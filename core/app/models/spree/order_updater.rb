@@ -29,7 +29,7 @@ module Spree
       # update totals a second time in case updated adjustments have an effect on the total
       update_totals
 
-      order.update_attributes_without_callbacks({
+      order.update_columns({
         payment_state: order.payment_state,
         shipment_state: order.shipment_state,
         item_total: order.item_total,
