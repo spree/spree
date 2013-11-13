@@ -982,6 +982,57 @@ module Spree
         "logged_on"=> "2013-11-05T19:44:11Z",
         "last_update"=> "2013-11-05T19:44:11Z",
       }
+
+    INCOMING_QUEUE ||=
+      {
+          "id"=> "52811a8584a8169f7a000002",
+          "message"=> "stock:change",
+          "state"=> "pending",
+          "consumer"=> "",
+          "created_at"=> "2013-11-11T17:57:25Z",
+          "completed_at"=> nil,
+          "attempt_at"=> "2013-11-13T15:51:26Z",
+          "is_consumer_remote"=> false,
+          "destination_name"=> "",
+          "integration_icon_url"=> nil,
+          "locked_at"=> nil,
+          "source"=> nil,
+          "queue_name"=> "incoming"
+      }
+
+    ACCEPTED_QUEUE ||=
+      {
+          "id"=> "52811a8584a8169f7a000002",
+          "message"=> "stock:change",
+          "state"=> "parked",
+          "consumer"=> "",
+          "created_at"=> "2013-11-11T17:57:25Z",
+          "completed_at"=> nil,
+          "attempt_at"=> "2013-11-13T15:51:26Z",
+          "is_consumer_remote"=> false,
+          "destination_name"=> "",
+          "integration_icon_url"=> nil,
+          "locked_at"=> nil,
+          "source"=> nil,
+          "queue_name"=> "accepted"
+      }
+
+    ARCHIVED_QUEUE ||=
+      {
+          "id"=> "52811a8584a8169f7a000002",
+          "message"=> "stock:change",
+          "state"=> "completed",
+          "consumer"=> "",
+          "created_at"=> "2013-11-11T17:57:25Z",
+          "completed_at"=> nil,
+          "attempt_at"=> "2013-11-13T15:51:26Z",
+          "is_consumer_remote"=> false,
+          "destination_name"=> "",
+          "integration_icon_url"=> nil,
+          "locked_at"=> nil,
+          "source"=> nil,
+          "queue_name"=> "archived"
+      }
   end
 end
 
