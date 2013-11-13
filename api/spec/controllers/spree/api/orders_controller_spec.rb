@@ -11,10 +11,9 @@ module Spree
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions] }
 
+    let(:variant) { create(:variant) }
 
-    before do
-      stub_authentication!
-    end
+    before { stub_authentication! }
 
     it "cannot view all orders" do
       api_get :index
@@ -62,6 +61,37 @@ module Spree
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
       json_response["state"].should == "cart"
+    end
+
+    context "import" do
+      let(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
+      let(:other_variant) { create(:variant) }
+
+      let(:order_params) do
+        {
+          :line_items => {
+            "0" => { :variant_id => variant.to_param, :quantity => 5 },
+            "1" => { :variant_id => other_variant.to_param, :quantity => 5 }
+          }
+        }
+      end
+
+      before do
+        Zone.stub default_tax: tax_rate.zone
+        current_api_user.stub has_spree_role?: true
+      end
+
+      it "sets channel" do
+        api_post :create, :order => { channel: "amazon" }
+        expect(json_response['channel']).to eq "amazon"
+      end
+
+      it "doesnt persist any automatic tax adjustment" do
+        expect {
+          api_post :create, :order => order_params.merge(:import => true)
+        }.not_to change { Adjustment.count }
+        expect(response.status).to eq 201
+      end
     end
 
     it "can create an order without any parameters" do

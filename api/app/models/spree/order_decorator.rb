@@ -1,4 +1,6 @@
 Spree::Order.class_eval do
+  attr_accessible :channel, :as => :api_admin
+
   def self.build_from_api(user, params)
     begin
       ensure_country_id_from_api params[:ship_address_attributes]
@@ -15,7 +17,12 @@ Spree::Order.class_eval do
       order.complete_from_api params.delete(:completed_at)
 
       destroy_automatic_taxes_on_import(order, params)
-      order.update_attributes!(params)
+
+      if user.has_spree_role? "admin"
+        order.update_attributes!(params, as: :api_admin)
+      else
+        order.update_attributes!(params)
+      end
 
       order.reload
     rescue Exception => e
