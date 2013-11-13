@@ -36,7 +36,7 @@ page to return by passing the `page` parameter in your request.
 To view messages in the incoming queue, make the following request:
 
 ```text
-POST http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/incoming```
+GET http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/incoming```
 
 ### Response
 
@@ -57,7 +57,7 @@ page to return by passing the `page` parameter in your request.
 To view messages in the accepted queue, make the following request:
 
 ```text
-POST http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/accepted```
+GET http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/accepted```
 
 ### Response
 
@@ -78,7 +78,7 @@ page to return by passing the `page` parameter in your request.
 To view messages in the archived queue, make the following request:
 
 ```text
-POST http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/archived```
+GET http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/archived```
 
 ***
 By default, the above request will only return completed messages that are in 
@@ -101,15 +101,24 @@ You can filter queues by passing one or more of the following attributes as a
 parameter in the request:
 
 * message - The message type to filter by, for example `order:persist`, 
-`order:poll`, etc.
+`spree:order:poll`, etc.
 
 * state - The current state of the message. This can be completed, pending, 
 failing, scheduled, never_processed, or parked.
 
-* start_date
+* start_date - Filter messages created after a date. For example, 2013-11-10T17:17:34+00:00
 
-* end_date
+* end_date - Filter messages created before a date. For example, 2013-11-10T17:17:34+00:00
 
 * message_id - The id of the message
 
 * mapping_id - The id of the mapping
+
+### Example
+
+To get all `spree:order:poll` messaqges from the accepted queue with a state of 
+completed, make the following request:
+
+```text
+GET http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/queues/accepted
+    ?message=spree:order:poll&state=completed```
