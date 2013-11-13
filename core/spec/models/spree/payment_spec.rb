@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Payment do
-  let(:order) do
-    order = Spree::Order.new(:bill_address => Spree::Address.new,
-                             :ship_address => Spree::Address.new)
-  end
+  let(:order) { Spree::Order.create }
 
   let(:gateway) do
     gateway = Spree::Gateway::Bogus.new(:environment => 'test', :active => true)
