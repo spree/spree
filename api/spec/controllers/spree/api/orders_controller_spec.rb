@@ -150,6 +150,11 @@ module Spree
         current_api_user.stub has_spree_role?: true
       end
 
+      it "sets channel" do
+        api_post :create, :order => { channel: "amazon" }
+        expect(json_response['channel']).to eq "amazon"
+      end
+
       it "doesnt persist any automatic tax adjustment" do
         expect {
           api_post :create, :order => order_params.merge(:import => true)
