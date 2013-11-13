@@ -11,10 +11,9 @@ module Spree
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions, :token] }
 
+    let(:variant) { create(:variant) }
 
-    before do
-      stub_authentication!
-    end
+    before { stub_authentication! }
 
     it "cannot view all orders" do
       api_get :index
@@ -76,6 +75,37 @@ module Spree
         json_response["user_id"].should == current_api_user.id
       end
 
+      context "import" do
+        let(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
+        let(:other_variant) { create(:variant) }
+
+        let(:order_params) do
+          {
+            :line_items => {
+              "0" => { :variant_id => variant.to_param, :quantity => 5 },
+              "1" => { :variant_id => other_variant.to_param, :quantity => 5 }
+            }
+          }
+        end
+
+        before do
+          Zone.stub default_tax: tax_rate.zone
+          current_api_user.stub has_spree_role?: true
+        end
+
+        it "sets channel" do
+          api_post :create, :order => { channel: "amazon" }
+          expect(json_response['channel']).to eq "amazon"
+        end
+
+        it "doesnt persist any automatic tax adjustment" do
+          expect {
+            api_post :create, :order => order_params.merge(:import => true)
+          }.not_to change { Adjustment.count }
+          expect(response.status).to eq 201
+        end
+      end
+
       it "cannot create an order with an abitrary price for the line item" do
         variant = create(:variant)
         api_post :create, :order => {
@@ -104,8 +134,6 @@ module Spree
     end
 
     context "working with an order" do
-
-      let(:variant) { create(:variant) }
       let!(:line_item) { order.contents.add(variant, 1) }
       let!(:payment_method) { create(:payment_method) }
 
