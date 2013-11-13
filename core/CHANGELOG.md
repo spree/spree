@@ -18,3 +18,8 @@
     Washington Luiz
 
 * Added tax_category to variants, to allow for different variants of a product to have different tax categories. #3946
+
+*   Introduce `Core::UserAddress` module. Once included on the store user class
+    the user address can be rememembered on checkout
+
+    Washington Luiz
