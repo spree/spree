@@ -33,6 +33,13 @@ describe Spree::LegacyUser do
           user.persist_order_address(order)
         }.not_to change { Spree::Address.count }
       end
+
+      it "set both bill and ship address id on subject" do
+        user.persist_order_address(order)
+
+        expect(user.bill_address_id).not_to be_blank
+        expect(user.ship_address_id).not_to be_blank
+      end
     end
   end
 end
