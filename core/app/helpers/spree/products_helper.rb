@@ -13,7 +13,7 @@ module Spree
     def variant_price_diff(variant)
       variant_amount = variant.amount_in(current_currency)
       product_amount = variant.product.amount_in(current_currency)
-      return if variant_amount == product_amount
+      return if variant_amount == product_amount || product_amount.nil?
       diff   = variant.amount_in(current_currency) - product_amount
       amount = Spree::Money.new(diff.abs, currency: current_currency).to_html
       label  = diff > 0 ? :add : :subtract
