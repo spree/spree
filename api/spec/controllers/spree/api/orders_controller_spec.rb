@@ -106,6 +106,17 @@ module Spree
           }.not_to change { Adjustment.count }
           expect(response.status).to eq 201
         end
+
+        context "provides sku rather than variant id" do
+          let(:order_params) do
+            { :line_items => [{ :sku => variant.sku, :quantity => 1 }] }
+          end
+
+          it "still finds the variant by sku and persist order" do
+            api_post :create, :order => order_params
+            expect(json_response['line_items'].count).to eq 1
+          end
+        end
       end
 
       it "cannot create an order with an abitrary price for the line item" do
