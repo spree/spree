@@ -30,7 +30,7 @@ handle_create = (e, data) ->
     type: "POST",
     dataType: "json",
     url: base_url.toString(),
-    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id"), "taxon[child_index]": position }),
+    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.attr("id")}),
     error: handle_ajax_error,
     success: (data,result) ->
       node.attr('id', data.id)
