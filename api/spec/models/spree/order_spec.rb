@@ -162,6 +162,8 @@ module Spree
       let(:other_state) { create(:state, name: "Uhuhuh", country: create(:country)) }
 
       before do
+        country.states.destroy_all
+
         ship_address.delete(:state_id)
         ship_address[:state] = { 'name' => other_state.name }
       end
@@ -173,6 +175,8 @@ module Spree
     end
 
     it 'sets state name if state record not found' do
+      country.states.destroy_all
+
       ship_address.delete(:state_id)
       ship_address[:state] = { 'name' => 'XXX' }
       params = { :ship_address_attributes => ship_address,
