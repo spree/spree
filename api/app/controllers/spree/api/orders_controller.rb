@@ -56,6 +56,8 @@ module Spree
       def sanitize_line_items(line_item_attributes)
         return {} if line_item_attributes.blank?
         line_item_attributes = line_item_attributes.map do |id, attributes|
+          attributes ||= id
+
           # Faux Strong-Parameters code to strip price if user isn't an admin
           if current_api_user.has_spree_role?("admin")
             [id, attributes.slice(*Spree::LineItem.attr_accessible[:api])]

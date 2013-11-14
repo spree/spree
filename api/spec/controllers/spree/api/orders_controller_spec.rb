@@ -67,12 +67,14 @@ module Spree
       let(:tax_rate) { create(:tax_rate, amount: 0.05, calculator: Calculator::DefaultTax.create) }
       let(:other_variant) { create(:variant) }
 
+      # line items come in as an array when importing orders or when
+      # creating both an order an a line item at once
       let(:order_params) do
         {
-          :line_items => {
-            "0" => { :variant_id => variant.to_param, :quantity => 5 },
-            "1" => { :variant_id => other_variant.to_param, :quantity => 5 }
-          }
+          :line_items => [
+            { :variant_id => variant.to_param, :quantity => 5 },
+            { :variant_id => other_variant.to_param, :quantity => 5 }
+          ]
         }
       end
 
