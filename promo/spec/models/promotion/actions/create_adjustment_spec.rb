@@ -51,15 +51,26 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
         before(:each) do
           action.perform(:order => order)
-          action.destroy
         end
 
         it "should keep the adjustment" do
+          action.destroy
           order.adjustments.count.should == 1 
         end
 
         it "should nullify the adjustment originator" do
+          action.destroy
           order.adjustments.first.originator.should be_nil
+        end
+
+        # Regression test for #3964
+        it "should not call callbacks on adjustments" do
+          adjustable = double(:complete? => true)
+          adjustment = double(:adjustment, :adjustable => adjustable)
+          action.stub :adjustments => [adjustment]
+          adjustment.should_receive(:update_attributes_without_callbacks)
+          adjustment.should_not_receive(:save)
+          action.destroy
         end
       end
     end

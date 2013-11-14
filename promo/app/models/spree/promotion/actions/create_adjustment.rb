@@ -57,8 +57,10 @@ module Spree
           def deals_with_adjustments
             self.adjustments.each do |adjustment|
               if adjustment.adjustable.complete?
-                adjustment.originator = nil
-                adjustment.save
+                adjustment.update_attributes_without_callbacks(
+                  :originator_id => nil,
+                  :originator_type => nil
+                )
               else
                 adjustment.destroy
               end
