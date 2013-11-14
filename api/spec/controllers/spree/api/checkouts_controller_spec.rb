@@ -38,7 +38,14 @@ module Spree
     end
 
     context "PUT 'update'" do
-      let(:order) { create(:order_with_line_items) }
+      let(:order) do 
+        order = create(:order_with_line_items)
+        # Order should be in a pristine state
+        # Without doing this, the order may transition from 'cart' straight to 'delivery'
+        order.shipments.delete_all
+        order
+      end
+
 
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)
