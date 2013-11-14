@@ -19,31 +19,31 @@ describe "Reports" do
   context "searching the admin reports page" do
     before do
       order = create(:order)
-      order.update_columns({:adjustment_total => 100})
       order.completed_at = Time.now
       order.save!
+      order.update_column(:adjustment_total, 100)
 
       order = create(:order)
-      order.update_columns({:adjustment_total => 200})
       order.completed_at = Time.now
       order.save!
+      order.update_column(:adjustment_total, 200)
 
       #incomplete order
       order = create(:order)
-      order.update_columns({:adjustment_total => 50})
       order.save!
+      order.update_column(:adjustment_total, 50)
 
       order = create(:order)
-      order.update_columns({:adjustment_total => 200})
       order.completed_at = 3.years.ago
       order.created_at = 3.years.ago
       order.save!
+      order.update_column(:adjustment_total, 200)
 
       order = create(:order)
-      order.update_columns({:adjustment_total => 200})
       order.completed_at = 3.years.from_now
       order.created_at = 3.years.from_now
       order.save!
+      order.update_column(:adjustment_total, 200)
     end
 
     it "should allow me to search for reports" do
