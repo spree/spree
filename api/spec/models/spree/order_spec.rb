@@ -62,6 +62,18 @@ module Spree
         expect(line_item.variant_id).to eq attributes[:variant_id]
         expect(line_item.price).to eq attributes[:price]
       end
+
+      it "ensures quantity values are converted to integer" do
+        params = {
+          :line_items_attributes => {
+            "0" => { :variant_id => variant.id, :quantity => "5" },
+            "1" => { :variant_id => variant.id, :quantity => "5" }
+          }
+        }
+
+        order = Order.build_from_api(user, params)
+        expect(order.line_items.first.quantity).to eq 10
+      end
     end
 
     it 'uses line item price if present' do

@@ -19,7 +19,7 @@ Spree::Order.class_eval do
       destroy_automatic_taxes_on_import(order, params)
 
       if user.has_spree_role? "admin"
-        order.update_attributes!(params, as: :api_admin)
+        order.update_attributes!(params, without_protection: true)
       else
         order.update_attributes!(params)
       end
@@ -91,7 +91,7 @@ Spree::Order.class_eval do
         line_item = line_items_hash[k]
         self.class.ensure_variant_id_from_api(line_item)
 
-        item  = self.add_variant(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+        item = self.add_variant(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity].to_i)
 
         if line_item.key? :price
           item.price = line_item[:price]
