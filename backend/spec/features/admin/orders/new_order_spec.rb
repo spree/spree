@@ -73,4 +73,50 @@ describe "New Order" do
     targetted_select2_search state.name, :from => "#s2id_order_#{kind}_address_attributes_state_id"
     fill_in "Phone",                   :with => "123-456-7890"
   end
+
+  describe "with inventory tracking off" do
+    before(:each) do
+      Spree::Config[:track_inventory_levels] = false
+    end
+
+    after do
+      Spree::Config[:track_inventory_levels] = true
+    end
+
+    let!(:stock_item) { product.master.stock_items.first.adjust_count_on_hand(-10) }
+
+    # I think this spec should fail - we want the product to be backordered, but
+    # it shows up in the order as "on hand"...so we're not really testing what we want
+    # here.
+    it "should complete a new order successfully", js: true do
+
+      select2_search product.name, :from => Spree.t(:name_or_sku)
+      click_icon :plus
+      click_on "Customer Details"
+
+      within "#select-customer" do
+        targetted_select2_search user.email, :from => "#s2id_customer_search"
+      end
+
+      check "order_use_billing"
+      fill_in_address
+      click_on "Update"
+
+      click_on "Payments"
+      click_on "Update"
+
+      expect(current_path).to eql(spree.edit_admin_order_path(Spree::Order.last))
+
+      click_on "Payments"
+      click_icon "capture"
+
+      click_on "Order Details"
+      click_on "ship"
+      wait_for_ajax
+
+      page.should have_content("shipped")
+    end
+
+  end
+
 end
