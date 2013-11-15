@@ -204,7 +204,7 @@ module Spree
     def determine_state(order)
       return 'canceled' if order.canceled?
       return 'pending' unless order.can_ship?
-      return 'pending' if inventory_units.any? &:backordered?
+      return 'pending' if (!Spree::Config[:allow_backorder_shipping] && inventory_units.any?(&:backordered?))
       return 'shipped' if state == 'shipped'
       order.paid? ? 'ready' : 'pending'
     end
