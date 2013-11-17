@@ -20,7 +20,7 @@ module Spree
       def default_package
         package = Package.new(stock_location, order)
         order.line_items.each do |line_item|
-          if Config.track_inventory_levels
+          if line_item.should_track_inventory?
             next unless stock_location.stock_item(line_item.variant)
 
             on_hand, backordered = stock_location.fill_status(line_item.variant, line_item.quantity)

@@ -65,6 +65,21 @@ describe Spree::OrderInventory do
       end
     end
 
+    context "variant doesnt track inventory" do
+      before { variant.track_inventory = false }
+
+      it "creates only on hand inventory units" do
+        variant.stock_items.destroy_all
+
+        line_item = order.contents.add variant, 1
+        subject.verify(line_item, shipment)
+
+        units = shipment.inventory_units_for(line_item.variant)
+        expect(units.count).to eq 1
+        expect(units.first).to be_on_hand
+      end
+    end
+
     it 'should create stock_movement' do
       subject.send(:add_to_shipment, shipment, variant, 5).should == 5
 
