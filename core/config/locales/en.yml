@@ -1076,6 +1076,7 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
+    track_inventory: Track Inventory
     tracking: Tracking
     tracking_number: Tracking Number
     tracking_url: Tracking URL

@@ -12,6 +12,10 @@ FactoryGirl.define do
     # ensure stock item will be created for this products master
     before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
 
+    after(:create) do |p|
+      p.variants_including_master.each { |v| v.save! }
+    end
+
     factory :custom_product do
       name 'Custom Product'
       price 17.99
