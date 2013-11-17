@@ -11,7 +11,7 @@ module Spree
     attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
-                    :weight, :height, :width, :depth, :sku, :cost_currency
+                    :weight, :height, :width, :depth, :sku, :cost_currency, :track_inventory
 
     has_many :inventory_units
     has_many :line_items
@@ -144,6 +144,12 @@ module Spree
     # This is a stopgap for that little problem.
     def product
       Spree::Product.unscoped { super }
+    end
+
+    # Shortcut method to determine if inventory tracking is enabled for this variant
+    # This considers both variant tracking flag and site-wide inventory tracking settings
+    def should_track_inventory?
+      self.track_inventory? && Spree::Config.track_inventory_levels
     end
 
     private
