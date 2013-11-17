@@ -151,7 +151,7 @@ span.required {
 fieldset {
   margin: 0;
   min-width: 100%;
-  
+
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -333,6 +333,12 @@ nav #main-nav-bar {
         }
       }
     }
+  }
+}
+
+figure#logo {
+  img {
+    padding-top:25px;
   }
 }
 
@@ -738,7 +744,7 @@ ul#products {
 
 #billing {
   input[type="text"], input[type="email"],
-  input[type="tel"], input[type="number"], 
+  input[type="tel"], input[type="number"],
   select, textarea {
     width: 100%;
   }
@@ -1240,7 +1246,6 @@ table.order-summary {
     tbody tr { display: inline-block; vertical-align: top; }
     td { display: block; min-height: 1.25em; }
   }
-
 
   figure#logo {
     text-align: center;
