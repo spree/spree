@@ -151,6 +151,19 @@ module Spree
       Spree::Stock::Quantifier.new(self).total_on_hand
     end
 
+    # Product may be created with deleted_at already set,
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def product
+      Spree::Product.unscoped { super }
+    end
+
+    # Shortcut method to determine if inventory tracking is enabled for this variant
+    # This considers both variant tracking flag and site-wide inventory tracking settings
+    def should_track_inventory?
+      self.track_inventory? && Spree::Config.track_inventory_levels
+    end
+
     private
       # strips all non-price-like characters from the price, taking into account locale settings
       def parse_price(price)
