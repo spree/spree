@@ -33,6 +33,15 @@
             <% if variant.images.present? %>
               <%= image_tag variant.images.first.attachment.url(:mini) %>
             <% end %>
+            <br/>
+            <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
+                <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
+                                  class: 'track_inventory_checkbox' %>
+                <%= Spree.t(:track_inventory) %>
+                <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
+                    class: 'variant_track_inventory',
+                    id: "variant_track_inventory_#{variant.id}" %>
+            <% end %>
           </td>
           <td colspan="4" class="stock_location_info">
             <table>

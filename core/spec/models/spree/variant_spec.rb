@@ -344,4 +344,27 @@ describe Spree::Variant do
       expect(variant.total_on_hand).to eq(Spree::Stock::Quantifier.new(variant).total_on_hand)
     end
   end
+
+  describe "#should_track_inventory?" do
+
+    it 'should not track inventory when global setting is off' do
+      Spree::Config[:track_inventory_levels] = false
+
+      build(:variant).should_track_inventory?.should eq(false)
+    end
+
+    it 'should not track inventory when variant is turned off' do
+      Spree::Config[:track_inventory_levels] = true
+
+      build(:on_demand_variant).should_track_inventory?.should eq(false)
+    end
+
+    it 'should track inventory when global and variant are on' do
+      Spree::Config[:track_inventory_levels] = true
+
+      build(:variant).should_track_inventory?.should eq(true)
+    end
+
+  end
+
 end

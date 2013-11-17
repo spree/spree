@@ -11,7 +11,7 @@ module Spree
 
     attr_accessible :count_on_hand, :variant, :stock_location, :backorderable, :variant_id
 
-    delegate :weight, to: :variant
+    delegate :weight, :should_track_inventory?, to: :variant
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
