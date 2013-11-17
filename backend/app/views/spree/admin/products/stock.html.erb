@@ -34,7 +34,7 @@
               <%= image_tag variant.images.first.attachment.url(:mini) %>
             <% end %>
             <br/>
-            <%= form_tag admin_product_variants_including_master_path(@product, variant), method: :put, class: 'toggle_variant_track_inventory' do %>
+            <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
                 <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
                                   class: 'track_inventory_checkbox' %>
                 <%= Spree.t(:track_inventory) %>

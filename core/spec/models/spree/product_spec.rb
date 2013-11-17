@@ -508,6 +508,11 @@ describe Spree::Product do
       build(:product, :variants_including_master => [build(:master_variant)]).total_on_hand.should eql(Float::INFINITY)
     end
 
+    it 'should be infinite if variant is on demand' do
+      Spree::Config[:track_inventory_levels] = true
+      build(:product, :variants_including_master => [build(:on_demand_master_variant)]).total_on_hand.should eql(Float::INFINITY)
+    end
+
     it 'should return master variants quantity' do
       product = build(:product)
       product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]

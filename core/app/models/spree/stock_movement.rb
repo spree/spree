@@ -17,10 +17,12 @@ module Spree
     end
 
     private
+
     def update_stock_item_quantity
-      return unless self.stock_item.variant.should_track_inventory?
+      return unless self.stock_item.should_track_inventory?
       stock_item.adjust_count_on_hand quantity
     end
+
   end
 end
 
