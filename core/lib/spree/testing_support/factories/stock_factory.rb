@@ -22,7 +22,7 @@ FactoryGirl.define do
       after(:build) do |package, evaluator|
         evaluator.order.line_items.reload
         evaluator.order.line_items.each do |line_item|
-          package.add line_item.variant, line_item.quantity, :on_hand
+          package.add line_item, line_item.quantity, :on_hand
         end
       end
     end

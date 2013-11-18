@@ -5,8 +5,9 @@ module Spree
     describe Prioritizer do
       let(:order) { create(:order_with_line_items, line_items_count: 2) }
       let(:stock_location) { build(:stock_location) }
-      let(:variant1) { order.line_items[0].variant }
-      let(:variant2) { order.line_items[1].variant }
+
+      let(:line_item1) { order.line_items[0] }
+      let(:line_item2) { order.line_items[1] }
 
       def pack
         package = Package.new(order, stock_location)
@@ -16,8 +17,8 @@ module Spree
 
       it 'keeps a single package' do
         package1 = pack do |package|
-          package.add variant1, 1, :on_hand
-          package.add variant2, 1, :on_hand
+          package.add line_item1, 1, :on_hand
+          package.add line_item2, 1, :on_hand
         end
 
         packages = [package1]
@@ -28,12 +29,12 @@ module Spree
 
       it 'removes duplicate packages' do
         package1 = pack do |package|
-          package.add variant1, 1, :on_hand
-          package.add variant2, 1, :on_hand
+          package.add line_item1, 1, :on_hand
+          package.add line_item2, 1, :on_hand
         end
         package2 = pack do |package|
-          package.add variant1, 1, :on_hand
-          package.add variant2, 1, :on_hand
+          package.add line_item1, 1, :on_hand
+          package.add line_item2, 1, :on_hand
         end
 
         packages = [package1, package2]
@@ -44,10 +45,10 @@ module Spree
 
       it 'split over 2 packages' do
         package1 = pack do |package|
-          package.add variant1, 1, :on_hand
+          package.add line_item1, 1, :on_hand
         end
         package2 = pack do |package|
-          package.add variant2, 1, :on_hand
+          package.add line_item2, 1, :on_hand
         end
 
         packages = [package1, package2]
@@ -59,10 +60,10 @@ module Spree
       it '1st has some, 2nd has remaining' do
         order.line_items[0].stub(:quantity => 5)
         package1 = pack do |package|
-          package.add variant1, 2, :on_hand
+          package.add line_item1, 2, :on_hand
         end
         package2 = pack do |package|
-          package.add variant1, 5, :on_hand
+          package.add line_item1, 5, :on_hand
         end
 
         packages = [package1, package2]
@@ -76,10 +77,10 @@ module Spree
       it '1st has backorder, 2nd has some' do
         order.line_items[0].stub(:quantity => 5)
         package1 = pack do |package|
-          package.add variant1, 5, :backordered
+          package.add line_item1, 5, :backordered
         end
         package2 = pack do |package|
-          package.add variant1, 2, :on_hand
+          package.add line_item1, 2, :on_hand
         end
 
         packages = [package1, package2]
@@ -93,11 +94,11 @@ module Spree
       it '1st has backorder, 2nd has all' do
         order.line_items[0].stub(:quantity => 5)
         package1 = pack do |package|
-          package.add variant1, 3, :backordered
-          package.add variant2, 1, :on_hand
+          package.add line_item1, 3, :backordered
+          package.add line_item2, 1, :on_hand
         end
         package2 = pack do |package|
-          package.add variant1, 5, :on_hand
+          package.add line_item1, 5, :on_hand
         end
 
         packages = [package1, package2]
