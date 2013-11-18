@@ -31,13 +31,17 @@ module Spree
       end
 
       it "update order adjustments" do
+        # A line item will not have both additional and included tax,
+        # so please just humour me for now.
         order.line_items.first.update_columns({
           :adjustment_total => 10.05,
-          :tax_total => 0.05
+          :additional_tax_total => 0.05,
+          :included_tax_total => 0.05,
         })
         updater.update_adjustment_total
         order.adjustment_total.should == 10.05
-        order.tax_total.should == 0.05
+        order.additional_tax_total.should == 0.05
+        order.included_tax_total.should == 0.05
       end
     end
 

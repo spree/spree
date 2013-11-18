@@ -119,7 +119,8 @@ describe Spree::Order do
         order.email = "user@example.com"
         order.next!
         order.adjustment_total.should == 0.5
-        order.tax_total.should == 0.5
+        order.additional_tax_total.should == 0.5
+        order.included_tax_total.should == 0
         order.total.should == 10.5
       end
 

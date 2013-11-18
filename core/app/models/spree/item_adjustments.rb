@@ -23,17 +23,27 @@ module Spree
       #
       # It also fits the criteria for sales tax as outlined here:
       # http://www.boe.ca.gov/formspubs/pub113/
+      # 
+      # Tax adjustments come in not one but *two* exciting flavours:
+      # Included & additional
+
+      # Included tax adjustments are those which are included in the price.
+      # These ones should not effect the eventual total price.
+      #
+      # Additional tax adjustments are the opposite; effecting the final total. 
       promotion_total = adjustments.promotion.reload.map(&:update!).compact.sum
       unless promotion_total == 0
         choose_best_promotion_adjustment
       end
       promo_total = best_promotion_adjustment.try(:amount).to_f
-      tax_total = adjustments.tax.excluded.reload.map(&:update!).compact.sum
+      included_tax_total = adjustments.tax.included.reload.map(&:update!).compact.sum
+      additional_tax_total = adjustments.tax.additional.reload.map(&:update!).compact.sum
 
       item.update_columns(
         :promo_total => promo_total,
-        :tax_total => tax_total,
-        :adjustment_total => promo_total + tax_total,
+        :included_tax_total => included_tax_total,
+        :additional_tax_total => additional_tax_total,
+        :adjustment_total => promo_total + additional_tax_total,
         :updated_at => Time.now,
       )
     end

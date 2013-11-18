@@ -125,7 +125,7 @@ module Spree
                     :order_id => gateway_order_id }
 
         options.merge!({ :shipping => order.ship_total * 100,
-                         :tax      => order.tax_total * 100,
+                         :tax      => order.additional_tax_total * 100,
                          :subtotal => order.item_total * 100,
                          :discount => order.promo_total * 100,
                          :currency => currency })

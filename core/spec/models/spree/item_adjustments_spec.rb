@@ -16,7 +16,7 @@ module Spree
 
         subject.update
         line_item.adjustment_total.should == 0.5
-        line_item.tax_total.should == 0.5
+        line_item.additional_tax_total.should == 0.5
       end
     end
 
@@ -38,18 +38,47 @@ module Spree
         line_item.price = 20
         line_item.tax_category = tax_rate.tax_category
         line_item.save
-        create(:adjustment, :source => tax_rate, :adjustable => line_item)
         create(:adjustment, :source => promotion_action, :adjustable => line_item)
       end
 
-      it "applies promotions first, then tax" do
-        subject.update_adjustments
-        line_item.reload
-        # Taxable amount is: $20 (base) - $10 (promotion) = $10
-        # Tax rate is 5% (of $10).
-        line_item.tax_total.should == 0.5
-        line_item.promo_total.should == -10
-        line_item.adjustment_total.should == -9.5
+      context "tax included in price" do
+        before do
+          create(:adjustment, 
+            :source => tax_rate,
+            :adjustable => line_item,
+            :included => true
+          )
+        end
+
+        it "tax has no bearing on final price" do
+          subject.update_adjustments
+          line_item.reload
+          line_item.included_tax_total.should == 0.5
+          line_item.additional_tax_total.should == 0
+          line_item.promo_total.should == -10
+          line_item.adjustment_total.should == -10
+        end
+      end
+
+      context "tax excluded from price" do
+        before do
+          create(:adjustment, 
+            :source => tax_rate,
+            :adjustable => line_item,
+            :included => false
+          )
+        end
+
+        it "tax applies to line item" do
+          subject.update_adjustments
+          line_item.reload
+          # Taxable amount is: $20 (base) - $10 (promotion) = $10
+          # Tax rate is 5% (of $10).
+          line_item.included_tax_total.should == 0
+          line_item.additional_tax_total.should == 0.5
+          line_item.promo_total.should == -10
+          line_item.adjustment_total.should == -9.5
+        end
       end
     end
 

@@ -109,7 +109,7 @@ describe Spree::TaxRate do
 
           context "when the tax is a VAT" do
             let(:included_in_price) { true }
-            it { should == [prate] }
+            it { should == [rate] }
           end
         end
 
