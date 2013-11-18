@@ -165,7 +165,7 @@ module Spree
 
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
-      payments.map(&:payment_method).any?(&:payment_profiles_supported?)
+      payments.valid.map(&:payment_method).any?(&:payment_profiles_supported?)
     end
 
     # Used by the checkout state machine to check for unprocessed payments
