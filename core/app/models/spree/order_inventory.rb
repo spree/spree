@@ -18,25 +18,24 @@ module Spree
     def verify(shipment = nil)
       if order.completed? || shipment.present?
 
-        if variant_units.size < line_item.quantity
-          quantity = line_item.quantity - variant_units.size
+        if item_units.size < line_item.quantity
+          quantity = line_item.quantity - item_units.size
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif variant_units.size > line_item.quantity
-          remove(variant_units, shipment)
+        elsif item_units.size > line_item.quantity
+          remove(item_units, shipment)
         end
       end
     end
 
-    def variant_units
-      units = order.shipments.collect{|s| s.inventory_units.to_a}.flatten
-      units.group_by(&:variant_id)[variant.id] || []
+    def item_units
+      line_item.inventory_units
     end
 
     private
-      def remove(variant_units, shipment = nil)
-        quantity = variant_units.size - line_item.quantity
+      def remove(item_units, shipment = nil)
+        quantity = item_units.size - line_item.quantity
 
         if shipment.present?
           remove_from_shipment(shipment, quantity)
@@ -66,10 +65,10 @@ module Spree
         if Config.track_inventory_levels
           on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
 
-          on_hand.times { shipment.set_up_inventory('on_hand', variant, order) }
-          back_order.times { shipment.set_up_inventory('backordered', variant, order) }
+          on_hand.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
+          back_order.times { shipment.set_up_inventory('backordered', variant, order, line_item) }
         else
-          quantity.times { shipment.set_up_inventory('on_hand', variant, order) }
+          quantity.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
         end
 
         # adding to this shipment, and removing from stock_location
