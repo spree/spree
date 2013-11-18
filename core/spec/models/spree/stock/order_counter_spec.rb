@@ -5,6 +5,7 @@ module Spree
     describe OrderCounter do
       let(:variant1) { mock_model(Spree::Variant) }
       let(:variant2) { mock_model(Spree::Variant) }
+
       let(:order) { order = mock_model(Spree::Order, line_items: [], inventory_units: [])
                     order.line_items << mock_model(Spree::LineItem, variant: variant1 , quantity: 2)
                     order.line_items << mock_model(Spree::LineItem, variant: variant2, quantity: 2)
@@ -47,4 +48,3 @@ module Spree
     end
   end
 end
-
