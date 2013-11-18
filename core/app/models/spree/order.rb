@@ -284,10 +284,6 @@ module Spree
       adjustments.shipping.sum(:amount)
     end
 
-    def tax_total
-      adjustments.tax.sum(:amount)
-    end
-
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!

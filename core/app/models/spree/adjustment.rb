@@ -49,7 +49,7 @@ module Spree
       end
     end
 
-    scope :tax, -> { where(originator_type: 'Spree::TaxRate', adjustable_type: 'Spree::Order') }
+    scope :tax, -> { where(originator_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(originator_type: 'Spree::ShippingMethod') }
     scope :optional, -> { where(mandatory: false) }

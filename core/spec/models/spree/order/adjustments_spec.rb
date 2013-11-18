@@ -27,13 +27,6 @@ describe Spree::Order do
       end
     end
 
-    describe "#tax_total" do
-      it "should return the correct amount" do
-        order.stub_chain :adjustments, :tax, :sum => 15
-        order.tax_total.should == 15
-      end
-    end
-
     describe "#promo_total" do
       it "should return the correct amount" do
         order.stub_chain :adjustments, :eligible, :promotion, :sum => 15

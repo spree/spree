@@ -55,6 +55,7 @@ module Spree
       order.payment_total = payments.completed.map(&:amount).sum
       order.item_total = line_items.map(&:amount).sum
       order.adjustment_total = adjustments.eligible.map(&:amount).sum
+      order.tax_total = order.all_adjustments.tax.map(&:amount).sum
       order.total = order.item_total + order.adjustment_total
     end
 

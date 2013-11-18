@@ -15,10 +15,17 @@ module Spree
       adjustments = [double(:amount => 10), double(:amount => -20)]
       order.stub_chain(:adjustments, :eligible).and_return(adjustments)
 
+      order_taxes = [double(:amount => 10)]
+      order.stub_chain(:adjustments, :tax).and_return(order_taxes)
+
+      line_item_taxes = [double(:amount => 20)]
+      order.stub_chain(:all_adjustments, :tax).and_return(order_taxes + line_item_taxes)
+
       updater.update_totals
       order.payment_total.should == 10
       order.item_total.should == 30
       order.adjustment_total.should == -10
+      order.tax_total.should == 30
       order.total.should == 20
     end
 
