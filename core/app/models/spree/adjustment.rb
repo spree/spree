@@ -59,6 +59,8 @@ module Spree
     scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
     scope :manual, -> { where(originator_type: nil) }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
+    scope :included, -> { where(included: true)  }
+    scope :additional, -> { where(included: false) }
 
     def promotion?
       originator_type == 'Spree::PromotionAction'
