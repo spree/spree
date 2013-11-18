@@ -223,8 +223,13 @@ module Spree
       package
     end
 
-    def set_up_inventory(state, variant, order)
-      self.inventory_units.create(variant_id: variant.id, state: state, order_id: order.id)
+    def set_up_inventory(state, variant, order, line_item)
+      self.inventory_units.create(
+        state: state,
+        variant_id: variant.id,
+        order_id: order.id,
+        line_item_id: line_item.id
+      )
     end
 
     def persist_cost
