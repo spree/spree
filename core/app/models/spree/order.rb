@@ -41,6 +41,7 @@ module Spree
     has_many :return_authorizations, dependent: :destroy
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
+    has_many :all_adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, class_name: 'Spree::Adjustment', dependent: :destroy
     has_many :inventory_units
 
     has_many :shipments, dependent: :destroy do

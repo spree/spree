@@ -114,7 +114,7 @@ describe Spree::TaxRate do
 
           context "when the tax is a VAT" do
             let(:included_in_price) { true }
-            it { should be_empty }
+            it { should == [rate] }
           end
         end
 
@@ -142,9 +142,9 @@ describe Spree::TaxRate do
           context "when the order does not have a tax_address" do
             let(:tax_address) { nil}
 
-            context "when the tax is not a VAT" do
+            context "when the tax is a VAT" do
               let(:included_in_price) { true }
-              it { should be_empty }
+              it { should == [rate] }
             end
 
             context "when the tax is not a VAT" do
@@ -215,16 +215,24 @@ describe Spree::TaxRate do
   end
 
   context "#adjust" do
+    let(:country) { create(:country) }
+    let(:zone) do
+      zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
+      zone.zone_members.create(:zoneable => country)
+      zone
+    end
+
     before do
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
       @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
       @calculator  = Spree::Calculator::DefaultTax.new
+      @order       = Spree::Order.create!
       @rate        = Spree::TaxRate.create(
         :amount => 0.10,
         :calculator => @calculator,
-        :tax_category => @category
+        :tax_category => @category,
+        :zone => zone
       )
-      @order       = Spree::Order.create!
       @taxable     = create(:product, :tax_category => @category)
       @nontaxable  = create(:product, :tax_category => @category2)
     end
@@ -249,17 +257,21 @@ describe Spree::TaxRate do
     end
 
     context "when order has one taxable line item" do
-      before { @order.contents.add(@taxable.master, 1) }
-
       context "when price includes tax" do
-        before { @rate.included_in_price = true }
+        before do 
+          @rate.update_column(:included_in_price, true)
+          @order.contents.add(@taxable.master, 1)
+          # The above automatically creates an adjustment which needs to be cleared
+          @order.all_adjustments.delete_all
+        end
 
         context "when zone is contained by default tax zone" do
           before { Spree::Zone.stub_chain :default_tax, :contains? => true }
 
-          it "should create one price adjustment" do
+          it "should create one included line item adjustment" do
             @rate.adjust(@order)
             @order.line_item_adjustments.count.should == 1
+            @order.line_item_adjustments.first.included.should be_true
           end
 
           it "should not create a tax refund" do
@@ -294,7 +306,12 @@ describe Spree::TaxRate do
       end
 
       context "when price does not include tax" do
-        before { @rate.included_in_price = false }
+        before do 
+          @rate.update_column(:included_in_price, false)
+          @order.contents.add(@taxable.master, 1)
+          # The above automatically creates an adjustment which needs to be cleared
+          @order.all_adjustments.delete_all
+        end
 
         it "should not create line item adjustment" do
           @rate.adjust(@order)
@@ -318,6 +335,8 @@ describe Spree::TaxRate do
         @taxable2 = create(:product, :tax_category => @category)
         @order.contents.add(@taxable.master, 1)
         @order.contents.add(@taxable2.master, 1)
+        # The above automatically creates an adjustment which needs to be cleared
+        @order.all_adjustments.delete_all
       end
 
       context "when line item includes tax" do
@@ -329,6 +348,7 @@ describe Spree::TaxRate do
           it "should create multiple price adjustments" do
             @rate.adjust(@order)
             @order.line_item_adjustments.count.should == 2
+            expect(@order.line_item_adjustments.all? { |a| a.included? }).to be_true
           end
 
           it "should not create a tax refund" do

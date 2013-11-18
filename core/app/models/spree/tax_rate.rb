@@ -26,7 +26,7 @@ module Spree
       return [] unless order.tax_zone
       all.select do |rate|
         (!rate.included_in_price && (rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax))) ||
-        (rate.included_in_price && !order.tax_address.nil? && !rate.zone.contains?(order.tax_zone) && rate.zone.default_tax)
+        rate.included_in_price
       end
     end
 
@@ -54,15 +54,31 @@ module Spree
 
     # Creates necessary tax adjustments for the order.
     def adjust(order)
+      # (rate.included_in_price && !order.tax_address.nil? && !rate.zone.contains?(order.tax_zone) && rate.zone.default_tax)
       label = create_label
       if included_in_price
         if Zone.default_tax.contains? order.tax_zone
-          order.line_items.each { |line_item| create_adjustment(label, line_item, line_item) }
+          order.line_items.each do |line_item|
+            amount = calculator.compute(line_item)
+            unless amount == 0
+              line_item.adjustments.create(
+                order: order,
+                amount: amount,
+                source: line_item,
+                originator: self,
+                label: label,
+                mandatory: false,
+                state: "closed",
+                included: true
+              )
+            end
+          end
         else
           amount = -1 * calculator.compute(order)
           label = Spree.t(:refund) + label
 
           order.adjustments.create(
+            order: order,
             amount: amount,
             source: order,
             originator: self,
@@ -71,7 +87,17 @@ module Spree
           )
         end
       else
-        create_adjustment(label, order, order)
+        amount = calculator.compute(order)
+        unless amount == 0
+          order.adjustments.create(
+            order: order,
+            amount: amount,
+            source: order,
+            originator: self,
+            state: "closed",
+            label: label
+          )
+        end
       end
     end
 
