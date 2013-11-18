@@ -109,7 +109,7 @@ describe Spree::TaxRate do
 
           context "when the tax is a VAT" do
             let(:included_in_price) { true }
-            it { should be_empty }
+            it { should == [prate] }
           end
         end
 
@@ -137,9 +137,9 @@ describe Spree::TaxRate do
           context "when the order does not have a tax_address" do
             let(:tax_address) { nil}
 
-            context "when the tax is not a VAT" do
+            context "when the tax is a VAT" do
               let(:included_in_price) { true }
-              it { should be_empty }
+              it { should == [rate] }
             end
 
             context "when the tax is not a VAT" do

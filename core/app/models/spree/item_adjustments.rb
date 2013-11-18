@@ -28,7 +28,7 @@ module Spree
         choose_best_promotion_adjustment
       end
       promo_total = best_promotion_adjustment.try(:amount).to_f
-      tax_total = adjustments.tax.reload.map(&:update!).compact.sum
+      tax_total = adjustments.tax.excluded.reload.map(&:update!).compact.sum
 
       item.update_columns(
         :promo_total => promo_total,

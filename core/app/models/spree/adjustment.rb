@@ -57,6 +57,8 @@ module Spree
     scope :credit, -> { where('amount < 0') }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
+    scope :included, -> { where(included: true)  }
+    scope :excluded, -> { where(included: false) }
 
     def immutable?
       state != "open"
