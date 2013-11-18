@@ -1,5 +1,9 @@
 ## Spree 2.2.0 (unreleased) ##
 
+*   Associate line item and inventory units for better extensibility with
+    product assemblies. Migration was added to set line_item_id for existing
+    inventory units.
+
 *   A *channel* column was added to the spree_orders table. Users can set
     it when importing orders from other stores. e.g. amazon
 
