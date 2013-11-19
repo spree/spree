@@ -6,24 +6,12 @@ describe Spree::OrderInventory do
 
   subject { described_class.new(order, line_item) }
 
-  it 'inventory_units_for should return array of units for a given variant' do
-    units = subject.variant_units
-    units.map(&:variant_id).should == [line_item.variant.id]
-  end
-
   context "when order is missing inventory units" do
-    before do
-      line_item.update_column(:quantity, 2)
-    end
+    before { line_item.update_column(:quantity, 2) }
 
-    it 'should be a messed up order' do
-      order.shipments.first.inventory_units_for(line_item.variant).size.should == 1
-      line_item.reload.quantity.should == 2
-    end
-
-    it 'should increase the number of inventory units' do
+    it 'creates the proper number of inventory units' do
       subject.verify
-      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
+      expect(subject.item_units.count).to eq 2
     end
   end
 
@@ -61,8 +49,8 @@ describe Spree::OrderInventory do
       it "creates only on hand inventory units" do
         variant.stock_items.destroy_all
 
-        line_item = order.contents.add variant, 1
-        subject.verify(shipment)
+        # The before_save callback in LineItem would verify inventory
+        line_item = order.contents.add variant, 1, nil, shipment
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.count).to eq 1
@@ -85,7 +73,10 @@ describe Spree::OrderInventory do
     let(:variant) { line_item.variant }
 
     before do
+      subject.verify
+
       order.shipments.create(:stock_location_id => stock_location.id, :cost => 5)
+
       shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id, :cost => 10)
       shipped.update_column(:state, 'shipped')
     end
@@ -94,13 +85,17 @@ describe Spree::OrderInventory do
       shipment = subject.send(:determine_target_shipment)
       shipment.shipped?.should be_false
       shipment.inventory_units_for(variant).should_not be_empty
+
       variant.stock_location_ids.include?(shipment.stock_location_id).should be_true
     end
 
     context "when no shipments already contain this varint" do
-      it 'selects first non-shipped shipment that leaves from same stock_location' do
-        subject.send(:remove_from_shipment, order.shipments.first, line_item.quantity)
+      before do
+        subject.line_item.reload
+        subject.item_units.destroy_all
+      end
 
+      it 'selects first non-shipped shipment that leaves from same stock_location' do
         shipment = subject.send(:determine_target_shipment)
         shipment.reload
         shipment.shipped?.should be_false
@@ -116,7 +111,7 @@ describe Spree::OrderInventory do
       line_item.save!
 
       line_item.update_column(:quantity, 2)
-      order.reload
+      subject.line_item.reload
     end
 
     it 'should be a messed up order' do
@@ -126,7 +121,7 @@ describe Spree::OrderInventory do
 
     it 'should decrease the number of inventory units' do
       subject.verify
-      order.reload.shipments.first.inventory_units_for(line_item.variant).size.should == 2
+      expect(subject.item_units.count).to eq 2
     end
 
     context '#remove_from_shipment' do

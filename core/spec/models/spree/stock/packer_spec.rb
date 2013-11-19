@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Packer do
-      let(:order) { create(:order_with_line_items, line_items_count: 5) }
+      let!(:order) { create(:order_with_line_items, line_items_count: 5) }
       let(:stock_location) { create(:stock_location) }
 
       subject { Packer.new(stock_location, order) }
