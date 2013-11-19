@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activemerchant', '1.42.2'
   s.add_dependency 'acts_as_list', '= 0.2.0'
   s.add_dependency 'awesome_nested_set', '~> 3.0.0.rc.2'
-  s.add_dependency 'aws-sdk', '1.11.1' # temporarily locked down due to https://github.com/aws/aws-sdk-ruby/issues/273
+  s.add_dependency 'aws-sdk', '1.27.0'
   s.add_dependency 'cancan', '~> 1.6.10'
   s.add_dependency 'deface', '~> 1.0.0'
   s.add_dependency 'ffaker', '~> 1.16'
