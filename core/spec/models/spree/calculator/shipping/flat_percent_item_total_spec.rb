@@ -5,10 +5,20 @@ module Spree
     describe FlatPercentItemTotal do
       let(:variant1) { build(:variant, :price => 10.11) }
       let(:variant2) { build(:variant, :price => 20.2222) }
-      let(:package) { double(Stock::Package,
-                           order: mock_model(Order),
-                           contents: [Stock::Package::ContentItem.new(variant1, 2),
-                                      Stock::Package::ContentItem.new(variant2, 1)]) }
+
+      let(:line_item1) { build(:line_item, variant: variant1) }
+      let(:line_item2) { build(:line_item, variant: variant2) }
+
+      let(:package) do
+        double(
+          Stock::Package,
+          order: mock_model(Order),
+          contents: [
+            Stock::Package::ContentItem.new(line_item1, variant1, 2),
+            Stock::Package::ContentItem.new(line_item2, variant2, 1)
+          ]
+        )
+      end
 
       subject { FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
 
