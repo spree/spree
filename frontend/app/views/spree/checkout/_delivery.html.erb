@@ -51,7 +51,7 @@
 
       <% end %>
 
-      <% if @differentiator.missing? %>
+      <% if @differentiator.try(:missing?) %>
         <div class="shipment unshippable">
           <h3 class="stock-location" data-hook="stock-location">
             <%= Spree.t(:unshippable_items) %>
