@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'awesome_nested_set', '2.1.6'
   s.add_dependency 'aws-sdk', '1.27.0'
   s.add_dependency 'cancan', '~> 1.6.10'
-  s.add_dependency 'deface', '= 0.9.1'
+  s.add_dependency 'deface', '= 1.0.0'
   s.add_dependency 'ffaker', '~> 1.16'
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
