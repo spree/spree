@@ -262,7 +262,7 @@ describe Spree::TaxRate do
           @rate.update_column(:included_in_price, true)
           @order.contents.add(@taxable.master, 1)
           # The above automatically creates an adjustment which needs to be cleared
-          @order.all_adjustments.delete_all
+          @order.all_adjustments.destroy_all
         end
 
         context "when zone is contained by default tax zone" do
@@ -310,7 +310,7 @@ describe Spree::TaxRate do
           @rate.update_column(:included_in_price, false)
           @order.contents.add(@taxable.master, 1)
           # The above automatically creates an adjustment which needs to be cleared
-          @order.all_adjustments.delete_all
+          @order.all_adjustments.destroy_all
         end
 
         it "should not create line item adjustment" do
@@ -336,7 +336,7 @@ describe Spree::TaxRate do
         @order.contents.add(@taxable.master, 1)
         @order.contents.add(@taxable2.master, 1)
         # The above automatically creates an adjustment which needs to be cleared
-        @order.all_adjustments.delete_all
+        @order.all_adjustments.destroy_all
       end
 
       context "when line item includes tax" do
