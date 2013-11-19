@@ -14,6 +14,13 @@ module Spree
         context "#perform" do
           before { promotion.promotion_actions = [action] }
 
+          # Regression test for #3966
+          it "does not create an adjustment when calculator returns 0" do
+            action.stub :compute_amount => 0
+            action.perform(order: order)
+            action.adjustments.should be_empty
+          end
+
           it "creates adjustment with item as adjustable" do
             action.perform(order: order)
             line_item.reload.adjustments.should == action.adjustments

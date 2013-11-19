@@ -13,6 +13,14 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.stub(:promotion => promotion)
     end
 
+    # Regression test for #3966
+    it "does not apply an adjustment if the amount is 0" do
+      action.calculator.preferred_amount = 0
+      action.perform(:order => order)
+      promotion.credits_count.should == 0
+      order.adjustments.count.should == 0
+    end
+
     it "should create a discount with correct negative amount" do
       order.shipments.create!(:cost => 10)
 

@@ -19,20 +19,21 @@ module Spree
           already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
           result = false
           order.line_items.where("id NOT IN (?)", already_adjusted_line_items).find_each do |line_item|
-            self.create_adjustment(line_item, order)
-            result = true
+            result ||= self.create_adjustment(line_item, order)
           end
           return result
         end
 
         def create_adjustment(adjustable, order)
           amount = self.compute_amount(adjustable)
+          return if amount == 0
           self.adjustments.create!(
             amount: amount,
             adjustable: adjustable,
             order: order,
             label: "#{Spree.t(:promotion)} (#{promotion.name})",
           )
+          true
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's

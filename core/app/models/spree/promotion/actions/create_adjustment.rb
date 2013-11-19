@@ -21,6 +21,7 @@ module Spree
           return if promotion_credit_exists?(order)
 
           amount = compute_amount(order)
+          return if amount == 0
           Spree::Adjustment.create!(
             amount: amount,
             order: order,
