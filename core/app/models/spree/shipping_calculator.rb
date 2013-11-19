@@ -1,8 +1,12 @@
 module Spree
   class ShippingCalculator < Calculator
     def compute(package_or_shipment)
-      package = package_or_shipment.respond_to?(:to_package) ?
-                  package_or_shipment.to_package : package_or_shipment
+      package = if package_or_shipment.respond_to?(:to_package)
+        package_or_shipment.to_package 
+      else
+        package_or_shipment
+      end
+
       compute_package package
     end
 

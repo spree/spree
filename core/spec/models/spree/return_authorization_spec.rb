@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
-  let(:stock_location) {Spree::StockLocation.create(:name => "test") }
+  let(:stock_location) { Spree::StockLocation.create(:name => "test") }
   let(:order) { FactoryGirl.create(:shipped_order) }
+
   let(:variant) { order.shipments.first.inventory_units.first.variant }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
