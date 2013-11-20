@@ -95,7 +95,14 @@ module Spree
             let(:order) { create(:order) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
-            before { order.stub :coupon_code => "10off" }
+            before do 
+              order.stub({
+                :coupon_code => "10off",
+                # These need to be here so that promotion adjustment "wins"
+                :item_total => 50,
+                :ship_total => 10
+              })
+            end
 
             it "successfully activates promo" do
               subject.apply
