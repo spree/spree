@@ -21,7 +21,6 @@ module Spree
         :country_attributes,
         :state_attributes,
         :adjustment_attributes,
-        :taxon_attributes,
         :inventory_unit_attributes,
         :return_authorization_attributes,
         :adjustment_attributes,
