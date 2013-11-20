@@ -19,7 +19,8 @@ module Spree
           already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
           result = false
           order.line_items.where("id NOT IN (?)", already_adjusted_line_items).find_each do |line_item|
-            result ||= self.create_adjustment(line_item, order)
+            current_result = self.create_adjustment(line_item, order)
+            result ||= current_result
           end
           return result
         end
