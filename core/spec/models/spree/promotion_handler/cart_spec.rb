@@ -60,6 +60,12 @@ module Spree
         end
 
         context "promotion with no rules" do
+          before do
+            # Gives the calculator something to discount
+            order.item_total = 10
+            order.save
+          end
+
           include_context "creates the adjustment"
         end
 
