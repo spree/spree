@@ -1,4 +1,4 @@
-## Spree 2.1.3 (unreleased) ##
+## Spree 2.1.3 ##
 
 *   ApiHelpers attributes can now be extended without overriding instance
     methods. By using the same approach in PermittedAttributes. e.g.
@@ -11,3 +11,8 @@
     channel attribute on Order model
 
     Washington Luiz
+
+*   An order's shipments are now destroyed (to be recreated) when an order is assigned a new line item through the API. #3914
+
+    Washington Luiz
+
