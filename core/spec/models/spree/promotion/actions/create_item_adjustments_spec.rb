@@ -12,28 +12,40 @@ module Spree
         before { action.stub(:promotion => promotion) }
 
         context "#perform" do
-          before { promotion.promotion_actions = [action] }
-
           # Regression test for #3966
-          it "does not create an adjustment when calculator returns 0" do
-            action.stub :compute_amount => 0
-            action.perform(order: order)
-            action.adjustments.should be_empty
+          context "when calculator computes 0" do
+            before do
+              action.stub :compute_amount => 0
+            end
+
+            it "does not create an adjustment when calculator returns 0" do
+              action.perform(order: order)
+              action.adjustments.should be_empty
+            end
           end
 
-          it "creates adjustment with item as adjustable" do
-            action.perform(order: order)
-            line_item.reload.adjustments.should == action.adjustments
-          end
+          context "when calculator returns a non-zero value" do
+            before do 
+              promotion.promotion_actions = [action]
+              action.stub :compute_amount => 10
+            end
 
-          it "creates adjustment with self as source" do
-            action.perform(order: order)
-            expect(line_item.reload.adjustments.first.source).to eq action
-          end
 
-          it "does not perform twice on the same item" do
-            2.times { action.perform(order: order) }
-            action.adjustments.count.should == 1
+            it "creates adjustment with item as adjustable" do
+              action.perform(order: order)
+              action.adjustments.count.should == 1
+              line_item.reload.adjustments.should == action.adjustments
+            end
+
+            it "creates adjustment with self as source" do
+              action.perform(order: order)
+              expect(line_item.reload.adjustments.first.source).to eq action
+            end
+
+            it "does not perform twice on the same item" do
+              2.times { action.perform(order: order) }
+              action.adjustments.count.should == 1
+            end
           end
         end
 
