@@ -71,8 +71,6 @@ module Spree
         response["state"].should eq("closed")
       end
 
-
-
       it "can learn how to create a new taxon" do
         api_get :new, :taxonomy_id => taxonomy.id
         json_response["attributes"].should == attributes.map(&:to_s)
@@ -109,6 +107,14 @@ module Spree
 
         taxon.parent_id.should eq taxonomy.root.id
         taxon.taxonomy_id.should eq taxonomy.id
+      end
+
+      it "can update the position in the list" do
+        taxonomy.root.children << taxon2
+        api_put :update, :taxonomy_id => taxonomy.id, :id => taxon.id, :taxon => {:parent_id => taxon.parent_id, :child_index => 2 }
+        response.status.should == 200
+        taxonomy.reload.root.children[0].should eql taxon2
+        taxonomy.reload.root.children[1].should eql taxon
       end
 
       it "cannot create a new taxon with invalid attributes" do
