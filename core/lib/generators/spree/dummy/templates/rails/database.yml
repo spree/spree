@@ -27,21 +27,31 @@ production:
   database: <%= database_prefix %>spree_production
   encoding: utf8
 <% when 'postgres' %>
+<% db_host = ENV['DB_HOST'] -%>
 development:
   adapter: postgresql
   database: <%= database_prefix %>spree_development
   username: postgres
   min_messages: warning
+<% unless db_host.blank? %>
+  host: <%= db_host %>
+<% end %>
 test:
   adapter: postgresql
   database: <%= database_prefix %>spree_test
   username: postgres
   min_messages: warning
+<% unless db_host.blank? %>
+  host: <%= db_host %>
+<% end %>
 production:
   adapter: postgresql
   database: <%= database_prefix %>spree_production
   username: postgres
   min_messages: warning
+<% unless db_host.blank? %>
+  host: <%= db_host %>
+<% end %>
 <% else %>
 development:
   adapter: sqlite3
