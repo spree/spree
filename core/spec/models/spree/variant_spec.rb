@@ -344,4 +344,12 @@ describe Spree::Variant do
       expect(variant.total_on_hand).to eq(Spree::Stock::Quantifier.new(variant).total_on_hand)
     end
   end
+
+  describe "touching" do
+    it "updates a product" do
+      variant.product.update_column(:updated_at, 1.day.ago)
+      variant.touch
+      variant.product.reload.updated_at.should be_within(3.seconds).of(Time.now)
+    end
+  end
 end
