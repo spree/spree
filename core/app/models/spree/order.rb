@@ -338,7 +338,7 @@ module Spree
 
     # Clear payments when transitioning to payment step of checkout, since there could be some stale payments left. #3990
     def clear_payments!
-      payments.destroy_all
+      payments.with_state("checkout").destroy_all
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
