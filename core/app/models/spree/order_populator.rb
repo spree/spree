@@ -47,6 +47,7 @@ module Spree
       if quantity > 0
         if check_stock_levels(variant, quantity)
           @order.add_variant(variant, quantity, currency)
+          @order.restart_checkout_flow
         end
       end
     end

@@ -261,7 +261,7 @@ module Spree
     def awaiting_returns?
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
-    
+
     def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
@@ -526,6 +526,10 @@ module Spree
           }, :without_protection => true)
         end
       end
+    end
+
+    def restart_checkout_flow
+      self.update_column(:state, checkout_steps.first)
     end
 
     private
