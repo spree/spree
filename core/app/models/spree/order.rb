@@ -336,6 +336,11 @@ module Spree
       shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
     end
 
+    # Clear payments when transitioning to payment step of checkout, since there could be some stale payments left. #3990
+    def clear_payments!
+      payments.destroy_all
+    end
+
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!

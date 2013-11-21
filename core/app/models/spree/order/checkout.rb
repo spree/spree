@@ -73,6 +73,7 @@ module Spree
               end
 
               before_transition :to => :delivery, :do => :remove_invalid_shipments!
+              before_transition :to => :payment, :do => :clear_payments!
 
               after_transition :to => :complete, :do => :finalize!
               after_transition :to => :delivery, :do => :create_tax_charge!
