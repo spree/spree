@@ -9,15 +9,24 @@
       <dd id='item_total'><%= @order.display_ship_total.to_html %></dd>
     <% end %>
 
-    <% if @order.tax_total > 0 %>
-      <dt data-hook><%= Spree.t(:tax_total) %>:</dt>
-      <dd id='item_total'><%= @order.display_tax_total.to_html %></dd>
+    <% if @order.included_tax_total > 0 %>
+      <dt data-hook><%= Spree.t(:included_tax_total) %>:</dt>
+      <dd id='included_tax_total'><%= @order.display_included_tax_total.to_html %></dd>
+    <% end %>
+
+    <% if @order.included_tax_total > 0 %>
+      <dt data-hook><%= Spree.t(:included_tax_total) %>:</dt>
+      <dd id='item_total'><%= @order.display_included_tax_total.to_html %></dd>
+    <% end %>
+
+    <% if @order.additional_tax_total > 0 %>
+      <dt data-hook><%= Spree.t(:additional_tax_total) %>:</dt>
+      <dd id='item_total'><%= @order.display_additional_tax_total.to_html %></dd>
     <% end %>
 
     <dt data-hook><%= Spree.t(:total) %>:</dt>
     <dd id='order_total'><%= @order.display_total.to_html %></dd>
 
-  
     <% if @order.completed? %>
       <dt><%= Spree.t(:shipment) %>: </dt>
       <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= Spree.t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
