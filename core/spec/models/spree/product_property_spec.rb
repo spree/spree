@@ -8,7 +8,13 @@ describe Spree::ProductProperty do
       pp.value = "x" * 256
       pp.should_not be_valid
     end
-
   end
 
+  context "touching" do
+    it "should update product" do
+      pp = create(:product_property)
+      pp.product.should_receive(:touch)
+      pp.touch
+    end
+  end
 end
