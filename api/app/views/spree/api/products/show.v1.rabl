@@ -6,7 +6,7 @@ child :variants_including_master => :variants do
   attributes *variant_attributes
 
   child :option_values => :option_values do
-    attributes *option_value_attributes
+    extends "spree/api/option_values/show"
   end
   
   child :images => :images do
@@ -15,11 +15,7 @@ child :variants_including_master => :variants do
 end
 
 child :option_types => :option_types do
-  attributes *option_type_attributes
-
-  child :option_values => :option_values do
-    attributes *option_value_attributes
-  end
+  extends "spree/api/option_types/show"
 end
 
 child :product_properties => :product_properties do
