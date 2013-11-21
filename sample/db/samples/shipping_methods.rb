@@ -33,6 +33,12 @@ shipping_methods = [
     :zones => [europe_vat],
     :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
+  },
+  {
+    :name => "UPS Ground (EUR)",
+    :zones => [europe_vat],
+    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
+    :shipping_categories => [shipping_category]
   }
 ]
 
@@ -44,7 +50,8 @@ end
   "UPS Ground (USD)" => [5, "USD"],
   "UPS Ground (EU)" => [5, "USD"],
   "UPS One Day (USD)" => [15, "USD"],
-  "UPS Two Day (USD)" => [10, "USD"]
+  "UPS Two Day (USD)" => [10, "USD"],
+  "UPS Ground (EUR)" => [8, "EUR"]
 }.each do |shipping_method_name, (price, currency)|
   shipping_method = Spree::ShippingMethod.find_by_name!(shipping_method_name)
   shipping_method.calculator.preferred_amount = price
