@@ -526,4 +526,11 @@ describe Spree::Order do
       order.finalize!
     end
   end
+
+  context "#restart_checkout_flow" do
+    it "updates the state column to the first checkout step" do
+      order = create(:order, :state => "confirm")
+      expect{order.restart_checkout_flow}.to change{order.state}.from("confirm").to(order.checkout_steps.first)
+    end
+  end
 end

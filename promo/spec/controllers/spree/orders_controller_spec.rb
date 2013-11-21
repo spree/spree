@@ -33,6 +33,11 @@ describe Spree::OrdersController do
       response.should render_template :edit
     end
 
+    it "resets the checkout flow" do
+      order.should_receive(:restart_checkout_flow)
+      spree_put :update, {}, {:order_id => 1}
+    end
+
   end
 
 end
