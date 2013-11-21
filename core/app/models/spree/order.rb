@@ -261,7 +261,7 @@ module Spree
     def awaiting_returns?
       return_authorizations.any? { |return_authorization| return_authorization.authorized? }
     end
-    
+
     def add_variant(variant, quantity = 1, currency = nil)
       current_item = find_line_item_by_variant(variant)
       if current_item
@@ -334,6 +334,11 @@ module Spree
     # current shipping address is not eligible for the existing shipping method
     def remove_invalid_shipments!
       shipments.each { |s| s.destroy unless s.shipping_method.available_to_order?(self) }
+    end
+
+    # Clear payments when transitioning to payment step of checkout, since there could be some stale payments left. #3990
+    def clear_payments!
+      payments.with_state("checkout").destroy_all
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already

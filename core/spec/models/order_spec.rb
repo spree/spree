@@ -526,4 +526,32 @@ describe Spree::Order do
       order.finalize!
     end
   end
+
+  # Related to #3990
+  context "clear previous payments in checkout" do
+    let!(:persisted_order) { create(:order) }
+    let!(:line_item) { create(:line_item) }
+    let!(:payment) { create(:payment, :order => persisted_order, :state => 'checkout') }
+    let!(:shipping_method) do
+      sm = create(:shipping_method)
+      sm.calculator.preferred_amount = 10
+      sm.save
+      sm
+    end
+
+    before do
+      persisted_order.line_items << line_item
+      persisted_order.state = 'delivery'
+      persisted_order.save # To ensure new state_change event
+    end
+
+    it "removes old payments before the transition to the payment state" do
+      persisted_order.state.should == "delivery"
+      persisted_order.payments.count.should == 1
+      persisted_order.shipping_method = shipping_method
+      persisted_order.next!
+      persisted_order.state.should == "payment"
+      persisted_order.payments.count.should == 0
+    end
+  end
 end
