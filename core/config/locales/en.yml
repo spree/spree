@@ -303,6 +303,7 @@ en:
     add_to_cart: Add To Cart
     add_variant: Add Variant
     additional_item: Additional Item Cost
+    additional_tax_total: Additional Tax Total
     address1: Address
     address2: Address (contd.)
     adjustable: Adjustable
@@ -603,6 +604,7 @@ en:
     images: Images
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
+    included_tax_total: Included Tax Total
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     intercept_email_address: Intercept Email Address
@@ -1052,7 +1054,6 @@ en:
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
     tax_settings: Tax Settings
-    tax_total: Tax Total
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon

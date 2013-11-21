@@ -124,8 +124,12 @@ module Spree
       Spree::Money.new(adjustment_total, { currency: currency })
     end
 
-    def display_tax_total
-      Spree::Money.new(tax_total, { currency: currency })
+    def display_included_tax_total
+      Spree::Money.new(included_tax_total, { currency: currency })
+    end
+
+    def display_additional_tax_total
+      Spree::Money.new(additional_tax_total, { currency: currency })
     end
 
     def display_ship_total
