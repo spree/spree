@@ -66,7 +66,7 @@ describe Spree::OrderInventory do
         variant.stock_items.destroy_all
 
         line_item = order.contents.add variant, 1
-        subject.verify(line_item, shipment)
+        subject.verify(shipment)
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.count).to eq 1
