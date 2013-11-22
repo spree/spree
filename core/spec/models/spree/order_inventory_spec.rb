@@ -59,6 +59,7 @@ describe Spree::OrderInventory do
     end
 
     context "variant doesnt track inventory" do
+      let(:variant) { create(:variant) }
       before { variant.track_inventory = false }
 
       it "creates only on hand inventory units" do
