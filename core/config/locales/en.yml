@@ -642,6 +642,7 @@ en:
     locale_changed: Locale Changed
     location: Location
     lock: Lock
+    log_entries: "Log Entries"
     logged_in_as: Logged in as
     logged_in_succesfully: Logged in successfully
     logged_out: You have been logged out.
