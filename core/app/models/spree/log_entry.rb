@@ -12,5 +12,9 @@ module Spree
       log.details = details
       log.save!
     end
+
+    def parsed_details
+      @details ||= YAML.load(details)
+    end
   end
 end

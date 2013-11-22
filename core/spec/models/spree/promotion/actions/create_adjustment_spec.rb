@@ -61,10 +61,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
     context "when order is complete" do
       let(:order) do
-        create(:order_with_line_items,
-               :state => "complete",
-               :completed_at => Time.now,
-               :line_items_count => 1)
+        create(:completed_order_with_totals, :line_items_count => 1)
       end
 
       before(:each) do

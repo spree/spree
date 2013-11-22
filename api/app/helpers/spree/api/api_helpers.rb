@@ -21,10 +21,8 @@ module Spree
         :country_attributes,
         :state_attributes,
         :adjustment_attributes,
-        :taxon_attributes,
         :inventory_unit_attributes,
         :return_authorization_attributes,
-        :adjustment_attributes,
         :creditcard_attributes,
         :user_attributes,
         :property_attributes,
@@ -93,7 +91,7 @@ module Spree
       @@taxonomy_attributes = [:id, :name]
 
       @@taxon_attributes = [
-        :id, :name, :pretty_name, :permalink, :position, :parent_id,
+        :id, :name, :pretty_name, :permalink, :parent_id,
         :taxonomy_id
       ]
 

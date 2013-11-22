@@ -17,6 +17,7 @@ describe Spree::Shipment do
   end
 
   let(:variant) { mock_model(Spree::Variant) }
+  let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
   it 'is backordered if one if its inventory_units is backordered' do
     shipment.stub(inventory_units: [
@@ -118,9 +119,13 @@ describe Spree::Shipment do
       end
 
       context 'to_package' do
+        let(:inventory_units) do
+          [build(:inventory_unit, line_item: line_item, variant: variant, state: 'on_hand'),
+           build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
+        end
+
         it 'should use symbols for states when adding contents to package' do
-          shipment.stub_chain(:inventory_units, includes: [ build(:inventory_unit, variant: variant, state: 'on_hand'),
-                                                            build(:inventory_unit, variant: variant, state: 'backordered') ] )
+          shipment.stub_chain(:inventory_units, includes: inventory_units)
           package = shipment.to_package
           package.on_hand.count.should eq 1
           package.backordered.count.should eq 1
@@ -208,6 +213,26 @@ describe Spree::Shipment do
       shipment.line_items.should == line_items
     end
   end
+
+  context "when variant inventory tracking is false" do
+    it "should include line items without inventory if variant inventory tracking is off" do
+      line_items = [mock_model(Spree::LineItem)]
+      line_items.each { |li| li.stub should_track_inventory?: false }
+      order.stub complete?: true
+      order.stub line_items: line_items
+      shipment.line_items.should == line_items
+    end
+
+    it "should not include line items without inventory if variant inventory tracking is on" do
+      line_items = [mock_model(Spree::LineItem)]
+      line_items.each { |li| li.stub should_track_inventory?: true }
+      order.stub complete?: true
+      order.stub line_items: line_items
+      shipment.line_items.should == []
+    end
+  end
+
+
 
   context "when order is completed" do
     after { Spree::Config.set track_inventory_levels: true }
@@ -391,17 +416,20 @@ describe Spree::Shipment do
   end
 
   context "set up new inventory units" do
+    # let(:line_item) { double(
     let(:variant) { double("Variant", id: 9) }
+
     let(:inventory_units) { double }
+
     let(:params) do
-      { variant_id: variant.id, state: 'on_hand', order_id: order.id }
+      { variant_id: variant.id, state: 'on_hand', order_id: order.id, line_item_id: line_item.id }
     end
 
     before { shipment.stub inventory_units: inventory_units }
 
     it "associates variant and order" do
       expect(inventory_units).to receive(:create).with(params)
-      unit = shipment.set_up_inventory('on_hand', variant, order)
+      unit = shipment.set_up_inventory('on_hand', variant, order, line_item)
     end
   end
 

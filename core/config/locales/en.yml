@@ -642,6 +642,7 @@ en:
     locale_changed: Locale Changed
     location: Location
     lock: Lock
+    log_entries: "Log Entries"
     logged_in_as: Logged in as
     logged_in_succesfully: Logged in successfully
     logged_out: You have been logged out.
@@ -1047,12 +1048,12 @@ en:
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
     tax: Tax
+    tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
     tax_category: Tax Category
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
     tax_settings: Tax Settings
-    tax_total: Tax Total
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
@@ -1076,6 +1077,7 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
+    track_inventory: Track Inventory
     tracking: Tracking
     tracking_number: Tracking Number
     tracking_url: Tracking URL

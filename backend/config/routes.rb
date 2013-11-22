@@ -37,6 +37,7 @@ Spree::Core::Engine.add_routes do
           post :update_positions
         end
       end
+      resources :variants_including_master, :only => [:update]
     end
 
     get '/variants/search', :to => "variants#search", :as => :search_variants
@@ -96,6 +97,8 @@ Spree::Core::Engine.add_routes do
         member do
           put :fire
         end
+
+        resources :log_entries
       end
     end
 

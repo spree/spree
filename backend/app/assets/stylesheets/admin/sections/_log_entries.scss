@@ -1,0 +1,13 @@
+.log_entry {
+  &.success {
+    background: $color-2;
+  }
+
+  &.fail {
+    background: $color-5;
+  }
+
+  td h4 {
+    color: darken($color-body-text, 25);
+  }
+}
