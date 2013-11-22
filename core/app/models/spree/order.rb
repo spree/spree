@@ -479,11 +479,15 @@ module Spree
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
-        self.update_columns(
-          state: "address",
-          updated_at: Time.now,
-        )
+        restart_checkout_flow
       end
+    end
+
+    def restart_checkout_flow
+      self.update_columns(
+        state: checkout_steps.first,
+        updated_at: Time.now,
+      )
     end
 
     def refresh_shipment_rates
