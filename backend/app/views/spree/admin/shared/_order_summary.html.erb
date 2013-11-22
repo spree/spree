@@ -9,12 +9,12 @@
       <dd id='item_total'><%= @order.display_ship_total.to_html %></dd>
     <% end %>
 
-    <% if @order.included_tax_total > 0 %>
+    <% if @order.included_tax_total != 0 %>
       <dt data-hook><%= Spree.t(:tax_included) %>:</dt>
       <dd id='included_tax_total'><%= @order.display_included_tax_total.to_html %></dd>
     <% end %>
 
-    <% if @order.additional_tax_total > 0 %>
+    <% if @order.additional_tax_total != 0 %>
       <dt data-hook><%= Spree.t(:tax) %>:</dt>
       <dd id='item_total'><%= @order.display_additional_tax_total.to_html %></dd>
     <% end %>
