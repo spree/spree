@@ -7,7 +7,7 @@ class AddLineItemIdToSpreeInventoryUnits < ActiveRecord::Migration
 
       shipments = Spree::Shipment.includes({ :inventory_units => :variant }, :order)
 
-      shipments.each do |shipment|
+      shipments.find_each do |shipment|
         shipment.inventory_units.group_by(&:variant).each do |variant, units|
 
           line_item = shipment.order.find_line_item_by_variant(variant)
