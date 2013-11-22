@@ -27,7 +27,7 @@ module Spree
     after_save :update_order
     after_destroy :update_order
 
-    delegate :name, :description, to: :variant
+    delegate :name, :description, :should_track_inventory?, to: :variant
 
     attr_accessor :target_shipment
 

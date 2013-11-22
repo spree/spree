@@ -42,6 +42,7 @@ Spree::Core::Engine.routes.draw do
           post :update_positions
         end
       end
+      resources :variants_including_master, :only => [:update]
     end
 
     get '/variants/search', :to => "variants#search", :as => :search_variants
