@@ -16,7 +16,7 @@ module Spree
       url: '/spree/taxons/:id/:style/:basename.:extension',
       path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
       default_url: '/assets/default_taxon.png'
-      
+
     include Spree::Core::S3Support
     supports_s3 :icon
 
@@ -76,7 +76,7 @@ module Spree
     #
     #  See #3390 for background.
     def child_index=(idx)
-      move_to_child_with_index(parent, idx.to_i)
+      move_to_child_with_index(parent, idx.to_i) unless self.new_record?
     end
   end
 end
