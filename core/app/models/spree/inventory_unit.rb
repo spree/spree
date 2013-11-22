@@ -4,6 +4,7 @@ module Spree
     belongs_to :order, class_name: "Spree::Order"
     belongs_to :shipment, class_name: "Spree::Shipment"
     belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
+    belongs_to :line_item, class_name: "Spree::LineItem"
 
     scope :backordered, -> { where state: 'backordered' }
     scope :shipped, -> { where state: 'shipped' }

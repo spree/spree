@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Package
-      ContentItem = Struct.new(:variant, :quantity, :state)
+      ContentItem = Struct.new(:line_item, :variant, :quantity, :state)
 
       attr_reader :stock_location, :order, :contents
       attr_accessor :shipping_rates
@@ -13,8 +13,8 @@ module Spree
         @shipping_rates = Array.new
       end
 
-      def add(variant, quantity, state=:on_hand)
-        contents << ContentItem.new(variant, quantity, state)
+      def add(line_item, quantity, state=:on_hand)
+        contents << ContentItem.new(line_item, line_item.variant, quantity, state)
       end
 
       def weight
@@ -55,7 +55,7 @@ module Spree
         flat = []
         contents.each do |item|
           item.quantity.times do
-            flat << ContentItem.new(item.variant, 1, item.state)
+            flat << ContentItem.new(item.line_item, item.variant, 1, item.state)
           end
         end
         flat
@@ -68,7 +68,7 @@ module Spree
           if current_item
             current_item.quantity += 1
           else
-            add(item.variant, item.quantity, item.state)
+            add(item.line_item, item.quantity, item.state)
           end
         end
       end
@@ -105,6 +105,7 @@ module Spree
             unit.pending = true
             unit.order = order
             unit.variant = item.variant
+            unit.line_item = item.line_item
             unit.state = item.state.to_s
           end
         end

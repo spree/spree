@@ -6,6 +6,7 @@ module Spree
       let!(:shipping_method) { create(:shipping_method) }
       let(:package) { build(:stock_package_fulfilled) }
       let(:order) { package.order }
+
       subject { Estimator.new(order) }
 
       context "#shipping rates" do

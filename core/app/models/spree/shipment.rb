@@ -73,6 +73,10 @@ module Spree
       inventory_units.any? { |inventory_unit| inventory_unit.backordered? }
     end
 
+    def ready_or_pending?
+      self.ready? || self.pending?
+    end
+
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now
@@ -218,13 +222,18 @@ module Spree
     def to_package
       package = Stock::Package.new(stock_location, order)
       inventory_units.includes(:variant).each do |inventory_unit|
-        package.add inventory_unit.variant, 1, inventory_unit.state_name
+        package.add inventory_unit.line_item, 1, inventory_unit.state_name
       end
       package
     end
 
-    def set_up_inventory(state, variant, order)
-      self.inventory_units.create(variant_id: variant.id, state: state, order_id: order.id)
+    def set_up_inventory(state, variant, order, line_item)
+      self.inventory_units.create(
+        state: state,
+        variant_id: variant.id,
+        order_id: order.id,
+        line_item_id: line_item.id
+      )
     end
 
     def persist_cost

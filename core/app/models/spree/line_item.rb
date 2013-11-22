@@ -6,7 +6,9 @@ module Spree
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
     has_one :product, through: :variant
+
     has_many :adjustments, as: :adjustable, dependent: :destroy
+    has_many :inventory_units
 
     before_validation :copy_price
     before_validation :copy_tax_category
@@ -20,8 +22,9 @@ module Spree
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
-    before_save :update_inventory
     before_destroy :update_inventory
+
+    after_save :update_inventory
     after_save :update_adjustments
 
     after_create :create_tax_charge
@@ -98,7 +101,7 @@ module Spree
     private
       def update_inventory
         if changed?
-          Spree::OrderInventory.new(self.order).verify(self, target_shipment)
+          Spree::OrderInventory.new(self.order, self).verify(target_shipment)
         end
       end
 
