@@ -97,6 +97,8 @@ Spree::Core::Engine.add_routes do
         member do
           put :fire
         end
+
+        resources :log_entries
       end
     end
 
