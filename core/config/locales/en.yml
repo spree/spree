@@ -964,6 +964,7 @@ en:
     shipment_state: Shipment State
     shipment_states:
       backorder: backorder
+      canceled: canceled
       partial: partial
       pending: pending
       ready: ready
