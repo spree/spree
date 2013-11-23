@@ -620,4 +620,21 @@ describe Spree::Order do
       end
     end
   end
+
+  describe ".restart_checkout_flow" do
+    it "updates the state column to the first checkout_steps value" do
+      order = create(:order, :state => "delivery")
+      expect(order.checkout_steps).to eql ["address", "delivery", "complete"]
+      expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("address")
+    end
+
+    context "with custom checkout_steps" do
+      it "updates the state column to the first checkout_steps value" do
+        order = create(:order, :state => "delivery")
+        order.should_receive(:checkout_steps).and_return ["custom_step", "address", "delivery", "complete"]
+        expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("custom_step")
+      end
+    end
+  end
+
 end

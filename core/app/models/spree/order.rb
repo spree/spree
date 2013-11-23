@@ -506,8 +506,12 @@ module Spree
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
-        self.update_column(:state, "address")
+        restart_checkout_flow
       end
+    end
+
+    def restart_checkout_flow
+      self.update_column(:state, checkout_steps.first)
     end
 
     def refresh_shipment_rates
