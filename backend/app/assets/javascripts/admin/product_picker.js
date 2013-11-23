@@ -24,8 +24,9 @@ $.fn.productAutocomplete = function () {
         };
       },
       results: function (data, page) {
+        var products = data.products ? data.products : [];
         return {
-          results: data.products
+          results: products
         };
       }
     },
