@@ -118,6 +118,14 @@ module Spree
       res || payment_method
     end
 
+    def is_avs_risky?
+      !(avs_response == "D" || avs_response.nil?)
+    end
+
+    def is_cvv_risky?
+      !(cvv_response_code == "M" || cvv_response_code.nil?)
+    end
+
     private
 
       def validate_source
