@@ -921,6 +921,7 @@ en:
     return_quantity: Return Quantity
     returned: Returned
     review: Review
+    risk_analysis: Risk Analysis
     rma_credit: RMA Credit
     rma_number: RMA Number
     rma_value: RMA Value

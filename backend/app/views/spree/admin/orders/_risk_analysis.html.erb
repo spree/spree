@@ -1,0 +1,15 @@
+<dt><%= Spree.t(:risk_analysis) %>: </dt>
+<dd id='risk_analysis'>
+  <ul>
+    <% if @order.is_risky? %>
+      <ul>
+        <li>
+          <%#= @order.payments.order("created_at ASC").first. %>
+
+        </li>
+      </ul>
+    <% else %>
+      not risky
+    <% end %>
+  </ul>
+</dd>

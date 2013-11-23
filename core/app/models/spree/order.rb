@@ -522,6 +522,10 @@ module Spree
       (bill_address.empty? && ship_address.empty?) || bill_address.same_as?(ship_address)
     end
 
+    def is_risky?
+      self.payments.where("avs_response IS NOT NULL").count > 1
+    end
+
     private
 
       def link_by_email
