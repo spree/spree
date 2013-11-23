@@ -6,6 +6,7 @@
   <%= Spree.t(:order_information) %>
 <% end %>
 
+
 <% content_for :sidebar do %>
   <% checkout_steps = @order.checkout_steps %>
   <header id="order_tab_summary" data-hook>
@@ -36,7 +37,6 @@
         <dd id='date_complete'><%= pretty_time(@order.completed_at) %></dd>
       <% end %>
 
-      <%= render 'spree/admin/orders/risk_analysis' %>
     </dl>
   </header>
 

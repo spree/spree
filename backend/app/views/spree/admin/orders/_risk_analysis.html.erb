@@ -1,15 +1,52 @@
-<dt><%= Spree.t(:risk_analysis) %>: </dt>
-<dd id='risk_analysis'>
-  <ul>
-    <% if @order.is_risky? %>
-      <ul>
-        <li>
-          <%#= @order.payments.order("created_at ASC").first. %>
+<%# Payments; link_to new log feature (ie. Number of multiple failed authorization requests) %>
+<%# AVS response (ie. Billing address not matching credit card) %>
+<%# CVV response (ie. code not matching) %>
+<%# Placed in one country, shipping location to another %>
 
-        </li>
-      </ul>
-    <% else %>
-      not risky
-    <% end %>
-  </ul>
-</dd>
+<fieldset class="no-border-bottom">
+  <legend><%= Spree.t(:risk_analysis) %></legend>
+  <table>
+    <thead>
+      <th><%= Spree.t('risk')%></th>
+      <th><%= Spree.t('status')%></th>
+    </thead>
+    <tbody id="risk-analysis" data-hook="order_details_adjustments"  class="with-border">
+      <tr class="">
+        <td><strong>
+          <%= "Failed payment attempts:" %>
+        </strong></td>
+          <td class="align-center">
+            <span>
+              <%= link_to "#{pluralize(@order.payments.failed.count, 'payment')}", spree.admin_order_payments_path(@order) %>
+            </span>
+        </td>
+      </tr>
+
+      <tr>
+        <td><strong>AVS Response:</strong></td>
+        <td class="align-center">
+          <span>
+            <% if latest_payment.avs_response %>
+              <%= "failed with: #{latest_payment.avs_response}" %>
+            <% else %>
+              <%= Spree.t(:success) %>
+            <% end %>
+          </span>
+        </td>
+      </tr>
+
+      <tr>
+        <td><strong>CVV Response:</strong></td>
+        <td class="align-center">
+          <span>
+            <% if latest_payment.cvv_response_code %>
+              <%= "failed with: #{latest_payment.avs_response}" %>
+            <% else %>
+              <%= Spree.t(:success) %>
+            <% end %>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</fieldset>

@@ -32,6 +32,8 @@
     </fieldset>
   <% end %>
 
+  <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.order("created_at ASC").first %>
+
   <%= javascript_tag do -%>
     var order_number = '<%= @order.number %>';
     var shipments = [];
