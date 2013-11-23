@@ -498,11 +498,19 @@ module Spree
       (bill_address.empty? && ship_address.empty?) || bill_address.same_as?(ship_address)
     end
 
-
     def set_shipments_cost
       shipments.each(&:update_amounts)
       updater.update_shipment_total
       updater.persist_totals
+    end
+
+    def is_risky?
+      self.payments.where(%{
+        (avs_response IS NOT NULL and avs_response != "D") or
+        (cvv_response_code IS NOT NULL and cvv_response_code != "M") or
+        cvv_response_message IS NOT NULL or
+        state = 'failed'
+      }.squish!).uniq.count > 0
     end
 
     private
