@@ -365,6 +365,7 @@ en:
     back_to_images_list: Back To Images List
     back_to_option_types_list: Back To Option Types List
     back_to_orders_list: Back To Orders List
+    back_to_payment: Back To Payment
     back_to_payment_methods_list: Back To Payment Methods List
     back_to_payments_list: Back To Payments List
     back_to_products_list: Back To Products List
@@ -643,6 +644,7 @@ en:
     location: Location
     lock: Lock
     log_entries: "Log Entries"
+    logs: "Logs"
     logged_in_as: Logged in as
     logged_in_succesfully: Logged in successfully
     logged_out: You have been logged out.
