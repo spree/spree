@@ -639,28 +639,28 @@ describe Spree::Order do
 
   describe ".is_risky?" do
     context "AVS response message" do
-      let(:order) { FactoryGirl.create(:order, avs_response: "A") }
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
       it "returns true if the order has an avs_response" do
         order.is_risky?.should == true
       end
     end
 
     context "CVV response message" do
-      let(:order) { FactoryGirl.create(:order, cvv_response_message: "foobar'd") }
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_message: "foobar'd")]) }
       it "returns true if the order has an cvv_response_message" do
         order.is_risky?.should == true
       end
     end
 
     context "CVV response code" do
-      let(:order) { FactoryGirl.create(:order, css_response_code: "M") }
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "M")]) }
       it "returns true if the order has an cvv_response_code" do
         order.is_risky?.should == true
       end
     end
 
     context "state == 'failed'" do
-      let(:order) { FactoryGirl.create(:order, state: "failed") }
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, state: 'failed')]) }
       it "returns true if the order has state == 'failed'" do
         order.is_risky?.should == true
       end

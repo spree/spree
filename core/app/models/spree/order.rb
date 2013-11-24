@@ -528,7 +528,7 @@ module Spree
         cvv_response_code IS NOT NULL or
         cvv_response_message IS NOT NULL or
         state = 'failed'
-      }.squish!).uniq.count > 1
+      }.squish!).uniq.count > 0
     end
 
     private
