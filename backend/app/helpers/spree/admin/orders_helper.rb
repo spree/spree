@@ -49,6 +49,17 @@ module Spree
           "Z" => "Street address does not match, but 5-digit postal code matches."
         }
       end
+
+      def cvv_response_code
+        {
+          "M" => "CVV2 Match",
+          "N" => "CVV2 No Match",
+          "P" => "Not Processed",
+          "S" => "Issuer indicates that CVV2 data should be present on the card, but the merchant has indicated data is not present on the card",
+          "U" => "Issuer has not certified for CVV2 or Issuer has not provided Visa with the CVV2 encryption keys",
+          ""  => "Transaction failed because wrong CVV2 number was entered or no CVV2 number was entered"
+        }
+      end
     end
   end
 end
