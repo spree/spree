@@ -17,7 +17,7 @@
     <thead>
       <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">
         <td colspan='2'>
-          <h4><i class='fa fa-<%= entry.parsed_details.success? ? 'check-circle' : 'times-circle' %>'></i> <%= pretty_time(entry.created_at) %></h4>
+          <h4><i class='icon icon-<%= entry.parsed_details.success? ? 'ok-circle' : 'remove-sign' %>'></i> <%= pretty_time(entry.created_at) %></h4>
         </td>
       </tr>
     </thead>
