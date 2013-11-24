@@ -357,6 +357,7 @@ en:
     attachment_url: Attachments URL
     authorization_failure: Authorization Failure
     available_on: Available On
+    avs_response: AVS Response
     back: Back
     back_end: Backend
     backordered: Backordered
@@ -468,6 +469,7 @@ en:
     customer_details_updated: Customer Details Updated
     customer_search: Customer Search
     cut: Cut
+    cvv_response: CVV Response
     dash:
       jirafe:
         app_id: App ID
@@ -552,6 +554,7 @@ en:
       count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
     expiration: Expiration
     extension: Extension
+    failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter_results: Filter Results
@@ -921,6 +924,7 @@ en:
     return_quantity: Return Quantity
     returned: Returned
     review: Review
+    risk: Risk
     risk_analysis: Risk Analysis
     rma_credit: RMA Credit
     rma_number: RMA Number
@@ -1034,6 +1038,7 @@ en:
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal
     subtract: Subtract
+    success: Success
     successfully_created: ! '%{resource} has been successfully created!'
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
