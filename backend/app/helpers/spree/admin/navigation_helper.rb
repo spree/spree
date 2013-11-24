@@ -69,8 +69,9 @@ module Spree
       end
 
       def link_to_edit(resource, options={})
+        url = options[:url] || edit_object_url(resource)
         options[:data] = {:action => 'edit'}
-        link_to_with_icon('icon-edit', Spree.t(:edit), edit_object_url(resource), options)
+        link_to_with_icon('icon-edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})

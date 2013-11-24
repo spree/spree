@@ -6,64 +6,6 @@ $(document).ready(function() {
   if ($('#variant_autocomplete_template').length > 0) {
     window.variantTemplate = Handlebars.compile($('#variant_autocomplete_template').text());
     window.variantStockTemplate = Handlebars.compile($('#variant_autocomplete_stock_template').text());
-
-    // handle variant selection, show stock level.
-    $('#add_variant_id').change(function(){
-      var variant_id = $(this).val();
-
-      var variant = _.find(window.variants, function(variant){
-        return variant.id == variant_id
-      })
-      $('#stock_details').html(variantStockTemplate({variant: variant}));
-      $('#stock_details').show();
-
-      $('button.add_variant').click(addVariantFromStockLocation);
-
-      // Add some tips
-      $('.with-tip').powerTip({
-        smartPlacement: true,
-        fadeInTime: 50,
-        fadeOutTime: 50,
-        intentPollInterval: 300
-      });
-
-    });
-
-    //handle edit click
-    $('a.edit-item').click(toggleItemEdit);
-
-    //handle cancel click
-    $('a.cancel-item').click(toggleItemEdit);
-
-    //handle split click
-    $('a.split-item').click(startItemSplit);
-
-    //handle save click
-    $('a.save-item').click(function(){
-      var save = $(this);
-      var shipment_number = save.data('shipment-number');
-      var variant_id = save.data('variant-id');
-
-      var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val());
-
-      toggleItemEdit();
-
-      adjustItems(shipment_number, variant_id, quantity);
-      return false;
-    });
-
-    //handle delete click
-    $('a.delete-item').click(function(){
-      if (confirm(Spree.translations.are_you_sure_delete)) {
-        var del = $(this);
-        var shipment_number = del.data('shipment-number');
-        var variant_id = del.data('variant-id');
-
-        toggleItemEdit();
-
-        adjustItems(shipment_number, variant_id, 0);
-      }
-    });
   }
 });
 
