@@ -3,7 +3,11 @@
     <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
 
-  <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
+  <% if Spree::Order.checkout_step_names.include?(:delivery) %>
+    <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
+  <% else %>
+    <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
+  <% end %>
   <% if order.adjustments.eligible.exists? %>
     <fieldset class="no-border-bottom">
       <legend><%= Spree.t('adjustments') %></legend>

@@ -45,6 +45,29 @@ describe "New Order" do
     page.should have_content("shipped")
   end
 
+  # Regression test for #3958
+  context "without a delivery step", js: true do
+    before do
+      Spree::Order.stub :checkout_step_names => [:address, :payment, :confirm, :complete]
+    end
+
+    it "can still see line items" do
+      select2_search product.name, :from => Spree.t(:name_or_sku)
+      click_icon :plus
+      within(".line-items") do
+        within(".line-item-name") do
+          page.should have_content(product.name)
+        end
+        within(".line-item-qty-show") do
+          page.should have_content("1")
+        end
+        within(".line-item-price") do
+          page.should have_content(product.price)
+        end
+      end
+    end
+  end
+
   # Regression test for #3336
   it "transitions order after products are selected", js: true do
     click_on "Customer Details"
