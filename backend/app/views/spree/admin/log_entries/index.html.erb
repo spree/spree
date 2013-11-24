@@ -12,18 +12,17 @@
   <li><%= button_link_to Spree.t(:back_to_payment), spree.admin_order_payment_url(@order, @payment), :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<% @log_entries.each do |entry| %>
-  <table class='index' id='listing_log_entries'>
-    <thead>
-      <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">
-        <td colspan='2'>
-          <h4><i class='icon icon-<%= entry.parsed_details.success? ? 'ok-circle' : 'remove-sign' %>'></i> <%= pretty_time(entry.created_at) %></h4>
-        </td>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render "spree/admin/log_entries/#{@payment.payment_method.name.gsub(' ', '').underscore}", entry: entry %>
-    </tbody>
-  </table>
-
-<% end %>
+<table class='index' id='listing_log_entries'>
+  <% @log_entries.each do |entry| %>
+      <thead>
+        <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">
+          <td colspan='2'>
+            <h4><i class='icon icon-<%= entry.parsed_details.success? ? 'ok-circle' : 'remove-sign' %>'></i> <%= pretty_time(entry.created_at) %></h4>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render "spree/admin/log_entries/#{@payment.payment_method.name.gsub(' ', '').underscore}", entry: entry %>
+      </tbody>
+  <% end %>
+</table>
