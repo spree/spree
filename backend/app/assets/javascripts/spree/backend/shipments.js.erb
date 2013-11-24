@@ -2,6 +2,62 @@
 $(document).ready(function () {
   'use strict';
 
+  // handle variant selection, show stock level.
+  $('#add_variant_id').change(function(){
+    var variant_id = $(this).val();
+
+    var variant = _.find(window.variants, function(variant){
+      return variant.id == variant_id
+    })
+    $('#stock_details').html(variantStockTemplate({variant: variant}));
+    $('#stock_details').show();
+
+    $('button.add_variant').click(addVariantFromStockLocation);
+
+    // Add some tips
+    $('.with-tip').powerTip({
+      smartPlacement: true,
+      fadeInTime: 50,
+      fadeOutTime: 50,
+      intentPollInterval: 300
+    });
+
+  });
+
+  //handle edit click
+  $('a.edit-item').click(toggleItemEdit);
+
+  //handle cancel click
+  $('a.cancel-item').click(toggleItemEdit);
+
+  //handle split click
+  $('a.split-item').click(startItemSplit);
+
+  //handle save click
+  $('a.save-item').click(function(){
+    var save = $(this);
+    var shipment_number = save.data('shipment-number');
+    var variant_id = save.data('variant-id');
+
+    var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val());
+
+    toggleItemEdit();
+    adjustShipmentItems(shipment_number, variant_id, quantity);
+    return false;
+  });
+
+  //handle delete click
+  $('a.delete-item').click(function(){
+    if (confirm(Spree.translations.are_you_sure_delete)) {
+      var del = $(this);
+      var shipment_number = del.data('shipment-number');
+      var variant_id = del.data('variant-id');
+
+      toggleItemEdit();
+      adjustShipmentItems(shipment_number, variant_id, 0);
+    }
+  });
+
   // handle ship click
   $('[data-hook=admin_order_edit_form] a.ship').on('click', function () {
     var link = $(this);
@@ -74,7 +130,7 @@ $(document).ready(function () {
 });
 
 
-adjustItems = function(shipment_number, variant_id, quantity){
+adjustShipmentItems = function(shipment_number, variant_id, quantity){
     var shipment = _.findWhere(shipments, {number: shipment_number + ''});
     var inventory_units = _.where(shipment.inventory_units, {variant_id: variant_id});
 
@@ -255,7 +311,7 @@ addVariantFromStockLocation = function() {
     });
   }else{
     //add to existing shipment
-    adjustItems(shipment.number, variant_id, quantity);
+    adjustShipmentItems(shipment.number, variant_id, quantity);
   }
   return 1
 }
