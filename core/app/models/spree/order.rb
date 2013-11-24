@@ -523,7 +523,12 @@ module Spree
     end
 
     def is_risky?
-      self.payments.where("avs_response IS NOT NULL").count > 1
+      self.payments.where(%{
+        avs_response IS NOT NULL or
+        cvv_response_code IS NOT NULL or
+        cvv_response_message IS NOT NULL or
+        state = 'failed'
+      }.squish!).uniq.count > 1
     end
 
     private
