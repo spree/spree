@@ -6,7 +6,6 @@
   <%= Spree.t(:order_information) %>
 <% end %>
 
-
 <% content_for :sidebar do %>
   <% checkout_steps = @order.checkout_steps %>
   <header id="order_tab_summary" data-hook>
@@ -28,6 +27,7 @@
       <dt data-hook><%= Spree.t(:total) %>:</dt>
       <dd id='order_total'><%= @order.display_total.to_html %></dd>
 
+
       <% if @order.completed? %>
         <dt><%= Spree.t(:shipment) %>: </dt>
         <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= Spree.t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>
@@ -36,7 +36,6 @@
         <dt data-hook><%= Spree.t(:date_completed) %>:</dt>
         <dd id='date_complete'><%= pretty_time(@order.completed_at) %></dd>
       <% end %>
-
     </dl>
   </header>
 
