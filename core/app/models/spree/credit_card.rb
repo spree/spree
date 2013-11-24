@@ -43,9 +43,6 @@ module Spree
       when 'mastercard', 'maestro' then 'master'
       when 'amex' then 'american_express'
       when 'dinersclub' then 'diners_club'
-      when 'visa' then 'visa'
-      when 'discover' then 'discover'
-      when 'jcb' then 'jcb'
       when '' then try_type_from_number
       else type
       end
