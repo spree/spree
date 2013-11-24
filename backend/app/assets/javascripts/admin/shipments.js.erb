@@ -311,10 +311,14 @@ addVariantFromStockLocation = function() {
   }else{
     //add to existing shipment
 <<<<<<< HEAD
+<<<<<<< HEAD
     adjustShipmentItems(shipment.number, variant_id, quantity);
 =======
     adjustItems(shipment.number, variant_id, quantity);
 >>>>>>> Move shipments JS out of variants_autocomplete.js and into shipments.js
+=======
+    adjustShipmentItems(shipment.number, variant_id, quantity);
+>>>>>>> Showing line items on orders screen now when there are no shipments
   }
   return 1
 }
