@@ -11,3 +11,11 @@
     channel attribute on Order model
 
     Washington Luiz
+
+*   Cached products/show template, which can lead to drastically (65x) faster loading times on product requests. 806319709c4ce9a3d0026e00ec2d07372f51cdb8
+
+    Ryan Bigg
+
+*   The parts that make up an order's response from /api/orders/:num are cached, which can lead to a 5x improvement of speed for this API endpoint. 80ffb1e739606ac02ac86336ac13a51583bcc225
+
+    Ryan Bigg
