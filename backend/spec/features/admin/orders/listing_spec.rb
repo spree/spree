@@ -61,7 +61,6 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders using only completed at input" do
-      pending "Failing on CI server. To be investigated."
       fill_in "q_created_at_gt", :with => Date.today
       click_icon :search
       within_row(1) { page.should have_content("R100") }
