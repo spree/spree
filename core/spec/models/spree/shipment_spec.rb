@@ -5,7 +5,8 @@ describe Spree::Shipment do
   let(:order) { mock_model Spree::Order, backordered?: false,
                                          canceled?: false,
                                          can_ship?: true,
-                                         currency: 'USD' }
+                                         currency: 'USD',
+                                         touch: true }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new order: order
