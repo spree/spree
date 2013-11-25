@@ -2,7 +2,7 @@ module Spree
   class InventoryUnit < ActiveRecord::Base
     belongs_to :variant, class_name: "Spree::Variant"
     belongs_to :order, class_name: "Spree::Order"
-    belongs_to :shipment, class_name: "Spree::Shipment"
+    belongs_to :shipment, class_name: "Spree::Shipment", touch: true
     belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
     belongs_to :line_item, class_name: "Spree::LineItem"
 
