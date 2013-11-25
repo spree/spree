@@ -52,11 +52,12 @@ describe "Order Details", js: true do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          accept_alert do
+            click_icon :trash
+          end
         end
 
         # Click "ok" on confirmation dialog
-        page.driver.browser.switch_to.alert.accept
         page.should_not have_content("spree t-shirt")
       end
 
@@ -65,11 +66,12 @@ describe "Order Details", js: true do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          # Click "cancel" on confirmation dialog
+          dismiss_alert do
+            click_icon :trash
+          end
         end
 
-        # Click "cancel" on confirmation dialog
-        page.driver.browser.switch_to.alert.dismiss
         page.should have_content("spree t-shirt")
       end
 

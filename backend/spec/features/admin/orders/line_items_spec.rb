@@ -36,8 +36,9 @@ describe "Order Line Items", js: true do
 
     within(".line-items") do
       within_row(1) do
-        find(".delete-line-item").click
-        page.driver.browser.switch_to.alert.accept
+        accept_alert do
+          find(".delete-line-item").click
+        end
       end
     end
 

@@ -109,6 +109,28 @@ module CapybaraExt
       raise "AJAX request took longer than 5 seconds." if counter >= 50
     end
   end
+
+  def accept_alert
+    if page.driver === Capybara::Selenium::Driver
+      yield
+      page.driver.browser.switch_to.alert.accept
+    else
+      page.evaluate_script('window.confirm = function() { return true; }')
+      yield
+    end
+  end
+  def dismiss_alert
+    if page.driver === Capybara::Selenium::Driver
+      yield
+      page.driver.browser.switch_to.alert.dismiss
+    else
+      page.evaluate_script('window.confirm = function() { return false; }')
+      yield
+
+      # Restore existing default
+      page.evaluate_script('window.confirm = function() { return true; }')
+    end
+  end
 end
 
 Capybara.configure do |config|
