@@ -15,5 +15,5 @@
 <%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}", :locals => { :payment => @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment } %>
 
 <div data-hook="amount" class="align-center">
-  <h5><%= label_tag nil, Spree.t(:amount) %>: <span class="green"><%= @payment.amount %></span> </h5>
+  <h5><%= label_tag nil, Spree.t(:amount) %>: <span class="green"><%= @payment.display_amount.to_html %></span> </h5>
 </div>
