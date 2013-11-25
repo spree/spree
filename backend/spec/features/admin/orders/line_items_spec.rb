@@ -23,8 +23,12 @@ describe "Order Line Items", js: true do
         find(".edit-line-item").click
         fill_in "quantity", :with => 10
         find(".save-line-item").click
-        page.should have_content("10", :css => ".line-item-qty-show")
-        page.should have_content("$100.00", :css => ".line-item-total")
+        within '.line-item-qty-show' do
+          page.should have_content("10")
+        end
+        within '.line-item-total' do
+          page.should have_content("$100.00")
+        end
       end
     end
   end
@@ -36,8 +40,9 @@ describe "Order Line Items", js: true do
 
     within(".line-items") do
       within_row(1) do
-        find(".delete-line-item").click
-        page.driver.browser.switch_to.alert.accept
+        accept_alert do
+          find(".delete-line-item").click
+        end
       end
     end
 

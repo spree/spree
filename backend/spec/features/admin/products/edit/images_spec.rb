@@ -33,8 +33,9 @@ describe "Product Images" do
       page.should have_content("successfully updated!")
       page.should have_content("ruby on rails t-shirt")
 
-      click_icon :trash
-      page.driver.browser.switch_to.alert.accept
+      accept_alert do
+        click_icon :trash
+      end
       page.should_not have_content("ruby on rails t-shirt")
     end
   end
