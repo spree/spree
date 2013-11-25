@@ -129,8 +129,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def object_name
-      return controller_name.singularize if Spree.const_defined?(controller_name.classify)
-      self.class.superclass.controller_name.singularize
+      controller_name.singularize
     end
 
     def load_resource
