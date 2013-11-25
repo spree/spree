@@ -17,12 +17,12 @@ Gem::Specification.new do |s|
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
 
-  s.add_dependency 'activemerchant', '1.41.0'
+  s.add_dependency 'activemerchant', '1.42.2'
   s.add_dependency 'acts_as_list', '= 0.2.0'
-  s.add_dependency 'awesome_nested_set', '2.1.5'
-  s.add_dependency 'aws-sdk', '1.11.1' # temporarily locked down due to https://github.com/aws/aws-sdk-ruby/issues/273
+  s.add_dependency 'awesome_nested_set', '2.1.6'
+  s.add_dependency 'aws-sdk', '1.27.0'
   s.add_dependency 'cancan', '~> 1.6.10'
-  s.add_dependency 'deface', '= 0.9.1'
+  s.add_dependency 'deface', '= 1.0.0'
   s.add_dependency 'ffaker', '~> 1.16'
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
