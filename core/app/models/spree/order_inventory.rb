@@ -53,18 +53,17 @@ module Spree
       # first unshipped that's leaving from a stock_location that stocks this variant
       def determine_target_shipment
         shipment = order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && shipment.include?(variant)
+          (shipment.ready? || shipment.pending?) && shipment.include?(variant)
         end
 
         shipment ||= order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
+          (shipment.ready? || shipment.pending?) && variant.stock_location_ids.include?(shipment.stock_location_id)
         end
       end
 
       def add_to_shipment(shipment, quantity)
         if variant.should_track_inventory?
           on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
-
           on_hand.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
           back_order.times { shipment.set_up_inventory('backordered', variant, order, line_item) }
         else
