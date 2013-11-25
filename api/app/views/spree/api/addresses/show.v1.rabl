@@ -1,4 +1,5 @@
 object @address
+cache @address
 attributes *address_attributes
 
 child(:country) do |address|
