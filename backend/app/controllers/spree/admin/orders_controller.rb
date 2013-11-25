@@ -58,25 +58,17 @@ module Spree
       end
 
       def update
-        return_path = nil
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           @order.update!
           unless @order.complete?
             # Jump to next step if order is not complete.
-            return_path = admin_order_customer_path(@order)
-          else
-            # Otherwise, go back to first page since all necessary information has been filled out.
-            return_path = admin_order_path(@order)
+            redirect_to admin_order_customer_path(@order) and return
           end
         else
           @order.errors.add(:line_items, Spree.t('errors.messages.blank')) if @order.line_items.empty?
         end
 
-        if return_path
-          redirect_to return_path
-        else
-          render :action => :edit
-        end
+        render :action => :edit
       end
 
       def fire
