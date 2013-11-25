@@ -12,8 +12,9 @@ module Spree
       fill_in "Iso Name", with: "BRL"
       click_button "Create"
 
-      click_icon :trash
-      page.driver.browser.switch_to.alert.accept
+      accept_alert do
+        click_icon :trash
+      end
       wait_for_ajax
 
       expect { Country.find(country.id) }.to raise_error

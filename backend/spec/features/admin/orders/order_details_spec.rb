@@ -52,24 +52,26 @@ describe "Order Details", js: true do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          accept_alert do
+            click_icon :trash
+          end
         end
 
         # Click "ok" on confirmation dialog
-        page.driver.browser.switch_to.alert.accept
         page.should_not have_content("spree t-shirt")
       end
 
       # Regression test for #3862
-      it "can remove an item from a shipment" do
+      it "can cancel removing an item from a shipment" do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          # Click "cancel" on confirmation dialog
+          dismiss_alert do
+            click_icon :trash
+          end
         end
 
-        # Click "cancel" on confirmation dialog
-        page.driver.browser.switch_to.alert.dismiss
         page.should have_content("spree t-shirt")
       end
 
@@ -149,8 +151,8 @@ describe "Order Details", js: true do
               click_icon :ok
             end
 
-            wait_for_ajax
-            page.should have_content("TOTAL: $100.00")
+            # poltergeist and selenium disagree on the existance of this space
+            page.should have_content(/TOTAL: ?\$100\.00/)
           end
 
           it "can add tracking information for the second shipment" do

@@ -196,13 +196,10 @@ describe "Promotion Adjustments" do
       select2 "Create line items", :from => "Add action of type"
 
       within('#action_fields') { click_button "Add" }
-      # Forced narcolepsy, thanks to JavaScript
-      sleep(1)
-      page.execute_script "$('.create_line_items .select2-choice').mousedown();"
-      sleep(1)
-      page.execute_script "$('.select2-input:visible').val('RoR Mug').trigger('keyup-change');"
-      sleep(1)
-      page.execute_script "$('.select2-highlighted').mouseup();"
+
+      page.find('.create_line_items .select2-choice').click
+      page.find('.select2-input').set('RoR Mug')
+      page.find('.select2-highlighted').click
 
       within('#actions_container') { click_button "Update" }
 

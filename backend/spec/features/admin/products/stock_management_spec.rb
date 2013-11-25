@@ -26,6 +26,7 @@ describe "Stock Management" do
       before do
         backorderable.should be_checked
         backorderable.set(false)
+        wait_for_ajax
       end
 
       it "persists the value when page reload", js: true do

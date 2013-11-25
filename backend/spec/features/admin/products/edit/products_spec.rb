@@ -55,8 +55,11 @@ describe 'Product Details' do
       create(:product)
 
       visit spree.admin_products_path
-      within_row(1) { click_icon :trash }
-      page.driver.browser.switch_to.alert.accept
+      within_row(1) do
+        accept_alert do
+          click_icon :trash
+        end
+      end
       wait_for_ajax
     end
   end
