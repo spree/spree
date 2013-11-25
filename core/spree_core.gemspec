@@ -27,8 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
-  s.add_dependency 'kaminari', '~> 0.14.1'
-  s.add_dependency 'money', '~> 5.1.1' # Move this dependency forward
+  s.add_dependency 'kaminari', '~> 0.15.0'
   s.add_dependency 'paperclip', '~> 3.4.1'
   s.add_dependency 'paranoia', '~> 1.3'
   s.add_dependency 'rails', '~> 3.2.14'
