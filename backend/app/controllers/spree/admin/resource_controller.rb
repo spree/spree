@@ -121,7 +121,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def model_class
-      return "Spree::#{self.class.superclass.controller_name.classify}".constantize unless Spree.const_defined?(controller_name.classify)
       "Spree::#{controller_name.classify}".constantize
     end
 
