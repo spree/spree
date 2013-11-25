@@ -37,6 +37,8 @@ module DelegateBelongsTo
       attrs = get_association_column_names(association) if attrs.empty?
       attrs.concat get_association_column_names(association) if attrs.delete :defaults
       attrs.each do |attr|
+        next if table_exists? && column_names.include?(attr.to_s)
+
         class_def attr do |*args|
           if args.empty?
             send(:delegator_for, association).send(attr)
