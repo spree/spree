@@ -62,7 +62,7 @@
               <strong><%= shipment.shipping_method.name %></strong>
             </td>
             <td class="total" align="center">
-              <span><%= shipment.cost %></span>
+              <span><%= shipment.display_cost %></span>
             </td>
           <% else %>
             <td colspan='5'><%= Spree.t(:no_shipping_method_selected) %></td>
