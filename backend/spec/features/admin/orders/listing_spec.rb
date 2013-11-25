@@ -60,6 +60,29 @@ describe "Orders Listing" do
       within("table#listing_orders") { page.should_not have_content("R100") }
     end
 
+    context "when pagination is really short" do
+      before do
+        @old_per_page = Spree::Config[:orders_per_page]
+        Spree::Config[:orders_per_page] = 1
+      end
+
+      after do
+        Spree::Config[:orders_per_page] = @old_per_page
+      end
+
+      # Regression test for #4004
+      it "should be able to go from page to page for incomplete orders" do
+        10.times { Spree::Order.create :email => "incomplete@example.com" }
+        uncheck "q_completed_at_not_null"
+        click_button "Filter Results"
+        within(".pagination") do
+          click_link "2"
+        end
+        page.should have_content("incomplete@example.com")
+        find("#q_completed_at_not_null").should_not be_checked
+      end
+    end
+
     it "should be able to search orders using only completed at input" do
       pending "Failing on CI server. To be investigated."
       fill_in "q_created_at_gt", :with => Date.today
