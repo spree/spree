@@ -60,6 +60,15 @@ module Spree
           invalid_resource!(@order)
         end
       end
+      
+      def mine
+        if current_api_user.anonymous?
+          render "spree/api/errors/unauthorized", status: :unauthorized
+        else
+          @orders = current_api_user.orders
+          render :mine
+        end
+      end
 
       private
         def deal_with_line_items
