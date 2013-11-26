@@ -11,3 +11,7 @@
 * Cached variant objects which can lead to slightly faster loading times (4x) for each variant.
 
     Ryan Bigg
+
+* Added a route to allow for /api/variants/:id requests
+
+    Ryan Bigg
