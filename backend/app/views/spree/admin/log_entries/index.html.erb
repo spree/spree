@@ -22,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= render "spree/admin/log_entries/#{@payment.payment_method.name.camelize.underscore}", entry: entry %>
+        <%= render "spree/admin/log_entries/#{@payment.payment_method.name.gsub(' ', '').underscore}", entry: entry %>
       </tbody>
   <% end %>
 </table>
