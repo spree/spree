@@ -27,3 +27,7 @@
 * Added a route to allow for /api/variants/:id requests
 
     Ryan Bigg
+
+* Products response now contains a master variant separately from all the other variants. Previously all variants were grouped together.
+
+    Ryan Bigg
