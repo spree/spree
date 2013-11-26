@@ -1,8 +1,8 @@
 $(function() {
-  var original_gtwy_type = $('#gtwy-type').attr('value');
+  var original_gtwy_type = $('#gtwy-type').prop('value');
   $('div#gateway-settings-warning').hide();
   $('#gtwy-type').change(function() { 
-    if ($('#gtwy-type').attr('value') == original_gtwy_type) {
+    if ($('#gtwy-type').prop('value') == original_gtwy_type) {
       $('div.gateway-settings').show();
       $('div#gateway-settings-warning').hide();
     } else {

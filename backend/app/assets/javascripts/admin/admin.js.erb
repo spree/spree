@@ -48,12 +48,12 @@ jQuery(function($) {
   // Highlight hovered table column
   $('table tbody tr td.actions a').hover(function(){
     var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).attr('data-action')
+    var klass = 'highlight action-' + $(this).data('action')
     tr.addClass(klass)
     tr.prev().addClass('before-' + klass);
   }, function(){
     var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).attr('data-action')
+    var klass = 'highlight action-' + $(this).data('action')
     tr.removeClass(klass)
     tr.prev().removeClass('before-' + klass);
   });
@@ -124,12 +124,12 @@ handle_date_picker_fields = function(){
 $(document).ready(function(){
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {
-    target = $(this).attr("data-update");
-    ajax_indicator = $(this).attr("data-ajax-indicator") || '#busy_indicator';
+    target = $(this).data("update");
+    ajax_indicator = $(this).data("ajax-indicator") || '#busy_indicator';
     $(target).hide();
     $(ajax_indicator).show();
     $.ajax({ dataType: 'html',
-             url: $(this).attr("data-base-url")+encodeURIComponent($(this).val()),
+             url: $(this).data("base-url")+encodeURIComponent($(this).val()),
              type: 'get',
              success: function(data){
                $(target).html(data);
@@ -146,15 +146,15 @@ $(document).ready(function(){
     new_table_row.find("input, select").each(function () {
       var el = $(this);
       el.val("");
-      el.attr("id", el.attr("id").replace(/\d+/, new_id))
-      el.attr("name", el.attr("name").replace(/\d+/, new_id))
+      el.prop("id", el.prop("id").replace(/\d+/, new_id))
+      el.prop("name", el.prop("name").replace(/\d+/, new_id))
     })
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
     // duplicated row
     new_table_row.find("a").each(function () {
       var el = $(this);
-      el.attr('href', '#');
+      el.prop('href', '#');
     })
     $(target).prepend(new_table_row);
   })
@@ -164,7 +164,7 @@ $(document).ready(function(){
     if (confirm(el.data("confirm"))) {
       $.ajax({
         type: 'POST',
-        url: $(this).attr("href"),
+        url: $(this).prop("href"),
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
@@ -185,12 +185,12 @@ $(document).ready(function(){
     el = $(this);
     el.prev("input[type=hidden]").val("1");
     el.closest(".fields").hide();
-    if (el.attr("href") == '#') {
+    if (el.prop("href") == '#') {
       el.parents("tr").fadeOut('hide');
-    }else if (el.attr("href")) {
+    }else if (el.prop("href")) {
       $.ajax({
         type: 'POST',
-        url: el.attr("href"),
+        url: el.prop("href"),
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
@@ -210,7 +210,7 @@ $(document).ready(function(){
   $('body').on('click', '.select_properties_from_prototype', function(){
     $("#busy_indicator").show();
     var clicked_link = $(this);
-    $.ajax({ dataType: 'script', url: clicked_link.attr("href"), type: 'get',
+    $.ajax({ dataType: 'script', url: clicked_link.prop("href"), type: 'get',
         success: function(data){
           clicked_link.parent("td").parent("tr").hide();
           $("#busy_indicator").hide();
@@ -239,7 +239,7 @@ $(document).ready(function(){
           positions = {};
           $.each($('table.sortable tbody tr'), function(position, obj){
             reg = /spree_(\w+_?)+_(\d+)/;
-            parts = reg.exec($(obj).attr('id'));
+            parts = reg.exec($(obj).prop('id'));
             if (parts) {
               positions['positions['+parts[2]+']'] = position;
             }

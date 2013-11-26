@@ -15,7 +15,7 @@ var update_state = function (region) {
       }].concat(states);
       $.each(states_with_blank, function (pos, state) {
         var opt = $(document.createElement('option'))
-          .attr('value', state.id)
+          .prop('value', state.id)
           .html(state.name);
         state_select.append(opt);
       });

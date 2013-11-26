@@ -126,7 +126,7 @@ jQuery ($) ->
     $new_input: (width) ->
       amount = @constructor.normalize_amount(@payment.display_amount())
       $('<input />')
-        .attr(id: 'amount', value: amount)
+        .prop(id: 'amount', value: amount)
         .width(width)
         .one
           blur: =>
@@ -144,5 +144,5 @@ jQuery ($) ->
   # Attach ShowPaymentView to each pending payment in the table
   $('.admin tr[data-hook=payments_row]').each ->
     $el = $(@)
-    payment = new Payment($el.attr('id').match(/\d+$/))
+    payment = new Payment($el.prop('id').match(/\d+$/))
     payment.if_pending -> new ShowPaymentView($el, payment)

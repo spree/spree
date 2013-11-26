@@ -24,7 +24,7 @@ var initProductActions = function () {
       if ($(this).val() === originalType) {
         $warning.hide();
         $settings.show();
-        $settings.find('input').removeAttr('disabled');
+        $settings.find('input').removeProp('disabled');
       } else {
         $warning.show();
         $settings.hide();

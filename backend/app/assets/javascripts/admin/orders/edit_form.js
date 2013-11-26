@@ -5,7 +5,7 @@ $(document).ready(function () {
 
     $(input).on('change', function () {
 
-      var id = '#' + $(this).attr('id').replace('_quantity', '_id');
+      var id = '#' + $(this).prop('id').replace('_quantity', '_id');
 
       $.post('/admin/orders/' + $('input#order_number').val() + '/line_items/' + $(id).val(), {
           _method: 'put',

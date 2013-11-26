@@ -25,7 +25,7 @@
     (function($){
 
       $("input.option-type").change(function() {
-        $(this).parents("li").find("input.option-value").attr("checked", this.checked);
+        $(this).parents("li").find("input.option-value").prop("checked", this.checked);
       });
 
       $("input.option-value").change(function() {
@@ -33,7 +33,7 @@
         $(this).parents(".option-type-values").find("input.option-value").each(function(i, el) {
           any_checked = any_checked || el.checked;
         });
-        $(this).parents(".option-type-field").find("input.option-type").attr("checked", any_checked);
+        $(this).parents(".option-type-field").find("input.option-type").prop("checked", any_checked);
       });
 
     })(jQuery);

@@ -71,7 +71,7 @@ $ ->
       for location in @locations when location.id isnt except
         select.append $('<option></option>')
                         .text(location.name)
-                        .attr('value', location.id)
+                        .prop('value', location.id)
       select.select2()
 
   # Populates variants drop down
@@ -107,7 +107,7 @@ $ ->
       for variant in variants
         $('#transfer_variant').append($('<option></option>')
                                     .text(variant.name)
-                                    .attr('value', variant.id)
+                                    .prop('value', variant.id)
                                     .data('variant', variant))
 
       $('#transfer_variant').select2()

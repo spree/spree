@@ -8,9 +8,9 @@ $(function () {
   'use strict';
 
   $('a[id*=nested]').on('click', function () {
-    var template = $(this).attr('href').replace(/.*#/, '');
+    var template = $(this).prop('href').replace(/.*#/, '');
     var html = replace_ids(eval(template));
-    $('#ul-' + $(this).attr('id')).append(html);
+    $('#ul-' + $(this).prop('id')).append(html);
     update_remove_links();
   });
   update_remove_links();

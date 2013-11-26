@@ -1,9 +1,9 @@
 $(function() {
   var calculator_select = $('select#calc_type')
-  var original_calc_type = calculator_select.attr('value');
+  var original_calc_type = calculator_select.prop('value');
   $('.calculator-settings-warning').hide();
   calculator_select.change(function() {
-    if (calculator_select.attr('value') == original_calc_type) {
+    if (calculator_select.prop('value') == original_calc_type) {
       $('div.calculator-settings').show();
       $('.calculator-settings-warning').hide();
       $('.calculator-settings').find('input,textarea').prop("disabled", false);

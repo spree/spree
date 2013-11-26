@@ -261,7 +261,7 @@ formatVariantResult = function(variant) {
 }
 
 $.fn.variantAutocomplete = function() {
-  this.parent().children(".options_placeholder").attr('id', this.parent().data('index'))
+  this.parent().children(".options_placeholder").prop('id', this.parent().data('index'))
   this.select2({
     placeholder: Spree.translations.variant_placeholder,
     minimumInputLength: 3,

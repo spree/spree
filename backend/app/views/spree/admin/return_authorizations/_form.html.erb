@@ -66,7 +66,7 @@
     $("td.return_quantity input").on('change', function() {
       var rma_amount = 0;
       $.each($("td.return_quantity input"), function(i, input) {
-        var variant_id = $(input).attr('id').replace("return_quantity_", "");
+        var variant_id = $(input).prop('id').replace("return_quantity_", "");
          rma_amount += line_item_prices[variant_id] * $(input).val()
       });
 
