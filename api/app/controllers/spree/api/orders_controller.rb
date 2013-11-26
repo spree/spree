@@ -61,6 +61,15 @@ module Spree
         end
       end
 
+      def mine
+        if current_api_user.anonymous?
+          render "spree/api/errors/unauthorized", status: :unauthorized
+        else
+          @orders = current_api_user.orders
+          render :mine
+        end
+      end
+
       def apply_coupon_code
         find_order
         @order.coupon_code = params[:coupon_code]
