@@ -9,5 +9,5 @@
   Spree.routes.apply_coupon_code = function(order_id) {
     return "<%= spree.api_orders_path %>/" + order_id + "/apply_coupon_code"
   }
+  Spree.routes.root = "<%= spree.root_url if spree.respond_to? :root_url %>"
 </script>
-
