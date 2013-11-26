@@ -6,5 +6,5 @@
     Spree.routes = {}
   }
   Spree.routes.states_search = "<%= spree.api_states_path(:format => 'json') %>"
+  Spree.routes.root = "<%= spree.root_url if spree.respond_to? :root_url %>"
 </script>
-
