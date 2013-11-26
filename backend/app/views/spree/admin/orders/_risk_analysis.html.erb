@@ -20,8 +20,8 @@
       <tr>
         <td><strong><%= Spree.t(:avs_response) %>:</strong></td>
         <td class="align-center">
-          <span class="<%= latest_payment.avs_response ? 'state void' : 'state complete' %>">
-            <% if latest_payment.avs_response %>
+          <span class="<%= latest_payment.avs_response != "D" ? 'state void' : 'state complete' %>">
+            <% if latest_payment.avs_response != "D" %>
               <%= "#{Spree.t(:error)}: #{avs_response_code[latest_payment.avs_response]}" %>
             <% else %>
               <%= Spree.t(:success) %>
@@ -33,8 +33,8 @@
       <tr>
         <td><strong><%= Spree.t(:cvv_response) %>:</strong></td>
         <td class="align-center">
-          <span class="<%= latest_payment.cvv_response_code ? 'state void' : 'state complete' %>">
-            <% if latest_payment.cvv_response_code %>
+          <span class="<%= latest_payment.cvv_response_code != "M" ? 'state void' : 'state complete' %>">
+            <% if latest_payment.cvv_response_code != "M" %>
               <%= "#{Spree.t(:error)}: #{cvv_response_code[latest_payment.cvv_response_code]}" %>
             <% else %>
               <%= Spree.t(:success) %>
