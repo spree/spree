@@ -5,7 +5,22 @@ module Spree
     # This method must be overriden in concrete calculator.
     #
     # It should return amount computed based on #calculable and/or optional parameter
-    def compute(something = nil)
+    def compute(computable = nil)
+      raise NotImplementedError, 'please use concrete calculator' unless computable
+      # Spree::LineItem -> :compute_line_item
+      method = "compute_#{computable.class.name.demodulize.underscore}".to_sym
+      self.send(method, computable)
+    end
+
+    def compute_shipment(shipment)
+      raise NotImplementedError, 'please use concrete calculator'
+    end
+
+    def compute_line_item(line_item)
+      raise NotImplementedError, 'please use concrete calculator'
+    end
+
+    def compute_order(order)
       raise NotImplementedError, 'please use concrete calculator'
     end
 
