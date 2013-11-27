@@ -79,4 +79,4 @@ Send e-mail information to ExactTarget.
 | :----| :-----| :------ |:------ | :------ |
 | exact_target.username | Your ExactTarget Username | string | Yes | user123 |
 | exact_target.password | Your ExactTarget Password | string | Yes | password123 |
-| exact_target.api_url | Your ExactTarget API URL | string | No | password123 |
+| exact_target.api_url | Your ExactTarget API URL | string | No | webservice.s6.exacttarget.com |
