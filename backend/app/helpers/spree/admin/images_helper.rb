@@ -6,7 +6,7 @@ module Spree
           if image.viewable.is_master?
             Spree.t(:all)
           else
-            image.viewable.options_text
+            image.viewable.sku_and_options_text
           end
         else
           Spree.t(:all)
