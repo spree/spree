@@ -1,0 +1,14 @@
+<script type='text/template' id='product_template'>
+  <li id="product_{{ product.id }}" data-product-id="{{product.id }}" class="columns three alpha small_product">
+    <div class="product-image">
+      {{#if product.image }}
+        <img src='{{product.image}}' alt='{{ product.name }}' />
+      {{ else }}
+        <img src='<%= image_path("noimage/small.png") %>' alt='{{product.name }}' />
+      {{/if}}
+    </div>
+    <a class="name">{{ product.name }}</a><br>
+    <span class="price">{{ product.display_price }}</span>
+  </li>
+</script>
+

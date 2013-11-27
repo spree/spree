@@ -17,6 +17,7 @@
     :first_day                => Spree.t(:first_day,
                                          :scope => 'date_picker',
                                          :default => 0).to_i,
+    :find_a_taxon             => Spree.t(:find_a_taxon),
     :loading                  => Spree.t(:loading),
     :month_names              => I18n.t(:month_names, :scope => :date).reject(&:blank?),
     :more                     => Spree.t(:more),
@@ -35,6 +36,7 @@
     :variant_placeholder      => Spree.t(:variant_placeholder),
     :value                    => Spree.t(:value),
     :currency_separator       => I18n.t('number.currency.format.separator'),
+
   }.to_json
 %>
 </script>

@@ -79,7 +79,9 @@ Spree::Core::Engine.add_routes do
         end
       end
     end
+
     resources :taxons, :only => [:index]
+
     resources :inventory_units, :only => [:show, :update]
     resources :users
     resources :properties
@@ -90,5 +92,8 @@ Spree::Core::Engine.add_routes do
 
     get '/config/money', :to => 'config#money'
     get '/config', :to => 'config#show'
+
+    put '/classifications', :to => 'classifications#update', :as => :classifications
+    get '/taxons/products', :to => 'taxons#products', :as => :taxon_products
   end
 end
