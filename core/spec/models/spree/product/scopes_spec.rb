@@ -16,8 +16,30 @@ describe "Product scopes" do
       product.taxons << @child_taxon
     end
 
+    it "calling Product.in_taxon returns products in child taxons" do
+      product.taxons -= [@child_taxon]
+      product.taxons.count.should == 1
+
+      Spree::Product.in_taxon(@parent_taxon).should include(product)
+    end
+
     it "calling Product.in_taxon should not return duplicate records" do
       Spree::Product.in_taxon(@parent_taxon).to_a.count.should == 1
+    end
+
+    it "orders products based on their ordering within the classification" do
+      product_2 = create(:product)
+      product_2.taxons << @parent_taxon
+
+      product_root_classification = Spree::Classification.find_by(:taxon => @parent_taxon, :product => product)
+      product_root_classification.update_column(:position, 1)
+
+      product_2_root_classification = Spree::Classification.find_by(:taxon => @parent_taxon, :product => product_2)
+      product_2_root_classification.update_column(:position, 2)
+
+      Spree::Product.in_taxon(@parent_taxon).should == [product, product_2]
+      product_2_root_classification.insert_at(1)
+      Spree::Product.in_taxon(@parent_taxon).should == [product_2, product]
     end
   end
 end
