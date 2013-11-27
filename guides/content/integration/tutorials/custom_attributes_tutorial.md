@@ -220,7 +220,7 @@ The `variety` key is there in the output (line 5). There is no value for it, bec
 
 ## Creating Custom Endpoint
 
-In the [Creating a Fulfillment Endpoint Tutorial](creating_fulfillment_tutorial), we made a basic endpoint that had some simple logic relating to shipments. In this tutorial, we'll create a similar fulfillment endpoint. In [the next section](#accessing-custom-data), we'll extend it to account for the custom attribute and take different actions accordingly.
+In the [Creating a Fulfillment Endpoint Tutorial](fulfillment_integration_tutorial), we made a basic endpoint that had some simple logic relating to shipments. In this tutorial, we'll create a similar fulfillment endpoint. In [the next section](#accessing-custom-data), we'll extend it to account for the custom attribute and take different actions accordingly.
 
 First, we need a new directory to house our integration files.
 
@@ -296,7 +296,7 @@ The `validate_address` service will accept an incoming JSON file, compare the pa
 We'll navigate to the custom_attribute_endpoint directory, install gems, start our Sinatra server, then launch a `curl` command to run the aforementioned order's JSON output through our new endpoint's `validate_address` service.
 
 +++
-We can't directly encode the order output message to the format we need (that's part of the magic the hub handles for us), but we can use hard-coded JSON files that would directly mimic the polling message the hub would generate in this case. These JSON files are provided to you - along with the other sample files - at [https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial](https://github.com/spree/hello_endpoint/tree/master/custom_attribute_endpoint_tutorial).
+We can't directly encode the order output message to the format we need (that's part of the magic the hub handles for us), but we can use hard-coded JSON files that would directly mimic the polling message the hub would generate in this case. These JSON files are provided to you - along with the other sample files - at [https://github.com/spree/integration_tutorials/tree/master/custom_attributes](https://github.com/spree/integration_tutorials/tree/master/custom_attributes).
 +++
 
 ```bash
