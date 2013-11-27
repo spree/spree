@@ -638,6 +638,13 @@ describe Spree::Order do
   end
 
   describe ".is_risky?" do
+    context "Not risky order" do
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "D")]) }
+      it "returns false if the order's avs_response == 'A'" do
+        order.is_risky?.should == false
+      end
+    end
+
     context "AVS response message" do
       let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
       it "returns true if the order has an avs_response" do
@@ -653,7 +660,7 @@ describe Spree::Order do
     end
 
     context "CVV response code" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "M")]) }
+      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
       it "returns true if the order has an cvv_response_code" do
         order.is_risky?.should == true
       end
