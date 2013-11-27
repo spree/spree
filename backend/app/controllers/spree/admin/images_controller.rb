@@ -19,7 +19,7 @@ module Spree
         def load_data
           @product = Product.find_by_permalink(params[:product_id])
           @variants = @product.variants.collect do |variant|
-            [variant.options_text, variant.id]
+            [variant.sku_and_options_text, variant.id]
           end
           @variants.insert(0, [Spree.t(:all), @product.master.id])
         end
