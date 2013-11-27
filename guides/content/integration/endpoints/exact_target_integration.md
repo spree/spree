@@ -14,9 +14,11 @@ The source code for the [ExactTarget Endpoint](https://github.com/spree/exact_ta
 
 ### Send E-mail
 
-Send e-mail information to ExactTarget.
+Send [Triggered E-mail](http://help.exacttarget.com/en-GB/documentation/exacttarget/interactions/triggered_emails/triggered_emails_guide/) to ExactTarget.
 
 #### Request
+
+Preprocessors could be used to modify the payload to include the "email" hash that the endpoint is expecting. All of the [data extension fields](http://help.exacttarget.com/en/documentation/exacttarget/subscribers/data_extensions_and_data_relationships/) that have been configured through the ExactTarget application must be passed in under the "parameters" hash.
 
 ### order:new
 
