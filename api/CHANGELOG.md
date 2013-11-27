@@ -31,3 +31,7 @@
 * Products response now contains a master variant separately from all the other variants. Previously all variants were grouped together.
 
     Ryan Bigg
+
+* Added API endpoint to retrieve a user's orders: /api/orders/mine. #4022
+
+    Richard Nuno
