@@ -301,7 +301,7 @@ Will determine if the state field should appear on the checkout page. Defaults t
 
 `admin_interface_logo`
 
-The path to the logo to display on the admin interface. Can be different from `Spree::Config[:logo]`. Defaults to `/admin/bg/spree_50.png`.
+The path to the logo to display on the admin interface. Can be different from `Spree::Config[:logo]`. Defaults to `logo/spree_50.png`.
 
 `admin_products_per_page`
 
@@ -420,7 +420,7 @@ end
 
 `logo`
 
-The logo to display on your frontend. Defaults to `admin/bg/spree_50.png`.
+The logo to display on your frontend. Defaults to `logo/spree_50.png`.
 
 `max_level_in_taxons_menu`
 
