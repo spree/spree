@@ -41,6 +41,27 @@ module Spree
       assert_unauthorized!
     end
 
+    context "the current api user is anonymous" do
+      let(:current_api_user) { double(anonymous?: true) }
+
+      it "returns a 401" do
+        api_get :mine
+
+        response.status.should == 401
+      end
+    end
+
+    context "the current api user is authenticated" do
+      it "can view all of their own orders" do
+        current_api_user.should_receive(:orders) { [order] }
+
+        api_get :mine
+
+        json_response["orders"].length.should == 1
+        json_response["orders"].first["number"].should == order.number
+      end
+    end
+
     it "can view their own order" do
       Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param

@@ -28,6 +28,8 @@ Spree::Core::Engine.add_routes do
       resources :option_values
     end
 
+    get '/orders/mine', :to => 'orders#mine', :as => 'my_orders'
+
     resources :orders do
       resources :addresses, :only => [:show, :update]
 
