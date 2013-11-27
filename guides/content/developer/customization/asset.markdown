@@ -211,7 +211,7 @@ var show_variant_images = function(variant_id) {
 ```
 
 Again, just create a new JavaScript file inside
-`your_app/app/assets/stylesheets/store` and include the new method
+`your_app/app/assets/javascripts/store` and include the new method
 definition:
 
 ```javascript
