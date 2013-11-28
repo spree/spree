@@ -35,15 +35,18 @@ module Spree
 
     has_one :master,
       -> { where is_master: true },
+      inverse_of: :product,
       class_name: 'Spree::Variant',
       dependent: :destroy
 
     has_many :variants,
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      inverse_of: :product,
       class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
       -> { order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      inverse_of: :product,
       class_name: 'Spree::Variant',
       dependent: :destroy
 
