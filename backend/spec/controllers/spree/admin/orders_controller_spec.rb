@@ -59,7 +59,7 @@ describe Spree::Admin::OrdersController do
         before(:each) do
           order.stub(:state_events).and_return([:bar])
         end
-        
+
         it "should not fire the requested event on the payment" do
           order.should_not_receive(:foo)
           spree_put :fire, {:id => "R1234567", :e => "foo"}
@@ -100,6 +100,26 @@ describe Spree::Admin::OrdersController do
         order.stub :complete? => false
         order.should_receive :refresh_shipment_rates
         spree_get :edit, :id => order.number
+      end
+    end
+
+    # Test for #3919
+    context "search" do
+      let(:user) { create(:user) }
+
+      before do
+        controller.stub :spree_current_user => user
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
+
+        create(:completed_order_with_totals)
+        expect(Spree::Order.count).to eq 1
+      end
+
+      it "does not display duplicated results" do
+        spree_get :index, q: {
+          line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
+        }
+        expect(assigns[:orders].map { |o| o.number }.count).to eq 1
       end
     end
   end
