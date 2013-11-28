@@ -41,19 +41,19 @@ describe Spree::Calculator do
   context "with no stubbing" do
     context "with a Spree::LineItem" do
         it "raises NotImplementedError" do
-          expect{subject.compute(line_item)}.to raise_error NotImplementedError
+          expect{subject.compute(line_item)}.to raise_error NoMethodError
         end
       end
 
       context "with a Spree::Order" do
         it "raises NotImplementedError" do
-          expect{subject.compute(order)}.to raise_error NotImplementedError
+          expect{subject.compute(order)}.to raise_error NoMethodError
         end
       end
 
       context "with a Spree::Shipment" do
         it "raises NotImplementedError" do
-          expect{subject.compute(shipment)}.to raise_error NotImplementedError
+          expect{subject.compute(shipment)}.to raise_error NoMethodError
         end
       end
 
@@ -63,12 +63,6 @@ describe Spree::Calculator do
           expect{subject.compute(s)}.to raise_error NoMethodError
         end
       end
-    end
-  end
-
-  context "without computable" do
-    it "raises NotImplementedError" do
-      expect{subject.compute}.to raise_error NotImplementedError
     end
   end
 
