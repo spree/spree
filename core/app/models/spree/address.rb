@@ -14,7 +14,7 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
-    def self.default
+    def self.build_default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
       new(country: country)
     end
@@ -23,6 +23,14 @@ module Spree
     # def editable?
     #   new_record? || (shipments.empty? && checkouts.empty?)
     # end
+
+    def self.default(user = nil, kind = "bill")
+      if user
+        user.send(:"#{kind}_address") || build_default
+      else
+        build_default
+      end
+    end
 
     def full_name
       "#{firstname} #{lastname}".strip
