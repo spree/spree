@@ -414,6 +414,7 @@ en:
     check_for_spree_alerts: Check for Spree alerts
     checkout: Checkout
     choose_a_customer: Choose a customer
+    choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
     choose_currency: Choose Currency
     choose_dashboard_locale: Choose Dashboard Locale
     city: City
@@ -561,6 +562,7 @@ en:
     fill_in_customer_info: Please fill in customer info
     filter_results: Filter Results
     finalize: Finalize
+    find_a_taxon: Find a Taxon
     finalized: Finalized
     first_item: First Item Cost
     first_name: First Name
@@ -946,6 +948,7 @@ en:
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
     save_and_continue: Save and Continue
+    save_my_address: Save my address
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope

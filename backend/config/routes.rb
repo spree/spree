@@ -118,7 +118,7 @@ Spree::Core::Engine.add_routes do
       resources :taxons
     end
 
-    resources :taxons, :only => [] do
+    resources :taxons, :only => [:index, :show] do
       collection do
         get :search
       end

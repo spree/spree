@@ -4,6 +4,10 @@ module Spree
 
       respond_to :html, :json, :js
 
+      def index
+
+      end
+
       def search
         if params[:ids]
           @taxons = Spree::Taxon.where(:id => params[:ids].split(','))

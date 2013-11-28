@@ -67,11 +67,9 @@ module Spree
     #
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      select("spree_products.id, spree_products.*").
-      where(id: Classification.select('spree_products_taxons.product_id').
-            joins(:taxon).
-            where(Taxon.table_name => { :id => taxon.self_and_descendants.pluck(:id) })
-           )
+      includes(:classifications).
+      where("spree_products_taxons.taxon_id" => taxon.self_and_descendants.pluck(:id)).
+      order("spree_products_taxons.position ASC")
     end
 
     # This scope selects products in all taxons AND all its descendants

@@ -142,8 +142,9 @@ describe Spree::Order do
 
       context "without shipped items" do
         it "should set payment state to 'credit owed'" do
+          # Regression test for #3711
+          order.should_receive(:update_column).with(:payment_state, 'credit_owed')
           order.cancel!
-          order.payment_state.should == 'credit_owed'
         end
       end
 
