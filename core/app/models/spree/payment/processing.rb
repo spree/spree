@@ -108,9 +108,10 @@ module Spree
     end
 
     def gateway_options
-      options = { :email    => order.email,
-                  :customer => order.email,
-                  :ip       => order.last_ip_address,
+      options = { :email       => order.email,
+                  :customer    => order.email,
+                  :ip          => order.last_ip_address,
+                  :customer_id => order.user_id,
                   :order_id => "#{order.number}-#{self.identifier}" }
 
       options.merge!({ :shipping => order.ship_total * 100,
