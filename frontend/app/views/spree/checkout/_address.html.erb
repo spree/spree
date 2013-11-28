@@ -22,4 +22,9 @@
 <hr class="clear" />
 <div class="form-buttons" data-hook="buttons">
   <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
+  <span data-hook="save_user_address">
+    &nbsp; &nbsp;
+    <%= check_box_tag 'save_user_address', '1', try_spree_current_user.respond_to?(:persist_order_address) %>
+    <%= label_tag :save_user_address, Spree.t(:save_my_address) %>
+  </span>
 </div>
