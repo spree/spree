@@ -9,10 +9,7 @@
     <% end %>
   </span>
   <br />
-  <span class="full-name">
-    <%= source.first_name %>
-    <%= source.last_name %>
-  </span>
+  <span class="full-name"><%= source.name %></span>
 <% else %>
   <%= content_tag(:span, payment.payment_method.name) %>
 <% end %>

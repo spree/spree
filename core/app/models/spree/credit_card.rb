@@ -59,14 +59,6 @@ module Spree
       CARD_TYPES.find{|type, pattern| return type.to_s if numbers =~ pattern}.to_s
     end
 
-    def name?
-      first_name? && last_name?
-    end
-
-    def name
-      "#{first_name} #{last_name}"
-    end
-
     def verification_value?
       verification_value.present?
     end

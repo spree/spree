@@ -1,5 +1,10 @@
 ## Spree 2.2.0 (unreleased) ##
 
+*   Add a `name` column to spree_payments. That should hold the *Name on card*
+    option in payment checkout step.
+
+    Washington Luiz
+
 *   Associate line item and inventory units for better extensibility with
     product assemblies. Migration was added to set line_item_id for existing
     inventory units.
