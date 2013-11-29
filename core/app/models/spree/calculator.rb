@@ -4,7 +4,7 @@ module Spree
 
     # This method calls a compute_<computable> method. must be overriden in concrete calculator.
     #
-    # It should return amount computed based on #calculable and/or optional parameter
+    # It should return amount computed based on #calculable and the computable parameter
     def compute(computable)
       # Spree::LineItem -> :compute_line_item
       computable_name = computable.class.name.demodulize.underscore
