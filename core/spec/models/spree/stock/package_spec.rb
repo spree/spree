@@ -106,6 +106,21 @@ module Spree
 
         shipment.shipping_method.should eq shipping_method
       end
+
+      context "line item and variant don't refer same product" do
+        let(:other_variant) { build(:variant) }
+
+        before { subject.add(line_item, 4, :on_hand, other_variant) }
+
+        it "cant find the item given wrong variant" do
+          expect(subject.find_item(variant, :on_hand)).to be_nil
+        end
+
+        it "finds the item when given proper variant and line item" do
+          expect(subject.find_item(other_variant, :on_hand)).to eq subject.contents.last
+          expect(subject.find_item(other_variant, :on_hand, line_item)).to eq subject.contents.last
+        end
+      end
     end
   end
 end
