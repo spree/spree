@@ -41,26 +41,26 @@ describe Spree::Calculator do
   context "with no stubbing" do
     context "with a Spree::LineItem" do
         it "raises NotImplementedError" do
-          expect{subject.compute(line_item)}.to raise_error NoMethodError
+          expect{subject.compute(line_item)}.to raise_error NotImplementedError, /Please implement \'compute_line_item\(line_item\)\' in your calculator/
         end
       end
 
       context "with a Spree::Order" do
         it "raises NotImplementedError" do
-          expect{subject.compute(order)}.to raise_error NoMethodError
+          expect{subject.compute(order)}.to raise_error NotImplementedError, /Please implement \'compute_order\(order\)\' in your calculator/
         end
       end
 
       context "with a Spree::Shipment" do
         it "raises NotImplementedError" do
-          expect{subject.compute(shipment)}.to raise_error NoMethodError
+          expect{subject.compute(shipment)}.to raise_error NotImplementedError, /Please implement \'compute_shipment\(shipment\)\' in your calculator/
         end
       end
 
       context "with a arbitray object" do
-        it "raises NoMethodError" do
+        it "raises NotImplementedError" do
           s = "Calculator can all"
-          expect{subject.compute(s)}.to raise_error NoMethodError
+          expect{subject.compute(s)}.to raise_error NotImplementedError, /Please implement \'compute_string\(string\)\' in your calculator/
         end
       end
     end

@@ -12,7 +12,7 @@ module Spree
       begin
         self.send(method, computable)
       rescue NoMethodError
-        raise NotImplementedError, "Please implement '#{method}(computable_name)' in your calculator: #{caller[0].split(:)[0]}"
+        raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{caller[0].split(':')[0]}"
       end
     end
 
