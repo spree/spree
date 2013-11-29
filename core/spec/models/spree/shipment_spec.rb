@@ -65,7 +65,7 @@ describe Spree::Shipment do
     end
 
     context "variant was removed" do
-      before { variant.product.destroy }
+      before { variant.destroy }
 
       it "still returns variant expected" do
         expect(shipment.manifest.first.variant).to eq variant
@@ -240,7 +240,7 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -259,7 +259,7 @@ describe Spree::Shipment do
     end
 
     it 'unstocks them items' do
-      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume

@@ -1,12 +1,10 @@
 <% shipment.manifest.each do |item| %>
-  <% line_item = order.find_line_item_by_variant(item.variant) %>
-
   <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
     <td class="item-image"><%= mini_image(item.variant) %></td>
     <td class="item-name">
       <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
     </td>
-    <td class="item-price align-center"><%= line_item.single_money.to_html %></td>
+    <td class="item-price align-center"><%= item.line_item.single_money.to_html %></td>
     <td class="item-qty-show align-center">
         <% item.states.each do |state,count| %>
           <%= count %> x <%= Spree.t(state) %>
@@ -17,7 +15,7 @@
         <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
       </td>
     <% end %>
-    <td class="item-total align-center"><%= line_item_shipment_price(line_item, item.quantity) %></td>
+    <td class="item-total align-center"><%= line_item_shipment_price(item.line_item, item.quantity) %></td>
     <% unless shipment.shipped? %>
       <td class="cart-item-delete actions" data-hook="cart_item_delete">
         <% if can? :update, item %>
