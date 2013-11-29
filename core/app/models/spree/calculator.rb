@@ -7,8 +7,13 @@ module Spree
     # It should return amount computed based on #calculable and/or optional parameter
     def compute(computable)
       # Spree::LineItem -> :compute_line_item
-      method = "compute_#{computable.class.name.demodulize.underscore}".to_sym
-      self.send(method, computable)
+      computable_name = computable.class.name.demodulize.underscore
+      method = "compute_#{computable_name}".to_sym
+      begin
+        self.send(method, computable)
+      rescue NoMethodError
+        raise NotImplementedError, "Please implement '#{method}(computable_name)' in your calculator: #{caller[0].split(:)[0]}"
+      end
     end
 
     # overwrite to provide description for your calculators
