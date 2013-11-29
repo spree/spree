@@ -70,6 +70,11 @@ describe Spree::OrdersController do
       spree_put :update, {}, {:order_id => 1}
       response.should redirect_to(spree.cart_path)
     end
+
+    it "resets the checkout flow" do
+      order.should_receive(:restart_checkout_flow)
+      spree_put :update, {}, {:order_id => 1}
+    end
   end
 
   context "#empty" do
