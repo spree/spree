@@ -64,11 +64,11 @@
         </div>
         <div class="field">
           <%= label_tag :smtp_username, Spree.t(:smtp_username) %><br />
-          <%= text_field_tag :smtp_username, Spree::Config[:smtp_username], :class => 'fullwidth' %>
+          <%= text_field_tag :smtp_username, Spree::Config[:smtp_username], :class => 'fullwidth', :autocomplete => 'off' %>
         </div>
         <div class="field">
           <%= label_tag :preferred_smtp_password, Spree.t(:smtp_password) %><br />
-          <%= password_field_tag :smtp_password, Spree::Config[:smtp_password], :class => 'fullwidth' %>
+          <%= password_field_tag :smtp_password, Spree::Config[:smtp_password], :class => 'fullwidth', :autocomplete => 'off' %>
         </div>
       </fieldset>
     </div>
