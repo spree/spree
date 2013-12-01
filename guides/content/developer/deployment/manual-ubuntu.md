@@ -14,7 +14,7 @@ covers setting up the following things:
 * A user for the application
 * Operating system dependencies required for Ruby, Rails and Spree
 * Ruby 1.9.3
-* Rails 3.2.12
+* Rails 4.0.0
 * PostgreSQL
 * Unicorn + nginx (with SSL)
 * Seed data for your store
@@ -185,10 +185,10 @@ $ apt-get install -y imagemagick
 ```
 
 Once these dependencies are installed, switch back into the `spree` user and
-install Ruby 1.9.3 by running this command:
+install Ruby 2.0.0 by running this command:
 
 ```bash
-$ rvm install 1.9.3
+$ rvm install 2.0.0
 ```
 
 This command will take a couple of minutes to finish running.
@@ -197,7 +197,7 @@ Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
 ```bash
-$ rvm use 1.9.3 --default
+$ rvm use 2.0.0 --default
 ```
 
 Ensure that this version of Ruby is really the new default by running this
