@@ -152,6 +152,8 @@ module Spree
       !shipped?
     end
 
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+
     def manifest
       inventory_units.group_by(&:variant).map do |variant, units|
         units.group_by(&:line_item).map do |line_item, units|
@@ -159,11 +161,7 @@ module Spree
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.count }
 
-          OpenStruct.new(line_item: line_item,
-            variant: variant,
-            quantity: units.length,
-            states: states
-          )
+          ManifestItem.new(line_item, variant, units.length, states)
         end
       end.flatten
     end
