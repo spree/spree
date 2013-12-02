@@ -9,10 +9,10 @@ module Spree
     let(:line_item2) { build(:line_item, variant: variant2) }
 
     let(:package) do
-      double(
-        Stock::Package,
-        order: mock_model(Order),
-        contents: [
+      Stock::Package.new(
+        build(:stock_location),
+        mock_model(Order),
+        [
           Stock::Package::ContentItem.new(line_item1, variant1, 2),
           Stock::Package::ContentItem.new(line_item2, variant2, 1)
         ]
