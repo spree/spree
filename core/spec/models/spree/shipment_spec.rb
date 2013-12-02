@@ -65,7 +65,7 @@ describe Spree::Shipment do
     end
 
     context "variant was removed" do
-      before { variant.product.destroy }
+      before { variant.destroy }
 
       it "still returns variant expected" do
         expect(shipment.manifest.first.variant).to eq variant
@@ -203,38 +203,6 @@ describe Spree::Shipment do
     end
   end
 
-  context "when track_inventory is false" do
-    before { Spree::Config.set track_inventory_levels: false }
-    after { Spree::Config.set track_inventory_levels: true }
-
-    it "should not use the line items from order when track_inventory_levels is false" do
-      line_items = [mock_model(Spree::LineItem)]
-      order.stub complete?: true
-      order.stub line_items: line_items
-      shipment.line_items.should == line_items
-    end
-  end
-
-  context "when variant inventory tracking is false" do
-    it "should include line items without inventory if variant inventory tracking is off" do
-      line_items = [mock_model(Spree::LineItem)]
-      line_items.each { |li| li.stub should_track_inventory?: false }
-      order.stub complete?: true
-      order.stub line_items: line_items
-      shipment.line_items.should == line_items
-    end
-
-    it "should not include line items without inventory if variant inventory tracking is on" do
-      line_items = [mock_model(Spree::LineItem)]
-      line_items.each { |li| li.stub should_track_inventory?: true }
-      order.stub complete?: true
-      order.stub line_items: line_items
-      shipment.line_items.should == []
-    end
-  end
-
-
-
   context "when order is completed" do
     after { Spree::Config.set track_inventory_levels: true }
 
@@ -272,7 +240,7 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -291,7 +259,7 @@ describe Spree::Shipment do
     end
 
     it 'unstocks them items' do
-      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume

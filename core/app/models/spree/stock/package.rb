@@ -13,8 +13,8 @@ module Spree
         @shipping_rates = Array.new
       end
 
-      def add(line_item, quantity, state=:on_hand)
-        contents << ContentItem.new(line_item, line_item.variant, quantity, state)
+      def add(line_item, quantity, state = :on_hand, variant = nil)
+        contents << ContentItem.new(line_item, variant || line_item.variant, quantity, state)
       end
 
       def weight
@@ -29,10 +29,13 @@ module Spree
         contents.select { |item| item.state == :backordered }
       end
 
-      def find_item(variant, state=:on_hand)
+      # Consider extensions and applications might create a inventory unit
+      # where the variant and the line_item might not refer to the same product
+      def find_item(variant, state = :on_hand, line_item = nil)
         contents.select do |item|
           item.variant == variant &&
-          item.state == state
+          item.state == state &&
+          (line_item.nil? || line_item == item.line_item)
         end.first
       end
 

@@ -154,18 +154,22 @@ module Spree
 
     def manifest
       inventory_units.group_by(&:variant).map do |variant, units|
-        states = {}
-        units.group_by(&:state).each { |state, iu| states[state] = iu.count }
-        OpenStruct.new(variant: variant, quantity: units.length, states: states)
-      end
+        units.group_by(&:line_item).map do |line_item, units|
+
+          states = {}
+          units.group_by(&:state).each { |state, iu| states[state] = iu.count }
+
+          OpenStruct.new(line_item: line_item,
+            variant: variant,
+            quantity: units.length,
+            states: states
+          )
+        end
+      end.flatten
     end
 
     def line_items
-      if order.complete? and Spree::Config.track_inventory_levels
-        order.line_items.select { |li| !li.should_track_inventory? || inventory_units.pluck(:variant_id).include?(li.variant_id) }
-      else
-        order.line_items
-      end
+      inventory_units.includes(:line_item).map(&:line_item).uniq
     end
 
     def finalize!
