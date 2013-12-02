@@ -36,8 +36,8 @@ module CapybaraExt
     label = find_label_by_text(options[:from])
     within label.first(:xpath,".//..") do
       options[:from] = "##{find(".select2-container")["id"]}"
-      targetted_select2_search(value, options)
     end
+    targetted_select2_search(value, options)
   end
 
   def targetted_select2_search(value, options)
@@ -51,8 +51,8 @@ module CapybaraExt
 
     within label.first(:xpath,".//..") do
       options[:from] = "##{find(".select2-container")["id"]}"
-      targetted_select2(value, options)
     end
+    targetted_select2(value, options)
   end
 
   def select2_no_label value, options={}
@@ -73,9 +73,10 @@ module CapybaraExt
   end
 
   def select_select2_result(value)
-    #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
-    sleep(1)
-    page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
+    # results are in a div appended to the end of the document
+    within(:xpath, '//body') do
+      page.find("div.select2-result-label", text: %r{#{Regexp.escape(value)}}i).click
+    end
   end
 
   def find_label_by_text(text)
