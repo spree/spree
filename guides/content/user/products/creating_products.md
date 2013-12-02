@@ -34,8 +34,8 @@ After you click the "Create" button, the Spree application brings you to a more 
 * **Width** - The product's width in inches. May be used to calculate shipping cost.
 * **Depth** - The product's depth or breadth in inches. May be used to calculate shipping cost.
 * **Shipping Categories** - You will learn about setting up Shipping Categories in the [Shipping Categories](shipping_categories).
-* **Tax Category** - You will learn about setting up Tax Categories in the [Taxes Guide](taxes).
-* **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](taxonomies).
+* **Tax Category** - You will learn about setting up Tax Categories in the [Taxes Guide](configuring_taxes).
+* **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](configuring_taxonomies).
 * **Option Types** - You can select any number of Options to associate your new product with. You'll learn more about Options in the [Options Guide](product_options).
 * **Meta Keywords** - These words are appended to the website's keywords you established in the [Site Settings](configuring_general_settings) and can help improve your site's search engine ratings, bringing you more web traffic. They should be words that are key to your new product.
 * **Meta Description** - The summary that someone sees when your product's page is returned in a web search. It should be descriptive but not overly verbose.
@@ -131,4 +131,4 @@ Your Stock Location Info table should now look like the one pictured above.
 "Backorderable" may or may not be checked for your individual Stock Locations, depending on how you configured them. Each Stock Location has defaults for this value, but you can change it on a variant-by-variant basis in this dialog.
 ***
 
-You should be sure to read the [Stock Locations](stock_locations) and [Stock Movements](stock_movements) guides for further information on managing your store's inventory.
+You should be sure to read the [Stock Locations](configuring_inventory.html#stock-locations) and [Stock Movements](configuring_inventory.html#stock-movements) guides for further information on managing your store's inventory.
