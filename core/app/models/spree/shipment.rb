@@ -263,11 +263,7 @@ module Spree
 
       def manifest_restock(item)
         if item.states["on_hand"].to_i > 0
-         stock_location.restock item.variant, item.states["on_hand"], self
-        end
-
-        if item.states["backordered"].to_i > 0
-          stock_location.restock_backordered item.variant, item.states["backordered"]
+          stock_location.restock item.variant, item.states["on_hand"], self
         end
       end
 
