@@ -254,16 +254,23 @@ describe Spree::Shipment do
       before do
         order.contents.add variant
         order.create_proposed_shipments
+
+        other_order.contents.add variant
+        other_order.create_proposed_shipments
       end
 
-      it "doesn't restock inventory units" do
+      it "doesn't fill backorders when restocking inventory units" do
         shipment = order.shipments.first
         expect(shipment.inventory_units.count).to eq 1
         expect(shipment.inventory_units.first).to be_backordered
 
+        other_shipment = other_order.shipments.first
+        expect(other_shipment.inventory_units.count).to eq 1
+        expect(other_shipment.inventory_units.first).to be_backordered
+
         expect {
           shipment.cancel!
-        }.not_to change { variant.stock_items.first.count_on_hand }
+        }.not_to change { other_shipment.inventory_units.first.state }
       end
     end
   end
