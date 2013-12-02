@@ -42,7 +42,7 @@ describe "New Order" do
     click_on "ship"
     wait_for_ajax
 
-    page.should have_content("Shipped")
+    page.should have_content("shipped")
   end
 
   # Regression test for #3336
