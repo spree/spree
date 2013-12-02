@@ -260,7 +260,9 @@ module Spree
       end
 
       def manifest_restock(item)
-        stock_location.restock item.variant, item.quantity, self
+        if item.states["on_hand"].to_i > 0
+          stock_location.restock item.variant, item.states["on_hand"], self
+        end
       end
 
       def generate_shipment_number

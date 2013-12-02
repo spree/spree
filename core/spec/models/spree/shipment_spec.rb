@@ -240,10 +240,30 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
+      shipment.stub_chain(inventory_units: [mock_model(Spree::InventoryUnit, state: "on_hand", line_item: line_item, variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
+    end
+
+    context "with backordered inventory units" do
+      let(:order) { create(:order) }
+      let(:variant) { create(:variant) }
+
+      before do
+        order.contents.add variant
+        order.create_proposed_shipments
+      end
+
+      it "doesn't restock inventory units" do
+        shipment = order.shipments.first
+        expect(shipment.inventory_units.count).to eq 1
+        expect(shipment.inventory_units.first).to be_backordered
+
+        expect {
+          shipment.cancel!
+        }.not_to change { variant.stock_items.first.count_on_hand }
+      end
     end
   end
 
