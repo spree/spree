@@ -18,18 +18,18 @@ module Spree
     def verify(shipment = nil)
       if order.completed? || shipment.present?
 
-        if item_units.size < line_item.quantity
-          quantity = line_item.quantity - item_units.size
+        if inventory_units.size < line_item.quantity
+          quantity = line_item.quantity - inventory_units.size
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif item_units.size > line_item.quantity
-          remove(item_units, shipment)
+        elsif inventory_units.size > line_item.quantity
+          remove(inventory_units, shipment)
         end
       end
     end
 
-    def item_units
+    def inventory_units
       line_item.inventory_units
     end
 

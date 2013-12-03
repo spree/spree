@@ -11,7 +11,7 @@ describe Spree::OrderInventory do
 
     it 'creates the proper number of inventory units' do
       subject.verify
-      expect(subject.item_units.count).to eq 2
+      expect(subject.inventory_units.count).to eq 2
     end
   end
 
@@ -108,7 +108,7 @@ describe Spree::OrderInventory do
     context "when no shipments already contain this varint" do
       before do
         subject.line_item.reload
-        subject.item_units.destroy_all
+        subject.inventory_units.destroy_all
       end
 
       it 'selects first non-shipped shipment that leaves from same stock_location' do
@@ -137,7 +137,7 @@ describe Spree::OrderInventory do
 
     it 'should decrease the number of inventory units' do
       subject.verify
-      expect(subject.item_units.count).to eq 2
+      expect(subject.inventory_units.count).to eq 2
     end
 
     context '#remove_from_shipment' do
