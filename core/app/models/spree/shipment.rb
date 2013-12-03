@@ -220,7 +220,11 @@ module Spree
     end
 
     def inventory_units_for(variant)
-      inventory_units.group_by(&:variant_id)[variant.id] || []
+      inventory_units.where(variant_id: variant.id)
+    end
+
+    def inventory_units_for_item(line_item, variant = nil)
+      inventory_units.where(line_item_id: line_item.id, variant_id: line_item.variant.id || variant.id)
     end
 
     def to_package

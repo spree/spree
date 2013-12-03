@@ -142,7 +142,7 @@ describe Spree::OrderInventory do
 
     context '#remove_from_shipment' do
       let(:shipment) { order.shipments.first }
-      let(:variant) { order.line_items.first.variant }
+      let(:variant) { subject.variant }
 
       context "order is not completed" do
         before { order.stub completed?: false }
@@ -163,33 +163,39 @@ describe Spree::OrderInventory do
       end
 
       it 'should destroy backordered units first' do
-        shipment.stub(:inventory_units_for => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
-                                                mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand'),
-                                                mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered') ])
+        shipment.stub(inventory_units_for_item: [
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered'),
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand'),
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered')
+        ])
 
-        shipment.inventory_units_for[0].should_receive(:destroy)
-        shipment.inventory_units_for[1].should_not_receive(:destroy)
-        shipment.inventory_units_for[2].should_receive(:destroy)
+        shipment.inventory_units_for_item[0].should_receive(:destroy)
+        shipment.inventory_units_for_item[1].should_not_receive(:destroy)
+        shipment.inventory_units_for_item[2].should_receive(:destroy)
 
         subject.send(:remove_from_shipment, shipment, 2).should == 2
       end
 
       it 'should destroy unshipped units first' do
-        shipment.stub(:inventory_units_for => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
-                                                mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand') ] )
+        shipment.stub(inventory_units_for_item: [
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand')
+        ])
 
-        shipment.inventory_units_for[0].should_not_receive(:destroy)
-        shipment.inventory_units_for[1].should_receive(:destroy)
+        shipment.inventory_units_for_item[0].should_not_receive(:destroy)
+        shipment.inventory_units_for_item[1].should_receive(:destroy)
 
         subject.send(:remove_from_shipment, shipment, 1).should == 1
       end
 
       it 'only attempts to destroy as many units as are eligible, and return amount destroyed' do
-        shipment.stub(:inventory_units_for => [ mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
-                                                mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand') ] )
+        shipment.stub(inventory_units_for_item: [
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'shipped'),
+          mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand')
+        ])
 
-        shipment.inventory_units_for[0].should_not_receive(:destroy)
-        shipment.inventory_units_for[1].should_receive(:destroy)
+        shipment.inventory_units_for_item[0].should_not_receive(:destroy)
+        shipment.inventory_units_for_item[1].should_receive(:destroy)
 
         subject.send(:remove_from_shipment, shipment, 1).should == 1
       end
@@ -199,6 +205,23 @@ describe Spree::OrderInventory do
         shipment.should_receive(:destroy)
 
         subject.send(:remove_from_shipment, shipment, 1).should == 1
+      end
+
+      context "inventory unit line item and variant points to different products" do
+        let(:different_line_item) { create(:line_item) }
+
+        let!(:different_inventory) do
+          shipment.set_up_inventory("on_hand", variant, order, different_line_item)
+        end
+
+        context "completed order" do
+          before { order.touch :completed_at }
+
+          it "removes only units that match both line item and variant" do
+            subject.send(:remove_from_shipment, shipment, shipment.inventory_units.count)
+            expect(different_inventory.reload).to be_persisted
+          end
+        end
       end
     end
   end
