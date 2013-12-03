@@ -62,7 +62,7 @@ describe "Order Details", js: true do
       end
 
       # Regression test for #3862
-      it "can remove an item from a shipment" do
+      it "can cancel removing an item from a shipment" do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
