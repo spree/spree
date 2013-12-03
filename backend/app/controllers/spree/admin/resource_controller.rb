@@ -6,20 +6,23 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
 
   respond_to :html
-  respond_to :js, :except => [:show, :index]
 
   def new
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
       format.html { render :layout => !request.xhr? }
-      format.js   { render :layout => false }
+      if request.xhr?
+        format.js   { render :layout => false }
+      end
     end
   end
 
   def edit
     respond_with(@object) do |format|
       format.html { render :layout => !request.xhr? }
-      format.js   { render :layout => false }
+      if request.xhr?
+        format.js   { render :layout => false }
+      end
     end
   end
 
