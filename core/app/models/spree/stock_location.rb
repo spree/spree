@@ -48,6 +48,11 @@ module Spree
       move(variant, quantity, originator)
     end
 
+    def restock_backordered(variant, quantity, originator = nil)
+      item = stock_item_or_create(variant)
+      item.update_column(:count_on_hand, item.count_on_hand + quantity)
+    end
+
     def unstock(variant, quantity, originator = nil)
       move(variant, -quantity, originator)
     end

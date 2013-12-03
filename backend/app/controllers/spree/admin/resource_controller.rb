@@ -6,20 +6,23 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
 
   respond_to :html
-  respond_to :js, :except => [:show, :index]
 
   def new
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
       format.html { render :layout => !request.xhr? }
-      format.js   { render :layout => false }
+      if request.xhr?
+        format.js   { render :layout => false }
+      end
     end
   end
 
   def edit
     respond_with(@object) do |format|
       format.html { render :layout => !request.xhr? }
-      format.js   { render :layout => false }
+      if request.xhr?
+        format.js   { render :layout => false }
+      end
     end
   end
 
@@ -121,7 +124,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def model_class
-      return "Spree::#{self.class.superclass.controller_name.classify}".constantize unless Spree.const_defined?(controller_name.classify)
       "Spree::#{controller_name.classify}".constantize
     end
 
@@ -130,8 +132,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     def object_name
-      return controller_name.singularize if Spree.const_defined?(controller_name.classify)
-      self.class.superclass.controller_name.singularize
+      controller_name.singularize
     end
 
     def load_resource

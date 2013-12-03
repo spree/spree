@@ -5,7 +5,8 @@ describe Spree::Shipment do
   let(:order) { mock_model Spree::Order, backordered?: false,
                                          canceled?: false,
                                          can_ship?: true,
-                                         currency: 'USD' }
+                                         currency: 'USD',
+                                         touch: true }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new order: order
@@ -283,10 +284,38 @@ describe Spree::Shipment do
     end
 
     it 'restocks the items' do
-      shipment.stub_chain(:inventory_units, :joins, includes: [mock_model(Spree::InventoryUnit, variant: variant)])
+      shipment.stub_chain(:inventory_units, :joins, includes: [mock_model(Spree::InventoryUnit, state: "on_hand", variant: variant)])
       shipment.stock_location = mock_model(Spree::StockLocation)
       shipment.stock_location.should_receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
+    end
+
+    context "with backordered inventory units" do
+      let(:order) { create(:order) }
+      let(:variant) { create(:variant) }
+      let(:other_order) { create(:order) }
+
+      before do
+        order.contents.add variant
+        order.create_proposed_shipments
+
+        other_order.contents.add variant
+        other_order.create_proposed_shipments
+      end
+
+      it "doesn't fill backorders when restocking inventory units" do
+        shipment = order.shipments.first
+        expect(shipment.inventory_units.count).to eq 1
+        expect(shipment.inventory_units.first).to be_backordered
+
+        other_shipment = other_order.shipments.first
+        expect(other_shipment.inventory_units.count).to eq 1
+        expect(other_shipment.inventory_units.first).to be_backordered
+
+        expect {
+          shipment.cancel!
+        }.not_to change { other_shipment.inventory_units.first.state }
+      end
     end
   end
 

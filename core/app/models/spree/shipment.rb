@@ -2,7 +2,7 @@ require 'ostruct'
 
 module Spree
   class Shipment < ActiveRecord::Base
-    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :order, class_name: 'Spree::Order', touch: true
     belongs_to :address, class_name: 'Spree::Address'
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
@@ -243,7 +243,13 @@ module Spree
       end
 
       def manifest_restock(item)
-        stock_location.restock item.variant, item.quantity, self
+        if item.states["on_hand"].to_i > 0
+         stock_location.restock item.variant, item.states["on_hand"], self
+        end
+
+        if item.states["backordered"].to_i > 0
+          stock_location.restock_backordered item.variant, item.states["backordered"]
+        end
       end
 
       def generate_shipment_number
