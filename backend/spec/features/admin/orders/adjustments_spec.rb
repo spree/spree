@@ -118,7 +118,7 @@ describe "Adjustments" do
         end
       end
 
-      page.should have_content("TOTAL: $170.00")
+      page.should have_content(/TOTAL: ?\$170\.00/)
     end
   end
 end

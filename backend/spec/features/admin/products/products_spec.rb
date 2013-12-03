@@ -321,7 +321,7 @@ describe "Products" do
 
         page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
-          first('input[type=text]')[:value].should eq('baseball_cap_color')
+          first('input[type=text]').value.should eq('baseball_cap_color')
         end
       end
     end

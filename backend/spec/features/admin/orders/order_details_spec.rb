@@ -151,8 +151,8 @@ describe "Order Details", js: true do
               click_icon :ok
             end
 
-            wait_for_ajax
-            page.should have_content("TOTAL: $100.00")
+            # poltergeist and selenium disagree on the existance of this space
+            page.should have_content(/TOTAL: ?\$100\.00/)
           end
 
           it "can add tracking information for the second shipment" do
