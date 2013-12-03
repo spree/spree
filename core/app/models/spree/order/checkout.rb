@@ -42,8 +42,14 @@ module Spree
               klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
 
               # Persist the state on the order
-              after_transition do |order|
+              after_transition do |order, transition|
                 order.state = order.state
+                order.state_changes.create(
+                  previous_state: transition.from,
+                  next_state:     transition.to,
+                  name:           'order',
+                  user_id:        order.user_id
+                )
                 order.save
               end
 
@@ -145,6 +151,10 @@ module Spree
             @checkout_steps ||= {}
           end
 
+          def self.checkout_step_names
+            self.checkout_steps.keys
+          end
+
           def self.add_transition(options)
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
           end
@@ -160,7 +170,7 @@ module Spree
           end
 
           def has_checkout_step?(step)
-            step.present? ? self.checkout_steps.include?(step) : false
+            step.present? && self.checkout_steps.include?(step)
           end
 
           def checkout_step_index(step)
@@ -172,7 +182,7 @@ module Spree
           end
 
           def can_go_to_state?(state)
-            return false unless self.state.present? && has_checkout_step?(state) && has_checkout_step?(self.state)
+            return false unless has_checkout_step?(self.state) && has_checkout_step?(state)
             checkout_step_index(state) > checkout_step_index(self.state)
           end
         end
