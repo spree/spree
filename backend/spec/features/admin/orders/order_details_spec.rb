@@ -96,6 +96,13 @@ describe "Order Details", js: true do
         page.should have_content("Default")
       end
 
+      it "will show the variant sku" do
+        order = create(:completed_order_with_totals)
+        visit spree.edit_admin_order_path(order)
+        sku = order.line_items.first.variant.sku
+        expect(page).to have_content("SKU: #{sku}")
+      end
+
       context "variant out of stock and not backorderable" do
         before { product.master.stock_items.first.update_column(:backorderable, false) }
 
