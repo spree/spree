@@ -118,9 +118,8 @@ module Spree
       end
 
       private
-
         def load_order
-          @order = Order.find_by_number!(params[:id], :include => :adjustments) if params[:id]
+          @order = Order.includes(:adjustments).find_by_number!(params[:id])
           authorize! action, @order
         end
 
