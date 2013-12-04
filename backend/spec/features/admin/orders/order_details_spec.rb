@@ -172,7 +172,7 @@ describe "Order Details", js: true do
             fill_in "order_bill_address_attributes_zipcode", :with => "20814"
             fill_in "order_bill_address_attributes_phone", :with => "301-444-5002"
             select2 "Alabama", :from => "State"
-            select2 "United States of Foo", :from => "Country"
+            select2 "United States of America", :from => "Country"
             click_icon :refresh
 
             click_link "Order Details"
