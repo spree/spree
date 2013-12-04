@@ -180,4 +180,14 @@ describe Spree::Admin::OrdersController do
       Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number).should eq  [number]
     end
   end
+
+  context "order number not given" do
+    stub_authorization!
+
+    it "raise active record not found" do
+      expect {
+        spree_get :edit, id: nil
+      }.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
 end
