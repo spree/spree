@@ -1,10 +1,14 @@
 <% shipment.manifest.each do |item| %>
   <% line_item = order.find_line_item_by_variant(item.variant) %>
-
   <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
-    <td class="item-image"><%= mini_image(item.variant) %></td>
+    <td class="item-image">
+      <%= mini_image(item.variant) %>
+    </td>
     <td class="item-name">
       <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+      <% if item.variant.sku.present? %>
+        <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
+      <% end %>
     </td>
     <td class="item-price align-center"><%= line_item.single_money.to_html %></td>
     <td class="item-qty-show align-center">
