@@ -27,7 +27,7 @@
       <dt data-hook><%= Spree.t(:total) %>:</dt>
       <dd id='order_total'><%= @order.display_total.to_html %></dd>
 
-    
+
       <% if @order.completed? %>
         <dt><%= Spree.t(:shipment) %>: </dt>
         <dd id='shipment_status'><span class="state <%= @order.shipment_state %>"><%= Spree.t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %></span></dd>

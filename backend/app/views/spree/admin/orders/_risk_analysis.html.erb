@@ -1,0 +1,47 @@
+<fieldset class="no-border-bottom">
+  <legend><%= Spree.t(:risk_analysis) %></legend>
+  <table>
+    <thead>
+      <th><%= Spree.t('risk')%></th>
+      <th><%= Spree.t('status')%></th>
+    </thead>
+    <tbody id="risk-analysis" data-hook="order_details_adjustments"  class="with-border">
+      <tr class="">
+        <td><strong>
+          <%= Spree.t(:failed_payment_attempts) %>:
+        </strong></td>
+          <td class="align-center">
+            <span class="<%= @order.is_risky? ? 'state void' : 'state complete' %>">
+              <%= link_to "#{pluralize(@order.payments.failed.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
+            </span>
+        </td>
+      </tr>
+
+      <tr>
+        <td><strong><%= Spree.t(:avs_response) %>:</strong></td>
+        <td class="align-center">
+          <span class="<%= latest_payment.is_avs_risky? ? 'state void' : 'state complete' %>">
+            <% if latest_payment.is_avs_risky? %>
+              <%= "#{Spree.t(:error)}: #{avs_response_code[latest_payment.avs_response]}" %>
+            <% else %>
+              <%= Spree.t(:success) %>
+            <% end %>
+          </span>
+        </td>
+      </tr>
+
+      <tr>
+        <td><strong><%= Spree.t(:cvv_response) %>:</strong></td>
+        <td class="align-center">
+          <span class="<%= latest_payment.is_cvv_risky? ? 'state void' : 'state complete' %>">
+            <% if latest_payment.is_cvv_risky? %>
+              <%= "#{Spree.t(:error)}: #{cvv_response_code[latest_payment.cvv_response_code]}" %>
+            <% else %>
+              <%= Spree.t(:success) %>
+            <% end %>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</fieldset>
