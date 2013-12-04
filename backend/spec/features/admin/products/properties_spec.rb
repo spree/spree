@@ -73,7 +73,7 @@ describe "Properties" do
       fill_in_property
       # Sometimes the page doesn't load before the all check is done
       # lazily finding the element gives the page 10 seconds
-      page.should have_css("tbody#product_properties")
+      page.should have_css("tbody#product_properties tr:nth-child(2)")
       all("tbody#product_properties tr").count.should == 2
 
       page.evaluate_script('window.confirm = function() { return true; }')
