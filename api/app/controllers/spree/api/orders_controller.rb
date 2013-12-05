@@ -80,10 +80,11 @@ module Spree
 
       private
         def deal_with_line_items
-          line_item_attributes = params[:order][:line_items].map do |id, attributes|
-            [id, attributes.slice(*permitted_line_item_attributes)]
+          line_item_attributes = params[:order][:line_items]
+          line_item_attributes.each_key do |key|
+            # need to call .to_hash to make sure Rails 4's strong parameters don't bite
+            line_item_attributes[key] = line_item_attributes[key].slice(*permitted_line_item_attributes).to_hash
           end
-          line_item_attributes = Hash[line_item_attributes].delete_if { |k,v| v.empty? }
           @order.update_line_items(line_item_attributes)
         end
 

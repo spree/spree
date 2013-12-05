@@ -226,7 +226,7 @@ module Spree
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            line_item.id => { :quantity => 10 }
+            0 => { :id => line_item.id, :quantity => 10 }
           }
         }
 
@@ -238,7 +238,7 @@ module Spree
       it "cannot change the price of an existing line item" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            line_item.id => { :price => 0 }
+            0 => { :id => line_item.id, :price => 0 }
           }
         }
 
@@ -290,7 +290,7 @@ module Spree
           previous_shipments = order.shipments
           api_put :update, :id => order.to_param, :order => {
             :line_items => {
-              line_item.id => { :quantity => 10 }
+              0 => { :id => line_item.id, :quantity => 10 }
             }
           }
           expect(order.reload.shipments).to be_empty
