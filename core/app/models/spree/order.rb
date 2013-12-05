@@ -529,7 +529,7 @@ module Spree
     end
 
     def restart_checkout_flow
-      self.update_column(:state, checkout_steps.first)
+      self.update_column(:state, checkout_steps.first) unless cart?
     end
 
     private
