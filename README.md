@@ -1,6 +1,6 @@
 ### Switches out Spree’s entire frontend for a bootstrap 3 powered frontend.
 
-This attempts to stay as closely to the original markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorator changes have been kept to a bare minimum. It utalises the SCSS port of bootstrap to keep inline with existing spree practices. It also includes support for spree_auth_devise.
+This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorator changes have been kept to a bare minimum. It utalises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for spree_auth_devise.
 
 **Ideally my goal is to for this to be integrated, replacing spree’s increasingly tired current frontend.** Or at least becoming a viable supported alternative. It has several large advantages:
 
@@ -19,11 +19,15 @@ Installation
 
 Add the following to your gemfile
 
-    gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend'
+```ruby
+gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend'
+```
 
 And run
 
-    bundle install
+```bash
+bundle install
+```
 
 Done.
 
@@ -32,7 +36,26 @@ If you are running a different branch of spree check if there is a compatible br
 Compatibility
 -------
 
-This is currently built against edge! I’m targeting switching to a stable branch when 2-2-stable is release, but as of now it's on 2.2.0.beta. Stay tuned.
+**WARNING: This is currently built against edge!**
+I’m targeting switching to a stable branch when 2-2-stable is release, but as of now it's on 2.2.0.beta. Stay tuned.
+
+Customizing
+-------
+
+This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass gem). So follow their readme for full cutomization instructions.
+
+To style your spree store just override the bootstrap 3 variables.
+
+The full list of bootstrap variables can be found [here](http://getbootstrap.com/customize/#less-variables). You can override these by simply redefining the variable before the `@import` directive.
+For example:
+
+```scss
+$navbar-default-bg: #312312;
+$light-orange: #ff8c00;
+$navbar-default-color: $light-orange;
+
+@import "bootstrap";
+```
 
 Contributing
 -------
@@ -42,7 +65,7 @@ Please fork and make a pull request.
 **Tests, tests, tests.** Although I’ve taken care to try and keep html changes to a minimum, this plugin currently breaks tests.
 To get it to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
-**I’m looking for help maintaining this, so anyone who would like to become a core contributor please email me.**
+**I’m looking for help maintaining this, so anyone who would like to become a core contributor please email me.** My email is in the gemspec.
 
 Raise bugs in github’s [issues tracker](https://github.com/200Creative/spree_bootstrap_frontend/issues).
 
@@ -54,14 +77,18 @@ Running tests
 
 Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
 
-    bundle
-    bundle exec rake test_app
-    bundle exec rspec spec
+```bash
+bundle
+bundle exec rake test_app
+bundle exec rspec spec
+```
 
 When testing your applications integration with this extension you may use it's factories.
 Simply add this require statement to your spec_helper:
 
-    require 'spree_bootstrap_frontend/factories'
+```ruby
+require 'spree_bootstrap_frontend/factories'
+```
 
 Licence
 -------
