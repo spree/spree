@@ -69,7 +69,6 @@ describe "Checkout", inaccessible: true do
     context "when Spree::Config[:always_include_confirm_step] is true" do
       before do
         Spree::Config[:always_include_confirm_step] = true
-        # Spree::Order.any_instance.stub :confirmation_required? => true
       end
 
       it "displays confirmation step", :js => true do
@@ -83,7 +82,8 @@ describe "Checkout", inaccessible: true do
         click_button "Save and Continue"
         click_button "Save and Continue"
 
-        page.should have_content("Place Order")
+        continue_button = find(".continue")
+        continue_button.value.should == "Place Order"
       end
     end
   end
