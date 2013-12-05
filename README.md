@@ -12,7 +12,7 @@ This attempts to stay as closely to the original spree frontend markup as possib
 - Lots of [spree community will for bootstrap](https://groups.google.com/forum/#!searchin/spree-user/bootstrap/spree-user/B17492QdnGA/AF9vEzRzf4cJ). 
 - Though this uses ‘full bootstrap’ for simplicity, you can remove the unused SCSS components you don’t require for minimal file sizes. 
 
-[images]
+![spree_bootstrap_frontend preview](http://i.imgur.com/7euvbtB.png)
 
 Installation
 -------
@@ -62,9 +62,9 @@ $navbar-default-color: $light-orange;
 
 This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So follow that README for full cutomization instructions.
 
-It’s quite powerful, here are some examples I created in ~10 minuites:
+It’s quite powerful, here are some examples I created in ~10 minuites with a few extra lines of SCSS:
 
-[images]
+![spree_bootstrap_frontend theme](http://i.imgur.com/zh34YJ5.png)
 
 Contributing
 -------
