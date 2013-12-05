@@ -71,7 +71,7 @@ module Spree
       it "can take line_items_attributes as a parameter" do
         line_item = order.line_items.first
         api_put :update, :id => order.to_param, :order_token => order.token,
-                         :order => { :line_items_attributes => { line_item.id => { :quantity => 1 } } }
+                         :order => { :line_items_attributes => { 0 => { :id => line_item.id, :quantity => 1 } } }
         response.status.should == 200
         order.reload.state.should eq "address"
       end
@@ -79,7 +79,7 @@ module Spree
       it "can take line_items as a parameter" do
         line_item = order.line_items.first
         api_put :update, :id => order.to_param, :order_token => order.token,
-                         :order => { :line_items => { line_item.id => { :quantity => 1 } } }
+                         :order => { :line_items => { 0 => { :id => line_item.id, :quantity => 1 } } }
         response.status.should == 200
         order.reload.state.should eq "address"
       end
