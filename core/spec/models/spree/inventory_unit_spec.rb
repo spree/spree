@@ -5,7 +5,12 @@ describe Spree::InventoryUnit do
   let(:stock_item) { stock_location.stock_items.order(:id).first }
 
   context "#backordered_for_stock_item" do
-    let(:order) { create(:order) }
+    let(:order) do
+      order = create(:order)
+      order.state = 'complete'
+      order.completed_at = Time.now
+      order.tap(&:save!)
+    end
 
     let(:shipment) do
       shipment = Spree::Shipment.new
@@ -21,6 +26,7 @@ describe Spree::InventoryUnit do
       unit = shipment.inventory_units.build
       unit.state = 'backordered'
       unit.variant_id = stock_item.variant.id
+      unit.order_id = order.id
       unit.tap(&:save!)
     end
 
@@ -50,6 +56,39 @@ describe Spree::InventoryUnit do
 
       Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_variant_unit)
     end
+
+    context "other shipments" do
+      let(:other_order) do
+        order = create(:order)
+        order.state = 'payment'
+        order.completed_at = nil
+        order.tap(&:save!)
+      end
+
+      let(:other_shipment) do
+        shipment = Spree::Shipment.new
+        shipment.stock_location = stock_location
+        shipment.shipping_methods << create(:shipping_method)
+        shipment.order = other_order
+        # We don't care about this in this test
+        shipment.stub(:ensure_correct_adjustment)
+        shipment.tap(&:save!)
+      end
+
+      let!(:other_unit) do
+        unit = other_shipment.inventory_units.build
+        unit.state = 'backordered'
+        unit.variant_id = stock_item.variant.id
+        unit.order_id = other_order.id
+        unit.tap(&:save!)
+      end
+
+      it "does not find inventory units belonging to incomplete orders" do
+        Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_unit)
+      end
+
+    end
+
   end
 
   context "variants deleted" do
