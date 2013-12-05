@@ -79,14 +79,15 @@ jQuery(function($) {
 
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
-show_flash_error = function(message) {
-  var error_div = $('.flash.error');
-  if (error_div.length == 0) {
-    error_div = $('<div class="flash error" />');
-    $('#wrapper').prepend(error_div);
+show_flash = function(type, message) {
+  var flash_div = $('.flash.' + type);
+  if (flash_div.length == 0) {
+    flash_div = $('<div class="flash ' + type + '" />');
+    $('#wrapper').prepend(flash_div);
   }
-  error_div.html(message).show().fadeOut(5000);
+  flash_div.html(message).show().delay(5000).fadeOut(500);
 }
+
 
 // Apply to individual radio button that makes another element visible when checked
 $.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
@@ -170,12 +171,12 @@ $(document).ready(function(){
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'html',
+        dataType: 'script',
         success: function(response) {
           el.parents("tr").fadeOut('hide');
         },
         error: function(response, textStatus, errorThrown) {
-          show_flash_error(response.responseText);
+          show_flash('error', response.responseText);
         }
       });
     }
@@ -200,7 +201,7 @@ $(document).ready(function(){
           el.parents("tr").fadeOut('hide');
         },
         error: function(response, textStatus, errorThrown) {
-          show_flash_error(response.responseText);
+          show_flash('error', response.responseText);
         }
 
       })
