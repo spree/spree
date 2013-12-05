@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrderPopulator do
-  let(:order) { double('Order') }
+  let(:order) { double('Order', :restart_checkout_flow => nil) }
   subject { Spree::OrderPopulator.new(order, "USD") }
 
   context "with stubbed out find_variant" do
