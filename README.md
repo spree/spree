@@ -1,8 +1,8 @@
 ### Switches out Spree’s entire frontend for a bootstrap 3 powered frontend.
 
-This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorator changes have been kept to a bare minimum. It utalises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for spree_auth_devise.
+This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorator changes have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for spree_auth_devise.
 
-**Ideally my goal is to for this to be integrated, replacing spree’s increasingly tired current frontend.** Or at least becoming a viable supported alternative. It has several large advantages:
+**Ideally my goal is for this to be integrated, replacing spree’s increasingly tired current frontend.** Or at least becoming a viable supported alternative. It has several large advantages:
 
 - Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full retina display support. Current spree only goes half way. 
 - Just 36 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
@@ -12,7 +12,7 @@ This attempts to stay as closely to the original spree frontend markup as possib
 - Lots of [spree community will for bootstrap](https://groups.google.com/forum/#!searchin/spree-user/bootstrap/spree-user/B17492QdnGA/AF9vEzRzf4cJ). 
 - Though this uses ‘full bootstrap’ for simplicity, you can remove the unused SCSS components you don’t require for minimal file sizes. 
 
-![spree_bootstrap_frontend preview](http://i.imgur.com/7euvbtB.png)
+![spree_bootstrap_frontend preview](http://i.imgur.com/S50Gn7V.png)
 
 Installation
 -------
@@ -62,7 +62,7 @@ $navbar-default-color: $light-orange;
 
 This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So follow that README for full cutomization instructions.
 
-It’s quite powerful, here are some examples I created in ~10 minuites with a few extra lines of SCSS:
+It’s quite powerful, here are some examples I created in ~10 minutes with a few extra lines of SCSS:
 
 ![spree_bootstrap_frontend theme](http://i.imgur.com/zh34YJ5.png)
 
@@ -71,7 +71,7 @@ Contributing
 
 Please fork and make a pull request.
 
-**Tests, tests, tests.** Although I’ve taken care to try and keep html changes to a minimum, this plugin currently breaks tests.
+**Tests, tests, tests.** Although I’ve taken care to try and keep HTML changes to a minimum, this plugin currently breaks tests.
 To get it to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
 **I’m looking for help maintaining this, so anyone who would like to become a core contributor please email me.** My email is in the gemspec.
