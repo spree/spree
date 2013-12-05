@@ -1,9 +1,0 @@
-<% shipments = order.shipments.trackable %>
-<% if shipments.any? %>
-  <h6><%= Spree.t(:tracking) %></h6>
-  <div class="tracking">
-    <% shipments.each do |shipment| %>
-      <%= link_to_tracking(shipment) %>
-    <% end %>
-  </div>
-<% end %>
