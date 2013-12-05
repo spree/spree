@@ -1,0 +1,20 @@
+<% @body_id = 'login' %>
+<div class="col-md-6 "> <!--TODO add col-md-offset-3 when on own -->
+  <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= Spree.t(:login_as_existing) %></h3>
+    </div>
+      <div id="existing-customer" class="panel-body" data-hook="login">
+          <% if flash[:alert] %>
+            <div class="alert alert-danger"><%= flash[:alert] %></div>
+          <% end %>
+          <%= render :partial => 'spree/shared/login' %>
+          <div class="text-center">
+            <%= Spree.t(:or) %> 
+                <%= link_to Spree.t(:create_a_new_account), spree.signup_path %> |
+                <%= link_to Spree.t(:forgot_password), spree.recover_password_path %>
+          </div>
+          <div data-hook="login_extras"></div>
+      </div>
+  </div>
+</div>

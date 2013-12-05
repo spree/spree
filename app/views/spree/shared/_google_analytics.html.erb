@@ -1,0 +1,35 @@
+<% if tracker = Spree::Tracker.current %>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', '<%= tracker.analytics_id %>');
+    ga('send', 'pageview');
+
+    <% if flash[:commerce_tracking] && @order.present? %>
+      <%# more info: https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce %>
+      ga('require', 'ecommerce', 'ecommerce.js');
+      ga('ecommerce:addTransaction', {
+        'id': '<%= j @order.number %>',                                     // Transaction ID. Required.
+        'affiliation': '<%= Spree::Config[:site_name] %>',                 // Affiliation or store name.
+        'revenue': '<%= @order.total %>',                                 // Grand Total.
+        'shipping': '<%= @order.shipments.sum("cost + promo_total") %>', // Shipping.
+        'tax': '<%= @order.all_adjustments.tax.sum(:amount) %>',        // Tax.
+        'currencyCode': '<%= current_currency %>'                      // local currency code.
+      });
+      <% @order.line_items.each do |line_item| %>
+        ga('ecommerce:addItem', {
+          'id': '<%= j @order.number %>',                        // Transaction ID. Required.
+          'name': '<%= j line_item.variant.product.name %>',    // Product name. Required.
+          'sku': '<%= j line_item.variant.sku %>',             // SKU/code.
+          'category': '',                                     // Category or variation.
+          'price': '<%= line_item.price %>',                 // Unit price.
+          'quantity': '<%= line_item.quantity %>'           // Quantity.
+        });
+      <% end %>
+      ga('ecommerce:send');
+    <% end %>
+  </script>
+<% end %>

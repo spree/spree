@@ -1,0 +1,38 @@
+<div id="checkout" data-hook>  
+  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+  
+  <div class="row" data-hook="checkout_header">
+    <div class="col-md-3">
+      <h1 data-hook="checkout_title"><%= Spree.t(:checkout) %></h1>
+    </div>
+    <div class="col-md-9" data-hook="checkout_progress"><%= checkout_progress %></div>
+  </div>
+  
+  <div class="row" data-hook="checkout_content">
+    <div class="<%= if @order.state != 'confirm' then 'col-md-9' else 'col-md-12' end %>" data-hook="checkout_form_wrapper">
+      <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
+        <% unless @order.email? %>
+          <p class="field" style='clear: both'>
+            <%= form.label :email %><br />
+            <%= form.text_field :email %>
+          </p>
+        <% end %>
+        <%= render @order.state, :form => form %>
+      <% end %>
+    </div>    
+    <% if @order.state != 'confirm' %>
+      <div id="checkout-summary" data-hook="checkout_summary_box" class="col-md-3">
+        <%= render :partial => 'summary', :locals => { :order => @order } %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+Spree.current_order_id = "<%= @order.number %>"
+Spree.current_order_token = "<%= @order.token %>"
+</script>
+
+<% if I18n.locale != :en %>
+  <script src='/assets/jquery.validate/localization/messages_<%= I18n.locale %>.js'></script>
+<% end %>

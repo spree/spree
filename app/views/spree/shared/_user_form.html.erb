@@ -1,0 +1,12 @@
+<fieldset id="password-credentials">
+  <div class="form-group">
+    <%= f.email_field :email, :class => 'form-control', :placeholder => Spree.t(:email) %>
+  </div>
+  <div class="form-group">
+    <%= f.password_field :password, :class => 'form-control', :placeholder => Spree.t(:password) %>
+  </div> 
+  <div class="form-group">
+    <%= f.password_field :password_confirmation, :class => 'form-control', :placeholder => Spree.t(:confirm_password) %>
+  </div> 
+</fieldset>
+<div data-hook="signup_below_password_fields"></div>

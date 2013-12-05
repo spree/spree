@@ -1,0 +1,32 @@
+<div class="well clearfix">
+  <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image', :class => 'pull-right' %>
+  <% param_prefix = "payment_source[#{payment_method.id}]" %>
+
+  <p class="field" data-hook="card_number">
+    <%= label_tag "card_number", Spree.t(:card_number) %><span class="required">*</span><br />
+    <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
+    <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:id => 'card_number', :class => 'form-control required cardNumber', :size => 19, :maxlength => 19, :autocomplete => "off") %>
+    &nbsp;
+    <span id="card_type" style="display:none;">
+      ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
+        <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
+      )
+    </span>
+  </p>
+  <div class="row">
+    <div class="col-md-8 field" data-hook="card_expiration">
+      <%= label_tag "card_expiry", Spree.t(:expiration) %><span class="required">*</span><br />
+      <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "form-control required cardExpiry", :placeholder => "MM / YY" %>
+    </div>
+    <div class="col-md-4 field" data-hook="card_code">
+      <%= label_tag "card_code", Spree.t(:card_code) %><span class="required">*</span><br />
+      <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'form-control required cardCode', :size => 5) %>
+      <%= link_to "(#{Spree.t(:what_is_this)})", spree.content_path('cvv'), :target => '_blank', "data-hook" => "cvv_link", :id => "cvv_link" %>
+    </div>
+  </div>
+
+  <%= hidden_field_tag "#{param_prefix}[cc_type]", '', :id => "cc_type", :class => 'ccType' %>
+
+  <%= hidden_field param_prefix, 'first_name', :value => @order.billing_firstname %>
+  <%= hidden_field param_prefix, 'last_name', :value => @order.billing_lastname %>
+</div>

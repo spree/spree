@@ -1,0 +1,22 @@
+<tbody id="cart_adjustments" data-hook>
+  <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments, :type => Spree.t(:promotion) %>
+  <% end %>
+
+  <% @order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments, :type => Spree.t(:tax) %>
+  <% end %>
+
+  <% @order.shipments.each do |shipment| %>
+    <tr>
+      <td colspan="4" align='right'><h5><%= Spree.t(:shipping) %>: <%= shipment.shipping_method.name %></h5></td>
+      <td colspan='2'>
+        <h5><%= shipment.display_discounted_cost %></h5>
+      </td>
+    </tr>
+  <% end %>
+
+  <% @order.adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+    <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments, :type => Spree.t(:adjustment) %>
+  <% end %>
+</tbody>

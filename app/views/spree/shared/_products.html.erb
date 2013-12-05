@@ -1,0 +1,39 @@
+<%
+  paginated_products = @searcher.retrieve_products if params.key?(:keywords)
+  paginated_products ||= products
+%>
+
+<% content_for :head do %>
+  <% if paginated_products.respond_to?(:num_pages) %>
+    <%= rel_next_prev_link_tags paginated_products %>
+  <% end %>
+<% end %>
+
+<% if products.empty? %>
+  <%= Spree.t(:no_products_found) %>
+<% elsif params.key?(:keywords) %>
+  <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
+<% end %>
+
+<% if products.any? %>
+<div id="products" class="row" data-hook>
+  <% products.each do |product| %>
+    <div id="product_<%= product.id %>" class="col-md-3 col-sm-6" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+      <div class="panel panel-default">
+        <div class="panel-body text-center product-body">
+          <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %><br/>
+          <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>
+        </div>
+        <div class="panel-footer text-center">
+          <span class="price selling lead" itemprop="price"><%= display_price(product) %></span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% reset_cycle("classes") %>
+</div>
+<% end %>
+
+<% if paginated_products.respond_to?(:num_pages) %>
+  <%= paginate paginated_products %>
+<% end %>

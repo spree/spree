@@ -1,0 +1,42 @@
+// -- Import bootstrap 3 framework -----------------------
+@import "bootstrap";
+
+// -- Spree Custom Header and Footer ---------------------
+#spree-header {
+  background: #1c5c92 asset-url('store/spree-header.jpg') center center;
+  background-size: cover;
+  margin-bottom: $line-height-computed;
+  #header {
+    background: rgba(9, 22, 33, 0.4);
+    padding: $line-height-computed 0;
+  }
+  .nav a {
+    color: #fff;
+    &:hover {
+      background:rgba(9, 22, 33, 0.4);  
+    }
+  }
+  .navbar {
+    border: 0;
+    margin-bottom: 0;
+  }
+}
+#spree-footer {
+  background: $gray-dark;
+  padding-top: $padding-base-horizontal;
+  margin-top: $line-height-computed;
+  color: #fff;
+}
+
+// -- Spree Bootstrap Custom Helpers ----------------------
+.form-control-inline {
+  display: inline;
+  width: auto !important;
+  margin: 0 1px;
+  }
+.alert-error { //This is a hack, TODO FIXME
+  .alert-danger{};
+}
+.product-body {
+  height: 170px;
+}

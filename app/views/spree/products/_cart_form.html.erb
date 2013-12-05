@@ -1,0 +1,62 @@
+<%= form_for :order, :url => populate_orders_path do |f| %>
+  <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+
+    <% if @product.variants_and_option_values(current_currency).any? %>
+      <div id="product-variants" class="col-md-6">
+        <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
+        <ul class="list-group">
+          <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
+            <li class="list-group-item">
+              <%= radio_button_tag "products[#{@product.id}]", variant.id, index == 0, 'data-price' => display_price(variant) %>
+              <label for="<%= ['products', @product.id, variant.id].join('_') %>">
+                <span class="variant-description">
+                  <%= variant_options variant %>
+                </span>
+                <% if variant_price variant %>
+                  <span class="price diff"><%= variant_price variant %></span>
+                <% end %>
+              </label>
+            </li>
+          <% end%>
+        </ul>
+      </div>
+    <% end%>
+
+    <% if @product.price_in(current_currency) and !@product.price.nil? %>
+      <div data-hook="product_price" class="col-md-5">
+        
+        <div id="product-price">
+          <h3 class="product-section-title"><%= Spree.t(:price) %></h3>
+          <div>
+            <span class="lead" itemprop="price">
+              <%= display_price(@product) %>
+            </span>
+            <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
+          </div>
+
+          <% if @product.master.in_stock? %>
+            <link itemprop="availability" href="http://schema.org/InStock" />
+          <% end %> 
+        </div>
+
+        <div class="add-to-cart">
+          <br/>
+          <div class="input-group">
+            <%= number_field_tag (@product.variants_and_option_values.any? ? :quantity : "variants[#{@product.master.id}]"),
+                  1, :class => 'title form-control', :min => 1 %>
+            <span class="input-group-btn">
+              <%= button_tag :class => 'btn btn-success', :id => 'add-to-cart-button', :type => :submit do %>
+                  <%= Spree.t(:add_to_cart) %>
+            </span>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+        <div id="product-price">
+          <br>
+          <div><span class="price selling" itemprop="price"><%= Spree.t('product_not_available_in_this_currency') %></span></div>
+        </div>
+    <% end %>    
+  </div>
+<% end %>

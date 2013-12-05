@@ -1,0 +1,27 @@
+<% content_for :sidebar do %>
+  <div data-hook="homepage_sidebar_navigation">
+    <% if "spree/products" == params[:controller] && @taxon %>
+      <%= render :partial => 'spree/shared/filters' %>
+    <% else %>
+      <%= render :partial => 'spree/shared/taxonomies' %>
+    <% end %>
+  </div>
+<% end %>
+
+
+<% if params[:keywords] %>
+
+  <div data-hook="search_results">
+    <% if @products.empty? %>
+      <h6 class="search-results-title"><%= Spree.t(:no_products_found) %></h6>
+    <% else %>
+      <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
+    <% end %>
+  </div>
+
+<% else %>
+
+  <div data-hook="homepage_products">
+    <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
+  </div>
+<% end %>

@@ -1,0 +1,41 @@
+<div class="row">
+  <div class="col-md-6" data-hook="billing_fieldset_wrapper">
+    <div class="panel panel-default" id="billing" data-hook>
+      <%= form.fields_for :bill_address do |bill_form| %>
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
+        </div>
+        <div class="panel-body">
+          <%= render :partial => 'spree/address/form', :locals => { :form => bill_form, :address_type => 'billing', :address => @order.bill_address } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-md-6" data-hook="shipping_fieldset_wrapper">
+    <div class="panel panel-default" id="shipping" data-hook>
+      <%= form.fields_for :ship_address do |ship_form| %>
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
+        </div>
+        <div class="panel-body">
+          <p class="field checkbox" data-hook="use_billing">
+            <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address? %>
+            <%= label_tag :order_use_billing, Spree.t(:use_billing_address), :id => 'use_billing' %>
+          </p>
+          <%= render :partial => 'spree/address/form', :locals => { :form => ship_form, :address_type => 'shipping', :address => @order.ship_address } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="well text-right form-buttons" data-hook="buttons">
+  <%= submit_tag Spree.t(:save_and_continue), :class => 'btn btn-lg btn-success' %>
+
+  <span data-hook="save_user_address">
+    &nbsp; &nbsp;
+    <%= check_box_tag 'save_user_address', '1', try_spree_current_user.respond_to?(:persist_order_address) %>
+    <%= label_tag :save_user_address, Spree.t(:save_my_address) %>
+  </span>
+</div>
