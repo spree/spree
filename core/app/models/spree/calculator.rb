@@ -9,11 +9,11 @@ module Spree
       # Spree::LineItem -> :compute_line_item
       computable_name = computable.class.name.demodulize.underscore
       method = "compute_#{computable_name}".to_sym
-      the_caller = caller[0].split(':')[0]
+      calculator_class = self.class
       begin
         self.send(method, computable)
       rescue NoMethodError
-        raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{the_caller}"
+        raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{calculator_class.name}"
       end
     end
 
