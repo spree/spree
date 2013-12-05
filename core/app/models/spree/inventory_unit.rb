@@ -9,10 +9,11 @@ module Spree
     scope :backordered, -> { where state: 'backordered' }
     scope :shipped, -> { where state: 'shipped' }
     scope :backordered_per_variant, ->(stock_item) do
-      includes(:shipment)
+      includes(:shipment, :order)
         .where("spree_shipments.state != 'canceled'").references(:shipment)
         .where(variant_id: stock_item.variant_id)
-        .backordered.order("#{self.table_name}.created_at ASC")
+        .where('spree_orders.completed_at is not null')
+        .backordered.order("spree_orders.completed_at ASC")
     end
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
