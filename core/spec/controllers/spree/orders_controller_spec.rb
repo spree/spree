@@ -50,6 +50,7 @@ describe Spree::OrdersController do
       order.stub(:line_items).and_return([])
       order.stub(:line_items=).with([])
       order.stub(:last_ip_address=)
+      order.stub(:restart_checkout_flow)
       Spree::Order.stub(:find_by_id_and_currency).and_return(order)
     end
 
