@@ -18,8 +18,9 @@
           <%= render :partial => 'form', :locals => { :order_form => order_form } %>
         </div>
 
-        <div class="links col-md-6 pull-right text-right" data-hook="cart_buttons">
-          <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %>
+        <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
+          <div class="form-group">
+          <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %></div>
           <%= button_tag :class => 'btn btn-primary', :id => 'update-button' do %>
             <%= Spree.t(:update) %>
           <% end %>
