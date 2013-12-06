@@ -152,6 +152,8 @@ module Spree
       !shipped?
     end
 
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+
     def manifest
       inventory_units.group_by(&:variant).map do |variant, units|
         units.group_by(&:line_item).map do |line_item, units|
@@ -159,11 +161,7 @@ module Spree
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.count }
 
-          OpenStruct.new(line_item: line_item,
-            variant: variant,
-            quantity: units.length,
-            states: states
-          )
+          ManifestItem.new(line_item, variant, units.length, states)
         end
       end.flatten
     end
@@ -220,7 +218,11 @@ module Spree
     end
 
     def inventory_units_for(variant)
-      inventory_units.group_by(&:variant_id)[variant.id] || []
+      inventory_units.where(variant_id: variant.id)
+    end
+
+    def inventory_units_for_item(line_item, variant = nil)
+      inventory_units.where(line_item_id: line_item.id, variant_id: line_item.variant.id || variant.id)
     end
 
     def to_package
@@ -260,7 +262,13 @@ module Spree
       end
 
       def manifest_restock(item)
-        stock_location.restock item.variant, item.quantity, self
+        if item.states["on_hand"].to_i > 0
+         stock_location.restock item.variant, item.states["on_hand"], self
+        end
+
+        if item.states["backordered"].to_i > 0
+          stock_location.restock_backordered item.variant, item.states["backordered"]
+        end
       end
 
       def generate_shipment_number

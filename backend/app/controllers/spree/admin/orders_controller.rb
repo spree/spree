@@ -35,7 +35,11 @@ module Spree
         end
 
         @search = Order.accessible_by(current_ability, :index).ransack(params[:q])
-        @orders = @search.result.includes([:user, :shipments, :payments]).
+
+        # lazyoading other models here (via includes) may result in an invalid query
+        # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
+        # see https://github.com/spree/spree/pull/3919
+        @orders = @search.result(distinct: true).
           page(params[:page]).
           per(params[:per_page] || Spree::Config[:orders_per_page])
 
@@ -110,9 +114,8 @@ module Spree
       end
 
       private
-
         def load_order
-          @order = Order.includes(:adjustments).find_by_number!(params[:id]) if params[:id]
+          @order = Order.includes(:adjustments).find_by_number!(params[:id])
           authorize! action, @order
         end
 
