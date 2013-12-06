@@ -18,7 +18,12 @@ Spree::CheckoutHelper.module_eval do
         css_classes << 'first' if state_index == 0
         css_classes << 'last' if state_index == states.length - 1
         # No more joined classes. IE6 is not a target browser.
-        content_tag('li', content_tag('a', text), class: css_classes.join(' '))
+        # Hack: Stops <a> being wrapped round previous items twice.
+        if state_index < current_index
+          content_tag('li', text, class: css_classes.join(' '))
+        else
+          content_tag('li', content_tag('a', text), class: css_classes.join(' '))
+        end
       end
       content_tag('ul', raw(items.join("\n")), class: 'progress-steps nav nav-pills nav-justified', id: "checkout-step-#{@order.state}")
     end
