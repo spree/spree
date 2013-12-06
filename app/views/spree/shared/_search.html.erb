@@ -1,5 +1,5 @@
 <% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots %>
-<%= form_tag spree.products_path, :method => :get, class: "navbar-form pull-right" do %>
+<%= form_tag spree.products_path, :method => :get, class: "navbar-form" do %>
 <div class="form-group">
   <%= select_tag :taxon,
         options_for_select([[Spree.t(:all_departments), '']] +
