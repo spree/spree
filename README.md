@@ -5,10 +5,10 @@ This attempts to stay as closely to the original spree frontend markup as possib
 **Ideally my goal is for this to be integrated, replacing spree’s increasingly tired current frontend.** Or at least becoming a viable drop-in alternative. It has several large advantages:
 
 - Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full retina display support. Current spree only goes half way. 
-- Just 36 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
-- As it’s SCSS powered the entire frontend can be easily customized: colours, grid, spacing, etc, by just overriding [variables from bootstrap]() - giving a custom store design in minutes. 
+- Just 39 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
+- The entire frontend can be easily customized: colours, grid, spacing, etc, by just overriding [variables from bootstrap]() - giving a custom store design in minutes. 
 - Bootstrap has some of the most [robust documentation](http://getbootstrap.com/css) of any framework, and a hugely active community. As this port uses only default bootstrap it means that entire spree frontend layout is documented by default. 
-- Sites like [bootswatch](http://bootswatch.com) allow for one-file bootstrap drop-in spree themes, which is currently totally impractical. 
+- Sites like [bootswatch](http://bootswatch.com) allow for one-file bootstrap drop-in spree themes.
 - Lots of [spree community will for bootstrap](https://groups.google.com/forum/#!searchin/spree-user/bootstrap/spree-user/B17492QdnGA/AF9vEzRzf4cJ). 
 - Though this uses ‘full bootstrap’ for simplicity, you can remove the unused SCSS components you don’t require for minimal file sizes. 
 
@@ -16,6 +16,8 @@ This attempts to stay as closely to the original spree frontend markup as possib
 
 Installation
 -------
+
+**WARNING: The master branch is currently built against spree edge!**
 
 Add the following to your gemfile
 
@@ -31,7 +33,7 @@ bundle install
 
 Done.
 
-If you are running a different branch of spree check if there is a compatible branch of spree_bootstrap_frontend. For example:
+If you are running a stable branch of spree check if there is a compatible branch of spree_bootstrap_frontend and use that. For example:
 
 ```ruby
 gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend', branch: '2-2-stable'
@@ -40,7 +42,7 @@ gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend', 
 Compatibility
 -------
 
-**WARNING: This is currently built against edge!**
+**WARNING: The master branch is currently built against spree edge!**
 
 I’m targeting switching to a stable branch when `2-2-stable` is released, but as of now it's on `2.2.0.beta`. Stay tuned.
 
@@ -60,7 +62,7 @@ $navbar-default-color: $light-orange;
 @import "bootstrap";
 ```
 
-This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So follow that README for full cutomization instructions.
+This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So check there for full cutomization instructions.
 
 It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables:
 
