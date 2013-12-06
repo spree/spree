@@ -46,10 +46,19 @@ module Spree
       end
 
       def spree_xhr_get(action, parameters = nil, session = nil, flash = nil)
-        parameters ||= {}
-        parameters.reverse_merge!(:format => :json)
-        parameters.merge!(:use_route => :spree)
-        xml_http_request(:get, action, parameters, session, flash)
+        process_spree_xhr_action(action, parameters, session, flash, :get)
+      end
+
+      def spree_xhr_post(action, parameters = nil, session = nil, flash = nil)
+        process_spree_xhr_action(action, parameters, session, flash, :post)
+      end
+
+      def spree_xhr_put(action, parameters = nil, session = nil, flash = nil)
+        process_spree_xhr_action(action, parameters, session, flash, :put)
+      end
+
+      def spree_xhr_delete(action, parameters = nil, session = nil, flash = nil)
+        process_spree_xhr_action(action, parameters, session, flash, :delete)
       end
 
       private
@@ -57,6 +66,13 @@ module Spree
       def process_spree_action(action, parameters = nil, session = nil, flash = nil, method = "GET")
         parameters ||= {}
         process(action, method, parameters.merge!(:use_route => :spree), session, flash)
+      end
+
+      def process_spree_xhr_action(action, parameters = nil, session = nil, flash = nil, method = :get)
+        parameters ||= {}
+        parameters.reverse_merge!(:format => :json)
+        parameters.merge!(:use_route => :spree)
+        xml_http_request(method, action, parameters, session, flash)
       end
     end
   end
