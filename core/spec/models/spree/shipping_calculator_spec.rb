@@ -25,7 +25,7 @@ module Spree
       shipment = mock_model(Spree::Shipment)
       shipment.should_receive(:to_package).and_return(package)
       subject.should_receive(:compute_package).with(package)
-      subject.compute(shipment)
+      subject.compute(shipment.to_package)
     end
 
     it 'computes with a package' do
