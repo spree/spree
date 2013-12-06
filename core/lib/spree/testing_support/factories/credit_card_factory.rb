@@ -9,5 +9,6 @@ FactoryGirl.define do
     month 12
     year { Time.now.year }
     number '4111111111111111'
+    name 'Spree Commerce'
   end
 end

@@ -1,7 +1,12 @@
 require 'spec_helper'
 
 describe Spree::CreditCard do
-  let(:valid_credit_card_attributes) { {:number => '4111111111111111', :verification_value => '123', :expiry => "12 / 14"} }
+  let(:valid_credit_card_attributes) do
+    { :number => '4111111111111111',
+      :verification_value => '123',
+      :expiry => "12 / 14",
+      :name => "Spree Commerce" }
+  end
 
   def self.payment_states
     Spree::Payment.state_machine.states.keys
@@ -81,6 +86,11 @@ describe Spree::CreditCard do
       credit_card.attributes = valid_credit_card_attributes.except(:verification_value)
       credit_card.should_not be_valid
       credit_card.errors[:verification_value].should == ["can't be blank"]
+    end
+
+    it "validates name presence" do
+      credit_card.valid?
+      expect(credit_card).to have(1).error_on(:name)
     end
 
     it "should validate expiration is not in the past" do

@@ -555,7 +555,8 @@ describe Spree::Payment do
         :source_attributes => {
           :expiry =>"1 / 99",
           :number => '1234567890123',
-          :verification_value => '123'
+          :verification_value => '123',
+          :name => 'Spree Commerce'
         }
       }
 

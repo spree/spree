@@ -2,7 +2,7 @@
 <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
 <p class="field">
-  <%= label_tag "name_on_card", t(:name_on_card) %><span class="required">*</span><br />
+  <%= label_tag "name_on_card", Spree.t(:name_on_card) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}" %>
 </p>
 

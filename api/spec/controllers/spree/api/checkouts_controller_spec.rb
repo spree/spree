@@ -149,7 +149,8 @@ module Spree
           "number" => "4111111111111111",
           "month" => 1.month.from_now.month,
           "year" => 1.month.from_now.year,
-          "verification_value" => "123"
+          "verification_value" => "123",
+          "name" => "Spree Commerce"
         }
 
         api_put :update, :id => order.to_param, :order_token => order.token,
