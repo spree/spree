@@ -2,7 +2,7 @@
 
 This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorators have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
 
-Ideally my goal is for this to replace spree’s increasingly tired current frontend. Or at least becoming a viable drop-in alternative. It has several large advantages:
+Ideally my goal is for this to replace spree’s current frontend. Or at least becoming a viable drop-in alternative. It has several large advantages:
 
 - Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full retina display support. Current spree only goes half way. 
 - Just 40 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
