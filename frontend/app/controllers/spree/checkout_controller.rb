@@ -149,7 +149,7 @@ module Spree
       end
 
       def rescue_from_spree_gateway_error(exception)
-        flash[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
+        flash.now[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
         @order.errors.add(:base, exception.message)
         render :edit
       end
