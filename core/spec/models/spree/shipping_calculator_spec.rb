@@ -23,9 +23,8 @@ module Spree
 
     it 'computes with a shipment' do
       shipment = mock_model(Spree::Shipment)
-      shipment.should_receive(:to_package).and_return(package)
-      subject.should_receive(:compute_package).with(package)
-      subject.compute(shipment.to_package)
+      subject.should_receive(:compute_shipment).with(shipment)
+      subject.compute(shipment)
     end
 
     it 'computes with a package' do
@@ -33,7 +32,13 @@ module Spree
       subject.compute(package)
     end
 
-    it 'compute must be overridden' do
+    it 'compute_shipment must be overridden' do
+      expect {
+        subject.compute_shipment(shipment)
+      }.to raise_error
+    end
+
+    it 'compute_package must be overridden' do
       expect {
         subject.compute_package(package)
       }.to raise_error
