@@ -96,8 +96,7 @@ module Spree
         end
 
         def permitted_params
-          [:name, :parent_id, :position, :icon, :description, :permalink,
-           :taxonomy_id, :meta_description, :meta_keywords, :meta_title]
+          Spree::PermittedAttributes.taxon_attributes
         end
     end
   end
