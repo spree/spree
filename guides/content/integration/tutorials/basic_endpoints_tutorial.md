@@ -92,12 +92,12 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Content-Length: 35
 X-Content-Type-Options: nosniff
-Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Tue, 02 Jul 2013 20:12:23 GMT
 Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}
 ```
+
+### Moving on
 
 So, great - we have success! But surely, there must be an easier way, right? Let's simplify our example by using the [Endpoint Base](https://github.com/spree/endpoint_base) library. We just need to change our endpoint's relevant files, as follows:
 
@@ -105,19 +105,28 @@ So, great - we have success! But surely, there must be an easier way, right? Let
 ```ruby
 source 'https://rubygems.org'
 
+gem 'sinatra'
+gem 'tilt-jbuilder', require: 'sinatra/jbuilder'
 gem 'endpoint_base', github: 'spree/endpoint_base'
 ```
 
 ---hello_endpoint.rb---
 ```ruby
+require 'sinatra'
 require 'endpoint_base'
 
-class HelloEndpoint < EndpointBase
+class HelloEndpoint < EndpointBase::Sinatra::Base
   post '/' do
-    process_result 200, { 'message_id' => @message[:message_id] }
+    process_result 200
   end
 end
 ```
+
+Notice in the `hello_endpoint.rb` file above we're no longer explicity returning a hash for our response, we're just calling the `process_result` method and giving it the HTTP response code we want to set.
+
+The `process_result` method is provided by endpoint_base library, and is automatically including the default 'message_id' value in response.
+
+Now we just need to update our `config.ru` file to:
 
 ---config.ru---
 ```ruby
@@ -125,7 +134,7 @@ require './hello_endpoint'
 run HelloEndpoint
 ```
 
-Install the new gem and restart your application:
+Install the new gems and restart your application:
 
 ```bash
 $ bundle install
@@ -142,15 +151,39 @@ Now, when you re-run the curl command:
 $ curl --data @./give_id.json -i -X POST -H 'Content-type:application/json' http://localhost:9292
 ```
 
-you should still get the same output:
+Now you should notice the output has changed from a successful **200 OK** response, to **401 Unauthorized** as below.
+
+```bash
+HTTP/1.1 401 Unauthorized
+Content-Type: text/html;charset=utf-8
+Content-Length: 0
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Connection: Keep-Alive
+```
+
+This is due to the fact that the `endpoint_base` library includes basic token authenication, so you now need to specify a token when running the server, and when making a request to the API.
+
+So, restart your endpoint as follows, note the **ENDPOINT_KEY** environmental variable is now being set:
+
+```bash
+$ ENDPOINT_KEY=123 bundle exec rackup -p 9292
+```
+
+When you run the curl command again, this time passing the token as a HTTP header (X_AUGURY_TOKEN):
+
+```bash
+curl --data @./give_id.json -i -X POST -H 'X_AUGURY_TOKEN:123' -H 'Content-type:application/json' http://localhost:9292
+```
+
+You should now get as successful 200 response similar too:
 
 ```bash
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Content-Length: 35
 X-Content-Type-Options: nosniff
-Server: WEBrick/1.3.1 (Ruby/1.9.3/2012-04-20)
-Date: Wed, 03 Jul 2013 01:41:01 GMT
 Connection: Keep-Alive
 
 {"message_id":"518726r84910000001"}
@@ -168,25 +201,25 @@ In the `give_id.json` message that we passed to our endpoint, we indicated with 
 
 ---hello_endpoint.rb---
 ```ruby
+require 'sinatra'
 require 'endpoint_base'
-require 'multi_json'
 
-class HelloEndpoint < EndpointBase
+class HelloEndpoint < EndpointBase::Sinatra::Base
   post '/' do
-    process_result 200, { 'message_id' => @message[:message_id] }
+    process_result 200
   end
 
   post '/product_existence_check' do
     product_names = JSON.parse(File.read("product_catalog.json"))['products'].map{|p| p["name"]}
 
     if product_names.include?(@message[:payload]['product']['name'])
-      process_result 200, { 'message_id' => @message[:message_id], 
-                            'notifications' => [ 
-                              { 'level' => 'info', 'subject' => 'product exists' , 'description' => 'product exists in the database'} ] }
+      add_notification 'info', 'product exists', 'product exists in the database'
+
+      process_result 200
     else
-      process_result 200, { 'message_id' => @message[:message_id], 
-                            'notifications' => [
-                              { 'level' => 'warn', 'subject' => 'product does not exist', 'description' => 'product does not exist in the database' } ] }
+      add_notification 'info', 'product does not exists', 'product does not exists in the database'
+
+      process_result 200
     end
   end
 end
@@ -250,7 +283,7 @@ We've laid the groundwork, so now it's time to test out our endpoint. First, let
 
 ```bash
 $ bundle exec rackup -p 9292
-$ curl --data @./in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
+$ curl --data @./in_stock_product.json -i -X POST -H 'X_AUGURY_TOKEN:123' -H 'Content-type:application/json' http://localhost:9292/product_existence_check
 ```
 
 Skipping the headers this time, you can see that the response we get is what we expect:
@@ -259,7 +292,7 @@ Skipping the headers this time, you can see that the response we get is what we 
 {
   "message_id":"518726r84910000015",
   "notifications": [
-    { 
+    {
       "level": "info",
       "subject": "product exists",
       "description": "product exists in the database"
@@ -271,7 +304,7 @@ Skipping the headers this time, you can see that the response we get is what we 
 Now, let's try a product our supplier does not carry. There is no need to restart `rack` here, since we haven't changed our endpoint.
 
 ```bash
-$ curl --data @./not_in_stock_product.json -i -X POST -H 'Content-type:application/json' http://localhost:9292/product_existence_check
+$ curl --data @./not_in_stock_product.json -i -X POST -H 'X_AUGURY_TOKEN:123' -H 'Content-type:application/json' http://localhost:9292/product_existence_check
 ```
 
 ```json
@@ -295,47 +328,44 @@ Now that we know the product is in stock, it would be helpful if we knew how muc
 
 ---hello_endpoint.rb---
 ```ruby
+require 'sinatra'
 require 'endpoint_base'
 
-class HelloEndpoint < EndpointBase
+class HelloEndpoint < EndpointBase::Sinatra::Base
   post '/' do
-    process_result 200, { 'message_id' => @message[:message_id] }
+    process_result 200
   end
 
   post '/product_existence_check' do
-    if product_names.include?(passed_in_name)
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:info' }
+    if product_names.include?(@message[:payload]['product']['name'])
+      add_notification 'info', 'product exists', 'product exists in the database'
+
+      process_result 200
     else
-      process_result 200, { 'message_id' => @message[:message_id], 'message' => 'notification:warn' }
+      add_notification 'info', 'product does not exists', 'product does not exists in the database'
+
+      process_result 200
     end
   end
 
   post '/query_price' do
     ## Find the product whose name matches what we're passing.
     if product = products.find { |product| product['name'] == passed_in_name }
-      process_result 200, { 'message_id' => @message[:message_id],
-                            'messages' => [
-                              { 'message' => 'product:in_stock',
-                                'payload' => {
-                                  'product' => {
-                                    'name' => product['name'],
-                                    'price' => product['price'] }
-                                }
-                              }
-                            ]
-                          }
+      add_message 'product:in_stock', { 'product' => {
+                                          'name' => product['name'],
+                                          'price' => product['price'] } }
+
+      process_result 200
 
     else
-      process_result 200, { 'message_id' => @message[:message_id], 
-                            'messages' => [
-                              { 'message' => 'product:not_in_stock',
-                                'payload' => {} }
-                            ]
-                          }
+      add_message 'product:not_in_stock', {}
+
+      process_result 200
     end
   end
 
-private
+  private
+
   def product_names
     @product_names ||= products.map { |product| product["name"] }
   end
