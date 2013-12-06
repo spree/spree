@@ -30,15 +30,16 @@
   color: #fff;
 }
 
-// -- Spree Bootstrap Custom Helpers ----------------------
-.form-control-inline {
-  display: inline;
-  width: auto !important;
-  margin: 0 1px;
-  }
+// -- Spree Layout Custom Rules -------------------------
 .alert-error { //This is a hack, TODO FIXME
   .alert-danger{};
 }
 .product-body {
   height: 170px;
+}
+.progress-steps {
+  margin-top: $line-height-computed;
+}
+h1 {
+  margin-bottom: 30px;
 }

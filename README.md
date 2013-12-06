@@ -73,7 +73,7 @@ Contributing
 
 Please fork and make a pull request.
 
-**Tests, tests, tests.** Although I’ve taken care to try and keep HTML changes to a minimum, this plugin currently breaks tests.
+**Tests, tests, tests.** Although care has been taken to try and keep HTML changes to a minimum, this plugin currently breaks tests.
 To get it to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
 **I’m looking for help maintaining this, so anyone who would like to become a core contributor please email me.** My email is in the gemspec.
