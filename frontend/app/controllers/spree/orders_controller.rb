@@ -103,7 +103,7 @@ module Spree
           flash[:success] = coupon_result[:success] if coupon_result[:success].present?
           return false
         else
-          flash[:error] = coupon_result[:error]
+          flash.now[:error] = coupon_result[:error]
           respond_with(@order) { |format| format.html { render :edit } }
           return true
         end
