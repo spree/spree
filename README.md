@@ -23,7 +23,6 @@ Installation
 Add the following to your gemfile
 
 ```ruby
-gem 'bootstrap-sass', '~> 3.0.3.0'
 gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend'
 ```
 

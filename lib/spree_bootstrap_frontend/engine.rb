@@ -1,3 +1,5 @@
+require 'bootstrap-sass/engine'
+
 module SpreeBootstrapFrontend
   class Engine < Rails::Engine
     require 'spree/core'
