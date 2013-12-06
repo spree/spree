@@ -13,7 +13,7 @@ Orders have the following attributes:
 * `item_total`: The sum of all the line items for this order.
 * `adjustment_total`: The sum of all adjustments on this order.
 * `total`: The result of the sum of the `item_total` and the `adjustment_total`.
-* `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](#the_order_state_machine) section of this guide.
+* `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](#the-order-state-machine) section of this guide.
 * `email`: The email address for the user who placed this order. Stored in case this order is for a guest user.
 * `user_id`: The ID for the corresponding user record for this order. Stored only if the order is placed by a signed-in user.
 * `completed_at`: The timestamp of when the order was completed.
