@@ -2,15 +2,16 @@
 
 This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorators have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
 
-**Ideally my goal is for this to be integrated, replacing spree’s increasingly tired current frontend.** Or at least becoming a viable drop-in alternative. It has several large advantages:
+Ideally my goal is for this to replace spree’s increasingly tired current frontend. Or at least becoming a viable drop-in alternative. It has several large advantages:
 
 - Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full retina display support. Current spree only goes half way. 
-- Just 39 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
+- Just 40 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed. 
 - The entire frontend can be easily customized: colours, grid, spacing, etc, by just overriding [variables from bootstrap]() - giving a custom store design in minutes. 
 - Bootstrap has some of the most [robust documentation](http://getbootstrap.com/css) of any framework, and a hugely active community. As this port uses only default bootstrap it means that entire spree frontend layout is documented by default. 
 - Sites like [bootswatch](http://bootswatch.com) allow for one-file bootstrap drop-in spree themes.
 - Lots of [spree community will for bootstrap](https://groups.google.com/forum/#!searchin/spree-user/bootstrap/spree-user/B17492QdnGA/AF9vEzRzf4cJ). 
 - Though this uses ‘full bootstrap’ for simplicity, you can remove the unused SCSS components you don’t require for minimal file sizes. 
+- Bootstrap is one of the largest most active open source projects out there - maintaining an entire framework just for spree makes little sense. Forget about cross browser bugs. Woo!
 
 ![spree_bootstrap_frontend preview](http://i.imgur.com/S50Gn7V.png)
 
@@ -22,6 +23,7 @@ Installation
 Add the following to your gemfile
 
 ```ruby
+gem 'bootstrap-sass', '~> 3.0.3.0'
 gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend'
 ```
 
@@ -45,6 +47,7 @@ Compatibility
 **WARNING: The master branch is currently built against spree edge!**
 
 I’m targeting switching to a stable branch when `2-2-stable` is released, but as of now it's on `2.2.0.beta`. Stay tuned.
+Currenly only tested against rails 4.0.X.
 
 Customizing
 -------
