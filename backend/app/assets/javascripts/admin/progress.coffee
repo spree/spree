@@ -16,11 +16,11 @@ $(document).ready ->
     top: 'auto'
     left: 'auto'
 
-  target = document.getElementById("spinner")
+  target  = document.getElementById("spinner")
+  spinner = new Spinner(opts).spin(target)
 
   $(document).ajaxStart ->
     $("#progress").stop(true, true).fadeIn()
-    spinner = new Spinner(opts).spin(target)
 
   $(document).ajaxStop ->
     $("#progress").fadeOut()
