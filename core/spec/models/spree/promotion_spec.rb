@@ -243,4 +243,14 @@ describe Spree::Promotion do
       end
     end
   end
+
+  # regression for #4059
+  # admin form posts the code and path as empty string
+  describe "normalize blank values for code & path" do
+    it "will save blank value as nil value instead" do
+      promotion = Spree::Promotion.create(:name => "A promotion", :code => "", :path => "")
+      expect(promotion.code).to be_nil
+      expect(promotion.path).to be_nil
+    end
+  end
 end
