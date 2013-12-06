@@ -20,6 +20,7 @@ module Spree
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
+    before_save :normalize_blank_values
 
     def save_rules_and_actions
       (rules + actions).each &:save
@@ -67,7 +68,7 @@ module Spree
       eligible = lambda { |r| r.eligible?(promotable, options) }
       specific_rules = rules.for(promotable)
       if match_policy == 'all'
-        # If there are rules for this promotion, but no rules for this 
+        # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
         specific_rules.any? && specific_rules.all?(&eligible)
       else
@@ -102,6 +103,13 @@ module Spree
 
     def credits_count
       credits.count
+    end
+
+    private
+    def normalize_blank_values
+      [:code, :path].each do |column|
+        self[column] = nil if self[column].blank?
+      end
     end
   end
 end
