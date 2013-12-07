@@ -170,7 +170,7 @@ THIS IS THE BEST PRODUCT EVER!
     end
     context "#line_item_description" do
       let(:variant) { create(:variant, :product => product, description: description) }
-      subject { line_item_description(variant) }
+      subject { line_item_description_text(variant.product.description) }
 
       it_should_behave_like "line item descriptions"
     end
