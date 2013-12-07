@@ -13,8 +13,7 @@ end
 Spree::CreditCard.table_name = 'spree_credit_cards'
 
 creditcard = Spree::CreditCard.create(:cc_type => 'visa', :month => 12, :year => 2014, :last_digits => '1111',
-                                      :first_name => 'Sean', :last_name => 'Schofield',
-                                      :gateway_customer_profile_id => 'BGS-1234')
+                                      :name => 'Sean Schofield', :gateway_customer_profile_id => 'BGS-1234')
 
 Spree::Order.all.each_with_index do |order, index|
   order.update!
