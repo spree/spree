@@ -18,7 +18,7 @@ module Spree
 
         def stub_authentication!
           controller.stub :check_for_user_or_api_key
-          Spree::LegacyUser.stub :find_by_spree_api_key => current_api_user
+          Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
         # This method can be overriden (with a let block) inside a context

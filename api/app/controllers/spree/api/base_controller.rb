@@ -74,7 +74,7 @@ module Spree
       def authenticate_user
         unless @current_api_user
           if requires_authentication? || api_key.present?
-            unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
+            unless @current_api_user = Spree.user_class.find_by(spree_api_key: api_key.to_s)
               render "spree/api/errors/invalid_api_key", :status => 401 and return
             end
           else
@@ -120,7 +120,7 @@ module Spree
 
       def find_product(id)
         begin
-          product_scope.find_by_permalink!(id.to_s)
+          product_scope.find_by!(permalink: id.to_s)
         rescue ActiveRecord::RecordNotFound
           product_scope.find(id)
         end

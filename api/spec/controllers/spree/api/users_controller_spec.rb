@@ -11,7 +11,10 @@ module Spree
     before { stub_authentication! }
 
     context "as a normal user" do
-      before { Spree::LegacyUser.stub :find_by_spree_api_key => user }
+      before do
+        Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { user }
+        Spree::LegacyUser.stub :find_by_spree_api_key => user
+      end
 
       it "can get own details" do
         api_get :show, :id => user.id
@@ -77,7 +80,7 @@ module Spree
       sign_in_as_admin!
 
       it "gets all users" do
-        Spree::LegacyUser.stub :find_by_spree_api_key => current_api_user
+        Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
 
         2.times { create(:user) }
 
