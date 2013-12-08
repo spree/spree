@@ -4,8 +4,6 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
-      config.autoload_paths += %W(#{config.root}/lib)
-
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access

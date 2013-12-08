@@ -3,8 +3,6 @@ module Spree
     class Engine < ::Rails::Engine
       config.middleware.use "Spree::Backend::Middleware::SeoAssist"
 
-      config.autoload_paths += %W(#{config.root}/lib)
-
       initializer "spree.backend.environment", :before => :load_config_initializers do |app|
         Spree::Backend::Config = Spree::BackendConfiguration.new
       end
@@ -25,7 +23,6 @@ module Spree
           jquery.jstree/themes/apple/*
         ]
       end
-
     end
   end
 end

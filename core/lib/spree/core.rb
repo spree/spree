@@ -35,19 +35,39 @@ module Spree
   def self.config(&block)
     yield(Spree::Config)
   end
+
+  module Core
+    autoload :ProductFilters, "spree/core/product_filters"
+
+    class GatewayError < RuntimeError; end
+  end
 end
 
 require 'spree/core/version'
+
+require 'spree/core/mail_settings'
+require 'spree/core/mail_interceptor'
+require 'spree/core/environment_extension'
+require 'spree/core/environment/calculators'
+require 'spree/core/environment'
+require 'spree/promo/environment'
 require 'spree/core/engine'
 
 require 'spree/i18n'
 require 'spree/money'
 
+require 'spree/permitted_attributes'
+require 'spree/core/user_address'
+require 'spree/core/s3_support'
 require 'spree/core/delegate_belongs_to'
 require 'spree/core/permalinks'
 require 'spree/core/token_resource'
 require 'spree/core/calculated_adjustments'
 require 'spree/core/product_duplicator'
+require 'spree/core/controller_helpers'
+require 'spree/core/controller_helpers/strong_parameters'
+require 'spree/core/controller_helpers/ssl'
+require 'spree/core/controller_helpers/search'
 
 ActiveRecord::Base.class_eval do
   include CollectiveIdea::Acts::NestedSet
