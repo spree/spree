@@ -83,6 +83,7 @@ module Spree
     preference :use_s3, :boolean, default: false # Use S3 for images rather than the file system
     preference :s3_protocol, :string
     preference :s3_host_alias, :string
+    preference :s3_host_name, :string
 
     # Default mail headers settings
     preference :enable_mail_delivery, :boolean, :default => false
