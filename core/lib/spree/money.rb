@@ -43,7 +43,7 @@ module Spree
       # check that currency passed and embedded currency are the same,
       # and negotiate the final currency
       if currency.nil? and c.nil?
-        currency = Money.default_currency
+        currency = ::Money.default_currency
       elsif currency.nil?
         currency = c
       elsif c.nil?
