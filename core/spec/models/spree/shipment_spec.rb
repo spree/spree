@@ -20,6 +20,13 @@ describe Spree::Shipment do
   let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
+  # Regression test for #4063
+  context "number generation" do
+    it "creates a 11-length number" do
+      shipment.number.length.should == 11
+    end
+  end
+
   it 'is backordered if one if its inventory_units is backordered' do
     shipment.stub(inventory_units: [
       mock_model(Spree::InventoryUnit, backordered?: false),
