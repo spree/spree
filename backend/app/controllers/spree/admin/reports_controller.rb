@@ -3,12 +3,26 @@ module Spree
     class ReportsController < Spree::Admin::BaseController
       respond_to :html
 
-      AVAILABLE_REPORTS = {
-        :sales_total => { :name => Spree.t(:sales_total), :description => Spree.t(:sales_total_description) }
-      }
+      class << self
+        def available_reports
+          @@available_reports
+        end
+
+        def add_available_report!(report_key, report_description_key = nil)
+          if report_description_key.nil?
+            report_description_key = "#{report_key}_description"
+          end
+          @@available_reports[report_key] = {name: Spree.t(report_key), description: Spree.t(report_description_key)}
+        end
+      end
+
+      def initialize
+        super 
+        ReportsController.add_available_report!(:sales_total)
+      end
 
       def index
-        @reports = AVAILABLE_REPORTS
+        @reports = ReportsController.available_reports
       end
 
       def sales_total
@@ -49,6 +63,8 @@ module Spree
       def model_class
         Spree::Admin::ReportsController
       end
+
+      @@available_reports = {}
 
     end
   end
