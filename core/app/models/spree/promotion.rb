@@ -30,6 +30,10 @@ module Spree
       where(advertise: true)
     end
 
+    def self.with_coupon_code(coupon_code)
+      where("lower(code) = ?", coupon_code.strip.downcase).first
+    end
+
     def self.active
       where('starts_at IS NULL OR starts_at < ?', Time.now).
         where('expires_at IS NULL OR expires_at > ?', Time.now)

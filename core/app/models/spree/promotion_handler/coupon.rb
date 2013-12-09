@@ -13,7 +13,7 @@ module Spree
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion(promotion)
           else
-            if Promotion.find_by(code: order.coupon_code).try(:expired?)
+            if Promotion.with_coupon_code(order.coupon_code).try(:expired?)
               self.error = Spree.t(:coupon_code_expired)
             else
               self.error = Spree.t(:coupon_code_not_found)
@@ -25,7 +25,7 @@ module Spree
       end
 
       def promotion
-        @promotion ||= Promotion.active.includes(:promotion_rules, :promotion_actions).find_by(code: order.coupon_code)
+        @promotion ||= Promotion.active.includes(:promotion_rules, :promotion_actions).with_coupon_code(order.coupon_code)
       end
 
       def successful?
