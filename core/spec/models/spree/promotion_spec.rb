@@ -243,4 +243,14 @@ describe Spree::Promotion do
       end
     end
   end
+
+  describe "#with_coupon_code" do
+    context "and code stored in uppercase" do
+      let!(:promotion) { create(:promotion, :code => "MY-COUPON-123") }
+      it "finds the code with lowercase" do
+        expect(Spree::Promotion.with_coupon_code("MY-COUPON-123")).to eql promotion
+      end
+    end
+  end
+
 end

@@ -29,6 +29,10 @@ module Spree
       where(advertise: true)
     end
 
+    def self.with_coupon_code(coupon_code)
+      where("lower(code) = ?", coupon_code.strip.downcase).first
+    end
+
     def self.active
       where('starts_at IS NULL OR starts_at < ?', Time.now).
         where('expires_at IS NULL OR expires_at > ?', Time.now)
@@ -67,7 +71,7 @@ module Spree
       eligible = lambda { |r| r.eligible?(promotable, options) }
       specific_rules = rules.for(promotable)
       if match_policy == 'all'
-        # If there are rules for this promotion, but no rules for this 
+        # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
         specific_rules.any? && specific_rules.all?(&eligible)
       else
