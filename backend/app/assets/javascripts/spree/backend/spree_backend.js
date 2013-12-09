@@ -16,5 +16,5 @@
 //= require equalize
 //= require responsive-tables
 //= require spree
-//= require admin/spree-select2
+//= require spree/backend/spree-select2
 //= require_tree .
