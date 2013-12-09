@@ -22,7 +22,7 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
-    make_permalink field: :number
+    make_permalink field: :number, length: 11
 
     scope :shipped, -> { with_state('shipped') }
     scope :ready,   -> { with_state('ready') }
