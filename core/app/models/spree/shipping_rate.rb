@@ -3,14 +3,8 @@ module Spree
     belongs_to :shipment, class_name: 'Spree::Shipment'
     belongs_to :shipping_method, class_name: 'Spree::ShippingMethod'
 
-    scope :frontend,
+    scope :with_shipping_method,
       -> { includes(:shipping_method).
-          where(ShippingMethod.on_frontend_query).
-          references(:shipping_method).
-          order("cost ASC") }
-    scope :backend,
-      -> { includes(:shipping_method).
-           where(ShippingMethod.on_backend_query).
            references(:shipping_method).
            order("cost ASC") }
     
