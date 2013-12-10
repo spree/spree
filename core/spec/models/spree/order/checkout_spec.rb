@@ -359,4 +359,37 @@ describe Spree::Order do
       order.checkout_steps.should == %w(delivery complete)
     end
   end
+
+  describe 'update_from_params' do
+    let(:permitted_params) { {} }
+    let(:params) { {} }
+    it 'calls update_atributes without order params' do
+      order.should_receive(:update_attributes).with({})
+      order.update_from_params( params, permitted_params)
+    end
+
+    it 'runs the callbacks' do
+      order.should_receive(:run_callbacks).with(:updating_from_params)
+      order.update_from_params( params, permitted_params)
+    end
+
+    context 'has params' do
+      let(:permitted_params) { [ :good_param ] }
+      let(:params) { ActionController::Parameters.new(order: {  bad_param: 'okay' } ) }
+      it 'does not let through unpermitted attributes' do
+        order.should_receive(:update_attributes).with({})
+        order.update_from_params(params, permitted_params)
+      end
+      context 'has allowed params' do
+        let(:params) { ActionController::Parameters.new(order: {  good_param: 'okay' } ) }
+
+        it 'accepts permitted attributes' do
+          order.should_receive(:update_attributes).with({"good_param" => 'okay'})
+          order.update_from_params(params, permitted_params)
+        end
+      end
+    end
+
+
+  end
 end
