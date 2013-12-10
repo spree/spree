@@ -94,22 +94,46 @@ taxons = [
   {
     :name => "Ruby",
     :taxonomy => brands,
-    :parent => "Brand" 
+    :parent => "Brand",
+    :products => [
+      products[:ruby_baseball_jersey]
+    ]
   },
   {
     :name => "Apache",
     :taxonomy => brands,
-    :parent => "Brand" 
+    :parent => "Brand",
+    :products => [
+      products[:apache_baseball_jersey]
+    ]
   },
   {
     :name => "Spree",
     :taxonomy => brands,
-    :parent => "Brand"
+    :parent => "Brand",
+    :products => [
+      products[:spree_stein],
+      products[:spree_mug],
+      products[:spree_ringer],
+      products[:spree_baseball_jersey],
+      products[:spree_tote],
+      products[:spree_bag],
+      products[:spree_jr_spaghetti],
+    ]
   },
   {
     :name => "Rails",
     :taxonomy => brands,
-    :parent => "Brand"
+    :parent => "Brand",
+    :products => [
+      products[:ror_tote],
+      products[:ror_bag],
+      products[:ror_mug],
+      products[:ror_stein],
+      products[:ror_baseball_jersey],
+      products[:ror_jr_spaghetti],
+      products[:ror_ringer],
+    ]
   },
 ]
 
