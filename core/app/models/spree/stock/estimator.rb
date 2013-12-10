@@ -9,15 +9,10 @@ module Spree
       end
 
       def shipping_rates(package, frontend_only = true)
-        shipping_rates = calculate_shipping_rates(package)
-
-        unless shipping_rates.empty?
-          available_rates = shipping_rates.clone
-          available_rates.select! { |rate| rate.shipping_method.frontend? } if frontend_only
-          choose_default_shipping_rate(available_rates)
-        end
-
-        sort_shipping_rates(shipping_rates)
+        rates = calculate_shipping_rates(package)
+        rates.select! { |rate| rate.shipping_method.frontend? } if frontend_only
+        choose_default_shipping_rate(rates)
+        sort_shipping_rates(rates)
       end
 
       private
