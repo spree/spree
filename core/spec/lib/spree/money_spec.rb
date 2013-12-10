@@ -158,4 +158,19 @@ describe Spree::Money do
       money.as_json(options).should == "$10.00"
     end
   end
+
+  describe ".parse" do
+    subject { Spree::Money.parse input, currency  }
+
+    context "when currency nil" do
+      let(:currency) { nil }
+
+      context "when input value is a number" do
+        let(:input) { 42 }
+
+        it { should be_a ::Money }
+        its(:currency) { should == ::Money.default_currency }
+      end
+    end
+  end
 end
