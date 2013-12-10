@@ -96,8 +96,8 @@ adjustItems = function(shipment_number, variant_id, quantity){
 
 toggleTrackingEdit = function(){
   var link = $(this);
-  link.parents('tbody').find('tr.edit-tracking').toggle();
-  link.parents('tbody').find('tr.show-tracking').toggle();
+  link.parents('tbody').find('tr.edit-tracking').toggleClass('hidden');
+  link.parents('tbody').find('tr.show-tracking').toggleClass('hidden');
 }
 
 toggleMethodEdit = function(){
