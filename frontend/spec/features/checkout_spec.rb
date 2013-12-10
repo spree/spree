@@ -32,6 +32,19 @@ describe "Checkout", inaccessible: true do
       end
     end
 
+    # Regression test for #4079
+    context "persists state when on address page" do
+      before do
+        add_mug_to_cart
+        click_button "Checkout"
+      end
+
+      specify do
+        Spree::Order.count.should == 1
+        Spree::Order.last.state.should == "address"
+      end
+    end
+
     # Regression test for #1596
     context "full checkout" do
       before do
