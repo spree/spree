@@ -29,15 +29,7 @@ module Spree
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
-<<<<<<< HEAD
               @order.next if @order.cart?
-=======
-              # Need to call next_transition.run_callbacks here, because calling
-              # next will not actually trigger the transition if the order requires an
-              # email address; which is the default behaviour.
-              # See discussion in #4079.
-              @order.next_transition.run_callbacks if @order.cart?
->>>>>>> Leave comment as to why we need to do next_transition.run_callbacks in OrdersController
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
               redirect_to cart_path
