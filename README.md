@@ -23,7 +23,7 @@ Installation
 Add the following to your gemfile
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend'
 ```
 
 And run
@@ -37,7 +37,7 @@ Done.
 If you are running a stable branch of spree check if there is a compatible branch of spree_bootstrap_frontend and use that. For example:
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200creative/spree_bootstrap_frontend', branch: '2-2-stable'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
 ```
 
 Compatibility
