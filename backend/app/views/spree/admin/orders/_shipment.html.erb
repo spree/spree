@@ -41,7 +41,7 @@
             <div class="field alpha five columns">
               <%= label_tag 'selected_shipping_rate_id', Spree.t(:shipping_method) %>
               <%= select_tag :selected_shipping_rate_id,
-                    options_for_select(shipment.shipping_rates.backend.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
+                    options_for_select(shipment.shipping_rates.with_shipping_method.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                     {:class => 'select2 fullwidth', :data => {'shipment-number' => shipment.number } } %>
             </div>
           </td>
@@ -54,7 +54,6 @@
             <% end %>
           </td>
         </tr>
-
 
         <tr class="show-method total">
           <% if shipment.shipping_method %>

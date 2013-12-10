@@ -1,3 +1,5 @@
+//= require jquery
+//= require jquery_ujs
 //= require jquery-migrate-1.0.0
 //= require jquery.ui.datepicker
 //= require jquery.ui.sortable
@@ -16,5 +18,5 @@
 //= require equalize
 //= require responsive-tables
 //= require spree
-//= require admin/spree-select2
+//= require spree/backend/spree-select2
 //= require_tree .

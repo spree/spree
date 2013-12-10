@@ -1,16 +1,7 @@
-notice_div = $('.flash.notice');
-<% notice = flash.discard(:notice)
-if notice %>
-  if (notice_div.length > 0) {
-    notice_div.html("<%= notice %>");
-    notice_div.show();
-  } else {
-    if ($("#content .toolbar").length > 0) {
-      $("#content .toolbar").before('<div class="flash notice"><%= notice %></div>');
-    } else {
-      $("#content h1").before('<div class="flash notice"><%= notice %></div>');
-    }
-  } <%
-end %>
+<% success = flash.discard(:success)
+if success %>
+  console.log(show_flash)
+  show_flash('success', "<%= success %>")
+<% end %>
 
 <%= render :partial => '/spree/admin/shared/update_order_state' if @order %>

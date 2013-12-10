@@ -20,6 +20,7 @@ module Spree
 
     # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
     after_save :save_rules_and_actions
+    before_save :normalize_blank_values
 
     def save_rules_and_actions
       (rules + actions).each &:save
@@ -106,6 +107,13 @@ module Spree
 
     def credits_count
       credits.count
+    end
+
+    private
+    def normalize_blank_values
+      [:code, :path].each do |column|
+        self[column] = nil if self[column].blank?
+      end
     end
   end
 end

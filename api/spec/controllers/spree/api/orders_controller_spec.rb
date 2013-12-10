@@ -226,7 +226,7 @@ module Spree
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            line_item.id => { :quantity => 10 }
+            0 => { :id => line_item.id, :quantity => 10 }
           }
         }
 
@@ -235,10 +235,26 @@ module Spree
         json_response['line_items'].first['quantity'].should == 10
       end
 
+      it "adds an extra line item" do
+        variant2 = create(:variant)
+        api_put :update, :id => order.to_param, :order => {
+          :line_items => {
+            0 => { :id => line_item.id, :quantity => 10 },
+            1 => { :variant_id => variant2.id, :quantity => 1}
+          }
+        }
+
+        response.status.should == 200
+        json_response['line_items'].count.should == 2
+        json_response['line_items'][0]['quantity'].should == 10
+        json_response['line_items'][1]['variant_id'].should == variant2.id
+        json_response['line_items'][1]['quantity'].should == 1
+      end
+
       it "cannot change the price of an existing line item" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            line_item.id => { :price => 0 }
+            0 => { :id => line_item.id, :price => 0 }
           }
         }
 
@@ -290,7 +306,7 @@ module Spree
           previous_shipments = order.shipments
           api_put :update, :id => order.to_param, :order => {
             :line_items => {
-              line_item.id => { :quantity => 10 }
+              0 => { :id => line_item.id, :quantity => 10 }
             }
           }
           expect(order.reload.shipments).to be_empty

@@ -37,7 +37,7 @@
 
           <h5 class="stock-shipping-method-title"><%= Spree.t(:shipping_method) %></h5>
           <ul class="field radios shipping-methods">
-            <% ship_form.object.shipping_rates.frontend.each do |rate| %>
+            <% ship_form.object.shipping_rates.with_shipping_method.each do |rate| %>
               <li class="shipping-method">
                 <label>
                   <%= ship_form.radio_button :selected_shipping_rate_id, rate.id %>

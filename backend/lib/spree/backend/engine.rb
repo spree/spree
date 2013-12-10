@@ -15,11 +15,11 @@ module Spree
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer "spree.assets.precompile", :group => :all do |app|
         app.config.assets.precompile += %w[
-          admin/all.*
-          admin/orders/edit_form.js
-          admin/address_states.js
+          spree/backend*
+          spree/backend/orders/edit_form.js
+          spree/backend/address_states.js
           jqPlot/excanvas.min.js
-          admin/images/new.js
+          spree/backend/images/new.js
           jquery.jstree/themes/apple/*
         ]
       end

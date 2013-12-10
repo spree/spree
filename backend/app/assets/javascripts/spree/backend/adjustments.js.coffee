@@ -10,7 +10,7 @@ $(@).ready( ->
         window.location.reload();
       error: (msg) ->
         if msg.responseJSON["error"]
-          show_flash_error msg.responseJSON["error"]
+          show_flash 'error', msg.responseJSON["error"]
         else
-          show_flash_error "There was a problem adding this coupon code."
+          show_flash 'error', "There was a problem adding this coupon code."
 )
