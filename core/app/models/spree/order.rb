@@ -447,7 +447,7 @@ module Spree
     end
 
     def coupon_code=(code)
-      @coupon_code = codes.strip rescue nil
+      @coupon_code = code.strip rescue nil
     end
 
     def can_add_coupon?
