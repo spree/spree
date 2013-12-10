@@ -11,12 +11,12 @@ This guide covers how to see which message types can be pushed to the hub and in
 ## Available Messages
 
 
-To see a list of message types you can push to the hub, make the following request:
+To see a list of message types that have been previously processed on hub for a given store, you can run the following request:
 
 ```text
 GET http://hub.spreecommerce.com/api/stores/YOUR_STORE_ID/available_messages```
 
-The response will be a list of possible message types you can push. The following is an abbreviated list:
+The following response is an abbreviated example:
 
 <%= headers 200 %>
 <%= json \
