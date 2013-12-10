@@ -84,14 +84,19 @@ module Spree
           let(:backend_method) { create(:shipping_method, display_on: "back_end") }
           let(:generic_method) { create(:shipping_method) }
 
-          # regression for #3287
-          it "doesn't select backend rates even if they're more affordable" do
+          before do
             backend_method.stub_chain(:calculator, :compute).and_return(0.00)
             generic_method.stub_chain(:calculator, :compute).and_return(5.00)
-
             subject.stub(:shipping_methods).and_return([backend_method, generic_method])
+          end
 
-            expect(subject.shipping_rates(package).map(&:selected)).to eq [false, true]
+          it "does not return backend rates at all" do
+            expect(subject.shipping_rates(package).map(&:shipping_method_id)).to eq([generic_method.id])
+          end
+
+          # regression for #3287
+          it "doesn't select backend rates even if they're more affordable" do
+            expect(subject.shipping_rates(package).map(&:selected)).to eq [true]
           end
         end
       end
