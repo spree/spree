@@ -45,10 +45,13 @@ This will enable your application to serve static assets and direct logging to s
 ### Asset Pipeline
 
 ***
-You can ignore this section if you're on Rails 4 or greater. There's no longer
+If you're on Rails 4 or greater. There's no longer
 a `initialize_on_precompile` config option because you should be able to run
 `assets:precompile` without a database connection. See Heroku [troubleshooting
 page for details](https://devcenter.heroku.com/articles/rails-asset-pipeline#troubleshooting).
+Unfortunately Spree still needs to connect to db on startup so you'll have to
+enable the [user-env-compile](https://devcenter.heroku.com/articles/labs-user-env-compile)
+feature on heroku to run your store.
 ***
 
 When deploying to Heroku by default Rails will attempt to intialize itself
