@@ -63,8 +63,7 @@ module Spree
       
       def mine
         if current_api_user.persisted?
-          @orders = current_api_user.orders
-          render :mine
+          @orders = Order.where(user_id: current_api_user.id).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         else
           render "spree/api/errors/unauthorized", status: :unauthorized
         end
