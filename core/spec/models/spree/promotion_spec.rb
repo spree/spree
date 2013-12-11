@@ -91,7 +91,13 @@ describe Spree::Promotion do
     it "does activate if newer then order" do
       @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
-      promotion.activate(@payload)
+      expect(promotion.activate(@payload)).to be_true
+    end
+
+    it "keeps track of the order" do
+      expect(promotion.orders).to be_empty
+      expect(promotion.activate(@payload)).to be_true
+      expect(promotion.orders.first).to eql @order
     end
   end
 

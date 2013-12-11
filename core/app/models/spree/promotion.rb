@@ -9,6 +9,8 @@ module Spree
     has_many :promotion_actions, foreign_key: :activator_id, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
+    has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
+
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
@@ -42,7 +44,13 @@ module Spree
     end
 
     def activate(payload)
-      return unless self.class.order_activatable?(payload[:order])
+      order = payload[:order]
+      return unless self.class.order_activatable?(order)
+
+      # connect to the order
+      #create the join_table entry.
+      self.orders << order
+      self.save
 
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
