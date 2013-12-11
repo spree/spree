@@ -11,6 +11,7 @@ module Spree
     has_many :offsets, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") },
       class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
+    has_many :state_changes, as: :stateful
 
     before_validation :validate_source
     before_create :set_unique_identifier
@@ -66,6 +67,14 @@ module Spree
       # when the card brand isnt supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
+      end
+
+      after_transition do |payment, transition|
+        payment.state_changes.create!(
+          previous_state: transition.from,
+          next_state:     transition.to,
+          name:           'payment',
+        )
       end
     end
 

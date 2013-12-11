@@ -444,4 +444,22 @@ describe Spree::Shipment do
       reflection.options[:dependent] = :destroy
     end
   end
+
+  # Regression test for #4072 (kinda)
+  # The need for this was discovered in the research for #4702
+  context "state changes" do
+    before do
+      # Must be stubbed so transition can succeed
+      order.stub :paid? => true
+    end
+
+    it "are logged to the database" do
+      shipment.state_changes.should be_empty
+      expect(shipment.ready!).to be_true
+      shipment.state_changes.count.should == 1
+      state_change = shipment.state_changes.first
+      expect(state_change.previous_state).to eq('pending')
+      expect(state_change.next_state).to eq('ready')
+    end
+  end
 end

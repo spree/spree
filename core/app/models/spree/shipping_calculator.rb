@@ -1,17 +1,12 @@
 module Spree
   class ShippingCalculator < Calculator
-    def compute(package_or_shipment)
-      package = if package_or_shipment.respond_to?(:to_package)
-        package_or_shipment.to_package 
-      else
-        package_or_shipment
-      end
 
-      compute_package package
+    def compute_shipment(shipment)
+      raise NotImplementedError, "Please implement 'compute_shipment(shipment)' in your calculator: #{self.class.name}"
     end
 
     def compute_package(package)
-      raise(NotImplementedError, 'please use concrete calculator')
+      raise NotImplementedError, "Please implement 'compute_package(package)' in your calculator: #{self.class.name}"
     end
 
     def available?(package)
