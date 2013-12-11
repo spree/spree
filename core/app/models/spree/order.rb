@@ -434,12 +434,15 @@ module Spree
       state = "#{name}_state"
       if persisted?
         old_state = self.send("#{state}_was")
-        self.state_changes.create(
-          previous_state: old_state,
-          next_state:     self.send(state),
-          name:           name,
-          user_id:        self.user_id
-        )
+        new_state = self.send(state)
+        unless old_state == new_state
+          self.state_changes.create(
+            previous_state: old_state,
+            next_state:     new_state,
+            name:           name,
+            user_id:        self.user_id
+          )
+        end
       end
     end
 
