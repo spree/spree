@@ -9,7 +9,7 @@ end
 europe_vat = Spree::Zone.find_by_name!("EU_VAT")
 shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
 
-shipping_methods = [
+Spree::ShippingMethod.create!([
   {
     :name => "UPS Ground (USD)",
     :zones => [north_america],
@@ -40,11 +40,7 @@ shipping_methods = [
     :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   }
-]
-
-shipping_methods.each do |shipping_method_attrs|
-  Spree::ShippingMethod.create!(shipping_method_attrs)
-end
+])
 
 {
   "UPS Ground (USD)" => [5, "USD"],
