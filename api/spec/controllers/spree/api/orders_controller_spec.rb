@@ -6,6 +6,7 @@ module Spree
 
     let!(:order) { create(:order) }
     let(:variant) { create(:variant) }
+    let(:line_item) { create(:line_item) }
 
     let(:attributes) { [:number, :item_total, :display_total, :total,
                         :state, :adjustment_total,
@@ -52,13 +53,26 @@ module Spree
     end
 
     context "the current api user is authenticated" do
-      it "can view all of their own orders" do
-        current_api_user.should_receive(:orders) { [order] }
+      let(:current_api_user) { order.user }
+      let(:order) { create(:order, line_items: [line_item]) }
 
+      it "can view all of their own orders" do
         api_get :mine
 
+        response.status.should == 200
+        json_response["pages"].should == 1
+        json_response["current_page"].should == 1
         json_response["orders"].length.should == 1
         json_response["orders"].first["number"].should == order.number
+        json_response["orders"].first["line_items"].length.should == 1
+        json_response["orders"].first["line_items"].first["id"].should == line_item.id
+      end
+
+      it "can filter the returned results" do
+        api_get :mine, q: {completed_at_not_null: 1}
+
+        response.status.should == 200
+        json_response["orders"].length.should == 0
       end
     end
 
