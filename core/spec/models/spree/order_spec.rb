@@ -633,4 +633,26 @@ describe Spree::Order do
       expect(order.state).to eql "address"
     end
   end
+
+  # Regression tests for #4072
+  context "#state_changed" do
+    let(:order) { FactoryGirl.create(:order) }
+
+    it "logs state changes" do
+      order.update_column(:payment_state, 'balance_due')
+      order.payment_state = 'paid'
+      expect(order.state_changes).to be_empty
+      order.state_changed('payment')
+      state_change = order.state_changes.where(:name => 'payment').first
+      expect(state_change.previous_state).to eq('balance_due')
+      expect(state_change.next_state).to eq('paid')
+    end
+
+    it "does not do anything if state does not change" do
+      order.update_column(:payment_state, 'balance_due')
+      expect(order.state_changes).to be_empty
+      order.state_changed('payment')
+      expect(order.state_changes).to be_empty
+    end
+  end
 end
