@@ -5,7 +5,7 @@ describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
     include Spree::Core::ControllerHelpers::SSL
     def index; render text: 'index'; end
     def create; end
-    def self.ssl_supported?; true; end
+    def ssl_supported?; true; end
   end
 
   describe 'redirect to http' do
