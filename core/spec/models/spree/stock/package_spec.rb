@@ -64,11 +64,15 @@ module Spree
       end
 
       # Contains regression test for #2804
-      it 'builds a list of shipping methods from all categories' do
-        shipping_method1 = create(:shipping_method)
-        shipping_method2 = create(:shipping_method)
-        variant1 = mock_model(Variant, shipping_category: shipping_method1.shipping_categories.first)
-        variant2 = mock_model(Variant, shipping_category: shipping_method2.shipping_categories.first)
+      it 'builds a list of shipping methods common to all categories' do
+        category1 = create(:shipping_category)
+        category2 = create(:shipping_category)
+        method1   = create(:shipping_method)
+        method2   = create(:shipping_method)
+        method1.shipping_categories = [category1, category2]
+        method2.shipping_categories = [category1]
+        variant1 = mock_model(Variant, shipping_category: category1)
+        variant2 = mock_model(Variant, shipping_category: category2)
         variant3 = mock_model(Variant, shipping_category: nil)
         contents = [Package::ContentItem.new(line_item, variant, 1),
                     Package::ContentItem.new(line_item, variant, 1),
@@ -76,9 +80,15 @@ module Spree
                     Package::ContentItem.new(line_item, variant, 1)]
 
         package = Package.new(stock_location, order, contents)
-        package.shipping_methods.size.should eq 2
+        package.shipping_methods.should == [method1]
       end
 
+      it 'builds an empty list of shipping methods when no categories' do
+        variant  = mock_model(Variant, shipping_category: nil)
+        contents = [Package::ContentItem.new(variant, 1)]
+        package  = Package.new(stock_location, order, contents)
+        package.shipping_methods.should be_empty
+      end
 
       it "can convert to a shipment" do
         flattened = [Package::ContentItem.new(line_item, variant, 2, :on_hand),

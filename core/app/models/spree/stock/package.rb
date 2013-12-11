@@ -85,7 +85,7 @@ module Spree
       end
 
       def shipping_methods
-        shipping_categories.map { |sc| sc.shipping_methods }.flatten.uniq
+        shipping_categories.map(&:shipping_methods).reduce(:&).to_a
       end
 
       def inspect
