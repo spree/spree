@@ -102,7 +102,7 @@
 <script>
   $(function(){
 
-    var sc_banner_state = $.cookie('sc_banner_state');
+    var sc_banner_state = $.cookie('sc_nyc_2014_banner_state');
 
     if (new Date().valueOf() < new Date('2014/02/27').valueOf()) {
       if(sc_banner_state != 'closed') {
@@ -114,7 +114,7 @@
             bottom: "-400px",
             opacity: 0
           }, 1000);
-          $.cookie('sc_banner_state', 'closed', { path: '/' });
+          $.cookie('sc_nyc_2014_banner_state', 'closed', { path: '/' });
         });
 
         $(window).scroll(function(){
