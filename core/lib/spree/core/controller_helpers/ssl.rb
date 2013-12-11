@@ -15,16 +15,14 @@ module Spree
 
           def self.ssl_required(*actions)
             ssl_allowed *actions
-            if ssl_supported?
-              if actions.empty? or Rails.application.config.force_ssl
-                force_ssl
-              else
-                force_ssl :only => actions
-              end
+            if actions.empty? or Rails.application.config.force_ssl
+              force_ssl :if => :ssl_supported?
+            else
+              force_ssl :if => :ssl_supported?, :only => actions
             end
           end
 
-          def self.ssl_supported?
+          def ssl_supported?
             return Spree::Config[:allow_ssl_in_production] if Rails.env.production?
             return Spree::Config[:allow_ssl_in_staging] if Rails.env.staging?
             return Spree::Config[:allow_ssl_in_development_and_test] if (Rails.env.development? or Rails.env.test?)
