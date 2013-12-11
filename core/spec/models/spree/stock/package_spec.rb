@@ -74,10 +74,10 @@ module Spree
         variant1 = mock_model(Variant, shipping_category: category1)
         variant2 = mock_model(Variant, shipping_category: category2)
         variant3 = mock_model(Variant, shipping_category: nil)
-        contents = [Package::ContentItem.new(line_item, variant, 1),
-                    Package::ContentItem.new(line_item, variant, 1),
-                    Package::ContentItem.new(line_item, variant, 1),
-                    Package::ContentItem.new(line_item, variant, 1)]
+        contents = [Package::ContentItem.new(line_item, variant1, 1),
+                    Package::ContentItem.new(line_item, variant1, 1),
+                    Package::ContentItem.new(line_item, variant2, 1),
+                    Package::ContentItem.new(line_item, variant3, 1)]
 
         package = Package.new(stock_location, order, contents)
         package.shipping_methods.should == [method1]
@@ -85,7 +85,7 @@ module Spree
 
       it 'builds an empty list of shipping methods when no categories' do
         variant  = mock_model(Variant, shipping_category: nil)
-        contents = [Package::ContentItem.new(variant, 1)]
+        contents = [Package::ContentItem.new(line_item, variant, 1)]
         package  = Package.new(stock_location, order, contents)
         package.shipping_methods.should be_empty
       end
