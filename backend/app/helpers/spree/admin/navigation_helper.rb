@@ -60,7 +60,7 @@ module Spree
 
       def link_to_clone(resource, options={})
         options[:data] = {:action => 'clone'}
-        link_to_with_icon('icon-copy', Spree.t(:clone), clone_admin_product_url(resource), options)
+        link_to_with_icon('icon-copy', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
@@ -69,8 +69,9 @@ module Spree
       end
 
       def link_to_edit(resource, options={})
+        url = options[:url] || edit_object_url(resource)
         options[:data] = {:action => 'edit'}
-        link_to_with_icon('icon-edit', Spree.t(:edit), edit_object_url(resource), options)
+        link_to_with_icon('icon-edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})

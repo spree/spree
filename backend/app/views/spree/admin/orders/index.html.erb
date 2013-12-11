@@ -60,7 +60,7 @@
       <div class="omega four columns">
         <div class="field checkbox">
           <label>
-            <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
+            <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '' %>
             <%= Spree.t(:show_only_complete_orders) %>
           </label>
         </div>
@@ -87,7 +87,9 @@
        <col style="width: 10%;">
        <col style="width: 10%;">
        <col style="width: 12%;">
-       <col style="width: 12%;">
+       <% if Spree::Order.checkout_step_names.include?(:shipment) %>
+         <col style="width: 12%;">
+       <% end %>
        <col style="width: 25%;">
        <col style="width: 10%;">
        <col style="width: 8%;">
@@ -102,7 +104,9 @@
         <th><%= sort_link @search, :number,         I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :state,          I18n.t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :payment_state,  I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :shipment_state, I18n.t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+         <% if Spree::Order.checkout_step_names.include?(:shipment) %>
+          <th><%= sort_link @search, :shipment_state, I18n.t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+         <% end %>
         <th><%= sort_link @search, :email,          I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :total,          I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
         <th data-hook="admin_orders_index_header_actions" class="actions"></th>
@@ -115,7 +119,9 @@
         <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
         <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
-        <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
+          <% if Spree::Order.checkout_step_names.include?(:shipment) %>
+            <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
+          <% end %>
         <td><%= mail_to order.email %></td>
         <td class="align-center"><%= order.display_total.to_html %></td>
         <td class='actions align-center' data-hook="admin_orders_index_row_actions">

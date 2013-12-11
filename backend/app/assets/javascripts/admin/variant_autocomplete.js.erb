@@ -43,12 +43,16 @@ $(document).ready(function() {
       var save = $(this);
       var shipment_number = save.data('shipment-number');
       var variant_id = save.data('variant-id');
+      var line_item_id = save.data('line-item-id');
 
       var quantity = parseInt(save.parents('tr').find('input.line_item_quantity').val());
 
       toggleItemEdit();
-
-      adjustItems(shipment_number, variant_id, quantity);
+      if (shipment_number) {
+        adjustShipmentItems(shipment_number, variant_id, quantity);
+      } else {
+        adjustLineItem(line_item_id, quantity);
+      }
       return false;
     });
 
@@ -60,14 +64,17 @@ $(document).ready(function() {
         var variant_id = del.data('variant-id');
 
         toggleItemEdit();
-
-        adjustItems(shipment_number, variant_id, 0);
+        if (shipment_number) {
+          adjustShipmentItems(shipment_number, variant_id, 0);
+        } else {
+          adjustLineItem(line_item_id, 0);
+        }
       }
     });
   }
 });
 
-adjustItems = function(shipment_number, variant_id, quantity){
+adjustShipmentItems = function(shipment_number, variant_id, quantity){
     var shipment = _.findWhere(shipments, {number: shipment_number + ''});
     var inventory_units = _.where(shipment.inventory_units, {variant_id: variant_id});
 
@@ -93,6 +100,32 @@ adjustItems = function(shipment_number, variant_id, quantity){
       });
     }
 }
+
+adjustLineItem = function(line_item_id, quantity){
+  var url = Spree.routes.orders_api + "/" + order_number + "/line_items/" + line_item_id;
+
+  if(quantity > 0){
+    $.ajax({
+      type: "PUT",
+      url: Spree.url(url),
+      data: { 
+        line_item: {
+          quantity: quantity
+        }
+      }
+    }).done(function( msg ) {
+      advanceOrder();
+    });
+  } else {
+    $.ajax({
+      type: "DELETE",
+      url: Spree.url(url)
+    }).done(function( msg ) {
+      advanceOrder();
+    });
+  }
+}
+
 
 toggleTrackingEdit = function(){
   var link = $(this);
