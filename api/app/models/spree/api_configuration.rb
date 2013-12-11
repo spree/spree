@@ -1,5 +1,6 @@
 module Spree
   class ApiConfiguration < Preferences::Configuration
-    preference :requires_authentication, :boolean, :default => false
+    # Make sure the api requires authentication by default to prevent unwanted access
+    preference :requires_authentication, :boolean, :default => true
   end
 end
