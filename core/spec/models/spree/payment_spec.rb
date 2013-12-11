@@ -741,4 +741,19 @@ describe Spree::Payment do
       end
     end
   end
+
+  # Regression test for #4072 (kinda)
+  # The need for this was discovered in the research for #4072
+  context "state changes" do
+    it "are logged to the database" do
+      payment.state_changes.should be_empty
+      expect(payment.process!).to be_true
+      payment.state_changes.count.should == 2
+      changes = payment.state_changes.map { |change| { change.previous_state => change.next_state} }
+      expect(changes).to eq([
+        {"checkout" => "processing"},
+        { "processing" => "pending"}
+      ])
+    end
+  end
 end
