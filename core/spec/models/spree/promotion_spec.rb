@@ -93,6 +93,12 @@ describe Spree::Promotion do
       promotion.created_at = DateTime.now + 2
       promotion.activate(@payload)
     end
+
+    it "keeps track of the order" do
+      @action1.should_receive(:perform).with(@payload)
+      promotion.activate(@order)
+      expect(promotion.orders.first).to eql @order
+    end
   end
 
   context "#usage_limit_exceeded" do
