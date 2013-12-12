@@ -166,6 +166,10 @@ module Spree
             @checkout_steps ||= {}
           end
 
+          def self.checkout_step_names
+            self.checkout_steps.keys
+          end
+
           def self.add_transition(options)
             self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
           end
