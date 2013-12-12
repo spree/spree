@@ -60,11 +60,20 @@ describe Spree::Calculator::DefaultTax do
 
     context "when tax is included in price" do
       let(:vat) { true }
+
       context "when the variant matches the tax category" do
         it "should be equal to the item total * rate" do
           calculator.compute(line_item_1).should == 1.43
         end
       end
+
+      context "and is computed on order" do
+        before {order.stub :line_items => [line_item_1, line_item_2]}
+        it "will return the deducted amount from the totals" do
+          expect(calculator.compute(order).to_f).to eql 1.67
+        end
+      end
+
     end
 
     context "when tax is not included in price" do
