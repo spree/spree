@@ -12,40 +12,22 @@ The source code for the [Spree Endpoint](https://github.com/spree/spree_endpoint
 
 ## Services
 
-### Order Poll
+### Collections Poll
 
-When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches new orders from Spree.
+When sent a "hub:poll" message to "/collections/poller", the endpoint fetches collection specified in the "payload.target" from Spree.
 
 ####Request
 
 ```json
 {
-  "store_name": "ABC Widgets",
-  "message": "spree:order:poll",
-  "consumer_class": "Augury::Consumers::Remote",
-  "mapping": {
-    "enabled": true,
-    "filters": [ ],
-    "identifiers": { },
-    "messages": [
-      "spree:order:poll"
-    ],
-    "name": "spree.order_poll",
-    "options": {
-      "retries_allowed": true
-    },
-    "parameters": [ ],
-    "required": true,
-    "store_id": {
-      "$oid": "123"
-    },
-    "token": "abc123",
-    "url": "http://ep-spree.spree.fm/orders/poller",
-    "consumer": "Augury::Consumers::Remote"
-  },
-  "source": "accepted"
+  "message": "hub:poll",
+  "payload": {
+    "target": "collections.orders"
+  }
 }
 ```
+
+In the example above the "orders" in "collections.orders" can be replaced by other Spree collections such as: "carts", "products", "return_authorizations", "stock_transfers", "taxons" and "users".
 
 #### Parameters
 
@@ -54,8 +36,8 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
 | api_url | Your Spree Store's API URL | http://demostore.com/api/ |
 | api_key | API Key for an Admin User | dj20492dhjkdjeh2838w7 |
 | api_version | Spree Store Version | 2.0 |
-| order_poll.last_updated_at | Import all orders after this timestamp | 2013-09-24T19:50:00Z |
-| order_poll.per_page | Number of orders to poll per page (max 50) | 10 |
+| collections_poll.last_updated_at | Import all objects after this timestamp | 2013-01-08T18:48:56.001Z |
+| collections_poll.per_page| Number of objects to poll per page (max 50) | 10 |
 
 #### Response
 
@@ -65,11 +47,31 @@ When sent a "spree:order:poll" message to /orders/poller, the endpoint fetches n
   "response": {
     "message_id": "5245b538b4395707ef0036f5",
     "parameters": [
-      {
-        "name": "spree.order_poll.last_updated_at",
-        "value": "2013-09-27T15:57:28Z"
-      }
-    ],
+       {
+         "name": "spree.collections_poll.last_updated_at",
+         "value": [
+           { "orders": "2013-12-11T16:48:18Z" },
+           { "users": "2013-12-11T16:28:05Z" },
+           { "products": "2013-12-11T16:19:58Z" },
+           { "stock_transfers": "2013-12-09T21:05:44Z" },
+           { "carts": "2013-12-09T14:30:42Z" },
+           { "taxons": "2013-11-06T19:14:16Z" },
+           { "return_authorizations": "2013-12-05T21:12:23Z" }
+         ]
+       },
+       {
+         "name": "spree.collections_poll.per_page",
+         "value": [
+           { "orders": "20" },
+           { "users": "20" },
+           { "products": "20" },
+           { "stock_transfers": "20" },
+           { "carts": "20" },
+           { "taxons": "20" },
+           { "return_authorizations": "20" }
+         ]
+       }
+     ],
     "messages": [
       ...
     ]
@@ -644,161 +646,6 @@ When sent an "shipment:confirm" message to /shipments/inventory_unit, the endpoi
          }
       ]
    }
-}
-```
-
-### Stock Transfer Poller
-
-When sent an "spree:stock_transfer:poll" message, the endpoint polls the Spree store for changes in Stock Transfers.
-
-####Request
-
-```json
-{
-  "store_name": "ABC Widgets",
-  "message": "spree:stock_transfer:poll",
-  "created_at": "2013-09-26T20:26:17Z",
-  "completed_at": "2013-09-26T20:26:24Z",
-  "consumer_class": "Augury::Consumers::Remote",
-  "attempt_at": "2013-09-26T20:26:20Z",
-  "attempts": 0,
-  "mapping": {
-    "enabled": true,
-    "filters": [ ],
-    "identifiers": { },
-    "messages": [
-      "spree:stock_transfer:poll"
-    ],
-    "name": "spree.stock_transfer.poll",
-    "options": {
-      "retries_allowed": true
-    },
-    "parameters": [ ],
-    "required": true,
-    "store_id": {
-      "$oid": "123"
-    },
-    "token": "abc123",
-    "url": "http://ep-spree.spree.fm/stock/transfer_poller",
-    "usage": {
-      "1hr": 6,
-      "6hr": 36,
-      "24hr": 144,
-      "3d": 1937
-    },
-    "usage_updated_at": "2013-09-26T20:24:19Z",
-    "consumer": "Augury::Consumers::Remote"
-  },
-  "source": "accepted"
-}
-```
-
-#### Parameters
-
-| Name | Value | Example |
-| :----| :-----| :------ |
-| api_url | Your Spree Store's API URL | http://demostore.com/api/ |
-| api_key | API Key for an Admin User | dj20492dhjkdjeh2838w7 |
-| api_version | Spree Store Version | 2.0 |
-| stock_transfer_poller.last_updated_at | Import all stock transfers after this timestamp | 2013-09-24T19:50:00Z |
-
-#### Response
-
-```json
-{
-  "code": "200",
-  "response": {
-    "message_id": "51da39193ed6f0235700000a",
-    "parameters": [
-      {
-        "name": "spree.stock_transfer_poller.last_updated_at",
-        "value": "2013-07-09T16:20:05+00:00"
-      }
-    ],
-    "messages": [
-      {
-        "key": "stock_transfer:persist",
-        "payload": {
-          "id": 1,
-          "created_at": "2013-07-09T16:20:05Z",
-          "updated_at": "2013-07-09T16:20:05Z",
-          "source_location": {
-            "id": 1,
-            "address1": null,
-            "address2": null,
-            "city": null,
-            "zipcode": null,
-            "phone": null,
-            "country_id": 41,
-            "state_id": null,
-            "state_name": null,
-            "country": {
-              "id": 41,
-              "iso_name": "CHINA",
-              "iso": "CN",
-              "iso3": "CHN",
-              "name": "China",
-              "numcode": 156
-            },
-            "": null,
-            "name": "Default"
-          },
-          "source_movements": [
-            {
-              "id": 1176,
-              "quantity": -13,
-              "stock_item_id": 3,
-              "stock_item": {
-                "id": 3,
-                "count_on_hand": 541,
-                "backorderable": true,
-                "stock_location_id": 1,
-                "variant_id": 3,
-                "variant": {
-                  "id": 3,
-                  "name": "bobblehead",
-                  "product_id": 3,
-                  "external_ref": "Bobblehead1",
-                  "sku": "Bobblehead1",
-                  "price": "30.0",
-                  "weight": "3.000",
-                  "height": "10.0",
-                  "width": "34.0",
-                  "depth": "12.0",
-                  "is_master": true,
-                  "cost_price": null,
-                  "permalink": "bobblehead"
-                }
-              }
-            }
-          ],
-          "destination_location": {
-            "id": 3,
-            "address1": null,
-            "address2": null,
-            "city": null,
-            "zipcode": null,
-            "phone": null,
-            "country_id": 214,
-            "state_id": null,
-            "state_name": null,
-            "country": {
-              "id": 214,
-              "iso_name": "UNITED STATES",
-              "iso": "US",
-              "iso3": "USA",
-              "name": "United States",
-              "numcode": 840
-            },
-            "": null,
-            "name": "office"
-          }
-        }
-      }
-    ],
-    "response": {
-    }
-  }
 }
 ```
 
