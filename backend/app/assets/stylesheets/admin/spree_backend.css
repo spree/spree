@@ -13,5 +13,5 @@
  *= require jquery.powertip
  *= require select2
 
- *= require ./spree_admin
+ *= require admin/spree_admin
 */
