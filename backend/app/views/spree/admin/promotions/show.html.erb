@@ -15,11 +15,7 @@
   <table class="index responsive" id="listing_orders" data-hook>
     <colgroup>
        <col style="width: 10%;">
-       <col style="width: 12%;">
-       <col style="width: 12%;">
-       <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-         <col style="width: 12%;">
-       <% end %>
+       <col style="width: 15%;">
        <col style="width: 25%;">
        <col style="width: 10%;">
     </colgroup>
@@ -27,10 +23,6 @@
       <tr data-hook="admin_orders_index_headers">
         <th><%= I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= I18n.t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-          <th><%= I18n.t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-         <% end %>
         <th><%= I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
       </tr>
@@ -40,10 +32,6 @@
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
         <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
-        <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
-          <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-            <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
-          <% end %>
         <td class="align-center"><%= mail_to order.email %></td>
         <td class="align-center"><%= order.display_total.to_html %></td>
       </tr>
