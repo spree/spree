@@ -13,9 +13,10 @@
     <colgroup>
       <col style="width: 20%">
       <col style="width: 10%">
-      <col style="width: 35%">
+      <col style="width: 30%">
       <col style="width: 10%">
-      <col style="width: 15%">
+      <col style="width: 10%">
+      <col style="width: 10%">
       <col style="width: 10%">
     </colgroup>
     <thead>
@@ -25,6 +26,7 @@
         <th><%= Spree.t(:description) %></th>
         <th><%= Spree.t(:usage_limit) %></th>
         <th><%= Spree.t(:expiration) %></th>
+        <th><%= Spree.t(:order_count) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -36,6 +38,7 @@
           <td><%= promotion.description %></td>
           <td class="align-center"><%= promotion.usage_limit %></td>
           <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
+          <td class="align-center"><%= promotion.orders.complete.count %></td>
           <td class="actions">
             <%= link_to_edit promotion, :no_text => true %>
             <%= link_to_delete promotion, :no_text => true %>
