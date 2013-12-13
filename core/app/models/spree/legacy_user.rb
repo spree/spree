@@ -11,15 +11,6 @@ module Spree
 
     class DestroyWithOrdersError < StandardError; end
 
-    def anonymous?
-      false
-    end
-
-    # Creates an anonymous user
-    def self.anonymous!
-      create
-    end
-
     def has_spree_role?(role)
       true
     end
