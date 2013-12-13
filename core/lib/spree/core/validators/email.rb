@@ -3,10 +3,16 @@
 require 'mail'
 class EmailValidator < ActiveModel::EachValidator
   def validate_each(record,attribute,value)
+    unless valid?(value)
+      record.errors.add(attribute, :invalid, {:value => value}.merge!(options))
+    end
+  end
+
+  def valid?(email)
     begin
-      m = Mail::Address.new(value)
+      m = Mail::Address.new(email)
       # We must check that value contains a domain and that value is an email address
-      r = m.domain && m.address == value
+      r = m.domain && m.address == email
       t = m.__send__(:tree)
       # We need to dig into treetop
       # A valid domain must have dot_atom_text elements size > 1
@@ -18,6 +24,6 @@ class EmailValidator < ActiveModel::EachValidator
     rescue Exception => e
       r = false
     end
-    record.errors.add(attribute, :invalid, {:value => value}.merge!(options)) unless r
+    r
   end
 end
