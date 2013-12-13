@@ -18,14 +18,8 @@ module Spree
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }
 
-    # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
-    after_save :save_rules_and_actions
     before_save :normalize_blank_values
-
-    def save_rules_and_actions
-      (rules + actions).each &:save
-    end
-
+    
     def self.advertised
       where(advertise: true)
     end
