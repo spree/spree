@@ -37,17 +37,12 @@ module DelegateBelongsTo
       attrs = get_association_column_names(association) if attrs.empty?
       attrs.concat get_association_column_names(association) if attrs.delete :defaults
       attrs.each do |attr|
-        next if attribute_method?(attr)
-
         class_def attr do |*args|
-          if args.empty?
-            send(:delegator_for, association).send(attr)
-          else
-            send(:delegator_for, association).send(attr, *args)
-          end
+          send(:delegator_for, association, attr, *args)
         end
+
         class_def "#{attr}=" do |val|
-          send(:delegator_for, association).send("#{attr}=", val)
+          send(:delegator_for_setter, association, attr, val)
         end
       end
     end
@@ -73,19 +68,28 @@ module DelegateBelongsTo
       end
 
     private
-
       def class_def(name, method=nil, &blk)
         class_eval { method.nil? ? define_method(name, &blk) : define_method(name, method) }
       end
-
   end
 
-  def delegator_for(association)
+  def delegator_for(association, attr, *args)
+    return if self.class.column_names.include?(attr.to_s)
     send("#{association}=", self.class.reflect_on_association(association).klass.new) if send(association).nil?
-    send(association)
+    if args.empty?
+      send(association).send(attr)
+    else
+      send(association).send(attr, *args)
+    end
+  end
+
+  def delegator_for_setter(association, attr, val)
+    return if self.class.column_names.include?(attr.to_s)
+    send("#{association}=", self.class.reflect_on_association(association).klass.new) if send(association).nil?
+    send(association).send("#{attr}=", val)
   end
   protected :delegator_for
-
+  protected :delegator_for_setter
 end
 
 ActiveRecord::Base.send :include, DelegateBelongsTo
