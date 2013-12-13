@@ -3,9 +3,11 @@ require 'spec_helper'
 describe "Orders Listing" do
   stub_authorization!
 
+  let!(:promotion) { create(:promotion_with_item_adjustment) }
+
   before(:each) do
-    create(:order, :created_at => 1.day.from_now, :completed_at => 1.day.from_now, :number => "R100")
-    create(:order, :created_at => 1.day.ago, :completed_at => 1.day.ago, :number => "R200")
+    @order1 = create(:order, :created_at => 1.day.from_now, :completed_at => 1.day.from_now, :number => "R100")
+    @order2 = create(:order, :created_at => 1.day.ago, :completed_at => 1.day.ago, :number => "R200")
     visit spree.admin_path
   end
 
@@ -91,5 +93,21 @@ describe "Orders Listing" do
       # Ensure that the other order doesn't show up
       within("table#listing_orders") { page.should_not have_content("R200") }
     end
+
+    context "filter on promotions", :js => true do
+      before(:each) do
+        @order1.promotions << promotion
+        @order1.save
+      end
+
+      it "only shows the orders with the selected promotion" do
+        select2 promotion.name, :from => "Promotion"
+        click_icon :search
+        within_row(1) { page.should have_content("R100") }
+        within("table#listing_orders") { page.should_not have_content("R200") }
+      end
+    end
+
+
   end
 end
