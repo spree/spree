@@ -22,8 +22,15 @@ describe Spree::Shipment do
 
   # Regression test for #4063
   context "number generation" do
-    it "creates a 11-length number" do
-      shipment.number.length.should == 11
+    before do
+      order.stub :update!
+    end
+
+    it "generates a number containing a letter + 11 numbers" do
+      shipment.save
+      shipment.number[0].should == "H"
+      /\d{11}/.match(shipment.number).should_not be_nil
+      shipment.number.length.should == 12
     end
   end
 
