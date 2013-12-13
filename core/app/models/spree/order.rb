@@ -44,6 +44,8 @@ module Spree
     has_many :all_adjustments, class_name: 'Spree::Adjustment'
     has_many :inventory_units
 
+    has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
+
     has_many :shipments, dependent: :destroy do
       def states
         pluck(:state).uniq

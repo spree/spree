@@ -33,6 +33,7 @@
           <%= label_tag nil, Spree.t(:status) %>
           <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2' %>
         </div>
+
       </div>
 
       <div class="four columns">
@@ -64,7 +65,10 @@
             <%= Spree.t(:show_only_complete_orders) %>
           </label>
         </div>
-
+        <div class="field">
+          <%= label_tag nil, Spree.t(:promotion) %>
+          <%= f.select :promotions_id_in, Spree::Promotion.all.collect {|p| [p.name, p.id]}, {:include_blank => true}, :class => 'select2' %>
+        </div>
       </div>
 
       <div class="clearfix"></div>
