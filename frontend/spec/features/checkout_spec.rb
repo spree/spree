@@ -335,6 +335,41 @@ describe "Checkout", inaccessible: true do
     end
   end
 
+  context "order has only payment step" do
+    before do
+      create(:bogus_payment_method)
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        checkout_flow do
+          go_to_state :payment
+          go_to_state :confirm
+        end
+      end
+
+      Spree::Order.any_instance.stub email: "spree@commerce.com"
+
+      add_mug_to_cart
+      click_on "Checkout"
+    end
+
+    after do
+      Spree::Order.checkout_flow(&@old_checkout_flow)
+    end
+
+    it "goes right payment step and place order just fine" do
+      expect(current_path).to eq spree.checkout_state_path('payment')
+
+      choose "Credit Card"
+      fill_in "Card Number", :with => '4111111111111111'
+      fill_in "card_expiry", :with => '04 / 20'
+      fill_in "Card Code", :with => '123'
+      click_button "Save and Continue"
+
+      expect(current_path).to eq spree.checkout_state_path('confirm')
+      click_button "Place Order"
+    end
+  end
+
   def fill_in_address
     address = "order_bill_address_attributes"
     fill_in "#{address}_firstname", :with => "Ryan"

@@ -178,8 +178,10 @@ module Spree
       end
 
       def persist_user_address
-        if @order.address? && try_spree_current_user.respond_to?(:persist_order_address)
-          try_spree_current_user.persist_order_address(@order) if params[:save_user_address]
+        if @order.checkout_steps.include? "address"
+          if @order.address? && try_spree_current_user.respond_to?(:persist_order_address)
+            try_spree_current_user.persist_order_address(@order) if params[:save_user_address]
+          end
         end
       end
 
