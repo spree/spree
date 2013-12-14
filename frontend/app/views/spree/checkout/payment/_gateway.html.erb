@@ -2,8 +2,8 @@
 <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
 <p class="field">
-  <%= label_tag "name_on_card", Spree.t(:name_on_card) %><span class="required">*</span><br />
-  <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}" %>
+  <%= label_tag "name_on_card_#{payment_method.id}", Spree.t(:name_on_card) %><span class="required">*</span><br />
+  <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}", { id: "name_on_card_#{payment_method.id}"} %>
 </p>
 
 <p class="field" data-hook="card_number">
