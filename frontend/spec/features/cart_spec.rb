@@ -62,4 +62,8 @@ describe "Cart", inaccessible: true do
       page.should have_content(product.name)
     end
   end
+  it "should have a surrounding element with data-hook='cart_container'" do
+    visit spree.cart_path
+    page.should have_selector("div[data-hook='cart_container']")
+  end
 end
