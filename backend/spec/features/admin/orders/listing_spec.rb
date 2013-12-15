@@ -4,8 +4,8 @@ describe "Orders Listing" do
   stub_authorization!
 
   before(:each) do
-    create(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
-    create(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
+    create(:order, :created_at => 1.day.from_now, :completed_at => 1.day.from_now, :number => "R100")
+    create(:order, :created_at => 1.day.ago, :completed_at => 1.day.ago, :number => "R200")
     visit spree.admin_path
   end
 
@@ -84,8 +84,7 @@ describe "Orders Listing" do
     end
 
     it "should be able to search orders using only completed at input" do
-      pending "Failing on CI server. To be investigated."
-      fill_in "q_created_at_gt", :with => Date.today
+      fill_in "q_created_at_gt", :with => Date.current
       click_icon :search
       within_row(1) { page.should have_content("R100") }
 

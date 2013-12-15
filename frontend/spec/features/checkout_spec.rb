@@ -32,6 +32,19 @@ describe "Checkout", inaccessible: true do
       end
     end
 
+    # Regression test for #4079
+    context "persists state when on address page" do
+      before do
+        add_mug_to_cart
+        click_button "Checkout"
+      end
+
+      specify do
+        Spree::Order.count.should == 1
+        Spree::Order.last.state.should == "address"
+      end
+    end
+
     # Regression test for #1596
     context "full checkout" do
       before do
@@ -63,6 +76,28 @@ describe "Checkout", inaccessible: true do
 
         click_button "Save and Continue"
         Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
+      end
+    end
+
+    #regression test for #3945
+    context "when Spree::Config[:always_include_confirm_step] is true" do
+      before do
+        Spree::Config[:always_include_confirm_step] = true
+      end
+
+      it "displays confirmation step", :js => true do
+        add_mug_to_cart
+        click_button "Checkout"
+
+        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        fill_in_address
+
+        click_button "Save and Continue"
+        click_button "Save and Continue"
+        click_button "Save and Continue"
+
+        continue_button = find(".continue")
+        continue_button.value.should == "Place Order"
       end
     end
   end

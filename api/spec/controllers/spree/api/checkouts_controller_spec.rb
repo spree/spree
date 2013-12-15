@@ -44,16 +44,6 @@ module Spree
         assert_unauthorized!
       end
 
-      it "will return an error if the recently created order cannot transition from cart to address" do
-        order.state.should eq "cart"
-        order.update_column(:email, nil) # email is necessary to transition from cart to address
-
-        api_put :update, :id => order.to_param, :order_token => order.token
-
-        # Order has not transitioned
-        json_response['state'].should == 'cart'
-      end
-
       it "should transition a recently created order from cart to address" do
         order.state.should eq "cart"
         order.email.should_not be_nil
@@ -220,6 +210,7 @@ module Spree
 
       it "cannot transition if order email is blank" do
         order.update_column(:email, nil)
+        order.update_column(:state, 'address')
 
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 422

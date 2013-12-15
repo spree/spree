@@ -24,7 +24,7 @@ module Spree
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
         order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-        self.scope(name.to_s, relation.order(order_text))
+        self.scope(name.to_s, order(order_text))
       end
     end
 

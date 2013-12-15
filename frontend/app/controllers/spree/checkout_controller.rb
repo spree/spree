@@ -149,7 +149,7 @@ module Spree
       end
 
       def rescue_from_spree_gateway_error(exception)
-        flash[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
+        flash.now[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
         @order.errors.add(:base, exception.message)
         render :edit
       end
@@ -166,7 +166,7 @@ module Spree
           if coupon_result[:coupon_applied?]
             flash[:success] = coupon_result[:success] if coupon_result[:success].present?
           else
-            flash[:error] = coupon_result[:error]
+            flash.now[:error] = coupon_result[:error]
             respond_with(@order) { |format| format.html { render :edit } } and return
           end
         end

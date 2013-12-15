@@ -68,7 +68,7 @@
 
       <tr class="show-method total">
         <td colspan="4">
-          <% if shipment.adjustment.present? %>
+          <% if shipment.adjustment.present? && shipment.shipping_method.present? %>
             <strong><%= shipment.adjustment.label %>: <%= shipment.shipping_method.name %></strong>
           <% else %>
             <%= Spree.t(:cannot_set_shipping_method_without_address) %>

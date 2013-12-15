@@ -10,7 +10,7 @@
   <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<% if @order.cart? %>
+<% if @order.cart? || (@order.checkout_steps.include?("address") && @order.address?) %>
   <div id="select-customer" data-hook>
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:customer_search) %></legend>

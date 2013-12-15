@@ -29,7 +29,7 @@ module Spree
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
-              @order.next_transition.run_callbacks if @order.cart?
+              @order.next if @order.cart?
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
               redirect_to cart_path
@@ -95,7 +95,7 @@ module Spree
         flash[:success] = coupon_result[:success] if coupon_result[:success].present?
         return false
       else
-        flash[:error] = coupon_result[:error]
+        flash.now[:error] = coupon_result[:error]
         respond_with(@order) { |format| format.html { render :edit } }
         return true
       end
