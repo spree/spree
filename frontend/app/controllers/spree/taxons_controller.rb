@@ -11,6 +11,7 @@ module Spree
 
       @searcher = build_searcher(params.merge(:taxon => @taxon.id))
       @products = @searcher.retrieve_products
+      @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
 
     private

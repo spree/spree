@@ -1,6 +1,8 @@
-<nav id="taxonomies" class="sidebar-item" data-hook>
-  <% get_taxonomies.each do |taxonomy| %>
-    <h6 class='taxonomy-root'><%= Spree.t(:shop_by_taxonomy, :taxonomy => taxonomy.name) %></h6>
-    <%= taxons_tree(taxonomy.root, @taxon, Spree::Config[:max_level_in_taxons_menu] || 1) %>
-  <% end %>
-</nav>
+<% cache(cache_key_for_taxonomies) do %>
+  <nav id="taxonomies" class="sidebar-item" data-hook>
+    <% @taxonomies.each do |taxonomy| %>
+      <h6 class='taxonomy-root'><%= Spree.t(:shop_by_taxonomy, :taxonomy => taxonomy.name) %></h6>
+      <%= taxons_tree(taxonomy.root, @taxon, Spree::Config[:max_level_in_taxons_menu] || 1) %>
+    <% end %>
+  </nav>
+<% end %>
