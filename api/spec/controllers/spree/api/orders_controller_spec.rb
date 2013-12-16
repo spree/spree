@@ -41,8 +41,8 @@ module Spree
       assert_unauthorized!
     end
 
-    context "the current api user is anonymous" do
-      let(:current_api_user) { double(anonymous?: true) }
+    context "the current api user is not persisted" do
+      let(:current_api_user) { double(persisted?: false) }
 
       it "returns a 401" do
         api_get :mine
