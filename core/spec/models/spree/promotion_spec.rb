@@ -244,6 +244,15 @@ describe Spree::Promotion do
     end
   end
 
+  describe "#with_coupon_code" do
+    context "and code stored in uppercase" do
+      let!(:promotion) { create(:promotion, :code => "MY-COUPON-123") }
+      it "finds the code with lowercase" do
+        expect(Spree::Promotion.with_coupon_code("my-coupon-123")).to eql promotion
+      end
+    end
+  end
+
   # regression for #4059
   # admin form posts the code and path as empty string
   describe "normalize blank values for code & path" do
