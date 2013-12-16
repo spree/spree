@@ -19,7 +19,7 @@
                 <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
               </li>
             <% else %>
-              <% guest = @order.user.nil? || @order.user.anonymous? %>
+              <% guest = @order.user.nil? %>
               <li>
                 <%= radio_button_tag :guest_checkout, true, guest %>
                 <%= label_tag :guest_checkout_true, Spree.t(:say_yes) %>
