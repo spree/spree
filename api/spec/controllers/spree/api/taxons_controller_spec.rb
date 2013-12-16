@@ -27,6 +27,14 @@ module Spree
         children.first['taxons'].count.should eq 1
       end
 
+      # Regression test for #4112
+      it "does not include children when asked not to" do
+        api_get :index, :taxonomy_id => taxonomy.id, :without_children => 1
+
+        json_response['taxons'].first['name'].should eq(taxon.name)
+        json_response['taxons'].first['taxons'].should be_nil
+      end
+
       it "paginates through taxons" do
         new_taxon = create(:taxon, :name => "Go", :taxonomy => taxonomy)
         taxonomy.root.children << new_taxon
