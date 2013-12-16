@@ -62,11 +62,11 @@ module Spree
       end
 
       def mine
-        if current_api_user.anonymous?
-          render "spree/api/errors/unauthorized", status: :unauthorized
-        else
+        if current_api_user.persisted?
           @orders = current_api_user.orders
           render :mine
+        else
+          render "spree/api/errors/unauthorized", status: :unauthorized
         end
       end
 
