@@ -201,7 +201,11 @@ describe Spree::Promotion do
     end
 
     let!(:adjustment) do
-      Spree::Adjustment.create!(:originator => action, :amount => 10, :label => "Promotional adjustment")
+      Spree::Adjustment.create!({
+        :originator => action,
+        :amount => 10,
+        :label => "Promotional adjustment"
+      })
     end
 
     it "counts eligible adjustments" do
