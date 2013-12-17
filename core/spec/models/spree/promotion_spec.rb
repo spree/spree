@@ -156,6 +156,43 @@ describe Spree::Promotion do
     end
   end
 
+  context "#credits_count" do
+    let!(:promotion) do
+      promotion = Spree::Promotion.new
+      promotion.name = "Foo"
+      promotion.code = "XXX"
+      calculator = Spree::Calculator::FlatRate.new
+      promotion.tap(&:save)
+    end
+
+    let!(:action) do
+      calculator = Spree::Calculator::FlatRate.new
+      action_params = { :promotion => promotion, :calculator => calculator }
+      action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      promotion.actions << action
+      action
+    end
+
+    let!(:adjustment) do
+      Spree::Adjustment.create!(
+        :source => action,
+        :amount => 10,
+        :label => "Promotional adjustment"
+      )
+    end
+
+    it "counts eligible adjustments" do
+      adjustment.update_column(:eligible, true)
+      expect(promotion.credits_count).to eq(1)
+    end
+
+    # Regression test for #4112
+    it "does not count ineligible adjustments" do
+      adjustment.update_column(:eligible, false)
+      expect(promotion.credits_count).to eq(0)
+    end
+  end
+
   context "#products" do
     let(:promotion) { create(:promotion) }
 
