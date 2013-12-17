@@ -494,6 +494,14 @@ describe Spree::Order do
 
   context "#confirmation_required?" do
 
+    # Regression test for #4117
+    it "is required if the state is currently 'confirm'" do
+      order = Spree::Order.new
+      assert !order.confirmation_required?
+      order.state = 'confirm'
+      assert order.confirmation_required?
+    end
+
     context 'Spree::Config[:always_include_confirm_step] == true' do
 
       before do
