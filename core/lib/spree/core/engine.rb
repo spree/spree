@@ -87,6 +87,7 @@ module Spree
           admin/all.*
           admin/orders/edit_form.js
           admin/address_states.js
+          admin/states.js
           jqPlot/excanvas.min.js
           admin/images/new.js
           jquery.jstree/themes/apple/*
