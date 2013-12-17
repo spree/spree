@@ -65,8 +65,7 @@ module Spree
         if current_api_user.anonymous?
           render "spree/api/errors/unauthorized", status: :unauthorized
         else
-          @orders = current_api_user.orders
-          render :mine
+          @orders = current_api_user.orders.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         end
       end
 

@@ -1,8 +1,8 @@
 object @order
 extends "spree/api/orders/order"
 
-if lookup_context.find_all("spree/api/orders/#{@order.state}").present?
-  extends "spree/api/orders/#{@order.state}"
+if lookup_context.find_all("spree/api/orders/#{root_object.state}").present?
+  extends "spree/api/orders/#{root_object.state}"
 end
 
 child :billing_address => :bill_address do
