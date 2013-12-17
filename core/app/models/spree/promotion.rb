@@ -84,7 +84,7 @@ module Spree
     end
 
     def credits
-      Adjustment.promotion.where(originator_id: actions.map(&:id))
+      Adjustment.eligible.promotion.where(originator_id: actions.map(&:id))
     end
 
     def credits_count
