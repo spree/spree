@@ -120,16 +120,19 @@ describe "Checkout", inaccessible: true do
   end
 
   context "and likes to double click buttons" do
-    before(:each) do
-      user = create(:user)
-
+    let!(:user) { create(:user) }
+    
+    let!(:order) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true
 
       order.reload
       order.user = user
       order.update!
+      order
+    end
 
+    before(:each) do
       Spree::CheckoutController.any_instance.stub(:current_order => order)
       Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
       Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
@@ -147,6 +150,7 @@ describe "Checkout", inaccessible: true do
     end
 
     it "prevents double clicking the confirm button on checkout", :js => true do
+      order.payments << create(:payment)
       visit spree.checkout_state_path(:confirm)
 
       # prevent form submit to verify button is disabled
