@@ -46,7 +46,13 @@ module Spree
       def update
         @product = find_product(params[:id])
         authorize! :update, @product
-        if @product.update_attributes(product_params)
+        permitted_product_params = product_params
+
+        if permitted_product_params[:taxon_ids].present?
+          permitted_product_params[:taxon_ids] = permitted_product_params[:taxon_ids].split(',')
+        end
+
+        if @product.update_attributes(permitted_product_params)
           respond_with(@product, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)

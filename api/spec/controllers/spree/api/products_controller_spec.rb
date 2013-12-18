@@ -155,6 +155,9 @@ module Spree
     end
 
     context "as an admin" do
+      let(:taxon_1) { create(:taxon) }
+      let(:taxon_2) { create(:taxon) }
+
       sign_in_as_admin!
 
       it "can see all products" do
@@ -183,9 +186,6 @@ module Spree
       end
 
       context 'creating a product' do
-        let(:taxon_1) { create(:taxon) }
-        let(:taxon_2) { create(:taxon) }
-
         let(:product_data) do
           { name: "The Other Product",
             price: 19.99,
@@ -249,6 +249,18 @@ module Spree
           response.status.should == 422
           json_response["error"].should == "Invalid resource. Please fix errors and try again."
           json_response["errors"]["name"].should == ["can't be blank"]
+        end
+
+        # Regression test for #4123
+        it "puts the created product in the given taxon" do
+          api_put :update, :id => product.to_param, :product => {:taxon_ids => taxon_1.id.to_s}
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+        end
+
+        # Regression test for #4123
+        it "puts the created product in the given taxons" do
+          api_put :update, :id => product.to_param, :product => {:taxon_ids => [taxon_1.id, taxon_2.id].join(',')}
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
         end
       end
 
