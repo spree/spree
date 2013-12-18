@@ -182,53 +182,58 @@ module Spree
         end
       end
 
-      it "can create a new product" do
-        api_post :create, :product => { :name => "The Other Product",
-                                        :price => 19.99,
-                                        :shipping_category_id => create(:shipping_category).id }
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
-      end
-
-      # Regression test for #2140
-      context "with authentication_required set to false" do
-        before do
-          Spree::Api::Config.requires_authentication = false
+      context 'creating a product' do
+        let(:product_data) do
+          { name: "The Other Product",
+            price: 19.99,
+            shipping_category_id: create(:shipping_category).id }
         end
 
-        after do
-          Spree::Api::Config.requires_authentication = true
-        end
-
-        it "can still create a product" do
-          api_post :create, :product => { :name => "The Other Product",
-                                          :price => 19.99,
-                                          :shipping_category_id => create(:shipping_category).id },
-                            :token => "fake"
+        it "can create a new product" do
+          api_post :create, :product => product_data
           json_response.should have_attributes(attributes)
           response.status.should == 201
         end
+
+        # Regression test for #2140
+        context "with authentication_required set to false" do
+          before do
+            Spree::Api::Config.requires_authentication = false
+          end
+
+          after do
+            Spree::Api::Config.requires_authentication = true
+          end
+
+          it "can still create a product" do
+            api_post :create, :product => product_data, :token => "fake"
+            json_response.should have_attributes(attributes)
+            response.status.should == 201
+          end
+        end
+
+        it "cannot create a new product with invalid attributes" do
+          api_post :create, :product => {}
+          response.status.should == 422
+          json_response["error"].should == "Invalid resource. Please fix errors and try again."
+          errors = json_response["errors"]
+          errors.delete("permalink") # Don't care about this one.
+          errors.keys.should =~ ["name", "price", "shipping_category_id"]
+        end
       end
 
-      it "cannot create a new product with invalid attributes" do
-        api_post :create, :product => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        errors = json_response["errors"]
-        errors.delete("permalink") # Don't care about this one.
-        errors.keys.should =~ ["name", "price", "shipping_category_id"]
-      end
+      context 'updating a product' do
+        it "can update a product" do
+          api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
+          response.status.should == 200
+        end
 
-      it "can update a product" do
-        api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
-        response.status.should == 200
-      end
-
-      it "cannot update a product with an invalid attribute" do
-        api_put :update, :id => product.to_param, :product => { :name => "" }
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        json_response["errors"]["name"].should == ["can't be blank"]
+        it "cannot update a product with an invalid attribute" do
+          api_put :update, :id => product.to_param, :product => { :name => "" }
+          response.status.should == 422
+          json_response["error"].should == "Invalid resource. Please fix errors and try again."
+          json_response["errors"]["name"].should == ["can't be blank"]
+        end
       end
 
       it "can delete a product" do
