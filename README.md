@@ -66,7 +66,7 @@ $navbar-default-color: $light-orange;
 
 This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So check there for full cutomization instructions.
 
-It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables:
+It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables, no actual css edits required:
 
 ![spree_bootstrap_frontend theme](http://i.imgur.com/zh34YJ5.png)
 
