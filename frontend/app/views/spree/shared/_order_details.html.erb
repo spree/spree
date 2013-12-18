@@ -7,7 +7,7 @@
         <h6><%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
         <%= render :partial => 'spree/shared/address', :locals => { :address => order.ship_address } %>
       </div>
-    <% end %> 
+    <% end %>
 
     <div class="columns alpha four" data-hook="order-bill-address">
       <h6><%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
@@ -93,15 +93,18 @@
       <td class="total"><span><%= @order.display_item_total.to_html %></span></td>
     </tr>
   </tfoot>
-  <% if order.all_adjustments.promotion.eligible.exists? %>
-    <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-      <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-        <tr class="total">
-          <td colspan="4"><%= Spree.t(:promotion) %>: <strong><%= label %></strong></td>
-          <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
-        </tr>
-      <% end %>
-    </tfoot>
+
+  <% if @order.line_item_adjustments.exists? %>
+    <% if order.all_adjustments.promotion.eligible.exists? %>
+      <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
+        <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+          <tr class="total">
+            <td colspan="4"><%= Spree.t(:promotion) %>: <strong><%= label %></strong></td>
+            <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
+          </tr>
+        <% end %>
+      </tfoot>
+    <% end %>
   <% end %>
 
   <% if order.all_adjustments.tax.exists? %>
@@ -122,6 +125,7 @@
       </tr>
     <% end %>
   </tfoot>
+
   <tfoot id="order-charges" data-hook="order_details_adjustments">
     <% @order.adjustments.eligible.each do |adjustment| %>
     <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
@@ -131,4 +135,5 @@
       </tr>
     <% end %>
   </tfoot>
+
 </table>
