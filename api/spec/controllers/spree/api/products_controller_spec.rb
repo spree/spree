@@ -183,6 +183,9 @@ module Spree
       end
 
       context 'creating a product' do
+        let(:taxon_1) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+
         let(:product_data) do
           { name: "The Other Product",
             price: 19.99,
@@ -193,6 +196,19 @@ module Spree
           api_post :create, :product => product_data
           json_response.should have_attributes(attributes)
           response.status.should == 201
+        end
+
+        it "puts the created product in the given taxon" do
+          product_data[:taxon_ids] = taxon_1.id.to_s
+          api_post :create, :product => product_data
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+        end
+
+        # Regression test for #4123
+        it "puts the created product in the given taxons" do
+          product_data[:taxon_ids] = [taxon_1.id, taxon_2.id].join(',')
+          api_post :create, :product => product_data
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
         end
 
         # Regression test for #2140

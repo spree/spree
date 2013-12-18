@@ -24,8 +24,14 @@ module Spree
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
+        permitted_product_params = product_params
+
+        if permitted_product_params[:taxon_ids].present?
+          permitted_product_params[:taxon_ids] = permitted_product_params[:taxon_ids].split(',')
+        end
+
         begin
-          @product = Product.new(product_params)
+          @product = Product.new(permitted_product_params)
           if @product.save
             respond_with(@product, :status => 201, :default_template => :show)
           else
