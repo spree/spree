@@ -155,6 +155,9 @@ module Spree
     end
 
     context "as an admin" do
+      let(:taxon_1) { create(:taxon) }
+      let(:taxon_2) { create(:taxon) }
+
       sign_in_as_admin!
 
       it "can see all products" do
@@ -182,53 +185,83 @@ module Spree
         end
       end
 
-      it "can create a new product" do
-        api_post :create, :product => { :name => "The Other Product",
-                                        :price => 19.99,
-                                        :shipping_category_id => create(:shipping_category).id }
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
-      end
-
-      # Regression test for #2140
-      context "with authentication_required set to false" do
-        before do
-          Spree::Api::Config.requires_authentication = false
+      context 'creating a product' do
+        let(:product_data) do
+          { name: "The Other Product",
+            price: 19.99,
+            shipping_category_id: create(:shipping_category).id }
         end
 
-        after do
-          Spree::Api::Config.requires_authentication = true
-        end
-
-        it "can still create a product" do
-          api_post :create, :product => { :name => "The Other Product",
-                                          :price => 19.99,
-                                          :shipping_category_id => create(:shipping_category).id },
-                            :token => "fake"
+        it "can create a new product" do
+          api_post :create, :product => product_data
           json_response.should have_attributes(attributes)
           response.status.should == 201
         end
+
+        it "puts the created product in the given taxon" do
+          product_data[:taxon_ids] = taxon_1.id.to_s
+          api_post :create, :product => product_data
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+        end
+
+        # Regression test for #4123
+        it "puts the created product in the given taxons" do
+          product_data[:taxon_ids] = [taxon_1.id, taxon_2.id].join(',')
+          api_post :create, :product => product_data
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
+        end
+
+        # Regression test for #2140
+        context "with authentication_required set to false" do
+          before do
+            Spree::Api::Config.requires_authentication = false
+          end
+
+          after do
+            Spree::Api::Config.requires_authentication = true
+          end
+
+          it "can still create a product" do
+            api_post :create, :product => product_data, :token => "fake"
+            json_response.should have_attributes(attributes)
+            response.status.should == 201
+          end
+        end
+
+        it "cannot create a new product with invalid attributes" do
+          api_post :create, :product => {}
+          response.status.should == 422
+          json_response["error"].should == "Invalid resource. Please fix errors and try again."
+          errors = json_response["errors"]
+          errors.delete("permalink") # Don't care about this one.
+          errors.keys.should =~ ["name", "price", "shipping_category_id"]
+        end
       end
 
-      it "cannot create a new product with invalid attributes" do
-        api_post :create, :product => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        errors = json_response["errors"]
-        errors.delete("permalink") # Don't care about this one.
-        errors.keys.should =~ ["name", "price", "shipping_category_id"]
-      end
+      context 'updating a product' do
+        it "can update a product" do
+          api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
+          response.status.should == 200
+        end
 
-      it "can update a product" do
-        api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
-        response.status.should == 200
-      end
+        it "cannot update a product with an invalid attribute" do
+          api_put :update, :id => product.to_param, :product => { :name => "" }
+          response.status.should == 422
+          json_response["error"].should == "Invalid resource. Please fix errors and try again."
+          json_response["errors"]["name"].should == ["can't be blank"]
+        end
 
-      it "cannot update a product with an invalid attribute" do
-        api_put :update, :id => product.to_param, :product => { :name => "" }
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
-        json_response["errors"]["name"].should == ["can't be blank"]
+        # Regression test for #4123
+        it "puts the created product in the given taxon" do
+          api_put :update, :id => product.to_param, :product => {:taxon_ids => taxon_1.id.to_s}
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+        end
+
+        # Regression test for #4123
+        it "puts the created product in the given taxons" do
+          api_put :update, :id => product.to_param, :product => {:taxon_ids => [taxon_1.id, taxon_2.id].join(',')}
+          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
+        end
       end
 
       it "can delete a product" do

@@ -24,6 +24,7 @@ module Spree
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
+        
         begin
           @product = Product.new(product_params)
           if @product.save
@@ -40,6 +41,7 @@ module Spree
       def update
         @product = find_product(params[:id])
         authorize! :update, @product
+      
         if @product.update_attributes(product_params)
           respond_with(@product, :status => 200, :default_template => :show)
         else
@@ -57,7 +59,11 @@ module Spree
 
       private
         def product_params
-          params.require(:product).permit(permitted_product_attributes)
+          product_params = params.require(:product).permit(permitted_product_attributes)
+          if product_params[:taxon_ids].present?
+            product_params[:taxon_ids] = product_params[:taxon_ids].split(',')
+          end
+          product_params
         end
     end
   end
