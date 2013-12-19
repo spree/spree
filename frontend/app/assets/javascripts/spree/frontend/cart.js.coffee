@@ -7,3 +7,8 @@ Spree.ready ($) ->
 
   ($ 'form#update-cart').submit ->
     ($ 'form#update-cart #update-button').attr('disabled', true)
+
+  $.ajax
+    url: Spree.routes.cart_link,
+    success: (data) ->
+      $('#link-to-cart').html data
