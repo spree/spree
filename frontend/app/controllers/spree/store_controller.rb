@@ -6,6 +6,11 @@ module Spree
       render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
     end
 
+    def cart_link
+      render :partial => 'spree/shared/link_to_cart'
+      fresh_when(simple_current_order, :public => true)
+    end
+
     protected
       # This method is placed here so that the CheckoutController
       # and OrdersController can both reference it (or any other controller
