@@ -46,6 +46,7 @@ module Spree
       end
 
       def reload_totals
+        order_updater.update_item_count
         order_updater.update_item_total
         order_updater.update_adjustment_total
         order_updater.persist_totals
