@@ -103,4 +103,8 @@ RSpec.configure do |config|
   config.include Paperclip::Shoulda::Matchers
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+
+  config.before do
+    Spree::Api::Config[:requires_authentication] = false
+  end
 end
