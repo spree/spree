@@ -146,11 +146,19 @@ When the playbook finishes, Ruby, PostgreSQL and nginx will be installed and fro
 
 This sets up the basic Capistrano files within the application that we need to deploy. The `ansible-rails-app` repository contains a `deploy.rb` which you can use as a starting point within your application.
 
-Before you do anything else, uncomment these three lines in `Capfile:
+Before you do anything else, uncomment these three lines in `Capfile`:
 
     require 'capistrano/bundler'
     require 'capistrano/rails/assets'
     require 'capistrano/rails/migrations'
+
+You will also need to add these gems to the Gemfile:
+
+    group :development do
+      gem 'capistrano', '~> 3.0'
+      gem 'capistrano-bundler', '1.1.1'
+      gem 'capistrano-rails', '1.1.0'
+    end
 
 Then configure `config/deploy/production.rb` to point to the correct server, and finally run this command to deploy:
 
