@@ -11,6 +11,9 @@
   }
   #logo {
     margin-bottom: 10px;
+    img {
+      width: 306px;
+    }
   }
   .nav a {
     color: #fff;
@@ -31,12 +34,11 @@
 }
 
 // -- Spree Layout Custom Rules -------------------------
-.alert-error { //This is a hack, TODO FIXME
-  .alert-danger{};
-}
-.alert-alert { //This is a hack, TODO FIXME
-  .alert-info{};
-}
+
+//TODO, bug #6
+.alert-error { .alert-danger{}; }
+.alert-alert { .alert-info{}; }
+
 .product-body {
   height: 170px;
 }
