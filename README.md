@@ -37,7 +37,7 @@ bundle install
 
 Done.
 
-If you are running a stable branch of spree check if there is a compatible branch of spree_bootstrap_frontend and use that. For example:
+If you are running a stable branch of spree check if there is a compatible branch of `spree_bootstrap_frontend` and use that. For example:
 
 ```ruby
 gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
@@ -48,7 +48,7 @@ I’m targeting creating a stable branch when spree `2-2-stable` is released, bu
 Customizing
 -------
 
-Copy the `spree_bootstrap_frontend.css.scss` file from `assets/stylesheets/store` into the place in your application and edit as required.
+Copy the `spree_bootstrap_frontend.css.scss` file from `assets/stylesheets/store` into the same location in your application and edit as required.
 
 To style your spree store just override the bootstrap 3 variables. The full list of bootstrap variables can be found [here](http://getbootstrap.com/customize/#less-variables). You can override these by simply redefining the variable before the `@import` directive.
 For example:
