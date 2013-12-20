@@ -15,7 +15,7 @@ Retrieve a list of all product properties for a product by making this request:
 
 Product properties are paginated and can be iterated through by passing along a `page` parameter:
 
-    GET /api/products/1/product_propeties?page=2
+    GET /api/products/1/product_properties?page=2
 
 ### Parameters
 
