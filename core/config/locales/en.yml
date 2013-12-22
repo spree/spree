@@ -352,11 +352,6 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
-    attachment_default_style: Attachments Style
-    attachment_default_url: Attachments Default URL
-    attachment_path: Attachments Path
-    attachment_styles: Paperclip Styles
-    attachment_url: Attachments URL
     authorization_failure: Authorization Failure
     available_on: Available On
     avs_response: AVS Response
@@ -427,7 +422,6 @@ en:
     complete: complete
     configuration: Configuration
     configurations: Configurations
-    configure_s3: Configure S3
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
@@ -604,9 +598,6 @@ en:
       translations: Translations
     icon: Icon
     image: Image
-    image_settings: Image Settings
-    image_settings_updated: Image Settings successfully updated.
-    image_settings_warning: You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::Image to do this.
     images: Images
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
@@ -945,11 +936,6 @@ en:
     rma_value: RMA Value
     roles: Roles
     rules: Rules
-    s3_access_key: Access Key
-    s3_bucket: Bucket
-    s3_headers: S3 Headers
-    s3_protocol: S3 Protocol
-    s3_secret: Secret Key
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
