@@ -43,7 +43,7 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order(true)
+      @order = current_order || Order.new
       associate_user
     end
 
