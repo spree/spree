@@ -69,7 +69,3 @@ require 'spree/core/controller_helpers'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/ssl'
 require 'spree/core/controller_helpers/search'
-
-ActiveRecord::Base.class_eval do
-  include CollectiveIdea::Acts::NestedSet
-end

@@ -13,10 +13,3 @@ require 'spree/responder'
 require 'spree/frontend/middleware/seo_assist'
 
 require 'spree/frontend/engine'
-
-if defined?(ActionView)
-  require 'awesome_nested_set/helper'
-  ActionView::Base.class_eval do
-    include CollectiveIdea::Acts::NestedSet::Helper
-  end
-end
