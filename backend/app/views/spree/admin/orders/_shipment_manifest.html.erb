@@ -2,7 +2,7 @@
   <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
     <td class="item-image"><%= mini_image(item.variant) %></td>
     <td class="item-name">
-      <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+      <%= link_to item.variant.product.name, [:admin, item.variant.product] %><br><%= "(#{link_to variant_options(item.variant), edit_admin_product_variant_path(item.variant.product, item.variant)})".html_safe unless item.variant.option_values.empty? %>
     </td>
     <td class="item-price align-center"><%= item.line_item.single_money.to_html %></td>
     <td class="item-qty-show align-center">
