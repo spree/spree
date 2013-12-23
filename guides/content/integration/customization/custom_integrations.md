@@ -59,6 +59,7 @@ The majority of the details within an `endpoint.json` file are related to a serv
         4. **default** - A default string value that will be used.
         5. **allowed** - An array of allowed string values or a regular expression string that the parameter will be validated against.
         6. **optional** - A boolean indicating if the parameter will be optional (defaults to false).
+        7. **enables** (currently only for "boolean" data types) - An array of field names that will be enabled if the checkbox is checked.
 5. **recommends** - Additional configuration that the mapping should use as defaults.
     1. **messages** - an array of message types the service would like to process.
     2. **identifiers** - a hash listing values which should be used to prevent duplicate messages from being processed. The key is an arbitrary name, and value is a path to value(s) within the message.
@@ -102,6 +103,19 @@ The majority of the details within an `endpoint.json` file are related to a serv
                 "allowed": [
                     "One", "Two", "Three"
                 ]
+            },
+            {
+                "name": "bounce_notification",
+                "description": "E-mail bounce notifications",
+                "data_type": "boolean",
+                "enables": [
+                    "bounce_notification_email"
+                ]
+            },
+            {
+                "name": "bounce_notification_email",
+                "description": "E-mail to send bounce notifications",
+                "data_type": "string"
             }
         ]
     },
