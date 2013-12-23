@@ -64,7 +64,8 @@ Send e-mail information to Amazon Simple Email Service.
     {
       "level": "error",
       "subject": "InvalidArguments: 'to', 'from', 'subject', 'body' attributes are required",
-      "description": "..."
+      "description": "...",
+      "backtrace": "..."
     }
   ]
 }

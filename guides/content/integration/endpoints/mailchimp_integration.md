@@ -161,7 +161,8 @@ This type of message is generated when an existing order is updated.
     {
       "level": "error",
       "subject": "MailChimp Error Code 502",
-      "description": "Invalid Email Address: spree@example.com"
+      "description": "Invalid Email Address: spree@example.com",
+      "backtrace": "..."
     }
   ]
 }

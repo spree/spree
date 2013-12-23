@@ -57,7 +57,7 @@ Send shopping cart data to Jirafe.
   "notifications": [
     {
       "level": "error",
-      "subject": "There was a problem while sending a cart event to Jirafe."
+      "subject": "There was a problem while sending a cart event to Jirafe.",
       "description": "..."
     }
   ]
@@ -125,7 +125,7 @@ available for that order.
   "notifications": [
     {
       "level": "error",
-      "subject": "There was a problem while sending an order-accepted event to Jirafe."
+      "subject": "There was a problem while sending an order-accepted event to Jirafe.",
       "description": "..."
     }
   ]
@@ -188,7 +188,7 @@ order is cancelled.
   "notifications": [
     {
       "level": "error",
-      "subject": "There was a problem while sending an order-accepted event to Jirafe."
+      "subject": "There was a problem while sending an order-accepted event to Jirafe.",
       "description": "..."
     }
   ]
@@ -245,7 +245,7 @@ Sync taxons to Jirafe as product categories.
   "notifications": [
     {
       "level": "error",
-      "subject": "There was a problem while sending a category event to Jirafe."
+      "subject": "There was a problem while sending a category event to Jirafe.",
       "description": "..."
     }
   ]
