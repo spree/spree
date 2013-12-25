@@ -58,7 +58,7 @@ these commands:
 
 ## Read the release notes
 
-For information about changes contained with this release, please read the [2.0.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_2.0.0.html).
+For information about changes contained with this release, please read the [2.0.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_2_0_0.html).
 
 ## Verify that everything is OK
 
