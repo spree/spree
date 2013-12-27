@@ -29,3 +29,9 @@ group :test do
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
 end
+
+gem 'polyamorous', github: 'huoxito/polyamorous', branch: 'drop-graft'
+gem 'ransack', github: 'huoxito/ransack', branch: 'rails-v4.1.0'
+gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.1.0.beta1'
+
+gem 'state_machine', github: 'lukeroberts1990/state_machine'
