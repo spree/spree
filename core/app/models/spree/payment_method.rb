@@ -8,6 +8,8 @@ module Spree
 
     validates :name, presence: true
 
+    has_many :payments, class_name: "Spree::Payment"
+
     def self.providers
       Rails.application.config.spree.payment_methods
     end
