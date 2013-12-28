@@ -108,6 +108,7 @@ module Spree
     def selected_shipping_rate_id=(id)
       shipping_rates.update_all(selected: false)
       shipping_rates.update(id, selected: true)
+      persist_cost
       self.save!
     end
 
