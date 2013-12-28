@@ -1,8 +1,7 @@
 module Spree
   class StockMovement < ActiveRecord::Base
-    belongs_to :stock_item, class_name: 'Spree::StockItem'
+    belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
-
 
     after_create :update_stock_item_quantity
 

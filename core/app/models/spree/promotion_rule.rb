@@ -1,7 +1,7 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < ActiveRecord::Base
-    belongs_to :promotion, foreign_key: 'activator_id', class_name: 'Spree::Promotion'
+    belongs_to :promotion, foreign_key: 'activator_id', class_name: 'Spree::Promotion', inverse_of: :promotion_rules
 
     scope :of_type, ->(t) { where(type: t) }
 
@@ -26,6 +26,6 @@ module Spree
         errors[:base] << "Promotion already contains this rule type"
       end
     end
- 
+
   end
 end
