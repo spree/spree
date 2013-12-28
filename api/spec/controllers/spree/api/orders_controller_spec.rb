@@ -110,6 +110,12 @@ module Spree
       response.status.should == 200
     end
 
+    it "can view an order if the token is passed in header" do
+      request.headers["X-Spree-Order-Token"] = order.token
+      api_get :show, :id => order.to_param
+      response.status.should == 200
+    end
+
     it "cannot cancel an order that doesn't belong to them" do
       order.update_attribute(:completed_at, Time.now)
       order.update_attribute(:shipment_state, "ready")
@@ -144,7 +150,7 @@ module Spree
       line_item.should_receive(:update_attributes).with("special" => true)
 
       controller.stub(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
-      api_post :create, :order => { 
+      api_post :create, :order => {
         :line_items => {
           "0" => {
             :variant_id => variant.to_param, :quantity => 5, :special => true
@@ -214,7 +220,7 @@ module Spree
       order.stub(:associate_user!)
       order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
       line_item.should_not_receive(:update_attributes)
-      api_post :create, :order => { 
+      api_post :create, :order => {
         :line_items => {
           "0" => {
             :variant_id => variant.to_param, :quantity => 5

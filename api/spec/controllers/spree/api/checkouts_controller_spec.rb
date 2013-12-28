@@ -38,7 +38,7 @@ module Spree
     end
 
     context "PUT 'update'" do
-      let(:order) do 
+      let(:order) do
         order = create(:order_with_line_items)
         # Order should be in a pristine state
         # Without doing this, the order may transition from 'cart' straight to 'delivery'
@@ -56,6 +56,14 @@ module Spree
         order.state.should eq "cart"
         order.email.should_not be_nil
         api_put :update, :id => order.to_param, :order_token => order.token
+        order.reload.state.should eq "address"
+      end
+
+      it "should transition a recently created order from cart to address with order token in header" do
+        order.state.should eq "cart"
+        order.email.should_not be_nil
+        request.headers["X-Spree-Order-Token"] = order.token
+        api_put :update, :id => order.to_param
         order.reload.state.should eq "address"
       end
 
