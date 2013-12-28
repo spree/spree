@@ -1,14 +1,14 @@
 module Spree
   class LineItem < ActiveRecord::Base
     before_validation :adjust_quantity
-    belongs_to :order, class_name: "Spree::Order", :inverse_of => :line_items
-    belongs_to :variant, class_name: "Spree::Variant"
+    belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items
+    belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
     has_one :product, through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
-    has_many :inventory_units
+    has_many :inventory_units, inverse_of: :line_item
 
     before_validation :copy_price
     before_validation :copy_tax_category
