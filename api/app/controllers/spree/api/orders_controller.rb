@@ -135,11 +135,15 @@ module Spree
 
         def find_order
           @order = Spree::Order.find_by!(number: params[:id])
-          authorize! :update, @order, params[:order_token]
+          authorize! :update, @order, order_token
         end
 
         def before_delivery
           @order.create_proposed_shipments
+        end
+
+        def order_token
+          request.headers["X-Spree-Order-Token"] || params[:order_token]
         end
 
     end

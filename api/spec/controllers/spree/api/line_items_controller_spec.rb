@@ -28,6 +28,14 @@ module Spree
         json_response.should have_attributes(attributes)
         json_response["variant"]["name"].should_not be_blank
       end
+
+      it "can add a new line item to an existing order with token in header" do
+        request.headers["X-Spree-Order-Token"] = order.token
+        api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+        json_response["variant"]["name"].should_not be_blank
+      end
     end
 
     context "as the order owner" do
