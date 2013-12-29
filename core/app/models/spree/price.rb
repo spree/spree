@@ -1,6 +1,6 @@
 module Spree
   class Price < ActiveRecord::Base
-    belongs_to :variant, class_name: 'Spree::Variant'
+    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices
 
     validate :check_price
     validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true

@@ -1,7 +1,7 @@
 module Spree
   class ProductOptionType < ActiveRecord::Base
-    belongs_to :product, class_name: 'Spree::Product'
-    belongs_to :option_type, class_name: 'Spree::OptionType'
+    belongs_to :product, class_name: 'Spree::Product', inverse_of: :product_option_types
+    belongs_to :option_type, class_name: 'Spree::OptionType', inverse_of: :product_option_types
     acts_as_list scope: :product
   end
 end

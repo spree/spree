@@ -2,7 +2,7 @@ module Spree
   class Variant < ActiveRecord::Base
     acts_as_paranoid
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product'
+    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
     delegate_belongs_to :product, :name, :description, :permalink, :available_on,
@@ -10,9 +10,9 @@ module Spree
                         :shipping_category
 
     has_many :inventory_units
-    has_many :line_items
+    has_many :line_items, inverse_of: :variant
 
-    has_many :stock_items, dependent: :destroy
+    has_many :stock_items, dependent: :destroy, inverse_of: :variant
     has_many :stock_locations, through: :stock_items
     has_many :stock_movements
 
@@ -28,7 +28,8 @@ module Spree
 
     has_many :prices,
       class_name: 'Spree::Price',
-      dependent: :destroy
+      dependent: :destroy,
+      inverse_of: :variant
 
     validate :check_price
     validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: proc { Spree::Config[:require_master_price] }
