@@ -10,9 +10,9 @@ module Spree
       variant.option_values << create(:option_value)
       variant
     end
-    let!(:attributes) { [:id, :name, :sku, :price, :weight, :height,
-                         :width, :depth, :is_master, :cost_price,
-                         :permalink, :description] }
+    let!(:base_attributes) { [:id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink, :description] }
+    let!(:show_attributes) { base_attributes.dup.push(:in_stock) }
+    let!(:new_attributes) { base_attributes }
 
     before do
       stub_authentication!
@@ -20,7 +20,7 @@ module Spree
 
     it "can see a paginated list of variants" do
       api_get :index
-      json_response["variants"].first.should have_attributes(attributes)
+      json_response["variants"].first.should have_attributes(show_attributes)
       json_response["count"].should == 1
       json_response["current_page"].should == 1
       json_response["pages"].should == 1
@@ -79,7 +79,7 @@ module Spree
       it "can select the next page of variants" do
         second_variant = create(:variant)
         api_get :index, :page => 2, :per_page => 1
-        json_response["variants"].first.should have_attributes(attributes)
+        json_response["variants"].first.should have_attributes(show_attributes)
         json_response["total_count"].should == 3
         json_response["current_page"].should == 2
         json_response["pages"].should == 3
@@ -88,7 +88,7 @@ module Spree
 
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
-      json_response.should have_attributes(attributes)
+      json_response.should have_attributes(show_attributes)
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
@@ -101,7 +101,7 @@ module Spree
 
       api_get :show, :id => variant.to_param
 
-      json_response.should have_attributes(attributes + [:images])
+      json_response.should have_attributes(show_attributes + [:images])
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
@@ -111,7 +111,7 @@ module Spree
 
     it "can learn how to create a new variant" do
       api_get :new
-      json_response["attributes"].should == attributes.map(&:to_s)
+      json_response["attributes"].should == new_attributes.map(&:to_s)
       json_response["required_attributes"].should be_empty
     end
 
@@ -149,7 +149,7 @@ module Spree
 
       it "can create a new variant" do
         api_post :create, :variant => { :sku => "12345" }
-        json_response.should have_attributes(attributes)
+        json_response.should have_attributes(new_attributes)
         response.status.should == 201
         json_response["sku"].should == "12345"
 
