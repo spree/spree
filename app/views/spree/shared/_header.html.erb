@@ -2,7 +2,9 @@
 
 	<header id="header" data-hook>
 		<div class="container">
-	  		<figure id="logo" class="text-center col-md-4" data-hook><%= logo %></figure>
+	  		<figure id="logo" class="text-center col-md-4" data-hook>
+          <%= logo('logo/spree_bootstrap.png') %>
+        </figure>
 	  		<%= render :partial => 'spree/shared/nav_bar' %>
 		</div>
 	</header>
