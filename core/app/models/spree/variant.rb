@@ -72,7 +72,7 @@ module Spree
         a.option_type.position <=> b.option_type.position
       end
 
-      values.map! do |ov|
+      values.to_a.map! do |ov|
         "#{ov.option_type.presentation}: #{ov.presentation}"
       end
 
