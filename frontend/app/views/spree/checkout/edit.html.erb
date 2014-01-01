@@ -32,5 +32,5 @@ Spree.current_order_token = "<%= @order.token %>"
 </script>
 
 <% if I18n.locale != :en %>
-  <script src='/assets/jquery.validate/localization/messages_<%= I18n.locale %>.js'></script>
+  <script src="<%= assets_prefix %>/jquery.validate/localization/messages_<%= I18n.locale %>.js"></script>
 <% end %>
