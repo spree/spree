@@ -389,6 +389,13 @@ module Spree
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
         end
 
+        it "includes the tax_total in the response" do
+          api_get :show, :id => order.to_param
+
+          json_response['tax_total'].should == '0.0'
+          json_response['display_tax_total'].should == '$0.00'
+        end
+
         context "when in delivery" do
           let!(:shipping_method) do
             FactoryGirl.create(:shipping_method).tap do |shipping_method|
