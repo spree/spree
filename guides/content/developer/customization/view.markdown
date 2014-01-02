@@ -189,7 +189,15 @@ override to ensure maximum protection against changes:
 Deface evaluates all the selectors passed against the original erb view
 contents (and importantly not against the finished / generated HTML). In
 order for Deface to make ruby blocks contained in a view parseable they
-are converted into a pseudo markup as follows:
+are converted into a pseudo markup as follows.
+
+***
+Version 1.0 of Deface, used in Spree 2.1, changed the code tag syntax.
+Formerly code tags were parsed as `<code erb-loud>` and `<code
+erb-silent>`.  They are now parsed as `<erb loud>` and `<erb silent>`.
+Deface overrides which used selectors like `code[erb-loud]` should now
+use `erb[loud]`.
+***
 
 Given the following Erb file:
 
@@ -205,13 +213,13 @@ Would be seen by Deface as:
 
 ```html
 <html>
-  <code erb-silent> if products.empty? </code>
-  <code erb-loud> Spree.t(:no_products_found) </code>
-  <code erb-silent> elsif params.key?(:keywords) </code>
+  <erb[silent]> if products.empty? </erb>
+  <erb[loud]> Spree.t(:no_products_found) </erb>
+  <erb[silent]> elsif params.key?(:keywords) </erb>
 
-  <h3><code erb-loud> Spree.t(:products) </code></h3>
+  <h3><erb[loud]> Spree.t(:products) </erb></h3>
 
-  <code erb-silent> end </code>
+  <erb[silent]> end </erb>
 </html>
 ```
 
@@ -219,9 +227,9 @@ So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
 
 ```ruby
- :replace => "code[erb-loud]:contains('t(:products)')"
+ :replace => "erb[loud]:contains('t(:products)')"
 
-:insert_before => "code[erb-silent]:contains('elsif')"
+:insert_before => "erb[silent]:contains('elsif')"
 ```
 
 #### View upgrade protection
