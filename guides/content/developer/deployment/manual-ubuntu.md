@@ -6,15 +6,15 @@ section: deployment
 ## Overview
 
 This guide will walk you through configuring and deploying your Spree
-application to an environment on Ubuntu 12.04.
+application to an environment on Ubuntu 13.04.
 
-This guide assumes an absolutely clean-slate Ubuntu 12.04 Server install, and
+This guide assumes an absolutely clean-slate Ubuntu 13.04 Server install, and
 covers setting up the following things:
 
 * A user for the application
 * Operating system dependencies required for Ruby, Rails and Spree
-* Ruby 1.9.3
-* Rails 4.0.0
+* Ruby 2.1.0
+* Rails 4.0.2
 * PostgreSQL
 * Unicorn + nginx (with SSL)
 * Seed data for your store
@@ -143,23 +143,10 @@ $ . ~/.bashrc
 ```
 
 Next, you will need to install the operating system dependencies required for
-Ruby. When you run `rvm requirements`, these dependencies are listed underneath
-the heading "Additional Dependencies". For MRI Ruby, these dependencies are as
-follows:
-
-
-    build-essential openssl libreadline6 libreadline6-dev curl git-core
-    zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev
-    libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion
-    pkg-config
-
-To install these dependencies, run these commands **as root**:
+Ruby. Run this command to install the dependencies:
 
 ```bash
-apt-get update apt-get install -y build-essential openssl libreadline6 \
-libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev \
-libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev \
-automake libtool bison subversion pkg-config
+rvm requirements
 ```
 
 You will also need to install a JavaScript runtime. You can install the `nodejs`
@@ -185,10 +172,10 @@ $ apt-get install -y imagemagick
 ```
 
 Once these dependencies are installed, switch back into the `spree` user and
-install Ruby 2.0.0 by running this command:
+install Ruby 2.1.0 by running this command:
 
 ```bash
-$ rvm install 2.0.0
+$ rvm install 2.1.0
 ```
 
 This command will take a couple of minutes to finish running.
@@ -197,7 +184,7 @@ Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
 ```bash
-$ rvm use 2.0.0 --default
+$ rvm use 2.1.0 --default
 ```
 
 Ensure that this version of Ruby is really the new default by running this
@@ -210,7 +197,7 @@ ruby -v
 It should output something similar to this:
 
 ```bash
-ruby 1.9.3p392 (2013-02-22 revision 39386) [i686-linux]
+ruby 2.1.0p0 (2013-12-25 revision 44422) [x86_64-linux]
 ```
 
 You now have a version of Ruby correctly configured on your server.
