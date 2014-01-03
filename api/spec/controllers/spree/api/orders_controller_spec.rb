@@ -410,6 +410,13 @@ module Spree
             order.save
           end
 
+          it "includes the ship_total in the response" do
+            api_get :show, :id => order.to_param
+
+            json_response['ship_total'].should == '10.0'
+            json_response['display_ship_total'].should == '$10.00'
+          end
+
           it "returns available shipments for an order" do
             api_get :show, :id => order.to_param
             response.status.should == 200
