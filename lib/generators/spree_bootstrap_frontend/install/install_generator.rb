@@ -1,8 +1,7 @@
 module SpreeBootstrapFrontend
   module Generators
     class InstallGenerator < Rails::Generators::Base
-
-      # currently no need for an install generator, commented out to avoid confusion if run
+      source_root File.expand_path("../templates", __FILE__)
 
       # class_option :auto_run_migrations, :type => :boolean, :default => false
 
@@ -12,6 +11,8 @@ module SpreeBootstrapFrontend
       end
 
       def add_stylesheets
+        copy_file 'stylesheets/spree_bootstrap_frontend.css.scss',
+                  'app/assets/stylesheets/spree/frontend/spree_bootstrap_frontend.css.scss'
         # inject_into_file 'app/assets/stylesheets/store/all.css', " *= require store/spree_bootstrap_frontend\n", :before => /\*\//, :verbose => true
         # inject_into_file 'app/assets/stylesheets/admin/all.css', " *= require admin/spree_bootstrap_frontend\n", :before => /\*\//, :verbose => true
       end
