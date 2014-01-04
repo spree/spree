@@ -22,8 +22,7 @@ module Spree
 
     attr_accessible :quantity, :variant_id
 
-    before_save :update_inventory
-
+    after_save :update_inventory
     after_save :update_order
     after_destroy :update_order
 
