@@ -20,8 +20,7 @@ module Spree
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
-    before_save :update_inventory
-
+    after_save :update_inventory
     after_save :update_order
     after_destroy :update_order
 
