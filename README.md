@@ -1,4 +1,4 @@
-### Switches out Spree’s entire frontend for a bootstrap 3 powered frontend.
+### Switches out [Spree](https://github.com/spree/spree)’s entire frontend for a bootstrap 3 powered frontend.
 
 This has several large advantages:
 
@@ -14,7 +14,7 @@ This has several large advantages:
 Overview
 -------
 
-This attempts to stay as closely to the original spree frontend markup as possible, only changing layout class names and adding a few DOM elements where required. Helper decorators have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
+This stays as closely to the original spree frontend markup as possible. Helper decorators have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
 
 ![spree_bootstrap_frontend preview](http://i.imgur.com/S50Gn7V.png)
 
