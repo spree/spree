@@ -181,6 +181,11 @@ describe "Order Details", js: true do
   end
 
   context 'with only read permissions' do
+    
+    before do 
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+    end
+
     custom_authorization! do |user|
       can [:admin, :index, :read, :edit], Spree::Order
     end
@@ -215,6 +220,7 @@ describe "Order Details", js: true do
     end
 
     it 'should not display order tabs or edit buttons without ability' do
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
       visit spree.edit_admin_order_path(order)
       # Order Form
       page.should_not have_css('.edit-item')
