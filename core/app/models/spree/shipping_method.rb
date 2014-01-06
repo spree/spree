@@ -9,7 +9,7 @@ module Spree
     has_many :shipments
     has_many :shipping_method_categories
     has_many :shipping_categories, through: :shipping_method_categories
-    has_many :shipping_rates
+    has_many :shipping_rates, inverse_of: :shipping_method
 
     has_and_belongs_to_many :zones, :join_table => 'spree_shipping_methods_zones',
                                     :class_name => 'Spree::Zone',
