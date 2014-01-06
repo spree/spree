@@ -357,6 +357,15 @@ module Spree
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
         end
 
+        it "includes the tax_total in the response" do
+          api_get :show, :id => order.to_param
+
+          json_response['included_tax_total'].should == '0.0'
+          json_response['additional_tax_total'].should == '0.0'
+          json_response['display_included_tax_total'].should == '$0.00'
+          json_response['display_additional_tax_total'].should == '$0.00'
+        end
+
         it "lists line item adjustments" do
           adjustment = create(:adjustment, 
             :label => "10% off!",
