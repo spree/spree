@@ -74,8 +74,11 @@ describe Spree::Promotion do
 
   describe "#activate" do
     before do
-      @action1 = stub_model(Spree::PromotionAction, :perform => true)
-      @action2 = stub_model(Spree::PromotionAction, :perform => true)
+      @action1 = Spree::Promotion::Actions::CreateAdjustment.create!
+      @action2 = Spree::Promotion::Actions::CreateAdjustment.create!
+      @action1.stub perform: true
+      @action2.stub perform: true
+
       promotion.promotion_actions = [@action1, @action2]
       promotion.created_at = 2.days.ago
 
@@ -288,15 +291,23 @@ describe Spree::Promotion do
       before { promotion.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
-                                     stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true)]
+        promo1 = Spree::PromotionRule.create!
+        promo1.stub(eligible?: true, applicable?: true)
+        promo2 = Spree::PromotionRule.create!
+        promo2.stub(eligible?: true, applicable?: true)
+
+        promotion.promotion_rules = [promo1, promo2]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
         promotion.rules_are_eligible?(promotable).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
-        promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
-                                     stub_model(Spree::PromotionRule, :eligible? => false, :applicable? => true)]
+        promo1 = Spree::PromotionRule.create!
+        promo1.stub(eligible?: true, applicable?: true)
+        promo2 = Spree::PromotionRule.create!
+        promo2.stub(eligible?: false, applicable?: true)
+
+        promotion.promotion_rules = [promo1, promo2]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
         promotion.rules_are_eligible?(promotable).should be_false
       end
