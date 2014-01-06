@@ -391,4 +391,12 @@ describe Spree::Variant do
       build(:variant).should_track_inventory?.should eq(true)
     end
   end
+
+  describe "deleted_at scope" do
+    before { variant.destroy && variant.reload }
+    it "should have a price if deleted" do
+      variant.price = 10
+      expect(variant.price).to eq(10)
+    end
+  end
 end
