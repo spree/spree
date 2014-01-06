@@ -126,6 +126,22 @@ describe Spree::CreditCard do
       credit_card.save
       credit_card.should be_valid
     end
+
+    context 'when encrypted_values is true' do
+      before do
+        credit_card.attributes = valid_credit_card_attributes.merge(encrypted_values: true)
+      end
+
+      it 'should not validate month numericality' do
+        credit_card.month = 'i am an encrypted month'
+        credit_card.should be_valid
+      end
+
+      it 'should not validate year numericality' do
+        credit_card.year = 'i am an encrypted year'
+        credit_card.should be_valid
+      end
+    end
   end
 
   context "#save" do
@@ -143,6 +159,30 @@ describe Spree::CreditCard do
     it "should not actually store the security code" do
       persisted_card.verification_value.should be_blank
     end
+
+    context 'when encrypted_values is true' do
+
+      before do
+        credit_card.attributes = valid_credit_card_attributes.merge(
+          month: 'i-am-encrypted-month',
+          year: 'i-am-encrypted-year',
+          encrypted_values: true
+        )
+        credit_card.save!
+      end
+
+      let!(:encrypted_persisted_card) { Spree::CreditCard.find(credit_card.id) }
+
+      it 'should not save encrypted values in database' do
+        encrypted_persisted_card.month.should be_blank
+        encrypted_persisted_card.year.should be_blank
+      end
+
+      it 'should still have encrypted values in memory' do
+        credit_card.month.should == 'i-am-encrypted-month'
+        credit_card.year.should == 'i-am-encrypted-year'
+      end
+    end
   end
 
   context "#number=" do
@@ -157,6 +197,17 @@ describe Spree::CreditCard do
     it "should not raise an exception on non-string input" do
       credit_card.number = Hash.new
       credit_card.number.should be_nil
+    end
+
+    context 'when encrypted_values is true' do
+      before do
+        credit_card.encrypted_values = true
+      end
+
+      it 'should not strip non-numeric characters' do
+        credit_card.number = "i-am-really-super-duper-encrypted"
+        credit_card.number.should == "i-am-really-super-duper-encrypted"
+      end
     end
   end
 
@@ -264,6 +315,20 @@ describe Spree::CreditCard do
       am_card.first_name.should == "Bob"
       am_card.last_name = "Boblaw"
       am_card.verification_value.should == 123
+    end
+  end
+
+  context "#has_encrypted_values?" do
+    context 'when encrypted_values is true' do
+      it 'should be true' do
+        Spree::CreditCard.new(encrypted_values: true).has_encrypted_values?.should be_true
+      end
+    end
+
+    context 'when encrypted_values is false' do
+      it 'should be false' do
+        Spree::CreditCard.new.has_encrypted_values?.should be_false
+      end
     end
   end
 end

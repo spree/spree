@@ -3,14 +3,16 @@ module Spree
     has_many :payments, as: :source
 
     before_save :set_last_digits
+    before_save :stash_encrypted_values
+    after_save  :restore_encrypted_values
 
-    attr_accessor :number, :verification_value
+    attr_accessor :number, :verification_value, :encrypted_values
 
-    validates :month, :year, numericality: { only_integer: true }, unless: :has_payment_profile?
+    validates :month, :year, numericality: { only_integer: true }, unless: Proc.new { |cc | cc.has_payment_profile? || cc.has_encrypted_values? }
     validates :number, presence: true, unless: :has_payment_profile?, on: :create
     validates :name, presence: true
     validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
-    validate :expiry_not_in_the_past
+    validate :expiry_not_in_the_past, unless: :has_encrypted_values?
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
 
@@ -34,7 +36,11 @@ module Spree
     end
 
     def number=(num)
-      @number = num.gsub(/[^0-9]/, '') rescue nil
+      if has_encrypted_values?
+        @number = num
+      else
+        @number = num.gsub(/[^0-9]/, '') rescue nil
+      end
     end
 
     # cc_type is set by jquery.payment, which helpfully provides different
@@ -95,6 +101,10 @@ module Spree
       gateway_customer_profile_id.present? || gateway_payment_profile_id.present?
     end
 
+    def has_encrypted_values?
+      encrypted_values
+    end
+
     def to_active_merchant
       ActiveMerchant::Billing::CreditCard.new(
         :number => number,
@@ -107,6 +117,23 @@ module Spree
     end
 
     private
+
+    PROTECTED_ENCRYPTED_VALUES = [:month, :year]
+    def stash_encrypted_values
+      return unless has_encrypted_values?
+      @encrypted_values_stash = {}
+      PROTECTED_ENCRYPTED_VALUES.each do |i|
+        @encrypted_values_stash[i] = self[i]
+        self[i] = nil
+      end
+    end
+
+    def restore_encrypted_values
+      return unless has_encrypted_values?
+      PROTECTED_ENCRYPTED_VALUES.each do |i|
+        self[i] = @encrypted_values_stash[i]
+      end
+    end
 
     def expiry_not_in_the_past
       if year.present? && month.present?
