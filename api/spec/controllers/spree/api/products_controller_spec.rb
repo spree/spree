@@ -7,7 +7,10 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
+    let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
+    let(:show_attributes) { base_attributes.dup.push(:has_variants) }
+    let(:new_attributes) { base_attributes }
+    
 
     before do
       stub_authentication!
@@ -16,7 +19,7 @@ module Spree
     context "as a normal user" do
       it "retrieves a list of products" do
         api_get :index
-        json_response["products"].first.should have_attributes(attributes)
+        json_response["products"].first.should have_attributes(show_attributes)
         json_response["total_count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
@@ -25,7 +28,7 @@ module Spree
 
       it "retrieves a list of products by id" do
         api_get :index, :ids => [product.id]
-        json_response["products"].first.should have_attributes(attributes)
+        json_response["products"].first.should have_attributes(show_attributes)
         json_response["total_count"].should == 1
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
@@ -35,8 +38,8 @@ module Spree
       it "retrieves a list of products by ids string" do
         second_product = create(:product)
         api_get :index, :ids => [product.id, second_product.id].join(",")
-        json_response["products"].first.should have_attributes(attributes)
-        json_response["products"][1].should have_attributes(attributes)
+        json_response["products"].first.should have_attributes(show_attributes)
+        json_response["products"][1].should have_attributes(show_attributes)
         json_response["total_count"].should == 2
         json_response["current_page"].should == 1
         json_response["pages"].should == 1
@@ -57,7 +60,7 @@ module Spree
         it "can select the next page of products" do
           second_product = create(:product)
           api_get :index, :page => 2, :per_page => 1
-          json_response["products"].first.should have_attributes(attributes)
+          json_response["products"].first.should have_attributes(show_attributes)
           json_response["total_count"].should == 2
           json_response["current_page"].should == 2
           json_response["pages"].should == 2
@@ -84,7 +87,7 @@ module Spree
       it "can search for products" do
         create(:product, :name => "The best product in the world")
         api_get :index, :q => { :name_cont => "best" }
-        json_response["products"].first.should have_attributes(attributes)
+        json_response["products"].first.should have_attributes(show_attributes)
         json_response["count"].should == 1
       end
 
@@ -94,11 +97,12 @@ module Spree
         product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
         api_get :show, :id => product.to_param
-        json_response.should have_attributes(attributes)
+        json_response.should have_attributes(show_attributes)
         json_response['variants'].first.should have_attributes([:name,
                                                               :is_master,
                                                               :price,
-                                                              :images])
+                                                              :images,
+                                                              :in_stock])
 
         json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
                                                                                 :attachment_width,
@@ -144,7 +148,7 @@ module Spree
 
       it "can learn how to create a new product" do
         api_get :new
-        json_response["attributes"].should == attributes.map(&:to_s)
+        json_response["attributes"].should == new_attributes.map(&:to_s)
         required_attributes = json_response["required_attributes"]
         required_attributes.should include("name")
         required_attributes.should include("price")
@@ -194,7 +198,7 @@ module Spree
 
         it "can create a new product" do
           api_post :create, :product => product_data
-          json_response.should have_attributes(attributes)
+          json_response.should have_attributes(new_attributes)
           response.status.should == 201
         end
 
@@ -223,7 +227,7 @@ module Spree
 
           it "can still create a product" do
             api_post :create, :product => product_data, :token => "fake"
-            json_response.should have_attributes(attributes)
+            json_response.should have_attributes(show_attributes)
             response.status.should == 201
           end
         end
