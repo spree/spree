@@ -24,7 +24,7 @@ module Spree::Preferences
       define_method preference_setter_method(name) do |value|
         value = convert_preference_value(value, type)
         if preference_cache_key(name)
-          preference_store.set preference_cache_key(name), value, type
+          preference_store.set preference_cache_key(name), value
         else
           add_pending_preference(name, value)
         end

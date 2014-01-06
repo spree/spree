@@ -16,9 +16,9 @@ module Spree::Preferences
       @persistence = true
     end
 
-    def set(key, value, type)
+    def set(key, value)
       @cache.write(key, value)
-      persist(key, value, type)
+      persist(key, value)
     end
 
     def exist?(key)
@@ -68,12 +68,11 @@ module Spree::Preferences
 
     private
 
-    def persist(cache_key, value, type)
+    def persist(cache_key, value)
       return unless should_persist?
 
       preference = Spree::Preference.where(:key => cache_key).first_or_initialize
       preference.value = value
-      preference.value_type = type
       preference.save
     end
 

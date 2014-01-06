@@ -6,20 +6,19 @@ describe Spree::Preferences::Store do
   end
 
   it "sets and gets a key" do
-    @store.set :test, 1, :integer
+    @store.set :test, 1
     @store.exist?(:test).should be_true
     @store.get(:test).should eq 1
   end
 
   it "can set and get false values when cache return nil" do
-    @store.set :test, false, :boolean
+    @store.set :test, false
     @store.get(:test).should be_false
   end
 
   it "will return db value when cache is emtpy and cache the db value" do
     preference = Spree::Preference.where(:key => 'test').first_or_initialize
     preference.value = '123'
-    preference.value_type = 'string'
     preference.save
 
     Rails.cache.clear
