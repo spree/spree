@@ -71,7 +71,7 @@ module Spree
       @@order_attributes = [
         :id, :number, :item_total, :total, :ship_total, :state, :adjustment_total,
         :user_id, :created_at, :updated_at, :completed_at, :payment_total,
-        :shipment_state, :payment_state, :email, :special_instructions, :channel
+        :shipment_state, :payment_state, :email, :special_instructions, :channel, :tax_total
       ]
 
       @@line_item_attributes = [:id, :quantity, :price, :variant_id]
