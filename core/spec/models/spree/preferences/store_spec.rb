@@ -40,7 +40,7 @@ describe Spree::Preferences::Store do
   end
 
   it "should return nil when key can't be found and fallback value is not supplied" do
-    @store.get(:random_key).should be_nil
+    @store.get(:random_key){ nil }.should be_nil
   end
 
 end
