@@ -6,7 +6,7 @@ module Spree
       preference :first_item,      :decimal, default: 0.0
       preference :additional_item, :decimal, default: 0.0
       preference :max_items,       :integer, default: 0
-      preference :currency,        :string,  default: Spree::Config[:currency]
+      preference :currency,        :string,  default: ->{ Spree::Config[:currency] }
 
       def self.description
         Spree.t(:shipping_flexible_rate)
