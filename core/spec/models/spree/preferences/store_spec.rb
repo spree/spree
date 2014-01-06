@@ -28,14 +28,14 @@ describe Spree::Preferences::Store do
 
   it "should return and cache fallback value when supplied" do
     Rails.cache.clear
-    @store.get(:test, false).should be_false
+    @store.get(:test){ false }.should be_false
     Rails.cache.read(:test).should be_false
   end
 
   it "should return but not cache fallback value when persistence is disabled" do
     Rails.cache.clear
     @store.stub(:should_persist? => false)
-    @store.get(:test, true).should be_true
+    @store.get(:test){ true }.should be_true
     Rails.cache.exist?(:test).should be_false
   end
 
