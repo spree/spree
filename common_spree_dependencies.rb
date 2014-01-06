@@ -30,8 +30,8 @@ group :test do
   gem 'poltergeist', '1.5.0'
 end
 
-gem 'polyamorous', github: 'huoxito/polyamorous', branch: 'drop-graft'
-gem 'ransack', github: 'huoxito/ransack', branch: 'rails-v4.1.0'
+gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
+gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
 gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.1.0.beta1'
 
 gem 'state_machine', github: 'lukeroberts1990/state_machine'
