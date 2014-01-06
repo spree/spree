@@ -24,6 +24,11 @@ module Spree
       self[:amount] = parse_price(price)
     end
 
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
     def check_price
       raise "Price must belong to a variant" if variant.nil?
