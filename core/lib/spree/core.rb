@@ -9,6 +9,7 @@ require 'paperclip'
 require 'paranoia'
 require 'ransack'
 require 'state_machine'
+require 'friendly_id'
 
 module Spree
 

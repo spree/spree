@@ -17,7 +17,7 @@ module Spree
         end
 
         def load_data
-          @product = Product.find_by_permalink(params[:product_id])
+          @product = Product.friendly.find(params[:product_id])
           @variants = @product.variants.collect do |variant|
             [variant.sku_and_options_text, variant.id]
           end

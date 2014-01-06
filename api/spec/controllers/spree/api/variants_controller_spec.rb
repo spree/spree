@@ -10,7 +10,7 @@ module Spree
       variant.option_values << create(:option_value)
       variant
     end
-    let!(:base_attributes) { [:id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink, :description] }
+    let!(:base_attributes) { [:id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :slug, :description] }
     let!(:show_attributes) { base_attributes.dup.push(:in_stock, :display_price) }
     let!(:new_attributes) { base_attributes }
 

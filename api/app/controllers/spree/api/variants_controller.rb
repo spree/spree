@@ -46,7 +46,7 @@ module Spree
       private
 
         def product
-          @product ||= Spree::Product.accessible_by(current_ability, :read).find_by(permalink: params[:product_id]) if params[:product_id]
+          @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
         end
 
         def scope

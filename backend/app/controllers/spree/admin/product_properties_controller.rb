@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ProductPropertiesController < ResourceController
-      belongs_to 'spree/product', :find_by => :permalink
+      belongs_to 'spree/product', :find_by => :slug
       before_filter :find_properties
       before_filter :setup_property, :only => [:index]
 

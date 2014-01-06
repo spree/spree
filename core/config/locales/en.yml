@@ -1014,6 +1014,7 @@ en:
     site_name: Site Name
     site_url: Site URL
     sku: SKU
+    slug: Slug
     smtp: SMTP
     smtp_authentication_type: SMTP Authentication Type
     smtp_domain: SMTP Domain
