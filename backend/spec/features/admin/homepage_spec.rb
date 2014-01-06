@@ -59,6 +59,11 @@ describe "Homepage" do
   end
 
   context 'as fakedispatch user' do
+
+    before do 
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+    end
+    
     custom_authorization! do |user|
       can [:admin, :edit, :index, :read], Spree::Order
     end

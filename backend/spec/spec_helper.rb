@@ -95,4 +95,10 @@ RSpec.configure do |config|
   config.include Paperclip::Shoulda::Matchers
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+
+  config.before(:each) do
+    current_user = create(:admin_user, :spree_api_key => SecureRandom.hex(24))
+    Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(current_user)
+  end
+  
 end

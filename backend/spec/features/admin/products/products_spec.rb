@@ -340,7 +340,13 @@ describe "Products" do
       end
     end
   end
+
   context 'with only product permissions' do
+  
+    before do 
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+    end
+
     custom_authorization! do |user|
       can [:admin, :update, :index, :read], Spree::Product
     end
@@ -358,6 +364,7 @@ describe "Products" do
       page.should have_css('a.edit')
       page.should_not have_css('a.delete-resource')
     end
+  
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 
