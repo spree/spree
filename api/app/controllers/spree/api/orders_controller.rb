@@ -2,6 +2,9 @@ module Spree
   module Api
     class OrdersController < Spree::Api::BaseController
 
+      skip_before_filter :check_for_user_or_api_key, only: :apply_coupon_code
+      skip_before_filter :authenticate_user, only: :apply_coupon_code
+
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
       Order.checkout_steps.keys.each do |step|
         define_method step do
