@@ -40,12 +40,14 @@ module Spree
         # Permalinks presence is validated, but are really automatically generated
         # Therefore we shouldn't tell API clients that they MUST send one through
         required_fields.map!(&:to_s).delete("permalink")
+        # Do not require slugs, either
+        required_fields.delete("slug")
         required_fields
       end
 
       @@product_attributes = [
         :id, :name, :description, :price, :display_price, :available_on,
-        :permalink, :meta_description, :meta_keywords, :shipping_category_id,
+        :slug, :meta_description, :meta_keywords, :shipping_category_id,
         :taxon_ids
       ]
 
@@ -55,7 +57,7 @@ module Spree
 
       @@variant_attributes = [
         :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
-        :cost_price, :permalink, :description
+        :cost_price, :slug, :description
       ]
 
       @@image_attributes = [

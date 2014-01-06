@@ -221,68 +221,6 @@ describe Spree::Product do
     end
   end
 
-  context "permalink" do
-    context "build product with similar name" do
-      let!(:other) { create(:product, :name => 'foo bar') }
-      let(:product) { build(:product, :name => 'foo') }
-
-      before { product.valid? }
-
-      it "increments name" do
-        product.permalink.should == 'foo-1'
-      end
-    end
-
-    context "build permalink with quotes" do
-      it "saves quotes" do
-        product = create(:product, :name => "Joe's", :permalink => "joe's")
-        product.permalink.should == "joe's"
-      end
-    end
-
-    context "permalinks must be unique" do
-      before do
-        @product1 = create(:product, :name => 'foo')
-      end
-
-      it "cannot create another product with the same permalink" do
-        @product2 = create(:product, :name => 'foo')
-        lambda do
-          @product2.update_attributes(:permalink => @product1.permalink)
-        end.should raise_error(ActiveRecord::RecordNotUnique)
-      end
-    end
-
-    it "supports Chinese" do
-      create(:product, :name => "你好").permalink.should == "ni-hao"
-    end
-
-    context "manual permalink override" do
-      let(:product) { create(:product, :name => "foo") }
-
-      it "calling save_permalink with a parameter" do
-        product.name = "foobar"
-        product.save
-        product.permalink.should == "foo"
-
-        product.save_permalink(product.name)
-        product.permalink.should == "foobar"
-      end
-    end
-
-    context "override permalink of deleted product" do 
-      let(:product) { create(:product, :name => "foo") } 
-
-      it "should create product with same permalink from name like deleted product" do 
-        product.permalink.should == "foo" 
-        product.destroy 
-        
-        new_product = create(:product, :name => "foo") 
-        new_product.permalink.should == "foo" 
-      end 
-    end 
-  end
-
   context "properties" do
     let(:product) { create(:product) }
 
