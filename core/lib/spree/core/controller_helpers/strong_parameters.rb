@@ -33,7 +33,8 @@ module Spree
 
         def permitted_product_attributes
           permitted_attributes.product_attributes + [
-            :product_properties_attributes => permitted_product_properties_attributes
+            :product_properties_attributes => permitted_product_properties_attributes,
+            :variants_attributes => permitted_variant_attributes
           ]
         end
       end
