@@ -76,6 +76,12 @@ module Spree
       deleted_at
     end
 
+    def options=(options = {})
+      options.each do |option|
+        set_option_value(option[:name], option[:value])
+      end
+    end
+
     def set_option_value(opt_name, opt_value)
       # no option values on master
       return if self.is_master
