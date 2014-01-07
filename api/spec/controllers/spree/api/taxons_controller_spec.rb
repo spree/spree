@@ -47,21 +47,42 @@ module Spree
         expect(json_response["pages"]).to eql(2)
       end
 
-      it "gets all taxons" do
-        api_get :index
+      describe 'searching' do
+        context 'with a name' do
+          before do
+            api_get :index, :q => { :name_cont => name }
+          end
 
-        json_response['taxons'].first['name'].should eq taxonomy.root.name
-        children = json_response['taxons'].first['taxons']
-        children.count.should eq 1
-        children.first['name'].should eq taxon.name
-        children.first['taxons'].count.should eq 1
-      end
+          context 'with one result' do
+            let(:name) { "Ruby" }
 
-      it "can search for a single taxon" do
-        api_get :index, :q => { :name_cont => "Ruby" }
+            it "returns an array including the matching taxon" do
+              json_response['taxons'].count.should == 1
+              json_response['taxons'].first['name'].should eq "Ruby"
+            end
+          end
 
-        json_response['taxons'].count.should == 1
-        json_response['taxons'].first['name'].should eq "Ruby"
+          context 'with no results' do
+            let(:name) { "Imaginary" }
+
+            it 'returns an empty array of taxons' do
+              json_response.keys.should include('taxons')
+              json_response['taxons'].count.should == 0
+            end
+          end
+        end
+
+        context 'with no filters' do
+          it "gets all taxons" do
+            api_get :index
+
+            json_response['taxons'].first['name'].should eq taxonomy.root.name
+            children = json_response['taxons'].first['taxons']
+            children.count.should eq 1
+            children.first['name'].should eq taxon.name
+            children.first['taxons'].count.should eq 1
+          end
+        end
       end
 
       it "gets a single taxon" do
