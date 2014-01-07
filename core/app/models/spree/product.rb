@@ -68,8 +68,6 @@ module Spree
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
 
-    accepts_nested_attributes_for :variants, allow_destroy: true
-
     validates :name, presence: true
     validates :permalink, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }

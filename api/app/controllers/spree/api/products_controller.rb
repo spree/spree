@@ -26,8 +26,21 @@ module Spree
         params[:product][:available_on] ||= Time.now
         
         begin
-          @product = Product.new(product_params)
+          @product = Product.new(product_without_variants_params)
           if @product.save
+            variants_params.each do |variant_attribute|
+              @product.variants.create variant_attribute.merge(product: @product)
+            end
+
+            option_types_params.each do |name|
+              option_type = OptionType.where(name: name).first_or_initialize do |option_type|
+                option_type.presentation = name
+                option_type.save!
+              end
+
+              @product.option_types << option_type unless @product.option_types.include?(option_type)
+            end
+
             respond_with(@product, :status => 201, :default_template => :show)
           else
             invalid_resource!(@product)
@@ -64,6 +77,21 @@ module Spree
             product_params[:taxon_ids] = product_params[:taxon_ids].split(',')
           end
           product_params
+        end
+
+        def product_without_variants_params
+          h = Hash[product_params].with_indifferent_access
+          h.delete(:variants_attributes)
+          h.delete(:option_types)
+          h
+        end
+
+        def variants_params
+          product_params.fetch(:variants_attributes, {})
+        end
+
+        def option_types_params
+          product_params.fetch(:option_types, [])
         end
     end
   end
