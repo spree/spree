@@ -10,7 +10,6 @@ module Spree
     let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :slug, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
-
     let(:product_data) do
       { name: "The Other Product",
         price: 19.99,

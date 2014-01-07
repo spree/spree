@@ -55,7 +55,7 @@ module Spree
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
 
-        @product = Product.new(product_params)
+        @product = Product.new(product_without_variants_params)
         if @product.save
           variants_params.each do |variant_attribute|
             # make sure the product is assigned before the options=
@@ -124,6 +124,7 @@ module Spree
           product_params
         end
 
+<<<<<<< HEAD
         def variants_params
           variants_key = if params[:product].has_key? :variants
             :variants
@@ -145,6 +146,21 @@ module Spree
             id = ShippingCategory.find_or_create_by(name: shipping_category).id
             params[:product][:shipping_category_id] = id
           end
+=======
+        def product_without_variants_params
+          h = Hash[product_params].with_indifferent_access
+          h.delete(:variants_attributes)
+          h.delete(:option_types)
+          h
+        end
+
+        def variants_params
+          product_params.fetch(:variants_attributes, {})
+        end
+
+        def option_types_params
+          product_params.fetch(:option_types, [])
+>>>>>>> Improves Api::ProductsController#create
         end
     end
   end
