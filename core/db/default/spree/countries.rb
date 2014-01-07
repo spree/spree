@@ -99,7 +99,7 @@ Spree::Country.create!([
   { name: "Sweden", iso3: "SWE", iso: "SE", iso_name: "SWEDEN", numcode: "752" },
   { name: "Honduras", iso3: "HND", iso: "HN", iso_name: "HONDURAS", numcode: "340" },
   { name: "Rwanda", iso3: "RWA", iso: "RW", iso_name: "RWANDA", numcode: "646" },
-  { name: "Switzerland", iso3: "CHE", iso: "CH", iso_name: "SWITZERLAND", numcode: "756", states_required: true },
+  { name: "Switzerland", iso3: "CHE", iso: "CH", iso_name: "SWITZERLAND", numcode: "756" },
   { name: "Hong Kong", iso3: "HKG", iso: "HK", iso_name: "HONG KONG", numcode: "344" },
   { name: "Syrian Arab Republic", iso3: "SYR", iso: "SY", iso_name: "SYRIAN ARAB REPUBLIC", numcode: "760" },
   { name: "Taiwan", iso3: "TWN", iso: "TW", iso_name: "TAIWAN, PROVINCE OF CHINA", numcode: "158" },
