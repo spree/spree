@@ -205,6 +205,8 @@ module Spree
           attributes.merge!({
             shipping_category_id: 1,
 
+            option_types: ['size', 'color'],
+
             variants_attributes: [
               attributes_for_variant,
               attributes_for_variant
@@ -238,7 +240,7 @@ module Spree
           expect(json_response['product_properties'][0]['value']).to eq('cotton')
         end
 
-        it "can create a new product with option_types" do
+        it "can create a new product with option_types even if without variants" do
           attributes = attributes_for(:product)
 
           attributes.merge!({
