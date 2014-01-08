@@ -21,6 +21,7 @@ module Spree
         params[:product][:available_on] ||= Time.now
 
         variants_attributes = params[:product].delete(:variants_attributes) || []
+        option_type_attributes = params[:product].delete(:option_types) || []
 
         @product = Product.new(params[:product])
         begin
@@ -30,13 +31,13 @@ module Spree
               variant.update_attributes(variant_attribute)
             end
 
-            params[:product].fetch(:option_types, []).each do |name|
+            option_type_attributes.each do |name|
               option_type = OptionType.where(name: name).first_or_initialize do |option_type|
                 option_type.presentation = name
                 option_type.save!
               end
 
-              @product.option_types << option_type
+              @product.option_types << option_type unless @product.option_types.include?(option_type)
             end
 
             respond_with(@product, :status => 201, :default_template => :show)
