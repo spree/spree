@@ -156,11 +156,78 @@ module Spree
         end
       end
 
-      it "can create a new product" do
-        api_post :create, :product => { :name => "The Other Product",
-                                        :price => 19.99 }
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
+      describe "creating products" do
+        it "can create a new product" do
+          api_post :create, :product => { :name => "The Other Product",
+                                          :price => 19.99,
+                                          :shipping_category_id => create(:shipping_category).id }
+          json_response.should have_attributes(attributes)
+          response.status.should == 201
+        end
+
+        it "can create a new product with embedded variants" do
+          def attributes_for_variant
+            h = attributes_for(:variant)
+            h.delete(:option_values)
+            h.merge({
+              options: [
+                { name: "size", value: "small" },
+                { name: "color", value: "black" }
+              ]
+            })
+          end
+
+          attributes = attributes_for(:product)
+
+          attributes.merge!({
+            shipping_category_id: 1,
+
+            variants_attributes: [
+              attributes_for_variant,
+              attributes_for_variant
+            ]
+          })
+
+          api_post :create, :product => attributes
+
+          expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
+          expect(json_response['variants'][1]['option_values'][0]['name']).to eq('small')
+          expect(json_response['variants'][1]['option_values'][0]['option_type_name']).to eq('size')
+
+          expect(json_response['option_types'].count).to eq(2) # size, color
+        end
+
+        it "can create a new product with embedded product_properties" do
+          attributes = attributes_for(:product)
+
+          attributes.merge!({
+            shipping_category_id: 1,
+
+            product_properties_attributes: [{
+              property_name: "fabric",
+              value: "cotton"
+            }]
+          })
+
+          api_post :create, :product => attributes
+
+          expect(json_response['product_properties'][0]['property_name']).to eq('fabric')
+          expect(json_response['product_properties'][0]['value']).to eq('cotton')
+        end
+
+        it "can create a new product with option_types" do
+          attributes = attributes_for(:product)
+
+          attributes.merge!({
+            shipping_category_id: 1,
+
+            option_types: ['size', 'color']
+          })
+
+          api_post :create, :product => attributes
+
+          expect(json_response['option_types'].count).to eq(2)
+        end
       end
 
       # Regression test for #2140
