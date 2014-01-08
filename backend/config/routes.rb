@@ -69,8 +69,6 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resource :image_settings
-
     resources :orders, :except => [:show] do
       member do
         put :fire
