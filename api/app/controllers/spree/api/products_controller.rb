@@ -26,9 +26,26 @@ module Spree
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
+
+        variants_attributes = params[:product].delete(:variants_attributes) || []
+
         @product = Product.new(params[:product])
         begin
           if @product.save
+            variants_attributes.each do |variant_attribute|
+              variant = @product.variants.new
+              variant.update_attributes(variant_attribute)
+            end
+
+            params[:product].fetch(:option_types, []).each do |name|
+              option_type = OptionType.where(name: name).first_or_initialize do |option_type|
+                option_type.presentation = name
+                option_type.save!
+              end
+
+              @product.option_types << option_type
+            end
+
             respond_with(@product, :status => 201, :default_template => :show)
           else
             invalid_resource!(@product)
