@@ -201,7 +201,7 @@ Spree::Country.create!([
   { name: "Nepal", iso3: "NPL", iso: "NP", iso_name: "NEPAL", numcode: "524", states_required: true },
   { name: "Wallis and Futuna", iso3: "WLF", iso: "WF", iso_name: "WALLIS AND FUTUNA", numcode: "876" },
   { name: "Western Sahara", iso3: "ESH", iso: "EH", iso_name: "WESTERN SAHARA", numcode: "732" },
-  { name: "Argentina", iso3: "ARG", iso: "AR", iso_name: "ARGENTINA", numcode: "32", states_required: true },
+  { name: "Argentina", iso3: "ARG", iso: "AR", iso_name: "ARGENTINA", numcode: "32" },
   { name: "Canada", iso3: "CAN", iso: "CA", iso_name: "CANADA", numcode: "124", states_required: true },
   { name: "Eritrea", iso3: "ERI", iso: "ER", iso_name: "ERITREA", numcode: "232" },
   { name: "Lithuania", iso3: "LTU", iso: "LT", iso_name: "LITHUANIA", numcode: "440" },
