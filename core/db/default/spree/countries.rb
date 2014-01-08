@@ -118,7 +118,7 @@ Spree::Country.create!([
   { name: "Tokelau", iso3: "TKL", iso: "TK", iso_name: "TOKELAU", numcode: "772" },
   { name: "Bahamas", iso3: "BHS", iso: "BS", iso_name: "BAHAMAS", numcode: "44" },
   { name: "China", iso3: "CHN", iso: "CN", iso_name: "CHINA", numcode: "156" },
-  { name: "Malaysia", iso3: "MYS", iso: "MY", iso_name: "MALAYSIA", numcode: "458", states_required: true },
+  { name: "Malaysia", iso3: "MYS", iso: "MY", iso_name: "MALAYSIA", numcode: "458" },
   { name: "Tonga", iso3: "TON", iso: "TO", iso_name: "TONGA", numcode: "776" },
   { name: "Bahrain", iso3: "BHR", iso: "BH", iso_name: "BAHRAIN", numcode: "48" },
   { name: "Colombia", iso3: "COL", iso: "CO", iso_name: "COLOMBIA", numcode: "170" },
