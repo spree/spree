@@ -12,19 +12,19 @@
       </li>
     <% end %>
 
-    <% if can? :index, @order.adjustments %>
+    <% if @order.adjustments.all? {|adjustment| can? :index, adjustment} %>
       <li<%== ' class="active"' if current == 'Adjustments' %>>
         <%= link_to_with_icon 'icon-cogs', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
       </li>
     <% end %>
 
-    <% if can? :index, @order.payments && @payment_required %>
+    <% if @order.payments.all? {|payment| can? :index, payment} && @payment_required %>
       <li<%== ' class="active"' if current == 'Payments' %>>
         <%= link_to_with_icon 'icon-credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
       </li>
     <% end %>
 
-    <% if can? :index, @order.return_authorizations %>
+    <% if @order.return_authorizations.all? {|return_authorization| return_authorization} %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Return Authorizations' %>>
           <%= link_to_with_icon 'icon-share-alt', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
