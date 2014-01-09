@@ -8,6 +8,10 @@ module Spree
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
     let(:attributes) { [:id, :name, :description, :price, :available_on, :permalink, :count_on_hand, :meta_description, :meta_keywords, :taxon_ids] }
+    let(:product_hash) do
+      { :name => "The Other Product",
+        :price => 19.99 }
+    end
 
     before do
       stub_authentication!
@@ -156,18 +160,16 @@ module Spree
         end
       end
 
-      describe "creating products" do
-        it "can create a new product" do
-          api_post :create, :product => { :name => "The Other Product",
-                                          :price => 19.99,
-                                          :shipping_category_id => create(:shipping_category).id }
-          json_response.should have_attributes(attributes)
-          response.status.should == 201
-        end
+      it "can create a new product" do
+        api_post :create, :product => product_hash
+        json_response.should have_attributes(attributes)
+        response.status.should == 201
+      end
 
-        it "can create a new product with embedded variants" do
+      describe "creating products with" do
+        it "embedded variants" do
           def attributes_for_variant
-            h = attributes_for(:variant)
+            h = attributes_for(:variant).except(:is_master, :product)
             h.delete(:option_values)
             h.merge({
               options: [
@@ -177,7 +179,7 @@ module Spree
             })
           end
 
-          attributes = attributes_for(:product)
+          attributes = product_hash
 
           attributes.merge!({
             shipping_category_id: 1,
@@ -199,8 +201,8 @@ module Spree
           expect(json_response['option_types'].count).to eq(2) # size, color
         end
 
-        it "can create a new product with embedded product_properties" do
-          attributes = attributes_for(:product)
+        it "embedded product_properties" do
+          attributes = product_hash
 
           attributes.merge!({
             shipping_category_id: 1,
@@ -217,8 +219,8 @@ module Spree
           expect(json_response['product_properties'][0]['value']).to eq('cotton')
         end
 
-        it "can create a new product with option_types even if without variants" do
-          attributes = attributes_for(:product)
+        it "option_types even if without variants" do
+          attributes = product_hash
 
           attributes.merge!({
             shipping_category_id: 1,
