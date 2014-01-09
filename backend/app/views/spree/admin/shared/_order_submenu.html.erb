@@ -24,7 +24,7 @@
       </li>
     <% end %>
 
-    <% if @order.return_authorizations.all? {|return_authorization| return_authorization} %>
+    <% if @order.return_authorizations.all? {|return_authorization| can? :index, return_authorization} %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Return Authorizations' %>>
           <%= link_to_with_icon 'icon-share-alt', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
