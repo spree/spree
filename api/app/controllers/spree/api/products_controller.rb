@@ -57,10 +57,11 @@ module Spree
         set_up_shipping_category
         
         begin
-          @product = Product.new(product_without_variants_params)
+          @product = Product.new(product_params)
           if @product.save
             variants_params.each do |variant_attribute|
-              @product.variants.create variant_attribute.merge(product: @product)
+              # make sure the product is assigned before the options=
+              @product.variants.create({ product: @product }.merge(variant_attribute))
             end
 
             option_types_params.each do |name|
@@ -111,6 +112,7 @@ module Spree
         end
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         def variants_params
           variants_key = if params[:product].has_key? :variants
             :variants
@@ -140,13 +142,20 @@ module Spree
           h
         end
 
+=======
+>>>>>>> Remove variants from permitted_product_attributes
         def variants_params
-          product_params.fetch(:variants_attributes, {})
+          params.require(:product).permit(variants: permitted_variant_attributes)
+            .delete(:variants) || []
         end
 
         def option_types_params
+<<<<<<< HEAD
           product_params.fetch(:option_types, [])
 >>>>>>> Improves Api::ProductsController#create
+=======
+          params[:product].fetch(:option_types, [])
+>>>>>>> Remove variants from permitted_product_attributes
         end
     end
   end
