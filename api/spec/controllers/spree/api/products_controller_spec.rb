@@ -203,32 +203,27 @@ module Spree
             })
           end
 
-          attributes = product_hash
-
-          attributes.merge!({
+          product_hash.merge!({
             shipping_category_id: 1,
-
-            option_types: ['size', 'color'],
-
             variants_attributes: [
               attributes_for_variant,
               attributes_for_variant
             ]
           })
 
-          api_post :create, :product => attributes
-
+          api_post :create, :product => product_hash
+          expect(response.status).to eq 201
           expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
-          expect(json_response['variants'][1]['option_values'][0]['name']).to eq('small')
-          expect(json_response['variants'][1]['option_values'][0]['option_type_name']).to eq('size')
+
+          variants = json_response['variants'].select { |v| !v[:is_master] }
+          expect(variants.first['option_values'][0]['name']).to eq('small')
+          expect(variants.first['option_values'][0]['option_type_name']).to eq('size')
 
           expect(json_response['option_types'].count).to eq(2) # size, color
         end
 
         it "embedded product_properties" do
-          attributes = product_hash
-
-          attributes.merge!({
+          product_hash.merge!({
             shipping_category_id: 1,
 
             product_properties_attributes: [{
@@ -237,22 +232,20 @@ module Spree
             }]
           })
 
-          api_post :create, :product => attributes
+          api_post :create, :product => product_hash
 
           expect(json_response['product_properties'][0]['property_name']).to eq('fabric')
           expect(json_response['product_properties'][0]['value']).to eq('cotton')
         end
 
         it "option_types even if without variants" do
-          attributes = product_hash
-
-          attributes.merge!({
+          product_hash.merge!({
             shipping_category_id: 1,
 
             option_types: ['size', 'color']
           })
 
-          api_post :create, :product => attributes
+          api_post :create, :product => product_hash
 
           expect(json_response['option_types'].count).to eq(2)
         end
