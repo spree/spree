@@ -41,6 +41,14 @@ module Spree
       #     ...
       #     option_types: ['size', 'color']
       #   }
+      # 
+      # By passing the shipping category name you can fetch or create that
+      # shipping category on the fly. e.g.
+      #
+      #   product: {
+      #     ...
+      #     shipping_category: "Free Shipping Items"
+      #   }
       #
       # By passing the shipping category name you can fetch or create that
       # shipping category on the fly. e.g.
@@ -124,8 +132,6 @@ module Spree
           product_params
         end
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         def variants_params
           variants_key = if params[:product].has_key? :variants
             :variants
@@ -147,28 +153,6 @@ module Spree
             id = ShippingCategory.find_or_create_by(name: shipping_category).id
             params[:product][:shipping_category_id] = id
           end
-=======
-        def product_without_variants_params
-          h = Hash[product_params].with_indifferent_access
-          h.delete(:variants_attributes)
-          h.delete(:option_types)
-          h
-        end
-
-=======
->>>>>>> Remove variants from permitted_product_attributes
-        def variants_params
-          params.require(:product).permit(variants: permitted_variant_attributes)
-            .delete(:variants) || []
-        end
-
-        def option_types_params
-<<<<<<< HEAD
-          product_params.fetch(:option_types, [])
->>>>>>> Improves Api::ProductsController#create
-=======
-          params[:product].fetch(:option_types, [])
->>>>>>> Remove variants from permitted_product_attributes
         end
     end
   end
