@@ -145,8 +145,15 @@ module Spree
 =======
 >>>>>>> Remove variants from permitted_product_attributes
         def variants_params
-          params.require(:product).permit(variants: permitted_variant_attributes)
-            .delete(:variants) || []
+          variants_key = if params[:product].has_key? :variants
+            :variants
+          else
+            :variants_attributes
+          end
+
+          params.require(:product).permit(
+            variants_key => permitted_variant_attributes,
+          ).delete(variants_key) || []
         end
 
         def option_types_params
