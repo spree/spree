@@ -249,6 +249,18 @@ module Spree
 
           expect(json_response['option_types'].count).to eq(2)
         end
+
+        it "creates with shipping categories" do
+          hash = { :name => "The Other Product",
+                   :price => 19.99,
+                   :shipping_category => "Free Ships" }
+
+          api_post :create, :product => hash
+          expect(response.status).to eq 201
+
+          shipping_id = ShippingCategory.find_by_name("Free Ships").id
+          expect(json_response['shipping_category_id']).to eq shipping_id
+        end
       end
 
       # Regression test for #2140

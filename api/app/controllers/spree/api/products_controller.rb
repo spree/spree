@@ -29,6 +29,7 @@ module Spree
 
         variants_attributes = params[:product].delete(:variants_attributes) || []
         option_type_attributes = params[:product].delete(:option_types) || []
+        set_up_shipping_category
 
         @product = Product.new(params[:product])
         begin
@@ -74,6 +75,14 @@ module Spree
         @product.variants_including_master.update_all(:deleted_at => Time.now)
         respond_with(@product, :status => 204)
       end
+
+      private
+        def set_up_shipping_category
+          if shipping_category = params[:product].delete(:shipping_category)
+            id = ShippingCategory.find_or_create_by_name(shipping_category).id
+            params[:product][:shipping_category_id] = id
+          end
+        end
     end
   end
 end
