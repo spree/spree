@@ -157,6 +157,13 @@ module Spree
           params[:product].fetch(:option_types, [])
 >>>>>>> Remove variants from permitted_product_attributes
         end
+
+        def set_up_shipping_category
+          if shipping_category = params[:product].delete(:shipping_category)
+            id = ShippingCategory.find_or_create_by(name: shipping_category).id
+            params[:product][:shipping_category_id] = id
+          end
+        end
     end
   end
 end
