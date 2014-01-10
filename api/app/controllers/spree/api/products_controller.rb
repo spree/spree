@@ -18,18 +18,41 @@ module Spree
         respond_with(@product)
       end
 
-      def new
-      end
-
+      # Takes besides the products attributes either an array of variants or
+      # an array of option types.
+      #
+      # By submitting an array of variants the option types will be created
+      # using the *name* key in options hash. e.g
+      #
+      #   product: {
+      #     ...
+      #     variants: {
+      #       price: 19.99,
+      #       sku: "hey_you",
+      #       options: [
+      #         { name: "size", value: "small" },
+      #         { name: "color", value: "black" }
+      #       ]
+      #     }
+      #   }
+      #
+      # Or just pass in the option types hash:
+      #
+      #   product: {
+      #     ...
+      #     option_types: ['size', 'color']
+      #   }
+      #
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
         
         begin
-          @product = Product.new(product_without_variants_params)
+          @product = Product.new(product_params)
           if @product.save
             variants_params.each do |variant_attribute|
-              @product.variants.create variant_attribute.merge(product: @product)
+              # make sure the product is assigned before the options=
+              @product.variants.create({ product: @product }.merge(variant_attribute))
             end
 
             option_types_params.each do |name|
@@ -79,19 +102,13 @@ module Spree
           product_params
         end
 
-        def product_without_variants_params
-          h = Hash[product_params].with_indifferent_access
-          h.delete(:variants_attributes)
-          h.delete(:option_types)
-          h
-        end
-
         def variants_params
-          product_params.fetch(:variants_attributes, {})
+          params.require(:product).permit(variants: permitted_variant_attributes)
+            .delete(:variants) || []
         end
 
         def option_types_params
-          product_params.fetch(:option_types, [])
+          params[:product].fetch(:option_types, [])
         end
     end
   end
