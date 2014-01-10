@@ -199,7 +199,7 @@ module Spree
           response.status.should == 201
         end
 
-        it "can create a new product with embedded variants" do
+        it "creates with embedded variants" do
           def attributes_for_variant
             h = attributes_for(:variant)
             h.delete(:option_values)
@@ -211,24 +211,19 @@ module Spree
             })
           end
 
-          attributes = product_data
-
-          attributes.merge!({
+          product_data.merge!({
             shipping_category_id: 1,
-
             option_types: ['size', 'color'],
-
-            variants_attributes: [
-              attributes_for_variant,
-              attributes_for_variant
-            ]
+            variants_attributes: [attributes_for_variant, attributes_for_variant]
           })
 
-          api_post :create, :product => attributes
+          api_post :create, :product => product_data
+          expect(response.status).to eq 201
 
-          expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
-          expect(json_response['variants'][1]['option_values'][0]['name']).to eq('small')
-          expect(json_response['variants'][1]['option_values'][0]['option_type_name']).to eq('size')
+          variants = json_response['variants']
+          expect(variants.count).to eq(3) # 1 master + 2 variants
+          expect(variants.last['option_values'][0]['name']).to eq('small')
+          expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
           expect(json_response['option_types'].count).to eq(2) # size, color
         end
