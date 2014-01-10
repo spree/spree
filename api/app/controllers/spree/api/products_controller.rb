@@ -42,10 +42,19 @@ module Spree
       #     ...
       #     option_types: ['size', 'color']
       #   }
+      # 
+      # By passing the shipping category name you can fetch or create that
+      # shipping category on the fly. e.g.
+      #
+      #   product: {
+      #     ...
+      #     shipping_category: "Free Shipping Items"
+      #   }
       #
       def create
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
+        set_up_shipping_category
         
         begin
           @product = Product.new(product_params)
@@ -109,6 +118,13 @@ module Spree
 
         def option_types_params
           params[:product].fetch(:option_types, [])
+        end
+
+        def set_up_shipping_category
+          if shipping_category = params[:product].delete(:shipping_category)
+            id = ShippingCategory.find_or_create_by(name: shipping_category).id
+            params[:product][:shipping_category_id] = id
+          end
         end
     end
   end

@@ -211,15 +211,14 @@ module Spree
           end
 
           product_data.merge!({
-            shipping_category_id: 1,
             variants: [attributes_for_variant, attributes_for_variant]
           })
 
           api_post :create, :product => product_data
           expect(response.status).to eq 201
+          expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
 
-          variants = json_response['variants']
-          expect(variants.count).to eq(3) # 1 master + 2 variants
+          variants = json_response['variants'].select { |v| !v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
@@ -227,18 +226,14 @@ module Spree
         end
 
         it "can create a new product with embedded product_properties" do
-          attributes = product_data
-
-          attributes.merge!({
-            shipping_category_id: 1,
-
+          product_data.merge!({
             product_properties_attributes: [{
               property_name: "fabric",
               value: "cotton"
             }]
           })
 
-          api_post :create, :product => attributes
+          api_post :create, :product => product_data
 
           expect(json_response['product_properties'][0]['property_name']).to eq('fabric')
           expect(json_response['product_properties'][0]['value']).to eq('cotton')
@@ -246,12 +241,23 @@ module Spree
 
         it "can create a new product with option_types" do
           product_data.merge!({
-            shipping_category_id: 1,
             option_types: ['size', 'color']
           })
 
           api_post :create, :product => product_data
           expect(json_response['option_types'].count).to eq(2)
+        end
+
+        it "creates with shipping categories" do
+          hash = { :name => "The Other Product",
+                   :price => 19.99,
+                   :shipping_category => "Free Ships" }
+
+          api_post :create, :product => hash
+          expect(response.status).to eq 201
+
+          shipping_id = ShippingCategory.find_by_name("Free Ships").id
+          expect(json_response['shipping_category_id']).to eq shipping_id
         end
 
         it "puts the created product in the given taxon" do
