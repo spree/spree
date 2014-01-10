@@ -243,6 +243,10 @@ module Spree
 
         it "can create a new product with option_types" do
           product_data.merge!({
+<<<<<<< HEAD
+=======
+            shipping_category_id: 1,
+>>>>>>> Remove variants from permitted_product_attributes
             option_types: ['size', 'color']
           })
 
