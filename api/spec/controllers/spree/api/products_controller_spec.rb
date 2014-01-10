@@ -199,7 +199,7 @@ module Spree
           api_post :create, :product => { :name => "The Other Product",
                                           :price => 19.99,
                                           :shipping_category_id => create(:shipping_category).id }
-          json_response.should have_attributes(attributes)
+          json_response.should have_attributes(base_attributes)
           response.status.should == 201
         end
 
@@ -223,7 +223,7 @@ module Spree
           expect(response.status).to eq 201
 
           variants = json_response['variants']
-          expect(variants.count).to eq(3) # 1 master + 2 variants
+          expect(variants.count).to eq(2)
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
