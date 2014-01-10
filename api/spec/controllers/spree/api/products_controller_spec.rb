@@ -7,9 +7,10 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :slug, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
+    let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
+
     let(:product_data) do
       { name: "The Other Product",
         price: 19.99,
@@ -132,20 +133,20 @@ module Spree
       end
 
 
-      context "finds a product by slug first then by id" do
-        let!(:other_product) { create(:product, :slug => "these-are-not-the-droids-you-are-looking-for") }
+      context "finds a product by permalink first then by id" do
+        let!(:other_product) { create(:product, :permalink => "these-are-not-the-droids-you-are-looking-for") }
 
         before do
-          product.update_column(:slug, "#{other_product.id}-and-1-ways")
+          product.update_attribute(:permalink, "#{other_product.id}-and-1-ways")
         end
 
         specify do
           api_get :show, :id => product.to_param
-          json_response["slug"].should =~ /and-1-ways/
+          json_response["permalink"].should =~ /and-1-ways/
           product.destroy
 
           api_get :show, :id => other_product.id
-          json_response["slug"].should =~ /droids/
+          json_response["permalink"].should =~ /droids/
         end
       end
 
@@ -243,10 +244,6 @@ module Spree
 
         it "can create a new product with option_types" do
           product_data.merge!({
-<<<<<<< HEAD
-=======
-            shipping_category_id: 1,
->>>>>>> Remove variants from permitted_product_attributes
             option_types: ['size', 'color']
           })
 
@@ -301,9 +298,8 @@ module Spree
           response.status.should == 422
           json_response["error"].should == "Invalid resource. Please fix errors and try again."
           errors = json_response["errors"]
-          errors.keys.should include("name")
-          errors.keys.should include("price")
-          errors.keys.should include("shipping_category_id")
+          errors.delete("permalink") # Don't care about this one.
+          errors.keys.should =~ ["name", "price", "shipping_category_id"]
         end
       end
 
