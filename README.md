@@ -2,19 +2,19 @@
 
 This has several large advantages:
 
-- Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full retina display support. Current spree only goes half way.
+- Fully responsive - Mobile, tablet and desktop. With custom grids for each, collapsing elements, and full HDPI support. Current spree only goes half way.
 - Just 44 lines of custom SCSS, replacing 1328 lines of undocumented spree CSS. Plus most of these lines only add some visual style to the header and footer and can be removed.
 - The entire frontend can be easily customized: colours, grid, spacing, etc, by just overriding [variables from bootstrap](https://github.com/twbs/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_variables.scss) - giving a custom store design in minutes.
 - Bootstrap has some of the most [robust documentation](http://getbootstrap.com/css) of any framework, and a hugely active community. As this port uses only default bootstrap it means that entire spree frontend layout is documented by default.
 - Sites like [bootswatch](http://bootswatch.com) allow for one-file bootstrap drop-in spree themes.
 - Lots of [spree community will for bootstrap](https://groups.google.com/forum/#!searchin/spree-user/bootstrap/spree-user/B17492QdnGA/AF9vEzRzf4cJ).
-- Though this uses ‘full bootstrap’ for simplicity, you can remove the unused SCSS components you don’t require for minimal file sizes.
+- Though this uses ‘full bootstrap’ for simplicity, you can remove the unused Bootstrap components you don’t require for minimal file sizes / weight.
 - Bootstrap is one of the largest most active open source projects out there - maintaining an entire framework just for spree makes little sense. Forget about cross browser bugs. Woo!
 
 Overview
 -------
 
-This stays as closely to the original spree frontend markup as possible. Helper decorators have been kept to a bare minimum. It utilises the SCSS port of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
+This stays as closely to the original spree frontend markup as possible. Helper decorators have been kept to a bare minimum. It utilises the [SCSS port](https://github.com/twbs/bootstrap-sass) of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
 
 ![spree_bootstrap_frontend preview](http://i.imgur.com/S50Gn7V.png)
 
