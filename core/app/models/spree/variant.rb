@@ -110,7 +110,6 @@ module Spree
         # then we have to check to make sure that the product has the option type
         unless self.product.option_types.include? option_type
           self.product.option_types << option_type
-          self.product.save
         end
       end
 

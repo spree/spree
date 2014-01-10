@@ -205,8 +205,7 @@ module Spree
 
         it "creates with embedded variants" do
           def attributes_for_variant
-            h = attributes_for(:variant)
-            h.delete(:option_values)
+            h = attributes_for(:variant).except(:option_values, :product)
             h.merge({
               options: [
                 { name: "size", value: "small" },
@@ -217,8 +216,7 @@ module Spree
 
           product_data.merge!({
             shipping_category_id: 1,
-            option_types: ['size', 'color'],
-            variants_attributes: [attributes_for_variant, attributes_for_variant]
+            variants: [attributes_for_variant, attributes_for_variant]
           })
 
           api_post :create, :product => product_data
@@ -251,16 +249,12 @@ module Spree
         end
 
         it "can create a new product with option_types" do
-          attributes = product_data
-
-          attributes.merge!({
+          product_data.merge!({
             shipping_category_id: 1,
-
             option_types: ['size', 'color']
           })
 
-          api_post :create, :product => attributes
-
+          api_post :create, :product => product_data
           expect(json_response['option_types'].count).to eq(2)
         end
 
