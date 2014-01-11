@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 
-<title><%= title %></title>
+<title><%= title if title%></title>
 
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1" name="viewport">
@@ -9,9 +9,7 @@
 
 <%= favicon_link_tag image_path('favicon.ico') %>
 
-<%= stylesheet_link_tag 'store/all', :media => 'screen' %>
 
-<%= csrf_meta_tags %>
 <%= javascript_include_tag 'store/all' %>
 
 <!--[if lt IE 9]>
