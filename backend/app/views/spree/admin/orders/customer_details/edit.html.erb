@@ -10,15 +10,13 @@
   <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
 <% end %>
 
-<% if @order.cart? %>
-  <div id="select-customer" data-hook>
-    <fieldset class="no-border-bottom">
-      <legend align="center"><%= Spree.t(:customer_search) %></legend>
-      <%= hidden_field_tag :customer_search,  nil, :class => 'fullwidth title' %>
-      <%= render :partial => "spree/admin/orders/customer_details/autocomplete", :formats => :js %>
-    </fieldset>
-  </div>
-<% end %>
+<div id="select-customer" data-hook>
+  <fieldset class="no-border-bottom">
+    <legend align="center"><%= Spree.t(:customer_search) %></legend>
+    <%= hidden_field_tag :customer_search,  nil, :class => 'fullwidth title' %>
+    <%= render :partial => "spree/admin/orders/customer_details/autocomplete", :formats => :js %>
+  </fieldset>
+</div>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 
