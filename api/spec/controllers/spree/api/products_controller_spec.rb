@@ -204,7 +204,6 @@ module Spree
           end
 
           product_hash.merge!({
-            shipping_category_id: 1,
             variants_attributes: [
               attributes_for_variant,
               attributes_for_variant
@@ -215,7 +214,7 @@ module Spree
           expect(response.status).to eq 201
           expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
 
-          variants = json_response['variants'].select { |v| !v[:is_master] }
+          variants = json_response['variants'].select { |v| !v['is_master'] }
           expect(variants.first['option_values'][0]['name']).to eq('small')
           expect(variants.first['option_values'][0]['option_type_name']).to eq('size')
 
