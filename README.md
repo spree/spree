@@ -21,9 +21,9 @@ This stays as closely to the original spree frontend markup as possible. Helper 
 Installation
 -------
 
-**WARNING: The master branch is currently built against spree edge!**
+**WARNING: The master branch is developed agaist edge. Use a stable branch for production.**
 
-Add the following to your Gemfile
+Add the following to your gemfile
 
 ```ruby
 gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend'
@@ -35,12 +35,6 @@ And run
 bundle install
 ```
 
-Then copy the default stylesheet
-
-```bash
-rails generate spree_bootstrap_frontend:install
-```
-
 Done.
 
 If you are running a stable branch of spree check if there is a compatible branch of `spree_bootstrap_frontend` and use that. For example:
@@ -49,7 +43,7 @@ If you are running a stable branch of spree check if there is a compatible branc
 gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
 ```
 
-I’m targeting creating a stable branch when spree `2-2-stable` is released, but as of now master is on `2.2.0.beta`. Stay tuned. Currenly only tested against rails 4.x.
+Only use branches marked as `-stable` in production, any others are likely to be short-lived.
 
 Customizing
 -------
