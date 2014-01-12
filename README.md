@@ -67,7 +67,7 @@ $navbar-default-color: $light-orange;
 @import "bootstrap";
 ```
 
-This uses the [bootstrap-sass](https://github.com/thomas-mcdonald/bootstrap-sass) gem. So check there for full cutomization instructions.
+This uses the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem. So check there for full cutomization instructions.
 
 It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables, no actual css edits required:
 
