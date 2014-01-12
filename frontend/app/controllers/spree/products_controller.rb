@@ -31,6 +31,8 @@ module Spree
           end
         end
       end
+
+      fresh_when @product
     end
 
     private
