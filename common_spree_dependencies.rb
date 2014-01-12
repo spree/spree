@@ -32,6 +32,4 @@ end
 
 gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
 gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
-gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.1.0.beta1'
-
-gem 'state_machine', github: 'lukeroberts1990/state_machine'
+gem 'paranoia', github: 'radar/paranoia', branch: 'rails4'
