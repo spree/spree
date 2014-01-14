@@ -101,6 +101,14 @@
         </td>
       </tr>
 
+      <% if @order.special_instructions.present? %>
+        <tr class='special_instructions'>
+          <td colspan="5">
+            <strong><%= Spree.t(:special_instructions) %>:&nbsp;</strong><%= @order.special_instructions %>
+          </td>
+        </tr>
+      <% end %>
+
       <tr class="show-tracking total">
         <td colspan="5">
           <% if shipment.tracking.present? %>
