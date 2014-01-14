@@ -669,4 +669,27 @@ describe Spree::Order do
       expect(order.state_changes).to be_empty
     end
   end
+
+  # Regression test for #4199
+  context "#available_payment_methods" do
+    it "includes frontend payment methods" do
+      payment_method = Spree::PaymentMethod.create!({
+        :name => "Fake",
+        :active => true,
+        :display_on => "front_end",
+        :environment => Rails.env
+      })
+      expect(order.available_payment_methods).to include(payment_method)
+    end
+
+    it "includes 'both' payment methods" do
+      payment_method = Spree::PaymentMethod.create!({
+        :name => "Fake",
+        :active => true,
+        :display_on => "both",
+        :environment => Rails.env
+      })
+      expect(order.available_payment_methods).to include(payment_method)
+    end
+  end
 end
