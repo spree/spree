@@ -10,6 +10,7 @@ module Spree
 
     before_filter :assign_order_with_lock, only: :update
     before_filter :apply_coupon_code, only: :update
+    skip_before_filter :verify_authenticity_token
 
     def show
       @order = Order.find_by_number!(params[:id])
