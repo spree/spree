@@ -16,9 +16,8 @@ module Spree
 
       def show
         @product = find_product(params[:id])
-        if stale?(@product)
-          respond_with(@product)
-        end
+        expires_in 3.minutes, :public => true
+        headers['Surrogate-Control'] = "max-age=180"
       end
 
       # Takes besides the products attributes either an array of variants or
