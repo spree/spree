@@ -168,6 +168,15 @@ describe "Order Details", js: true do
           end
         end
       end
+      
+      context "with special_instructions present" do
+        let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
+        it "will show the special_instructions" do
+          visit spree.edit_admin_order_path(order)
+          expect(page).to have_content("Very special instructions here")
+        end
+      end
+
     end
   end
 
