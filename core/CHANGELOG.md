@@ -68,5 +68,7 @@
 
     Ryan Bigg
 
+* Order#available_payment_methods will now return payment methods marked as 'Both' #4199
 
+    Francisco Trindade & Ryan Bigg
 
