@@ -7,13 +7,14 @@
   </div>
 <% end %>
 
-<div data-hook="taxon_products">
-  <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
-</div>
-
-<% unless params[:keywords].present? %>
-  <div data-hook="taxon_children">
-    <%= render :partial => 'taxon', :collection => @taxon.children %>
+<% cache @taxon do %>
+  <div data-hook="taxon_products">
+    <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
   </div>
-<% end %>
 
+  <% unless params[:keywords].present? %>
+    <div data-hook="taxon_children">
+      <%= render :partial => 'taxon', :collection => @taxon.children %>
+    </div>
+  <% end %>
+<% end %>
