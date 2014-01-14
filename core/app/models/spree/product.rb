@@ -247,10 +247,6 @@ module Spree
         return unless new_record?
         self.master ||= Variant.new
       end
-      
-      def punch_permalink
-        update_attribute :permalink, "#{Time.now.to_i}_#{permalink}" # punch permalink with date prefix
-      end
 
       def touch_taxons
         self.taxons.each(&:touch)
