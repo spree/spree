@@ -36,6 +36,9 @@ module Spree
     def edit
       @order = current_order || Order.new
       associate_user
+      if stale?(current_order)
+        respond_with(current_order)
+      end
     end
 
     # Adds a new item to the order (creating a new order if none already exists)
