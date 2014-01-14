@@ -16,7 +16,9 @@ module Spree
 
       def show
         @product = find_product(params[:id])
-        respond_with(@product)
+        if stale?(@product)
+          respond_with(@product)
+        end
       end
 
       # Takes besides the products attributes either an array of variants or
