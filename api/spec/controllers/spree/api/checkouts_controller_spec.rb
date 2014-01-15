@@ -14,7 +14,7 @@ module Spree
       create(:stock_location)
 
       @shipping_method = create(:shipping_method, :zones => [country_zone])
-      @payment_method = create(:bogus_payment_method)
+      @payment_method = create(:credit_card_payment_method)
     end
 
     after do

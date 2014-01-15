@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :payment, class: Spree::Payment do
     amount 45.75
-    association(:payment_method, factory: :bogus_payment_method)
+    association(:payment_method, factory: :credit_card_payment_method)
     association(:source, factory: :credit_card)
     order
     state 'checkout'

@@ -4,14 +4,14 @@ FactoryGirl.define do
     environment 'test'
   end
 
-  factory :bogus_payment_method, class: Spree::Gateway::Bogus do
+  factory :credit_card_payment_method, class: Spree::Gateway::Bogus do
     name 'Credit Card'
     environment 'test'
   end
 
   # authorize.net was moved to spree_gateway.
   # Leaving this factory in place with bogus in case anyone is using it.
-  factory :bogus_simple_payment_method, class: Spree::Gateway::BogusSimple do
+  factory :simple_credit_card_payment_method, class: Spree::Gateway::BogusSimple do
     name 'Credit Card'
     environment 'test'
   end

@@ -73,7 +73,7 @@ describe "Checkout", inaccessible: true do
     before(:each) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true
-      order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+      order.stub(:available_payment_methods => [ create(:credit_card_payment_method, :environment => 'test') ])
 
       user = create(:user)
       order.user = user
@@ -163,7 +163,7 @@ describe "Checkout", inaccessible: true do
   end
 
   context "when several payment methods are available" do
-    let(:credit_cart_payment) {create(:bogus_payment_method, :environment => 'test') }
+    let(:credit_cart_payment) {create(:credit_card_payment_method, :environment => 'test') }
     let(:check_payment) {create(:check_payment_method, :environment => 'test') }
 
     after do
@@ -328,7 +328,7 @@ describe "Checkout", inaccessible: true do
 
   context "order has only payment step" do
     before do
-      create(:bogus_payment_method)
+      create(:credit_card_payment_method)
       @old_checkout_flow = Spree::Order.checkout_flow
       Spree::Order.class_eval do
         checkout_flow do

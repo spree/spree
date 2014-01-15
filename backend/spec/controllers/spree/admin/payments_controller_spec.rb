@@ -10,7 +10,7 @@ module Spree
       context "with a valid credit card" do
         it "should process payment correctly" do
           order = create(:order_with_line_items, :state => "payment")
-          payment_method = create(:bogus_payment_method, :display_on => "back_end")
+          payment_method = create(:credit_card_payment_method, :display_on => "back_end")
           attributes = {
             :order_id => order.number,
             :card => "new",

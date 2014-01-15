@@ -270,7 +270,7 @@ describe Spree::CheckoutController do
             order.next!
           end
           # So that the confirmation step is skipped and we get straight to the action.
-          payment_method = FactoryGirl.create(:bogus_simple_payment_method)
+          payment_method = FactoryGirl.create(:simple_credit_card_payment_method)
           payment = FactoryGirl.create(:payment, :payment_method => payment_method)
           order.payments << payment
         end

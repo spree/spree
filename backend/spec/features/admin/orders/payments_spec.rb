@@ -7,7 +7,7 @@ describe 'Payments' do
     create(:payment,
       order:          order,
       amount:         order.outstanding_balance,
-      payment_method: create(:bogus_payment_method),  # Credit Card
+      payment_method: create(:credit_card_payment_method),  # Credit Card
       state:          state
     )
   end
