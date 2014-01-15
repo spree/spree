@@ -4,6 +4,16 @@
 
 #### Adjustments Refactoring
 
+The adjustments system in Spree has undergone a large portion of work. Adjustments (typically originating from promotions and taxes) can now be applied at a line item, shipment or order level.
+
+**This system has been designed to be backwards-compatible with older versions of Spree, so that an upgrade path is relatively easy. If you encounter any issues during an upgrade, please [file an issue](https://github.com/spree/spree/issues/new).**
+
+Along with this, taxes are now split into two groupings: "additional" and "included". Additional taxes are those which increase the price of the item they're attached to. Included taxes are those which are already included in the cost of the item. It is still necessary to track these included taxes due to tax reporting requirements in many countries.
+
+Shipments no longer have a linked adjustment. Instead, the shipment itself has a "cost" attribute which is used in the calculation of shipping costs for an order.
+
+For more information about this, [Ryan Bigg wrote up a long explanation about it](http://ryanbigg.com/2013/09/order-adjustments/), and there is further discussion on #3567. 
+
 #### Asset renaming
 
 An issue was brought up in #4050 where a user showed us that a `require_tree` use inside `app/assets` would also require the Spree assets that were placed in `app/assets/store` and app/assets/admin` respectively. This would happen in areas of the application where Spree wasn't even used.
