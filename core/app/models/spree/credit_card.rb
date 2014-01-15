@@ -29,6 +29,8 @@ module Spree
       if expiry.present?
         self[:month], self[:year] = expiry.delete(' ').split('/')
         self[:year] = "20" + self[:year] if self[:year].length == 2
+        self[:year] = self[:year].to_i
+        self[:month] = self[:month].to_i
       end
     end
 
