@@ -5,7 +5,7 @@ describe "New Order" do
   let!(:product) { create(:product) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user) }
-  let!(:payment_method) { create(:payment_method) }
+  let!(:payment_method) { create(:check_payment_method) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_item) { product.master.stock_items.first.adjust_count_on_hand(10) }
 

@@ -10,7 +10,7 @@ describe "Payment Methods" do
 
   context "admin visiting payment methods listing page" do
     it "should display existing payment methods" do
-      create(:payment_method)
+      create(:check_payment_method)
       click_link "Payment Methods"
 
       within("table#listing_payment_methods") do
@@ -42,7 +42,7 @@ describe "Payment Methods" do
 
   context "admin editing a payment method" do
     before(:each) do
-      create(:payment_method)
+      create(:check_payment_method)
       click_link "Payment Methods"
       within("table#listing_payment_methods") do
         click_icon(:edit)

@@ -30,7 +30,7 @@ module Spree
       # Regression test for #3233
       context "with a backend payment method" do
         before do
-          @payment_method = create(:payment_method, :display_on => "back_end")
+          @payment_method = create(:check_payment_method, :display_on => "back_end")
         end
 
         it "loads backend payment methods" do

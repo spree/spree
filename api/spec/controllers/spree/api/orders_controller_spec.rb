@@ -25,7 +25,7 @@ module Spree
                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                :country_id => Country.first.id, :state_id => State.first.id} }
 
-    let!(:payment_method) { create(:payment_method) }
+    let!(:payment_method) { create(:check_payment_method) }
 
     let(:current_api_user) do
       user = Spree.user_class.new(:email => "spree@example.com")
@@ -202,7 +202,7 @@ module Spree
 
       let(:variant) { create(:variant) }
       let!(:line_item) { order.contents.add(variant, 1) }
-      let!(:payment_method) { create(:payment_method) }
+      let!(:payment_method) { create(:check_payment_method) }
 
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
       let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",

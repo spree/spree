@@ -8,7 +8,7 @@ module Spree
 
     let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
     let(:shipping_method) { create(:shipping_method) }
-    let(:payment_method) { create(:payment_method) }
+    let(:payment_method) { create(:check_payment_method) }
 
     let(:product) { product = Spree::Product.create(:name => 'Test',
                                            :sku => 'TEST-1',

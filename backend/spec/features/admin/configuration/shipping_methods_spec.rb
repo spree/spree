@@ -13,7 +13,7 @@ describe "Shipping Methods" do
     Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
-    create(:payment_method, :environment => 'test')
+    create(:check_payment_method, :environment => 'test')
 
     visit spree.admin_path
     click_link "Configuration"

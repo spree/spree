@@ -7,7 +7,7 @@ describe "Checkout", inaccessible: true do
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:mug) { create(:product, :name => "RoR Mug") }
-  let!(:payment_method) { create(:payment_method) }
+  let!(:payment_method) { create(:check_payment_method) }
   let!(:zone) { create(:zone) }
 
   context "visitor makes checkout as guest without registration" do
@@ -164,7 +164,7 @@ describe "Checkout", inaccessible: true do
 
   context "when several payment methods are available" do
     let(:credit_cart_payment) {create(:bogus_payment_method, :environment => 'test') }
-    let(:check_payment) {create(:payment_method, :environment => 'test') }
+    let(:check_payment) {create(:check_payment_method, :environment => 'test') }
 
     after do
       Capybara.ignore_hidden_elements = true

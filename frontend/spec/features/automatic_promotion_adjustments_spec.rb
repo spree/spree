@@ -5,7 +5,7 @@ describe "Automatic promotions", :js => true do
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
   let!(:shipping_method) { create(:shipping_method) }
-  let!(:payment_method) { create(:payment_method) }
+  let!(:payment_method) { create(:check_payment_method) }
   let!(:product) { create(:product, :name => "RoR Mug", :price => 20) }
 
   let!(:promotion) do
