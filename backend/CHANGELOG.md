@@ -16,3 +16,7 @@
         CVV response (ie. code not matching)
 
     * Ben Radler (aka lordnibbler)
+
+* Moved 'Taxonomies' out from under 'Configuration' menu. It now is a sub-menu item on the products.
+
+    * Ryan Bigg
