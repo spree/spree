@@ -54,9 +54,21 @@ describe Spree::Admin::NavigationHelper do
           tab.should include('class="selected"')
         end
 
+        it "should be selected if the fullpath matches a regular expression" do
+          controller.stub(:controller_name).and_return("bonobos")
+          tab = helper.tab(:orders, :label => "delivered orders", :match_path => /orders$|orders\//)
+          tab.should include('class="selected"')
+        end
+
         it "should not be selected if the fullpath does not match" do
           controller.stub(:controller_name).and_return("bonobos")
           tab = helper.tab(:orders, :label => "delivered orders", :match_path => '/shady')
+          tab.should_not include('class="selected"')
+        end
+
+        it "should not be selected if the fullpath does not match a regular expression" do
+          controller.stub(:controller_name).and_return("bonobos")
+          tab = helper.tab(:orders, :label => "delivered orders", :match_path => /shady$|shady\//)
           tab.should_not include('class="selected"')
         end
       end
