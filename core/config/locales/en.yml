@@ -24,6 +24,7 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+        name: Name
       spree/inventory_unit:
         state: State
       spree/line_item:
@@ -805,6 +806,7 @@ en:
     path: Path
     pay: pay
     payment: Payment
+    payment_could_not_be_created: Payment could not be created.
     payment_information: Payment Information
     payment_method: Payment Method
     payment_methods: Payment Methods
