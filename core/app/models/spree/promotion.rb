@@ -21,7 +21,7 @@ module Spree
     validates :description, length: { maximum: 255 }
 
     before_save :normalize_blank_values
-    
+
     def self.advertised
       where(advertise: true)
     end
@@ -47,11 +47,6 @@ module Spree
       order = payload[:order]
       return unless self.class.order_activatable?(order)
 
-      # connect to the order
-      #create the join_table entry.
-      self.orders << order
-      self.save
-
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
       # If an action returns true, then an action has been taken.
@@ -59,7 +54,16 @@ module Spree
         action.perform(payload)
       end
       # If an action has been taken, report back to whatever activated this promotion.
-      return results.include?(true)
+      action_taken = results.include?(true)
+
+      if action_taken
+      # connect to the order
+      # create the join_table entry.
+        self.orders << order
+        self.save
+      end
+
+      return action_taken
     end
 
     # called anytime order.update! happens
