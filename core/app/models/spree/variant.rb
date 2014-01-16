@@ -42,7 +42,7 @@ module Spree
     after_create :set_position
 
     # default variant scope only lists non-deleted variants
-    scope :deleted, lambda { where('deleted_at IS NOT NULL') }
+    scope :deleted, lambda { where.not(deleted_at: nil) }
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
