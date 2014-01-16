@@ -64,12 +64,18 @@ module Spree::Preferences::Preferable
     respond_to? self.class.preference_getter_method(name)
   end
 
-  def preferences
-    prefs = {}
-    methods.grep(/^prefers_.*\?$/).each do |pref_method|
-      prefs[pref_method.to_s.gsub(/prefers_|\?/, '').to_sym] = send(pref_method)
+  def defined_preferences
+    methods.grep(/\Apreferred_.*=\Z/).map do |pref_method|
+      pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
     end
-    prefs
+  end
+
+  def preferences
+    Hash[
+      defined_preferences.map do |preference|
+        [preference, get_preference(preference)]
+      end
+    ]
   end
 
   def prefers?(name)
