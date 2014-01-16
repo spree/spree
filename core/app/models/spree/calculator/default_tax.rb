@@ -10,12 +10,17 @@ module Spree
     # Orders created before Spree 2.1 had tax adjustments applied to the order, as a whole.
     # Orders created with Spree 2.2 and after, have them applied to the line items individually.
     def compute_order(order)
+
       matched_line_items = order.line_items.select do |line_item|
         line_item.tax_category == rate.tax_category
       end
 
       line_items_total = matched_line_items.sum(&:total)
-      round_to_two_places(line_items_total * rate.amount)
+      if rate.included_in_price
+        round_to_two_places(line_items_total - ( line_items_total / (1 + rate.amount) ) )
+      else
+        round_to_two_places(line_items_total * rate.amount)
+      end
     end
 
     def compute_shipment(shipment)
@@ -34,24 +39,24 @@ module Spree
       end
     end
 
+    private
 
+    def rate
+      self.calculable
+    end
 
-      def rate
-        self.calculable
+    def round_to_two_places(amount)
+      BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+    end
+
+    def deduced_total_by_rate(line_item, rate)
+      combined_taxes = 0
+      line_item.product.tax_category.tax_rates.each do |tax|
+        combined_taxes += tax.amount
       end
-
-      def round_to_two_places(amount)
-        BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
-      end
-
-      def deduced_total_by_rate(line_item, rate)
-        combined_taxes = 0
-        line_item.product.tax_category.tax_rates.each do |tax|
-          combined_taxes += tax.amount
-        end
-        price_without_taxes = line_item.discounted_amount / (1 + combined_taxes)
-        round_to_two_places(price_without_taxes * rate.amount)
-      end
+      price_without_taxes = line_item.discounted_amount / (1 + combined_taxes)
+      round_to_two_places(price_without_taxes * rate.amount)
+    end
 
   end
 end
