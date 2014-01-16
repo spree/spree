@@ -12,6 +12,8 @@ Along with this, taxes are now split into two groupings: "additional" and "inclu
 
 Shipments no longer have a linked adjustment. Instead, the shipment itself has a "cost" attribute which is used in the calculation of shipping costs for an order.
 
+Also worth noting is that the number of callbacks triggered when any aspect of an order is updated has been greatly reduced, which should lead up to speed-ups in stores. An example of this would be in prior versions of Spree, an order would trigger an update on all its adjustments when it updated. With the new system, only line items or shipments that change will have their adjustments updated. 
+
 For more information about this, [Ryan Bigg wrote up a long explanation about it](http://ryanbigg.com/2013/09/order-adjustments/), and there is further discussion on #3567. 
 
 #### Asset renaming
@@ -46,3 +48,13 @@ Similar changes to this have also been made to extensions, where their assets ar
     Washington Luiz
 
 * Added tax_category to variants, to allow for different variants of a product to have different tax categories. #3946
+
+    Peter Rhoades
+
+*   Removed `Spree::Activator`. Promotions are now activated using the `Spree::PromotionHandler` classes.
+
+    Ryan Bigg
+
+*   Promotion#event_name attribute has been removed. A promotion's event now depends on the fields that are filled out during its creation.
+
+    Ryan Bigg
