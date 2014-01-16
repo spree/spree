@@ -34,6 +34,8 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
+    alias_attribute :ship_total, :shipment_total
+
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order('created_at ASC') }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy, inverse_of: :order
@@ -134,9 +136,10 @@ module Spree
       Spree::Money.new(additional_tax_total, { currency: currency })
     end
 
-    def display_ship_total
-      Spree::Money.new(ship_total, { currency: currency })
+    def display_shipment_total
+      Spree::Money.new(shipment_total, { currency: currency })
     end
+    alias :display_ship_total :display_shipment_total
 
     def display_total
       Spree::Money.new(total, { currency: currency })
@@ -273,10 +276,6 @@ module Spree
 
     def find_line_item_by_variant(variant)
       line_items.detect { |line_item| line_item.variant_id == variant.id }
-    end
-
-    def ship_total
-      shipments.sum(:cost)
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
