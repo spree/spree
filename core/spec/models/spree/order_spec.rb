@@ -605,6 +605,12 @@ describe Spree::Order do
       order.ensure_updated_shipments
       expect(order.state).to eql "address"
     end
+
+    it "resets shipment_total" do
+      order.update_column(:shipment_total, 5)
+      order.ensure_updated_shipments
+      expect(order.shipment_total).to eq(0)
+    end
   end
 
   describe ".tax_address" do

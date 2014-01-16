@@ -484,6 +484,7 @@ module Spree
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
+        self.update_column(:shipment_total, 0)
         restart_checkout_flow
       end
     end
