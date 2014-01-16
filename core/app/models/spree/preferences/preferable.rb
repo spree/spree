@@ -33,8 +33,6 @@ module Spree::Preferences::Preferable
     has_preference! name
     send self.class.preference_getter_method(name)
   end
-  alias :preferred :get_preference
-  alias :prefers? :get_preference
 
   def set_preference(name, value)
     has_preference! name
@@ -49,11 +47,6 @@ module Spree::Preferences::Preferable
   def preference_default(name)
     has_preference! name
     send self.class.preference_default_getter_method(name)
-  end
-
-  def preference_description(name)
-    has_preference! name
-    send self.class.preference_description_getter_method(name)
   end
 
   def has_preference!(name)
@@ -76,10 +69,6 @@ module Spree::Preferences::Preferable
         [preference, get_preference(preference)]
       end
     ]
-  end
-
-  def prefers?(name)
-    get_preference(name)
   end
 
   def preference_cache_key(name)

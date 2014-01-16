@@ -11,7 +11,7 @@ describe Spree::Preferences::Preferable do
         @id = rand(999)
       end
 
-      preference :color, :string, :default => 'green', :description => "My Favorite Color"
+      preference :color, :string, :default => 'green'
     end
 
     class B < A
@@ -89,11 +89,6 @@ describe Spree::Preferences::Preferable do
       @a.preference_default(:color).should eq 'green'
     end
 
-    it "has a description" do
-      @a.preferred_color_description.should eq "My Favorite Color"
-      @a.preference_description(:color).should eq "My Favorite Color"
-    end
-
     it "raises if not defined" do
       expect {
         @a.get_preference :flavor
@@ -106,15 +101,6 @@ describe Spree::Preferences::Preferable do
     it "handles ghost methods for preferences" do
       @a.preferred_color = 'blue'
       @a.preferred_color.should eq 'blue'
-
-      @a.prefers_color = 'green'
-      @a.prefers_color?.should eq 'green'
-    end
-
-    it "has genric readers" do
-      @a.preferred_color = 'red'
-      @a.prefers?(:color).should eq 'red'
-      @a.preferred(:color).should eq 'red'
     end
 
     it "parent and child instances have their own prefs" do
@@ -336,14 +322,6 @@ describe Spree::Preferences::Preferable do
 
   it "builds cache keys" do
     @a.preference_cache_key(:color).should match /a\/color\/\d+/
-  end
-
-  it "can add and remove preferences" do
-    A.preference :test_temp, :boolean, :default => true
-    @a.preferred_test_temp.should be_true
-    A.remove_preference :test_temp
-    @a.has_preference?(:test_temp).should be_false
-    @a.respond_to?(:preferred_test_temp).should be_false
   end
 
 end
