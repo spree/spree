@@ -94,11 +94,25 @@ describe Spree::Promotion do
       expect(promotion.activate(@payload)).to be_true
     end
 
-    it "keeps track of the order" do
-      expect(promotion.orders).to be_empty
-      expect(promotion.activate(@payload)).to be_true
-      expect(promotion.orders.first).to eql @order
+    context "keeps track of the orders" do
+      context "when activated" do
+        it "assigns the order" do
+          expect(promotion.orders).to be_empty
+          expect(promotion.activate(@payload)).to be_true
+          expect(promotion.orders.first).to eql @order
+        end
+      end
+      context "when not activated" do
+        it "will not assign the order" do
+          @order.state = 'complete'
+          expect(promotion.orders).to be_empty
+          expect(promotion.activate(@payload)).to be_false
+          expect(promotion.orders).to be_empty
+        end
+      end
+
     end
+
   end
 
   context "#usage_limit_exceeded" do
