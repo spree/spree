@@ -60,6 +60,17 @@ describe Spree::Calculator::DefaultTax do
           calculator.compute(order).should == 3
         end
       end
+
+      context "when tax is included in price" do
+        let(:vat) { true }
+
+        it "will return the deducted amount from the totals" do
+          # total price including 5% tax = 57.14
+          # ex tax = 54.42
+          # 54.42 + %5 = 57.14
+          expect(calculator.compute(order).to_f).to eql 2.72
+        end
+      end
     end
 
     context "when tax is included in price" do
