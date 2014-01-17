@@ -35,3 +35,7 @@
 * Added API endpoint to retrieve a user's orders: /api/orders/mine. #4022
 
     Richard Nuno
+
+* Order token can now be passed as a header: `X-Spree-Order-Token`. #4148
+
+    Lucjan Suski
