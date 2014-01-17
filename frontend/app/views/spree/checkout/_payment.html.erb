@@ -2,7 +2,7 @@
   <legend align="center"><%= Spree.t(:payment_information) %></legend>
   <div data-hook="checkout_payment_step">
     <% @order.available_payment_methods.each do |method| %>
-    <p>
+    <p data-hook='payment_method_field'>
       <label>
         <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
         <%= Spree.t(method.name, :scope => :payment_methods, :default => method.name) %>
