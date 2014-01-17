@@ -1,14 +1,16 @@
 <fieldset id="payment" data-hook>
   <legend align="center"><%= Spree.t(:payment_information) %></legend>
   <div data-hook="checkout_payment_step">
-    <% @order.available_payment_methods.each do |method| %>
-    <p>
-      <label>
-        <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
-        <%= Spree.t(method.name, :scope => :payment_methods, :default => method.name) %>
-      </label>
-    </p>
-    <% end %>
+    <div id="payment-method-fields" data-hook>
+      <% @order.available_payment_methods.each do |method| %>
+      <p>
+        <label>
+          <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
+          <%= Spree.t(method.name, :scope => :payment_methods, :default => method.name) %>
+        </label>
+      </p>
+      <% end %>
+    </div>
 
     <ul id="payment-methods" data-hook>
       <% @order.available_payment_methods.each do |method| %>
