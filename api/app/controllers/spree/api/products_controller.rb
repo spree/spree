@@ -10,14 +10,15 @@ module Spree
         end
 
         @products = @products.page(params[:page]).per(params[:per_page])
-        expires_in 3.minutes, :public => true
-        headers['Surrogate-Control'] = "max-age=180"
+        expires_in 1.day, :public => true
+        headers['Surrogate-Control'] = "max-age=#{1.day}"
       end
 
       def show
         @product = find_product(params[:id])
-        expires_in 3.minutes, :public => true
-        headers['Surrogate-Control'] = "max-age=180"
+        expires_in 1.day, :public => true
+        headers['Surrogate-Control'] = "max-age=#{1.day}"
+        headers['Surrogate-Key'] = "product_id=1"
       end
 
       # Takes besides the products attributes either an array of variants or
