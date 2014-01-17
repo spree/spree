@@ -28,7 +28,7 @@ module Spree
 
     attr_accessible :line_items, :bill_address_attributes, :ship_address_attributes,
                     :payments_attributes, :ship_address, :bill_address, :currency,
-                    :line_items_attributes, :number, :email, :use_billing, 
+                    :line_items_attributes, :number, :email, :use_billing,
                     :special_instructions, :shipments_attributes, :coupon_code
 
     attr_reader :coupon_code
@@ -103,7 +103,7 @@ module Spree
     end
 
     def self.complete
-      where('completed_at IS NOT NULL')
+      where("#{quoted_table_name}.completed_at IS NOT NULL")
     end
 
     def self.incomplete
@@ -549,7 +549,7 @@ module Spree
     #
     # At some point the might need to force the order to transition from address
     # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items 
+    # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
       if shipments.any?
         self.shipments.destroy_all
