@@ -12,3 +12,6 @@
 
     Washington Luiz
 
+* Added Deface Hook for Payment Method fields so that they can be defaced. #42222
+
+    Dave Kiss
