@@ -53,9 +53,9 @@ module Spree
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
         inside dummy_path do
-          %w(spree_frontend spree_backend spree_api).each do |requirement|
-            inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
-          end
+          inject_require_for('spree_frontend') if Object.const_defined?("Spree::Frontend")
+          inject_require_for('spree_backend') if Object.const_defined?("Spree::Backend")
+          inject_require_for('spree_api') if Object.const_defined?("Spree::Api")
         end
       end
     end
@@ -82,6 +82,11 @@ module Spree
     attr :database
 
     protected
+
+    def inject_require_for(requirement)
+      inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
+    end
+
     def dummy_path
       ENV['DUMMY_PATH'] || 'spec/dummy'
     end
