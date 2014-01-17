@@ -55,8 +55,8 @@ module Spree
     scope :shipping, -> { where(originator_type: 'Spree::ShippingMethod') }
     scope :optional, -> { where(mandatory: false) }
     scope :eligible, -> { where(eligible: true) }
-    scope :charge, -> { where('amount >= 0') }
-    scope :credit, -> { where('amount < 0') }
+    scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
+    scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :promotion, -> { where(originator_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
 
