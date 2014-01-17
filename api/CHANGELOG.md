@@ -24,3 +24,6 @@
 
     Richard Nuno
 
+* Order token can now be passed as a header: `X-Spree-Order-Token`. #4148
+
+    Lucjan Suski (methyl)
