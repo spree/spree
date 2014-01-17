@@ -111,8 +111,6 @@ module Spree
           product_params
         end
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         def variants_params
           variants_key = if params[:product].has_key? :variants
             :variants
@@ -127,42 +125,6 @@ module Spree
 
         def option_types_params
           params[:product].fetch(:option_types, [])
-        end
-
-        def set_up_shipping_category
-          if shipping_category = params[:product].delete(:shipping_category)
-            id = ShippingCategory.find_or_create_by(name: shipping_category).id
-            params[:product][:shipping_category_id] = id
-          end
-=======
-        def product_without_variants_params
-          h = Hash[product_params].with_indifferent_access
-          h.delete(:variants_attributes)
-          h.delete(:option_types)
-          h
-        end
-
-=======
->>>>>>> Remove variants from permitted_product_attributes
-        def variants_params
-          variants_key = if params[:product].has_key? :variants
-            :variants
-          else
-            :variants_attributes
-          end
-
-          params.require(:product).permit(
-            variants_key => permitted_variant_attributes,
-          ).delete(variants_key) || []
-        end
-
-        def option_types_params
-<<<<<<< HEAD
-          product_params.fetch(:option_types, [])
->>>>>>> Improves Api::ProductsController#create
-=======
-          params[:product].fetch(:option_types, [])
->>>>>>> Remove variants from permitted_product_attributes
         end
 
         def set_up_shipping_category
