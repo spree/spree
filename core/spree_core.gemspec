@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
   s.require_path = 'lib'
 
-  s.add_dependency 'activemerchant', '1.42.3'
+  s.add_dependency 'activemerchant', '~> 1.42.3'
   s.add_dependency 'acts_as_list', '= 0.3.0'
   s.add_dependency 'awesome_nested_set', '2.1.6'
   s.add_dependency 'aws-sdk', '1.31.3'
