@@ -16,14 +16,19 @@ module Spree
             :card => "new",
             :payment => {
               :amount => order.total,
-              :payment_method_id => payment_method.id.to_s
-            },
-            :payment_source => {
-              payment_method.id.to_s => {:number => Spree::Gateway::Bogus::TEST_VISA.sample}
+              :payment_method_id => payment_method.id.to_s,
+              :source_attributes => {
+                :name => "Test User",
+                :number => "4111 1111 1111 1111",
+                :expiry => "09 / #{Time.now.year + 1}",
+                :verification_value => "123"
+              }
             }
           }
           spree_post :create, attributes
-          expect(response).to redirect_to spree.admin_order_payments_path(order)
+          order.payments.count.should == 1
+          expect(response).to redirect_to(spree.admin_order_payments_path(order))
+          expect(order.reload.state).to eq('complete')
         end
       end
 

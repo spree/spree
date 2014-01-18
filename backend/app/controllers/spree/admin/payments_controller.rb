@@ -25,6 +25,8 @@ module Spree
 
         begin
           if @payment.save
+            # Transition order as far as it will go.
+            while @order.next; end
             @payment.process! if @order.completed?
             flash[:success] = flash_message_for(@payment, :successfully_created)
             redirect_to admin_order_payments_path(@order)

@@ -33,12 +33,11 @@ describe "New Order" do
     click_on "Payments"
     click_on "Update"
 
-    expect(current_path).to eql(spree.edit_admin_order_path(Spree::Order.last))
-
-    click_on "Payments"
+    expect(current_path).to eql(spree.admin_order_payments_path(Spree::Order.last))
     click_icon "capture"
 
     click_on "Order Details"
+    binding.pry
     click_on "ship"
     wait_for_ajax
 
