@@ -168,7 +168,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
-      insert_into_file File.join('config', 'routes.rb'), :after => "Application.routes.draw do\n" do
+      insert_into_file File.join('config', 'routes.rb'), :after => "Rails.application.routes.draw do\n" do
         %Q{
   # This line mounts Spree's routes at the root of your application.
   # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
@@ -195,6 +195,5 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "Enjoy!"
       end
     end
-
   end
 end
