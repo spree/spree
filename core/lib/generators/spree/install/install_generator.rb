@@ -45,10 +45,6 @@ module Spree
       end
     end
 
-    def remove_unneeded_files
-      remove_file "public/index.html"
-    end
-
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS
