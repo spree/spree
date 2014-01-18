@@ -34,3 +34,5 @@ gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
 gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
 gem 'paranoia', github: 'radar/paranoia', branch: 'rails4'
 gem 'versioncake', github: 'huoxito/versioncake', branch: 'actionview-extensions-hash'
+
+gem 'rails', github: 'rails/rails'
