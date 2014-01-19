@@ -156,11 +156,7 @@ There are three configuration options for currency:
 
 ## Creating and Modifying Locales
 
-A public project for spree_i18n was created on [LocaleApp](http://www.localeapp.com/projects/4605).
-The community should use that to add new files or modify
-existing ones. Those changes will be eventuallly imported by a member with
-commit access to the extension repo. Hopefully it will help us to get
-translations faster.
+While we have used [LocaleApp](http://localeapp.com) in the past to manage the translations for the spree_i18n project, Localeapp does not have support for different branches within the same project. As such, please submit Pull Requests or issues directly to https://github.com/spree/spree_i18n for missing translations.
 
 ## Localizing Extensions
 
