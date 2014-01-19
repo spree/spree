@@ -367,4 +367,11 @@ describe Spree::Variant do
 
   end
 
+  describe "deleted_at scope" do
+    before { variant.destroy && variant.reload }
+    it "should have a price if deleted" do
+      variant.price = 10
+      expect(variant.price).to eq(10)
+    end
+  end
 end

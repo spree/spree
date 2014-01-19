@@ -26,5 +26,3 @@ group :test do
   gem 'simplecov'
   gem 'webmock', '1.8.11'
 end
-
-gemspec

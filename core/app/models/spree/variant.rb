@@ -11,7 +11,8 @@ module Spree
     attr_accessible :name, :presentation, :cost_price, :lock_version,
                     :position, :option_value_ids,
                     :product_id, :option_values_attributes, :price,
-                    :weight, :height, :width, :depth, :sku, :cost_currency, :track_inventory
+                    :weight, :height, :width, :depth, :sku, :cost_currency,
+                    :track_inventory, :options
 
     has_many :inventory_units
     has_many :line_items
@@ -78,6 +79,12 @@ module Spree
     # their own definition.
     def deleted?
       deleted_at
+    end
+
+    def options=(options = {})
+      options.each do |option|
+        set_option_value(option[:name], option[:value])
+      end
     end
 
     def set_option_value(opt_name, opt_value)
