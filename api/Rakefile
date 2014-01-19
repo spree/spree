@@ -8,7 +8,12 @@ require 'spree/testing_support/common_rake'
 require 'rails/all'
 
 Bundler::GemHelper.install_tasks
-RSpec::Core::RakeTask.new
+
+Rake::Task["spec"].clear
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.fail_on_error = false
+  t.rspec_opts = %w[-f JUnit -o results.xml]
+end
 
 spec = eval(File.read('spree_api.gemspec'))
 Gem::PackageTask.new(spec) do |p|
@@ -27,4 +32,10 @@ desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/api'
   Rake::Task['common:test_app'].invoke
+end
+
+desc "Run RSpec with code coverage"
+task :coverage do
+  ENV['COVERAGE'] = 'true'
+  Rake::Task["spec"].execute
 end

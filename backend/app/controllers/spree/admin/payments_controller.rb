@@ -54,8 +54,12 @@ module Spree
 
         # Because we have a transition method also called void, we do this to avoid conflicts.
         event = "void_transaction" if event == "void"
-        if @payment.send("#{event}!")
-          flash[:success] = Spree.t(:payment_updated)
+        if @payment.actions.include?(params[:e].to_s)
+          if @payment.respond_to?("#{event}!") && @payment.send("#{event}!")
+            flash[:success] = Spree.t(:payment_updated)
+          else
+            flash[:error] = Spree.t(:cannot_perform_operation)
+          end
         else
           flash[:error] = Spree.t(:cannot_perform_operation)
         end
