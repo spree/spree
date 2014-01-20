@@ -37,7 +37,6 @@ describe "New Order" do
     click_icon "capture"
 
     click_on "Order Details"
-    binding.pry
     click_on "ship"
     wait_for_ajax
 
