@@ -10,7 +10,7 @@ FactoryGirl.define do
 
   factory :check_payment, class: Spree::Payment do
     amount 45.75
-    payment_method
+    association(:payment_method, factory: :check_payment_method)
     order
   end
 end
