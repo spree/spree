@@ -57,7 +57,7 @@ module Spree
 
         # Fix for #4117
         # If confirmation of payment fails, redirect back to payment screen
-        if params[:state] == "confirm" && @order.payments.valid.empty?
+        if params[:state] == "confirm" && @order.payment_required? && @order.payments.valid.empty?
           flash.keep
           redirect_to checkout_state_path("payment")
         end
