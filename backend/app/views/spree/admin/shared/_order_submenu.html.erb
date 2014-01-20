@@ -18,7 +18,7 @@
       </li>
     <% end %>
 
-    <% if can?(:index, Spree::Payment) && @payment_required %>
+    <% if can?(:index, Spree::Payment) %>
       <li<%== ' class="active"' if current == 'Payments' %>>
         <%= link_to_with_icon 'icon-credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
       </li>
