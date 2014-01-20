@@ -30,7 +30,7 @@ module Spree
           } }
         end
 
-        it "calculates descount properly" do
+        it "calculates discount properly" do
           order.update_attributes(params)
           expected_discount = - order.reload.item_total * (promo_calculator.preferred_flat_percent / 100)
           expect(order.adjustments.promotion.first.amount).to eql expected_discount.round(2)
