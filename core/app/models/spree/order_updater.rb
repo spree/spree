@@ -73,7 +73,7 @@ module Spree
     end
 
     def update_item_count
-      order.item_count = line_items.sum(&:quantity)
+      order.item_count = line_items.sum(:quantity)
     end
 
     def update_item_total
