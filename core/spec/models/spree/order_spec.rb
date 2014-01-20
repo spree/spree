@@ -399,16 +399,6 @@ describe Spree::Order do
     end
   end
 
-  context "#item_count" do
-    before do
-      @order = create(:order, :user => user)
-      @order.line_items = [ create(:line_item, :quantity => 2), create(:line_item, :quantity => 1) ]
-    end
-    it "should return the correct number of items" do
-      @order.item_count.should == 3
-    end
-  end
-
   context "#amount" do
     before do
       @order = create(:order, :user => user)
