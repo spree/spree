@@ -98,6 +98,10 @@ module Spree
           :number,
           :verification_value]
       end
+
+      initializer "spree.core.checking_migrations" do |app|
+        Migrations.new(config, engine_name).check
+      end
     end
   end
 end
