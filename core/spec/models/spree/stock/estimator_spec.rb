@@ -48,6 +48,12 @@ module Spree
           shipping_rates.should == []
         end
 
+        it "does not return shipping rates if the shipping method's calculator raises an exception" do
+          ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
+          subject.should_receive(:log_calculator_exception)
+          lambda { subject.shipping_rates(package) }.should_not raise_error
+        end
+
         it "sorts shipping rates by cost" do
           shipping_methods = 3.times.map { create(:shipping_method) }
           shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
