@@ -68,17 +68,7 @@ Run the migration.
 $ bundle exec rake db:migrate
 ```
 
-Next, we need to make the field attr_accessible on the `Address` object. Create a new file: `/app/models/spree/address_decorator.rb` and add the following content to it:
-
-```ruby
-module Spree
-  Address.class_eval do
-    attr_accessible :variety
-  end
-end
-```
-
-Of course, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
+Next, we need to add this field to the checkout form so customers can indicate the type of address. The checkout form resides within the `spree` gem at `/frontend/app/views/spree/address/_form.html.erb`, the relevant portion of which is:
 
 ```erb
 <%% address_id = address_type.chars.first %>
