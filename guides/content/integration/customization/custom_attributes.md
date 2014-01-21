@@ -49,6 +49,17 @@ Then, when your store's orders are output, you'll see the custom `upc` field in 
 }
 ```
 
+As of Spree 2.1.4 there's a possible simpler approach to extend the json output
+in your api. This code accomplishes the same thing as the class_eval example
+above (no need to create a decorator anymore):
+
+```ruby
+class ApplicationController < ActionController::Base
+  Spree::Api::Helpers.variant_attributes.push :upc
+  # ... your other stuff
+end
+```
+
 ## Messages From the Hub 
 
 Messages that come from the Hub will not have the custom fields encoded like the ones exported from Spree. The Hub's messages use the standard [order message format](order_messages), but the custom fields will be accessible through the `original` key within the `payload`.
