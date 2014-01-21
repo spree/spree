@@ -35,15 +35,27 @@ module Spree
 
       private
       def shipping_methods(package)
-        shipping_methods = package.shipping_methods
-        shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package) }
-        shipping_methods.delete_if { |ship_method| !ship_method.include?(order.ship_address) }
-        shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
-        shipping_methods
+        package.shipping_methods.select do |ship_method|
+          calculator = ship_method.calculator
+          begin
+            calculator.available?(package) &&
+            ship_method.include?(order.ship_address) &&
+            (calculator.preferences[:currency].nil? ||
+             calculator.preferences[:currency] == currency)
+          rescue Exception => exception
+            log_calculator_exception(ship_method, exception)
+          end
+        end
       end
 
       def calculate_cost(shipping_method, package)
         shipping_method.calculator.compute(package)
+      end
+
+      def log_calculator_exception(ship_method, exception)
+        Rails.logger.info("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
+        Rails.logger.info("*" * 50)
+        Rails.logger.info(exception.backtrace.join("\n"))
       end
     end
   end
