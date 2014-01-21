@@ -19,10 +19,7 @@ Orders have the following attributes:
 * `completed_at`: The timestamp of when the order was completed.
 * `bill_address_id`: The ID for the related `Address` object with billing address information.
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
-* `shipment_state`: The current shipment state of the order. For possible states, please see the Shipping guide.
-$$$
-Find where shipment_states are described and link to them.
-$$$
+* `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](shipments).
 * `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](payments).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
 * `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.

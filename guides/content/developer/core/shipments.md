@@ -15,9 +15,28 @@ This guide explains how Spree represents shipping options and how it calculates 
 
 Spree uses a very flexible and effective system to calculate shipping, accommodating the full range of shipment pricing: from simple flat rate to complex product-type- and weight-dependent calculations.
 
-Explaining each piece separately and how they fit together can be a cumbersome task. Fortunately, using a few simple examples makes it much easier to grasp.
+The Shipment model is used to track how items are delivered to the buyer.
 
-In that spirit, the examples are shown first in this guide.
+Shipments have the following attributes:
+
+* `number`: The unique identifier for this shipment. It begins with the letter H and ends in an 11-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Shipment.find_by(number: number)`.
+* `tracking`: The identifier given for the shipping provider (i.e. FedEx, UPS, etc).
+* `shipped_at`: The time when the shipment was shipped.
+* `state`: The current state of the shipment.
+* `stock_location_id`: The ID of the Stock Location where the items for this shipment will be sourced from.
+
+A shipment can go through many different states, as illustrated below.
+
+![Shipment flow](/images/developer/core/shipment_flow.jpg)
+
+An explanation of the different states:
+
+* `pending`: The shipment has backordered inventory units and/or the order is not paid for.
+* `ready`: The shipment has *no* backordered inventory units and the order is paid for.
+* `shipped`: The shipment is on its way to the buyer.
+* `canceled`: When an order is cancelled, all of its shipments will also be cancelled. When this happens, all items in the shipment will be restocked. If an order is "resumed", then the shipment will also be resumed.
+
+Explaining each piece of the shipment world inside of Spree separately and how each piece fits together can be a cumbersome task. Fortunately, using a few simple examples makes it much easier to grasp. In that spirit, the examples are shown first in this guide.
 
 ## Examples
 
