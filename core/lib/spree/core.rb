@@ -38,6 +38,7 @@ module Spree
 end
 
 require 'spree/core/version'
+require 'spree/migrations'
 require 'spree/core/engine'
 
 require 'spree/i18n'
