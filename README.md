@@ -35,12 +35,11 @@ And run
 bundle install
 ```
 
-Then copy the default stylesheet into your project `app/assets/stylesheets/spree/frontend/spree_bootstrap_frontend.css.scss`
+Then copy the default stylesheet into your project
  
 ```bash
 rails generate spree_bootstrap_frontend:install
 ```
-
 
 Done.
 

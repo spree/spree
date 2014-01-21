@@ -38,8 +38,8 @@
 // -- Spree Layout Custom Rules -------------------------
 
 //TODO, bug #6
-.alert-error { .alert-danger{}; }
-.alert-alert { .alert-info{}; }
+.alert-error, .alert-registration_error { @extend .alert-danger; }
+.alert-alert { @extend .alert-info; }
 
 .product-body {
   height: 170px;
