@@ -55,7 +55,7 @@ above (no need to create a decorator anymore):
 
 ```ruby
 class ApplicationController < ActionController::Base
-  Spree::Api::Helpers.variant_attributes.push :upc
+  Spree::Api::ApiHelpers.variant_attributes.push :upc
   # ... your other stuff
 end
 ```
