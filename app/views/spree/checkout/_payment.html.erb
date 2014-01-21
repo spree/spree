@@ -3,7 +3,7 @@
     <h3 class="panel-title"><%= Spree.t(:payment_information) %></h3>
   </div>
   <div class="panel-body" data-hook="checkout_payment_step">
-    <ul class="list-group">
+    <ul class="list-group" id="payment-method-fields" data-hook>
       <% @order.available_payment_methods.each do |method| %>
       <li class="list-group-item">
         <label>

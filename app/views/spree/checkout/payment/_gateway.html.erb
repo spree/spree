@@ -2,6 +2,11 @@
   <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image', :class => 'pull-right' %>
   <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
+  <p class="field">
+    <%= label_tag "name_on_card_#{payment_method.id}", Spree.t(:name_on_card) %><span class="form-control required">*</span><br />
+    <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}", { id: "name_on_card_#{payment_method.id}", :class => 'form-control required'} %>
+  </p>
+
   <p class="field" data-hook="card_number">
     <%= label_tag "card_number", Spree.t(:card_number) %><span class="required">*</span><br />
     <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
@@ -27,6 +32,4 @@
 
   <%= hidden_field_tag "#{param_prefix}[cc_type]", '', :id => "cc_type", :class => 'ccType' %>
 
-  <%= hidden_field param_prefix, 'first_name', :value => @order.billing_firstname %>
-  <%= hidden_field param_prefix, 'last_name', :value => @order.billing_lastname %>
 </div>
