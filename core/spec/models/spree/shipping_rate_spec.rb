@@ -35,4 +35,18 @@ describe Spree::ShippingRate do
       end
     end
   end
+
+  # Regression test for #3829
+  context "#shipping_method" do
+    it "can be retrieved" do
+      expect(shipping_rate.shipping_method.reload).to eq(shipping_method)
+    end
+
+    it "can be retrieved even when deleted" do
+      shipping_method.update_column(:deleted_at, Time.now)
+      shipping_rate.save
+      shipping_rate.reload
+      expect(shipping_rate.shipping_method).to eq(shipping_method)
+    end
+  end
 end
