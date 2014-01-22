@@ -16,6 +16,15 @@ module Spree
         price: 19.99,
         shipping_category_id: create(:shipping_category).id }
     end
+    let(:attributes_for_variant) do
+      h = attributes_for(:variant).except(:option_values, :product)
+      h.merge({
+        options: [
+          { name: "size", value: "small" },
+          { name: "color", value: "black" }
+        ]
+      })
+    end
 
     before do
       stub_authentication!
@@ -204,16 +213,6 @@ module Spree
         end
 
         it "creates with embedded variants" do
-          def attributes_for_variant
-            h = attributes_for(:variant).except(:option_values, :product)
-            h.merge({
-              options: [
-                { name: "size", value: "small" },
-                { name: "color", value: "black" }
-              ]
-            })
-          end
-
           product_data.merge!({
             variants: [attributes_for_variant, attributes_for_variant]
           })
@@ -311,8 +310,20 @@ module Spree
         end
 
         it "can create new option types on a product" do
-          api_post :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
+          api_put :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
           expect(json_response['option_types'].count).to eq(2)
+        end
+
+        it "can create new variants on a product" do
+          api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant] }
+          expect(response.status).to eq 200
+          expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
+
+          variants = json_response['variants'].select { |v| !v['is_master'] }
+          expect(variants.last['option_values'][0]['name']).to eq('small')
+          expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
+
+          expect(json_response['option_types'].count).to eq(2) # size, color
         end
 
         it "cannot update a product with an invalid attribute" do

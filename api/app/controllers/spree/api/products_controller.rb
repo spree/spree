@@ -87,13 +87,20 @@ module Spree
         authorize! :update, @product
 
         if @product.update_attributes(product_params)
+          variants_params.each do |variant_attribute|
+            # make sure the product is assigned before the options=
+            @product.variants.create({ product: @product }.merge(variant_attribute))
+          end
+
           option_types_params.each do |name|
             option_type = OptionType.where(name: name).first_or_initialize do |option_type|
               option_type.presentation = name
               option_type.save!
             end
+
             @product.option_types << option_type unless @product.option_types.include?(option_type)
           end
+
           respond_with(@product, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
