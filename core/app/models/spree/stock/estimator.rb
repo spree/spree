@@ -15,7 +15,8 @@ module Spree
 
         shipping_methods.each do |shipping_method|
           cost = calculate_cost(shipping_method, package)
-          shipping_rates << shipping_method.shipping_rates.new(:cost => cost) unless cost.nil?
+          rate = shipping_method.shipping_rates.new(:cost => cost) unless cost.nil?
+          shipping_rates << rate unless rate.nil?
         end
 
         shipping_rates.sort_by! { |r| r.cost || 0 }
@@ -34,6 +35,7 @@ module Spree
       end
 
       private
+
       def shipping_methods(package)
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
@@ -53,9 +55,9 @@ module Spree
       end
 
       def log_calculator_exception(ship_method, exception)
-        Rails.logger.info("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
-        Rails.logger.info("*" * 50)
-        Rails.logger.info(exception.backtrace.join("\n"))
+        Rails.logger.error("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
+        Rails.logger.error("*" * 50)
+        Rails.logger.error(exception.backtrace.join("\n"))
       end
     end
   end
