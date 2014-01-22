@@ -65,23 +65,44 @@ module Spree
 
         context "general shipping methods" do
           let(:shipping_methods) { 2.times.map { create(:shipping_method) } }
-
-          it "selects the most affordable shipping rate" do
-            shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
-            shipping_methods[1].stub_chain(:calculator, :compute).and_return(3.00)
-
+          before do
             subject.stub(:shipping_methods).and_return(shipping_methods)
 
+            shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
+            shipping_methods[1].stub_chain(:calculator, :compute).and_return(3.00)
+          end
+
+          it "selects the most affordable shipping rate" do
             expect(subject.shipping_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false]
           end
 
-          it "selects the most affordable shipping rate and doesn't raise exception over nil cost" do
-            shipping_methods[0].stub_chain(:calculator, :compute).and_return(1.00)
-            shipping_methods[1].stub_chain(:calculator, :compute).and_return(nil)
+          context "nil shipping rates" do
+            before { shipping_methods[1].stub_chain(:calculator, :compute) { nil } }
 
-            subject.stub(:shipping_methods).and_return(shipping_methods)
+            it "discards nil shipping rates to avoid *accidentally* offering free shipping" do
+              expect(subject.shipping_rates(package).count).to eq 1
+            end
+          end
 
-            subject.shipping_rates(package)
+          context "zero shipping rates" do
+            before { shipping_methods[1].stub_chain(:calculator, :compute) { 0 } }
+
+            it "preserves $0 shipping rates, trusting the calculator to offer free shipping if desired" do
+              expect(subject.shipping_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false]
+            end
+          end
+
+          context "no usable shipping methods" do
+            before do
+              shipping_methods[0].stub_chain(:calculator, :compute).and_return(nil)
+              shipping_methods[1].stub_chain(:calculator, :compute).and_return(nil)
+            end
+            
+            after { subject.shipping_rates(package) }
+
+            it "should register an error message on the order" do
+              subject.should_receive(:notify_no_eligible_methods)
+            end
           end
         end
 
