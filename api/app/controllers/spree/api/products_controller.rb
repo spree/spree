@@ -41,7 +41,7 @@ module Spree
       #     ...
       #     option_types: ['size', 'color']
       #   }
-      # 
+      #
       # By passing the shipping category name you can fetch or create that
       # shipping category on the fly. e.g.
       #
@@ -54,7 +54,7 @@ module Spree
         authorize! :create, Product
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
-        
+
         begin
           @product = Product.new(product_params)
           if @product.save
@@ -85,8 +85,15 @@ module Spree
       def update
         @product = find_product(params[:id])
         authorize! :update, @product
-      
+
         if @product.update_attributes(product_params)
+          option_types_params.each do |name|
+            option_type = OptionType.where(name: name).first_or_initialize do |option_type|
+              option_type.presentation = name
+              option_type.save!
+            end
+            @product.option_types << option_type unless @product.option_types.include?(option_type)
+          end
           respond_with(@product, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)

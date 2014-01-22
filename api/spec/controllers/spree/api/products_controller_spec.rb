@@ -310,6 +310,11 @@ module Spree
           response.status.should == 200
         end
 
+        it "can create new option types on a product" do
+          api_post :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
+          expect(json_response['option_types'].count).to eq(2)
+        end
+
         it "cannot update a product with an invalid attribute" do
           api_put :update, :id => product.to_param, :product => { :name => "" }
           response.status.should == 422
