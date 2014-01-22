@@ -46,6 +46,33 @@ describe Spree::Order do
     end
   end
 
+  context "#payments" do
+    it "does not have inverse_of defined" do
+      expect(Spree::Order.reflections[:payments].options[:inverse_of]).to be_nil
+    end
+
+    it "keeps source attributes after updating" do
+      persisted_order = Spree::Order.create
+      credit_card_payment_method = create(:credit_card_payment_method)
+      attributes = {
+        :payments_attributes => [
+          { 
+            :payment_method_id => credit_card_payment_method.id,
+            :source_attributes => {
+              :name => "Ryan Bigg",
+              :number => "41111111111111111111",
+              :expiry => "01 / 15",
+              :verification_value => "123"
+            }
+          }
+        ]
+      }
+
+      persisted_order.update_attributes(attributes)
+      expect(persisted_order.pending_payments.last.source.number).to be_present
+    end
+  end
+
   context "#generate_order_number" do
     it "should generate a random string" do
       order.generate_order_number.is_a?(String).should be_true
