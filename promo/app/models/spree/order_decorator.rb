@@ -27,7 +27,7 @@ Spree::Order.class_eval do
   end
 
   def find_promo_for_coupon_code
-    Spree::Promotion.where("LOWER(code) = '#{normalized_coupon_code}'").first
+    Spree::Promotion.where("LOWER(code) = #{Spree::Order.sanitize(normalized_coupon_code)}").first
   end
 
   def normalized_coupon_code
