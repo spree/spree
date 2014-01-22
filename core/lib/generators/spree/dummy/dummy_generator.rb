@@ -53,9 +53,9 @@ module Spree
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
         inside dummy_path do
-          inject_require_for('spree_frontend') if Object.const_defined?("Spree::Frontend")
-          inject_require_for('spree_backend') if Object.const_defined?("Spree::Backend")
-          inject_require_for('spree_api') if Object.const_defined?("Spree::Api")
+          inject_require_for('spree_frontend') if defined?(Spree::Frontend)
+          inject_require_for('spree_backend') if defined?(Spree::Backend)
+          inject_require_for('spree_api') if defined?(Spree::Api)
         end
       end
     end
