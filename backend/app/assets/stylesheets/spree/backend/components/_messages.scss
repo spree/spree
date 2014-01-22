@@ -25,7 +25,7 @@
   }
 }
 
-.flash {
+.flash, .alert {
   position: fixed;
   top: 0;
   left: 0;
@@ -40,4 +40,15 @@
   &.notice  { background-color: rgba($color-notice,  0.8) }
   &.success { background-color: rgba($color-success, 0.8) }
   &.error   { background-color: rgba($color-error,   0.8) }
+}
+
+.alert {
+  position: relative;
+  font-weight: normal !important;
+
+  a {
+    text-decoration: underline;
+  }
+
+  &.error a { color: very-light($color-error, 10) }
 }
