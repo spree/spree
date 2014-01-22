@@ -206,7 +206,7 @@ module Spree
       end
     end
 
-    context "shippments" do
+    context "shipments" do
       let(:params) do
         { :shipments_attributes => [
             { :tracking => '123456789',
