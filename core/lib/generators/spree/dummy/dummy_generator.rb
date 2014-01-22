@@ -54,9 +54,9 @@ module Spree
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
         inside dummy_path do
-          inject_require_for('spree_frontend') if Object.const_defined?("Spree::Frontend")
-          inject_require_for('spree_backend') if Object.const_defined?("Spree::Backend")
-          inject_require_for('spree_api') if Object.const_defined?("Spree::Api")
+          inject_require_for('spree_frontend')
+          inject_require_for('spree_backend')
+          inject_require_for('spree_api')
         end
       end
     end
@@ -85,7 +85,13 @@ module Spree
     protected
 
     def inject_require_for(requirement)
-      inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
+      inject_into_file 'config/application.rb', %Q[
+begin
+  require '#{requirement}'
+rescue LoadError
+  # #{requirement} is not available.
+end
+      ], :before => /require '#{@lib_name}'/, :verbose => true
     end
 
     def dummy_path
