@@ -41,14 +41,6 @@ module Spree
       #     ...
       #     option_types: ['size', 'color']
       #   }
-      # 
-      # By passing the shipping category name you can fetch or create that
-      # shipping category on the fly. e.g.
-      #
-      #   product: {
-      #     ...
-      #     shipping_category: "Free Shipping Items"
-      #   }
       #
       # By passing the shipping category name you can fetch or create that
       # shipping category on the fly. e.g.
@@ -63,7 +55,7 @@ module Spree
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
 
-        @product = Product.new(product_without_variants_params)
+        @product = Product.new(product_params)
         if @product.save
           variants_params.each do |variant_attribute|
             # make sure the product is assigned before the options=
