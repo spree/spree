@@ -201,7 +201,7 @@ module Spree
             checkout_step_index(state) > checkout_step_index(self.state)
           end
 
-          define_callbacks :updating_from_params
+          define_callbacks :updating_from_params, terminator: 'result == false'
 
           set_callback :updating_from_params, :before, :update_params_payment_source
 
