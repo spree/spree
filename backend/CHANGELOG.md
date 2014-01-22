@@ -49,3 +49,6 @@
 
     Peter Berkenbosch
 
+* Spaces inside shipment tracking numbers are now accounted for.
+
+    Daniel Pritchett
