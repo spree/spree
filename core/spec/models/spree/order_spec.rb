@@ -47,6 +47,7 @@ describe Spree::Order do
   end
 
   context "#payments" do
+    # For the reason of this test, please see spree/spree_gateway#132
     it "does not have inverse_of defined" do
       expect(Spree::Order.reflections[:payments].options[:inverse_of]).to be_nil
     end
