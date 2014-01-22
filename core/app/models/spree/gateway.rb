@@ -1,6 +1,6 @@
 module Spree
   class Gateway < PaymentMethod
-    delegate_belongs_to :provider, :authorize, :purchase, :capture, :void, :credit
+    delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
     validates :name, :type, presence: true
 
