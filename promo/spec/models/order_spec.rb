@@ -63,5 +63,12 @@ describe Spree::Order do
     end
   end
 
+  context "coupon_code sql injection" do
+    it "will sanitize the input" do
+      order.coupon_code = "Let's do this"
+      expect(order.find_promo_for_coupon_code).to be_nil
+    end
+  end
+  
 end
 
