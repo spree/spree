@@ -58,3 +58,7 @@ Similar changes to this have also been made to extensions, where their assets ar
 *   Promotion#event_name attribute has been removed. A promotion's event now depends on the fields that are filled out during its creation.
 
     Ryan Bigg
+
+*   Simplified OrderPopulator to take only a variant_id and a quantity, rather than a confusing hash of product/variant ids.
+
+    Ryan Bigg  

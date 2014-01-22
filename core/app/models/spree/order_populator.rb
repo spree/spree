@@ -9,23 +9,9 @@ module Spree
       @errors = ActiveModel::Errors.new(self)
     end
 
-    #
-    # Parameters can be passed using the following possible parameter configurations:
-    #
-    # * Single variant/quantity pairing
-    # +:variants => { variant_id => quantity }+
-    #
-    # * Multiple products at once
-    # +:products => { product_id => variant_id, product_id => variant_id }, :quantity => quantity+
-    def populate(from_hash)
-      from_hash[:products].each do |product_id,variant_id|
-        attempt_cart_add(variant_id, from_hash[:quantity])
-      end if from_hash[:products]
-
-      from_hash[:variants].each do |variant_id, quantity|
-        attempt_cart_add(variant_id, quantity)
-      end if from_hash[:variants]
-
+    
+    def populate(variant_id, quantity)
+      attempt_cart_add(variant_id, quantity)
       valid?
     end
 
