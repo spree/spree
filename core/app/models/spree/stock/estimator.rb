@@ -48,9 +48,9 @@ module Spree
       end
 
       def log_calculator_exception(ship_method, exception)
-        Rails.logger.info("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
-        Rails.logger.info("*" * 50)
-        Rails.logger.info(exception.backtrace.join("\n"))
+        Rails.logger.error("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
+        Rails.logger.error("*" * 50)
+        Rails.logger.error(exception.backtrace.join("\n"))
       end
     end
   end
