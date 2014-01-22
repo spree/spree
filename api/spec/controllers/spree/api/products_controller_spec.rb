@@ -330,6 +330,21 @@ module Spree
           expect(json_response['option_types'].count).to eq(2) # size, color
         end
 
+        it "can update an existing variant on a product" do
+          variant_hash = {
+            :sku => '123', :price => 19.99, :options => [{:name => "size", :value => "small"}]
+          }
+          variant_id = product.variants.create!({ product: product }.merge(variant_hash)).id
+
+          api_put :update, :id => product.to_param, :product => { :variants => [variant_hash.merge(:id => variant_id.to_s, :sku => '456', :options => [{:name => "size", :value => "large" }])] }
+
+          expect(json_response['variants'].count).to eq(2) # 1 master + 1 variants
+          variants = json_response['variants'].select { |v| !v['is_master'] }
+          expect(variants.last['option_values'][0]['name']).to eq('large')
+          expect(variants.last['sku']).to eq('456')
+          expect(variants.count).to eq(1)
+        end
+
         it "cannot update a product with an invalid attribute" do
           api_put :update, :id => product.to_param, :product => { :name => "" }
           response.status.should == 422
