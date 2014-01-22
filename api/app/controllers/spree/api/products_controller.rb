@@ -88,8 +88,13 @@ module Spree
 
         if @product.update_attributes(product_params)
           variants_params.each do |variant_attribute|
-            # make sure the product is assigned before the options=
-            @product.variants.create({ product: @product }.merge(variant_attribute))
+            # update the variant if the id is present in the payload
+            if variant_attribute['id'].present?
+              @product.variants.find(variant_attribute['id'].to_i).update_attributes(variant_attribute)
+            else
+              # make sure the product is assigned before the options=
+              @product.variants.create({ product: @product }.merge(variant_attribute))
+            end
           end
 
           option_types_params.each do |name|
@@ -132,7 +137,7 @@ module Spree
           end
 
           params.require(:product).permit(
-            variants_key => permitted_variant_attributes,
+            variants_key => [permitted_variant_attributes, :id],
           ).delete(variants_key) || []
         end
 

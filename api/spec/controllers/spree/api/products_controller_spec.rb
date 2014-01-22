@@ -10,7 +10,7 @@ module Spree
     let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :permalink, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
-    
+
     let(:product_data) do
       { name: "The Other Product",
         price: 19.99,
@@ -317,13 +317,28 @@ module Spree
         it "can create new variants on a product" do
           api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant] }
           expect(response.status).to eq 200
-          expect(json_response['variants'].count).to eq(3) # 1 master + 2 variants
+          expect(json_response['variants'].count).to eq(2) # 2 variants
 
           variants = json_response['variants'].select { |v| !v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
           expect(json_response['option_types'].count).to eq(2) # size, color
+        end
+
+        it "can update an existing variant on a product" do
+          variant_hash = {
+            :sku => '123', :price => 19.99, :options => [{:name => "size", :value => "small"}]
+          }
+          variant_id = product.variants.create!({ product: product }.merge(variant_hash)).id
+
+          api_put :update, :id => product.to_param, :product => { :variants => [variant_hash.merge(:id => variant_id.to_s, :sku => '456', :options => [{:name => "size", :value => "large" }])] }
+
+          expect(json_response['variants'].count).to eq(1)
+          variants = json_response['variants'].select { |v| !v['is_master'] }
+          expect(variants.last['option_values'][0]['name']).to eq('large')
+          expect(variants.last['sku']).to eq('456')
+          expect(variants.count).to eq(1)
         end
 
         it "cannot update a product with an invalid attribute" do
