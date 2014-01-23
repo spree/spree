@@ -199,6 +199,7 @@ module Spree
           "count_on_hand"=>10,
           "sku"=>"ROR-00011",
           "price"=>"15.99",
+          "display_price"=>"$15.99",
           "weight"=>nil,
           "height"=>nil,
           "width"=>nil,
@@ -209,7 +210,8 @@ module Spree
           "option_values"=> [OPTION_VALUE],
           "images"=> [IMAGE],
           "description"=>"A text description of the product.",
-          "options_text"=> "(Size: small, Colour: red)"
+          "options_text"=> "(Size: small, Colour: red)",
+          "in_stock" => true
        }
 
     PRODUCT_PROPERTY ||=
@@ -319,10 +321,13 @@ module Spree
         "display_price"=>"$15.99",
         "available_on"=>"2012-10-17T03:43:57Z",
         "permalink"=>"ruby-on-rails-tote",
-        "count_on_hand"=>10,
         "meta_description"=>nil,
         "meta_keywords"=>nil,
-        "variants"=> [VARIANT],
+        "taxon_ids" => [1,2,3],
+        "shipping_category_id" => 1,
+        "has_variants" => true, 
+        "master" => VARIANT.merge("is_master" => true),
+        "variants" => [VARIANT.merge("is_master" => false)],
         "product_properties"=> [PRODUCT_PROPERTY]
       }
 
