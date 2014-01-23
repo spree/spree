@@ -144,6 +144,11 @@ module Spree
     end
 
     def in_stock?(quantity=1)
+      puts %q{[DEPRECATION] In Spree 2.2, Variant#in_stock? will no longer take a quantity. Use Variant#can_stock? instead.}
+      can_stock?(quantity)
+    end
+
+    def can_stock?(quantity=1)
       Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 

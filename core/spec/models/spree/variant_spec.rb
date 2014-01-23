@@ -301,17 +301,19 @@ describe Spree::Variant do
           variant.in_stock?.should be_false
         end
       end
+    end
 
-      context 'when providing quantity param' do
+    describe "#can_stock?" do
+      context 'with 10 items on hand' do
         before do
           variant.stock_items.first.update_attribute(:count_on_hand, 10)
         end
 
-        it 'returns correctt value' do
-          variant.in_stock?.should be_true
-          variant.in_stock?(2).should be_true
-          variant.in_stock?(10).should be_true
-          variant.in_stock?(11).should be_false
+        it 'returns correct value' do
+          variant.can_stock?.should be_true
+          variant.can_stock?(2).should be_true
+          variant.can_stock?(10).should be_true
+          variant.can_stock?(11).should be_false
         end
       end
     end
