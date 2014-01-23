@@ -294,6 +294,13 @@ module Spree
         response.status.should == 200
       end
 
+      it "updates shipping category properly if provided" do
+        api_put :update, :id => product.to_param, :product => { :shipping_category => "New Ships" }
+        expect(response.status).to eq 200
+        shipping_id = ShippingCategory.find_by_name("New Ships").id
+        expect(json_response['shipping_category_id']).to eq shipping_id
+      end
+
       it "cannot update a product with an invalid attribute" do
         api_put :update, :id => product.to_param, :product => { :name => "" }
         response.status.should == 422

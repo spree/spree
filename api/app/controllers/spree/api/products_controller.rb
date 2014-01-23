@@ -63,6 +63,7 @@ module Spree
 
         variants_attributes = params[:product].delete(:variants_attributes) || []
         option_type_attributes = params[:product].delete(:option_types) || []
+        set_up_shipping_category
 
         @product = find_product(params[:id])
         if @product.update_attributes(params[:product])
