@@ -24,7 +24,9 @@ module Spree
       end
 
       def destroy
-        @line_item.destroy
+        unless @order.complete? and @order.line_items.count == 1
+          @line_item.destroy
+        end
         respond_with(@line_item) do |format|
           format.html { redirect_to edit_admin_order_path(@order) }
           format.js { @order.reload }
