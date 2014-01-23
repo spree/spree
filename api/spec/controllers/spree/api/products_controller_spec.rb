@@ -12,6 +12,16 @@ module Spree
       { :name => "The Other Product",
         :price => 19.99 }
     end
+    let(:attributes_for_variant) do
+      h = attributes_for(:variant).except(:is_master, :product)
+      h.delete(:option_values)
+      h.merge({
+        options: [
+          { name: "size", value: "small" },
+          { name: "color", value: "black" }
+        ]
+      })
+    end
 
     before do
       stub_authentication!
@@ -168,17 +178,6 @@ module Spree
 
       describe "creating products with" do
         it "embedded variants" do
-          def attributes_for_variant
-            h = attributes_for(:variant).except(:is_master, :product)
-            h.delete(:option_values)
-            h.merge({
-              options: [
-                { name: "size", value: "small" },
-                { name: "color", value: "black" }
-              ]
-            })
-          end
-
           attributes = product_hash
 
           attributes.merge!({
@@ -279,6 +278,41 @@ module Spree
         api_delete :destroy, :id => product.to_param
         response.status.should == 204
         product.reload.deleted_at.should_not be_nil
+      end
+
+      context "updating products with" do
+        it "embedded option types" do
+          api_put :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
+          json_response['option_types'].count.should eq(2)
+        end
+
+        it "embedded new variants" do
+          api_put :update, :id => product.to_param, :product => { :variants_attributes => [attributes_for_variant, attributes_for_variant] }
+          response.status.should == 200
+          json_response['variants'].count.should == 3 # 1 master + 2 variants
+
+          variants = json_response['variants'].select { |v| !v['is_master'] }
+          variants.last['option_values'][0]['name'].should == 'small'
+          variants.last['option_values'][0]['option_type_name'].should == 'size'
+
+          json_response['option_types'].count.should == 2 # size, color
+        end
+
+        it "embedded existing variant" do
+          variant_hash = {
+            :sku => '123', :price => 19.99, :options => [{:name => "size", :value => "small"}]
+          }
+          variant = product.variants.new
+          variant.update_attributes(variant_hash)
+
+          api_put :update, :id => product.to_param, :product => { :variants_attributes => [variant_hash.merge(:id => variant.id.to_s, :sku => '456', :options => [{:name => "size", :value => "large" }])] }
+
+          json_response['variants'].count.should == 2 # 1 master + 2 variants
+          variants = json_response['variants'].select { |v| !v['is_master'] }
+          variants.last['option_values'][0]['name'].should == 'large'
+          variants.last['sku'].should == '456'
+          variants.count.should == 1
+        end
       end
     end
   end
