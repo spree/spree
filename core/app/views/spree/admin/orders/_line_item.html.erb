@@ -4,6 +4,8 @@
   <td class="qty"><%= f.number_field :quantity, :min => 0, :class => "qty" %></td>
   <td class="total align-center"><%= f.object.display_amount %></td>
   <td data-hook="admin_order_form_line_item_actions" class="actions">
-    <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object), :no_text => true} %>
+    <% unless @order.complete? and @order.line_items.count == 1 %>
+      <%= link_to_delete f.object, {:url => admin_order_line_item_url(@order.number, f.object), :no_text => true} %>
+    <% end %>
   </td>
 </tr>
