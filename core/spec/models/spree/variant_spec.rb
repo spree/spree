@@ -301,17 +301,19 @@ describe Spree::Variant do
           variant.in_stock?.should be_false
         end
       end
+    end
 
-      context 'when providing quantity param' do
+    describe "#can_stock?" do
+      context 'with 10 items' do
         before do
           variant.stock_items.first.update_attribute(:count_on_hand, 10)
         end
 
-        it 'returns correctt value' do
-          variant.in_stock?.should be_true
-          variant.in_stock?(2).should be_true
-          variant.in_stock?(10).should be_true
-          variant.in_stock?(11).should be_false
+        it 'returns correct value' do
+          variant.can_stock?.should be_true
+          variant.can_stock?(2).should be_true
+          variant.can_stock?(10).should be_true
+          variant.can_stock?(11).should be_false
         end
       end
     end
@@ -368,6 +370,11 @@ describe Spree::Variant do
       variant.product.update_column(:updated_at, 1.day.ago)
       variant.touch
       variant.product.reload.updated_at.should be_within(3.seconds).of(Time.now)
+    end
+
+    it "clears the in_stock cache key" do
+      Rails.cache.should_receive(:delete).with(variant.send(:in_stock_cache_key))
+      variant.touch
     end
   end
 
