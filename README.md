@@ -21,12 +21,12 @@ This stays as closely to the original spree frontend markup as possible. Helper 
 Installation
 -------
 
-**WARNING: The master branch is developed agaist edge. Use a stable branch for production.**
+**NOTE: The master branch is developed agaist edge. Use a stable branch for production.**
 
-Add the following to your gemfile
+Add the following to your gemfile. If you are running a `-stable` branch of spree check there is a compatible branch of `spree_bootstrap_frontend`
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-1-stable'
 ```
 
 And run
@@ -43,18 +43,18 @@ rails generate spree_bootstrap_frontend:install
 
 Done.
 
-If you are running a stable branch of spree check if there is a compatible branch of `spree_bootstrap_frontend` and use that. For example:
+The `Master` branch is actively developed against spree edge, so it's not recommended to use this in production
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend'
 ```
 
-Only use branches marked as `-stable` in production, any others are likely to be short-lived.
+Only use branches marked as `-stable` in production, any others are likely to be short-lived patches.
 
 Customizing
 -------
 
-Running the above `spree_bootstrap_frontend:install` command copies the stylesheet to `app/assets/stylesheets/spree/frontend/spree_bootstrap_frontend.css.scss`. Edit this as required.
+Running the above `spree_bootstrap_frontend:install` command copies the stylesheet to `app/assets/stylesheets/spree/frontend/spree_bootstrap_frontend.css.scss`. Use this as your base stylesheet and edit as required.
 
 To style your spree store just override the bootstrap 3 variables. The full list of bootstrap variables can be found [here](https://github.com/twbs/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_variables.scss). You can override these by simply redefining the variable before the `@import` directive.
 For example:
