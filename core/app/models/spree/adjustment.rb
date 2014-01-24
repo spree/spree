@@ -1,10 +1,8 @@
 # Adjustments represent a change to the +item_total+ of an Order. Each adjustment
 # has an +amount+ that can be either positive or negative.
 #
-# Adjustments can be open/closed/finalized
-#
-# Once an adjustment is finalized, it cannot be changed, but an adjustment can
-# toggle between open/closed as needed
+# Adjustments can be "opened" or "closed".
+# Once an adjustment is closed, it will not be automatically updated.
 #
 # Boolean attributes:
 #
@@ -33,15 +31,11 @@ module Spree
 
     state_machine :state, initial: :open do
       event :close do
-        transition from: :open, to: :closed
+        transition from: :open, to: :close
       end
 
-      event :open do
-        transition from: :closed, to: :open
-      end
-
-      event :finalize do
-        transition from: [:open, :closed], to: :finalized
+      event :close do
+        transition from: :close, to: :open
       end
     end
 
@@ -60,8 +54,8 @@ module Spree
     scope :included, -> { where(included: true)  }
     scope :additional, -> { where(included: false) }
 
-    def immutable?
-      state != "open"
+    def closed?
+      state == "closed"
     end
 
     def promotion?
@@ -76,7 +70,7 @@ module Spree
     #
     # Noop if the adjustment is locked.
     def update!(target = nil)
-      return amount if immutable?
+      return amount if closed?
       amount = source.compute_amount(target || adjustable)
       self.update_columns(
         amount: amount,

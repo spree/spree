@@ -30,7 +30,7 @@ module Spree
     end
 
     def recalculate_adjustments
-      adjustments.includes(:source).open.each { |adjustment| adjustment.update! order }
+      adjustments.includes(:source).each { |adjustment| adjustment.update! order }
     end
 
     # Updates the following Order total values:
