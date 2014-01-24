@@ -570,6 +570,7 @@ en:
     flexible_rate: Flexible Rate
     forgot_password: Forgot Password?
     free_shipping: Free Shipping
+    free_shipping_amount: "-"
     front_end: Front End
     gateway: Gateway
     gateway_config_unavailable: Gateway unavailable for environment

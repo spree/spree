@@ -145,6 +145,10 @@ module Spree
       Spree::Money.new(total, { currency: currency })
     end
 
+    def shipping_discount
+      shipment_adjustments.eligible.sum(:amount) * - 1
+    end
+
     def to_param
       number.to_s.to_url.upcase
     end
@@ -474,6 +478,13 @@ module Spree
       end
 
       shipments
+    end
+
+    def apply_free_shipping_promotions
+      Spree::PromotionHandler::FreeShipping.new(self).activate
+      shipments.each { |shipment| ItemAdjustments.new(shipment).update }
+      updater.update_shipment_total
+      updater.persist_totals
     end
 
     # Clean shipments and make order back to address state

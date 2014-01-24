@@ -86,6 +86,7 @@ module Spree
         included_tax_total: order.included_tax_total,
         additional_tax_total: order.additional_tax_total,
         payment_total: order.payment_total,
+        shipment_total: order.shipment_total,
         total: order.total,
         updated_at: Time.now,
       )

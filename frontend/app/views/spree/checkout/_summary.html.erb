@@ -29,16 +29,20 @@
       </tbody>
     <% end %>
 
-    <tr data-hook="shipping_total">
-      <td><%= Spree.t(:shipping_total) %></td>
-      <td><%= Spree::Money.new(order.shipment_total).to_html %></td>
-    </tr>
+    <% if order.checkout_steps.include?("delivery") %>
+      <tr data-hook="shipping_total">
+      <% if order.shipment_total > 0 %>
+        <td><%= Spree.t(:shipping_total) %></td>
+        <td><%= Spree::Money.new(order.shipment_total).to_html %></td>
+      <% else %>
+        <td><strong><%= Spree.t(:free_shipping) %></strong></td>
+        <td><%= Spree.t(:free_shipping_amount) %></td>
+      <% end %>
+      </tr>
+    <% end %>
 
     <% if order.adjustments.eligible.exists? %>
       <tbody id="summary-order-charges" data-hook>
-        <tr>
-          <td colspan="2">Order adjustments</td>
-        </tr>
         <% order.adjustments.eligible.each do |adjustment| %>
         <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
           <tr class="total">
