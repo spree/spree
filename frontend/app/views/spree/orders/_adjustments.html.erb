@@ -1,6 +1,6 @@
 <tbody id="cart_adjustments" data-hook>
   <% if @order.line_item_adjustments.exists? %>
-    <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+    <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
       <%= render "spree/orders/adjustment_row", :label => label, :adjustments => adjustments, :type => Spree.t(:promotion) %>
     <% end %>
   <% end %>
