@@ -92,7 +92,7 @@ Spree::Order.class_eval do
         adjustment = self.adjustments.build(:amount => a[:amount].to_f,
                                             :label => a[:label])
         adjustment.save!
-        adjustment.finalize!
+        adjustment.close!
       rescue Exception => e
         raise "Order import adjustments: #{e.message} #{a}"
       end
