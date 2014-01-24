@@ -11,31 +11,15 @@ describe Spree::Adjustment do
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, state: 'open') }
 
-    context "#immutable?" do
-      it "is true when adjustment state isn't open" do
+    context "#closed?" do
+      it "is true when adjustment state is closed" do
         adjustment.state = "closed"
-        adjustment.should be_immutable
-        adjustment.state = "finalized"
-        adjustment.should be_immutable
+        adjustment.should be_closed
       end
 
       it "is false when adjustment state is open" do
         adjustment.state = "open"
-        adjustment.should_not be_immutable
-      end
-    end
-
-    context "#finalized?" do
-      it "is true when adjustment state is finalized" do
-        adjustment.state = "finalized"
-        adjustment.should be_finalized
-      end
-
-      it "is false when adjustment state isn't finalized" do
-        adjustment.state = "closed"
-        adjustment.should_not be_finalized
-        adjustment.state = "open"
-        adjustment.should_not be_finalized
+        adjustment.should_not be_closed
       end
     end
   end
@@ -86,8 +70,8 @@ describe Spree::Adjustment do
   end
 
   context '#update!' do
-    context "when adjustment is immutable" do
-      before { adjustment.stub :immutable? => true }
+    context "when adjustment is closed" do
+      before { adjustment.stub :closed? => true }
 
       it "does not update the adjustment" do
         adjustment.should_not_receive(:update_column)
@@ -95,8 +79,8 @@ describe Spree::Adjustment do
       end
     end
 
-    context "when adjustment mutable" do
-      before { adjustment.stub :immutable? => false }
+    context "when adjustment is open" do
+      before { adjustment.stub :closed? => false }
 
       it "updates the amount" do
         adjustment.stub :adjustable => double("Adjustable")

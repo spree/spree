@@ -31,7 +31,7 @@ module Spree
 
     state_machine :state, initial: :open do
       event :close do
-        transition from: :open, to: :close
+        transition from: :open, to: :closed
       end
 
       event :close do
