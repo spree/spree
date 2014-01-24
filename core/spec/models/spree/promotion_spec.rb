@@ -297,13 +297,6 @@ describe Spree::Promotion do
         promotion.stub_chain(:rules, :for).and_return([true_rule])
         promotion.rules_are_eligible?(promotable).should be_true
       end
-
-      it "should have no eligible rules if no rules are applicable to promotable" do
-        Spree::PromotionRule.any_instance.stub(:applicable? => false)
-        rule = Spree::PromotionRule.create(:promotion => @promotion)
-        promotion.rules << rule
-        promotion.rules_are_eligible?(promotable).should be_false
-      end
     end
   end
 
