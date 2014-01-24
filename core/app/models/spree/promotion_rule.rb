@@ -6,7 +6,7 @@ module Spree
     scope :of_type, ->(t) { where(type: t) }
 
     validate :promotion, presence: true
-    validate :unique_per_activator, on: :create
+    validate :unique_per_promotion, on: :create
 
     def self.for(promotable)
       all.select { |rule| rule.applicable?(promotable) }
@@ -21,8 +21,8 @@ module Spree
     end
 
     private
-    def unique_per_activator
-      if Spree::PromotionRule.exists?(activator_id: activator_id, type: self.class.name)
+    def unique_per_promotion
+      if Spree::PromotionRule.exists?(promotion_id: promotion_id, type: self.class.name)
         errors[:base] << "Promotion already contains this rule type"
       end
     end
