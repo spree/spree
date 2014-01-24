@@ -51,6 +51,7 @@ describe Spree::Order do
     context "when current state is delivery" do
       before do
         order.stub :payment_required? => true
+        order.stub :apply_free_shipping_promotions
         order.state = "delivery"
       end
 
