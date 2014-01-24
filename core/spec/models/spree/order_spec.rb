@@ -680,9 +680,19 @@ describe Spree::Order do
 
   describe ".is_risky?" do
     context "Not risky order" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "D")]) }
-      it "returns false if the order's avs_response == 'A'" do
-        order.is_risky?.should == false
+      let(:order) { FactoryGirl.create(:order, payments: [payment]) }
+      context "with avs_response == D" do
+        let(:payment) { FactoryGirl.create(:payment, avs_response: "D") }
+        it "is not considered risky" do
+          order.is_risky?.should == false
+        end
+      end
+
+      context "with avs_response == M" do
+        let(:payment) { FactoryGirl.create(:payment, avs_response: "M") }
+        it "is not considered risky" do
+          order.is_risky?.should == false
+        end
       end
     end
 
