@@ -304,17 +304,10 @@ describe Spree::Variant do
     end
 
     describe "#can_stock?" do
-      context 'with 10 items' do
-        before do
-          variant.stock_items.first.update_attribute(:count_on_hand, 10)
-        end
-
-        it 'returns correct value' do
-          variant.can_stock?.should be_true
-          variant.can_stock?(2).should be_true
-          variant.can_stock?(10).should be_true
-          variant.can_stock?(11).should be_false
-        end
+      it "calls out to quantifier" do
+        Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = stub)
+        quantifier.should_receive(:can_supply?).with(10)
+        variant.can_stock?(10)
       end
     end
 
