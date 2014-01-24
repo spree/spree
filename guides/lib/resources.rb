@@ -207,11 +207,11 @@ module Spree
           "is_master"=>true,
           "cost_price"=>"13.0",
           "permalink"=>"ruby-on-rails-tote",
-          "option_values"=> [OPTION_VALUE],
-          "images"=> [IMAGE],
           "description"=>"A text description of the product.",
           "options_text"=> "(Size: small, Colour: red)",
-          "in_stock" => true
+          "in_stock" => true,
+          "option_values"=> [OPTION_VALUE],
+          "images"=> [IMAGE]
        }
 
     PRODUCT_PROPERTY ||=
