@@ -77,6 +77,7 @@ module Spree
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
       specific_rules = rules.for(promotable)
+      return true if specific_rules.none?
       if match_policy == 'all'
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.

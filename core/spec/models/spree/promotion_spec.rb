@@ -255,9 +255,15 @@ describe Spree::Promotion do
     end
   end
 
-  context "rules" do
+  context "#rules_are_eligible?" do
     let(:promotable) { double('Promotable') }
-    it "should have eligible rules if there are no rules" do
+    it "true if there are no rules" do
+      promotion.rules_are_eligible?(promotable).should be_true
+    end
+
+    it "true if there are no applicable rules" do
+      promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => false)]
+      promotion.promotion_rules.stub(:for).and_return([])
       promotion.rules_are_eligible?(promotable).should be_true
     end
 
