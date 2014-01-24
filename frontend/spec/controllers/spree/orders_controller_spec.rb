@@ -25,16 +25,19 @@ describe Spree::OrdersController do
           Spree::OrderPopulator.should_receive(:new).and_return(populator)
         end
 
-        it "should handle single variant/quantity pair" do
-          populator.should_receive(:populate).with("variants" => { 1 => "2" }).and_return(true)
-          spree_post :populate, { :order_id => 1, :variants => { 1 => 2 } }
+        it "should handle population" do
+          populator.should_receive(:populate).with("2", "5").and_return(true)
+          spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
           response.should redirect_to spree.cart_path
         end
 
-        it "should handle multiple variant/quantity pairs with shared quantity" do
-          populator.should_receive(:populate).with("products" => { 1 => "2" }, "quantity" => "1").and_return(true)
-          spree_post :populate, { :order_id => 1, :products => { 1 => 2 }, :quantity => 1 }
-          response.should redirect_to spree.cart_path
+        it "shows an error when population fails" do
+          request.env["HTTP_REFERER"] = spree.root_path
+          populator.should_receive(:populate).with("2", "5").and_return(false)
+          populator.stub_chain(:errors, :full_messages).and_return(["Order population failed"])
+          spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
+          expect(flash[:error]).to eq("Order population failed")
+          response.should redirect_to(spree.root_path)
         end
       end
     end
