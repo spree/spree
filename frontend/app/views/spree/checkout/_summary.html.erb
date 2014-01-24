@@ -9,7 +9,7 @@
 
     <% if order.line_item_adjustments.exists? %>
       <tbody data-hook="order_details_promotion_adjustments">
-        <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <% order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td><%= label %></td>
             <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
