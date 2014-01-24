@@ -895,6 +895,7 @@ en:
         description: Available only to logged in users
         name: User Logged In
     promotions: Promotions
+    promotion_uses: Promotion uses
     properties: Properties
     property: Property
     prototype: Prototype

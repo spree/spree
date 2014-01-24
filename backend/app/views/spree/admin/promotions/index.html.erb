@@ -25,8 +25,8 @@
         <th><%= Spree.t(:code) %></th>
         <th><%= Spree.t(:description) %></th>
         <th><%= Spree.t(:usage_limit) %></th>
+        <th><%= Spree.t(:promotion_uses) %></th>
         <th><%= Spree.t(:expiration) %></th>
-        <th><%= Spree.t(:current_promotion_usage) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -36,9 +36,9 @@
           <td><%= promotion.name %></td>
           <td class="align-center"><%= promotion.code %></td>
           <td><%= promotion.description %></td>
-          <td class="align-center"><%= promotion.usage_limit %></td>
-          <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
+          <td class="align-center"><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
           <td class="align-center"><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
+          <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions">
             <%= link_to_edit promotion, :no_text => true %>
             <%= link_to_delete promotion, :no_text => true %>
