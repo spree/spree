@@ -9,7 +9,7 @@ module Spree
           @products = product_scope.ransack(params[:q]).result
         end
 
-        @products = @products.page(params[:page]).per(params[:per_page])
+        @products = @products.distinct.page(params[:page]).per(params[:per_page])
         expires_in 15.minutes, :public => true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
       end
