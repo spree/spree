@@ -80,11 +80,7 @@ Spree::Core::Engine.add_routes do
 
       resource :customer, :controller => "orders/customer_details"
 
-      resources :adjustments do
-        member do
-          get :toggle_state
-        end
-      end
+      resources :adjustments
       resources :line_items
       resources :return_authorizations do
         member do
