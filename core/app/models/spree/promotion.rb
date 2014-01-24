@@ -3,10 +3,10 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
-    has_many :promotion_rules, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_rules, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 
-    has_many :promotion_actions, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
     has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
