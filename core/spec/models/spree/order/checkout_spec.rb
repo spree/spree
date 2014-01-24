@@ -144,6 +144,12 @@ describe Spree::Order do
     context "from delivery" do
       before do
         order.state = 'delivery'
+        order.stub(:apply_free_shipping_promotions)
+      end
+
+      it "attempts to apply free shipping promotions" do
+        order.should_receive(:apply_free_shipping_promotions)
+        order.next!
       end
 
       context "with payment required" do
