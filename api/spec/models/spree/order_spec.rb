@@ -254,8 +254,8 @@ module Spree
 
     it 'adds adjustments' do
       params = { :adjustments_attributes => [
-          { "label" => "Shipping Discount", "amount" => "-4.99" },
-          { "label" => "Promotion Discount", "amount" => "-3.00" }] }
+          { label: 'Shipping Discount', amount: -4.99 },
+          { label: 'Promotion Discount', amount: -3.00 }] }
 
       order = Order.build_from_api(user, params)
       order.adjustments.all?(&:finalized?).should be_true
@@ -265,8 +265,8 @@ module Spree
 
     it 'handles adjustment building exceptions' do
       params = { :adjustments_attributes => [
-          { "amount" => "XXX" },
-          { "label" => "Promotion Discount", "amount" => "-3.00" }] }
+          { amount: 'XXX' },
+          { label: 'Promotion Discount', amount: '-3.00' }] }
 
       expect {
         order = Order.build_from_api(user, params)

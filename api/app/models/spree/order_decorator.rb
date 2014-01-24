@@ -97,8 +97,8 @@ Spree::Order.class_eval do
   def create_adjustments_from_api(adjustments)
     adjustments.each do |a|
       begin
-        adjustment = self.adjustments.build(:amount => a['amount'].to_f,
-                                            :label => a['label'])
+        adjustment = self.adjustments.build(:amount => a[:amount].to_f,
+                                            :label => a[:label])
         adjustment.save!
         adjustment.finalize!
       rescue Exception => e
