@@ -196,7 +196,6 @@ module Spree
        {
          "id"=>1,
           "name"=>"Ruby on Rails Tote",
-          "count_on_hand"=>10,
           "sku"=>"ROR-00011",
           "price"=>"15.99",
           "display_price"=>"$15.99",
