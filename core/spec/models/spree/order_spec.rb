@@ -780,4 +780,20 @@ describe Spree::Order do
       expect(order.available_payment_methods).to include(payment_method)
     end
   end
+
+  context "#apply_free_shipping_promotions" do
+    it "calls out to the FreeShipping promotion handler" do
+      shipment = double('Shipment')
+      order.stub :shipments => [shipment]
+      Spree::PromotionHandler::FreeShipping.should_receive(:new).and_return(handler = double)
+      handler.should_receive(:activate)
+
+      Spree::ItemAdjustments.should_receive(:new).with(shipment).and_return(adjuster = double)
+      adjuster.should_receive(:update)
+
+      order.updater.should_receive(:update_shipment_total)
+      order.updater.should_receive(:persist_totals)
+      order.apply_free_shipping_promotions
+    end
+  end
 end
