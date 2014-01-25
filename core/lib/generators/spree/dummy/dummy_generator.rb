@@ -1,3 +1,4 @@
+require 'pry'
 require "rails/generators/rails/app/app_generator"
 require 'active_support/core_ext/hash'
 require 'spree/core/version'
@@ -116,12 +117,7 @@ module Spree
     end
 
     def gemfile_path
-      version_file = File.expand_path("../../Versionfile", Dir.pwd)
-      if File.exist?(version_file)
-        '../../../../Gemfile'
-      else
-        '../../../../../Gemfile'
-      end
+      '../../../../../Gemfile'
     end
   end
 end
