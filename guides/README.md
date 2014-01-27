@@ -115,7 +115,9 @@ Any text that needs to be emphasized should be in _italics_.
 
 ####Terminal Blocks####
 
-You can specify terminal blocks by setting it off with <code>```bash</code>. In addition, you can differentiate commands you are using from output returned by using the `$` precursor for input and `=>` precursor for output.
+You can specify terminal blocks by setting it off with \`\`\`bash.
+In addition, you can differentiate commands you are using from output
+returned by using the `$` precursor for input and `=>` precursor for output.
 
 ```bash
 $ irb
