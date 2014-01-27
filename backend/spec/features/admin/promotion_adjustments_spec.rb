@@ -22,9 +22,9 @@ describe "Promotion Adjustments" do
       eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
 
       within('.calculator-fields') { fill_in "Amount", :with => 5 }
@@ -51,9 +51,9 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('#action_fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
@@ -80,7 +80,7 @@ describe "Promotion Adjustments" do
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => 30
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
       select2 "Flat Percent", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
@@ -113,7 +113,7 @@ describe "Promotion Adjustments" do
       select2_search "RoR Mug", :from => "Choose products"
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create per-line-item adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
       select2 "Percent Per Item", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
@@ -128,9 +128,9 @@ describe "Promotion Adjustments" do
       first_rule.products.map(&:name).should include("RoR Mug")
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      first_action.class.should == Spree::Promotion::Actions::CreateItemAdjustments
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::PercentPerItem
+      first_action_calculator.class.should == Spree::Calculator::PercentOnLineItem
       first_action_calculator.preferred_percent.should == 10
     end
 
@@ -144,7 +144,7 @@ describe "Promotion Adjustments" do
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "30"
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
       select2 "Free Shipping", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
@@ -167,9 +167,9 @@ describe "Promotion Adjustments" do
       click_button "Create"
       page.should have_content("Editing Promotion")
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "4" }
       within('#actions_container') { click_button "Update" }
@@ -206,9 +206,9 @@ describe "Promotion Adjustments" do
 
       within('#actions_container') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#new_promotion_action_form') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "40.00" }
       within('#actions_container') { click_button "Update" }
@@ -231,9 +231,9 @@ describe "Promotion Adjustments" do
       eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", :with => "50"
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create adjustment", :from => "Add action of type"
+      select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select2 "Flat Rate (per order)", :from => "Calculator"
+      select2 "Flat Rate", :from => "Calculator"
       within('#actions_container') { click_button "Update" }
       within('.calculator-fields') { fill_in "Amount", :with => "5" }
       within('#actions_container') { click_button "Update" }
