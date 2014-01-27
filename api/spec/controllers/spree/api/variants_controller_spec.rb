@@ -20,7 +20,9 @@ module Spree
 
     it "can see a paginated list of variants" do
       api_get :index
-      json_response["variants"].first.should have_attributes(show_attributes)
+      first_variant = json_response["variants"].first
+      first_variant.should have_attributes(show_attributes)
+      first_variant["stock_items"].should be_present
       json_response["count"].should == 1
       json_response["current_page"].should == 1
       json_response["pages"].should == 1
