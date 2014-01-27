@@ -79,20 +79,4 @@ describe "Adjustments" do
       end
     end
   end
-
-  context "changing an adjustment's state" do
-    it "can toggle an adjustment's state" do
-      within_row(1) do
-        page.should have_css('.icon-lock')
-        click_icon :lock
-        page.should have_css('.icon-unlock')
-      end
-      page.should have_content("successfully closed!")
-
-      within_row(1) do
-        click_icon :unlock
-      end
-      page.should have_content("successfully opened!")
-    end
-  end
 end
