@@ -1,15 +1,15 @@
 <div id="spree-header">
 
-	<header id="header" data-hook>
-		<div class="container">
-	  		<figure id="logo" class="text-center col-md-4" data-hook>
-          <%= logo('logo/spree_bootstrap.png') %>
+  <header id="header" data-hook>
+    <div class="container">
+        <figure id="logo" class="text-center col-md-4" data-hook>
+          <%= logo %>
         </figure>
-	  		<%= render :partial => 'spree/shared/nav_bar' %>
-		</div>
-	</header>
-	<div class="container">
-		<%= render :partial => 'spree/shared/main_nav_bar' if store_menu? %>
-	</div>
+        <%= render :partial => 'spree/shared/nav_bar' %>
+    </div>
+  </header>
+  <div class="container">
+    <%= render :partial => 'spree/shared/main_nav_bar' if store_menu? %>
+  </div>
 
 </div>

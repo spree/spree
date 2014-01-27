@@ -78,9 +78,9 @@ Contributing
 
 **Please fork and make a pull request.**
 
-**Tests, tests, tests.** To get this to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
+Spree edge templates were last synced at spree/spree@284dd45615ffe8443d29aa788ce19d621219ca77 feel free to patch in any newer changes and update this SHA.
 
-I’m looking for help maintaining this, so anyone who would like to become a core contributor please email me. My email is in the gemspec.
+**Tests.** To get this to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
 - Raise bugs in github’s [issues tracker](https://github.com/200Creative/spree_bootstrap_frontend/issues).
 - Further discussion can be had in the [spree google group](https://groups.google.com/forum/#!forum/spree-user).
