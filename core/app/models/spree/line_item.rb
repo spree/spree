@@ -18,7 +18,7 @@ module Spree
     attr_accessible :quantity, :variant_id
 
     before_save :update_inventory
-    before_destroy :ensure_not_shipped, :remove_inventory
+    before_destroy :ensure_not_shipped, :remove_inventory, :ensure_not_last_in_complete_order
 
     after_save :update_order
     after_destroy :update_order
@@ -101,6 +101,13 @@ module Spree
       def ensure_not_shipped
         if order.try(:inventory_units).to_a.any?{ |unit| unit.variant_id == variant_id && unit.shipped? }
           errors.add :base, I18n.t('validation.cannot_destroy_line_item_as_inventory_units_have_shipped')
+          return false
+        end
+      end
+
+      def ensure_not_last_in_complete_order
+        if order.completed? and order.line_items.count == 1
+          errors.add :base, I18n.t('validation.cannot_destroy_last_line_item_for_complete_order')
           return false
         end
       end
