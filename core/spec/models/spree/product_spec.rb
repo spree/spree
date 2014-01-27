@@ -12,6 +12,7 @@ end
 describe Spree::Product do
   context 'product instance' do
     let(:product) { create(:product) }
+    let(:variant) { create(:variant, :product => product) }
 
     context '#duplicate' do
       before do
@@ -211,7 +212,7 @@ describe Spree::Product do
       end
     end
 
-    # Regression test for #3737 
+    # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
       it "can retreive stock items" do
@@ -270,17 +271,17 @@ describe Spree::Product do
       end
     end
 
-    context "override permalink of deleted product" do 
-      let(:product) { create(:product, :name => "foo") } 
+    context "override permalink of deleted product" do
+      let(:product) { create(:product, :name => "foo") }
 
-      it "should create product with same permalink from name like deleted product" do 
-        product.permalink.should == "foo" 
-        product.destroy 
-        
-        new_product = create(:product, :name => "foo") 
-        new_product.permalink.should == "foo" 
-      end 
-    end 
+      it "should create product with same permalink from name like deleted product" do
+        product.permalink.should == "foo"
+        product.destroy
+
+        new_product = create(:product, :name => "foo")
+        new_product.permalink.should == "foo"
+      end
+    end
   end
 
   context "properties" do
