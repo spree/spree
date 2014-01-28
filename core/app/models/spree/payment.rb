@@ -123,7 +123,8 @@ module Spree
     end
 
     def is_cvv_risky?
-      !(cvv_response_code == "M" || cvv_response_code.blank?)
+      !(cvv_response_code == "M" || cvv_response_code.blank?) ||
+       (cvv_response_message.blank?)
     end
 
     private
