@@ -528,9 +528,9 @@ module Spree
 
     def is_risky?
       self.payments.where(%{
-        (avs_response IS NOT NULL and avs_response != 'D' and avs_response != 'M') or
+        (avs_response IS NOT NULL and avs_response != '' and avs_response != 'D' and avs_response != 'M') or
         (cvv_response_code IS NOT NULL and cvv_response_code != 'M') or
-        cvv_response_message IS NOT NULL or
+        cvv_response_message IS NOT NULL and cvv_response_message != '' or
         state = 'failed'
       }.squish!).uniq.count > 0
     end
