@@ -11,7 +11,7 @@
           <%= Spree.t(:failed_payment_attempts) %>:
         </strong></td>
           <td class="align-center">
-            <span class="<%= @order.is_risky? ? 'state void' : 'state complete' %>">
+            <span class="<%= @order.payments.failed.count > 0 ? 'state void' : 'state complete' %>">
               <%= link_to "#{pluralize(@order.payments.failed.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
             </span>
         </td>
