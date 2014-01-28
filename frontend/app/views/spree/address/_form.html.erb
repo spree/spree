@@ -36,7 +36,7 @@
   <% if Spree::Config[:address_requires_state] %>
     <p class="field" id=<%="#{address_id}state" %>>
       <% have_states = !address.country.states.empty? %>
-      <%= form.label :state, Spree.t(:state) %><span class='required' id=<%="#{address_id}state-required"%>>*</span><br/>
+      <%= form.label :state, Spree.t(:state) %><span class="required" id="<%="#{address_id}state-required"%>">*</span><br/>
 
       <% state_elements = [
          form.collection_select(:state_id, address.country.states,

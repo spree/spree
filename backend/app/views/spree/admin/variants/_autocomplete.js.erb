@@ -1,14 +1,14 @@
-<script type='text/template' id='variant_autocomplete_template'>
-  <div class='variant-autocomplete-item'>
-    <figure class='variant-image'>
+<script type="text/template" id="variant_autocomplete_template">
+  <div class="variant-autocomplete-item">
+    <figure class="variant-image">
       {{#if variant.image }}
-        <img src='{{variant.image}}' />
+        <img src="{{variant.image}}" />
       {{ else }}
-        <img src='<%= image_path("noimage/mini.png") %>' />
+        <img src="<%= image_path("noimage/mini.png") %>" />
       {{/if}}
     </figure>
 
-    <div class='variant-details'>
+    <div class="variant-details">
 
       <h6 class="variant-name">{{variant.name}}</h6>
 

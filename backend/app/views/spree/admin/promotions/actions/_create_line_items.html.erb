@@ -12,7 +12,7 @@
         <div class="field alpha four columns">
           <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
           <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete fullwidth" %>
-          <div class='options_placeholder'></div>
+          <div class="options_placeholder"></div>
         </div>
         <div class="field omega four columns">
           <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :min => 1, :class => 'fullwidth' %>
