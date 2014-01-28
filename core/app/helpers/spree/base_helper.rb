@@ -22,7 +22,7 @@ module Spree
         text = "#{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else
-        text = "#{text}: (#{current_order.item_count})  <span class='amount'>#{current_order.display_total.to_html}</span>".html_safe
+        text = "#{text}: (#{current_order.item_count}) <span class='amount'>#{current_order.display_total.to_html}</span>".html_safe
         css_class = 'full'
       end
 

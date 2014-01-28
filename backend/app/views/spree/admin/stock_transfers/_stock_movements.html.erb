@@ -18,9 +18,9 @@
     <% stock_movements.each do |movement| %>
     <tr>
       <td><%= movement.stock_item.variant.name %></td>
-      <td class='align-center'><%= movement.stock_item.variant.sku %></td>
-      <td class='align-center'><%= movement.quantity %></td>
-      <td class='align-center'><%= movement.stock_item.count_on_hand %></td>
+      <td class="align-center"><%= movement.stock_item.variant.sku %></td>
+      <td class="align-center"><%= movement.quantity %></td>
+      <td class="align-center"><%= movement.stock_item.count_on_hand %></td>
       <% end %>
     </tbody>
   </table>
