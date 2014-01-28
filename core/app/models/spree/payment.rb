@@ -119,11 +119,11 @@ module Spree
     end
 
     def is_avs_risky?
-      !(avs_response == "D" || avs_response.nil?)
+      !(avs_response == "D" || avs_response.blank?)
     end
 
     def is_cvv_risky?
-      !(cvv_response_code == "M" || cvv_response_code.nil?)
+      !(cvv_response_code == "M" || cvv_response_code.blank?)
     end
 
     private
