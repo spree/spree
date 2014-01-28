@@ -216,7 +216,7 @@ The GitHub guide on [pull requests](https://help.github.com/articles/using-pull-
 
 ### Contributing to the Documentation
 
-Improvements to the documentation is encouraged. The primary source of documentation are the guides (_HINT: You are reading one now._) The documentation is in its own GitHub project called [spree-guides](https://github.com/spree/spree-guides/tree/master). You may make edits to the guide in your fork and then pull request for them to be updated to this site.
+Improvements to the documentation are encouraged. The primary source of documentation are the guides (_HINT: You are reading one now._) The documentation is in its own GitHub project called [spree-guides](https://github.com/spree/spree-guides/tree/master). You may make edits to the guide in your fork and then pull request for them to be updated to this site.
 
 To build the documentation normally simply clone and install.
 
