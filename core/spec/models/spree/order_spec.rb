@@ -690,8 +690,8 @@ describe Spree::Order do
       end
 
       context "with avs_response == ''" do
+        let(:payment) { FactoryGirl.create(:payment, avs_response: "") }
         it "is not considered risky" do
-          payment.update_attribute(:avs_response, '')
           order.is_risky?.should == false
         end
       end
@@ -703,16 +703,9 @@ describe Spree::Order do
         end
       end
 
-      context "with cvv_response_code == ''" do
-        it "is not considered risky" do
-          payment.update_attribute(:cvv_response_code, '')
-          order.is_risky?.should == false
-        end
-      end
-
       context "with cvv_response_message == ''" do
+        let(:payment) { FactoryGirl.create(:payment, cvv_response_message: "") }
         it "is not considered risky" do
-          payment.update_attribute(:cvv_response_message, '')
           order.is_risky?.should == false
         end
       end
