@@ -688,33 +688,63 @@ describe Spree::Order do
           order.is_risky?.should == false
         end
       end
-    end
 
-    context "AVS response message" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
-      it "returns true if the order has an avs_response" do
-        order.is_risky?.should == true
+      context "with avs_response == ''" do
+        it "is not considered risky" do
+          payment.update_attribute(:avs_response, '')
+          order.is_risky?.should == false
+        end
+      end
+
+      context "with cvv_response_code == M" do
+        let(:payment) { FactoryGirl.create(:payment, cvv_response_code: "M") }
+        it "is not considered risky" do
+          order.is_risky?.should == false
+        end
+      end
+
+      context "with cvv_response_code == ''" do
+        it "is not considered risky" do
+          payment.update_attribute(:cvv_response_code, '')
+          order.is_risky?.should == false
+        end
+      end
+
+      context "with cvv_response_message == ''" do
+        it "is not considered risky" do
+          payment.update_attribute(:cvv_response_message, '')
+          order.is_risky?.should == false
+        end
       end
     end
 
-    context "CVV response message" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_message: "foobar'd")]) }
-      it "returns true if the order has an cvv_response_message" do
-        order.is_risky?.should == true
+    context "Risky order" do
+      context "AVS response message" do
+        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
+        it "returns true if the order has an avs_response" do
+          order.is_risky?.should == true
+        end
       end
-    end
 
-    context "CVV response code" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
-      it "returns true if the order has an cvv_response_code" do
-        order.is_risky?.should == true
+      context "CVV response message" do
+        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_message: "foobar'd")]) }
+        it "returns true if the order has an cvv_response_message" do
+          order.is_risky?.should == true
+        end
       end
-    end
 
-    context "state == 'failed'" do
-      let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, state: 'failed')]) }
-      it "returns true if the order has state == 'failed'" do
-        order.is_risky?.should == true
+      context "CVV response code" do
+        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
+        it "returns true if the order has an cvv_response_code" do
+          order.is_risky?.should == true
+        end
+      end
+
+      context "state == 'failed'" do
+        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, state: 'failed')]) }
+        it "returns true if the order has state == 'failed'" do
+          order.is_risky?.should == true
+        end
       end
     end
   end
