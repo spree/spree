@@ -27,7 +27,7 @@ Similar changes to this have also been made to extensions, where their assets ar
 You will need to manually rename asset requires within your application:
 
 * `admin/spree_backend` => `spree/backend`
-* `store/spree_frontend` => spree/frontend`
+* `store/spree_frontend` => `spree/frontend`
 
 *Ryan Bigg*
 
