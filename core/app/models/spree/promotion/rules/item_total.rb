@@ -10,10 +10,15 @@ module Spree
         OPERATORS = ['gt', 'gte']
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Shipment)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(promotable, options = {})
+          if order.is_a?(Spree::Shipment)
+            order = promotable.order
+          else
+            order = promotable
+          end
           item_total = order.item_total
           item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
         end
