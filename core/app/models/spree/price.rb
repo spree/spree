@@ -1,5 +1,6 @@
 module Spree
   class Price < ActiveRecord::Base
+    acts_as_paranoid
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices
 
     validate :check_price
