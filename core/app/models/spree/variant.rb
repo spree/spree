@@ -76,6 +76,17 @@ module Spree
       deleted_at
     end
 
+    # Product may be created with deleted_at already set,
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def product
+      Spree::Product.unscoped { super }
+    end
+
+    def default_price
+      Spree::Price.unscoped { super }
+    end
+
     def options=(options = {})
       options.each do |option|
         set_option_value(option[:name], option[:value])
@@ -134,13 +145,6 @@ module Spree
 
     def sku_and_options_text
       "#{sku} #{options_text}".strip
-    end
-
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
     end
 
     def in_stock?(quantity=1)
