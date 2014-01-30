@@ -69,9 +69,7 @@ $ ->
     populate_select: (select, except=0) ->
       select.children('option').remove()
       for location in @locations when location.id isnt except
-        select.append $('<option></option>')
-                        .text(location.name)
-                        .prop('value', location.id)
+        select.append $('<option></option>').text(location.name).attr('value', location.id)
       select.select2()
 
   # Populates variants drop down
