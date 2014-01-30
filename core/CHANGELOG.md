@@ -33,6 +33,10 @@ You will need to manually rename asset requires within your application:
 
 ### Minor
 
+*   Switched to using friendly_id for permalink generation. This meant that we needed to rename `Spree::Product`'s `permalink` field to `slug`.
+
+    Ryan Bigg
+
 *   Add a `name` column to spree_payments. That should hold the *Name on card*
     option in payment checkout step.
 
