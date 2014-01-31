@@ -65,11 +65,11 @@ Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails 4.0.x application. To use the 2-1-stable branch of Spree, add this line to
+Rails 4.0.x application. To use the 2-2-stable branch of Spree, add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-1-stable'
+gem 'spree', github: 'spree/spree', branch: '2-2-stable'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
