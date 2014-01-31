@@ -159,13 +159,14 @@ describe 'Payments' do
         visit spree.admin_order_payments_path(order)
       end
 
-      it "is able to create a new credit card payment with valid information" do
+      it "is able to create a new credit card payment with valid information", :js => true do
         choose "Use a new card"
         fill_in "Card Number", :with => "4111 1111 1111 1111"
         fill_in "Name", :with => "Test User"
         fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
         fill_in "Card Code", :with => "007"
         # Regression test for #4277
+        sleep(1)
         find('#cc_type', :visible => false).value.should == 'visa'
         click_button "Continue"
         page.should have_content("Payment has been successfully created!")
