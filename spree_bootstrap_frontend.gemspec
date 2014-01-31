@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_runtime_dependency 'bootstrap-sass',      '~> 3.0.3.0'
+  s.add_runtime_dependency 'bootstrap-sass',      '~> 3.1.0'
   s.add_runtime_dependency 'kaminari-bootstrap',  '~> 3.0.1'
   s.add_runtime_dependency 'spree_core',          '~> 2.2.0.beta'
 
