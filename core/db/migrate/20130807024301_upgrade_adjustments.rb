@@ -22,11 +22,15 @@ class UpgradeAdjustments < ActiveRecord::Migration
     Spree::Adjustment.where(:originator_type => "Spree::PromotionAction").find_each do |adjustment|
       next if adjustment.originator.nil?
       adjustment.source = adjustment.originator
-      if adjustment.source.calculator_type == "Spree::Calculator::FreeShipping"
-        # Previously this was a Spree::Promotion::Actions::CreateAdjustment
-        # And it had a calculator to work out FreeShipping
-        # In Spree 2.2, the "calculator" is now the action itself.
-        adjustment.source.becomes(Spree::Promotion::Actions::FreeShipping)
+      begin
+        if adjustment.source.calculator_type == "Spree::Calculator::FreeShipping"
+          # Previously this was a Spree::Promotion::Actions::CreateAdjustment
+          # And it had a calculator to work out FreeShipping
+          # In Spree 2.2, the "calculator" is now the action itself.
+          adjustment.source.becomes(Spree::Promotion::Actions::FreeShipping)
+        end
+      rescue
+        # Fail silently. This is primarily in instances where the calculator no longer exists
       end
 
       adjustment.save
