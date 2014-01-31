@@ -165,6 +165,8 @@ describe 'Payments' do
         fill_in "Name", :with => "Test User"
         fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
         fill_in "Card Code", :with => "007"
+        # Regression test for #4277
+        find('#cc_type', :visible => false).value.should == 'visa'
         click_button "Continue"
         page.should have_content("Payment has been successfully created!")
       end

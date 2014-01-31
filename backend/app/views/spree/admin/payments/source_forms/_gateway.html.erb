@@ -17,6 +17,7 @@
     <div class="alpha four columns">
       <div data-hook="card_number">
         <div class="field">
+          <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {:id => 'cc_type'} %>
           <%= label_tag 'card_number', raw(Spree.t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
           <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth', :id => 'card_number', :maxlength => 19 %>
           <span id="card_type" style="display:none;">
