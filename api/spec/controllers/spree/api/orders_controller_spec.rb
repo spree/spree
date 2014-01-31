@@ -554,7 +554,7 @@ module Spree
       let(:order) { create(:order, state: 'payment', user: current_api_user) }
 
       subject do
-        api_put :apply_coupon_code, id: order.to_param, coupon_code: coupon_code
+        api_put :apply_coupon_code, id: order.to_param, coupon_code: coupon_code, :order_token => order.token
       end
 
       context 'when valid promo code' do
