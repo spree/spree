@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_bootstrap_frontend'
-  s.version     = '2.2.0.beta'
+  s.version     = '2.2.0'
   s.summary     = 'Switches out Spree’s entire frontend for a bootstrap 3 powered frontend'
   s.description = 'Switches out Spree’s entire frontend for a bootstrap 3 powered frontend'
   s.required_ruby_version = '>= 1.9.3'
