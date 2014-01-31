@@ -303,11 +303,11 @@ describe Spree::Variant do
       end
     end
 
-    describe "#can_stock?" do
+    describe "#can_supply?" do
       it "calls out to quantifier" do
         Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = stub)
         quantifier.should_receive(:can_supply?).with(10)
-        variant.can_stock?(10)
+        variant.can_supply?(10)
       end
     end
 
@@ -321,8 +321,12 @@ describe Spree::Variant do
           Spree::StockItem.any_instance.stub(count_on_hand: 0)
         end
 
-        it 'returns true if stock_items in stock' do
-          variant.in_stock?.should be_true
+        it 'in_stock? returns false' do
+          expect(variant.in_stock?).to be_false
+        end
+
+        it 'can_supply? return true' do
+          expect(variant.can_supply?).to be_true
         end
       end
     end
