@@ -55,6 +55,8 @@ describe 'Payments' do
     fill_in 'card_expiry', :with => "01/#{Time.now.year+1}"
     fill_in 'card_code', :with => '123'
 
+    find('#cc_type', :visible => false).value.should == 'visa'
+
     click_button 'Update'
     page.should have_content('successfully created!')
 
