@@ -450,10 +450,13 @@ module Spree
       end
 
       it "responds with orders updated_at with miliseconds precision" do
+        if ActiveRecord::Base.connection.adapter_name == "Mysql2"
+          pending "MySQL does not support millisecond timestamps."
+        end
+
         api_get :index
         milisecond = order.updated_at.strftime("%L")
         updated_at = json_response["orders"].first["updated_at"]
-
         expect(updated_at.split("T").last).to have_content(milisecond)
       end
 
