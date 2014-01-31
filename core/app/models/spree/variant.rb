@@ -161,11 +161,11 @@ module Spree
 
     def in_stock?
       Rails.cache.fetch(in_stock_cache_key) do
-        can_stock?(1)
+        total_on_hand > 0
       end
     end
 
-    def can_stock?(quantity=1)
+    def can_supply?(quantity=1)
       Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 
