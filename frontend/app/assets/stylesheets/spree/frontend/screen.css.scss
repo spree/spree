@@ -310,7 +310,7 @@ nav #main-nav-bar {
     &#link-to-cart {
       float: right;
       padding-left: 24px;
-      background: url("cart.png") no-repeat left center;
+      background: asset-url("spree/frontend/cart.png") no-repeat left center;
 
       &:hover {
         border-color: $link_text_color;
