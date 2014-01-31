@@ -110,6 +110,7 @@ describe Spree::Order do
 
       order.stub :completed? => true
       order.stub :allow_cancel? => true
+      order.stub :has_available_payment => true
     end
 
     it "should send a cancel email" do

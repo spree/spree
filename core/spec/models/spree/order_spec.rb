@@ -211,9 +211,10 @@ describe Spree::Order do
     end
 
     it "should freeze all adjustments" do
-      # Stub this method as it's called due to a callback
+      # Stub these methods as they're called due to a callback
       # and it's irrelevant to this test
       order.stub :has_available_shipment
+      order.stub :has_available_payment
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
       adjustments = double
       order.stub :adjustments => adjustments
