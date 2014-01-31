@@ -566,7 +566,7 @@ module Spree
       end
 
       def has_available_payment
-        return unless delivery?
+        return unless has_step?("delivery") && delivery?
         # errors.add(:base, :no_payment_methods_available) if available_payment_methods.empty?
       end
 
