@@ -318,13 +318,18 @@ en:
           delivery_success: Test Mail sent successfully
           error: ! 'Test Mail error: %{e}'
       tab:
-        overview: "Overview"
-        orders: "Orders"
-        products: "Products"
-        reports: "Reports"
-        configuration: "Configuration"
-        promotions: "Promotions"
-        users: "Users"
+        configuration: Configuration
+        option_types: Option Types
+        orders: Orders
+        overview: Overview
+        products: Products
+        promotions: Promotions
+        properties: Properties
+        prototypes: Prototypes
+        reports: Reports
+        taxonomies: Taxonomies
+        taxons: Taxons
+        users: Users
     administration: Administration
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
