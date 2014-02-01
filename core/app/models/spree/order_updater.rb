@@ -138,8 +138,12 @@ module Spree
 
       #line_item are empty when user empties cart
       if line_items.empty? || round_money(order.payment_total) < round_money(order.total)
-        if payments.present? && payments.last.state == 'failed'
-          order.payment_state = 'failed'
+        if payments.present?
+          if payments.last.state == 'failed'
+            order.payment_state = 'failed'
+          elsif payments.last.state == 'completed'
+            order.payment_state = 'credit_owed'
+          end
         else
           order.payment_state = 'balance_due'
         end
