@@ -47,7 +47,7 @@ module Spree
       end
 
       def update
-        find_order
+        find_order(true)
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
         # hence the use of the update_line_items method, defined within order_decorator.rb.
@@ -136,8 +136,8 @@ module Spree
           end
         end
 
-        def find_order
-          @order = Spree::Order.find_by!(number: params[:id])
+        def find_order(lock = false)
+          @order = Spree::Order.lock(lock).find_by!(number: params[:id])
           authorize! :update, @order, order_token
         end
 
