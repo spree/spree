@@ -68,6 +68,15 @@ module Spree
         order.payment_state.should == 'failed'
       end
 
+      # Regression test for #4281
+      it "is credit_owed if payment taken, but no line items" do
+        order.stub_chain(:line_items, :empty?).and_return(true)
+        order.stub_chain(:payments, :last, :state).and_return('completed')
+
+        updater.update_payment_state
+        order.payment_state.should == 'credit_owed'
+      end
+
       it "is balance due with no line items" do
         order.stub_chain(:line_items, :empty?).and_return(true)
 
