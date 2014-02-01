@@ -10,10 +10,7 @@ module Spree
 
       def activate
         if promotion && promotion.eligible?(order)
-          if promotion.activate(:order => order)
-            order.update_totals
-            order.updater.persist_totals
-          end
+          promotion.activate(:order => order)
         end
       end
 
