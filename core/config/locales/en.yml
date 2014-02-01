@@ -600,6 +600,7 @@ en:
     image_settings_updated: Image Settings successfully updated.
     image_settings_warning: You will need to regenerate thumbnails if you update the paperclip styles. Use rake paperclip:refresh:thumbnails CLASS=Spree::Image to do this.
     images: Images
+    inactive: Inactive
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
     instructions_to_reset_password: Please enter your email on the form below
