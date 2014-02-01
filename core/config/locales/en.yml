@@ -600,6 +600,7 @@ en:
     icon: Icon
     image: Image
     images: Images
+    inactive: Inactive
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
     instructions_to_reset_password: Please enter your email on the form below
