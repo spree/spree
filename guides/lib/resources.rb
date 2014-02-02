@@ -192,6 +192,14 @@ module Spree
         "option_type_id"=>1
       }
 
+    OPTION_TYPE ||=
+      {
+        "id" => 1,
+        "name" => "tshirt-size",
+        "presentation" => "Size",
+        "position" => 1
+      }
+
     VARIANT ||=
        {
          "id"=>1,
@@ -327,7 +335,8 @@ module Spree
         "has_variants" => true, 
         "master" => VARIANT.merge("is_master" => true),
         "variants" => [VARIANT.merge("is_master" => false)],
-        "product_properties"=> [PRODUCT_PROPERTY]
+        "product_properties"=> [PRODUCT_PROPERTY],
+        "option_types" => [OPTION_TYPE]
       }
 
     PAYMENT_METHOD ||=
