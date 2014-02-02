@@ -43,24 +43,41 @@ module Spree
 
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
-            before { order.stub :coupon_code => "10off" }
+            context "with correct coupon code casing" do
+              before { order.stub :coupon_code => "10off" }
 
-            it "successfully activates promo" do
-              order.total.should == 130
-              subject.apply
-              expect(subject.success).to be_present
-              order.line_items.each do |line_item|
-                line_item.adjustments.count.should == 1
+              it "successfully activates promo" do
+                order.total.should == 130
+                subject.apply
+                expect(subject.success).to be_present
+                order.line_items.each do |line_item|
+                  line_item.adjustments.count.should == 1
+                end
+                # Ensure that applying the adjustment actually affects the order's total!
+                order.reload.total.should == 100
               end
-              # Ensure that applying the adjustment actually affects the order's total!
-              order.reload.total.should == 100
+
+              it "coupon already applied to the order" do
+                subject.apply
+                expect(subject.success).to be_present
+                subject.apply
+                expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+              end
             end
 
-            it "coupon already applied to the order" do
-              subject.apply
-              expect(subject.success).to be_present
-              subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+            # Regression test for #4211
+            context "with incorrect coupon code casing" do
+              before { order.stub :coupon_code => "10OFF" }
+              it "successfully activates promo" do
+                order.total.should == 130
+                subject.apply
+                expect(subject.success).to be_present
+                order.line_items.each do |line_item|
+                  line_item.adjustments.count.should == 1
+                end
+                # Ensure that applying the adjustment actually affects the order's total!
+                order.reload.total.should == 100
+              end
             end
           end
         end
