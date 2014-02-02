@@ -336,7 +336,15 @@ module Spree
           }
           variant_id = product.variants.create!({ product: product }.merge(variant_hash)).id
 
-          api_put :update, :id => product.to_param, :product => { :variants => [variant_hash.merge(:id => variant_id.to_s, :sku => '456', :options => [{:name => "size", :value => "large" }])] }
+          api_put :update, :id => product.to_param, :product => {
+            :variants => [
+              variant_hash.merge(
+                :id => variant_id.to_s,
+                :sku => '456',
+                :options => [{:name => "size", :value => "large" }]
+              )
+            ]
+          }
 
           expect(json_response['variants'].count).to eq(2) # 1 master + 1 variants
           variants = json_response['variants'].select { |v| !v['is_master'] }
