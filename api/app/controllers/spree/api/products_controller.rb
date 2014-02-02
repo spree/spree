@@ -101,7 +101,7 @@ module Spree
             @product.option_types << option_type unless @product.option_types.include?(option_type)
           end
 
-          respond_with(@product, :status => 200, :default_template => :show)
+          respond_with(@product.reload, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
         end

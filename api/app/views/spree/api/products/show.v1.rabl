@@ -12,7 +12,7 @@ child :variants => :variants do
 end
 
 child :option_types => :option_types do
-  extends "spree/api/option_types/show"
+  attributes *option_type_attributes
 end
 
 child :product_properties => :product_properties do
