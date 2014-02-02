@@ -57,7 +57,7 @@ module Spree
       end
 
       def determine_promotion_application_result(result)
-        detector = lambda { |p| p.source.promotion.code == order.coupon_code }
+        detector = lambda { |p| p.source.promotion.code.downcase == order.coupon_code.downcase }
         discount = order.line_item_adjustments.promotion.detect(&detector)
         discount ||= order.shipment_adjustments.promotion.detect(&detector)
         discount ||= order.adjustments.promotion.detect(&detector)
