@@ -54,7 +54,7 @@ describe 'Payments' do
     end
 
     it 'should be able to list and create payment methods for an order', js: true do
-      find('#payment_status').text.should == 'BALANCE DUE'
+      find('#payment_status').text.should == 'PENDING'
       within_row(1) do
         column_text(2).should == '$150.00'
         column_text(3).should == 'Credit Card'
@@ -62,7 +62,7 @@ describe 'Payments' do
       end
 
       click_icon :void
-      find('#payment_status').text.should == 'BALANCE DUE'
+      find('#payment_status').text.should == 'PENDING'
       page.should have_content('Payment Updated')
 
       within_row(1) do
