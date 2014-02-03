@@ -184,4 +184,16 @@ describe Spree::Order do
       order.stub :has_available_shipment
     end
   end
+
+  context "considered risky" do
+    before do
+      order.state = 'complete'
+    end
+
+    it "sets the state" do
+      order.considered_risky!
+      expect(order.state).to eq 'considered_risky'
+    end
+  end
+
 end

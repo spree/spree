@@ -30,5 +30,12 @@
       <dt data-hook><%= Spree.t(:date_completed) %>:</dt>
       <dd id='date_complete'><%= pretty_time(@order.completed_at) %></dd>
     <% end %>
+
+    <% if @order.approved? %>
+      <dt><%= Spree.t(:approver) %></dt>
+      <dd><%= @order.approver.email %></dd>
+      <dt><%= Spree.t(:approved_at) %></dt>
+      <dd><%= pretty_time(@order.approved_at) %></dd>
+    <% end %>
   </dl>
 </header>

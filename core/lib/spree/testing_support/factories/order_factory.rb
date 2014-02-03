@@ -38,6 +38,12 @@ FactoryGirl.define do
           order.update_column(:completed_at, Time.now)
         end
 
+        factory :completed_order_with_pending_payment do
+          after(:create) do |order|
+            create(:payment, amount: order.total, order: order)
+          end
+        end
+
         factory :order_ready_to_ship do
           payment_state 'paid'
           shipment_state 'ready'

@@ -17,6 +17,10 @@
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
 </div>
 
+<% if @order.payments.exists? && @order.considered_risky? %>
+  <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.order("created_at DESC").first %>
+<% end %>
+
 <%= render :partial => 'add_product' if can?(:update, @order) %>
 
 <% if @order.line_items.empty? %>
