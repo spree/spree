@@ -20,7 +20,7 @@ Addresses have the following attributes:
 * `alternative_phone`: The alternative phone number.
 * `company`: A company name.
 
-Addresses can also link to countries and states. An address must always link to a `Spree::Country` object. It can can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
+Addresses can also link to countries and states. An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
 
 ## Zones
 
