@@ -250,16 +250,16 @@ describe Spree::Variant do
 
   # Regression test for #2432
   describe 'options_text' do
+    let!(:variant) { create(:variant, option_values: []) }
+
     before do
-      option_type = double("OptionType", :presentation => "Foo")
-      option_values = [double("OptionValue", :option_type => option_type, :presentation => "bar")]
-      variant.stub(:option_values).and_return(option_values)
+      # Order bar than foo
+      variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
+      variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
     end
 
-    it "orders options correctly" do
-      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = double)
-      scope.should_receive(:order).with('spree_option_types.position asc').and_return(variant.option_values)
-      variant.options_text
+    it 'should order by bar than foo' do
+      variant.options_text.should == 'Bar Type: Bar, Foo Type: Foo'
     end
   end
 
