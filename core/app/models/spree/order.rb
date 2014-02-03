@@ -315,8 +315,6 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      touch :completed_at
-
       # lock all adjustments (coupon promotions, etc.)
       all_adjustments.update_all state: 'closed'
 
@@ -332,6 +330,16 @@ module Spree
       updater.run_hooks
 
       deliver_order_confirmation_email
+
+      consider_risk
+    end
+
+    def consider_risk
+      if is_risky?
+        self.considered_risky!
+      else
+        touch :completed_at
+      end
     end
 
     def deliver_order_confirmation_email

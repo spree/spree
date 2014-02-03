@@ -203,6 +203,11 @@ describe Spree::Order do
 
   context "#finalize!" do
     let(:order) { Spree::Order.create }
+
+    before do
+      order.update_column :state, 'complete'
+    end
+
     it "should set completed_at" do
       order.should_receive(:touch).with(:completed_at)
       order.finalize!
@@ -261,6 +266,28 @@ describe Spree::Order do
       order.should_receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to receive(:update_all).with(state: 'closed')
       order.finalize!
+    end
+
+    context "order is considered risky" do
+      before do
+        order.stub :is_risky? => true
+      end
+
+      it "should change state to risky" do
+        expect(order).to receive(:considered_risky!)
+        order.finalize!
+      end
+    end
+
+    context "order is not considered risky" do
+      before do
+        order.stub :is_risky? => false
+      end
+
+      it "should set completed_at" do
+        order.finalize!
+        expect(order.completed_at).to be_present
+      end
     end
   end
 
