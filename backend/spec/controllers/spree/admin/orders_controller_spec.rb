@@ -28,47 +28,27 @@ describe Spree::Admin::OrdersController do
     let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100, :number => 'R123456789') }
     before { Spree::Order.stub :find_by_number! => order }
 
-    context "#fire" do
-      before(:each) do
-        order.stub :foo => true
+    context "#approve" do
+      it "approves an order" do
+        expect(order).to receive(:approved_by).with(controller.try_spree_current_user)
+        spree_put :approve, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_approved)
       end
+    end
 
-      it "should receive state_events" do
-        order.should_receive(:state_events).and_return([:foo])
-        spree_put :fire, {:id => "R1234567", :e => "foo"}
+    context "#cancel" do
+      it "cancels an order" do
+        expect(order).to receive(:cancel!)
+        spree_put :cancel, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_canceled)
       end
+    end
 
-      context 'params[:e] includes in state_events' do
-        before(:each) do
-          order.stub(:state_events).and_return([:foo])
-        end
-
-        it "should fire the requested event on the payment" do
-          order.should_receive(:foo).and_return true
-          spree_put :fire, {:id => "R1234567", :e => "foo"}
-        end
-
-        it "should respond with a flash message if the event cannot be fired" do
-          order.stub :foo => false
-          spree_put :fire, {:id => "R1234567", :e => "foo"}
-          flash[:error].should_not be_nil
-        end
-      end
-
-      context 'params[:e] not includes in state_events' do
-        before(:each) do
-          order.stub(:state_events).and_return([:bar])
-        end
-
-        it "should not fire the requested event on the payment" do
-          order.should_not_receive(:foo)
-          spree_put :fire, {:id => "R1234567", :e => "foo"}
-        end
-
-        it "should respond with a flash message if the event cannot be fired" do
-          spree_put :fire, {:id => "R1234567", :e => "foo"}
-          flash[:error].should_not be_nil
-        end
+    context "#resume" do
+      it "resumes an order" do
+        expect(order).to receive(:resume!)
+        spree_put :resume, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_resumed)
       end
     end
 

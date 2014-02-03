@@ -355,6 +355,9 @@ en:
     analytics_desc_list_4: It's completely free!
     analytics_trackers: Analytics Trackers
     and: and
+    approve: approve
+    approver: Approver
+    approved_at: Approved at
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
@@ -760,6 +763,8 @@ en:
     or_over_price: ! '%{price} or over'
     order: Order
     order_adjustments: Order adjustments
+    order_approved: Order approved
+    order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
     order_information: Order Information
@@ -786,11 +791,13 @@ en:
       selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
+    order_resumed: Order resumed
     order_state:
       address: address
       awaiting_return: awaiting return
       canceled: canceled
       cart: cart
+      considered_risky: considered risky
       complete: complete
       confirm: confirm
       delivery: delivery

@@ -71,11 +71,12 @@ Spree::Core::Engine.add_routes do
 
     resources :orders, :except => [:show] do
       member do
-        put :fire
-        get :fire
         post :resend
         get :open_adjustments
         get :close_adjustments
+        put :approve
+        put :cancel
+        put :resume
       end
 
       resource :customer, :controller => "orders/customer_details"

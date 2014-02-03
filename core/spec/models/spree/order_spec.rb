@@ -202,7 +202,12 @@ describe Spree::Order do
   end
 
   context "#finalize!" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create(email: 'test@example.com') }
+
+    before do
+      order.update_column :state, 'complete'
+    end
+
     it "should set completed_at" do
       order.should_receive(:touch).with(:completed_at)
       order.finalize!
@@ -247,8 +252,15 @@ describe Spree::Order do
       order.finalize!
     end
 
-    it "should continue even if confirmation email delivery fails" do
-      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_raise 'send failed!'
+    it "sets confirmation delivered when finalizing" do
+      expect(order.confirmation_delivered?).to be_false
+      order.finalize!
+      expect(order.confirmation_delivered?).to be_true
+    end
+
+    it "should not send duplicate confirmation emails" do
+      order.stub(:confirmation_delivered? => true)
+      Spree::OrderMailer.should_not_receive(:confirm_email)
       order.finalize!
     end
 
@@ -261,6 +273,40 @@ describe Spree::Order do
       order.should_receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to receive(:update_all).with(state: 'closed')
       order.finalize!
+    end
+
+    context "order is considered risky" do
+      before do
+        order.stub :is_risky? => true
+      end
+
+      it "should change state to risky" do
+        expect(order).to receive(:considered_risky!)
+        order.finalize!
+      end
+
+      context "and order is approved" do
+        before do 
+          order.stub :approved? => true
+        end
+
+        it "should leave order in complete state" do
+          order.finalize!
+          expect(order.state).to eq 'complete'
+        end
+
+      end
+    end
+
+    context "order is not considered risky" do
+      before do
+        order.stub :is_risky? => false
+      end
+
+      it "should set completed_at" do
+        order.finalize!
+        expect(order.completed_at).to be_present
+      end
     end
   end
 
@@ -747,6 +793,23 @@ describe Spree::Order do
       end
     end
   end
+
+  context "is considered risky" do
+    let(:order) do
+      order = FactoryGirl.create(:completed_order_with_pending_payment)
+      order.considered_risky!
+      order
+    end
+
+    it "can be approved by a user" do
+      expect(order).to receive(:approve!)
+      order.approved_by(stub_model(Spree::LegacyUser, id: 1))
+      expect(order.approver_id).to eq(1)
+      expect(order.approved_at).to be_present
+      expect(order.approved?).to be_true
+    end
+  end
+
 
   # Regression tests for #4072
   context "#state_changed" do

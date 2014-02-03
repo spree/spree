@@ -23,9 +23,11 @@ module Spree
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s
       belongs_to :created_by, class_name: Spree.user_class.to_s
+      belongs_to :approver, class_name: Spree.user_class.to_s
     else
       belongs_to :user
       belongs_to :created_by
+      belongs_to :approver
     end
 
     belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address'
@@ -315,8 +317,6 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      touch :completed_at
-
       # lock all adjustments (coupon promotions, etc.)
       all_adjustments.update_all state: 'closed'
 
@@ -331,16 +331,22 @@ module Spree
       save
       updater.run_hooks
 
-      deliver_order_confirmation_email
+      deliver_order_confirmation_email unless confirmation_delivered?
+
+      consider_risk
+    end
+
+    def consider_risk
+      if is_risky? && !approved?
+        self.considered_risky!
+      else
+        touch :completed_at
+      end
     end
 
     def deliver_order_confirmation_email
-      begin
-        OrderMailer.confirm_email(self.id).deliver
-      rescue Exception => e
-        logger.error("#{e.class.name}: #{e.message}")
-        logger.error(e.backtrace * "\n")
-      end
+      OrderMailer.confirm_email(self.id).deliver
+      update_column(:confirmation_delivered, true)
     end
 
     # Helper methods for checkout steps
@@ -353,7 +359,7 @@ module Spree
     end
 
     def pending_payments
-      payments.select(&:checkout?)
+      payments.select { |payment| payment.checkout? || payment.pending? }
     end
 
     # processes any pending payments and must return a boolean as it's
@@ -530,6 +536,20 @@ module Spree
       }.squish!).uniq.count > 0
     end
 
+    def approved_by(user)
+      self.transaction do
+        self.update_columns(
+          approver_id: user.id,
+          approved_at: Time.now,
+        )
+        self.approve!
+      end
+    end
+
+    def approved?
+      !!self.approved_at
+    end
+
     private
 
       def link_by_email
@@ -574,6 +594,7 @@ module Spree
 
       def after_resume
         shipments.each { |shipment| shipment.resume! }
+        consider_risk
       end
 
       def use_billing?
@@ -583,5 +604,6 @@ module Spree
       def set_currency
         self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
+
   end
 end
