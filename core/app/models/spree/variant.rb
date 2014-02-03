@@ -148,7 +148,7 @@ module Spree
     end
 
     def in_stock?(quantity=1)
-      puts %q{[DEPRECATION] In Spree 2.2, Variant#in_stock? will no longer take a quantity. Use Variant#can_stock? instead.}
+      puts %q{[DEPRECATION] In Spree 2.2, Variant#in_stock? will no longer take a quantity. Use Variant#can_supply? instead.}
       can_stock?(quantity)
     end
 
