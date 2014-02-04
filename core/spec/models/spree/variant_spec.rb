@@ -305,7 +305,7 @@ describe Spree::Variant do
 
     describe "#can_supply?" do
       it "calls out to quantifier" do
-        Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = stub)
+        Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = double)
         quantifier.should_receive(:can_supply?).with(10)
         variant.can_supply?(10)
       end
