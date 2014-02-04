@@ -26,7 +26,7 @@ module Spree
     def authorize(money, credit_card, options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include? credit_card.number or (profile_id and profile_id.starts_with? 'BGS-')
-        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'A' })
+        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'D' })
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', { :message => 'Bogus Gateway: Forced failure' }, :test => true)
       end
@@ -35,7 +35,7 @@ module Spree
     def purchase(money, credit_card, options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include? credit_card.number  or (profile_id and profile_id.starts_with? 'BGS-')
-        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'A' })
+        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345', :avs_result => { :code => 'M' })
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', :message => 'Bogus Gateway: Forced failure', :test => true)
       end
