@@ -26,7 +26,7 @@ Installation
 Add the following to your gemfile. If you are running a `-stable` branch of spree check there is a compatible branch of `spree_bootstrap_frontend`
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-1-stable'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
 ```
 
 And run
@@ -43,13 +43,11 @@ rails generate spree_bootstrap_frontend:install
 
 Done.
 
-The `Master` branch is actively developed against spree edge, so it's not recommended to use this in production
+The `master` branch is actively developed against spree edge, so it's not recommended to use this in production
 
 ```ruby
 gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend'
 ```
-
-Only use branches marked as `-stable` in production, any others are likely to be short-lived patches.
 
 Customizing
 -------
