@@ -252,11 +252,6 @@ describe Spree::Order do
       order.finalize!
     end
 
-    it "should continue even if confirmation email delivery fails" do
-      Spree::OrderMailer.should_receive(:confirm_email).with(order.id).and_raise 'send failed!'
-      order.finalize!
-    end
-
     it "should freeze all adjustments" do
       # Stub this method as it's called due to a callback
       # and it's irrelevant to this test

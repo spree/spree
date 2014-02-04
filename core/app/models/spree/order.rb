@@ -343,12 +343,7 @@ module Spree
     end
 
     def deliver_order_confirmation_email
-      begin
-        OrderMailer.confirm_email(self.id).deliver
-      rescue Exception => e
-        logger.error("#{e.class.name}: #{e.message}")
-        logger.error(e.backtrace * "\n")
-      end
+      OrderMailer.confirm_email(self.id).deliver
     end
 
     # Helper methods for checkout steps
