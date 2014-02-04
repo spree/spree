@@ -359,6 +359,7 @@ en:
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     authorization_failure: Authorization Failure
+    auto_capture: Auto Capture
     available_on: Available On
     avs_response: AVS Response
     back: Back
@@ -1108,6 +1109,7 @@ en:
     update: Update
     updating: Updating
     usage_limit: Usage Limit
+    use_app_default: Use App Default
     use_billing_address: Use Billing Address
     use_new_cc: Use a new card
     use_s3: Use Amazon S3 For Images

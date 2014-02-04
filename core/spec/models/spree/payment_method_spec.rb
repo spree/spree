@@ -34,4 +34,62 @@ describe Spree::PaymentMethod do
     end
   end
 
+  describe '#auto_capture?' do
+    class TestGateway < Spree::Gateway
+      def provider_class
+        Provider
+      end
+    end
+
+    let(:gateway) { TestGateway.new }
+
+    subject { gateway.auto_capture? }
+
+    context 'when auto_capture is nil' do
+      before(:each) do
+        Spree::Config.should_receive('[]').with(:auto_capture).and_return(auto_capture)
+      end
+
+      context 'and when Spree::Config[:auto_capture] is false' do
+        let(:auto_capture) { false }
+
+        it 'should be false' do
+          gateway.auto_capture.should be_nil
+          subject.should be_false
+        end
+      end
+
+      context 'and when Spree::Config[:auto_capture] is true' do
+        let(:auto_capture) { true }
+
+        it 'should be true' do
+          gateway.auto_capture.should be_nil
+          subject.should be_true
+        end
+      end
+    end
+
+    context 'when auto_capture is not nil' do
+      before(:each) do
+        gateway.auto_capture = auto_capture
+      end
+
+      context 'and is true' do
+        let(:auto_capture) { true }
+
+        it 'should be true' do
+          subject.should be_true
+        end
+      end
+
+      context 'and is false' do
+        let(:auto_capture) { false }
+
+        it 'should be true' do
+          subject.should be_false
+        end
+      end
+    end
+  end
+
 end
