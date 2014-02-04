@@ -73,6 +73,10 @@ module Spree
                 transition :to => :considered_risky
               end
 
+              event :approve do
+                transition :to => :complete, :from => :considered_risky
+              end
+
               if states[:payment]
                 before_transition :to => :complete do |order|
                   order.process_payments! if order.payment_required?

@@ -16,6 +16,7 @@
 
 .icon-email:before    { @extend .icon-envelope:before }
 .icon-resume:before   { @extend .icon-refresh:before  }
+.icon-approve:before  { @extend .icon-ok:before       }
 
 .icon-cancel:before,
 .icon-void:before     { @extend .icon-remove:before   }
