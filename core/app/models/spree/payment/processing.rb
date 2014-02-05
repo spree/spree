@@ -27,11 +27,16 @@ module Spree
         gateway_action(source, :authorize, :pend)
       end
 
+      # Captures the entire amount of a payment.
       def purchase!
         started_processing!
-        gateway_action(source, :purchase, :complete)
+        result = gateway_action(source, :purchase, :complete)
+        # This won't be called if gateway_action raises a GatewayError
+        capture_events.create!(amount: amount)
       end
 
+      # Takes the amount in cents to capture.
+      # Can be used to capture partial amounts of a payment.
       def capture!(amount=nil)
         amount ||= money.money.cents
         return true if completed?
@@ -45,7 +50,8 @@ module Spree
             gateway_options
           )
 
-          capture_events.create!(amount: amount)
+          money = ::Money.new(amount, Spree::Config[:currency])
+          capture_events.create!(amount: money.to_f)
           handle_response(response, :complete, :failure)
         end
       end
