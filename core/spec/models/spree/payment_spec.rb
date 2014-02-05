@@ -38,6 +38,14 @@ describe Spree::Payment do
     payment.log_entries.stub(:create!)
   end
 
+  context '#uncaptured_amount' do
+    it "sets uncaptured amount on save" do
+      expect(payment.uncaptured_amount).to eq(0)
+      payment.save
+      expect(payment.uncaptured_amount).to eq(payment.amount)
+    end
+  end
+
   context 'validations' do
     it "returns useful error messages when source is invalid" do
       payment.source = Spree::CreditCard.new
@@ -202,14 +210,33 @@ describe Spree::Payment do
           payment.should_receive(:complete!)
           payment.purchase!
         end
+
+        it "should log a capture event" do
+          payment.purchase!
+          expect(payment.capture_events.count).to eq(1)
+          expect(payment.capture_events.first.amount).to eq(payment.amount)
+        end
+
+        it "should set the uncaptured amount to 0" do
+          payment.purchase!
+          expect(payment.uncaptured_amount).to eq(0)
+        end
       end
 
       context "if unsuccessful" do
-        it "should make payment failed" do
+        before do
           gateway.stub(:purchase).and_return(failed_response)
           payment.should_receive(:failure)
           payment.should_not_receive(:pend)
+        end
+
+        it "should make payment failed" do
           expect { payment.purchase! }.to raise_error(Spree::Core::GatewayError)
+        end
+
+        it "should not log a capture event" do
+          expect { payment.purchase! }.to raise_error(Spree::Core::GatewayError)
+          expect(payment.capture_events.count).to eq(0)
         end
       end
     end
@@ -217,6 +244,7 @@ describe Spree::Payment do
     describe "#capture!" do
       context "when payment is pending" do
         before do
+          payment.amount = 100
           payment.state = 'pending'
           payment.response_code = '12345'
         end
@@ -240,10 +268,15 @@ describe Spree::Payment do
 
         context "capturing a partial amount" do
           it "logs capture events" do
-            payment.capture!(50)
+            payment.capture!(5000)
             expect(payment.capture_events.count).to eq(1)
             expect(payment.capture_events.first.amount).to eq(50)
           end
+
+          it "stores the uncaptured amount on the payment" do
+            payment.capture!(6000)
+            expect(payment.uncaptured_amount).to eq(40) # 100 - 60 = 40
+          end 
         end
 
         context "if unsuccessful" do

@@ -16,6 +16,7 @@ module Spree
 
     before_validation :validate_source
     before_create :set_unique_identifier
+    before_save :update_uncaptured_amount
 
     after_save :create_payment_profile, if: :profiles_supported?
 
@@ -188,6 +189,10 @@ module Spree
 
       def generate_identifier
         Array.new(8){ IDENTIFIER_CHARS.sample }.join
+      end
+
+      def update_uncaptured_amount
+        self.uncaptured_amount = amount - capture_events.sum(:amount)
       end
   end
 end
