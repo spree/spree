@@ -144,7 +144,6 @@ module Spree
             end
 
             it "does not raise a stack level error" do
-              pending "Investigate why a payment.reload after the request raises 'stack level too deep'"
               payment.reload.state.should == "failed"
             end
           end
