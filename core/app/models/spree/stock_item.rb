@@ -3,13 +3,16 @@ module Spree
     acts_as_paranoid
 
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
-    belongs_to :variant, class_name: 'Spree::Variant', touch: true, inverse_of: :stock_items
+    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :stock_items
     has_many :stock_movements, inverse_of: :stock_item
 
     validates_presence_of :stock_location, :variant
     validates_uniqueness_of :variant_id, scope: [:stock_location_id, :deleted_at]
 
     delegate :weight, :should_track_inventory?, to: :variant
+
+    after_save :conditional_variant_touch
+    after_touch { variant.touch }
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
@@ -57,6 +60,12 @@ module Spree
           backordered_inventory_units.first(number).each do |unit|
             unit.fill_backorder
           end
+        end
+      end
+
+      def conditional_variant_touch
+        if !Spree::Config.binary_inventory_cache || (count_on_hand_changed? && count_on_hand_change.any?(&:zero?))
+          variant.touch
         end
       end
   end
