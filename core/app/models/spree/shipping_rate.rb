@@ -26,5 +26,6 @@ module Spree
     def shipping_method
       Spree::ShippingMethod.unscoped { super }
     end
+
   end
 end

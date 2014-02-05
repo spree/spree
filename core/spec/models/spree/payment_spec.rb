@@ -83,7 +83,7 @@ describe Spree::Payment do
     describe "#process!" do
       it "should purchase if with auto_capture" do
         payment.payment_method.should_receive(:auto_capture?).and_return(true)
-        payment.should_receive(:purchase!)
+        payment.should_receive(:capture!)
         payment.process!
       end
 
@@ -215,29 +215,34 @@ describe Spree::Payment do
     end
 
     describe "#capture!" do
-      before do
-        payment.stub(:complete).and_return(true)
-      end
-
       context "when payment is pending" do
         before do
           payment.state = 'pending'
+          payment.response_code = '12345'
         end
 
         context "if successful" do
           before do
-            payment.payment_method.should_receive(:capture).with(payment, card, anything).and_return(success_response)
+            payment.payment_method.should_receive(:capture).with(payment.money.money.cents, payment.response_code, anything).and_return(success_response)
           end
 
           it "should make payment complete" do
-            payment.should_receive(:complete)
+            payment.should_receive(:complete!)
             payment.capture!
           end
 
-          it "should store the response_code" do
-            gateway.stub :capture => success_response
+          it "logs capture events" do
             payment.capture!
-            payment.response_code.should == '123'
+            expect(payment.capture_events.count).to eq(1)
+            expect(payment.capture_events.first.amount).to eq(payment.amount)
+          end
+        end
+
+        context "capturing a partial amount" do
+          it "logs capture events" do
+            payment.capture!(50)
+            expect(payment.capture_events.count).to eq(1)
+            expect(payment.capture_events.first.amount).to eq(50)
           end
         end
 

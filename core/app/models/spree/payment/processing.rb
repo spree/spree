@@ -7,7 +7,7 @@ module Spree
             if !processing?
               if payment_method.supports?(source)
                 if payment_method.auto_capture?
-                  purchase!
+                  capture!
                 else
                   authorize!
                 end
@@ -32,23 +32,20 @@ module Spree
         gateway_action(source, :purchase, :complete)
       end
 
-      def capture!
+      def capture!(amount=nil)
+        amount ||= money.money.cents
         return true if completed?
         started_processing!
         protect_from_connection_error do
           check_environment
+          # Standard ActiveMerchant capture usage
+          response = payment_method.capture(
+            amount,
+            response_code,
+            gateway_options
+          )
 
-          if payment_method.payment_profiles_supported?
-            # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
-            # so supply the authorization itself as well as the credit card, rather than just the authorization code
-            response = payment_method.capture(self, source, gateway_options)
-          else
-            # Standard ActiveMerchant capture usage
-            response = payment_method.capture(money.money.cents,
-                                              response_code,
-                                              gateway_options)
-          end
-
+          capture_events.create!(amount: amount)
           handle_response(response, :complete, :failure)
         end
       end

@@ -45,9 +45,9 @@ module Spree
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345')
     end
 
-    def capture(authorization, credit_card, gateway_options)
-      if authorization.response_code == '12345'
-        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '67890')
+    def capture(money, authorization, gateway_options)
+      if authorization == '12345'
+        ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true)
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', :error => 'Bogus Gateway: Forced failure', :test => true)
       end
