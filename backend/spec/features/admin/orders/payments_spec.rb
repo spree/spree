@@ -53,6 +53,19 @@ describe 'Payments' do
       end
     end
 
+    it 'should list all captures for a payment' do
+      capture_amount = order.outstanding_balance/2 * 100
+      payment.capture!(capture_amount)
+
+      visit spree.admin_order_payment_path(order, payment)
+      expect(page).to have_content 'Capture events'
+      # within '#capture_events' do
+        within_row(1) do
+          expect(page).to have_content(capture_amount / 100)
+        end
+      # end
+    end
+
     it 'should be able to list and create payment methods for an order', js: true do
       find('#payment_status').text.should == 'PENDING'
       within_row(1) do
