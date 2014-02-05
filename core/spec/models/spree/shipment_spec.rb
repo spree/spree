@@ -68,6 +68,28 @@ describe Spree::Shipment do
     shipment.discounted_cost.should == 9
   end
 
+  it "#tax_total with included taxes" do
+    shipment = Spree::Shipment.new
+    expect(shipment.tax_total).to eq(0)
+    shipment.included_tax_total = 10
+    expect(shipment.tax_total).to eq(10)
+  end
+
+  it "#tax_total with additional taxes" do
+    shipment = Spree::Shipment.new
+    expect(shipment.tax_total).to eq(0)
+    shipment.additional_tax_total = 10
+    expect(shipment.tax_total).to eq(10)
+  end
+
+  it "#final_price" do
+    shipment = Spree::Shipment.new
+    shipment.cost = 10
+    shipment.promo_total = -2
+    shipment.included_tax_total = 1
+    expect(shipment.final_price).to eq(9)
+  end
+
   context "manifest" do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
