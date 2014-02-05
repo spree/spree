@@ -21,3 +21,5 @@
 <div data-hook="amount" class="align-center">
   <h5><%= label_tag nil, Spree.t(:amount) %>: <span class="green"><%= @payment.display_amount.to_html %></span> </h5>
 </div>
+
+<%= render 'spree/admin/payments/capture_events' %>
