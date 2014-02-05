@@ -5,6 +5,10 @@
   <%= I18n.t(:one, scope: "activerecord.models.spree/payment") %>
   <i class="icon-arrow-right"></i>
   <%= payment_method_name(@payment) %>
+  &nbsp;
+  <span class="state <%= @payment.state %>">
+    <%= Spree.t(@payment.state, :scope => :payment_states, :default => @payment.state.capitalize) %>
+  </span>
 <% end %>
 
 <% content_for :page_actions do %>
