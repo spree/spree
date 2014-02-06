@@ -1,5 +1,6 @@
 object @variant
-cache @variant
+cache [__FILE__.gsub(/.*app\/views/, ""), root_object]
+
 attributes *variant_attributes
 extends "spree/api/variants/variant"
 child(:images => :images) do
