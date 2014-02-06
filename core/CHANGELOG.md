@@ -29,7 +29,13 @@ You will need to manually rename asset requires within your application:
 * `admin/spree_backend` => `spree/backend`
 * `store/spree_frontend` => `spree/frontend`
 
-*Ryan Bigg*
+#### Risk analysis
+
+The AVS and CVV response codes for payments are now checked to determine the possibility that an order is considered risky. If the order is considered risky, then it will transition to a 'considered risky' state upon finalize rather than 'complete'. The order must be approved in the admin backend in order for it to proceed to the 'complete' state.
+
+Stores may choose to override `Order#is_risky` to implement their own risk analysis for orders.
+
+See issues #4021 and #4298 for further information.
 
 ### Minor
 
