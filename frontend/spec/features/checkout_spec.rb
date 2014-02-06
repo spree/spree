@@ -18,7 +18,7 @@ describe "Checkout", inaccessible: true do
     context "defaults to use billing address" do
       before do
         add_mug_to_cart
-        Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
+        Spree::Order.last.update_column(:email, "test@example.com")
         click_button "Checkout"
       end
 
@@ -57,7 +57,7 @@ describe "Checkout", inaccessible: true do
         add_mug_to_cart
         click_button "Checkout"
 
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        fill_in "order_email", :with => "test@example.com"
         fill_in_address
 
         click_button "Save and Continue"
@@ -107,7 +107,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_button "Checkout"
 
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
 
       click_button "Save and Continue"
@@ -203,7 +203,7 @@ describe "Checkout", inaccessible: true do
     it "transit nicely through checkout steps again" do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -226,7 +226,7 @@ describe "Checkout", inaccessible: true do
     before do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -292,7 +292,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_on "Checkout"
 
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
 
