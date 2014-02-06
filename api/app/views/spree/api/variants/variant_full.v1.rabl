@@ -1,5 +1,5 @@
 object @variant
-cache @variant
+cache ['variant_full', root_object]
 extends "spree/api/variants/variant"
 
 child(:images => :images) do
