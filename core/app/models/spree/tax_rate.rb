@@ -34,7 +34,11 @@ module Spree
 
     def self.adjust(order, items)
       self.match(order).each do |rate|
-        items.each { |item| rate.adjust(order, item) }
+        items.each do |item|
+          if item.tax_category == rate.tax_category
+            rate.adjust(order, item)
+          end
+        end
       end
     end
 

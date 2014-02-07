@@ -15,6 +15,8 @@ module Spree
                                     :class_name => 'Spree::Zone',
                                     :foreign_key => 'shipping_method_id'
 
+    belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
+
     validates :name, presence: true
 
     validate :at_least_one_shipping_category
@@ -38,6 +40,10 @@ module Spree
     # Some shipping methods are only meant to be set via backend
     def frontend?
       self.display_on != "back_end"
+    end
+
+    def tax_category
+      Spree::TaxCategory.unscoped { super }
     end
 
     private
