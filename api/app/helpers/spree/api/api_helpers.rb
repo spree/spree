@@ -34,15 +34,13 @@ module Spree
       mattr_reader *ATTRIBUTES
 
       def required_fields_for(model)
-        required_fields = model._validators.select do |field, validations|
-          validations.any? { |v| v.is_a?(ActiveModel::Validations::PresenceValidator) }
-        end.map(&:first) # get fields that are invalid
+        required_fields = model.validators.select do |validation|
+          validation.is_a?(ActiveModel::Validations::PresenceValidator)
+        end.map(&:attributes).map(&:first).map(&:to_s) # get fields that are invalid
         # Permalinks presence is validated, but are really automatically generated
         # Therefore we shouldn't tell API clients that they MUST send one through
-        required_fields.map!(&:to_s).delete("permalink")
         # Do not require slugs, either
-        required_fields.delete("slug")
-        required_fields
+        required_fields - ['permalink', 'slugs']
       end
 
       @@product_attributes = [
