@@ -284,7 +284,7 @@ module Spree
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
       Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, shipments)
+      Spree::TaxRate.adjust(self, shipments) if shipments.any?
     end
 
     def outstanding_balance
