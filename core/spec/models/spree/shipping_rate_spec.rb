@@ -8,7 +8,6 @@ describe Spree::ShippingRate do
   let(:shipping_rate) { Spree::ShippingRate.new(:shipment => shipment,
                                                 :shipping_method => shipping_method,
                                                 :cost => 10.55) }
-  before { Spree::TaxRate.stub(:default => 0.05) }
 
   context "#display_price" do
     context "when shipment includes VAT" do
@@ -47,6 +46,25 @@ describe Spree::ShippingRate do
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.shipping_method).to eq(shipping_method)
+    end
+  end
+
+  context "#tax_rate" do
+    let!(:tax_rate) { create(:tax_rate) }
+
+    before do
+      shipping_rate.tax_rate = tax_rate
+    end
+
+    it "can be retrieved" do
+      expect(shipping_rate.tax_rate.reload).to eq(tax_rate)
+    end
+
+    it "can be retrieved even when deleted" do
+      tax_rate.update_column(:deleted_at, Time.now)
+      shipping_rate.save
+      shipping_rate.reload
+      expect(shipping_rate.tax_rate).to eq(tax_rate)
     end
   end
 end

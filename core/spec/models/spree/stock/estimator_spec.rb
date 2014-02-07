@@ -106,6 +106,24 @@ module Spree
             expect(subject.shipping_rates(package).map(&:selected)).to eq [true]
           end
         end
+
+        context "includes tax adjustments if applicable" do
+          let!(:tax_rate) { create(:tax_rate, zone: order.tax_zone) }
+
+          before do
+            Spree::ShippingMethod.all.each do |sm|
+              sm.tax_category_id = tax_rate.tax_category_id
+              sm.save
+            end
+            package.shipping_methods.map(&:reload)
+          end
+
+
+          it "links the shipping rate and the tax rate" do
+            shipping_rates = subject.shipping_rates(package)
+            expect(shipping_rates.first.tax_rate).to eq(tax_rate)
+          end
+        end
       end
     end
   end

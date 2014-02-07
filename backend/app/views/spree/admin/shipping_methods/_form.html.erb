@@ -37,7 +37,7 @@
 <div class="alpha six columns">
   <div data-hook="admin_shipping_method_form_availability_fields" class="alpha six columns">
     <fieldset class="categories no-border-bottom">
-      <legend align="center"><%= Spree.t(:categories) %></legend>
+      <legend align="center"><%= Spree.t(:shipping_categories) %></legend>
           <%= f.field_container :categories do %>
         <% Spree::ShippingCategory.all.each do |category| %>
           <%= label_tag do %>
@@ -69,5 +69,17 @@
 
 <div data-hook="admin_shipping_method_form_calculator_fields" class="omega six columns">
   <%= render :partial => 'spree/admin/shared/calculator_fields', :locals => { :f => f } %>
+</div>
+
+<div class="alpha six columns">
+  <div class="alpha six columns">
+    <fieldset class="tax_categories no-border-bottom">
+      <legend align="center"><%= Spree.t(:tax_category) %></legend>
+        <%= f.field_container :categories do %>
+          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, {}, :class => "select2 fullwidth" %>
+          <%= error_message_on :shipping_method, :tax_category_id %>
+        <% end %>
+    </fieldset>
+  </div>
 </div>
 

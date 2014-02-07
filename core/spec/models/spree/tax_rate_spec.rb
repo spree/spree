@@ -153,18 +153,37 @@ describe Spree::TaxRate do
 
   context "adjust" do
     let(:order) { stub_model(Spree::Order) }
-    let(:rate_1) { stub_model(Spree::TaxRate) }
-    let(:rate_2) { stub_model(Spree::TaxRate) }
-    let(:line_items) { [stub_model(Spree::LineItem)] }
+    let(:tax_category_1) { stub_model(Spree::TaxCategory) }
+    let(:tax_category_2) { stub_model(Spree::TaxCategory) }
+    let(:rate_1) { stub_model(Spree::TaxRate, :tax_category => tax_category_1) }
+    let(:rate_2) { stub_model(Spree::TaxRate, :tax_category => tax_category_2) }
 
-    before do
-      Spree::TaxRate.stub :match => [rate_1, rate_2]
+    context "with line items" do
+      let(:line_items) { [stub_model(Spree::LineItem, :tax_category => tax_category_1)] }
+
+      before do
+        Spree::TaxRate.stub :match => [rate_1, rate_2]
+      end
+
+      it "should apply adjustments for two tax rates to the order" do
+        rate_1.should_receive(:adjust)
+        rate_2.should_not_receive(:adjust)
+        Spree::TaxRate.adjust(order, line_items)
+      end
     end
 
-    it "should apply adjustments for two tax rates to the order" do
-      rate_1.should_receive(:adjust)
-      rate_2.should_receive(:adjust)
-      Spree::TaxRate.adjust(order, line_items)
+    context "with shipments" do
+      let(:shipments) { [stub_model(Spree::Shipment, :tax_category => tax_category_1)] }
+
+      before do
+        Spree::TaxRate.stub :match => [rate_1, rate_2]
+      end
+
+      it "should apply adjustments for two tax rates to the order" do
+        rate_1.should_receive(:adjust)
+        rate_2.should_not_receive(:adjust)
+        Spree::TaxRate.adjust(order, shipments)
+      end
     end
   end
 
