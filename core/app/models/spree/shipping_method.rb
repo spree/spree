@@ -7,7 +7,7 @@ module Spree
 
     has_many :adjustments, as: :source
     has_many :shipments
-    has_many :shipping_method_categories
+    has_many :shipping_method_categories, :dependent => :destroy
     has_many :shipping_categories, through: :shipping_method_categories
     has_many :shipping_rates, inverse_of: :shipping_method
 
