@@ -206,11 +206,30 @@ describe "Order Details", js: true do
         end
       end
 
+      context "variant doesn't track inventory" do
+        before do
+          tote.master.update_column :track_inventory, false
+          # make sure there's no stock level for any item
+          tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+        end
+
+        it "adds variant to order just fine"  do
+          select2_search tote.name, :from => Spree.t(:name_or_sku)
+
+          within("table.stock-levels") do
+            fill_in "stock_item_quantity", :with => 1
+            click_icon :plus
+          end
+
+          within(".stock-contents") do
+            page.should have_content(tote.name)
+          end
+        end
+      end
     end
   end
 
   context 'with only read permissions' do
-    
     before do 
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
