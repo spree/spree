@@ -81,7 +81,7 @@ class FancyPaymentMethod < Spree::PaymentMethod
 end
 ```
 
-The result of this method determines if a payment will be automatically authorized or not during the processing of the payment.
+The result of this method determines if a payment will be automatically captured (true) or only authorized (false) during the processing of the payment.
 
 ## Payment Processing
 
