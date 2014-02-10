@@ -26,7 +26,11 @@ module Spree
             redirect_to '/unauthorized'
           else
             store_location
-            redirect_to respond_to?(:spree_login_path) ? spree_login_path : spree.root_path
+            if respond_to?(:spree_login_path)
+              redirect_to spree_login_path
+            else
+              redirect_to spree.respond_to?(:root_path) ? spree.root_path : root_path
+            end
           end
         end
 
