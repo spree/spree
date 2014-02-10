@@ -10,9 +10,7 @@ module Spree
       variant.option_values << create(:option_value)
       variant
     end
-    let!(:attributes) { [:id, :name, :sku, :price, :weight, :height,
-                         :width, :depth, :is_master, :cost_price,
-                         :permalink, :description] }
+    let!(:attributes) { Api::ApiHelpers.variant_attributes }
 
     before do
       stub_authentication!
