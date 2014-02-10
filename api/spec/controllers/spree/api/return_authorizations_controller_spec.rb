@@ -133,7 +133,7 @@ module Spree
       end
 
       it "can mark a return authorization as received on the order with an inventory unit" do
-        FactoryGirl.create(:new_return_authorization, :order => order)
+        FactoryGirl.create(:new_return_authorization, :order => order, :stock_location_id => order.shipments.first.stock_location.id)
         return_authorization = order.return_authorizations.first
         return_authorization.state.should == "authorized"
 

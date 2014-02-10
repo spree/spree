@@ -71,30 +71,59 @@ describe Spree::ReturnAuthorization do
   context "receive!" do
     let(:inventory_unit) { order.shipments.first.inventory_units.first }
 
-    before  do
-      return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
-      Spree::Adjustment.stub(:create)
-      order.stub(:update!)
+    context "to the initial stock location" do
+      before do
+        return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
+        return_authorization.stub(:stock_location_id => inventory_unit.shipment.stock_location.id)
+        Spree::Adjustment.stub(:create)
+        order.stub(:update!)
+      end
+
+      it "should mark all inventory units are returned" do
+        inventory_unit.should_receive(:return!)
+        return_authorization.receive!
+      end
+
+      it "should add credit for specified amount" do
+        return_authorization.amount = 20
+        mock_adjustment = double
+        mock_adjustment.should_receive(:source=).with(return_authorization)
+        mock_adjustment.should_receive(:adjustable=).with(order)
+        mock_adjustment.should_receive(:save)
+        Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => Spree.t(:rma_credit)).and_return(mock_adjustment)
+        return_authorization.receive!
+      end
+
+      it "should update order state" do
+        order.should_receive :update!
+        return_authorization.receive!
+      end
+
+      it "should update the stock item counts in the stock location" do
+        count_on_hand = inventory_unit.find_stock_item.count_on_hand
+        return_authorization.receive!
+        inventory_unit.find_stock_item.count_on_hand.should == count_on_hand + 1
+      end
     end
 
-    it "should mark all inventory units are returned" do
-      inventory_unit.should_receive(:return!)
-      return_authorization.receive!
-    end
+    context "to a different stock location" do
+      let(:new_stock_location) { FactoryGirl.create(:stock_location, :name => "other") }
+      before do
+        return_authorization.stub(:stock_location_id => new_stock_location.id)
+        return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
+      end
 
-    it "should add credit for specified amount" do
-      return_authorization.amount = 20
-      mock_adjustment = double
-      mock_adjustment.should_receive(:source=).with(return_authorization)
-      mock_adjustment.should_receive(:adjustable=).with(order)
-      mock_adjustment.should_receive(:save)
-      Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => Spree.t(:rma_credit)).and_return(mock_adjustment)
-      return_authorization.receive!
-    end
+      it "should update the stock item counts in new stock location" do
+        count_on_hand = Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
+        return_authorization.receive!
+        Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand.should == count_on_hand + 1
+      end
 
-    it "should update order state" do
-      order.should_receive :update!
-      return_authorization.receive!
+      it "should not update the stock item counts in the original stock location" do
+        count_on_hand = inventory_unit.find_stock_item.count_on_hand
+        return_authorization.receive!
+        inventory_unit.find_stock_item.count_on_hand.should == count_on_hand
+      end
     end
   end
 
