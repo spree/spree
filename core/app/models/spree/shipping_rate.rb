@@ -22,7 +22,14 @@ module Spree
 
     def display_price
       price = display_base_price.to_s
-      price += " (+ #{display_tax_amount} tax)" if tax_rate
+      if tax_rate
+        amount = "#{display_tax_amount} #{tax_rate.name}"
+        if tax_rate.included_in_price?
+          price += " (incl. #{amount})"
+        else
+          price += " (+ #{amount})"
+        end
+      end
       price
     end
     alias_method :display_cost, :display_price
