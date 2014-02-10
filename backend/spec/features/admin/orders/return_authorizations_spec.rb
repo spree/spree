@@ -9,7 +9,8 @@ describe "return authorizations" do
     create(:return_authorization,
             :order => order,
             :state => 'authorized',
-            :inventory_units => order.shipments.first.inventory_units)
+            :inventory_units => order.shipments.first.inventory_units,
+            :stock_location_id => order.shipments.first.stock_location_id)
   end
 
   # Regression test for #1107
