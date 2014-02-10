@@ -18,16 +18,14 @@
       </tbody>
     <% end %>
 
-    <% order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
-      <tbody data-hook="order_details_tax_adjustments">
-        <% order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
-          <tr class="total">
-            <td><%= label %></td>
-            <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    <% end %>
+    <tbody data-hook="order_details_tax_adjustments">
+      <% order.all_adjustments.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+        <tr class="total">
+          <td><%= label %></td>
+          <td><%= Spree::Money.new(adjustments.sum(&:amount)).to_html %></td>
+        </tr>
+      <% end %>
+    </tbody>
 
     <% if order.checkout_steps.include?("delivery") %>
       <tr data-hook="shipping_total">
