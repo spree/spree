@@ -7,20 +7,24 @@ describe Spree::ShippingRate do
   let(:shipping_method) { create(:shipping_method) }
   let(:shipping_rate) { Spree::ShippingRate.new(:shipment => shipment,
                                                 :shipping_method => shipping_method,
-                                                :cost => 10.55) }
+                                                :cost => 10) }
 
   context "#display_price" do
-    context "when shipment includes VAT" do
-      before { Spree::Config[:shipment_inc_vat] = true }
-      it "displays the correct price" do
-        shipping_rate.display_price.to_s.should == "$11.08" # $10.55 * 1.05 == $11.08
+    context "when tax included in price" do
+      let(:tax_rate) { create(:tax_rate, :amount => 0.1, :included_in_price => true) }
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it "shows correct tax amount" do
+        expect(shipping_rate.display_price.to_s).to eq("omg")
       end
     end
 
-    context "when shipment does not include VAT" do
-      before { Spree::Config[:shipment_inc_vat] = false }
-      it "displays the correct price" do
-        shipping_rate.display_price.to_s.should == "$10.55"
+    context "when tax is additional to price" do
+      let(:tax_rate) { create(:tax_rate, :amount => 0.1) }
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it "shows correct tax amount" do
+        expect(shipping_rate.display_price.to_s).to eq("$10.00 (+ $1.00 tax)")
       end
     end
 
