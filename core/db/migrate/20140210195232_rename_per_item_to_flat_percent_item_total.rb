@@ -5,5 +5,10 @@ class RenamePerItemToFlatPercentItemTotal < ActiveRecord::Migration
 		p.key = p.key.gsub(/per_item/, 'flat_percent_item_total')
 		p.save!
 	end
+	Spree::Calculator.where("type='Spree::Calculator::FreeShipping'").each do |c|
+		pa = Spree::Promotion::Actions::CreateAdjustment.where(:promotion_id => c.calculable_id).first
+		pa.type = "Spree::Promotion::Actions::FreeShipping"
+		pa.save!
+	end	
   end
 end
