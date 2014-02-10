@@ -12,8 +12,18 @@ module Spree
     delegate :order, :currency, to: :shipment
     delegate :name, to: :shipping_method
 
+    def display_base_price
+      Spree::Money.new(cost, currency: currency)
+    end
+
+    def display_tax_amount
+      Spree::Money.new(cost * tax_rate.amount, currency: currency)
+    end
+
     def display_price
-      
+      price = display_base_price.to_s
+      price += " (+ #{display_tax_amount} tax)" if tax_rate
+      price
     end
     alias_method :display_cost, :display_price
 
