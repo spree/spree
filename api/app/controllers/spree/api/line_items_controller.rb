@@ -27,6 +27,7 @@ module Spree
         @line_item = order.line_items.find(params[:id])
         variant = Spree::Variant.find(@line_item.variant_id)
         @order.contents.remove(variant, @line_item.quantity)
+        @order.ensure_updated_shipments
         respond_with(@line_item, status: 204)
       end
 
