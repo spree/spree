@@ -17,7 +17,7 @@ describe Spree::ShippingRate do
       before { shipping_rate.tax_rate = tax_rate }
 
       it "shows correct tax amount" do
-        expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $1.00 #{tax_rate.name})")
+        expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
       end
     end
 

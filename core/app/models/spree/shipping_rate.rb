@@ -17,7 +17,7 @@ module Spree
     end
 
     def display_tax_amount
-      Spree::Money.new(cost * tax_rate.amount, currency: currency)
+      Spree::Money.new(tax_rate.calculator.compute_shipping_rate(self), currency: currency)
     end
 
     def display_price

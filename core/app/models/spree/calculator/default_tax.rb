@@ -35,6 +35,16 @@ module Spree
     alias_method :compute_shipment, :compute_shipment_or_line_item
     alias_method :compute_line_item, :compute_shipment_or_line_item
 
+    def compute_shipping_rate(shipping_rate)
+      if rate.included_in_price
+        pre_tax_amount = shipping_rate.cost / (1 + rate.amount)
+        deduced_total_by_rate(pre_tax_amount, rate)
+      else
+        with_tax_amount = shipping_rate.cost * rate.amount
+        round_to_two_places(with_tax_amount)
+      end
+    end
+
     private
 
     def rate
