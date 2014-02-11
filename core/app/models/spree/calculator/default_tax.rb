@@ -23,17 +23,17 @@ module Spree
       end
     end
 
-    def compute_shipment(shipment)
-      round_to_two_places(shipment.discounted_cost * rate.amount)
-    end
-
-    def compute_line_item(line_item)
+    # When it comes to computing shipments or line items: same same.
+    def compute_shipment_or_line_item(item)
       if rate.included_in_price
-        deduced_total_by_rate(line_item, rate)
+        deduced_total_by_rate(item.pre_tax_amount, rate)
       else
-        round_to_two_places(line_item.discounted_amount * rate.amount)
+        round_to_two_places(item.discounted_amount * rate.amount)
       end
     end
+
+    alias_method :compute_shipment, :compute_shipment_or_line_item
+    alias_method :compute_line_item, :compute_shipment_or_line_item
 
     private
 
@@ -45,8 +45,8 @@ module Spree
       BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
     end
 
-    def deduced_total_by_rate(item, rate)
-      round_to_two_places(item.pre_tax_amount * rate.amount)
+    def deduced_total_by_rate(pre_tax_amount, rate)
+      round_to_two_places(pre_tax_amount * rate.amount)
     end
 
   end
