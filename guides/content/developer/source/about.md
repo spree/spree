@@ -26,8 +26,7 @@ In addition, he was motivated by unsuccessful efforts to use other open
 source solutions in other programming languages, including (but not
 limited to) the Magento and OSCommerce platforms. These solutions were
 deemed to be unsatisfactory when challenged with even the simplest
-practical cases of use. They were also written in PHP which was
-considered to be a poor choice for long term maintainability.
+practical cases of use. 
 
 ### Opinionated Commerce
 
