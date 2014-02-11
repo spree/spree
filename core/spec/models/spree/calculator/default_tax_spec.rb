@@ -78,31 +78,33 @@ describe Spree::Calculator::DefaultTax do
       context "when the variant matches the tax category" do
 
         context "when line item is discounted" do
-          before { line_item.promo_total = -1 }
+          before do
+            line_item.promo_total = -1
+            Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
+          end
 
           it "should be equal to the item's discounted total * rate" do
             calculator.compute(line_item).should == 1.38
           end
         end
 
-        it "should be equal to the item total * rate" do
+        it "should be equal to the item's discounted * rate" do
           calculator.compute(line_item).should == 1.43
         end
       end
     end
 
     context "when tax is not included in price" do
-
       context "when the line item is discounted" do
         before { line_item.promo_total = -1 }
 
-        it "should be equal to the item's discounted total * rate" do
+        it "should be equal to the item's pre-tax total * rate" do
           calculator.compute(line_item).should == 1.45
         end
       end
 
       context "when the variant matches the tax category" do
-        it "should be equal to the item total * rate" do
+        it "should be equal to the item pre-tax total * rate" do
           calculator.compute(line_item).should == 1.50
         end
       end
