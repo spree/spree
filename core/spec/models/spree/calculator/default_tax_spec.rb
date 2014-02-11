@@ -108,18 +108,6 @@ describe Spree::Calculator::DefaultTax do
       end
     end
 
-    context "when given a line item" do
-      context "when the variant does not match the tax category" do
-        before do
-          line_item.stub :tax_category => nil
-        end
-
-        it "should be 0" do
-          calculator.compute(line_item).should == 0
-        end
-      end
-    end
-
     context "when given a shipment" do
       it "should be 5% of 15" do
         calculator.compute(shipment).should == 0.75
