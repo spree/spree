@@ -32,6 +32,22 @@ module Spree
       end
     end
 
+    # Pre-tax amounts must be stored so that we can calculate 
+    # correct rate amounts in the future. For example:
+    # https://github.com/spree/spree/issues/4318#issuecomment-34723428
+    def self.store_pre_tax_amount(item, rates)
+      if rates.any? { |r| r.included_in_price }
+        case item
+        when Spree::LineItem
+          item_amount = item.discounted_amount
+        when Spree::Shipment
+          item_amount = item.discounted_cost
+        end
+        pre_tax_amount = item_amount / (1 + rates.map(&:amount).sum)
+        item.update_column(:pre_tax_amount, pre_tax_amount)
+      end
+    end
+
     def self.adjust(order, items)
       rates = self.match(order)
       tax_categories = rates.map(&:tax_category)
@@ -60,7 +76,7 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order, item)      
+    def adjust(order, item)
       amount = calculator.compute(item)
       return if amount == 0
 
@@ -95,23 +111,6 @@ module Spree
     end
 
     private
-
-      # Pre-tax amounts must be stored so that we can calculate 
-      # correct rate amounts in the future. For example:
-      # https://github.com/spree/spree/issues/4318#issuecomment-34723428
-      def self.store_pre_tax_amount(item, rates)
-        if rates.any? { |r| r.included_in_price }
-          case item
-          when Spree::LineItem
-            item_amount = item.price
-          when Spree::Shipment
-            item_amount = item.cost
-          end
-          
-          pre_tax_amount = amount / (1 + rates.map(&:amount).sum)
-          item.update_column(:pre_tax_amount, pre_tax_amount)
-        end
-      end
 
       def create_label
         label = ""
