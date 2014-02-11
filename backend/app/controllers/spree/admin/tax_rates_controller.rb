@@ -13,14 +13,6 @@ module Spree
         @available_categories = TaxCategory.order(:name)
         @calculators = TaxRate.calculators.sort_by(&:name)
       end
-
-      def update_after
-        Rails.cache.delete('vat_rates')
-      end
-
-      def create_after
-        Rails.cache.delete('vat_rates')
-      end
     end
   end
 end
