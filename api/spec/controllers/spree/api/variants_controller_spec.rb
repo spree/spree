@@ -92,6 +92,7 @@ module Spree
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
       json_response.should have_attributes(show_attributes)
+      json_response["stock_items"].should be_present
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,
