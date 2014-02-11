@@ -4,8 +4,8 @@ describe Spree::Calculator::DefaultTax do
   let!(:country) { create(:country) }
   let!(:zone) { create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => []) }
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
-  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
-  let(:vat) { false }
+  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => included_in_price) }
+  let(:included_in_price) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }
   let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
@@ -62,7 +62,7 @@ describe Spree::Calculator::DefaultTax do
       end
 
       context "when tax is included in price" do
-        let(:vat) { true }
+        let(:included_in_price) { true }
 
         it "will return the deducted amount from the totals" do
           # total price including 5% tax = 57.14
@@ -74,7 +74,7 @@ describe Spree::Calculator::DefaultTax do
     end
 
     context "when tax is included in price" do
-      let(:vat) { true }
+      let(:included_in_price) { true }
       context "when the variant matches the tax category" do
 
         context "when line item is discounted" do
