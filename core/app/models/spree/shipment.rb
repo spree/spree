@@ -150,6 +150,7 @@ module Spree
     def discounted_cost
       cost + promo_total
     end
+    alias discounted_amount discounted_cost
 
     # Only one of either included_tax_total or additional_tax_total is set
     # This method returns the total of the two. Saves having to check if 
