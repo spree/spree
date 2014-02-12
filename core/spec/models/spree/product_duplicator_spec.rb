@@ -5,6 +5,7 @@ module Spree
     let(:product) do
       double 'Product',
         :name => "foo",
+        :permalink => "foo",
         :taxons => [],
         :product_properties => [property],
         :master => variant,
@@ -57,6 +58,7 @@ module Spree
     it "can duplicate a product" do
       duplicator = Spree::ProductDuplicator.new(product)
       new_product.should_receive(:name=).with("COPY OF foo")
+      new_product.should_receive(:permalink=).with("copy-of-foo")
       new_product.should_receive(:taxons=).with([])
       new_product.should_receive(:product_properties=).with([new_property])
       new_product.should_receive(:created_at=).with(nil)
