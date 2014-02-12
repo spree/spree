@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 module Spree
-
   describe Spree::ProductDuplicator do
     
     let(:product) { create(:product, properties: [create(:property, name: "MyProperty")])}
@@ -27,6 +26,10 @@ module Spree
       
       it "will set an unique name" do
         expect(new_product.name).to eql "COPY OF #{product.name}"
+      end
+
+      it "will set a unique permalink" do
+        expect(new_product.permalink).to eql "copy-of-product-number-4-3954"
       end
 
       it "will set an unique sku" do
