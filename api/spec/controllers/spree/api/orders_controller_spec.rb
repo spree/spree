@@ -554,7 +554,14 @@ module Spree
       # Borrowed from:
       # https://github.com/spree/spree/blob/master/api/spec/controllers/spree/api/promotion_application_spec.rb
 
-      let(:order) { create(:order, state: 'payment', user: current_api_user) }
+      let(:order) do
+        order = create(
+          :order_with_line_items,
+          state: 'payment',
+          user: current_api_user,
+          line_items_count: 1
+        )
+      end
 
       subject do
         api_put :apply_coupon_code, id: order.to_param, coupon_code: coupon_code, :order_token => order.token
@@ -577,7 +584,7 @@ module Spree
           Spree::Adjustment.any_instance.stub(:eligible => true)
         end
 
-        it 'should should be_ok ' do
+        it 'should should be_ok' do
           subject
           response.should be_ok 
         end
