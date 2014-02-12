@@ -22,7 +22,7 @@ Spree::Core::Engine.routes.draw do
       end
     end
 
-    resources :variants, :only => [:index]
+    resources :variants, :only => [:index, :show]
 
     resources :option_types do
       resources :option_values
