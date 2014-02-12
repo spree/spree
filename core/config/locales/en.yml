@@ -229,6 +229,10 @@ en:
           attributes:
             base:
               card_expired: "Card has expired"
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: "Must match order currency"
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
