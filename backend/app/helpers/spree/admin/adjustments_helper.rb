@@ -13,6 +13,8 @@ module Spree
             display_line_item(adjustable)
           when Spree::Shipment
             display_shipment(adjustable)
+          when Spree::Order
+            display_order(adjustable)
         end
 
       end
@@ -30,6 +32,10 @@ module Spree
 
       def display_shipment(shipment)
         "#{Spree.t(:shipment)} ##{shipment.number}<br>#{shipment.display_cost}".html_safe
+      end
+
+      def display_order(order)
+        Spree.t(:order)
       end
     end
   end

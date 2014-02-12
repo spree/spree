@@ -45,7 +45,6 @@ module Spree
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
-    has_many :all_adjustments, class_name: 'Spree::Adjustment'
     has_many :inventory_units, inverse_of: :order
 
     has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
@@ -107,6 +106,10 @@ module Spree
     # that should be called after Order#update
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
+    end
+
+    def all_adjustments
+      Adjustment.where("order_id = :order_id OR adjustable_id = :order_id", :order_id => self.id)
     end
 
     # For compatiblity with Calculator::PriceSack

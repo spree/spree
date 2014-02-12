@@ -5,6 +5,10 @@ module Spree
       destroy.after :reload_order
       skip_before_filter :load_resource, :only => [:toggle_state, :edit, :update, :destroy]
 
+      def index
+        @adjustments = @order.all_adjustments.order("created_at ASC")
+      end
+
       def edit
         find_adjustment
         super
