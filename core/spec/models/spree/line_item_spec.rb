@@ -190,4 +190,17 @@ describe Spree::LineItem do
       end
     end
   end
+
+  context "saving with currency the same as order.currency" do
+    it "saves the line_item" do
+      expect { order.line_items.first.update_attributes!(currency: 'USD') }.to_not raise_error
+    end
+  end
+
+  context "saving with currency different than order.currency" do
+    it "doesn't save the line_item" do
+      expect { order.line_items.first.update_attributes!(currency: 'AUD') }.to raise_error
+    end
+  end
+
 end
