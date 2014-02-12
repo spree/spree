@@ -6,7 +6,7 @@ module Spree
   class CheckoutController < Spree::StoreController
     ssl_required
 
-    before_filter :load_order
+    before_filter :load_order_with_lock
 
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
@@ -70,8 +70,8 @@ module Spree
         false
       end
 
-      def load_order
-        @order = current_order
+      def load_order_with_lock
+        @order = current_order(lock: true)
         redirect_to spree.cart_path and return unless @order
 
         if params[:state]

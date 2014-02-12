@@ -11,14 +11,17 @@ module Spree
         end
 
         # The current incomplete order from the session for use in cart and during checkout
-        def current_order(create_order_if_necessary = false)
+        def current_order(options = {})
+          options[:create_order_if_necessary] ||= false
+          options[:lock] ||= false
           return @current_order if @current_order
           if session[:order_id]
-            current_order = Spree::Order.find_by_id_and_currency(session[:order_id], current_currency, :include => :adjustments)
+            current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).find_by(id: session[:order_id], currency: current_currency)
             @current_order = current_order unless current_order.try(:completed?)
           end
-          if create_order_if_necessary and (@current_order.nil? or @current_order.completed?)
-            @current_order = Spree::Order.new(:currency => current_currency)
+
+          if options[:create_order_if_necessary] and (@current_order.nil? or @current_order.completed?)
+            @current_order = Spree::Order.new(currency: current_currency)
             @current_order.user ||= try_spree_current_user
             # See issue #3346 for reasons why this line is here
             @current_order.created_by ||= try_spree_current_user
