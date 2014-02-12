@@ -29,7 +29,7 @@ module Spree
       end
 
       def display_shipment(shipment)
-        "Shipment ##{shipment.number}<br>#{shipment.display_cost}".html_safe
+        "#{Spree.t(:shipment)} ##{shipment.number}<br>#{shipment.display_cost}".html_safe
       end
     end
   end
