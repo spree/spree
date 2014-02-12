@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <%= render :partial => "adjustment", :collection => @order.all_adjustments.order("created_at ASC") %>
+    <%= render :partial => "adjustment", :collection => @adjustments %>
     <tr>
       <td class="align-center" colspan='4'>
         <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), :method => :get %>&nbsp;
