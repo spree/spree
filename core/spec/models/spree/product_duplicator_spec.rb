@@ -29,7 +29,7 @@ module Spree
       end
 
       it "will set a unique permalink" do
-        expect(new_product.permalink).to eql "copy-of-product-number-4-3954"
+        expect(new_product.permalink).to include("copy-of-product-number")
       end
 
       it "will set an unique sku" do
