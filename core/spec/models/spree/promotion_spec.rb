@@ -122,6 +122,13 @@ describe Spree::Promotion do
       promotion.activate(@payload)
     end
 
+    # Regression test for #4270
+    it "does not perform actions against an order that is not eligible" do
+      promotion.stub :eligible? => false
+      @action1.should_not_receive(:perform).with(@payload)
+      promotion.activate(@payload)
+    end
+
     it "does activate if newer then order" do
       @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
