@@ -68,6 +68,7 @@ module Spree
     attr_accessor :use_billing
 
     before_create :link_by_email
+    before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
@@ -612,6 +613,37 @@ module Spree
       def set_currency
         self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
+  
+      # Updates the order's prices and all line items prices
+      def homogenize_line_item_currencies
+        begin
+          update! if update_line_item_currencies!
+        rescue
+          return false # flunk the validation
+        end
+      end
+                                                    
+      # Updates prices of order's line items
+      def update_line_item_currencies!
+        line_items.where('currency != ?', currency).each do |line_item|
+          update_line_item_price!(line_item)
+        end
+      end
+  
+      # Returns the price object from given item
+      def price_from_line_item(line_item)
+        line_item.variant.prices.where(currency: currency).first
+      end
+  
+      # Updates price from given line item
+      def update_line_item_price!(line_item)
+        price = price_from_line_item(line_item)
 
+        if price
+          line_item.update_attributes!(currency: price.currency, price: price.amount)
+        else
+          raise 'no price found for line item'
+        end
+      end
   end
 end
