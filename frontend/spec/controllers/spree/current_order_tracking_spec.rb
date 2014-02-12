@@ -19,7 +19,7 @@ describe 'current order tracking' do
   it 'automatically tracks who the order was created by' do
     controller.stub(:try_spree_current_user => user)
     get :index
-    controller.current_order(true).created_by.should == controller.try_spree_current_user
+    controller.current_order(create_order_if_necessary: true).created_by.should == controller.try_spree_current_user
   end
 
   context "current order creation" do
