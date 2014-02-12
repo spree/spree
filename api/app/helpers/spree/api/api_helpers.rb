@@ -40,7 +40,7 @@ module Spree
         # Permalinks presence is validated, but are really automatically generated
         # Therefore we shouldn't tell API clients that they MUST send one through
         # Do not require slugs, either
-        required_fields - ['permalink', 'slugs']
+        required_fields - ['permalink', 'slug']
       end
 
       @@product_attributes = [
