@@ -11,10 +11,10 @@
   <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
 </div>
 
-<% cache @taxon do %>
   <% unless params[:keywords].present? %>
     <div data-hook="taxon_children">
+    <% cache @taxon do %>
       <%= render :partial => 'taxon', :collection => @taxon.children %>
+    <% end %>
     </div>
-  <% end %>
 <% end %>
