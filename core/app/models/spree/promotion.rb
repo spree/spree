@@ -49,7 +49,10 @@ module Spree
         actions.each do |action|
           action.perform(payload)
         end
+
+        return true
       end
+      false
     end
 
     # called anytime order.update! happens
