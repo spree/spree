@@ -64,7 +64,7 @@ module Spree
 
         if result and discount.eligible
           order.update_totals
-          order.updater.persist_totals
+          order.persist_totals
           self.success = Spree.t(:coupon_code_applied)
         else
           # if the promotion was created after the order

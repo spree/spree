@@ -105,8 +105,8 @@ module Spree
               after_transition :to => :canceled, :do => :after_cancel
 
               after_transition :from => any - :cart, :to => any - [:confirm, :complete] do |order|
-                order.updater.update_totals
-                order.updater.persist_totals
+                order.update_totals
+                order.persist_totals
               end
             end
           end
