@@ -117,7 +117,7 @@ describe "Adjustments" do
         page.driver.browser.switch_to.alert.accept
       end
 
-      page.should have_content("Total: $170.00")
+      page.should have_content("TOTAL: $170.00")
     end
   end
 end
