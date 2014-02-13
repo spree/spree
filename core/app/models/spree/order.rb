@@ -75,6 +75,8 @@ module Spree
 
     make_permalink field: :number
 
+    delegate :update_totals, :persist_totals, :to => :updater
+
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
@@ -219,10 +221,6 @@ module Spree
 
     def update!
       updater.update
-    end
-
-    def update_totals
-      updater.update_totals
     end
 
     def clone_billing_address
@@ -440,8 +438,8 @@ module Spree
     def empty!
       line_items.destroy_all
       adjustments.destroy_all
-      updater.update_totals
-      updater.persist_totals
+      update_totals
+      persist_totals
     end
 
     def has_step?(step)
@@ -493,7 +491,7 @@ module Spree
       Spree::PromotionHandler::FreeShipping.new(self).activate
       shipments.each { |shipment| ItemAdjustments.new(shipment).update }
       updater.update_shipment_total
-      updater.persist_totals
+      persist_totals
     end
 
     # Clean shipments and make order back to address state
@@ -527,7 +525,7 @@ module Spree
     def set_shipments_cost
       shipments.each(&:update_amounts)
       updater.update_shipment_total
-      updater.persist_totals
+      persist_totals
     end
 
     def is_risky?
