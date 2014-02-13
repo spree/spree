@@ -18,7 +18,7 @@
 <% if products.any? %>
 <ul id="products" class="inline product-listing" data-hook>
   <% products.each do |product| %>
-    <% cache [@taxon, product] do %>
+    <% cache(@taxon.present? ? [@taxon, product] : product) do %>
       <% url = product_url(product, :taxon_id => @taxon.try(:id)) %>
       <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary", :name => "classes") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
         <div class="product-image">
