@@ -8,7 +8,9 @@
   <td class="align-center"><%= adjustment.display_amount.to_html %></td>
   <td class="align-center"><%= adjustment_state(adjustment) %></td>
   <td class='actions'>
-    <%= link_to_edit adjustment, :no_text => true %>
-    <%= link_to_delete adjustment, :no_text => true %>
+    <% if adjustment.open? %>
+      <%= link_to_edit adjustment, :no_text => true %>
+      <%= link_to_delete adjustment, :no_text => true %>
+    <% end %>
   </td>
 </tr>
