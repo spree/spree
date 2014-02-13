@@ -10,6 +10,8 @@ module Spree
 
     validates :name, presence: true
 
+    after_touch :touch_parent
+
     has_attached_file :icon,
       styles: { mini: '32x32>', normal: '128x128>' },
       default_style: :mini,
@@ -74,6 +76,12 @@ module Spree
     #  See #3390 for background.
     def child_index=(idx)
       move_to_child_with_index(parent, idx.to_i) unless self.new_record?
+    end
+
+    private
+
+    def touch_parent
+      parent.touch if parent
     end
   end
 end
