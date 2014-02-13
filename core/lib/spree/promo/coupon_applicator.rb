@@ -32,9 +32,12 @@ module Spree
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?
 
         event_name = "spree.checkout.coupon_code_added"
-        promotion.activate(:coupon_code => @order.coupon_code, :order => @order)
-        promo = @order.adjustments.includes(:originator).promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
-        determine_promotion_application_result(promo)
+        if promotion.activate(:coupon_code => @order.coupon_code, :order => @order)
+          promo = @order.adjustments.includes(:originator).promotion.detect { |p| p.originator.promotion.code == @order.coupon_code }
+          determine_promotion_application_result(promo)
+        else
+          return { :coupon_applied? => false, :error =>  Spree.t(:coupon_code_not_eligible) }
+        end
       end
 
       def promotion_expired
