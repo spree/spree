@@ -3,13 +3,30 @@ require 'spec_helper'
 describe "Adjustments" do
   stub_authorization!
 
-  before(:each) do
-    visit spree.admin_path
-    order = create(:completed_order_with_totals)
+  let!(:order) { create(:completed_order_with_totals) }
+  let!(:line_item) do
     line_item = order.line_items.first
     # so we can be sure of a determinate price in our assertions
     line_item.update_column(:price, 10)
-    adjustment = create(:tax_adjustment, :adjustable => line_item, :state => 'open', :order => order, :label => "VAT 5%")
+    line_item
+  end
+
+  let!(:tax_adjustment) do
+    create(:tax_adjustment,
+      :adjustable => line_item,
+      :state => 'closed',
+      :order => order,
+      :label => "VAT 5%")
+  end
+
+  let!(:adjustment) { order.adjustments.create!(label: 'Rebate', amount: 10) }
+
+  before(:each) do
+    # To ensure the order totals are correct
+    order.update_totals
+    order.persist_totals
+
+    visit spree.admin_path
     click_link "Orders"
     within_row(1) { click_icon :edit }
     click_link "Adjustments"
@@ -39,6 +56,7 @@ describe "Adjustments" do
         fill_in "adjustment_label", :with => "rebate"
         click_button "Continue"
         page.should have_content("successfully created!")
+        page.should have_content("Total: $160.00")
       end
     end
 
@@ -54,8 +72,9 @@ describe "Adjustments" do
   end
 
   context "admin editing an adjustment" do
+
     before(:each) do
-      within_row(1) { click_icon :edit }
+      within_row(2) { click_icon :edit }
     end
 
     context "successfully" do
@@ -65,7 +84,11 @@ describe "Adjustments" do
         click_button "Continue"
         page.should have_content("successfully updated!")
         page.should have_content("rebate 99")
-        page.should have_content("$99.00")
+        within(".adjustments") do
+          page.should have_content("$99.00")
+        end
+
+        page.should have_content("Total: $259.00")
       end
     end
 
@@ -77,6 +100,23 @@ describe "Adjustments" do
         page.should have_content("Label can't be blank")
         page.should have_content("Amount is not a number")
       end
+    end
+  end
+  
+  context "deleting an adjustment" do
+    it "should not be possible if adjustment is closed" do
+      within_row(1) do
+        page.should_not have_css('.icon-trash')
+      end
+    end
+
+    it "should update the total", :js => true do
+      within_row(2) do
+        click_icon(:trash)
+        page.driver.browser.switch_to.alert.accept
+      end
+
+      page.should have_content("Total: $160.00")
     end
   end
 end
