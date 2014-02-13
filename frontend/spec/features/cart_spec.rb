@@ -6,11 +6,6 @@ describe "Cart", inaccessible: true do
     page.should have_selector("li#link-to-cart a", :visible => true)
   end
 
-  it "hides cart icon on cart page" do
-    visit spree.cart_path
-    page.should_not have_selector("li#link-to-cart a")
-  end
-
   it "prevents double clicking the remove button on cart", :js => true do
     @product = create(:product, :name => "RoR Mug")
 
