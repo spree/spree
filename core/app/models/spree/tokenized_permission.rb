@@ -1,5 +1,5 @@
 module Spree
-  class TokenizedPermission < ActiveRecord::Base
+  class TokenizedPermission < Spree::Base
     belongs_to :permissable, polymorphic: true
   end
 end

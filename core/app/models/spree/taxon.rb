@@ -1,5 +1,5 @@
 module Spree
-  class Taxon < ActiveRecord::Base
+  class Taxon < Spree::Base
     acts_as_nested_set dependent: :destroy
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', touch: true, inverse_of: :taxons

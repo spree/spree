@@ -1,5 +1,5 @@
 module Spree
-  class Product < ActiveRecord::Base
+  class Product < Spree::Base
     cattr_accessor :search_scopes do
       []
     end

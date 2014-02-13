@@ -1,5 +1,5 @@
 module Spree
-  class StockLocation < ActiveRecord::Base
+  class StockLocation < Spree::Base
     has_many :stock_items, dependent: :delete_all
     has_many :stock_movements, through: :stock_items
 

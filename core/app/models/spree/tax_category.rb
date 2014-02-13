@@ -1,5 +1,5 @@
 module Spree
-  class TaxCategory < ActiveRecord::Base
+  class TaxCategory < Spree::Base
     acts_as_paranoid
     validates :name, presence: true, uniqueness: { scope: :deleted_at }
 

@@ -1,5 +1,5 @@
 module Spree
-  class Configuration < ActiveRecord::Base
+  class Configuration < Spree::Base
 
   end
 end

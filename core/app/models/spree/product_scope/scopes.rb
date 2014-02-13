@@ -1,5 +1,5 @@
 module Spree
-  class ProductScope < ActiveRecord::Base
+  class ProductScope < Spree::Base
     before_validation(:on => :create) do
       # Add default empty arguments so scope validates and errors aren't caused when previewing it
       if name && args = self.class.arguments_for_scope_name(name)
