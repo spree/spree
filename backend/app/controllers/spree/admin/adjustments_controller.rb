@@ -3,6 +3,10 @@ module Spree
     class AdjustmentsController < ResourceController
       belongs_to 'spree/order', :find_by => :number
       destroy.after :reload_order
+      destroy.after :update_totals
+      create.after :update_totals
+      update.after :update_totals
+
       skip_before_filter :load_resource, :only => [:toggle_state, :edit, :update, :destroy]
 
       def index
@@ -32,6 +36,11 @@ module Spree
 
       def reload_order
         @order.reload
+      end
+
+      def update_totals
+        @order.updater.update_adjustment_total
+        @order.persist_totals
       end
     end
   end
