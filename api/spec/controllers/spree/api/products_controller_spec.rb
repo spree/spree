@@ -298,14 +298,8 @@ module Spree
           response.status.should == 422
           json_response["error"].should == "Invalid resource. Please fix errors and try again."
           errors = json_response["errors"]
-<<<<<<< HEAD
           errors.delete("slug") # Don't care about this one.
           errors.keys.should =~ ["name", "price", "shipping_category_id"]
-=======
-          errors.keys.should include("name")
-          errors.keys.should include("price")
-          errors.keys.should include("shipping_category_id")
->>>>>>> Switch to using friendly_id for product permalink generation
         end
       end
 
