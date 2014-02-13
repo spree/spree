@@ -3,7 +3,7 @@ module Spree
     class OrdersController < Spree::Api::BaseController
       respond_to :json
 
-      before_filter :authorize_read!, :except => [:index, :search, :create]
+      before_filter :find_and_authorize!, :except => [:index, :search, :create]
 
       def index
         # should probably look at turning this into a CanCan step
@@ -19,33 +19,32 @@ module Spree
       def create
         nested_params[:line_items_attributes] = sanitize_line_items(nested_params[:line_items_attributes])
         @order = Order.build_from_api(current_api_user, nested_params)
-        respond_with(order, :default_template => :show, :status => 201)
+        respond_with(@order, :default_template => :show, :status => 201)
       end
 
       def update
-        find_order(true)
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
         # hence the use of the update_line_items method, defined within order_decorator.rb.
         line_items_params = sanitize_line_items(nested_params.delete("line_items_attributes"))
-        if order.update_attributes(nested_params)
-          order.update_line_items(line_items_params)
-          order.line_items.reload
-          order.update!
-          respond_with(order, :default_template => :show)
+        if @order.update_attributes(nested_params)
+          @order.update_line_items(line_items_params)
+          @order.line_items.reload
+          @order.update!
+          respond_with(@order, :default_template => :show)
         else
-          invalid_resource!(order)
+          invalid_resource!(@order)
         end
       end
 
       def cancel
-        order.cancel!
+        @order.cancel!
         render :show
       end
 
       def empty
-        order.empty!
-        order.update!
+        @order.empty!
+        @order.update!
         render :text => nil, :status => 200
       end
 
@@ -83,8 +82,9 @@ module Spree
         end
       end
 
-      def authorize_read!
-        authorize! :read, order
+      def find_and_authorize!
+        find_order(true)
+        authorize! :read, @order
       end
     end
   end
