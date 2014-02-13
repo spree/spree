@@ -47,6 +47,10 @@ module Spree
         can :update, Order do |order, token|
           order.user == user || order.token && token == order.token
         end
+        can [:create, :read], Address
+        can :update, Address do |address|
+          user.bill_address == address || user.ship_address == address
+        end
         can [:index, :read], Product
         can [:index, :read], ProductProperty
         can [:index, :read], Property
