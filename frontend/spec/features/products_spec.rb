@@ -45,12 +45,12 @@ describe "Visiting Products", inaccessible: true do
         end
       end
 
-      it "when adding a product to the cart" do
+      it "when adding a product to the cart", :js => true do
         visit spree.product_path(product)
         click_button "Add To Cart"
         click_link "Home"
         within(".cart-info") do
-          page.should have_content("руб19.99")
+          page.should have_content("РУБ19.99")
         end
       end
 
