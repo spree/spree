@@ -55,14 +55,6 @@ module Spree
         end
       end
 
-      def next
-        @order.next!
-        authorize! :update, @order, params[:order_token]
-        respond_with(@order, :default_template => 'spree/api/orders/show', :status => 200)
-        rescue StateMachine::InvalidTransition
-          respond_with(@order, :default_template => 'spree/api/orders/could_not_transition', :status => 422)
-      end
-
       private
 
         def object_params
