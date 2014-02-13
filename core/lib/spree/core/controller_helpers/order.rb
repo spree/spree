@@ -16,7 +16,7 @@ module Spree
           options[:lock] ||= false
           return @current_order if @current_order
           if session[:order_id]
-            current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).find_by(id: session[:order_id], currency: current_currency)
+            current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).where(id: session[:order_id], currency: current_currency).first!
             @current_order = current_order unless current_order.try(:completed?)
           end
 
