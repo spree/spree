@@ -12,6 +12,7 @@ end
 describe Spree::Product do
   context 'product instance' do
     let(:product) { create(:product) }
+    let(:variant) { create(:variant, :product => product) }
 
     context '#duplicate' do
       before do
@@ -211,7 +212,7 @@ describe Spree::Product do
       end
     end
 
-    # Regression test for #3737 
+    # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
       it "can retreive stock items" do

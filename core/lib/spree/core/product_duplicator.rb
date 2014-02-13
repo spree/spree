@@ -30,6 +30,7 @@ module Spree
         new_product.updated_at = nil
         new_product.product_properties = reset_properties
         new_product.master = duplicate_master
+        new_product.variants = product.variants.map { |variant| duplicate_variant variant }
       end
     end
 
@@ -42,6 +43,14 @@ module Spree
         new_master.price = master.price
         new_master.currency = master.currency
       end
+    end
+
+    def duplicate_variant(variant)
+      new_variant = variant.dup
+      new_variant.sku = "COPY OF #{new_variant.sku}"
+      new_variant.deleted_at = nil
+      new_variant.option_values = variant.option_values.map { |option_value| option_value.dup}
+      new_variant
     end
 
     def duplicate_image(image)
