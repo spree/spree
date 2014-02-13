@@ -20,14 +20,4 @@ describe 'current order tracking' do
     get :index
     controller.current_order(create_order_if_necessary: true).created_by.should == controller.try_spree_current_user
   end
-
-  context "current order creation" do
-    before { controller.stub(:try_spree_current_user => user) }
-
-    it "doesn't create a new order out of the blue" do
-      expect {
-        spree_get :index
-      }.not_to change { Spree::Order.count }
-    end
-  end
 end
