@@ -3,9 +3,6 @@ module Spree
     class TaxRatesController < ResourceController
       before_filter :load_data
 
-      update.after :update_after
-      create.after :create_after
-
       private
 
       def load_data
