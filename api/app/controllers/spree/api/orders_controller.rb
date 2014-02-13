@@ -71,7 +71,7 @@ module Spree
       end
 
       def find_order(lock = false)
-        @order = Spree::Order.lock(lock).find_by!(number: params[:id])
+        @order = Spree::Order.lock(lock).find_by_number!(params[:id])
         authorize! :update, @order, params[:order_token]
       end
 
