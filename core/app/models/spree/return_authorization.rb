@@ -1,5 +1,5 @@
 module Spree
-  class ReturnAuthorization < ActiveRecord::Base
+  class ReturnAuthorization < Spree::Base
     belongs_to :order, class_name: 'Spree::Order'
 
     has_many :inventory_units

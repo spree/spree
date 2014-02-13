@@ -1,7 +1,7 @@
 require 'ostruct'
 
 module Spree
-  class Shipment < ActiveRecord::Base
+  class Shipment < Spree::Base
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'

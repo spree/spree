@@ -1,5 +1,5 @@
 module Spree
-  class ZoneMember < ActiveRecord::Base
+  class ZoneMember < Spree::Base
     belongs_to :zone, class_name: 'Spree::Zone', counter_cache: true
     belongs_to :zoneable, polymorphic: true
 

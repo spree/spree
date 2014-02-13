@@ -1,5 +1,5 @@
 module Spree
-  class PaymentCaptureEvent < ActiveRecord::Base
+  class PaymentCaptureEvent < Spree::Base
     belongs_to :payment, class_name: 'Spree::Payment'
 
     def display_amount

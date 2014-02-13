@@ -1,5 +1,5 @@
 module Spree
-  class Taxonomy < ActiveRecord::Base
+  class Taxonomy < Spree::Base
     validates :name, presence: true
 
     has_many :taxons, inverse_of: :taxonomy

@@ -1,5 +1,5 @@
 module Spree
-  class Payment < ActiveRecord::Base
+  class Payment < Spree::Base
     include Spree::Payment::Processing
 
     IDENTIFIER_CHARS = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze

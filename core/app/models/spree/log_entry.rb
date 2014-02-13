@@ -1,5 +1,5 @@
 module Spree
-  class LogEntry < ActiveRecord::Base
+  class LogEntry < Spree::Base
     belongs_to :source, polymorphic: true
 
     # Fix for #1767

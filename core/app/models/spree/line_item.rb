@@ -1,5 +1,5 @@
 module Spree
-  class LineItem < ActiveRecord::Base
+  class LineItem < Spree::Base
     before_validation :adjust_quantity
     belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
