@@ -16,7 +16,8 @@ describe "Adjustments" do
       :adjustable => line_item,
       :state => 'closed',
       :order => order,
-      :label => "VAT 5%")
+      :label => "VAT 5%",
+      :amount => 10)
   end
 
   let!(:adjustment) { order.adjustments.create!(label: 'Rebate', amount: 10) }
@@ -36,7 +37,7 @@ describe "Adjustments" do
     it "should display the correct values for existing order adjustments" do
       within_row(1) do
         column_text(2).should == "VAT 5%"
-        column_text(3).should == "$1.00"
+        column_text(3).should == "$10.00"
       end
     end
 
@@ -56,7 +57,7 @@ describe "Adjustments" do
         fill_in "adjustment_label", :with => "rebate"
         click_button "Continue"
         page.should have_content("successfully created!")
-        page.should have_content("Total: $160.00")
+        page.should have_content("Total: $180.00")
       end
     end
 
@@ -116,7 +117,7 @@ describe "Adjustments" do
         page.driver.browser.switch_to.alert.accept
       end
 
-      page.should have_content("Total: $160.00")
+      page.should have_content("Total: $170.00")
     end
   end
 end
