@@ -120,8 +120,7 @@ module Spree
         images = json_response["images"]
         image = images.first
 
-        expect(image).to have_attributes [:urls]
-        expect(image['urls']).to have_attributes [:mini, :small, :product, :large]
+        expect(image).to have_attributes [:mini_url, :small_url, :product_url, :large_url]
       end
 
     end
