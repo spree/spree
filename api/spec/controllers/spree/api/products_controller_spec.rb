@@ -96,6 +96,13 @@ module Spree
           response.body.should =~ /^callback\(.*\)$/
           response.header['Content-Type'].should include('application/javascript')
         end
+
+        # Regression test for #4332
+        it "does not escape quotes" do
+          api_get :index, {:callback => 'callback'}
+          response.body.should =~ /^callback\({"count":1,"total_count":1/
+          response.header['Content-Type'].should include('application/javascript')
+        end
       end
 
       it "can search for products" do
