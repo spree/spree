@@ -46,9 +46,8 @@ require 'spree/testing_support/order_walkthrough'
 
 require 'paperclip/matchers'
 
-require 'capybara/accessible'
-
 if ENV['WEBDRIVER'] == 'accessible'
+  require 'capybara/accessible'
   Capybara.javascript_driver = :accessible
 else
   require 'capybara/poltergeist'
