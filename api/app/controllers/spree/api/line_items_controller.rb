@@ -25,7 +25,8 @@ module Spree
 
       def destroy
         @line_item = order.line_items.find(params[:id])
-        @line_item.destroy
+        variant = Spree::Variant.find(@line_item.variant_id)
+        @order.contents.remove(variant, @line_item.quantity)
         respond_with(@line_item, status: 204)
       end
 
