@@ -276,7 +276,7 @@ describe Spree::Payment do
           it "stores the uncaptured amount on the payment" do
             payment.capture!(6000)
             expect(payment.uncaptured_amount).to eq(40) # 100 - 60 = 40
-          end 
+          end
         end
 
         context "if unsuccessful" do
