@@ -8,12 +8,12 @@ describe Spree::Gateway::BogusSimple do
   describe "#capture" do
     it "returns success with the right response code" do
       response = subject.capture(123, '12345', {})
-      response.message.should =~ /success/
+      expect(response.message).to include("success")
     end
 
     it "returns failure with the wrong response code" do
       response = subject.capture(123, 'wrong', {})
-      response.message.should =~ /failure/
+      expect(response.message).to include("failure")
     end
   end
 
