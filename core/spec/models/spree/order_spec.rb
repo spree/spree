@@ -269,9 +269,11 @@ describe Spree::Order do
       # and it's irrelevant to this test
       order.stub :has_available_shipment
       Spree::OrderMailer.stub_chain :confirm_email, :deliver
-      adjustments = double
+      adjustments = [double]
       order.should_receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to receive(:update_all).with(state: 'closed')
+      adjustments.each do |adj|
+	expect(adj).to receive(:close)
+      end
       order.finalize!
     end
 
