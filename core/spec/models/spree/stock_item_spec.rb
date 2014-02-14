@@ -151,6 +151,10 @@ describe Spree::StockItem do
   end
 
   describe "#after_save" do
+    before do
+      subject.variant.update_column(:updated_at, 1.day.ago)
+    end
+
     context "binary_inventory_cache is set to false (default)" do
       context "in_stock? changes" do
         it "touches its variant" do
