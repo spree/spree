@@ -102,13 +102,15 @@ module Spree
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
 
-      #line_item are empty when user empties cart
+      # line_item are empty when user empties cart
       if line_items.empty? || round_money(order.payment_total) < round_money(order.total)
         if payments.present?
           if payments.last.state == 'failed'
             order.payment_state = 'failed'
           elsif payments.last.state == 'completed'
             order.payment_state = 'credit_owed'
+          else
+            order.payment_state = 'balance_due'
           end
         else
           order.payment_state = 'balance_due'
