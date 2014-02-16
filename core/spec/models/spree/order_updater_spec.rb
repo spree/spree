@@ -101,6 +101,13 @@ module Spree
         order.payment_state.should == 'credit_owed'
       end
 
+      it "is balance due with one pending payment" do
+        order.stub_chain(:payments, :last, :state).and_return('pending')
+
+        updater.update_payment_state
+        order.payment_state.should == 'balance_due'
+      end
+
       it "is balance due with no line items" do
         order.stub_chain(:line_items, :empty?).and_return(true)
 
