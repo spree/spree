@@ -12,7 +12,7 @@
         </strong></td>
           <td class="align-center">
             <span class="<%= @order.payments.failed.count > 0 ? 'state void' : 'state complete' %>">
-              <%= link_to "#{pluralize(@order.payments.failed.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
+              <%= link_to "#{Spree.t 'payments_count', count: @order.payments.failed.count, default: pluralize(@order.payments.failed.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
             </span>
         </td>
       </tr>
