@@ -88,6 +88,15 @@ module Spree
     preference :smtp_username, :string
     preference :smtp_password, :string
 
+    # S3 preferences
+    preference :s3_access_key, :string
+    preference :s3_bucket, :string
+    preference :s3_headers, :string, default: "{\"Cache-Control\":\"max-age=31557600\"}"
+    preference :s3_host_alias, :string
+    preference :s3_protocol, :string
+    preference :s3_secret, :string
+    preference :use_s3, :boolean, default: false # Use S3 for images rather than the file system
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base
