@@ -160,11 +160,6 @@ module Spree
     # times use has put product in cart, not completed orders)
     #
     # there is alternative faster and more elegant solution, it has small drawback though,
-    # it doesn stack with other scopes :/
-    #
-    # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
-    # :order => 'COALESCE(cnt, 0) DESC'
-    add_search_scope :descend_by_popularity do
       joins(:master).
       order(%Q{
            COALESCE((
@@ -201,19 +196,28 @@ module Spree
       group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
-    def self.distinct_by_product_ids(sort_order=nil)
-      if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-        sort_column = sort_order.split(" ").first
-        # Don't allow sort_column, a variable coming from params,
-        # to be anything but a column in the database
-        if column_names.include?(sort_column)
-          distinct_fields = ["id", sort_column].compact.join(",")
-          select("DISTINCT ON(#{distinct_fields}) spree_products.*")
-        else
-          all
-        end
+    def self.distinct_by_product_ids(sort_order = nil)
+      sort_column = sort_order.split(" ").first
+
+      # Postgres will complain when using ordering by expressions not present in
+      # SELECT DISTINCT. e.g.
+      #
+      #   PG::InvalidColumnReference: ERROR:  for SELECT DISTINCT, ORDER BY
+      #   expressions must appear in select list. e.g.
+      #
+      #   SELECT  DISTINCT "spree_products".* FROM "spree_products" LEFT OUTER JOIN
+      #   "spree_variants" ON "spree_variants"."product_id" = "spree_products"."id" AND "spree_variants"."is_master" = 't'
+      #   AND "spree_variants"."deleted_at" IS NULL LEFT OUTER JOIN "spree_prices" ON
+      #   "spree_prices"."variant_id" = "spree_variants"."id" AND "spree_prices"."currency" = 'USD'
+      #   AND "spree_prices"."deleted_at" IS NULL WHERE "spree_products"."deleted_at" IS NULL AND ('t'='t') 
+      #   ORDER BY "spree_prices"."amount" ASC LIMIT 10 OFFSET 0
+      #
+      # Don't allow sort_column, a variable coming from params,
+      # to be anything but a column in the database
+      if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' && !column_names.include?(sort_column)
+        all
       else
-        select("DISTINCT spree_products.*")
+        distinct
       end
     end
 
