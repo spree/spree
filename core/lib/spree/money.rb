@@ -199,7 +199,7 @@ module Spree
       if options[:html]
         # 1) prevent blank, breaking spaces
         # 2) prevent escaping of HTML character entities
-        output = output.gsub(" ", "&nbsp;").html_safe
+        output = output.sub(" ", "&nbsp;").html_safe
       end
       output
     end
