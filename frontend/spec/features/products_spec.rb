@@ -78,10 +78,14 @@ describe "Visiting Products", inaccessible: true do
     let!(:variant) { product.variants.create!(:price => 5.59) }
 
     before do
+      Spree::Config[:display_currency] = true
       # Need to have two images to trigger the error
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
       product.images.create!(:attachment => image)
       product.images.create!(:attachment => image)
+
+      product.option_types << option_value.option_type
+      variant.option_values << option_value
     end
 
     it "should be displayed" do
@@ -89,12 +93,18 @@ describe "Visiting Products", inaccessible: true do
     end
 
     it "displays price of first variant listed", js: true do
-      product.option_types << option_value.option_type
-      variant.option_values << option_value
-
       click_link product.name
       within("#product-price") do
         expect(page).to have_content variant.price
+      end
+    end
+
+    # Regression test for #4342
+    it "does not fail when display_currency is true" do
+      Spree::Config[:display_currency] = true
+      click_link product.name
+      within("#cart-form") do
+        find('input[type=radio]')
       end
     end
   end
