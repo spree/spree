@@ -22,8 +22,7 @@ This stays as closely to the original spree frontend markup as possible. Helper 
 [![home page](http://i.imgur.com/HutvtWF.png)](http://i.imgur.com/mis2XHY.png)
 [![home page](http://i.imgur.com/pKUbyMu.png)](http://i.imgur.com/hF0IjWI.png)
 [![home page](http://i.imgur.com/bkYVBfh.png)](http://i.imgur.com/U06g9Jn.png)
-[![home page](http://i.imgur.com/pKUbyMu.png)](http://i.imgur.com/Ozh5vQr.png)
-[![home page](http://i.imgur.com/uHwYVPA.png)](http://i.imgur.com/U06g9Jn.png)
+[![home page](http://i.imgur.com/uHwYVPA.png)](http://i.imgur.com/Ozh5vQr.png)
 
 
 Installation
