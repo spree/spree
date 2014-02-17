@@ -75,7 +75,7 @@ describe 'Payments' do
       end
 
       click_icon :void
-      find('#payment_status').text.should == 'PENDING'
+      find('#payment_status').text.should == 'BALANCE DUE'
       page.should have_content('Payment Updated')
 
       within_row(1) do
