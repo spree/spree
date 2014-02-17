@@ -7,7 +7,7 @@
         <ul>
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
-              <%= radio_button_tag "variant_id", variant.id, index == 0, 'data-price' => display_price(variant) %>
+              <%= radio_button_tag "variant_id", variant.id, index == 0, 'data-price' => Spree::Money.new(variant.price, with_currency: true).to_s  %>
               <%= label_tag "variant_id" do %>
                 <span class="variant-description">
                   <%= variant_options variant %>
