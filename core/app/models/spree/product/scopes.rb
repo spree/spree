@@ -214,7 +214,7 @@ module Spree
           distinct_fields = ["id", sort_column].compact.join(",")
           select("DISTINCT ON(#{distinct_fields}) spree_products.*")
         else
-          scoped
+          all
         end
       else
         select("DISTINCT spree_products.*")
