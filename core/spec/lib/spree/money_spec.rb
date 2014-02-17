@@ -148,6 +148,13 @@ describe Spree::Money do
       # The HTML'ified version of "10.00 €"
       money.to_html.should == "10.00&nbsp;&#x20AC;"
     end
+
+    it "formats as HTML with currency" do
+      Spree::Config[:display_currency] = true
+      money = Spree::Money.new(10)
+      # The HTML'ified version of "10.00 €"
+      money.to_html.should == "10.00&nbsp;&#x20AC; <span class=\"currency\">EUR</span>"
+    end
   end
 
   describe "#as_json" do
