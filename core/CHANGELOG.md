@@ -10,3 +10,7 @@
     The existing functionality can also be used by including the [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) gem.
 
     John Hawthorn
+
+*   refactor the api to use a general importer in `lib/spree/importer/order.rb`
+
+    Peter Berkenbosch
