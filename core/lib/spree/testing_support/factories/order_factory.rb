@@ -55,17 +55,17 @@ FactoryGirl.define do
             end
             order.reload
           end
-        end
-
-        factory :shipped_order do
-          after(:create) do |order|
-            order.shipments.each do |shipment|
-              shipment.inventory_units.each { |u| u.update_column('state', 'shipped') }
-              shipment.update_column('state', 'shipped')
+          factory :shipped_order do
+            after(:create) do |order|
+              order.shipments.each do |shipment|
+                shipment.inventory_units.each { |u| u.update_column('state', 'shipped') }
+                shipment.update_column('state', 'shipped')
+              end
+              order.reload
             end
-            order.reload
           end
         end
+
       end
     end
   end
