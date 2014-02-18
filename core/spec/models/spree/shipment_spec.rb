@@ -229,12 +229,29 @@ describe Spree::Shipment do
     end
 
     context "when shipment state changes to shipped" do
+      before do
+        shipment.stub(:send_shipped_email)
+        shipment.stub(:update_order_shipment_state)
+      end
+
       it "should call after_ship" do
         shipment.state = 'pending'
         shipment.should_receive :after_ship
         shipment.stub determine_state: 'shipped'
         shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
+      end
+
+      # Regression test for #4347
+      context "with adjustments" do
+        before do
+          shipment.adjustments << Spree::Adjustment.create(:label => "Label", :amount => 5)
+        end
+
+        it "transitions to shipped" do
+          shipment.update_column(:state, "ready")
+          lambda { shipment.ship! }.should_not raise_error
+        end
       end
     end
   end
