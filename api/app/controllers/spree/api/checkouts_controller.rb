@@ -10,7 +10,7 @@ module Spree
 
       def create
         authorize! :create, Order
-        @order = Order.build_from_api(current_api_user, nested_params)
+        @order = Spree::Core::Importer::Order.import(current_api_user, nested_params)
         respond_with(@order, default_template: 'spree/api/orders/show', status: 201)
       end
 

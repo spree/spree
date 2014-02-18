@@ -22,7 +22,7 @@ module Spree
 
       def create
         authorize! :create, Order
-        @order = Order.build_from_api(current_api_user, order_params)
+        @order = Spree::Core::Importer::Order.import(current_api_user, order_params)
         respond_with(@order, default_template: :show, status: 201)
       end
 
