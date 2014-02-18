@@ -8,14 +8,13 @@ describe 'products', :caching => true do
   before do
     # warm up the cache
     visit spree.root_path
-    assert_written_to_cache("views/spree/products/all")
-    assert_written_to_cache("views/spree/products/#{product.id}")
+    assert_written_to_cache("views/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
+    assert_written_to_cache("views/USD/spree/products/#{product.id}-#{product.updated_at.utc.to_s(:number)}")
     assert_written_to_cache("views/spree/taxonomies/#{taxonomy.id}")
-    assert_written_to_cache("views/taxons/#{taxon.updated_at.to_i}")
+    assert_written_to_cache("views/taxons/#{taxon.updated_at.utc.to_s(:number)}")
 
     clear_cache_events
   end
-
 
   it "reads from cache upon a second viewing" do
     visit spree.root_path
@@ -25,15 +24,15 @@ describe 'products', :caching => true do
   it "busts the cache when a product is updated" do
     product.update_column(:updated_at, 1.day.from_now)
     visit spree.root_path
-    assert_written_to_cache("views/spree/products/all")
-    assert_written_to_cache("views/spree/products/#{product.id}")
+    assert_written_to_cache("views/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
+    assert_written_to_cache("views/USD/spree/products/#{product.id}-#{product.updated_at.utc.to_s(:number)}")
     expect(cache_writes.count).to eq(2)
   end
 
   it "busts the cache when a product is deleted" do
     product.destroy
     visit spree.root_path
-    assert_written_to_cache("views/spree/products/all")
+    assert_written_to_cache("views/USD/spree/products/all--0")
     expect(cache_writes.count).to eq(1)
   end
 end

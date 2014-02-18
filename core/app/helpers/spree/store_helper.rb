@@ -8,7 +8,7 @@ module Spree
     end
 
     def cache_key_for_taxons
-      max_updated_at = @taxons.maximum(:updated_at).to_i
+      max_updated_at = @taxons.maximum(:updated_at).to_s(:number)
       parts = [@taxon.try(:id), max_updated_at].compact.join("-")
       "taxons/#{parts}"
     end
