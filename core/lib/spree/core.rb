@@ -72,3 +72,5 @@ require 'spree/core/controller_helpers'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/ssl'
 require 'spree/core/controller_helpers/search'
+
+require 'spree/core/importer'

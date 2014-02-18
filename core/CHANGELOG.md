@@ -7,3 +7,7 @@
     be added to the user class to make better use of that feature.
 
     Washington Luiz
+
+*   refactor the api to use a general importer in `lib/spree/importer/order.rb`
+
+    Peter Berkenbosch
