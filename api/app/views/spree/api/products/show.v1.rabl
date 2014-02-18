@@ -1,5 +1,5 @@
 object @product
-cache @product
+cache [current_currency, @product]
 attributes *product_attributes
 node(:display_price) { |p| p.display_price.to_s }
 node(:has_variants) { |p| p.has_variants? }

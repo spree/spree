@@ -94,10 +94,6 @@ module Spree
           state_callback(:before)
         end
 
-        def current_currency
-          Spree::Config[:currency]
-        end
-
         def ip_address
           ''
         end

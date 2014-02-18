@@ -54,8 +54,8 @@ module Spree
     end
 
     def cache_key_for_products
-      max_updated_at = @products.maximum(:updated_at).to_i
-      "spree/products/all-#{params[:page]}-#{max_updated_at}"
+      max_updated_at = @products.maximum(:updated_at).to_s(:number)
+      "#{current_currency}/spree/products/all-#{params[:page]}-#{max_updated_at}"
     end
   end
 end
