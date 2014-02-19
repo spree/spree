@@ -329,15 +329,8 @@ module Spree
 
       deliver_order_confirmation_email unless confirmation_delivered?
 
+      touch :completed_at
       consider_risk
-    end
-
-    def consider_risk
-      if is_risky? && !approved?
-        self.considered_risky!
-      else
-        touch :completed_at
-      end
     end
 
     def deliver_order_confirmation_email
@@ -534,16 +527,34 @@ module Spree
 
     def approved_by(user)
       self.transaction do
+        approve!
         self.update_columns(
           approver_id: user.id,
           approved_at: Time.now,
         )
-        self.approve!
       end
     end
 
     def approved?
       !!self.approved_at
+    end
+
+    def can_approve?
+      !approved?
+    end
+
+    def consider_risk
+      if is_risky? && !approved?
+        considered_risky!
+      end
+    end
+
+    def considered_risky!
+      update_column(:considered_risky, true)
+    end
+
+    def approve!
+      update_column(:considered_risky, false)
     end
 
     private
