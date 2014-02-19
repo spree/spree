@@ -333,12 +333,6 @@ module Spree
       consider_risk
     end
 
-    def consider_risk
-      if is_risky? && !approved?
-        self.update_column(:considered_risky, true)
-      end
-    end
-
     def deliver_order_confirmation_email
       OrderMailer.confirm_email(self.id).deliver
       update_column(:confirmation_delivered, true)
@@ -523,7 +517,6 @@ module Spree
     end
 
     def is_risky?
-      return true
       self.payments.where(%{
         (avs_response IS NOT NULL and avs_response != '' and avs_response != 'D' and avs_response != 'M') or
         (cvv_response_code IS NOT NULL and cvv_response_code != 'M') or
@@ -534,6 +527,7 @@ module Spree
 
     def approved_by(user)
       self.transaction do
+        approve!
         self.update_columns(
           approver_id: user.id,
           approved_at: Time.now,
@@ -548,6 +542,20 @@ module Spree
 
     def can_approve?
       !approved?
+    end
+
+    def consider_risk
+      if is_risky? && !approved?
+        considered_risky!
+      end
+    end
+
+    def considered_risky!
+      update_column(:considered_risky, true)
+    end
+
+    def approve!
+      update_column(:considered_risky, false)
     end
 
     private
