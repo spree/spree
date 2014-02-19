@@ -329,14 +329,13 @@ module Spree
 
       deliver_order_confirmation_email unless confirmation_delivered?
 
+      touch :completed_at
       consider_risk
     end
 
     def consider_risk
       if is_risky? && !approved?
-        self.considered_risky!
-      else
-        touch :completed_at
+        self.update_column(:considered_risky, true)
       end
     end
 
@@ -524,6 +523,7 @@ module Spree
     end
 
     def is_risky?
+      return true
       self.payments.where(%{
         (avs_response IS NOT NULL and avs_response != '' and avs_response != 'D' and avs_response != 'M') or
         (cvv_response_code IS NOT NULL and cvv_response_code != 'M') or
@@ -537,13 +537,17 @@ module Spree
         self.update_columns(
           approver_id: user.id,
           approved_at: Time.now,
+          considered_risky: false,
         )
-        self.approve!
       end
     end
 
     def approved?
       !!self.approved_at
+    end
+
+    def can_approve?
+      !approved?
     end
 
     private
