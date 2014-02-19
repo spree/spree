@@ -33,13 +33,6 @@ describe 'Order Risk Analysis' do
       expect(page).to have_content 'Approved at'
       expect(page).to have_content 'Status: complete'
     end
-
-    it "can be canceled and resumed" do
-      click_button('cancel')
-      expect(page).to have_content 'Status: canceled'
-      click_button('resume')
-      expect(page).to have_content 'Status: considered risky'
-    end
   end
   
   context "the order is not considered risky" do
