@@ -34,5 +34,3 @@ gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
 gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
 gem 'versioncake', github: 'bwillis/versioncake'
 gem 'friendly_id', github: 'norman/friendly_id'
-
-gem 'rails', github: 'rails/rails'
