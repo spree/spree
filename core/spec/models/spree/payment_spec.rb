@@ -91,7 +91,7 @@ describe Spree::Payment do
     describe "#process!" do
       it "should purchase if with auto_capture" do
         payment.payment_method.should_receive(:auto_capture?).and_return(true)
-        payment.should_receive(:capture!)
+        payment.should_receive(:purchase!)
         payment.process!
       end
 

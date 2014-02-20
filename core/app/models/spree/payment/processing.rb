@@ -7,7 +7,7 @@ module Spree
             if !processing?
               if payment_method.supports?(source)
                 if payment_method.auto_capture?
-                  capture!
+                  purchase!
                 else
                   authorize!
                 end
