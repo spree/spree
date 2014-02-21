@@ -14,22 +14,16 @@
         <div class="field">
           <%= label_tag nil, Spree.t(:guest_checkout) %>
           <ul>
-            <% if @order.completed? %>
-              <li>
-                <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-              </li>
-            <% else %>
-              <% guest = @order.user.nil? %>
-              <li>
-                <%= radio_button_tag :guest_checkout, true, guest %>
-                <%= label_tag :guest_checkout_true, Spree.t(:say_yes) %>
-              </li>
-              <li>
-                <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
-                <%= label_tag :guest_checkout_false, Spree.t(:say_no) %>
-              </li>
-              <%= hidden_field_tag :user_id, @order.user_id %>
-            <% end %>
+            <% guest = @order.user.nil? %>
+            <li>
+              <%= radio_button_tag :guest_checkout, true, guest %>
+              <%= label_tag :guest_checkout_true, Spree.t(:say_yes) %>
+            </li>
+            <li>
+              <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
+              <%= label_tag :guest_checkout_false, Spree.t(:say_no) %>
+            </li>
+            <%= hidden_field_tag :user_id, @order.user_id %>
           </ul>
         </div>
       </div>
