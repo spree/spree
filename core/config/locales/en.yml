@@ -144,6 +144,12 @@ en:
       spree/line_item:
         one: Line Item
         other: Line Items
+      spree/option_type:
+        one: Option Type
+        other: Option Types
+      spree/option_value:
+        one: Option Value
+        other: Option Values
       spree/order:
         one: Order
         other: Orders
