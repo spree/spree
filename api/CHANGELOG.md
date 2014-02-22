@@ -1,5 +1,15 @@
 ## Spree 2.2.0 (unreleased) ##
 
+*   Api requires authentication by default now
+    
+    Peter Berkenbosch
+
+*   Improve products_controller #create and #update for better support to create
+    and update variants, option types and option values.
+    See #4172 and #4240
+
+    Bruno Buccolo / Washington Luiz / John Dyer
+
 *   ApiHelpers attributes can now be extended without overriding instance
     methods. By using the same approach in PermittedAttributes. e.g.
 

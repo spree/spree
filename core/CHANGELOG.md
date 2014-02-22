@@ -62,7 +62,7 @@ See issues #4021 and #4298 for further information.
 
     Washington Luiz
 
-* Added tax_category to variants, to allow for different variants of a product to have different tax categories. #3946
+*   Added tax_category to variants, to allow for different variants of a product to have different tax categories. #3946
 
     Peter Rhoades
 
@@ -77,3 +77,25 @@ See issues #4021 and #4298 for further information.
 *   Simplified OrderPopulator to take only a variant_id and a quantity, rather than a confusing hash of product/variant ids.
 
     Ryan Bigg  
+
+*   lib/ is no longer in autoload paths. You'll have to manually require what
+    you need in that dir. See https://github.com/spree/spree/commit/b3834a1542e350034c1e9c5a8b13c00b2415e63b
+
+*   Introduce Spree::Core::MailMethod to manage mail settings at each delivery.
+    This allows changes to mail settings to be applied without a server restart.
+    See https://github.com/spree/spree/commit/95df1aa7832912f73e34302d31b0abbbea3af709
+
+    John Hawthorn
+
+*   Create Spree::Migrations to warn about missing migrations. See #4080
+
+    Washington Luiz
+
+*   Variant#in_stock? now no longer takes a quantity. Call can_supply? instead.
+    see #4279
+
+    Ryan Bigg / Peter Berkenbosch
+
+*   PromotionRule#activator_id column has been renamed to promotion_id.
+
+    Ryan Bigg
