@@ -49,6 +49,15 @@ module Spree
         json_response["per_page"].should == Kaminari.config.default_per_page
       end
 
+      context "product has more than one price" do
+        before { product.master.prices.create currency: "EUR", amount: 22 }
+
+        it "returns distinct products only" do
+          api_get :index
+          expect(assigns(:products).map(&:id).uniq).to eq assigns(:products).map(&:id)
+        end
+      end
+
       it "retrieves a list of products by ids string" do
         second_product = create(:product)
         api_get :index, :ids => [product.id, second_product.id].join(",")
