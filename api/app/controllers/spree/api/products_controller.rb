@@ -9,7 +9,7 @@ module Spree
           @products = product_scope.ransack(params[:q]).result
         end
 
-        @products = @products.page(params[:page]).per(params[:per_page])
+        @products = @products.distinct.page(params[:page]).per(params[:per_page])
       end
 
       def show
