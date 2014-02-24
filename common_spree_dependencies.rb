@@ -21,7 +21,7 @@ group :test do
   gem 'capybara', '~> 2.1'
   gem 'database_cleaner', '~> 1.0.1'
   gem 'email_spec', '1.4.0'
-  gem 'factory_girl_rails', '~> 4.2.1'
+  gem 'factory_girl_rails', '~> 4.4.0'
   gem 'launchy'
   gem 'pry'
   gem 'rspec-rails', '~> 2.14.0'
