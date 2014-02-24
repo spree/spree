@@ -36,7 +36,7 @@
             <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
           </div>
 
-          <% if @product.master.in_stock? %>
+          <% if @product.master.can_supply? %>
             <link itemprop="availability" href="http://schema.org/InStock" />
           <% end %> 
         </div>
