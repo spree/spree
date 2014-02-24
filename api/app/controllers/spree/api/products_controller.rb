@@ -14,13 +14,7 @@ module Spree
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
         render json: @products, 
                each_serializer: Spree::ProductSerializer,
-               meta: {
-                count: @products.count,
-                total_count: @products.total_count,
-                current_page: params[:page] ? params[:page].to_i : 1,
-                per_page: params[:per_page] || Kaminari.config.default_per_page,
-                pages: @products.num_pages
-               }
+               meta: pagination(@products)
       end
 
       def show
