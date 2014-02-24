@@ -92,7 +92,7 @@ describe Spree::Api::ShipmentsController do
         Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
         # For the shipment notification email
         Spree::Config[:mails_from] = "spree@example.com"
-
+        shipment.adjustments << Spree::Adjustment.create!({:label => "discount", :amount => -3.99})
         shipment.update!(shipment.order)
         shipment.state.should == "ready"
         Spree::ShippingRate.any_instance.stub(:cost => 5)
