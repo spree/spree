@@ -124,26 +124,6 @@ compile '/user/*' do
   layout 'user/default'
 end
 
-compile '/integration/' do
-  filter :pretty_urls
-  filter :fenced_code_blocks
-  filter :erb
-  # Converts ``` codeblocks into Kramdown-friendly ~~~
-  filter :parse_info_boxes
-  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
-  layout 'integration'
-end
-
-compile '/integration/*' do
-  filter :pretty_urls
-  filter :fenced_code_blocks
-  filter :erb
-  # Converts ``` codeblocks into Kramdown-friendly ~~~
-  filter :parse_info_boxes
-  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
-  layout 'integration/default'
-end
-
 compile '/release_notes/' do
   filter :pretty_urls
   filter :fenced_code_blocks
@@ -244,34 +224,6 @@ end
 
 route '/user/inventory/*/' do
   location = item.identifier.gsub('/inventory/', '/')
-  location.chop + ".html"
-end
-
-###############################################################
-# Flatten the integration guide stuff into single directory
-###############################################################
-route '/integration/tutorials/*/' do
-  location = item.identifier.gsub('/tutorials/', '/')
-  location.chop + ".html"
-end
-
-route '/integration/messages/*/' do
-  location = item.identifier.gsub('/messages/', '/')
-  location.chop + ".html"
-end
-
-route '/integration/endpoints/*/' do
-  location = item.identifier.gsub('/endpoints/', '/')
-  location.chop + ".html"
-end
-
-route '/integration/customization/*/' do
-  location = item.identifier.gsub('/customization/', '/')
-  location.chop + ".html"
-end
-
-route '/integration/api/*/' do
-  location = item.identifier.gsub('/api/', '/')
   location.chop + ".html"
 end
 
