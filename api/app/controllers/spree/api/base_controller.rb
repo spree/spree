@@ -2,13 +2,10 @@ require_dependency 'spree/api/controller_setup'
 
 module Spree
   module Api
-    class BaseController < ActionController::Metal
-      include ActionController::StrongParameters
+    class BaseController < ActionController::Base
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
       include Spree::Core::ControllerHelpers::StrongParameters
-      include ::ActionController::Head
-      include ::ActionController::ConditionalGet
 
       attr_accessor :current_api_user
 
@@ -17,7 +14,7 @@ module Spree
       before_filter :authenticate_user
       after_filter  :set_jsonp_format
 
-      rescue_from Exception, :with => :error_during_processing
+      # rescue_from Exception, :with => :error_during_processing
       rescue_from CanCan::AccessDenied, :with => :unauthorized
       rescue_from ActiveRecord::RecordNotFound, :with => :not_found
 
@@ -85,7 +82,7 @@ module Spree
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", :status => 401 and return
+        render json: { error: I18n.t(:unauthorized, :scope => "spree.api") }, status: 401
       end
 
       def error_during_processing(exception)
@@ -101,7 +98,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", :status => 404 and return
+        render json: { error: I18n.t(:resource_not_found, :scope => "spree.api") }, status: 404
       end
 
       def current_ability
@@ -114,8 +111,10 @@ module Spree
       helper_method :current_currency
 
       def invalid_resource!(resource)
-        @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render json: {
+          error: I18n.t(:invalid_resource, :scope => "spree.api"),
+          errors: resource.errors
+        }, status: 422 
       end
 
       def api_key

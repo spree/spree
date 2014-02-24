@@ -12,6 +12,15 @@ module Spree
         @products = @products.distinct.page(params[:page]).per(params[:per_page])
         expires_in 15.minutes, :public => true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
+        render json: @products, 
+               each_serializer: Spree::ProductSerializer,
+               meta: {
+                count: @products.count,
+                total_count: @products.total_count,
+                current_page: params[:page] ? params[:page].to_i : 1,
+                per_page: params[:per_page] || Kaminari.config.default_per_page,
+                pages: @products.num_pages
+               }
       end
 
       def show
@@ -19,6 +28,7 @@ module Spree
         expires_in 15.minutes, :public => true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
         headers['Surrogate-Key'] = "product_id=1"
+        render json: @product
       end
 
       # Takes besides the products attributes either an array of variants or
@@ -75,7 +85,7 @@ module Spree
             @product.option_types << option_type unless @product.option_types.include?(option_type)
           end
 
-          respond_with(@product, :status => 201, :default_template => :show)
+          render json: @product, status: 201
         else
           invalid_resource!(@product)
         end
@@ -105,7 +115,7 @@ module Spree
             @product.option_types << option_type unless @product.option_types.include?(option_type)
           end
 
-          respond_with(@product.reload, :status => 200, :default_template => :show)
+          render json: @product.reload, status: 200
         else
           invalid_resource!(@product)
         end
@@ -116,7 +126,7 @@ module Spree
         authorize! :destroy, @product
         @product.update_attribute(:deleted_at, Time.now)
         @product.variants_including_master.update_all(:deleted_at => Time.now)
-        respond_with(@product, :status => 204)
+        render nothing: true, status: 204
       end
 
       private

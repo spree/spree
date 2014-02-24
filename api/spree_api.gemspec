@@ -16,6 +16,6 @@ Gem::Specification.new do |gem|
   gem.version       = version
 
   gem.add_dependency 'spree_core', version
-  gem.add_dependency 'rabl', '0.9.3'
+  gem.add_dependency 'active_model_serializers', '0.9.0.alpha1'
   gem.add_dependency 'versioncake', '~> 1.2.0'
 end
