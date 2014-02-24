@@ -327,9 +327,10 @@ module Spree
       save
       updater.run_hooks
 
+      touch :completed_at
+
       deliver_order_confirmation_email unless confirmation_delivered?
 
-      touch :completed_at
       consider_risk
     end
 
