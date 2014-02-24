@@ -21,13 +21,13 @@ module Spree
 
         it "gets an address" do
           api_get :show, :id => @address.id, :order_id => @order.number
-          json_response['address1'].should eq @address.address1
+          json_response['address']['address1'].should eq @address.address1
         end
 
         it "updates an address" do
           api_put :update, :id => @address.id, :order_id => @order.number,
                            :address => { :address1 => "123 Test Lane" }
-          json_response['address1'].should eq '123 Test Lane'
+          json_response['address']['address1'].should eq '123 Test Lane'
         end
 
         it "receives the errors object if address is invalid" do
@@ -66,14 +66,13 @@ module Spree
 
         it "gets an address" do
           api_get :show, :id => @address.id
-          json_response['address1'].should eq @address.address1
+          json_response['address']['address1'].should eq @address.address1
         end
       end
 
       context "on an address that does not belong to this user" do
         it "cannot update address information" do
           api_put :update, :id => @address.id, :address => { :address1 => "123 Test Lane" }
-          json_response['address1'].should be_nil
           assert_unauthorized!
         end
       end

@@ -5,14 +5,14 @@ module Spree
 
       def show
         load_and_authorize_address(:read)
-        respond_with(@address)
+        render json: @address
       end
 
       def update
         load_and_authorize_address(:update)
 
         if @address.update_attributes(address_params)
-          respond_with(@address, :default_template => :show)
+          render json: @address
         else
           invalid_resource!(@address)
         end
