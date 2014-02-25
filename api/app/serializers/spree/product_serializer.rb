@@ -6,7 +6,7 @@ module Spree
 
     has_many :variants, embed: :objects, serializer: Spree::SmallVariantSerializer
     has_many :product_properties, embed: :objects, root: :properties
-    has_many :option_types
+    has_many :option_types, serializer: Spree::SmallOptionTypeSerializer
 
     def has_variants
       object.has_variants?
