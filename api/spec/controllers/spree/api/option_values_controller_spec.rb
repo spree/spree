@@ -26,8 +26,8 @@ module Spree
 
       it "can retreive a list of all option values" do
         api_get :index
-        json_response.count.should == 2
-        json_response.first.should have_attributes(attributes)
+        json_response['option_values'].count.should == 2
+        json_response['option_values'].first.should have_attributes(attributes)
       end
     end
 
@@ -36,27 +36,27 @@ module Spree
 
       it "can list all option values" do
         api_get :index
-        json_response.count.should == 1
-        json_response.first.should have_attributes(attributes)
+        json_response['option_values'].count.should == 1
+        json_response['option_values'].first.should have_attributes(attributes)
       end
 
       it "can search for an option type" do
         create(:option_value, :name => "buzz")
         api_get :index, :q => { :name_cont => option_value.name }
-        json_response.count.should == 1
-        json_response.first.should have_attributes(attributes)
+        json_response['option_values'].count.should == 1
+        json_response['option_values'].first.should have_attributes(attributes)
       end
 
       it "can retreive a list of option types" do
         option_value_1 = create(:option_value, :option_type => option_type)
         option_value_2 = create(:option_value, :option_type => option_type)
         api_get :index, :ids => [option_value.id, option_value_1.id]
-        json_response.count.should == 2
+        json_response['option_values'].count.should == 2
       end
 
       it "can list a single option value" do
         api_get :show, :id => option_value.id
-        json_response.should have_attributes(attributes)
+        json_response['option_value'].should have_attributes(attributes)
       end
 
       it "cannot create a new option value" do
@@ -91,7 +91,7 @@ module Spree
                             :name => "Option Value",
                             :presentation => "Option Value"
                           }
-          json_response.should have_attributes(attributes)
+          json_response['option_value'].should have_attributes(attributes)
           response.status.should == 201
         end
 
