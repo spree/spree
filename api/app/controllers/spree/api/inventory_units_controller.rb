@@ -4,7 +4,7 @@ module Spree
       before_filter :prepare_event, :only => :update
 
       def show
-        @inventory_unit = inventory_unit
+        render json: inventory_unit
       end
 
       def update
@@ -13,7 +13,7 @@ module Spree
         inventory_unit.transaction do
           if inventory_unit.update_attributes(inventory_unit_params)
             fire
-            render :show, :status => 200
+            render json: inventory_unit
           else
             invalid_resource!(inventory_unit)
           end

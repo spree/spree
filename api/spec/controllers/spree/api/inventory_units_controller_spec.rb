@@ -14,13 +14,13 @@ module Spree
 
       it "gets an inventory unit" do
         api_get :show, :id => @inventory_unit.id
-        json_response['state'].should eq @inventory_unit.state
+        json_response['inventory_unit']['state'].should eq @inventory_unit.state
       end
 
       it "updates an inventory unit (only shipment is accessable by default)" do
         api_put :update, :id => @inventory_unit.id,
                          :inventory_unit => { :shipment => nil }
-        json_response['shipment_id'].should be_nil
+        json_response['inventory_unit']['shipment_id'].should be_nil
       end
 
       context 'fires state event' do
@@ -29,7 +29,7 @@ module Spree
                            :fire => 'ship',
                            :inventory_unit => { :shipment => nil }
 
-          json_response['state'].should eq 'shipped'
+          json_response['inventory_unit']['state'].should eq 'shipped'
         end
 
         it 'and returns exception if cannot fire' do
