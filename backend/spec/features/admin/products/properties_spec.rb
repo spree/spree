@@ -8,20 +8,34 @@ describe "Properties" do
     click_link "Products"
   end
 
-  context "listing product properties" do
-    it "should list the existing product properties" do
+  context "Property index" do
+    before do
       create(:property, :name => 'shirt size', :presentation => 'size')
       create(:property, :name => 'shirt fit', :presentation => 'fit')
-
       click_link "Properties"
-      within_row(1) do
-        column_text(1).should == "shirt size"
-        column_text(2).should == "size"
-      end
+    end
 
-      within_row(2) do
-        column_text(1).should == "shirt fit"
-        column_text(2).should == "fit"
+    context "listing product properties" do
+      it "should list the existing product properties" do
+        within_row(1) do
+          column_text(1).should == "shirt size"
+          column_text(2).should == "size"
+        end
+
+        within_row(2) do
+          column_text(1).should == "shirt fit"
+          column_text(2).should == "fit"
+        end
+      end
+    end
+
+    context "searching properties" do
+      it 'should list properties matching search query', :js => true do
+        fill_in "q_name_cont", :with => "size"
+        click_icon :search
+
+        page.should have_content("shirt size")
+        page.should_not have_content("shirt fit")
       end
     end
   end
