@@ -6,7 +6,10 @@ $(document).ready(function () {
       placeholder: Spree.translations.option_type_placeholder,
       multiple: true,
       initSelection: function (element, callback) {
-        return $.getJSON(Spree.routes.option_type_search + '?ids=' + (element.val()), null, function (data) {
+        var url = Spree.url(Spree.routes.option_type_search, {
+          ids: element.val()
+        });
+        return $.getJSON(url, null, function (data) {
           return callback(data);
         });
       },
