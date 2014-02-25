@@ -2,14 +2,10 @@ module Spree
   class AddressSerializer < ActiveModel::Serializer
     attributes :firstname, :lastname, :full_name, :address1, :address2, :city,
       :zipcode, :phone, :company, :alternative_phone, :country_id, :state_id,
-      :state_name
+      :state_name, :country, :state
 
-    def country
-      object.country
-    end
+    has_one :country, serializer: Spree::SmallCountrySerializer
+    has_one :state
 
-    def state
-      object.state
-    end
   end
 end
