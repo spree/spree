@@ -10,6 +10,35 @@
 
 <%= render 'spree/admin/shared/product_sub_menu' %>
 
+<% content_for :table_filter_title do %>
+  <%= Spree.t(:search) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_property_sidebar">
+
+    <%= search_form_for [:admin, @search] do |f| %>
+
+        <%- locals = {:f => f} %>
+
+        <div data-hook="admin_property_index_search">
+          <div class="alpha eight columns">
+            <div class="field">
+              <%= f.label :name_cont, Spree.t(:name) %>
+              <%= f.text_field :name_cont, :size => 15 %>
+            </div>
+          </div>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="form-buttons actions filter-actions" data-hook="admin_pproperties_index_search_buttons">
+          <%= button Spree.t(:search), 'icon-search' %>
+        </div>
+    <% end %>
+  </div>
+<% end %>
+
 <div id="new_property"></div>
 
 <% if @properties.any? %>
@@ -46,3 +75,4 @@
   </div>
 <% end %>
 
+<%= paginate @collection %>
