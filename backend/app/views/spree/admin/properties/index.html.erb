@@ -15,13 +15,13 @@
 <% end %>
 
 <% content_for :table_filter do %>
-  <div data-hook="admin_products_sidebar">
+  <div data-hook="admin_property_sidebar">
 
     <%= search_form_for [:admin, @search] do |f| %>
 
         <%- locals = {:f => f} %>
 
-        <div data-hook="admin_products_index_search">
+        <div data-hook="admin_property_index_search">
           <div class="alpha eight columns">
             <div class="field">
               <%= f.label :name_cont, Spree.t(:name) %>
@@ -32,7 +32,7 @@
 
         <div class="clear"></div>
 
-        <div class="form-buttons actions filter-actions" data-hook="admin_products_index_search_buttons">
+        <div class="form-buttons actions filter-actions" data-hook="admin_pproperties_index_search_buttons">
           <%= button Spree.t(:search), 'icon-search' %>
         </div>
     <% end %>
