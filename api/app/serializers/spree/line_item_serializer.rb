@@ -1,0 +1,10 @@
+module Spree
+  class LineItemSerializer < ActiveModel::Serializer
+    attributes :id, :variant_id, :quantity, :price, 
+               :single_display_amount, :total, :display_total,
+               :display_amount
+
+    has_one :variant, serializer: Spree::SmallVariantSerializer
+
+  end
+end

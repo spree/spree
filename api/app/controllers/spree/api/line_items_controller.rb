@@ -7,7 +7,7 @@ module Spree
         @line_item = order.contents.add(variant, params[:line_item][:quantity])
         if @line_item.save
           @order.ensure_updated_shipments
-          respond_with(@line_item, status: 201, default_template: :show)
+          render json: @line_item, status: 201
         else
           invalid_resource!(@line_item)
         end
@@ -18,7 +18,7 @@ module Spree
         if @order.contents.update_cart(line_items_attributes)
           @order.ensure_updated_shipments
           @line_item.reload
-          respond_with(@line_item, default_template: :show)
+          render json: @line_item
         else
           invalid_resource!(@line_item)
         end
@@ -29,7 +29,7 @@ module Spree
         variant = Spree::Variant.find(@line_item.variant_id)
         @order.contents.remove(variant, @line_item.quantity)
         @order.ensure_updated_shipments
-        respond_with(@line_item, status: 204)
+        render nothing: true, status: 204
       end
 
       private
