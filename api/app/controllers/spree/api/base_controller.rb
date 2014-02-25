@@ -74,7 +74,9 @@ module Spree
         return true if @current_api_user = try_spree_current_user || !Spree::Api::Config[:requires_authentication]
 
         if api_key.blank?
-          render "spree/api/errors/must_specify_api_key", :status => 401 and return
+          render json: {
+            error: I18n.t(:must_specify_api_key, :scope => "spree.api")
+          }, status: 401
         end
       end
 
@@ -82,7 +84,9 @@ module Spree
         unless @current_api_user
           if requires_authentication? || api_key.present?
             unless @current_api_user = Spree.user_class.find_by(spree_api_key: api_key.to_s)
-              render "spree/api/errors/invalid_api_key", :status => 401 and return
+              render json: {
+                error: I18n.t(:invalid_api_key, :key => api_key, :scope => "spree.api")
+                }, status: 401
             end
           else
             # An anonymous user
