@@ -10,19 +10,19 @@ module Spree
       def create
         authorize! :create, Image
         @image = Image.create(image_params)
-        respond_with(@image, :status => 201, :default_template => :show)
+        render json: @image, status: 201
       end
 
       def update
         @image = Image.accessible_by(current_ability, :update).find(params[:id])
         @image.update_attributes(image_params)
-        respond_with(@image, :default_template => :show)
+        render json: @image
       end
 
       def destroy
         @image = Image.accessible_by(current_ability, :destroy).find(params[:id])
         @image.destroy
-        respond_with(@image, :status => 204)
+        render nothing: true, :status => 204
       end
 
       private
