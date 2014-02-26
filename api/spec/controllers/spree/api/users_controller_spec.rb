@@ -18,8 +18,7 @@ module Spree
 
       it "can get own details" do
         api_get :show, :id => user.id
-
-        json_response['email'].should eq user.email
+        json_response['user']['email'].should eq user.email
       end
 
       it "cannot get other users details" do
@@ -29,13 +28,14 @@ module Spree
       end
 
       it "can learn how to create a new user" do
+        pending "I don't think anybody uses this anymore"
         api_get :new
         json_response["attributes"].should == attributes.map(&:to_s)
       end
 
       it "can create a new user" do
         api_post :create, :user => { :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123' }
-        json_response['email'].should eq 'new@example.com'
+        json_response['user']['email'].should eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
@@ -48,7 +48,7 @@ module Spree
 
       it "can update own details" do
         api_put :update, :id => user.id, :user => { :email => "mine@example.com" }
-        json_response['email'].should eq 'mine@example.com'
+        json_response['user']['email'].should eq 'mine@example.com'
       end
 
       it "cannot update other users details" do
@@ -71,7 +71,7 @@ module Spree
         api_get :index
 
         Spree.user_class.count.should eq 3
-        json_response['count'].should eq 1
+        json_response['meta']['count'].should eq 1
         json_response['users'].size.should eq 1
       end
     end
@@ -86,28 +86,28 @@ module Spree
 
         api_get :index
         Spree.user_class.count.should eq 2
-        json_response['count'].should eq 2
+        json_response['meta']['count'].should eq 2
         json_response['users'].size.should eq 2
       end
 
       it 'can control the page size through a parameter' do
         2.times { create(:user) }
         api_get :index, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        json_response['meta']['count'].should == 1
+        json_response['meta']['current_page'].should == 1
+        json_response['meta']['pages'].should == 2
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:user, :email => 'brian@spreecommerce.com')
         api_get :index, :q => { :email_cont => 'brian' }
-        json_response['count'].should == 1
+        json_response['meta']['count'].should == 1
         json_response['users'].first['email'].should eq expected_result.email
       end
 
       it "can create" do
         api_post :create, :user => { :email => "new@example.com", :password => 'spree123', :password_confirmation => 'spree123' }
-        json_response.should have_attributes(attributes)
+        json_response['user'].should have_attributes(attributes)
         response.status.should == 201
       end
 
