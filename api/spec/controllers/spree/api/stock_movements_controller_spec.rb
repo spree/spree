@@ -55,21 +55,21 @@ module Spree
       it 'can control the page size through a parameter' do
         create(:stock_movement, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, per_page: 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        json_response['meta']['count'].should == 1
+        json_response['meta']['current_page'].should == 1
+        json_response['meta']['pages'].should == 2
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, q: { quantity_eq: '10' }
-        json_response['count'].should == 1
+        json_response['meta']['count'].should == 1
       end
 
       it 'gets a stock movement' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_movement.to_param
-        json_response.should have_attributes(attributes)
-        json_response['stock_item_id'].should eq stock_movement.stock_item_id
+        json_response['stock_movement'].should have_attributes(attributes)
+        json_response['stock_movement']['stock_item_id'].should eq stock_movement.stock_item_id
       end
 
       it 'can create a new stock movement' do
@@ -82,7 +82,7 @@ module Spree
 
         api_post :create, params
         response.status.should == 201
-        json_response.should have_attributes(attributes)
+        json_response['stock_movement'].should have_attributes(attributes)
       end
     end
   end
