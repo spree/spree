@@ -5,6 +5,7 @@ module Spree
                :display_amount
 
     has_one :variant, serializer: Spree::SmallVariantSerializer
+    has_many :adjustments
 
   end
 end

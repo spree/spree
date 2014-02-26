@@ -4,8 +4,25 @@ module Spree
                :stock_location_name, :manifest
 
     has_many :shipping_rates
-    has_one :selected_shipping_rate
     has_many :shipping_methods
+
+    has_one :selected_shipping_rate
+
+    def manifest
+      object.manifest.map do |item|
+        { 
+          variant: {
+            id: item.variant.id,
+            name: item.variant.name,
+            sku: item.variant.sku,
+            price: item.variant.price
+          },
+          states: item.states,
+          line_item: item.line_item,
+          quantity: item.quantity
+        }  
+      end
+    end
     
     def order_id
       object.order.number
@@ -13,10 +30,6 @@ module Spree
 
     def stock_location_name
       object.stock_location.name
-    end
-
-    def manifest
-      object.manifest
     end
   end
 end

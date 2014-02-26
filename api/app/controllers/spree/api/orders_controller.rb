@@ -17,33 +17,33 @@ module Spree
         find_order
         authorize! :update, @order, params[:token]
         @order.cancel!
-        render :show
+        render json: @order
       end
 
       def create
         authorize! :create, Order
         @order = Order.build_from_api(current_api_user, order_params)
-        respond_with(@order, default_template: :show, status: 201)
+        render json: @order, status: 201
       end
 
       def empty
         find_order
         @order.empty!
         @order.update!
-        render text: nil, status: 200
+        render nothing: true, status: 200
       end
 
       def index
         authorize! :index, Order
         @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@orders)
+        render json: @orders, meta: pagination(@orders)
       end
 
       def show
         find_order
         method = "before_#{@order.state}"
         send(method) if respond_to?(method, true)
-        respond_with(@order)
+        render json: @order
       end
 
       def update
@@ -58,7 +58,7 @@ module Spree
 
           @order.line_items.reload
           @order.update!
-          respond_with(@order, default_template: :show)
+          render json: @order
         else
           invalid_resource!(@order)
         end
@@ -67,8 +67,9 @@ module Spree
       def mine
         if current_api_user.persisted?
           @orders = current_api_user.orders.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          render json: @orders, meta: pagination(@orders)
         else
-          render "spree/api/errors/unauthorized", status: :unauthorized
+          unauthorized
         end
       end
 
