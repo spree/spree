@@ -15,7 +15,7 @@ module Spree
         @shipment.refresh_rates
         @shipment.save!
 
-        respond_with(@shipment.reload, default_template: :show)
+        render json: @shipment
       end
 
       def update
@@ -34,7 +34,7 @@ module Spree
         end
 
         @shipment.reload
-        respond_with(@shipment, default_template: :show)
+        render json: @shipment
       end
 
       def ready
@@ -42,17 +42,20 @@ module Spree
           if @shipment.can_ready?
             @shipment.ready!
           else
-            render 'spree/api/shipments/cannot_ready_shipment', status: 422 and return
+            render json: {
+              error: I18n.t(:cannot_ready, :scope => "spree.api.shipment")
+              }, status: 422
+            return
           end
         end
-        respond_with(@shipment, default_template: :show)
+        render json: @shipment
       end
 
       def ship
         unless @shipment.shipped?
           @shipment.ship!
         end
-        respond_with(@shipment, default_template: :show)
+        render json: @shipment
       end
 
       def add
@@ -61,7 +64,7 @@ module Spree
 
         @order.contents.add(variant, quantity, nil, @shipment)
 
-        respond_with(@shipment, default_template: :show)
+        render json: @shipment
       end
 
       def remove
@@ -70,7 +73,7 @@ module Spree
 
         @order.contents.remove(variant, quantity, @shipment)
         @shipment.reload if @shipment.persisted?
-        respond_with(@shipment, default_template: :show)
+        render json: @shipment
       end
 
       private
