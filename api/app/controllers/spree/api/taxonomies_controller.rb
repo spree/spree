@@ -6,24 +6,38 @@ module Spree
         @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
-        respond_with(@taxonomies)
+        render json: @taxonomies, meta: pagination(@taxonomies)
       end
 
       def show
         @taxonomy = Taxonomy.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@taxonomy)
+        if params[:set]
+          render json: @taxonomy, 
+                 serializer: Spree::NestedTaxonomySerializer,
+                 root: :taxonomy
+        else
+          render json: @taxonomy
+        end
       end
 
       # Because JSTree wants parameters in a *slightly* different format
       def jstree
-        show
+        @taxonomy = Taxonomy.accessible_by(current_ability, :read).find(params[:id])
+        render json: {
+          data: @taxonomy.root.name,
+          attr: { 
+            id: @taxonomy.root.id,
+            name: @taxonomy.root.name
+          },
+          state: "closed"
+        }
       end
 
       def create
         authorize! :create, Taxonomy
         @taxonomy = Taxonomy.new(taxonomy_params)
         if @taxonomy.save
-          respond_with(@taxonomy, :status => 201, :default_template => :show)
+          render json: @taxonomy, status: 201
         else
           invalid_resource!(@taxonomy)
         end
@@ -32,7 +46,7 @@ module Spree
       def update
         authorize! :update, taxonomy
         if taxonomy.update_attributes(taxonomy_params)
-          respond_with(taxonomy, :status => 200, :default_template => :show)
+          render json: taxonomy, status: 200
         else
           invalid_resource!(taxonomy)
         end
@@ -41,7 +55,7 @@ module Spree
       def destroy
         authorize! :destroy, taxonomy
         taxonomy.destroy
-        respond_with(taxonomy, :status => 204)
+        render nothing: true, status: 204
       end
 
       private
