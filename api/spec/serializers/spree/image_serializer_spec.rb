@@ -4,7 +4,6 @@ describe Spree::ImageSerializer do
   let(:image) { Spree::Image.new }
   it "contains image URLs" do
     s = Spree::ImageSerializer.new(image)
-    binding.pry
     json = JSON.parse(s.to_json)
     json['image']['urls'].should == {
       "mini" => "48x48>",
