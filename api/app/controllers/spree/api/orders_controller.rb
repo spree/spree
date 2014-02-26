@@ -78,7 +78,11 @@ module Spree
         @order.coupon_code = params[:coupon_code]
         @handler = PromotionHandler::Coupon.new(@order).apply
         status = @handler.successful? ? 200 : 422
-        render "spree/api/promotions/handler", :status => status
+        render json: {
+          success: @handler.success,
+          error: @handler.error,
+          successful: @handler.successful?
+        }, status: status
       end
 
       private

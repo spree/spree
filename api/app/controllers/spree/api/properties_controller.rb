@@ -14,11 +14,11 @@ module Spree
         end
 
         @properties = @properties.page(params[:page]).per(params[:per_page])
-        respond_with(@properties)
+        render json: @properties, meta: pagination(@properties)
       end
 
       def show
-        respond_with(@property)
+        render json: @property
       end
 
       def new
@@ -28,7 +28,7 @@ module Spree
         authorize! :create, Property
         @property = Spree::Property.new(property_params)
         if @property.save
-          respond_with(@property, status: 201, default_template: :show)
+          render json: @property, status: 201
         else
           invalid_resource!(@property)
         end
@@ -38,7 +38,7 @@ module Spree
         if @property
           authorize! :update, @property
           @property.update_attributes(property_params)
-          respond_with(@property, status: 200, default_template: :show)
+          render json: @property
         else
           invalid_resource!(@property)
         end
@@ -48,7 +48,7 @@ module Spree
         if @property
           authorize! :destroy, @property
           @property.destroy
-          respond_with(@property, status: 204)
+          render nothing: true, status: 204
         else
           invalid_resource!(@property)
         end
