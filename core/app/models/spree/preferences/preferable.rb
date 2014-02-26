@@ -71,15 +71,6 @@ module Spree::Preferences::Preferable
     ]
   end
 
-  def preference_cache_key(name)
-    return unless id
-    [rails_cache_id, self.class.name, name, id].compact.join('::').underscore
-  end
-
-  def rails_cache_id
-    ENV['RAILS_CACHE_ID']
-  end
-
   def save_pending_preferences
     return unless @pending_preferences
     @pending_preferences.each do |name, value|
@@ -88,20 +79,10 @@ module Spree::Preferences::Preferable
   end
 
   def clear_preferences
-    preferences.keys.each {|pref| preference_store.delete preference_cache_key(pref)}
+    preferences.keys.each {|pref| preference_store.delete pref}
   end
 
   private
-
-  def add_pending_preference(name, value)
-    @pending_preferences ||= {}
-    @pending_preferences[name] = value
-  end
-
-  def get_pending_preference(name)
-    return unless @pending_preferences
-    @pending_preferences[name]
-  end
 
   def convert_preference_value(value, type)
     case type
@@ -129,8 +110,11 @@ module Spree::Preferences::Preferable
   end
 
   def preference_store
-    Spree::Preferences::Store.instance
+    if id
+      Spree::Preferences::ScopedStore.new(self.class.name.underscore, id)
+    else
+      @pending_preferences ||= {}
+    end
   end
-
 end
 
