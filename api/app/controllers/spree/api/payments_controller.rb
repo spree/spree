@@ -70,7 +70,7 @@ module Spree
               scope: 'spree.api.payment'
             )
           }, status: 422
-          
+
         else
           perform_payment_action(:credit, params[:amount])
         end

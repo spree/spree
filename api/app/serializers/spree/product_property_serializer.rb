@@ -1,5 +1,5 @@
 module Spree
   class ProductPropertySerializer < ActiveModel::Serializer
-    attributes :value, :property_name
+    attributes :id, :product_id, :property_id, :value, :property_name
   end
 end
