@@ -70,7 +70,7 @@ module Spree
 
     it "can view a state" do
       api_get :show, :id => state.id
-      json_response.should have_attributes(attributes)
+      json_response['state'].should have_attributes(attributes)
     end
   end
 end

@@ -9,19 +9,17 @@ module Spree
         @states = scope.ransack(params[:q]).result.
                     includes(:country).order('name ASC')
 
-        if params[:page] || params[:per_page]
-          @states = @states.page(params[:page]).per(params[:per_page])
-        end
+        @states = @states.page(params[:page]).per(params[:per_page])
 
         state = @states.last
         if stale?(state)
-          respond_with(@states)
+          render json: @states, meta: pagination(@states)
         end
       end
 
       def show
         @state = scope.find(params[:id])
-        respond_with(@state)
+        render json: @state
       end
 
       private
