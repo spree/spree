@@ -35,12 +35,6 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
-      initializer "spree.mail.settings" do |app|
-        ActionMailer::Base.add_delivery_method :spree, Spree::Core::MailMethod
-        Spree::Core::MailSettings.init
-        Mail.register_interceptor(Spree::Core::MailInterceptor)
-      end
-
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|
