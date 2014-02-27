@@ -46,9 +46,6 @@ end
 
 require 'spree/core/version'
 
-require 'spree/core/mail_interceptor'
-require 'spree/core/mail_method'
-require 'spree/core/mail_settings'
 require 'spree/core/environment_extension'
 require 'spree/core/environment/calculators'
 require 'spree/core/environment'
