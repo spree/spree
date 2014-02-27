@@ -6,7 +6,9 @@ module Spree
         @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
-        render json: @taxonomies, meta: pagination(@taxonomies)
+        render json: @taxonomies,
+               meta: pagination(@taxonomies),
+               each_serializer: Spree::NestedTaxonomySerializer
       end
 
       def show
