@@ -15,8 +15,8 @@ module Spree
     has_many :shipments
     has_many :credit_cards
 
-    has_one :bill_address, serializer: Spree::AddressSerializer
-    has_one :ship_address, serializer: Spree::AddressSerializer
+    has_one :bill_address
+    has_one :ship_address
 
     def total_quantity
       object.line_items.sum(:quantity)
