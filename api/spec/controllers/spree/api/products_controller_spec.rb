@@ -33,7 +33,9 @@ module Spree
     context "as a normal user" do
       it "retrieves a list of products" do
         api_get :index
-        json_response["products"].first.should have_attributes(show_attributes)
+        first_product = json_response["products"].first
+        first_product.should have_attributes(show_attributes)
+        first_product["master"].should_not be_blank
         json_response["meta"]["total_count"].should == 1
         json_response["meta"]["current_page"].should == 1
         json_response["meta"]["pages"].should == 1
