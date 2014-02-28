@@ -1,0 +1,37 @@
+<div data-hook="admin_user_form_fields" class="row">
+  <div class="alpha six columns">
+    <%= f.field_container :email do %>
+      <%= f.label :email, Spree.t(:email) %>
+      <%= f.email_field :email, :class => 'fullwidth' %>
+      <%= error_message_on :user, :email %>
+    <% end %>
+
+    <div data-hook="admin_user_form_roles" class="field">
+      <%= label_tag nil, Spree.t(:roles) %>
+      <ul>
+        <% @roles.each do |role| %>
+          <li>
+            <%= check_box_tag 'user[spree_role_ids][]', role.id, @user.spree_roles.include?(role), :id => "user_spree_role_#{role.name}" %>
+            <%= label_tag role.name %>
+          </li>
+        <% end %>
+      </ul>
+      <%= hidden_field_tag 'user[spree_role_ids][]', '' %>
+    </div>
+
+  </div>
+
+  <div class="omega six columns">
+    <%= f.field_container :password do %>
+      <%= f.label :password, Spree.t(:password) %>
+      <%= f.password_field :password, :class => 'fullwidth' %>
+      <%= f.error_message_on :password %>
+    <% end %>
+
+    <%= f.field_container :password do %>
+      <%= f.label :password_confirmation, Spree.t(:confirm_password) %>
+      <%= f.password_field :password_confirmation, :class => 'fullwidth' %>
+      <%= f.error_message_on :password_confirmation %>
+    <% end %>
+  </div>
+</div>
