@@ -37,6 +37,29 @@ module Spree
       stub_authentication!
     end
 
+    context "it doesn't exist the current_api_user" do
+
+      let!(:current_order) { create(:order) }
+      let(:current_api_user) { false }
+      let(:error) do
+        {
+          error: 'Invalid API key () specified.'
+        }
+      end
+
+      it 'When the token is not provided' do
+        api_get :show, :id => order.to_param
+        expect(response.body).to eq error.to_json
+        expect(response.status).to eq 401
+      end
+
+      it 'When the token is provided' do
+        request.headers["X-Spree-Order-Token"] = current_order.token
+        api_get :show, :id => current_order.to_param
+        expect(response.status).to eq 200
+      end
+    end
+
     it "cannot view all orders" do
       api_get :index
       assert_unauthorized!

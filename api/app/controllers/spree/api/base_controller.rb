@@ -72,6 +72,10 @@ module Spree
       end
 
       def authenticate_user
+        if api_key_type == 'order-token'
+          @current_api_user = Spree.user_class.new
+        end
+
         unless @current_api_user
           if requires_authentication? || api_key.present?
             unless @current_api_user = Spree.user_class.find_by(spree_api_key: api_key.to_s)
@@ -119,8 +123,21 @@ module Spree
       end
 
       def api_key
+        user_token || order_token
+      end
+
+      def api_key_type
+        user_token && 'user-token' || order_token && 'order-token'
+      end
+
+      def user_token
         request.headers["X-Spree-Token"] || params[:token]
       end
+
+      def order_token
+        request.headers["X-Spree-Order-Token"] || params[:order_token]
+      end
+
       helper_method :api_key
 
       def find_product(id)
@@ -150,3 +167,4 @@ module Spree
     end
   end
 end
+
