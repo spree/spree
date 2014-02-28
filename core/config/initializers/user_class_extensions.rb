@@ -1,6 +1,8 @@
 Spree::Core::Engine.config.to_prepare do
   if Spree.user_class
     Spree.user_class.class_eval do
+      include Spree::UserReporting
+      include Spree::UserApiAuthentication
       has_and_belongs_to_many :spree_roles,
                               :join_table => 'spree_roles_users',
                               :foreign_key => "user_id",
