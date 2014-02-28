@@ -11,3 +11,6 @@
 <% if can? :admin, Spree::Promotion %>
   <%= tab(:promotions, :url => spree.admin_promotions_path, :icon => 'icon-bullhorn') %>
 <% end %>
+<% if Spree.user_class && can?(:admin, Spree.user_class) %>
+  <%= tab(:users, :url => spree.admin_users_path, :icon => 'icon-user') %>
+<% end %>

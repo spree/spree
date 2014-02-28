@@ -1,0 +1,74 @@
+<% content_for :page_title do %>
+  <%= link_to "#{Spree.t(:"admin.user.items_purchased")} #{@user.email}", edit_admin_user_url(@user) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :items } %>
+<%= render :partial => 'spree/admin/users/user_page_actions' %>
+
+<fieldset data-hook="admin_user_items_purchased" class="alpha twelve columns">
+  <legend><%= Spree.t(:"admin.user.items_purchased") %></legend>
+
+  <%= paginate @orders %>
+
+  <% if @orders.any? %>
+    <%# TODO add search interface %>
+    <table class="stock-contents index" id="listing_items" data-hook="stock-contents">
+      <colgroup>
+        <col style="width: 10%;" />
+        <col style="width: 10%;" />
+        <col style="width: 30%;" />
+        <col style="width: 8%;" />
+        <col style="width: 8%;" />
+        <col style="width: 10%;" />
+        <col style="width: 14%;" />
+      </colgroup>
+
+      <thead>
+        <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
+        <th colspan=2><%= Spree.t(:description) %></th>
+        <th><%= I18n.t(:price, :scope => 'activerecord.attributes.spree/line_item') %></th>
+        <th><%= I18n.t(:quantity, :scope => 'activerecord.attributes.spree/line_item') %></th>
+        <th><%= Spree.t(:total) %></th>
+        <th><%= sort_link @search, :state, I18n.t(:state, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_state_title'} %></th>
+        <th><%= sort_link @search, :number, Spree.t(:order_num, :scope => 'admin.user'), {}, {:title => 'orders_number_title'} %></th>
+      </thead>
+
+      <tbody>
+        <% @orders.each do |order| %>
+          <% order.line_items.each do |item| %>
+            <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
+              <td class="align-center order-completed-at"><%= l(order.completed_at.to_date) if order.completed_at %></td>
+              <td class="item-image">
+                <%= mini_image(item.variant) %>
+              </td>
+              <td class="item-name">
+                <%= item.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+                <% if item.variant.sku.present? %>
+                  <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
+                <% end %>
+              </td>
+              <td class="align-center item-price"><%= item.single_money.to_html %></td>
+              <td class="align-center item-quantity"><%= item.quantity %></td>
+              <td class="align-center item-total"><%= item.money.to_html %></td>
+              <td class="align-center order-state">
+                <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
+                <% if order.payment_state %>
+                  <div class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></div>
+                <% end %>
+                <% if Spree::Order.checkout_step_names.include?(:delivery) && order.shipment_state %>
+                  <div class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></div>
+                <% end %>
+              </td>
+              <td class="align-center order-number"><%= link_to order.number, edit_admin_order_url(order) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+    </table>
+  <% else %>
+    <div class="alpha twelve columns no-objects-found">
+      <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/order')) %>,
+      <%= link_to Spree.t(:add_one), spree.new_admin_order_path %>!
+    </div>
+  <% end %>
+  <%= paginate @orders %>
+</fieldset>

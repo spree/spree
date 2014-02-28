@@ -1,5 +1,5 @@
-if Spree.user_class
-  Spree.user_class.class_eval do
+module Spree
+  module UserApiAuthentication
     def generate_spree_api_key!
       self.spree_api_key = SecureRandom.hex(24)
       save!
