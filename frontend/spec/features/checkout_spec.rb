@@ -48,7 +48,7 @@ describe "Checkout", inaccessible: true do
     # Regression test for #1596
     context "full checkout" do
       before do
-        shipping_method.calculator.preferred_amount = 10
+        shipping_method.calculator.update!(preferred_amount: 10)
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
