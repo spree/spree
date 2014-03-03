@@ -1,5 +1,6 @@
 module Spree
   class ShippingMethod < ActiveRecord::Base
+    acts_as_paranoid
     include Spree::Core::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 

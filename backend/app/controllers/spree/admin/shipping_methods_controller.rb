@@ -6,7 +6,7 @@ module Spree
       before_filter :set_zones, :only => [:create, :update]
 
       def destroy
-        @object.touch :deleted_at
+        @object.destroy
 
         flash[:success] = flash_message_for(@object, :successfully_removed)
 

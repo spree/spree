@@ -64,4 +64,13 @@ describe Spree::ShippingMethod do
       end
     end
   end
+
+  # Regression test for #4320
+  context "soft deletion" do
+    let(:shipping_method) { create(:shipping_method) }
+    it "soft-deletes when destroy is called" do
+      shipping_method.destroy
+      shipping_method.deleted_at.should_not be_blank
+    end
+  end
 end
