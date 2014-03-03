@@ -4,11 +4,6 @@ module Spree
     belongs_to :shipping_method, class_name: 'Spree::ShippingMethod', inverse_of: :shipping_rates
     belongs_to :tax_rate, class_name: 'Spree::TaxRate'
 
-    scope :with_shipping_method,
-      -> { includes(:shipping_method).
-           references(:shipping_method).
-           order("cost ASC") }
-
     delegate :order, :currency, to: :shipment
     delegate :name, to: :shipping_method
 
