@@ -16,7 +16,14 @@ Overview
 
 This stays as closely to the original spree frontend markup as possible. Helper decorators have been kept to a bare minimum. It utilises the [SCSS port](https://github.com/twbs/bootstrap-sass) of bootstrap 3 to keep inline with existing spree practices. It also includes support for `spree_auth_devise`.
 
-![spree_bootstrap_frontend preview](http://i.imgur.com/S50Gn7V.png)
+[![home page](http://i.imgur.com/QlwZwS8.png)](http://i.imgur.com/2Ycr8w8.png)
+[![home page](http://i.imgur.com/6eoQmfi.png)](http://i.imgur.com/XLi5DAs.png)
+[![home page](http://i.imgur.com/D154fb4.png)](http://i.imgur.com/UdKueAQ.png)
+[![home page](http://i.imgur.com/HutvtWF.png)](http://i.imgur.com/mis2XHY.png)
+[![home page](http://i.imgur.com/pKUbyMu.png)](http://i.imgur.com/hF0IjWI.png)
+[![home page](http://i.imgur.com/bkYVBfh.png)](http://i.imgur.com/U06g9Jn.png)
+[![home page](http://i.imgur.com/uHwYVPA.png)](http://i.imgur.com/Ozh5vQr.png)
+
 
 Installation
 -------
@@ -69,7 +76,8 @@ This uses the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem. So c
 
 It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables, no actual css edits required:
 
-![spree_bootstrap_frontend theme](http://i.imgur.com/zh34YJ5.png)
+[![layout](http://i.imgur.com/kppJiFS.png)](http://i.imgur.com/m3zKV0s.png)
+[![layout](http://i.imgur.com/x92TXYh.png)](http://i.imgur.com/eNyNFSg.png)
 
 Contributing
 -------
