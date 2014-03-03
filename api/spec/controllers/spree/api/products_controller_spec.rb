@@ -28,6 +28,24 @@ module Spree
     end
 
     context "as a normal user" do
+      context "with caching enabled" do
+        let!(:product_2) { create(:product) }
+
+        before do
+          ActionController::Base.perform_caching = true
+        end
+
+        it "returns unique products" do
+          api_get :index
+          product_ids = json_response["products"].map { |p| p["id"] }
+          expect(product_ids.uniq.count).to eq(product_ids.count)
+        end
+
+        after do
+          ActionController::Base.perform_caching = false
+        end
+      end
+
       it "retrieves a list of products" do
         api_get :index
         json_response["products"].first.should have_attributes(attributes)
