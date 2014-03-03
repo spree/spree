@@ -72,7 +72,7 @@ module Spree
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Default mail headers settings
-    preference :enable_mail_delivery, :boolean, :default => false
+    preference :enable_mail_delivery, :boolean, :default => true
     preference :send_core_emails, :boolean, :default => true
     preference :mails_from, :string, :default => 'spree@example.com'
     preference :mail_bcc, :string, :default => 'spree@example.com'
