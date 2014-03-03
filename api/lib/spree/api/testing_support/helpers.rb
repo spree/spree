@@ -32,7 +32,7 @@ module Spree
         end
 
         def upload_image(filename)
-          fixture_file_upload(image(filename).path, 'image/jpg')
+          fixture_file_upload(image(filename).path)
         end
       end
     end
