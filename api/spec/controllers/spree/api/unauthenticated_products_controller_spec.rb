@@ -14,9 +14,9 @@ module Spree
       it "retreives a list of products" do
         api_get :index
         json_response["products"].first.should have_attributes(attributes)
-        json_response["count"].should == 1
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
+        json_response["meta"]["count"].should == 1
+        json_response["meta"]["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
       end
 
       it_behaves_like "modifying product actions are restricted"

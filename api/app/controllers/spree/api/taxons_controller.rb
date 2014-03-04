@@ -13,16 +13,34 @@ module Spree
         end
 
         @taxons = @taxons.page(params[:page]).per(params[:per_page])
-        respond_with(@taxons)
+        if params[:without_children]
+          serializer = Spree::TaxonNoChildrenSerializer
+        else
+          serializer = Spree::TaxonSerializer
+        end
+        render json: @taxons, 
+               each_serializer: serializer,
+               meta: pagination(@taxons)
       end
 
       def show
         @taxon = taxon
-        respond_with(@taxon)
+        render json: @taxon
       end
 
       def jstree
-        show
+        tree = taxon.children.map do |taxon|
+          { 
+            data: taxon.name,
+            attr: {
+              id: taxon.id,
+              name: taxon.name
+            },
+            state: 'closed'
+          }
+        end
+
+        render json: tree, root: false
       end
 
       def create
@@ -39,7 +57,7 @@ module Spree
         @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
 
         if @taxon.save
-          respond_with(@taxon, status: 201, default_template: :show)
+          render json: @taxon, status: 201
         else
           invalid_resource!(@taxon)
         end
@@ -48,7 +66,7 @@ module Spree
       def update
         authorize! :update, taxon
         if taxon.update_attributes(taxon_params)
-          respond_with(taxon, status: 200, default_template: :show)
+          render json: taxon
         else
           invalid_resource!(taxon)
         end
@@ -57,7 +75,7 @@ module Spree
       def destroy
         authorize! :destroy, taxon
         taxon.destroy
-        respond_with(taxon, status: 204)
+        render nothing: true, status: 204
       end
 
       def products

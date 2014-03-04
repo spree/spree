@@ -11,28 +11,31 @@ module Spree
       def create
         authorize! :create, Order
         @order = Order.build_from_api(current_api_user, nested_params)
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 201)
+        render json: @order, status: 201
       end
 
       def next
         load_order(true)
         authorize! :update, @order, order_token
         @order.next!
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+        render json: @order
       rescue StateMachine::InvalidTransition
-        respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+        render json: {
+          error: I18n.t(:could_not_transition, :scope => "spree.api.order"), 
+          errors: @order.errors
+        }, status: 422
       end
 
       def advance
         load_order(true)
         authorize! :update, @order, order_token
         while @order.next; end
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+        render json: @order
       end
 
       def show
         load_order
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+        render json: @order
       end
 
       def update
@@ -47,7 +50,7 @@ module Spree
           end
           return if after_update_attributes
           state_callback(:after) if @order.next
-          respond_with(@order, default_template: 'spree/api/orders/show')
+          render json: @order
         else
           invalid_resource!(@order)
         end

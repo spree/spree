@@ -24,15 +24,14 @@ module Spree
     context "POST 'create'" do
       it "creates a new order when no parameters are passed" do
         api_post :create
-
-        json_response['number'].should be_present
+        json_response['order']['number'].should be_present
         response.status.should == 201
       end
 
       it "assigns email when creating a new order" do
         api_post :create, :order => { :email => "guest@spreecommerce.com" }
-        expect(json_response['email']).not_to eq controller.current_api_user
-        expect(json_response['email']).to eq "guest@spreecommerce.com"
+        expect(json_response['order']['email']).not_to eq controller.current_api_user
+        expect(json_response['order']['email']).to eq "guest@spreecommerce.com"
       end
     end
 
@@ -107,9 +106,9 @@ module Spree
         api_put :update,
                 :id => order.to_param, :order_token => order.token,
                 :order => { :bill_address_attributes => billing_address, :ship_address_attributes => shipping_address }
-        json_response['state'].should == 'delivery'
-        json_response['bill_address']['firstname'].should == 'John'
-        json_response['ship_address']['firstname'].should == 'John'
+        json_response['order']['state'].should == 'delivery'
+        json_response['order']['bill_address']['firstname'].should == 'John'
+        json_response['order']['ship_address']['firstname'].should == 'John'
         response.status.should == 200
       end
 
@@ -122,22 +121,23 @@ module Spree
           :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
         response.status.should == 200
         # Find the correct shipment...
-        json_shipment = json_response['shipments'].detect { |s| s["id"] == shipment.id }
+        json_shipment = json_response['order']['shipments'].detect { |s| s["id"] == shipment.id }
         # Find the correct shipping rate for that shipment...
         json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr["id"] == shipping_rate.id }
         # ... And finally ensure that it's selected
         json_shipping_rate['selected'].should be_true
         # Order should automatically transfer to payment because all criteria are met
-        json_response['state'].should == 'payment'
+        json_response['order']['state'].should == 'payment'
       end
 
       it "can update payment method and transition from payment to confirm" do
         order.update_column(:state, "payment")
         api_put :update, :id => order.to_param, :order_token => order.token,
           :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id }] }
-        json_response['state'].should == 'confirm'
-        json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
-        json_response['payments'][0]['amount'].should == order.total.to_s
+        json_response['order']['state'].should == 'confirm'
+        first_payment = json_response['order']['payments'][0]
+        first_payment['payment_method']['name'].should == @payment_method.name
+        first_payment['amount'].should == order.total.to_s
         response.status.should == 200
       end
 
@@ -154,8 +154,8 @@ module Spree
         api_put :update, :id => order.to_param, :order_token => order.token,
           :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
                       :payment_source => { @payment_method.id.to_s => source_attributes } }
-        json_response['payments'][0]['payment_method']['name'].should == @payment_method.name
-        json_response['payments'][0]['amount'].should == order.total.to_s
+        json_response['order']['payments'][0]['payment_method']['name'].should == @payment_method.name
+        json_response['order']['payments'][0]['amount'].should == order.total.to_s
         response.status.should == 200
       end
 
@@ -176,14 +176,14 @@ module Spree
         order.update_column(:state, "confirm")
         Spree::Order.any_instance.stub(:payment_required? => false)
         api_put :update, :id => order.to_param, :order_token => order.token
-        json_response['state'].should == 'complete'
+        json_response['order']['state'].should == 'complete'
         response.status.should == 200
       end
 
       it "returns the order if the order is already complete" do
         order.update_column(:state, "complete")
         api_put :update, :id => order.to_param, :order_token => order.token
-        json_response['number'].should == order.number
+        json_response['order']['number'].should == order.number
         response.status.should == 200
       end
 
@@ -192,7 +192,7 @@ module Spree
         instructions = "Don't drop it. (Please)"
         api_put :update, :id => order.to_param, :order_token => order.token,
           :order => { :special_instructions => instructions }
-        expect(json_response['special_instructions']).to eql(instructions)
+        expect(json_response['order']['special_instructions']).to eql(instructions)
       end
 
       context "as an admin" do
@@ -203,14 +203,14 @@ module Spree
           api_put :update, :id => order.to_param, :order_token => order.token,
             :order => { :user_id => user.id, :email => "guest@spreecommerce.com" }
           response.status.should == 200
-          json_response['user_id'].should == user.id
+          json_response['order']['user_id'].should == user.id
         end
       end
 
       it "can assign an email to the order" do
         api_put :update, :id => order.to_param, :order_token => order.token,
           :order => { :email => "guest@spreecommerce.com" }
-        json_response['email'].should == "guest@spreecommerce.com"
+        json_response['order']['email'].should == "guest@spreecommerce.com"
         response.status.should == 200
       end
 
@@ -239,7 +239,7 @@ module Spree
 
         api_put :next, :id => order.to_param, :order_token => order.token
         response.status.should == 200
-        json_response['state'].should == 'address'
+        json_response['order']['state'].should == 'address'
       end
 
       it "cannot transition if order email is blank" do
@@ -266,11 +266,11 @@ module Spree
         Spree::Order.any_instance.should_receive(:next).exactly(3).times.and_return(true, true, false)
         api_put :advance, :id => order.to_param, :order_token => order.token
       end
+
       it 'returns the order' do
         api_put :advance, :id => order.to_param, :order_token => order.token
-        json_response['id'].should == order.id
+        json_response['order']['id'].should == order.id
       end
-
     end
   end
 end

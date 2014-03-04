@@ -20,28 +20,28 @@ module Spree
 
       it "can view all countries" do
         api_get :index
-        json_response['count'].should == 2
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 1
+        json_response['meta']['count'].should == 2
+        json_response['meta']['current_page'].should == 1
+        json_response['meta']['pages'].should == 1
       end
 
       it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'zam' }
-        json_response['count'].should == 1
+        json_response['meta']['count'].should == 1
         json_response['countries'].first['name'].should eq @zambia.name
       end
 
       it 'can control the page size through a parameter' do
         api_get :index, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        json_response['meta']['count'].should == 1
+        json_response['meta']['current_page'].should == 1
+        json_response['meta']['pages'].should == 2
       end
     end
 
     it "includes states" do
       api_get :show, :id => @country.id
-      states = json_response['states']
+      states = json_response['country']['states']
       states.first['name'].should eq @state.name
     end
   end

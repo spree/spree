@@ -33,20 +33,22 @@ module Spree
     context "as a normal user" do
       it "retrieves a list of products" do
         api_get :index
-        json_response["products"].first.should have_attributes(show_attributes)
-        json_response["total_count"].should == 1
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
-        json_response["per_page"].should == Kaminari.config.default_per_page
+        first_product = json_response["products"].first
+        first_product.should have_attributes(show_attributes)
+        first_product["master"].should_not be_blank
+        json_response["meta"]["total_count"].should == 1
+        json_response["meta"]["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
+        json_response["meta"]["per_page"].should == Kaminari.config.default_per_page
       end
 
       it "retrieves a list of products by id" do
         api_get :index, :ids => [product.id]
         json_response["products"].first.should have_attributes(show_attributes)
-        json_response["total_count"].should == 1
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
-        json_response["per_page"].should == Kaminari.config.default_per_page
+        json_response["meta"]["total_count"].should == 1
+        json_response["meta"]["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
+        json_response["meta"]["per_page"].should == Kaminari.config.default_per_page
       end
 
       context "product has more than one price" do
@@ -63,15 +65,15 @@ module Spree
         api_get :index, :ids => [product.id, second_product.id].join(",")
         json_response["products"].first.should have_attributes(show_attributes)
         json_response["products"][1].should have_attributes(show_attributes)
-        json_response["total_count"].should == 2
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
-        json_response["per_page"].should == Kaminari.config.default_per_page
+        json_response["meta"]["total_count"].should == 2
+        json_response["meta"]["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
+        json_response["meta"]["per_page"].should == Kaminari.config.default_per_page
       end
 
       it "does not return inactive products when queried by ids" do
         api_get :index, :ids => [inactive_product.id]
-        json_response["count"].should == 0
+        json_response["meta"]["count"].should == 0
       end
 
       it "does not list unavailable products" do
@@ -84,18 +86,18 @@ module Spree
           second_product = create(:product)
           api_get :index, :page => 2, :per_page => 1
           json_response["products"].first.should have_attributes(show_attributes)
-          json_response["total_count"].should == 2
-          json_response["current_page"].should == 2
-          json_response["pages"].should == 2
+          json_response["meta"]["total_count"].should == 2
+          json_response["meta"]["current_page"].should == 2
+          json_response["meta"]["pages"].should == 2
         end
 
         it 'can control the page size through a parameter' do
           create(:product)
           api_get :index, :per_page => 1
-          json_response['count'].should == 1
-          json_response['total_count'].should == 2
-          json_response['current_page'].should == 1
-          json_response['pages'].should == 2
+          json_response['meta']['count'].should == 1
+          json_response['meta']['total_count'].should == 2
+          json_response['meta']['current_page'].should == 1
+          json_response['meta']['pages'].should == 2
         end
       end
 
@@ -109,7 +111,7 @@ module Spree
         # Regression test for #4332
         it "does not escape quotes" do
           api_get :index, {:callback => 'callback'}
-          response.body.should =~ /^callback\({"count":1,"total_count":1/
+          response.body.should =~ /^callback\({"products":\[{"id":/
           response.header['Content-Type'].should include('application/javascript')
         end
       end
@@ -118,7 +120,7 @@ module Spree
         create(:product, :name => "The best product in the world")
         api_get :index, :q => { :name_cont => "best" }
         json_response["products"].first.should have_attributes(show_attributes)
-        json_response["count"].should == 1
+        json_response["meta"]["count"].should == 1
       end
 
       it "gets a single product" do
@@ -127,25 +129,22 @@ module Spree
         product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
         api_get :show, :id => product.to_param
-        json_response.should have_attributes(show_attributes)
-        json_response['variants'].first.should have_attributes([:name,
+        json_response['product'].should have_attributes(show_attributes)
+        json_response['product']['variants'].first.should have_attributes([:name,
                                                               :is_master,
                                                               :price,
                                                               :images,
                                                               :in_stock])
+        images = json_response['product']['variants'].first['images']
+        images.first.should have_attributes([:attachment_file_name,
+                                             :attachment_width,
+                                             :attachment_height,
+                                             :attachment_content_type,
+                                             :urls])
 
-        json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
-                                                                                :attachment_width,
-                                                                                :attachment_height,
-                                                                                :attachment_content_type,
-                                                                                :mini_url,
-                                                                                :small_url,
-                                                                                :product_url,
-                                                                                :large_url])
-
-        json_response["product_properties"].first.should have_attributes([:value,
-                                                                         :product_id,
-                                                                         :property_name])
+        properties = json_response['product']['properties']
+        properties.first.should have_attributes([:value,
+                                                 :property_name])
       end
 
 
@@ -158,11 +157,11 @@ module Spree
 
         specify do
           api_get :show, :id => product.to_param
-          json_response["slug"].should =~ /and-1-ways/
+          json_response["product"]["slug"].should =~ /and-1-ways/
           product.destroy
 
           api_get :show, :id => other_product.id
-          json_response["slug"].should =~ /droids/
+          json_response["product"]["slug"].should =~ /droids/
         end
       end
 
@@ -177,6 +176,7 @@ module Spree
       end
 
       it "can learn how to create a new product" do
+        pending "I don't think anyone uses this in earnest..."
         api_get :new
         json_response["attributes"].should == new_attributes.map(&:to_s)
         required_attributes = json_response["required_attributes"]
@@ -197,9 +197,9 @@ module Spree
       it "can see all products" do
         api_get :index
         json_response["products"].count.should == 2
-        json_response["count"].should == 2
-        json_response["current_page"].should == 1
-        json_response["pages"].should == 1
+        json_response["meta"]["count"].should == 2
+        json_response["meta"]["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
       end
 
       # Regression test for #1626
@@ -224,7 +224,7 @@ module Spree
           api_post :create, :product => { :name => "The Other Product",
                                           :price => 19.99,
                                           :shipping_category_id => create(:shipping_category).id }
-          json_response.should have_attributes(base_attributes)
+          json_response['product'].should have_attributes(base_attributes)
           response.status.should == 201
         end
 
@@ -236,12 +236,14 @@ module Spree
           api_post :create, :product => product_data
           expect(response.status).to eq 201
 
-          variants = json_response['variants']
+          variants = json_response['product']['variants']
           expect(variants.count).to eq(2)
-          expect(variants.last['option_values'][0]['name']).to eq('small')
-          expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
-          expect(json_response['option_types'].count).to eq(2) # size, color
+          first_option_value = variants.last['option_values'][0]
+          expect(first_option_value['name']).to eq('small')
+          expect(first_option_value['option_type_name']).to eq('size')
+
+          expect(json_response['product']['option_types'].count).to eq(2) # size, color
         end
 
         it "can create a new product with embedded product_properties" do
@@ -254,8 +256,9 @@ module Spree
 
           api_post :create, :product => product_data
 
-          expect(json_response['product_properties'][0]['property_name']).to eq('fabric')
-          expect(json_response['product_properties'][0]['value']).to eq('cotton')
+          first_product_property = json_response['product']['properties'][0]
+          expect(first_product_property['property_name']).to eq('fabric')
+          expect(first_product_property['value']).to eq('cotton')
         end
 
         it "can create a new product with option_types" do
@@ -264,7 +267,7 @@ module Spree
           })
 
           api_post :create, :product => product_data
-          expect(json_response['option_types'].count).to eq(2)
+          expect(json_response['product']['option_types'].count).to eq(2)
         end
 
         it "creates with shipping categories" do
@@ -276,20 +279,20 @@ module Spree
           expect(response.status).to eq 201
 
           shipping_id = ShippingCategory.find_by_name("Free Ships").id
-          expect(json_response['shipping_category_id']).to eq shipping_id
+          expect(json_response['product']['shipping_category_id']).to eq shipping_id
         end
 
         it "puts the created product in the given taxon" do
           product_data[:taxon_ids] = taxon_1.id.to_s
           api_post :create, :product => product_data
-          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+          expect(json_response["product"]["taxon_ids"]).to eq([taxon_1.id,])
         end
 
         # Regression test for #4123
         it "puts the created product in the given taxons" do
           product_data[:taxon_ids] = [taxon_1.id, taxon_2.id].join(',')
           api_post :create, :product => product_data
-          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
+          expect(json_response["product"]["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
         end
 
         # Regression test for #2140
@@ -304,7 +307,7 @@ module Spree
 
           it "can still create a product" do
             api_post :create, :product => product_data, :token => "fake"
-            json_response.should have_attributes(show_attributes)
+            json_response['product'].should have_attributes(show_attributes)
             response.status.should == 201
           end
         end
@@ -327,19 +330,19 @@ module Spree
 
         it "can create new option types on a product" do
           api_put :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
-          expect(json_response['option_types'].count).to eq(2)
+          expect(json_response['product']['option_types'].count).to eq(2)
         end
 
         it "can create new variants on a product" do
           api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant] }
           expect(response.status).to eq 200
-          expect(json_response['variants'].count).to eq(2) # 2 variants
+          expect(json_response['product']['variants'].count).to eq(2) # 2 variants
 
-          variants = json_response['variants'].select { |v| !v['is_master'] }
+          variants = json_response['product']['variants'].select { |v| !v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
-          expect(json_response['option_types'].count).to eq(2) # size, color
+          expect(json_response['product']['option_types'].count).to eq(2) # size, color
         end
 
         it "can update an existing variant on a product" do
@@ -358,8 +361,8 @@ module Spree
             ]
           }
 
-          expect(json_response['variants'].count).to eq(1)
-          variants = json_response['variants'].select { |v| !v['is_master'] }
+          expect(json_response['product']['variants'].count).to eq(1)
+          variants = json_response['product']['variants'].select { |v| !v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('large')
           expect(variants.last['sku']).to eq('456')
           expect(variants.count).to eq(1)
@@ -375,13 +378,13 @@ module Spree
         # Regression test for #4123
         it "puts the created product in the given taxon" do
           api_put :update, :id => product.to_param, :product => {:taxon_ids => taxon_1.id.to_s}
-          expect(json_response["taxon_ids"]).to eq([taxon_1.id,])
+          expect(json_response["product"]["taxon_ids"]).to eq([taxon_1.id,])
         end
 
         # Regression test for #4123
         it "puts the created product in the given taxons" do
           api_put :update, :id => product.to_param, :product => {:taxon_ids => [taxon_1.id, taxon_2.id].join(',')}
-          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
+          expect(json_response["product"]["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
         end
       end
 

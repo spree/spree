@@ -23,7 +23,7 @@ module Spree
                                :viewable_type => 'Spree::Variant',
                                :viewable_id => product.master.to_param  }
           response.status.should == 201
-          json_response.should have_attributes(attributes)
+          json_response['image'].should have_attributes(attributes)
         end.should change(Image, :count).by(1)
       end
 
@@ -34,7 +34,7 @@ module Spree
           product_image.position.should == 1
           api_post :update, :image => { :position => 2 }, :id => product_image.id
           response.status.should == 200
-          json_response.should have_attributes(attributes)
+          json_response['image'].should have_attributes(attributes)
           product_image.reload.position.should == 2
         end
 

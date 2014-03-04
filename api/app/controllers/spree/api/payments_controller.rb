@@ -7,7 +7,7 @@ module Spree
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@payments)
+        render json: @payments, meta: pagination(@payments)
       end
 
       def new
@@ -18,7 +18,7 @@ module Spree
       def create
         @payment = @order.payments.build(payment_params)
         if @payment.save
-          respond_with(@payment, status: 201, default_template: :show)
+          render json: @payment, status: 201
         else
           invalid_resource!(@payment)
         end
@@ -26,17 +26,23 @@ module Spree
 
       def update
         authorize! params[:action], @payment
-        if ! @payment.pending?
-          render 'update_forbidden', status: 403
+        if !@payment.pending?
+          render json: {
+            error: I18n.t(
+              :update_forbidden,
+              :state => @payment.state,
+              :scope => 'spree.api.payment'
+            )
+          }, status: 403
         elsif @payment.update_attributes(payment_params)
-          respond_with(@payment, default_template: :show)
+          render json: @payment
         else
           invalid_resource!(@payment)
         end
       end
 
       def show
-        respond_with(@payment)
+        render json: @payment
       end
 
       def authorize
@@ -57,7 +63,14 @@ module Spree
 
       def credit
         if params[:amount].to_f > @payment.credit_allowed
-          render 'credit_over_limit', status: 422
+          render json: {
+            error: I18n.t(
+              :credit_over_limit,
+              limit: @payment.credit_allowed,
+              scope: 'spree.api.payment'
+            )
+          }, status: 422
+
         else
           perform_payment_action(:credit, params[:amount])
         end
@@ -79,10 +92,12 @@ module Spree
 
           begin
             @payment.send("#{action}!", *args)
-            respond_with(@payment, :default_template => :show)
+            render json: @payment
           rescue Spree::Core::GatewayError => e
             @error = e.message
-            render 'spree/api/errors/gateway_error', status: 422
+            render json: {
+              error: I18n.t(:gateway_error, :scope => "spree.api", :text => @error)
+            }, status: 422
           end
         end
 

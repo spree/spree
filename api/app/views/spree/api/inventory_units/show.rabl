@@ -1,2 +1,0 @@
-object @inventory_unit
-attributes *inventory_unit_attributes

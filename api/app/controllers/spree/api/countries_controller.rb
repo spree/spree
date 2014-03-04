@@ -10,13 +10,13 @@ module Spree
                      page(params[:page]).per(params[:per_page])
         country = Country.order("updated_at ASC").last
         if stale?(country)
-          respond_with(@countries)
+          render json: @countries, meta: pagination(@countries)
         end
       end
 
       def show
         @country = Country.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@country)
+        render json: @country
       end
     end
   end

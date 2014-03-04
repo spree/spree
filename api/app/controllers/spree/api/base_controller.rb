@@ -2,13 +2,10 @@ require_dependency 'spree/api/controller_setup'
 
 module Spree
   module Api
-    class BaseController < ActionController::Metal
-      include ActionController::StrongParameters
+    class BaseController < ActionController::Base
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
       include Spree::Core::ControllerHelpers::StrongParameters
-      include ::ActionController::Head
-      include ::ActionController::ConditionalGet
 
       attr_accessor :current_api_user
 
@@ -52,6 +49,16 @@ module Spree
 
       private
 
+      def pagination(collection)
+        {
+         count: collection.count,
+         total_count: collection.total_count,
+         current_page: params[:page] ? params[:page].to_i : 1,
+         per_page: params[:per_page] || Kaminari.config.default_per_page,
+         pages: collection.num_pages
+        }
+      end
+
       def set_content_type
         content_type = case params[:format]
         when "json"
@@ -67,7 +74,9 @@ module Spree
         return true if @current_api_user = try_spree_current_user || !Spree::Api::Config[:requires_authentication]
 
         if api_key.blank?
-          render "spree/api/errors/must_specify_api_key", :status => 401 and return
+          render json: {
+            error: I18n.t(:must_specify_api_key, :scope => "spree.api")
+          }, status: 401
         end
       end
 
@@ -75,7 +84,9 @@ module Spree
         unless @current_api_user
           if requires_authentication? || api_key.present?
             unless @current_api_user = Spree.user_class.find_by(spree_api_key: api_key.to_s)
-              render "spree/api/errors/invalid_api_key", :status => 401 and return
+              render json: {
+                error: I18n.t(:invalid_api_key, :key => api_key, :scope => "spree.api")
+                }, status: 401
             end
           else
             # An anonymous user
@@ -85,7 +96,7 @@ module Spree
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", :status => 401 and return
+        render json: { error: I18n.t(:unauthorized, :scope => "spree.api") }, status: 401
       end
 
       def error_during_processing(exception)
@@ -101,7 +112,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", :status => 404 and return
+        render json: { error: I18n.t(:resource_not_found, :scope => "spree.api") }, status: 404
       end
 
       def current_ability
@@ -114,8 +125,10 @@ module Spree
       helper_method :current_currency
 
       def invalid_resource!(resource)
-        @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render json: {
+          error: I18n.t(:invalid_resource, :scope => "spree.api"),
+          errors: resource.errors
+        }, status: 422 
       end
 
       def api_key

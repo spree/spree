@@ -38,7 +38,7 @@ describe Spree::Api::ShipmentsController do
 
       api_post :create, params
       response.status.should == 200
-      json_response.should have_attributes(attributes)
+      json_response['shipment'].should have_attributes(attributes)
     end
 
     it 'can update a shipment' do
@@ -50,14 +50,14 @@ describe Spree::Api::ShipmentsController do
 
       api_put :update, params
       response.status.should == 200
-      json_response['stock_location_name'].should == stock_location.name
+      json_response['shipment']['stock_location_name'].should == stock_location.name
     end
     
     it "can make a shipment ready" do
       Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
       api_put :ready
-      json_response.should have_attributes(attributes)
-      json_response["state"].should == "ready"
+      json_response["shipment"].should have_attributes(attributes)
+      json_response["shipment"]["state"].should == "ready"
       shipment.reload.state.should == "ready"
     end
 
@@ -75,7 +75,10 @@ describe Spree::Api::ShipmentsController do
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }
         response.status.should == 200
-        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 2
+        manifest_item = json_response['shipment']['manifest'].detect do |h|
+          h['variant']['id'] == variant.id
+        end
+        manifest_item["quantity"].should == 2
       end
 
       it 'removes a variant from a shipment' do
@@ -83,7 +86,7 @@ describe Spree::Api::ShipmentsController do
 
         api_put :remove, { variant_id: variant.to_param, quantity: 1 }
         response.status.should == 200
-        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
+        json_response['shipment']['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
      end
     end
 
@@ -101,8 +104,8 @@ describe Spree::Api::ShipmentsController do
       it "can transition a shipment from ready to ship" do
         shipment.reload
         api_put :ship, :order_id => shipment.order.to_param, :id => shipment.to_param, :shipment => { :tracking => "123123" }
-        json_response.should have_attributes(attributes)
-        json_response["state"].should == "shipped"
+        json_response["shipment"].should have_attributes(attributes)
+        json_response["shipment"]["state"].should == "shipped"
       end
     end
   end

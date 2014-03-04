@@ -60,8 +60,8 @@ module Spree
         api_get :mine
 
         response.status.should == 200
-        json_response["pages"].should == 1
-        json_response["current_page"].should == 1
+        json_response["meta"]["pages"].should == 1
+        json_response["meta"]["current_page"].should == 1
         json_response["orders"].length.should == 1
         json_response["orders"].first["number"].should == order.number
         json_response["orders"].first["line_items"].length.should == 1
@@ -80,16 +80,16 @@ module Spree
       Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param
       response.status.should == 200
-      json_response.should have_attributes(attributes)
-      json_response["adjustments"].should be_empty
-      json_response["credit_cards"].should be_empty
+      json_response["order"].should have_attributes(attributes)
+      json_response["order"]["adjustments"].should be_empty
+      json_response["order"]["credit_cards"].should be_empty
     end
 
     it "orders contain the basic checkout steps" do
       Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param
       response.status.should == 200
-      json_response["checkout_steps"].should == ["address", "delivery", "complete"]
+      json_response["order"]["checkout_steps"].should == ["address", "delivery", "complete"]
     end
 
     # Regression test for #1992
@@ -135,11 +135,11 @@ module Spree
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
-      json_response["token"].should_not be_blank
-      json_response["state"].should == "cart"
+      json_response["order"]["token"].should_not be_blank
+      json_response["order"]["state"].should == "cart"
       order.user.should == current_api_user
       order.email.should == current_api_user.email
-      json_response["user_id"].should == current_api_user.id
+      json_response["order"]["user_id"].should == current_api_user.id
     end
 
     # Regression test for #3404
@@ -178,7 +178,7 @@ module Spree
 
       it "sets channel" do
         api_post :create, :order => { channel: "amazon" }
-        expect(json_response['channel']).to eq "amazon"
+        expect(json_response['order']['channel']).to eq "amazon"
       end
     end
 
@@ -201,7 +201,7 @@ module Spree
       lambda { api_post :create }.should_not raise_error
       response.status.should == 201
       order = Order.last
-      json_response["state"].should == "cart"
+      json_response["order"]["state"].should == "cart"
     end
 
     context "working with an order" do
@@ -251,8 +251,8 @@ module Spree
         }
 
         response.status.should == 200
-        json_response['line_items'].count.should == 1
-        json_response['line_items'].first['quantity'].should == 10
+        json_response['order']['line_items'].count.should == 1
+        json_response['order']['line_items'].first['quantity'].should == 10
       end
 
       it "adds an extra line item" do
@@ -265,10 +265,10 @@ module Spree
         }
 
         response.status.should == 200
-        json_response['line_items'].count.should == 2
-        json_response['line_items'][0]['quantity'].should == 10
-        json_response['line_items'][1]['variant_id'].should == variant2.id
-        json_response['line_items'][1]['quantity'].should == 1
+        json_response['order']['line_items'].count.should == 2
+        json_response['order']['line_items'][0]['quantity'].should == 10
+        json_response['order']['line_items'][1]['variant_id'].should == variant2.id
+        json_response['order']['line_items'][1]['quantity'].should == 1
       end
 
       it "cannot change the price of an existing line item" do
@@ -279,9 +279,10 @@ module Spree
         }
 
         response.status.should == 200
-        json_response['line_items'].count.should == 1
-        expect(json_response['line_items'].first['price'].to_f).to_not eq(0)
-        expect(json_response['line_items'].first['price'].to_f).to eq(line_item.variant.price)
+        json_response['order']['line_items'].count.should == 1
+        first_line_item = json_response['order']['line_items'].first
+        expect(first_line_item['price'].to_f).to_not eq(0)
+        expect(first_line_item['price'].to_f).to eq(line_item.variant.price)
       end
 
       it "can add billing address" do
@@ -354,22 +355,22 @@ module Spree
 
           api_get :show, :id => order.to_param
 
-          json_response['line_items'].first['variant'].should have_attributes([:images])
+          json_response['order']['line_items'].first['variant'].should have_attributes([:images])
         end
 
         it "lists variants product id" do
           api_get :show, :id => order.to_param
 
-          json_response['line_items'].first['variant'].should have_attributes([:product_id])
+          json_response['order']['line_items'].first['variant'].should have_attributes([:product_id])
         end
 
         it "includes the tax_total in the response" do
           api_get :show, :id => order.to_param
 
-          json_response['included_tax_total'].should == '0.0'
-          json_response['additional_tax_total'].should == '0.0'
-          json_response['display_included_tax_total'].should == '$0.00'
-          json_response['display_additional_tax_total'].should == '$0.00'
+          json_response['order']['included_tax_total'].should == '0.0'
+          json_response['order']['additional_tax_total'].should == '0.0'
+          json_response['order']['display_included_tax_total'].should == '$0.00'
+          json_response['order']['display_additional_tax_total'].should == '$0.00'
         end
 
         it "lists line item adjustments" do
@@ -380,7 +381,7 @@ module Spree
           adjustment.update_column(:amount, 5)
           api_get :show, :id => order.to_param
 
-          adjustment = json_response['line_items'].first['adjustments'].first
+          adjustment = json_response['order']['line_items'].first['adjustments'].first
           adjustment['label'].should == "10% off!"
           adjustment['amount'].should == "5.0"
         end
@@ -402,17 +403,17 @@ module Spree
           it "includes the ship_total in the response" do
             api_get :show, :id => order.to_param
 
-            json_response['ship_total'].should == '0.0'
-            json_response['display_ship_total'].should == '$0.00'
+            json_response['order']['ship_total'].should == '0.0'
+            json_response['order']['display_ship_total'].should == '$0.00'
           end
 
           it "returns available shipments for an order" do
             api_get :show, :id => order.to_param
             response.status.should == 200
-            json_response["shipments"].should_not be_empty
-            shipment = json_response["shipments"][0]
+            json_response['order']["shipments"].should_not be_empty
+            shipment = json_response['order']["shipments"][0]
             # Test for correct shipping method attributes
-            # Regression test for #3206
+            # Regression test for #3206 
             shipment["shipping_methods"].should_not be_nil
             json_shipping_method = shipment["shipping_methods"][0]
             json_shipping_method["id"].should == shipping_method.id
@@ -466,9 +467,9 @@ module Spree
         it "can view all orders" do
           api_get :index
           json_response["orders"].first.should have_attributes(attributes)
-          json_response["count"].should == 2
-          json_response["current_page"].should == 1
-          json_response["pages"].should == 1
+          json_response["meta"]["count"].should == 2
+          json_response["meta"]["current_page"].should == 1
+          json_response["meta"]["pages"].should == 1
         end
 
         # Test for #1763
@@ -476,9 +477,9 @@ module Spree
           api_get :index, :per_page => 1
           json_response["orders"].count.should == 1
           json_response["orders"].first.should have_attributes(attributes)
-          json_response["count"].should == 1
-          json_response["current_page"].should == 1
-          json_response["pages"].should == 2
+          json_response["meta"]["count"].should == 1
+          json_response["meta"]["current_page"].should == 1
+          json_response["meta"]["pages"].should == 2
         end
       end
 
@@ -495,9 +496,9 @@ module Spree
           json_response["orders"].count.should == 1
           json_response["orders"].first.should have_attributes(attributes)
           json_response["orders"].first["email"].should == expected_result.email
-          json_response["count"].should == 1
-          json_response["current_page"].should == 1
-          json_response["pages"].should == 1
+          json_response["meta"]["count"].should == 1
+          json_response["meta"]["current_page"].should == 1
+          json_response["meta"]["pages"].should == 1
         end
       end
 
@@ -528,7 +529,7 @@ module Spree
 
         specify do
           api_put :cancel, :id => order.to_param
-          json_response["state"].should == "canceled"
+          json_response["order"]["state"].should == "canceled"
         end
       end
     end
