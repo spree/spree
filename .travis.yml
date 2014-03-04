@@ -1,0 +1,11 @@
+language: ruby
+before_script:
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
+  - bundle exec rake test_app
+script:
+  - bundle exec rspec spec
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.0
