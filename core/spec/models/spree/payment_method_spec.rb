@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe Spree::PaymentMethod do
   describe "#available" do
-    before(:all) do
-      Spree::PaymentMethod.delete_all
-
+    before do
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
           :name => 'Display Both',
@@ -14,6 +12,9 @@ describe Spree::PaymentMethod do
           :description => 'foofah'
         )
       end
+    end
+
+    it "should have 4 total methods" do
       Spree::PaymentMethod.all.size.should == 4
     end
 
