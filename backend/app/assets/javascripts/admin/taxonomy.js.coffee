@@ -74,7 +74,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
     root.base_url = Spree.url(Spree.routes.taxonomy_taxons_path)
 
     $.ajax
-      url: base_url.path().replace("/taxons", "/jstree"),
+      url: Spree.url(base_url.path().replace("/taxons", "/jstree")).toString(),
       success: (taxonomy) ->
         last_rollback = null
 
@@ -83,7 +83,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
             data: taxonomy,
             ajax:
               url: (e) ->
-                base_url.path() + '/' + e.attr('id') + '/jstree'
+                Spree.url(base_url.path() + '/' + e.prop('id') + '/jstree').toString()
           themes:
             theme: "apple",
             url: Spree.url(Spree.routes.jstree_theme_path)
