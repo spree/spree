@@ -1,4 +1,4 @@
-# This command will automatically be run when you run "rails" with Rails 3 gems installed from the root of your application.
+#!/usr/bin/env ruby
 
 ENGINE_ROOT = File.expand_path('../..', __FILE__)
 ENGINE_PATH = File.expand_path('../../lib/spree_bootstrap_frontend/engine', __FILE__)

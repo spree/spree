@@ -12,3 +12,4 @@ nbproject
 pkg
 *.swp
 spec/dummy
+.rvmrc
