@@ -1,5 +1,5 @@
 module Spree
-  class Promotion < ActiveRecord::Base
+  class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 

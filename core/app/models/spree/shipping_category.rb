@@ -1,5 +1,5 @@
 module Spree
-  class ShippingCategory < ActiveRecord::Base
+  class ShippingCategory < Spree::Base
     validates :name, presence: true
     has_many :products, inverse_of: :shipping_category
     has_many :shipping_method_categories

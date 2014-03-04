@@ -1,5 +1,5 @@
 module Spree
-  class Variant < ActiveRecord::Base
+  class Variant < Spree::Base
     acts_as_paranoid
 
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants

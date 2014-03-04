@@ -1,5 +1,5 @@
 module Spree
-  class Property < ActiveRecord::Base
+  class Property < Spree::Base
     has_and_belongs_to_many :prototypes, join_table: 'spree_properties_prototypes'
 
     has_many :product_properties, dependent: :delete_all, inverse_of: :property

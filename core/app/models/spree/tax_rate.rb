@@ -9,7 +9,7 @@ module Spree
 end
 
 module Spree
-  class TaxRate < ActiveRecord::Base
+  class TaxRate < Spree::Base
     acts_as_paranoid
     include Spree::Core::CalculatedAdjustments
     belongs_to :zone, class_name: "Spree::Zone"

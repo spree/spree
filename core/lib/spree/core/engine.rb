@@ -9,10 +9,6 @@ module Spree
         Spree::Config = app.config.spree.preferences #legacy access
       end
 
-      initializer "spree.load_preferences", :before => "spree.environment" do
-        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
-      end
-
       initializer "spree.register.calculators" do |app|
         app.config.spree.calculators.shipping_methods = [
             Spree::Calculator::Shipping::FlatPercentItemTotal,

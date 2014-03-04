@@ -1,5 +1,5 @@
 module Spree
-  class StockItem < ActiveRecord::Base
+  class StockItem < Spree::Base
     acts_as_paranoid
 
     belongs_to :stock_location, class_name: 'Spree::StockLocation'

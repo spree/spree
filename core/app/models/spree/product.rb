@@ -19,7 +19,7 @@
 #
 
 module Spree
-  class Product < ActiveRecord::Base
+  class Product < Spree::Base
     extend FriendlyId
     friendly_id :name, use: :slugged
 

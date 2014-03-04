@@ -1,5 +1,5 @@
 module Spree
-  class Zone < ActiveRecord::Base
+  class Zone < Spree::Base
     has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember"
     has_many :tax_rates, dependent: :destroy
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'

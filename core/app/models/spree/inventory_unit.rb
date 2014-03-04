@@ -1,5 +1,5 @@
 module Spree
-  class InventoryUnit < ActiveRecord::Base
+  class InventoryUnit < Spree::Base
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :inventory_units
     belongs_to :order, class_name: "Spree::Order", inverse_of: :inventory_units
     belongs_to :shipment, class_name: "Spree::Shipment", touch: true, inverse_of: :inventory_units

@@ -1,7 +1,7 @@
 # Base class for all types of promotion action.
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
-  class PromotionAction < ActiveRecord::Base
+  class PromotionAction < Spree::Base
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
     scope :of_type, ->(t) { where(type: t) }

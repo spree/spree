@@ -1,5 +1,5 @@
 module Spree
-  class Payment < ActiveRecord::Base
+  class Payment < Spree::Base
     module Processing
       def process!
         if payment_method && payment_method.source_required?

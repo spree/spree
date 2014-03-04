@@ -1,6 +1,6 @@
 # Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
 module Spree
-  class LegacyUser < ActiveRecord::Base
+  class LegacyUser < Spree::Base
     include Core::UserAddress
 
     self.table_name = 'spree_users'

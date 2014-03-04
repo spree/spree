@@ -1,7 +1,7 @@
 module Spree
   module Stock
     module Splitter
-      class Backordered < Base
+      class Backordered < Spree::Stock::Splitter::Base
 
         def split(packages)
           split_packages = []

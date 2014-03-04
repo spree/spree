@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 module ThirdParty
-  class Extension < ActiveRecord::Base
+  class Extension < Spree::Base
     # nasty hack so we don't have to create a table to back this fake model
     self.table_name = 'spree_products'
   end

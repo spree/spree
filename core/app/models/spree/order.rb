@@ -2,7 +2,7 @@ require 'spree/core/validators/email'
 require 'spree/order/checkout'
 
 module Spree
-  class Order < ActiveRecord::Base
+  class Order < Spree::Base
     include Checkout
     include CurrencyUpdater
 

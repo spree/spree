@@ -1,5 +1,5 @@
 module Spree
-  class Classification < ActiveRecord::Base
+  class Classification < Spree::Base
     self.table_name = 'spree_products_taxons'
     acts_as_list
     belongs_to :product, class_name: "Spree::Product", inverse_of: :classifications
