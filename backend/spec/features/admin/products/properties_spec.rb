@@ -78,6 +78,7 @@ describe "Properties" do
 
       page.evaluate_script('window.confirm = function() { return true; }')
       click_icon :trash
+      wait_for_ajax # delete action must finish before reloading
       click_link "Product Properties"
       page.should have_css("tbody#product_properties")
       all("tbody#product_properties tr").count.should == 1
