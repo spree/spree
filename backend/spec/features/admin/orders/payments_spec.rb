@@ -131,7 +131,12 @@ describe 'Payments' do
       it 'allows the amount change to be cancelled by clicking on the cancel button' do
         within_row(1) do
           click_icon(:edit)
-          fill_in('amount', with: '$1')
+
+          # Can't use fill_in here, as under poltergeist that will unfocus (and
+          # thus submit) the field under poltergeist
+          find('td.amount input').click
+          page.execute_script("$('td.amount input').val('$1')")
+
           click_icon(:cancel)
           page.should have_selector('td.amount span', text: '$150.00')
           payment.reload.amount.should == 150.00
