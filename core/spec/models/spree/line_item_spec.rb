@@ -19,6 +19,13 @@ describe Spree::LineItem do
       Spree::OrderInventory.any_instance.should_receive(:verify).with(line_item, nil)
       line_item.destroy
     end
+    context "the order is completed" do
+      it "is unable to be destroyed and has a an error around the order being complete" do
+        order.stub(:completed?).and_return(true)
+        expect(line_item.destroy).to be_false
+        expect(line_item.errors.messages[:base].first).to eq "Line items are frozen for completed orders"
+      end
+    end
   end
 
   context "#save" do
@@ -37,6 +44,13 @@ describe Spree::LineItem do
       it "does not trigger adjustment total recalculation" do
         line_item.should_not_receive(:recalculate_adjustments)
         line_item.save
+      end
+    end
+    context "the order is completed" do
+      it "is unable to be saved and has a an error around the order being complete" do
+        order.stub(:completed?).and_return(true)
+        expect(line_item.save).to be_false
+        expect(line_item.errors.messages[:base].first).to eq "Line items are frozen for completed orders"
       end
     end
   end
@@ -72,6 +86,15 @@ describe Spree::LineItem do
         order.contents.add(variant)
         line_item = order.find_line_item_by_variant(variant)
         line_item.adjustments.tax.count.should == 0
+      end
+    end
+
+    context "the order is completed" do
+      it "is unable to be created and has a an error around the order being complete" do
+        order.stub(:completed?).and_return(true)
+        line_item = order.contents.add(variant)
+        expect(line_item).to_not be_persisted
+        expect(line_item.errors.messages[:base].first).to eq "Line items are frozen for completed orders"
       end
     end
   end

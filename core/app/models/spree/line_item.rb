@@ -22,6 +22,9 @@ module Spree
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
+    validate :order_cannot_be_completed
+    before_destroy :order_cannot_be_completed
+
     validate :ensure_proper_currency
     before_destroy :update_inventory
 
@@ -123,6 +126,15 @@ module Spree
       def ensure_proper_currency
         unless currency == order.currency
           errors.add(:currency, t(:must_match_order_currency))
+        end
+      end
+
+      def order_cannot_be_completed
+        if order.completed?
+          errors.add(:base, :line_items_frozen_for_completed_orders)
+          false
+        else
+          true
         end
       end
   end
