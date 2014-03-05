@@ -240,24 +240,6 @@ describe Spree::Preferences::Preferable do
       end
     end
 
-    context "converts string preferences to proper values" do
-      before do
-        ENV.stub(:[])
-        ENV.stub(:[]).with("HELLO").and_return("World")
-        A.preference :is_string, :string, default: 'Fail'
-      end
-
-      it "returns ENV Variable if value matches /ENV_/" do
-        @a.set_preference(:is_string, 'ENV_HELLO')
-        @a.preferences[:is_string].should == 'World'
-      end
-
-      it "returns value when value does not match /ENV_/" do
-        @a.set_preference(:is_string, 'ENV-HELLO-WORLD')
-        @a.preferences[:is_string].should == 'ENV-HELLO-WORLD'
-      end
-    end
-
   end
 
   describe "persisted preferables" do
