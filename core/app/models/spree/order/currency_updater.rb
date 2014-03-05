@@ -1,5 +1,5 @@
 module Spree
-  class Order < ActiveRecord::Base
+  class Order < Spree::Base
     module CurrencyUpdater
       extend ActiveSupport::Concern
 
