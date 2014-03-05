@@ -13,10 +13,17 @@ module Spree::Preferences
 
         # perference_cache_key will only be nil/false for new records
         #
-        if preference_cache_key(name)
+        value = if preference_cache_key(name)
           preference_store.get(preference_cache_key(name), default)
         else
           get_pending_preference(name) || default
+        end
+        # If your preference value is prefixed with ENV_ we assume you want to access an ENV variable.
+        # Example given ENV['HELLO'] = 'World': ENV_HELLO => ENV['HELLO'] => 'World'
+        if value.is_a?(String) && value =~ /ENV_/
+          ENV[value.gsub('ENV_', '')].to_s
+        else
+          value
         end
       end
       alias_method prefers_getter_method(name), preference_getter_method(name)
