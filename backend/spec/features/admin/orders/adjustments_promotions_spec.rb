@@ -40,10 +40,12 @@ describe "Adjustments Promotions" do
 
     context "for already applied promotion" do
       it "should show an error message", :js => true do
-        2.times {
-          fill_in "coupon_code", :with => "10_off"
-          click_button "Add Coupon Code"
-        }
+        fill_in "coupon_code", :with => "10_off"
+        click_button "Add Coupon Code"
+        page.should have_content('-$10.00')
+
+        fill_in "coupon_code", :with => "10_off"
+        click_button "Add Coupon Code"
         page.should have_content("already been applied")
       end
     end
