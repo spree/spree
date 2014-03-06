@@ -94,7 +94,7 @@ module Spree
     end
 
     def credit_allowed
-      amount - offsets_total
+      amount - offsets_total.abs
     end
 
     def can_credit?
