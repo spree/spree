@@ -484,11 +484,12 @@ describe Spree::Payment do
   end
 
   describe "#credit_allowed" do
+    # Regression test for #4403 & #4407
     it "is the difference between offsets total and payment amount" do
       payment.amount = 100
       payment.stub(:offsets_total).and_return(0)
       payment.credit_allowed.should == 100
-      payment.stub(:offsets_total).and_return(80)
+      payment.stub(:offsets_total).and_return(-80)
       payment.credit_allowed.should == 20
     end
   end
