@@ -1,9 +1,11 @@
 <fieldset class="no-border-bottom">
   <div class="field" data-hook="previous_cards">
-    <% @previous_cards.each do |card| %>
-      <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
+    <% if previous_cards.any? %>
+      <% previous_cards.each do |card| %>
+        <label><%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_number %><br /></label>
+      <% end %>
+      <label><%= radio_button_tag :card, 'new', false, { class: "card_new" } %> <%= Spree.t(:use_new_cc) %></label>
     <% end %>
-    <label><%= radio_button_tag :card, 'new', @previous_cards.none?, { class: "card_new" } %> <%= Spree.t(:use_new_cc) %></label>
   </div>
 
   <div class="card_form" data-hook>
