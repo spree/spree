@@ -189,6 +189,9 @@ en:
       spree/state:
         one: State
         other: States
+      spree/stock_movement:
+        one: Stock Movement
+        other: Stock Movements
       spree/stock_location:
         one: Stock Location
         other: Stock Locations
