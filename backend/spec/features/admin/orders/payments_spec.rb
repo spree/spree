@@ -178,7 +178,6 @@ describe 'Payments' do
       end
 
       it "is able to create a new credit card payment with valid information", :js => true do
-        choose "Use a new card"
         fill_in "Card Number", :with => "4111 1111 1111 1111"
         fill_in "Name", :with => "Test User"
         fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
@@ -191,7 +190,6 @@ describe 'Payments' do
       end
 
       it "is unable to create a new payment with invalid information" do
-        choose "Use a new card"
         click_button "Continue"
         page.should have_content("Payment could not be created.")
         page.should have_content("Number can't be blank")
