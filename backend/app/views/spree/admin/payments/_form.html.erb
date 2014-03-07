@@ -25,7 +25,8 @@
           <div class="payment-methods" id="payment_method_<%= method.id %>">
             <% if method.source_required? %>
               <br />
-              <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+              <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}",
+                         :locals => { :payment_method => method, previous_cards: method.sources_by_order(@order) } %>
             <% end %>
           </div>
         <% end %>
