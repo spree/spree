@@ -159,7 +159,8 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
+        return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
