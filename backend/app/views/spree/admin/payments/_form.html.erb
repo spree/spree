@@ -12,17 +12,22 @@
         <% @payment_methods.each do |method| %>
           <li>
             <label data-hook="payment_method_field">
-              <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method %>
+              <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method, { class: "payment_methods_radios" } %>
               <%= Spree.t(method.name, :scope => :payment_methods, :default => method.name) %>
             </label>
           </li>
         <% end %>
       </ul>
+
       <div class="payment-method-settings">
         <% @payment_methods.each do |method| %>
-          <% if method.source_required? %>
-            <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
-          <% end %>
+
+          <div class="payment-methods" id="payment_method_<%= method.id %>">
+            <% if method.source_required? %>
+              <br />
+              <%= render :partial => "spree/admin/payments/source_forms/#{method.method_type}", :locals => { :payment_method => method } %>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </div>

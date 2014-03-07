@@ -185,7 +185,7 @@ describe 'Payments' do
         fill_in "Card Code", :with => "007"
         # Regression test for #4277
         sleep(1)
-        find('#cc_type', :visible => false).value.should == 'visa'
+        find('.ccType', :visible => false).value.should == 'visa'
         click_button "Continue"
         page.should have_content("Payment has been successfully created!")
       end
