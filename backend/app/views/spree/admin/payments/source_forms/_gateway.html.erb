@@ -3,13 +3,10 @@
     <% @previous_cards.each do |card| %>
       <label><%= radio_button_tag :card, card.id, card == @previous_cards.first %> <%= card.display_number %><br /></label>
     <% end %>
-    <label><%= radio_button_tag :card, 'new', @previous_cards.none? %> <%= Spree.t(:use_new_cc) %></label>
+    <label><%= radio_button_tag :card, 'new', @previous_cards.none?, { class: "card_new" } %> <%= Spree.t(:use_new_cc) %></label>
   </div>
-  <div id="card_form" data-hook>
-    <div class="nine columns">
-      <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image' %>
-    </div>
 
+  <div class="card_form" data-hook>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
     <div class="clear"></div>
@@ -17,9 +14,9 @@
     <div class="alpha four columns">
       <div data-hook="card_number">
         <div class="field">
-          <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {:id => 'cc_type'} %>
-          <%= label_tag 'card_number', raw(Spree.t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth', :id => 'card_number', :maxlength => 19 %>
+          <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {class: 'ccType'} %>
+          <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
+          <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth cardNumber', :id => "card_number#{payment_method.id}", :maxlength => 19 %>
           <span id="card_type" style="display:none;">
             ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
               <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
@@ -31,28 +28,31 @@
     <div class="alpha four columns">
       <div data-hook="card_name">
         <div class="field">
-          <%= label_tag 'card_name', raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= text_field_tag "#{param_prefix}[name]", '', :class => 'required fullwidth', :id => 'card_name', :maxlength => 19 %>
+          <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
+          <%= text_field_tag "#{param_prefix}[name]", '', id: "card_name#{payment_method.id}", class: 'required fullwidth', maxlength: 19 %>
         </div>
       </div>
     </div>
     <div class="three columns">
       <div data-hook="card_expiration" class="field">
-        <%= label_tag 'card_expiry', raw(Spree.t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
-        <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "required", :placeholder => "MM / YY" %>
+        <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
+        <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry", placeholder: "MM / YY" %>
       </div>
     </div>
     <div class="omega two columns">
       <div data-hook="card_code" class="field">
-        <%= label_tag 'card_code', raw(Spree.t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
-        <%= text_field_tag "#{param_prefix}[verification_value]", '', :class => 'required fullwidth', :size => 5, :id => 'card_code' %>
-        <a href="/content/cvv" class="info" target="_blank" id="cvv_link">
+        <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
+        <%= text_field_tag "#{param_prefix}[verification_value]", '', id: "card_code#{payment_method.id}", class: 'required fullwidth cardCode', size: 5 %>
+        <a href="/content/cvv" class="info cvvLink" target="_blank">
           (<%= Spree.t(:what_is_this) %>)
         </a>
       </div>
     </div>
 
+    <div class="nine columns">
+      <%= image_tag 'credit_cards/credit_card.gif', :class => 'credit-card-image' %>
+    </div>
+
     <div class="clear"></div>
   </div>
-
 </fieldset>
