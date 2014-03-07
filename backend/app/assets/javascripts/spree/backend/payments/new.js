@@ -25,6 +25,10 @@ $(document).ready(function() {
         } else {
           $('#payment_method_' + this.value).hide();
         }
+
+        if ($("#card_new" + this.value).is("*")) {
+          $("#card_new" + this.value).radioControlsVisibilityOfElement('#card_form' + this.value);
+        }
       }
     );
 
@@ -34,8 +38,6 @@ $(document).ready(function() {
       window.open($(this).prop('href'), window_name, window_options);
       event.preventDefault();
     });
-
-    $(".card_new").radioControlsVisibilityOfElement('.card_form');
 
     $('select.jump_menu').change(function(){
       window.location = this.options[this.selectedIndex].value;
