@@ -12,7 +12,7 @@ To create a new product for your store, go into the Admin Interface, click the "
 The two mandatory fields ("Name" and "Master Price") are denoted with an asterisk (&#42;) next to the label. You can leave SKU blank. If you don't add a value for "Available On" the product will not be shown in your store.
 
 ***
-[Prototypes](prototypes.md) are a more complex topic, and are covered in their own guide.
+[Prototypes](product_prototypes) are a more complex topic, and are covered in their own guide.
 ***
 
 ## Product Details
