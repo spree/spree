@@ -97,6 +97,19 @@ module Spree
           api_delete :destroy, :id => line_item.id
           expect(order.reload.shipments).to be_empty
         end
+
+        context "order is completed" do
+          before do
+            order.stub completed?: true
+            Order.stub find_by!: order
+          end
+
+          it "doesn't destroy shipments or restart checkout flow" do
+            expect(order.reload.shipments).not_to be_empty
+            api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
+            expect(order.reload.shipments).not_to be_empty
+          end
+        end
       end
     end
 
