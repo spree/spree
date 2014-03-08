@@ -30,7 +30,7 @@ module Spree
 
         unless (engine_migrations.sort - engine_in_app.sort).empty?
           puts "[#{engine_name.capitalize} WARNING] Missing migrations." \
-               "Run `bundle exec rake railties:install:migrations` to get them.\n\n"
+               " Run `bundle exec rake railties:install:migrations` to get them.\n\n"
           true
         end
       end
