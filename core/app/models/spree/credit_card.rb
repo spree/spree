@@ -1,5 +1,6 @@
 module Spree
   class CreditCard < ActiveRecord::Base
+    belongs_to :payment_method
     has_many :payments, as: :source
 
     before_save :set_last_digits
