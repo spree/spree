@@ -1,6 +1,21 @@
 Spree.onPayment = () ->
   if ($ '#checkout_form_payment').is('*')
 
+    if ($ '#existing_cards').is('*')
+      ($ '#payment-method-fields').hide()
+      ($ '#payment-methods').hide()
+
+      ($ '#use_existing_card_yes').click ->
+        ($ '#payment-method-fields').hide()
+        ($ '#payment-methods').hide()
+        ($ '.existing-cc-radio').prop("disabled", false)
+
+      ($ '#use_existing_card_no').click ->
+        ($ '#payment-method-fields').show()
+        ($ '#payment-methods').show()
+        ($ '.existing-cc-radio').prop("disabled", true)
+
+
     $(".cardNumber").payment('formatCardNumber')
     $(".cardExpiry").payment('formatCardExpiry')
     $(".cardCode").payment('formatCardCVC')
