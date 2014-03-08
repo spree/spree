@@ -677,6 +677,26 @@ describe Spree::Order do
       order.ensure_updated_shipments
       expect(order.shipment_total).to eq(0)
     end
+
+    context "except when order is completed, that's OrderInventory job" do
+      it "doesn't touch anything" do
+        order.stub completed?: true
+        order.update_column(:shipment_total, 5)
+        order.shipments.create!
+
+        expect {
+          order.ensure_updated_shipments
+        }.not_to change { order.shipment_total }
+
+        expect {
+          order.ensure_updated_shipments
+        }.not_to change { order.shipments }
+
+        expect {
+          order.ensure_updated_shipments
+        }.not_to change { order.state }
+      end
+    end
   end
 
   describe ".tax_address" do
