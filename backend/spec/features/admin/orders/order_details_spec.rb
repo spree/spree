@@ -82,6 +82,7 @@ describe "Order Details", js: true do
         fill_in "tracking", :with => "FOOBAR"
         click_icon :ok
 
+        page.should_not have_css("input[name=tracking]")
         page.should have_content("Tracking: FOOBAR")
       end
 
@@ -93,8 +94,8 @@ describe "Order Details", js: true do
         end
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
-        wait_for_ajax
 
+        page.should_not have_css('#selected_shipping_rate_id')
         page.should have_content("Default")
       end
 
@@ -160,12 +161,12 @@ describe "Order Details", js: true do
               within("tr.show-tracking") do
                 click_icon :edit
               end
-              wait_for_ajax
+
               fill_in "tracking", :with => "TRACKING_NUMBER"
               click_icon :ok
             end
 
-            wait_for_ajax
+            page.should_not have_css("input[name=tracking]")
             page.should have_content("Tracking: TRACKING_NUMBER")
           end
 
@@ -193,8 +194,8 @@ describe "Order Details", js: true do
               select2 "Default", :from => "Shipping Method"
             end
             click_icon :ok
-            wait_for_ajax
 
+            page.should_not have_css('#selected_shipping_rate_id')
             page.should have_content("Default")
           end
         end
@@ -289,8 +290,8 @@ describe "Order Details", js: true do
       end
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
-      wait_for_ajax
 
+      page.should_not have_css("input[name=tracking]")
       page.should have_content("Tracking: FOOBAR")
     end
 
@@ -302,8 +303,8 @@ describe "Order Details", js: true do
       end
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
-      wait_for_ajax
 
+      page.should_not have_css('#selected_shipping_rate_id')
       page.should have_content("Default")
     end
 
