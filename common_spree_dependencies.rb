@@ -32,4 +32,3 @@ end
 
 gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
 gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
-gem 'friendly_id', github: 'norman/friendly_id'
