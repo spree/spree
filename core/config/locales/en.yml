@@ -234,6 +234,8 @@ en:
               card_expired: "Card has expired"
         spree/line_item:
           attributes:
+            base:
+              line_items_frozen_for_completed_orders: "Line items are frozen for completed orders"
             currency:
               must_match_order_currency: "Must match order currency"
   devise:
