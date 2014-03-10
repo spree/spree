@@ -5,13 +5,13 @@ describe Spree::AppConfiguration do
   let (:prefs) { Rails.application.config.spree.preferences }
 
   it "should be available from the environment" do
-    prefs.site_name = "TEST SITE NAME"
-    prefs.site_name.should eq "TEST SITE NAME"
+    prefs.layout = "my/layout"
+    prefs.layout.should eq "my/layout"
   end
 
   it "should be available as Spree::Config for legacy access" do
-    Spree::Config.site_name = "Spree::Config TEST SITE NAME"
-    Spree::Config.site_name.should eq "Spree::Config TEST SITE NAME"
+    Spree::Config.layout = "my/layout"
+    Spree::Config.layout.should eq "my/layout"
   end
 
   it "uses base searcher class by default" do
