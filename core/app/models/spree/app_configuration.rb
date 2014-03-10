@@ -94,19 +94,6 @@ module Spree
       @searcher_class = sclass
     end
 
-    # This and the two aliases are only required while store prefs are beind deprecated
-    def get_preference name
-      name_sym = name.to_sym
-      if DEPRECATED_STORE_PREFERENCES.include? name_sym
-        ActiveSupport::Deprecation.warn("#{name} is no longer supported on Spree::Config, please access it through #{DEPRECATED_STORE_PREFERENCES[name_sym]} on Spree::Store")
-        default_store.send(DEPRECATED_STORE_PREFERENCES[name_sym])
-      else
-        super(name)
-      end
-    end
-    alias :get :get_preference
-    alias :[] :get_preference
-
     private
     # all the following can be deprecated when store prefs are no longer supported
     DEPRECATED_STORE_PREFERENCES = {
@@ -125,10 +112,11 @@ module Spree
     end
 
     DEPRECATED_STORE_PREFERENCES.each do |old_preference_name, store_method|
-      # support all the old preference methods through get_preference
-      define_method old_preference_name, proc { self.get_preference old_preference_name }
-      # this makes them still look like preferences
-      define_method "preferred_#{old_preference_name.to_s}", proc {}
+      # support all the old preference methods with a warning
+      define_method "preferred_#{old_preference_name}" do
+        ActiveSupport::Deprecation.warn("#{old_preference_name} is no longer supported on Spree::Config, please access it through #{store_method} on Spree::Store")
+        default_store.send(store_method)
+      end
     end
   end
 end
