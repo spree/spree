@@ -100,7 +100,7 @@ module Spree
       site_name: :name,
       site_url: :url,
       default_meta_description: :meta_description,
-      default_meta_keywords: :meta_description,
+      default_meta_keywords: :meta_keywords,
       default_seo_title: :seo_title,
     }
 
