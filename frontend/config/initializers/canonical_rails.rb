@@ -1,9 +1,4 @@
 CanonicalRails.setup do |config|
-
-  # This is the main host, not just the TLD, omit slashes and protocol. If you have more than one, pick the one you want to rank in search results.
-
-  config.host = Spree::Config[:site_url]
-
   # http://en.wikipedia.org/wiki/URL_normalization
   # Trailing slash represents semantics of a directory, ie a collection view - implying an :index get route;
   # otherwise we have to assume semantics of an instance of a resource type, a member view - implying a :show get route
