@@ -261,6 +261,23 @@ describe Spree::Product do
       Spree::Property.where(:name => 'foo').first.presentation.should == "Foo's Presentation Name"
       Spree::Property.where(:name => 'bar').first.presentation.should == "bar"
     end
+
+    # Regression test for #4416
+    context "#possible_promotions" do
+      let!(:promotion) do
+        create(:promotion, advertise: true, starts_at: 1.day.ago)
+      end
+      let!(:rule) do
+        Spree::Promotion::Rules::Product.create(
+          promotion: promotion,
+          products: [product]
+        )
+      end
+
+      it "lists the promotion as a possible promotion" do
+        product.possible_promotions.should include(promotion)
+      end
+    end
   end
 
   context '#create' do
