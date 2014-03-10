@@ -28,7 +28,7 @@ module Spree
   # Example:
   #
   #   Spree.config do |config|
-  #     config.site_name = "An awesome Spree site"
+  #     config.track_inventory_levels = false
   #   end
   #
   # This method is defined within the core gem on purpose.
