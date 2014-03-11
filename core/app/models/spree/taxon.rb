@@ -1,6 +1,6 @@
 module Spree
   class Taxon < ActiveRecord::Base
-    acts_as_nested_set dependent: :destroy
+    acts_as_nested_set scope: :taxonomy_id, dependent: :destroy
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', touch: true, inverse_of: :taxons
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
