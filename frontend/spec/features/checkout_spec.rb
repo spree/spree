@@ -210,6 +210,52 @@ describe "Checkout", inaccessible: true do
     end
   end
 
+  context "user has payment sources", js: true do
+    let(:bogus) { create(:credit_card_payment_method) }
+    let(:user) { create(:user) }
+
+    let!(:credit_card) do
+      create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: "BGS-WEFWF")
+    end
+
+    before do
+      order = OrderWalkthrough.up_to(:delivery)
+      order.stub(:available_payment_methods => [bogus])
+
+      Spree::CheckoutController.any_instance.stub(current_order: order)
+      Spree::CheckoutController.any_instance.stub(try_spree_current_user: user)
+
+      visit spree.checkout_state_path(:payment)
+    end
+
+    it "selects first source available and customer moves on" do
+      expect(find "#use_existing_card_yes").to be_checked
+
+      expect {
+        click_on "Save and Continue"
+      }.not_to change { Spree::CreditCard.count }
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+
+    it "allows user to enter a new source" do
+      choose "use_existing_card_no"
+
+      fill_in "Name on card", :with => 'Spree Commerce'
+      fill_in "Card Number", :with => '4111111111111111'
+      fill_in "card_expiry", :with => '04 / 20'
+      fill_in "Card Code", :with => '123'
+
+      expect {
+        click_on "Save and Continue"
+      }.to change { Spree::CreditCard.count }.by 1
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+  end
+
   # regression for #2921
   context "goes back from payment to add another item", js: true do
     let!(:bag) { create(:product, :name => "RoR Bag") }
