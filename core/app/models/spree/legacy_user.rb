@@ -2,6 +2,7 @@
 module Spree
   class LegacyUser < ActiveRecord::Base
     include Core::UserAddress
+    include Core::UserPaymentSource
 
     self.table_name = 'spree_users'
 

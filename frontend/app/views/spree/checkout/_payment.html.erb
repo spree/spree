@@ -2,7 +2,7 @@
   <legend align="center"><%= Spree.t(:payment_information) %></legend>
   <div data-hook="checkout_payment_step">
 
-    <% if @cards.present? %>
+    <% if @payment_sources.present? %>
       <div class="card_options">
         <%= radio_button_tag 'use_existing_card', 'yes', true %>
         <label for="use_existing_card_yes">Use an existing card on file</label>
@@ -15,14 +15,14 @@
         <p class="field" data-hook="existing_cards">
           <table class="existing-credit-card-list">
             <tbody>
-              <% @cards.each do |card| %>
+              <% @payment_sources.each do |card| %>
                 <tr id="<%= dom_id(card,'spree')%>" class="<%= cycle('even', 'odd') %>">
                   <td><%= card.name %></td>
                   <td><%= card.display_number %></td>
                   <td><%= card.month %></td>
                   <td><%= card.year %></td>
                   <td>
-                    <%= radio_button_tag "existing_card", card.id, (card == @cards.first), { class: "existing-cc-radio" }  %>
+                    <%= radio_button_tag "existing_card", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
                   </td>
                 </tr>
               <% end %>
