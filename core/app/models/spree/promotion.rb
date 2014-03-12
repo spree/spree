@@ -101,11 +101,15 @@ module Spree
     end
 
     def usage_limit_exceeded?(promotable)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+      usage_limit.present? && usage_limit > 0 && completed_credits_count >= usage_limit
     end
 
-    def adjusted_credits_count(promotable)
-      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+    def completed_credits
+      credits.joins(:order).where.not(orders: {completed_at: nil})
+    end
+
+    def completed_credits_count
+      completed_credits.count
     end
 
     def credits

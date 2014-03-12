@@ -124,16 +124,19 @@ describe Spree::Promotion do
 
     it "should have its usage limit exceeded" do
       promotion.usage_limit = 2
-      promotion.stub(:adjusted_credits_count => 2)
+      promotion.stub(:completed_credits_count => 2)
       promotion.usage_limit_exceeded?(promotable).should be_true
 
-      promotion.stub(:adjusted_credits_count => 3)
+      promotion.stub(:completed_credits_count => 3)
       promotion.usage_limit_exceeded?(promotable).should be_true
+
+      promotion.stub(:completed_credits_count => 1)
+      promotion.usage_limit_exceeded?(promotable).should be_false
     end
   end
 
   context "#expired" do
-    it "should not be exipired" do
+    it "should not be expired" do
       promotion.should_not be_expired
     end
 
