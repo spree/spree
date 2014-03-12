@@ -36,21 +36,16 @@ The state transition for these is handled by the processing code within Spree; h
 
 ## Payment Methods
 
-Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [Paypal Express Checkout](https://github.com/spree/spree_paypal_express).
+Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express).
 
 A `PaymentMethod` can have the following attributes:
 
-* `type`: The subclass of `Spree::PaymentMethod` this payment method represents
+* `type`: The subclass of `Spree::PaymentMethod` this payment method represents. Uses rails single table inheritance feature.
 * `name`: The visible name for this payment method
 * `description`: The description for this payment method
-* `active`: Whether or not this payment method is active
+* `active`: Whether or not this payment method is active. Set it `false` to hide it in frontend.
 * `environment`: The Rails environment (`Rails.env`) where this payment method is active
 * `display_on`: Determines where the payment method can be visible. Values can be `front` for frontend, `back` for backend or `both` for both.
-
-$$$
-What are the options for `type` above?
-What does it mean for a `PaymentMethod` to be `active`? What impact does that have? What activates/deactivates a `PaymentMethod`?
-$$$
 
 ### Payment Method Visibility
 
@@ -183,3 +178,17 @@ These are just some of the gateways which are supported by the Active Merchant g
 
 In order to implement a new gateway in the spree_gateway project, please refer to the other gateways within `app/models/spree/gateway` inside that project.
 ***
+
+## Adding your custom gateway
+
+In order to make your custom gateway show up on backend list of available payment methods
+you need to add it to spree config list of payment methods first. That can be achieved
+by adding the following code in your spree.rb for example:
+
+```ruby
+Rails.application.config.spree.payment_methods << YourCustomGateway
+```
+
+[better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express) and
+[spree-adyen](https://github.com/spree/spree-adyen) are good examples of standalone custom gateways.
+No dependency on spree_gateway or activemerchant required.
