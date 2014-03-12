@@ -4,7 +4,7 @@ module Spree
       respond_to :json
 
       def create
-        authorize! :read, order
+        authorize! :update, @order, order_token
         @line_item = order.line_items.build(params[:line_item], :as => :api)
         if @line_item.save
           @order.ensure_updated_shipments
@@ -15,7 +15,7 @@ module Spree
       end
 
       def update
-        authorize! :read, order
+        authorize! :update, @order, order_token
         @line_item = order.line_items.find(params[:id])
         if @line_item.update_attributes(params[:line_item], :as => :api)
           @order.ensure_updated_shipments
@@ -26,7 +26,7 @@ module Spree
       end
 
       def destroy
-        authorize! :read, order
+        authorize! :update, @order, order_token
         @line_item = order.line_items.find(params[:id])
         @line_item.destroy
         respond_with(@line_item, :status => 204)
