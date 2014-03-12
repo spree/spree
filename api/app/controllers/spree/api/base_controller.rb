@@ -18,6 +18,7 @@ module Spree
 
       before_filter :set_content_type
       before_filter :check_for_user_or_api_key, :if => :requires_authentication?
+      before_filter :authorize_for_order, :if => Proc.new { order_token.present? }
       before_filter :authenticate_user
       after_filter  :set_jsonp_format
 
@@ -70,14 +71,14 @@ module Spree
         # User is already authenticated with Spree, make request this way instead.
         return true if @current_api_user = try_spree_current_user || !Spree::Api::Config[:requires_authentication]
 
-        if api_key.blank?
+        if api_key.blank? && order_token.blank?
           render "spree/api/errors/must_specify_api_key", :status => 401 and return
         end
       end
 
       def authenticate_user
         unless @current_api_user
-          if requires_authentication? || api_key.present?
+          if order_token.blank? && (requires_authentication? || api_key.present?)
             unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
               render "spree/api/errors/invalid_api_key", :status => 401 and return
             end
@@ -127,6 +128,10 @@ module Spree
       end
       helper_method :api_key
 
+      def order_token
+        request.headers["X-Spree-Order-Token"] || params[:order_token]
+      end
+
       def find_product(id)
         begin
           product_scope.find_by_permalink!(id.to_s)
@@ -150,6 +155,13 @@ module Spree
         end
 
         scope
+      end
+
+      def authorize_for_order
+        @order = Spree::Order.find_by(number: params[:order_id] || params[:id])
+        unless @order.token == order_token
+          unauthorized
+        end
       end
     end
   end
