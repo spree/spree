@@ -131,7 +131,12 @@ describe 'Payments' do
       it 'allows the amount change to be cancelled by clicking on the cancel button' do
         within_row(1) do
           click_icon(:edit)
-          fill_in('amount', with: '$1')
+
+          # Can't use fill_in here, as under poltergeist that will unfocus (and
+          # thus submit) the field under poltergeist
+          find('td.amount input').click
+          page.execute_script("$('td.amount input').val('$1')")
+
           click_icon(:cancel)
           page.should have_selector('td.amount span', text: '$150.00')
           payment.reload.amount.should == 150.00
@@ -173,20 +178,18 @@ describe 'Payments' do
       end
 
       it "is able to create a new credit card payment with valid information", :js => true do
-        choose "Use a new card"
         fill_in "Card Number", :with => "4111 1111 1111 1111"
         fill_in "Name", :with => "Test User"
         fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
         fill_in "Card Code", :with => "007"
         # Regression test for #4277
         sleep(1)
-        find('#cc_type', :visible => false).value.should == 'visa'
+        find('.ccType', :visible => false).value.should == 'visa'
         click_button "Continue"
         page.should have_content("Payment has been successfully created!")
       end
 
       it "is unable to create a new payment with invalid information" do
-        choose "Use a new card"
         click_button "Continue"
         page.should have_content("Payment could not be created.")
         page.should have_content("Number can't be blank")

@@ -49,10 +49,6 @@ module Spree
         def line_item_params
           params.require(:line_item).permit(:quantity, :variant_id)
         end
-
-        def order_token
-          request.headers["X-Spree-Order-Token"] || params[:order_token]
-        end
     end
   end
 end

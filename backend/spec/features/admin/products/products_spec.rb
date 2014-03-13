@@ -321,7 +321,7 @@ describe "Products" do
 
         page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
-          first('input[type=text]')[:value].should eq('baseball_cap_color')
+          first('input[type=text]').value.should eq('baseball_cap_color')
         end
       end
     end
@@ -331,8 +331,9 @@ describe "Products" do
 
       it "is still viewable" do
         visit spree.admin_products_path
-        click_icon :trash
-        page.driver.browser.switch_to.alert.accept
+        accept_alert do
+          click_icon :trash
+        end
         # This will show our deleted product
         click_button "Search"
         click_link product.name

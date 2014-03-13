@@ -25,7 +25,7 @@ end
 
 child :manifest => :manifest do
   child :variant => :variant do
-    extends "spree/api/variants/show"
+    extends "spree/api/variants/small"
   end
   node(:quantity) { |m| m.quantity }
   node(:states) { |m| m.states }

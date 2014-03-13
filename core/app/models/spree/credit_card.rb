@@ -4,12 +4,13 @@ module Spree
 
     before_save :set_last_digits
 
-    attr_accessor :number, :verification_value
+    attr_accessor :number, :verification_value, :encrypted_data
 
-    validates :month, :year, numericality: { only_integer: true }, unless: :has_payment_profile?
-    validates :number, presence: true, unless: :has_payment_profile?, on: :create
-    validates :name, presence: true
-    validates :verification_value, presence: true, unless: :has_payment_profile?, on: :create
+    validates :month, :year, numericality: { only_integer: true }, if: :require_card_numbers?, on: :create
+    validates :number, presence: true, if: :require_card_numbers?, on: :create
+    validates :name, presence: true, if: :require_card_numbers?, on: :create
+    validates :verification_value, presence: true, if: :require_card_numbers?, on: :create
+
     validate :expiry_not_in_the_past
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
@@ -117,6 +118,10 @@ module Spree
           errors.add(:base, :card_expired)
         end
       end
+    end
+
+    def require_card_numbers?
+      !self.encrypted_data.present? && !self.has_payment_profile?
     end
   end
 end

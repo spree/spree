@@ -74,7 +74,6 @@ module Spree
         else
           @payment_method = @payment_methods.first
         end
-        @previous_cards = @order.credit_cards.with_payment_profile
       end
 
       def can_transition_to_payment

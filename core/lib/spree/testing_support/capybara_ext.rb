@@ -103,10 +103,32 @@ module CapybaraExt
 
   def wait_for_ajax
     counter = 0
-    while page.evaluate_script("$.active").to_i > 0
+    while page.evaluate_script("typeof($) === 'undefined' || $.active > 0")
       counter += 1
       sleep(0.1)
       raise "AJAX request took longer than 5 seconds." if counter >= 50
+    end
+  end
+
+  def accept_alert
+    if page.driver === Capybara::Selenium::Driver
+      yield
+      page.driver.browser.switch_to.alert.accept
+    else
+      page.evaluate_script('window.confirm = function() { return true; }')
+      yield
+    end
+  end
+  def dismiss_alert
+    if page.driver === Capybara::Selenium::Driver
+      yield
+      page.driver.browser.switch_to.alert.dismiss
+    else
+      page.evaluate_script('window.confirm = function() { return false; }')
+      yield
+
+      # Restore existing default
+      page.evaluate_script('window.confirm = function() { return true; }')
     end
   end
 end

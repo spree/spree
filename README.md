@@ -38,9 +38,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.0.2
+gem install rails -v 4.0.3
 gem install spree
-rails _4.0.2_ new my_store
+rails _4.0.3_ new my_store
 spree install my_store
 ```
 
@@ -87,7 +87,7 @@ If you wish to have authentication included also, you will need to add the
 `spree_auth_devise` gem as well. Either this:
 
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-1-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-2-stable'
 ```
 
 Or this:

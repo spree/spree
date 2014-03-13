@@ -4,6 +4,7 @@ require 'spree/order/checkout'
 module Spree
   class Order < ActiveRecord::Base
     include Checkout
+    include CurrencyUpdater
 
     checkout_flow do
       go_to_state :address
@@ -68,6 +69,7 @@ module Spree
     attr_accessor :use_billing
 
     before_create :link_by_email
+    before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
@@ -489,7 +491,7 @@ module Spree
     # to delivery again so that proper updated shipments are created.
     # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
-      if shipments.any?
+      if shipments.any? && !self.completed?
         self.shipments.destroy_all
         self.update_column(:shipment_total, 0)
         restart_checkout_flow

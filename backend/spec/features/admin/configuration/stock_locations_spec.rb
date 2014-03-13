@@ -25,8 +25,9 @@ describe "Stock Locations" do
     visit current_path
 
     find('#listing_stock_locations').should have_content("NY Warehouse")
-    click_icon :trash
-    page.driver.browser.switch_to.alert.accept
+    accept_alert do
+      click_icon :trash
+    end
     # Wait for API request to complete.
     wait_for_ajax
     visit current_path 
