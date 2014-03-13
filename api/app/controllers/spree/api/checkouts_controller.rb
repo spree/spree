@@ -134,10 +134,6 @@ module Spree
           end
           false
         end
-
-        def order_token
-          request.headers["X-Spree-Order-Token"] || params[:order_token]
-        end
     end
   end
 end
