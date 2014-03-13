@@ -533,10 +533,29 @@ describe Spree::Payment do
   end
 
   describe "#save" do
-    it "should call order#update!" do
-      payment = Spree::Payment.create(:amount => 100, :order => order)
-      order.should_receive(:update!)
-      payment.save
+    context "completed payments" do
+      it "updates order payment total" do
+        payment = Spree::Payment.create(:amount => 100, :order => order, state: "completed")
+        expect(order.payment_total).to eq payment.amount
+      end
+    end
+
+    context "not completed payments" do
+      it "doesn't update order payment total" do
+        expect {
+          Spree::Payment.create(:amount => 100, :order => order)
+        }.not_to change { order.payment_total }
+      end
+    end
+
+    context "completed orders" do
+      before { order.stub completed?: true }
+
+      it "updates payment_state and shipments" do
+        expect(order.updater).to receive(:update_payment_state)
+        expect(order.updater).to receive(:update_shipment_state)
+        Spree::Payment.create(:amount => 100, :order => order)
+      end
     end
 
     context "when profiles are supported" do

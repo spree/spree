@@ -66,7 +66,7 @@ describe 'Payments' do
       # end
     end
 
-    it 'should be able to list and create payment methods for an order', js: true do
+    it 'lists and create payments for an order', js: true do
       find('#payment_status').text.should == 'PENDING'
       within_row(1) do
         column_text(2).should == '$150.00'
