@@ -66,6 +66,20 @@ describe "Checkout", inaccessible: true do
         page.should have_content("Shipping total $10.00")
       end
     end
+
+    # Regression test for #4306
+    context "free shipping" do
+      before do
+        add_mug_to_cart
+        click_button "Checkout"
+      end
+
+      it "should not show 'Free Shipping' when there are no shipments" do
+        within("#checkout-summary") do
+          expect(page).to_not have_content('Free Shipping')
+        end
+      end
+    end
   end
 
   # Regression test for #2694 and #4117
