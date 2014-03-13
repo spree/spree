@@ -41,10 +41,6 @@ module Spree
           end
         end
 
-        def order_token
-          request.headers["X-Spree-Order-Token"] || params[:order_token]
-        end
-
         def load_and_authorize_address(permission)
           find_address
           if @order
