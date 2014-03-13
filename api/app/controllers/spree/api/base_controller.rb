@@ -17,6 +17,7 @@ module Spree
       attr_accessor :current_api_user
 
       before_filter :set_content_type
+      before_filter :load_user
       before_filter :check_for_user_or_api_key, :if => :requires_authentication?
       before_filter :authorize_for_order, :if => Proc.new { order_token.present? }
       before_filter :authenticate_user
@@ -69,19 +70,21 @@ module Spree
 
       def check_for_user_or_api_key
         # User is already authenticated with Spree, make request this way instead.
-        return true if @current_api_user = try_spree_current_user || !Spree::Api::Config[:requires_authentication]
+        return true if @current_api_user || !Spree::Api::Config[:requires_authentication]
 
         if api_key.blank? && order_token.blank?
           render "spree/api/errors/must_specify_api_key", :status => 401 and return
         end
       end
 
+      def load_user
+        @current_api_user = (try_spree_current_user || Spree.user_class.find_by(spree_api_key: api_key.to_s))
+      end
+
       def authenticate_user
         unless @current_api_user
           if order_token.blank? && (requires_authentication? || api_key.present?)
-            unless @current_api_user = Spree.user_class.find_by_spree_api_key(api_key.to_s)
-              render "spree/api/errors/invalid_api_key", :status => 401 and return
-            end
+            render "spree/api/errors/invalid_api_key", :status => 401 and return
           else
             # An anonymous user
             @current_api_user = Spree.user_class.new
