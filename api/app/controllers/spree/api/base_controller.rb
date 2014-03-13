@@ -66,7 +66,7 @@ module Spree
 
       def check_for_user_or_api_key
         # User is already authenticated with Spree, make request this way instead.
-        return true if @current_api_user || !Spree::Api::Config[:requires_authentication]
+        return true if @current_api_user
 
         if api_key.blank? && order_token.blank?
           render "spree/api/errors/must_specify_api_key", :status => 401 and return
