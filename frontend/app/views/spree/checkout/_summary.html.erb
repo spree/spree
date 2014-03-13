@@ -27,7 +27,7 @@
       <% end %>
     </tbody>
 
-    <% if order.checkout_steps.include?("delivery") %>
+    <% if order.checkout_steps.include?("delivery") && order.shipments.any? %>
       <tr data-hook="shipping_total">
       <% if order.shipment_total > 0 %>
         <td><%= Spree.t(:shipping_total) %></td>
