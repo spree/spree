@@ -162,9 +162,7 @@ module Spree
 
       def authorize_for_order
         @order = Spree::Order.find_by(number: params[:order_id] || params[:id])
-        unless @order.token == order_token
-          unauthorized
-        end
+        authorize! :read, @order, order_token
       end
     end
   end
