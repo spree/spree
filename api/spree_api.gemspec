@@ -18,5 +18,4 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'spree_core', version
   gem.add_dependency 'rabl', '0.9.3'
   gem.add_dependency 'versioncake', '~> 1.2.0'
-  gem.add_dependency 'oj', '2.5.5'
 end
