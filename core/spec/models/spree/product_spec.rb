@@ -174,6 +174,11 @@ describe Spree::Product do
         product.available_on = 1.day.from_now
         product.should_not be_available
       end
+
+      it "should not be available if destroyed" do 
+        product.destroy 
+        product.should_not be_available 
+      end 
     end
 
     context "variants_and_option_values" do
