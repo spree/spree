@@ -83,7 +83,7 @@ module Spree
 
     def adjusted_credits_count(order)
       return credits_count if order.nil?
-      credits_count - (order.promotion_credit_exists?(self) ? 1 : 0)
+      credits_count - (exists_on_order?(order) ? 1 : 0)
     end
 
     def credits
@@ -96,6 +96,10 @@ module Spree
 
     def code=(coupon_code)
       write_attribute(:code, (coupon_code.downcase.strip rescue nil))
+    end
+    
+    def exists_on_order?(order)
+      actions.any? { |a| a.credit_exists_on_order?(order) }
     end
   end
 end
