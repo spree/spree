@@ -70,9 +70,9 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       model.reset_column_information
     end
 
-    load_defaults  = Spree::Country.count == 0
-    unless load_defaults    # ask if there are already Countries => default data hass been loaded
-      load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
+    load_defaults  = Spree::Zone.count == 0
+    unless load_defaults    # ask if there are already Zones => default data has been loaded
+      load_defaults = agree('Zones present, load sample data anyways? [y/n]: ')
     end
     if load_defaults
       Rake::Task["db:seed"].invoke
