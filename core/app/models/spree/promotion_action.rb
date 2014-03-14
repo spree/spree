@@ -13,5 +13,9 @@ module Spree
     def perform(options = {})
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
+
+    def credit_exists_on_order?(order)
+      !!order.promotion_credit_exists?(self)
+    end
   end
 end

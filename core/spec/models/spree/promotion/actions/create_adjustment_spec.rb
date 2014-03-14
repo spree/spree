@@ -13,6 +13,11 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       action.stub(:promotion => promotion)
     end
 
+    it 'should call credit_exist_on_order?' do
+      action.should_receive(:credit_exists_on_order?).with(order).and_return(true) 
+      action.perform(:order => order)
+    end
+
     it "should create a discount with correct negative amount" do
       order = create(:line_item, :price => 5000).order
 

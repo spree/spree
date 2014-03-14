@@ -41,6 +41,37 @@ describe Spree::Promotion do
     end
   end
 
+  describe '#exists_on_order?' do
+    let(:promotion) { create :promotion } 
+    let(:order) { create :order }
+    let(:action_1) { Spree::Promotion::Actions::CreateAdjustment.new }
+    let(:action_2) { Spree::Promotion::Actions::CreateAdjustment.new }
+
+    before do
+      promotion.actions << action_1
+      promotion.actions << action_2
+
+      action_1.should_receive(:credit_exists_on_order?).with(order).and_return(false)
+      action_2.should_receive(:credit_exists_on_order?).with(order).and_return(action_2_status)
+    end
+
+    context 'when one returns true' do
+      let(:action_2_status) { true }
+
+      it 'should be true' do
+        promotion.exists_on_order?(order).should be_true
+      end    
+    end
+
+    context 'when none returns true' do
+      let(:action_2_status) { false }
+
+      it 'should be false' do
+        promotion.exists_on_order?(order).should be_false
+      end 
+    end
+  end
+
   describe ".advertised" do
     let(:promotion) { create(:promotion) }
     let(:advertised_promotion) { create(:promotion, :advertise => true) }
