@@ -12,7 +12,7 @@ module Spree
 
     context "as a normal user" do
       before do
-        controller.stub :try_spree_current_user => user
+        controller.stub :current_api_user => user
       end
 
       it "can get own details" do
