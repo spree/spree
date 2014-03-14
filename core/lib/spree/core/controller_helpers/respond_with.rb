@@ -19,7 +19,7 @@ module ActionController
           # The action name is needed for processing
           options.merge!(:action_name => action_name.to_sym)
           # If responder is not specified then pass in Spree::Responder
-          responder = options.delete(:responder) || self.responder || Spree::Responder
+          responder = options.delete(:responder) || self.responder
           responder.call(self, resources, options)
         end
       end
@@ -36,6 +36,8 @@ module Spree
         included do
           cattr_accessor :spree_responders
           self.spree_responders = {}
+
+          self.responder = Spree::Responder
         end
 
         module ClassMethods
