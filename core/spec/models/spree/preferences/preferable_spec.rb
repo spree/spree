@@ -11,6 +11,10 @@ describe Spree::Preferences::Preferable do
         @id = rand(999)
       end
 
+      def preferences
+        @preferences ||= default_preferences
+      end
+
       preference :color, :string, :default => 'green'
     end
 
@@ -101,6 +105,13 @@ describe Spree::Preferences::Preferable do
       @b.preferred_flavor = :strawberry
       @b.preferences[:flavor].should eq 'strawberry'
       @b.preferences[:color].should eq 'green' #default from A
+    end
+
+    it "builds a hash of preference defaults" do
+      @b.default_preferences.should eq({
+        flavor: nil,
+        color: 'green'
+      })
     end
 
     context "converts integer preferences to integer values" do
@@ -196,6 +207,7 @@ describe Spree::Preferences::Preferable do
         def self.up
           create_table :pref_tests do |t|
             t.string :col
+            t.text :preferences
           end
         end
 

@@ -9,24 +9,10 @@
 # and copy all the definitions allowing the subclass to add
 # additional defintions without affecting the base
 module Spree::Preferences::Preferable
+  extend ActiveSupport::Concern
 
-  def self.included(base)
-    base.class_eval do
-      extend Spree::Preferences::PreferableClassMethods
-
-      if respond_to?(:after_create)
-        after_create do |obj|
-          obj.save_pending_preferences
-        end
-      end
-
-      if respond_to?(:after_destroy)
-        after_destroy do |obj|
-          obj.clear_preferences
-        end
-      end
-
-    end
+  included do
+    extend Spree::Preferences::PreferableClassMethods
   end
 
   def get_preference(name)
@@ -63,23 +49,16 @@ module Spree::Preferences::Preferable
     end
   end
 
-  def preferences
+  def default_preferences
     Hash[
       defined_preferences.map do |preference|
-        [preference, get_preference(preference)]
+        [preference, preference_default(preference)]
       end
     ]
   end
 
-  def save_pending_preferences
-    return unless @pending_preferences
-    @pending_preferences.each do |name, value|
-      set_preference(name, value)
-    end
-  end
-
   def clear_preferences
-    preferences.keys.each {|pref| preference_store.delete pref}
+    preferences.keys.each {|pref| preferences.delete pref}
   end
 
   private
@@ -108,13 +87,4 @@ module Spree::Preferences::Preferable
       value
     end
   end
-
-  def preference_store
-    if id
-      Spree::Preferences::ScopedStore.new(self.class.name.underscore, id)
-    else
-      @pending_preferences ||= {}
-    end
-  end
 end
-
