@@ -1,3 +1,5 @@
+require 'spree/responder'
+
 module ActionController
   class Base
     def respond_with(*resources, &block)
@@ -17,7 +19,8 @@ module ActionController
           # The action name is needed for processing
           options.merge!(:action_name => action_name.to_sym)
           # If responder is not specified then pass in Spree::Responder
-          (options.delete(:responder) || Spree::Responder).call(self, resources, options)
+          responder = options.delete(:responder) || self.responder || Spree::Responder
+          responder.call(self, resources, options)
         end
       end
     end
