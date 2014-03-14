@@ -34,14 +34,15 @@ module Spree
         transition from: :open, to: :closed
       end
 
-      event :close do
-        transition from: :close, to: :open
+      event :open do
+        transition from: :closed, to: :open
       end
     end
 
     after_create :update_adjustable_adjustment_total
 
     scope :open, -> { where(state: 'open') }
+    scope :closed, -> { where(state: 'closed') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
