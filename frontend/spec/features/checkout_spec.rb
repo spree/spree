@@ -376,6 +376,36 @@ describe "Checkout", inaccessible: true do
     end
   end
 
+
+  context "save my address" do
+    before do
+      stock_location.stock_items.update_all(count_on_hand: 1)
+      add_mug_to_cart
+    end
+
+    context 'as a guest' do
+      before do
+        Spree::Order.last.update_column(:email, "test@example.com")
+        click_button "Checkout"
+      end
+
+      it 'should not be displayed' do
+        expect(page).to_not have_css("[data-hook=save_user_address]")
+      end
+    end
+
+    context 'as a User' do
+      before do
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => create(:user))
+        click_button "Checkout"
+      end
+
+      it 'should be displayed' do
+        expect(page).to have_css("[data-hook=save_user_address]")
+      end
+    end
+  end
+
   def fill_in_address
     address = "order_bill_address_attributes"
     fill_in "#{address}_firstname", :with => "Ryan"
