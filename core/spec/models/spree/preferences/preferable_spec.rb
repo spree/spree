@@ -11,7 +11,11 @@ describe Spree::Preferences::Preferable do
         @id = rand(999)
       end
 
-      preference :color, :string, :default => 'green', :description => "My Favorite Color"
+      def preferences
+        @preferences ||= default_preferences
+      end
+
+      preference :color, :string, :default => 'green'
     end
 
     class B < A
@@ -29,26 +33,6 @@ describe Spree::Preferences::Preferable do
     #
     store = Spree::Preferences::Store.instance
     store.persistence = true
-  end
-
-  # Regression test for #3831
-  describe "preference cache key" do
-    context "with a rails_cache_id set" do
-      before do
-        @a.stub(:rails_cache_id => 'cache')
-      end
-
-      it "includes the cache id within the key" do
-        expect(@a.preference_cache_key('foo')).to eql("cache/a/foo/#{@a.id}")
-      end
-    end
-
-    context "without a rails_cache_id set" do
-      it "includes the cache id within the key" do
-        expect(@a.preference_cache_key('foo')).to eql("a/foo/#{@a.id}")
-      end
-    end
-
   end
 
   describe "preference definitions" do
@@ -89,11 +73,6 @@ describe Spree::Preferences::Preferable do
       @a.preference_default(:color).should eq 'green'
     end
 
-    it "has a description" do
-      @a.preferred_color_description.should eq "My Favorite Color"
-      @a.preference_description(:color).should eq "My Favorite Color"
-    end
-
     it "raises if not defined" do
       expect {
         @a.get_preference :flavor
@@ -106,15 +85,6 @@ describe Spree::Preferences::Preferable do
     it "handles ghost methods for preferences" do
       @a.preferred_color = 'blue'
       @a.preferred_color.should eq 'blue'
-
-      @a.prefers_color = 'green'
-      @a.prefers_color?.should eq 'green'
-    end
-
-    it "has genric readers" do
-      @a.preferred_color = 'red'
-      @a.prefers?(:color).should eq 'red'
-      @a.preferred(:color).should eq 'red'
     end
 
     it "parent and child instances have their own prefs" do
@@ -137,23 +107,12 @@ describe Spree::Preferences::Preferable do
       @b.preferences[:color].should eq 'green' #default from A
     end
 
-    context "database fallback" do
-      before do
-        @a.instance_variable_set("@pending_preferences", {})
-      end
-
-      it "retrieves a preference from the database before falling back to default" do
-        preference = double(:value => "chatreuse", :key => 'a/color/123')
-        Spree::Preference.should_receive(:find_by_key).and_return(preference)
-        @a.preferred_color.should == 'chatreuse'
-      end
-
-      it "defaults if no database key exists" do
-        Spree::Preference.should_receive(:find_by_key).and_return(nil)
-        @a.preferred_color.should == 'green'
-      end
+    it "builds a hash of preference defaults" do
+      @b.default_preferences.should eq({
+        flavor: nil,
+        color: 'green'
+      })
     end
-
 
     context "converts integer preferences to integer values" do
       before do
@@ -248,6 +207,7 @@ describe Spree::Preferences::Preferable do
         def self.up
           create_table :pref_tests do |t|
             t.string :col
+            t.text :preferences
           end
         end
 
@@ -293,27 +253,6 @@ describe Spree::Preferences::Preferable do
       end
     end
 
-    describe "requires a valid id" do
-      it "for cache_key" do
-        pref_test = PrefTest.new
-        pref_test.preference_cache_key(:pref_test_pref).should be_nil
-
-        pref_test.save
-        pref_test.preference_cache_key(:pref_test_pref).should_not be_nil
-      end
-
-      it "but returns default values" do
-        pref_test = PrefTest.new
-        pref_test.get_preference(:pref_test_pref).should == 'abc'
-      end
-
-      it "adds prefs in a pending hash until after_create" do
-        pref_test = PrefTest.new
-        pref_test.should_receive(:add_pending_preference).with(:pref_test_pref, 'XXX')
-        pref_test.set_preference(:pref_test_pref, 'XXX')
-      end
-    end
-
     it "clear preferences" do
       @pt.set_preference(:pref_test_pref, 'xyz')
       @pt.preferred_pref_test_pref.should == 'xyz'
@@ -329,21 +268,8 @@ describe Spree::Preferences::Preferable do
       @pt1 = PrefTest.new(:col => 'aaaa')
       @pt1.id = @pt.id
       @pt1.save!
-      @pt1.get_preference(:pref_test_pref).should_not == 'lmn'
       @pt1.get_preference(:pref_test_pref).should == 'abc'
     end
-  end
-
-  it "builds cache keys" do
-    @a.preference_cache_key(:color).should match /a\/color\/\d+/
-  end
-
-  it "can add and remove preferences" do
-    A.preference :test_temp, :boolean, :default => true
-    @a.preferred_test_temp.should be_true
-    A.remove_preference :test_temp
-    @a.has_preference?(:test_temp).should be_false
-    @a.respond_to?(:preferred_test_temp).should be_false
   end
 
 end

@@ -1,40 +1,47 @@
-# The preference_cache_key is used to determine if the preference
-# can be set. The default behavior is to return nil if there is no
-# id value. On ActiveRecords, new objects will have their preferences
-# saved to a pending hash until it is persisted.
+# Preferable allows defining preference accessor methods.
 #
-# class_attributes are inheritied unless you reassign them in
-# the subclass, so when you inherit a Preferable class, the
-# inherited hook will assign a new hash for the subclass definitions
-# and copy all the definitions allowing the subclass to add
-# additional defintions without affecting the base
+# A class including Preferable must implement #preferences which should return
+# an object responding to .fetch(key), []=(key, val), and .delete(key).
+#
+# The generated writer method performs typecasting before assignment into the
+# preferences object.
+#
+# Examples:
+#
+#   # Spree::Base includes Preferable and defines preferences as a serialized
+#   # column.
+#   class Settings < Spree::Base
+#     preference :color,       :string,  default: 'red'
+#     preference :temperature, :integer, default: 21
+#   end
+#
+#   s = Settings.new
+#   s.preferred_color # => 'red'
+#   s.preferred_temperature # => 21
+#
+#   s.preferred_color = 'blue'
+#   s.preferred_color # => 'blue'
+#
+#   # Typecasting is performed on assignment
+#   s.preferred_temperature = '24'
+#   s.preferred_color # => 24
+#
+#   # Modifications have been made to the .preferences hash
+#   s.preferences #=> {color: 'blue', temperature: 24}
+#
+#   # Save the changes. All handled by activerecord
+#   s.save!
 module Spree::Preferences::Preferable
+  extend ActiveSupport::Concern
 
-  def self.included(base)
-    base.class_eval do
-      extend Spree::Preferences::PreferableClassMethods
-
-      if respond_to?(:after_create)
-        after_create do |obj|
-          obj.save_pending_preferences
-        end
-      end
-
-      if respond_to?(:after_destroy)
-        after_destroy do |obj|
-          obj.clear_preferences
-        end
-      end
-
-    end
+  included do
+    extend Spree::Preferences::PreferableClassMethods
   end
 
   def get_preference(name)
     has_preference! name
     send self.class.preference_getter_method(name)
   end
-  alias :preferred :get_preference
-  alias :prefers? :get_preference
 
   def set_preference(name, value)
     has_preference! name
@@ -51,11 +58,6 @@ module Spree::Preferences::Preferable
     send self.class.preference_default_getter_method(name)
   end
 
-  def preference_description(name)
-    has_preference! name
-    send self.class.preference_description_getter_method(name)
-  end
-
   def has_preference!(name)
     raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
   end
@@ -64,49 +66,25 @@ module Spree::Preferences::Preferable
     respond_to? self.class.preference_getter_method(name)
   end
 
-  def preferences
-    prefs = {}
-    methods.grep(/^prefers_.*\?$/).each do |pref_method|
-      prefs[pref_method.to_s.gsub(/prefers_|\?/, '').to_sym] = send(pref_method)
+  def defined_preferences
+    methods.grep(/\Apreferred_.*=\Z/).map do |pref_method|
+      pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
     end
-    prefs
   end
 
-  def prefers?(name)
-    get_preference(name)
-  end
-
-  def preference_cache_key(name)
-    return unless id
-    [rails_cache_id, self.class.name, name, id].compact.join('::').underscore
-  end
-
-  def rails_cache_id
-    ENV['RAILS_CACHE_ID']
-  end
-
-  def save_pending_preferences
-    return unless @pending_preferences
-    @pending_preferences.each do |name, value|
-      set_preference(name, value)
-    end
+  def default_preferences
+    Hash[
+      defined_preferences.map do |preference|
+        [preference, preference_default(preference)]
+      end
+    ]
   end
 
   def clear_preferences
-    preferences.keys.each {|pref| preference_store.delete preference_cache_key(pref)}
+    preferences.keys.each {|pref| preferences.delete pref}
   end
 
   private
-
-  def add_pending_preference(name, value)
-    @pending_preferences ||= {}
-    @pending_preferences[name] = value
-  end
-
-  def get_pending_preference(name)
-    return unless @pending_preferences
-    @pending_preferences[name]
-  end
 
   def convert_preference_value(value, type)
     case type
@@ -132,10 +110,4 @@ module Spree::Preferences::Preferable
       value
     end
   end
-
-  def preference_store
-    Spree::Preferences::Store.instance
-  end
-
 end
-

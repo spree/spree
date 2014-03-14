@@ -37,12 +37,13 @@ describe Spree::Promotion do
     end
   end
 
-  describe "#delete" do
+  describe "#destroy" do
     let(:promotion) { Spree::Promotion.create(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
       promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.save!
       promotion.destroy
     end
 
@@ -52,6 +53,22 @@ describe Spree::Promotion do
 
     it "should delete rules" do
       Spree::PromotionRule.count.should == 0
+    end
+  end
+
+  describe "#save" do
+    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+
+    before(:each) do
+      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+      promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.save!
+    end
+
+    it "should deeply autosave records and preferences" do
+      promotion.actions[0].calculator.preferred_flat_percent = 10
+      promotion.save!
+      Spree::Calculator.first.preferred_flat_percent.should == 10
     end
   end
 

@@ -10,9 +10,7 @@ FactoryGirl.define do
       after(:create) do |promotion, evaluator|
         calculator = Spree::Calculator::FlatRate.new
         calculator.preferred_amount = evaluator.adjustment_rate
-        action = Spree::Promotion::Actions::CreateItemAdjustments.create(:calculator => calculator)
-        promotion.actions << action
-        promotion.save
+        Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
       end
     end
 
