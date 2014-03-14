@@ -1,13 +1,36 @@
-# The preference_cache_key is used to determine if the preference
-# can be set. The default behavior is to return nil if there is no
-# id value. On ActiveRecords, new objects will have their preferences
-# saved to a pending hash until it is persisted.
+# Preferable allows defining preference accessor methods.
 #
-# class_attributes are inheritied unless you reassign them in
-# the subclass, so when you inherit a Preferable class, the
-# inherited hook will assign a new hash for the subclass definitions
-# and copy all the definitions allowing the subclass to add
-# additional defintions without affecting the base
+# A class including Preferable must implement #preferences which should return
+# an object responding to .fetch(key), []=(key, val), and .delete(key).
+#
+# The generated writer method performs typecasting before assignment into the
+# preferences object.
+#
+# Examples:
+#
+#   # Spree::Base includes Preferable and defines preferences as a serialized
+#   # column.
+#   class Settings < Spree::Base
+#     preference :color,       :string,  default: 'red'
+#     preference :temperature, :integer, default: 21
+#   end
+#
+#   s = Settings.new
+#   s.preferred_color # => 'red'
+#   s.preferred_temperature # => 21
+#
+#   s.preferred_color = 'blue'
+#   s.preferred_color # => 'blue'
+#
+#   # Typecasting is performed on assignment
+#   s.preferred_temperature = '24'
+#   s.preferred_color # => 24
+#
+#   # Modifications have been made to the .preferences hash
+#   s.preferences #=> {color: 'blue', temperature: 24}
+#
+#   # Save the changes. All handled by activerecord
+#   s.save!
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
