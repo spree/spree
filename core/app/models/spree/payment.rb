@@ -116,6 +116,8 @@ module Spree
       return if source_attributes.nil?
       if payment_method and payment_method.payment_source_class
         self.source = payment_method.payment_source_class.new(source_attributes)
+        self.source.payment_method_id = payment_method.id
+        self.source.user_id = self.order.user_id if self.order
       end
     end
 

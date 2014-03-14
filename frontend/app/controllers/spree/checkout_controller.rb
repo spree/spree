@@ -131,6 +131,10 @@ module Spree
             @order.contents.remove(variant, quantity)
           end
         end
+
+        if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
+          @payment_sources = try_spree_current_user.payment_sources
+        end
       end
 
       def rescue_from_spree_gateway_error(exception)

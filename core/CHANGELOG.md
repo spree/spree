@@ -1,6 +1,8 @@
 ## Spree 2.3.0 (unreleased) ##
 
-### Preferences Refactoring
+### Major
+
+#### Preferences Refactoring
 
 Preferences defined on ActiveRecord objects are now stored on the same table.
 This is done by adding a preferences column which is serialized via
@@ -22,3 +24,13 @@ Assigning `calculator.preferred_amount = 10` will not update the database
 record until `calculator.save` is called.
 
 A migration will move existing preferences onto the new column.
+
+### Minor
+
+*   A user_id and payment_method_id column were added to CreditCard. By default
+    both are set when initializing the payment source (via Payment object). That
+    should help improving payment profiles control for both customers and store
+    owners. A Core::UserPaymentSource module was added to exemplify what should
+    be added to the user class to make better use of that feature.
+
+    Washington Luiz

@@ -41,5 +41,21 @@ describe Spree::LegacyUser do
         expect(user.ship_address_id).not_to be_blank
       end
     end
+
+    context "payment source" do
+      let(:payment_method) { create(:credit_card_payment_method) }
+      let!(:cc) do
+        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: "2342343")
+      end
+
+      it "has payment sources" do
+        expect(user.payment_sources.first.gateway_customer_profile_id).not_to be_empty
+      end
+
+      it "drops payment source" do
+        user.drop_payment_source cc
+        expect(cc.gateway_customer_profile_id).to be_nil
+      end
+    end
   end
 end

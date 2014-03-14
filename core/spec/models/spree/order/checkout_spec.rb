@@ -379,13 +379,56 @@ describe Spree::Order do
       order.update_from_params( params, permitted_params)
     end
 
+    context "passing a credit card" do
+      let(:permitted_params) do
+        Spree::PermittedAttributes.checkout_attributes +
+          [payments_attributes: Spree::PermittedAttributes.payment_attributes]
+      end
+
+      let(:credit_card) { create(:credit_card, user_id: order.user_id) }
+
+      let(:params) do
+        ActionController::Parameters.new(
+          order: { payments_attributes: [{payment_method_id: 1}] },
+          existing_card: credit_card.id,
+          payment_source: {
+            "1" => { name: "Luis Braga",
+                     number: "4111 1111 1111 1111",
+                     expiry: "06 / 2016",
+                     verification_value: "737",
+                     cc_type: "" }
+          }
+        )
+      end
+
+      before { order.user_id = 3 }
+
+      it "sets existing card as source for new payment" do
+        expect {
+          order.update_from_params(params, permitted_params)
+        }.to change { Spree::Payment.count }.by(1)
+
+        expect(Spree::Payment.last.source).to eq credit_card
+      end
+
+      it "dont let users mess with others users cards" do
+        credit_card.update_column :user_id, 5
+
+        expect {
+          order.update_from_params(params, permitted_params)
+        }.to raise_error
+      end
+    end
+
     context 'has params' do
       let(:permitted_params) { [ :good_param ] }
       let(:params) { ActionController::Parameters.new(order: {  bad_param: 'okay' } ) }
+
       it 'does not let through unpermitted attributes' do
         order.should_receive(:update_attributes).with({})
         order.update_from_params(params, permitted_params)
       end
+
       context 'has allowed params' do
         let(:params) { ActionController::Parameters.new(order: {  good_param: 'okay' } ) }
 
@@ -405,6 +448,5 @@ describe Spree::Order do
         end
       end
     end
-
   end
 end

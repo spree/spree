@@ -51,9 +51,29 @@ module Spree
       provider_class.supports?(source.brand)
     end
 
+    def disable_customer_profile(source)
+      if source.is_a? CreditCard
+        source.update_column :gateway_customer_profile_id, nil
+      else
+        raise 'You must implement disable_customer_profile method for this gateway.'
+      end
+    end
+
     def sources_by_order(order)
       source_ids = order.payments.where(source_type: payment_source_class.to_s, payment_method_id: self.id).pluck(:source_id).uniq
-      payment_source_class.where(id: source_ids)
+      payment_source_class.where(id: source_ids).with_payment_profile
+    end
+
+    def sources_with_profile(order)
+      if order.completed?
+        sources_by_order order
+      else
+        if order.user_id
+          self.credit_cards.where(user_id: order.user_id).with_payment_profile
+        else
+          []
+        end
+      end
     end
   end
 end
