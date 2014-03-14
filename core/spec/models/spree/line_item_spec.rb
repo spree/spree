@@ -133,7 +133,7 @@ describe Spree::LineItem do
   end
 
   context "has inventory (completed order so items were already unstocked)" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create(email: 'spree@example.com') }
     let(:variant) { create(:variant) }
 
     context "nothing left on stock" do

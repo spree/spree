@@ -72,21 +72,8 @@ module Spree
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Default mail headers settings
-    preference :enable_mail_delivery, :boolean, :default => false
     preference :send_core_emails, :boolean, :default => true
     preference :mails_from, :string, :default => 'spree@example.com'
-    preference :mail_bcc, :string, :default => 'spree@example.com'
-    preference :intercept_email, :string, :default => nil
-
-    # Default smtp settings
-    preference :override_actionmailer_config, :boolean, :default => true
-    preference :mail_host, :string, :default => 'localhost'
-    preference :mail_domain, :string, :default => 'localhost'
-    preference :mail_port, :integer, :default => 25
-    preference :secure_connection_type, :string, :default => Core::MailSettings::SECURE_CONNECTION_TYPES[0]
-    preference :mail_auth_type, :string, :default => Core::MailSettings::MAIL_AUTH[0]
-    preference :smtp_username, :string
-    preference :smtp_password, :string
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class

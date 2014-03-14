@@ -327,12 +327,6 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
-      mail_methods:
-        send_testmail: Send Test Mail
-        testmail:
-          delivery_error: Test Mail delivery error
-          delivery_success: Test Mail sent successfully
-          error: ! 'Test Mail error: %{e}'
       tab:
         configuration: Configuration
         option_types: Option Types
@@ -676,17 +670,6 @@ en:
     login_name: Login
     logout: Logout
     look_for_similar_items: Look for similar items
-    mail_method_settings: Mail Method Settings
-    mail_methods: Mail Methods
-    mail_settings:
-      auth:
-        none: "None"
-        plain: "Plain"
-        login: "Login"
-        cram_md5: "cram_md5"
-      security:
-        ssl: "SSL"
-        tls: "TLS"
     make_refund: Make refund
     master_price: Master Price
     match_choices:
@@ -1038,15 +1021,6 @@ en:
     site_url: Site URL
     sku: SKU
     slug: Slug
-    smtp: SMTP
-    smtp_authentication_type: SMTP Authentication Type
-    smtp_domain: SMTP Domain
-    smtp_mail_host: SMTP Mail Host
-    smtp_password: SMTP Password
-    smtp_port: SMTP Port
-    smtp_send_all_emails_as_from_following_address: Send all mails as from the following address.
-    smtp_send_copy_to_this_addresses: Sends a copy of all outgoing mails to this address. For multiple addresses, separate with commas.
-    smtp_username: SMTP Username
     source: Source
     special_instructions: Special Instructions
     split: Split

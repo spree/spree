@@ -7,7 +7,7 @@
 <% if can? :admin, Spree::Admin::ReportsController %>
   <%= tab :reports, :icon => 'icon-file'  %>
 <% end %>
-<%= tab :configurations, :general_settings, :mail_methods, :tax_categories, :tax_rates, :tax_settings, :zones, :countries, :states, :payment_methods, :shipping_methods, :shipping_categories, :stock_transfers, :stock_locations, :trackers, :label => 'configuration', :icon => 'icon-wrench', :url => spree.edit_admin_general_settings_path %>
+<%= tab :configurations, :general_settings, :tax_categories, :tax_rates, :tax_settings, :zones, :countries, :states, :payment_methods, :shipping_methods, :shipping_categories, :stock_transfers, :stock_locations, :trackers, :label => 'configuration', :icon => 'icon-wrench', :url => spree.edit_admin_general_settings_path %>
 <% if can? :admin, Spree::Promotion %>
   <%= tab(:promotions, :url => spree.admin_promotions_path, :icon => 'icon-bullhorn') %>
 <% end %>
