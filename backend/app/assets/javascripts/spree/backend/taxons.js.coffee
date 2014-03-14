@@ -18,6 +18,7 @@ $(document).ready ->
         url: Spree.routes.taxons_search,
         datatype: 'json',
         data: (term, page) ->
+          token: Spree.api_key || "",
           per_page: 50,
           page: page,
           q:
