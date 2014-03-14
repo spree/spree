@@ -28,7 +28,7 @@ module Spree::Preferences
       yield(self) if block_given?
     end
 
-    def preference_store
+    def preferences
       ScopedStore.new(self.class.name.underscore)
     end
 
