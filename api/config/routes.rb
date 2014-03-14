@@ -68,8 +68,6 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :zones
-    resources :countries, :only => [:index, :show]
-    resources :states,    :only => [:index, :show]
 
     resources :taxonomies do
       member do

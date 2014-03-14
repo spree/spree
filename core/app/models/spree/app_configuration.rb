@@ -21,7 +21,6 @@ module Spree
   class AppConfiguration < Preferences::Configuration
 
     # Alphabetized to more easily lookup particular preferences
-    preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
     preference :admin_products_per_page, :integer, default: 10
     preference :allow_backorder_shipping, :boolean, default: false # should only be true if you don't need to track inventory
@@ -45,7 +44,7 @@ module Spree
     preference :currency_sign_before_symbol, :boolean, default: true
     preference :currency_thousands_separator, :string, default: ","
     preference :display_currency, :boolean, default: false
-    preference :default_country_id, :integer
+    preference :default_country_code, :string, default: 'US'
     preference :default_meta_description, :string, default: 'Spree demo site'
     preference :default_meta_keywords, :string, default: 'spree, demo'
     preference :default_seo_title, :string, default: ''

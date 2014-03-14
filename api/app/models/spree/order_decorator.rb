@@ -1,10 +1,12 @@
+require 'carmen'
+
 Spree::Order.class_eval do
   def self.build_from_api(user, params)
     begin
-      ensure_country_id_from_api params[:ship_address_attributes]
-      ensure_state_id_from_api params[:ship_address_attributes]
-      ensure_country_id_from_api params[:bill_address_attributes]
-      ensure_state_id_from_api params[:bill_address_attributes]
+      ensure_country_code_from_api params[:ship_address_attributes]
+      ensure_region_code_from_api params[:ship_address_attributes]
+      ensure_country_code_from_api params[:bill_address_attributes]
+      ensure_region_code_from_api params[:bill_address_attributes]
 
       order = create!
       order.associate_user!(user)
@@ -110,50 +112,28 @@ Spree::Order.class_eval do
     end
   end
 
-  def self.ensure_country_id_from_api(address)
-    return if address.nil? or address[:country_id].present? or address[:country].nil?
+  def self.ensure_country_code_from_api(address)
+    country_text = address.try(:delete, :country_text)
+    return if address.nil? or address[:country_code].present? or country_text.blank?
 
     begin
-      search = {}
-      if name = address[:country]['name']
-        search[:name] = name
-      elsif iso_name = address[:country]['iso_name']
-        search[:iso_name] = iso_name.upcase
-      elsif iso = address[:country]['iso']
-        search[:iso] = iso.upcase
-      elsif iso3 = address[:country]['iso3']
-        search[:iso3] = iso3.upcase
-      end
-
-      address.delete(:country)
-      address[:country_id] = Spree::Country.where(search).first!.id
-
+      country = Carmen::Country.coded(country_text) || Carmen::Country.named(country_text)
+      address[:country_code] = country.code
     rescue Exception => e
-      raise "Ensure order import address country: #{e.message} #{search}"
+      raise "Ensure order import address country: #{e.message} #{country_text}"
     end
   end
 
-  def self.ensure_state_id_from_api(address)
-    return if address.nil? or address[:state_id].present? or address[:state].nil?
+  def self.ensure_region_code_from_api(address)
+    region_text = address.try(:delete, :region_text)
+    return if address.nil? or address[:region_code].present? or region_text.blank?
 
     begin
-      search = {}
-      if name = address[:state]['name']
-        search[:name] = name
-      elsif abbr = address[:state]['abbr']
-        search[:abbr] = abbr.upcase
-      end
-
-      address.delete(:state)
-      search[:country_id] = address[:country_id]
-
-      if state = Spree::State.where(search).first
-        address[:state_id] = state.id
-      else
-        address[:state_name] = search[:name] || search[:abbr]
-      end
+      country = Carmen::Country.coded(address[:country_code])
+      region = country.subregions.coded(region_text) || country.subregions.named(region_text) unless country.nil?
+      address[:region_code] = region.code
     rescue Exception => e
-      raise "Ensure order import address state: #{e.message} #{search}"
+      raise "Ensure order import address state: #{e.message} #{region_text}"
     end
   end
 

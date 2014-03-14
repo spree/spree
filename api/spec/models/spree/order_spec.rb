@@ -2,8 +2,6 @@ require 'spec_helper'
 
 module Spree
   describe Order do
-    let!(:country) { create(:country) }
-    let!(:state) { country.states.first || create(:state, :country => country) }
     let!(:stock_location) { create(:stock_location) }
 
     let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
@@ -30,8 +28,8 @@ module Spree
        :firstname => 'Fox',
        :lastname => 'Mulder',
        :city => 'Washington',
-       :country_id => country.id,
-       :state_id => state.id,
+       :country_code => 'US',
+       :region_code => 'DC',
        :zipcode => '666',
        :phone => '666-666-6666'
     }}
@@ -105,19 +103,19 @@ module Spree
       order.ship_address.address1.should eq '123 Testable Way'
     end
 
-    it 'can build an order from API with country attributes' do
-      ship_address.delete(:country_id)
-      ship_address[:country] = { 'iso' => 'US' }
+    it 'can build an order from API with country iso3' do
+      ship_address.delete(:country_code)
+      ship_address[:country_text] = 'USA'
       params = { :ship_address_attributes => ship_address,
                  :line_items_attributes => line_items }
 
       order = Order.build_from_api(user, params)
-      order.ship_address.country.iso.should eq 'US'
+      order.ship_address.country_code.should eq 'US'
     end
 
     it 'handles country lookup exceptions' do
-      ship_address.delete(:country_id)
-      ship_address[:country] = { 'iso' => 'XXX' }
+      ship_address.delete(:country_code)
+      ship_address[:country_text] = 'XXX'
       params = { :ship_address_attributes => ship_address,
                  :line_items_attributes => line_items }
 
@@ -126,43 +124,14 @@ module Spree
       }.to raise_error /XXX/
     end
 
-    it 'can build an order from API with state attributes' do
-      ship_address.delete(:state_id)
-      ship_address[:state] = { 'name' => state.name }
+    it 'can build an order from API with region attributes' do
+      ship_address.delete(:region_code)
+      ship_address[:region_text] = 'Alabama'
       params = { :ship_address_attributes => ship_address,
                  :line_items_attributes => line_items }
 
       order = Order.build_from_api(user, params)
-      order.ship_address.state.name.should eq 'Alabama'
-    end
-
-    context "state passed is not associated with country" do
-      let(:params) do
-        params = { :ship_address_attributes => ship_address,
-                   :line_items_attributes => line_items }
-      end
-
-      let(:other_state) { create(:state, name: "Uhuhuh", country: create(:country)) }
-
-      before do
-        ship_address.delete(:state_id)
-        ship_address[:state] = { 'name' => other_state.name }
-      end
-
-      it 'sets states name instead of state id' do
-        order = Order.build_from_api(user, params)
-        expect(order.ship_address.state_name).to eq other_state.name
-      end
-    end
-
-    it 'sets state name if state record not found' do
-      ship_address.delete(:state_id)
-      ship_address[:state] = { 'name' => 'XXX' }
-      params = { :ship_address_attributes => ship_address,
-                 :line_items_attributes => line_items }
-
-      order = Order.build_from_api(user, params)
-      expect(order.ship_address.state_name).to eq 'XXX'
+      order.ship_address.region_code.should eq 'AL'
     end
 
     context 'variant not deleted' do
@@ -183,27 +152,23 @@ module Spree
       end
     end
 
-    it 'ensures_country_id for country fields' do
-      [:name, :iso, :iso_name, :iso3].each do |field|
-        address = { :country => { field => country.send(field) }}
-        Order.ensure_country_id_from_api(address)
-        address[:country_id].should eq country.id
-      end
+    it 'ensures_country_code for country_text' do
+      address = { country_text: 'Brazil' }
+      Order.ensure_country_code_from_api(address)
+      address[:country_code].should eq 'BR'
     end
 
     it "raises with proper message when cant find country" do
-      address = { :country => { "name" => "NoNoCountry" } }
+      address = { :country_text => "NoNoCountry" }
       expect {
-        Order.ensure_country_id_from_api(address)
+        Order.ensure_country_code_from_api(address)
       }.to raise_error /NoNoCountry/
     end
 
-    it 'ensures_state_id for state fields' do
-      [:name, :abbr].each do |field|
-        address = { country_id: country.id, :state => { field => state.send(field) }}
-        Order.ensure_state_id_from_api(address)
-        address[:state_id].should eq state.id
-      end
+    it 'ensures_region_code for region text' do
+      address = { country_code: 'US', region_text: 'Alabama' }
+      Order.ensure_region_code_from_api(address)
+      address[:region_code].should eq 'AL'
     end
 
     context "shipments" do

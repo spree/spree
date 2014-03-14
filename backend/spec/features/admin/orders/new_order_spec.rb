@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "New Order" do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product) }
-  let!(:state) { create(:state) }
   let!(:user) { create(:user) }
   let!(:payment_method) { create(:check_payment_method) }
   let!(:shipping_method) { create(:shipping_method) }

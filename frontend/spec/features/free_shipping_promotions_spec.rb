@@ -1,8 +1,7 @@
+require 'carmen'
 require 'spec_helper'
 
 describe "Free shipping promotions", :js => true do
-  let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
-  let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:check_payment_method) }
@@ -32,8 +31,11 @@ describe "Free shipping promotions", :js => true do
       fill_in "Street Address", :with => "1 John Street"
       fill_in "City", :with => "City of John"
       fill_in "Zip", :with => "01337"
-      select country.name, :from => "Country"
-      select state.name, :from => "order[bill_address_attributes][state_id]"
+
+      usa = Carmen::Country.coded('US')
+      select usa.name, :from => "Country"
+      select usa.subregions.coded('CT').name, :from => "order[bill_address_attributes][region_code]"
+
       fill_in "Phone", :with => "555-555-5555"
 
       # To shipping method screen

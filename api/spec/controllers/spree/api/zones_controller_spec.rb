@@ -69,8 +69,7 @@ module Spree
             :name => "North Pole",
             :zone_members => [
               {
-                :zoneable_type => "Spree::Country",
-                :zoneable_id => 1
+                :country_code => 'US'
               }
             ]
           }
@@ -88,8 +87,7 @@ module Spree
             :name => "North Pole",
             :zone_members => [
               {
-                :zoneable_type => "Spree::Country",
-                :zoneable_id => 1
+                :country_code => 'US'
               }
             ]
           }

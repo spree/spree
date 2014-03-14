@@ -1,3 +1,5 @@
+require 'carmen'
+
 module Spree
   module BaseHelper
 
@@ -112,13 +114,10 @@ module Spree
       if checkout_zone && checkout_zone.kind == 'country'
         countries = checkout_zone.country_list
       else
-        countries = Country.all
+        countries = Carmen::Country.all
       end
 
-      countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
-        country
-      end.sort { |a, b| a.name.parameterize <=> b.name.parameterize }
+      countries.sort { |a, b| a.name.parameterize <=> b.name.parameterize }
     end
 
     def seo_url(taxon)

@@ -4,7 +4,6 @@ describe "Stock Locations" do
   stub_authorization!
 
   before(:each) do
-    country = create(:country)
     visit spree.admin_path
     click_link "Configuration"
     click_link "Stock Locations"
@@ -30,7 +29,7 @@ describe "Stock Locations" do
     end
     # Wait for API request to complete.
     wait_for_ajax
-    visit current_path 
+    visit current_path
     page.should have_content("NO STOCK LOCATIONS FOUND")
   end
 

@@ -2,10 +2,9 @@ var update_state = function (region) {
   'use strict';
 
   var country = $('span#' + region + 'country .select2').select2('val');
-  var state_select = $('span#' + region + 'state select.select2');
-  var state_input = $('span#' + region + 'state input.state_name');
+  var state_select = $('span#' + region + 'region select.select2');
 
-  $.get(Spree.routes.states_search + '?country_id=' + country, function (data) {
+  $.get(Spree.routes.states_search + '?country_code=' + country, function (data) {
     var states = data.states;
     if (states.length > 0) {
       state_select.html('');

@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Spree::TaxRate do
   context "match" do
     let(:order) { create(:order) }
-    let(:country) { create(:country) }
     let(:tax_category) { create(:tax_category) }
     let(:calculator) { Spree::Calculator::FlatRate.new }
 
@@ -20,7 +19,7 @@ describe Spree::TaxRate do
       context "when there is no default tax zone" do
         before do
           @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
-          @zone.zone_members.create(:zoneable => country)
+          @zone.zone_members.create(:country_code => 'US')
         end
 
         it "should return an empty array" do
@@ -62,7 +61,7 @@ describe Spree::TaxRate do
         context "when the tax_zone is contained within a rate zone" do
           before do
             sub_zone = create(:zone, :name => "State Zone", :zone_members => [])
-            sub_zone.zone_members.create(:zoneable => create(:state, :country => country))
+            sub_zone.zone_members.create(country_code: 'US', region_code: 'CT')
             order.stub :tax_zone => sub_zone
             @rate = Spree::TaxRate.create(
               :amount => 1,
@@ -81,7 +80,7 @@ describe Spree::TaxRate do
       context "when there is a default tax zone" do
         before do
           @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
-          @zone.zone_members.create(:zoneable => country)
+          @zone.zone_members.create(country_code: 'US')
         end
 
         let(:included_in_price) { false }
@@ -160,7 +159,7 @@ describe Spree::TaxRate do
 
     context "with line items" do
       let(:line_item) do
-        stub_model(Spree::LineItem, 
+        stub_model(Spree::LineItem,
           :tax_category => tax_category_1,
           :variant => stub_model(Spree::Variant)
         )
@@ -196,7 +195,6 @@ describe Spree::TaxRate do
 
   context "default" do
     let(:tax_category) { create(:tax_category) }
-    let(:country) { create(:country) }
     let(:calculator) { Spree::Calculator::FlatRate.new }
 
     context "when there is no default tax_category" do
@@ -212,9 +210,9 @@ describe Spree::TaxRate do
 
       context "when the default category has tax rates in the default tax zone" do
         before(:each) do
-          Spree::Config[:default_country_id] = country.id
+          Spree::Config[:default_country_code] = 'US'
           @zone = create(:zone, :name => "Country Zone", :default_tax => true)
-          @zone.zone_members.create(:zoneable => country)
+          @zone.zone_members.create(country_code: 'US')
           rate = Spree::TaxRate.create(
             :amount => 1,
             :zone => @zone,
@@ -307,7 +305,7 @@ describe Spree::TaxRate do
         end
 
         context "when price does not include tax" do
-          before do             
+          before do
             @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
             @order.stub :tax_zone => @zone
 

@@ -37,7 +37,6 @@ module Spree
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
-        can [:index, :read], Country
         can [:index, :read], OptionType
         can [:index, :read], OptionValue
         can :create, Order
@@ -56,7 +55,6 @@ module Spree
         can [:index, :read], Property
         can :create, Spree.user_class
         can [:read, :update, :destroy], Spree.user_class, id: user.id
-        can [:index, :read], State
         can [:index, :read], Taxon
         can [:index, :read], Taxonomy
         can [:index, :read], Variant

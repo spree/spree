@@ -8,9 +8,7 @@ module Spree
       stub_authentication!
       Spree::Config[:track_inventory_levels] = false
       country_zone = create(:zone, :name => 'CountryZone')
-      @state = create(:state)
-      @country = @state.country
-      country_zone.members.create(:zoneable => @country)
+      country_zone.members.create(country_code: 'US', region_code: 'CT')
       create(:stock_location)
 
       @shipping_method = create(:shipping_method, :zones => [country_zone])
@@ -101,8 +99,8 @@ module Spree
           :city       => 'Bethesda',
           :phone      => '3014445002',
           :zipcode    => '20814',
-          :state_id   => @state.id,
-          :country_id => @country.id
+          :region_code => 'MD',
+          :country_code => 'US',
         }
         api_put :update,
                 :id => order.to_param, :order_token => order.token,
