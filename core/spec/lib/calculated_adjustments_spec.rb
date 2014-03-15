@@ -5,7 +5,7 @@ require 'spec_helper'
 # ShippingMethod instead since those classes are including the module.
 describe Spree::Core::CalculatedAdjustments do
 
-  let(:calculator) { mock_model(Spree::Calculator, :compute => 10, :[]= => nil) }
+  let(:calculator) { stub_model(Spree::Calculator, :compute => 10, :[]= => nil) }
 
   it "should add has_one :calculator relationship" do
     assert Spree::ShippingMethod.reflect_on_all_associations(:has_one).map(&:name).include?(:calculator)
