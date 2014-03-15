@@ -138,7 +138,7 @@ module Spree
         end
 
         def sign_in_if_change_own_password
-          if spree_current_user == @user && @user.password.present?
+          if try_spree_current_user == @user && @user.password.present?
             sign_in(@user, :event => :authentication, :bypass => true)
           end
         end
