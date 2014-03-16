@@ -270,9 +270,13 @@ describe "Order Details", js: true do
       can [:admin, :manage, :read, :ship], Spree::Shipment
     end
 
+    before do
+      Spree::Api::BaseController.any_instance.stub :try_spree_current_user => Spree.user_class.new
+    end
+
     it 'should not display order tabs or edit buttons without ability' do
-      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
       visit spree.edit_admin_order_path(order)
+
       # Order Form
       page.should_not have_css('.edit-item')
       # Order Tabs

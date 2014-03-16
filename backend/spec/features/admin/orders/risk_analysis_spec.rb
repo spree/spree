@@ -16,8 +16,9 @@ describe 'Order Risk Analysis' do
   end
 
   context "the order is considered risky" do
-    
     before do
+      Spree::Admin::BaseController.any_instance.stub :try_spree_current_user => create(:user)
+
       order.payments.first.update_column(:avs_response, 'X')
       order.considered_risky!
       visit_order
@@ -36,7 +37,6 @@ describe 'Order Risk Analysis' do
   end
   
   context "the order is not considered risky" do
-
     before do
       visit_order      
     end
@@ -44,7 +44,5 @@ describe 'Order Risk Analysis' do
     it "does not display 'Risk Analysis' box" do
       expect(page).to_not have_content 'Risk Analysis'
     end
-
   end
-
 end
