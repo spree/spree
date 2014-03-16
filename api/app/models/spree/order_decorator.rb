@@ -11,5 +11,5 @@ Spree::Order.class_eval do
     end
     self.ensure_updated_shipments
   end
-  
+
 end
