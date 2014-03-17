@@ -146,7 +146,7 @@ module Spree
       end
 
       def authorize_for_order
-        @order = Spree::Order.find_by(number: params[:order_id] || params[:id])
+        @order = Spree::Order.find_by(number: params[:order_id] || params[:order_number] || params[:id])
         authorize! :read, @order, order_token
       end
     end
