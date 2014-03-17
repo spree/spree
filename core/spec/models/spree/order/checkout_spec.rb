@@ -175,6 +175,41 @@ describe Spree::Order do
           order.state.should == "complete"
         end
       end
+
+      context "correctly determining payment required based on shipping information" do
+        let(:shipment) do
+          FactoryGirl.create(:shipment)
+        end
+
+        before do
+          # Needs to be set here because we're working with a persisted order object
+          order.email = "test@example.com"
+          order.save!
+          order.shipments << shipment
+        end
+
+        context "with a shipment that has a price" do
+          before do
+            shipment.shipping_rates.first.update_column(:cost, 10)
+          end
+
+          it "transitions to payment" do
+            order.next!
+            order.state.should == "payment"
+          end
+        end
+
+        context "with a shipment that is free" do
+          before do
+            shipment.shipping_rates.first.update_column(:cost, 0)
+          end
+
+          it "skips payment, transitions to complete" do
+            order.next!
+            order.state.should == "complete"
+          end
+        end
+      end
     end
 
     context "from payment" do
