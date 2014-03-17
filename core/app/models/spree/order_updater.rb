@@ -57,7 +57,7 @@ module Spree
     end
 
     def update_shipment_total
-      order.shipment_total = shipments.sum("cost + promo_total")
+      order.shipment_total = shipments.sum(:cost)
       update_order_total
     end
 
