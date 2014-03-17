@@ -81,15 +81,15 @@ module Spree
                 before_transition :from => :address, :do => :create_tax_charge!
               end
 
+              if states[:payment]
+                before_transition :to => :payment, :do => :set_shipments_cost
+                before_transition :to => :payment, :do => :create_tax_charge!
+              end
+
               if states[:delivery]
                 before_transition :to => :delivery, :do => :create_proposed_shipments
                 before_transition :to => :delivery, :do => :ensure_available_shipping_rates
                 before_transition :from => :delivery, :do => :apply_free_shipping_promotions
-              end
-
-              if states[:payment]
-                before_transition :to => :payment, :do => :set_shipments_cost
-                before_transition :to => :payment, :do => :create_tax_charge!
               end
 
               after_transition :to => :complete, :do => :finalize!
