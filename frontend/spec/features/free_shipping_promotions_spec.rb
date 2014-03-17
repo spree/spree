@@ -4,7 +4,13 @@ describe "Free shipping promotions", :js => true do
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
-  let!(:shipping_method) { create(:shipping_method) }
+  let!(:shipping_method) do 
+    sm = create(:shipping_method)
+    sm.calculator.preferred_amount = 10
+    sm.calculator.save
+    sm
+  end
+
   let!(:payment_method) { create(:check_payment_method) }
   let!(:product) { create(:product, :name => "RoR Mug", :price => 20) }
   let!(:promotion) do
@@ -42,9 +48,11 @@ describe "Free shipping promotions", :js => true do
       click_button "Save and Continue"
     end
 
-    it "informs about an invalid coupon code" do
+    # Regression test for #4428
+    it "applies the free shipping promotion" do
       within("#checkout-summary") do
-        page.should have_content("Free Shipping")
+        page.should have_content("Shipping total  $10.00")
+        page.should have_content("Promotion (Free Shipping) -$10.00")
       end
     end
   end
