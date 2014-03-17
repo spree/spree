@@ -79,7 +79,7 @@
           <td class="align-center"><%= promotion.code %></td>
           <td><%= promotion.description %></td>
           <td class="align-center"><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
-          <td class="align-center"><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
+          <td class="align-center"><%= link_to Spree.t(:current_promotion_usage, :count => promotion.completed_orders_count), admin_orders_path(q: {promotions_id_in: promotion.id}) %></td>
           <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions">
             <%= link_to_edit promotion, :no_text => true %>
