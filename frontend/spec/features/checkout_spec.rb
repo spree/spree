@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe "Checkout", inaccessible: true do
 
-  let!(:country) { create(:country, :states_required => true) }
-  let!(:state) { create(:state, :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:mug) { create(:product, :name => "RoR Mug") }
@@ -135,7 +133,7 @@ describe "Checkout", inaccessible: true do
 
   context "and likes to double click buttons" do
     let!(:user) { create(:user) }
-    
+
     let!(:order) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true

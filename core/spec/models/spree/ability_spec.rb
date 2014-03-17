@@ -124,13 +124,6 @@ describe Spree::Ability do
 
   context 'as Guest User' do
 
-    context 'for Country' do
-      let(:resource) { Spree::Country.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
     context 'for OptionType' do
       let(:resource) { Spree::OptionType.new }
       context 'requested by any user' do
@@ -189,13 +182,6 @@ describe Spree::Ability do
 
     context 'for Property' do
       let(:resource) { Spree::Product.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for State' do
-      let(:resource) { Spree::State.new }
       context 'requested by any user' do
         it_should_behave_like 'read only'
       end

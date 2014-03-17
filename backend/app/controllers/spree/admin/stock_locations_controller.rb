@@ -1,3 +1,5 @@
+require 'carmen'
+
 module Spree
   module Admin
     class StockLocationsController < ResourceController
@@ -5,15 +7,9 @@ module Spree
       new_action.before :set_country
 
       private
-
-      def set_country
-        if Spree::Config[:default_country_id].present?
-          @stock_location.country = Spree::Country.find(Spree::Config[:default_country_id])
-        else
-          @stock_location.country = Spree::Country.find_by_iso('US')
+        def set_country
+          @stock_location.country_code = Carmen::Country.coded(Spree::Config[:default_country_code] || 'US').code
         end
-      end
-
     end
   end
 end

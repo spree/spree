@@ -8,10 +8,8 @@ FactoryGirl.define do
     active true
     backorderable_default true
 
-    country  { |stock_location| Spree::Country.first || stock_location.association(:country) }
-    state do |stock_location|
-      stock_location.country.states.first || stock_location.association(:state, :country => stock_location.country)
-    end
+    country_code 'US'
+    region_code 'DC'
 
     factory :stock_location_with_items do
       after(:create) do |stock_location, evaluator|

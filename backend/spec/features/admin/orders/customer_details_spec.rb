@@ -5,20 +5,18 @@ describe "Customer Details" do
 
   let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
   let(:order) { create(:completed_order_with_totals) }
-  let(:country) { create(:country, :name => "Kangaland") }
-  let(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
   let!(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15") }
 
   # We need a unique name that will appear for the customer dropdown
-  let!(:ship_address) { create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin") }
-  let!(:bill_address) { create(:address, :country => country, :state => state, :first_name => "Rumpelstiltskin") }
+  let!(:ship_address) { create(:address, :country_code => 'US', :region_code => 'AL', :first_name => "Rumpelstiltskin") }
+  let!(:bill_address) { create(:address, :country_code => 'US', :region_code => 'AL', :first_name => "Rumpelstiltskin") }
 
   let!(:user) { create(:user, :email => 'foobar@example.com', :ship_address => ship_address, :bill_address => bill_address) }
 
   before do
     configure_spree_preferences do |config|
-      config.default_country_id = country.id
+      config.default_country_code = 'US'
       config.company = true
     end
 
@@ -32,7 +30,7 @@ describe "Customer Details" do
     it "associates a user when not using guest checkout" do
       click_link "Orders"
       click_link "New Order"
-      click_link "Customer Details" 
+      click_link "Customer Details"
       targetted_select2 "foobar@example.com", :from => "#s2id_customer_search"
       fill_in_address
       check "order_use_billing"
@@ -43,18 +41,16 @@ describe "Customer Details" do
 
   context "editing an order", :js => true do
     context "selected country has no state" do
-      before { create(:country, iso: "BRA", name: "Brazil") }
-
       it "changes state field to text input" do
         click_link "Customer Details"
 
         within("#billing") do
-          targetted_select2 "Brazil", :from => "#s2id_order_bill_address_attributes_country_id"
-          fill_in "order_bill_address_attributes_state_name", with: "Piaui"
+          targetted_select2 "Brazil", :from => "#s2id_order_bill_address_attributes_country_code"
+          fill_in "order_bill_address_attributes_region_text", with: "Piaui"
         end
 
         click_button "Update"
-        find_field("order_bill_address_attributes_state_name").value.should == "Piaui"
+        find_field("order_bill_address_attributes_region_text").value.should == "Piaui"
       end
     end
 
@@ -78,18 +74,16 @@ describe "Customer Details" do
   end
 
   context "country associated was removed" do
-    let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
-
     before do
       order.bill_address.country.destroy
       configure_spree_preferences do |config|
-        config.default_country_id = brazil.id
+        config.default_country_code = 'BR'
       end
     end
 
     it "sets default country when displaying form" do
       click_link "Customer Details"
-      expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
+      expect(find_field("order_bill_address_attributes_country_code").value).to eq 'BR'
     end
   end
 

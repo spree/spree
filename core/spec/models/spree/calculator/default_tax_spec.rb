@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Calculator::DefaultTax do
-  let!(:country) { create(:country) }
   let!(:zone) { create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => []) }
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
   let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => included_in_price) }

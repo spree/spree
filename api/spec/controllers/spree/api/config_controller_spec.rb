@@ -21,7 +21,7 @@ module Spree
     it "returns some configuration settings" do
       api_get :show
       response.should be_success
-      json_response["default_country_id"].should == Spree::Config[:default_country_id]
+      json_response["default_country_code"].should == Spree::Config[:default_country_code]
     end
   end
 end

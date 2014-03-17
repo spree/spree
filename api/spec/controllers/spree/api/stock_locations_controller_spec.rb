@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let!(:stock_location) { create(:stock_location) }
-    let!(:attributes) { [:id, :name, :address1, :address2, :city, :state_id, :state_name, :country_id, :zipcode, :phone, :active] }
+    let!(:attributes) { [:id, :name, :address1, :address2, :city, :region_code, :country_code, :zipcode, :phone, :active] }
 
     before do
       stub_authentication!
@@ -45,15 +45,15 @@ module Spree
       end
     end
 
-    
+
     context "as an admin" do
       sign_in_as_admin!
 
       it "gets list of stock locations" do
         api_get :index
         json_response['stock_locations'].first.should have_attributes(attributes)
-        json_response['stock_locations'].first['country'].should_not be_nil
-        json_response['stock_locations'].first['state'].should_not be_nil
+        json_response['stock_locations'].first['country_code'].should_not be_nil
+        json_response['stock_locations'].first['region_code'].should_not be_nil
       end
 
       it 'can control the page size through a parameter' do

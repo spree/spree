@@ -64,17 +64,17 @@
     <div class="alpha eight columns">
       <div class="field ">
         <%= f.label :country_id, Spree.t(:country) %>
-        <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %></span>
+        <span id="country"><%= f.collection_select :country_id, available_countries, :code, :name, {}, {:class => 'select2 fullwidth'} %></span>
       </div>
     </div>
 
     <div class="four columns">
       <div class="field ">
         <% if f.object.country %>
-          <%= f.label :state_id, Spree.t(:state) %>
-          <span id="state" class="region">
-            <%= f.text_field :state_name, :style => "display: #{f.object.country.states.empty? ? 'block' : 'none' };", :disabled => !f.object.country.states.empty?, :class => 'fullwidth state_name' %>
-            <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.states.empty? ? 'none' : 'block' };", :disabled => f.object.country.states.empty?} %>
+          <%= f.label :region_code, Spree.t(:region) %>
+          <span id="region" class="region">
+            <%= f.text_field :region_text, :style => "display: #{f.object.country.subregions.empty? ? 'block' : 'none' };", :disabled => !f.object.country.subregions.empty?, :class => 'fullwidth region_text' %>
+            <%= f.collection_select :region_code, f.object.country.subregions.sort, :code, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{f.object.country.subregions.empty? ? 'none' : 'block' };", :disabled => f.object.country.subregions.empty?} %>
           </span>
         <% end %>
       </div>

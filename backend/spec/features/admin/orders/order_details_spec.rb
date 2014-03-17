@@ -6,7 +6,6 @@ describe "Order Details", js: true do
   let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
   let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
-  let(:state) { create(:state) }
   let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
   let!(:shipping_method) { create(:shipping_method, :name => "Default") }
 
@@ -200,7 +199,7 @@ describe "Order Details", js: true do
           end
         end
       end
-      
+
       context "with special_instructions present" do
         let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
         it "will show the special_instructions" do
@@ -233,7 +232,7 @@ describe "Order Details", js: true do
   end
 
   context 'with only read permissions' do
-    before do 
+    before do
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
 

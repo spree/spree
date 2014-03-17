@@ -9,14 +9,7 @@ FactoryGirl.define do
     zipcode '20170'
     phone '123-456-7890'
     alternative_phone '123-456-7899'
-
-    state { |address| address.association(:state) }
-    country do |address|
-      if address.state
-        address.state.country
-      else
-        address.association(:country)
-      end
-    end
+    region_code 'VA'
+    country_code 'US'
   end
 end

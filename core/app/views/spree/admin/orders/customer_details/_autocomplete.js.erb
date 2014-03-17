@@ -7,12 +7,8 @@
         {{bill_address.firstname}} {{bill_address.lastname}}<br>
         {{bill_address.address1}}, {{bill_address.address2}}<br>
         {{bill_address.city}}<br>
-        {{#if bill_address.state_id }}
-          {{bill_address.state.name}}
-        {{else}}
-          {{bill_address.state_name}}
-        {{/if}}
-        {{bill_address.country.name}}
+        {{bill_address.region_code}}
+        {{bill_address.country_code}}
       {{/if}}
     </div>
   </div>

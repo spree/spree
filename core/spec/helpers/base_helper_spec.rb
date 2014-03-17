@@ -1,22 +1,17 @@
+require 'carmen'
 require 'spec_helper'
 
 describe Spree::BaseHelper do
   include Spree::BaseHelper
 
   context "available_countries" do
-    let(:country) { create(:country) }
-
-    before do
-      3.times { create(:country) }
-    end
-
     context "with no checkout zone defined" do
       before do
         Spree::Config[:checkout_zone] = nil
       end
 
       it "return complete list of countries" do
-        available_countries.count.should == Spree::Country.count
+        available_countries.count.should == Carmen::Country.all.length
       end
     end
 
@@ -24,25 +19,24 @@ describe Spree::BaseHelper do
       context "checkout zone is of type country" do
         before do
           @country_zone = create(:zone, :name => "CountryZone")
-          @country_zone.members.create(:zoneable => country)
+          @country_zone.members.create(country_code: 'AU')
           Spree::Config[:checkout_zone] = @country_zone.name
         end
 
         it "return only the countries defined by the checkout zone" do
-          available_countries.should == [country]
+          available_countries.first.code.should == 'AU'
         end
       end
 
       context "checkout zone is of type state" do
         before do
           state_zone = create(:zone, :name => "StateZone")
-          state = create(:state, :country => country)
-          state_zone.members.create(:zoneable => state)
+          state_zone.members.create(country_code: 'AU', region_code: 'NSW')
           Spree::Config[:checkout_zone] = state_zone.name
         end
 
         it "return complete list of countries" do
-          available_countries.count.should == Spree::Country.count
+          available_countries.count.should == Carmen::Country.all.length
         end
       end
     end

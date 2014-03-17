@@ -9,12 +9,12 @@ module Spree
     after_save :remove_previous_default
 
     alias :members :zone_members
-    accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
+    accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['country_code'].blank? }
 
     def self.default_tax
       where(default_tax: true).first
     end
-  
+
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)
@@ -22,7 +22,7 @@ module Spree
         order('zone_members_count', 'created_at').
         select { |zone| zone.include? address }
 
-      ['state', 'country'].each do |zone_kind|
+      ['region', 'country'].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }
           return match
         end
@@ -31,8 +31,8 @@ module Spree
     end
 
     def kind
-      if members.any? && !members.any? { |member| member.try(:zoneable_type).nil? }
-        members.last.zoneable_type.demodulize.underscore
+      if members.any? && !members.any? { |member| member.kind.nil? }
+        members.last.kind
       end
     end
 
@@ -44,68 +44,49 @@ module Spree
       return false unless address
 
       members.any? do |zone_member|
-        case zone_member.zoneable_type
-        when 'Spree::Country'
-          zone_member.zoneable_id == address.country_id
-        when 'Spree::State'
-          zone_member.zoneable_id == address.state_id
-        else
-          false
-        end
+        zone_member.country_code == address.country_code && (zone_member.region_code.nil? || zone_member.region_code == address.region_code)
       end
     end
 
     # convenience method for returning the countries contained within a zone
     def country_list
-      @countries ||= case kind
-                     when 'country' then zoneables
-                     when 'state' then zoneables.collect(&:country)
-                     else nil
-                     end.flatten.compact.uniq
+      @countries ||= members.collect(&:country).compact.uniq
     end
 
     def <=>(other)
       name <=> other.name
     end
 
-    # All zoneables belonging to the zone members.  Will be a collection of either
-    # countries or states depending on the zone type.
-    def zoneables
-      members.collect(&:zoneable)
-    end
-
-    def country_ids
+    def country_codes
       if kind == 'country'
-        members.collect(&:zoneable_id)
+        members.collect(&:country_code)
       else
         []
       end
     end
 
-    def state_ids
-      if kind == 'state'
-        members.collect(&:zoneable_id)
+    def region_codes
+      if kind == 'region'
+        members.collect(&:region_code)
       else
         []
       end
     end
 
-    def country_ids=(ids)
+    def country_codes=(codes)
       zone_members.destroy_all
-      ids.reject{ |id| id.blank? }.map do |id|
+      codes.reject{ |code| code.blank? }.map do |code|
         member = ZoneMember.new
-        member.zoneable_type = 'Spree::Country'
-        member.zoneable_id = id
+        member.country_code = code
         members << member
       end
     end
 
-    def state_ids=(ids)
+    def region_codes=(codes)
       zone_members.destroy_all
-      ids.reject{ |id| id.blank? }.map do |id|
+      codes.reject{ |code| code.blank? }.map do |code|
         member = ZoneMember.new
-        member.zoneable_type = 'Spree::State'
-        member.zoneable_id = id
+        member.country_code, member.region_code = code.split('-')
         members << member
       end
     end
@@ -113,14 +94,10 @@ module Spree
     # Indicates whether the specified zone falls entirely within the zone performing
     # the check.
     def contains?(target)
-      return false if kind == 'state' && target.kind == 'country'
+      return false if kind == 'region' && target.kind == 'country'
       return false if zone_members.empty? || target.zone_members.empty?
+      return false if target.zone_members.any? { |target_member| !zone_members.any? { |member| member.contains?(target_member) } }
 
-      if kind == target.kind
-        return false if target.zoneables.any? { |target_zoneable| zoneables.exclude?(target_zoneable) }
-      else
-        return false if target.zoneables.any? { |target_state| zoneables.exclude?(target_state.country) }
-      end
       true
     end
 
@@ -128,7 +105,11 @@ module Spree
 
       def remove_defunct_members
         if zone_members.any?
-          zone_members.where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.classify}").destroy_all
+          if kind == 'country'
+            zone_members.where('country_code is null or region_code is not null').destroy_all
+          else
+            zone_members.where('country_code is null or region_code is null').destroy_all
+          end
         end
       end
 

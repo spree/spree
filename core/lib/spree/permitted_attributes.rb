@@ -28,10 +28,10 @@ module Spree
 
     @@address_attributes = [
       :firstname, :lastname, :address1, :address2,
-      :city, :country_id, :state_id, :zipcode, :phone,
-      :state_name, :alternative_phone, :company,
+      :city, :country_code, :state_id, :zipcode, :phone,
+      :region_code, :alternative_phone, :company,
       :country => [:iso, :name, :iso3, :iso_name],
-      :state => [:name, :abbr]
+      :region => [:name, :abbr]
     ]
 
     @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
@@ -68,14 +68,14 @@ module Spree
     # month / year may be provided by some sources, or others may elect to use one field
     @@source_attributes = [
       :number, :month, :year, :expiry, :verification_value,
-      :first_name, :last_name, :cc_type, :gateway_customer_profile_id, 
+      :first_name, :last_name, :cc_type, :gateway_customer_profile_id,
       :gateway_payment_profile_id, :last_digits, :name, :encrypted_data]
 
     @@stock_item_attributes = [:variant, :stock_location, :backorderable, :variant_id]
 
     @@stock_location_attributes = [
       :name, :active, :address1, :address2, :city, :zipcode,
-      :backorderable_default, :state_name, :state_id, :country_id, :phone,
+      :backorderable_default, :region_code, :country_code, :phone,
       :propagate_all_variants]
 
     @@stock_movement_attributes = [
