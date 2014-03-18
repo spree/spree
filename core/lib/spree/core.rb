@@ -41,6 +41,7 @@ module Spree
     autoload :ProductFilters, "spree/core/product_filters"
 
     class GatewayError < RuntimeError; end
+    class DestroyWithOrdersError < StandardError; end
   end
 end
 
