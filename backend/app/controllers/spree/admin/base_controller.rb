@@ -11,6 +11,7 @@ module Spree
       before_filter :authorize_admin
 
       protected
+
         def action
           params[:action].to_sym
         end
@@ -85,6 +86,7 @@ module Spree
         def config_locale
           Spree::Backend::Config[:locale]
         end
+
     end
   end
 end
