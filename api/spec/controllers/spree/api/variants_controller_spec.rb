@@ -59,6 +59,15 @@ module Spree
       api_get :index
 
       json_response["variants"].last.should have_attributes([:images])
+      json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
+                                                                               :attachment_width,
+                                                                               :attachment_height,
+                                                                               :attachment_content_type,
+                                                                               :mini_url,
+                                                                               :small_url,
+                                                                               :product_url,
+                                                                               :large_url])
+
     end
 
     # Regression test for #2141
