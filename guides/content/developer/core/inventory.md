@@ -37,7 +37,7 @@ Note: Stock items are created automatically for each stock location you have. Yo
 
 ![image](../images/developer/core/stock_movements.png)
 
-Stock movements allow you to mange the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the "Stock Management" link in the sidebar.
+Stock movements allow you to manage the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the "Stock Management" link in the sidebar.
 
 As shown in the image above, you can increase or decrease the count on hand available for a variant at a stock location. To increase the count on hand, make a stock movement with a positive quantity. To decrease the count on hand, make a stock movement with a negative quantity.
 
