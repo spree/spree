@@ -6,6 +6,8 @@ module Spree
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
       include ::ActionController::Head
+      include ::ActionController::Redirecting
+      include Spree::Core::Engine.routes.url_helpers
 
       self.responder = Spree::Api::Responders::AppResponder
 
