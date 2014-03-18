@@ -9,6 +9,8 @@ module Spree
       include Spree::Core::ControllerHelpers::StrongParameters
       include ::ActionController::Head
       include ::ActionController::ConditionalGet
+      include ::ActionController::Redirecting
+      include Spree::Core::Engine.routes.url_helpers
 
       self.responder = Spree::Api::Responders::AppResponder
 

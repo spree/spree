@@ -22,6 +22,16 @@ module Spree
       Spree::Config[:track_inventory_levels] = true
     end
 
+    context "GET 'show'" do
+      let(:order) { create(:order) }
+
+      it "redirects to Orders#show" do
+        api_get :show, :id => order.number
+        response.status.should == 301
+        response.should redirect_to("/api/orders/#{order.number}")
+      end
+    end
+
     context "POST 'create'" do
       it "creates a new order when no parameters are passed" do
         api_post :create
