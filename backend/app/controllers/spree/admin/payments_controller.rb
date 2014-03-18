@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class PaymentsController < Spree::Admin::BaseController
+      include Spree::Backend::Callbacks
+
       before_filter :load_order, :only => [:create, :new, :index, :fire]
       before_filter :load_payment, :except => [:create, :new, :index]
       before_filter :load_data
@@ -18,23 +20,27 @@ module Spree
       end
 
       def create
-        @payment = @order.payments.build(object_params)
+        invoke_callbacks(:create, :before)
+        @payment ||= @order.payments.build(object_params)
         if params[:card].present? and params[:card] != 'new'
           @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
         end
 
         begin
           if @payment.save
+            invoke_callbacks(:create, :after)
             # Transition order as far as it will go.
             while @order.next; end
             @payment.process! if @order.completed?
             flash[:success] = flash_message_for(@payment, :successfully_created)
             redirect_to admin_order_payments_path(@order)
           else
+            invoke_callbacks(:create, :fails)
             flash[:error] = Spree.t(:payment_could_not_be_created)
             render :new
           end
         rescue Spree::Core::GatewayError => e
+          invoke_callbacks(:create, :fails)
           flash[:error] = "#{e.message}"
           redirect_to new_admin_order_payment_path(@order)
         end
