@@ -1076,6 +1076,7 @@ en:
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
+    stock_locations_need_a_default_country: You must create a default country before creating a stock location.
     stock_management: Stock Management
     stock_management_requires_a_stock_location: Please create a stock location in order to manage stock.
     stock_movements: Stock Movements
