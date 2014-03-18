@@ -30,7 +30,7 @@
     <% if order.checkout_steps.include?("delivery") && order.shipments.any? %>
       <tr data-hook="shipping_total">
         <td><%= Spree.t(:shipping_total) %></td>
-        <td><%= Spree::Money.new(order.shipments.sum(&:cost)).to_html %></td>
+        <td><%= Spree::Money.new(order.shipments.to_a.sum(&:cost)).to_html %></td>
       </tr>
 
       <% if order.shipment_adjustments.exists? %>
