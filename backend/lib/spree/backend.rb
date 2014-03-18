@@ -12,4 +12,6 @@ require 'spree/core/mail_interceptor'
 
 require 'spree/responder'
 
+require 'spree/backend/action_callbacks'
+require 'spree/backend/callbacks'
 require 'spree/backend/engine'
