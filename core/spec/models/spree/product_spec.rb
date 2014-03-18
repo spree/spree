@@ -405,4 +405,14 @@ describe Spree::Product do
       product.total_on_hand.should eql(5)
     end
   end
+
+  describe "slugs" do
+    it "normalizes slug on update" do
+      product = stub_model Spree::Product
+      product.slug = "hey//joe"
+
+      product.valid?
+      expect(product.slug).not_to match "/"
+    end
+  end
 end
