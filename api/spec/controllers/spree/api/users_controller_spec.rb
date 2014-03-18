@@ -119,7 +119,7 @@ module Spree
       it "cannot destroy user with orders" do
         create(:completed_order_with_totals, :user => user)
         api_delete :destroy, :id => user.id
-        json_response["exception"].should eq "Spree::LegacyUser::DestroyWithOrdersError"
+        json_response["exception"].should eq "Spree::Core::DestroyWithOrdersError"
         response.status.should == 422
       end
 

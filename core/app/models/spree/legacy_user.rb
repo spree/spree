@@ -10,8 +10,6 @@ module Spree
 
     before_destroy :check_completed_orders
 
-    class DestroyWithOrdersError < StandardError; end
-
     def has_spree_role?(role)
       true
     end
@@ -22,7 +20,7 @@ module Spree
     private
 
       def check_completed_orders
-        raise DestroyWithOrdersError if orders.complete.present?
+        raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
       end
   end
 end
