@@ -1,5 +1,5 @@
 attributes *variant_attributes
-cache ['show', root_object]
+cache ['small_variant', root_object]
 
 node(:display_price) { |p| p.display_price.to_s }
 node(:options_text) { |v| v.options_text }
