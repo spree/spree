@@ -1014,6 +1014,9 @@ en:
       user_logged_in:
         description: Available only to logged in users
         name: User Logged In
+      taxon:
+        description: Ordes includes products with specified taxon(s)
+        name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
     properties: Properties
@@ -1191,6 +1194,11 @@ en:
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
+    taxon_rule:
+      choose_products: Choose taxon
+      label: Order must contain %{select} of these taxons
+      match_all: all
+      match_any: at least one
     taxonomies: Taxonomies
     taxonomy: Taxonomy
     taxonomy_edit: Edit taxonomy
