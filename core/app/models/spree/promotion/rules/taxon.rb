@@ -19,6 +19,15 @@ module Spree
           end
         end
 
+        def taxon_ids_string
+          taxons.pluck(:id).join(',')
+        end
+
+        def taxon_ids_string=(s)
+          ids = s.to_s.split(',').map(&:strip)
+          taxons << Spree::Taxon.find(ids)
+        end
+
         private
         def order_taxons(order)
           Spree::Taxon.joins(products: {variants: :line_items}).where(spree_line_items: {order_id: order.id})
