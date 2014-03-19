@@ -76,11 +76,29 @@ describe "Properties" do
       page.should have_css("tbody#product_properties")
       all("tbody#product_properties tr").count.should == 2
 
-      page.evaluate_script('window.confirm = function() { return true; }')
-      click_icon :trash
-      click_link "Product Properties"
-      page.should have_css("tbody#product_properties")
-      all("tbody#product_properties tr").count.should == 1
+      delete_product_property
+
+      check_property_row_count(1)
+    end
+
+    # Regression test for #4466
+    it "successfully remove and create a product property at the same time" do
+      fill_in_property
+
+      fill_in "product_product_properties_attributes_1_property_name", :with => "New Property"
+      fill_in "product_product_properties_attributes_1_value", :with => "New Value"
+
+      delete_product_property
+
+      # Give fadeOut time to complete
+      page.should_not have_selector("#product_product_properties_attributes_0_property_name")
+      page.should_not have_selector("#product_product_properties_attributes_0_value")
+
+      click_button "Update"
+
+      page.should_not have_content("Product is not found")
+
+      check_property_row_count(2)
     end
 
     def fill_in_property
@@ -89,6 +107,18 @@ describe "Properties" do
       fill_in "product_product_properties_attributes_0_value", :with => "A Value"
       click_button "Update"
       click_link "Product Properties"
+    end
+
+    def delete_product_property
+      page.evaluate_script('window.confirm = function() { return true; }')
+      click_icon :trash
+      wait_for_ajax # delete action must finish before reloading
+    end
+
+    def check_property_row_count(expected_row_count)
+      click_link "Product Properties"
+      page.should have_css("tbody#product_properties")
+      all("tbody#product_properties tr").count.should == expected_row_count
     end
   end
 end
