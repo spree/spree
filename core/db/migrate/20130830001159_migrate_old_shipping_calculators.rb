@@ -1,6 +1,6 @@
 class MigrateOldShippingCalculators < ActiveRecord::Migration
   def up
-    Spree::ShippingMethod.all.each do |shipping_method|
+    Spree::ShippingMethod.find_each do |shipping_method|
       old_calculator = shipping_method.calculator
       next if old_calculator.class < Spree::ShippingCalculator # We don't want to mess with new shipping calculators
       new_calculator = eval("Spree::Calculator::Shipping::#{old_calculator.class.name.demodulize}").new
