@@ -13,9 +13,10 @@ module Spree
 
         def eligible?(order, options = {})
           if preferred_match_policy == 'all'
-            order_taxons(order).where(id: taxons).count == taxons.count
+            (taxons.to_a - taxons_in_order_including_parents(order)).empty?
           else
-            order_taxons(order).where(id: taxons).count > 0
+            order_taxons = taxons_in_order_including_parents(order)
+            taxons.any?{ |taxon| order_taxons.include? taxon }
           end
         end
 
@@ -25,12 +26,28 @@ module Spree
 
         def taxon_ids_string=(s)
           ids = s.to_s.split(',').map(&:strip)
-          taxons << Spree::Taxon.find(ids)
+          self.taxons = Spree::Taxon.find(ids)
         end
 
         private
+
+        # All taxons in an order
         def order_taxons(order)
-          Spree::Taxon.joins(products: {variants: :line_items}).where(spree_line_items: {order_id: order.id})
+          Spree::Taxon.joins(products: {variants_including_master: :line_items}).where(spree_line_items: {order_id: order.id}).uniq
+        end
+
+        # ids of taxons rules and taxons rules children
+        def taxons_including_children_ids
+          taxons.inject([]){ |ids,taxon| ids += taxon.self_and_descendants.ids }
+        end
+
+        # taxons order vs taxons rules and taxons rules children
+        def order_taxons_in_taxons_and_children(order)
+          order_taxons(order).where(id: taxons_including_children_ids)
+        end
+
+        def taxons_in_order_including_parents(order)
+          order_taxons_in_taxons_and_children(order).inject([]){ |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
         end
       end
     end

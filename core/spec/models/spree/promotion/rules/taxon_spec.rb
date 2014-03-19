@@ -18,7 +18,7 @@ describe Spree::Promotion::Rules::Taxon do
         rule.preferred_match_policy = 'any'
       end
 
-      it 'is eligible if order does not has any prefered taxon' do
+      it 'is eligible if order does has any prefered taxon' do
         order.products.first.taxons << taxon
         rule.taxons << taxon
         expect(rule).to be_eligible(order)
@@ -27,6 +27,16 @@ describe Spree::Promotion::Rules::Taxon do
       it 'is not eligile if order does not has any prefered taxon' do
         rule.taxons << taxon2
         expect(rule).not_to be_eligible(order)
+      end
+
+      context 'when a product has a taxon child of a taxon rule' do
+        before do
+          taxon.children << taxon2
+          order.products.first.taxons << taxon2
+          rule.taxons << taxon2
+        end
+
+        it{ expect(rule).to be_eligible(order) }
       end
     end
 
@@ -47,6 +57,20 @@ describe Spree::Promotion::Rules::Taxon do
       it 'is not eligile if order does not has all prefered taxons' do
         rule.taxons << taxon
         expect(rule).not_to be_eligible(order)
+      end
+
+      context 'when a product has a taxon child of a taxon rule' do
+        let(:taxon3){ create :taxon }
+
+        before do
+          taxon.children << taxon2
+          order.products.first.taxons << taxon2
+          order.products.last.taxons << taxon3
+          rule.taxons << taxon2
+          rule.taxons << taxon3
+        end
+
+        it{ expect(rule).to be_eligible(order) }
       end
     end
   end
