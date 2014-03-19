@@ -6,7 +6,7 @@ class AddNumberToStockTransfer < ActiveRecord::Migration
     rename_column :spree_stock_transfers, :reference_number, :reference
     add_column :spree_stock_transfers, :number, :string
 
-    Spree::StockTransfer.all.each do |transfer|
+    Spree::StockTransfer.find_each do |transfer|
       transfer.send(:generate_stock_transfer_number)
       transfer.save!
     end
