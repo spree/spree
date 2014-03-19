@@ -13,7 +13,7 @@ module Spree
                         :user_id, :created_at, :updated_at,
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions,
-                        :total_quantity, :display_item_total] }
+                        :total_quantity, :display_item_total, :currency] }
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
