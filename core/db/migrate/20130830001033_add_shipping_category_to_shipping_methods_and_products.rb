@@ -3,7 +3,7 @@ class AddShippingCategoryToShippingMethodsAndProducts < ActiveRecord::Migration
     default_category = Spree::ShippingCategory.first
     default_category ||= Spree::ShippingCategory.create!(:name => "Default")
 
-    Spree::ShippingMethod.all.each do |method|
+    Spree::ShippingMethod.find_each do |method|
       method.shipping_categories << default_category if method.shipping_categories.blank?
     end
 
