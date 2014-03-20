@@ -441,6 +441,7 @@ en:
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
     choose_currency: Choose Currency
     choose_dashboard_locale: Choose Dashboard Locale
+    choose_location: Choose location
     city: City
     clone: Clone
     close: Close
@@ -582,6 +583,7 @@ en:
       count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
     expiration: Expiration
     extension: Extension
+    existing_shipments: Existing shipments
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
@@ -718,6 +720,7 @@ en:
     new_return_authorization: New Return Authorization
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
+    new_shipment_at_location: New shipment at location
     new_state: New State
     new_stock_location: New Stock Location
     new_stock_movement: New Stock Movement
