@@ -94,7 +94,7 @@ module Spree
     end
 
     def add_shipping_method(shipping_method, selected = false)
-      shipping_rates.create(shipping_method: shipping_method, selected: selected)
+      shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)
     end
 
     def selected_shipping_rate
