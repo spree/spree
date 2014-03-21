@@ -21,7 +21,8 @@ module Spree
           api_post :create,
                    :image => { :attachment => upload_image('thinking-cat.jpg'),
                                :viewable_type => 'Spree::Variant',
-                               :viewable_id => product.master.to_param  }
+                               :viewable_id => product.master.to_param  },
+                   :product_id => product.id
           response.status.should == 201
           json_response.should have_attributes(attributes)
         end.should change(Image, :count).by(1)
@@ -32,14 +33,14 @@ module Spree
 
         it "can update image data" do
           product_image.position.should == 1
-          api_post :update, :image => { :position => 2 }, :id => product_image.id
+          api_post :update, :image => { :position => 2 }, :id => product_image.id, :product_id => product.id
           response.status.should == 200
           json_response.should have_attributes(attributes)
           product_image.reload.position.should == 2
         end
 
         it "can delete an image" do
-          api_delete :destroy, :id => product_image.id
+          api_delete :destroy, :id => product_image.id, :product_id => product.id
           response.status.should == 204
           lambda { product_image.reload }.should raise_error(ActiveRecord::RecordNotFound)
         end
@@ -48,17 +49,17 @@ module Spree
 
     context "as a non-admin" do
       it "cannot create an image" do
-        api_post :create
+        api_post :create, :product_id => product.id
         assert_unauthorized!
       end
 
       it "cannot update an image" do
-        api_put :update, :id => 1
+        api_put :update, :id => 1, :product_id => product.id
         assert_not_found!
       end
 
       it "cannot delete an image" do
-        api_delete :destroy, :id => 1
+        api_delete :destroy, :id => 1, :product_id => product.id
         assert_not_found!
       end
     end
