@@ -1,10 +1,15 @@
 require 'spec_helper'
 
 describe Spree::Admin::PromotionsController do
-  stub_authorization!
+  let(:user) { create(:user) }
 
   let!(:promotion1) { create(:promotion, name: "name1", code: "code1", path: "path1") }
   let!(:promotion2) { create(:promotion, name: "name2", code: "code2", path: "path2") }
+
+  before do
+    controller.stub :spree_current_user => user
+    user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
+  end
 
   context "#index" do
 
