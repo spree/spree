@@ -15,6 +15,9 @@
                 <% if variant_price variant %>
                   <span class="price diff"><%= variant_price variant %></span>
                 <% end %>
+                <% if ! variant.can_supply? %>
+                  <span class="out-of-stock">SOLD OUT</span>
+                <% end %>
               <% end %>
             </li>
           <% end%>
