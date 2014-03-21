@@ -72,7 +72,7 @@ module Spree
       end
 
       def load_order_with_lock
-        @order = current_order(lock: true)
+        @order = current_order
         redirect_to spree.cart_path and return unless @order
       end
 

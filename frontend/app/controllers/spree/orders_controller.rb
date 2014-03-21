@@ -91,7 +91,7 @@ module Spree
       end
 
       def assign_order_with_lock
-        @order = current_order(lock: true)
+        @order = current_order
         unless @order
           flash[:error] = Spree.t(:order_not_found)
           redirect_to root_path and return

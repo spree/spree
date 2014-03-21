@@ -29,6 +29,7 @@ module Spree
 
         # The current incomplete order from the guest_token for use in cart and during checkout
         def current_order(options = {})
+          options[:lock] = true
           options[:create_order_if_necessary] ||= false
 
           return @current_order if @current_order
