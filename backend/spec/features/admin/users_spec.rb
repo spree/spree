@@ -127,20 +127,26 @@ describe 'Users' do
     end
 
     it 'can edit user shipping address' do
+      click_link "Addresses"
+
       within("#admin_user_edit_addresses") do
         fill_in "user_ship_address_attributes_address1", with: "1313 Mockingbird Ln"
         click_button 'Update'
         expect(find_field('user_ship_address_attributes_address1').value).to eq "1313 Mockingbird Ln"
       end
+
       expect(user_a.reload.ship_address.address1).to eq "1313 Mockingbird Ln"
     end
 
     it 'can edit user billing address' do
+      click_link "Addresses"
+
       within("#admin_user_edit_addresses") do
         fill_in "user_bill_address_attributes_address1", with: "1313 Mockingbird Ln"
         click_button 'Update'
         expect(find_field('user_bill_address_attributes_address1').value).to eq "1313 Mockingbird Ln"
       end
+
       expect(user_a.reload.bill_address.address1).to eq "1313 Mockingbird Ln"
     end
 

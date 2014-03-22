@@ -48,11 +48,19 @@ module Spree
           if roles
             @user.spree_roles = roles.reject(&:blank?).collect{|r| Spree::Role.find(r)}
           end
-
           flash.now[:success] = Spree.t(:account_updated)
-          render :edit
-        else
-          render :edit
+        end
+
+        render :edit
+      end
+
+      def addresses
+        if request.put?
+          if @user.update_attributes(user_params)
+            flash.now[:success] = Spree.t(:account_updated)
+          end
+
+          render :addresses
         end
       end
 

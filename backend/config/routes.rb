@@ -151,6 +151,8 @@ Spree::Core::Engine.add_routes do
       member do
         get :orders
         get :items
+        get :addresses
+        put :addresses
       end
 
     end
