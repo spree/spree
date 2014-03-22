@@ -237,4 +237,4 @@ the same path within your application or extension as the file you would
 like to replace.
 
 For example, to replace the Spree logo you would simply copy your logo
-to: `your_app/vendor/assets/images/spree/logo/spree_50.png`.
+to: `your_app/vendor/assets/images/logo/spree_50.png`.
