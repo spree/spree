@@ -1,6 +1,7 @@
 module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
+    skip_around_filter :set_locale_from_url
 
     def unauthorized
       render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401

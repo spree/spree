@@ -24,7 +24,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'canonical-rails', '~> 0.0.4'
   s.add_dependency 'jquery-rails', '~> 3.1.0'
   s.add_dependency 'stringex', '~> 1.5.1'
-
+  
+  s.add_dependency 'route_translator', '~> 3.2.0'
+  
   s.add_development_dependency 'email_spec', '~> 1.2.1'
   s.add_development_dependency 'capybara-accessible'
 end
