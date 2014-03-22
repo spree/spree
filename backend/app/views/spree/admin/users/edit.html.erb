@@ -23,19 +23,6 @@
   </div>
 </fieldset>
 
-<fieldset data-hook="admin_user_addresses" id="admin_user_edit_addresses" class="alpha twelve columns">
-  <legend><%= Spree.t('addresses', :scope => 'admin.user') %></legend>
-  <div data-hook="admin_user_address_edit_form">
-    <%= form_for [:admin, @user], as: :user, url: admin_user_url(@user), method: :put do |f| %>
-      <%= render :partial => 'addresses_form', :locals => { :f => f } %>
-
-      <div data-hook="admin_user_edit_form_button">
-        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
-      </div>
-    <% end %>
-  </div>
-</fieldset>
-
 <fieldset data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="alpha twelve columns">
   <legend><%= Spree.t('access', :scope => 'api') %></legend>
 
