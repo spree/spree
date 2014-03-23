@@ -798,6 +798,12 @@ describe Spree::Payment do
 
         its(:amount) { should eql(BigDecimal('-2.99')) }
       end
+
+      context "amount uses a dot as a decimal separator" do
+        let(:amount) { '2.99' }
+
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
     end
   end
 
