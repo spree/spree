@@ -15,8 +15,9 @@
                 <% if variant_price variant %>
                   <span class="price diff"><%= variant_price variant %></span>
                 <% end %>
-                <% if ! variant.can_supply? %>
-                  <span class="out-of-stock">SOLD OUT</span>
+
+                <% unless variant.can_supply? %>
+                  <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
                 <% end %>
               <% end %>
             </li>
@@ -41,6 +42,9 @@
 
           <% if @product.master.can_supply? %>
             <link itemprop="availability" href="http://schema.org/InStock" />
+          <% else %>
+            <br />
+            <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
           <% end %> 
         </div>
 
