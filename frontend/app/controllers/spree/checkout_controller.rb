@@ -73,6 +73,12 @@ module Spree
         @order = current_order(lock: true) 
         redirect_to spree.cart_path and return unless @order
 
+        keys = @order.checkout_steps
+        vals = @order.checkout_steps.map{ |t| Spree.t("checkout_steps.slugs.#{t}", default: '') }
+        checkout_steps = Hash[keys.zip vals]
+        state = checkout_steps.key(params[:state])
+        params[:state] = state if state
+        
         if params[:state]
           redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
           @order.state = params[:state]
