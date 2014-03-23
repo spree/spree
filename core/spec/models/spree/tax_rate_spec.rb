@@ -113,7 +113,7 @@ describe Spree::TaxRate do
           end
         end
 
-        context "when there order has a different tax zone" do
+        context "when the order has a different tax zone" do
           before do
             order.stub :tax_zone => create(:zone, :name => "Other Zone")
             order.stub :tax_address => tax_address
@@ -124,7 +124,10 @@ describe Spree::TaxRate do
 
             context "when the tax is a VAT" do
               let(:included_in_price) { true }
-              it { should == [rate] }
+              # No rate should match in this instance because:
+              # 1) The Order's zone is not the default tax zone
+              # 2) The Order's zone does not match the rate's zone
+              it { should == [] }
             end
 
             context "when the tax is not VAT" do
@@ -139,6 +142,11 @@ describe Spree::TaxRate do
 
             context "when the tax is a VAT" do
               let(:included_in_price) { true }
+              # The rate should match in this instance because:
+              # 1) The order has no tax address by this stage
+              # 2) With no tax address, it has no tax zone
+              # 3) Therefore, we assume the default tax zone
+              # 4) This default zone has a default tax rate.
               it { should == [rate] }
             end
 
@@ -238,17 +246,22 @@ describe Spree::TaxRate do
 
   context "#adjust" do
     before do
+      @country = create(:country)
+      @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
+      @zone.zone_members.create(:zoneable => @country)
       @category    = Spree::TaxCategory.create :name => "Taxable Foo"
       @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
       @rate1        = Spree::TaxRate.create(
         :amount => 0.10,
         :calculator => Spree::Calculator::DefaultTax.create,
-        :tax_category => @category
+        :tax_category => @category,
+        :zone => @zone
       )
       @rate2       = Spree::TaxRate.create(
         :amount => 0.05,
         :calculator => Spree::Calculator::DefaultTax.create,
-        :tax_category => @category
+        :tax_category => @category,
+        :zone => @zone
       )
       @order       = Spree::Order.create!
       @taxable     = create(:product, :tax_category => @category)
@@ -280,8 +293,6 @@ describe Spree::TaxRate do
         end
 
         context "when zone is contained by default tax zone" do
-          before { Spree::Zone.stub_chain :default_tax, :contains? => true }
-
           it "should create two adjustments, one for each tax rate" do
             Spree::TaxRate.adjust(@order, @order.line_items)
             line_item.adjustments.count.should == 2
@@ -294,7 +305,12 @@ describe Spree::TaxRate do
         end
 
         context "when zone is not contained by default tax zone" do
-          before { Spree::Zone.stub_chain :default_tax, :contains? => false }
+          before do
+            # With no zone members, this zone will not contain anything
+            # Previously:
+            # Zone.stub_chain :default_tax, :contains? => false
+            @zone.zone_members.delete_all
+          end
           it "should not create an adjustment" do
             Spree::TaxRate.adjust(@order, @order.line_items)
             line_item.adjustments.charge.count.should == 0
@@ -307,8 +323,7 @@ describe Spree::TaxRate do
         end
 
         context "when price does not include tax" do
-          before do             
-            @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
+          before do
             @order.stub :tax_zone => @zone
 
             [@rate1, @rate2].each do |rate|
@@ -331,12 +346,12 @@ describe Spree::TaxRate do
 
         context "when two rates apply" do
           before do
-            Spree::Zone.stub_chain :default_tax, :contains? => true
-
             @price_before_taxes = line_item.price / (1 + @rate1.amount + @rate2.amount)
             # Use the same rounding method as in DefaultTax calculator
             @price_before_taxes = BigDecimal.new(@price_before_taxes).round(2, BigDecimal::ROUND_HALF_UP)
             line_item.update_column(:pre_tax_amount, @price_before_taxes)
+            # Clear out any previously automatically-applied adjustments
+            @order.all_adjustments.delete_all
             @rate1.adjust(@order, line_item)
             @rate2.adjust(@order, line_item)
           end
