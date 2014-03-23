@@ -27,8 +27,9 @@ module Spree
     def self.match(order)
       return [] unless order.tax_zone
       all.select do |rate|
-        (!rate.included_in_price && (rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax))) ||
-        rate.included_in_price && (rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax))
+        # Why "potentially"?
+        # Go see the documentation for that method.
+        rate.potentially_applicable?(order)
       end
     end
 
@@ -48,6 +49,7 @@ module Spree
       end
     end
 
+    # This method is best described by the documentation on #potentially_applicable?
     def self.adjust(order, items)
       rates = self.match(order)
       tax_categories = rates.map(&:tax_category)
@@ -73,6 +75,57 @@ module Spree
       rate = category.tax_rates.detect { |rate| rate.zone.include? address }.try(:amount)
 
       rate || 0
+    end
+
+    
+    # Tax rates can *potentially* be applicable to an order.
+    # We do not know if they are/aren't until we attempt to apply these rates to
+    # the items contained within the Order itself.
+    # For instance, if a rate passes the criteria outlined in this method,
+    # but then has a tax category that doesn't match against any of the line items
+    # inside of the order, then that tax rate will not be applicable to anything.
+    # For instance:
+    # 
+    # Zones:
+    #   - Spain (default tax zone)
+    #   - France
+    #
+    # Tax rates: (note: amounts below do not actually reflect real VAT rates)
+    #   21% inclusive - "Clothing" - Spain
+    #   18% inclusive - "Clothing" - France 
+    #   10% inclusive - "Food" - Spain
+    #   8% inclusive - "Food" - France
+    #   5% inclusive - "Hotels" - Spain
+    #   2% inclusive - "Hotels" - France
+    #
+    # Order has:
+    #   Line Item #1 - Tax Category: Clothing
+    #   Line Item #2 - Tax Category: Food
+    # 
+    # Tax rates that should be selected:
+    #
+    #  21% inclusive - "Clothing" - Spain
+    #  10% inclusive - "Food" - Spain
+    #
+    # If the order's address changes to one in France, then the tax will be recalculated:
+    #  
+    #  18% inclusive - "Clothing" - France
+    #  8% inclusive - "Food" - France
+    #
+    # Note here that the "Hotels" tax rates will not be used at all.
+    # This is because there are no items which have the tax category of "Hotels".
+    #
+    # Under no circumstances should negative adjustments be applied for the Spanish tax rates.
+    #
+    # Those rates should never come into play at all and only the French rates should apply.
+    def potentially_applicable?(order)
+      # If the rate's zone matches the order's tax zone, then it's applicable.
+      self.zone == order.tax_zone ||
+      # If the rate's zone *contains* the order's tax zone, then it's applicable.
+      self.zone.contains?(order.tax_zone) ||
+      # 1) If there is an unknown tax address for this order, and
+      # 2) The rate's zone is the default zone, then it's applicable.
+      (order.tax_address.nil? && self.zone.default_tax)
     end
 
     # Creates necessary tax adjustments for the order.
