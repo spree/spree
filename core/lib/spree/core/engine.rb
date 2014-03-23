@@ -9,10 +9,6 @@ module Spree
         Spree::Config = app.config.spree.preferences #legacy access
       end
 
-      initializer "spree.load_preferences", :before => "spree.environment" do
-        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
-      end
-
       initializer "spree.register.calculators" do |app|
         app.config.spree.calculators.shipping_methods = [
             Spree::Calculator::Shipping::FlatPercentItemTotal,
@@ -39,12 +35,6 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
-      initializer "spree.mail.settings" do |app|
-        ActionMailer::Base.add_delivery_method :spree, Spree::Core::MailMethod
-        Spree::Core::MailSettings.init
-        Mail.register_interceptor(Spree::Core::MailInterceptor)
-      end
-
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|
@@ -59,8 +49,6 @@ module Spree
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
-          Spree::Calculator::PerItem,
-          Spree::Calculator::PercentPerItem
         ]
 
         app.config.spree.calculators.add_class('promotion_actions_create_item_adjustments')
@@ -97,6 +85,10 @@ module Spree
           :password_confirmation,
           :number,
           :verification_value]
+      end
+
+      initializer "spree.core.checking_migrations" do |app|
+        Migrations.new(config, engine_name).check
       end
     end
   end

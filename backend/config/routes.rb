@@ -71,20 +71,17 @@ Spree::Core::Engine.add_routes do
 
     resources :orders, :except => [:show] do
       member do
-        put :fire
-        get :fire
         post :resend
         get :open_adjustments
         get :close_adjustments
+        put :approve
+        put :cancel
+        put :resume
       end
 
       resource :customer, :controller => "orders/customer_details"
 
-      resources :adjustments do
-        member do
-          get :toggle_state
-        end
-      end
+      resources :adjustments
       resources :line_items
       resources :return_authorizations do
         member do
@@ -146,8 +143,12 @@ Spree::Core::Engine.add_routes do
 
     resources :trackers
     resources :payment_methods
-    resource :mail_method, :only => [:edit, :update] do
-      post :testmail, :on => :collection
+
+    resources :users do
+      member do
+        get :orders
+        get :items
+      end
     end
   end
 end

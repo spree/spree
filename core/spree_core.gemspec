@@ -24,13 +24,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'cancan', '~> 1.6.10'
   s.add_dependency 'deface', '~> 1.0.0'
   s.add_dependency 'ffaker', '~> 1.16'
+  s.add_dependency 'friendly_id', '5.0.3'
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.15.0'
-  s.add_dependency 'paperclip', '~> 3.4.1'
+  s.add_dependency 'paperclip', '~> 4.1.1'
   s.add_dependency 'paranoia', '~> 2.0'
-  s.add_dependency 'rails', '~> 4.0.0'
+  s.add_dependency 'rails', '~> 4.0.4'
   s.add_dependency 'ransack', '~> 1.1.0'
   s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'stringex', '~> 1.5.1'

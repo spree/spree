@@ -9,6 +9,7 @@ module Spree
     def index
       @searcher = build_searcher(params)
       @products = @searcher.retrieve_products
+      @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
 
     def show
@@ -16,20 +17,7 @@ module Spree
 
       @variants = @product.variants_including_master.active(current_currency).includes([:option_values, :images])
       @product_properties = @product.product_properties.includes(:property)
-
-      referer = request.env['HTTP_REFERER']
-      if referer
-        begin
-          referer_path = URI.parse(request.env['HTTP_REFERER']).path
-          # Fix for #2249
-        rescue URI::InvalidURIError
-          # Do nothing
-        else
-          if referer_path && referer_path.match(/\/t\/(.*)/)
-            @taxon = Spree::Taxon.find_by_permalink($1)
-          end
-        end
-      end
+      @taxon = Spree::Taxon.find(params[:taxon_id]) if params[:taxon_id]
     end
 
     private
@@ -39,10 +27,11 @@ module Spree
 
       def load_product
         if try_spree_current_user.try(:has_spree_role?, "admin")
-          @product = Product.find_by_permalink!(params[:id])
+          @products = Product.with_deleted
         else
-          @product = Product.active(current_currency).find_by_permalink!(params[:id])
+          @products = Product.active(current_currency)
         end
+        @product = @products.friendly.find(params[:id])
       end
   end
 end

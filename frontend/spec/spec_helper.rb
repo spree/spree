@@ -19,6 +19,7 @@ begin
   require File.expand_path("../dummy/config/environment", __FILE__)
 rescue LoadError
   puts "Could not load dummy application. Please ensure you have run `bundle exec rake test_app`"
+  exit
 end
 
 require 'rspec/rails'
@@ -42,12 +43,12 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
+require 'spree/testing_support/caching'
 
 require 'paperclip/matchers'
 
-require 'capybara/accessible'
-
 if ENV['WEBDRIVER'] == 'accessible'
+  require 'capybara/accessible'
   Capybara.javascript_driver = :accessible
 else
   require 'capybara/poltergeist'
@@ -65,8 +66,10 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  config.around(:each, :inaccessible => true) do |example|
-    Capybara::Accessible.skip_audit { example.run }
+  if ENV['WEBDRIVER'] == 'accessible'
+    config.around(:each, :inaccessible => true) do |example|
+      Capybara::Accessible.skip_audit { example.run }
+    end
   end
 
   config.before(:each) do

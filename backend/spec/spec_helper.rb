@@ -19,6 +19,7 @@ begin
   require File.expand_path("../dummy/config/environment", __FILE__)
 rescue LoadError
   puts "Could not load dummy application. Please ensure you have run `bundle exec rake test_app`"
+  exit
 end
 
 require 'rspec/rails'
@@ -40,6 +41,9 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
 
 require 'paperclip/matchers'
+
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
 
 RSpec.configure do |config|
   config.color = true
@@ -73,13 +77,15 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    # Ensure js requests finish processing before advancing to the next test
+    wait_for_ajax if example.metadata[:js]
+
     DatabaseCleaner.clean
   end
 
   config.after(:each, :type => :feature) do
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
-      #binding.pry
       puts "Found missing translations: #{missing_translations.inspect}"
       puts "In spec: #{example.location}"
     end

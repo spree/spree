@@ -1,5 +1,5 @@
 module Spree
-  class Calculator < ActiveRecord::Base
+  class Calculator < Spree::Base
     belongs_to :calculable, polymorphic: true
 
     # This method calls a compute_<computable> method. must be overriden in concrete calculator.

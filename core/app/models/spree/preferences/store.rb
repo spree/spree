@@ -16,17 +16,18 @@ module Spree::Preferences
       @persistence = true
     end
 
-    def set(key, value, type)
+    def set(key, value)
       @cache.write(key, value)
-      persist(key, value, type)
+      persist(key, value)
     end
+    alias_method :[]=, :set
 
     def exist?(key)
       @cache.exist?(key) ||
       should_persist? && Spree::Preference.where(:key => key).exists?
     end
 
-    def get(key,fallback=nil)
+    def get(key)
       # return the retrieved value, if it's in the cache
       # use unless nil? incase the value is actually boolean false
       #
@@ -44,7 +45,7 @@ module Spree::Preferences
           val = preference.value
         else
           # use the fallback value
-          val = fallback
+          val = yield
         end
 
         # Cache either the value from the db or the fallback value.
@@ -53,9 +54,10 @@ module Spree::Preferences
 
         return val
       else
-        return fallback
+        yield
       end
     end
+    alias_method :fetch, :get
 
     def delete(key)
       @cache.delete(key)
@@ -68,12 +70,11 @@ module Spree::Preferences
 
     private
 
-    def persist(cache_key, value, type)
+    def persist(cache_key, value)
       return unless should_persist?
 
       preference = Spree::Preference.where(:key => cache_key).first_or_initialize
       preference.value = value
-      preference.value_type = type
       preference.save
     end
 

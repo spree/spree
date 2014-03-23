@@ -37,12 +37,13 @@ describe Spree::Promotion do
     end
   end
 
-  describe "#delete" do
+  describe "#destroy" do
     let(:promotion) { Spree::Promotion.create(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
       promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.save!
       promotion.destroy
     end
 
@@ -55,10 +56,26 @@ describe Spree::Promotion do
     end
   end
 
+  describe "#save" do
+    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+
+    before(:each) do
+      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+      promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.save!
+    end
+
+    it "should deeply autosave records and preferences" do
+      promotion.actions[0].calculator.preferred_flat_percent = 10
+      promotion.save!
+      Spree::Calculator.first.preferred_flat_percent.should == 10
+    end
+  end
+
   describe "#activate" do
     before do
-      @action1 = mock_model(Spree::PromotionAction, :perform => true)
-      @action2 = mock_model(Spree::PromotionAction, :perform => true)
+      @action1 = stub_model(Spree::PromotionAction, :perform => true)
+      @action2 = stub_model(Spree::PromotionAction, :perform => true)
       promotion.promotion_actions = [@action1, @action2]
       promotion.created_at = 2.days.ago
 
@@ -255,9 +272,15 @@ describe Spree::Promotion do
     end
   end
 
-  context "rules" do
+  context "#rules_are_eligible?" do
     let(:promotable) { double('Promotable') }
-    it "should have eligible rules if there are no rules" do
+    it "true if there are no rules" do
+      promotion.rules_are_eligible?(promotable).should be_true
+    end
+
+    it "true if there are no applicable rules" do
+      promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => false)]
+      promotion.promotion_rules.stub(:for).and_return([])
       promotion.rules_are_eligible?(promotable).should be_true
     end
 
@@ -265,15 +288,15 @@ describe Spree::Promotion do
       before { promotion.match_policy = 'all' }
 
       it "should have eligible rules if all rules are eligible" do
-        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
-                                     mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true)]
+        promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
+                                     stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true)]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
         promotion.rules_are_eligible?(promotable).should be_true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
-        promotion.promotion_rules = [mock_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
-                                     mock_model(Spree::PromotionRule, :eligible? => false, :applicable? => true)]
+        promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => true),
+                                     stub_model(Spree::PromotionRule, :eligible? => false, :applicable? => true)]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
         promotion.rules_are_eligible?(promotable).should be_false
       end
@@ -290,13 +313,6 @@ describe Spree::Promotion do
         promotion.stub(:rules => [true_rule])
         promotion.stub_chain(:rules, :for).and_return([true_rule])
         promotion.rules_are_eligible?(promotable).should be_true
-      end
-
-      it "should have no eligible rules if no rules are applicable to promotable" do
-        Spree::PromotionRule.any_instance.stub(:applicable? => false)
-        rule = Spree::PromotionRule.create(:promotion => @promotion)
-        promotion.rules << rule
-        promotion.rules_are_eligible?(promotable).should be_false
       end
     end
   end

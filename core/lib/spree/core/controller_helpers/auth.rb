@@ -5,7 +5,6 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_filter :ensure_api_key
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|
@@ -27,7 +26,11 @@ module Spree
             redirect_to '/unauthorized'
           else
             store_location
-            redirect_to respond_to?(:spree_login_path) ? spree_login_path : spree.root_path
+            if respond_to?(:spree_login_path)
+              redirect_to spree_login_path
+            else
+              redirect_to spree.respond_to?(:root_path) ? spree.root_path : root_path
+            end
           end
         end
 
@@ -50,22 +53,21 @@ module Spree
         # proxy method to *possible* spree_current_user method
         # Authentication extensions (such as spree_auth_devise) are meant to provide spree_current_user
         def try_spree_current_user
-          respond_to?(:spree_current_user) ? spree_current_user : nil
+          # This one will be defined by apps looking to hook into Spree
+          # As per authentication_helpers.rb
+          if respond_to?(:spree_current_user)
+            spree_current_user
+          # This one will be defined by Devise
+          elsif respond_to?(:current_spree_user)
+            current_spree_user
+          else
+            nil
+          end
         end
 
         def redirect_back_or_default(default)
           redirect_to(session["spree_user_return_to"] || default)
           session["spree_user_return_to"] = nil
-        end
-
-        # Need to generate an API key for a user due to some actions potentially
-        # requiring authentication to the Spree API
-        def ensure_api_key
-          if user = try_spree_current_user
-            if user.respond_to?(:spree_api_key) && user.spree_api_key.blank?
-              user.generate_spree_api_key!
-            end
-          end
         end
       end
     end

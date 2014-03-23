@@ -23,19 +23,25 @@ module Spree
       end
     end
 
-    def compute_shipment(shipment)
-      round_to_two_places(shipment.discounted_cost * rate.amount)
+    # When it comes to computing shipments or line items: same same.
+    def compute_shipment_or_line_item(item)
+      if rate.included_in_price
+        deduced_total_by_rate(item.pre_tax_amount, rate)
+      else
+        round_to_two_places(item.discounted_amount * rate.amount)
+      end
     end
 
-    def compute_line_item(line_item)
-      if line_item.tax_category == rate.tax_category
-        if rate.included_in_price
-          deduced_total_by_rate(line_item, rate)
-        else
-          round_to_two_places(line_item.discounted_amount * rate.amount)
-        end
+    alias_method :compute_shipment, :compute_shipment_or_line_item
+    alias_method :compute_line_item, :compute_shipment_or_line_item
+
+    def compute_shipping_rate(shipping_rate)
+      if rate.included_in_price
+        pre_tax_amount = shipping_rate.cost / (1 + rate.amount)
+        deduced_total_by_rate(pre_tax_amount, rate)
       else
-        0
+        with_tax_amount = shipping_rate.cost * rate.amount
+        round_to_two_places(with_tax_amount)
       end
     end
 
@@ -49,13 +55,8 @@ module Spree
       BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
     end
 
-    def deduced_total_by_rate(line_item, rate)
-      combined_taxes = 0
-      line_item.product.tax_category.tax_rates.each do |tax|
-        combined_taxes += tax.amount
-      end
-      price_without_taxes = line_item.discounted_amount / (1 + combined_taxes)
-      round_to_two_places(price_without_taxes * rate.amount)
+    def deduced_total_by_rate(pre_tax_amount, rate)
+      round_to_two_places(pre_tax_amount * rate.amount)
     end
 
   end

@@ -53,8 +53,21 @@ describe 'Payments' do
       end
     end
 
-    it 'should be able to list and create payment methods for an order', js: true do
-      find('#payment_status').text.should == 'BALANCE DUE'
+    it 'should list all captures for a payment' do
+      capture_amount = order.outstanding_balance/2 * 100
+      payment.capture!(capture_amount)
+
+      visit spree.admin_order_payment_path(order, payment)
+      expect(page).to have_content 'Capture events'
+      # within '#capture_events' do
+        within_row(1) do
+          expect(page).to have_content(capture_amount / 100)
+        end
+      # end
+    end
+
+    it 'lists and create payments for an order', js: true do
+      find('#payment_status').text.should == 'PENDING'
       within_row(1) do
         column_text(2).should == '$150.00'
         column_text(3).should == 'Credit Card'
@@ -118,7 +131,12 @@ describe 'Payments' do
       it 'allows the amount change to be cancelled by clicking on the cancel button' do
         within_row(1) do
           click_icon(:edit)
-          fill_in('amount', with: '$1')
+
+          # Can't use fill_in here, as under poltergeist that will unfocus (and
+          # thus submit) the field under poltergeist
+          find('td.amount input').click
+          page.execute_script("$('td.amount input').val('$1')")
+
           click_icon(:cancel)
           page.should have_selector('td.amount span', text: '$150.00')
           payment.reload.amount.should == 150.00
@@ -151,26 +169,27 @@ describe 'Payments' do
 
   context "with no prior payments" do
     let(:order) { create(:order_with_line_items, :line_items_count => 1) }
+    let!(:payment_method) { create(:credit_card_payment_method)}
 
     # Regression tests for #4129
     context "with a credit card payment method" do
-      let!(:payment_method) { create(:credit_card_payment_method)}
       before do
         visit spree.admin_order_payments_path(order)
       end
 
-      it "is able to create a new credit card payment with valid information" do
-        choose "Use a new card"
+      it "is able to create a new credit card payment with valid information", :js => true do
         fill_in "Card Number", :with => "4111 1111 1111 1111"
         fill_in "Name", :with => "Test User"
         fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
         fill_in "Card Code", :with => "007"
+        # Regression test for #4277
+        sleep(1)
+        find('.ccType', :visible => false).value.should == 'visa'
         click_button "Continue"
         page.should have_content("Payment has been successfully created!")
       end
 
       it "is unable to create a new payment with invalid information" do
-        choose "Use a new card"
         click_button "Continue"
         page.should have_content("Payment could not be created.")
         page.should have_content("Number can't be blank")
@@ -178,6 +197,20 @@ describe 'Payments' do
         page.should have_content("Verification Value can't be blank")
         page.should have_content("Month is not a number")
         page.should have_content("Year is not a number")
+      end
+    end
+
+    context "user existing card" do
+      let!(:cc) do
+        create(:credit_card, user_id: order.user_id, payment_method: payment_method, gateway_customer_profile_id: "BGS-RFRE")
+      end
+
+      before { visit spree.admin_order_payments_path(order) }
+
+      it "is able to reuse customer payment source" do
+        expect(find("#card_#{cc.id}")).to be_checked
+        click_button "Continue"
+        page.should have_content("Payment has been successfully created!")
       end
     end
   end

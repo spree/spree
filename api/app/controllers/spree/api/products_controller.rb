@@ -9,12 +9,16 @@ module Spree
           @products = product_scope.ransack(params[:q]).result
         end
 
-        @products = @products.page(params[:page]).per(params[:per_page])
+        @products = @products.distinct.page(params[:page]).per(params[:per_page])
+        expires_in 15.minutes, :public => true
+        headers['Surrogate-Control'] = "max-age=#{15.minutes}"
       end
 
       def show
         @product = find_product(params[:id])
-        respond_with(@product)
+        expires_in 15.minutes, :public => true
+        headers['Surrogate-Control'] = "max-age=#{15.minutes}"
+        headers['Surrogate-Key'] = "product_id=1"
       end
 
       # Takes besides the products attributes either an array of variants or
@@ -55,30 +59,25 @@ module Spree
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
 
-        begin
-          @product = Product.new(product_params)
-          if @product.save
-            variants_params.each do |variant_attribute|
-              # make sure the product is assigned before the options=
-              @product.variants.create({ product: @product }.merge(variant_attribute))
-            end
-
-            option_types_params.each do |name|
-              option_type = OptionType.where(name: name).first_or_initialize do |option_type|
-                option_type.presentation = name
-                option_type.save!
-              end
-
-              @product.option_types << option_type unless @product.option_types.include?(option_type)
-            end
-
-            respond_with(@product, :status => 201, :default_template => :show)
-          else
-            invalid_resource!(@product)
+        @product = Product.new(product_params)
+        if @product.save
+          variants_params.each do |variant_attribute|
+            # make sure the product is assigned before the options=
+            @product.variants.create({ product: @product }.merge(variant_attribute))
           end
-        rescue ActiveRecord::RecordNotUnique
-          @product.permalink = nil
-          retry
+
+          option_types_params.each do |name|
+            option_type = OptionType.where(name: name).first_or_initialize do |option_type|
+              option_type.presentation = name
+              option_type.save!
+            end
+
+            @product.option_types << option_type unless @product.option_types.include?(option_type)
+          end
+
+          respond_with(@product, :status => 201, :default_template => :show)
+        else
+          invalid_resource!(@product)
         end
       end
 
@@ -106,7 +105,7 @@ module Spree
             @product.option_types << option_type unless @product.option_types.include?(option_type)
           end
 
-          respond_with(@product, :status => 200, :default_template => :show)
+          respond_with(@product.reload, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)
         end
@@ -115,8 +114,7 @@ module Spree
       def destroy
         @product = find_product(params[:id])
         authorize! :destroy, @product
-        @product.update_attribute(:deleted_at, Time.now)
-        @product.variants_including_master.update_all(:deleted_at => Time.now)
+        @product.destroy
         respond_with(@product, :status => 204)
       end
 

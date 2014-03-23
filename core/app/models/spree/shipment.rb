@@ -1,12 +1,12 @@
 require 'ostruct'
 
 module Spree
-  class Shipment < ActiveRecord::Base
+  class Shipment < Spree::Base
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
-    has_many :shipping_rates, dependent: :delete_all
+    has_many :shipping_rates, -> { order('cost ASC') }, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
@@ -94,7 +94,7 @@ module Spree
     end
 
     def add_shipping_method(shipping_method, selected = false)
-      shipping_rates.create(shipping_method: shipping_method, selected: selected)
+      shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)
     end
 
     def selected_shipping_rate
@@ -109,6 +109,10 @@ module Spree
       shipping_rates.update_all(selected: false)
       shipping_rates.update(id, selected: true)
       self.save!
+    end
+
+    def tax_category
+      selected_shipping_rate.try(:tax_rate).try(:tax_category)
     end
 
     def refresh_rates
@@ -146,6 +150,18 @@ module Spree
     def discounted_cost
       cost + promo_total
     end
+    alias discounted_amount discounted_cost
+
+    # Only one of either included_tax_total or additional_tax_total is set
+    # This method returns the total of the two. Saves having to check if 
+    # tax is included or additional.
+    def tax_total
+      included_tax_total + additional_tax_total
+    end
+
+    def final_price
+      discounted_cost + tax_total
+    end
 
     def display_discounted_cost
       Spree::Money.new(discounted_cost, { currency: currency })
@@ -162,12 +178,16 @@ module Spree
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest
-      inventory_units.group_by(&:variant).map do |variant, units|
-        units.group_by(&:line_item).map do |line_item, units|
+      # Grouping by the ID means that we don't have to call out to the association accessor
+      # This makes the grouping by faster because it results in less SQL cache hits.
+      inventory_units.group_by(&:variant_id).map do |variant_id, units|
+        units.group_by(&:line_item_id).map do |line_item_id, units|
 
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.count }
 
+          line_item = units.first.line_item
+          variant = units.first.variant
           ManifestItem.new(line_item, variant, units.length, states)
         end
       end.flatten
@@ -234,8 +254,12 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location, order)
-      inventory_units.includes(:variant).each do |inventory_unit|
-        package.add inventory_unit.line_item, 1, inventory_unit.state_name
+      grouped_inventory_units = inventory_units.includes(:line_item).group_by do |iu|
+        [iu.line_item, iu.state_name]
+      end
+
+      grouped_inventory_units.each do |(line_item, state_name), inventory_units|
+        package.add line_item, inventory_units.count, state_name
       end
       package
     end
@@ -249,17 +273,14 @@ module Spree
       )
     end
 
-    def persist_cost
-      self.cost = selected_shipping_rate.cost
-      update_amounts
-    end
-
     def update_amounts
-      self.update_columns(
-        cost: selected_shipping_rate.cost,
-        adjustment_total: adjustments.map(&:update!).compact.sum,
-        updated_at: Time.now,
-      )
+      if selected_shipping_rate
+        self.update_columns(
+          cost: selected_shipping_rate.cost,
+          adjustment_total: adjustments.map(&:update!).compact.sum,
+          updated_at: Time.now,
+        )
+      end
     end
 
     private
@@ -290,7 +311,6 @@ module Spree
 
       def after_ship
         inventory_units.each &:ship!
-        adjustments.map(&:finalize!)
         send_shipped_email
         touch :shipped_at
         update_order_shipment_state

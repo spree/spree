@@ -46,6 +46,7 @@ module Spree
       end
 
       def reload_totals
+        order_updater.update_item_count
         order_updater.update_item_total
         order_updater.update_adjustment_total
         order_updater.persist_totals
@@ -63,7 +64,7 @@ module Spree
           line_item = order.line_items.new(quantity: quantity, variant: variant)
           line_item.target_shipment = shipment
           if currency
-            line_item.currency = currency unless currency.nil?
+            line_item.currency = currency
             line_item.price    = variant.price_in(currency).amount
           else
             line_item.price    = variant.price

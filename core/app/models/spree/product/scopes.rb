@@ -1,5 +1,5 @@
 module Spree
-  class Product < ActiveRecord::Base
+  class Product < Spree::Base
     cattr_accessor :search_scopes do
       []
     end
@@ -24,6 +24,15 @@ module Spree
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
         self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}") })
+      end
+    end
+
+    def self.property_conditions(property)
+      properties = Property.table_name
+      conditions = case property
+      when String   then { "#{properties}.name" => property }
+      when Property then { "#{properties}.id" => property.id }
+      else               { "#{properties}.id" => property.to_i }
       end
     end
 
@@ -83,28 +92,15 @@ module Spree
 
     # a scope that finds all products having property specified by name, object or id
     add_search_scope :with_property do |property|
-      properties = Property.table_name
-      conditions = case property
-      when String   then { "#{properties}.name" => property }
-      when Property then { "#{properties}.id" => property.id }
-      else               { "#{properties}.id" => property.to_i }
-      end
-
-      joins(:properties).where(conditions)
+      joins(:properties).where(property_conditions(property))
     end
 
     # a simple test for product with a certain property-value pairing
     # note that it can test for properties with NULL values, but not for absent values
     add_search_scope :with_property_value do |property, value|
-      properties = Spree::Property.table_name
-      conditions = case property
-      when String   then ["#{properties}.name = ?", property]
-      when Property then ["#{properties}.id = ?", property.id]
-      else               ["#{properties}.id = ?", property.to_i]
-      end
-      conditions = ["#{ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
-
-      joins(:properties).where(conditions)
+      joins(:properties)
+        .where("#{ProductProperty.table_name}.value = ?", value)
+        .where(property_conditions(property))
     end
 
     add_search_scope :with_option do |option|
@@ -214,7 +210,7 @@ module Spree
           distinct_fields = ["id", sort_column].compact.join(",")
           select("DISTINCT ON(#{distinct_fields}) spree_products.*")
         else
-          scoped
+          all
         end
       else
         select("DISTINCT spree_products.*")

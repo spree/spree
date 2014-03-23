@@ -7,10 +7,10 @@
       <%= f.error_message_on :name %>
     <% end %>
 
-    <%= f.field_container :permalink do %>
-      <%= f.label :permalink, raw(Spree.t(:permalink) + content_tag(:span, ' *',  :class => "required")) %>
-      <%= f.text_field :permalink, :class => 'fullwidth title' %>
-      <%= f.error_message_on :permalink %>
+    <%= f.field_container :slug do %>
+      <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *',  :class => "required")) %>
+      <%= f.text_field :slug, :class => 'fullwidth title' %>
+      <%= f.error_message_on :slug %>
     <% end %>
 
     <%= f.field_container :description do %>

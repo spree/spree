@@ -1,11 +1,11 @@
 module Spree
-  class Variant < ActiveRecord::Base
+  class Variant < Spree::Base
     acts_as_paranoid
 
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
-    delegate_belongs_to :product, :name, :description, :permalink, :available_on,
+    delegate_belongs_to :product, :name, :description, :slug, :available_on,
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
@@ -32,7 +32,7 @@ module Spree
       inverse_of: :variant
 
     validate :check_price
-    validates :price, numericality: { greater_than_or_equal_to: 0 }, presence: true, if: proc { Spree::Config[:require_master_price] }
+    validates :price, numericality: { greater_than_or_equal_to: 0 }
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
 
@@ -41,8 +41,10 @@ module Spree
     after_create :create_stock_items
     after_create :set_position
 
+    after_touch :clear_in_stock_cache
+
     # default variant scope only lists non-deleted variants
-    scope :deleted, lambda { where('deleted_at IS NOT NULL') }
+    scope :deleted, lambda { where.not(deleted_at: nil) }
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
@@ -66,7 +68,9 @@ module Spree
     end
 
     def options_text
-      values = self.option_values.joins(:option_type).order("#{Spree::OptionType.table_name}.position asc")
+      values = self.option_values.sort do |a, b|
+        a.option_type.position <=> b.option_type.position
+      end
 
       values.map! do |ov|
         "#{ov.option_type.presentation}: #{ov.presentation}"
@@ -84,6 +88,17 @@ module Spree
     # their own definition.
     def deleted?
       deleted_at
+    end
+
+    # Product may be created with deleted_at already set,
+    # which would make AR's default finder return nil.
+    # This is a stopgap for that little problem.
+    def product
+      Spree::Product.unscoped { super }
+    end
+
+    def default_price
+      Spree::Price.unscoped { super }
     end
 
     def options=(options = {})
@@ -146,14 +161,13 @@ module Spree
       "#{sku} #{options_text}".strip
     end
 
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
+    def in_stock?
+      Rails.cache.fetch(in_stock_cache_key) do
+        total_on_hand > 0
+      end
     end
 
-    def in_stock?(quantity=1)
+    def can_supply?(quantity=1)
       Spree::Stock::Quantifier.new(self).can_supply?(quantity)
     end
 
@@ -208,6 +222,14 @@ module Spree
 
       def set_position
         self.update_column(:position, product.variants.maximum(:position).to_i + 1)
+      end
+
+      def in_stock_cache_key
+        "variant-#{id}-in_stock"
+      end
+
+      def clear_in_stock_cache
+        Rails.cache.delete(in_stock_cache_key)
       end
   end
 end

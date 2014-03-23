@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 module ThirdParty
-  class Extension < ActiveRecord::Base
+  class Extension < Spree::Base
     # nasty hack so we don't have to create a table to back this fake model
     self.table_name = 'spree_products'
   end
@@ -12,6 +12,7 @@ end
 describe Spree::Product do
   context 'product instance' do
     let(:product) { create(:product) }
+    let(:variant) { create(:variant, :product => product) }
 
     context '#duplicate' do
       before do
@@ -173,6 +174,11 @@ describe Spree::Product do
         product.available_on = 1.day.from_now
         product.should_not be_available
       end
+
+      it "should not be available if destroyed" do 
+        product.destroy 
+        product.should_not be_available 
+      end 
     end
 
     context "variants_and_option_values" do
@@ -211,7 +217,7 @@ describe Spree::Product do
       end
     end
 
-    # Regression test for #3737 
+    # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
       it "can retreive stock items" do
@@ -219,68 +225,6 @@ describe Spree::Product do
         product.stock_items.first.should_not be_nil
       end
     end
-  end
-
-  context "permalink" do
-    context "build product with similar name" do
-      let!(:other) { create(:product, :name => 'foo bar') }
-      let(:product) { build(:product, :name => 'foo') }
-
-      before { product.valid? }
-
-      it "increments name" do
-        product.permalink.should == 'foo-1'
-      end
-    end
-
-    context "build permalink with quotes" do
-      it "saves quotes" do
-        product = create(:product, :name => "Joe's", :permalink => "joe's")
-        product.permalink.should == "joe's"
-      end
-    end
-
-    context "permalinks must be unique" do
-      before do
-        @product1 = create(:product, :name => 'foo')
-      end
-
-      it "cannot create another product with the same permalink" do
-        @product2 = create(:product, :name => 'foo')
-        lambda do
-          @product2.update_attributes(:permalink => @product1.permalink)
-        end.should raise_error(ActiveRecord::RecordNotUnique)
-      end
-    end
-
-    it "supports Chinese" do
-      create(:product, :name => "你好").permalink.should == "ni-hao"
-    end
-
-    context "manual permalink override" do
-      let(:product) { create(:product, :name => "foo") }
-
-      it "calling save_permalink with a parameter" do
-        product.name = "foobar"
-        product.save
-        product.permalink.should == "foo"
-
-        product.save_permalink(product.name)
-        product.permalink.should == "foobar"
-      end
-    end
-
-    context "override permalink of deleted product" do 
-      let(:product) { create(:product, :name => "foo") } 
-
-      it "should create product with same permalink from name like deleted product" do 
-        product.permalink.should == "foo" 
-        product.destroy 
-        
-        new_product = create(:product, :name => "foo") 
-        new_product.permalink.should == "foo" 
-      end 
-    end 
   end
 
   context "properties" do
@@ -316,6 +260,23 @@ describe Spree::Product do
       product.set_property('bar', 'value2')
       Spree::Property.where(:name => 'foo').first.presentation.should == "Foo's Presentation Name"
       Spree::Property.where(:name => 'bar').first.presentation.should == "bar"
+    end
+
+    # Regression test for #4416
+    context "#possible_promotions" do
+      let!(:promotion) do
+        create(:promotion, advertise: true, starts_at: 1.day.ago)
+      end
+      let!(:rule) do
+        Spree::Promotion::Rules::Product.create(
+          promotion: promotion,
+          products: [product]
+        )
+      end
+
+      it "lists the promotion as a possible promotion" do
+        product.possible_promotions.should include(promotion)
+      end
     end
   end
 
@@ -442,6 +403,16 @@ describe Spree::Product do
       product = build(:product)
       product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]
       product.total_on_hand.should eql(5)
+    end
+  end
+
+  describe "slugs" do
+    it "normalizes slug on update" do
+      product = stub_model Spree::Product
+      product.slug = "hey//joe"
+
+      product.valid?
+      expect(product.slug).not_to match "/"
     end
   end
 end

@@ -4,8 +4,8 @@ describe Spree::Calculator::DefaultTax do
   let!(:country) { create(:country) }
   let!(:zone) { create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => []) }
   let!(:tax_category) { create(:tax_category, :tax_rates => []) }
-  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => vat) }
-  let(:vat) { false }
+  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => included_in_price) }
+  let(:included_in_price) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }
   let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
@@ -62,7 +62,7 @@ describe Spree::Calculator::DefaultTax do
       end
 
       context "when tax is included in price" do
-        let(:vat) { true }
+        let(:included_in_price) { true }
 
         it "will return the deducted amount from the totals" do
           # total price including 5% tax = 57.14
@@ -74,48 +74,38 @@ describe Spree::Calculator::DefaultTax do
     end
 
     context "when tax is included in price" do
-      let(:vat) { true }
+      let(:included_in_price) { true }
       context "when the variant matches the tax category" do
 
         context "when line item is discounted" do
-          before { line_item.promo_total = -1 }
+          before do
+            line_item.promo_total = -1
+            Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
+          end
 
           it "should be equal to the item's discounted total * rate" do
             calculator.compute(line_item).should == 1.38
           end
         end
 
-        it "should be equal to the item total * rate" do
+        it "should be equal to the item's discounted * rate" do
           calculator.compute(line_item).should == 1.43
         end
       end
     end
 
     context "when tax is not included in price" do
-
       context "when the line item is discounted" do
         before { line_item.promo_total = -1 }
 
-        it "should be equal to the item's discounted total * rate" do
+        it "should be equal to the item's pre-tax total * rate" do
           calculator.compute(line_item).should == 1.45
         end
       end
 
       context "when the variant matches the tax category" do
-        it "should be equal to the item total * rate" do
+        it "should be equal to the item pre-tax total * rate" do
           calculator.compute(line_item).should == 1.50
-        end
-      end
-    end
-
-    context "when given a line item" do
-      context "when the variant does not match the tax category" do
-        before do
-          line_item.stub :tax_category => nil
-        end
-
-        it "should be 0" do
-          calculator.compute(line_item).should == 0
         end
       end
     end

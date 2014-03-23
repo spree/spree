@@ -23,6 +23,10 @@
         <%= label_tag nil, Spree.t(:display) %>
         <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
       </div>
+      <div data-hook="auto_capture" class="field">
+        <%= label_tag nil, Spree.t(:auto_capture) %>
+        <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes), true], [Spree.t(:say_no), false]], {}, {:class => 'select2 fullwidth'}) %>
+      </div>
       <div data-hook="active" class="field">
         <%= label_tag nil, Spree.t(:active) %>
         <ul>

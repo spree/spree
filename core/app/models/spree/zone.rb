@@ -1,5 +1,5 @@
 module Spree
-  class Zone < ActiveRecord::Base
+  class Zone < Spree::Base
     has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember"
     has_many :tax_rates, dependent: :destroy
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'
@@ -10,6 +10,25 @@ module Spree
 
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
+
+    def self.default_tax
+      where(default_tax: true).first
+    end
+  
+    # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
+    # Returns nil in the case of no matches.
+    def self.match(address)
+      return unless matches = self.includes(:zone_members).
+        order('zone_members_count', 'created_at').
+        select { |zone| zone.include? address }
+
+      ['state', 'country'].each do |zone_kind|
+        if match = matches.detect { |zone| zone_kind == zone.kind }
+          return match
+        end
+      end
+      matches.first
+    end
 
     def kind
       if members.any? && !members.any? { |member| member.try(:zoneable_type).nil? }
@@ -34,21 +53,6 @@ module Spree
           false
         end
       end
-    end
-
-    # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
-    # Returns nil in the case of no matches.
-    def self.match(address)
-      return unless matches = self.includes(:zone_members).
-        order('zone_members_count', 'created_at').
-        select { |zone| zone.include? address }
-
-      ['state', 'country'].each do |zone_kind|
-        if match = matches.detect { |zone| zone_kind == zone.kind }
-          return match
-        end
-      end
-      matches.first
     end
 
     # convenience method for returning the countries contained within a zone
@@ -104,10 +108,6 @@ module Spree
         member.zoneable_id = id
         members << member
       end
-    end
-
-    def self.default_tax
-      where(default_tax: true).first
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing

@@ -17,7 +17,6 @@ module Spree
         end
 
         def stub_authentication!
-          controller.stub :check_for_user_or_api_key
           Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
@@ -32,7 +31,7 @@ module Spree
         end
 
         def upload_image(filename)
-          fixture_file_upload(image(filename).path)
+          fixture_file_upload(image(filename).path, 'image/jpg')
         end
       end
     end

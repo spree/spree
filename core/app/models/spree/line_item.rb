@@ -1,5 +1,5 @@
 module Spree
-  class LineItem < ActiveRecord::Base
+  class LineItem < Spree::Base
     before_validation :adjust_quantity
     belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
@@ -22,6 +22,7 @@ module Spree
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
+    validate :ensure_proper_currency
     before_destroy :update_inventory
 
     after_save :update_inventory
@@ -117,6 +118,12 @@ module Spree
 
       def create_tax_charge
         Spree::TaxRate.adjust(order, [self])
+      end
+
+      def ensure_proper_currency
+        unless currency == order.currency
+          errors.add(:currency, t(:must_match_order_currency))
+        end
       end
   end
 end

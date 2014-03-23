@@ -30,7 +30,7 @@ module Spree
     end
 
     def recalculate_adjustments
-      adjustments.includes(:source).open.each { |adjustment| adjustment.update! order }
+      adjustments.includes(:source).each { |adjustment| adjustment.update! order }
     end
 
     # Updates the following Order total values:
@@ -40,7 +40,7 @@ module Spree
     # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
-      order.payment_total = payments.completed.sum(:amount)
+      update_payment_total
       update_item_total
       update_shipment_total
       update_adjustment_total
@@ -52,8 +52,12 @@ module Spree
       shipments.each { |shipment| shipment.update!(order) }
     end
 
+    def update_payment_total
+      order.payment_total = payments.completed.sum(:amount)
+    end
+
     def update_shipment_total
-      order.shipment_total = shipments.sum("cost + promo_total")
+      order.shipment_total = shipments.sum(:cost)
       update_order_total
     end
 
@@ -72,6 +76,10 @@ module Spree
       update_order_total
     end
 
+    def update_item_count
+      order.item_count = line_items.sum(:quantity)
+    end
+
     def update_item_total
       order.item_total = line_items.map(&:amount).sum
       update_order_total
@@ -82,10 +90,12 @@ module Spree
         payment_state: order.payment_state,
         shipment_state: order.shipment_state,
         item_total: order.item_total,
+        item_count: order.item_count,
         adjustment_total: order.adjustment_total,
         included_tax_total: order.included_tax_total,
         additional_tax_total: order.additional_tax_total,
         payment_total: order.payment_total,
+        shipment_total: order.shipment_total,
         total: order.total,
         updated_at: Time.now,
       )
@@ -135,10 +145,18 @@ module Spree
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
 
-      #line_item are empty when user empties cart
+      # line_item are empty when user empties cart
       if line_items.empty? || round_money(order.payment_total) < round_money(order.total)
-        if payments.present? && payments.last.state == 'failed'
-          order.payment_state = 'failed'
+        if payments.present?
+          if payments.last.state == 'failed'
+            order.payment_state = 'failed'
+          elsif payments.last.state == 'checkout'
+            order.payment_state = 'pending'
+          elsif payments.last.state == 'completed'
+            order.payment_state = 'credit_owed'
+          else
+            order.payment_state = 'balance_due'
+          end
         else
           order.payment_state = 'balance_due'
         end

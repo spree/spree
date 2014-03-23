@@ -1,5 +1,5 @@
 module Spree
-  class StockMovement < ActiveRecord::Base
+  class StockMovement < Spree::Base
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
 

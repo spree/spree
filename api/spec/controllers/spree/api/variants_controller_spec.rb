@@ -10,8 +10,9 @@ module Spree
       variant.option_values << create(:option_value)
       variant
     end
-    let!(:base_attributes) { [:id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master, :cost_price, :permalink, :description] }
-    let!(:show_attributes) { base_attributes.dup.push(:in_stock) }
+
+    let!(:base_attributes) { Api::ApiHelpers.variant_attributes }
+    let!(:show_attributes) { base_attributes.dup.push(:in_stock, :display_price) }
     let!(:new_attributes) { base_attributes }
 
     before do
@@ -20,7 +21,9 @@ module Spree
 
     it "can see a paginated list of variants" do
       api_get :index
-      json_response["variants"].first.should have_attributes(show_attributes)
+      first_variant = json_response["variants"].first
+      first_variant.should have_attributes(show_attributes)
+      first_variant["stock_items"].should be_present
       json_response["count"].should == 1
       json_response["current_page"].should == 1
       json_response["pages"].should == 1
@@ -56,6 +59,15 @@ module Spree
       api_get :index
 
       json_response["variants"].last.should have_attributes([:images])
+      json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
+                                                                               :attachment_width,
+                                                                               :attachment_height,
+                                                                               :attachment_content_type,
+                                                                               :mini_url,
+                                                                               :small_url,
+                                                                               :product_url,
+                                                                               :large_url])
+
     end
 
     # Regression test for #2141
@@ -89,6 +101,7 @@ module Spree
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
       json_response.should have_attributes(show_attributes)
+      json_response["stock_items"].should be_present
       option_values = json_response["option_values"]
       option_values.first.should have_attributes([:name,
                                                  :presentation,

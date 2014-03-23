@@ -1,5 +1,5 @@
 module Spree
-  class Payment < ActiveRecord::Base
+  class Payment < Spree::Base
     include Spree::Payment::Processing
 
     IDENTIFIER_CHARS = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze
@@ -12,9 +12,11 @@ module Spree
       class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
     has_many :state_changes, as: :stateful
+    has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
 
     before_validation :validate_source
     before_create :set_unique_identifier
+    before_save :update_uncaptured_amount
 
     after_save :create_payment_profile, if: :profiles_supported?
 
@@ -31,7 +33,7 @@ module Spree
     scope :completed, -> { with_state('completed') }
     scope :pending, -> { with_state('pending') }
     scope :failed, -> { with_state('failed') }
-    scope :valid, -> { where('state NOT IN (?)', %w(failed invalid)) }
+    scope :valid, -> { where.not(state: %w(failed invalid)) }
 
     after_rollback :persist_invalid
 
@@ -114,6 +116,8 @@ module Spree
       return if source_attributes.nil?
       if payment_method and payment_method.payment_source_class
         self.source = payment_method.payment_source_class.new(source_attributes)
+        self.source.payment_method_id = payment_method.id
+        self.source.user_id = self.order.user_id if self.order
       end
     end
 
@@ -128,11 +132,16 @@ module Spree
     end
 
     def is_avs_risky?
-      !(avs_response == "D" || avs_response.nil?)
+      return false if avs_response == "D"
+      return false if avs_response.blank?
+      return true
     end
 
     def is_cvv_risky?
-      !(cvv_response_code == "M" || cvv_response_code.nil?)
+      return false if cvv_response_code == "M"
+      return false if cvv_response_code.nil?
+      return false if cvv_response_message.present?
+      return true
     end
 
     private
@@ -152,7 +161,8 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
+        return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
@@ -165,8 +175,19 @@ module Spree
       end
 
       def update_order
-        order.payments.reload
-        order.update!
+        if self.completed?
+          order.updater.update_payment_total
+        end
+
+        if order.completed?
+          order.updater.update_payment_state
+          order.updater.update_shipments
+          order.updater.update_shipment_state
+        end
+
+        if self.completed? || order.completed?
+          order.persist_totals
+        end
       end
 
       # Necessary because some payment gateways will refuse payments with
@@ -182,6 +203,10 @@ module Spree
 
       def generate_identifier
         Array.new(8){ IDENTIFIER_CHARS.sample }.join
+      end
+
+      def update_uncaptured_amount
+        self.uncaptured_amount = amount - capture_events.sum(:amount)
       end
   end
 end

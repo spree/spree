@@ -1,5 +1,5 @@
 module Spree
-  class Taxon < ActiveRecord::Base
+  class Taxon < Spree::Base
     acts_as_nested_set dependent: :destroy
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', touch: true, inverse_of: :taxons
@@ -9,6 +9,8 @@ module Spree
     before_create :set_permalink
 
     validates :name, presence: true
+
+    after_touch :touch_parent
 
     has_attached_file :icon,
       styles: { mini: '32x32>', normal: '128x128>' },
@@ -74,6 +76,12 @@ module Spree
     #  See #3390 for background.
     def child_index=(idx)
       move_to_child_with_index(parent, idx.to_i) unless self.new_record?
+    end
+
+    private
+
+    def touch_parent
+      parent.touch if parent
     end
   end
 end

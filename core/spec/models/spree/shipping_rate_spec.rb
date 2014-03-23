@@ -7,21 +7,26 @@ describe Spree::ShippingRate do
   let(:shipping_method) { create(:shipping_method) }
   let(:shipping_rate) { Spree::ShippingRate.new(:shipment => shipment,
                                                 :shipping_method => shipping_method,
-                                                :cost => 10.55) }
-  before { Spree::TaxRate.stub(:default => 0.05) }
+                                                :cost => 10) }
 
   context "#display_price" do
-    context "when shipment includes VAT" do
-      before { Spree::Config[:shipment_inc_vat] = true }
-      it "displays the correct price" do
-        shipping_rate.display_price.to_s.should == "$11.08" # $10.55 * 1.05 == $11.08
+    context "when tax included in price" do
+      # This zone needs to exist so the inclusive tax test works
+      let!(:zone) { create(:zone, :default_tax => true) }
+      let(:tax_rate) { create(:tax_rate, :amount => 0.1, :included_in_price => true) }
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it "shows correct tax amount" do
+        expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
       end
     end
 
-    context "when shipment does not include VAT" do
-      before { Spree::Config[:shipment_inc_vat] = false }
-      it "displays the correct price" do
-        shipping_rate.display_price.to_s.should == "$10.55"
+    context "when tax is additional to price" do
+      let(:tax_rate) { create(:tax_rate, :amount => 0.1) }
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it "shows correct tax amount" do
+        expect(shipping_rate.display_price.to_s).to eq("$10.00 (+ $1.00 #{tax_rate.name})")
       end
     end
 
@@ -47,6 +52,25 @@ describe Spree::ShippingRate do
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.shipping_method).to eq(shipping_method)
+    end
+  end
+
+  context "#tax_rate" do
+    let!(:tax_rate) { create(:tax_rate) }
+
+    before do
+      shipping_rate.tax_rate = tax_rate
+    end
+
+    it "can be retrieved" do
+      expect(shipping_rate.tax_rate.reload).to eq(tax_rate)
+    end
+
+    it "can be retrieved even when deleted" do
+      tax_rate.update_column(:deleted_at, Time.now)
+      shipping_rate.save
+      shipping_rate.reload
+      expect(shipping_rate.tax_rate).to eq(tax_rate)
     end
   end
 end

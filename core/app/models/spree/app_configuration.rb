@@ -35,6 +35,7 @@ module Spree
     preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
     preference :always_put_site_name_in_title, :boolean, default: true
     preference :auto_capture, :boolean, default: false # automatically capture the credit card (as opposed to just authorize and capture later)
+    preference :binary_inventory_cache, :boolean, default: false # only invalidate product cache when a stock item changes whether it is in_stock
     preference :check_for_spree_alerts, :boolean, default: true
     preference :checkout_zone, :string, default: nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, default: false # Request company field for billing and shipping addr
@@ -71,21 +72,8 @@ module Spree
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Default mail headers settings
-    preference :enable_mail_delivery, :boolean, :default => false
     preference :send_core_emails, :boolean, :default => true
     preference :mails_from, :string, :default => 'spree@example.com'
-    preference :mail_bcc, :string, :default => 'spree@example.com'
-    preference :intercept_email, :string, :default => nil
-
-    # Default smtp settings
-    preference :override_actionmailer_config, :boolean, :default => true
-    preference :mail_host, :string, :default => 'localhost'
-    preference :mail_domain, :string, :default => 'localhost'
-    preference :mail_port, :integer, :default => 25
-    preference :secure_connection_type, :string, :default => Core::MailSettings::SECURE_CONNECTION_TYPES[0]
-    preference :mail_auth_type, :string, :default => Core::MailSettings::MAIL_AUTH[0]
-    preference :smtp_username, :string
-    preference :smtp_password, :string
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class

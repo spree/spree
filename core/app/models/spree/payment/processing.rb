@@ -1,5 +1,5 @@
 module Spree
-  class Payment < ActiveRecord::Base
+  class Payment < Spree::Base
     module Processing
       def process!
         if payment_method && payment_method.source_required?
@@ -27,28 +27,31 @@ module Spree
         gateway_action(source, :authorize, :pend)
       end
 
+      # Captures the entire amount of a payment.
       def purchase!
         started_processing!
-        gateway_action(source, :purchase, :complete)
+        result = gateway_action(source, :purchase, :complete)
+        # This won't be called if gateway_action raises a GatewayError
+        capture_events.create!(amount: amount)
       end
 
-      def capture!
+      # Takes the amount in cents to capture.
+      # Can be used to capture partial amounts of a payment.
+      def capture!(amount=nil)
+        amount ||= money.money.cents
         return true if completed?
         started_processing!
         protect_from_connection_error do
           check_environment
+          # Standard ActiveMerchant capture usage
+          response = payment_method.capture(
+            amount,
+            response_code,
+            gateway_options
+          )
 
-          if payment_method.payment_profiles_supported?
-            # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
-            # so supply the authorization itself as well as the credit card, rather than just the authorization code
-            response = payment_method.capture(self, source, gateway_options)
-          else
-            # Standard ActiveMerchant capture usage
-            response = payment_method.capture(money.money.cents,
-                                              response_code,
-                                              gateway_options)
-          end
-
+          money = ::Money.new(amount, Spree::Config[:currency])
+          capture_events.create!(amount: money.to_f)
           handle_response(response, :complete, :failure)
         end
       end

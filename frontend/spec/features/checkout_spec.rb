@@ -18,7 +18,7 @@ describe "Checkout", inaccessible: true do
     context "defaults to use billing address" do
       before do
         add_mug_to_cart
-        Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
+        Spree::Order.last.update_column(:email, "test@example.com")
         click_button "Checkout"
       end
 
@@ -48,7 +48,7 @@ describe "Checkout", inaccessible: true do
     # Regression test for #1596
     context "full checkout" do
       before do
-        shipping_method.calculator.preferred_amount = 10
+        shipping_method.calculator.update!(preferred_amount: 10)
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
@@ -57,13 +57,27 @@ describe "Checkout", inaccessible: true do
         add_mug_to_cart
         click_button "Checkout"
 
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        fill_in "order_email", :with => "test@example.com"
         fill_in_address
 
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
         page.should have_content("Shipping total $10.00")
+      end
+    end
+
+    # Regression test for #4306
+    context "free shipping" do
+      before do
+        add_mug_to_cart
+        click_button "Checkout"
+      end
+
+      it "should not show 'Free Shipping' when there are no shipments" do
+        within("#checkout-summary") do
+          expect(page).to_not have_content('Free Shipping')
+        end
       end
     end
   end
@@ -107,7 +121,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_button "Checkout"
 
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
 
       click_button "Save and Continue"
@@ -196,6 +210,52 @@ describe "Checkout", inaccessible: true do
     end
   end
 
+  context "user has payment sources", js: true do
+    let(:bogus) { create(:credit_card_payment_method) }
+    let(:user) { create(:user) }
+
+    let!(:credit_card) do
+      create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: "BGS-WEFWF")
+    end
+
+    before do
+      order = OrderWalkthrough.up_to(:delivery)
+      order.stub(:available_payment_methods => [bogus])
+
+      Spree::CheckoutController.any_instance.stub(current_order: order)
+      Spree::CheckoutController.any_instance.stub(try_spree_current_user: user)
+
+      visit spree.checkout_state_path(:payment)
+    end
+
+    it "selects first source available and customer moves on" do
+      expect(find "#use_existing_card_yes").to be_checked
+
+      expect {
+        click_on "Save and Continue"
+      }.not_to change { Spree::CreditCard.count }
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+
+    it "allows user to enter a new source" do
+      choose "use_existing_card_no"
+
+      fill_in "Name on card", :with => 'Spree Commerce'
+      fill_in "Card Number", :with => '4111111111111111'
+      fill_in "card_expiry", :with => '04 / 20'
+      fill_in "Card Code", :with => '123'
+
+      expect {
+        click_on "Save and Continue"
+      }.to change { Spree::CreditCard.count }.by 1
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+  end
+
   # regression for #2921
   context "goes back from payment to add another item", js: true do
     let!(:bag) { create(:product, :name => "RoR Bag") }
@@ -203,7 +263,7 @@ describe "Checkout", inaccessible: true do
     it "transit nicely through checkout steps again" do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -226,7 +286,7 @@ describe "Checkout", inaccessible: true do
     before do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -292,7 +352,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_on "Checkout"
 
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
 
@@ -359,6 +419,36 @@ describe "Checkout", inaccessible: true do
 
       expect(current_path).to eq spree.checkout_state_path('confirm')
       click_button "Place Order"
+    end
+  end
+
+
+  context "save my address" do
+    before do
+      stock_location.stock_items.update_all(count_on_hand: 1)
+      add_mug_to_cart
+    end
+
+    context 'as a guest' do
+      before do
+        Spree::Order.last.update_column(:email, "test@example.com")
+        click_button "Checkout"
+      end
+
+      it 'should not be displayed' do
+        expect(page).to_not have_css("[data-hook=save_user_address]")
+      end
+    end
+
+    context 'as a User' do
+      before do
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => create(:user))
+        click_button "Checkout"
+      end
+
+      it 'should be displayed' do
+        expect(page).to have_css("[data-hook=save_user_address]")
+      end
     end
   end
 

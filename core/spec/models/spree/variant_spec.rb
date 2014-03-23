@@ -250,16 +250,16 @@ describe Spree::Variant do
 
   # Regression test for #2432
   describe 'options_text' do
+    let!(:variant) { create(:variant, option_values: []) }
+
     before do
-      option_type = double("OptionType", :presentation => "Foo")
-      option_values = [double("OptionValue", :option_type => option_type, :presentation => "bar")]
-      variant.stub(:option_values).and_return(option_values)
+      # Order bar than foo
+      variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
+      variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
     end
 
-    it "orders options correctly" do
-      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = double)
-      scope.should_receive(:order).with('spree_option_types.position asc').and_return(variant.option_values)
-      variant.options_text
+    it 'should order by bar than foo' do
+      variant.options_text.should == 'Bar Type: Bar, Foo Type: Foo'
     end
   end
 
@@ -301,18 +301,13 @@ describe Spree::Variant do
           variant.in_stock?.should be_false
         end
       end
+    end
 
-      context 'when providing quantity param' do
-        before do
-          variant.stock_items.first.update_attribute(:count_on_hand, 10)
-        end
-
-        it 'returns correctt value' do
-          variant.in_stock?.should be_true
-          variant.in_stock?(2).should be_true
-          variant.in_stock?(10).should be_true
-          variant.in_stock?(11).should be_false
-        end
+    describe "#can_supply?" do
+      it "calls out to quantifier" do
+        Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = double)
+        quantifier.should_receive(:can_supply?).with(10)
+        variant.can_supply?(10)
       end
     end
 
@@ -326,8 +321,12 @@ describe Spree::Variant do
           Spree::StockItem.any_instance.stub(count_on_hand: 0)
         end
 
-        it 'returns true if stock_items in stock' do
-          variant.in_stock?.should be_true
+        it 'in_stock? returns false' do
+          expect(variant.in_stock?).to be_false
+        end
+
+        it 'can_supply? return true' do
+          expect(variant.can_supply?).to be_true
         end
       end
     end
@@ -368,6 +367,11 @@ describe Spree::Variant do
       variant.product.update_column(:updated_at, 1.day.ago)
       variant.touch
       variant.product.reload.updated_at.should be_within(3.seconds).of(Time.now)
+    end
+
+    it "clears the in_stock cache key" do
+      Rails.cache.should_receive(:delete).with(variant.send(:in_stock_cache_key))
+      variant.touch
     end
   end
 

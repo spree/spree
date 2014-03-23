@@ -3,20 +3,14 @@ module Spree
     class AdjustmentsController < ResourceController
       belongs_to 'spree/order', :find_by => :number
       destroy.after :reload_order
+      destroy.after :update_totals
+      create.after :update_totals
+      update.after :update_totals
+
       skip_before_filter :load_resource, :only => [:toggle_state, :edit, :update, :destroy]
 
-      def toggle_state
-        @adjustment = parent.all_adjustments.find(params[:id])
-        redirect_to admin_order_adjustments_path(@order) if @adjustment.finalized?
-
-        if @adjustment.immutable?
-          @adjustment.fire_state_event(:open)
-          flash[:success] = Spree.t(:adjustment_successfully_opened)
-        else
-          @adjustment.fire_state_event(:close)
-          flash[:success] = Spree.t(:adjustment_successfully_closed)
-        end
-        redirect_to admin_order_adjustments_path(@order)
+      def index
+        @adjustments = @order.all_adjustments.order("created_at ASC")
       end
 
       def edit
@@ -42,6 +36,11 @@ module Spree
 
       def reload_order
         @order.reload
+      end
+
+      def update_totals
+        @order.updater.update_adjustment_total
+        @order.persist_totals
       end
     end
   end

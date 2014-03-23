@@ -321,12 +321,33 @@ describe "Products" do
 
         page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
-          first('input[type=text]')[:value].should eq('baseball_cap_color')
+          first('input[type=text]').value.should eq('baseball_cap_color')
         end
       end
     end
+
+    context 'deleting a product', :js => true do
+      let!(:product) { create(:product) }
+
+      it "is still viewable" do
+        visit spree.admin_products_path
+        accept_alert do
+          click_icon :trash
+        end
+        # This will show our deleted product
+        click_button "Search"
+        click_link product.name
+        find("#product_price").value.to_f.should == product.price
+      end
+    end
   end
+
   context 'with only product permissions' do
+  
+    before do 
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+    end
+
     custom_authorization! do |user|
       can [:admin, :update, :index, :read], Spree::Product
     end
@@ -344,6 +365,7 @@ describe "Products" do
       page.should have_css('a.edit')
       page.should_not have_css('a.delete-resource')
     end
+  
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 

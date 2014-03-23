@@ -68,6 +68,28 @@ describe Spree::Shipment do
     shipment.discounted_cost.should == 9
   end
 
+  it "#tax_total with included taxes" do
+    shipment = Spree::Shipment.new
+    expect(shipment.tax_total).to eq(0)
+    shipment.included_tax_total = 10
+    expect(shipment.tax_total).to eq(10)
+  end
+
+  it "#tax_total with additional taxes" do
+    shipment = Spree::Shipment.new
+    expect(shipment.tax_total).to eq(0)
+    shipment.additional_tax_total = 10
+    expect(shipment.tax_total).to eq(10)
+  end
+
+  it "#final_price" do
+    shipment = Spree::Shipment.new
+    shipment.cost = 10
+    shipment.promo_total = -2
+    shipment.included_tax_total = 1
+    expect(shipment.final_price).to eq(9)
+  end
+
   context "manifest" do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
@@ -207,12 +229,29 @@ describe Spree::Shipment do
     end
 
     context "when shipment state changes to shipped" do
+      before do
+        shipment.stub(:send_shipped_email)
+        shipment.stub(:update_order_shipment_state)
+      end
+
       it "should call after_ship" do
         shipment.state = 'pending'
         shipment.should_receive :after_ship
         shipment.stub determine_state: 'shipped'
         shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
+      end
+
+      # Regression test for #4347
+      context "with adjustments" do
+        before do
+          shipment.adjustments << Spree::Adjustment.create(:label => "Label", :amount => 5)
+        end
+
+        it "transitions to shipped" do
+          shipment.update_column(:state, "ready")
+          lambda { shipment.ship! }.should_not raise_error
+        end
       end
     end
   end

@@ -19,8 +19,8 @@ module Spree
 
       def create
         @payment = @order.payments.build(object_params)
-        if @payment.payment_method.is_a?(Spree::Gateway) && @payment.payment_method.payment_profiles_supported? && params[:card].present? and params[:card] != 'new'
-          @payment.source = CreditCard.find_by_id(params[:card])
+        if params[:card].present? and params[:card] != 'new'
+          @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
         end
 
         begin
@@ -62,7 +62,8 @@ module Spree
         if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
           params[:payment][:source_attributes] = source_params
         end
-        params.require(:payment).permit(:amount, :payment_method_id, source_attributes: [:number, :expiry, :name, :verification_value])
+        
+        params.require(:payment).permit(permitted_payment_attributes)
       end
 
       def load_data
@@ -73,7 +74,6 @@ module Spree
         else
           @payment_method = @payment_methods.first
         end
-        @previous_cards = @order.credit_cards.with_payment_profile
       end
 
       def can_transition_to_payment

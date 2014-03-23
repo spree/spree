@@ -10,11 +10,8 @@ module Spree
     let(:attributes) { [:id, :quantity, :price, :variant, :total, :display_amount, :single_display_amount] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
-    before do
-      stub_authentication!
-    end
-
     it "can learn how to create a new line item" do
+      controller.stub :try_spree_current_user => current_api_user
       api_get :new
       json_response["attributes"].should == ["quantity", "price", "variant_id"]
       required_attributes = json_response["required_attributes"]
@@ -40,6 +37,7 @@ module Spree
 
     context "as the order owner" do
       before do
+        controller.stub :try_spree_current_user => current_api_user
         Order.any_instance.stub :user => current_api_user
       end
 
@@ -96,10 +94,34 @@ module Spree
           api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
           expect(order.reload.shipments).to be_empty
         end
+
+        it "clear out shipments on delete" do
+          expect(order.reload.shipments).not_to be_empty
+          api_delete :destroy, :id => line_item.id
+          expect(order.reload.shipments).to be_empty
+        end
+
+        context "order is completed" do
+          before do
+            order.stub completed?: true
+            Order.stub_chain :includes, find_by!: order
+          end
+
+          it "doesn't destroy shipments or restart checkout flow" do
+            expect(order.reload.shipments).not_to be_empty
+            api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
+            expect(order.reload.shipments).not_to be_empty
+          end
+        end
       end
     end
 
     context "as just another user" do
+      before do
+        user = create(:user)
+        controller.stub :try_spree_current_user => user
+      end
+
       it "cannot add a new line item to the order" do
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
         assert_unauthorized!

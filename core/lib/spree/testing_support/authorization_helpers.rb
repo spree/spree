@@ -24,6 +24,11 @@ module Spree
             ability = Spree::TestingSupport::AuthorizationHelpers::Request::SuperAbility
             Spree::Ability.remove_ability(ability)
           end
+
+          before do
+            Api::BaseController.any_instance.stub :try_spree_current_user => Spree.user_class.new
+          end
+
           before(:all) do
             ability = Spree::TestingSupport::AuthorizationHelpers::Request::SuperAbility
             Spree::Ability.register_ability(ability)

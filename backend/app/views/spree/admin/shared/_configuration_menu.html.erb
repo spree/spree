@@ -6,9 +6,6 @@
   <nav class="menu">
     <ul class="sidebar" data-hook="admin_configurations_sidebar_menu">
       <%= configurations_sidebar_menu_item Spree.t(:general_settings), edit_admin_general_settings_path %>
-      <% if Spree::Config[:override_actionmailer_config] %>
-        <%= configurations_sidebar_menu_item Spree.t(:mail_method_settings), edit_admin_mail_method_path %>
-      <% end %>
       <%= configurations_sidebar_menu_item Spree.t(:tax_categories), admin_tax_categories_path %>
       <%= configurations_sidebar_menu_item Spree.t(:tax_rates), admin_tax_rates_path %>
       <%= configurations_sidebar_menu_item Spree.t(:tax_settings), edit_admin_tax_settings_path %>

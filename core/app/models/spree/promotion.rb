@@ -1,12 +1,12 @@
 module Spree
-  class Promotion < ActiveRecord::Base
+  class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
-    has_many :promotion_rules, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_rules, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 
-    has_many :promotion_actions, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
     has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
@@ -40,7 +40,7 @@ module Spree
     end
 
     def expired?
-      starts_at && Time.now < starts_at || expires_at && Time.now > expires_at
+      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
     end
 
     def activate(payload)
@@ -77,6 +77,7 @@ module Spree
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
       specific_rules = rules.for(promotable)
+      return true if specific_rules.none?
       if match_policy == 'all'
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.

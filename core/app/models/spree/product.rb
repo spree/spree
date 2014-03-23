@@ -19,7 +19,10 @@
 #
 
 module Spree
-  class Product < ActiveRecord::Base
+  class Product < Spree::Base
+    extend FriendlyId
+    friendly_id :name, use: :slugged
+
     acts_as_paranoid
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
@@ -62,6 +65,8 @@ module Spree
     after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
     after_save :save_master
+    after_save :touch
+    after_touch :touch_taxons
 
     delegate :images, to: :master, prefix: true
     alias_method :images, :master_images
@@ -69,24 +74,22 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
 
     validates :name, presence: true
-    validates :permalink, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
+    validates :slug, length: { minimum: 3 }
+
+    before_validation :normalize_slug, on: :update
 
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
 
-    make_permalink order: :name
-
     alias :options :product_option_types
 
     after_initialize :ensure_master
 
-    before_destroy :punch_permalink
-
     def to_param
-      permalink.present? ? permalink : (permalink_was || name.to_s.to_url)
+      slug
     end
 
     # the master variant is not a member of the variants array
@@ -131,8 +134,11 @@ module Spree
       !!deleted_at
     end
 
+    # determine if product is available.
+    # deleted products and products with nil or future available_on date
+    # are not available
     def available?
-      !(available_on.nil? || available_on.future?)
+      !(available_on.nil? || available_on.future?) && !deleted?
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants
@@ -187,7 +193,7 @@ module Spree
     end
 
     def possible_promotions
-      promotion_ids = promotion_rules.map(&:activator_id).uniq
+      promotion_ids = promotion_rules.map(&:promotion_id).uniq
       Spree::Promotion.advertised.where(id: promotion_ids).reject(&:expired?)
     end
 
@@ -207,6 +213,9 @@ module Spree
     end
 
     private
+      def normalize_slug
+        self.slug = normalize_friendly_id(slug)
+      end
 
       # Builds variants from a hash of option types & values
       def build_variants_from_option_values_hash
@@ -248,8 +257,8 @@ module Spree
         self.master ||= Variant.new
       end
 
-      def punch_permalink
-        update_attribute :permalink, "#{Time.now.to_i}_#{permalink}" # punch permalink with date prefix
+      def touch_taxons
+        self.taxons.each(&:touch)
       end
   end
 end

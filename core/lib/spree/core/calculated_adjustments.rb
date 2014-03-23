@@ -3,7 +3,7 @@ module Spree
     module CalculatedAdjustments
       def self.included(klass)
         klass.class_eval do
-          has_one   :calculator, :class_name => "Spree::Calculator", :as => :calculable, :dependent => :destroy
+          has_one   :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
           accepts_nested_attributes_for :calculator
           validates :calculator, :presence => true
 

@@ -9,7 +9,7 @@ module Spree
 end
 
 module Spree
-  class TaxRate < ActiveRecord::Base
+  class TaxRate < Spree::Base
     acts_as_paranoid
     include Spree::Core::CalculatedAdjustments
     belongs_to :zone, class_name: "Spree::Zone"
@@ -32,9 +32,33 @@ module Spree
       end
     end
 
+    # Pre-tax amounts must be stored so that we can calculate 
+    # correct rate amounts in the future. For example:
+    # https://github.com/spree/spree/issues/4318#issuecomment-34723428
+    def self.store_pre_tax_amount(item, rates)
+      if rates.any? { |r| r.included_in_price }
+        case item
+        when Spree::LineItem
+          item_amount = item.discounted_amount
+        when Spree::Shipment
+          item_amount = item.discounted_cost
+        end
+        pre_tax_amount = item_amount / (1 + rates.map(&:amount).sum)
+        item.update_column(:pre_tax_amount, pre_tax_amount)
+      end
+    end
+
     def self.adjust(order, items)
-      self.match(order).each do |rate|
-        items.each { |item| rate.adjust(order, item) }
+      rates = self.match(order)
+      tax_categories = rates.map(&:tax_category)
+      relevant_items = items.select { |item| tax_categories.include?(item.tax_category) }
+      relevant_items.each do |item|
+        item.adjustments.tax.delete_all
+        relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
+        store_pre_tax_amount(item, relevant_rates)
+        relevant_rates.each do |rate|
+          rate.adjust(order, item)
+        end
       end
     end
 
@@ -52,17 +76,16 @@ module Spree
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order, item, append = false)
-      item.adjustments.tax.delete_all unless append
-      amount = compute_amount(item)
+    def adjust(order, item)
+      amount = calculator.compute(item)
       return if amount == 0
+
+      included = included_in_price &&
+                 Zone.default_tax.contains?(item.order.tax_zone)
 
       if amount < 0
         label = Spree.t(:refund) + ' ' + create_label
       end
-
-      included = included_in_price &&
-                 Zone.default_tax.contains?(item.order.tax_zone)
 
       self.adjustments.create!({
         :adjustable => item,
@@ -88,6 +111,7 @@ module Spree
     end
 
     private
+
       def create_label
         label = ""
         label << (name.present? ? name : tax_category.name) + " "

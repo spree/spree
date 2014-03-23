@@ -13,7 +13,7 @@ module Spree
                         :user_id, :created_at, :updated_at,
                         :completed_at, :payment_total, :shipment_state,
                         :payment_state, :email, :special_instructions,
-                        :total_quantity, :display_item_total] }
+                        :total_quantity, :display_item_total, :currency] }
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
@@ -450,10 +450,13 @@ module Spree
       end
 
       it "responds with orders updated_at with miliseconds precision" do
+        if ActiveRecord::Base.connection.adapter_name == "Mysql2"
+          pending "MySQL does not support millisecond timestamps."
+        end
+
         api_get :index
         milisecond = order.updated_at.strftime("%L")
         updated_at = json_response["orders"].first["updated_at"]
-
         expect(updated_at.split("T").last).to have_content(milisecond)
       end
 
