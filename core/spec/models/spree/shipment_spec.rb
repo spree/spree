@@ -49,6 +49,13 @@ describe Spree::Shipment do
     end
   end
 
+  context "display_final_price" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:final_price) { 21.22 }
+      shipment.display_final_price.should == Spree::Money.new(21.22)
+    end
+  end
+
   context "display_item_cost" do
     it "retuns a Spree::Money" do
       shipment.stub(:item_cost) { 21.22 }
