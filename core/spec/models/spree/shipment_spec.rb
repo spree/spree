@@ -11,6 +11,7 @@ describe Spree::Shipment do
   let(:shipment) do
     shipment = Spree::Shipment.new order: order
     shipment.stub(shipping_method: shipping_method)
+    shipment.stub(order: order)
     shipment.state = 'pending'
     shipment.cost = 1
     shipment.save
