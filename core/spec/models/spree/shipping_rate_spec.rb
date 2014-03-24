@@ -11,18 +11,43 @@ describe Spree::ShippingRate do
 
   context "#display_price" do
     context "when tax included in price" do
-      # This zone needs to exist so the inclusive tax test works
-      let!(:zone) { create(:zone, :default_tax => true) }
-      let(:tax_rate) { create(:tax_rate, :amount => 0.1, :included_in_price => true) }
-      before { shipping_rate.tax_rate = tax_rate }
+      context "when the tax rate is from the default zone" do
+        let!(:zone) { create(:zone, :default_tax => true) }
+        let(:tax_rate) do 
+          create(:tax_rate,
+            :name => "VAT",
+            :amount => 0.1,
+            :included_in_price => true,
+            :zone => zone)
+        end
 
-      it "shows correct tax amount" do
-        expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
+        before { shipping_rate.tax_rate = tax_rate }
+
+        it "shows correct tax amount" do
+          expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
+        end
+      end
+
+      context "when the tax rate is from a non-default zone" do
+        let!(:default_zone) { create(:zone, :default_tax => true) }
+        let!(:non_default_zone) { create(:zone, :default_tax => false) }
+        let(:tax_rate) do
+          create(:tax_rate,
+            :name => "VAT",
+            :amount => 0.1,
+            :included_in_price => true,
+            :zone => non_default_zone)
+        end
+        before { shipping_rate.tax_rate = tax_rate }
+
+        it "shows correct tax amount" do
+          expect(shipping_rate.display_price.to_s).to eq("$10.00 (excl. $0.91 #{tax_rate.name})")
+        end
       end
     end
 
     context "when tax is additional to price" do
-      let(:tax_rate) { create(:tax_rate, :amount => 0.1) }
+      let(:tax_rate) { create(:tax_rate, :name => "Sales Tax", :amount => 0.1) }
       before { shipping_rate.tax_rate = tax_rate }
 
       it "shows correct tax amount" do
