@@ -147,7 +147,7 @@ module Spree
 
     # Creates necessary tax adjustments for the order.
     def adjust(order, item)
-      amount = calculator.compute(item)
+      amount = compute_amount(item)
       return if amount == 0
 
       included = included_in_price && default_zone_or_zone_match?(item)
