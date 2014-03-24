@@ -21,5 +21,12 @@ describe Spree::Admin::ResourceController do
         variant.reload
       }.to change(variant, :position).from(1).to(2)
     end
+
+    it "touches updated_at" do
+      expect {
+        spree_post :update_positions, id: variant.id, positions: { variant.id => "2" }, format: "js"
+        variant.reload
+      }.to change(variant, :updated_at)
+    end
   end
 end
