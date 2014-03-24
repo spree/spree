@@ -1,7 +1,8 @@
 module Spree
   class Zone < ActiveRecord::Base
-    has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember"
-    has_many :tax_rates, dependent: :destroy
+    has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember", inverse_of: :zone
+    has_many :tax_rates, dependent: :destroy, inverse_of: :zone
+
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'
 
     validates :name, presence: true, uniqueness: true
@@ -14,7 +15,7 @@ module Spree
     def self.default_tax
       where(default_tax: true).first
     end
-  
+
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)

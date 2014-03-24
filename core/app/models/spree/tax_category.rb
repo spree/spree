@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     validates :name, presence: true, uniqueness: { scope: :deleted_at }
 
-    has_many :tax_rates, dependent: :destroy
+    has_many :tax_rates, dependent: :destroy, inverse_of: :tax_category
 
     before_save :set_default_category
 
