@@ -6,7 +6,7 @@ module Spree
     delegate :adjustments, :order, to: :item
 
     def initialize(item)
-      @item = item
+      @item = item.reload
     end
 
     def update
