@@ -74,7 +74,7 @@ module Spree
         end
 
         def ip_address
-          request.env['HTTP_X_REAL_IP'] || request.env['REMOTE_ADDR']
+          request.remote_ip
         end
       end
     end
