@@ -89,7 +89,8 @@ describe Spree::Calculator::DefaultTax do
           end
         end
 
-        it "should be equal to the item's discounted * rate" do
+        it "should be equal to the item's full price * rate" do
+          Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           calculator.compute(line_item).should == 1.43
         end
       end
