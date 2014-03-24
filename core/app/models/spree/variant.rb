@@ -9,7 +9,7 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
-    has_many :inventory_units
+    has_many :inventory_units, inverse_of: :variant
     has_many :line_items, inverse_of: :variant
     has_many :orders, through: :line_items
 
