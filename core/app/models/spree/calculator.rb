@@ -10,9 +10,9 @@ module Spree
       computable_name = computable.class.name.demodulize.underscore
       method = "compute_#{computable_name}".to_sym
       calculator_class = self.class
-      begin
+      if respond_to?(method)
         self.send(method, computable)
-      rescue NoMethodError
+      else
         raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{calculator_class.name}"
       end
     end
