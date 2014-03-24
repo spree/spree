@@ -1,6 +1,6 @@
 module Spree
   class ReturnAuthorization < Spree::Base
-    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
     has_many :inventory_units, through: :return_items

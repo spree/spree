@@ -8,7 +8,7 @@ module Spree
 
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :payments
     belongs_to :source, polymorphic: true
-    belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+    belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
 
     has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
