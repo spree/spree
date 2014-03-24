@@ -414,6 +414,28 @@ describe Spree::Shipment do
       shipment.update_amounts
       shipment.reload.cost.should == 5
     end
+
+    it "factors in additional adjustments to adjustment total" do
+      shipment.adjustments.create!({
+        :label => "Additional",
+        :amount => 5,
+        :included => false,
+        :state => "closed"
+      })
+      shipment.update_amounts
+      shipment.reload.adjustment_total.should == 5
+    end
+
+    it "does not factor in included adjustments to adjustment total" do
+      shipment.adjustments.create!({
+        :label => "Included",
+        :amount => 5,
+        :included => true,
+        :state => "closed"
+      })
+      shipment.update_amounts
+      shipment.reload.adjustment_total.should == 0
+    end
   end
 
   context "after_save" do
