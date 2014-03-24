@@ -123,9 +123,8 @@ module Spree
       self.zone == order.tax_zone ||
       # If the rate's zone *contains* the order's tax zone, then it's applicable.
       self.zone.contains?(order.tax_zone) ||
-      # 1) If there is an unknown tax address for this order, and
-      # 2) The rate's zone is the default zone, then it's applicable.
-      (order.tax_address.nil? && self.zone.default_tax)
+      # 1) The rate's zone is the default zone, then it's always applicable.
+      (self.included_in_price? && self.zone.default_tax)
     end
 
     # Creates necessary tax adjustments for the order.
@@ -133,8 +132,7 @@ module Spree
       amount = calculator.compute(item)
       return if amount == 0
 
-      included = included_in_price &&
-                 Zone.default_tax.contains?(item.order.tax_zone)
+      included = included_in_price && default_zone_or_zone_match?(item)
 
       if amount < 0
         label = Spree.t(:refund) + ' ' + create_label
@@ -152,7 +150,7 @@ module Spree
     # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
       if included_in_price
-        if Zone.default_tax.contains? item.order.tax_zone
+        if default_zone_or_zone_match?(item)
           calculator.compute(item)
         else
           # In this case, it's a refund.
@@ -161,6 +159,11 @@ module Spree
       else
         calculator.compute(item)
       end
+    end
+
+    def default_zone_or_zone_match?(item)
+      Zone.default_tax.contains?(item.order.tax_zone) ||
+      item.order.tax_zone == self.zone
     end
 
     private
