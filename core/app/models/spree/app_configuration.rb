@@ -82,7 +82,6 @@ module Spree
       @searcher_class = sclass
     end
 
-    private
     # all the following can be deprecated when store prefs are no longer supported
     DEPRECATED_STORE_PREFERENCES = {
       site_name: :name,
