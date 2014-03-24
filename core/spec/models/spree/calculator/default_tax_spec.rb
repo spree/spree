@@ -65,10 +65,11 @@ describe Spree::Calculator::DefaultTax do
         let(:included_in_price) { true }
 
         it "will return the deducted amount from the totals" do
-          # total price including 5% tax = 57.14
-          # ex tax = 54.42
-          # 54.42 + %5 = 57.14
-          expect(calculator.compute(order).to_f).to eql 2.72
+          # total price including 5% tax = $60
+          # ex tax = $57.14
+          # 57.14 + %5 = 59.997 (or "close enough" to $60)
+          # 60 - 57.14 = $2.86
+          expect(calculator.compute(order).to_f).to eql 2.86
         end
       end
     end
