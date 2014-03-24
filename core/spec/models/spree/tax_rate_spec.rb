@@ -124,10 +124,9 @@ describe Spree::TaxRate do
 
             context "when the tax is a VAT" do
               let(:included_in_price) { true }
-              # No rate should match in this instance because:
-              # 1) The Order's zone is not the default tax zone
-              # 2) The Order's zone does not match the rate's zone
-              it { should == [] }
+              # The rate should match in this instance because:
+              # 1) It's the default rate (and as such, a negative adjustment should apply)
+              it { should == [rate] }
             end
 
             context "when the tax is not VAT" do
@@ -151,7 +150,7 @@ describe Spree::TaxRate do
             end
 
             context "when the tax is not a VAT" do
-              it { should == [rate] }
+              it { should be_empty }
             end
           end
         end
@@ -304,14 +303,34 @@ describe Spree::TaxRate do
           end
         end
 
-        context "when zone is not contained by default tax zone" do
+        context "when order's zone is neither the default zone, or included in the default zone, but matches the rate's zone" do
           before do
             # With no zone members, this zone will not contain anything
             # Previously:
             # Zone.stub_chain :default_tax, :contains? => false
             @zone.zone_members.delete_all
           end
-          it "should not create an adjustment" do
+          it "should create an adjustment" do
+            Spree::TaxRate.adjust(@order, @order.line_items)
+            line_item.adjustments.charge.count.should == 2
+          end
+
+          it "should not create a tax refund for each tax rate" do
+            Spree::TaxRate.adjust(@order, @order.line_items)
+            line_item.adjustments.credit.count.should == 0
+          end
+        end
+
+        context "when order's zone does not match default zone, is not included in the default zone, AND does not match the rate's zone" do
+          before do
+            @new_zone = create(:zone, :name => "New Zone", :default_tax => false)
+            @new_country = create(:country, :name => "New Country")
+            @new_zone.zone_members.create(:zoneable => @new_country)
+            @order.ship_address = create(:address, :country => @new_country)
+            @order.save
+          end
+
+          it "should not create positive adjustments" do
             Spree::TaxRate.adjust(@order, @order.line_items)
             line_item.adjustments.charge.count.should == 0
           end
