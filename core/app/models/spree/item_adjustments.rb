@@ -6,7 +6,9 @@ module Spree
     delegate :adjustments, :order, to: :item
 
     def initialize(item)
-      @item = item.reload
+      @item = item
+      # Don't attempt to reload the item from the DB if it's not there
+      @item.reload if @item.persisted?
     end
 
     def update
