@@ -9,8 +9,9 @@ describe Spree::Shipment do
                                          touch: true }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
-    shipment = Spree::Shipment.new order: order
+    shipment = Spree::Shipment.new
     shipment.stub(shipping_method: shipping_method)
+    shipment.stub(order: order)
     shipment.state = 'pending'
     shipment.cost = 1
     shipment.save
