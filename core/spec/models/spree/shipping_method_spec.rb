@@ -20,6 +20,20 @@ describe Spree::ShippingMethod do
     end
   end
 
+  # Regression test for #4492
+  context "#shipments" do
+    let!(:shipping_method) { create(:shipping_method) }
+    let!(:shipment) do
+      shipment = create(:shipment)
+      shipment.shipping_rates.create!(:shipping_method => shipping_method)
+      shipment
+    end
+
+    it "can gather all the related shipments" do
+      shipping_method.shipments.should include(shipment)
+    end
+  end
+
   context "validations" do
     before { subject.valid? }
 
