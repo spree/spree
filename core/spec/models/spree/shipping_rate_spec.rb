@@ -26,6 +26,16 @@ describe Spree::ShippingRate do
         it "shows correct tax amount" do
           expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
         end
+
+        context "when cost is zero" do
+          before do
+            shipping_rate.cost = 0
+          end
+
+          it "shows no tax amount" do
+            expect(shipping_rate.display_price.to_s).to eq("$0.00")
+          end
+        end
       end
 
       context "when the tax rate is from a non-default zone" do
@@ -43,6 +53,16 @@ describe Spree::ShippingRate do
         it "shows correct tax amount" do
           expect(shipping_rate.display_price.to_s).to eq("$10.00 (excl. $0.91 #{tax_rate.name})")
         end
+
+        context "when cost is zero" do
+          before do
+            shipping_rate.cost = 0
+          end
+
+          it "shows no tax amount" do
+            expect(shipping_rate.display_price.to_s).to eq("$0.00")
+          end
+        end
       end
     end
 
@@ -52,6 +72,16 @@ describe Spree::ShippingRate do
 
       it "shows correct tax amount" do
         expect(shipping_rate.display_price.to_s).to eq("$10.00 (+ $1.00 #{tax_rate.name})")
+      end
+
+      context "when cost is zero" do
+        before do
+          shipping_rate.cost = 0
+        end
+
+        it "shows no tax amount" do
+          expect(shipping_rate.display_price.to_s).to eq("$0.00")
+        end
       end
     end
 
