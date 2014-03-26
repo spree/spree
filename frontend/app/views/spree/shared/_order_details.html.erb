@@ -107,6 +107,15 @@
     <% end %>
   <% end %>
 
+  <tfoot id='shipment-total'>
+    <% order.shipments.group_by { |s| s.shipping_method.name }.each do |name, shipments| %>
+      <tr class="total" data-hook='shipment-row'>
+        <td colspan="4"><%= Spree.t(:shipping) %>: <strong><%= name %></strong></td>
+        <td class="total"><span><%= Spree::Money.new(shipments.sum(&:discounted_cost)).to_html %></span></td>
+      </tr>
+    <% end %>
+  </tfoot>
+
   <% if order.all_adjustments.tax.exists? %>
     <tfoot id="tax-adjustments" data-hook="order_details_tax_adjustments">
       <% order.all_adjustments.tax.group_by(&:label).each do |label, adjustments| %>
@@ -117,14 +126,6 @@
       <% end %>
     </tfoot>
   <% end %>
-  <tfoot id='shipment-total'>
-    <% order.shipments.group_by { |s| s.shipping_method.name }.each do |name, shipments| %>
-      <tr class="total" data-hook='shipment-row'>
-        <td colspan="4"><%= Spree.t(:shipping) %>: <strong><%= name %></strong></td>
-        <td class="total"><span><%= Spree::Money.new(shipments.sum(&:discounted_cost)).to_html %></span></td>
-      </tr>
-    <% end %>
-  </tfoot>
 
   <tfoot id="order-charges" data-hook="order_details_adjustments">
     <% @order.adjustments.eligible.each do |adjustment| %>
