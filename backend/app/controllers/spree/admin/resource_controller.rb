@@ -1,6 +1,6 @@
-require 'spree/backend/action_callbacks'
-
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
+  include Spree::Backend::Callbacks
+
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_filter :load_resource, :except => [:update_positions]
   rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
@@ -86,14 +86,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   protected
 
-    def resource_not_found
-      flash[:error] = flash_message_for(model_class.new, :not_found)
-      redirect_to collection_url
-    end
-
     class << self
       attr_accessor :parent_data
-      attr_accessor :callbacks
 
       def belongs_to(model_name, options = {})
         @parent_data ||= {}
@@ -101,26 +95,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
         @parent_data[:model_class] = model_name.to_s.classify.constantize
         @parent_data[:find_by] = options[:find_by] || :id
       end
+    end
 
-      def new_action
-        @callbacks ||= {}
-        @callbacks[:new_action] ||= Spree::ActionCallbacks.new
-      end
-
-      def create
-        @callbacks ||= {}
-        @callbacks[:create] ||= Spree::ActionCallbacks.new
-      end
-
-      def update
-        @callbacks ||= {}
-        @callbacks[:update] ||= Spree::ActionCallbacks.new
-      end
-
-      def destroy
-        @callbacks ||= {}
-        @callbacks[:destroy] ||= Spree::ActionCallbacks.new
-      end
+    def resource_not_found
+      flash[:error] = flash_message_for(model_class.new, :not_found)
+      redirect_to collection_url
     end
 
     def model_class
@@ -207,16 +186,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     def location_after_save
       collection_url
-    end
-
-    def invoke_callbacks(action, callback_type)
-      callbacks = self.class.callbacks || {}
-      return if callbacks[action].nil?
-      case callback_type.to_sym
-        when :before then callbacks[action].before_methods.each {|method| send method }
-        when :after  then callbacks[action].after_methods.each  {|method| send method }
-        when :fails  then callbacks[action].fails_methods.each  {|method| send method }
-      end
     end
 
     # URL helpers
