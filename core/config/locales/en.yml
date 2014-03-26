@@ -99,6 +99,12 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
+      spree/store:
+        url: Site URL
+        meta_description: Meta Description
+        meta_keywords: Meta Keywords
+        seo_title: Seo Title
+        name: Site Name
       spree/tax_category:
         description: Description
         name: Name
@@ -517,9 +523,6 @@ en:
       js_format: yy/mm/dd
     date_range: Date Range
     default: Default
-    default_meta_description: Default Meta Description
-    default_meta_keywords: Default Meta Keywords
-    default_seo_title: Default Seo Title
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
@@ -1034,8 +1037,6 @@ en:
     show_deleted: Show Deleted
     show_only_complete_orders: Only show complete orders
     show_rate_in_label: Show rate in label
-    site_name: Site Name
-    site_url: Site URL
     sku: SKU
     slug: Slug
     source: Source

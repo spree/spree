@@ -8,15 +8,38 @@
   <div id="preferences" data-hook>
 
     <fieldset class="general no-border-top">
-      <% @preferences_general.each do |key|
-          type = Spree::Config.preference_type(key) %>
-          <div class="field">
-            <%= label_tag(key, Spree.t(key)) + tag(:br) if type != :boolean %>
-            <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
-            <%= label_tag(key, Spree.t(key)) + tag(:br) if type == :boolean %>
-          </div>
-      <% end %>
 
+      <%= fields_for :store do |f| %>
+        <div class="field">
+          <%= f.label :name %>
+          <br />
+          <%= f.text_field :name, class: 'fullwidth' %>
+        </div>
+
+        <div class="field">
+          <%= f.label :seo_title %>
+          <br />
+          <%= f.text_field :seo_title, class: 'fullwidth'  %>
+        </div>
+
+        <div class="field">
+          <%= f.label :meta_keywords %>
+          <br />
+          <%= f.text_field :meta_keywords, class: 'fullwidth'  %>
+        </div>
+
+        <div class="field">
+          <%= f.label :meta_description %>
+          <br />
+          <%= f.text_field :meta_description, class: 'fullwidth'  %>
+        </div>
+
+        <div class="field">
+          <%= f.label :url %>
+          <br />
+          <%= f.text_field :url, class: 'fullwidth'  %>
+        </div>
+      <% end %>
 
       <div class="row">
         <div class="alpha six columns">
@@ -88,5 +111,6 @@
 <% end %>
 
 <script>
+  $('#store_default_currency').select2();
   $('#currency').select2();
 </script>

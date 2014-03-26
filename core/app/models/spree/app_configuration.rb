@@ -20,6 +20,8 @@ require "spree/core/search/base"
 module Spree
   class AppConfiguration < Preferences::Configuration
 
+    attr_accessor :store
+
     # Alphabetized to more easily lookup particular preferences
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
@@ -46,9 +48,6 @@ module Spree
     preference :currency_thousands_separator, :string, default: ","
     preference :display_currency, :boolean, default: false
     preference :default_country_id, :integer
-    preference :default_meta_description, :string, default: 'Spree demo site'
-    preference :default_meta_keywords, :string, default: 'spree, demo'
-    preference :default_seo_title, :string, default: ''
     preference :dismissed_spree_alerts, :string, default: ''
     preference :hide_cents, :boolean, default: false
     preference :last_check_for_spree_alerts, :string, default: nil
@@ -66,8 +65,6 @@ module Spree
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, :default => false
-    preference :site_name, :string, default: 'Spree Demo Site'
-    preference :site_url, :string, default: 'demo.spreecommerce.com'
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
@@ -82,6 +79,31 @@ module Spree
 
     def searcher_class=(sclass)
       @searcher_class = sclass
+    end
+
+    private
+    # all the following can be deprecated when store prefs are no longer supported
+    DEPRECATED_STORE_PREFERENCES = {
+      site_name: :name,
+      site_url: :url,
+      default_meta_description: :meta_description,
+      default_meta_keywords: :meta_keywords,
+      default_seo_title: :seo_title,
+    }
+
+    def default_store
+      # hack to access preferences on stores if spun up before the database exists
+      # safe to kill when all the Spree::Config access is gone
+      return OpenStruct.new if @store.nil? && !ActiveRecord::Base.connection.table_exists?(Spree::Store.table_name)
+      self.store ||= Spree::Store.first || Spree::Store.new
+    end
+
+    DEPRECATED_STORE_PREFERENCES.each do |old_preference_name, store_method|
+      # support all the old preference methods with a warning
+      define_method "preferred_#{old_preference_name}" do
+        ActiveSupport::Deprecation.warn("#{old_preference_name} is no longer supported on Spree::Config, please access it through #{store_method} on Spree::Store")
+        default_store.send(store_method)
+      end
     end
   end
 end

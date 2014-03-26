@@ -18,6 +18,7 @@ module Spree
       :stock_item_attributes,
       :stock_location_attributes,
       :stock_movement_attributes,
+      :store_attributes,
       :taxon_attributes,
       :taxonomy_attributes,
       :user_attributes,
@@ -80,6 +81,9 @@ module Spree
 
     @@stock_movement_attributes = [
       :quantity, :stock_item, :stock_item_id, :originator, :action]
+
+    @@store_attributes = [:name, :url, :seo_title, :meta_keywords,
+                         :meta_description, :default_currency]
 
     @@taxonomy_attributes = [:name]
 
