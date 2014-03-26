@@ -1,15 +1,15 @@
 module Spree
   class ShippingMethod < ActiveRecord::Base
+    acts_as_paranoid
     include Spree::Core::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
     default_scope -> { where(deleted_at: nil) }
 
-    has_many :adjustments, as: :source
-    has_many :shipments
     has_many :shipping_method_categories, :dependent => :destroy
     has_many :shipping_categories, through: :shipping_method_categories
     has_many :shipping_rates, inverse_of: :shipping_method
+    has_many :shipments, :through => :shipping_rates
 
     has_and_belongs_to_many :zones, :join_table => 'spree_shipping_methods_zones',
                                     :class_name => 'Spree::Zone',

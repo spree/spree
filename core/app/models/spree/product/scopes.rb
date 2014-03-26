@@ -27,6 +27,15 @@ module Spree
       end
     end
 
+    def self.property_conditions(property)
+      properties = Property.table_name
+      conditions = case property
+      when String   then { "#{properties}.name" => property }
+      when Property then { "#{properties}.id" => property.id }
+      else               { "#{properties}.id" => property.to_i }
+      end
+    end
+
     add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
@@ -83,28 +92,15 @@ module Spree
 
     # a scope that finds all products having property specified by name, object or id
     add_search_scope :with_property do |property|
-      properties = Property.table_name
-      conditions = case property
-      when String   then { "#{properties}.name" => property }
-      when Property then { "#{properties}.id" => property.id }
-      else               { "#{properties}.id" => property.to_i }
-      end
-
-      joins(:properties).where(conditions)
+      joins(:properties).where(property_conditions(property))
     end
 
     # a simple test for product with a certain property-value pairing
     # note that it can test for properties with NULL values, but not for absent values
     add_search_scope :with_property_value do |property, value|
-      properties = Spree::Property.table_name
-      conditions = case property
-      when String   then ["#{properties}.name = ?", property]
-      when Property then ["#{properties}.id = ?", property.id]
-      else               ["#{properties}.id = ?", property.to_i]
-      end
-      conditions = ["#{ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
-
-      joins(:properties).where(conditions)
+      joins(:properties)
+        .where("#{ProductProperty.table_name}.value = ?", value)
+        .where(property_conditions(property))
     end
 
     add_search_scope :with_option do |option|

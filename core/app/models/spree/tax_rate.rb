@@ -26,9 +26,28 @@ module Spree
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
       return [] unless order.tax_zone
-      all.select do |rate|
-        (!rate.included_in_price && (rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || (order.tax_address.nil? && rate.zone.default_tax))) ||
-        rate.included_in_price
+      rates = all.select do |rate|
+        # Why "potentially"?
+        # Go see the documentation for that method.
+        rate.potentially_applicable?(order)
+      end
+
+      # Imagine with me this scenario:
+      # You are living in Spain and you have a store which ships to France.
+      # Spain is therefore your default tax rate.
+      # When you ship to Spain, you want the Spanish rate to apply.
+      # When you ship to France, you want the French rate to apply.
+      #
+      # Normally, Spree would notice that you have two potentially applicable
+      # tax rates for one particular item.
+      # When you ship to Spain, only the Spanish one will apply.
+      # When you ship to France, you'll see a Spanish refund AND a French tax.
+      # This little bit of code at the end stops the Spanish refund from appearing.
+      #
+      # For further discussion, see #4397 and #4327.
+      rates.delete_if do |rate|
+        rate.included_in_price? &&
+        (rates - [rate]).map(&:tax_category).include?(rate.tax_category)
       end
     end
 
@@ -48,6 +67,7 @@ module Spree
       end
     end
 
+    # This method is best described by the documentation on #potentially_applicable?
     def self.adjust(order, items)
       rates = self.match(order)
       tax_categories = rates.map(&:tax_category)
@@ -75,13 +95,62 @@ module Spree
       rate || 0
     end
 
+    
+    # Tax rates can *potentially* be applicable to an order.
+    # We do not know if they are/aren't until we attempt to apply these rates to
+    # the items contained within the Order itself.
+    # For instance, if a rate passes the criteria outlined in this method,
+    # but then has a tax category that doesn't match against any of the line items
+    # inside of the order, then that tax rate will not be applicable to anything.
+    # For instance:
+    # 
+    # Zones:
+    #   - Spain (default tax zone)
+    #   - France
+    #
+    # Tax rates: (note: amounts below do not actually reflect real VAT rates)
+    #   21% inclusive - "Clothing" - Spain
+    #   18% inclusive - "Clothing" - France 
+    #   10% inclusive - "Food" - Spain
+    #   8% inclusive - "Food" - France
+    #   5% inclusive - "Hotels" - Spain
+    #   2% inclusive - "Hotels" - France
+    #
+    # Order has:
+    #   Line Item #1 - Tax Category: Clothing
+    #   Line Item #2 - Tax Category: Food
+    # 
+    # Tax rates that should be selected:
+    #
+    #  21% inclusive - "Clothing" - Spain
+    #  10% inclusive - "Food" - Spain
+    #
+    # If the order's address changes to one in France, then the tax will be recalculated:
+    #  
+    #  18% inclusive - "Clothing" - France
+    #  8% inclusive - "Food" - France
+    #
+    # Note here that the "Hotels" tax rates will not be used at all.
+    # This is because there are no items which have the tax category of "Hotels".
+    #
+    # Under no circumstances should negative adjustments be applied for the Spanish tax rates.
+    #
+    # Those rates should never come into play at all and only the French rates should apply.
+    def potentially_applicable?(order)
+      # If the rate's zone matches the order's tax zone, then it's applicable.
+      self.zone == order.tax_zone ||
+      # If the rate's zone *contains* the order's tax zone, then it's applicable.
+      self.zone.contains?(order.tax_zone) ||
+      # 1) The rate's zone is the default zone, then it's always applicable.
+      (self.included_in_price? && self.zone.default_tax)
+    end
+
     # Creates necessary tax adjustments for the order.
     def adjust(order, item)
-      amount = calculator.compute(item)
+      amount = compute_amount(item)
       return if amount == 0
 
-      included = included_in_price &&
-                 Zone.default_tax.contains?(item.order.tax_zone)
+      included = included_in_price && default_zone_or_zone_match?(item)
 
       if amount < 0
         label = Spree.t(:refund) + ' ' + create_label
@@ -99,7 +168,7 @@ module Spree
     # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
       if included_in_price
-        if Zone.default_tax.contains? item.order.tax_zone
+        if default_zone_or_zone_match?(item)
           calculator.compute(item)
         else
           # In this case, it's a refund.
@@ -108,6 +177,11 @@ module Spree
       else
         calculator.compute(item)
       end
+    end
+
+    def default_zone_or_zone_match?(item)
+      Zone.default_tax.contains?(item.order.tax_zone) ||
+      item.order.tax_zone == self.zone
     end
 
     private

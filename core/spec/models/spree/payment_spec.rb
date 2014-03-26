@@ -484,11 +484,12 @@ describe Spree::Payment do
   end
 
   describe "#credit_allowed" do
+    # Regression test for #4403 & #4407
     it "is the difference between offsets total and payment amount" do
       payment.amount = 100
       payment.stub(:offsets_total).and_return(0)
       payment.credit_allowed.should == 100
-      payment.stub(:offsets_total).and_return(80)
+      payment.stub(:offsets_total).and_return(-80)
       payment.credit_allowed.should == 20
     end
   end
@@ -588,8 +589,10 @@ describe Spree::Payment do
   end
 
   describe "#build_source" do
-    it "should build the payment's source" do
-      params = { :amount => 100, :payment_method => gateway,
+    let(:params) do
+      {
+        :amount => 100,
+        :payment_method => gateway,
         :source_attributes => {
           :expiry =>"1 / 99",
           :number => '1234567890123',
@@ -597,10 +600,20 @@ describe Spree::Payment do
           :name => 'Spree Commerce'
         }
       }
+    end
 
+    it "should build the payment's source" do
       payment = Spree::Payment.new(params)
       payment.should be_valid
       payment.source.should_not be_nil
+    end
+
+    it "assigns user and gateway to payment source" do
+      order = create(:order)
+      source = order.payments.new(params).source
+
+      expect(source.user_id).to eq order.user_id
+      expect(source.payment_method_id).to eq gateway.id
     end
 
     it "errors when payment source not valid" do

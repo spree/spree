@@ -57,7 +57,7 @@ describe "Adjustments" do
         fill_in "adjustment_label", :with => "rebate"
         click_button "Continue"
         page.should have_content("successfully created!")
-        page.should have_content("Total: $180.00")
+        page.should have_content("Total: $80.00")
       end
     end
 
@@ -89,7 +89,7 @@ describe "Adjustments" do
           page.should have_content("$99.00")
         end
 
-        page.should have_content("Total: $259.00")
+        page.should have_content("Total: $159.00")
       end
     end
 
@@ -112,12 +112,13 @@ describe "Adjustments" do
     end
 
     it "should update the total", :js => true do
-      within_row(2) do
-        click_icon(:trash)
-        page.driver.browser.switch_to.alert.accept
+      accept_alert do
+        within_row(2) do
+          click_icon(:trash)
+        end
       end
 
-      page.should have_content("TOTAL: $170.00")
+      page.should have_content(/TOTAL: ?\$70\.00/)
     end
   end
 end

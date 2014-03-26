@@ -4,8 +4,6 @@ module Spree
       class FreeShipping < Spree::PromotionAction
         def perform(payload={})
           order = payload[:order]
-
-          label = "#{Spree.t(:promotion)} (#{promotion.name})"
           results = order.shipments.map do |shipment|
             return false if promotion_credit_exists?(shipment)
             shipment.adjustments.create!(
@@ -19,6 +17,10 @@ module Spree
           # Did we actually end up applying any adjustments?
           # If so, then this action should be classed as 'successful'
           results.any? { |r| r == true }
+        end
+
+        def label
+          "#{Spree.t(:promotion)} (#{promotion.name})"
         end
 
         def compute_amount(shipment)

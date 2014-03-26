@@ -4,13 +4,15 @@ require 'spree/order/checkout'
 module Spree
   class Order < ActiveRecord::Base
     include Checkout
+    include CurrencyUpdater
 
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, if: ->(order) {
+      go_to_state :payment, if: ->(order) do
+        order.set_shipments_cost if order.shipments.any?
         order.payment_required?
-      }
+      end
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
       remove_transition from: :delivery, to: :confirm
@@ -68,6 +70,7 @@ module Spree
     attr_accessor :use_billing
 
     before_create :link_by_email
+    before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
@@ -327,9 +330,10 @@ module Spree
       save
       updater.run_hooks
 
+      touch :completed_at
+
       deliver_order_confirmation_email unless confirmation_delivered?
 
-      touch :completed_at
       consider_risk
     end
 
@@ -488,7 +492,7 @@ module Spree
     # to delivery again so that proper updated shipments are created.
     # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
-      if shipments.any?
+      if shipments.any? && !self.completed?
         self.shipments.destroy_all
         self.update_column(:shipment_total, 0)
         restart_checkout_flow
@@ -556,6 +560,19 @@ module Spree
 
     def approve!
       update_column(:considered_risky, false)
+    end
+
+    # moved from api order_decorator. This is a better place for it.
+    def update_line_items(line_item_params)
+      return if line_item_params.blank?
+      line_item_params.each_value do |attributes|
+        if attributes[:id].present?
+          self.line_items.find(attributes[:id]).update_attributes!(attributes)
+        else
+          self.line_items.create!(attributes)
+        end
+      end
+      self.ensure_updated_shipments
     end
 
     private

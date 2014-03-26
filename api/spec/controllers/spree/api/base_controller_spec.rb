@@ -21,6 +21,29 @@ describe Spree::Api::BaseController do
     end
   end
 
+  context "when validating based on an order token" do
+    let!(:order) { create :order }
+
+    context "with a correct order token" do
+      it "succeeds" do
+        api_get :index, order_token: order.token, order_id: order.number
+        response.status.should == 200
+      end
+
+      it "succeeds with an order_number parameter" do
+        api_get :index, order_token: order.token, order_number: order.number
+        response.status.should == 200
+      end
+    end
+
+    context "with an incorrect order token" do
+      it "returns unauthorized" do
+        api_get :index, order_token: "NOT_A_TOKEN", order_id: order.number
+        response.status.should == 401
+      end
+    end
+  end
+
   context "cannot make a request to the API" do
     it "without an API key" do
       api_get :index

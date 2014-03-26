@@ -16,21 +16,21 @@ production:
 <% when 'mysql' %>
 development:
   adapter: mysql2
-  database: <%= database_prefix %>spree_development
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
   encoding: utf8
 test:
   adapter: mysql2
-  database: <%= database_prefix %>spree_test
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
   encoding: utf8
 production:
   adapter: mysql2
-  database: <%= database_prefix %>spree_production
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
   encoding: utf8
 <% when 'postgres' %>
 <% db_host = ENV['DB_HOST'] -%>
 development:
   adapter: postgresql
-  database: <%= database_prefix %>spree_development
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
   username: postgres
   min_messages: warning
 <% unless db_host.blank? %>
@@ -38,7 +38,7 @@ development:
 <% end %>
 test:
   adapter: postgresql
-  database: <%= database_prefix %>spree_test
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
   username: postgres
   min_messages: warning
 <% unless db_host.blank? %>
@@ -46,7 +46,7 @@ test:
 <% end %>
 production:
   adapter: postgresql
-  database: <%= database_prefix %>spree_production
+  database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
   username: postgres
   min_messages: warning
 <% unless db_host.blank? %>

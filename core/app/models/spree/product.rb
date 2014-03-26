@@ -78,6 +78,8 @@ module Spree
     validates :shipping_category_id, presence: true
     validates :slug, length: { minimum: 3 }
 
+    before_validation :normalize_slug, on: :update
+
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
@@ -132,8 +134,11 @@ module Spree
       !!deleted_at
     end
 
+    # determine if product is available.
+    # deleted products and products with nil or future available_on date
+    # are not available
     def available?
-      !(available_on.nil? || available_on.future?)
+      !(available_on.nil? || available_on.future?) && !deleted?
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants
@@ -188,7 +193,7 @@ module Spree
     end
 
     def possible_promotions
-      promotion_ids = promotion_rules.map(&:activator_id).uniq
+      promotion_ids = promotion_rules.map(&:promotion_id).uniq
       Spree::Promotion.advertised.where(id: promotion_ids).reject(&:expired?)
     end
 
@@ -208,6 +213,9 @@ module Spree
     end
 
     private
+      def normalize_slug
+        self.slug = normalize_friendly_id(slug)
+      end
 
       # Builds variants from a hash of option types & values
       def build_variants_from_option_values_hash

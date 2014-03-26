@@ -1,13 +1,9 @@
 object @variant
-cache @variant
-extends "spree/api/variants/variant"
+attributes *variant_attributes
 
-child(:images => :images) do
-  attributes *image_attributes
-  code(:urls) do |v|
-    v.attachment.styles.keys.inject({}) { |urls, style| urls[style] = v.attachment.url(style); urls  }
-  end
-end
+cache ['big_variant', root_object]
+
+extends "spree/api/variants/small"
 
 child(:stock_items => :stock_items) do
   attributes :id, :count_on_hand, :stock_location_id, :backorderable

@@ -10,6 +10,8 @@ module Spree
         belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
         alias_attribute :shipping_address, :ship_address
 
+        accepts_nested_attributes_for :ship_address, :bill_address
+
         def persist_order_address(order)
           b_address = self.bill_address || self.build_bill_address
           b_address.attributes = order.bill_address.attributes.except('id', 'updated_at', 'created_at')

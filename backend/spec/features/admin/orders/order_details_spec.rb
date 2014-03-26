@@ -52,24 +52,26 @@ describe "Order Details", js: true do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          accept_alert do
+            click_icon :trash
+          end
         end
 
         # Click "ok" on confirmation dialog
-        page.driver.browser.switch_to.alert.accept
         page.should_not have_content("spree t-shirt")
       end
 
       # Regression test for #3862
-      it "can remove an item from a shipment" do
+      it "can cancel removing an item from a shipment" do
         page.should have_content("spree t-shirt")
 
         within_row(1) do
-          click_icon :trash
+          # Click "cancel" on confirmation dialog
+          dismiss_alert do
+            click_icon :trash
+          end
         end
 
-        # Click "cancel" on confirmation dialog
-        page.driver.browser.switch_to.alert.dismiss
         page.should have_content("spree t-shirt")
       end
 
@@ -80,6 +82,7 @@ describe "Order Details", js: true do
         fill_in "tracking", :with => "FOOBAR"
         click_icon :ok
 
+        page.should_not have_css("input[name=tracking]")
         page.should have_content("Tracking: FOOBAR")
       end
 
@@ -91,8 +94,8 @@ describe "Order Details", js: true do
         end
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
-        wait_for_ajax
 
+        page.should_not have_css('#selected_shipping_rate_id')
         page.should have_content("Default")
       end
 
@@ -149,8 +152,8 @@ describe "Order Details", js: true do
               click_icon :ok
             end
 
-            wait_for_ajax
-            page.should have_content("TOTAL: $100.00")
+            # poltergeist and selenium disagree on the existance of this space
+            page.should have_content(/TOTAL: ?\$100\.00/)
           end
 
           it "can add tracking information for the second shipment" do
@@ -158,12 +161,12 @@ describe "Order Details", js: true do
               within("tr.show-tracking") do
                 click_icon :edit
               end
-              wait_for_ajax
+
               fill_in "tracking", :with => "TRACKING_NUMBER"
               click_icon :ok
             end
 
-            wait_for_ajax
+            page.should_not have_css("input[name=tracking]")
             page.should have_content("Tracking: TRACKING_NUMBER")
           end
 
@@ -191,8 +194,8 @@ describe "Order Details", js: true do
               select2 "Default", :from => "Shipping Method"
             end
             click_icon :ok
-            wait_for_ajax
 
+            page.should_not have_css('#selected_shipping_rate_id')
             page.should have_content("Default")
           end
         end
@@ -287,8 +290,8 @@ describe "Order Details", js: true do
       end
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
-      wait_for_ajax
 
+      page.should_not have_css("input[name=tracking]")
       page.should have_content("Tracking: FOOBAR")
     end
 
@@ -300,8 +303,8 @@ describe "Order Details", js: true do
       end
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
-      wait_for_ajax
 
+      page.should_not have_css('#selected_shipping_rate_id')
       page.should have_content("Default")
     end
 

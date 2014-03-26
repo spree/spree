@@ -81,15 +81,15 @@ module Spree
                 before_transition :from => :address, :do => :create_tax_charge!
               end
 
+              if states[:payment]
+                before_transition :to => :payment, :do => :set_shipments_cost
+                before_transition :to => :payment, :do => :create_tax_charge!
+              end
+
               if states[:delivery]
                 before_transition :to => :delivery, :do => :create_proposed_shipments
                 before_transition :to => :delivery, :do => :ensure_available_shipping_rates
                 before_transition :from => :delivery, :do => :apply_free_shipping_promotions
-              end
-
-              if states[:payment]
-                before_transition :to => :payment, :do => :set_shipments_cost
-                before_transition :to => :payment, :do => :create_tax_charge!
               end
 
               after_transition :to => :complete, :do => :finalize!
@@ -211,6 +211,20 @@ module Spree
             @updating_params = params
             run_callbacks :updating_from_params do
               attributes = @updating_params[:order] ? @updating_params[:order].permit(permitted_params) : {}
+
+              # Set existing card after setting permitted parameters because
+              # rails would slice parameters containg ruby objects, apparently
+              if @updating_params[:existing_card].present?
+                credit_card = CreditCard.find(@updating_params[:existing_card])
+                if credit_card.user_id != self.user_id || credit_card.user_id.blank?
+                  raise Core::GatewayError.new Spree.t(:invalid_credit_card)
+                end
+
+                attributes[:payments_attributes].first[:source] = credit_card
+                attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
+                attributes[:payments_attributes].first.delete :source_attributes
+              end
+
               success = self.update_attributes(attributes)
             end
             @updating_params = nil
@@ -222,7 +236,6 @@ module Spree
           # attributes for a single payment and its source, discarding attributes
           # for payment methods other than the one selected
           def update_params_payment_source
-            # respond_to check is necessary due to issue described in #2910
             if has_checkout_step?("payment") && self.payment?
               if @updating_params[:payment_source].present?
                 source_params = @updating_params.delete(:payment_source)[@updating_params[:order][:payments_attributes].first[:payment_method_id].underscore]
@@ -237,7 +250,6 @@ module Spree
               end
             end
           end
-
         end
       end
     end

@@ -9,7 +9,7 @@ describe Spree::Asset do
       product.update_column(:updated_at,  1.day.ago)
 
       expect do
-        asset.touch
+        asset.save
       end.to change { product.reload.updated_at }
     end
   end

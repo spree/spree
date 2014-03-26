@@ -1,17 +1,17 @@
 <script type='text/template' id='variant_split_template'>
   <tr class='stock-item-split' data-variant-id='{{variant.id}}'>
     <td colspan='2'>
-      Move {{variant.name}} to:
+      <%=Spree.t("move_variant_to", default: "Move {{variant.name}} to")%>
     </td>
     <td colspan='2'>
     <select name="item_stock_location" id='item_stock_location' style='width:100%;'>
       <option></option>
-      <optgroup label="Existing Shipments">
+      <optgroup label="<%=Spree.t('existing_shipments')%>">
         {{#each shipments}}
         <option data-shipment-number='{{this.number}}' value='{{this.stock_location_id}}'>{{this.stock_location.name}}({{this.number}})</option>
         {{/each}}
       </optgroup>
-      <optgroup label="New Shipment At Location">
+      <optgroup label="<%=Spree.t('new_shipment_at_location')%>">
         {{#each variant.stock_items}}
           <option data-new-shipment='true' value='{{this.stock_location_id}}'>{{this.stock_location_name}}</option>
         {{/each}}

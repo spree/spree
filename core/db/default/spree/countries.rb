@@ -225,6 +225,7 @@ Spree::Country.create!([
   { name: "Macedonia", iso3: "MKD", iso: "MK", iso_name: "MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF", numcode: "807" },
   { name: "New Zealand", iso3: "NZL", iso: "NZ", iso_name: "NEW ZEALAND", numcode: "554" },
   { name: "Saint Kitts and Nevis", iso3: "KNA", iso: "KN", iso_name: "SAINT KITTS AND NEVIS", numcode: "659", states_required: true },
-  { name: "Serbia", iso3: "SRB", iso: "RS", "iso_name" => "SERBIA", numcode: "999" }
+  { name: "Serbia", iso3: "SRB", iso: "RS", "iso_name" => "SERBIA", numcode: "999" },
+  { name: "Montenegro", iso3: "MNE", iso: "ME", iso_name: "MONTENEGRO", numcode: "499" }
 ])
 Spree::Config[:default_country_id] = Spree::Country.find_by(name: "United States").id

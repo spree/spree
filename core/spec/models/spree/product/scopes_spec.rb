@@ -43,6 +43,75 @@ describe "Product scopes" do
     end
   end
 
+  context "property scopes" do
+    let(:name) { "A proper tee" }
+    let(:value) { "A proper value"}
+    let!(:property) { create(:property, name: name)}
+
+    before do
+      product.properties << property
+      product.product_properties.find_by(property: property).update_column(:value, value)
+    end
+
+    context "with_property" do
+      let(:with_property) { Spree::Product.method(:with_property) }
+      it "finds by a property's name" do
+        expect(with_property.(name).count).to eq(1)
+      end
+
+      it "doesn't find any properties with an unknown name" do
+        expect(with_property.("fake").count).to eq(0)
+      end
+
+      it "finds by a property" do
+        expect(with_property.(property).count).to eq(1)
+      end
+
+      it "finds by an id" do
+        expect(with_property.(property.id).count).to eq(1)
+      end
+
+      it "cannot find a property with an unknown id" do
+        expect(with_property.(0).count).to eq(0)
+      end
+    end
+
+    context "with_property_value" do
+      let(:with_property_value) { Spree::Product.method(:with_property_value) }
+      it "finds by a property's name" do
+        expect(with_property_value.(name, value).count).to eq(1)
+      end
+
+      it "cannot find by an unknown property's name" do
+        expect(with_property_value.("fake", value).count).to eq(0)
+      end
+
+      it "cannot find with a name by an incorrect value" do
+        expect(with_property_value.(name, "fake").count).to eq(0)
+      end
+
+      it "finds by a property" do
+        expect(with_property_value.(property, value).count).to eq(1)
+      end
+
+      it "cannot find with a property by an incorrect value" do
+        expect(with_property_value.(property, "fake").count).to eq(0)
+      end
+
+      it "finds by an id with a value" do
+        expect(with_property_value.(property.id, value).count).to eq(1)
+      end
+
+      it "cannot find with an invalid id" do
+        expect(with_property_value.(0, value).count).to eq(0)
+      end
+
+      it "cannot find with an invalid value" do
+        expect(with_property_value.(property.id, "fake").count).to eq(0)
+      end
+    end
+  end
+
   context '#add_simple_scopes' do
     let(:simple_scopes) { [:ascend_by_updated_at, :descend_by_name] }
 

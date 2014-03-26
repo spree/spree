@@ -1,0 +1,53 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:listing_users) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to Spree.t(:new_user), new_admin_user_url, :icon => 'icon-plus', :id => 'admin_new_user_link' %>
+  </li>
+<% end %>
+
+<table class="index" id="listing_users" data-hook>
+  <colgroup>
+    <col style="width: 85%">
+    <col style="width: 15%">
+  </colgroup>
+  <thead>
+    <tr data-hook="admin_users_index_headers">
+      <th><%= sort_link @search,:email, Spree.t(:user), {}, {:title => 'users_email_title'} %></th>
+      <th data-hook="admin_users_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user|%>
+      <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows" class="<%= cycle('odd', 'even')%>">
+        <td class='user_email'><%=link_to user.email, edit_admin_user_url(user) %></td>
+        <td data-hook="admin_users_index_row_actions" class="actions">
+          <%= link_to_edit user, :no_text => true %>
+          <%= link_to_delete user, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @users %>
+
+<% content_for :sidebar_title do %>
+  <%= Spree.t(:search) %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <div class="box align-center" data-hook="admin_users_index_search">
+    <%= search_form_for [:admin, @search], url: admin_users_url do |f| %>
+      <div class="field">
+        <%= f.label Spree.t(:email) %> <br>
+        <%= f.text_field :email_cont, :class => 'fullwidth' %>
+      </div>
+      <div data-hook="admin_users_index_search_buttons">
+        <%= button Spree.t(:search), 'icon-search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

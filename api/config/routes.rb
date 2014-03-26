@@ -10,11 +10,11 @@ Spree::Core::Engine.add_routes do
 
   namespace :api, :defaults => { :format => 'json' } do
     resources :products do
+      resources :images
       resources :variants
       resources :product_properties
     end
 
-    resources :images
     resources :checkouts do
       member do
         put :next
@@ -22,7 +22,9 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :variants, :only => [:index, :show]
+    resources :variants, :only => [:index, :show] do
+      resources :images
+    end
 
     resources :option_types do
       resources :option_values

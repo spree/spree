@@ -126,6 +126,15 @@ describe Spree::CreditCard do
       credit_card.save
       credit_card.should be_valid
     end
+
+    context "encrypted data is present" do
+      it "does not validate presence of number or cvv" do
+        credit_card.encrypted_data = "$fdgsfgdgfgfdg&gfdgfdgsf-"
+        credit_card.valid?
+        expect(credit_card.errors[:number]).to be_empty
+        expect(credit_card.errors[:verification_value]).to be_empty
+      end
+    end
   end
 
   context "#save" do

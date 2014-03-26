@@ -174,6 +174,11 @@ describe Spree::Product do
         product.available_on = 1.day.from_now
         product.should_not be_available
       end
+
+      it "should not be available if destroyed" do 
+        product.destroy 
+        product.should_not be_available 
+      end 
     end
 
     context "variants_and_option_values" do
@@ -255,6 +260,23 @@ describe Spree::Product do
       product.set_property('bar', 'value2')
       Spree::Property.where(:name => 'foo').first.presentation.should == "Foo's Presentation Name"
       Spree::Property.where(:name => 'bar').first.presentation.should == "bar"
+    end
+
+    # Regression test for #4416
+    context "#possible_promotions" do
+      let!(:promotion) do
+        create(:promotion, advertise: true, starts_at: 1.day.ago)
+      end
+      let!(:rule) do
+        Spree::Promotion::Rules::Product.create(
+          promotion: promotion,
+          products: [product]
+        )
+      end
+
+      it "lists the promotion as a possible promotion" do
+        product.possible_promotions.should include(promotion)
+      end
     end
   end
 
@@ -381,6 +403,16 @@ describe Spree::Product do
       product = build(:product)
       product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]
       product.total_on_hand.should eql(5)
+    end
+  end
+
+  describe "slugs" do
+    it "normalizes slug on update" do
+      product = stub_model Spree::Product
+      product.slug = "hey//joe"
+
+      product.valid?
+      expect(product.slug).not_to match "/"
     end
   end
 end

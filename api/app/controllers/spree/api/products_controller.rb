@@ -114,8 +114,7 @@ module Spree
       def destroy
         @product = find_product(params[:id])
         authorize! :destroy, @product
-        @product.update_attribute(:deleted_at, Time.now)
-        @product.variants_including_master.update_all(:deleted_at => Time.now)
+        @product.destroy
         respond_with(@product, :status => 204)
       end
 

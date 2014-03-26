@@ -1,0 +1,36 @@
+<% content_for :sidebar_title do %>
+  <%= Spree.t(:"admin.user.user_information") %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <nav class="menu">
+    <ul data-hook="admin_user_tab_options">
+      <li<%== ' class="active"' if current == :account %>>
+        <%= link_to_with_icon 'icon-user', Spree.t(:"admin.user.account"), edit_admin_user_path(@user) %>
+      </li>
+      <li<%== ' class="active"' if current == :address %>>
+        <%= link_to_with_icon 'icon-user', Spree.t(:"admin.user.addresses"), addresses_admin_user_path(@user) %>
+      </li>
+      <li<%== ' class="active"' if current == :orders %>>
+        <%= link_to_with_icon 'icon-shopping-cart', Spree.t(:"admin.user.orders"), orders_admin_user_path(@user) %>
+      </li>
+      <li<%== ' class="active"' if current == :items %>>
+        <%= link_to_with_icon 'icon-edit', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
+      </li>
+    </ul>
+
+    <fieldset data-hook="admin_user_lifetime_stats">
+      <legend><%= Spree.t(:lifetime_stats) %></legend>
+      <dl id="user-lifetime-stats">
+        <dt><%= Spree.t(:total_sales) %>:</dt>
+          <dd><%= @user.display_lifetime_value.to_html %></dd>
+        <dt><%= Spree.t(:num_orders) %>:</dt>
+          <dd><%= @user.order_count.to_i %></dd>
+        <dt><%= Spree.t(:average_order_value) %>:</dt>
+          <dd><%= @user.display_average_order_value.to_html %></dd>
+        <dt><%= Spree.t(:member_since) %>:</dt>
+          <dd><%= l @user.created_at.to_date %></dd>
+      </dl>
+    </fieldset>
+  </nav>
+<% end %>

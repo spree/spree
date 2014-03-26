@@ -1,10 +1,8 @@
-## Spree 2.2.0 (unreleased) ##
+## Spree 2.2.1 (unreleased) ##
 
-*   Payment step displays a name input so that users can enter *Name on card*
-    Previously we had a first_name and last_name hidden input instead.
-
-    Washington Luiz
-
-*   Checkout now may remember user address
+*   Mostly inspired by Jeff Squires extension spree_reuse_credit card, checkout
+    now can remember user credit card info. Make sure your user model responds
+    to a `payment_sources` method and customers will be able to reuse their
+    credit card info.
 
     Washington Luiz

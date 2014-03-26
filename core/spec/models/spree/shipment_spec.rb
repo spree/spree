@@ -9,8 +9,9 @@ describe Spree::Shipment do
                                          touch: true }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
-    shipment = Spree::Shipment.new order: order
+    shipment = Spree::Shipment.new
     shipment.stub(shipping_method: shipping_method)
+    shipment.stub(order: order)
     shipment.state = 'pending'
     shipment.cost = 1
     shipment.save
@@ -46,6 +47,13 @@ describe Spree::Shipment do
     it "retuns a Spree::Money" do
       shipment.stub(:cost) { 21.22 }
       shipment.display_amount.should == Spree::Money.new(21.22)
+    end
+  end
+
+  context "display_final_price" do
+    it "retuns a Spree::Money" do
+      shipment.stub(:final_price) { 21.22 }
+      shipment.display_final_price.should == Spree::Money.new(21.22)
     end
   end
 
@@ -229,12 +237,29 @@ describe Spree::Shipment do
     end
 
     context "when shipment state changes to shipped" do
+      before do
+        shipment.stub(:send_shipped_email)
+        shipment.stub(:update_order_shipment_state)
+      end
+
       it "should call after_ship" do
         shipment.state = 'pending'
         shipment.should_receive :after_ship
         shipment.stub determine_state: 'shipped'
         shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
+      end
+
+      # Regression test for #4347
+      context "with adjustments" do
+        before do
+          shipment.adjustments << Spree::Adjustment.create(:label => "Label", :amount => 5)
+        end
+
+        it "transitions to shipped" do
+          shipment.update_column(:state, "ready")
+          lambda { shipment.ship! }.should_not raise_error
+        end
       end
     end
   end
@@ -388,7 +413,7 @@ describe Spree::Shipment do
     end
   end
 
-  context "create adjustments" do
+  context "updates cost when selected shipping rate is present" do
     let(:shipment) { create(:shipment) }
 
     before { shipment.stub_chain :selected_shipping_rate, cost: 5 }
@@ -396,6 +421,28 @@ describe Spree::Shipment do
     it "updates shipment totals" do
       shipment.update_amounts
       shipment.reload.cost.should == 5
+    end
+
+    it "factors in additional adjustments to adjustment total" do
+      shipment.adjustments.create!({
+        :label => "Additional",
+        :amount => 5,
+        :included => false,
+        :state => "closed"
+      })
+      shipment.update_amounts
+      shipment.reload.adjustment_total.should == 5
+    end
+
+    it "does not factor in included adjustments to adjustment total" do
+      shipment.adjustments.create!({
+        :label => "Included",
+        :amount => 5,
+        :included => true,
+        :state => "closed"
+      })
+      shipment.update_amounts
+      shipment.reload.adjustment_total.should == 0
     end
   end
 

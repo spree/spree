@@ -12,8 +12,7 @@ module Spree
 
     context "as a normal user" do
       before do
-        Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { user }
-        Spree::LegacyUser.stub :find_by_spree_api_key => user
+        controller.stub :try_spree_current_user => user
       end
 
       it "can get own details" do
@@ -120,7 +119,7 @@ module Spree
       it "cannot destroy user with orders" do
         create(:completed_order_with_totals, :user => user)
         api_delete :destroy, :id => user.id
-        json_response["exception"].should eq "Spree::LegacyUser::DestroyWithOrdersError"
+        json_response["exception"].should eq "Spree::Core::DestroyWithOrdersError"
         response.status.should == 422
       end
 

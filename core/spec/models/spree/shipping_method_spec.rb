@@ -20,6 +20,20 @@ describe Spree::ShippingMethod do
     end
   end
 
+  # Regression test for #4492
+  context "#shipments" do
+    let!(:shipping_method) { create(:shipping_method) }
+    let!(:shipment) do
+      shipment = create(:shipment)
+      shipment.shipping_rates.create!(:shipping_method => shipping_method)
+      shipment
+    end
+
+    it "can gather all the related shipments" do
+      shipping_method.shipments.should include(shipment)
+    end
+  end
+
   context "validations" do
     before { subject.valid? }
 
@@ -60,6 +74,15 @@ describe Spree::ShippingMethod do
           end
         end
       end
+    end
+  end
+
+  # Regression test for #4320
+  context "soft deletion" do
+    let(:shipping_method) { create(:shipping_method) }
+    it "soft-deletes when destroy is called" do
+      shipping_method.destroy
+      shipping_method.deleted_at.should_not be_blank
     end
   end
 end

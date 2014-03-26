@@ -1,0 +1,55 @@
+<% content_for :page_title do %>
+  <%= link_to "#{Spree.t(:editing_user)} #{@user.email}", edit_admin_user_url(@user) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :account } %>
+<%= render :partial => 'spree/admin/users/user_page_actions' %>
+
+<fieldset data-hook="admin_user_edit_general_settings" class="alpha twelve columns">
+  <legend><%= Spree.t(:general_settings) %></legend>
+
+  <div data-hook="admin_user_edit_form_header">
+    <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
+  </div>
+
+  <div data-hook="admin_user_edit_form">
+    <%= form_for [:admin, @user], as: :user, url: admin_user_url(@user), method: :put do |f| %>
+      <%= render :partial => 'form', :locals => { :f => f } %>
+
+      <div data-hook="admin_user_edit_form_button">
+        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
+      </div>
+    <% end %>
+  </div>
+</fieldset>
+
+<fieldset data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="alpha twelve columns">
+  <legend><%= Spree.t('access', :scope => 'api') %></legend>
+
+  <% if @user.spree_api_key.present? %>
+    <div class="field">
+      <div id="current-api-key"><%= Spree.t('key', :scope => 'api') %>: <%= @user.spree_api_key %></div>
+    </div>
+    <div class="filter-actions actions">
+      <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('clear_key', :scope => 'api'), 'icon-trash' %>
+      <% end %>
+
+      <span class="or"><%= Spree.t(:or)%></span>
+
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('regenerate_key', :scope => 'api'), 'icon-refresh' %>
+      <% end %>
+    </div>
+
+  <% else %>
+
+    <div class="no-objects-found"><%= Spree.t('no_key', :scope => 'api') %></div>
+
+    <div class="filter-actions actions">
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('generate_key', :scope => 'api'), 'icon-key' %>
+      <% end %>
+    </div>
+  <% end %>
+</fieldset>
