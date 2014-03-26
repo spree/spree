@@ -126,7 +126,7 @@ module Spree
       ]
 
       @@creditcard_attributes = [
-        :id, :month, :year, :cc_type, :last_digits, :first_name, :last_name,
+        :id, :month, :year, :cc_type, :last_digits, :name,
         :gateway_customer_profile_id, :gateway_payment_profile_id
       ]
 
