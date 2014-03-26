@@ -25,8 +25,6 @@ module Spree
                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
                                :country_id => Country.first.id, :state_id => State.first.id} }
 
-    let!(:payment_method) { create(:check_payment_method) }
-
     let(:current_api_user) do
       user = Spree.user_class.new(:email => "spree@example.com")
       user.generate_spree_api_key!
@@ -82,7 +80,6 @@ module Spree
       response.status.should == 200
       json_response.should have_attributes(attributes)
       json_response["adjustments"].should be_empty
-      json_response["credit_cards"].should be_empty
     end
 
     it "orders contain the basic checkout steps" do
@@ -383,6 +380,18 @@ module Spree
           adjustment = json_response['line_items'].first['adjustments'].first
           adjustment['label'].should == "10% off!"
           adjustment['amount'].should == "5.0"
+        end
+
+        it "lists payments source" do
+          order.payments.push payment = create(:payment)
+          api_get :show, :id => order.to_param
+
+          source = json_response[:payments].first[:source]
+          expect(source[:name]).to eq payment.source.name
+          expect(source[:cc_type]).to eq payment.source.cc_type
+          expect(source[:last_digits]).to eq payment.source.last_digits
+          expect(source[:month].to_i).to eq payment.source.month
+          expect(source[:year].to_i).to eq payment.source.year
         end
 
         context "when in delivery" do

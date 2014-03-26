@@ -18,9 +18,14 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes :id, :amount, :state, :payment_method_id
+  attributes :id, :amount, :state, :source_type
+
   child :payment_method => :payment_method do
     attributes :id, :name, :environment
+  end
+
+  child :source => :source do
+    attributes *payment_source_attributes
   end
 end
 
@@ -30,8 +35,4 @@ end
 
 child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
-end
-
-child :credit_cards => :credit_cards do
-  extends "spree/api/credit_cards/show"
 end
