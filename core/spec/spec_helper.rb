@@ -33,7 +33,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before(:each) do
-    if example.metadata[:js]
+    if example.metadata[:js] || example.metadata[:truncate]
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction
