@@ -145,6 +145,10 @@ module Spree
           @order.create_proposed_shipments
         end
 
+        def order_id
+          super || params[:id]
+        end
+
     end
   end
 end
