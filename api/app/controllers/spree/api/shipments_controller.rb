@@ -76,7 +76,7 @@ module Spree
       private
 
       def find_order
-        @order = Spree::Order.find_by!(number: params[:order_id])
+        @order = Spree::Order.find_by!(number: order_id)
         authorize! :read, @order
       end
 
