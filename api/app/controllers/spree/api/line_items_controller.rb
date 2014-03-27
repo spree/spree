@@ -35,7 +35,7 @@ module Spree
       private
 
         def order
-          @order ||= Spree::Order.includes(:line_items).find_by!(number: params[:order_id])
+          @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
           authorize! :update, @order, order_token
         end
 
