@@ -74,7 +74,9 @@ Spree::Core::Engine.add_routes do
     resources :orders, &order_routes
 
     resources :zones
-    resources :countries, :only => [:index, :show]
+    resources :countries, :only => [:index, :show] do
+      resources :states, :only => [:index, :show]
+    end
     resources :states,    :only => [:index, :show]
 
     resources :taxonomies do
