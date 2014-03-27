@@ -102,25 +102,50 @@ module Spree
         response.status.should == 422
       end
 
-      it "can update addresses and transition from address to delivery" do
-        order.update_column(:state, "address")
-        shipping_address = billing_address = {
-          :firstname  => 'John',
-          :lastname   => 'Doe',
-          :address1   => '7735 Old Georgetown Road',
-          :city       => 'Bethesda',
-          :phone      => '3014445002',
-          :zipcode    => '20814',
-          :state_id   => @state.id,
-          :country_id => @country.id
-        }
-        api_put :update,
-                :id => order.to_param, :order_token => order.token,
-                :order => { :bill_address_attributes => billing_address, :ship_address_attributes => shipping_address }
-        json_response['state'].should == 'delivery'
-        json_response['bill_address']['firstname'].should == 'John'
-        json_response['ship_address']['firstname'].should == 'John'
-        response.status.should == 200
+      context "transitioning to delivery" do
+        before do
+          order.update_column(:state, "address")
+        end
+
+        let(:address) do
+          {
+            :firstname  => 'John',
+            :lastname   => 'Doe',
+            :address1   => '7735 Old Georgetown Road',
+            :city       => 'Bethesda',
+            :phone      => '3014445002',
+            :zipcode    => '20814',
+            :state_id   => @state.id,
+            :country_id => @country.id
+          }
+        end
+
+        it "can update addresses and transition from address to delivery" do
+          api_put :update,
+                  :id => order.to_param, :order_token => order.token,
+                  :order => {
+                    :bill_address_attributes => address,
+                    :ship_address_attributes => address
+                  }
+          json_response['state'].should == 'delivery'
+          json_response['bill_address']['firstname'].should == 'John'
+          json_response['ship_address']['firstname'].should == 'John'
+          response.status.should == 200
+        end
+
+        # Regression test for #4498
+        it "does not contain duplicate variant data in delivery return" do
+          api_put :update,
+                  :id => order.to_param, :order_token => order.token,
+                  :order => {
+                    :bill_address_attributes => address,
+                    :ship_address_attributes => address
+                  }
+          # Shipments manifests should not return the ENTIRE variant
+          # This information is already present within the order's line items
+          expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil
+          expect(json_response['shipments'].first['manifest'].first['variant_id']).to_not be_nil
+        end
       end
 
       it "can update shipping method and transition from delivery to payment" do

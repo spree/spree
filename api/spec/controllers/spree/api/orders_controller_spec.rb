@@ -441,7 +441,7 @@ module Spree
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
             manifest_item["quantity"].should == 1
-            manifest_item["variant"].should have_attributes([:id, :name, :sku, :price])
+            manifest_item["variant_id"].should == order.line_items.first.variant_id
           end
         end
       end
