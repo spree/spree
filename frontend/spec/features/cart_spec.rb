@@ -40,6 +40,25 @@ describe "Cart", inaccessible: true do
     page.should_not have_content("Line items quantity must be an integer")
     page.should_not have_content("RoR Mug")
     page.should have_content("Your cart is empty")
+
+    within "#link-to-cart" do
+      page.should have_content("EMPTY")
+    end
+  end
+
+  it 'allows you to empty the cart', js: true do
+    create(:product, :name => "RoR Mug")
+    visit spree.root_path
+    click_link "RoR Mug"
+    click_button "add-to-cart-button"
+
+    page.should have_content("RoR Mug")
+    click_on "Empty"
+    page.should have_content("Your cart is empty")
+
+    within "#link-to-cart" do
+      page.should have_content("EMPTY")
+    end
   end
 
   # regression for #2276
