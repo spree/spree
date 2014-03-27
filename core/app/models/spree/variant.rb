@@ -87,7 +87,7 @@ module Spree
     # allows extensions to override deleted? if they want to provide
     # their own definition.
     def deleted?
-      deleted_at
+      !!deleted_at
     end
 
     # Product may be created with deleted_at already set,
