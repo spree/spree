@@ -271,4 +271,22 @@ describe Spree::Order do
       order.checkout_steps.should == %w(delivery complete)
     end
   end
+
+  describe "payment processing" do
+    let(:order) { OrderWalkthrough.up_to(:payment) }
+    let(:creditcard) { create(:credit_card) }
+    let!(:payment_method) { create(:bogus_payment_method, :environment => 'test') }
+
+    it "does not process payment within transaction", :truncate => true do
+      # Make sure we are not already in a transaction
+      ActiveRecord::Base.connection.open_transactions.should == 0
+
+      Spree::Payment.any_instance.should_receive(:authorize!) do
+        ActiveRecord::Base.connection.open_transactions.should == 0
+      end
+
+      order.payments.create!({ :amount => order.outstanding_balance, :payment_method => payment_method, :source => creditcard }, :without_protection => true)
+      order.next!
+    end
+  end
 end
