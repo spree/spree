@@ -437,14 +437,13 @@ describe Spree::Order do
       order.insufficient_stock_lines.size.should == 1
       order.insufficient_stock_lines.include?(line_item).should be_true
     end
-
   end
 
   context "empty!" do
-    let(:order) { stub_model(Spree::Order) }
+    let(:order) { stub_model(Spree::Order, item_count: 2) }
     
     before do
-      order.stub(:line_items => line_items = [])
+      order.stub(:line_items => line_items = [1, 2])
       order.stub(:adjustments => adjustments = [])
     end
 
@@ -455,6 +454,7 @@ describe Spree::Order do
       expect(order.updater).to receive(:persist_totals)
 
       order.empty!
+      expect(order.item_total).to eq 0
     end
   end
 
