@@ -15,33 +15,7 @@ Spree::Core::Engine.add_routes do
       resources :product_properties
     end
 
-    resources :checkouts do
-      member do
-        put :next
-        put :advance
-      end
-    end
-
-    resources :variants, :only => [:index, :show] do
-      resources :images
-    end
-
-    resources :option_types do
-      resources :option_values
-    end
-
-    get '/orders/mine', :to => 'orders#mine', :as => 'my_orders'
-
-    resources :orders do
-      resources :addresses, :only => [:show, :update]
-
-      resources :return_authorizations do
-        member do
-          put :add
-          put :cancel
-          put :receive
-        end
-      end
+    order_routes = lambda {
       member do
         put :cancel
         put :empty
@@ -67,7 +41,37 @@ Spree::Core::Engine.add_routes do
           put :remove
         end
       end
+
+      resources :addresses, :only => [:show, :update]
+
+      resources :return_authorizations do
+        member do
+          put :add
+          put :cancel
+          put :receive
+        end
+      end
+    }
+
+    resources :checkouts do
+      member do
+        put :next
+        put :advance
+      end
+      order_routes.call
     end
+
+    resources :variants, :only => [:index, :show] do
+      resources :images
+    end
+
+    resources :option_types do
+      resources :option_values
+    end
+
+    get '/orders/mine', :to => 'orders#mine', :as => 'my_orders'
+
+    resources :orders, &order_routes
 
     resources :zones
     resources :countries, :only => [:index, :show]
