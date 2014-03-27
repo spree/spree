@@ -69,6 +69,9 @@ config.assets.initialize_on_precompile = false
 The assets for your application will still be precompiled, it's just that Rails
 won't be intialized during this process.
 
+### Paperclip image quality issues
+Heroku currently defaults to a surprisingly old version of ImageMagick (6.5 as of March 2014) which can cause problems.  Aside from the fact that 6.5 is missing some of the newer command line arguments that Paperclip can invoke, its [image conversion quality is noticeably inferior](http://i.imgur.com/dqeNdlW.png) to that of the current release.  You can easily work around this by [using a Heroku buildpack to provide the latest ImageMagick release](https://github.com/spree/spree/pull/3104#issuecomment-36977413).  You may have to `:reprocess!` your images after upgrading ImageMagick.
+
 ### S3 Support
 
 Because Heroku's filesystem is readonly, you will need to configure Spree to
