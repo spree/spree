@@ -266,6 +266,25 @@ module Spree
         order.adjustments.first.amount.should eq -4.99
       end
 
+      it "calculates final order total correctly" do
+        params = {
+          adjustments_attributes: [
+            { label: 'Promotion Discount', amount: -3.00 }
+          ],
+          line_items_attributes: {
+            "0" => {
+              variant_id: variant.id,
+              quantity: 5
+            }
+          }
+        }
+
+        order = Importer::Order.import(user,params)
+        expect(order.item_total).to eq(166.1)
+        expect(order.total).to eq(163.1) # = item_total (166.1) - adjustment_total (3.00) 
+
+      end
+
       it 'handles adjustment building exceptions' do
         params = { :adjustments_attributes => [
             { amount: 'XXX' },
