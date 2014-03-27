@@ -232,6 +232,7 @@ module Spree
           shipment.inventory_units.first.variant_id.should eq product.master.id
           shipment.tracking.should eq '123456789'
           shipment.shipping_rates.first.cost.should eq 4.99
+          expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           shipment.stock_location.should eq stock_location
         end
 
