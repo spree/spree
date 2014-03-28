@@ -33,7 +33,7 @@
     </thead>
 
     <tbody data-shipment-number="<%= shipment.number %>" data-order-number="<%= order.number %>">
-      <%= render 'spree/admin/orders/shipment_manifest', order: order, shipment: shipment %>
+      <%= render 'spree/admin/orders/shipment_manifest', shipment: shipment %>
 
       <% unless shipment.shipped? %>
         <tr class="edit-method hidden total">
@@ -88,10 +88,10 @@
         </td>
       </tr>
 
-      <% if @order.special_instructions.present? %>
+      <% if order.special_instructions.present? %>
         <tr class='special_instructions'>
           <td colspan="5">
-            <strong><%= Spree.t(:special_instructions) %>:&nbsp;</strong><%= @order.special_instructions %>
+            <strong><%= Spree.t(:special_instructions) %>:&nbsp;</strong><%= order.special_instructions %>
           </td>
         </tr>
       <% end %>
