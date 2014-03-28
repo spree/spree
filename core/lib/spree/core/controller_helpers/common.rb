@@ -39,12 +39,12 @@ module Spree
           end
 
           def default_title
-            Spree::Config[:site_name]
+            current_store.name
           end
 
           # this is a hook for subclasses to provide title
           def accurate_title
-            Spree::Config[:default_seo_title]
+            current_store.seo_title
           end
 
           def render_404(exception = nil)

@@ -11,6 +11,11 @@ module Spree
       fresh_when(simple_current_order)
     end
 
+    def current_store
+      @current_store ||= Spree::Store.default
+    end
+    helper_method :current_store
+
     protected
       # This method is placed here so that the CheckoutController
       # and OrdersController can both reference it (or any other controller

@@ -46,8 +46,8 @@ module Spree
       end
 
       meta.reverse_merge!({
-        keywords: Spree::Config[:default_meta_keywords],
-        description: Spree::Config[:default_meta_description]
+        keywords: current_store.meta_keywords,
+        description: current_store.meta_description,
       })
       meta
     end
