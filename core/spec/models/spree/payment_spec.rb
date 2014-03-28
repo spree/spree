@@ -645,6 +645,12 @@ describe Spree::Payment do
       payment.source.should have(1).error_on(:number)
       payment.source.should have(1).error_on(:verification_value)
     end
+
+    it "does not build a new source when duplicating the model with source_attributes set" do
+      payment = create(:payment)
+      payment.source_attributes = params[:source_attributes]
+      expect { payment.dup }.to_not change { payment.source }
+    end
   end
 
   describe "#currency" do
