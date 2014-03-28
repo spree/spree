@@ -37,7 +37,7 @@
           <div class="three columns omega">
             <div class="field checkbox">
               <label>
-                <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null].blank?}, '', '1' %>
+                <%= f.check_box :deleted_at_null, {:checked => params[:q][:deleted_at_null] == '0'}, '0', '1' %>
                 <%= Spree.t(:show_deleted) %>
               </label>
             </div>
