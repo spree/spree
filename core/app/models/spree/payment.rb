@@ -102,8 +102,8 @@ module Spree
 
     # see https://github.com/spree/spree/issues/981
     def build_source
-      return if source_attributes.nil?
-      if payment_method and payment_method.payment_source_class
+      return unless new_record?
+      if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
         self.source = payment_method.payment_source_class.new(source_attributes)
       end
     end
