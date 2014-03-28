@@ -64,8 +64,9 @@ Spree::Order.class_eval do
         shipment.save!
 
         shipping_method = Spree::ShippingMethod.find_by_name!(s[:shipping_method])
-        shipment.shipping_rates.create!(:shipping_method => shipping_method,
-                                        :cost => s[:cost])
+        rate = shipment.shipping_rates.create!(:shipping_method => shipping_method,
+                                               :cost => s[:cost])
+        shipment.selected_shipping_rate_id = rate.id
       rescue Exception => e
         raise "Order import shipments: #{e.message} #{s}"
       end

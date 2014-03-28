@@ -231,8 +231,20 @@ module Spree
         shipment = order.shipments.first
         shipment.inventory_units.first.variant_id.should eq product.master.id
         shipment.tracking.should eq '123456789'
-        shipment.shipping_rates.first.cost.should eq 4.99
-        shipment.stock_location.should eq stock_location
+        rate = shipment.selected_shipping_rate
+        rate.shipping_method.name.should == shipping_method.name
+        rate.cost.should == 4.99
+      end
+
+      it 'handles shipment building exceptions' do
+        params = { :shipments_attributes => [{ :tracking => '123456789',
+                                               :cost => '4.99',
+                                               :shipping_method => 'XXX',
+                                               :inventory_units => [{ :sku => sku }]
+                                             }] }
+        expect {
+          order = Order.build_from_api(user, params)
+        }.to raise_error /XXX/
       end
 
       it "raises if cant find stock location" do
