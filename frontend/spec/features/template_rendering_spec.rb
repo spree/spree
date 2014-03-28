@@ -11,7 +11,9 @@ describe "Template rendering" do
   end
 
   it 'layout should have canonical tag referencing site url' do
+    Spree::Store.create!(name: 'My Spree Store', url: 'spreestore.example.com', mail_from_address: 'test@example.com')
+
     visit spree.root_path
-    find('link[rel=canonical]')[:href].should eql('http://demo.spreecommerce.com/')
+    find('link[rel=canonical]')[:href].should eql('http://spreestore.example.com/')
   end
 end

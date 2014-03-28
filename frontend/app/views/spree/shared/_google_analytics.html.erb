@@ -13,7 +13,7 @@
       ga('require', 'ecommerce', 'ecommerce.js');
       ga('ecommerce:addTransaction', {
         'id': '<%= j @order.number %>',                                     // Transaction ID. Required.
-        'affiliation': '<%= Spree::Config[:site_name] %>',                 // Affiliation or store name.
+        'affiliation': '<%= current_store.name %>',                 // Affiliation or store name.
         'revenue': '<%= @order.total %>',                                 // Grand Total.
         'shipping': '<%= @order.shipments.sum("cost + promo_total") %>', // Shipping.
         'tax': '<%= @order.all_adjustments.tax.sum(:amount) %>',        // Tax.
