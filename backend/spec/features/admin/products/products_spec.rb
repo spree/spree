@@ -2,8 +2,6 @@
 require 'spec_helper'
 
 describe "Products" do
-  stub_authorization!
-
   context "as admin user" do
     stub_authorization!
 
@@ -337,7 +335,7 @@ describe "Products" do
         # This will show our deleted product
         click_button "Search"
         click_link product.name
-        find("#product_price").value.to_f.should == product.price
+        find("#product_price").value.to_f.should == product.price.to_f
       end
     end
   end
