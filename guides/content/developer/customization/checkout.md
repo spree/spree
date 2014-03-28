@@ -321,10 +321,9 @@ a translation for that state in the relevant translation file located in the
 `config/locales` directory of your extension or application:
 
 ```ruby
-spree:
-  checkout_steps:
-    names:
-      calling_plan: Calling Plan
+en:
+  order_state:
+    new_step: New Step
 ```
 
 ***
