@@ -82,15 +82,15 @@ module Spree
       }
     end
 
+    def require_phone?
+      true
+    end
+
+    def require_zipcode?
+      true
+    end
+
     private
-      def require_phone?
-        true
-      end
-
-      def require_zipcode?
-        true
-      end
-
       def state_validate
         # Skip state validation without country (also required)
         # or when disabled by preference
