@@ -80,17 +80,28 @@ module Spree
 
     def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
       return "" if current_page?("/") || taxon.nil?
-      separator = raw(separator)
-      crumbs = [content_tag(:li, link_to(Spree.t(:home), spree.root_path) + separator)]
+
+      crumbs = [[Spree.t(:home), spree.root_path]]
+
       if taxon
-        crumbs << content_tag(:li, link_to(Spree.t(:products), products_path) + separator)
-        crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, link_to(ancestor.name , seo_url(ancestor)) + separator) } unless taxon.ancestors.empty?
-        crumbs << content_tag(:li, content_tag(:span, link_to(taxon.name , seo_url(taxon))))
+        crumbs << [Spree.t(:products), products_path]
+        crumbs += taxon.ancestors.collect { |a| [a.name, spree.nested_taxons_path(a.permalink)] } unless taxon.ancestors.empty?
+        crumbs << [taxon.name, spree.nested_taxons_path(taxon.permalink)]
       else
-        crumbs << content_tag(:li, content_tag(:span, Spree.t(:products)))
+        crumbs << [Spree.t(:products), products_path]
       end
-      crumb_list = content_tag(:ul, raw(crumbs.flatten.map{|li| li.mb_chars}.join), class: 'inline')
-      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'sixteen columns')
+
+      separator = raw(separator)
+
+      crumbs.map! do |crumb|
+        content_tag(:li, itemscope:"itemscope", itemtype:"http://data-vocabulary.org/Breadcrumb") do
+          link_to(crumb.last, itemprop: "url") do
+            content_tag(:span, crumb.first, itemprop: "title")
+          end + (crumb == crumbs.last ? '' : separator)
+        end
+      end
+
+      content_tag(:nav, content_tag(:ul, raw(crumbs.map(&:mb_chars).join), class: 'inline'), id: 'breadcrumbs', class: 'sixteen columns')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
