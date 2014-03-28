@@ -15,7 +15,7 @@ module Spree
         end
 
         def collection
-          return @collection if @collection.present?
+          return @collection if defined?(@collection)
           params[:q] ||= HashWithIndifferentAccess.new
 
           @collection = super
