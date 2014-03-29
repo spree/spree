@@ -60,6 +60,29 @@ module Spree
         expect(order.email).to eq params[:email]
       end
 
+      context "assigning a user to an order" do
+        let(:other_user) { stub_model(LegacyUser, :email => 'dana@scully.com') }
+
+        context "as an admin" do
+          before { user.stub :has_spree_role? => true }
+
+          it "permits the user to be assigned" do
+            params = { user_id: other_user.id }
+            order = Importer::Order.import(user, params)
+            expect(order.user_id).to eq(other_user.id)
+          end
+        end
+
+        context "as a user" do
+          before { user.stub :has_spree_role? => false }
+          it "does not assign the order to the other user" do
+            params = { user_id: other_user.id }
+            order = Importer::Order.import(user, params)
+            expect(order.user_id).to eq(user.id)
+          end
+        end
+      end
+
       it 'can build an order from API with just line items' do
         params = { :line_items_attributes => line_items }
 
