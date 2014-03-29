@@ -8,7 +8,7 @@ module Spree
       let!(:state) { country.states.first || create(:state, :country => country) }
       let!(:stock_location) { create(:stock_location) }
 
-      let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
+      let(:user) { stub_model(LegacyUser, :email => 'fox@mulder.com') }
       let(:shipping_method) { create(:shipping_method) }
       let(:payment_method) { create(:check_payment_method) }
 
