@@ -31,18 +31,17 @@ module Spree
 
       context "existing coupon code promotion" do
         let!(:promotion) { Promotion.create name: "promo", :code => "10off"  }
-        
+        let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+
         it "fetches with given code" do
           expect(subject.promotion).to eq promotion
         end
 
         context "with a per-item adjustment action" do
-          let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+          let(:order) { create(:order_with_line_items, :line_items_count => 3) }
+
           context "right coupon given" do
-            let(:order) { create(:order_with_line_items, :line_items_count => 3) }
-
-            let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
-
             context "with correct coupon code casing" do
               before { order.stub :coupon_code => "10off" }
 
@@ -78,6 +77,25 @@ module Spree
                 # Ensure that applying the adjustment actually affects the order's total!
                 order.reload.total.should == 100
               end
+            end
+          end
+
+          context "coexists with a non coupon code promo" do
+            let!(:order) { Order.create }
+
+            before do
+              order.stub :coupon_code => "10off"
+              calculator = Calculator::FlatRate.new(preferred_amount: 10)
+              general_promo = Promotion.create name: "General Promo"
+              general_action = Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator)
+
+              order.contents.add create(:variant)
+            end
+
+            # regression spec for #4515
+            it "successfully activates promo" do
+              subject.apply
+              expect(subject).to be_successful
             end
           end
         end
