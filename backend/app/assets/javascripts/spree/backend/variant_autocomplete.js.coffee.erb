@@ -10,7 +10,6 @@ formatVariantResult = (variant) ->
   variantTemplate variant: variant
 
 $.fn.variantAutocomplete = ->
-  @parent().children(".options_placeholder").prop "id", @parent().data("index")
   @select2
     placeholder: Spree.translations.variant_placeholder
     minimumInputLength: 3
@@ -27,5 +26,4 @@ $.fn.variantAutocomplete = ->
 
     formatResult: formatVariantResult
     formatSelection: (variant) ->
-      $(@element).parent().children(".options_placeholder").html variant.options_text
-      variant.name
+      variant.name + " (#{variant.options_text})"
