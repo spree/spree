@@ -10,7 +10,7 @@ describe Spree::Admin::PromotionsController do
 
     it "succeeds" do
       spree_get :index
-      expect(assigns[:promotions].map(&:id)).to eq [promotion1.id, promotion2.id]
+      expect(assigns[:promotions].map(&:id).sort).to eq [promotion1.id, promotion2.id].sort
     end
 
     context "search" do
