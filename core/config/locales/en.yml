@@ -737,6 +737,7 @@ en:
     new_variant: New Variant
     new_zone: New Zone
     next: Next
+    n_for_x: N for X
     no_actions_added: No actions added
     no_orders_found: No orders found
     no_payment_methods_found: No payment methods found
