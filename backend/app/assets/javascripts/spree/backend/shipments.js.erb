@@ -78,7 +78,7 @@ $(document).ready(function () {
   $('a.cancel-method').click(toggleMethodEdit);
 
   // handle shipping method save
-  $('[data-hook=admin_order_edit_form] a.save-method').on('click', function () {
+  $('a.save-method').on('click', function () {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
@@ -101,12 +101,22 @@ $(document).ready(function () {
     });
   });
 
+  var toggleTrackingEdit = function(event) {
+    event.preventDefault();
+
+    var link = $(this);
+    link.parents('tbody').find('tr.edit-tracking').toggle();
+    link.parents('tbody').find('tr.show-tracking').toggle();
+  }
+
   // handle tracking edit click
-  $('a.edit-tracking').on('click', toggleTrackingEdit);
-  $('a.cancel-tracking').on('click', toggleTrackingEdit);
+  $('a.edit-tracking').click(toggleTrackingEdit);
+  $('a.cancel-tracking').click(toggleTrackingEdit);
 
   // handle tracking save
-  $('[data-hook=admin_order_edit_form] a.save-tracking').on('click', function () {
+  $('.save-tracking').on('click', function (event) {
+    event.preventDefault();
+
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var tracking = link.parents('tbody').find('input#tracking').val();
@@ -120,15 +130,15 @@ $(document).ready(function () {
           tracking: tracking
         }
       }
-    }).done(function () {
-      window.location.reload();
-    }).error(function (msg) {
-      console.log(msg);
+    }).done(function (data) {
+      link.parents('tbody').find('tr.edit-tracking').toggle();
+
+      var show = link.parents('tbody').find('tr.show-tracking');
+      show.toggle();
+      show.find('.tracking-value').html(data.tracking);
     });
   });
-
 });
-
 
 adjustShipmentItems = function(shipment_number, variant_id, quantity){
     var shipment = _.findWhere(shipments, {number: shipment_number + ''});
@@ -155,12 +165,6 @@ adjustShipmentItems = function(shipment_number, variant_id, quantity){
         advanceOrder();
       });
     }
-}
-
-toggleTrackingEdit = function(){
-  var link = $(this);
-  link.parents('tbody').find('tr.edit-tracking').toggle();
-  link.parents('tbody').find('tr.show-tracking').toggle();
 }
 
 toggleMethodEdit = function(){
