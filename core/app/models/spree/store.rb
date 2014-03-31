@@ -14,10 +14,6 @@ module Spree
       where(default: true).first || new
     end
 
-    def self.cached_default
-      @cached_default ||= Store.default
-    end
-
     private
 
     def ensure_default_exists_and_is_unique
