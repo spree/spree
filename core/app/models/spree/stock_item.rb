@@ -8,7 +8,11 @@ module Spree
 
     validates_presence_of :stock_location, :variant
     validates_uniqueness_of :variant_id, scope: [:stock_location_id, :deleted_at]
-    validates :count_on_hand, numericality: { greater_than_or_equal_to: 0 }, if: :verify_count_on_hand?
+
+    validates_numericality_of :count_on_hand,
+                              greater_than_or_equal_to: 0,
+                              less_than_or_equal_to: 2**31 - 1,
+                              only_integer: true, if: :verify_count_on_hand?
 
     delegate :weight, :should_track_inventory?, to: :variant
 
