@@ -6,7 +6,12 @@ module Spree
     after_create :update_stock_item_quantity
 
     validates :stock_item, presence: true
-    validates :quantity, presence: true
+    validates :quantity, presence: true, numericality: {
+                 greater_than_or_equal_to: -2**31,
+                 less_than_or_equal_to: 2**31-1,
+                 only_integer: true,
+                 allow_nil: true
+              }
 
     scope :recent, -> { order('created_at DESC') }
 
