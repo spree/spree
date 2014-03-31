@@ -8,6 +8,8 @@ class CreateSpreeStores < ActiveRecord::Migration
       t.string :seo_title
       t.string :mail_from_address
       t.string :default_currency
+      t.string :code
+      t.boolean :default, default: false, null: false
 
       t.timestamps
     end
