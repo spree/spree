@@ -330,7 +330,6 @@ module Spree
         self.cost = 0 unless self.cost
       end
 
-
       def update_adjustments
         if cost_changed? && state != 'shipped'
           recalculate_adjustments

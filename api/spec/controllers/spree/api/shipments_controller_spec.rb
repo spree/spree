@@ -9,17 +9,17 @@ describe Spree::Api::ShipmentsController do
     stub_authentication!
   end
 
-  let!(:resource_scoping) { { :order_id => shipment.order.to_param, :id => shipment.to_param } }
+  let!(:resource_scoping) { { id: shipment.to_param, shipment: { order_id: shipment.order.to_param } } }
 
   context "as a non-admin" do
     it "cannot make a shipment ready" do
       api_put :ready
-      assert_unauthorized!
+      assert_not_found!
     end
 
     it "cannot make a shipment shipped" do
       api_put :ship
-      assert_unauthorized!
+      assert_not_found!
     end
   end
 
@@ -32,7 +32,7 @@ describe Spree::Api::ShipmentsController do
     it 'can create a new shipment' do
       params = {
         variant_id: stock_location.stock_items.first.variant.to_param,
-        order_id: order.number,
+        shipment: { order_id: order.number },
         stock_location_id: stock_location.to_param,
       }
 
@@ -70,7 +70,7 @@ describe Spree::Api::ShipmentsController do
 
     context 'for completed shipments' do
       let(:order) { create :completed_order_with_totals }
-      let!(:resource_scoping) { { :order_id => order.to_param, :id => order.shipments.first.to_param } }
+      let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }
@@ -100,10 +100,21 @@ describe Spree::Api::ShipmentsController do
 
       it "can transition a shipment from ready to ship" do
         shipment.reload
-        api_put :ship, :order_id => shipment.order.to_param, :id => shipment.to_param, :shipment => { :tracking => "123123" }
+        api_put :ship, id: shipment.to_param, shipment: { tracking: "123123", order_id: shipment.order.to_param }
         json_response.should have_attributes(attributes)
         json_response["state"].should == "shipped"
       end
+
+      context 'DEPRECATED:' do
+        it "can transition a shipment from ready to ship" do
+          ActiveSupport::Deprecation.should_receive(:warn).once
+          shipment.reload
+          api_put :ship, order_id: shipment.order.to_param, id: shipment.to_param, shipment: { tracking: "123123" }
+          json_response.should have_attributes(attributes)
+          json_response["state"].should == "shipped"
+        end
+      end
+
     end
   end
 end
