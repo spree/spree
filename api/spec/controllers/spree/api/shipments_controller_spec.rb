@@ -105,6 +105,15 @@ describe Spree::Api::ShipmentsController do
         json_response["state"].should == "shipped"
       end
 
+      context 'DEPRECATED:' do
+        it "can transition a shipment from ready to ship" do
+          ActiveSupport::Deprecation.should_receive(:warn).once
+          shipment.reload
+          api_put :ship, order_id: shipment.order.to_param, id: shipment.to_param, shipment: { tracking: "123123" }
+          json_response.should have_attributes(attributes)
+          json_response["state"].should == "shipped"
+        end
+      end
     end
   end
 end

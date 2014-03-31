@@ -5,8 +5,11 @@ module Spree
       before_filter :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
 
       def create
-        @order = Spree::Order.find_by!(number: params[:shipment][:order_id])
-        authorize! :read, @order
+        # TODO Can remove conditional here once deprecated #find_order is removed.
+        unless @order.present?
+          @order = Spree::Order.find_by!(number: params[:shipment][:order_id])
+          authorize! :read, @order
+        end
         authorize! :create, Shipment
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
@@ -20,7 +23,11 @@ module Spree
       end
 
       def update
-        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        if @order.present?
+          @shipment = @order.shipments.accessible_by(current_ability, :update).find_by!(number: params[:id])
+        else
+          @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        end
 
         unlock = params[:shipment].delete(:unlock)
 
@@ -76,8 +83,20 @@ module Spree
 
       private
 
+      def find_order
+        if params[:order_id].present?
+          ActiveSupport::Deprecation.warn "Spree::Api::ShipmentsController#find_order is deprecated and will be removed from Spree 2.3.x, access shipments directly without being nested to orders route instead.", caller
+          @order = Spree::Order.find_by!(number: params[:order_id])
+          authorize! :read, @order
+        end
+      end
+
       def find_and_update_shipment
-        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        if @order.present?
+          @shipment = @order.shipments.accessible_by(current_ability, :update).find_by!(number: params[:id])
+        else
+          @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        end
         @shipment.update_attributes(shipment_params)
         @shipment.reload
       end
