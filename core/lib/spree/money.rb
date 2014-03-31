@@ -30,7 +30,7 @@ module Spree
 
       # Check the first character for a currency symbol, alternatively get it
       # from the stated currency string
-      c = if ::Money.assume_from_symbol && i =~ /^(\$|€|£)/
+      c = if ::Monetize.assume_from_symbol && i =~ /^(\$|€|£)/
         case i
         when /^\$/ then "USD"
         when /^€/ then "EUR"
