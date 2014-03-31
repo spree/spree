@@ -26,4 +26,7 @@ $.fn.variantAutocomplete = ->
 
     formatResult: formatVariantResult
     formatSelection: (variant) ->
-      variant.name + " (#{variant.options_text})"
+      if !!variant.options_text
+        variant.name + " (#{variant.options_text})"
+      else
+        variant.name
