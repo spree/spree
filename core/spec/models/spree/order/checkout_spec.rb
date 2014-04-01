@@ -132,10 +132,22 @@ describe Spree::Order do
       end
 
       context "cannot transition to delivery" do
-        context "if there are no shipping rates for any shipment" do
-          specify do
-            transition = lambda { order.next! }
-            transition.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+        context "with an existing shipment" do
+          before do
+            line_item = FactoryGirl.create(:line_item, :price => 10)
+            order.line_items << line_item
+          end
+
+          context "if there are no shipping rates for any shipment" do
+            it "raises an InvalidTransitionError" do
+              transition = lambda { order.next! }
+              transition.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+            end
+
+            it "deletes all the shipments" do
+              order.next
+              order.shipments.should be_empty
+            end
           end
         end
       end
