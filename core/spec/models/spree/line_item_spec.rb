@@ -12,6 +12,11 @@ describe Spree::LineItem do
       line_item.quantity = 2
       line_item.save
     end
+
+    it 'touches the order' do
+      line_item.order.should_receive(:touch)
+      line_item.save
+    end
   end
 
   context '#destroy' do
