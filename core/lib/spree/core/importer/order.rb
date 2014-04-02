@@ -25,7 +25,7 @@ module Spree
             end
 
             user_id = params.delete(:user_id)
-            if user.has_spree_role? :admin
+            if user.has_spree_role? "admin"
               order.user_id = user_id
             end
 
