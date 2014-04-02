@@ -2,10 +2,12 @@ require 'spec_helper'
 
 describe 'products', :caching => true do
   let!(:product) { create(:product) }
+  let!(:product2) { create(:product) }
   let!(:taxonomy) { create(:taxonomy) }
   let!(:taxon) { create(:taxon, :taxonomy => taxonomy) }
 
   before do
+    product2.update_column(:updated_at, 1.day.ago)
     # warm up the cache
     visit spree.root_path
     assert_written_to_cache("views/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
@@ -29,10 +31,25 @@ describe 'products', :caching => true do
     expect(cache_writes.count).to eq(2)
   end
 
-  it "busts the cache when a product is deleted" do
+  it "busts the cache when all products are deleted" do
     product.destroy
+    product2.destroy
     visit spree.root_path
     assert_written_to_cache("views/USD/spree/products/all--0")
+    expect(cache_writes.count).to eq(1)
+  end
+
+  it "busts the cache when the newest product is deleted" do
+    product.destroy
+    visit spree.root_path
+    assert_written_to_cache("views/USD/spree/products/all--#{product2.updated_at.utc.to_s(:number)}")
+    expect(cache_writes.count).to eq(1)
+  end
+
+  it "busts the cache when an older product is deleted" do
+    product2.destroy
+    visit spree.root_path
+    assert_written_to_cache("views/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
     expect(cache_writes.count).to eq(1)
   end
 end
