@@ -85,10 +85,6 @@ module Spree
       !sufficient_stock?
     end
 
-    def assign_stock_changes_to=(shipment)
-      @preferred_shipment = shipment
-    end
-
     # Remove product default_scope `deleted_at: nil`
     def product
       variant.product
