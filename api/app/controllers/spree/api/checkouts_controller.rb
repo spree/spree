@@ -130,6 +130,10 @@ module Spree
           end
           false
         end
+
+        def order_id
+          super || params[:id]
+        end
     end
   end
 end
