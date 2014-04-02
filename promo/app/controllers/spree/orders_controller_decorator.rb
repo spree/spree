@@ -8,10 +8,11 @@ Spree::OrdersController.class_eval do
     end
 
     if @order.update_attributes(params[:order])
-      render :edit and return unless apply_coupon_code
-
       @order.line_items = @order.line_items.select {|li| li.quantity > 0 }
       @order.restart_checkout_flow
+
+      render :edit and return unless apply_coupon_code
+
       fire_event('spree.order.contents_changed')
       respond_with(@order) do |format|
         format.html do
@@ -27,5 +28,4 @@ Spree::OrdersController.class_eval do
       respond_with(@order)
     end
   end
-
 end
