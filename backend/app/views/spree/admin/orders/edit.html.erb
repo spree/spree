@@ -1,4 +1,3 @@
-<%= csrf_meta_tags %>
 <% content_for :page_actions do %>
   <% if can?(:fire, @order) %>
     <li><%= event_links %></li>
