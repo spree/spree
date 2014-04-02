@@ -3,6 +3,12 @@ class window.Spree
   @ready: (callback) ->
     jQuery(document).ready(callback)
 
+  @mountedAt: ->
+    "<%= Rails.application.routes.url_helpers.spree_path %>"
+
+  @pathFor: (path) ->
+    "#{window.location.origin}#{@mountedAt()}#{path}"
+
   # Helper function to take a URL and add query parameters to it
   # Uses the JSUri library from here: https://code.google.com/p/jsuri/
   # Thanks to Jake Moffat for the suggestion: https://twitter.com/jakeonrails/statuses/321776992221544449
@@ -36,3 +42,8 @@ class window.Spree
       url = url_or_settings['url']
       delete url_or_settings['url']
       $.ajax(Spree.url(url).toString(), url_or_settings)
+
+  @routes:
+    states_search: @pathFor('api/states')
+    apply_coupon_code: (order_id) ->
+      Spree.pathFor("api/orders/#{order_id}/apply_coupon_code")
