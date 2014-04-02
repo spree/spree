@@ -119,7 +119,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :reports, :only => [:index, :show] do
+    resources :reports, :only => [:index] do
       collection do
         get :sales_total
         post :sales_total
