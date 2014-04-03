@@ -29,7 +29,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @shipping_methods.each do |shipping_method|%>
+      <% @shipping_methods.includes(:zones, :calculator).each do |shipping_method|%>
         <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows" class="<%= cycle('odd', 'even')%>">
           <td class="align-center"><%= shipping_method.admin_name + ' / ' if shipping_method.admin_name.present? %><%= shipping_method.name %></td>
           <td class="align-center"><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
