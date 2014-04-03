@@ -54,9 +54,10 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:zones) %></legend>
       <%= f.field_container :zones do %>
+        <% shipping_method_zones = @shipping_method.zones.to_a %>
         <% Spree::Zone.all.each do |zone| %>
           <%= label_tag do %>
-            <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %>
+            <%= check_box_tag('shipping_method[zones][]', zone.id, shipping_method_zones.include?(zone)) %>
             <%= zone.name %>
           <% end %>
           <br>
