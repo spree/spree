@@ -98,9 +98,10 @@
       <% end %>
 
       <tr class="show-tracking total">
-        <td colspan="5" class="tracking-value">
+        <td colspan="5">
+          <strong><%= Spree.t(:tracking) %>:</strong>
           <% if shipment.tracking.present? %>
-            <strong><%= Spree.t(:tracking) %>:</strong> <%= shipment.tracking %>
+            <span class="tracking-value"><%= shipment.tracking %></span>
           <% else %>
             <%= Spree.t(:no_tracking_present) %>
           <% end %>
