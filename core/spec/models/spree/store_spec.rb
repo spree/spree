@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Store do
 
-  describe "by_url" do 
+  describe ".by_url" do 
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
 
@@ -14,7 +14,21 @@ describe Spree::Store do
     end
   end
 
-  describe "default" do
+  describe '.current' do
+    let!(:store_1) { create(:store, default: true, url: 'spreecommerce.com') }
+    let!(:store_2) { create(:store, default: false, url: 'www.subdomain.com') }
+
+    it 'should return default when no domain' do
+      expect(subject.class.current).to eql(store_1)
+    end
+
+    it 'should return store for domain' do
+      expect(subject.class.current('spreecommerce.com')).to eql(store_1)
+      expect(subject.class.current('www.subdomain.com')).to eql(store_2)
+    end
+  end
+
+  describe ".default" do
     let!(:store)    { create(:store) }
     let!(:store_2)  { create(:store, default: true) }
 
