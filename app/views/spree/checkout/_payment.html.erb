@@ -3,6 +3,37 @@
     <h3 class="panel-title"><%= Spree.t(:payment_information) %></h3>
   </div>
   <div class="panel-body" data-hook="checkout_payment_step">
+
+    <% if @payment_sources.present? %>
+      <div class="card_options">
+        <%= radio_button_tag 'use_existing_card', 'yes', true %>
+        <label for="use_existing_card_yes">Use an existing card on file</label>
+        <br/>
+        <%= radio_button_tag 'use_existing_card', 'no' %>
+        <label for="use_existing_card_no">Use a new card / payment method</label>
+      </div>
+
+      <div id="existing_cards">
+        <p class="field" data-hook="existing_cards">
+          <table class="existing-credit-card-list">
+            <tbody>
+              <% @payment_sources.each do |card| %>
+                <tr id="<%= dom_id(card,'spree')%>" class="<%= cycle('even', 'odd') %>">
+                  <td><%= card.name %></td>
+                  <td><%= card.display_number %></td>
+                  <td><%= card.month %></td>
+                  <td><%= card.year %></td>
+                  <td>
+                    <%= radio_button_tag "existing_card", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </p>
+      </div>
+    <% end %>
+
     <ul class="list-group" id="payment-method-fields" data-hook>
       <% @order.available_payment_methods.each do |method| %>
       <li class="list-group-item">
@@ -17,7 +48,9 @@
     <ul class="nav" id="payment-methods" data-hook>
       <% @order.available_payment_methods.each do |method| %>
         <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
+          <fieldset>
             <%= render :partial => "spree/checkout/payment/#{method.method_type}", :locals => { :payment_method => method } %>
+          </fieldset>
         </li>
       <% end %>
     </ul>
