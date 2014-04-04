@@ -113,7 +113,8 @@ module Spree
     end
 
     def all_adjustments
-      Adjustment.where("order_id = :order_id OR adjustable_id = :order_id", :order_id => self.id)
+      Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
+        :order_id => self.id)
     end
 
     # For compatiblity with Calculator::PriceSack
