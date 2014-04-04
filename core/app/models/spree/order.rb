@@ -204,14 +204,6 @@ module Spree
       Zone.match(tax_address) || Zone.default_tax
     end
 
-    # Indicates whether tax should be backed out of the price calcualtions in
-    # cases where prices include tax but the customer is not required to pay
-    # taxes in that case.
-    def exclude_tax?
-      return false unless Spree::Config[:prices_inc_tax]
-      return tax_zone != Zone.default_tax
-    end
-
     # Returns the address for taxation based on configuration
     def tax_address
       Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
