@@ -14,3 +14,7 @@
 *   refactor the api to use a general importer in `lib/spree/importer/order.rb`
 
     Peter Berkenbosch
+
+*   Ensure transition to payment processing state happens outside transaction.
+
+    Chris Salzberg
