@@ -20,7 +20,7 @@ describe Spree::OrderContents do
         shipment = create(:shipment)
         expect(subject.order).to_not receive(:ensure_updated_shipments)
         expect(shipment).to receive(:update_amounts)
-        subject.add(variant, 1, nil, shipment)
+        subject.add(variant, 1, shipment: shipment)
       end
     end
 
@@ -111,7 +111,7 @@ describe Spree::OrderContents do
         shipment = create(:shipment)
         expect(subject.order).to_not receive(:ensure_updated_shipments)
         expect(shipment).to receive(:update_amounts)
-        subject.remove(variant, 1, shipment)
+        subject.remove(variant, 1, shipment: shipment)
       end
     end
 

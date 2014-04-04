@@ -462,7 +462,7 @@ describe Spree::Promotion do
       expect(line_item.adjustments).to have(1).item
       expect(order.adjustment_total).to eq -5
 
-      other_line_item = order.contents.add(variant, 1, order.currency)
+      other_line_item = order.contents.add(variant, 1, currency: order.currency)
 
       expect(other_line_item).not_to eq line_item
       expect(other_line_item.adjustments).to have(1).item
