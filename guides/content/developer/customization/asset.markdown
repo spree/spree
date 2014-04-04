@@ -96,7 +96,8 @@ all core extensions no longer have public directories.
 ### Managing your application's assets
 
 Assets that customize your Spree store should go inside the appropriate
-directories inside `vendor/assets/spree`. This is done so that these assets do
+directories inside `vendor/assets/images/spree`, `vendor/assets/javascripts/spree`,
+or `vendor/assets/stylesheets/spree`. This is done so that these assets do
 not interfere with other parts of your application.
 
 ### Managing your extension's assets
