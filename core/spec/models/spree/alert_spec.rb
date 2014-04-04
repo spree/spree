@@ -13,7 +13,7 @@ module Spree
       stub_request(:get, "alerts.spreecommerce.com/alerts.json").
         with(:query => {
           version: Spree.version,
-          name: Spree::Config[:site_name],
+          name: Spree::Store.current.name,
           host: "localhost",
           rails_env: Rails.env,
           rails_version: Rails.version
