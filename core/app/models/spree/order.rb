@@ -272,19 +272,33 @@ module Spree
       shipments.shipped
     end
 
-    def contains?(variant)
-      find_line_item_by_variant(variant).present?
+    def contains?(variant, options = nil)
+      find_line_item_by_variant(variant, options).present?
     end
 
-    def quantity_of(variant)
-      line_item = find_line_item_by_variant(variant)
+    def quantity_of(variant, options = nil)
+      line_item = find_line_item_by_variant(variant, options)
       line_item ? line_item.quantity : 0
     end
 
-    def find_line_item_by_variant(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
+    def find_line_item_by_variant(variant, options = nil)
+      line_items.detect { |line_item| 
+                    line_item.variant_id == variant.id &&
+                    line_item_options_match(line_item, options)                  
+                  }
     end
 
+    # an extension would send params[:options][:product_customizations]={...}
+    # and provide:
+    # def product_customizations_match
+    def line_item_options_match(line_item, options)
+      return true unless options
+
+      options.keys.all? do |key|
+        self.send("#{options[key]}_match".to_sym, line_item, options[key])
+      end
+    end
+                                     
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
