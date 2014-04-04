@@ -96,6 +96,16 @@ describe "Visiting Products", inaccessible: true do
       click_link product.name
       within("#product-price") do
         expect(page).to have_content variant.price
+        expect(page).not_to have_content Spree.t(:out_of_stock)
+      end
+    end
+
+    it "doesn't display out of stock for master product" do
+      product.master.stock_items.update_all count_on_hand: 0, backorderable: false
+
+      click_link product.name
+      within("#product-price") do
+        expect(page).not_to have_content Spree.t(:out_of_stock)
       end
     end
 

@@ -42,7 +42,7 @@
 
           <% if @product.master.can_supply? %>
             <link itemprop="availability" href="http://schema.org/InStock" />
-          <% else %>
+          <% elsif @product.variants.empty? %>
             <br />
             <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
           <% end %> 
