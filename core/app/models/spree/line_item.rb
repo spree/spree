@@ -95,6 +95,12 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
+    def build_options(options)
+      options.keys.each do |key|
+        self.send("build_#{key}",options[key])
+      end
+    end
+
     private
       def update_inventory
         if changed? || target_shipment.present?

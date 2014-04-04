@@ -82,6 +82,9 @@ module Spree
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
+    class_attribute :line_item_comparison_hooks
+    self.line_item_comparison_hooks = Set.new
+
     def self.by_number(number)
       where(number: number)
     end
@@ -112,6 +115,13 @@ module Spree
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
     end
+
+    # Use this method in other gems that wish to register their own custom logic
+    # that should be called when determining if two line items are equal.
+    def self.register_line_item_comparison_hook(hook)
+      self.line_item_comparison_hooks.add(hook)
+    end
+
 
     def all_adjustments
       Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
@@ -269,19 +279,39 @@ module Spree
       shipments.shipped
     end
 
-    def contains?(variant)
-      find_line_item_by_variant(variant).present?
+    def contains?(variant, options = nil)
+      find_line_item_by_variant(variant, options).present?
     end
 
-    def quantity_of(variant)
-      line_item = find_line_item_by_variant(variant)
+    def quantity_of(variant, options = nil)
+      line_item = find_line_item_by_variant(variant, options)
       line_item ? line_item.quantity : 0
     end
 
-    def find_line_item_by_variant(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
+    def find_line_item_by_variant(variant, options = {})
+      line_items.detect { |line_item| 
+                    line_item.variant_id == variant.id &&
+                    line_item_options_match(line_item, options)                  
+                  }
     end
+    
+    # This method enables extensions to participate in the 
+    # "Are these line items equal" decision.
+    #
+    # When adding to cart, an extension would send something like:
+    # params[:product_customizations]={...}
+    #                                 
+    # and would provide:
+    #
+    # def product_customizations_match
+    def line_item_options_match(line_item, options)
+      return true unless options
 
+      options.keys.all? do |key|
+        self.send("#{key}_match".to_sym, line_item, options[key])
+      end
+    end
+                                     
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
@@ -400,15 +430,24 @@ module Spree
     end
 
     def merge!(order, user = nil)
-      order.line_items.each do |line_item|
-        next unless line_item.currency == currency
-        current_line_item = self.line_items.find_by(variant: line_item.variant)
+      order.line_items.each do |other_order_line_item|
+        next unless other_order_line_item.currency == currency
+
+        # Compare the line items of the other order with mine. 
+        # Make sure you allow any extensions to chime in on whether or
+        # not the extension-specific parts of the line item match
+        current_line_item = self.line_items.detect { |my_li| 
+                      my_li.variant == other_order_line_item.variant && 
+                      self.line_item_comparison_hooks.all? { |hook| 
+                        self.send(hook, my_li, other_order_line_item)
+                      }
+                    }
         if current_line_item
-          current_line_item.quantity += line_item.quantity
+          current_line_item.quantity += other_order_line_item.quantity
           current_line_item.save
         else
-          line_item.order_id = self.id
-          line_item.save
+          other_order_line_item.order_id = self.id
+          other_order_line_item.save
         end
       end
 

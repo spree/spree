@@ -250,6 +250,56 @@ describe Spree::Order do
         line_item.quantity.should == 2
         line_item.variant_id.should == variant.id
       end
+
+    end
+
+    context "merging using extension-specific line_item_comparison_hooks" do
+      before do
+        Spree::Order.register_line_item_comparison_hook(:foos_match)
+        Spree::LineItem.any_instance.stub(:build_foos)
+        Spree::Variant.stub(:price_modifier_amount).and_return(0.00)
+      end
+
+      context "2 equal line items" do
+        before do
+          order_1.stub(:foos_match).and_return(true)
+
+          order_1.contents.add(variant, 1, {foos: {}})
+          order_2.contents.add(variant, 1, {foos: {}})
+        end
+
+        specify do
+          #order_1.should_receive(:foos_match)
+          order_1.merge!(order_2)
+          order_1.line_items.count.should == 1
+
+          line_item = order_1.line_items.first
+          line_item.quantity.should == 2
+          line_item.variant_id.should == variant.id
+        end       
+      end
+
+      context "2 different line items" do
+        before do
+          order_1.stub(:foos_match).and_return(false)
+
+          order_1.contents.add(variant, 1, {foos: {}})
+          order_2.contents.add(variant, 1, {foos: {bar: :zoo}})
+        end
+
+        specify do
+          order_1.merge!(order_2)
+          order_1.line_items.count.should == 2
+
+          line_item = order_1.line_items.first
+          line_item.quantity.should == 1
+          line_item.variant_id.should == variant.id
+
+          line_item = order_1.line_items.last
+          line_item.quantity.should == 1
+          line_item.variant_id.should == variant.id
+        end       
+      end
     end
 
     context "merging together two orders with different line items" do
@@ -262,7 +312,7 @@ describe Spree::Order do
 
       specify do
         order_1.merge!(order_2)
-        line_items = order_1.line_items
+        line_items = order_1.line_items.reload
         line_items.count.should == 2
 
         expect(order_1.item_count).to eq 2
