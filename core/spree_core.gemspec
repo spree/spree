@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monetize'
   s.add_dependency 'paperclip', '~> 4.1.1'
   s.add_dependency 'paranoia', '~> 2.0'
+  s.add_dependency 'psych', '>= 2.0.5'
   s.add_dependency 'rails', '~> 4.0.4'
   s.add_dependency 'ransack', '~> 1.1.0'
   s.add_dependency 'state_machine', '1.2.0'
