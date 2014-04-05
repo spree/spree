@@ -54,6 +54,12 @@ module Spree
       true
     end
 
+    # Custom gateways should redefine this method. See Gateway implementation
+    # as an example
+    def reusable_sources(order)
+      []
+    end
+
     def auto_capture?
       self.auto_capture.nil? ? Spree::Config[:auto_capture] : self.auto_capture
     end
