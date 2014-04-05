@@ -39,16 +39,16 @@ describe Spree::Gateway do
     it "finds credit cards associated on a order completed" do
       payment.order.stub completed?: true
 
-      expect(no_card.sources_with_profile(payment.order)).to be_empty
-      expect(has_card.sources_with_profile(payment.order)).not_to be_empty
+      expect(no_card.reusable_sources(payment.order)).to be_empty
+      expect(has_card.reusable_sources(payment.order)).not_to be_empty
     end
 
     it "finds credit cards associated with the order user" do
       cc.update_column :user_id, 1
       payment.order.stub completed?: false
 
-      expect(no_card.sources_with_profile(payment.order)).to be_empty
-      expect(has_card.sources_with_profile(payment.order)).not_to be_empty
+      expect(no_card.reusable_sources(payment.order)).to be_empty
+      expect(has_card.reusable_sources(payment.order)).not_to be_empty
     end
   end
 end
