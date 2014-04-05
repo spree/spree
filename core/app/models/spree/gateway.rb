@@ -64,7 +64,7 @@ module Spree
       payment_source_class.where(id: source_ids).with_payment_profile
     end
 
-    def sources_with_profile(order)
+    def reusable_sources(order)
       if order.completed?
         sources_by_order order
       else
@@ -75,5 +75,8 @@ module Spree
         end
       end
     end
+
+    # for backwards compatibility
+    alias_method :source_with_profiles, :reusable_sources
   end
 end
