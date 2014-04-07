@@ -18,9 +18,10 @@ module Spree
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)
-      return unless matches = self.includes(:zone_members).
-        order('zone_members_count', 'created_at').
-        select { |zone| zone.include? address }
+      return unless address and matches = self.includes(:zone_members).
+        order('spree_zones.zone_members_count', 'spree_zones.created_at').
+        where('(spree_zone_members.zoneable_type = "Spree::Country" AND spree_zone_members.zoneable_id = ?) OR (spree_zone_members.zoneable_type = "Spree::State" AND spree_zone_members.zoneable_id = ?)', address.country_id, address.state_id).
+        references(:zones)
 
       ['state', 'country'].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }
