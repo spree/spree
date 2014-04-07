@@ -2,6 +2,8 @@ module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
 
+    ssl_allowed :cart_link
+    
     def unauthorized
       render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
     end
