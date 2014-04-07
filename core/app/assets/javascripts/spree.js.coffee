@@ -12,8 +12,6 @@ class window.Spree
     if query
       $.each query, (key, value) ->
         uri.addQueryParam(key, value)
-    if Spree.api_key
-      uri.addQueryParam('token', Spree.api_key)
     return uri
 
   # Helper method in case people want to call uri rather than url

@@ -20,8 +20,7 @@ $.fn.productAutocomplete = function () {
             name_cont: term,
             sku_cont: term
           },
-          m: 'OR',
-          token: Spree.api_key
+          m: 'OR'
         };
       },
       results: function (data, page) {
