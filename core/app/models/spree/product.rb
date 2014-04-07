@@ -24,6 +24,7 @@ module Spree
     friendly_id :name, use: :slugged
 
     acts_as_paranoid
+
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy, inverse_of: :product
@@ -64,6 +65,7 @@ module Spree
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
+
     after_save :save_master
     after_save :touch
     after_touch :touch_taxons

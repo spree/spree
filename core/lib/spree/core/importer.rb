@@ -6,3 +6,4 @@ module Spree
 end
 
 require 'spree/core/importer/order'
+require 'spree/core/importer/product'
