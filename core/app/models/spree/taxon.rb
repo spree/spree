@@ -10,7 +10,7 @@ module Spree
 
     validates :name, presence: true
 
-    after_touch :touch_parent
+    after_touch :touch_parents
 
     has_attached_file :icon,
       styles: { mini: '32x32>', normal: '128x128>' },
@@ -80,8 +80,9 @@ module Spree
 
     private
 
-    def touch_parent
-      parent.touch if parent
+    def touch_parents
+      # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
+      self.class.where(id: ancestors.pluck(:id)).update_all(updated_at: Time.now)
     end
   end
 end
