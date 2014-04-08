@@ -9,7 +9,7 @@ describe Spree::TaxRate do
 
     it "should return an empty array when tax_zone is nil" do
       order.stub :tax_zone => nil
-      Spree::TaxRate.match(order).should == []
+      Spree::TaxRate.match(order.tax_zone).should == []
     end
 
     context "when no rate zones match the tax zone" do
@@ -25,7 +25,7 @@ describe Spree::TaxRate do
 
         it "should return an empty array" do
           order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order).should == []
+          Spree::TaxRate.match(order.tax_zone).should == []
         end
 
         it "should return the rate that matches the rate zone" do
@@ -37,7 +37,7 @@ describe Spree::TaxRate do
           )
 
           order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order).should == [rate]
+          Spree::TaxRate.match(order.tax_zone).should == [rate]
         end
 
         it "should return all rates that match the rate zone" do
@@ -56,7 +56,7 @@ describe Spree::TaxRate do
           )
 
           order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order).should == [rate1, rate2]
+          Spree::TaxRate.match(order.tax_zone).should == [rate1, rate2]
         end
 
         context "when the tax_zone is contained within a rate zone" do
@@ -73,7 +73,7 @@ describe Spree::TaxRate do
           end
 
           it "should return the rate zone" do
-            Spree::TaxRate.match(order).should == [@rate]
+            Spree::TaxRate.match(order.tax_zone).should == [@rate]
           end
         end
       end
@@ -93,7 +93,7 @@ describe Spree::TaxRate do
                                 :included_in_price => included_in_price)
         end
 
-        subject { Spree::TaxRate.match(order) }
+        subject { Spree::TaxRate.match(order.tax_zone) }
 
         context "when the order has the same tax zone" do
           before do
@@ -182,7 +182,7 @@ describe Spree::TaxRate do
       it "should apply adjustments for two tax rates to the order" do
         rate_1.should_receive(:adjust)
         rate_2.should_not_receive(:adjust)
-        Spree::TaxRate.adjust(order, line_items)
+        Spree::TaxRate.adjust(order.tax_zone, line_items)
       end
     end
 
@@ -196,7 +196,7 @@ describe Spree::TaxRate do
       it "should apply adjustments for two tax rates to the order" do
         rate_1.should_receive(:adjust)
         rate_2.should_not_receive(:adjust)
-        Spree::TaxRate.adjust(order, shipments)
+        Spree::TaxRate.adjust(order.tax_zone, shipments)
       end
     end
   end
@@ -271,12 +271,12 @@ describe Spree::TaxRate do
       let!(:line_item) { @order.contents.add(@nontaxable.master, 1) }
 
       it "should not create a tax adjustment" do
-        Spree::TaxRate.adjust(@order, @order.line_items)
+        Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
         line_item.adjustments.tax.charge.count.should == 0
       end
 
       it "should not create a refund" do
-        Spree::TaxRate.adjust(@order, @order.line_items)
+        Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
         line_item.adjustments.credit.count.should == 0
       end
     end
@@ -293,12 +293,12 @@ describe Spree::TaxRate do
 
         context "when zone is contained by default tax zone" do
           it "should create two adjustments, one for each tax rate" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.count.should == 1
           end
 
           it "should not create a tax refund" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.credit.count.should == 0
           end
         end
@@ -311,12 +311,12 @@ describe Spree::TaxRate do
             @zone.zone_members.delete_all
           end
           it "should create an adjustment" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.charge.count.should == 1
           end
 
           it "should not create a tax refund for each tax rate" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.credit.count.should == 0
           end
         end
@@ -331,12 +331,12 @@ describe Spree::TaxRate do
           end
 
           it "should not create positive adjustments" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.charge.count.should == 0
           end
 
           it "should create a tax refund for each tax rate" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.credit.count.should == 1
           end
         end
@@ -353,12 +353,12 @@ describe Spree::TaxRate do
           end
 
           it "should create an adjustment" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.count.should == 2
           end
 
           it "should not create a tax refund" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.credit.count.should == 0
           end
         end
@@ -371,8 +371,8 @@ describe Spree::TaxRate do
             line_item.update_column(:pre_tax_amount, @price_before_taxes)
             # Clear out any previously automatically-applied adjustments
             @order.all_adjustments.delete_all
-            @rate1.adjust(@order, line_item)
-            @rate2.adjust(@order, line_item)
+            @rate1.adjust(@order.tax_zone, line_item)
+            @rate2.adjust(@order.tax_zone, line_item)
           end
 
           it "should create two price adjustments" do

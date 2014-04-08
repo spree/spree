@@ -113,7 +113,7 @@ module Spree
       end
 
       def create_tax_charge
-        Spree::TaxRate.adjust(order, [self])
+        Spree::TaxRate.adjust(order.tax_zone, [self])
       end
 
       def ensure_proper_currency

@@ -24,12 +24,12 @@ module Spree
     scope :by_zone, ->(zone) { where(zone_id: zone) }
 
     # Gets the array of TaxRates appropriate for the specified order
-    def self.match(order)
-      return [] unless order.tax_zone
+    def self.match(order_tax_zone)
+      return [] unless order_tax_zone
       rates = all.select do |rate|
         # Why "potentially"?
         # Go see the documentation for that method.
-        rate.potentially_applicable?(order)
+        rate.potentially_applicable?(order_tax_zone)
       end
 
       # Imagine with me this scenario:
@@ -68,8 +68,8 @@ module Spree
     end
 
     # This method is best described by the documentation on #potentially_applicable?
-    def self.adjust(order, items)
-      rates = self.match(order)
+    def self.adjust(order_tax_zone, items)
+      rates = self.match(order_tax_zone)
       tax_categories = rates.map(&:tax_category)
       relevant_items = items.select { |item| tax_categories.include?(item.tax_category) }
       relevant_items.each do |item|
@@ -77,7 +77,7 @@ module Spree
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
         relevant_rates.each do |rate|
-          rate.adjust(order, item)
+          rate.adjust(order_tax_zone, item)
         end
       end
     end
@@ -136,21 +136,21 @@ module Spree
     # Under no circumstances should negative adjustments be applied for the Spanish tax rates.
     #
     # Those rates should never come into play at all and only the French rates should apply.
-    def potentially_applicable?(order)
+    def potentially_applicable?(order_tax_zone)
       # If the rate's zone matches the order's tax zone, then it's applicable.
-      self.zone == order.tax_zone ||
+      self.zone == order_tax_zone ||
       # If the rate's zone *contains* the order's tax zone, then it's applicable.
-      self.zone.contains?(order.tax_zone) ||
+      self.zone.contains?(order_tax_zone) ||
       # 1) The rate's zone is the default zone, then it's always applicable.
       (self.included_in_price? && self.zone.default_tax)
     end
 
     # Creates necessary tax adjustments for the order.
-    def adjust(order, item)
+    def adjust(order_tax_zone, item)
       amount = compute_amount(item)
       return if amount == 0
 
-      included = included_in_price && default_zone_or_zone_match?(item)
+      included = included_in_price && default_zone_or_zone_match?(order_tax_zone)
 
       if amount < 0
         label = Spree.t(:refund) + ' ' + create_label
@@ -159,7 +159,7 @@ module Spree
       self.adjustments.create!({
         :adjustable => item,
         :amount => amount,
-        :order => order,
+        :order_id => item.order_id,
         :label => label || create_label,
         :included => included
       })
@@ -168,7 +168,7 @@ module Spree
     # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
       if included_in_price
-        if default_zone_or_zone_match?(item)
+        if default_zone_or_zone_match?(item.order.tax_zone)
           calculator.compute(item)
         else
           # In this case, it's a refund.
@@ -179,9 +179,9 @@ module Spree
       end
     end
 
-    def default_zone_or_zone_match?(item)
-      Zone.default_tax.contains?(item.order.tax_zone) ||
-      item.order.tax_zone == self.zone
+    def default_zone_or_zone_match?(order_tax_zone)
+      Zone.default_tax.contains?(order_tax_zone) ||
+      order_tax_zone == self.zone
     end
 
     private
