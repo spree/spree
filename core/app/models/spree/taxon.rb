@@ -2,7 +2,7 @@ module Spree
   class Taxon < Spree::Base
     acts_as_nested_set dependent: :destroy
 
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', touch: true, inverse_of: :taxons
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
@@ -10,7 +10,7 @@ module Spree
 
     validates :name, presence: true
 
-    after_touch :touch_parents
+    after_touch :touch_ancestors_and_taxonomy
 
     has_attached_file :icon,
       styles: { mini: '32x32>', normal: '128x128>' },
@@ -80,9 +80,10 @@ module Spree
 
     private
 
-    def touch_parents
+    def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
       self.class.where(id: ancestors.pluck(:id)).update_all(updated_at: Time.now)
+      taxonomy.touch
     end
   end
 end
