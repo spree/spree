@@ -30,6 +30,5 @@ group :test do
   gem 'poltergeist', '1.5.0'
 end
 
-gem 'rails', github: 'rails/rails', branch: '4-1-0'
 gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
 gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
