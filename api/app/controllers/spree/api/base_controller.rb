@@ -5,6 +5,7 @@ module Spree
     class BaseController < ActionController::Base
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::SSL
+      include Spree::Core::ControllerHelpers::Store
       include Spree::Core::ControllerHelpers::StrongParameters
 
       attr_accessor :current_api_user
