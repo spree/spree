@@ -12,11 +12,6 @@ module Spree
 
           before_filter :set_user_language
 
-          def current_store
-            @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
-          end
-          helper_method :current_store
-
           protected
 
           # Creates the hash that is sent as the payload for all notifications. Specific notifications will
