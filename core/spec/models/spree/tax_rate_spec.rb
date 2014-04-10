@@ -56,7 +56,7 @@ describe Spree::TaxRate do
           )
 
           order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order.tax_zone).should == [rate1, rate2]
+          Spree::TaxRate.match(order.tax_zone).should match_array([rate1, rate2])
         end
 
         context "when the tax_zone is contained within a rate zone" do

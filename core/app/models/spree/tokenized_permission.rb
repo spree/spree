@@ -3,4 +3,3 @@ module Spree
     belongs_to :permissable, polymorphic: true
   end
 end
-

@@ -831,7 +831,7 @@ describe Spree::Payment do
       expect(payment.process!).to be_true
       payment.state_changes.count.should == 2
       changes = payment.state_changes.map { |change| { change.previous_state => change.next_state} }
-      expect(changes).to eq([
+      expect(changes).to match_array([
         {"checkout" => "processing"},
         { "processing" => "pending"}
       ])
