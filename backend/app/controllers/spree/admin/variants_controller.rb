@@ -35,7 +35,7 @@ module Spree
           if @deleted.blank?
             @collection ||= super
           else
-            @collection ||= Variant.where(:product_id => parent.id).deleted
+            @collection ||= Variant.only_deleted.where(:product_id => parent.id)
           end
           @collection
         end
