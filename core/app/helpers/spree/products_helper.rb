@@ -9,7 +9,6 @@ module Spree
       end
     end
 
-
     # returns the formatted price for the specified variant as a difference from product price
     def variant_price_diff(variant)
       diff = variant.amount_in(current_currency) - variant.product.amount_in(current_currency)
@@ -54,8 +53,9 @@ module Spree
     end
 
     def cache_key_for_products
-      max_updated_at = (@products.maximum(:updated_at) || 0).to_s(:number)
       count = Spree::Product.count
+      max_updated_at = count == 0 ? Date.today : @products.maximum(:updated_at)
+      max_updated_at = max_updated_at.to_s(:number)
       "#{current_currency}/spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}"
     end
   end
