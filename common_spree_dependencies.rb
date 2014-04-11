@@ -29,6 +29,3 @@ group :test do
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
 end
-
-gem 'polyamorous', github: 'activerecord-hackery/polyamorous'
-gem 'ransack', github: 'activerecord-hackery/ransack', branch: 'rails-4.1'
