@@ -26,7 +26,7 @@
 
     <% if @product.price_in(current_currency) and !@product.price.nil? %>
       <div data-hook="product_price" class="col-md-5">
-        
+
         <div id="product-price">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
@@ -36,9 +36,9 @@
             <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
           </div>
 
-          <% if @product.master.in_stock? %>
+          <% if @product.master.can_supply? %>
             <link itemprop="availability" href="http://schema.org/InStock" />
-          <% end %> 
+          <% end %>
         </div>
 
         <div class="add-to-cart">
@@ -58,6 +58,6 @@
           <br>
           <div><span class="price selling" itemprop="price"><%= Spree.t('product_not_available_in_this_currency') %></span></div>
         </div>
-    <% end %>    
+    <% end %>
   </div>
 <% end %>
