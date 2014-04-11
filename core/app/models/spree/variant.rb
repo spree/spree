@@ -149,9 +149,13 @@ module Spree
       "#{sku} #{options_text}".strip
     end
 
-    def in_stock?(quantity=1)
-      puts %q{[DEPRECATION] In Spree 2.2, Variant#in_stock? will no longer take a quantity. Use Variant#can_supply? instead.}
-      can_stock?(quantity)
+    def in_stock?(quantity=:argument_here_is_deprecated)
+      if quantity == :argument_here_is_deprecated
+        can_stock?(1)
+      else
+        puts %q{[DEPRECATION] In Spree 2.2, Variant#in_stock? will no longer take a quantity. Use Variant#can_supply? instead.}
+        can_stock?(quantity)
+      end
     end
 
     def can_stock?(quantity=1)
