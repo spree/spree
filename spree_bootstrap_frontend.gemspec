@@ -20,15 +20,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'kaminari-bootstrap',  '~> 3.0.1'
   s.add_runtime_dependency 'spree_core',          '~> 2.3.0.beta'
 
-  s.add_development_dependency 'capybara',        '~> 2.2.1'
-  s.add_development_dependency 'coffee-rails',    '~> 4.0.0'
-  s.add_development_dependency 'database_cleaner','~> 1.2.0'
-  s.add_development_dependency 'factory_girl',    '~> 4.4'
-  s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'rspec-rails',     '~> 2.14'
-  s.add_development_dependency 'sass-rails',      '~> 4.0.0'
-  s.add_development_dependency 'selenium-webdriver'
-  s.add_development_dependency 'poltergeist',     '~> 1.5.0'
-  s.add_development_dependency 'simplecov',       '~> 0.7.1'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'email_spec', '~> 1.2.1'
+  s.add_development_dependency 'capybara-accessible'
 end

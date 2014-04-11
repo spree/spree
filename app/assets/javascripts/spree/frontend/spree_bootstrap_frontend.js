@@ -1,1 +1,1 @@
-//= require spree/frontend
+// Placeholder for spec dummy app
