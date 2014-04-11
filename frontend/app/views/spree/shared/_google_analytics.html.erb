@@ -5,7 +5,7 @@
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', '<%= tracker.analytics_id %>','<%= Spree::Config[:site_url].sub!(/^www./,'') %>');
+    ga('create', '<%= tracker.analytics_id %>','<%= Spree::Config[:site_url].sub!(/(^www.)?/,'') %>');
     ga('send', 'pageview');
 
     <% if flash[:commerce_tracking] && @order.present? %>
@@ -15,8 +15,8 @@
         'id': '<%= j @order.number %>',                                     // Transaction ID. Required.
         'affiliation': '<%= Spree::Config[:site_name] %>',                 // Affiliation or store name.
         'revenue': '<%= @order.total %>',                                 // Grand Total.
-        'shipping': '<%= @order.shipments.sum("cost + promo_total") %>', // Shipping.
-        'tax': '<%= @order.additional_tax_total %>',        // Tax.
+        'shipping': '<%= @order.ship_total %>',                          // Shipping.
+        'tax': '<%= @order.additional_tax_total %>',                    // Tax.
         'currencyCode': '<%= current_currency %>'                      // local currency code.
       });
       <% @order.line_items.each do |line_item| %>
