@@ -1,3 +1,8 @@
+# Spree Bootstrap (Frontend)
+
+[![Build Status](https://api.travis-ci.org/200Creative/spree_bootstrap_frontend.png?branch=master)](https://travis-ci.org/200Creative/spree_bootstrap_frontend)
+[![Code Climate](https://codeclimate.com/github/200Creative/spree_bootstrap_frontend.png)](https://codeclimate.com/github/200Creative/spree_bootstrap_frontend)
+
 ### Switches out [Spree](https://github.com/spree/spree)’s entire frontend for a bootstrap 3 powered frontend.
 
 This has several large advantages:
@@ -43,7 +48,7 @@ bundle install
 ```
 
 Then copy the default stylesheets into your project
- 
+
 ```bash
 rails generate spree_bootstrap_frontend:install
 ```
