@@ -189,24 +189,25 @@ THIS IS THE BEST PRODUCT EVER!
         helper.stub(:params) { {:page => 10} }
       end
 
-      context 'when there are products' do
+      context 'when there is a maximum updated date' do
         let(:updated_at) { Date.new(2011, 12, 13) }
         before :each do
-          Spree::Product.stub(:count) { 5 }
+          @products.stub(:count) { 5 }
           @products.stub(:maximum).with(:updated_at) { updated_at }
         end
 
         it { should == 'USD/spree/products/all-10-20111213-5' }
       end
 
-      context 'when there are no products' do
+      context 'when there is no considered maximum updated date' do
         let(:today) { Date.new(2013, 12, 11) }
         before :each do
-          Spree::Product.stub(:count) { 0 }
+          @products.stub(:count) { 1234567 }
+          @products.stub(:maximum).with(:updated_at) { nil }
           Date.stub(:today) { today }
         end
 
-        it { should == 'USD/spree/products/all-10-20131211-0' }
+        it { should == 'USD/spree/products/all-10-20131211-1234567' }
       end
     end
   end
