@@ -8,7 +8,7 @@
     ga('create', '<%= tracker.analytics_id %>','<%= Spree::Config[:site_url].sub!(/^www./,'') %>');
     ga('send', 'pageview');
 
-    <% if flash[:commerce_tracking] && @order.present? %>
+    <% if order_just_completed?(@order) %>
       <%# more info: https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce %>
       ga('require', 'ecommerce', 'ecommerce.js');
       ga('ecommerce:addTransaction', {

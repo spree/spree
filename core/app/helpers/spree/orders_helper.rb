@@ -8,6 +8,10 @@ module Spree
     def truncated_product_description(product)
       truncate_html(raw(product.description))
     end
+
+    def order_just_completed?(order)
+      flash[:commerce_tracking] && order.present?
+    end
   end
 end
 
