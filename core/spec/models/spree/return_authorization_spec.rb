@@ -4,12 +4,13 @@ describe Spree::ReturnAuthorization do
   let(:stock_location) { Spree::StockLocation.create(:name => "test") }
   let(:order) { FactoryGirl.create(:shipped_order) }
 
-  let(:variant) { order.shipments.first.inventory_units.first.variant }
+  let(:variant) { order.variants.first }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
   context "save" do
+    let(:order) { Spree::Order.create }
+
     it "should be invalid when order has no inventory units" do
-      order.shipments.destroy_all
       return_authorization.save
       return_authorization.errors[:order].should == ["has no shipped units"]
     end
@@ -18,7 +19,7 @@ describe Spree::ReturnAuthorization do
   describe ".before_create" do
     describe "#generate_number" do
       context "number is assigned" do
-        let(:return_authorization) { FactoryGirl.build(:return_authorization, number: '123') }
+        let(:return_authorization) { Spree::ReturnAuthorization.new(number: '123') }
 
         it "should return the assigned number" do
           return_authorization.save
@@ -27,7 +28,9 @@ describe Spree::ReturnAuthorization do
       end
 
       context "number is not assigned" do
-        let(:return_authorization) { FactoryGirl.build(:return_authorization, number: nil) }
+        let(:return_authorization) { Spree::ReturnAuthorization.new(number: nil) }
+
+        before { return_authorization.stub valid?: true }
 
         it "should assign number with random RMA number" do
           return_authorization.save
@@ -39,11 +42,6 @@ describe Spree::ReturnAuthorization do
 
   context "add_variant" do
     context "on empty rma" do
-      it "should associate inventory unit" do
-        return_authorization.add_variant(variant.id, 1)
-        return_authorization.inventory_units.size.should == 1
-      end
-
       it "should associate inventory units as shipped" do
         return_authorization.add_variant(variant.id, 1)
         expect(return_authorization.inventory_units.where(state: 'shipped').size).to eq 1
