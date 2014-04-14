@@ -26,7 +26,7 @@ module Spree
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order_tax_zone)
       return [] unless order_tax_zone
-      rates = all.select do |rate|
+      rates = includes(zone: { zone_members: :zoneable }).load.select do |rate|
         # Why "potentially"?
         # Go see the documentation for that method.
         rate.potentially_applicable?(order_tax_zone)
@@ -51,7 +51,7 @@ module Spree
       end
     end
 
-    # Pre-tax amounts must be stored so that we can calculate 
+    # Pre-tax amounts must be stored so that we can calculate
     # correct rate amounts in the future. For example:
     # https://github.com/spree/spree/issues/4318#issuecomment-34723428
     def self.store_pre_tax_amount(item, rates)
@@ -95,7 +95,7 @@ module Spree
       rate || 0
     end
 
-    
+
     # Tax rates can *potentially* be applicable to an order.
     # We do not know if they are/aren't until we attempt to apply these rates to
     # the items contained within the Order itself.
@@ -103,14 +103,14 @@ module Spree
     # but then has a tax category that doesn't match against any of the line items
     # inside of the order, then that tax rate will not be applicable to anything.
     # For instance:
-    # 
+    #
     # Zones:
     #   - Spain (default tax zone)
     #   - France
     #
     # Tax rates: (note: amounts below do not actually reflect real VAT rates)
     #   21% inclusive - "Clothing" - Spain
-    #   18% inclusive - "Clothing" - France 
+    #   18% inclusive - "Clothing" - France
     #   10% inclusive - "Food" - Spain
     #   8% inclusive - "Food" - France
     #   5% inclusive - "Hotels" - Spain
@@ -119,14 +119,14 @@ module Spree
     # Order has:
     #   Line Item #1 - Tax Category: Clothing
     #   Line Item #2 - Tax Category: Food
-    # 
+    #
     # Tax rates that should be selected:
     #
     #  21% inclusive - "Clothing" - Spain
     #  10% inclusive - "Food" - Spain
     #
     # If the order's address changes to one in France, then the tax will be recalculated:
-    #  
+    #
     #  18% inclusive - "Clothing" - France
     #  8% inclusive - "Food" - France
     #
