@@ -36,3 +36,8 @@ end
 child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
 end
+
+# Necessary for backend's order interface
+node :permissions do
+  { can_update: current_ability.can?(:update, root_object) }
+end
