@@ -87,9 +87,8 @@ module Spree
       where(number: number)
     end
 
-    def self.between(start_date, end_date)
-      where(created_at: start_date..end_date)
-    end
+    scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
+    scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
 
     def self.by_customer(customer)
       joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
