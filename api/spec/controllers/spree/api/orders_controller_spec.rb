@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/bar_ability'
 
 module Spree
   describe Api::OrdersController do
@@ -111,6 +112,20 @@ module Spree
       request.headers["X-Spree-Order-Token"] = order.token
       api_get :show, :id => order.to_param
       response.status.should == 200
+    end
+
+    context "with BarAbility registered" do
+      before { Spree::Ability.register_ability(::BarAbility) }
+      after { Spree::Ability.remove_ability(::BarAbility) }
+
+      it "can view an order" do
+        user = mock_model(Spree::LegacyUser)
+        user.should_receive(:has_spree_role?).with('bar').and_return(true)
+        user.should_receive(:has_spree_role?).with('admin').and_return(false)
+        controller.stub try_spree_current_user: user
+        api_get :show, :id => order.to_param
+        response.status.should == 200
+      end
     end
 
     it "cannot cancel an order that doesn't belong to them" do
