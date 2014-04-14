@@ -46,5 +46,22 @@ describe Spree::Promotion::Rules::Product do
         rule.should_not be_eligible(order)
       end
     end
+
+    context "with 'none' match policy" do
+      before { rule.preferred_match_policy = 'none' }
+
+      it "should be eligible if none of the eligible products are ordered" do
+        order.stub(:products => [@product1])
+        rule.stub(:eligible_products => [@product2, @product3])
+        rule.should be_eligible(order)
+      end
+
+      it "should not be eligible if any of the eligible products is ordered" do
+        order.stub(:products => [@product1, @product2])
+        rule.stub(:eligible_products => [@product2, @product3])
+        rule.should_not be_eligible(order)
+      end
+
+    end
   end
 end
