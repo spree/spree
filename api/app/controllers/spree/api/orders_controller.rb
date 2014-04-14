@@ -28,6 +28,7 @@ module Spree
 
       def empty
         find_order
+        authorize! :update, @order, order_token
         @order.empty!
         @order.update!
         render text: nil, status: 200
@@ -41,12 +42,14 @@ module Spree
 
       def show
         find_order
+        authorize! :show, @order, order_token
         method = "before_#{@order.state}"
         send(method) if respond_to?(method, true)
         respond_with(@order)
       end
 
       def update
+        authorize! :update, @order, order_token
         find_order(true)
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
@@ -84,6 +87,7 @@ module Spree
       # https://github.com/spree/spree/blob/2-1-stable/frontend/app/controllers/spree/orders_controller.rb#L100
       def apply_coupon_code
         find_order
+        authorize! :update, @order, order_token
         @order.coupon_code = params[:coupon_code]
         @order.save
 
@@ -162,7 +166,6 @@ module Spree
 
         def find_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
-          authorize! :update, @order, order_token
         end
 
         def before_delivery
