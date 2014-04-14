@@ -26,9 +26,10 @@ module Spree
 
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order)
-      return [] unless order.tax_zone
-      all.select do |rate|
-        rate.zone == order.tax_zone || rate.zone.contains?(order.tax_zone) || rate.zone.default_tax
+      order_zone = order.tax_zone
+      return [] unless order_zone
+      includes(zone: { zone_members: :zoneable }).all.select do |rate|
+        rate.zone == order_zone || rate.zone.contains?(order_zone) || rate.zone.default_tax
       end
     end
 
