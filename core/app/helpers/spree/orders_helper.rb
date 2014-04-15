@@ -10,7 +10,7 @@ module Spree
     end
 
     def order_just_completed?(order)
-      flash[:commerce_tracking] && order.present?
+      flash[:order_completed] && order.present?
     end
   end
 end
