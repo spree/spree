@@ -3,4 +3,3 @@ class AddUserIdCreatedByIdIndexToOrder < ActiveRecord::Migration
     add_index :spree_orders, [:user_id, :created_by_id]
   end
 end
-https://github.com/spree/spree/issues/4582
