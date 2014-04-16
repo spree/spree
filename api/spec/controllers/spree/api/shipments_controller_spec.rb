@@ -52,7 +52,7 @@ describe Spree::Api::ShipmentsController do
       response.status.should == 200
       json_response['stock_location_name'].should == stock_location.name
     end
-    
+
     it "can make a shipment ready" do
       Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
       api_put :ready
@@ -103,16 +103,6 @@ describe Spree::Api::ShipmentsController do
         api_put :ship, id: shipment.to_param, shipment: { tracking: "123123", order_id: shipment.order.to_param }
         json_response.should have_attributes(attributes)
         json_response["state"].should == "shipped"
-      end
-
-      context 'DEPRECATED:' do
-        it "can transition a shipment from ready to ship" do
-          ActiveSupport::Deprecation.should_receive(:warn).once
-          shipment.reload
-          api_put :ship, order_id: shipment.order.to_param, id: shipment.to_param, shipment: { tracking: "123123" }
-          json_response.should have_attributes(attributes)
-          json_response["state"].should == "shipped"
-        end
       end
 
     end
