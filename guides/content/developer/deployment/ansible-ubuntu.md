@@ -37,7 +37,8 @@ The playbook has this setup within `ruby-webapp.yml`:
 
   roles:
     - webserver
-    - database```
+    - database
+```
 
 This tells Ansible that on all hosts specified within the `hosts` file, we want to use the user `root` and the variables from `vars/defaults.yml`. On these hosts, we want to give them the roles of `webserver` and `database`. Since we're only setting up one host here, that is a good setup. If we wanted the server and the database to be on separate hosts, then we would need to configure it as such within the playbook.
 
@@ -59,7 +60,8 @@ rubyTmpDir: /usr/local/src
 rubyUrl: http://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz
 rubyCompressedFile: ruby-2.0.0-p353.tar.gz
 rubyName: ruby-2.0.0-p353
-tmpRubyPath: {{rubyTmpDir}}/{{rubyName}}```
+tmpRubyPath: {{rubyTmpDir}}/{{rubyName}}
+```
 
 Before we can run the playbook, we'll need to set up key-based authentication on the server so we are not asked for our password. To do this, we can run this command:
 
@@ -74,7 +76,8 @@ If you are not prompted for your password, then key-based authentication is setu
 You will need to also set up the deployment key for the deploy user. This is done in `roles/webserver/tasks/deploy.yml` with this line:
 
 ```yaml
-- authorized_key: user=deploy key="{{ lookup('file', '/Users/example/.ssh/id_rsa.pub') }}"```
+- authorized_key: user=deploy key="{{ lookup('file', '/Users/example/.ssh/id_rsa.pub') }}"
+```
 
 Change this path to point to the path on your system where your public key resides.
 
@@ -87,12 +90,14 @@ Within `roles/webserver/tasks/main.yml`, we have this:
 ```yaml
 - include: deploy.yml tags=deploy
 - include: puma.yml tags=puma
-- include: nginx.yml tags=nginx```
+- include: nginx.yml tags=nginx
+```
 
 Within `roles/database/tasks.main.yml`, we have this:
 
 ```yaml
-- include: postgresql.yml tags=postgresql```
+- include: postgresql.yml tags=postgresql
+```
 
 We can run the playbook with this command:
 
