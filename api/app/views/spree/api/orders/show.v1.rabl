@@ -18,7 +18,7 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes :id, :amount, :state, :source_type
+  attributes *payment_attributes
 
   child :payment_method => :payment_method do
     attributes :id, :name, :environment
