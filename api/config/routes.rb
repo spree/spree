@@ -8,14 +8,14 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  namespace :api, :defaults => { :format => 'json' } do
+  namespace :api, defaults: { format: 'json' } do
     resources :products do
       resources :images
       resources :variants
       resources :product_properties
     end
 
-    order_routes = lambda {
+    concern :order_routes do
       member do
         put :cancel
         put :empty
@@ -33,7 +33,7 @@ Spree::Core::Engine.add_routes do
         end
       end
 
-      resources :shipments, :only => [:create, :update] do
+      resources :shipments, only: [:create, :update] do
         member do
           put :ready
           put :ship
@@ -42,7 +42,7 @@ Spree::Core::Engine.add_routes do
         end
       end
 
-      resources :addresses, :only => [:show, :update]
+      resources :addresses, only: [:show, :update]
 
       resources :return_authorizations do
         member do
@@ -51,17 +51,16 @@ Spree::Core::Engine.add_routes do
           put :receive
         end
       end
-    }
+    end
 
-    resources :checkouts do
+    resources :checkouts, concerns: :order_routes do
       member do
         put :next
         put :advance
       end
-      order_routes.call
     end
 
-    resources :variants, :only => [:index, :show] do
+    resources :variants, only: [:index, :show] do
       resources :images
     end
 
@@ -69,15 +68,15 @@ Spree::Core::Engine.add_routes do
       resources :option_values
     end
 
-    get '/orders/mine', :to => 'orders#mine', :as => 'my_orders'
+    get '/orders/mine', to: 'orders#mine', as: 'my_orders'
 
-    resources :orders, &order_routes
+    resources :orders, concerns: :order_routes
 
     resources :zones
-    resources :countries, :only => [:index, :show] do
-      resources :states, :only => [:index, :show]
+    resources :countries, only: [:index, :show] do
+      resources :states, only: [:index, :show]
     end
-    resources :states,    :only => [:index, :show]
+    resources :states, only: [:index, :show]
 
     resources :taxonomies do
       member do
@@ -90,9 +89,9 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :taxons, :only => [:index]
+    resources :taxons, only: [:index]
 
-    resources :inventory_units, :only => [:show, :update]
+    resources :inventory_units, only: [:show, :update]
     resources :users
     resources :properties
     resources :stock_locations do
@@ -100,10 +99,10 @@ Spree::Core::Engine.add_routes do
       resources :stock_items
     end
 
-    get '/config/money', :to => 'config#money'
-    get '/config', :to => 'config#show'
+    get '/config/money', to: 'config#money'
+    get '/config', to: 'config#show'
 
-    put '/classifications', :to => 'classifications#update', :as => :classifications
-    get '/taxons/products', :to => 'taxons#products', :as => :taxon_products
+    put '/classifications', to: 'classifications#update', as: :classifications
+    get '/taxons/products', to: 'taxons#products', as: :taxon_products
   end
 end
