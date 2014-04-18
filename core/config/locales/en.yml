@@ -882,6 +882,7 @@ en:
       label: Order must contain %{select} of these products
       match_all: all
       match_any: at least one
+      match_none: none 
       product_source:
         group: From product group
         manual: Manually choose
