@@ -47,6 +47,7 @@ module Spree
                 ensure_variant_id_from_params(iu)
 
                 unit = shipment.inventory_units.build
+                unit.line_item = order.line_items.find_by_variant_id(iu[:variant_id])
                 unit.order = order
                 unit.variant_id = iu[:variant_id]
               end
