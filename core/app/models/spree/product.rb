@@ -201,7 +201,7 @@ module Spree
       if self.variants_including_master.any? { |v| !v.should_track_inventory? }
         Float::INFINITY
       else
-        self.stock_items.sum(&:count_on_hand)
+        self.stock_items.to_a.sum(&:count_on_hand)
       end
     end
 
