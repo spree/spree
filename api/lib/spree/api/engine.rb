@@ -9,6 +9,11 @@ module Spree
       Rabl.configure do |config|
         config.include_json_root = false
         config.include_child_root = false
+
+        # Motivation here it make it call as_json when rendering. Otherwise it
+        # would fall to JSON and get errors like the one described here https://github.com/spree/spree/issues/4589
+        # where Float::INFINITY would resolve to Infinite (invalid json) istead of null
+        config.json_engine = ActiveSupport::JSON
       end
 
       config.view_versions = [1]
@@ -31,5 +36,3 @@ module Spree
     end
   end
 end
-
-

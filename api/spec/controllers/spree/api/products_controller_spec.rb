@@ -7,7 +7,7 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
-    let(:base_attributes) { [:id, :name, :description, :price, :display_price, :available_on, :slug, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids] }
+    let(:base_attributes) { Api::ApiHelpers.product_attributes }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
 
@@ -166,6 +166,17 @@ module Spree
                                                                          :property_name])
       end
 
+      context "tracking is disabled" do
+        before { Config.track_inventory_levels = false }
+
+        it "still displays valid json with total on hand" do
+          api_get :show, :id => product.to_param
+          expect(response).to be_ok
+          expect(json_response[:total_on_hand]).to eq nil
+        end
+
+        after { Config.track_inventory_levels = true }
+      end
 
       context "finds a product by slug first then by id" do
         let!(:other_product) { create(:product, :slug => "these-are-not-the-droids-you-are-looking-for") }
