@@ -17,6 +17,7 @@ module Spree
         def collection
           return @collection if @collection.present?
           params[:q] ||= HashWithIndifferentAccess.new
+          params[:q][:s] ||= 'id desc'
 
           @collection = super
           @search = @collection.ransack(params[:q])

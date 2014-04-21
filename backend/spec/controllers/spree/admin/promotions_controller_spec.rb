@@ -10,13 +10,13 @@ describe Spree::Admin::PromotionsController do
 
     it "succeeds" do
       spree_get :index
-      expect(assigns[:promotions].map(&:id).sort).to eq [promotion1.id, promotion2.id].sort
+      expect(assigns[:promotions]).to match_array [promotion2, promotion1]
     end
 
     context "search" do
       it "pages results" do
         spree_get :index, per_page: '1'
-        expect(assigns[:promotions].map(&:id)).to eq [promotion1.id]
+        expect(assigns[:promotions]).to eq [promotion2]
       end
 
       it "filters by name" do
