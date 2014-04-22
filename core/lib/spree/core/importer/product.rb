@@ -8,8 +8,8 @@ module Spree
           @product = product || Spree::Product.new(product_params)
 
           @product_attrs = product_params
-          @variants_attrs = options[:variants_attrs]
-          @options_attrs = options[:options_attrs]
+          @variants_attrs = options[:variants_attrs] || []
+          @options_attrs = options[:options_attrs] || []
         end
 
         def create
