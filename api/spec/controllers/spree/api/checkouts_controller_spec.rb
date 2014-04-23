@@ -172,8 +172,12 @@ module Spree
       it "returns errors when source is missing attributes" do
         order.update_column(:state, "payment")
         api_put :update, :id => order.to_param, :order_token => order.token,
-          :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
-                      :payment_source => { @payment_method.id.to_s => { name: "Spree" } } }
+          :order => {
+            :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }]
+          },
+          :payment_source => {
+            @payment_method.id.to_s => { name: "Spree" }
+          }
 
         response.status.should == 422
         cc_errors = json_response['errors']['payments.Credit Card']
