@@ -38,6 +38,7 @@ module Spree
     # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
     # +item_total+         The total value of all LineItems
     # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
+    # +promo_total+        The total value of all promotion adjustments
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
       update_payment_total
@@ -78,6 +79,10 @@ module Spree
       order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
       order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
 
+      order.promo_total = line_items.sum(:promo_total) +
+                          shipments.sum(:promo_total) +
+                          adjustments.promotion.eligible.sum(:amount)
+
       update_order_total
     end
 
@@ -101,6 +106,7 @@ module Spree
         additional_tax_total: order.additional_tax_total,
         payment_total: order.payment_total,
         shipment_total: order.shipment_total,
+        promo_total: order.promo_total,
         total: order.total,
         updated_at: Time.now,
       )
