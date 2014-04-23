@@ -32,7 +32,7 @@ Spree::Core::Engine.add_routes do
           put :credit
         end
       end
-
+      # TODO Remove after shipment api is no longer handled through order nesting.
       resources :shipments, :only => [:create, :update] do
         member do
           put :ready
@@ -76,6 +76,14 @@ Spree::Core::Engine.add_routes do
     resources :zones
     resources :countries, :only => [:index, :show] do
       resources :states, :only => [:index, :show]
+    end
+    resources :shipments, :only => [:create, :update] do
+      member do
+        put :ready
+        put :ship
+        put :add
+        put :remove
+      end
     end
     resources :states,    :only => [:index, :show]
 
