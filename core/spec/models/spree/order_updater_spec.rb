@@ -30,6 +30,29 @@ module Spree
         order.shipment_total.should == 10
       end
 
+      context 'with order promotion followed by line item addition' do
+        let(:promotion) { Spree::Promotion.create!(:name => "10% off") }
+        let(:calculator) { Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
+
+        let(:promotion_action) do
+          Promotion::Actions::CreateAdjustment.create!({
+            calculator: calculator,
+            promotion: promotion,
+          })
+        end
+
+        before do
+          updater.update
+          create(:adjustment, :source => promotion_action, :adjustable => order)
+          create(:line_item, :order => order, price: 10) # in addition to the two already created
+          updater.update
+        end
+
+        it "updates promotion total" do
+          order.promo_total.should == -3
+        end
+      end
+
       it "update order adjustments" do
         # A line item will not have both additional and included tax,
         # so please just humour me for now.
