@@ -23,6 +23,7 @@ module Spree
           jquery.jstree/themes/apple/*
           fontawesome-webfont*
           select2_locale*
+          jquery.alerts/images/*
         ]
       end
     end
