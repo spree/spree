@@ -240,14 +240,16 @@ module Spree
     end
 
     # Associates the specified user with the order.
-    def associate_user!(user)
+    def associate_user!(user, override_email = true)
       self.user = user
-      self.email = user.email
-      self.created_by = user if self.created_by.blank?
+      attrs_to_set = { user_id: user.id }
+      attrs_to_set[:email] = user.email if override_email
+      attrs_to_set[:created_by_id] = user.id if self.created_by.blank?
+      assign_attributes(attrs_to_set)
 
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.unscoped.where(id: id).update_all(email: user.email, user_id: user.id, created_by_id: self.created_by_id)
+        self.class.unscoped.where(id: id).update_all(attrs_to_set)
       end
     end
 
