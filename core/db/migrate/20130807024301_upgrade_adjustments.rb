@@ -5,10 +5,11 @@ class UpgradeAdjustments < ActiveRecord::Migration
       belongs_to :originator, polymorphic: true
     end
     # Shipping adjustments are now tracked as fields on the object
+    add_column :spree_shipments, :adjustment_total, :decimal, :precision => 10, :scale => 2, :default => 0.0
     Spree::Adjustment.where(:source_type => "Spree::Shipment").find_each do |adjustment|
       # Account for possible invalid data
       next if adjustment.source.nil?
-      adjustment.source.update_column(:cost, adjustment.amount)
+      adjustment.source.update_column(:adjustment_total, adjustment.amount)
       adjustment.destroy
     end
 
