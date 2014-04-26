@@ -3,7 +3,7 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order'
 
     has_many :inventory_units
-    has_one :stock_location
+    belongs_to :stock_location
     before_create :generate_number
     before_save :force_positive_amount
 
