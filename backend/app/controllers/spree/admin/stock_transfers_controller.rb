@@ -9,7 +9,7 @@ module Spree
         @stock_transfers = @q.result
                              .includes(:stock_movements => { :stock_item => :stock_location })
                              .order('created_at DESC')
-                             .page(params[:page])
+                             .send(Kaminari.config.page_method_name, params[:page])
       end
 
       def show

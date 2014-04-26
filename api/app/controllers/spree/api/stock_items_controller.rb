@@ -4,7 +4,7 @@ module Spree
       before_filter :stock_location, except: [:update, :destroy]
 
       def index
-        @stock_items = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @stock_items = scope.ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@stock_items)
       end
 

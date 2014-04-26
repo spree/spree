@@ -22,7 +22,8 @@ module Spree
 
       def index
         @variants = scope.includes(:option_values).ransack(params[:q]).result.
-          page(params[:page]).per(params[:per_page])
+          send(Kaminari.config.page_method_name, params[:page]).
+          per(params[:per_page])
         respond_with(@variants)
       end
 

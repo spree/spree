@@ -37,7 +37,7 @@ module Spree
 
       def index
         authorize! :index, Order
-        @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @orders = Order.ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@orders)
       end
 
@@ -70,7 +70,7 @@ module Spree
 
       def mine
         if current_api_user.persisted?
-          @orders = current_api_user.orders.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          @orders = current_api_user.orders.ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         else
           render "spree/api/errors/unauthorized", status: :unauthorized
         end

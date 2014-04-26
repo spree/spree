@@ -3,7 +3,7 @@ module Spree
     class UsersController < Spree::Api::BaseController
 
       def index
-        @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@users)
       end
 

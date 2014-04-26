@@ -13,7 +13,7 @@ module Spree
           params[:q] ||= {}
           params[:q][:s] ||= "ascend_by_name"
           @search = super.ransack(params[:q])
-          @zones = @search.result.page(params[:page]).per(params[:per_page])
+          @zones = @search.result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         end
 
         def load_data

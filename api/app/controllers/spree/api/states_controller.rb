@@ -10,7 +10,7 @@ module Spree
                     includes(:country).order('name ASC')
 
         if params[:page] || params[:per_page]
-          @states = @states.page(params[:page]).per(params[:per_page])
+          @states = @states.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         end
 
         state = @states.last

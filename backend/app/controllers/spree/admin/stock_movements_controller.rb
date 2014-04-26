@@ -7,7 +7,7 @@ module Spree
       def index
         @stock_movements = stock_location.stock_movements.recent.
           includes(:stock_item => { :variant => :product }).
-          page(params[:page])
+          send(Kaminari.config.page_method_name, params[:page])
       end
 
       def new

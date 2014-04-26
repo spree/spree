@@ -6,7 +6,7 @@ module Spree
       before_filter :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void, :credit]
 
       def index
-        @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @payments = @order.payments.ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@payments)
       end
 
