@@ -90,10 +90,6 @@ module Spree
 
     after_initialize :ensure_master
 
-    def to_param
-      slug
-    end
-
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
