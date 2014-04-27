@@ -3,7 +3,7 @@
 <div id="registration" data-hook>
 
   <div id="account">
-    <!-- TODO: add partial with registration form -->
+    <%= render :partial => 'new_user' %>
   </div>
 
   <% if Spree::Config[:allow_guest_checkout] %>
