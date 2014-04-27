@@ -2,7 +2,7 @@
 <h1><%= Spree.t(:registration) %></h1>
 <div id="registration" data-hook>
   <div id="account">
-    <%= render template: 'spree/user_sessions/new' %>
+    <%= render :partial => 'new_user' %>
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <div class="col-md-6">
