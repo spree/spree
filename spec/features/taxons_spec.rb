@@ -23,6 +23,18 @@ describe "viewing products" do
     page.should_not have_selector("div[data-hook='taxon_children']")
   end
 
+  describe 'breadcrumbs' do
+    before do
+      visit '/t/category/super-clothing/t-shirts'
+    end
+    it "should render breadcrumbs" do
+      page.find("#breadcrumbs").should have_link("T-Shirts")
+    end
+    it "should mark last breadcrumb as active" do
+      page.find('#breadcrumbs li.active').should have_link("T-Shirts")
+    end
+  end
+
   describe 'meta tags and title' do
 
     after do
