@@ -49,8 +49,8 @@ module Spree
       end
 
       def update
-        authorize! :update, @order, order_token
         find_order(true)
+        authorize! :update, @order, order_token
         # Parsing line items through as an update_attributes call in the API will result in
         # many line items for the same variant_id being created. We must be smarter about this,
         # hence the use of the update_line_items method, defined within order_decorator.rb.
