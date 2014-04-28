@@ -392,6 +392,13 @@ module Spree
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
         end
 
+        it "lists stock locations of the variant" do
+          api_get :show, :id => order.to_param
+
+          json_response['line_items'].first['variant'].should have_attributes([:stock_items])
+          json_response['line_items'].first['variant']['stock_items'].first.should have_attributes([:stock_location_name])
+        end
+
         it "includes the tax_total in the response" do
           api_get :show, :id => order.to_param
 
