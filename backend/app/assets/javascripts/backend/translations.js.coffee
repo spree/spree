@@ -42,11 +42,15 @@ I18n.translations = {
     payment_method: 'Payment method'
     amount: 'Amount'
     payment_state: 'Payment state'
+    select_stock: 'Select stock'
+    location: 'Location'
+    count_on_hand: 'Count on hand'
 
     # New
     actions:
       edit: 'Edit'
       update: 'Update'
+      add: 'Add'
     order:
       bill_address: 'Billing Address'
       ship_address: 'Shipping Address'
