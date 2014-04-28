@@ -120,8 +120,8 @@ module Spree
 
       it "can view an order" do
         user = mock_model(Spree::LegacyUser)
-        user.should_receive(:has_spree_role?).with('bar').and_return(true)
-        user.should_receive(:has_spree_role?).with('admin').and_return(false)
+        user.stub(:has_spree_role?).with('bar').and_return(true)
+        user.stub(:has_spree_role?).with('admin').and_return(false)
         controller.stub try_spree_current_user: user
         api_get :show, :id => order.to_param
         response.status.should == 200
