@@ -1,0 +1,39 @@
+<tr class="stock-item">
+  <td class="item-image">
+    <img src='{{unbound image}}' />
+  </td>
+  <td class="item-name">
+    {{unbound variant.name}}
+    {{#if variant.sku}}
+      <br><strong>{{i18n sku}}</strong> {{unbound variant.sku}}
+    {{/if}}
+  </td>
+  <td class="item-price align-center">{{unbound line_item.single_display_amount}}</td>
+  {{#if editing}}
+    <td class="item-qty-edit">
+      {{input type='number' id='quantity' min='0' class='line_item_quantity' size='5' value=quantity}}
+    </td>
+  {{else}}
+    <td class="item-qty-show align-center">
+      {{#each states}}
+        {{unbound this}}
+      {{/each}}
+    </td>
+  {{/if}}
+  <td class="item-total align-center">{{unbound price}}</td>
+  <td class="cart-item-delete actions" data-hook="cart_item_delete">
+    {{#if canUpdate }}
+      {{#if editing}}
+        <a href='#' {{action 'save'}} class="save-item icon_link icon-ok no-text with-tip" title='{{i18n actions.save}}'></a>
+        <a href='#' {{action 'cancel'}} class="cancel-item icon_link icon-cancel no-text with-tip" title='{{i18n actions.cancel}}'></a>
+      {{else}}
+        <a href='#' {{action 'edit'}} class='edit-item icon_link icon-edit no-text with-tip' title='{{i18n actions.edit}}'></a>
+        <a href='#' {{action 'split'}} class='split-item icon_link icon-resize-horizontal no-text with-tip' title='{{i18n actions.split}}'></a>
+        <a href='#' {{action 'delete'}} class='delete-item icon-trash no-text with-tip' title='{{i18n actions.delete}}'></a>
+      {{/if}}
+    {{/if}}
+  </td>
+</tr>
+<tr {{bind-attr class="splitting:shown:hidden"}}>
+  {{render 'orders/shipments/manifest_item_split' this}}
+</tr>

@@ -1,0 +1,25 @@
+<td colspan='2'>
+  {{i18n 'manifest_item_split.move_variant_to' }}
+</td>
+<td colspan='2'>
+<select name="item_stock_location" class="item_stock_location" style='width:100%;'>
+  <option></option>
+  <optgroup label="{{ i18n 'manifest_item_split.existing_shipments' }}">
+    {{#each shipments}}
+      <option value='{{unbound stock_location_id}}'>{{unbound stock_location_name}} ({{unbound number}})</option>
+    {{/each}}
+  </optgroup>
+  <optgroup label="{{ i18n 'manifest_item_split.new_shipment_at_location' }}">
+    {{#each variant.stock_items}}
+      <option value='{{unbound stock_location_id}}'>{{unbound stock_location_name}}</option>
+    {{/each}}
+  </optgroup>
+  </select>
+</td>
+<td>
+  <input class="quantity" name="quantity" type="number" min="1" value="1" max="{{max_quantity}}">
+</td>
+<td class='actions'>
+  <a href='#' class='save-split icon_link icon-ok no-text with-tip' title='{{i18n actions.save}}'></a>
+  <a href='#' class='cancel-split icon_link icon-cancel no-text with-tip' title='{{i18n actions.cancel}}'></a>
+</td>
