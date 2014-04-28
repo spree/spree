@@ -1,0 +1,13 @@
+<tr>
+  <td>{{prettyDateTime created_at}}</td>
+  <td class="align-center amount">{{display_amount}}</td>
+  <td class="align-center">{{payment_method.name}}</td>
+  <td class="align-center">
+    <span {{bind-attr class=":state state"}}>{{state}}</span>
+  </td>
+  <td class="actions">
+    {{#each actions}}
+      <a href='#' {{action 'fire' this}} class="icon_link icon-{{unbound this}} no-text with-tip" title='{{i18n this}}'></a>
+    {{/each}}
+  </td>
+</tr>

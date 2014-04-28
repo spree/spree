@@ -18,15 +18,7 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes *payment_attributes
-
-  child :payment_method => :payment_method do
-    attributes :id, :name, :environment
-  end
-
-  child :source => :source do
-    attributes *payment_source_attributes
-  end
+  extends "spree/api/payments/show"
 end
 
 child :shipments => :shipments do
