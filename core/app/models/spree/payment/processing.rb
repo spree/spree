@@ -118,6 +118,7 @@ module Spree
       end
 
       def gateway_options
+        order.reload
         options = { :email       => order.email,
                     :customer    => order.email,
                     :customer_id => order.user_id,
