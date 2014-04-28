@@ -22,16 +22,17 @@
 //= require_tree .
 
 
-Spree.routes.user_search = Spree.pathFor('admin/search/users')
-Spree.routes.taxons_search = Spree.pathFor('api/taxons')
-Spree.routes.product_search = Spree.pathFor('api/products')
+Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
+Spree.routes.classifications_api = Spree.pathFor('api/classifications')
 Spree.routes.option_type_search = Spree.pathFor('api/option_types')
 Spree.routes.orders_api = Spree.pathFor('api/orders')
-Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
+Spree.routes.product_search = Spree.pathFor('api/products')
+Spree.routes.shipments_api = Spree.pathFor('api/shipments')
 Spree.routes.stock_locations_api = Spree.pathFor('api/stock_locations')
-Spree.routes.variants_api = Spree.pathFor('api/variants')
-Spree.routes.classifications_api = Spree.pathFor('api/classifications')
 Spree.routes.taxon_products_api = Spree.pathFor('api/taxons/products')
+Spree.routes.taxons_search = Spree.pathFor('api/taxons')
+Spree.routes.user_search = Spree.pathFor('admin/search/users')
+Spree.routes.variants_api = Spree.pathFor('api/variants')
 
 Spree.routes.payments_api = function(order_id) {
   return Spree.pathFor('api/orders/' + order_id + '/payments')
@@ -40,4 +41,3 @@ Spree.routes.payments_api = function(order_id) {
 Spree.routes.stock_items_api = function(stock_location_id) {
   return Spree.pathFor('api/stock_locations/' + stock_location_id + '/stock_items')
 }
-
