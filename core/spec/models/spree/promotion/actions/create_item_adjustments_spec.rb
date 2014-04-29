@@ -25,7 +25,7 @@ module Spree
           end
 
           context "when calculator returns a non-zero value" do
-            before do 
+            before do
               promotion.promotion_actions = [action]
               action.stub :compute_amount => 10
             end
@@ -45,6 +45,20 @@ module Spree
             it "does not perform twice on the same item" do
               2.times { action.perform(order: order) }
               action.adjustments.count.should == 1
+            end
+
+            context "with products rules" do
+              before do
+                promotion.stub(:product_ids => [line_item.product.id])
+              end
+              let!(:second_line_item) { create(:line_item, :order => order) }
+
+              it "does not create an adjustmenty for line_items not in product rule" do
+                action.perform(order: order)
+                expect(action.adjustments.count).to eql 1
+                expect(line_item.reload.adjustments).to match_array action.adjustments
+                expect(second_line_item.reload.adjustments).to be_empty
+              end
             end
           end
         end
