@@ -27,5 +27,6 @@ Backend.VariantPicker = Ember.TextField.extend
           variant.name
 
   change: (e) ->
-    content = Ember.TEMPLATES['variants/stock'](variant: this.get('variant'))
-    $('#stock_details').html(content)
+    this.send('showStockDetails', this.get('variant'))
+    # content = Ember.TEMPLATES['variants/stock'](variant: this.get('variant'))
+    # $('#stock_details').html(content)
