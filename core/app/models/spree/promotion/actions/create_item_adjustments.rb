@@ -28,6 +28,7 @@ module Spree
         def create_adjustment(adjustable, order)
           amount = self.compute_amount(adjustable)
           return if amount == 0
+          return if promotion.product_ids.present? and !promotion.product_ids.include?(adjustable.product.id)
           self.adjustments.create!(
             amount: amount,
             adjustable: adjustable,
