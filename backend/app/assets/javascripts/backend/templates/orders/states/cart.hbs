@@ -3,30 +3,34 @@
 
   <div data-hook="add_product_name" class="field twelve columns alpha">
     <label for='add_variant_id'>{{i18n 'name_or_sku' }}</label><br>
-    {{view Backend.VariantPicker type="hidden" class="fullwidth"}}
+    {{view Backend.VariantPicker type="hidden" class="fullwidth" action='showStockDetails'}}
+    {{#if variant}}
+      {{render 'orders/variants/stock_picker' variant }}
+    {{/if}}
   </div>
-  <div id="stock_details"></div>
-    
-  <table id='line-items' class="line-items index">
-    <colgroup>
-      <col style="width: 10%;" />
-      <col style="width: 40%;" />
-      <col style="width: 10%;" />
-      <col style="width: 10%;" />
-    </colgroup>
 
-    <thead>
-      <th colspan="2">{{i18n 'name' }}</th>
-      <th>{{i18n 'price' }}</th>
-      <th>{{i18n 'quantity' }}</th>
-      <th>{{i18n 'total_price' }}</th>
-      <th class="orders-actions actions">&nbsp;</th>
-    </thead>
+  {{#if line_items}}
+    <table id='line-items' class="line-items index">
+      <colgroup>
+        <col style="width: 10%;" />
+        <col style="width: 40%;" />
+        <col style="width: 10%;" />
+        <col style="width: 10%;" />
+      </colgroup>
 
-    <tbody>
-      {{#each line_items}}
-        {{render 'orders/line_items/show' this}}
-      {{/each}}
-    </tbody>
-  </table>
+      <thead>
+        <th colspan="2">{{i18n 'name' }}</th>
+        <th>{{i18n 'price' }}</th>
+        <th>{{i18n 'quantity' }}</th>
+        <th>{{i18n 'total_price' }}</th>
+        <th class="orders-actions actions">&nbsp;</th>
+      </thead>
+
+      <tbody>
+        {{#each line_items}}
+          {{render 'orders/line_items/show' this}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{/if}}
 </fieldset>

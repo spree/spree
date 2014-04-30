@@ -51,6 +51,18 @@ Backend.Order.reopen
     @get('permissions.can_update')
   ).property('canUpdate')
 
+  addItem: (variant, quantity) ->
+    order = this
+    $.ajax
+      method: 'POST'
+      url: Spree.pathFor("api/orders/#{order.number}/line_items")
+      data:
+        line_item:
+          variant_id: variant.id
+          quantity: quantity
+    .done ->
+      order.advance()
+
   update: (params) ->
     order = this
     $.ajax

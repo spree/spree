@@ -45,6 +45,7 @@ I18n.translations = {
     select_stock: 'Select stock'
     location: 'Location'
     count_on_hand: 'Count on hand'
+    backorders_allowed: 'Backorders allowed'
 
     # New
     actions:
