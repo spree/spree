@@ -173,7 +173,7 @@ describe Spree::Order do
 
         it "should automatically refund all payments" do
           order.stub_chain(:payments, :completed).and_return([payment])
-          payment.should_receive(:credit!)
+          payment.should_receive(:cancel!)
           order.cancel!
         end
       end
