@@ -1,8 +1,4 @@
 Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
-  variant: (->
-    @get('order').variantByID(this.get('variant_id'))
-  ).property('variant')
-
   image: (->
     @get('variant').images[0].mini_url
   ).property('image')
