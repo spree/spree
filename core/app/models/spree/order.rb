@@ -48,6 +48,8 @@ module Spree
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
+    has_many :products, through: :variants
+    has_many :variants, through: :line_items
 
     has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
 
@@ -393,14 +395,6 @@ module Spree
 
     def billing_lastname
       bill_address.try(:lastname)
-    end
-
-    def products
-      line_items.map(&:product)
-    end
-
-    def variants
-      line_items.map(&:variant)
     end
 
     def insufficient_stock_lines
