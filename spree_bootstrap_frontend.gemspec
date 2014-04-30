@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'bootstrap-sass',      '~> 3.1.0'
   s.add_runtime_dependency 'bootstrap-kaminari-views', '~> 0.0.3'
-  s.add_runtime_dependency 'spree_core',          '~> 2.2.0'
+  s.add_runtime_dependency 'spree_core',          '~> 2.3.0.beta'
 
   s.add_development_dependency 'email_spec', '~> 1.2.1'
   s.add_development_dependency 'capybara-accessible'
