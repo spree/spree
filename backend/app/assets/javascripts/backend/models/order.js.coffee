@@ -72,19 +72,14 @@ Backend.Order.reopen
       
   advance: ->
     order = this
-    store = @store
-    adapter = @store.adapterFor(@constructor)
-    serializer = store.serializerFor('order')
-    url = adapter.buildURL("checkout", this.id)
+    url = Spree.pathFor("api/checkouts/#{order.number}/advance")
 
-    $.ajax(
-      url: "#{this.url}/advance"
+    $.ajax
+      url: url
       method: "PUT"
-    ).then((data) ->
-       payload = serializer.extract(store, Backend.Order, data, order.id, 'find')
-       store.push('order', payload)
-       return store.findById('order', order.id)
-    )
+    .done (data) ->
+      order.setProperties(data)
+      order.init()
 
   states: (->
     states = this.get('checkout_steps')
