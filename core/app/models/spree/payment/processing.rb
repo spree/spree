@@ -111,6 +111,14 @@ module Spree
         end
       end
 
+      def cancel!
+        if payment_method.respond_to?(:cancel)
+          payment_method.cancel(response_code)
+        else
+          credit!
+        end
+      end
+
       def partial_credit(amount)
         return if amount > credit_allowed
         started_processing!
