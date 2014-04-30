@@ -18,6 +18,4 @@ Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
       this.set('editing', false)
     delete: ->
       if confirm(Spree.translations.are_you_sure_delete)
-        object = this.get('model')
-        object.set('quantity', 0)
-        object.update()
+        this.get('model').destroy()
