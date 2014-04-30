@@ -447,10 +447,6 @@ describe Spree::Order do
       order.stub(:line_items => @line_items)
     end
 
-    it "should return ordered products" do
-      order.products.should == ['product1', 'product2']
-    end
-
     it "contains?" do
       order.contains?(@variant1).should be_true
     end
