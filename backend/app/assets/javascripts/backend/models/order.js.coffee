@@ -9,7 +9,10 @@ Backend.Order.reopenClass
     .then (data) ->
       Ember.run () ->
         orders = Em.A();
-        orders.pushObjects(data.orders)
+        incoming_orders = data.orders
+        orders.pushObjects(incoming_orders.map (order) ->
+          Backend.Order.create(order)
+        )
 
   find: (number) ->
     Em.$.ajax
