@@ -1,6 +1,9 @@
 Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
   image: (->
-    @get('variant').images[0].mini_url
+    if image = @get('variant').images[0]
+      image.mini_url
+    else
+      '/assets/noimage/mini.png'
   ).property('image')
 
   canUpdate: (->
