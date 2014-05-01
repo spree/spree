@@ -23,6 +23,7 @@ module Spree
     def duplicate_product
       product.dup.tap do |new_product|
         new_product.name = "COPY OF #{product.name}"
+        new_product.slug = "#{DateTime.now.to_i}_#{product.slug}"
         new_product.taxons = product.taxons
         new_product.created_at = nil
         new_product.deleted_at = nil
