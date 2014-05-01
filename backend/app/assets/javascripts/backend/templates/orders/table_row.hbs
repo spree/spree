@@ -1,0 +1,34 @@
+<tr class="state-{{unbound state}}">
+  <td class="align-center">
+    {{#if completed_at}}
+      {{prettyDate completed_at}}
+    {{else}}
+      -
+    {{/if}}
+  </td>
+  <td class="align-center">
+    {{#link-to 'order' number}}{{number}}{{/link-to}}
+  </td>
+  <td class="align-center">
+    <span class="state {{unbound state}}">{{state}}</span>
+  </td>
+  <td class="align-center">
+    <span class="state {{unbound payment_state}}">
+      {{#if payment_state}}
+        {{payment_state}}
+      {{/if}}
+    </span>
+  </td>
+  <td class="align-center">
+    <span class="state {{unbound shipment_state}}">
+      {{#if shipment_state}}
+        {{shipment_state}}
+      {{/if}}
+    </span>
+  </td>
+  <td>{{email}}</td>
+  <td class="align-center">{{display_total}}</td>
+  <td class='actions align-center' data-hook="admin_orders_index_row_actions">
+    Edit
+  </td>
+</tr>
