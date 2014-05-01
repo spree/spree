@@ -4,21 +4,25 @@
     {{render 'orders/shipments/show' this}}
   {{/each}}
   
-  <div class="alpha six columns" id='billing_address'>
-    <fieldset class="no-border-bottom">
-      <legend align="center">{{i18n 'order.bill_address' }}</legend>
-      {{#with bill_address as address}}
-        {{partial 'orders/addresses/show'}}
-      {{/with}}
-    </fieldset>
-  </div>
+  {{#if bill_address}}
+    <div class="alpha six columns" id='billing_address'>
+      <fieldset class="no-border-bottom">
+        <legend align="center">{{i18n 'order.bill_address' }}</legend>
+        {{#with bill_address as address}}
+          {{partial 'orders/addresses/show'}}
+        {{/with}}
+      </fieldset>
+    </div>
+  {{/if}}
 
-  <div class="alpha six columns" id='shipping_address'>
-    <fieldset class="no-border-bottom">
-      <legend align="center">{{i18n 'order.ship_address' }}</legend>
-      {{#with ship_address as address}}
-        {{partial 'orders/addresses/show'}}
-      {{/with}}
-    </fieldset>
-  </div>
+  {{#if ship_address}}
+    <div class="alpha six columns" id='shipping_address'>
+      <fieldset class="no-border-bottom">
+        <legend align="center">{{i18n 'order.ship_address' }}</legend>
+        {{#with ship_address as address}}
+          {{partial 'orders/addresses/show'}}
+        {{/with}}
+      </fieldset>
+    </div>
+  {{/if}}
 </fieldset>
