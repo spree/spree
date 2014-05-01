@@ -26,6 +26,9 @@ Backend.VariantPicker = Ember.TextField.extend
         else
           variant.name
 
+  willDestroyElement: ->
+    $("##{this.elementId}").select2('destroy')
+
   change: (e) ->
     this.sendAction('action', this.get('variant'))
     # content = Ember.TEMPLATES['variants/stock'](variant: this.get('variant'))
