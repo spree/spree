@@ -1,4 +1,6 @@
 Backend.OrdersStatesAddressController = Ember.ObjectController.extend
+  needs: ['order']
+
   init: ->
     @set('guestCheckout', false)
   guestCheckout: (->
@@ -28,10 +30,7 @@ Backend.OrdersStatesAddressController = Ember.ObjectController.extend
       params.bill_address_attributes = @get('bill_address.formParams')
       params.ship_address_attributes = @get('ship_address.formParams')
 
-      # TODO: Why does this have to be accessed through two content calls?
-      # Shouldn't the model be accessible from this controller?
-      model = @get('content.content')
-      model.update(params)
+      this.get('controllers.order').update(params)
 
        # if $('#use_billing').is(':checked')
        #   data.order.use_billing = true

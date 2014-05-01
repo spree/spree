@@ -34,6 +34,8 @@
     {{/if}}
   </td>
 </tr>
-<tr {{bind-attr class="splitting:shown:hidden"}}>
-  {{render 'orders/shipments/manifest_item_split' this}}
-</tr>
+{{#if splitting}}
+  <tr>
+    {{render 'orders/shipments/manifest_item_split' this}}
+  </tr>
+{{/if}}

@@ -3,6 +3,17 @@
   {{#each shipments}}
     {{render 'orders/shipments/show' this}}
   {{/each}}
+
+  # TODO: line item adjustments
+  # TODO: shipment adjustments
+  # TODO: normal adjustments
+  
+  {{#if total}}
+    <fieldset class="no-border-bottom" id="order-total">
+      <legend>{{i18n 'order_total' }}</legend>
+      <span class="order-total">{{display_total}}</span>
+    </fieldset>
+  {{/if}}
   
   {{#if bill_address}}
     <div class="alpha six columns" id='billing_address'>
