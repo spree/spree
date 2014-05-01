@@ -129,6 +129,10 @@ module Spree
         def model_class
           Spree::Order
         end
+
+        def ember?
+          true
+        end
     end
   end
 end
