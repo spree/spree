@@ -11,7 +11,7 @@
   <td class="item-price align-center">{{unbound line_item.single_display_amount}}</td>
   {{#if editing}}
     <td class="item-qty-edit">
-      {{input type='number' id='quantity' min='0' class='line_item_quantity' size='5' value=quantity}}
+      {{input type='number' min='0' size='5' value=quantity class='quantity'}}
     </td>
   {{else}}
     <td class="item-qty-show align-center">
