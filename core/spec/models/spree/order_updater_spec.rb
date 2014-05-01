@@ -115,6 +115,17 @@ module Spree
         order.payment_state.should == 'balance_due'
       end
 
+      it 'is balance_due if a completed payment is below total' do
+        order.stub_chain(:line_items, :empty?).and_return(false)
+        order.stub_chain(:payments, :present?).and_return(true)
+        order.stub_chain(:payments, :last, :state).and_return('completed')
+        order.stub :payment_total => 20
+        order.stub :total => 30
+
+        updater.update_payment_state
+        order.payment_state.should == 'balance_due'
+      end
+
       it "is credit owed if payment is above total" do
         order.stub_chain(:line_items, :empty?).and_return(false)
         order.stub :payment_total => 31

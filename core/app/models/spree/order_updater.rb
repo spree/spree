@@ -152,7 +152,7 @@ module Spree
             order.payment_state = 'failed'
           elsif payments.last.state == 'checkout'
             order.payment_state = 'pending'
-          elsif payments.last.state == 'completed'
+          elsif payments.last.state == 'completed' && line_items.empty?
             order.payment_state = 'credit_owed'
           else
             order.payment_state = 'balance_due'
