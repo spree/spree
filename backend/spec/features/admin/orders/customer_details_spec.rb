@@ -76,7 +76,7 @@ describe "Customer Details" do
       end
     end
 
-    it "can update user email for an existing order with a user" do
+    it "updates order email for an existing order with a user" do
       order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
       previous_user = order.user
       click_link "Customer Details"
