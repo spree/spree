@@ -28,4 +28,5 @@ group :test do
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
+  gem 'timecop'
 end
