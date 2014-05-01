@@ -56,8 +56,13 @@ module Spree
         # hence the use of the update_line_items method, defined within order_decorator.rb.
         order_params.delete("line_items_attributes")
         if @order.update_attributes(order_params)
+          user_id = params[:order][:user_id]
+          if current_api_user.has_spree_role?('admin') && user_id
+            @order.associate_user!(Spree.user_class.find(user_id))
+          end
 
           deal_with_line_items if params[:order][:line_items]
+
 
           @order.line_items.reload
           @order.update!

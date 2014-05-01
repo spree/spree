@@ -331,6 +331,14 @@ module Spree
         json_response['errors']['ship_address.firstname'].first.should eq "can't be blank"
       end
 
+      it "cannot set the user_id for the order" do
+        user = Spree.user_class.create
+        original_id = order.user_id
+        api_post :update, :id => order.to_param, :order => { user_id: user.id }
+        expect(response.status).to eq 200
+        json_response["user_id"].should == original_id
+      end
+
       context "order has shipments" do
         before { order.create_proposed_shipments }
 
@@ -539,6 +547,15 @@ module Spree
 
           expect(response.status).to eq 201
           expect(Order.last.line_items.first.price.to_f).to eq(33.0)
+        end
+      end
+
+      context "updating" do
+        it "can set the user_id for the order" do
+          user = Spree.user_class.create
+          api_post :update, :id => order.number, :order => { user_id: user.id }
+          expect(response.status).to eq 200
+          json_response["user_id"].should == user.id
         end
       end
 
