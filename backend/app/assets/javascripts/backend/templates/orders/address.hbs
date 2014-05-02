@@ -1,5 +1,5 @@
-{{#if canUpdate}}
-  {{render 'orders/addresses/form' address}}
+{{#if order.canUpdate}}
+  {{render 'orders/addresses/form' this}}
 
   {{#if useBilling}}
     <span>

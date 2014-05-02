@@ -9,7 +9,7 @@
     {{/if}}
   </div>
 
-  {{#if line_items}}
+  {{#if order.line_items}}
     <table id='line-items' class="line-items index">
       <colgroup>
         <col style="width: 10%;" />
@@ -27,7 +27,7 @@
       </thead>
 
       <tbody>
-        {{#each line_items}}
+        {{#each order.line_items}}
           {{render 'orders/line_items/show' this}}
         {{/each}}
       </tbody>
