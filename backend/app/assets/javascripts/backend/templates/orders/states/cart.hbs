@@ -4,8 +4,8 @@
   <div data-hook="add_product_name" class="field twelve columns alpha">
     <label for='add_variant_id'>{{i18n 'name_or_sku' }}</label><br>
     {{view Backend.VariantPicker type="hidden" class="fullwidth" action='showStockDetails'}}
-    {{#if variant}}
-      {{render 'orders/variants/stock_picker' variant }}
+    {{#if order.variant}}
+      {{render 'orders/variants/stock_picker' order.variant }}
     {{/if}}
   </div>
 
