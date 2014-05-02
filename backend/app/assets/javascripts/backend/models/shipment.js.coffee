@@ -29,3 +29,16 @@ Backend.Shipment = Ember.Object.extend
           quantity: new_quantity
       .then (response) ->
         shipment.get('order').advance()
+
+  updateShippingRate: ->
+    shipment = this
+    url = Spree.pathFor("api/shipments/#{this.get('number')}")
+    $.ajax
+      method: 'PUT'
+      url: url
+      data:
+        shipment:
+          selected_shipping_rate_id: this.get('selected_shipping_rate_id')
+    .done (response) ->
+      shipment.setProperties(response)
+      shipment.order.refresh()
