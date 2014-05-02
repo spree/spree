@@ -1,0 +1,6 @@
+<fieldset class='state_info' id='delivery_info'>
+  <legend>{{i18n 'order.states.delivery' }}</legend>
+  {{#each order.shipments}}
+    {{render 'orders/shipments/show' this}}
+  {{/each}}
+</fieldset>

@@ -1,6 +1,4 @@
-Backend.OrdersStatesCartController = Ember.ObjectController.extend
-  needs: ['order']
-  order: Ember.computed.alias("controllers.order")
+Backend.OrdersStatesCartController = Backend.OrdersStatesController.extend
   actions:
     showStockDetails: (variant) ->
       this.set('variant', Backend.Variant.create(variant))
