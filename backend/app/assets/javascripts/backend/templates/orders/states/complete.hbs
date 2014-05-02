@@ -1,39 +1,32 @@
-<fieldset class="no-border-bottom state_info" id='complete_info'>
-  <legend>{{i18n 'order_details' }}</legend>
-  {{#each order.shipments}}
-    {{render 'orders/shipments/show' this}}
-  {{/each}}
-
-  # TODO: line item adjustments
-  # TODO: shipment adjustments
-  # TODO: normal adjustments
-  
-  {{#if total}}
-    <fieldset class="no-border-bottom" id="order-total">
-      <legend>{{i18n 'order_total' }}</legend>
-      <span class="order-total">{{order.display_total}}</span>
-    </fieldset>
-  {{/if}}
-  
-  {{#if order.bill_address}}
-    <div class="alpha six columns" id='billing_address'>
-      <fieldset class="no-border-bottom">
-        <legend align="center">{{i18n 'order.bill_address' }}</legend>
-        {{#with order.bill_address}}
-          {{partial 'orders/addresses/show'}}
-        {{/with}}
-      </fieldset>
-    </div>
-  {{/if}}
-
-  {{#if order.ship_address}}
-    <div class="alpha six columns" id='shipping_address'>
-      <fieldset class="no-border-bottom">
-        <legend align="center">{{i18n 'order.ship_address' }}</legend>
-        {{#with order.ship_address}}
-          {{partial 'orders/addresses/show'}}
-        {{/with}}
-      </fieldset>
-    </div>
-  {{/if}}
+<fieldset class='no-border-bottom'>
+  <legend>{{i18n 'order.shipments'}}</legend>
+  {{partial 'orders/shipments'}}
 </fieldset>
+
+<fieldset class='no-border-bottom'>
+  <legend>{{i18n 'order.payments'}}</legend>
+    {{partial 'orders/payments'}}
+  </legend>
+</fieldset>
+  
+{{#if order.bill_address}}
+  <div class="alpha six columns" id='billing_address'>
+    <fieldset class="no-border-bottom">
+      <legend align="center">{{i18n 'order.bill_address' }}</legend>
+      {{#with order.bill_address}}
+        {{partial 'orders/addresses/show'}}
+      {{/with}}
+    </fieldset>
+  </div>
+{{/if}}
+
+{{#if order.ship_address}}
+  <div class="alpha six columns" id='shipping_address'>
+    <fieldset class="no-border-bottom">
+      <legend align="center">{{i18n 'order.ship_address' }}</legend>
+      {{#with order.ship_address}}
+        {{partial 'orders/addresses/show'}}
+      {{/with}}
+    </fieldset>
+  </div>
+{{/if}}

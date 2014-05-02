@@ -1,20 +1,4 @@
 <fieldset class='state_info no-border-bottom' id='payment_info'>
   <legend>{{i18n 'order.states.payment' }}</legend>
-    
-  <table class="index" id='payments'>
-    <thead>
-      <tr data-hook="payments_header">
-        <th>{{i18n 'date'}}/{{i18n 'time'}}</th>
-        <th>{{i18n 'amount'}}</th>
-        <th>{{i18n 'payment_method'}}</th>
-        <th>{{i18n 'payment_state'}}</th>
-        <th class="actions"></th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each order.payments}}
-        {{render 'orders/payments/show' this}}
-      {{/each}}
-    </tbody>
-  </table>
+  {{partial 'orders/payments'}}
 </fieldset>

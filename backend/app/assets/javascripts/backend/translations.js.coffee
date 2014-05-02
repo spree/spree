@@ -53,6 +53,9 @@ I18n.translations = {
       update: 'Update'
       add: 'Add'
     order:
+      address_information: 'Address information'
+      shipments: 'Shipments'
+      payments: 'Payments'
       bill_address: 'Billing Address'
       ship_address: 'Shipping Address'
       states:
