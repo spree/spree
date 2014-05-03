@@ -53,7 +53,7 @@ Then copy the default stylesheets into your project
 rails generate spree_bootstrap_frontend:install
 ```
 
-Done.
+You'll want to select to overwrite `all.css`. Done.
 
 
 Customizing
