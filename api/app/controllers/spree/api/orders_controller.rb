@@ -48,16 +48,8 @@ module Spree
       def update
         find_order(true)
         authorize! :update, @order, order_token
-        # Parsing line items through as an update_attributes call in the API will result in
-        # many line items for the same variant_id being created. We must be smarter about this,
-        # hence the use of the update_line_items method, defined within order_decorator.rb.
-        order_params.delete("line_items_attributes")
-        if @order.update_attributes(order_params)
 
-          deal_with_line_items if params[:order][:line_items]
-
-          @order.line_items.reload
-          @order.update!
+        if @order.contents.update_cart(order_params)
           respond_with(@order, default_template: :show)
         else
           invalid_resource!(@order)
@@ -82,15 +74,6 @@ module Spree
       end
 
       private
-        def deal_with_line_items
-          line_item_attributes = params[:order][:line_items]
-          line_item_attributes.each_key do |key|
-            # need to call .to_hash to make sure Rails 4's strong parameters don't bite
-            line_item_attributes[key] = line_item_attributes[key].slice(*permitted_line_item_attributes).to_hash
-          end
-          @order.update_line_items(line_item_attributes)
-        end
-
         def order_params
           if params[:order]
             params[:order][:payments_attributes] = params[:order][:payments] if params[:order][:payments]

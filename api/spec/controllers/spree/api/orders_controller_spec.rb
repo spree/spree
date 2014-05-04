@@ -267,7 +267,7 @@ module Spree
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 }
+            "0" => { :id => line_item.id, :quantity => 10 }
           }
         }
 
@@ -280,8 +280,8 @@ module Spree
         variant2 = create(:variant)
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 },
-            1 => { :variant_id => variant2.id, :quantity => 1}
+            "0" => { :id => line_item.id, :quantity => 10 },
+            "1" => { :variant_id => variant2.id, :quantity => 1}
           }
         }
 
