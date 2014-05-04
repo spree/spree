@@ -43,6 +43,21 @@ describe "New Order" do
     page.should have_content("shipped")
   end
 
+  context "adding new item to the order", js: true do
+    it "inventory items show up just fine" do
+      select2_search product.name, :from => Spree.t(:name_or_sku)
+
+      within("table.stock-levels") do
+        fill_in "stock_item_quantity", :with => 2
+        click_icon :plus
+      end
+
+      within(".stock-contents") do
+        page.should have_content(product.name)
+      end
+    end
+  end
+
   # Regression test for #3958
   context "without a delivery step", js: true do
     before do
@@ -67,22 +82,29 @@ describe "New Order" do
   end
 
   # Regression test for #3336
-  it "transitions order after products are selected", js: true do
-    click_on "Customer Details"
+  context "start by customer address" do
+    it "completes order fine", js: true do
+      click_on "Customer Details"
 
-    within "#select-customer" do
-      targetted_select2_search user.email, :from => "#s2id_customer_search"
-    end
-    check "order_use_billing"
-    fill_in_address
-    click_on "Update"
+      within "#select-customer" do
+        targetted_select2_search user.email, :from => "#s2id_customer_search"
+      end
 
-    click_on "Order Details"
-    select2_search product.name, :from => Spree.t(:name_or_sku)
-    click_icon :plus
-    wait_for_ajax
-    within(".additional-info .state") do
-      page.should have_content("PAYMENT")
+      check "order_use_billing"
+      fill_in_address
+      click_on "Update"
+
+      click_on "Order Details"
+      select2_search product.name, :from => Spree.t(:name_or_sku)
+      click_icon :plus
+      wait_for_ajax
+
+      click_on "Payments"
+      click_on "Continue"
+
+      within(".additional-info .state") do
+        page.should have_content("COMPLETE")
+      end
     end
   end
 
