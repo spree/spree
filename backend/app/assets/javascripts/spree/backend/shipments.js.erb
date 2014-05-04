@@ -162,7 +162,7 @@ adjustShipmentItems = function(shipment_number, variant_id, quantity){
         url: Spree.url(url),
         data: { variant_id: variant_id, quantity: new_quantity }
       }).done(function( msg ) {
-        advanceOrder();
+        window.location.reload();
       });
     }
 }
@@ -309,7 +309,7 @@ addVariantFromStockLocation = function() {
       url: Spree.url(Spree.routes.shipments_api + "?shipment[order_id]=" + order_number),
       data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
     }).done(function( msg ) {
-      advanceOrder();
+      window.location.reload();
     }).error(function( msg ) {
       console.log(msg);
     });
