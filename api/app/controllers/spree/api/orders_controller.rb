@@ -116,14 +116,6 @@ module Spree
           [:import, :number, :completed_at, :locked_at, :channel]
         end
 
-        def next!(options={})
-          if @order.valid? && @order.next
-            render :show, status: options[:status] || 200
-          else
-            render :could_not_transition, status: 422
-          end
-        end
-
         def find_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
         end
