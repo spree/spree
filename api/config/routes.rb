@@ -44,7 +44,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :checkouts, concerns: :order_routes do
+    resources :checkouts, only: [:update], concerns: :order_routes do
       member do
         put :next
         put :advance

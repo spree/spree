@@ -8,12 +8,6 @@ module Spree
       # This before_filter comes from Spree::Core::ControllerHelpers::Order
       skip_before_filter :set_current_order
 
-      def create
-        authorize! :create, Order
-        @order = Spree::Core::Importer::Order.import(current_api_user, nested_params)
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 201)
-      end
-
       def next
         load_order(true)
         authorize! :update, @order, order_token
@@ -28,10 +22,6 @@ module Spree
         authorize! :update, @order, order_token
         while @order.next; end
         respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
-      end
-
-      def show
-        redirect_to(api_order_path(params[:id]), status: 301)
       end
 
       def update
