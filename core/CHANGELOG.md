@@ -1,5 +1,14 @@
 ## Spree 2.3.0 (unreleased) ##
 
+*   More accurate and simpler Order#payment_state options.
+
+    Balance Due. Paid. Credit Owed. Failed. These are the only possible values
+    for order payment_state now. The previous `pending` state has been dropped
+    and order updater logic greatly improved as it now mostly consider total
+    values rather than doing last payment state checks.
+
+    Huge thanks to dan-ding. See https://github.com/spree/spree/issues/4605
+
 *   Config settings related to mail have been removed. This includes
     `enable_mail_delivery`, `mail_bcc`, `intercept_email`,
     `override_actionmailer_config`, `mail_host`, `mail_domain`, `mail_port`,
