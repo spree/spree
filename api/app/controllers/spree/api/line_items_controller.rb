@@ -16,7 +16,6 @@ module Spree
       def update
         @line_item = find_line_item
         if @order.contents.update_cart(line_items_attributes)
-          @order.ensure_updated_shipments
           @line_item.reload
           respond_with(@line_item, default_template: :show)
         else
