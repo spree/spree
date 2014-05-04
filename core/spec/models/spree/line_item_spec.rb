@@ -46,6 +46,14 @@ describe Spree::LineItem do
         line_item.save
       end
     end
+
+    context "target_shipment is provided" do
+      it "verifies inventory" do
+        line_item.target_shipment = Spree::Shipment.new
+        Spree::OrderInventory.any_instance.should_receive(:verify)
+        line_item.save
+      end
+    end
   end
 
   context "#create" do
@@ -209,5 +217,4 @@ describe Spree::LineItem do
       expect { order.line_items.first.update_attributes!(currency: 'AUD') }.to raise_error
     end
   end
-
 end
