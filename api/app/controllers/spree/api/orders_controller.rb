@@ -1,9 +1,10 @@
 module Spree
   module Api
     class OrdersController < Spree::Api::BaseController
-
       skip_before_filter :check_for_user_or_api_key, only: :apply_coupon_code
       skip_before_filter :authenticate_user, only: :apply_coupon_code
+
+      before_filter :find_order, except: [:create, :mine, :index, :update]
 
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
       Order.checkout_steps.keys.each do |step|
@@ -14,7 +15,6 @@ module Spree
       end
 
       def cancel
-        find_order
         authorize! :update, @order, params[:token]
         @order.cancel!
         render :show
@@ -27,10 +27,10 @@ module Spree
       end
 
       def empty
-        find_order
         authorize! :update, @order, order_token
         @order.empty!
         @order.update!
+
         render text: nil, status: 200
       end
 
@@ -41,7 +41,6 @@ module Spree
       end
 
       def show
-        find_order
         authorize! :show, @order, order_token
         method = "before_#{@order.state}"
         send(method) if respond_to?(method, true)
@@ -156,7 +155,6 @@ module Spree
         def order_id
           super || params[:id]
         end
-
     end
   end
 end
