@@ -61,31 +61,4 @@
   background-color: #c00;
   color: #FFF;
   font-size: 2em;
-<<<<<<< HEAD
 }
-=======
-}
-
-.shipment, .line_item {
-  .item-qty-show img, .item-total img {
-    border: 0
-  }
-}
-
-#states {
-  margin: 1.5em;
-
-  span a {
-    text-transform: uppercase;
-    margin-right: 2.5em;
-    padding: 1em;
-
-    &.active {
-      background-color: $color-3;
-      font-weight: bold;
-      color: white;
-    }
-  }
-}
-
->>>>>>> Set active link for states
