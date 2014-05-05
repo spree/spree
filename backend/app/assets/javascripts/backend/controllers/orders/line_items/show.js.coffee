@@ -6,10 +6,7 @@ Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
       '/assets/noimage/mini.png'
   ).property('image')
 
-  canUpdate: (->
-    @get('order.permissions.can_update')
-  ).property('canUpdate')
-
+  canUpdate: Em.computed.oneWay('order.permissions.can_update')
   
   actions:
     edit: ->
