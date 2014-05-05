@@ -52,6 +52,8 @@ FactoryGirl.define do
 
         factory :shipped_order do
           after(:create) do |order|
+            order.update_totals # To ensure we have the right total
+            create(:payment, amount: order.total, order: order, state: 'completed')
             order.shipments.each do |shipment|
               shipment.inventory_units.each { |u| u.update_column('state', 'shipped') }
               shipment.update_column('state', 'shipped')
