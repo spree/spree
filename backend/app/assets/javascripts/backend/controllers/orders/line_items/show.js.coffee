@@ -10,12 +10,12 @@ Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
   
   actions:
     edit: ->
-      this.set('editing', true)
+      @set 'editing', true
     save: ->
-      this.set('editing', false)
-      this.get('model').update()
+      @set 'editing', false
+      @get('model').update()
     cancel: ->
-      this.set('editing', false)
+      @set 'editing', false
     delete: ->
       if confirm(Spree.translations.are_you_sure_delete)
-        this.get('model').destroy()
+        @get('model').destroy()
