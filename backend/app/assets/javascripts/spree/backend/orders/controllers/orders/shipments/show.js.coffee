@@ -15,5 +15,15 @@ Backend.OrdersShipmentsShowController = Ember.ObjectController.extend
       this.get('model').updateShippingRate()
       this.set('editingMethod', false)
 
+    editTracking: ->
+      this.set('editingTracking', true)
+
+    cancelTracking: ->
+      this.set('editingTracking', false)
+
+    saveTracking: ->
+      this.get('model').updateTracking()
+      this.set('editingTracking', false)
+
 
 

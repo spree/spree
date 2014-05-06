@@ -75,6 +75,10 @@ I18n.translations = {
       phone: "Phone"
       state: "State"
       zipcode: "Zip Code"
+    shipment:
+      tracking_number: 'Tracking number'
+      tracking: 'Tracking'
+      no_tracking_present: 'N/A'
     manifest_item_split:
       move_variant_to: 'Move variant to'
       existing_shipments: 'Existing shipments'
