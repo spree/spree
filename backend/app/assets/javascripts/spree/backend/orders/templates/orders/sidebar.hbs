@@ -1,0 +1,46 @@
+<h5 class="sidebar-title"><span>Order #{{unbound number}}</span></h5>
+
+<nav class="menu">
+  <ul>
+    <li>
+      <a href="#" class='icon-cogs'>{{i18n 'adjustments'}}</a>
+    </li>
+    <li>
+      <a href="#" class='icon-credit-card'>{{i18n 'payments'}}</a>
+    </li>
+    <li>
+      <a href="#" class='icon-share-alt'>{{i18n 'return_authorizations'}}</a>
+    </li>
+  </ul>
+</nav>
+
+<hr>
+
+<dl class="additional-info" id="order_tab_summary">
+  <dt id="order_status" style="height: 42px;">{{i18n 'state'}}:</dt>
+  <dd style="height: 42px;"><span class="state {{unbound state}}">{{state}}</span></dd>
+  <dt style="height: 42px;">{{i18n 'subtotal' }}:</dt>
+  <dd id="item_total" style="height: 42px;">{{display_item_total}}</dd>
+  <dt style="height: 42px;">{{i18n 'ship_total' }}:</dt>
+  <dd id="ship_total" style="height: 42px;">{{display_ship_total}}</dd>
+  <dt style="height: 42px;">{{i18n 'tax' }}:</dt>
+  <dd id="tax_total" style="height: 42px;">{{display_tax_total}}</dd>
+  <dt style="height: 42px;">{{i18n 'total' }}:</dt>
+  <dd id="order_total" style="height: 42px;">{{display_total}}</dd>
+  {{#if shipment_state}}
+    <dt style="height: 42px;">{{i18n 'shipment'}}:</dt>
+    <dd id="shipment_status" style="height: 42px;">
+      <span {{bind-attr class=":state shipment_state"}}>{{shipment_state}}</span>
+    </dd>
+  {{/if}}
+  {{#if paymentState}}
+    <dt style="height: 42px;">{{i18n 'payment'}}:</dt>
+    <dd id="payment_status" style="height: 42px;">
+      <span {{bind-attr class=":state payment_state"}}">{{payment_state}}</span>
+    </dd>
+  {{/if}}
+  {{#if completed_at}}
+    <dt style="height: 42px;">{{i18n 'date_completed'}}:</dt>
+    <dd id="date_complete" style="height: 42px;">{{prettyDate completed_at }}</dd>
+  {{/if}}
+</dl>

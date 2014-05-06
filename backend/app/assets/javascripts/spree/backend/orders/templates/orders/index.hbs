@@ -1,0 +1,32 @@
+{{ render 'orders/search' }}
+
+
+<table class="index responsive" id="listing_orders">
+  <colgroup>
+     <col style="width: 13%;" />
+     <col style="width: 10%;" />
+     <col style="width: 10%;" />
+     <col style="width: 12%;" />
+     <col style="width: 12%;" />
+     <col style="width: 25%;" />
+     <col style="width: 10%;" />
+     <col style="width: 8%;" />
+  </colgroup>
+  <thead>
+    <tr>
+      <th>{{i18n completed_at}}</th>
+      <th>{{i18n number}}</th>
+      <th>{{i18n state}}</th>
+      <th>{{i18n payment_state}}</th>
+      <th>{{i18n shipment_state}}</th>
+      <th>{{i18n email}}</th>
+      <th>{{i18n total}}</th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each}}
+      {{ render 'orders/table_row' this }}
+    {{/each}}
+  </tbody>
+</table>

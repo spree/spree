@@ -16,12 +16,11 @@
 
 <%= stylesheet_link_tag 'spree/backend/all' %>
 
-<%= javascript_include_tag 'spree/backend/all' %>
+<%= javascript_include_tag "spree/backend/#{params[:controller].split('/').last}" %>
 
 <%= render "spree/admin/shared/translations" %>
 
 <%= javascript_tag do -%>
-  jQuery.alerts.dialogClass = 'spree';
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
 <% end -%>
 

@@ -4,7 +4,10 @@
 #= require ember-data
 #= require moment
 #= require i18n
-#= require backend/translations
+#= require select2
+
+#= require spree
+#= require ./translations
 
 #= require_self
 #= require ./store
