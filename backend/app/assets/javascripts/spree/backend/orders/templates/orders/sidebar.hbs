@@ -28,13 +28,13 @@
   <dt style="height: 42px;">{{i18n 'total' }}:</dt>
   <dd id="order_total" style="height: 42px;">{{display_total}}</dd>
   {{#if shipment_state}}
-    <dt style="height: 42px;">{{i18n 'shipment'}}:</dt>
+    <dt style="height: 42px;">{{i18n 'shipment_state'}}:</dt>
     <dd id="shipment_status" style="height: 42px;">
       <span {{bind-attr class=":state shipment_state"}}>{{shipment_state}}</span>
     </dd>
   {{/if}}
-  {{#if paymentState}}
-    <dt style="height: 42px;">{{i18n 'payment'}}:</dt>
+  {{#if payment_state}}
+    <dt style="height: 42px;">{{i18n 'payment_state'}}:</dt>
     <dd id="payment_status" style="height: 42px;">
       <span {{bind-attr class=":state payment_state"}}">{{payment_state}}</span>
     </dd>
