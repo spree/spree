@@ -32,17 +32,15 @@ module Spree
           if @order.completed?
             @payment.process!
             flash[:success] = flash_message_for(@payment, :successfully_created)
-
-             redirect_to admin_order_payments_path(@order)
           else
             #This is the first payment (admin created order)
             until @order.completed?
               @order.next!
             end
             flash[:success] = Spree.t(:new_order_completed)
-            redirect_to edit_admin_order_url(@order)
           end
 
+          redirect_to admin_order_payments_path(@order)
         rescue Spree::Core::GatewayError => e
           flash[:error] = "#{e.message}"
           redirect_to new_admin_order_payment_path(@order)
