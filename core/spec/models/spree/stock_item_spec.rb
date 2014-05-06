@@ -149,4 +149,28 @@ describe Spree::StockItem do
       }.to raise_error
     end
   end
+
+  context "inventory tracking" do
+
+    before do
+      subject.variant.track_inventory = true
+    end
+
+    it "tracks inventory by variant setting" do
+      expect(subject.should_track_inventory?).to eq true
+    end
+
+    context "deleted variant" do
+      before do
+        subject.variant.destroy
+        subject.reload
+      end
+
+      it "does not track inventory" do
+        expect(subject.should_track_inventory?).to eq false
+      end
+    end
+
+  end
+
 end
