@@ -4,7 +4,7 @@ Backend.OrdersLineItemsShowController = Ember.ObjectController.extend
       image.mini_url
     else
       '/assets/noimage/mini.png'
-  ).property('image')
+  ).property()
 
   canUpdate: Em.computed.oneWay('order.permissions.can_update')
   
