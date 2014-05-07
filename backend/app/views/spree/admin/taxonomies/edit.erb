@@ -8,7 +8,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'arrow-left' %>
   </li>
 <% end %>
 
@@ -35,9 +35,9 @@
     <br>
 
     <div class="filter-actions actions">
-      <%= button Spree.t('actions.update'), 'icon-refresh' %>
+      <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'icon-remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'remove' %>
     </div>
   </fieldset>
 <% end %>

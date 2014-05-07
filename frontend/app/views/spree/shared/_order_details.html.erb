@@ -20,7 +20,7 @@
         <div class="delivery">
           <% order.shipments.each do |shipment| %>
             <div>
-              <i class='icon-truck'></i>
+              <i class='fa fa-truck'></i>
               <%= Spree.t(:shipment_details, :stock_location => shipment.stock_location.name, :shipping_method => shipment.shipping_method.name) %>
             </div>
           <% end %>

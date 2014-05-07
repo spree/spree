@@ -62,7 +62,7 @@
   <% content_for :page_actions do %>
     <ul class="inline-menu" data-hook="toolbar">
       <li id="new_var_link" data-hook>
-        <%= link_to_with_icon('icon-plus',
+        <%= link_to_with_icon('plus',
                               Spree.t(:new_variant),
                               new_admin_product_variant_url(@product),
                               :remote => :true,
@@ -70,7 +70,7 @@
                               :class => 'button'
                              ) %>
       </li>
-      <li><%= link_to_with_icon('icon-filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
+      <li><%= link_to_with_icon('filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
     </ul>
   <% end %>
 <% end %>
