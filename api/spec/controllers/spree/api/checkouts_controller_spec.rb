@@ -21,31 +21,6 @@ module Spree
       Spree::Config[:track_inventory_levels] = true
     end
 
-    context "GET 'show'" do
-      let(:order) { create(:order) }
-
-      it "redirects to Orders#show" do
-        api_get :show, :id => order.number
-        response.status.should == 301
-        response.should redirect_to("/api/orders/#{order.number}")
-      end
-    end
-
-    context "POST 'create'" do
-      it "creates a new order when no parameters are passed" do
-        api_post :create
-
-        json_response['number'].should be_present
-        response.status.should == 201
-      end
-
-      it "assigns email when creating a new order" do
-        api_post :create, :order => { :email => "guest@spreecommerce.com" }
-        expect(json_response['email']).not_to eq controller.current_api_user
-        expect(json_response['email']).to eq "guest@spreecommerce.com"
-      end
-    end
-
     context "PUT 'update'" do
       let(:order) do
         order = create(:order_with_line_items)
@@ -54,7 +29,6 @@ module Spree
         order.shipments.delete_all
         order
       end
-
 
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)

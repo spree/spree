@@ -1,11 +1,11 @@
 module Spree
   module Api
     class LineItemsController < Spree::Api::BaseController
-
       def create
         variant = Spree::Variant.find(params[:line_item][:variant_id])
         @line_item = order.contents.add(variant, params[:line_item][:quantity])
-        if @line_item.save
+
+        if @line_item.errors.empty?
           @order.ensure_updated_shipments
           respond_with(@line_item, status: 201, default_template: :show)
         else
@@ -16,7 +16,6 @@ module Spree
       def update
         @line_item = find_line_item
         if @order.contents.update_cart(line_items_attributes)
-          @order.ensure_updated_shipments
           @line_item.reload
           respond_with(@line_item, default_template: :show)
         else
@@ -33,7 +32,6 @@ module Spree
       end
 
       private
-
         def order
           @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
           authorize! :update, @order, order_token

@@ -143,15 +143,24 @@ module Spree
     it "can create an order" do
       api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
       response.status.should == 201
+
       order = Order.last
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
+
+      json_response['number'].should be_present
       json_response["token"].should_not be_blank
       json_response["state"].should == "cart"
       order.user.should == current_api_user
       order.email.should == current_api_user.email
       json_response["user_id"].should == current_api_user.id
+    end
+
+    it "assigns email when creating a new order" do
+      api_post :create, :order => { :email => "guest@spreecommerce.com" }
+      expect(json_response['email']).not_to eq controller.current_api_user
+      expect(json_response['email']).to eq "guest@spreecommerce.com"
     end
 
     # Regression test for #3404
@@ -258,7 +267,7 @@ module Spree
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 }
+            "0" => { :id => line_item.id, :quantity => 10 }
           }
         }
 
@@ -271,8 +280,8 @@ module Spree
         variant2 = create(:variant)
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 },
-            1 => { :variant_id => variant2.id, :quantity => 1}
+            "0" => { :id => line_item.id, :quantity => 10 },
+            "1" => { :variant_id => variant2.id, :quantity => 1}
           }
         }
 
