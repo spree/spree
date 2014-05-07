@@ -8,7 +8,6 @@ When filing an issue on the Spree project, please provide these details:
 
 * A comprehensive list of steps to reproduce the issue.
 * What you're *expecting* to happen compared with what's *actually* happening.
-* The version of Spree *and* the version of Rails.
 * Your application's complete Gemfile, as text (*not as an image*)
 * Any relevant stack traces ("Full trace" preferred)
 
