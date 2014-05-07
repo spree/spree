@@ -160,7 +160,7 @@ describe 'Payments' do
 
       it 'does not allow the amount to be edited' do
         within_row(1) do
-          page.should_not have_selector('.icon-edit')
+          page.should_not have_selector('.fa-edit')
           page.should_not have_selector('td.amount span')
         end
       end

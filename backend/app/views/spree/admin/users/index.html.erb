@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_user), new_admin_user_url, :icon => 'icon-plus', :id => 'admin_new_user_link' %>
+    <%= button_link_to Spree.t(:new_user), new_admin_user_url, :icon => 'plus', :id => 'admin_new_user_link' %>
   </li>
 <% end %>
 
@@ -46,7 +46,7 @@
         <%= f.text_field :email_cont, :class => 'fullwidth' %>
       </div>
       <div data-hook="admin_users_index_search_buttons">
-        <%= button Spree.t(:search), 'icon-search' %>
+        <%= button Spree.t(:search), 'search' %>
       </div>
     <% end %>
   </div>

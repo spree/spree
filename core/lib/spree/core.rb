@@ -11,6 +11,7 @@ require 'paranoia'
 require 'ransack'
 require 'state_machine'
 require 'friendly_id'
+require 'font-awesome-rails'
 
 module Spree
 

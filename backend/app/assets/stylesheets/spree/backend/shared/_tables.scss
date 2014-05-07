@@ -41,7 +41,7 @@ table {
         font-size: $body-font-size;
       }
 
-      [class*='icon-'].no-text {
+      [class*='fa-'].no-text {
         font-size: 120%;
         background-color: very-light($color-3);
         border: 1px solid $color-border;
@@ -49,7 +49,7 @@ table {
         width: 29px;
         height: 29px;
         display: inline-block;
-        padding-top: 2px;
+        padding-top: 6px;
 
         &:before {
           text-align: center !important;
@@ -62,12 +62,12 @@ table {
         }
       }
 
-      button[class*='icon-'] {
+      button[class*='fa-'] {
         color: $color-link;
         padding: 0 !important;
       }
 
-      .icon-envelope-alt, .icon-eye-open {
+      .fa-envelope-alt, .fa-eye-open {
         color: $color-link;
         padding-left: 0px;
 
@@ -76,19 +76,19 @@ table {
           color: $color-1;
         }
       }
-      .icon-trash:hover, .icon-void:hover {
+      .fa-trash:hover, .fa-void:hover {
         background-color: $color-error;
         color: $color-1;
       }
-      .icon-cancel:hover {
+      .fa-cancel:hover {
         background-color: $color-notice;
         color: $color-1;
       }
-      .icon-edit:hover, .icon-capture:hover, .icon-ok:hover, .icon-plus:hover, .icon-save:hover {
+      .fa-edit:hover, .fa-capture:hover, .fa-ok:hover, .fa-plus:hover, .fa-save:hover {
         background-color: $color-success;
         color: $color-1;
       }
-      .icon-copy:hover {
+      .fa-copy:hover {
         background-color: $color-notice;
         color: $color-1;
       }
@@ -105,7 +105,7 @@ table {
 
     .handle {
       @extend [class^="icon-"]:before;
-      @extend .icon-reorder;
+      @extend .fa-reorder;
       cursor: move;
     }
 
