@@ -200,4 +200,12 @@ describe Spree::StockItem do
       end.to change { subject.variant.updated_at }
     end
   end
+
+  # Regression test for #4651
+  context "variant" do
+    it "can be found even if the variant is deleted" do
+      subject.variant.destroy
+      subject.reload.variant.should_not be_nil
+    end
+  end
 end
