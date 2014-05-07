@@ -274,15 +274,15 @@ Each USPS delivery service you want to make available at checkout has to be asso
 
 With zones in place, we can now start adding some shipping methods through the admin panel. The only other essential requirement to calculate the shipping total at checkout is that each product and variant be assigned a weight.
 
-The `spree_active_shipping` gem needs some configuration variables set in order to consume the carrier web service. Among other things, it needs the API username and the origin location:
+The `spree_active_shipping` gem needs some configuration variables set in order to consume the carrier web services.
 
 ```ruby
   # these can be set in an initializer in your site extension
   Spree::ActiveShipping::Config.set(:usps_login => "YOUR_USPS_LOGIN")
-  Spree::ActiveShipping::Config.set(:origin_country => "US")
-  Spree::ActiveShipping::Config.set(:origin_state => "HI")
-  Spree::ActiveShipping::Config.set(:origin_city => "Pahoa")
-  Spree::ActiveShipping::Config.set(:origin_zip => "96778")
+  Spree::ActiveShipping::Config.set(:fedex_login => "YOUR_FEDEX_LOGIN")
+  Spree::ActiveShipping::Config.set(:fedex_password => "YOUR_FEDEX_PASSWORD")
+  Spree::ActiveShipping::Config.set(:fedex_account => "YOUR_FEDEX_ACCOUNT")
+  Spree::ActiveShipping::Config.set(:fedex_key => "YOUR_FEDEX_KEY")
 ```
 
 ### Adding Additional Calculators
