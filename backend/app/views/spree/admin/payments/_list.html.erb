@@ -17,7 +17,7 @@
         <td class="align-center"> <span class="state <%= payment.state %>"><%= Spree.t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></span></td>
         <td class="actions">
           <% payment.actions.each do |action| %>
-            <%= link_to_with_icon "icon-#{action}", Spree.t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :no_text => true, :data => {:action => action} %>
+            <%= link_to_with_icon action, Spree.t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :no_text => true, :data => {:action => action} %>
           <% end %>
         </td>
       </tr>

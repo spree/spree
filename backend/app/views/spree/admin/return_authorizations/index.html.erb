@@ -3,14 +3,14 @@
 <% content_for :page_actions do %>
   <% if @order.shipments.any? &:shipped? %>
     <li>
-      <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'icon-plus' %>
+      <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'plus' %>
     </li>
   <% end %>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= Spree.t(:return_authorizations) %>
+  <i class="fa fa-arrow-right"></i> <%= Spree.t(:return_authorizations) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) || @order.return_authorizations.any? %>
@@ -49,4 +49,4 @@
   </div>
 <% end %>
 
-<%= button_link_to Spree.t(:continue), admin_orders_url, :icon => 'icon-arrow-right' %>
+<%= button_link_to Spree.t(:continue), admin_orders_url, :icon => 'arrow-right' %>

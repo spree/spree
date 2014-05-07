@@ -8,10 +8,10 @@
   }
 
   .jstree-open > .jstree-icon {    
-    @extend .icon-caret-down;
+    @extend .fa-caret-down;
   }
   .jstree-closed > .jstree-icon {    
-    @extend .icon-caret-right;
+    @extend .fa-caret-right;
   }
 
   li {
@@ -31,7 +31,7 @@
 
       .jstree-icon {
         padding-left: 0px;
-        @extend .icon-move;   
+        @extend .fa-arrows;   
       }
     }
   }
@@ -45,16 +45,16 @@
   @extend [class^="icon-"]:before;   
 }
 #vakata-dragged.jstree-apple .jstree-invalid {
-  @extend .icon-remove;  
+  @extend .fa-bars;  
   color: $color-5;
 }
 #vakata-dragged.jstree-apple .jstree-ok {
-  @extend .icon-ok;
+  @extend .fa-ok;
   color: $color-2;
 }
 
 #jstree-marker {
-  @extend .icon-caret-right;
+  @extend .fa-caret-right;
   color: $color-body-text !important;
   width: 4px !important;
 }

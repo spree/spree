@@ -9,7 +9,7 @@
         <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion), :class => 'select2 fullwidth') %>
       </div>
       <div class="filter-actions actions">
-        <%= button Spree.t(:add), 'icon-plus' %>
+        <%= button Spree.t(:add), 'plus' %>
       </div>
     </fieldset>
   <% end %>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="promotion-update filter-actions actions">
-          <%= button Spree.t('actions.update'), 'icon-refresh' %>
+          <%= button Spree.t('actions.update'), 'refresh' %>
         </div>
       </fieldset>
     <% end %>

@@ -63,14 +63,14 @@
       left: 0;
 
       .ui-icon {
-        @extend .icon-arrow-left;        
+        @extend .fa-arrow-left;        
       }
     }
     .ui-datepicker-next {
       right: 0;
 
       .ui-icon {
-        @extend .icon-arrow-right;
+        @extend .fa-arrow-right;
       }
 
       &:hover {

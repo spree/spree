@@ -49,7 +49,7 @@ jQuery ($) ->
     $new_button: (action) ->
       $('<a />')
         .attr
-          class: "icon-#{action} icon_link no-text with-tip"
+          class: "fa fa-#{action} icon_link no-text with-tip"
           title: Spree.translations[action]
         .data
           action: action
@@ -66,7 +66,7 @@ jQuery ($) ->
           fadeOutTime:    50
 
     $buttons: ->
-      @$actions().find(".icon-#{@action}, .icon-cancel")
+      @$actions().find(".fa-#{@action}, .fa-cancel")
 
     $actions: ->
       @$el.find('.actions')
