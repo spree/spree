@@ -4,8 +4,9 @@ module Spree
       def validate(line_item)
         if shipment = line_item.target_shipment
           units = shipment.inventory_units_for(line_item.variant)
-          return if units.count > line_item.quantity
-          quantity = line_item.quantity - units.count
+          unit_quantity = units.sum(:quantity)
+          return if unit_quantity > line_item.quantity
+          quantity = line_item.quantity - unit_quantity
         else
           quantity = line_item.quantity
         end
