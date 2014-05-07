@@ -132,6 +132,16 @@ module Spree
         updater.update_payment_state
         order.payment_state.should == 'paid'
       end
+
+      it "is balance due if payment total is less than order total" do
+        order.stub_chain(:line_items, :empty?).and_return(false)
+        order.stub_chain(:payments, :last, :state).and_return('completed')
+        order.stub :payment_total => 29
+        order.stub :total => 30
+
+        updater.update_payment_state
+        order.payment_state.should == 'balance_due'
+      end
     end
 
     it "state change" do
