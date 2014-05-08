@@ -10,7 +10,7 @@ module Spree
           quantity = line_item.quantity
         end
 
-        quantifier = Stock::Quantifier.new(line_item.variant_id)
+        quantifier = Stock::Quantifier.new(line_item.variant)
 
         unless quantifier.can_supply? quantity
           variant = line_item.variant
