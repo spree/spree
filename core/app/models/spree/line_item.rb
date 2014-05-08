@@ -78,7 +78,7 @@ module Spree
     end
 
     def sufficient_stock?
-      Stock::Quantifier.new(variant_id).can_supply? quantity
+      Stock::Quantifier.new(variant).can_supply? quantity
     end
 
     def insufficient_stock?
