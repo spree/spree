@@ -1,6 +1,7 @@
 module Spree
   module Api
     class VariantsController < Spree::Api::BaseController
+      include Spree::Core::ControllerHelpers::Search
 
       before_filter :product
 
@@ -20,9 +21,15 @@ module Spree
         respond_with(@variant, status: 204)
       end
 
-      def index
-        @variants = scope.includes(:option_values).ransack(params[:q]).result.
-          page(params[:page]).per(params[:per_page])
+      def index  
+        @variants = build_searcher(
+          :Variant, {
+            scope:    scope,
+            q:        params[:q],
+            page:     params[:page],
+            per_page: params[:per_page]
+          }
+        ).search
         respond_with(@variants)
       end
 

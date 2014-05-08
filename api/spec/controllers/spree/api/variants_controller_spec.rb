@@ -39,7 +39,7 @@ module Spree
 
     it 'can query the results through a paramter' do
       expected_result = create(:variant, :sku => 'FOOBAR')
-      api_get :index, :q => { :sku_cont => 'FOO' }
+      api_get :index, :q => 'FOO'
       json_response['count'].should == 1
       json_response['variants'].first['sku'].should eq expected_result.sku
     end
