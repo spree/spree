@@ -75,7 +75,9 @@ describe 'Payments' do
       end
 
       click_icon :void
-      find('#payment_status').text.should == 'BALANCE DUE'
+
+      # as it had a payment greater than order total ($50)
+      find('#payment_status').text.should == 'CREDIT OWED'
       page.should have_content('Payment Updated')
 
       within_row(1) do
