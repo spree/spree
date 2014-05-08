@@ -28,7 +28,7 @@ module Spree
 
       # return variant when passed either variant object or variant id
       def resolve_variant_id(variant)
-        variant = Spree::Variant.find_by_id(variant) unless variant.respond_to?(:should_track_inventory?)
+        variant = Spree::Variant.unscoped.find_by_id(variant) unless variant.respond_to?(:should_track_inventory?)
         variant
       end
 
