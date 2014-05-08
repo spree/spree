@@ -15,7 +15,7 @@
 # a.get :color
 # a.preferred_color
 #
-require "spree/core/search/base"
+require "spree/core/search"
 
 module Spree
   class AppConfiguration < Preferences::Configuration
@@ -77,7 +77,7 @@ module Spree
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
-      @searcher_class ||= Spree::Core::Search::Base
+      @searcher_class ||= Spree::Core::Search
     end
 
     def searcher_class=(sclass)
