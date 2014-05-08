@@ -9,8 +9,7 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true))
-      @products = @searcher.retrieve_products
+      @products = build_searcher(:Product, params.merge(include_images: true)).search
       @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
 

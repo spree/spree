@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Core::Search::Base do
+describe Spree::Core::Search::Product do
 
   before do
     include Spree::Core::ProductFilters
@@ -13,7 +13,7 @@ describe Spree::Core::Search::Base do
 
   it "returns all products by default" do
     params = { :per_page => "" }
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.retrieve_products.count).to eq(2)
   end
 
@@ -37,18 +37,18 @@ describe Spree::Core::Search::Base do
     @product3 = create(:product, :name => "RoR Pants", :price => 14.00)
 
     params = { :per_page => "2" }
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.retrieve_products.count).to eq(2)
 
     params.merge! :page => "2"
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.retrieve_products.count).to eq(1)
   end
 
   it "maps search params to named scopes" do
     params = { :per_page => "",
                :search => { "price_range_any" => ["Under $10.00"] }}
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.retrieve_products.count).to eq(1)
   end
@@ -56,7 +56,7 @@ describe Spree::Core::Search::Base do
   it "maps multiple price_range_any filters" do
     params = { :per_page => "",
                :search => { "price_range_any" => ["Under $10.00", "$10.00 - $15.00"] }}
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.send(:get_base_scope).to_sql).to match /between 10 and 15/i
     expect(searcher.retrieve_products.count).to eq(2)
@@ -65,20 +65,20 @@ describe Spree::Core::Search::Base do
   it "uses ransack if scope not found" do
     params = { :per_page => "",
                :search => { "name_not_cont" => "Shirt" }}
-    searcher = Spree::Core::Search::Base.new(params)
+    searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.retrieve_products.count).to eq(1)
   end
 
   it "accepts a current user" do
     user = double
-    searcher = Spree::Core::Search::Base.new({})
+    searcher = Spree::Core::Search::Product.new({})
     searcher.current_user = user
     expect(searcher.current_user).to eql(user)
   end
 
   it "finds products in alternate currencies" do
     price = create(:price, :currency => 'EUR', :variant => @product1.master)
-    searcher = Spree::Core::Search::Base.new({})
+    searcher = Spree::Core::Search::Product.new({})
     searcher.current_currency = 'EUR'
     expect(searcher.retrieve_products).to eq([@product1])
   end

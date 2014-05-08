@@ -2,6 +2,8 @@ module Spree
   module Api
     module V1
       class VariantsController < Spree::Api::BaseController
+        include Spree::Core::ControllerHelpers::Search
+
         before_action :product
 
         def create
@@ -20,12 +22,21 @@ module Spree
           respond_with(@variant, status: 204)
         end
 
-        # The lazyloaded associations here are pretty much attached to which nodes
-        # we render on the view so we better update it any time a node is included
-        # or removed from the views.
         def index
-          @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
-            .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          # The lazyloaded associations here are pretty much attached to which nodes
+          # we render on the view so we better update it any time a node is included
+          # or removed from the views.
+          scope = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
+
+          @variants = build_searcher(
+            :Variant, {
+              scope:    scope,
+              q:        params[:q],
+              page:     params[:page],
+              per_page: params[:per_page]
+            }
+          ).search
+
           respond_with(@variants)
         end
 
