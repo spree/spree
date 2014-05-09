@@ -72,7 +72,7 @@ describe Spree.user_class do
     end
 
     def load_orders
-      subject.stub(:orders).and_return(double(complete: orders))
+      subject.stub(:spree_orders).and_return(double(complete: orders))
     end
 
     describe "#lifetime_value" do
