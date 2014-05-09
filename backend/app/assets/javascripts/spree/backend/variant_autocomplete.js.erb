@@ -10,8 +10,8 @@ $(document).ready(function() {
 });
 
 formatVariantResult = function(variant) {
-  if (variant["images"][0] != undefined && variant["images"][0].urls != undefined) {
-    variant.image = variant.images[0].urls.mini
+  if (variant["images"][0] != undefined && variant["images"][0].mini_url != undefined) {
+    variant.image = variant.images[0].mini_url
   }
   return variantTemplate({ variant: variant })
 }
