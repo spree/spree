@@ -9,7 +9,7 @@
       <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
       <% if shipment.ready? and can? :update, shipment %>
         -
-        <%= link_to 'ship', '#', :class => 'ship button icon-arrow-right', :data => {'shipment-number' => shipment.number} %>
+        <%= link_to Spree.t(:ship), '#', :class => 'ship button icon-arrow-right', :data => {'shipment-number' => shipment.number} %>
       <% end %>
     </legend>
   </fieldset>
