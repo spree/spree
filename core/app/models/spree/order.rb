@@ -398,7 +398,7 @@ module Spree
     end
 
     def insufficient_stock_lines
-     @insufficient_stock_lines ||= line_items.select(&:insufficient_stock?)
+     line_items.select(&:insufficient_stock?)
     end
 
     def merge!(order, user = nil)
