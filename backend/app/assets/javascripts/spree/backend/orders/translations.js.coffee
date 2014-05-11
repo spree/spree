@@ -83,4 +83,5 @@ I18n.translations = {
       move_variant_to: 'Move variant to'
       existing_shipments: 'Existing shipments'
       new_shipment_at_location: 'New shipment at location'
+    new_payment: 'New Payment'
 }

@@ -6,4 +6,4 @@ Backend.Payment = Ember.Object.extend
       method: 'PUT'
       url: url
     .done (response) ->
-      order.refresh()
+      order.refreshTotals()

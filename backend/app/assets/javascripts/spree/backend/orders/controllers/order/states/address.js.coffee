@@ -1,4 +1,4 @@
-Backend.OrdersStatesAddressController = Backend.OrdersStatesController.extend
+Backend.OrderStatesAddressController = Ember.ObjectController.extend
   init: ->
     @set('guestCheckout', false)
   guestCheckout: (->

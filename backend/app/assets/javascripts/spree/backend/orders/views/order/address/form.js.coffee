@@ -1,4 +1,4 @@
-Backend.OrdersAddressesFormView = Ember.View.extend
+Backend.OrderAddressFormView = Ember.View.extend
   didInsertElement: ->
     @initCountryPicker()
     @didChangeCountry()

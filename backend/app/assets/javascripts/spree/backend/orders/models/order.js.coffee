@@ -76,14 +76,14 @@ Backend.Order.reopen
       order.setProperties(data)
       order.init()
 
-  refresh: ->
+  refreshTotals: ->
     order = this
     $.ajax
       method: 'GET'
-      url: this.get('url')
+      url: this.get('url') + '/sidebar'
     .then (data) ->
       order.setProperties(data)
-      order.init()
+      # order.init()
       
   advance: ->
     order = this

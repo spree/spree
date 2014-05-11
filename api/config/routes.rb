@@ -20,6 +20,7 @@ Spree::Core::Engine.add_routes do
         put :cancel
         put :empty
         put :apply_coupon_code
+        get :sidebar
       end
 
       resources :line_items

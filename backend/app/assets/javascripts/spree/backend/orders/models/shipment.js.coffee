@@ -40,7 +40,7 @@ Backend.Shipment = Ember.Object.extend
         shipment: params
     .done (response) ->
       shipment.setProperties(response)
-      shipment.order.refresh()
+      shipment.order.refreshTotals()
 
   updateShippingRate: ->
     @update selected_shipping_rate_id: this.get('selected_shipping_rate_id')

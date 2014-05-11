@@ -1,4 +1,4 @@
-Backend.OrdersVariantsStockPickerController = Ember.ObjectController.extend
+Backend.OrderVariantStockPickerController = Ember.ObjectController.extend
   needs: ['order']
   order: Ember.computed.alias("controllers.order")
 

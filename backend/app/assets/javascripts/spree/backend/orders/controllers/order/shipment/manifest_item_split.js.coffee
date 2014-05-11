@@ -1,18 +1,7 @@
-Backend.OrdersShipmentsManifestItemController = Ember.ObjectController.extend
-  image: ( ->
-    @get('variant.images.firstObject.mini_url')
-  ).property("image")
-  states: (->
-    $.map @get("model.states"), (state, count) ->
-      count + " x " + state
-  ).property("states")
-  canUpdate: (->
-    this.get('shipment.permissions.can_update')
-  ).property("canUpdate")
-
-  shipment: (->
-    this.get('model.shipment')
-  ).property("shipment")
+Backend.OrderShipmentManifestItemSplitController = Ember.ObjectController.extend
+  shipments: (->
+    this.get('model.shipment.order.shipments')
+  ).property("shipments")
 
   actions:
     edit: ->
@@ -25,10 +14,8 @@ Backend.OrdersShipmentsManifestItemController = Ember.ObjectController.extend
       this.get('shipment').adjustItems(variant_id, quantity, original_quantity)
     cancel: ->
       this.set('editing', false)
-    beginSplit: ->
-      this.set('splitting', true)
     split: ->
-      # Pending jhawthorn's splitter API endpoint
+      this.set('splitting', true)
     delete: ->
       variant_id = this.get('model.variant_id')
       original_quantity = this.get('model.original_quantity')

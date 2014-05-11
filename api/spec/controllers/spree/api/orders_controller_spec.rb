@@ -114,6 +114,13 @@ module Spree
       response.status.should == 200
     end
 
+    it "can view just the sidebar info for the order" do
+      Order.any_instance.stub :user => current_api_user
+      api_get :sidebar, :id => order.to_param
+      response.status.should == 200
+      json_response.should have_attributes([:state, :ship_total, :total, :shipment_state, :payment_state])
+    end
+
     context "with BarAbility registered" do
       before { Spree::Ability.register_ability(::BarAbility) }
       after { Spree::Ability.remove_ability(::BarAbility) }

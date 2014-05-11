@@ -3,8 +3,8 @@ Backend.OrdersRoute = Ember.Route.extend
     Backend.Order.findAll()
 
   renderTemplate: ->
-    this.render 'orders/index'
-    this.render 'orders/index_actions', { outlet: 'actions', into: 'application' }
+    this.render 'order/index'
+    this.render 'order/index_actions', { outlet: 'actions', into: 'application' }
     this.controllerFor('application').set('showSidebar', false)
     this.controllerFor('application').set('title', 'Listing Orders')
 

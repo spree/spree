@@ -9,17 +9,17 @@ Backend.OrderRoute = Ember.Route.extend
     { order_number: model.get('number') }
 
   renderTemplate: ->
-    @render 'orders/show'
+    @render 'order/show'
 
     order = @currentModel
     # Set the title
     app_controller = @controllerFor('application')
     app_controller.set('title', "Order ##{order.get('number')}")
-    @render 'orders/show_actions', { outlet: 'actions', into: 'application' }
+    @render 'order/show_actions', { outlet: 'actions', into: 'application' }
 
     # Show the sidebar
     app_controller.set('showSidebar', true)
-    @render 'orders/sidebar', { outlet: 'sidebar', into: 'application' }
+    @render 'order/sidebar', { outlet: 'sidebar', into: 'application' }
 
   actions:
     cancel: ->

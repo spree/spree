@@ -10,7 +10,7 @@ Backend.LineItem = Ember.Object.extend
           quantity: item.get('quantity')
     .done (data) ->
       item.setProperties(data)
-      item.get('order').refresh()
+      item.get('order').refreshTotals()
   destroy: ->
     this.get('order').line_items.removeObject(this)
 

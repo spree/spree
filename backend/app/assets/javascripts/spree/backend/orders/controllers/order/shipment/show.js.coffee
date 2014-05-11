@@ -1,4 +1,4 @@
-Backend.OrdersShipmentsShowController = Ember.ObjectController.extend
+Backend.OrderShipmentShowController = Ember.ObjectController.extend
 
   shippingMethodID: (->
     @get('selected_shipping_rate.shipping_method_id')
