@@ -416,6 +416,10 @@ module Spree
 
       self.associate_user!(user) if !self.user && !user.blank?
 
+      updater.update_item_count
+      updater.update_item_total
+      updater.persist_totals
+
       # So that the destroy doesn't take out line items which may have been re-assigned
       order.line_items.reload
       order.destroy

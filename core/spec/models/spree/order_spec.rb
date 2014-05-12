@@ -259,6 +259,9 @@ describe Spree::Order do
         line_items = order_1.line_items
         line_items.count.should == 2
 
+        expect(order_1.item_count).to eq 2
+        expect(order_1.item_total).to eq line_items.map(&:amount).sum
+
         # No guarantee on ordering of line items, so we do this:
         line_items.pluck(:quantity).should =~ [1, 1]
         line_items.pluck(:variant_id).should =~ [variant.id, variant_2.id]
