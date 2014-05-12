@@ -1,4 +1,7 @@
-Backend.OrderStatesAddressController = Ember.ObjectController.extend
+Backend.OrderAddressController = Ember.ObjectController.extend
+  needs: ['order']
+  order: Ember.computed.alias("controllers.order")
+  
   init: ->
     @set('guestCheckout', false)
   guestCheckout: (->

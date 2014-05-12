@@ -52,6 +52,8 @@ I18n.translations = {
       edit: 'Edit'
       update: 'Update'
       add: 'Add'
+      save: 'Save'
+      cancel: 'Cancel'
     order:
       address_information: 'Address information'
       shipments: 'Shipments'

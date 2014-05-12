@@ -1,0 +1,57 @@
+<div class="row">
+  <div id='content' class="columns twelve">
+    <div id="content-header" data-hook="">
+      <div class="container">
+        <div class="sixteen columns">
+          <div class="block-table">
+            <div class="table-cell">
+              <h1 class="page-title">{{i18n 'listing_orders' }}</h1>
+            </div>
+            <div class="page-actions table-cell toolbar" data-hook="toolbar">
+              {{partial 'orders/actions' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class='container'>
+  <div class="row">
+    <div class="columns sixteen">
+      {{ render 'orders/search' }}
+
+      <table class="index responsive" id="listing_orders">
+        <colgroup>
+           <col style="width: 13%;" />
+           <col style="width: 10%;" />
+           <col style="width: 10%;" />
+           <col style="width: 12%;" />
+           <col style="width: 12%;" />
+           <col style="width: 25%;" />
+           <col style="width: 10%;" />
+           <col style="width: 8%;" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>{{i18n completed_at}}</th>
+            <th>{{i18n number}}</th>
+            <th>{{i18n state}}</th>
+            <th>{{i18n payment_state}}</th>
+            <th>{{i18n shipment_state}}</th>
+            <th>{{i18n email}}</th>
+            <th>{{i18n total}}</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each}}
+            {{ render 'order/table_row' this }}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

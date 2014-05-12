@@ -1,4 +1,4 @@
-Backend.OrderVariantStockPickerController = Ember.ObjectController.extend
+Backend.VariantsStockPickerController = Ember.ObjectController.extend
   needs: ['order']
   order: Ember.computed.alias("controllers.order")
 
@@ -7,5 +7,4 @@ Backend.OrderVariantStockPickerController = Ember.ObjectController.extend
       variant = this.parentController.get('variant')
       this.parentController.set('variant', null)
       quantity = stock_item.get('quantity')
-
       this.get('order.content').addItem(variant, quantity)

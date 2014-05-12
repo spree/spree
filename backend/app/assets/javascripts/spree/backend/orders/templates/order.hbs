@@ -1,0 +1,30 @@
+<div class="row">
+  <div id='content' class="columns twelve">
+    <div id="content-header" data-hook="">
+      <div class="container">
+        <div class="sixteen columns">
+          <div class="block-table">
+            <div class="table-cell">
+              <h1 class="page-title">Order #{{number}}</h1>
+            </div>
+            <div class="page-actions table-cell toolbar" data-hook="toolbar">
+              {{partial 'order/actions' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='container'>
+  <div class="row">
+    <div class="columns twelve">
+      {{outlet}}
+    </div>
+
+    <aside id="sidebar" class="columns four" data-hook>
+      {{partial 'order/sidebar'}}
+    </aside>
+  </div>
+</div>

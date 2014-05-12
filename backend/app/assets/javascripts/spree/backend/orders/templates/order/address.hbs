@@ -1,7 +1,7 @@
 <fieldset class="no-border-bottom state_info" id='address_info'>
   <legend>{{i18n 'order.states.address' }}</legend>
 
-  {{#if order.canUpdate}}
+  {{#if canUpdate}}
     <div class="twelve columns" id='user_info'>
       {{view Ember.Checkbox checked=guestCheckout id='guest_checkout' }}
       <label for='guest_checkout'>{{i18n 'guest_checkout' }}</label>
@@ -21,7 +21,7 @@
   <div class="alpha six columns" id='billing_address'>
     <fieldset class="no-border-bottom">
       <legend align="center">{{i18n 'order.bill_address' }}</legend>
-      {{#with order.bill_address}}
+      {{#with bill_address}}
         {{partial 'order/address/details'}}
       {{/with}}
     </fieldset>
@@ -30,7 +30,7 @@
   <div class="alpha six columns" id='shipping_address'>
     <fieldset class="no-border-bottom">
       <legend align="center">{{i18n 'order.ship_address'}}</legend>
-      {{#with order.ship_address}}
+      {{#with ship_address}}
         {{partial 'order/address/details'}}
       {{/with}}
     </fieldset>

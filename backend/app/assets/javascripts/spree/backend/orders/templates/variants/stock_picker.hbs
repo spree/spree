@@ -27,7 +27,7 @@
                 {{input type='number' min='1' value=quantity}}
               </td>
               <td class="actions">
-                <button class="no-text icon-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
+                <button class="no-text fa fa-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
               </td>
             {{else}}
               {{#if available}}
@@ -39,7 +39,7 @@
                   {{input type='number' min='1' value=quantity}}
                 </td>
                 <td class="actions">
-                  <button class="no-text icon-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
+                  <button class="no-text fa fa-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
                 </td>
               {{else}}
                 <td>{{i18n 'out_of_stock' }}</td>

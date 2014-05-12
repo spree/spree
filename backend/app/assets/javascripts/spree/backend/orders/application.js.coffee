@@ -23,15 +23,16 @@
 
 # for more details see: http://emberjs.com/guides/application/
 
-window.Backend = Ember.Application.create
+window.Backend = Em.Application.create
   LOG_TRANSITIONS: true
   LOG_TRANSITIONS_INTERNAL: true
   LOG_VIEW_LOOKUPS: true
   LOG_ACTIVE_GENERATION: true
+  rootElement: '#application'
   Resolver: Ember.DefaultResolver.extend
     resolve: (name) ->
       console.log(name)
       this._super(name)
-  rootElement: '#application'
+    
 
   

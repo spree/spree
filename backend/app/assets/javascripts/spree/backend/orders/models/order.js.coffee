@@ -64,7 +64,10 @@ Backend.Order.reopen
           variant_id: variant.id
           quantity: quantity
     .done ->
-      order.advance()
+      if order.state == 'cart'
+        order.advance()
+      else
+        order.refresh()
 
   update: (params) ->
     order = this
@@ -76,6 +79,15 @@ Backend.Order.reopen
       order.setProperties(data)
       order.init()
 
+  refresh: ->
+    order = this
+    $.ajax
+      method: 'GET'
+      url: this.get('url')
+    .then (data) ->
+      order.setProperties(data)
+      order.init()
+
   refreshTotals: ->
     order = this
     $.ajax
@@ -83,7 +95,6 @@ Backend.Order.reopen
       url: this.get('url') + '/sidebar'
     .then (data) ->
       order.setProperties(data)
-      # order.init()
       
   advance: ->
     order = this

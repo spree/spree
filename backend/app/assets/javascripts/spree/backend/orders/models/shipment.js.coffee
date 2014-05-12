@@ -28,7 +28,8 @@ Backend.Shipment = Ember.Object.extend
           variant_id: variant_id
           quantity: new_quantity
       .then (response) ->
-        shipment.get('order').advance()
+        shipment.setProperties(response)
+        shipment.get('order').refreshTotals()
 
   update: (params) ->
     shipment = this

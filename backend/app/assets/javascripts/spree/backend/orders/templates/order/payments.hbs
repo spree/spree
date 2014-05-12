@@ -1,6 +1,6 @@
-<fieldset class="no-border-bottom state_info" id='address_info'>
+<fieldset class="no-border-bottom">
   <legend>{{i18n 'payments' }}</legend>
-  <button class='fa fa-plus' {{action 'newPayment'}}>{{i18n 'new_payment' }}</button>
+  {{#link-to 'payments.new' order class='fa fa-plus'}}{{i18n 'new_payment'}}{{/link-to}}
   {{#if order.payments}}
     <table class="index">
       <thead>
@@ -20,3 +20,5 @@
     </table>
   {{/if}}
 </fieldset>
+
+{{outlet}}

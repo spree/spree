@@ -1,0 +1,11 @@
+<ul class="inline-menu">
+  {{#if canceled}}
+    <li>
+      <a class="button fa fa-resume" {{action 'resume'}}>Resume</a>
+    </li>
+  {{else}}
+    <li>
+      <a class="button fa fa-cancel" {{action 'cancel'}}>Cancel</a>
+    </li>
+  {{/if}}
+</ul>
