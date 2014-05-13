@@ -16,7 +16,7 @@ module Spree
         @shipment.refresh_rates
         @shipment.save!
 
-        respond_with(@shipment.reload, default_template: :show)
+        respond_with(@shipment.reload, default_template: :small)
       end
 
       def update
@@ -35,7 +35,7 @@ module Spree
         end
 
         @shipment.reload
-        respond_with(@shipment, default_template: :show)
+        respond_with(@shipment, default_template: :small)
       end
 
       def ready
@@ -46,14 +46,14 @@ module Spree
             render 'spree/api/shipments/cannot_ready_shipment', status: 422 and return
           end
         end
-        respond_with(@shipment, default_template: :show)
+        respond_with(@shipment, default_template: :small)
       end
 
       def ship
         unless @shipment.shipped?
           @shipment.ship!
         end
-        respond_with(@shipment, default_template: :show)
+        respond_with(@shipment, default_template: :small)
       end
 
       def add
@@ -62,7 +62,7 @@ module Spree
 
         @shipment.order.contents.add(variant, quantity, nil, @shipment)
 
-        respond_with(@shipment, default_template: :show)
+        respond_with(@shipment, default_template: :small)
       end
 
       def remove
@@ -71,7 +71,7 @@ module Spree
 
         @shipment.order.contents.remove(variant, quantity, @shipment)
         @shipment.reload if @shipment.persisted?
-        respond_with(@shipment, default_template: :show)
+        respond_with(@shipment, default_template: :small)
       end
 
       private
