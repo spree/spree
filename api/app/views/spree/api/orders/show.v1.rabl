@@ -29,6 +29,10 @@ child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
 end
 
+child :available_payment_methods => :payment_methods do
+  attributes :id, :name, :environment, :method_type
+end
+
 # Necessary for backend's order interface
 node :permissions do
   { can_update: current_ability.can?(:update, root_object) }
