@@ -5,14 +5,18 @@ Backend.OrderShipmentManifestItemController = Ember.ObjectController.extend
   states: (->
     $.map @get("model.states"), (state, count) ->
       count + " x " + state
-  ).property("states")
+  ).property()
   canUpdate: (->
     this.get('shipment.permissions.can_update')
-  ).property("canUpdate")
+  ).property()
 
   shipment: (->
     this.get('model.shipment')
-  ).property("shipment")
+  ).property()
+
+  price: (->
+    '$' + this.get('line_item.price') * this.get('quantity')
+  ).property('quantity')
 
   actions:
     edit: ->
