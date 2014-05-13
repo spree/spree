@@ -1,3 +1,5 @@
+#= require spin
+
 $(document).ready ->
   opts =
     lines: 11
