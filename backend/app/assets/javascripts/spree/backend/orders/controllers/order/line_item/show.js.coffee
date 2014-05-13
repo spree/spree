@@ -1,4 +1,7 @@
 Backend.OrderLineItemShowController = Ember.ObjectController.extend
+  needs: ['order']
+  order: Ember.computed.alias("controllers.order")
+  
   image: (->
     if image = @get('variant').images[0]
       image.mini_url
