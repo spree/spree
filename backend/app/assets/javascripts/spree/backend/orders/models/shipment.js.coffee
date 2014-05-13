@@ -8,7 +8,7 @@ Backend.Shipment = Ember.Object.extend
       item.variant = item.line_item.variant
       item.shipment = shipment
       Backend.ManifestItem.create(item)
-  ).property('manifestItems')
+  ).property('manifest.@each')
 
   adjustItems: (variant_id, quantity, original_quantity) ->
     url = Spree.pathFor("api/orders/#{this.get('order.number')}/shipments/#{this.get('number')}")
