@@ -11,7 +11,7 @@ Backend.Shipment = Ember.Object.extend
   ).property('manifest.@each')
 
   adjustItems: (variant_id, quantity, original_quantity) ->
-    url = Spree.pathFor("api/orders/#{this.get('order.number')}/shipments/#{this.get('number')}")
+    url = Spree.pathFor("api/shipments/#{this.get('number')}")
     shipment = this
     if original_quantity != quantity
       new_quantity = 0
