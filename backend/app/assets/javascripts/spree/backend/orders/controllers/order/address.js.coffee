@@ -31,8 +31,6 @@ Backend.OrderAddressController = Ember.ObjectController.extend
       params.bill_address_attributes = @get('bill_address.formParams')
       params.ship_address_attributes = @get('ship_address.formParams')
 
-      this.get('order.content').update(params)
-
-       # if $('#use_billing').is(':checked')
-       #   data.order.use_billing = true
-       #   data.order.ship_address_attributes = data.order.bill_address_attributes
+      order = this.get('order.content')
+      order.update(params).then ->
+        order.advance()

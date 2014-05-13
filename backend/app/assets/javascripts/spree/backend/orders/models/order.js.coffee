@@ -64,10 +64,7 @@ Backend.Order.reopen
           variant_id: variant.id
           quantity: quantity
     .done ->
-      if order.state == 'cart'
-        order.advance()
-      else
-        order.refresh()
+      order.advance()
 
   update: (params) ->
     order = this
