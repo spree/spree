@@ -46,6 +46,7 @@ I18n.translations = {
     location: 'Location'
     count_on_hand: 'Count on hand'
     backorders_allowed: 'Backorders allowed'
+    shipping_method: 'Shipping method'
 
     # New
     actions:
