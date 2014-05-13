@@ -80,7 +80,7 @@ describe Spree::LineItem do
         order.bill_address = nil
         order.ship_address = nil
         order.save
-        order.tax_zone.should be_nil
+        order.reload.tax_zone.should be_nil
       end
 
       it "does not create a tax adjustment" do
