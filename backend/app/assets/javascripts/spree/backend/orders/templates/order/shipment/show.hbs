@@ -62,7 +62,7 @@
         <td class="actions">
           {{#unless shipped}}
             {{#if editingMethod}}
-              <a href='#' {{action 'saveMethod'}} class="fa fa-ok no-text with-tip" title='{{i18n actions.save}}'></a>
+              <a href='#' {{action 'saveMethod'}} class="fa fa-check no-text with-tip" title='{{i18n actions.save}}'></a>
               <a href='#' {{action 'cancelMethod'}} class="fa fa-cancel no-text with-tip" title='{{i18n actions.cancel}}'></a>
             {{else}}  
               <a href='#' {{action 'editMethod'}} class="fa fa-edit no-text with-tip" title='{{i18n actions.edit}}'></a>
@@ -87,7 +87,7 @@
         </td>
         <td class="actions">
           {{#if editingTracking}}
-            <a href='#' {{action 'saveTracking'}} class="fa fa-ok no-text with-tip" title='{{i18n actions.save}}'></a>
+            <a href='#' {{action 'saveTracking'}} class="fa fa-check no-text with-tip" title='{{i18n actions.save}}'></a>
             <a href='#' {{action 'cancelTracking'}} class="fa fa-cancel no-text with-tip" title='{{i18n actions.cancel}}'></a>
           {{else}}  
             <a href='#' {{action 'editTracking'}} class="fa fa-edit no-text with-tip" title='{{i18n actions.edit}}'></a>
