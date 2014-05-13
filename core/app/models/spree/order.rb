@@ -203,7 +203,7 @@ module Spree
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
     def tax_zone
-      Zone.match(tax_address) || Zone.default_tax
+      @tax_zone ||= Zone.match(tax_address) || Zone.default_tax
     end
 
     # Returns the address for taxation based on configuration
@@ -574,6 +574,11 @@ module Spree
       self.ensure_updated_shipments
     end
 
+    def reload
+      remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
+      super
+    end
+
     private
 
       def link_by_email
@@ -582,7 +587,7 @@ module Spree
 
       # Determine if email is required (we don't want validation errors before we hit the checkout)
       def require_email
-        return true unless new_record? or ['cart', 'address'].include?(state)
+        true unless new_record? or ['cart', 'address'].include?(state)
       end
 
       def ensure_line_items_present
