@@ -1,1 +1,10 @@
-New payment form goes here
+<h3>New Payment</h3>
+
+<ul>
+  {{#each order.payment_methods}}
+    <li>
+      <input type='radio' name='payment_method' {{action 'chooseMethod' this}} id='payment_method_{{unbound id}}' value='{{unbound id}}'/> 
+      <label for='payment_method_{{unbound id}}'>{{name}}</label>
+    </li>
+  {{/each}}
+</ul>
