@@ -76,10 +76,6 @@ module Spree
       values.to_sentence({ words_connector: ", ", two_words_connector: ", " })
     end
 
-    def gross_profit
-      cost_price.nil? ? 0 : (price - cost_price)
-    end
-
     # use deleted? rather than checking the attribute directly. this
     # allows extensions to override deleted? if they want to provide
     # their own definition.
