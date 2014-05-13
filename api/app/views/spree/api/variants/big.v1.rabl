@@ -1,7 +1,7 @@
 object @variant
 attributes *variant_attributes
 
-cache ['big_variant', root_object]
+cache [I18n.locale, 'big_variant', root_object]
 
 extends "spree/api/variants/small"
 

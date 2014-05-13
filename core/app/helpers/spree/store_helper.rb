@@ -10,7 +10,7 @@ module Spree
     def cache_key_for_taxons
       max_updated_at = @taxons.maximum(:updated_at).to_i
       parts = [@taxon.try(:id), max_updated_at].compact.join("-")
-      "taxons/#{parts}"
+      "#{I18n.locale}/taxons/#{parts}"
     end
   end
 end
