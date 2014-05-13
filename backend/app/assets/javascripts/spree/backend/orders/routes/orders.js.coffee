@@ -5,5 +5,5 @@ Backend.OrdersRoute = Ember.Route.extend
   actions: 
     newOrder: ->
       route = this
-      $.post("/api/checkouts").then (response) ->
+      $.post("/api/orders").then (response) ->
         route.transitionTo('order', response.number)
