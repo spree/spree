@@ -48,9 +48,7 @@ module Spree
       end
 
       def new
-        @order = Order.create
-        @order.created_by = try_spree_current_user
-        @order.save
+        @order = Order.create(order_params)
         redirect_to edit_admin_order_url(@order)
       end
 
@@ -116,6 +114,11 @@ module Spree
       end
 
       private
+        def order_params
+          params[:created_by_id] = try_spree_current_user.try(:id)
+          params.permit(:created_by_id)
+        end
+
         def load_order
           @order = Order.includes(:adjustments).find_by_number!(params[:id])
           authorize! action, @order
