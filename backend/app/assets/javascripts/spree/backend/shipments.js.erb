@@ -143,16 +143,20 @@ $(document).ready(function () {
 adjustShipmentItems = function(shipment_number, variant_id, quantity){
     var shipment = _.findWhere(shipments, {number: shipment_number + ''});
     var inventory_units = _.where(shipment.inventory_units, {variant_id: variant_id});
+    var total_units = 0;
+    for(var i = 0; i < inventory_units.length; i++){
+      total_units += inventory_units[i].quantity;
+    }
 
     var url = Spree.routes.shipments_api + "/" + shipment_number;
 
     var new_quantity = 0;
-    if(inventory_units.length<quantity){
+    if(total_units<quantity){
       url += "/add"
-      new_quantity = (quantity - inventory_units.length);
-    }else if(inventory_units.length>quantity){
+      new_quantity = (quantity - total_units);
+    }else if(total_units>quantity){
       url += "/remove"
-      new_quantity = (inventory_units.length - quantity);
+      new_quantity = (total_units - quantity);
     }
     url += '.json';
 
