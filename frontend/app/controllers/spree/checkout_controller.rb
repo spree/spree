@@ -25,7 +25,7 @@ module Spree
 
     # Updates the order and advances to the next state (when possible.)
     def update
-      if @order.update_from_params(params, permitted_checkout_attributes)
+      if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
         persist_user_address
         unless @order.next
           flash[:error] = @order.errors.full_messages.join("\n")

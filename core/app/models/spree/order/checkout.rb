@@ -208,7 +208,7 @@ module Spree
 
           set_callback :updating_from_params, :before, :update_params_payment_source
 
-          def update_from_params(params, permitted_params)
+          def update_from_params(params, permitted_params, request_env = {})
             success = false
             @updating_params = params
             run_callbacks :updating_from_params do
@@ -227,8 +227,13 @@ module Spree
                 attributes[:payments_attributes].first.delete :source_attributes
               end
 
+              if attributes[:payments_attributes]
+                attributes[:payments_attributes].first[:request_env] = request_env
+              end
+
               success = self.update_attributes(attributes)
             end
+
             @updating_params = nil
             success
           end

@@ -485,6 +485,15 @@ describe Spree::Order do
         expect(Spree::Payment.last.source).to eq credit_card
       end
 
+      it "sets request_env on payment" do
+        request_env = { "USER_AGENT" => "Firefox" }
+
+        expected_hash = { "payments_attributes" => [hash_including("request_env" => request_env)] }
+        expect(order).to receive(:update_attributes).with expected_hash
+
+        order.update_from_params(params, permitted_params, request_env)
+      end
+
       it "dont let users mess with others users cards" do
         credit_card.update_column :user_id, 5
 
