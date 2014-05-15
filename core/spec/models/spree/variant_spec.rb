@@ -35,8 +35,11 @@ describe Spree::Variant do
     end
 
     describe 'mark_master_out_of_stock' do
-      context 'when product is created without variants' do
-        it { product.master.should be_in_stock }
+      before do
+        product.master.stock_items.first.set_count_on_hand(5)
+      end
+      context 'when product is created without variants but with stock' do
+        it {product.master.should be_in_stock}
       end
 
       context 'when a variant is created' do
