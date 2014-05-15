@@ -19,7 +19,7 @@
 .fa-approve:before  { @extend .fa-check:before    }
 
 .fa-cancel:before,
-.fa-void:before     { @extend .fa-bars:before   }
+.fa-void:before     { @extend .fa-times:before   }
 
 .fa-trash:before    { @extend .fa-trash-o:before }
 
