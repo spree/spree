@@ -21,7 +21,7 @@
           <% order.shipments.each do |shipment| %>
             <div>
               <i class='fa fa-truck'></i>
-              <%= Spree.t(:shipment_details, :stock_location => shipment.stock_location.name, :shipping_method => shipment.shipping_method.name) %>
+              <%= Spree.t(:shipment_details, :stock_location => shipment.stock_location.name, :shipping_method => shipment.selected_shipping_rate.name) %>
             </div>
           <% end %>
         </div>
@@ -108,7 +108,7 @@
   <% end %>
 
   <tfoot id='shipment-total'>
-    <% order.shipments.group_by { |s| s.shipping_method.name }.each do |name, shipments| %>
+    <% order.shipments.group_by { |s| s.selected_shipping_rate.name }.each do |name, shipments| %>
       <tr class="total" data-hook='shipment-row'>
         <td colspan="4"><%= Spree.t(:shipping) %>: <strong><%= name %></strong></td>
         <td class="total"><span><%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency).to_html %></span></td>
