@@ -9,6 +9,12 @@ This guide will walk you through deploying your Spree application with [Ninefold
 
 This guide, like the others, assumes your app is in a 'ready-to-deploy' state and that your code is available in a hosted Git repository.  Ninefold requires access to this repository in order to deploy your application. 
 
+***
+Ninefold deployments require you to use Postgresql.  This means you need to have the pg gem specified in the production group in your gemfile. 
+
+Alternatively, you can choose not to have Ninefold provision your database for you and you can setup a stand-alone server to host your MySQL or nosql database.  If you choose this option, Ninefold's database functionality (backups, replication, promotion, etc.) will not be available.
+***
+
 ## Initial setup
 
 ### Create a Ninefold account
