@@ -57,9 +57,9 @@
         <% end %>
 
         <tr class="show-method total">
-          <% if shipment.shipping_method %>
+          <% if rate = shipment.selected_shipping_rate %>
             <td colspan="4">
-              <strong><%= shipment.shipping_method.name %></strong>
+              <strong><%= rate.name %></strong>
             </td>
             <td class="total" align="center">
               <span><%= shipment.display_cost %></span>
