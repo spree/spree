@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'jquery-rails', '3.1.0' # Locked down because 3.1.1 breaks data-confirm https://github.com/spree/spree/pull/4892
   s.add_dependency 'jquery-ui-rails', '~> 4.1.0'
   s.add_dependency 'select2-rails', '~> 3.5.0'
+  s.add_dependency 'premailer-rails'
 
   s.add_development_dependency 'email_spec', '~> 1.2.1'
 end

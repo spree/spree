@@ -1,0 +1,20 @@
+<%= Spree.t('order_mailer.confirm_email.dear_customer') %>
+
+<%= Spree.t('order_mailer.confirm_email.instructions') %>
+
+============================================================
+<%= Spree.t('order_mailer.confirm_email.order_summary') %>
+============================================================
+<% @order.line_items.each do |item| %>
+  <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) @ <%= item.single_money %> = <%= item.display_amount %>
+<% end %>
+============================================================
+<%= Spree.t('order_mailer.confirm_email.subtotal', :subtotal => @order.display_item_total) %>
+
+<% @order.adjustments.eligible.each do |adjustment| %>
+  <%= raw(adjustment.label) %> <%= adjustment.display_amount %>
+<% end %>
+
+<%= Spree.t('order_mailer.confirm_email.total', :total => @order.display_total) %>
+
+<%= Spree.t('order_mailer.confirm_email.thanks') %>
