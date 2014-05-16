@@ -13,7 +13,7 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-          @order ||= Spree::Order.find_by(id: session[:order_id], currency: current_currency)
+          @order ||= Spree::Order.find_by(id: session[:order_id], currency: current_currency, completed_at: nil)
         end
 
         # The current incomplete order from the session for use in cart and during checkout
