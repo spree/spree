@@ -294,9 +294,22 @@ If you want to run the simplecov code coverage report
 COVERAGE=true bundle exec rspec spec
 ```
 
-If you're working on multiple facets of Spree, you may want
-to run this command at the root of the Spree project to
-generate test applications and run specs for all the facets:
+If you're working on multiple facets of Spree to test,
+please ensure that you have a postgres user:
+
+```shell
+createuser -s -r postgres
+```
+
+And also ensure that you have [PhantomJS](http://phantomjs.org/) installed as well:
+
+```shell
+brew update && brew install phantomjs
+```
+
+To execute all the tests, you may want to run this command at the
+root of the Spree project to generate test applications and run
+specs for all the facets:
 ```shell
 bash build.sh
 ```
