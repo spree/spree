@@ -1,5 +1,11 @@
 ## Spree 2.3.0 (unreleased) ##
 
+*   Order#process_payments! no longer raises. Gateways must raise on failing authorizations.
+
+    Now it's a Gateway or PaymentMethod responsability to raise a custom
+    exception any time an authorization fails so that it can be rescued
+    during checkout and proper action taken.
+
 *   Assign request headers env to Payment when creating it via checkout.
 
     This might come in handy for some gateways, e.g. Adyen, actions that require

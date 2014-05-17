@@ -104,11 +104,6 @@ module Spree
         order.process_payments!.should be_true
       end
 
-      it "should return false if no pending_payments available" do
-        order.stub :pending_payments => []
-        order.process_payments!.should be_false
-      end
-
       context "when a payment raises a GatewayError" do
         before { payment.should_receive(:process!).and_raise(Spree::Core::GatewayError) }
 

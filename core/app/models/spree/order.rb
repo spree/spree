@@ -362,26 +362,25 @@ module Spree
     # success or failure of the 'complete' event for the order
     #
     # Returns:
+    #
     # - true if all pending_payments processed successfully
+    #
     # - true if a payment failed, ie. raised a GatewayError
     #   which gets rescued and converted to TRUE when
     #   :allow_checkout_gateway_error is set to true
+    #
     # - false if a payment failed, ie. raised a GatewayError
     #   which gets rescued and converted to FALSE when
     #   :allow_checkout_on_gateway_error is set to false
     #
     def process_payments!
-      if pending_payments.empty?
-        raise Core::GatewayError.new Spree.t(:no_pending_payments)
-      else
-        pending_payments.each do |payment|
-          break if payment_total >= total
+      pending_payments.each do |payment|
+        break if payment_total >= total
 
-          payment.process!
+        payment.process!
 
-          if payment.completed?
-            self.payment_total += payment.amount
-          end
+        if payment.completed?
+          self.payment_total += payment.amount
         end
       end
     rescue Core::GatewayError => e
