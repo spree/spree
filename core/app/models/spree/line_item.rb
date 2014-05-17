@@ -1,7 +1,7 @@
 module Spree
   class LineItem < Spree::Base
     before_validation :adjust_quantity
-    belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items
+    belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items, touch: true
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
@@ -78,15 +78,11 @@ module Spree
     end
 
     def sufficient_stock?
-      Stock::Quantifier.new(variant_id).can_supply? quantity
+      Stock::Quantifier.new(variant).can_supply? quantity
     end
 
     def insufficient_stock?
       !sufficient_stock?
-    end
-
-    def assign_stock_changes_to=(shipment)
-      @preferred_shipment = shipment
     end
 
     # Remove product default_scope `deleted_at: nil`
@@ -101,7 +97,7 @@ module Spree
 
     private
       def update_inventory
-        if changed?
+        if changed? || target_shipment.present?
           Spree::OrderInventory.new(self.order, self).verify(target_shipment)
         end
       end
@@ -117,7 +113,7 @@ module Spree
       end
 
       def create_tax_charge
-        Spree::TaxRate.adjust(order, [self])
+        Spree::TaxRate.adjust(order.tax_zone, [self])
       end
 
       def ensure_proper_currency

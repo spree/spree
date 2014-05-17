@@ -47,6 +47,14 @@ module Spree
       self.in_stock? || self.backorderable?
     end
 
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
+    def reduce_count_on_hand_to_zero
+      self.set_count_on_hand(0) if count_on_hand > 0
+    end
+
     private
       def count_on_hand=(value)
         write_attribute(:count_on_hand, value)

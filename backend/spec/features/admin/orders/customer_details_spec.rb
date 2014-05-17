@@ -75,6 +75,16 @@ describe "Customer Details" do
         find(".state").text.should == "COMPLETE"
       end
     end
+
+    it "updates order email for an existing order with a user" do
+      order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
+      previous_user = order.user
+      click_link "Customer Details"
+      fill_in "order_email", with: "newemail@example.com"
+      expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
+      expect(order.user_id).to eq previous_user.id
+      expect(order.user.email).to eq previous_user.email
+    end
   end
 
   context "country associated was removed" do

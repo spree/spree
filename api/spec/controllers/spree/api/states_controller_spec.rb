@@ -17,6 +17,12 @@ module Spree
       json_response['states'].first['name'].should eq(state.name)
     end
 
+    it "gets all the states for a particular country" do
+      api_get :index, :country_id => state.country.id
+      json_response["states"].first.should have_attributes(attributes)
+      json_response['states'].first['name'].should eq(state.name)
+    end
+
     context "pagination" do
       before do
         State.should_receive(:accessible_by).and_return(@scope = double)

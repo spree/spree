@@ -25,7 +25,8 @@ module Spree
     # invalidate previously entered payments
     after_create :invalidate_old_payments
 
-    attr_accessor :source_attributes
+    attr_accessor :source_attributes, :request_env
+
     after_initialize :build_source
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }

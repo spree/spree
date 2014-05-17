@@ -6,10 +6,8 @@ describe Spree::Asset do
       product = create(:custom_product)
       asset = Spree::Asset.create! { |a| a.viewable = product.master }
 
-      product.update_column(:updated_at,  1.day.ago)
-
       expect do
-        asset.touch
+        asset.save
       end.to change { product.reload.updated_at }
     end
   end

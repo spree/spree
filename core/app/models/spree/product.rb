@@ -24,6 +24,7 @@ module Spree
     friendly_id :name, use: :slugged
 
     acts_as_paranoid
+
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy, inverse_of: :product
@@ -64,6 +65,7 @@ module Spree
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
+
     after_save :save_master
     after_save :touch
     after_touch :touch_taxons
@@ -87,10 +89,6 @@ module Spree
     alias :options :product_option_types
 
     after_initialize :ensure_master
-
-    def to_param
-      slug
-    end
 
     # the master variant is not a member of the variants array
     def has_variants?
@@ -201,7 +199,7 @@ module Spree
       if self.variants_including_master.any? { |v| !v.should_track_inventory? }
         Float::INFINITY
       else
-        self.stock_items.sum(&:count_on_hand)
+        self.stock_items.to_a.sum(&:count_on_hand)
       end
     end
 
@@ -257,8 +255,13 @@ module Spree
         self.master ||= Variant.new
       end
 
+      # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
       def touch_taxons
-        self.taxons.each(&:touch)
+        taxons_to_touch = taxons.map(&:self_and_ancestors).flatten.uniq
+        Spree::Taxon.where(id: taxons_to_touch.map(&:id)).update_all(updated_at: Time.current)
+
+        taxonomy_ids_to_touch = taxons_to_touch.map(&:taxonomy_id).flatten.uniq
+        Spree::Taxonomy.where(id: taxonomy_ids_to_touch).update_all(updated_at: Time.current)
       end
   end
 end

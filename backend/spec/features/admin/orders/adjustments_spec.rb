@@ -107,7 +107,7 @@ describe "Adjustments" do
   context "deleting an adjustment" do
     it "should not be possible if adjustment is closed" do
       within_row(1) do
-        page.should_not have_css('.icon-trash')
+        page.should_not have_css('.fa-trash')
       end
     end
 

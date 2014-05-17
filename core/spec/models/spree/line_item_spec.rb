@@ -4,6 +4,13 @@ describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
+  context '#save' do
+    it 'touches the order' do
+      line_item.order.should_receive(:touch)
+      line_item.save
+    end
+  end
+
   context '#destroy' do
     it "fetches deleted products" do
       line_item.product.destroy
@@ -39,6 +46,14 @@ describe Spree::LineItem do
         line_item.save
       end
     end
+
+    context "target_shipment is provided" do
+      it "verifies inventory" do
+        line_item.target_shipment = Spree::Shipment.new
+        Spree::OrderInventory.any_instance.should_receive(:verify)
+        line_item.save
+      end
+    end
   end
 
   context "#create" do
@@ -65,7 +80,7 @@ describe Spree::LineItem do
         order.bill_address = nil
         order.ship_address = nil
         order.save
-        order.tax_zone.should be_nil
+        order.reload.tax_zone.should be_nil
       end
 
       it "does not create a tax adjustment" do
@@ -202,5 +217,4 @@ describe Spree::LineItem do
       expect { order.line_items.first.update_attributes!(currency: 'AUD') }.to raise_error
     end
   end
-
 end

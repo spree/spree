@@ -24,7 +24,7 @@ module Spree
         end
 
         def find_order
-          @order = Spree::Order.find_by!(number: params[:order_id]) if params[:order_id]
+          @order = Spree::Order.find_by!(number: order_id) if order_id
         end
 
         def find_address

@@ -85,6 +85,9 @@ module Spree
     end
 
     context "updating payment state" do
+      let(:order) { Order.new }
+      let(:updater) { order.updater }
+
       it "is failed if last payment failed" do
         order.stub_chain(:payments, :last, :state).and_return('failed')
 
@@ -92,45 +95,37 @@ module Spree
         order.payment_state.should == 'failed'
       end
 
-      # Regression test for #4281
-      it "is credit_owed if payment taken, but no line items" do
-        order.stub_chain(:line_items, :empty?).and_return(true)
-        order.stub_chain(:payments, :last, :state).and_return('completed')
+      context "payment total is greater than order total" do
+        it "is credit_owed" do
+          order.payment_total = 2
+          order.total = 1
 
-        updater.update_payment_state
-        order.payment_state.should == 'credit_owed'
+          expect {
+            updater.update_payment_state
+          }.to change { order.payment_state }.to 'credit_owed'
+        end
       end
 
-      it "is balance due with one pending payment" do
-        order.stub_chain(:payments, :last, :state).and_return('pending')
+      context "order total is greater than payment total" do
+        it "is credit_owed" do
+          order.payment_total = 1
+          order.total = 2
 
-        updater.update_payment_state
-        order.payment_state.should == 'balance_due'
+          expect {
+            updater.update_payment_state
+          }.to change { order.payment_state }.to 'balance_due'
+        end
       end
 
-      it "is balance due with no line items" do
-        order.stub_chain(:line_items, :empty?).and_return(true)
+      context "order total equals payment total" do
+        it "is paid" do
+          order.payment_total = 30
+          order.total = 30
 
-        updater.update_payment_state
-        order.payment_state.should == 'balance_due'
-      end
-
-      it "is credit owed if payment is above total" do
-        order.stub_chain(:line_items, :empty?).and_return(false)
-        order.stub :payment_total => 31
-        order.stub :total => 30
-
-        updater.update_payment_state
-        order.payment_state.should == 'credit_owed'
-      end
-
-      it "is paid if order is paid in full" do
-        order.stub_chain(:line_items, :empty?).and_return(false)
-        order.stub :payment_total => 30
-        order.stub :total => 30
-
-        updater.update_payment_state
-        order.payment_state.should == 'paid'
+          expect {
+            updater.update_payment_state
+          }.to change { order.payment_state }.to 'paid'
+        end
       end
     end
 

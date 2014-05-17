@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order do
   let(:order) { Spree::Order.new }
@@ -132,10 +133,22 @@ describe Spree::Order do
       end
 
       context "cannot transition to delivery" do
-        context "if there are no shipping rates for any shipment" do
-          specify do
-            transition = lambda { order.next! }
-            transition.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+        context "with an existing shipment" do
+          before do
+            line_item = FactoryGirl.create(:line_item, :price => 10)
+            order.line_items << line_item
+          end
+
+          context "if there are no shipping rates for any shipment" do
+            it "raises an InvalidTransitionError" do
+              transition = lambda { order.next! }
+              transition.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+            end
+
+            it "deletes all the shipments" do
+              order.next
+              order.shipments.should be_empty
+            end
           end
         end
       end
@@ -269,7 +282,7 @@ describe Spree::Order do
       end
     end
 
-    it "should only call default transitions once when checkout_flow is redefined" do
+    pending "should only call default transitions once when checkout_flow is redefined" do
       order = SubclassedOrder.new
       order.stub :payment_required? => true
       order.should_receive(:process_payments!).once
@@ -401,6 +414,32 @@ describe Spree::Order do
     end
   end
 
+  describe "payment processing" do
+    # Turn off transactional fixtures so that we can test that
+    # processing state is persisted.
+    self.use_transactional_fixtures = false
+    before(:all) { DatabaseCleaner.strategy = :truncation }
+    after(:all) do
+      DatabaseCleaner.clean
+      DatabaseCleaner.strategy = :transaction
+    end
+    let(:order) { OrderWalkthrough.up_to(:payment) }
+    let(:creditcard) { create(:credit_card) }
+    let!(:payment_method) { create(:credit_card_payment_method, :environment => 'test') }
+
+    it "does not process payment within transaction" do
+      # Make sure we are not already in a transaction
+      ActiveRecord::Base.connection.open_transactions.should == 0
+
+      Spree::Payment.any_instance.should_receive(:authorize!) do
+        ActiveRecord::Base.connection.open_transactions.should == 0
+      end
+
+      order.payments.create!({ :amount => order.outstanding_balance, :payment_method => payment_method, :source => creditcard })
+      order.next!
+    end
+  end
+
   describe 'update_from_params' do
     let(:permitted_params) { {} }
     let(:params) { {} }
@@ -444,6 +483,15 @@ describe Spree::Order do
         }.to change { Spree::Payment.count }.by(1)
 
         expect(Spree::Payment.last.source).to eq credit_card
+      end
+
+      it "sets request_env on payment" do
+        request_env = { "USER_AGENT" => "Firefox" }
+
+        expected_hash = { "payments_attributes" => [hash_including("request_env" => request_env)] }
+        expect(order).to receive(:update_attributes).with expected_hash
+
+        order.update_from_params(params, permitted_params, request_env)
       end
 
       it "dont let users mess with others users cards" do

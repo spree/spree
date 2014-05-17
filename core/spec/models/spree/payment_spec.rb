@@ -673,6 +673,14 @@ describe Spree::Payment do
     it "contains an IP" do
       payment.gateway_options[:ip].should == order.last_ip_address
     end
+
+    it "contains the email address from a persisted order" do
+      # Sets the payment's order to a different Ruby object entirely
+      payment.order = Spree::Order.find(payment.order_id)
+      email = 'foo@example.com'
+      order.update_attributes(:email => email)
+      expect(payment.gateway_options[:email]).to eq(email)
+    end
   end
 
   describe "#set_unique_identifier" do
@@ -831,7 +839,7 @@ describe Spree::Payment do
       expect(payment.process!).to be_true
       payment.state_changes.count.should == 2
       changes = payment.state_changes.map { |change| { change.previous_state => change.next_state} }
-      expect(changes).to eq([
+      expect(changes).to match_array([
         {"checkout" => "processing"},
         { "processing" => "pending"}
       ])

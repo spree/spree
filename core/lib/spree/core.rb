@@ -11,6 +11,7 @@ require 'paranoia'
 require 'ransack'
 require 'state_machine'
 require 'friendly_id'
+require 'font-awesome-rails'
 
 module Spree
 
@@ -67,8 +68,18 @@ require 'spree/core/token_resource'
 require 'spree/core/calculated_adjustments'
 require 'spree/core/product_duplicator'
 require 'spree/core/controller_helpers'
-require 'spree/core/controller_helpers/strong_parameters'
-require 'spree/core/controller_helpers/ssl'
 require 'spree/core/controller_helpers/search'
+require 'spree/core/controller_helpers/ssl'
+require 'spree/core/controller_helpers/store'
+require 'spree/core/controller_helpers/strong_parameters'
 
 require 'spree/core/importer'
+
+# Hack waiting on https://github.com/pluginaweek/state_machine/pull/275
+module StateMachine
+  module Integrations
+    module ActiveModel
+      public :around_validation
+    end
+  end
+end

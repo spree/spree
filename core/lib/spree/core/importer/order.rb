@@ -24,6 +24,9 @@ module Spree
             end
 
             order.update_attributes!(params)
+            # Really ensure that the order totals are correct
+            order.update_totals
+            order.persist_totals
             order.reload
           rescue Exception => e
             order.destroy if order && order.persisted?
@@ -51,8 +54,10 @@ module Spree
               shipment.save!
 
               shipping_method = Spree::ShippingMethod.find_by_name!(s[:shipping_method])
-              shipment.shipping_rates.create!(:shipping_method => shipping_method,
-                                              :cost => s[:cost])
+              rate = shipment.shipping_rates.create!(:shipping_method => shipping_method,
+                                                     :cost => s[:cost])
+              shipment.selected_shipping_rate_id = rate.id
+
             rescue Exception => e
               raise "Order import shipments: #{e.message} #{s}"
             end

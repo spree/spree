@@ -100,6 +100,20 @@ describe Spree::CreditCard do
       credit_card.errors[:base].should == ["Card has expired"]
     end
 
+    it "should handle TZ correctly" do
+      # The card is valid according to the system clock's local time
+      # (Time.now).
+      # However it has expired in rails's configured time zone (Time.current),
+      # which is the value we should be respecting.
+      time = Time.new(2014, 04, 30, 23, 0, 0, "-07:00")
+      Timecop.freeze(time) do
+        credit_card.month = 1.month.ago.month
+        credit_card.year = 1.month.ago.year
+        credit_card.should_not be_valid
+        credit_card.errors[:base].should == ["Card has expired"]
+      end
+    end
+
     it "does not run expiration in the past validation if month is not set" do
       credit_card.month = nil
       credit_card.year = Time.now.year
@@ -191,6 +205,18 @@ describe Spree::CreditCard do
 
     it "can set with a 2-digit month and 4-digit year without whitespace" do
       credit_card.expiry = '04/2014'
+      expect(credit_card.month).to eq(4)
+      expect(credit_card.year).to eq(2014)
+    end
+
+    it "can set with a 2-digit month and 4-digit year without whitespace and slash" do
+      credit_card.expiry = '042014'
+      expect(credit_card.month).to eq(4)
+      expect(credit_card.year).to eq(2014)
+    end
+
+    it "can set with a 2-digit month and 2-digit year without whitespace and slash" do
+      credit_card.expiry = '0414'
       expect(credit_card.month).to eq(4)
       expect(credit_card.year).to eq(2014)
     end

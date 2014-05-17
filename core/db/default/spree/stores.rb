@@ -1,4 +1,5 @@
-unless Spree::Store.count > 0
+# Possibly already created by a migration.
+unless Spree::Store.where(code: 'spree').exists?
   Spree::Store.new do |s|
     s.code              = 'spree'
     s.name              = 'Spree Demo Site'

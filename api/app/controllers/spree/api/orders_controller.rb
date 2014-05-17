@@ -1,9 +1,10 @@
 module Spree
   module Api
     class OrdersController < Spree::Api::BaseController
-
       skip_before_filter :check_for_user_or_api_key, only: :apply_coupon_code
       skip_before_filter :authenticate_user, only: :apply_coupon_code
+
+      before_filter :find_order, except: [:create, :mine, :index, :update]
 
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
       Order.checkout_steps.keys.each do |step|
@@ -14,7 +15,6 @@ module Spree
       end
 
       def cancel
-        find_order
         authorize! :update, @order, params[:token]
         @order.cancel!
         render :show
@@ -27,9 +27,8 @@ module Spree
       end
 
       def empty
-        find_order
+        authorize! :update, @order, order_token
         @order.empty!
-        @order.update!
         render text: nil, status: 200
       end
 
@@ -40,7 +39,7 @@ module Spree
       end
 
       def show
-        find_order
+        authorize! :show, @order, order_token
         method = "before_#{@order.state}"
         send(method) if respond_to?(method, true)
         respond_with(@order)
@@ -48,16 +47,13 @@ module Spree
 
       def update
         find_order(true)
-        # Parsing line items through as an update_attributes call in the API will result in
-        # many line items for the same variant_id being created. We must be smarter about this,
-        # hence the use of the update_line_items method, defined within order_decorator.rb.
-        order_params.delete("line_items_attributes")
-        if @order.update_attributes(order_params)
+        authorize! :update, @order, order_token
 
-          deal_with_line_items if params[:order][:line_items]
-
-          @order.line_items.reload
-          @order.update!
+        if @order.contents.update_cart(order_params)
+          user_id = params[:order][:user_id]
+          if current_api_user.has_spree_role?('admin') && user_id
+            @order.associate_user!(Spree.user_class.find(user_id))
+          end
           respond_with(@order, default_template: :show)
         else
           invalid_resource!(@order)
@@ -74,6 +70,7 @@ module Spree
 
       def apply_coupon_code
         find_order
+        authorize! :update, @order, order_token
         @order.coupon_code = params[:coupon_code]
         @handler = PromotionHandler::Coupon.new(@order).apply
         status = @handler.successful? ? 200 : 422
@@ -81,15 +78,6 @@ module Spree
       end
 
       private
-        def deal_with_line_items
-          line_item_attributes = params[:order][:line_items]
-          line_item_attributes.each_key do |key|
-            # need to call .to_hash to make sure Rails 4's strong parameters don't bite
-            line_item_attributes[key] = line_item_attributes[key].slice(*permitted_line_item_attributes).to_hash
-          end
-          @order.update_line_items(line_item_attributes)
-        end
-
         def order_params
           if params[:order]
             params[:order][:payments_attributes] = params[:order][:payments] if params[:order][:payments]
@@ -128,23 +116,17 @@ module Spree
           [:import, :number, :completed_at, :locked_at, :channel]
         end
 
-        def next!(options={})
-          if @order.valid? && @order.next
-            render :show, status: options[:status] || 200
-          else
-            render :could_not_transition, status: 422
-          end
-        end
-
         def find_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
-          authorize! :update, @order, order_token
         end
 
         def before_delivery
           @order.create_proposed_shipments
         end
 
+        def order_id
+          super || params[:id]
+        end
     end
   end
 end

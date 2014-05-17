@@ -1,7 +1,7 @@
 module Spree
   module UserReporting
     def lifetime_value
-      orders.complete.pluck(:total).sum
+      spree_orders.complete.pluck(:total).sum
     end
 
     def display_lifetime_value
@@ -9,7 +9,7 @@ module Spree
     end
 
     def order_count
-      BigDecimal(orders.complete.count)
+      BigDecimal(spree_orders.complete.count)
     end
 
     def average_order_value

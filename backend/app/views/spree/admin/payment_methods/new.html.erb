@@ -6,7 +6,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to Spree.t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'arrow-left' %>
   </li>  
 <% end %>
 
@@ -16,7 +16,7 @@
   <fieldset class="no-border-top">
     <%= render :partial => 'form', :locals => { :f => f } %>
     <div data-hook="buttons" class="filter-actions actions">
-      <%= button Spree.t(:create), 'icon-ok' %>
+      <%= button Spree.t(:create), 'ok' %>
     </div>
   </fieldset>
 <% end %>

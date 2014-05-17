@@ -22,7 +22,7 @@ jQuery(function($) {
      # like states_spec and shipping_methods_spec. Let's not do this. %>
   <% unless Rails.env.test? %>
     $('.main-menu-wrapper ul').AdaptiveMenu({
-      text: "<a href='#'><i class='icon-chevron-down'></i> " + Spree.translations.more + "</a>",
+      text: "<a href='#'><i class='fa fa-chevron-down'></i> " + Spree.translations.more + "</a>",
       klass: "dropdown"
     });
   <% end %>
@@ -140,11 +140,11 @@ $(document).ready(function(){
              }
     });
   });
-
+  var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");
     var new_table_row = $(target + ' tr:visible:last').clone();
-    var new_id = new Date().getTime();
+    var new_id = new Date().getTime() + (uniqueId++);
     new_table_row.find("input, select").each(function () {
       var el = $(this);
       el.val("");

@@ -27,9 +27,9 @@
     </div>
 
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button Spree.t(:add_stock), 'icon-plus' %>
+      <%= button Spree.t(:add_stock), 'plus' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= link_to_with_icon 'icon-remove', Spree.t('actions.cancel'), collection_url, :class => 'button' %>
+      <%= link_to_with_icon 'remove', Spree.t('actions.cancel'), collection_url, :class => 'button' %>
     </div>
   </fieldset>
 <% end %>

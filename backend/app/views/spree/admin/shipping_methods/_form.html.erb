@@ -1,5 +1,5 @@
 <div data-hook="admin_shipping_method_form_fields" class="alpha twelve columns">
-  <div class="alpha six columns">
+  <div data-hook="admin_shipping_method_form_name_field" class="alpha six columns">
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %><br />
       <%= f.text_field :name, :class => 'fullwidth' %>
@@ -7,7 +7,7 @@
     <% end %>
   </div>
 
-  <div class="omega six columns">
+  <div data-hook="admin_shipping_method_form_display_field" class="omega six columns">
     <%= f.field_container :display_on do %>
       <%= f.label :display_on, Spree.t(:display) %><br />
       <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
@@ -16,7 +16,7 @@
   </div>
 
   <div class="alpha omega twelve columns">
-    <div class="alpha six columns">
+    <div data-hook="admin_shipping_method_form_internal_name_field" class="alpha six columns">
       <%= f.field_container :admin_name do %>
         <%= f.label :admin_name, Spree.t(:internal_name) %><br />
         <%= f.text_field :admin_name, :class => 'fullwidth', :label => false  %>
@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div class="alpha twelve columns">
+  <div data-hook="admin_shipping_method_form_tracking_url_field" class="alpha twelve columns">
     <%= f.field_container :tracking_url do %>
       <%= f.label :tracking_url, Spree.t(:tracking_url) %><br />
       <%= f.text_field :tracking_url, :class => 'fullwidth', :placeholder => Spree.t(:tracking_url_placeholder) %>
@@ -54,9 +54,10 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:zones) %></legend>
       <%= f.field_container :zones do %>
+        <% shipping_method_zones = @shipping_method.zones.to_a %>
         <% Spree::Zone.all.each do |zone| %>
           <%= label_tag do %>
-            <%= check_box_tag('shipping_method[zones][]', zone.id, @shipping_method.zones.include?(zone)) %>
+            <%= check_box_tag('shipping_method[zones][]', zone.id, shipping_method_zones.include?(zone)) %>
             <%= zone.name %>
           <% end %>
           <br>
