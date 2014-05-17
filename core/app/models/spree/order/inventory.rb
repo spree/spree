@@ -1,39 +1,40 @@
 module Spree
-  class OrderInventory
-    attr_accessor :order, :line_item, :variant
+  class Order < Spree::Base
+    class Inventory
+      attr_accessor :order, :line_item, :variant
 
-    def initialize(order, line_item)
-      @order = order
-      @line_item = line_item
-      @variant = line_item.variant
-    end
+      def initialize(order, line_item)
+        @order = order
+        @line_item = line_item
+        @variant = line_item.variant
+      end
 
-    # Only verify inventory for completed orders (as orders in frontend checkout
-    # have inventory assigned via +order.create_proposed_shipment+) or when
-    # shipment is explicitly passed
-    #
-    # In case shipment is passed the stock location should only unstock or
-    # restock items if the order is completed. That is so because stock items
-    # are always unstocked when the order is completed through +shipment.finalize+
-    def verify(shipment = nil)
-      if order.completed? || shipment.present?
+      # Only verify inventory for completed orders (as orders in frontend checkout
+      # have inventory assigned via +order.create_proposed_shipment+) or when
+      # shipment is explicitly passed
+      #
+      # In case shipment is passed the stock location should only unstock or
+      # restock items if the order is completed. That is so because stock items
+      # are always unstocked when the order is completed through +shipment.finalize+
+      def verify(shipment = nil)
+        if order.completed? || shipment.present?
 
-        if inventory_units.size < line_item.quantity
-          quantity = line_item.quantity - inventory_units.size
+          if inventory_units.size < line_item.quantity
+            quantity = line_item.quantity - inventory_units.size
 
-          shipment = determine_target_shipment unless shipment
-          add_to_shipment(shipment, quantity)
-        elsif inventory_units.size > line_item.quantity
-          remove(inventory_units, shipment)
+            shipment = determine_target_shipment unless shipment
+            add_to_shipment(shipment, quantity)
+          elsif inventory_units.size > line_item.quantity
+            remove(inventory_units, shipment)
+          end
         end
       end
-    end
 
-    def inventory_units
-      line_item.inventory_units
-    end
+      def inventory_units
+        line_item.inventory_units
+      end
 
-    private
+      private
       def remove(item_units, shipment = nil)
         quantity = item_units.size - line_item.quantity
 
@@ -103,5 +104,6 @@ module Spree
 
         removed_quantity
       end
+    end
   end
 end
