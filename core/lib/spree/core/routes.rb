@@ -38,11 +38,9 @@ module Spree
         @append_routes = []
       end
 
-      private
-
-        def eval_block(&block)
-          Spree::Core::Engine.routes.eval_block(block)
-        end
+      def eval_block(&block)
+        Spree::Core::Engine.routes.eval_block(block)
+      end
     end
   end
 end
