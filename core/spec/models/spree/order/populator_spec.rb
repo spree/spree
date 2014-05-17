@@ -9,7 +9,7 @@ describe Spree::Order::Populator do
 
     before do
      Spree::Variant.stub(:find).and_return(variant)
-     order.should_receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
+     order.should_receive(:contents).at_least(:once).and_return(Spree::Order::Contents.new(self))
     end
 
     context "can populate an order" do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderContents do
+describe Spree::Order::Contents do
   let(:order) { Spree::Order.create }
   let(:variant) { create(:variant) }
 
