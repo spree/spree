@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Spree::OrderPopulator do
+describe Spree::Order::Populator do
   let(:order) { double('Order') }
-  subject { Spree::OrderPopulator.new(order, "USD") }
+  subject { described_class.new(order, "USD") }
 
   context "with stubbed out find_variant" do
     let(:variant) { double('Variant', :name => "T-Shirt", :options_text => "Size: M") }
 
     before do
-     Spree::Variant.stub(:find).and_return(variant) 
+     Spree::Variant.stub(:find).and_return(variant)
      order.should_receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
     end
 

@@ -20,9 +20,9 @@ describe Spree::OrdersController do
       end
 
       context "with Variant" do
-        let(:populator) { double('OrderPopulator') }
+        let(:populator) { double('Populator') }
         before do
-          Spree::OrderPopulator.should_receive(:new).and_return(populator)
+          Spree::Order::Populator.should_receive(:new).and_return(populator)
         end
 
         it "should handle population" do
