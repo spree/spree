@@ -246,6 +246,7 @@ describe Spree::Order do
         before do
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
+          order.stub :payments => [1]
         end
 
         it "transitions to complete" do
