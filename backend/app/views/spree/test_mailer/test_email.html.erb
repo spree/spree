@@ -1,14 +1,162 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width"/>
+
     <title> Test Email </title>
   </head>
-  <body>
+  <body style="color:#333333; margin: 0 auto">
     <style>
       <%= Rails.application.assets['ink.css'].to_s.html_safe %>
+
+      .panel {
+        background: #414141;
+      }
+
+      .panel p,
+      .panel a {
+        color: #ddd !important;
+      }
+
+      .panel a {
+        text-decoration: underline;
+      }
+
+      h1, h2, h3,
+      h4, h5, h6 {
+        color: #5498da;
+      }
     </style>
-    <div>
-      <h1> Hey there </h1>
-    </div>
+    <table style="margin: 0 auto">
+      <tr>
+        <td class="center" align="center" valign="top">
+          <center>
+            <table class="row header">
+              <tr>
+                <td class="center" align="center">
+                  <center>
+
+                    <table class="container">
+                      <tr>
+                        <td class="wrapper last">
+
+                          <table class="twelve columns">
+                            <tr>
+                              <td class="center panel">
+                                <center>
+                                  <img class="center" src="http://spreecommerce.com/images/logo.svg" alt="Spree Logo" %>
+                                </center>
+                              </td>
+                              <td class="expander"></td>
+                            </tr>
+                          </table>
+
+                        </td>
+                      </tr>
+                    </table>
+
+                  </center>
+                </td>
+              </tr>
+            </table>
+
+            <table class="container">
+              <tr>
+                <td>
+
+                  <table class="row">
+                    <tr>
+                      <td class="wrapper last">
+
+                        <table class="twelve columns">
+                          <tr>
+                            <td class="center row">
+
+                              <table>
+                                <tr>
+                                  <td>
+
+                                    <center>
+                                      <h1 class="center"> This is a Test Email </h1>
+                                    </center>
+
+                                  </td>
+                                  <td class="expander"></td>
+                                </tr>
+                              </table>
+
+                              <table>
+                                <tr>
+                                  <td>
+
+                                    <p class="lede">
+                                      Please remember to configure all of the emails that Spree has provided to your needs.
+                                      Spree comes shipped with Ink prepackaged, but you can use your own version.
+                                      Ink is not placed in the asset pipeline.
+                                    </p>
+
+                                    <p class="lede">
+                                      Also take note that Gmail does not support <code>&lt;style&gt;</code> tags.
+                                      Therefore, you will need a gem that will be able to remove your <code>&lt;style&gt;</code>
+                                      tags and place them inline. Gmail only supports inline styles.
+                                    </p>
+
+                                  </td>
+                                  <td class="expander"></td>
+                                </tr>
+                              </table>
+
+                            </td>
+                            <td class="expander"></td>
+                          </tr>
+                        </table>
+
+                      </td>
+                    </tr>
+                  </table>
+
+                </td>
+              </tr>
+            </table>
+
+            <table class="row header">
+              <tr>
+                <td class="center" align="center">
+                  <center>
+
+                    <table class="container">
+                      <tr>
+                        <td class="wrapper last">
+
+                          <table class="twelve columns">
+                            <tr>
+                              <td class="panel">
+
+                                <p>
+                                  <a href="http://spreecommerce.com"
+                                     target="_blank">
+                                    Spree Commerce</a>:
+                                  a complete open source e-commerce solution for Ruby on Rails.
+                                </p>
+
+                              </td>
+                              <td class="expander"></td>
+                            </tr>
+                          </table>
+
+                        </td>
+                      </tr>
+                    </table>
+
+                  </center>
+                </td>
+              </tr>
+            </table>
+
+          </center>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
