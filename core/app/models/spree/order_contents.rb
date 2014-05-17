@@ -42,7 +42,7 @@ module Spree
 
     private
       def order_updater
-        @updater ||= OrderUpdater.new(order)
+        @updater ||= Order::Updater.new(order)
       end
 
       def reload_totals

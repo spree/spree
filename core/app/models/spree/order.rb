@@ -212,7 +212,7 @@ module Spree
     end
 
     def updater
-      @updater ||= OrderUpdater.new(self)
+      @updater ||= Updater.new(self)
     end
 
     def update!

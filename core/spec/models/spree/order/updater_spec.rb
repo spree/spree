@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 module Spree
-  describe OrderUpdater do
+  describe Order::Updater do
     let(:order) { Spree::Order.create }
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    let(:updater) { Spree::Order::Updater.new(order) }
 
     context "order totals" do
       before do 

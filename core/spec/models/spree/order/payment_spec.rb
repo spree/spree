@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe Spree::Order do
     let(:order) { stub_model(Spree::Order) }
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    let(:updater) { Spree::Order::Updater.new(order) }
 
     context "processing payments" do
 

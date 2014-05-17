@@ -315,7 +315,7 @@ module Spree
       end
 
       def update_order_shipment_state
-        new_state = OrderUpdater.new(order).update_shipment_state
+        new_state = Order::Updater.new(order).update_shipment_state
         order.update_columns(
           shipment_state: new_state,
           updated_at: Time.now,
