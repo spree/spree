@@ -5,6 +5,17 @@
 
     Jordan Brough
 
+*   Order#token is no longer fetched from another table.
+
+    Both Spree::Core::TokeResource and Spree::TokenizedPersmission are deprecated.
+    Order#token value is now persisted into spree_orders.token. Main motivation
+    here is save a few extra queries when creating an order. The TokenResource
+    module was being of no use in spree core.
+
+    NOTE: Watch out for the possible expensive migration that come along with this
+
+    Washington L Braga Jr
+
 *   Replaced session[:order_id] usage with cookies.signed[:order_id].
 
     Now we are using a signed cookie to store the order id on a guests

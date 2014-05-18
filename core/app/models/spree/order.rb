@@ -18,8 +18,6 @@ module Spree
       remove_transition from: :delivery, to: :confirm
     end
 
-    token_resource
-
     attr_reader :coupon_code
 
     if Spree.user_class
@@ -71,6 +69,8 @@ module Spree
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
+
+    before_create :create_token
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
@@ -636,5 +636,8 @@ module Spree
         self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
 
+      def create_token
+        self.token = ::SecureRandom::hex(8)
+      end
   end
 end
