@@ -281,12 +281,10 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location, order)
-      grouped_inventory_units = inventory_units.includes(:line_item).group_by do |iu|
-        [iu.line_item, iu.state_name]
-      end
-
-      grouped_inventory_units.each do |(line_item, state_name), inventory_units|
-        package.add line_item, inventory_units.count, state_name
+      manifest.each do |item|
+        item.states.each do |state, count|
+          package.add item.line_item, count, state.to_sym, item.variant
+        end
       end
       package
     end

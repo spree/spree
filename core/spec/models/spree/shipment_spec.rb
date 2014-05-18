@@ -200,16 +200,23 @@ describe Spree::Shipment do
       end
 
       context 'to_package' do
-        let(:inventory_units) do
-          [build(:inventory_unit, line_item: line_item, variant: variant, state: 'on_hand'),
-           build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
+        let(:manifest) do
+          [
+            double(:manifest_item,
+                   line_item: line_item,
+                   variant: variant,
+                   states: {'on_hand' => 3, 'backordered' => 5}
+                  )
+          ]
         end
 
         it 'should use symbols for states when adding contents to package' do
-          shipment.stub_chain(:inventory_units, includes: inventory_units)
+          expect(shipment).to receive(:manifest).and_return(manifest)
           package = shipment.to_package
-          package.on_hand.count.should eq 1
-          package.backordered.count.should eq 1
+          expect(package.on_hand.count).to eq 1
+          expect(package.on_hand.first.quantity).to eq 3
+          expect(package.backordered.count).to eq 1
+          expect(package.backordered.first.quantity).to eq 5
         end
       end
     end
