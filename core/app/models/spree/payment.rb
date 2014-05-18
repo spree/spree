@@ -50,6 +50,10 @@ module Spree
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
       # With card payments, happens before purchase or authorization happens
+      #
+      # Setting it after creating a profile and authorizing a full amount will
+      # prevent the payment from being authorized again once Order transitions
+      # to complete
       event :started_processing do
         transition from: [:checkout, :pending, :completed, :processing], to: :processing
       end
@@ -66,7 +70,7 @@ module Spree
         transition from: [:processing, :pending, :checkout], to: :completed
       end
       event :void do
-        transition from: [:pending, :completed, :checkout], to: :void
+        transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
       # when the card brand isnt supported
       event :invalidate do
