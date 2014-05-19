@@ -227,6 +227,8 @@ module Spree
                   raise Core::GatewayError.new Spree.t(:invalid_credit_card)
                 end
 
+                credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
+
                 attributes[:payments_attributes].first[:source] = credit_card
                 attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
                 attributes[:payments_attributes].first.delete :source_attributes
