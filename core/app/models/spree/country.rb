@@ -1,5 +1,8 @@
 module Spree
   class Country < Spree::Base
+
+    acts_as_paranoid
+
     has_many :states, -> { order('name ASC') }, dependent: :destroy
     has_many :addresses, dependent: :nullify
 

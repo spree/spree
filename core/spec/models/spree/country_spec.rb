@@ -12,4 +12,33 @@ describe Spree::Country do
   it "returns that the states are required for an invalid country" do
     Spree::Country.states_required_by_country_id['i do not exit'].should be_true
   end
+
+  context 'country instance' do
+    let(:country) { create(:country) }
+
+    context "country has no orders" do
+      context "#destroy" do
+        it "should set deleted_at value" do
+          country.destroy
+          country.deleted_at.should_not be_nil
+        end
+      end
+    end
+
+    context "country has orders" do
+      before do
+        address = create(:address, :country => country)
+        @order = create(:order, :shipping_address => address)
+      end
+
+      context "#destroy" do
+        it "should set deleted_at value" do
+          country.destroy
+          country.deleted_at.should_not be_nil
+          @order.shipping_address.country.should_not be_nil
+        end
+      end
+    end
+  end
+
 end
