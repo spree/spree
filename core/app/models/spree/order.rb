@@ -212,7 +212,7 @@ module Spree
     end
 
     def updater
-      @updater ||= OrderUpdater.new(self)
+      @updater ||= Updater.new(self)
     end
 
     def update!
@@ -238,7 +238,7 @@ module Spree
     end
 
     def contents
-      @contents ||= Spree::OrderContents.new(self)
+      @contents ||= Contents.new(self)
     end
 
     # Associates the specified user with the order.

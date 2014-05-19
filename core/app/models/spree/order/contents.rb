@@ -1,48 +1,49 @@
 module Spree
-  class OrderContents
-    attr_accessor :order, :currency
+  class Order < Spree::Base
+    class Contents
+      attr_accessor :order, :currency
 
-    def initialize(order)
-      @order = order
-    end
-
-    def add(variant, quantity = 1, currency = nil, shipment = nil)
-      line_item = add_to_line_item(variant, quantity, currency, shipment)
-      reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
-      reload_totals
-      line_item
-    end
-
-    def remove(variant, quantity = 1, shipment = nil)
-      line_item = remove_from_line_item(variant, quantity, shipment)
-      reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
-      reload_totals
-      line_item
-    end
-
-    def update_cart(params)
-      if order.update_attributes(params)
-        order.line_items = order.line_items.select {|li| li.quantity > 0 }
-        # Update totals, then check if the order is eligible for any cart promotions.
-        # If we do not update first, then the item total will be wrong and ItemTotal
-        # promotion rules would not be triggered.
-        reload_totals
-        PromotionHandler::Cart.new(order).activate
-        order.ensure_updated_shipments
-        reload_totals
-        true
-      else
-        false
+      def initialize(order)
+        @order = order
       end
-    end
 
-    private
+      def add(variant, quantity = 1, currency = nil, shipment = nil)
+        line_item = add_to_line_item(variant, quantity, currency, shipment)
+        reload_totals
+        PromotionHandler::Cart.new(order, line_item).activate
+        ItemAdjustments.new(line_item).update
+        reload_totals
+        line_item
+      end
+
+      def remove(variant, quantity = 1, shipment = nil)
+        line_item = remove_from_line_item(variant, quantity, shipment)
+        reload_totals
+        PromotionHandler::Cart.new(order, line_item).activate
+        ItemAdjustments.new(line_item).update
+        reload_totals
+        line_item
+      end
+
+      def update_cart(params)
+        if order.update_attributes(params)
+          order.line_items = order.line_items.select {|li| li.quantity > 0 }
+          # Update totals, then check if the order is eligible for any cart promotions.
+          # If we do not update first, then the item total will be wrong and ItemTotal
+          # promotion rules would not be triggered.
+          reload_totals
+          PromotionHandler::Cart.new(order).activate
+          order.ensure_updated_shipments
+          reload_totals
+          true
+        else
+          false
+        end
+      end
+
+      private
       def order_updater
-        @updater ||= OrderUpdater.new(order)
+        @updater ||= Order::Updater.new(order)
       end
 
       def reload_totals
@@ -98,5 +99,6 @@ module Spree
 
         line_item
       end
+    end
   end
 end

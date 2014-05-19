@@ -23,7 +23,7 @@ describe Spree::LineItem do
     end
 
     it "returns inventory when a line item is destroyed" do
-      Spree::OrderInventory.any_instance.should_receive(:verify).with(line_item, nil)
+      Spree::Order::Inventory.any_instance.should_receive(:verify).with(line_item, nil)
       line_item.destroy
     end
   end
@@ -50,7 +50,7 @@ describe Spree::LineItem do
     context "target_shipment is provided" do
       it "verifies inventory" do
         line_item.target_shipment = Spree::Shipment.new
-        Spree::OrderInventory.any_instance.should_receive(:verify)
+        Spree::Order::Inventory.any_instance.should_receive(:verify)
         line_item.save
       end
     end

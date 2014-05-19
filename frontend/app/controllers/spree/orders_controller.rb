@@ -44,7 +44,7 @@ module Spree
 
     # Adds a new item to the order (creating a new order if none already exists)
     def populate
-      populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true), current_currency)
+      populator = Spree::Order::Populator.new(current_order(create_order_if_necessary: true), current_currency)
       if populator.populate(params[:variant_id], params[:quantity])
         current_order.ensure_updated_shipments
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderInventory do
+describe Spree::Order::Inventory do
   let(:order) { create :completed_order_with_totals }
   let(:line_item) { order.line_items.first }
 

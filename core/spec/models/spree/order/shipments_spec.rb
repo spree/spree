@@ -20,7 +20,7 @@ describe Spree::Order do
       expect(order.shipment_total).to eq(0)
     end
 
-    context "except when order is completed, that's OrderInventory job" do
+    context "except when order is completed, that's the job of Order::Inventory" do
       it "doesn't touch anything" do
         order.stub completed?: true
         order.update_column(:shipment_total, 5)
