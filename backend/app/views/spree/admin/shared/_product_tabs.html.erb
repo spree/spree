@@ -13,7 +13,7 @@
         <%= link_to_with_icon 'edit', Spree.t(:product_details), edit_admin_product_url(@product) %>
       <% end if can?(:admin, Spree::Product) %>
       <%= content_tag :li, :class => ('active' if current == 'Images') do %>
-        <%= link_to_with_icon 'picture', Spree.t(:images), admin_product_images_url(@product) %>
+        <%= link_to_with_icon 'picture-o', Spree.t(:images), admin_product_images_url(@product) %>
       <% end if can?(:admin, Spree::Image) %>
       <%= content_tag :li, :class => ('active' if current == 'Variants') do %>
         <%= link_to_with_icon 'th-large', Spree.t(:variants),  admin_product_variants_url(@product) %>
