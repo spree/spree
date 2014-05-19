@@ -48,6 +48,13 @@ module Spree
         json_response["variant"]["name"].should_not be_blank
       end
 
+      it "default quantity to 1 if none is given" do
+        api_post :create, :line_item => { :variant_id => product.master.to_param }
+        response.status.should == 201
+        json_response.should have_attributes(attributes)
+        expect(json_response[:quantity]).to eq 1
+      end
+
       it "increases a line item's quantity if it exists already" do
         order.line_items.create(:variant_id => product.master.id, :quantity => 10)
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }

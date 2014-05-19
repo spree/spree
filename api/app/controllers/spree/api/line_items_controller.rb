@@ -3,7 +3,7 @@ module Spree
     class LineItemsController < Spree::Api::BaseController
       def create
         variant = Spree::Variant.find(params[:line_item][:variant_id])
-        @line_item = order.contents.add(variant, params[:line_item][:quantity])
+        @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1)
 
         if @line_item.errors.empty?
           @order.ensure_updated_shipments
