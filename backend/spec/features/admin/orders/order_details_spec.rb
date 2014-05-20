@@ -29,7 +29,7 @@ describe "Order Details", js: true do
           click_icon :edit
           fill_in "quantity", :with => "1"
         end
-        click_icon :ok
+        click_icon :check
 
         within("#order_total") do
           page.should have_content("$20.00")
@@ -80,7 +80,7 @@ describe "Order Details", js: true do
           click_icon :edit
         end
         fill_in "tracking", :with => "FOOBAR"
-        click_icon :ok
+        click_icon :check
 
         page.should_not have_css("input[name=tracking]")
         page.should have_content("Tracking: FOOBAR")
@@ -93,7 +93,7 @@ describe "Order Details", js: true do
           click_icon :edit
         end
         select2 "Default", :from => "Shipping Method"
-        click_icon :ok
+        click_icon :check
 
         page.should_not have_css('#selected_shipping_rate_id')
         page.should have_content("Default")
@@ -149,7 +149,7 @@ describe "Order Details", js: true do
             within("table.stock-contents", :text => tote.name) do
               click_icon :edit
               fill_in "quantity", with: 4
-              click_icon :ok
+              click_icon :check
             end
 
             # poltergeist and selenium disagree on the existance of this space
@@ -163,7 +163,7 @@ describe "Order Details", js: true do
               end
 
               fill_in "tracking", :with => "TRACKING_NUMBER"
-              click_icon :ok
+              click_icon :check
             end
 
             page.should_not have_css("input[name=tracking]")
@@ -193,7 +193,7 @@ describe "Order Details", js: true do
               end
               select2 "Default", :from => "Shipping Method"
             end
-            click_icon :ok
+            click_icon :check
 
             page.should_not have_css('#selected_shipping_rate_id')
             page.should have_content("Default")
@@ -289,7 +289,7 @@ describe "Order Details", js: true do
         click_icon :edit
       end
       fill_in "tracking", :with => "FOOBAR"
-      click_icon :ok
+      click_icon :check
 
       page.should_not have_css("input[name=tracking]")
       page.should have_content("Tracking: FOOBAR")
@@ -302,7 +302,7 @@ describe "Order Details", js: true do
         click_icon :edit
       end
       select2 "Default", :from => "Shipping Method"
-      click_icon :ok
+      click_icon :check
 
       page.should_not have_css('#selected_shipping_rate_id')
       page.should have_content("Default")
