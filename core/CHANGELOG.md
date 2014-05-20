@@ -39,3 +39,7 @@
 *   Ensure transition to payment processing state happens outside transaction.
 
     Chris Salzberg
+
+*   Increase the precision of the amount/price columns in order for support other currencies. See https://github.com/spree/spree/issues/4657
+
+    Gonzalo Moreno
