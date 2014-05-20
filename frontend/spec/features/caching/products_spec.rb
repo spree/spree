@@ -35,7 +35,7 @@ describe 'products', :caching => true do
     product.destroy
     product2.destroy
     visit spree.root_path
-    assert_written_to_cache("views/en/USD/spree/products/all--#{Date.today.to_s(:number)}-0")
+    assert_written_to_cache("views/en/USD/spree/products/all--0-0")
     expect(cache_writes.count).to eq(1)
   end
 
