@@ -43,12 +43,16 @@ module Spree
         started_processing!
         protect_from_connection_error do
           check_environment
-          # Standard ActiveMerchant capture usage
-          response = payment_method.capture(
-            amount,
-            response_code,
-            gateway_options
-          )
+          if payment_method.payment_profiles_supported?
+            response = payment_method.capture(self, source, gateway_options)
+          else
+            # Standard ActiveMerchant capture usage
+            response = payment_method.capture(
+              amount,
+              response_code,
+              gateway_options
+            )
+          end
 
           money = ::Money.new(amount, Spree::Config[:currency])
           capture_events.create!(amount: money.to_f)
