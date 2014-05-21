@@ -167,19 +167,32 @@ module Spree
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest
-      # Grouping by the ID means that we don't have to call out to the association accessor
-      # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |variant_id, units|
-        units.group_by(&:line_item_id).map do |line_item_id, units|
+      counts = inventory_units.group(:line_item_id, :variant_id, :state).count
 
-          states = {}
-          units.group_by(&:state).each { |state, iu| states[state] = iu.count }
+      # Change counts into a hash of {variant_id => {state => quantity}}
+      states = Hash.new{|h,k| h[k] = {} }
+      line_item_ids = []
+      variant_ids = []
+      counts.each do |(line_item_id, variant_id, state), quantity|
+        states[[line_item_id, variant_id]][state] = quantity
+        line_item_ids << line_item_id
+        variant_ids << variant_id
+      end
 
-          line_item = units.first.line_item
-          variant = units.first.variant
-          ManifestItem.new(line_item, variant, units.length, states)
-        end
-      end.flatten
+      # Eager load a hash of {variant_id => variant}
+      variants = Hash[Variant.unscoped.where(id: variant_ids).map{|v| [v.id, v] }]
+      # And the same of line items
+      line_items = Hash[LineItem.unscoped.where(id: line_item_ids).map{|i| [i.id, i] }]
+
+      # Use states and eager loaded variants to create ManifestItem
+      states.map do |(line_item_id, variant_id), counts|
+        ManifestItem.new(
+          line_items[line_item_id],
+          variants[variant_id],
+          counts.values.sum,
+          counts
+        )
+      end
     end
 
     def process_order_payments
