@@ -18,18 +18,18 @@ describe "Order Details", js: true do
   context 'as Admin' do
     stub_authorization!
 
-    before { visit spree.edit_admin_order_path(order) }
+    before { visit spree.admin_order_path(order) }
 
     context "edit order page" do
       it "should allow me to edit order details" do
         page.should have_content("spree t-shirt")
         page.should have_content("$40.00")
 
-        within_row(1) do
+        within(".stock-contents") do
           click_icon :edit
-          fill_in "quantity", :with => "1"
+          find("input.quantity").set(1)
+          click_icon :ok
         end
-        click_icon :ok
 
         within("#order_total") do
           page.should have_content("$20.00")

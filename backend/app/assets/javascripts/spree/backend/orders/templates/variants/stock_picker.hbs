@@ -1,0 +1,54 @@
+<fieldset>
+  <legend align="center">{{i18n 'select_stock' }}</legend>
+  <table class="stock-levels" data-hook="stock-levels">
+    <colgroup>
+      <col style="width: 30%;" />
+      <col style="width: 40%;" />
+      <col style="width: 20%;" />
+      <col style="width: 10%;" />
+    </colgroup>
+    <thead>
+      <th>{{i18n 'location' }}</th>
+      <th>{{i18n 'count_on_hand' }}</th>
+      <th>{{i18n 'quantity' }}</th>
+      <th class="actions"></th>
+    </thead>
+    <tbody>
+      {{#with this as variant}}
+        {{#each stock_items}}
+          <tr>
+            <td>{{stock_location_name}}</td>
+
+            {{#unless variant.track_inventory}}
+              <td>
+                It doesn't track inventory
+              </td>
+              <td>
+                {{input type='number' min='1' value=quantity}}
+              </td>
+              <td class="actions">
+                <button class="no-text fa fa-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
+              </td>
+            {{else}}
+              {{#if available}}
+                <td>
+                  {{count_on_hand}}
+                  {{#if backorderable}} ({{i18n 'backorders_allowed'}}) {{/if}}
+                </td>
+                <td>
+                  {{input type='number' min='1' value=quantity}}
+                </td>
+                <td class="actions">
+                  <button class="no-text fa fa-plus icon_link with-tip" title="{{i18n 'actions.add'}}" {{action 'add' this}}></button>
+                </td>
+              {{else}}
+                <td>{{i18n 'out_of_stock' }}</td>
+                <td>0</td>
+              {{/if}}
+            {{/unless}}
+          </tr>
+        {{/each}}
+      {{/with}}
+    </tbody>
+  </table>
+</fieldset>

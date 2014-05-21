@@ -77,6 +77,13 @@ module Spree
         render "spree/api/promotions/handler", :status => status
       end
 
+      # Return just the info necessary for the sidebar, not the entire order
+      def sidebar
+        find_order
+        authorize! :show, @order, order_token
+        respond_with(@order)
+      end
+
       private
         def order_params
           if params[:order]

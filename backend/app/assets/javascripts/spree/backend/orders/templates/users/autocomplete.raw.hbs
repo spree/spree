@@ -1,0 +1,34 @@
+<div class='customer-autocomplete-item'>
+  <div class='customer-details'>
+    <h5>{{customer.email}}</h5>
+    <div class='bill-address'>
+      {{#if bill_address.firstname }}
+        <strong>{{translations.bill_address}}</strong><br>
+        {{bill_address.firstname}} {{bill_address.lastname}}<br>
+        {{bill_address.address1}}, {{bill_address.address2}}<br>
+        {{bill_address.city}}<br>
+        {{#if bill_address.state_id }}
+          {{bill_address.state.name}}
+        {{else}}
+          {{bill_address.state_name}}
+        {{/if}}
+        {{bill_address.country.name}}<br>
+      {{/if}}
+    </div>
+    <hr>
+    <div class='ship-address'>
+      {{#if ship_address.firstname }}
+        <strong>{{translations.ship_address}}</strong><br>
+        {{ship_address.firstname}} {{ship_address.lastname}}<br>
+        {{ship_address.address1}}, {{ship_address.address2}}<br>
+        {{ship_address.city}}<br>
+        {{#if ship_address.state_id }}
+          {{ship_address.state.name}}
+        {{else}}
+          {{ship_address.state_name}}
+        {{/if}}
+        {{ship_address.country.name}}
+      {{/if}}
+    </div>
+  </div>
+</div>

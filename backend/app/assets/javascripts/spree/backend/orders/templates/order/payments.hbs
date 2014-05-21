@@ -1,0 +1,24 @@
+<fieldset class="no-border-bottom">
+  <legend>{{i18n 'payments' }}</legend>
+  {{#link-to 'payments.new' order class='fa fa-plus'}}{{i18n 'new_payment'}}{{/link-to}}
+  {{#if order.payments}}
+    <table class="index">
+      <thead>
+        <tr data-hook="payments_header">
+          <th>{{i18n 'date'}}/{{i18n 'time'}}</th>
+          <th>{{i18n 'amount' }}</th>
+          <th>{{i18n 'payment_method' }}</th>
+          <th>{{i18n 'payment_state' }}</th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each order.payments}}
+          {{render 'order/payment/show' this}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{/if}}
+</fieldset>
+
+{{outlet}}

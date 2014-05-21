@@ -114,6 +114,13 @@ module Spree
       response.status.should == 200
     end
 
+    it "can view just the sidebar info for the order" do
+      Order.any_instance.stub :user => current_api_user
+      api_get :sidebar, :id => order.to_param
+      response.status.should == 200
+      json_response.should have_attributes([:state, :ship_total, :total, :shipment_state, :payment_state])
+    end
+
     context "with BarAbility registered" do
       before { Spree::Ability.register_ability(::BarAbility) }
       after { Spree::Ability.remove_ability(::BarAbility) }
@@ -390,6 +397,13 @@ module Spree
           api_get :show, :id => order.to_param
 
           json_response['line_items'].first['variant'].should have_attributes([:product_id])
+        end
+
+        it "lists stock locations of the variant" do
+          api_get :show, :id => order.to_param
+
+          json_response['line_items'].first['variant'].should have_attributes([:stock_items])
+          json_response['line_items'].first['variant']['stock_items'].first.should have_attributes([:stock_location_name])
         end
 
         it "includes the tax_total in the response" do

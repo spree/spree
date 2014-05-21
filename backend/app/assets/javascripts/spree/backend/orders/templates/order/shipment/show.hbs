@@ -1,0 +1,108 @@
+<div id="shipment_{{unbound id}}" class='shipment'>
+  <fieldset class="no-border-bottom">
+    <legend align="center" class="stock-location" data-hook="stock-location">
+      <span class="shipment-number">{{number}}</span>
+      -
+      <span class="shipment-state">{{state}}</span>
+      {{i18n package_from}}:
+      <strong class="stock-location-name" data-hook="stock-location-name">{{stock_location_name}}</strong>
+      {{#if canShip}}
+        <a href='#' class='ship button fa-arrow-right'>{{i18n ship}}</a>
+      {{/if}}
+    </legend>
+  </fieldset>
+
+  <table class="stock-contents index" data-hook="stock-contents">
+    <colgroup>
+      <col style="width: 10%;" />
+      <col style="width: 30%;" />
+      <col style="width: 15%;" />
+      <col style="width: 15%;" />
+      <col style="width: 15%;" />
+      <col style="width: 15%;" />
+    </colgroup>
+
+    <thead>
+      <th colspan="2">{{i18n item_description}}</th>
+      <th>{{i18n price }}</th>
+      <th>{{i18n quantity }}</th>
+      <th>{{i18n total}}</th>
+      <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions"></th>
+    </thead>
+
+    <tbody>
+      {{#each manifestItems}}
+        {{ render 'order/shipment/manifest_item' this}}
+      {{/each}}
+
+      <tr class="shipping-method total">
+        {{#if editingMethod}}
+          <td colspan="5">
+            <div class="field alpha five columns">
+              <label for='selected_shipping_rate_id'>{{i18n 'shipping_method'}}</label>
+              {{view Backend.ShippingRatesPicker
+                     content=shipping_rates
+                     optionValuePath="content.id"
+                     optionLabelPath="content.display_text"
+                     value=selected_shipping_rate_id}}
+            </div>
+          </td>
+        {{else}}
+          {{#if selected_shipping_rate}}
+            <td colspan="4">
+              <strong>{{selected_shipping_rate.name}}</strong>
+            </td>
+            <td class="total" align="center">
+              <span>{{selected_shipping_rate.display_cost}}</span>
+            </td>
+          {{else}}
+            <td colspan='5'>{{i18n 'no_shipping_method_selected' }}</td>
+          {{/if}}
+        {{/if}}
+        <td class="actions">
+          {{#unless shipped}}
+            {{#if editingMethod}}
+              <a href='#' {{action 'saveMethod'}} class="fa fa-check no-text with-tip" title='{{i18n actions.save}}'></a>
+              <a href='#' {{action 'cancelMethod'}} class="fa fa-cancel no-text with-tip" title='{{i18n actions.cancel}}'></a>
+            {{else}}  
+              <a href='#' {{action 'editMethod'}} class="fa fa-edit no-text with-tip" title='{{i18n actions.edit}}'></a>
+            {{/if}}
+          {{/unless}}
+        </td>
+      </tr>
+
+      <tr class="tracking total">
+        <td colspan="5">
+          {{#if editingTracking}}
+            <label>{{i18n 'shipment.tracking_number' }}</label>
+            {{input value=tracking}}
+          {{else}}
+            <strong>{{i18n 'shipment.tracking' }}</strong> 
+            {{#if tracking}}
+              {{tracking}}
+            {{else}}
+              {{i18n 'shipment.no_tracking_present'}}
+            {{/if}}
+          {{/if}}
+        </td>
+        <td class="actions">
+          {{#if editingTracking}}
+            <a href='#' {{action 'saveTracking'}} class="fa fa-check no-text with-tip" title='{{i18n actions.save}}'></a>
+            <a href='#' {{action 'cancelTracking'}} class="fa fa-cancel no-text with-tip" title='{{i18n actions.cancel}}'></a>
+          {{else}}  
+            <a href='#' {{action 'editTracking'}} class="fa fa-edit no-text with-tip" title='{{i18n actions.edit}}'></a>
+          {{/if}}
+        </td>
+      </tr>
+
+      {{#if order.special_instructions}}
+        <tr class='special_instructions'>
+          <td colspan="5">
+            <strong>{{i18n 'special_instructions'}}:&nbsp;</strong>{{order.special_instructions}}
+          </td>
+        </tr>
+      {{/if}}
+
+    </tbody>
+  </table>
+</div>

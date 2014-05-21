@@ -69,6 +69,10 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    # To make ember happy
+    get '/orders/:number', :to => "orders#index"
+    get '/orders/:number/*path', :to => "orders#index"
+
     resources :orders, :except => [:show] do
       member do
         post :resend

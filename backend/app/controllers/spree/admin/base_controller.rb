@@ -87,6 +87,13 @@ module Spree
           Spree::Backend::Config[:locale]
         end
 
+        # Used to determine what kind of layout the page should have
+        # False by default, overriden in controllers that provide an ember frontend
+        def ember?
+          false
+        end
+        helper_method :ember?
+
     end
   end
 end

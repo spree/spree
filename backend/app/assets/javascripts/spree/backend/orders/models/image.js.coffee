@@ -1,0 +1,1 @@
+Backend.Image = Ember.Object.extend({})

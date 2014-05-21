@@ -1,0 +1,24 @@
+{{#if order.line_items}}
+  <table id='line-items' class="line-items index">
+    <colgroup>
+      <col style="width: 10%;" />
+      <col style="width: 40%;" />
+      <col style="width: 10%;" />
+      <col style="width: 10%;" />
+    </colgroup>
+
+    <thead>
+      <th colspan="2">{{i18n 'name' }}</th>
+      <th>{{i18n 'price' }}</th>
+      <th>{{i18n 'quantity' }}</th>
+      <th>{{i18n 'total_price' }}</th>
+      <th class="orders-actions actions">&nbsp;</th>
+    </thead>
+
+    <tbody>
+      {{#each order.line_items}}
+        {{render 'order/line_item/show' this}}
+      {{/each}}
+    </tbody>
+  </table>
+{{/if}}

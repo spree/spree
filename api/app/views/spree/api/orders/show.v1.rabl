@@ -18,15 +18,7 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes *payment_attributes
-
-  child :payment_method => :payment_method do
-    attributes :id, :name, :environment
-  end
-
-  child :source => :source do
-    attributes *payment_source_attributes
-  end
+  extends "spree/api/payments/show"
 end
 
 child :shipments => :shipments do
@@ -35,6 +27,10 @@ end
 
 child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
+end
+
+child :available_payment_methods => :payment_methods do
+  attributes :id, :name, :environment, :method_type
 end
 
 # Necessary for backend's order interface

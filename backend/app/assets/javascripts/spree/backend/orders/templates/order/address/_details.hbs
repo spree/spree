@@ -1,0 +1,12 @@
+{{#if order.canUpdate}}
+  {{render 'order/address/form' this}}
+
+  {{#if useBilling}}
+    <span>
+      <input type='checkbox' id='use_billing' {{action 'useBilling'}}> {{ i18n 'same_as_shipping' }}
+    </span>
+  {{/if}}
+
+{{else}}
+  {{partial 'order/address/show'}}
+{{/if}}

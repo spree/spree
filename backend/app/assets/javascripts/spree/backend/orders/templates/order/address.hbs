@@ -1,0 +1,42 @@
+<fieldset class="no-border-bottom state_info" id='address_info'>
+  <legend>{{i18n 'order.states.address' }}</legend>
+
+  {{#if canUpdate}}
+    <div class="twelve columns" id='user_info'>
+      {{view Ember.Checkbox checked=guestCheckout id='guest_checkout' }}
+      <label for='guest_checkout'>{{i18n 'guest_checkout' }}</label>
+      {{#if guestCheckout}}
+        <div id='guest_checkout_fields'>
+          <label for='order_email'>{{i18n 'email'}}</label><br>
+          <input type='email' id='order_email' name='order[email]'>
+        </div>
+      {{else}}
+        <p class='field' id='user_picker'>
+          <label for='order_user_id'>{{i18n 'choose_a_customer' }}</label>
+          {{view Backend.UserPicker id='order_user_id' value=user_id type="hidden" class="fullwidth" action='pickedCustomer'}}
+        </p>
+      {{/if}}
+    </div>
+  {{/if}}
+  <div class="alpha six columns" id='billing_address'>
+    <fieldset class="no-border-bottom">
+      <legend align="center">{{i18n 'order.bill_address' }}</legend>
+      {{#with bill_address}}
+        {{partial 'order/address/details'}}
+      {{/with}}
+    </fieldset>
+  </div>
+
+  <div class="alpha six columns" id='shipping_address'>
+    <fieldset class="no-border-bottom">
+      <legend align="center">{{i18n 'order.ship_address'}}</legend>
+      {{#with ship_address}}
+        {{partial 'order/address/details'}}
+      {{/with}}
+    </fieldset>
+  </div>
+  
+  <div>
+    <button {{action 'update'}}>{{i18n 'actions.update' }}</button>
+  </div>
+</fieldset>

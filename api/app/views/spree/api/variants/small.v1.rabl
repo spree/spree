@@ -10,3 +10,10 @@ child :option_values => :option_values do
 end
 
 child(:images => :images) { extends "spree/api/images/show" }
+
+child(:stock_items => :stock_items) do
+  glue(:stock_location) do
+    attribute :name => :stock_location_name
+  end
+end
+
