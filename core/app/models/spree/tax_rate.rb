@@ -180,8 +180,8 @@ module Spree
     end
 
     def default_zone_or_zone_match?(order_tax_zone)
-      Zone.default_tax.contains?(order_tax_zone) ||
-      order_tax_zone == self.zone
+      default_tax = Zone.default_tax
+      (default_tax && default_tax.contains?(order_tax_zone)) || order_tax_zone == self.zone
     end
 
     private
