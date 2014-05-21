@@ -2,15 +2,16 @@
   > ul, .jstree-icon {
     background-image: none;
   }
-  
+
   .jstree-icon {
     @extend [class^="icon-"]:before;
+    @extend .fa;
   }
 
-  .jstree-open > .jstree-icon {    
+  .jstree-open > .jstree-icon {
     @extend .fa-caret-down;
   }
-  .jstree-closed > .jstree-icon {    
+  .jstree-closed > .jstree-icon {
     @extend .fa-caret-right;
   }
 
@@ -31,25 +32,28 @@
 
       .jstree-icon {
         padding-left: 0px;
-        @extend .fa-arrows;   
+        @extend .fa;
+        @extend .fa-arrows;
       }
     }
   }
 }
 
-#vakata-dragged.jstree-apple .jstree-invalid, 
+#vakata-dragged.jstree-apple .jstree-invalid,
 #vakata-dragged.jstree-apple .jstree-ok,
 #jstree-marker {
   background-image: none !important;
   background-color: transparent !important;
-  @extend [class^="icon-"]:before;   
+  @extend [class^="icon-"]:before;
 }
 #vakata-dragged.jstree-apple .jstree-invalid {
-  @extend .fa-bars;  
+  @extend .fa;
+  @extend .fa-bars;
   color: $color-5;
 }
 #vakata-dragged.jstree-apple .jstree-ok {
-  @extend .fa-check;
+  @extend .fa;
+  @extend .fa-ok;
   color: $color-2;
 }
 
@@ -71,7 +75,7 @@
   -webkit-box-shadow: none !important;
      -moz-box-shadow: none !important;
           box-shadow: none !important;
-  
+
 }
 
 #vakata-contextmenu {
@@ -109,7 +113,7 @@
       -webkit-box-shadow: none !important;
       line-height: inherit !important;
       padding: 5px 10px !important;
-      margin: 0 !important;      
+      margin: 0 !important;
     }
   }
 
