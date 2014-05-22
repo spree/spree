@@ -18,7 +18,7 @@ module Spree
     def verify(shipment = nil)
       if order.completed? || shipment.present?
 
-        quantity = line_item.quantity - inventory_units.size
+        quantity = line_item.quantity - inventory_units.sum(:quantity)
         if quantity > 0
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
@@ -87,8 +87,7 @@ module Spree
 
         shipment_units.each do |inventory_unit|
           break if removed_quantity == quantity
-          inventory_unit.destroy
-          removed_quantity += 1
+          removed_quantity += inventory_unit.remove(quantity - removed_quantity)
         end
 
         shipment.destroy if shipment.inventory_units.count == 0

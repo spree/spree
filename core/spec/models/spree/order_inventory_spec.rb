@@ -169,9 +169,8 @@ describe Spree::OrderInventory do
           mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'backordered')
         ])
 
-        shipment.inventory_units_for_item[0].should_receive(:destroy)
-        shipment.inventory_units_for_item[1].should_not_receive(:destroy)
-        shipment.inventory_units_for_item[2].should_receive(:destroy)
+        shipment.inventory_units_for_item[0].should_receive(:remove).with(2).and_return(1)
+        shipment.inventory_units_for_item[2].should_receive(:remove).with(1).and_return(1)
 
         subject.send(:remove_from_shipment, shipment, 2).should == 2
       end
@@ -182,8 +181,7 @@ describe Spree::OrderInventory do
           mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand')
         ])
 
-        shipment.inventory_units_for_item[0].should_not_receive(:destroy)
-        shipment.inventory_units_for_item[1].should_receive(:destroy)
+        shipment.inventory_units_for_item[1].should_receive(:remove).with(1).and_return(1)
 
         subject.send(:remove_from_shipment, shipment, 1).should == 1
       end
@@ -194,8 +192,7 @@ describe Spree::OrderInventory do
           mock_model(Spree::InventoryUnit, :variant_id => variant.id, :state => 'on_hand')
         ])
 
-        shipment.inventory_units_for_item[0].should_not_receive(:destroy)
-        shipment.inventory_units_for_item[1].should_receive(:destroy)
+        shipment.inventory_units_for_item[1].should_receive(:remove).with(1).and_return(1)
 
         subject.send(:remove_from_shipment, shipment, 1).should == 1
       end

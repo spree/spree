@@ -64,6 +64,19 @@ module Spree
         variant_id: variant_id).first
     end
 
+    def remove(count)
+      count = quantity if count > quantity
+
+      self.quantity -= count
+      if quantity == 0
+        destroy
+      else
+        save!
+      end
+
+      count
+    end
+
     # Remove variant default_scope `deleted_at: nil`
     def variant
       Spree::Variant.unscoped { super }
