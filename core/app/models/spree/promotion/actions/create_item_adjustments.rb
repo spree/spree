@@ -62,7 +62,8 @@ module Spree
           end
 
           def deals_with_adjustments
-            adjustment_scope = Adjustment.includes(:order).references(:spree_orders)
+            adjustment_scope = self.adjustments.includes(:order).references(:spree_orders)
+
             # For incomplete orders, remove the adjustment completely.
             adjustment_scope.where("spree_orders.completed_at IS NULL").each do |adjustment|
               adjustment.destroy

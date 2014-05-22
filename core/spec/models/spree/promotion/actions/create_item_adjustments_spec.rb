@@ -82,6 +82,19 @@ module Spree
             end
           end
         end
+
+        context "#destroy" do
+          let!(:action) { CreateItemAdjustments.create! }
+          let!(:other_action) { CreateItemAdjustments.create! }
+
+          it "doesnt mess with unrelated adjustments" do
+            other_action.adjustments.create!(label: "Check", amount: 0)
+
+            expect {
+              action.destroy
+            }.not_to change { other_action.adjustments.count }
+          end
+        end
       end
     end
   end
