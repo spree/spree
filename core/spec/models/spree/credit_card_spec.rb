@@ -224,6 +224,12 @@ describe Spree::CreditCard do
     it "does not blow up when passed an empty string" do
       lambda { credit_card.expiry = '' }.should_not raise_error
     end
+
+    # Regression test for #4725
+    it "does not blow up when passed one number" do
+      lambda { credit_card.expiry = '12' }.should_not raise_error
+    end
+
   end
 
   context "#cc_type=" do
