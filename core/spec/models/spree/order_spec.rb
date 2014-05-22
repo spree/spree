@@ -615,4 +615,12 @@ describe Spree::Order do
       order.can_cancel?.should be_true
     end
   end
+
+  context "#tax_total" do
+    it "adds included tax and additional tax" do
+      order.stub(:additional_tax_total => 10, :included_tax_total => 20)
+      
+      order.tax_total.should eq 30
+    end
+  end
 end
