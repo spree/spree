@@ -7,7 +7,7 @@
         <ul>
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
-              <%= radio_button_tag "variant_id", variant.id, index == 0, 'data-price' => Spree::Money.new(variant.price, with_currency: true).to_s  %>
+              <%= radio_button_tag "variant_id", variant.id, index == 0, 'data-price' => Spree::Money.new(variant.price, currency: current_currency, with_currency: true).to_s  %>
               <%= label_tag "variant_id_#{ variant.id }" do %>
                 <span class="variant-description">
                   <%= variant_options variant %>
@@ -30,7 +30,7 @@
 
     <% if @product.price_in(current_currency) and !@product.price.nil? %>
       <div data-hook="product_price" class="columns five <% if !@product.has_variants? %> alpha <% else %> omega <% end %>">
-        
+
         <div id="product-price">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
@@ -45,7 +45,7 @@
           <% elsif @product.variants.empty? %>
             <br />
             <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
-          <% end %> 
+          <% end %>
         </div>
 
         <div class="add-to-cart">
@@ -60,6 +60,6 @@
           <br>
           <div><span class="price selling" itemprop="price"><%= Spree.t('product_not_available_in_this_currency') %></span></div>
         </div>
-    <% end %>    
+    <% end %>
   </div>
 <% end %>
