@@ -4,8 +4,8 @@ module Spree
       Spree::Config[:mails_from]
     end
 
-    def money(amount)
-      Spree::Money.new(amount).to_s
+    def money(amount, currency = Spree::Config[:currency])
+      Spree::Money.new(amount, currency: currency).to_s
     end
     helper_method :money
 
