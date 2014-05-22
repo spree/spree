@@ -24,10 +24,7 @@ module Spree
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
-      event :fill_backorder do
-        transition to: :on_hand, from: :backordered
-      end
-      after_transition on: :fill_backorder, do: :update_order
+      state :backordered
 
       event :ship do
         transition to: :shipped, if: :allow_ship?
@@ -75,6 +72,27 @@ module Spree
       end
 
       count
+    end
+
+    def fill_backorders(number)
+      raise "item not backordered" unless backordered?
+      return if number.zero?
+      if number >= quantity
+        update!(state: 'on_hand')
+        update_order
+        quantity
+      else
+        InventoryUnit.create! do |unit|
+          unit.quantity = number
+          unit.state = 'on_hand'
+          unit.variant_id = variant_id
+          unit.line_item_id = line_item_id
+          unit.shipment_id = shipment_id
+        end
+        update!(quantity: quantity - number)
+        update_order
+        number
+      end
     end
 
     # Remove variant default_scope `deleted_at: nil`
