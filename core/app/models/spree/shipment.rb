@@ -167,7 +167,7 @@ module Spree
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest
-      counts = inventory_units.group(:line_item_id, :variant_id, :state).count
+      counts = inventory_units.group(:line_item_id, :variant_id, :state).sum(:quantity)
 
       # Change counts into a hash of {variant_id => {state => quantity}}
       states = Hash.new{|h,k| h[k] = {} }
