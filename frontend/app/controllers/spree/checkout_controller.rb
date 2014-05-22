@@ -33,7 +33,7 @@ module Spree
         end
 
         if @order.completed?
-          session[:order_id] = nil
+          cookies.signed[:order_id] = nil
           flash.notice = Spree.t(:order_processed_successfully)
           flash[:order_completed] = true
           redirect_to completion_route

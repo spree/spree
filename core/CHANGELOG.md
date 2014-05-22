@@ -1,5 +1,15 @@
 ## Spree 2.3.0 (unreleased) ##
 
+*   Replaced session[:order_id] usage with cookies.signed[:order_id].
+
+    Now we are using a signed cookie to store the order id on a guests
+    browser client.  This allows customers who close their browser to
+    continue their shopping when they visit again.
+    Fixes #4319
+
+    Jeff Dutil
+
+
 *   Order#process_payments! no longer raises. Gateways must raise on failing authorizations.
 
     Now it's a Gateway or PaymentMethod responsability to raise a custom

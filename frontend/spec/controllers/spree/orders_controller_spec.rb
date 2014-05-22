@@ -15,8 +15,8 @@ describe Spree::OrdersController do
     context "#populate" do
       it "should create a new order when none specified" do
         spree_post :populate, {}, {}
-        session[:order_id].should_not be_blank
-        Spree::Order.find(session[:order_id]).should be_persisted
+        cookies.signed[:order_id].should_not be_blank
+        Spree::Order.find(cookies.signed[:order_id]).should be_persisted
       end
 
       context "with Variant" do
@@ -46,17 +46,17 @@ describe Spree::OrdersController do
       context "with authorization" do
         before do
           controller.stub :check_authorization
+          controller.stub current_order: order
         end
 
         it "should render the edit view (on failure)" do
           # email validation is only after address state
           order.update_column(:state, "delivery")
-          spree_put :update, { :order => { :email => "" } }, {:order_id => order.id }
+          spree_put :update, { :order => { :email => "" } }, { :order_id => order.id }
           response.should render_template :edit
         end
 
         it "should redirect to cart path (on success)" do
-          controller.stub current_order: order
           order.stub(:update_attributes).and_return true
           spree_put :update, {}, {:order_id => 1}
           response.should redirect_to(spree.cart_path)

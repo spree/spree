@@ -13,7 +13,7 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-          @order ||= Spree::Order.find_by(id: session[:order_id], currency: current_currency, completed_at: nil)
+          @order ||= Spree::Order.find_by(id: cookies.signed[:order_id], currency: current_currency, completed_at: nil)
         end
 
         # The current incomplete order from the session for use in cart and during checkout
@@ -23,8 +23,8 @@ module Spree
 
           return @current_order if @current_order
 
-          if session[:order_id]
-            current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).find_by(id: session[:order_id], currency: current_currency)
+          if cookies.signed[:order_id]
+            current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).find_by(id: cookies.signed[:order_id], currency: current_currency)
             @current_order = current_order unless current_order.try(:completed?)
           end
 
@@ -43,7 +43,7 @@ module Spree
 
           if @current_order
             @current_order.last_ip_address = ip_address
-            session[:order_id] = @current_order.id
+            cookies.signed[:order_id] = @current_order.id
             return @current_order
           end
         end
@@ -60,8 +60,8 @@ module Spree
         def set_current_order
           if user = try_spree_current_user
             last_incomplete_order = user.last_incomplete_spree_order
-            if session[:order_id].nil? && last_incomplete_order
-              session[:order_id] = last_incomplete_order.id
+            if cookies.signed[:order_id].nil? && last_incomplete_order
+              cookies.signed[:order_id] = last_incomplete_order.id
             elsif current_order && last_incomplete_order && current_order != last_incomplete_order
               current_order.merge!(last_incomplete_order, user)
             end
