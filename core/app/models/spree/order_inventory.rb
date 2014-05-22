@@ -18,13 +18,12 @@ module Spree
     def verify(shipment = nil)
       if order.completed? || shipment.present?
 
-        if inventory_units.size < line_item.quantity
-          quantity = line_item.quantity - inventory_units.size
-
+        quantity = line_item.quantity - inventory_units.size
+        if quantity > 0
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif inventory_units.size > line_item.quantity
-          remove(inventory_units, shipment)
+        elsif quantity < 0
+          remove(-quantity, shipment)
         end
       end
     end
@@ -34,9 +33,7 @@ module Spree
     end
 
     private
-      def remove(item_units, shipment = nil)
-        quantity = item_units.size - line_item.quantity
-
+      def remove(quantity, shipment = nil)
         if shipment.present?
           remove_from_shipment(shipment, quantity)
         else
