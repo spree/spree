@@ -100,7 +100,7 @@
         <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td colspan="4"><%= Spree.t(:promotion) %>: <strong><%= label %></strong></td>
-            <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
+            <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>
           </tr>
         <% end %>
       </tfoot>
@@ -111,7 +111,7 @@
     <% order.shipments.group_by { |s| s.shipping_method.name }.each do |name, shipments| %>
       <tr class="total" data-hook='shipment-row'>
         <td colspan="4"><%= Spree.t(:shipping) %>: <strong><%= name %></strong></td>
-        <td class="total"><span><%= Spree::Money.new(shipments.sum(&:discounted_cost)).to_html %></span></td>
+        <td class="total"><span><%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency).to_html %></span></td>
       </tr>
     <% end %>
   </tfoot>
@@ -121,7 +121,7 @@
       <% order.all_adjustments.tax.group_by(&:label).each do |label, adjustments| %>
         <tr class="total">
           <td colspan="4"><%= Spree.t(:tax) %>: <strong><%= label %></strong></td>
-          <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount)) %></span></td>
+          <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>
         </tr>
       <% end %>
     </tfoot>
