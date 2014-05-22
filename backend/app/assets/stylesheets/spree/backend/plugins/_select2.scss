@@ -173,9 +173,12 @@
         background-image: none !important;
         font-size: 85% !important;
         @extend .fa;
-        @extend .fa-bars;
+        @extend .fa-void;
         margin-left: 2px;
         color: $color-1;
+        &:before {
+          font-size: 11px;
+        }
       }
     }
   }
