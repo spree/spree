@@ -30,7 +30,6 @@ module Spree
               action.stub :compute_amount => 10
             end
 
-
             it "creates adjustment with item as adjustable" do
               action.perform(order: order)
               action.adjustments.count.should == 1
@@ -85,7 +84,25 @@ module Spree
 
         context "#destroy" do
           let!(:action) { CreateItemAdjustments.create! }
-          let!(:other_action) { CreateItemAdjustments.create! }
+          let(:other_action) { CreateItemAdjustments.create! }
+
+          it "destroys adjustments for incompleted orders" do
+            order = Order.create
+            action.adjustments.create!(label: "Check", amount: 0, order: order)
+
+            expect {
+              action.destroy
+            }.to change { Adjustment.count }.by(-1)
+          end
+
+          it "nullifies adjustments for completed orders" do
+            order = Order.create(completed_at: Time.now)
+            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order)
+
+            expect {
+              action.destroy
+            }.to change { adjustment.reload.source_id }.from(action.id).to nil
+          end
 
           it "doesnt mess with unrelated adjustments" do
             other_action.adjustments.create!(label: "Check", amount: 0)
