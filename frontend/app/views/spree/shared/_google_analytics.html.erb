@@ -16,7 +16,7 @@
         'affiliation': '<%= current_store.name %>',                 // Affiliation or store name.
         'revenue': '<%= @order.total %>',                                        // Grand Total.
         'shipping': '<%= @order.ship_total %>',                                  // Shipping.
-        'tax': '<%= @order.additional_tax_total + @order.included_tax_total %>', // Tax.
+        'tax': '<%= @order.tax_total %>',                                        // Tax.
         'currencyCode': '<%= current_currency %>'                                // local currency code.
       });
       <% @order.line_items.each do |line_item| %>

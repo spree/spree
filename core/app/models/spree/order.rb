@@ -578,6 +578,10 @@ module Spree
       super
     end
 
+    def tax_total
+      included_tax_total + additional_tax_total
+    end
+
     private
 
       def link_by_email
