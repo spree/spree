@@ -87,6 +87,8 @@ gem 'spree', github: 'spree/spree'
 state. It is unwise to use this branch in a production system you care deeply
 about.**
 
+**Note: The master branch is depending on the latest Rails 4.1 release.**
+
 If you wish to have authentication included also, you will need to add the
 `spree_auth_devise` gem as well. Either this:
 
