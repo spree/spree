@@ -3,10 +3,7 @@ module Spree
     class TaxonomiesController < Spree::Api::BaseController
 
       def index
-        @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
-                      ransack(params[:q]).result.
-                      page(params[:page]).per(params[:per_page])
-        respond_with(@taxonomies)
+        respond_with(taxonomies)
       end
 
       def show
@@ -44,6 +41,12 @@ module Spree
       end
 
       private
+
+      def taxonomies
+        @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
+                      ransack(params[:q]).result.
+                      page(params[:page]).per(params[:per_page])
+      end
 
       def taxonomy
         @taxonomy ||= Taxonomy.accessible_by(current_ability, :read).find(params[:id])
