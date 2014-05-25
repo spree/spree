@@ -787,6 +787,12 @@ describe Spree::Payment, :type => :model do
       order.update_attributes(:email => email)
       expect(payment.gateway_options[:email]).to eq(email)
     end
+
+    it "contains the adjustment total as the discount" do
+      adjustment_total = BigDecimal('9.99')
+      order.update_attributes(:adjustment_total => adjustment_total)
+      expect(payment.gateway_options[:discount]).to eql(BigDecimal('999'))
+    end
   end
 
   describe "#set_unique_identifier" do
