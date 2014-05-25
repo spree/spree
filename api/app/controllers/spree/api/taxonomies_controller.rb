@@ -10,8 +10,7 @@ module Spree
       end
 
       def show
-        @taxonomy = Taxonomy.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@taxonomy)
+        respond_with(taxonomy)
       end
 
       # Because JSTree wants parameters in a *slightly* different format
