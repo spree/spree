@@ -306,5 +306,18 @@ describe Spree::CreditCard do
       am_card.last_name = "Boblaw"
       am_card.verification_value.should == 123
     end
+
+    context "provides name instead of first and last" do
+      before do
+        credit_card.first_name = credit_card.last_name = nil
+        credit_card.name = "Bob Law"
+      end
+
+      it "falls back to split first and last" do
+        am_card = credit_card.to_active_merchant
+        expect(am_card.first_name).to eq "Bob"
+        expect(am_card.last_name).to eq "Law"
+      end
+    end
   end
 end
