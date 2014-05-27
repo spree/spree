@@ -42,17 +42,26 @@ gem 'rails_12factor', group: :production
 
 This will enable your application to serve static assets and direct logging to stdout.
 
-### Asset Pipeline
+### Rails 4
 
-***
-If you're on Rails 4 or greater. There's no longer
-a `initialize_on_precompile` config option because you should be able to run
-`assets:precompile` without a database connection. See Heroku [troubleshooting
-page for details](https://devcenter.heroku.com/articles/rails-asset-pipeline#troubleshooting).
-Unfortunately Spree still needs to connect to db on startup so you'll have to
-enable the [user-env-compile](https://devcenter.heroku.com/articles/labs-user-env-compile)
-feature on heroku to run your store.
-***
+As of rails 4 things got a bit more complicated to deploy spree apps on heroku.
+Spree versions up to 2.2.0 require a db connection on initialization. Heroku
+won't allow the db connection though the first time you deploy the app, probably
+because it doesn't know which database to connect to yet.
+
+A possible work around for this is to uninstall spree from your rails app,
+deploy it to heroku and only then install spree again, e.g. by reverting
+your previous commits, so that you get a successful deploy.
+
+Also look into this [github thread](https://github.com/spree/spree/issues/3749#issuecomment-30987342)
+and all related for further info on how you could accomplish a successful
+heroku deploy.
+
+Fortunately a lot of work has been done so that Spree 2.3 doesn't touch db
+on initialization. This issue about [preferences on initialization](https://github.com/spree/spree/issues/3833)
+contains most of the context related.
+
+### Asset Pipeline Rails 3
 
 When deploying to Heroku by default Rails will attempt to intialize itself
 before the assets are precompiled. This step will fail because the application
@@ -68,6 +77,8 @@ config.assets.initialize_on_precompile = false
 
 The assets for your application will still be precompiled, it's just that Rails
 won't be intialized during this process.
+
+***
 
 ### Paperclip image quality issues
 Heroku currently defaults to a surprisingly old version of ImageMagick (6.5 as of March 2014) which can cause problems.  Aside from the fact that 6.5 is missing some of the newer command line arguments that Paperclip can invoke, its [image conversion quality is noticeably inferior](http://i.imgur.com/dqeNdlW.png) to that of the current release.  You can easily work around this by [using a Heroku buildpack to provide the latest ImageMagick release](https://github.com/spree/spree/pull/3104#issuecomment-36977413).  You may have to `:reprocess!` your images after upgrading ImageMagick.
