@@ -93,7 +93,7 @@ module Spree::Preferences::Preferable
     when :password
       value.to_s
     when :decimal
-      BigDecimal.new(value.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+      BigDecimal.new(value.to_s)
     when :integer
       value.to_i
     when :boolean
