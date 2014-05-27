@@ -17,14 +17,9 @@ describe Spree::Order do
   end
 
   context "#create" do
-    let(:order) { Spree::Order.create }
-
     it "should assign an order number" do
+      order = Spree::Order.create
       order.number.should_not be_nil
-    end
-
-    it 'should create a randomized 16 character token' do
-      order.token.size.should == 16
     end
   end
 
