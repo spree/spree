@@ -114,7 +114,7 @@ $(document).ready(function () {
   $('a.cancel-tracking').click(toggleTrackingEdit);
 
   // handle tracking save
-  $('[data-hook=admin_shipment_form] a.save-tracking').on('click', function () {
+  $('[data-hook=admin_shipment_form] a.save-tracking').on('click', function (event) {
     event.preventDefault();
 
     var link = $(this);
