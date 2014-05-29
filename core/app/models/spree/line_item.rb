@@ -28,7 +28,7 @@ module Spree
     after_save :update_inventory
     after_save :update_adjustments
 
-    after_create :create_tax_charge
+    after_create :update_tax_charge
 
     delegate :name, :description, :should_track_inventory?, to: :variant
 
@@ -104,6 +104,7 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
+          update_tax_charge # Called to ensure pre_tax_amount is updated. 
           recalculate_adjustments
         end
       end
@@ -112,7 +113,7 @@ module Spree
         Spree::ItemAdjustments.new(self).update
       end
 
-      def create_tax_charge
+      def update_tax_charge
         Spree::TaxRate.adjust(order.tax_zone, [self])
       end
 
@@ -123,4 +124,3 @@ module Spree
       end
   end
 end
-

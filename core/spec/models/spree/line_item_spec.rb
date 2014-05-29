@@ -35,6 +35,7 @@ describe Spree::LineItem do
       end
 
       it "triggers adjustment total recalculation" do
+        line_item.should_receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
         line_item.should_receive(:recalculate_adjustments)
         line_item.save
       end
