@@ -25,7 +25,7 @@ describe Spree::Admin::OrdersController do
       end
     end
 
-    let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100, :number => 'R123456789') }
+    let(:order) { mock_model(Spree::Order, :completed? => true, :total => 100, :number => 'R123456789') }
     before { Spree::Order.stub :find_by_number! => order }
 
     context "#approve" do
@@ -70,14 +70,14 @@ describe Spree::Admin::OrdersController do
 
     # Regression test for #3684
     context "#edit" do
-      it "does not refresh rates if the order is complete" do
-        order.stub :complete? => true
+      it "does not refresh rates if the order is completed" do
+        order.stub :completed? => true
         order.should_not_receive :refresh_shipment_rates
         spree_get :edit, :id => order.number
       end
 
       it "does refresh the rates if the order is incomplete" do
-        order.stub :complete? => false
+        order.stub :completed? => false
         order.should_receive :refresh_shipment_rates
         spree_get :edit, :id => order.number
       end
