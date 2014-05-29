@@ -66,7 +66,7 @@ describe Spree::Calculator::DefaultTax do
 
         it "will return the deducted amount from the totals" do
           # total price including 5% tax = $60
-          # ex tax = $57.14
+          # ex pre-tax = $57.14
           # 57.14 + %5 = 59.997 (or "close enough" to $60)
           # 60 - 57.14 = $2.86
           expect(calculator.compute(order).to_f).to eql 2.86
@@ -85,13 +85,13 @@ describe Spree::Calculator::DefaultTax do
           end
 
           it "should be equal to the item's discounted total * rate" do
-            calculator.compute(line_item).should == 1.38
+            expect(calculator.compute(line_item)).to eql 1.38
           end
         end
 
         it "should be equal to the item's full price * rate" do
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
-          calculator.compute(line_item).should == 1.43
+          expect(calculator.compute(line_item)).to eql 1.43
         end
       end
     end
