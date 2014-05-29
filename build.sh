@@ -34,4 +34,4 @@ cd ../frontend; set_gemfile; bundle update; bundle exec rspec spec
 
 # Spree Sample
 echo "Setup Spree Sample and running RSpec..."
-cd ../sample; bundle install; bundle exec rake test_app; bundle exec rspec spec
+cd ../sample; set_gemfile; bundle update; bundle exec rspec spec
