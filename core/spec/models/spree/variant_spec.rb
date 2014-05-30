@@ -420,4 +420,12 @@ describe Spree::Variant do
       expect(variant.price).to eq(10)
     end
   end
+
+  describe "stock movements" do
+    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
+
+    it "builds out collection just fine through stock items" do
+      expect(variant.stock_movements.to_a).not_to be_empty
+    end
+  end
 end
