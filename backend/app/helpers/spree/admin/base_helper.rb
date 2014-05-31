@@ -11,13 +11,17 @@ module Spree
       end
 
       def error_message_on(object, method, options = {})
-        object = convert_to_model(object)
-        obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
+        begin
+          object = convert_to_model(object)
+          obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
 
-        if obj && obj.errors[method].present?
-          errors = obj.errors[method].map { |err| h(err) }.join('<br />').html_safe
-          content_tag(:span, errors, :class => 'formError')
-        else
+          if obj && obj.errors[method].present?
+            errors = obj.errors[method].map { |err| h(err) }.join('<br />').html_safe
+            content_tag(:span, errors, :class => 'formError')
+          else
+            ''
+          end
+        rescue
           ''
         end
       end
