@@ -1,5 +1,5 @@
 object @address
-cache [I18n.locale, @address]
+cache [I18n.locale, root_object]
 attributes *address_attributes
 
 child(:country) do |address|
