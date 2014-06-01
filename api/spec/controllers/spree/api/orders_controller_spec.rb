@@ -503,6 +503,23 @@ module Spree
         expect(updated_at.split("T").last).to have_content(milisecond)
       end
 
+      context "caching enabled" do
+        before do
+          ActionController::Base.perform_caching = true
+          3.times { Order.create }
+        end
+
+        it "returns unique orders" do
+          api_get :index
+
+          orders = json_response[:orders]
+          expect(orders.count).to be >= 3
+          expect(orders.map { |o| o[:id] }).to eq Order.pluck(:id)
+        end
+
+        after { ActionController::Base.perform_caching = false }
+      end
+
       context "with two orders" do
         before { create(:order) }
 
@@ -586,4 +603,3 @@ module Spree
     end
   end
 end
-
