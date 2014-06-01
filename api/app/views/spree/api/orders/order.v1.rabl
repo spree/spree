@@ -1,4 +1,4 @@
-cache [I18n.locale, @order]
+cache [I18n.locale, root_object]
 attributes *order_attributes
 node(:display_item_total) { |o| o.display_item_total.to_s }
 node(:total_quantity) { |o| o.line_items.sum(:quantity) }
