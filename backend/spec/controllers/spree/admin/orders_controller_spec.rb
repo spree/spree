@@ -63,8 +63,10 @@ describe Spree::Admin::OrdersController do
     # Test for #3346
     context "#new" do
       it "a new order has the current user assigned as a creator" do
-        spree_get :new
-        assigns[:order].created_by.should == controller.try_spree_current_user
+        Spree::Order.should_receive(:create)
+          .with('created_by_id' => controller.try_spree_current_user.id)
+          .and_return(order)
+        spree_get :new        
       end
     end
 
