@@ -120,6 +120,11 @@ $ rails g spree_simple_sales:install
 
 Now we need to extend `Spree::HomeController` and add an action that selects "on sale" products.
 
+***
+Note for the sake of this example that `Spree::HomeController` is only included
+in spree_frontend so you need to make it a dependency on your extensions *.gemspec file.
+***
+
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
 ```bash
