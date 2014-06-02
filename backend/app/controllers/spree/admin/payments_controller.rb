@@ -29,9 +29,12 @@ module Spree
         begin
           if @payment.save
             invoke_callbacks(:create, :after)
-            # Transition order as far as it will go.
-            while @order.next; end
-            @payment.process! if @order.completed?
+            if @order.completed?
+              @payment.process!
+            else
+              # Transition order as far as it will go, which will trigger payment as well
+              while @order.next; end
+            end
             flash[:success] = flash_message_for(@payment, :successfully_created)
             redirect_to admin_order_payments_path(@order)
           else
