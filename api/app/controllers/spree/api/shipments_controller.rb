@@ -22,17 +22,7 @@ module Spree
       def update
         @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
 
-        unlock = params[:shipment].delete(:unlock)
-
-        if unlock == 'yes'
-          @shipment.adjustment.open
-        end
-
         @shipment.update_attributes(shipment_params)
-
-        if unlock == 'yes'
-          @shipment.adjustment.close
-        end
 
         @shipment.reload
         respond_with(@shipment, default_template: :show)
