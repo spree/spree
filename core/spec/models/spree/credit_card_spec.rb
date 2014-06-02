@@ -310,13 +310,13 @@ describe Spree::CreditCard do
     context "provides name instead of first and last" do
       before do
         credit_card.first_name = credit_card.last_name = nil
-        credit_card.name = "Bob Law"
+        credit_card.name = "Ludwig van Beethoven"
       end
 
       it "falls back to split first and last" do
         am_card = credit_card.to_active_merchant
-        expect(am_card.first_name).to eq "Bob"
-        expect(am_card.last_name).to eq "Law"
+        expect(am_card.first_name).to eq "Ludwig"
+        expect(am_card.last_name).to eq "van Beethoven"
       end
     end
   end

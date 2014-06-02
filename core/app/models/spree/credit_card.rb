@@ -112,8 +112,8 @@ module Spree
         :month => month,
         :year => year,
         :verification_value => verification_value,
-        :first_name => first_name || name.to_s.split.first,
-        :last_name => last_name || name.to_s.split.last
+        :first_name => first_name || name.to_s.split(/[[:space:]]/, 2)[0],
+        :last_name => last_name || name.to_s.split(/[[:space:]]/, 2)[1]
       )
     end
 
