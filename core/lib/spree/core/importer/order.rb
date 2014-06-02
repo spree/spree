@@ -12,6 +12,7 @@ module Spree
 
             order = Spree::Order.create!
             order.associate_user!(user)
+            order.save!
 
             create_shipments_from_params(params.delete(:shipments_attributes), order)
             create_line_items_from_params(params.delete(:line_items_attributes),order)
@@ -21,6 +22,11 @@ module Spree
             if(completed_at = params.delete(:completed_at))
               order.completed_at = completed_at
               order.state = 'complete'
+            end
+
+            user_id = params.delete(:user_id)
+            if user && user.has_spree_role?("admin")
+              order.user_id = user_id
             end
 
             order.update_attributes!(params)

@@ -48,7 +48,8 @@ module Spree
       end
 
       def new
-        @order = Order.create(order_params)
+        user = Spree.user_class.find_by_id(params[:user_id])
+        @order = Spree::Core::Importer::Order.import(user, order_params)
         redirect_to edit_admin_order_url(@order)
       end
 

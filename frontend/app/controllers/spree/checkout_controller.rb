@@ -26,7 +26,7 @@ module Spree
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
-        persist_user_address
+        persist_user_address(@order) if params[:save_user_address]
         unless @order.next
           flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
@@ -145,14 +145,6 @@ module Spree
 
       def check_authorization
         authorize!(:edit, current_order, cookies.signed[:guest_token])
-      end
-
-      def persist_user_address
-        if @order.checkout_steps.include? "address"
-          if @order.address? && try_spree_current_user.respond_to?(:persist_order_address)
-            try_spree_current_user.persist_order_address(@order) if params[:save_user_address]
-          end
-        end
       end
   end
 end
