@@ -157,4 +157,20 @@ describe Spree::OrderContents do
       subject.update_cart params
     end
   end
+
+  context "completed order" do
+    let(:order) { Spree::Order.create! state: 'complete', completed_at: Time.now }
+
+    before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
+
+    it "updates order payment state" do
+      expect {
+        subject.add variant
+      }.to change { order.payment_state }
+
+      expect {
+        subject.remove variant
+      }.to change { order.payment_state }
+    end
+  end
 end
