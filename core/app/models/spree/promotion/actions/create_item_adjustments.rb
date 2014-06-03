@@ -41,8 +41,9 @@ module Spree
         # Ensure a negative amount which does not exceed the sum of the order's
         # item_total and ship_total
         def compute_amount(adjustable)
-          amount = self.calculator.compute(adjustable).to_f.abs
-          [adjustable.total, amount].min * -1
+          promotion_amount = self.calculator.compute(adjustable).to_f.abs
+          
+          [adjustable.amount, promotion_amount].min * -1
         end
 
         private
