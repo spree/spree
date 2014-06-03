@@ -42,10 +42,10 @@ module Spree
         can [:index, :read], OptionValue
         can :create, Order
         can :read, Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.user == user || order.guest_token && token == order.guest_token
         end
         can :update, Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.user == user || order.guest_token && token == order.guest_token
         end
         can [:create, :read], Address
         can :update, Address do |address|

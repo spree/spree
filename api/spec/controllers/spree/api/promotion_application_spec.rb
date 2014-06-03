@@ -20,7 +20,7 @@ module Spree::Api
 
       it "can apply a coupon code to the order" do
         order.total.should == 110.00
-        api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.token
+        api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
         response.status.should == 200
         order.reload.total.should == 109.00
         json_response["success"].should == "The coupon code was successfully applied to your order."
@@ -36,7 +36,7 @@ module Spree::Api
         end
 
         it "fails to apply" do
-          api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.token
+          api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
           response.status.should == 422
           json_response["success"].should be_blank
           json_response["error"].should == "The coupon code is expired"

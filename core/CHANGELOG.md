@@ -5,10 +5,25 @@
 
     Jordan Brough
 
+*   Replaced cookies.signed[:order_id] with cookies.signed[:guest_token].
+
+    Now we are using a signed cookie to store the guests unique token
+    in the browser.  This allows customers who close their browser to
+    continue their shopping when they visit again.  More importantly
+    it allows you as a store owner to uniquely identify your guests orders.
+    Since we set cookies.signed[:guest_token] whenever a vistor comes
+    you may also use this cookie token on other objects than just orders.
+    For instance if a guest user wants to favorite a product you can
+    assign the cookies.signed[:guest_token] value to a token field on your
+    favorites model.  Which will then allow you to analyze the orders and
+    favorites this user has placed before which is useful for recommendations.
+
+    Jeff Dutil
+
 *   Order#token is no longer fetched from another table.
 
     Both Spree::Core::TokeResource and Spree::TokenizedPersmission are deprecated.
-    Order#token value is now persisted into spree_orders.token. Main motivation
+    Order#token value is now persisted into spree_orders.guest_token. Main motivation
     here is save a few extra queries when creating an order. The TokenResource
     module was being of no use in spree core.
 

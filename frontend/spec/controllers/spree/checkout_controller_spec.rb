@@ -19,7 +19,8 @@ describe Spree::CheckoutController do
   context "#edit" do
     it 'should check if the user is authorized for :edit' do
       controller.should_receive(:authorize!).with(:edit, order, token)
-      spree_get :edit, { :state => 'address' }, { :access_token => token }
+      request.cookie_jar.signed[:guest_token] = token
+      spree_get :edit, { state: 'address' }
     end
 
     it "should redirect to the cart path unless checkout_allowed?" do
@@ -65,7 +66,8 @@ describe Spree::CheckoutController do
   context "#update" do
     it 'should check if the user is authorized for :edit' do
       controller.should_receive(:authorize!).with(:edit, order, token)
-      spree_post :update, { :state => 'address' }, { :access_token => token }
+      request.cookie_jar.signed[:guest_token] = token
+      spree_post :update, { state: 'address' }
     end
 
     context "save successful" do
@@ -160,9 +162,10 @@ describe Spree::CheckoutController do
           flash.notice.should == Spree.t(:order_processed_successfully)
         end
 
-        it "should remove completed order from the session" do
+        it "should remove completed order from current_order" do
           spree_post :update, {:state => "confirm"}, {:order_id => "foofah"}
-          cookies.signed[:order_id].should be_nil
+          expect(assigns(:current_order)).to be_nil
+          expect(assigns(:order)).to eql controller.current_order
         end
       end
     end

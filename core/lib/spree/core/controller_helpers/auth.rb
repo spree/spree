@@ -5,6 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
+          before_filter :set_guest_token
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|
@@ -17,20 +18,15 @@ module Spree
           @current_ability ||= Spree::Ability.new(try_spree_current_user)
         end
 
-        # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
-        # Override this method in your controllers if you want to have special behavior in case the user is not authorized
-        # to access the requested action.  For example, a popup window might simply close itself.
-        def unauthorized
-          if try_spree_current_user
-            flash[:error] = Spree.t(:authorization_failure)
-            redirect_to '/unauthorized'
-          else
-            store_location
-            if respond_to?(:spree_login_path)
-              redirect_to spree_login_path
-            else
-              redirect_to spree.respond_to?(:root_path) ? spree.root_path : root_path
-            end
+
+        def redirect_back_or_default(default)
+          redirect_to(session["spree_user_return_to"] || default)
+          session["spree_user_return_to"] = nil
+        end
+
+        def set_guest_token
+          unless cookies.signed[:guest_token].present?
+            cookies.permanent.signed[:guest_token] = SecureRandom.urlsafe_base64(nil, false)
           end
         end
 
@@ -65,10 +61,23 @@ module Spree
           end
         end
 
-        def redirect_back_or_default(default)
-          redirect_to(session["spree_user_return_to"] || default)
-          session["spree_user_return_to"] = nil
+        # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
+        # Override this method in your controllers if you want to have special behavior in case the user is not authorized
+        # to access the requested action.  For example, a popup window might simply close itself.
+        def unauthorized
+          if try_spree_current_user
+            flash[:error] = Spree.t(:authorization_failure)
+            redirect_to '/unauthorized'
+          else
+            store_location
+            if respond_to?(:spree_login_path)
+              redirect_to spree_login_path
+            else
+              redirect_to spree.respond_to?(:root_path) ? spree.root_path : root_path
+            end
+          end
         end
+
       end
     end
   end
