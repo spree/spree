@@ -1,11 +1,11 @@
 module Spree
-  # Manage (recalculate) item (LineItem or Shipment) adjustments
+  # Manage (recalculate) adjustments on LineItem, Shipment and Order
   class ItemAdjustments
     include ActiveSupport::Callbacks
     define_callbacks :promo_adjustments, :tax_adjustments
     attr_reader :item
 
-    delegate :adjustments, :order, to: :item
+    delegate :adjustments, to: :item
 
     def initialize(item)
       @item = item
@@ -72,6 +72,9 @@ module Spree
 
     def best_promotion_adjustment
       @best_promotion_adjustment ||= adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
+
+    def order
+      item.is_a?(Spree::Order) ? item : item.order
     end
   end
 end
