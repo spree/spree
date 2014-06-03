@@ -9,7 +9,7 @@
     Before you'd send a request like this:
 
         ```ruby
-        api_put :update, :id => order.to_param, :order_token => order.token,
+        api_put :update, :id => order.to_param, :order_token => order.guest_token,
           :order => {
             :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
             :payment_source => { @payment_method.id.to_s => { name: "Spree" } }
@@ -19,7 +19,7 @@
     Now it should look like this:
 
         ```ruby
-        api_put :update, :id => order.to_param, :order_token => order.token,
+        api_put :update, :id => order.to_param, :order_token => order.guest_token,
           :order => {
             :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }]
           },

@@ -104,12 +104,12 @@ module Spree
     end
 
     it "can view an order if the token is known" do
-      api_get :show, :id => order.to_param, :order_token => order.token
+      api_get :show, :id => order.to_param, :order_token => order.guest_token
       response.status.should == 200
     end
 
     it "can view an order if the token is passed in header" do
-      request.headers["X-Spree-Order-Token"] = order.token
+      request.headers["X-Spree-Order-Token"] = order.guest_token
       api_get :show, :id => order.to_param
       response.status.should == 200
     end

@@ -23,8 +23,8 @@ describe Spree::Order do
       order.number.should_not be_nil
     end
 
-    it 'should create a randomized 16 character token' do
-      order.token.size.should == 16
+    it 'should create a randomized 22 character token' do
+      order.guest_token.size.should == 22
     end
   end
 
@@ -446,7 +446,7 @@ describe Spree::Order do
     end
   end
 
-  
+
   context "#products" do
     before :each do
       @variant1 = mock_model(Spree::Variant, :product => "product1")
@@ -516,7 +516,6 @@ describe Spree::Order do
       order.email.should == user.email
       order.created_by.should == creator
     end
-
 
     it "should associate a user with a non-persisted order" do
       order = Spree::Order.new
@@ -625,7 +624,7 @@ describe Spree::Order do
   context "#tax_total" do
     it "adds included tax and additional tax" do
       order.stub(:additional_tax_total => 10, :included_tax_total => 20)
-      
+
       order.tax_total.should eq 30
     end
   end

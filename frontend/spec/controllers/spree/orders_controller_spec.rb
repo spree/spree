@@ -15,8 +15,8 @@ describe Spree::OrdersController do
     context "#populate" do
       it "should create a new order when none specified" do
         spree_post :populate, {}, {}
-        cookies.signed[:order_id].should_not be_blank
-        Spree::Order.find(cookies.signed[:order_id]).should be_persisted
+        cookies.signed[:guest_token].should_not be_blank
+        Spree::Order.find_by_guest_token(cookies.signed[:guest_token]).should be_persisted
       end
 
       context "with Variant" do

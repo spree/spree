@@ -12,30 +12,7 @@ module Spree
       spree.token_order_path('R123456', 'ABCDEF').should == '/orders/R123456/token/ABCDEF'
     end
 
-    context 'when no order exists in the session' do
-      before { Spree::Order.stub :new => order }
-
-      context '#populate' do
-        context 'when not authenticated' do
-          context 'when there is an order token' do
-            before { order.stub :token => ORDER_TOKEN }
-
-            it 'should store the token in the session' do
-              spree_post :populate
-              session[:access_token].should == ORDER_TOKEN
-            end
-
-            it 'should replace any previous access tokens' do
-              session[:access_token] = 'OLD_TOKEN'
-              spree_post :populate
-              session[:access_token].should == ORDER_TOKEN
-            end
-          end
-        end
-      end
-    end
-
-    context 'when an order exists in the session' do
+    context 'when an order exists in the cookies.signed' do
       let(:token) { 'some_token' }
       let(:specified_order) { create(:order) }
 
@@ -104,23 +81,18 @@ module Spree
       context '#show' do
         context 'when token parameter present' do
           it 'always ooverride existing token when passing a new one' do
-            session[:access_token] = "soo wrong"
-            spree_get :show, { :id => 'R123', :token => order.token }
-            session[:access_token].should == order.token
+            cookies.signed[:guest_token] = "soo wrong"
+            spree_get :show, { :id => 'R123', :token => order.guest_token }
+            cookies.signed[:guest_token].should == order.guest_token
           end
 
           it 'should store as guest_token in session' do
-            spree_get :show, {:id => 'R123', :token => order.token }
-            session[:access_token].should == order.token
+            spree_get :show, {:id => 'R123', :token => order.guest_token }
+            cookies.signed[:guest_token].should == order.guest_token
           end
         end
 
         context 'when no token present' do
-          it 'should not store a guest_token in the session' do
-            spree_get :show, {:id => 'R123'}
-            session[:access_token].should be_nil
-          end
-
           it 'should respond with 404' do
             spree_get :show, {:id => 'R123'}
             response.code.should == '404'

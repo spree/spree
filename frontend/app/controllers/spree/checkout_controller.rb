@@ -33,7 +33,7 @@ module Spree
         end
 
         if @order.completed?
-          cookies.signed[:order_id] = nil
+          @current_order = nil
           flash.notice = Spree.t(:order_processed_successfully)
           flash[:order_completed] = true
           redirect_to completion_route
@@ -144,7 +144,7 @@ module Spree
       end
 
       def check_authorization
-        authorize!(:edit, current_order, session[:access_token])
+        authorize!(:edit, current_order, cookies.signed[:guest_token])
       end
 
       def persist_user_address
