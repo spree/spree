@@ -303,7 +303,7 @@ describe Spree::CreditCard do
       am_card.year.should == Time.now.year
       am_card.month.should == Time.now.month
       am_card.first_name.should == "Bob"
-      am_card.last_name = "Boblaw"
+      am_card.last_name.should == "Boblaw"
       am_card.verification_value.should == 123
     end
 
