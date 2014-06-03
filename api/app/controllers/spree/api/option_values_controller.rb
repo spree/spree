@@ -51,7 +51,7 @@ module Spree
         end
 
         def option_value_params
-          params.require(:option_value).permit(permitted_option_type_attributes)
+          params.require(:option_value).permit(permitted_option_value_attributes)
         end
     end
   end
