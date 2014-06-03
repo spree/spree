@@ -111,6 +111,13 @@ module Spree
           option_value.name.should == "Option Value"
         end
 
+        it "permits the correct attributes" do
+          controller.should_receive(:permitted_option_value_attributes)
+          api_put :update, :id => option_value.id, :option_value => {
+                            :name => ""
+                           }
+        end
+
         it "cannot update an option value with invalid attributes" do
           api_put :update, :id => option_value.id, :option_value => {
                             :name => ""
