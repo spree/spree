@@ -267,7 +267,7 @@ module Spree
       it "returns a sensible error when no payment method is specified" do
         order.update_column(:state, "payment")
         api_put :next, :id => order.to_param, :order_token => order.token, :order => {}
-        json_response["errors"]["base"].should include(Spree.t(:no_pending_payments))
+        json_response["errors"]["base"].should include(Spree.t(:collected_payment_does_not_match_order_total))
       end
     end
 

@@ -19,6 +19,15 @@ describe Spree::Order do
         order.stub :has_available_shipment
       end
 
+      context "when payment capturable total does not match order total" do
+        before { order.stub :ensure_capturable_payment_amount_matches_total => false }
+
+        it "should not complete the order" do
+           order.next
+           order.state.should == "confirm"
+         end
+      end
+
       context "when payment processing succeeds" do
         before { order.stub :process_payments! => true }
 

@@ -893,4 +893,45 @@ describe Spree::Order do
       order.apply_free_shipping_promotions
     end
   end
+
+  context "#ensure_capturable_payment_amount_matches_total" do
+    context "insufficient capturable payment amount" do
+      let(:order) { FactoryGirl.create(:order, total: 20.0, state: 'payment', payments: [FactoryGirl.create(:payment, state: 'checkout', amount: 10.0)]) }
+
+      it "returns false" do
+        order.ensure_capturable_payment_amount_matches_total.should be_false
+      end
+
+      it "adds an error" do
+        order.ensure_capturable_payment_amount_matches_total
+        order.errors.full_messages.should include(Spree.t(:collected_payment_does_not_match_order_total))
+      end
+    end
+
+    context "sufficient capturable payment amount" do
+      let(:order) { FactoryGirl.create(:order, total: 10.0, state: 'payment', payments: [FactoryGirl.create(:payment, state: 'checkout', amount: 10.0)]) }
+
+      it "returns true" do
+        order.ensure_capturable_payment_amount_matches_total.should be_true
+      end
+
+      it "does not add an error" do
+        order.ensure_capturable_payment_amount_matches_total
+        order.errors.should be_empty
+      end
+    end
+
+    context "capturable payment amount exceeds order total" do
+      let(:order) { FactoryGirl.create(:order, total: 10.0, state: 'payment', payments: [FactoryGirl.create(:payment, state: 'checkout', amount: 100.0)]) }
+
+      it "returns false" do
+        order.ensure_capturable_payment_amount_matches_total.should be_false
+      end
+
+      it "adds an error" do
+        order.ensure_capturable_payment_amount_matches_total
+        order.errors.full_messages.should include(Spree.t(:collected_payment_does_not_match_order_total))
+      end
+    end
+  end
 end
