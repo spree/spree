@@ -174,6 +174,85 @@ module Spree
             end
           end
         end
+
+        context "for an order with taxable line items" do
+          before(:each) do
+            @country = create(:country)
+            @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
+            @zone.zone_members.create(:zoneable => @country)
+            @category = Spree::TaxCategory.create :name => "Taxable Foo"
+            @rate1 = Spree::TaxRate.create(
+                :amount => 0.10,
+                :calculator => Spree::Calculator::DefaultTax.create,
+                :tax_category => @category,
+                :zone => @zone
+            )
+
+            @order = Spree::Order.create!
+            @order.stub :coupon_code => "10off"
+          end
+          context "and the product price is less than promo discount" do
+            before(:each) do
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 9.0)
+                @order.contents.add(taxable.master, 1)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * (9 + 0.9)
+              @order.total.should == 29.7
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 3 * ((9 - [9,10].min) + 0)
+              @order.reload.total.should == 0
+              @order.additional_tax_total.should == 0
+            end
+          end
+          context "and the product price is greater than promo discount" do
+            before(:each) do
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 11.0)
+                @order.contents.add(taxable.master, 2)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * (22 + 2.2)
+              @order.total.to_f.should == 72.6
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 3 * ( (22 - 10) + 1.2)
+              @order.reload.total.should == 39.6
+              @order.additional_tax_total.should == 3.6
+            end
+          end
+          context "and multiple quantity per line item" do
+            before(:each) do
+              twnty_off = Promotion.create name: "promo", :code => "20off"
+              twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
+              Promotion::Actions::CreateItemAdjustments.create(promotion: twnty_off,
+                                                               calculator: twnty_off_calc)
+
+              @order.unstub :coupon_code
+              @order.stub :coupon_code => "20off"
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 10.0)
+                @order.contents.add(taxable.master, 2)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * ((2 * 10) + 2.0)
+              @order.total.to_f.should == 66
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 0
+              @order.reload.total.should == 0
+              @order.additional_tax_total.should == 0
+            end
+          end
+        end
       end
     end
   end
