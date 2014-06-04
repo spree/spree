@@ -31,6 +31,7 @@ module Spree
 
         it "should process payment correctly" do
           order.payments.count.should == 1
+          Spree::LogEntry.where(source: order.payments.first).count.should == 1
           expect(response).to redirect_to(spree.admin_order_payments_path(order))
           expect(order.reload.state).to eq('complete')
         end
