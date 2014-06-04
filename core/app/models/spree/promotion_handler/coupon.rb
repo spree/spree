@@ -36,6 +36,7 @@ module Spree
 
       def handle_present_promotion(promotion)
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
+        return promotion_applied if promotion_exists_on_order?(order, promotion)
         return ineligible_for_this_order unless promotion.eligible?(order)
 
         # If any of the actions for the promotion return `true`,
@@ -44,7 +45,7 @@ module Spree
         if result
           determine_promotion_application_result(result)
         else
-          self.error = Spree.t(:coupon_code_already_applied)
+          self.error = Spree.t(:coupon_code_unknown_error)
         end
       end
 
@@ -54,6 +55,14 @@ module Spree
 
       def ineligible_for_this_order
         self.error = Spree.t(:coupon_code_not_eligible)
+      end
+
+      def promotion_applied
+        self.error = Spree.t(:coupon_code_already_applied)
+      end
+
+      def promotion_exists_on_order?(order, promotion)
+        order.promotions.include? promotion
       end
 
       def determine_promotion_application_result(result)
