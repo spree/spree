@@ -206,6 +206,7 @@ module Spree
           text = [
             error.params['message'],
             error.params['response_reason_text'],
+            error.params['error'],
             error.message
           ].detect(&:present?)
         elsif error.is_a? ActiveMerchant::ConnectionError
