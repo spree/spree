@@ -659,8 +659,9 @@ describe Spree::Order do
   end
 
   context "ensure shipments will be updated" do
+    let(:order) { Spree::Order.create }
+
     before do
-      Spree::Shipment.any_instance.stub(:order => order)
       Spree::Shipment.create!(order: order)
     end
 

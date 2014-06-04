@@ -60,8 +60,9 @@ module Spree
       )
     end
 
-    # Picks one (and only one) promotion to be eligible for this order
-    # This promotion provides the most discount, and if two promotions
+    # Picks a single order-level promotion adjustment, or a set of line-item adjustments
+    # based on a single promotion, to be eligible for this order.
+    # This adjustment(s) provides the most discount, and if two order-level promotions
     # have the same amount, then it will pick the latest one.
     def choose_best_promotion_adjustment
       if best_adjustments = best_promotion_adjustments_for_order
@@ -71,13 +72,6 @@ module Spree
       end
     end
 
-    def best_promotion_adjustments_for_order
-      promotion_adjustments = order.all_adjustments.eligible.includes(source: :promotion).promotion
-      return [] unless promotion_adjustments.present?
-      promotion_adjustments.group_by { |a| a.source.promotion }.min_by { |p, a| [a.map(&:amount).sum, -1 * p.updated_at.to_i] }.last
-    end
-    private :best_promotion_adjustments_for_order
-
     def best_promotion_adjustment
       best_promotion_adjustments_for_order.find { |a| a.adjustable == item }
     end
@@ -85,5 +79,14 @@ module Spree
     def order
       item.is_a?(Spree::Order) ? item : item.order
     end
+
+    private
+
+      def best_promotion_adjustments_for_order
+        promotion_adjustments = order.all_adjustments.eligible.includes(source: :promotion).promotion
+        return [] unless promotion_adjustments.present?
+        promotion_adjustments.group_by { |a| a.source.promotion }.min_by { |p, a| [a.map(&:amount).sum, -1 * p.updated_at.to_i] }.last
+      end
+
   end
 end
