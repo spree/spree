@@ -1,5 +1,10 @@
 ## Spree 2.3.0 (unreleased) ##
 
+*   Drop first_name and last_name fields from spree_credit_cards.  Add
+    first_name & last_name methods for now to keep ActiveMerchant happy.
+
+    Jordan Brough
+
 *   Replaced session[:order_id] usage with cookies.signed[:order_id].
 
     Now we are using a signed cookie to store the order id on a guests
