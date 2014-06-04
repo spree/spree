@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :promotion, class: Spree::Promotion do
     name 'Promo'
 
-    factory :promotion_with_item_adjustment do
+    trait :with_line_item_adjustment do
       ignore do
         adjustment_rate 10
       end
@@ -15,6 +15,7 @@ FactoryGirl.define do
         promotion.save
       end
     end
+    factory :promotion_with_item_adjustment, traits: [:with_line_item_adjustment]
 
     trait :with_order_adjustment do
       ignore do
