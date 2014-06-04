@@ -287,13 +287,32 @@ describe Spree::CreditCard do
     end
   end
 
+  context "#first_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the first name" do
+      expect(credit_card.first_name).to eq "Ludwig"
+    end
+  end
+
+  context "#last_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the last name" do
+      expect(credit_card.last_name).to eq "van Beethoven"
+    end
+  end
+
   context "#to_active_merchant" do
     before do
       credit_card.number = "4111111111111111"
       credit_card.year = Time.now.year
       credit_card.month = Time.now.month
-      credit_card.first_name = "Bob"
-      credit_card.last_name = "Boblaw"
+      credit_card.name = "Ludwig van Beethoven"
       credit_card.verification_value = 123
     end
 
@@ -302,22 +321,9 @@ describe Spree::CreditCard do
       am_card.number.should == "4111111111111111"
       am_card.year.should == Time.now.year
       am_card.month.should == Time.now.month
-      am_card.first_name.should == "Bob"
-      am_card.last_name.should == "Boblaw"
+      am_card.first_name.should == "Ludwig"
+      am_card.last_name.should == "van Beethoven"
       am_card.verification_value.should == 123
-    end
-
-    context "provides name instead of first and last" do
-      before do
-        credit_card.first_name = credit_card.last_name = nil
-        credit_card.name = "Ludwig van Beethoven"
-      end
-
-      it "falls back to split first and last" do
-        am_card = credit_card.to_active_merchant
-        expect(am_card.first_name).to eq "Ludwig"
-        expect(am_card.last_name).to eq "van Beethoven"
-      end
     end
   end
 end
