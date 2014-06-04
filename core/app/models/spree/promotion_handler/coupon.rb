@@ -42,7 +42,7 @@ module Spree
         # then result here will also be `true`.
         result = promotion.activate(:order => order)
         if result
-          determine_promotion_application_result(result)
+          determine_promotion_application_result
         else
           self.error = Spree.t(:coupon_code_already_applied)
         end
@@ -56,7 +56,7 @@ module Spree
         self.error = Spree.t(:coupon_code_not_eligible)
       end
 
-      def determine_promotion_application_result(result)
+      def determine_promotion_application_result
         detector = lambda { |p|
           if p.source.promotion.code
             p.source.promotion.code.downcase == order.coupon_code.downcase
@@ -67,7 +67,7 @@ module Spree
         discount ||= order.shipment_adjustments.promotion.detect(&detector)
         discount ||= order.adjustments.promotion.detect(&detector)
 
-        if result and discount.eligible
+        if discount.eligible
           order.update_totals
           order.persist_totals
           self.success = Spree.t(:coupon_code_applied)
