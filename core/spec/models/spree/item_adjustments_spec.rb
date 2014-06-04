@@ -38,7 +38,7 @@ module Spree
         line_item.price = 20
         line_item.tax_category = tax_rate.tax_category
         line_item.save
-        create(:adjustment, :source => promotion_action, :adjustable => line_item)
+        create(:adjustment, :source => promotion_action, :adjustable => line_item, :order => order)
       end
 
       context "tax included in price" do
@@ -46,7 +46,8 @@ module Spree
           create(:adjustment, 
             :source => tax_rate,
             :adjustable => line_item,
-            :included => true
+            :included => true,
+            :order => order
           )
         end
 
@@ -85,12 +86,17 @@ module Spree
     context "best promotion is always applied" do
       let(:calculator) { Calculator::FlatRate.new(:preferred_amount => 10) }
 
-      let(:source) { Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
+      def source
+        Promotion::Actions::CreateItemAdjustments.create(
+          calculator: calculator,
+          promotion: Promotion.create!(name: 'test promotion')
+        )
+      end
 
-      def create_adjustment(label, amount)
+      def create_adjustment(label, amount, options = {})
         create(:adjustment, :order      => order,
-                            :adjustable => line_item,
-                            :source     => source,
+                            :adjustable => options[:adjustable] || line_item,
+                            :source     => options[:source] || source,
                             :amount     => amount,
                             :state      => "closed",
                             :label      => label,
@@ -115,6 +121,59 @@ module Spree
         line_item.adjustments.promotion.eligible.first.label.should == 'Promotion C'
       end
 
+      context "comparing order and line item level adjustments" do
+        let(:order)               { create :order_with_line_items, line_items_count: 2 }
+        let(:line_item_1)         { order.line_items.first }
+        let(:line_item_2)         { order.line_items.last }
+        let(:order_promotion)     { Promotion.create! name: "Order promotion" }
+        let(:line_item_promotion) { Promotion.create! name: "Line item promotion" }
+        let(:order_source)        { Promotion::Actions::CreateAdjustment.create! calculator: calculator, promotion: order_promotion }
+        let(:line_item_source)    { Promotion::Actions::CreateAdjustment.create! calculator: calculator, promotion: line_item_promotion }
+        let!(:order_adjustment)   { create_adjustment("Order Promotion", order_discount, adjustable: order, source: order_source) }
+        let!(:item_adjustment_1)  { create_adjustment("Item Promotion 1", item_1_discount, adjustable: line_item_1, source: line_item_source) }
+        let!(:item_adjustment_2)  { create_adjustment("Item Promotion 2", item_2_discount, adjustable: line_item_2, source: line_item_source) }
+        before                    { Spree::Adjustment.update_all(eligible: true) }
+
+        context "the order level adjustment is greater than all of the line item adjustments for the same promotion put together" do
+          let(:order_discount)  { -100 }
+          let(:item_1_discount) { -30 }
+          let(:item_2_discount) { -40 }
+
+          it "chooses the order level adjustment" do
+            subject.choose_best_promotion_adjustment
+            expect(order_adjustment.reload).to be_eligible
+            expect(item_adjustment_1.reload).not_to be_eligible
+            expect(item_adjustment_2.reload).not_to be_eligible
+          end
+        end
+
+        context "the order level adjustment is less than all of the line item adjustments for the same promotion put together" do
+          let(:order_discount)  { -50 }
+          let(:item_1_discount) { -30 }
+          let(:item_2_discount) { -40 }
+
+          it "chooses all the line item level adjustments" do
+            subject.choose_best_promotion_adjustment
+            expect(order_adjustment.reload).not_to be_eligible
+            expect(item_adjustment_1.reload).to be_eligible
+            expect(item_adjustment_2.reload).to be_eligible
+          end
+        end
+
+        context "the order level adjustment is the same as all of the line item adjustments for the same promotion put together" do
+          let(:order_discount)  { -50 }
+          let(:item_1_discount) { -10 }
+          let(:item_2_discount) { -40 }
+
+          it "chooses just the order level adjustment" do
+            subject.choose_best_promotion_adjustment
+            expect(order_adjustment.reload).to be_eligible
+            expect(item_adjustment_1.reload).not_to be_eligible
+            expect(item_adjustment_2.reload).not_to be_eligible
+          end
+        end
+      end
+
       context "multiple adjustments and the best one is not eligible" do
         let!(:promo_a) { create_adjustment("Promotion A", -100) }
         let!(:promo_c) { create_adjustment("Promotion C", -300) }
@@ -127,7 +186,7 @@ module Spree
         # regression for #3274
         it "still makes the previous best eligible adjustment valid" do
           subject.choose_best_promotion_adjustment
-          line_item.adjustments.promotion.first.label.should == 'Promotion A'
+          line_item.adjustments.promotion.eligible.first.label.should == 'Promotion A'
         end
       end
 

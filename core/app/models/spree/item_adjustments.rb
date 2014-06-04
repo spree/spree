@@ -1,11 +1,11 @@
 module Spree
-  # Manage (recalculate) item (LineItem or Shipment) adjustments
+  # Manage (recalculate) adjustments on LineItem, Shipment and Order
   class ItemAdjustments
     include ActiveSupport::Callbacks
     define_callbacks :promo_adjustments, :tax_adjustments
     attr_reader :item
 
-    delegate :adjustments, :order, to: :item
+    delegate :adjustments, to: :item
 
     def initialize(item)
       @item = item
@@ -64,14 +64,26 @@ module Spree
     # This promotion provides the most discount, and if two promotions
     # have the same amount, then it will pick the latest one.
     def choose_best_promotion_adjustment
-      if best_promotion_adjustment
-        other_promotions = self.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
+      if best_adjustments = best_promotion_adjustments_for_order
+        Adjustment.where(:id => best_adjustments.map(&:id)).update_all(:eligible => true)
+        other_promotions = order.all_adjustments.promotion.where("id NOT IN (?)", best_adjustments.map(&:id))
         other_promotions.update_all(:eligible => false)
       end
     end
 
+    def best_promotion_adjustments_for_order
+      promotion_adjustments = order.all_adjustments.eligible.includes(source: :promotion).promotion
+      return [] unless promotion_adjustments.present?
+      promotion_adjustments.group_by { |a| a.source.promotion }.min_by { |p, a| [a.map(&:amount).sum, -1 * p.updated_at.to_i] }.last
+    end
+    private :best_promotion_adjustments_for_order
+
     def best_promotion_adjustment
-      @best_promotion_adjustment ||= adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
+      best_promotion_adjustments_for_order.find { |a| a.adjustable == item }
+    end
+
+    def order
+      item.is_a?(Spree::Order) ? item : item.order
     end
   end
 end
