@@ -72,8 +72,14 @@ module Spree
           order.persist_totals
           self.success = Spree.t(:coupon_code_applied)
         else
-          # if the promotion was created after the order
-          self.error = Spree.t(:coupon_code_not_found)
+          # if the promotion exists on an order, but wasn't found above,
+          # we've already selected a better promotion
+          if order.promotions.detect { |x| x.code.downcase == order.coupon_code.downcase }
+            self.error = Spree.t(:coupon_code_better_exists)
+          else
+            # if the promotion was created after the order
+            self.error = Spree.t(:coupon_code_not_found)
+          end
         end
       end
     end
