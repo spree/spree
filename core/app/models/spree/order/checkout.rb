@@ -71,7 +71,10 @@ module Spree
 
               if states[:payment]
                 before_transition :to => :complete do |order|
-                  order.process_payments! if order.payment_required?
+                  if order.payment_required?
+                    order.ensure_capturable_payment_amount_matches_total &&
+                      order.process_payments!
+                  end
                 end
               end
 

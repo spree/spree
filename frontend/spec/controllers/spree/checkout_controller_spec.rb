@@ -143,6 +143,8 @@ describe Spree::CheckoutController do
           order.stub :confirmation_required? => true
           order.update_column(:state, "confirm")
           order.stub :user => user
+          order.update_totals
+          order.persist_totals
           # An order requires a payment to reach the complete state
           # This is because payment_required? is true on the order
           create(:payment, :amount => order.total, :order => order)
@@ -282,6 +284,7 @@ describe Spree::CheckoutController do
       end
 
       it "when GatewayError is raised" do
+        order.stub(:ensure_capturable_payment_amount_matches_total).and_return(true)
         order.payments.any_instance.stub(:process!).and_raise(Spree::Core::GatewayError.new(Spree.t(:payment_processing_failed)))
         spree_put :update, :order => {}
         flash[:error].should == Spree.t(:payment_processing_failed)

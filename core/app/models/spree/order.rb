@@ -591,6 +591,12 @@ module Spree
       super
     end
 
+    def ensure_capturable_payment_amount_matches_total
+      payment_matches_total = payments.valid.to_a.sum(&:amount) == total
+      errors.add(:base, Spree.t(:collected_payment_does_not_match_order_total)) unless payment_matches_total
+      payment_matches_total
+    end
+
     private
 
       def link_by_email
