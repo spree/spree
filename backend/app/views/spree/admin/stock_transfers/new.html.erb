@@ -64,7 +64,7 @@
       <div class="alpha eight columns">
         <div class="field" id="stock_movement_variant_id_field">
           <%= label_tag 'variant_id', Spree.t(:variant) %>
-          <%= select_tag 'transfer_variant', {}, class: 'fullwidth' %>
+          <%= hidden_field_tag 'transfer_variant', {}, class: 'fullwidth' %>
         </div>
       </div>
       <div class="two columns">

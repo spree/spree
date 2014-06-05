@@ -82,33 +82,48 @@ $ ->
 
     refresh_variants: ->
       if @receiving_stock()
-        @_refresh_transfer_variants()
+        @_search_transfer_variants()
       else
-        @_refresh_transfer_stock_items()
+        @_search_transfer_stock_items()
 
-    _refresh_transfer_variants: ->
-      if @cached_variants?
-        @populate_select @cached_variants
-      else
-        $.getJSON Spree.url(Spree.routes.variants_api), (data) =>
-          @cached_variants = _.map(data.variants, (variant) -> new TransferVariant(variant))
-          @populate_select @cached_variants
+    _search_transfer_variants: ->
+      @build_select(Spree.url(Spree.routes.variants_api), 'product_name_or_sku_cont')
 
-    _refresh_transfer_stock_items: ->
+    _search_transfer_stock_items: ->
       stock_location_id = $('#transfer_source_location_id').val()
-      $.getJSON Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items"), (data) =>
-        @populate_select _.map(data.stock_items, (stock_item) -> new TransferStockItem(stock_item))
+      @build_select(Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items"),
+        'variant_product_name_or_variant_sku_cont')
 
-    populate_select: (variants) ->
-      $('#transfer_variant').children('option').remove()
+    format_variant_result: (result) ->
+      "#{result.name} - #{result.sku}"
 
-      for variant in variants
-        $('#transfer_variant').append($('<option></option>')
-                                    .text(variant.name)
-                                    .prop('value', variant.id)
-                                    .data('variant', variant))
+    build_select: (url, query) ->
+      $('#transfer_variant').select2
+        minimumInputLength: 3
+        ajax:
+          url: url
+          datatype: "json"
+          data: (term, page) ->
+            query_object = {}
+            query_object[query] = term
+            q: query_object
 
-      $('#transfer_variant').select2()
+          results: (data, page) ->
+            result = data["variants"] || data["stock_items"]
+            # Format stock items as variants
+            if data["stock_items"]?
+              result = _(result).map (variant) ->
+                variant.variant
+            window.variants = result
+            results: result
+
+        formatResult: @format_variant_result
+        formatSelection: (variant) ->
+          if !!variant.options_text
+            variant.name + " (#{variant.options_text})" + " - #{variant.sku}"
+          else
+            variant.name + " - #{variant.sku}"
+
 
   # Add/Remove variant line items
   class TransferAddVariants
@@ -120,7 +135,10 @@ $ ->
 
       $('button.transfer_add_variant').click (event) =>
         event.preventDefault()
-        @add_variant()
+        if $('#transfer_variant').select2('data')?
+          @add_variant()
+        else
+          alert('Please select a variant first')
 
       $('#transfer-variants-table').on 'click', '.transfer_remove_variant', (event) =>
         event.preventDefault()
@@ -132,7 +150,7 @@ $ ->
           false
 
     add_variant: ->
-      variant = $('#transfer_variant option:selected').data('variant')
+      variant = $('#transfer_variant').select2('data')
       quantity = parseInt $('#transfer_variant_quantity').val()
 
       variant = @find_or_add(variant)
@@ -143,7 +161,7 @@ $ ->
       if existing = _.find(@variants, (v) -> v.id == variant.id)
         return existing
       else
-        variant = $.extend({}, variant)
+        variant = new TransferVariant($.extend({}, variant))
         @variants.push variant
         return variant
 
