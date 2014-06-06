@@ -124,7 +124,7 @@ describe Spree::Order do
       end
 
       context "and order is approved" do
-        before do 
+        before do
           order.stub :approved? => true
         end
 
@@ -149,7 +149,7 @@ describe Spree::Order do
 
   context "empty!" do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
-    
+
     before do
       order.stub(:line_items => line_items = [1, 2])
       order.stub(:adjustments => adjustments = [])
@@ -158,6 +158,7 @@ describe Spree::Order do
     it "clears out line items, adjustments and update totals" do
       expect(order.line_items).to receive(:destroy_all)
       expect(order.adjustments).to receive(:destroy_all)
+      expect(order.shipments).to receive(:destroy_all)
       expect(order.updater).to receive(:update_totals)
       expect(order.updater).to receive(:persist_totals)
 
