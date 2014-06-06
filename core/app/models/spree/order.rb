@@ -121,7 +121,7 @@ module Spree
 
     def all_adjustments
       Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
-        :order_id => self.id)
+        order_id: self.id)
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -532,12 +532,7 @@ module Spree
     end
 
     def is_risky?
-      self.payments.where(%{
-        (avs_response IS NOT NULL and avs_response != '' and avs_response != 'D' and avs_response != 'M') or
-        (cvv_response_code IS NOT NULL and cvv_response_code != 'M') or
-        cvv_response_message IS NOT NULL and cvv_response_message != '' or
-        state = 'failed'
-      }.squish!).uniq.count > 0
+      self.payments.risky.count > 0
     end
 
     def approved_by(user)
