@@ -167,6 +167,60 @@ module Spree
             end
           end
         end
+
+        context "for an order with taxable line items" do
+          before(:each) do
+            @country = create(:country)
+            @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
+            @zone.zone_members.create(:zoneable => @country)
+            @category = Spree::TaxCategory.create :name => "Taxable Foo"
+            @rate1 = Spree::TaxRate.create(
+                :amount => 0.10,
+                :calculator => Spree::Calculator::DefaultTax.create,
+                :tax_category => @category,
+                :zone => @zone
+            )
+
+            @order = Spree::Order.create!
+            @order.stub :coupon_code => "10off"
+          end
+          context "and the product price is less than promo discount" do
+            before(:each) do
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 9.0)
+                @order.contents.add(taxable.master, 1)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * (9 + 0.9)
+              @order.total.should == 29.7
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 3 * ((9 - [9,10].min) + 0)
+              @order.reload.total.should == 0
+              @order.additional_tax_total.should == 0
+            end
+          end
+          context "and the product price is greater than promo discount" do
+            before(:each) do
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 11.0)
+                @order.contents.add(taxable.master, 1)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * (11 + 1.1)
+              @order.total.should == 36.3
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 3 * ( (11 - 10) + 0.1)
+              @order.reload.total.should == 3.3
+              @order.additional_tax_total.should == 0.3
+            end
+          end
+        end
       end
     end
   end
