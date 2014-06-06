@@ -22,6 +22,8 @@ module Spree
 
     before_save :normalize_blank_values
 
+    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
+
     def self.advertised
       where(advertise: true)
     end

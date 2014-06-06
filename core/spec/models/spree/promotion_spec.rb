@@ -26,6 +26,16 @@ describe Spree::Promotion do
     end
   end
 
+  describe ".coupons" do
+    it "scopes promotions with coupon code present only" do
+      promotion = Spree::Promotion.create! name: "test", code: ''
+      expect(Spree::Promotion.coupons).to be_empty
+
+      promotion.update_column :code, "check"
+      expect(Spree::Promotion.coupons.first).to eq promotion
+    end
+  end
+
   describe ".advertised" do
     let(:promotion) { create(:promotion) }
     let(:advertised_promotion) { create(:promotion, :advertise => true) }
