@@ -82,37 +82,5 @@ module Spree
       end
     end
 
-
-    context "#exclude_tax?" do
-      before do
-        @order = create(:order)
-        @default_zone = create(:zone)
-        Spree::Zone.stub :default_tax => @default_zone
-      end
-
-      context "when prices include tax" do
-        before { Spree::Config.set(:prices_inc_tax => true) }
-
-        it "should be true when tax_zone is not the same as the default" do
-          @order.stub :tax_zone => create(:zone, :name => "other_zone")
-          @order.exclude_tax?.should be_true
-        end
-
-        it "should be false when tax_zone is the same as the default" do
-          @order.stub :tax_zone => @default_zone
-          @order.exclude_tax?.should be_false
-        end
-      end
-
-      context "when prices do not include tax" do
-        before { Spree::Config.set(:prices_inc_tax => false) }
-
-        it "should be false" do
-          @order.exclude_tax?.should be_false
-        end
-      end
-    end
   end
 end
-
-

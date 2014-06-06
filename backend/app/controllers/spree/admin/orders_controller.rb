@@ -48,14 +48,12 @@ module Spree
       end
 
       def new
-        @order = Order.create
-        @order.created_by = try_spree_current_user
-        @order.save
+        @order = Order.create(order_params)
         redirect_to edit_admin_order_url(@order)
       end
 
       def edit
-        unless @order.complete?
+        unless @order.completed?
           @order.refresh_shipment_rates
         end
       end
@@ -63,8 +61,8 @@ module Spree
       def update
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           @order.update!
-          unless @order.complete?
-            # Jump to next step if order is not complete.
+          unless @order.completed?
+            # Jump to next step if order is not completed.
             redirect_to admin_order_customer_path(@order) and return
           end
         else
@@ -116,6 +114,11 @@ module Spree
       end
 
       private
+        def order_params
+          params[:created_by_id] = try_spree_current_user.try(:id)
+          params.permit(:created_by_id)
+        end
+
         def load_order
           @order = Order.includes(:adjustments).find_by_number!(params[:id])
           authorize! action, @order

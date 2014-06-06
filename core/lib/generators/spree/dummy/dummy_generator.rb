@@ -122,7 +122,13 @@ end
     end
 
     def gemfile_path
-      '../../../../../Gemfile'
+      core_gems = ["spree/core", "spree/api", "spree/backend", "spree/frontend"]
+
+      if core_gems.include?(lib_name)
+        '../../../../../Gemfile'
+      else
+        '../../../../Gemfile'
+      end
     end
   end
 end
@@ -131,4 +137,3 @@ module Spree::DummyGeneratorHelper
   mattr_accessor :inject_extension_requirements
   self.inject_extension_requirements = false
 end
-

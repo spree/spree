@@ -1,13 +1,11 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Details' } %>
 
-<%= csrf_meta_tags %>
-
 <% content_for :page_title do %>
-  <i class="icon-arrow-right"></i> <%= Spree.t(:customer_details) %>
+  <i class="fa fa-arrow-right"></i> <%= Spree.t(:customer_details) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
 <div id="select-customer" data-hook>

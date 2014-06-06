@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/bar_ability'
 
 module Spree
   describe Api::OrdersController do
@@ -113,6 +114,20 @@ module Spree
       response.status.should == 200
     end
 
+    context "with BarAbility registered" do
+      before { Spree::Ability.register_ability(::BarAbility) }
+      after { Spree::Ability.remove_ability(::BarAbility) }
+
+      it "can view an order" do
+        user = mock_model(Spree::LegacyUser)
+        user.stub(:has_spree_role?).with('bar').and_return(true)
+        user.stub(:has_spree_role?).with('admin').and_return(false)
+        controller.stub try_spree_current_user: user
+        api_get :show, :id => order.to_param
+        response.status.should == 200
+      end
+    end
+
     it "cannot cancel an order that doesn't belong to them" do
       order.update_attribute(:completed_at, Time.now)
       order.update_attribute(:shipment_state, "ready")
@@ -128,15 +143,24 @@ module Spree
     it "can create an order" do
       api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
       response.status.should == 201
+
       order = Order.last
       order.line_items.count.should == 1
       order.line_items.first.variant.should == variant
       order.line_items.first.quantity.should == 5
+
+      json_response['number'].should be_present
       json_response["token"].should_not be_blank
       json_response["state"].should == "cart"
       order.user.should == current_api_user
       order.email.should == current_api_user.email
       json_response["user_id"].should == current_api_user.id
+    end
+
+    it "assigns email when creating a new order" do
+      api_post :create, :order => { :email => "guest@spreecommerce.com" }
+      expect(json_response['email']).not_to eq controller.current_api_user
+      expect(json_response['email']).to eq "guest@spreecommerce.com"
     end
 
     # Regression test for #3404
@@ -243,7 +267,7 @@ module Spree
       it "updates quantities of existing line items" do
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 }
+            "0" => { :id => line_item.id, :quantity => 10 }
           }
         }
 
@@ -256,8 +280,8 @@ module Spree
         variant2 = create(:variant)
         api_put :update, :id => order.to_param, :order => {
           :line_items => {
-            0 => { :id => line_item.id, :quantity => 10 },
-            1 => { :variant_id => variant2.id, :quantity => 1}
+            "0" => { :id => line_item.id, :quantity => 10 },
+            "1" => { :variant_id => variant2.id, :quantity => 1}
           }
         }
 
@@ -314,6 +338,14 @@ module Spree
         json_response['error'].should_not be_nil
         json_response['errors'].should_not be_nil
         json_response['errors']['ship_address.firstname'].first.should eq "can't be blank"
+      end
+
+      it "cannot set the user_id for the order" do
+        user = Spree.user_class.create
+        original_id = order.user_id
+        api_post :update, :id => order.to_param, :order => { user_id: user.id }
+        expect(response.status).to eq 200
+        json_response["user_id"].should == original_id
       end
 
       context "order has shipments" do
@@ -441,7 +473,7 @@ module Spree
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
             manifest_item["quantity"].should == 1
-            manifest_item["variant"].should have_attributes([:id, :name, :sku, :price])
+            manifest_item["variant_id"].should == order.line_items.first.variant_id
           end
         end
       end
@@ -461,12 +493,31 @@ module Spree
       it "responds with orders updated_at with miliseconds precision" do
         if ActiveRecord::Base.connection.adapter_name == "Mysql2"
           pending "MySQL does not support millisecond timestamps."
+        else
+          pending "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
         end
 
         api_get :index
         milisecond = order.updated_at.strftime("%L")
         updated_at = json_response["orders"].first["updated_at"]
         expect(updated_at.split("T").last).to have_content(milisecond)
+      end
+
+      context "caching enabled" do
+        before do
+          ActionController::Base.perform_caching = true
+          3.times { Order.create }
+        end
+
+        it "returns unique orders" do
+          api_get :index
+
+          orders = json_response[:orders]
+          expect(orders.count).to be >= 3
+          expect(orders.map { |o| o[:id] }).to match_array Order.pluck(:id)
+        end
+
+        after { ActionController::Base.perform_caching = false }
       end
 
       context "with two orders" do
@@ -525,6 +576,15 @@ module Spree
         end
       end
 
+      context "updating" do
+        it "can set the user_id for the order" do
+          user = Spree.user_class.create
+          api_post :update, :id => order.number, :order => { user_id: user.id }
+          expect(response.status).to eq 200
+          json_response["user_id"].should == user.id
+        end
+      end
+
       context "can cancel an order" do
         before do
           Spree::Config[:mails_from] = "spree@example.com"
@@ -543,4 +603,3 @@ module Spree
     end
   end
 end
-

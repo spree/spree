@@ -25,11 +25,10 @@ module Spree
           end
 
           context "when calculator returns a non-zero value" do
-            before do 
+            before do
               promotion.promotion_actions = [action]
               action.stub :compute_amount => 10
             end
-
 
             it "creates adjustment with item as adjustable" do
               action.perform(order: order)
@@ -45,6 +44,20 @@ module Spree
             it "does not perform twice on the same item" do
               2.times { action.perform(order: order) }
               action.adjustments.count.should == 1
+            end
+
+            context "with products rules" do
+              before do
+                promotion.stub(:product_ids => [line_item.product.id])
+              end
+              let!(:second_line_item) { create(:line_item, :order => order) }
+
+              it "does not create an adjustmenty for line_items not in product rule" do
+                action.perform(order: order)
+                expect(action.adjustments.count).to eql 1
+                expect(line_item.reload.adjustments).to match_array action.adjustments
+                expect(second_line_item.reload.adjustments).to be_empty
+              end
             end
           end
         end
@@ -66,6 +79,37 @@ module Spree
             it "does not exceed it" do
               action.compute_amount(line_item).should eql(-100)
             end
+          end
+        end
+
+        context "#destroy" do
+          let!(:action) { CreateItemAdjustments.create! }
+          let(:other_action) { CreateItemAdjustments.create! }
+
+          it "destroys adjustments for incompleted orders" do
+            order = Order.create
+            action.adjustments.create!(label: "Check", amount: 0, order: order)
+
+            expect {
+              action.destroy
+            }.to change { Adjustment.count }.by(-1)
+          end
+
+          it "nullifies adjustments for completed orders" do
+            order = Order.create(completed_at: Time.now)
+            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order)
+
+            expect {
+              action.destroy
+            }.to change { adjustment.reload.source_id }.from(action.id).to nil
+          end
+
+          it "doesnt mess with unrelated adjustments" do
+            other_action.adjustments.create!(label: "Check", amount: 0)
+
+            expect {
+              action.destroy
+            }.not_to change { other_action.adjustments.count }
           end
         end
       end

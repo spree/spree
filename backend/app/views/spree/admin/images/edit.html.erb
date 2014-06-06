@@ -5,7 +5,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to Spree.t(:back_to_images_list), admin_product_images_url(@product), :icon => 'icon-arrow-left' %></li>
+  <li><%= button_link_to Spree.t(:back_to_images_list), admin_product_images_url(@product), :icon => 'arrow-left' %></li>
 <% end %>
 
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
@@ -20,9 +20,9 @@
     </div>
     <div class="clear"></div>
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button Spree.t('actions.update'), 'icon-refresh' %>
+      <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= link_to Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button icon-remove' %>
+      <%= link_to Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button remove' %>
     </div>
   </fieldset>
 <% end %>

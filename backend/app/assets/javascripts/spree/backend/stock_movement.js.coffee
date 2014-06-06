@@ -1,8 +1,9 @@
 jQuery ->
-  $('#stock_movement_stock_item_id').select2
+  el = $('#stock_movement_stock_item_id')
+  el.select2
     placeholder: "Find a stock item" # translate
     ajax:
-      url: Spree.url(Spree.routes.stock_items_api)
+      url: Spree.url(Spree.routes.stock_items_api(el.data('stock-location-id')))
       data: (term, page) ->
         q:
           variant_product_name_cont: term

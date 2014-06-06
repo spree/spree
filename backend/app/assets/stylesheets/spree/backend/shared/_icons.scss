@@ -14,12 +14,35 @@
   }
 }
 
-.icon-email:before    { @extend .icon-envelope:before }
-.icon-resume:before   { @extend .icon-refresh:before  }
-.icon-approve:before  { @extend .icon-ok:before       }
+.fa-email:before     { @extend .fa-envelope:before }
+.fa-resume:before    { @extend .fa-refresh:before  }
+.fa-approve:before   { @extend .fa-check:before    }
 
-.icon-cancel:before,
-.icon-void:before     { @extend .icon-remove:before   }
+.fa-remove:before,
+.fa-cancel:before,
+.fa-void:before      { @extend .fa-times:before    }
 
-.icon-capture:before  { @extend .icon-ok:before       }
-.icon-credit:before   { @extend .icon-ok:before       }
+.fa-trash:before     { @extend .fa-trash-o:before  }
+
+.fa-capture:before   { @extend .fa-check:before    }
+.fa-credit:before    { @extend .fa-check:before    }
+.fa-approve:before   { @extend .fa-check:before    }
+.fa-icon-cogs:before { @extend .fa-cogs:before     }
+.fa-ok:before,
+.fa-icon-ok:before   { @extend .fa-check:before    }
+
+button, a {
+  &.fa:before {
+    padding-right: 5px;
+  }
+}
+
+// Admin navigation fixes
+.icon-user,
+.icon-signout,
+.icon-external-link {
+  @extend .fa;
+}
+.icon-user          { @extend .fa-user; }
+.icon-signout       { @extend .fa-sign-out; }
+.icon-external-link { @extend .fa-external-link; }

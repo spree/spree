@@ -38,7 +38,7 @@ module Spree
             # To avoid multiple occurrences of the same transition being defined
             # On first definition, state_machines will not be defined
             state_machines.clear if respond_to?(:state_machines)
-            state_machine :state, :initial => :cart do
+            state_machine :state, :initial => :cart, :use_transactions => false, :action => :save_state do
               klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
 
               # Persist the state on the order
@@ -71,7 +71,12 @@ module Spree
 
               if states[:payment]
                 before_transition :to => :complete do |order|
-                  order.process_payments! if order.payment_required?
+                  if order.payment_required? && order.payments.empty?
+                    order.errors.add(:base, Spree.t(:no_payment_found))
+                    false
+                  elsif order.payment_required?
+                    order.process_payments!
+                  end
                 end
               end
 
@@ -101,6 +106,8 @@ module Spree
                 order.persist_totals
               end
             end
+
+            alias_method :save_state, :save
           end
 
           def self.go_to_state(name, options={})
@@ -202,11 +209,11 @@ module Spree
             checkout_step_index(state) > checkout_step_index(self.state)
           end
 
-          define_callbacks :updating_from_params, terminator: 'result == false'
+          define_callbacks :updating_from_params, terminator: ->(target, result) { result == false }
 
           set_callback :updating_from_params, :before, :update_params_payment_source
 
-          def update_from_params(params, permitted_params)
+          def update_from_params(params, permitted_params, request_env = {})
             success = false
             @updating_params = params
             run_callbacks :updating_from_params do
@@ -220,13 +227,20 @@ module Spree
                   raise Core::GatewayError.new Spree.t(:invalid_credit_card)
                 end
 
+                credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
+
                 attributes[:payments_attributes].first[:source] = credit_card
                 attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
                 attributes[:payments_attributes].first.delete :source_attributes
               end
 
+              if attributes[:payments_attributes]
+                attributes[:payments_attributes].first[:request_env] = request_env
+              end
+
               success = self.update_attributes(attributes)
             end
+
             @updating_params = nil
             success
           end

@@ -42,27 +42,6 @@ module Spree
         item.quantity.should eq 4
       end
 
-      it 'get flattened contents' do
-        subject.add line_item, 4, :on_hand
-        subject.add line_item, 2, :backordered
-        flattened = subject.flattened
-        flattened.select { |i| i.state == :on_hand }.size.should eq 4
-        flattened.select { |i| i.state == :backordered }.size.should eq 2
-      end
-
-      it 'set contents from flattened' do
-        flattened = [Package::ContentItem.new(line_item, variant, 1, :on_hand),
-                    Package::ContentItem.new(line_item, variant, 1, :on_hand),
-                    Package::ContentItem.new(line_item, variant, 1, :backordered),
-                    Package::ContentItem.new(line_item, variant, 1, :backordered)]
-
-        subject.flattened = flattened
-        subject.on_hand.size.should eq 1
-        subject.on_hand.first.quantity.should eq 2
-
-        subject.backordered.size.should eq 1
-      end
-
       # Contains regression test for #2804
       it 'builds a list of shipping methods common to all categories' do
         category1 = create(:shipping_category)
@@ -91,9 +70,8 @@ module Spree
       end
 
       it "can convert to a shipment" do
-        flattened = [Package::ContentItem.new(line_item, variant, 2, :on_hand),
-                    Package::ContentItem.new(line_item, variant, 1, :backordered)]
-        subject.flattened = flattened
+        subject.add line_item, 2, :on_hand, variant
+        subject.add line_item, 1, :backordered, variant
 
         shipping_method = build(:shipping_method)
         subject.shipping_rates = [ Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true) ]

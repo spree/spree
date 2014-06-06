@@ -28,6 +28,7 @@ module Spree
         def create_adjustment(adjustable, order)
           amount = self.compute_amount(adjustable)
           return if amount == 0
+          return if promotion.product_ids.present? and !promotion.product_ids.include?(adjustable.product.id)
           self.adjustments.create!(
             amount: amount,
             adjustable: adjustable,
@@ -61,7 +62,8 @@ module Spree
           end
 
           def deals_with_adjustments
-            adjustment_scope = Adjustment.includes(:order).references(:spree_orders)
+            adjustment_scope = self.adjustments.includes(:order).references(:spree_orders)
+
             # For incomplete orders, remove the adjustment completely.
             adjustment_scope.where("spree_orders.completed_at IS NULL").each do |adjustment|
               adjustment.destroy

@@ -21,31 +21,6 @@ module Spree
       Spree::Config[:track_inventory_levels] = true
     end
 
-    context "GET 'show'" do
-      let(:order) { create(:order) }
-
-      it "redirects to Orders#show" do
-        api_get :show, :id => order.number
-        response.status.should == 301
-        response.should redirect_to("/api/orders/#{order.number}")
-      end
-    end
-
-    context "POST 'create'" do
-      it "creates a new order when no parameters are passed" do
-        api_post :create
-
-        json_response['number'].should be_present
-        response.status.should == 201
-      end
-
-      it "assigns email when creating a new order" do
-        api_post :create, :order => { :email => "guest@spreecommerce.com" }
-        expect(json_response['email']).not_to eq controller.current_api_user
-        expect(json_response['email']).to eq "guest@spreecommerce.com"
-      end
-    end
-
     context "PUT 'update'" do
       let(:order) do
         order = create(:order_with_line_items)
@@ -54,7 +29,6 @@ module Spree
         order.shipments.delete_all
         order
       end
-
 
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)
@@ -102,25 +76,50 @@ module Spree
         response.status.should == 422
       end
 
-      it "can update addresses and transition from address to delivery" do
-        order.update_column(:state, "address")
-        shipping_address = billing_address = {
-          :firstname  => 'John',
-          :lastname   => 'Doe',
-          :address1   => '7735 Old Georgetown Road',
-          :city       => 'Bethesda',
-          :phone      => '3014445002',
-          :zipcode    => '20814',
-          :state_id   => @state.id,
-          :country_id => @country.id
-        }
-        api_put :update,
-                :id => order.to_param, :order_token => order.token,
-                :order => { :bill_address_attributes => billing_address, :ship_address_attributes => shipping_address }
-        json_response['state'].should == 'delivery'
-        json_response['bill_address']['firstname'].should == 'John'
-        json_response['ship_address']['firstname'].should == 'John'
-        response.status.should == 200
+      context "transitioning to delivery" do
+        before do
+          order.update_column(:state, "address")
+        end
+
+        let(:address) do
+          {
+            :firstname  => 'John',
+            :lastname   => 'Doe',
+            :address1   => '7735 Old Georgetown Road',
+            :city       => 'Bethesda',
+            :phone      => '3014445002',
+            :zipcode    => '20814',
+            :state_id   => @state.id,
+            :country_id => @country.id
+          }
+        end
+
+        it "can update addresses and transition from address to delivery" do
+          api_put :update,
+                  :id => order.to_param, :order_token => order.token,
+                  :order => {
+                    :bill_address_attributes => address,
+                    :ship_address_attributes => address
+                  }
+          json_response['state'].should == 'delivery'
+          json_response['bill_address']['firstname'].should == 'John'
+          json_response['ship_address']['firstname'].should == 'John'
+          response.status.should == 200
+        end
+
+        # Regression test for #4498
+        it "does not contain duplicate variant data in delivery return" do
+          api_put :update,
+                  :id => order.to_param, :order_token => order.token,
+                  :order => {
+                    :bill_address_attributes => address,
+                    :ship_address_attributes => address
+                  }
+          # Shipments manifests should not return the ENTIRE variant
+          # This information is already present within the order's line items
+          expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil
+          expect(json_response['shipments'].first['manifest'].first['variant_id']).to_not be_nil
+        end
       end
 
       it "can update shipping method and transition from delivery to payment" do
@@ -172,8 +171,13 @@ module Spree
       it "returns errors when source is missing attributes" do
         order.update_column(:state, "payment")
         api_put :update, :id => order.to_param, :order_token => order.token,
-          :order => { :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }],
-                      :payment_source => { @payment_method.id.to_s => { } } }
+          :order => {
+            :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }]
+          },
+          :payment_source => {
+            @payment_method.id.to_s => { name: "Spree" }
+          }
+
         response.status.should == 422
         cc_errors = json_response['errors']['payments.Credit Card']
         cc_errors.should include("Number can't be blank")
@@ -263,24 +267,25 @@ module Spree
         json_response['error'].should =~ /could not be transitioned/
       end
 
-      it "returns a sensible error when no payment method is specified" do
+      it "doesnt advance payment state if order has no payment" do
         order.update_column(:state, "payment")
         api_put :next, :id => order.to_param, :order_token => order.token, :order => {}
-        json_response["errors"]["base"].should include(Spree.t(:no_pending_payments))
+        json_response["errors"]["base"].should include(Spree.t(:no_payment_found))
       end
     end
 
     context "PUT 'advance'" do
       let!(:order) { create(:order_with_line_items) }
+
       it 'continues to advance advances an order while it can move forward' do
         Spree::Order.any_instance.should_receive(:next).exactly(3).times.and_return(true, true, false)
         api_put :advance, :id => order.to_param, :order_token => order.token
       end
+
       it 'returns the order' do
         api_put :advance, :id => order.to_param, :order_token => order.token
         json_response['id'].should == order.id
       end
-
     end
   end
 end

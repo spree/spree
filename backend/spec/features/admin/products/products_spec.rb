@@ -333,7 +333,8 @@ describe "Products" do
           click_icon :trash
         end
         # This will show our deleted product
-        click_button "Search"
+        check "Show Deleted"
+        click_icon :search
         click_link product.name
         find("#product_price").value.to_f.should == product.price.to_f
       end

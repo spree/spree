@@ -48,6 +48,8 @@ module Spree
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
+    has_many :products, through: :variants
+    has_many :variants, through: :line_items
 
     has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
 
@@ -87,9 +89,8 @@ module Spree
       where(number: number)
     end
 
-    def self.between(start_date, end_date)
-      where(created_at: start_date..end_date)
-    end
+    scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
+    scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
 
     def self.by_customer(customer)
       joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
@@ -114,7 +115,8 @@ module Spree
     end
 
     def all_adjustments
-      Adjustment.where("order_id = :order_id OR adjustable_id = :order_id", :order_id => self.id)
+      Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
+        :order_id => self.id)
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -144,6 +146,10 @@ module Spree
 
     def display_additional_tax_total
       Spree::Money.new(additional_tax_total, { currency: currency })
+    end
+
+    def display_tax_total
+      Spree::Money.new(included_tax_total + additional_tax_total, { currency: currency })
     end
 
     def display_shipment_total
@@ -197,15 +203,7 @@ module Spree
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
     def tax_zone
-      Zone.match(tax_address) || Zone.default_tax
-    end
-
-    # Indicates whether tax should be backed out of the price calcualtions in
-    # cases where prices include tax but the customer is not required to pay
-    # taxes in that case.
-    def exclude_tax?
-      return false unless Spree::Config[:prices_inc_tax]
-      return tax_zone != Zone.default_tax
+      @tax_zone ||= Zone.match(tax_address) || Zone.default_tax
     end
 
     # Returns the address for taxation based on configuration
@@ -244,14 +242,16 @@ module Spree
     end
 
     # Associates the specified user with the order.
-    def associate_user!(user)
+    def associate_user!(user, override_email = true)
       self.user = user
-      self.email = user.email
-      self.created_by = user if self.created_by.blank?
+      attrs_to_set = { user_id: user.id }
+      attrs_to_set[:email] = user.email if override_email
+      attrs_to_set[:created_by_id] = user.id if self.created_by.blank?
+      assign_attributes(attrs_to_set)
 
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.unscoped.where(id: id).update_all(email: user.email, user_id: user.id, created_by_id: self.created_by_id)
+        self.class.unscoped.where(id: id).update_all(attrs_to_set)
       end
     end
 
@@ -286,8 +286,10 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
+      # We want to only look up the applicable tax zone once and pass it to TaxRate calculation to avoid duplicated lookups.
+      order_tax_zone = self.tax_zone
+      Spree::TaxRate.adjust(order_tax_zone, line_items)
+      Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
     end
 
     def outstanding_balance
@@ -360,26 +362,25 @@ module Spree
     # success or failure of the 'complete' event for the order
     #
     # Returns:
+    #
     # - true if all pending_payments processed successfully
+    #
     # - true if a payment failed, ie. raised a GatewayError
     #   which gets rescued and converted to TRUE when
     #   :allow_checkout_gateway_error is set to true
+    #
     # - false if a payment failed, ie. raised a GatewayError
     #   which gets rescued and converted to FALSE when
     #   :allow_checkout_on_gateway_error is set to false
     #
     def process_payments!
-      if pending_payments.empty?
-        raise Core::GatewayError.new Spree.t(:no_pending_payments)
-      else
-        pending_payments.each do |payment|
-          break if payment_total >= total
+      pending_payments.each do |payment|
+        break if payment_total >= total
 
-          payment.process!
+        payment.process!
 
-          if payment.completed?
-            self.payment_total += payment.amount
-          end
+        if payment.completed?
+          self.payment_total += payment.amount
         end
       end
     rescue Core::GatewayError => e
@@ -395,16 +396,8 @@ module Spree
       bill_address.try(:lastname)
     end
 
-    def products
-      line_items.map(&:product)
-    end
-
-    def variants
-      line_items.map(&:variant)
-    end
-
     def insufficient_stock_lines
-     @insufficient_stock_lines ||= line_items.select(&:insufficient_stock?)
+     line_items.select(&:insufficient_stock?)
     end
 
     def merge!(order, user = nil)
@@ -421,6 +414,10 @@ module Spree
       end
 
       self.associate_user!(user) if !self.user && !user.blank?
+
+      updater.update_item_count
+      updater.update_item_total
+      updater.persist_totals
 
       # So that the destroy doesn't take out line items which may have been re-assigned
       order.line_items.reload
@@ -576,6 +573,15 @@ module Spree
       self.ensure_updated_shipments
     end
 
+    def reload
+      remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
+      super
+    end
+
+    def tax_total
+      included_tax_total + additional_tax_total
+    end
+
     private
 
       def link_by_email
@@ -584,7 +590,7 @@ module Spree
 
       # Determine if email is required (we don't want validation errors before we hit the checkout)
       def require_email
-        return true unless new_record? or ['cart', 'address'].include?(state)
+        true unless new_record? or ['cart', 'address'].include?(state)
       end
 
       def ensure_line_items_present
@@ -602,13 +608,16 @@ module Spree
 
       def ensure_available_shipping_rates
         if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
+          # After this point, order redirects back to 'address' state and asks user to pick a proper address
+          # Therefore, shipments are not necessary at this point.
+          shipments.delete_all
           errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
         end
       end
 
       def after_cancel
         shipments.each { |shipment| shipment.cancel! }
-        payments.completed.each { |payment| payment.credit! }
+        payments.completed.each { |payment| payment.cancel! }
 
         send_cancel_email
         self.update_column(:payment_state, 'credit_owed') unless shipped?

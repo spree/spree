@@ -93,7 +93,7 @@ describe "Option Types" do
 
     # Remove default option type
     within("tbody#option_values") do
-      find('.icon-trash').click
+      find('.fa-trash').click
     end
     # Check that there was no HTTP request
     all("div#progress[style]").count.should == 0
@@ -102,7 +102,7 @@ describe "Option Types" do
 
     # Remove added option type
     within("tbody#option_values") do
-      find('.icon-trash').click
+      find('.fa-trash').click
     end
     # Check that there was no HTTP request
     all("div#progress[style]").count.should == 0

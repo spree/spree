@@ -52,8 +52,8 @@ module Spree
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
           begin
-            calculator.available?(package) &&
             ship_method.include?(order.ship_address) &&
+            calculator.available?(package) &&
             (calculator.preferences[:currency].nil? ||
              calculator.preferences[:currency] == currency)
           rescue Exception => exception

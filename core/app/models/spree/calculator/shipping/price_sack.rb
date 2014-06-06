@@ -1,6 +1,4 @@
 require_dependency 'spree/shipping_calculator'
-# For #to_d method on Ruby 1.8
-require 'bigdecimal/util'
 
 module Spree
   module Calculator::Shipping

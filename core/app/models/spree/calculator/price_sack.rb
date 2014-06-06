@@ -1,6 +1,4 @@
 require_dependency 'spree/calculator'
-# For #to_d method on Ruby 1.8
-require 'bigdecimal/util'
 
 module Spree
   class Calculator::PriceSack < Calculator

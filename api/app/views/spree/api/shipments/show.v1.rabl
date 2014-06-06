@@ -1,5 +1,5 @@
 object @shipment
-cache @shipment
+cache [I18n.locale, root_object]
 attributes *shipment_attributes
 node(:order_id) { |shipment| shipment.order.number }
 node(:stock_location_name) { |shipment| shipment.stock_location.name }

@@ -6,7 +6,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:back_to_stock_transfers_list), admin_stock_transfers_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to Spree.t(:back_to_stock_transfers_list), admin_stock_transfers_path, :icon => 'arrow-left' %>
   </li>
 <% end %>
 
@@ -16,7 +16,7 @@
       <td>{{name}}</td>
       <td class='align-center'>{{quantity}}</td>
       <td class='actions'>
-        <button class='icon_link icon-trash no-text transfer_remove_variant'
+        <button class='icon_link fa fa-trash no-text transfer_remove_variant'
                 data-variant-id='{{id}}' data-action='remove'></button>
       </td>
       <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
@@ -64,7 +64,7 @@
       <div class="alpha eight columns">
         <div class="field" id="stock_movement_variant_id_field">
           <%= label_tag 'variant_id', Spree.t(:variant) %>
-          <%= select_tag 'transfer_variant', {}, class: 'fullwidth' %>
+          <%= hidden_field_tag 'transfer_variant', {}, class: 'fullwidth' %>
         </div>
       </div>
       <div class="two columns">
@@ -75,7 +75,7 @@
       </div>
       <div class="two columns omega">
         <div class="field" style="padding: 25px 0 0 0 !important">
-          <%= button Spree.t(:add), 'icon-plus button transfer_add_variant' %>
+          <%= button Spree.t(:add), 'plus button transfer_add_variant' %>
         </div>
       </div>
 
@@ -105,7 +105,7 @@
     </div>
 
     <div class="filter-actions actions" data-hook="buttons">
-      <%= button Spree.t(:transfer_stock), 'icon-plus transfer_transfer' %>
+      <%= button Spree.t(:transfer_stock), 'plus transfer_transfer' %>
     </div>
   </fieldset>
 <% end %>

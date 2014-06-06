@@ -25,13 +25,15 @@ module Spree
     # invalidate previously entered payments
     after_create :invalidate_old_payments
 
-    attr_accessor :source_attributes
+    attr_accessor :source_attributes, :request_env
+
     after_initialize :build_source
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
     scope :completed, -> { with_state('completed') }
     scope :pending, -> { with_state('pending') }
+    scope :processing, -> { with_state('processing') }
     scope :failed, -> { with_state('failed') }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
 
@@ -48,6 +50,10 @@ module Spree
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
       # With card payments, happens before purchase or authorization happens
+      #
+      # Setting it after creating a profile and authorizing a full amount will
+      # prevent the payment from being authorized again once Order transitions
+      # to complete
       event :started_processing do
         transition from: [:checkout, :pending, :completed, :processing], to: :processing
       end
@@ -64,7 +70,7 @@ module Spree
         transition from: [:processing, :pending, :checkout], to: :completed
       end
       event :void do
-        transition from: [:pending, :completed, :checkout], to: :void
+        transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
       # when the card brand isnt supported
       event :invalidate do
@@ -113,8 +119,8 @@ module Spree
 
     # see https://github.com/spree/spree/issues/981
     def build_source
-      return if source_attributes.nil?
-      if payment_method and payment_method.payment_source_class
+      return unless new_record?
+      if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
         self.source = payment_method.payment_source_class.new(source_attributes)
         self.source.payment_method_id = payment_method.id
         self.source.user_id = self.order.user_id if self.order

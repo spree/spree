@@ -59,22 +59,10 @@ module Spree
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
 
-        @product = Product.new(product_params)
-        if @product.save
-          variants_params.each do |variant_attribute|
-            # make sure the product is assigned before the options=
-            @product.variants.create({ product: @product }.merge(variant_attribute))
-          end
+        options = { variants_attrs: variants_params, options_attrs: option_types_params }
+        @product = Core::Importer::Product.new(nil, product_params, options).create
 
-          option_types_params.each do |name|
-            option_type = OptionType.where(name: name).first_or_initialize do |option_type|
-              option_type.presentation = name
-              option_type.save!
-            end
-
-            @product.option_types << option_type unless @product.option_types.include?(option_type)
-          end
-
+        if @product.persisted?
           respond_with(@product, :status => 201, :default_template => :show)
         else
           invalid_resource!(@product)
@@ -85,26 +73,10 @@ module Spree
         @product = find_product(params[:id])
         authorize! :update, @product
 
-        if @product.update_attributes(product_params)
-          variants_params.each do |variant_attribute|
-            # update the variant if the id is present in the payload
-            if variant_attribute['id'].present?
-              @product.variants.find(variant_attribute['id'].to_i).update_attributes(variant_attribute)
-            else
-              # make sure the product is assigned before the options=
-              @product.variants.create({ product: @product }.merge(variant_attribute))
-            end
-          end
+        options = { variants_attrs: variants_params, options_attrs: option_types_params }
+        @product = Core::Importer::Product.new(@product, product_params, options).update
 
-          option_types_params.each do |name|
-            option_type = OptionType.where(name: name).first_or_initialize do |option_type|
-              option_type.presentation = name
-              option_type.save!
-            end
-
-            @product.option_types << option_type unless @product.option_types.include?(option_type)
-          end
-
+        if @product.errors.empty?
           respond_with(@product.reload, :status => 200, :default_template => :show)
         else
           invalid_resource!(@product)

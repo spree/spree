@@ -485,6 +485,7 @@ en:
     coupon_code_max_usage: Coupon code usage limit exceeded
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+    coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     create: Create
     create_a_new_account: Create a new account
     created_at: Created At
@@ -740,6 +741,7 @@ en:
     no_actions_added: No actions added
     no_orders_found: No orders found
     no_payment_methods_found: No payment methods found
+    no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_products_found: No products found
     no_promotions_found: No promotions found
@@ -882,6 +884,7 @@ en:
       label: Order must contain %{select} of these products
       match_all: all
       match_any: at least one
+      match_none: none 
       product_source:
         group: From product group
         manual: Manually choose

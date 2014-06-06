@@ -18,7 +18,7 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes :id, :amount, :state, :source_type
+  attributes *payment_attributes
 
   child :payment_method => :payment_method do
     attributes :id, :name, :environment
@@ -30,9 +30,14 @@ child :payments => :payments do
 end
 
 child :shipments => :shipments do
-  extends "spree/api/shipments/show"
+  extends "spree/api/shipments/small"
 end
 
 child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
+end
+
+# Necessary for backend's order interface
+node :permissions do
+  { can_update: current_ability.can?(:update, root_object) }
 end

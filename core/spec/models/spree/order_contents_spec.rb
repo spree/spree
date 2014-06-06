@@ -69,8 +69,6 @@ describe Spree::OrderContents do
         include_context "discount changes order total"
       end
     end
-
-    pending "what if validation fails"
   end
 
   context "#remove" do
@@ -154,7 +152,25 @@ describe Spree::OrderContents do
       end
     end
 
-    pending "what if validation fails"
-    pending "destroy existing shipments when order is not in cart state"
+    it "ensures updated shipments" do
+      expect(subject.order).to receive(:ensure_updated_shipments)
+      subject.update_cart params
+    end
+  end
+
+  context "completed order" do
+    let(:order) { Spree::Order.create! state: 'complete', completed_at: Time.now }
+
+    before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
+
+    it "updates order payment state" do
+      expect {
+        subject.add variant
+      }.to change { order.payment_state }
+
+      expect {
+        subject.remove variant
+      }.to change { order.payment_state }
+    end
   end
 end

@@ -1,8 +1,9 @@
 jQuery ($) ->
   # Payment model
+  order_id = $('#payments').data('order-id')
   class Payment
     constructor: (id) ->
-      @url  = Spree.url("#{Spree.routes.payments_api}/#{id}.json")
+      @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{id}.json")
       @json = $.getJSON @url.toString(), (data) =>
         @data = data
 
@@ -49,7 +50,7 @@ jQuery ($) ->
     $new_button: (action) ->
       $('<a />')
         .attr
-          class: "icon-#{action} icon_link no-text with-tip"
+          class: "fa fa-#{action} icon_link no-text with-tip"
           title: Spree.translations[action]
         .data
           action: action
@@ -66,7 +67,7 @@ jQuery ($) ->
           fadeOutTime:    50
 
     $buttons: ->
-      @$actions().find(".icon-#{@action}, .icon-cancel")
+      @$actions().find(".fa-#{@action}, .fa-cancel")
 
     $actions: ->
       @$el.find('.actions')

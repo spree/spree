@@ -8,9 +8,10 @@ module Spree
       let(:order) { create(:order) }
 
       context "with a valid credit card" do
-        it "should process payment correctly" do
-          order = create(:order_with_line_items, :state => "payment")
-          payment_method = create(:credit_card_payment_method, :display_on => "back_end")
+        let(:order) { create(:order_with_line_items, :state => "payment") }
+        let(:payment_method) { create(:credit_card_payment_method, :display_on => "back_end") }
+
+        before do
           attributes = {
             :order_id => order.number,
             :card => "new",
@@ -26,9 +27,17 @@ module Spree
             }
           }
           spree_post :create, attributes
+        end
+
+        it "should process payment correctly" do
           order.payments.count.should == 1
           expect(response).to redirect_to(spree.admin_order_payments_path(order))
           expect(order.reload.state).to eq('complete')
+        end
+
+        # Regression for #4768
+        it "doesnt process the same payment twice" do
+          Spree::LogEntry.where(source: order.payments.first).count.should == 1
         end
       end
 

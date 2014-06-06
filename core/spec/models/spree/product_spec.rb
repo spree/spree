@@ -415,4 +415,9 @@ describe Spree::Product do
       expect(product.slug).not_to match "/"
     end
   end
+
+  it "maps to_param to slug" do
+    subject.slug = "heyslug"
+    expect(subject.to_param).to eq subject.slug
+  end
 end

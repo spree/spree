@@ -5,7 +5,6 @@ FactoryGirl.define do
     cost 100.00
     state 'pending'
     order
-    address
     stock_location
 
     after(:create) do |shipment, evalulator|

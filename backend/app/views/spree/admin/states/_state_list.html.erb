@@ -19,7 +19,7 @@
         <td><%= state.name %></td>
         <td class="align-center"><%= state.abbr %></td>
         <td class="actions">
-          <%= link_to_with_icon 'icon-edit', Spree.t(:edit), edit_admin_country_state_url(@country, state), :no_text => true %>
+          <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_country_state_url(@country, state), :no_text => true %>
           <%= link_to_delete state, :no_text => true %>
         </td>
       </tr>

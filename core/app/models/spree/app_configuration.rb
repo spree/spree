@@ -19,9 +19,6 @@ require "spree/core/search/base"
 
 module Spree
   class AppConfiguration < Preferences::Configuration
-
-    attr_accessor :store
-
     # Alphabetized to more easily lookup particular preferences
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
@@ -55,7 +52,6 @@ module Spree
     preference :logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
     preference :orders_per_page, :integer, default: 15
-    preference :prices_inc_tax, :boolean, default: false
     preference :products_per_page, :integer, default: 12
     preference :promotions_per_page, :integer, default: 15
     preference :redirect_https_to_http, :boolean, :default => false
@@ -91,18 +87,11 @@ module Spree
       default_seo_title: :seo_title,
     }
 
-    def default_store
-      # hack to access preferences on stores if spun up before the database exists
-      # safe to kill when all the Spree::Config access is gone
-      return OpenStruct.new if @store.nil? && !ActiveRecord::Base.connection.table_exists?(Spree::Store.table_name)
-      self.store ||= Spree::Store.first || Spree::Store.new
-    end
-
     DEPRECATED_STORE_PREFERENCES.each do |old_preference_name, store_method|
       # support all the old preference methods with a warning
       define_method "preferred_#{old_preference_name}" do
         ActiveSupport::Deprecation.warn("#{old_preference_name} is no longer supported on Spree::Config, please access it through #{store_method} on Spree::Store")
-        default_store.send(store_method)
+        Store.default.send(store_method)
       end
     end
   end

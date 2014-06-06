@@ -67,7 +67,6 @@ describe 'Payments' do
     end
 
     it 'lists and create payments for an order', js: true do
-      find('#payment_status').text.should == 'PENDING'
       within_row(1) do
         column_text(2).should == '$150.00'
         column_text(3).should == 'Credit Card'
@@ -160,7 +159,7 @@ describe 'Payments' do
 
       it 'does not allow the amount to be edited' do
         within_row(1) do
-          page.should_not have_selector('.icon-edit')
+          page.should_not have_selector('.fa-edit')
           page.should_not have_selector('td.amount span')
         end
       end

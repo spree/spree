@@ -162,7 +162,7 @@ describe Spree::CheckoutController do
 
         it "should remove completed order from the session" do
           spree_post :update, {:state => "confirm"}, {:order_id => "foofah"}
-          session[:order_id].should be_nil
+          cookies.signed[:order_id].should be_nil
         end
       end
     end

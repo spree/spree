@@ -3,8 +3,8 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::ProductsHelper do
-    include Spree::ProductsHelper
+  describe ProductsHelper do
+    include ProductsHelper
 
     let(:product) { create(:product) }
     let(:currency) { 'USD' }
@@ -168,17 +168,47 @@ THIS IS THE BEST PRODUCT EVER!
         it { should == 'test desc' }
       end
     end
+
     context "#line_item_description" do
       let(:variant) { create(:variant, :product => product, description: description) }
       subject { line_item_description_text(variant.product.description) }
 
       it_should_behave_like "line item descriptions"
     end
+
     context '#line_item_description_text' do
       subject { line_item_description_text description }
 
       it_should_behave_like "line item descriptions"
     end
 
+    context '#cache_key_for_products' do
+      subject { helper.cache_key_for_products }
+      before(:each) do
+        @products = double('products collection')
+        helper.stub(:params) { {:page => 10} }
+      end
+
+      context 'when there is a maximum updated date' do
+        let(:updated_at) { Date.new(2011, 12, 13) }
+        before :each do
+          @products.stub(:count) { 5 }
+          @products.stub(:maximum).with(:updated_at) { updated_at }
+        end
+
+        it { should == 'en/USD/spree/products/all-10-20111213-5' }
+      end
+
+      context 'when there is no considered maximum updated date' do
+        let(:today) { Date.new(2013, 12, 11) }
+        before :each do
+          @products.stub(:count) { 1234567 }
+          @products.stub(:maximum).with(:updated_at) { nil }
+          Date.stub(:today) { today }
+        end
+
+        it { should == 'en/USD/spree/products/all-10-20131211-1234567' }
+      end
+    end
   end
 end

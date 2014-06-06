@@ -33,6 +33,23 @@ describe Spree::Variant do
         product.variants.create(:name => "Foobar")
       end
     end
+
+    describe 'mark_master_out_of_stock' do
+      before do
+        product.master.stock_items.first.set_count_on_hand(5)
+      end
+      context 'when product is created without variants but with stock' do
+        it {product.master.should be_in_stock}
+      end
+
+      context 'when a variant is created' do
+        before(:each) do
+          product.variants.create!(:name => 'any-name')
+        end
+
+        it { product.master.should_not be_in_stock }
+       end
+     end
   end
 
   context "product has other variants" do
@@ -401,6 +418,14 @@ describe Spree::Variant do
     it "should have a price if deleted" do
       variant.price = 10
       expect(variant.price).to eq(10)
+    end
+  end
+
+  describe "stock movements" do
+    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
+
+    it "builds out collection just fine through stock items" do
+      expect(variant.stock_movements.to_a).not_to be_empty
     end
   end
 end

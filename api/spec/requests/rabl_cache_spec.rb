@@ -14,7 +14,10 @@ describe "Rabl Cache", :caching => true do
     response.status.should == 200
 
     # Make sure we get a non master variant
-    variant_a = JSON.parse(response.body)['variants'].last
+    variant_a = JSON.parse(response.body)['variants'].select do |v|
+      !v['is_master']
+    end.first
+
     variant_a['is_master'].should be_false
     variant_a['stock_items'].should_not be_nil
 

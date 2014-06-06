@@ -12,6 +12,7 @@ describe 'current order tracking' do
   let(:order) { FactoryGirl.create(:order) }
 
   it 'automatically tracks IP when current_order is called' do
+    request.cookie_jar.signed[:order_id] = order.id
     get :index, {}, { :order_id => order.id }
     controller.current_order.last_ip_address.should == "0.0.0.0"
   end

@@ -100,6 +100,20 @@ describe Spree::CreditCard do
       credit_card.errors[:base].should == ["Card has expired"]
     end
 
+    it "should handle TZ correctly" do
+      # The card is valid according to the system clock's local time
+      # (Time.now).
+      # However it has expired in rails's configured time zone (Time.current),
+      # which is the value we should be respecting.
+      time = Time.new(2014, 04, 30, 23, 0, 0, "-07:00")
+      Timecop.freeze(time) do
+        credit_card.month = 1.month.ago.month
+        credit_card.year = 1.month.ago.year
+        credit_card.should_not be_valid
+        credit_card.errors[:base].should == ["Card has expired"]
+      end
+    end
+
     it "does not run expiration in the past validation if month is not set" do
       credit_card.month = nil
       credit_card.year = Time.now.year
@@ -195,9 +209,27 @@ describe Spree::CreditCard do
       expect(credit_card.year).to eq(2014)
     end
 
+    it "can set with a 2-digit month and 4-digit year without whitespace and slash" do
+      credit_card.expiry = '042014'
+      expect(credit_card.month).to eq(4)
+      expect(credit_card.year).to eq(2014)
+    end
+
+    it "can set with a 2-digit month and 2-digit year without whitespace and slash" do
+      credit_card.expiry = '0414'
+      expect(credit_card.month).to eq(4)
+      expect(credit_card.year).to eq(2014)
+    end
+
     it "does not blow up when passed an empty string" do
       lambda { credit_card.expiry = '' }.should_not raise_error
     end
+
+    # Regression test for #4725
+    it "does not blow up when passed one number" do
+      lambda { credit_card.expiry = '12' }.should_not raise_error
+    end
+
   end
 
   context "#cc_type=" do
@@ -271,8 +303,21 @@ describe Spree::CreditCard do
       am_card.year.should == Time.now.year
       am_card.month.should == Time.now.month
       am_card.first_name.should == "Bob"
-      am_card.last_name = "Boblaw"
+      am_card.last_name.should == "Boblaw"
       am_card.verification_value.should == 123
+    end
+
+    context "provides name instead of first and last" do
+      before do
+        credit_card.first_name = credit_card.last_name = nil
+        credit_card.name = "Ludwig van Beethoven"
+      end
+
+      it "falls back to split first and last" do
+        am_card = credit_card.to_active_merchant
+        expect(am_card.first_name).to eq "Ludwig"
+        expect(am_card.last_name).to eq "van Beethoven"
+      end
     end
   end
 end
