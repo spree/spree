@@ -67,10 +67,15 @@ module Spree
         discount ||= order.shipment_adjustments.promotion.detect(&detector)
         discount ||= order.adjustments.promotion.detect(&detector)
 
+        best_promo = order.adjustments.promotion.eligible.first
         if result and discount.eligible
           order.update_totals
           order.persist_totals
           self.success = Spree.t(:coupon_code_applied)
+        elsif best_promo.present? && best_promo != discount
+          self.error = Spree.t(:coupon_code_better_exists)
+        elsif not discount.eligible
+          self.error = Spree.t(:coupon_code_not_eligible)
         else
           # if the promotion was created after the order
           self.error = Spree.t(:coupon_code_not_found)

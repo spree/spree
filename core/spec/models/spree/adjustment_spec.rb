@@ -6,7 +6,9 @@ require 'spec_helper'
 describe Spree::Adjustment do
 
   let(:order) { mock_model(Spree::Order, update!: nil) }
-  let(:adjustment) { Spree::Adjustment.create(:label => "Adjustment", :amount => 5) }
+  let(:default_adjustment_amount) { 5 }
+  let(:updated_adjustment_amount) { 5.5 }
+  let(:adjustment) { Spree::Adjustment.create(:label => "Adjustment", :amount => default_adjustment_amount) }
 
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, state: 'open') }
@@ -74,7 +76,7 @@ describe Spree::Adjustment do
       before { adjustment.stub :closed? => true }
 
       it "does not update the adjustment" do
-        adjustment.should_not_receive(:update_column)
+        adjustment.should_not_receive(:save)
         adjustment.update!
       end
     end
@@ -85,10 +87,36 @@ describe Spree::Adjustment do
       it "updates the amount" do
         adjustment.stub :adjustable => double("Adjustable")
         adjustment.stub :source => double("Source")
-        adjustment.source.should_receive("compute_amount").with(adjustment.adjustable).and_return(5)
-        adjustment.should_receive(:update_columns).with(amount: 5, updated_at: kind_of(Time))
+        adjustment.source.should_receive("compute_amount").with(adjustment.adjustable).and_return(updated_adjustment_amount)
+        adjustment.should_receive(:save)
         adjustment.update!
+        adjustment.amount.should == updated_adjustment_amount
       end
+    end
+
+    context "when updating the eligible attribute" do
+      before(:each) do
+        adjustment.stub :adjustable => double("Adjustable")
+        adjustment.stub :source => double("Source", :promotion => double(Spree::Promotion, :eligible? => true))
+        adjustment.stub :promotion? => true
+        adjustment.source.should_receive("compute_amount").with(adjustment.adjustable)
+      end
+
+      it "skips the update if the adjustment has been already been marked ineligible" do
+        adjustment.eligible = false
+        adjustment.update!
+        adjustment.should_not_receive(:save)
+        adjustment.eligible.should == false
+      end
+
+      it "performs the update if the adjustment has been not been marked ineligible earlier" do
+        adjustment.eligible = true
+        adjustment.source.promotion.should_receive(:eligible?).and_return(false)
+        adjustment.should_receive(:save)
+        adjustment.update!
+        adjustment.eligible.should == false
+      end
+
     end
 
   end

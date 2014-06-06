@@ -63,6 +63,11 @@ module Spree
       source.class < Spree::PromotionAction
     end
 
+    def already_marked_ineligible?
+      # by default eligible is true
+      eligible == false
+    end
+
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid
@@ -77,13 +82,9 @@ module Spree
       return amount if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
-        self.update_columns(
-          amount: amount,
-          updated_at: Time.now,
-        )
-        if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
-        end
+        self.amount = amount
+        self.eligible = source.promotion.eligible?(adjustable) if promotion? && !already_marked_ineligible?
+        self.save if changed?
       end
       amount
     end
