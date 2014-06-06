@@ -103,6 +103,12 @@ module Spree
 
       context '#show' do
         context 'when token parameter present' do
+          it 'always ooverride existing token when passing a new one' do
+            session[:access_token] = "soo wrong"
+            spree_get :show, { :id => 'R123', :token => order.token }
+            session[:access_token].should == order.token
+          end
+
           it 'should store as guest_token in session' do
             spree_get :show, {:id => 'R123', :token => order.token }
             session[:access_token].should == order.token
@@ -121,7 +127,6 @@ module Spree
           end
         end
       end
-
     end
   end
 end
