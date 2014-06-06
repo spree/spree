@@ -18,12 +18,12 @@
   <% end %>
 <% end %>
 
-<% @order.shipments.group_by { |s| s.selected_shipping_rate.name }.each do |name, shipments| %>
+<% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
 <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: @order.currency) %>
 <% end %>
 
-<% if @order.all_adjustments.tax.exists? %>
-  <% @order.all_adjustments.tax.group_by(&:label).each do |label, adjustments| %>
+<% if @order.all_adjustments.eligible.tax.exists? %>
+  <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
 <%= Spree.t(:tax) %>: <%= label %> <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
   <% end %>
 <% end %>

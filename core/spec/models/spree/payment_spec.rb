@@ -787,21 +787,25 @@ describe Spree::Payment do
   end
 
   describe "is_avs_risky?" do
-    it "returns false if avs_response == 'D'" do
-      payment.update_attribute(:avs_response, "D")
-      payment.is_avs_risky?.should == false
-    end
-
-    it "returns false if avs_response == nil" do
-      payment.update_attribute(:avs_response, nil)
-      payment.is_avs_risky?.should == false
-    end
-
-    it "returns true if avs_response == A-Z, omitting D" do
-      # should use avs_response_code helper
-      ('A'..'Z').reject{ |x| x == 'D' }.to_a.each do |char|
+    it "returns false if avs_response included in NON_RISKY_AVS_CODES" do
+      ('A'..'Z').reject{ |x| subject.class::RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
         payment.update_attribute(:avs_response, char)
-        payment.is_avs_risky?.should == true
+        expect(payment.is_avs_risky?).to eq false
+      end
+    end
+
+    it "returns false if avs_response.blank?" do
+      payment.update_attribute(:avs_response, nil)
+      expect(payment.is_avs_risky?).to eq false
+      payment.update_attribute(:avs_response, '')
+      expect(payment.is_avs_risky?).to eq false
+    end
+
+    it "returns true if avs_response in RISKY_AVS_CODES" do
+      # should use avs_response_code helper
+      ('A'..'Z').reject{ |x| subject.class::NON_RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
+        payment.update_attribute(:avs_response, char)
+        expect(payment.is_avs_risky?).to eq true
       end
     end
   end
