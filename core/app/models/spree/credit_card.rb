@@ -106,12 +106,13 @@ module Spree
       gateway_customer_profile_id.present? || gateway_payment_profile_id.present?
     end
 
-    # ActiveMerchant expects an object that responds to #first_name and #last_name.
-    # Even better would be to have spree_gateway always call #to_active_merchant before passing
+    # ActiveMerchant needs first_name/last_name because we pass it a Spree::CreditCard and it calls those methods on it.
+    # Looking at the ActiveMerchant source code we should probably be calling #to_active_merchant before passing
     # the object to ActiveMerchant but this should do for now.
     def first_name
       name.to_s.split(/[[:space:]]/, 2)[0]
     end
+
     def last_name
       name.to_s.split(/[[:space:]]/, 2)[1]
     end
