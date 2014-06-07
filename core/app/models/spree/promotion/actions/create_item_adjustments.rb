@@ -45,7 +45,7 @@ module Spree
             if adjustable.is_a?(Spree::Order)
               adjustable.item_total
             elsif adjustable.is_a?(Spree::LineItem)
-              adjustable.price
+              adjustable.amount
             elsif adjustable.is_a?(Spree::Shipment)
               adjustable.pre_tax_amount
             else

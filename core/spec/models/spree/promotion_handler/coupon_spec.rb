@@ -206,18 +206,43 @@ module Spree
             before(:each) do
               3.times do |i|
                 taxable = create(:product, :tax_category => @category, :price => 11.0)
-                @order.contents.add(taxable.master, 1)
+                @order.contents.add(taxable.master, 2)
               end
             end
             it "successfully applies the promo" do
-              # 3 * (11 + 1.1)
-              @order.total.should == 36.3
+              # 3 * (22 + 2.2)
+              @order.total.to_f.should == 72.6
               coupon = Coupon.new(@order)
               coupon.apply
               expect(coupon.success).to be_present
-              # 3 * ( (11 - 10) + 0.1)
-              @order.reload.total.should == 3.3
-              @order.additional_tax_total.should == 0.3
+              # 3 * ( (22 - 10) + 1.2)
+              @order.reload.total.should == 39.6
+              @order.additional_tax_total.should == 3.6
+            end
+          end
+          context "and multiple quantity per line item" do
+            before(:each) do
+              twnty_off = Promotion.create name: "promo", :code => "20off"
+              twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
+              Promotion::Actions::CreateItemAdjustments.create(promotion: twnty_off,
+                                                               calculator: twnty_off_calc)
+
+              @order.unstub :coupon_code
+              @order.stub :coupon_code => "20off"
+              3.times do |i|
+                taxable = create(:product, :tax_category => @category, :price => 10.0)
+                @order.contents.add(taxable.master, 2)
+              end
+            end
+            it "successfully applies the promo" do
+              # 3 * ((2 * 10) + 2.0)
+              @order.total.to_f.should == 66
+              coupon = Coupon.new(@order)
+              coupon.apply
+              expect(coupon.success).to be_present
+              # 0
+              @order.reload.total.should == 0
+              @order.additional_tax_total.should == 0
             end
           end
         end
