@@ -24,6 +24,7 @@ module Spree
       run_hooks
       persist_totals
     end
+    Spree.instrument_method self, :update
 
     def run_hooks
       update_hooks.each { |hook| order.send hook }
@@ -111,6 +112,7 @@ module Spree
         updated_at: Time.now,
       )
     end
+    Spree.instrument_method self, :persist_totals
 
     # Updates the +shipment_state+ attribute according to the following logic:
     #

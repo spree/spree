@@ -559,6 +559,7 @@ module Spree
       updater.update_shipment_total
       persist_totals
     end
+    Spree.instrument_method self, :set_shipments_cost
 
     def is_risky?
       self.payments.risky.count > 0
