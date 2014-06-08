@@ -57,6 +57,7 @@ require 'spree/migrations'
 require 'spree/core/engine'
 
 require 'spree/i18n'
+require 'spree/instrumentation'
 require 'spree/money'
 
 require 'spree/permitted_attributes'
