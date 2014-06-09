@@ -41,19 +41,9 @@ module Spree
         # Ensure a negative amount which does not exceed the sum of the order's
         # item_total and ship_total
         def compute_amount(adjustable)
-          adjustable_amount = 
-            if adjustable.is_a?(Spree::Order)
-              adjustable.item_total
-            elsif adjustable.is_a?(Spree::LineItem)
-              adjustable.amount
-            elsif adjustable.is_a?(Spree::Shipment)
-              adjustable.pre_tax_amount
-            else
-              raise "Unsupported Adjustable: #{adjustable.inspect}"
-            end
           promotion_amount = self.calculator.compute(adjustable).to_f.abs
           
-          [adjustable_amount, promotion_amount].min * -1
+          [adjustable.amount, promotion_amount].min * -1
         end
 
         private
