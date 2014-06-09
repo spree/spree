@@ -2,6 +2,8 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree::Base
+    acts_as_paranoid
+
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
     scope :of_type, ->(t) { where(type: t) }
