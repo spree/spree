@@ -58,6 +58,12 @@ module Spree
       amount + promo_total
     end
 
+    # Since pre_tax amount only gets set for included tax...
+    # https://github.com/spree/spree/blob/6ac5b6d0106405b88f66310c7a7cc4e7149e3543/core/app/models/spree/tax_rate.rb#L58
+    def pre_tax_amount
+      read_attribute(:pre_tax_amount) || (discounted_amount - included_tax_total)
+    end
+
     def final_amount
       amount + adjustment_total.to_f
     end
@@ -96,10 +102,6 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
-    def pre_tax_amount
-      read_attribute(:pre_tax_amount) || BigDecimal("0.0")
-    end
-
     private
       def update_inventory
         if changed? || target_shipment.present?
@@ -121,7 +123,7 @@ module Spree
 
       def recalculate_external_adjustment_total
         unless pre_tax_percentage_of_order.zero?
-          update_columns(external_adjustment_total: order.adjustment_total * pre_tax_percentage_of_order)
+          update_columns(external_adjustment_total: (order.adjustment_total * pre_tax_percentage_of_order).round(2))
         end
       end
 

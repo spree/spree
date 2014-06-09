@@ -224,21 +224,15 @@ describe Spree::LineItem do
 
   describe "#external_promotion_total" do
     let!(:order)                { create :order_with_line_items, line_items_count: 2 }
-    let!(:line_item)            { order.line_items.first.tap { |li| li.update_attributes(price: 70) } }
-    let!(:line_item_2)          { order.line_items.last.tap { |li| li.update_attributes(price: 40) } }
-    let(:item_promotion_action) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10).promotion_actions.first }
-    before                      { item_promotion_action.perform(order: order) }
+    let!(:line_item)            { order.line_items.first.tap { |li| li.stub(:discounted_amount) { 60 } } }
+    let!(:line_item_2)          { order.line_items.last.tap { |li| li.stub(:discounted_amount) { 30 } } }
 
     context "order promotion exists" do
-      let(:order_promotion_action) { create(:promotion, :with_order_adjustment, order_adjustment_amount: 30).promotion_actions.first }
-      before                       { order_promotion_action.perform(order: order) }
+      before { order.stub(:adjustment_total).and_return(BigDecimal("-30.0")) }
 
       it "stores a snapshot of the line item's portion of order promotions exclusive of taxes" do
-        order.reload
         line_item.save
         line_item_2.save
-        line_item.reload
-        line_item_2.reload
         expect(line_item.external_adjustment_total).to eq -20.0
         expect(line_item_2.external_adjustment_total).to eq -10.0
       end
@@ -248,8 +242,6 @@ describe Spree::LineItem do
       it "is 0" do
         line_item.save
         line_item_2.save
-        line_item.reload
-        line_item_2.reload
         expect(line_item.external_adjustment_total).to eq 0.0
         expect(line_item_2.external_adjustment_total).to eq 0.0
       end
