@@ -38,6 +38,19 @@ describe Spree::Payment do
     payment.log_entries.stub(:create!)
   end
 
+  context '.risky' do
+
+    let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }
+    let!(:payment_2) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '') }
+    let!(:payment_3) { create(:payment, avs_response: 'A', cvv_response_code: 'M', cvv_response_message: 'Match') }
+    let!(:payment_4) { create(:payment, avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: 'No Match') }
+
+    it 'should not return successful responses' do
+      expect(subject.class.risky.to_a).to match_array([payment_3, payment_4])
+    end
+
+  end
+
   context '#uncaptured_amount' do
     it "sets uncaptured amount on save" do
       expect(payment.uncaptured_amount).to eq(0)
