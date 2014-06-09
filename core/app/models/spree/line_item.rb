@@ -27,6 +27,7 @@ module Spree
 
     after_save :update_inventory
     after_save :update_adjustments
+    after_save :recalculate_external_adjustment_total
 
     after_create :update_tax_charge
 
@@ -95,6 +96,10 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
+    def pre_tax_amount
+      read_attribute(:pre_tax_amount) || BigDecimal("0.0")
+    end
+
     private
       def update_inventory
         if changed? || target_shipment.present?
@@ -106,6 +111,17 @@ module Spree
         if quantity_changed?
           update_tax_charge # Called to ensure pre_tax_amount is updated. 
           recalculate_adjustments
+        end
+      end
+
+      def pre_tax_percentage_of_order
+        return 0.0 if order.pre_tax_item_amount.zero?
+        pre_tax_amount / order.pre_tax_item_amount
+      end
+
+      def recalculate_external_adjustment_total
+        unless pre_tax_percentage_of_order.zero?
+          update_columns(external_adjustment_total: order.adjustment_total * pre_tax_percentage_of_order)
         end
       end
 

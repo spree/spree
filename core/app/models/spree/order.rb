@@ -124,6 +124,11 @@ module Spree
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
+    # Sum of all line item amounts pre-tax
+    def pre_tax_item_amount
+      line_items.inject(0.0) { |sum, li| sum + li.pre_tax_amount }
+    end
+
     def currency
       self[:currency] || Spree::Config[:currency]
     end

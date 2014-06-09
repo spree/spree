@@ -4,13 +4,6 @@ describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
-  context '#save' do
-    it 'touches the order' do
-      line_item.order.should_receive(:touch)
-      line_item.save
-    end
-  end
-
   context '#destroy' do
     it "fetches deleted products" do
       line_item.product.destroy
@@ -29,6 +22,16 @@ describe Spree::LineItem do
   end
 
   context "#save" do
+    it 'touches the order' do
+      line_item.order.should_receive(:touch)
+      line_item.save
+    end
+
+    it "triggers external_adjustment_total recalculation" do
+      line_item.should_receive(:recalculate_external_adjustment_total)
+      line_item.save
+    end
+
     context "line item changes" do
       before do
         line_item.quantity = line_item.quantity + 1
@@ -216,6 +219,40 @@ describe Spree::LineItem do
   context "saving with currency different than order.currency" do
     it "doesn't save the line_item" do
       expect { order.line_items.first.update_attributes!(currency: 'AUD') }.to raise_error
+    end
+  end
+
+  describe "#external_promotion_total" do
+    let!(:order)                { create :order_with_line_items, line_items_count: 2 }
+    let!(:line_item)            { order.line_items.first.tap { |li| li.update_attributes(price: 70) } }
+    let!(:line_item_2)          { order.line_items.last.tap { |li| li.update_attributes(price: 40) } }
+    let(:item_promotion_action) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10).promotion_actions.first }
+    before                      { item_promotion_action.perform(order: order) }
+
+    context "order promotion exists" do
+      let(:order_promotion_action) { create(:promotion, :with_order_adjustment, order_adjustment_amount: 30).promotion_actions.first }
+      before                       { order_promotion_action.perform(order: order) }
+
+      it "stores a snapshot of the line item's portion of order promotions exclusive of taxes" do
+        order.reload
+        line_item.save
+        line_item_2.save
+        line_item.reload
+        line_item_2.reload
+        expect(line_item.external_adjustment_total).to eq -20.0
+        expect(line_item_2.external_adjustment_total).to eq -10.0
+      end
+    end
+
+    context "order promotion does not exist" do
+      it "is 0" do
+        line_item.save
+        line_item_2.save
+        line_item.reload
+        line_item_2.reload
+        expect(line_item.external_adjustment_total).to eq 0.0
+        expect(line_item_2.external_adjustment_total).to eq 0.0
+      end
     end
   end
 end
