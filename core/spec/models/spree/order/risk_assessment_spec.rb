@@ -50,13 +50,6 @@ describe Spree::Order do
         end
       end
 
-      context "CVV response message" do
-        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_message: "foobar'd")]) }
-        it "returns true if the order has an cvv_response_message" do
-          order.is_risky?.should == true
-        end
-      end
-
       context "CVV response code" do
         let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
         it "returns true if the order has an cvv_response_code" do
