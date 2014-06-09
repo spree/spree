@@ -73,7 +73,7 @@ module Spree
           context "calculator returns amount greater than item total" do
             before do
               action.calculator.should_receive(:compute).with(line_item).and_return(300)
-              line_item.stub(total: 100)
+              line_item.stub(amount: 100)
             end
 
             it "does not exceed it" do
