@@ -21,7 +21,7 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
-    friendly_id :name, use: :slugged
+    friendly_id :slug_candidates, use: :slugged
 
     acts_as_paranoid
 
@@ -79,8 +79,11 @@ module Spree
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
     validates :slug, length: { minimum: 3 }
+    validates :slug, uniqueness: true
 
     before_validation :normalize_slug, on: :update
+
+    after_destroy :punch_slug
 
     attr_accessor :option_values_hash
 
@@ -211,6 +214,7 @@ module Spree
     end
 
     private
+
       def normalize_slug
         self.slug = normalize_friendly_id(slug)
       end
@@ -263,6 +267,19 @@ module Spree
         taxonomy_ids_to_touch = taxons_to_touch.map(&:taxonomy_id).flatten.uniq
         Spree::Taxonomy.where(id: taxonomy_ids_to_touch).update_all(updated_at: Time.current)
       end
+
+      # Try building a slug based on the following fields in increasing order of specificity.
+      def slug_candidates
+        [
+            :name,
+            [:name, :sku]
+        ]
+      end
+
+      def punch_slug
+        update(slug: "#{Time.now.to_i}_#{slug}") # punch slug with date prefix to allow reuse of original
+      end
+
   end
 end
 
