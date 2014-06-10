@@ -19,8 +19,8 @@ desc "Runs all tests in all Spree engines"
 task :test do
   Rake::Task['test_app'].invoke
   %w(api backend core frontend sample).each do |gem_name|
-    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
-      system("rspec --fail-fast") or exit!(1)
+    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}/spec") do
+      system("rake")
     end
   end
 end
