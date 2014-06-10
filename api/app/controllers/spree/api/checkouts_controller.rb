@@ -35,6 +35,7 @@ module Spree
 
           return if after_update_attributes
           state_callback(:after) if @order.next
+          OrderUpdater.new(@order).update
           respond_with(@order, default_template: 'spree/api/orders/show')
         else
           invalid_resource!(@order)
