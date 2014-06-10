@@ -74,25 +74,28 @@ module Spree
       count
     end
 
-    def fill_backorders(number)
-      raise "item not backordered" unless backordered?
-      return if number.zero?
-      if number >= quantity
-        update!(state: 'on_hand')
-        update_order
-        quantity
-      else
-        InventoryUnit.create! do |unit|
-          unit.quantity = number
-          unit.state = 'on_hand'
-          unit.variant_id = variant_id
-          unit.line_item_id = line_item_id
-          unit.shipment_id = shipment_id
-        end
-        update!(quantity: quantity - number)
-        update_order
-        number
+    # Splits `count` units into a new duplicate (other than quantity) record.
+    # The new record is yielded before saving, and the saved record is
+    # returned.
+    def split!(count)
+      raise ArgumentError if count <= 0
+      count = remove(count)
+      InventoryUnit.create! do |unit|
+        unit.quantity = count
+        unit.variant_id = variant_id
+        unit.line_item_id = line_item_id
+        unit.shipment_id = shipment_id
+        unit.state = state
+        yield unit
       end
+    end
+
+    def fill_backorders(count)
+      raise "item not backordered" unless backordered?
+      return if count.zero?
+      split!(count) do |unit|
+        unit.state = 'on_hand'
+      end.quantity
     end
 
     # Remove variant default_scope `deleted_at: nil`
