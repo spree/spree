@@ -17,7 +17,7 @@ module Spree
         def stub_authorization!(&block)
           ability_class = build_ability(&block)
           before do
-            controller.stub(:current_ability).and_return{ ability_class.new(nil) }
+            allow(controller).to receive(:current_ability).and_return{ ability_class.new(nil) }
           end
         end
       end
@@ -37,7 +37,7 @@ module Spree
           end
 
           before do
-            Api::BaseController.any_instance.stub :try_spree_current_user => Spree.user_class.new
+            allow_any_instance_of(Api::BaseController).to receive(:try_spree_current_user).and_return(Spree.user_class.new)
           end
         end
 
