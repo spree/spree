@@ -486,7 +486,7 @@ module Spree
 
           orders = json_response["orders"]
           expect(orders.count).to be >= 3
-          expect(orders.map { |o| o["id"] }).to eq Order.pluck(:id)
+          expect(orders.map { |o| o["id"] }.sort).to eq(Order.order(:id).pluck(:id))
         end
 
         after { ActionController::Base.perform_caching = false }
