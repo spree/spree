@@ -24,10 +24,7 @@ module Spree
               order.state = 'complete'
             end
 
-            user_id = params.delete(:user_id)
-            if user && user.has_spree_role?("admin")
-              order.user_id = user_id
-            end
+            params.delete(:user_id) unless user.try(:has_spree_role?, "admin") && params.key?(:user_id)
 
             order.update_attributes!(params)
             # Really ensure that the order totals are correct
