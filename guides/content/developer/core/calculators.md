@@ -184,6 +184,13 @@ config.spree.calculators.shipping_methods << CustomCalculator
 config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator
 ```
 
+For example if your calculator is placed in `app/models/spree/calculator/shipping/my_own_calculator.rb` you should call:
+
+```
+config = Rails.application.config
+config.spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
+```
+
 ### Determining Availability
 
 By default, all shipping method calculators are available at all times. If you wish to make this dependent on something from the order, you can re-define the `available?` method inside your calculator:
