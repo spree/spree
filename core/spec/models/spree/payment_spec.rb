@@ -773,7 +773,7 @@ describe Spree::Payment do
       its(:amount) { should eql(BigDecimal('1.55')) }
     end
 
-    context "when the locale uses a coma as a decimal separator" do
+    context "when the locale uses a comma as a decimal separator" do
       before(:each) do
         I18n.backend.store_translations(:fr, { :number => { :currency => { :format => { :delimiter => ' ', :separator => ',' } } } })
         I18n.locale = :fr
