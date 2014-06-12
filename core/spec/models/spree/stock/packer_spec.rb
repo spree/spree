@@ -25,7 +25,6 @@ module Spree
         it 'contains all the items' do
           package = subject.default_package
           package.contents.size.should eq 5
-          package.weight.should > 0
         end
 
         it 'variants are added as backordered without enough on_hand' do
