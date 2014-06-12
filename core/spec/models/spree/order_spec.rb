@@ -624,4 +624,15 @@ describe Spree::Order do
       order.tax_total.should eq 30
     end
   end
+
+  describe "#pre_tax_item_amount" do
+    it "sums all of the line items' pre tax amounts" do
+      subject.line_items = [
+        Spree::LineItem.new(price: 10, quantity: 2, included_tax_total: 2, additional_tax_total: 8, promo_total: -5),
+        Spree::LineItem.new(price: 30, quantity: 1, included_tax_total: 4, additional_tax_total: 10, promo_total: -20),
+      ]
+
+      expect(subject.pre_tax_item_amount).to eq 19.0
+    end
+  end
 end

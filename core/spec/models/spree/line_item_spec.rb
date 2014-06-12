@@ -4,6 +4,13 @@ describe Spree::LineItem do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
+  context '#save' do
+    it 'touches the order' do
+      line_item.order.should_receive(:touch)
+      line_item.save
+    end
+  end
+
   context '#destroy' do
     it "fetches deleted products" do
       line_item.product.destroy
@@ -22,16 +29,6 @@ describe Spree::LineItem do
   end
 
   context "#save" do
-    it 'touches the order' do
-      line_item.order.should_receive(:touch)
-      line_item.save
-    end
-
-    it "triggers external_adjustment_total recalculation" do
-      line_item.should_receive(:recalculate_external_adjustment_total)
-      line_item.save
-    end
-
     context "line item changes" do
       before do
         line_item.quantity = line_item.quantity + 1
@@ -222,29 +219,35 @@ describe Spree::LineItem do
     end
   end
 
-  describe "#external_promotion_total" do
-    let!(:order)                { create :order_with_line_items, line_items_count: 2 }
-    let!(:line_item)            { order.line_items.first.tap { |li| li.stub(:discounted_amount) { 60 } } }
-    let!(:line_item_2)          { order.line_items.last.tap { |li| li.stub(:discounted_amount) { 30 } } }
+  describe "#pre_tax_amount" do
+    context "a stored value exists" do
+      before { subject.pre_tax_amount = 5.0 }
 
-    context "order promotion exists" do
-      before { order.stub(:adjustment_total).and_return(BigDecimal("-30.0")) }
-
-      it "stores a snapshot of the line item's portion of order promotions exclusive of taxes" do
-        line_item.save
-        line_item_2.save
-        expect(line_item.external_adjustment_total).to eq -20.0
-        expect(line_item_2.external_adjustment_total).to eq -10.0
+      it "uses the stored value" do
+        expect(subject.pre_tax_amount).to eq 5.0
       end
     end
 
-    context "order promotion does not exist" do
-      it "is 0" do
-        line_item.save
-        line_item_2.save
-        expect(line_item.external_adjustment_total).to eq 0.0
-        expect(line_item_2.external_adjustment_total).to eq 0.0
+    context "a stored value does not exist" do
+      before do
+        subject.assign_attributes(pre_tax_amount: nil,
+                                  price: 100.0,
+                                  quantity: 1,
+                                  additional_tax_total: 7.0,
+                                  included_tax_total: 3.0,
+                                  promo_total: -20.0)
       end
+
+      it "returns the discounted amount exclusive of tax" do
+        expect(subject.pre_tax_amount).to eq 77.0
+      end
+    end
+  end
+
+  describe "#total_taxes" do
+    it "returns inclusive and exclusive taxes" do
+      subject.assign_attributes(additional_tax_total: 7.0, included_tax_total: 3.0)
+      expect(subject.total_taxes).to eq 10.0
     end
   end
 end
