@@ -6,6 +6,7 @@ module Spree
     let(:line_item) { order.line_items.first }
 
     let(:subject) { ItemAdjustments.new(line_item) }
+    let(:order_subject) { ItemAdjustments.new(order) }
 
     context '#update' do
       it "updates a linked adjustment" do
@@ -46,6 +47,7 @@ module Spree
           create(:adjustment, 
             :source => tax_rate,
             :adjustable => line_item,
+            :order => order,
             :included => true
           )
         end
@@ -58,6 +60,13 @@ module Spree
           line_item.promo_total.should == -10
           line_item.adjustment_total.should == -10
         end
+
+        it "tax linked to order" do
+          order_subject.update_adjustments
+          order.reload
+          order.included_tax_total.should == 0.5
+          order.additional_tax_total.should == 00
+        end
       end
 
       context "tax excluded from price" do
@@ -65,6 +74,7 @@ module Spree
           create(:adjustment, 
             :source => tax_rate,
             :adjustable => line_item,
+            :order => order,
             :included => false
           )
         end
@@ -78,6 +88,13 @@ module Spree
           line_item.additional_tax_total.should == 0.5
           line_item.promo_total.should == -10
           line_item.adjustment_total.should == -9.5
+        end
+
+        it "tax linked to order" do
+          order_subject.update_adjustments
+          order.reload
+          order.included_tax_total.should == 0
+          order.additional_tax_total.should == 0.5
         end
       end
     end
