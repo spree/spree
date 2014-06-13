@@ -136,9 +136,3 @@ Finally, if the order's address is changed to being outside this tax zone, then 
 !!!
 All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive interpretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.
 !!!
-
-### Quebec Sales Tax (QST)
-
-In Quebec, Canada there are two different tax rates to consider. There is the Goods and Services Tax (GST) which is calculated at 5% of the sales price. There is also the Quebec Sales Tax of 9.5% on the sale price including GST.
-
-Since Spree does not currently support the notion of compound tax rates you can calculate a combined sales tax amount instead. In this case you can create a single sales tax rate of 14.975%. This approach is allowed [according to the Quebec government](http://www.revenuquebec.ca/en/entreprise/taxes/tvq_tps/calcul-taxes.aspx). Follow the link for details.
