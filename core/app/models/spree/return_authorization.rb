@@ -81,16 +81,17 @@ module Spree
       end
 
       def process_return
-        inventory_units.each do |iu|
+        inventory_units(include: :variant).each do |iu|
           iu.return!
-          stock_item = Spree::StockItem.where(variant_id: iu.variant.id, stock_location_id: stock_location_id).first
-          Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1)
+
+          if iu.variant.should_track_inventory?
+            if stock_item = Spree::StockItem.find_by(variant_id: iu.variant_id, stock_location_id: stock_location_id)
+              Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1)
+            end
+          end
         end
 
-        credit = Adjustment.new(amount: compute_amount, label: Spree.t(:rma_credit))
-        credit.source = self
-        credit.adjustable = order
-        credit.save
+        Adjustment.create(adjustable: order, amount: compute_amount, label: Spree.t(:rma_credit), source: self)
         order.update!
 
         order.return if inventory_units.all?(&:returned?)

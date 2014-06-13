@@ -99,11 +99,7 @@ describe Spree::ReturnAuthorization do
 
       it "should add credit for specified amount" do
         return_authorization.amount = 20
-        mock_adjustment = double
-        mock_adjustment.should_receive(:source=).with(return_authorization)
-        mock_adjustment.should_receive(:adjustable=).with(order)
-        mock_adjustment.should_receive(:save)
-        Spree::Adjustment.should_receive(:new).with(:amount => -20, :label => Spree.t(:rma_credit)).and_return(mock_adjustment)
+        Spree::Adjustment.should_receive(:create).with(adjustable: order, amount: -20, label: Spree.t(:rma_credit), source: return_authorization)
         return_authorization.receive!
       end
 
@@ -117,10 +113,25 @@ describe Spree::ReturnAuthorization do
         return_authorization.receive!
         inventory_unit.find_stock_item.count_on_hand.should == count_on_hand + 1
       end
+
+      context 'with Config.track_inventory_levels == false' do
+        before do
+          Spree::Config.track_inventory_levels = false
+          expect(Spree::StockItem).not_to receive(:find_by)
+          expect(Spree::StockMovement).not_to receive(:create!)
+        end
+
+        it "should NOT update the stock item counts in the stock location" do
+          count_on_hand = inventory_unit.find_stock_item.count_on_hand
+          return_authorization.receive!
+          expect(inventory_unit.find_stock_item.count_on_hand).to eql count_on_hand
+        end
+      end
     end
 
     context "to a different stock location" do
       let(:new_stock_location) { FactoryGirl.create(:stock_location, :name => "other") }
+
       before do
         return_authorization.stub(:stock_location_id => new_stock_location.id)
         return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
@@ -130,6 +141,11 @@ describe Spree::ReturnAuthorization do
         count_on_hand = Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
         return_authorization.receive!
         Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand.should == count_on_hand + 1
+      end
+
+      it "should NOT raise an error when no stock item exists in the stock location" do
+        inventory_unit.find_stock_item.destroy
+        expect { return_authorization.receive! }.not_to raise_error
       end
 
       it "should not update the stock item counts in the original stock location" do
