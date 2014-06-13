@@ -24,6 +24,12 @@ describe Spree::Adjustment do
     end
   end
 
+  context '#currency' do
+    it 'returns the globally configured currency' do
+      adjustment.currency.should == 'USD'
+    end
+  end
+
   context "#display_amount" do
     before { adjustment.amount = 10.55 }
 
@@ -63,12 +69,6 @@ describe Spree::Adjustment do
     end
   end
 
-  context '#currency' do
-    it 'returns the globally configured currency' do
-      adjustment.currency.should == 'USD'
-    end
-  end
-
   context '#update!' do
     context "when adjustment is closed" do
       before { adjustment.stub :closed? => true }
@@ -90,6 +90,6 @@ describe Spree::Adjustment do
         adjustment.update!
       end
     end
-
   end
+
 end
