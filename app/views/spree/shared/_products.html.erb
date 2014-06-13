@@ -19,7 +19,7 @@
 <div id="products" class="row" data-hook>
   <% products.each do |product| %>
     <% url = product_url(product, :taxon_id => @taxon.try(:id)) %>
-    <div id="product_<%= product.id %>" class="col-md-3 col-sm-6" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+    <div id="product_<%= product.id %>" class="col-md-3 col-sm-6 product-list-item" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
       <div class="panel panel-default">
         <% cache(@taxon.present? ? [current_currency, @taxon, product] : [current_currency, product]) do %>
           <div class="panel-body text-center product-body">

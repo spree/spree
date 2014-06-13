@@ -23,12 +23,12 @@ describe "Checkout", inaccessible: true do
       end
 
       it "should default checkbox to checked", inaccessible: true do
-        find('input#order_use_billing').should be_checked
+        expect(find('input#order_use_billing')).to be_checked
       end
 
       it "should remain checked when used and visitor steps back to address step", :js => true do
         fill_in_address
-        find('input#order_use_billing').should be_checked
+        expect(find('input#order_use_billing')).to be_checked
       end
     end
 
@@ -40,15 +40,15 @@ describe "Checkout", inaccessible: true do
       end
 
       specify do
-        Spree::Order.count.should == 1
-        Spree::Order.last.state.should == "address"
+        expect(Spree::Order.count).to eq 1
+        expect(Spree::Order.last.state).to eq "address"
       end
     end
 
     # Regression test for #1596
     context "full checkout" do
       before do
-        shipping_method.calculator.preferred_amount = 10
+        shipping_method.calculator.update!(preferred_amount: 10)
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
@@ -62,9 +62,9 @@ describe "Checkout", inaccessible: true do
         fill_in_address
 
         click_button "Save and Continue"
-        page.should_not have_content("undefined method `promotion'")
+        expect(page).to_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content("Shipping total $10.00")
+        expect(page).to have_content("Shipping total $10.00")
       end
     end
 
@@ -109,8 +109,8 @@ describe "Checkout", inaccessible: true do
       fill_in "Card Code", :with => '123'
       click_button "Save and Continue"
       click_button "Place Order"
-      page.should have_content("Bogus Gateway: Forced failure")
-      page.current_url.should include("/checkout/payment")
+      expect(page).to have_content("Bogus Gateway: Forced failure")
+      expect(page.current_url).to include("/checkout/payment")
     end
   end
 
@@ -132,14 +132,14 @@ describe "Checkout", inaccessible: true do
       click_button "Save and Continue"
       click_button "Save and Continue"
 
-      continue_button = find(".continue")
-      continue_button.value.should == "Place Order"
+      continue_button = find("#checkout .btn-success")
+      expect(continue_button.value).to eq "Place Order"
     end
   end
 
   context "and likes to double click buttons" do
     let!(:user) { create(:user) }
-    
+
     let!(:order) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true
@@ -162,9 +162,9 @@ describe "Checkout", inaccessible: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_payment').submit(function(){return false;})")
 
-      page.should_not have_selector('input.button[disabled]')
+      expect(page).to_not have_selector('input.btn[disabled]')
       click_button "Save and Continue"
-      page.should have_selector('input.button[disabled]')
+      expect(page).to have_selector('input.btn[disabled]')
     end
 
     it "prevents double clicking the confirm button on checkout", :js => true do
@@ -174,9 +174,9 @@ describe "Checkout", inaccessible: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_confirm').submit(function(){return false;})")
 
-      page.should_not have_selector('input.button[disabled]')
+      expect(page).to_not have_selector('input.btn[disabled]')
       click_button "Place Order"
-      page.should have_selector('input.button[disabled]')
+      expect(page).to have_selector('input.btn[disabled]')
     end
   end
 

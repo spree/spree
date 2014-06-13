@@ -60,7 +60,7 @@ describe "viewing products" do
 
     it 'display title from taxon root and taxon name' do
       visit '/t/category/super-clothing/t-shirts'
-      page.should have_title('Category - T-Shirts - Spree Demo Site')
+      page.should have_title("Category - T-Shirts - #{Spree::Store.default.name}")
     end
 
     # Regression test for #2814
@@ -82,8 +82,8 @@ describe "viewing products" do
     it "should be able to visit brand Ruby on Rails" do
       within(:css, '#taxonomies') { click_link "Ruby on Rails" }
 
-      page.all('ul.product-listing li').size.should == 7
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 7
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       array = ["Ruby on Rails Bag",
        "Ruby on Rails Baseball Jersey",
@@ -98,8 +98,8 @@ describe "viewing products" do
     it "should be able to visit brand Ruby" do
       within(:css, '#taxonomies') { click_link "Ruby" }
 
-      page.all('ul.product-listing li').size.should == 1
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 1
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby Baseball Jersey"]
     end
@@ -107,8 +107,8 @@ describe "viewing products" do
     it "should be able to visit brand Apache" do
       within(:css, '#taxonomies') { click_link "Apache" }
 
-      page.all('ul.product-listing li').size.should == 1
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 1
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Apache Baseball Jersey"]
     end
@@ -116,8 +116,8 @@ describe "viewing products" do
     it "should be able to visit category Clothing" do
       click_link "Clothing"
 
-      page.all('ul.product-listing li').size.should == 5
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 5
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Apache Baseball Jersey",
      "Ruby Baseball Jersey",
@@ -129,8 +129,8 @@ describe "viewing products" do
     it "should be able to visit category Mugs" do
       click_link "Mugs"
 
-      page.all('ul.product-listing li').size.should == 2
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 2
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Stein"]
     end
@@ -138,8 +138,8 @@ describe "viewing products" do
     it "should be able to visit category Bags" do
       click_link "Bags"
 
-      page.all('ul.product-listing li').size.should == 2
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 2
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby on Rails Bag", "Ruby on Rails Tote"]
     end

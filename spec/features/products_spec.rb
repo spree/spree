@@ -71,7 +71,7 @@ describe "Visiting Products", inaccessible: true do
     fill_in "keywords", :with => "shirt"
     click_button "Search"
 
-    page.all('ul.product-listing li').size.should == 1
+    page.all('#products .product-list-item').size.should == 1
   end
 
   context "a product with variants" do
@@ -129,11 +129,11 @@ describe "Visiting Products", inaccessible: true do
   end
 
   it "should be able to hide products without price" do
-    page.all('ul.product-listing li').size.should == 9
+    page.all('#products .product-list-item').size.should == 9
     Spree::Config.show_products_without_price = false
     Spree::Config.currency = "CAN"
     visit spree.root_path
-    page.all('ul.product-listing li').size.should == 0
+    page.all('#products .product-list-item').size.should == 0
   end
 
 
@@ -149,8 +149,8 @@ describe "Visiting Products", inaccessible: true do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 3
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    page.all('#products .product-list-item').size.should == 3
+    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete("")
     tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Stein", "Ruby on Rails Tote"]
   end
@@ -161,12 +161,12 @@ describe "Visiting Products", inaccessible: true do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 2
-    products = page.all('ul.product-listing li a[itemprop=name]')
+    page.all('#products .product-list-item').size.should == 2
+    products = page.all('#products .product-list-item a[itemprop=name]')
     products.count.should == 2
 
-    find('nav.pagination .next a').click
-    products = page.all('ul.product-listing li a[itemprop=name]')
+    find('.pagination .next a').click
+    products = page.all('#products .product-list-item a[itemprop=name]')
     products.count.should == 1
   end
 
@@ -176,8 +176,8 @@ describe "Visiting Products", inaccessible: true do
     check "Price_Range_$20.00_or_over"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    page.all('ul.product-listing li').size.should == 4
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    page.all('#products .product-list-item').size.should == 4
+    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete("")
     tmp.sort!.should == ["Ruby on Rails Bag",
                          "Ruby on Rails Baseball Jersey",
