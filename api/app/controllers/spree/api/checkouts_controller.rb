@@ -110,10 +110,6 @@ module Spree
           send(method_name) if respond_to?(method_name, true)
         end
 
-        def before_payment
-          @order.payments.destroy_all if request.put?
-        end
-
         def next!(options={})
           if @order.valid? && @order.next
             render 'spree/api/orders/show', status: options[:status] || 200
