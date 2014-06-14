@@ -76,10 +76,6 @@ module Spree
           send(method_name) if respond_to?(method_name, true)
         end
 
-        def before_payment
-          @order.payments.destroy_all if request.put?
-        end
-
         def after_update_attributes
           if nested_params && nested_params[:coupon_code].present?
             handler = PromotionHandler::Coupon.new(@order).apply
