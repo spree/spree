@@ -5,10 +5,12 @@ class AddLineItemIdToSpreeInventoryUnits < ActiveRecord::Migration
       add_column :spree_inventory_units, :line_item_id, :integer
       add_index :spree_inventory_units, :line_item_id
 
-      Spree::Shipment.includes(:inventory_units, :order).find_each do |shipment|
-        shipment.inventory_units.group_by(&:variant).each do |variant, units|
+      shipments = Spree::Shipment.includes(:inventory_units, :order)
 
-          line_item = shipment.order.find_line_item_by_variant(variant)
+      shipments.find_each do |shipment|
+        shipment.inventory_units.group_by(&:variant_id).each do |variant, units|
+
+          line_item = shipment.order.line_items.find_by(variant_id: variant_id)
           next unless line_item
 
           Spree::InventoryUnit.where(id: units.map(&:id)).update_all(line_item_id: line_item.id)
