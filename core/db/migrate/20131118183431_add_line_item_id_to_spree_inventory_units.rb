@@ -5,9 +5,7 @@ class AddLineItemIdToSpreeInventoryUnits < ActiveRecord::Migration
       add_column :spree_inventory_units, :line_item_id, :integer
       add_index :spree_inventory_units, :line_item_id
 
-      shipments = Spree::Shipment.includes(:inventory_units, :order)
-
-      shipments.find_each do |shipment|
+      Spree::Shipment.includes(:inventory_units, :order).find_each do |shipment|
         shipment.inventory_units.group_by(&:variant).each do |variant, units|
 
           line_item = shipment.order.find_line_item_by_variant(variant)
