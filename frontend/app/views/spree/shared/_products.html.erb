@@ -9,11 +9,17 @@
   <% end %>
 <% end %>
 
-<% if products.empty? %>
-  <%= Spree.t(:no_products_found) %>
-<% elsif params.key?(:keywords) %>
-  <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
-<% end %>
+<div data-hook="products_search_results_heading">
+  <% if products.empty? %>
+    <div data-hook="products_search_results_heading_no_results_found">
+      <%= Spree.t(:no_products_found) %>
+    </div>
+  <% elsif params.key?(:keywords) %>
+    <div data-hook="products_search_results_heading_results_found">
+      <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
+    </div>
+  <% end %>
+</div>
 
 <% if products.any? %>
 <ul id="products" class="inline product-listing" data-hook>
