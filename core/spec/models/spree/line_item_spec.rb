@@ -218,4 +218,36 @@ describe Spree::LineItem do
       expect { order.line_items.first.update_attributes!(currency: 'AUD') }.to raise_error
     end
   end
+
+  describe "#pre_tax_amount" do
+    context "a stored value exists" do
+      before { subject.pre_tax_amount = 5.0 }
+
+      it "uses the stored value" do
+        expect(subject.pre_tax_amount).to eq 5.0
+      end
+    end
+
+    context "a stored value does not exist" do
+      before do
+        subject.assign_attributes(pre_tax_amount: nil,
+                                  price: 100.0,
+                                  quantity: 1,
+                                  additional_tax_total: 7.0,
+                                  included_tax_total: 3.0,
+                                  promo_total: -20.0)
+      end
+
+      it "returns the discounted amount exclusive of tax" do
+        expect(subject.pre_tax_amount).to eq 77.0
+      end
+    end
+  end
+
+  describe "#total_taxes" do
+    it "returns inclusive and exclusive taxes" do
+      subject.assign_attributes(additional_tax_total: 7.0, included_tax_total: 3.0)
+      expect(subject.total_taxes).to eq 10.0
+    end
+  end
 end
