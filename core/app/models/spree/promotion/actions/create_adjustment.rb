@@ -3,13 +3,14 @@ module Spree
     module Actions
       class CreateAdjustment < PromotionAction
         include Spree::Core::CalculatedAdjustments
+        include Spree::Core::AdjustmentSource
 
         has_many :adjustments, as: :source
 
         delegate :eligible?, to: :promotion
 
         before_validation :ensure_action_has_calculator
-        before_destroy :deals_with_adjustments
+        before_destroy :deals_with_adjustments_for_deleted_source
 
         # Creates the adjustment related to a promotion for the order passed
         # through options hash
@@ -55,16 +56,6 @@ module Spree
             self.calculator = Calculator::FlatPercentItemTotal.new
           end
 
-          def deals_with_adjustments
-            adjustment_scope = self.adjustments.joins("LEFT OUTER JOIN spree_orders ON spree_orders.id = spree_adjustments.adjustable_id")
-            # For incomplete orders, remove the adjustment completely.
-            adjustment_scope.where("spree_orders.completed_at IS NULL").readonly(false).destroy_all
-
-            # For complete orders, the source will be invalid.
-            # Therefore we nullify the source_id, leaving the adjustment in place.
-            # This would mean that the order's total is not altered at all.
-            adjustment_scope.where("spree_orders.completed_at IS NOT NULL").update_all("source_id = NULL")
-          end
       end
     end
   end
