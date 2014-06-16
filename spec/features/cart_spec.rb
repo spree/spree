@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Cart", inaccessible: true do
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
-    page.should have_selector("li#link-to-cart a", :visible => true)
+    expect(page).to have_selector("li#link-to-cart a", :visible => true)
   end
 
   it "prevents double clicking the remove button on cart", :js => true do
@@ -16,16 +16,16 @@ describe "Cart", inaccessible: true do
     # prevent form submit to verify button is disabled
     page.execute_script("$('#update-cart').submit(function(){return false;})")
 
-    page.should_not have_selector('button#update-button[disabled]')
+    expect(page).not_to have_selector('button#update-button[disabled]')
     page.find(:css, '.delete img').click
-    page.should have_selector('button#update-button[disabled]')
+    expect(page).to have_selector('button#update-button[disabled]')
   end
 
   # Regression test for #2006
   it "does not error out with a 404 when GET'ing to /orders/populate" do
     visit '/orders/populate'
-    within(".error") do
-      page.should have_content(Spree.t(:populate_get_error))
+    within(".alert-error") do
+      expect(page).to have_content(Spree.t(:populate_get_error))
     end
   end
 
@@ -37,9 +37,9 @@ describe "Cart", inaccessible: true do
     within("#line_items") do
       click_link "delete_line_item_1"
     end
-    page.should_not have_content("Line items quantity must be an integer")
-    page.should_not have_content("RoR Mug")
-    page.should have_content("Your cart is empty")
+    expect(page).to_not have_content("Line items quantity must be an integer")
+    expect(page).to_not have_content("RoR Mug")
+    expect(page).to have_content("Your cart is empty")
   end
 
   # regression for #2276
@@ -54,11 +54,11 @@ describe "Cart", inaccessible: true do
       click_button "add-to-cart-button"
 
       visit spree.cart_path
-      page.should have_content(product.name)
+      expect(page).to have_content(product.name)
     end
   end
   it "should have a surrounding element with data-hook='cart_container'" do
     visit spree.cart_path
-    page.should have_selector("div[data-hook='cart_container']")
+    expect(page).to have_selector("div[data-hook='cart_container']")
   end
 end

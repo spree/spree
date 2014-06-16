@@ -1,13 +1,13 @@
-<div id="checkout" data-hook>  
+<div id="checkout" data-hook>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
-  
+
   <div class="row" data-hook="checkout_header">
     <div class="col-sm-3">
       <h1 data-hook="checkout_title"><%= Spree.t(:checkout) %></h1>
     </div>
     <div class="col-sm-9" data-hook="checkout_progress"><%= checkout_progress %></div>
   </div>
-  
+
   <div class="row" data-hook="checkout_content">
     <div class="<%= if @order.state != 'confirm' then 'col-md-9' else 'col-md-12' end %>" data-hook="checkout_form_wrapper">
       <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
@@ -23,7 +23,7 @@
         <% end %>
         <%= render @order.state, :form => form %>
       <% end %>
-    </div>    
+    </div>
     <% if @order.state != 'confirm' %>
       <div id="checkout-summary" data-hook="checkout_summary_box" class="col-md-3">
         <%= render :partial => 'summary', :locals => { :order => @order } %>
@@ -33,8 +33,8 @@
 </div>
 
 <script>
-Spree.current_order_id = "<%= @order.number %>"
-Spree.current_order_token = "<%= @order.token %>"
+  Spree.current_order_id = "<%= @order.number %>"
+  Spree.current_order_token = "<%= @order.guest_token %>"
 </script>
 
 <% if I18n.locale != :en %>

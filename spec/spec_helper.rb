@@ -24,6 +24,7 @@ end
 
 require 'rspec/rails'
 require 'ffaker'
+require 'webmock'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -57,6 +58,7 @@ end
 
 RSpec.configure do |config|
   config.color = true
+  config.infer_spec_type_from_file_location!
   config.mock_with :rspec
 
   config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
@@ -74,7 +76,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     WebMock.disable!
-    if example.metadata[:js]
+    if RSpec.current_example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction
@@ -97,7 +99,7 @@ RSpec.configure do |config|
     if missing_translations.any?
       #binding.pry
       puts "Found missing translations: #{missing_translations.inspect}"
-      puts "In spec: #{example.location}"
+      puts "In spec: #{RSpec.current_example.location}"
     end
   end
 

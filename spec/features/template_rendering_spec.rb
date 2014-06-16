@@ -10,36 +10,11 @@ describe "Template rendering" do
     Capybara.ignore_hidden_elements = false
   end
 
-  context "with layout option set to 'application' in the configuration" do
+  it 'layout should have canonical tag referencing site url' do
+    Spree::Store.create!(code: 'spree', name: 'My Spree Store', url: 'www.example.com', mail_from_address: 'test@example.com')
 
-    before do
-      @app_layout = Rails.root.join('app/views/layouts', 'application.html.erb')
-      File.open(@app_layout, 'w') do |app_layout|
-        app_layout.puts "<html>I am the application layout</html>"
-      end
-      Spree::Config.set(:layout => 'application')
-    end
-
-    it "should render application layout" do
-      visit spree.root_path
-      page.should_not have_content('Spree Demo Site')
-      page.should have_content('I am the application layout')
-    end
-
-    after do
-      FileUtils.rm(@app_layout)
-    end
-
-  end
-
-  context "without any layout option" do
-
-    it "should render default layout" do
-      visit spree.root_path
-      page.should_not have_content('I am the application layout')
-      page.should have_content('Spree Demo Site')
-    end
-
+    visit spree.root_path
+    find('link[rel=canonical]')[:href].should eql('http://www.example.com/')
   end
 
 end
