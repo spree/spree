@@ -302,21 +302,32 @@ describe Spree::TaxRate do
         context "when price does not include tax" do
           before do
             @order.stub :tax_zone => @zone
-
             [@rate1, @rate2].each do |rate|
               rate.included_in_price = false
               rate.zone = @zone
               rate.save
             end
+            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
+          end
+
+          it "should delete adjustments for open order when taxrate is deleted" do
+            @rate1.destroy!
+            @rate2.destroy!
+            line_item.adjustments.count.should == 0
+          end
+
+          it "should not delete adjustments for complete order when taxrate is deleted" do
+            @order.update_column :completed_at, Time.now
+            @rate1.destroy!
+            @rate2.destroy!
+            line_item.adjustments.count.should == 2
           end
 
           it "should create an adjustment" do
-            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.count.should == 2
           end
 
           it "should not create a tax refund" do
-            Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
             line_item.adjustments.credit.count.should == 0
           end
         end
