@@ -66,15 +66,15 @@ describe Spree::OrderMailer do
     # Tests mailer view spree/order_mailer/confirm_email.text.erb
     specify do
       confirmation_email = Spree::OrderMailer.confirm_email(order)
-      confirmation_email.body.should include("4.99")
-      confirmation_email.body.should_not include("5.00")
+      expect(confirmation_email).to have_body_text("4.99")
+      expect(confirmation_email).to_not have_body_text("5.00")
     end
 
     # Tests mailer view spree/order_mailer/cancel_email.text.erb
     specify do
       cancel_email = Spree::OrderMailer.cancel_email(order)
-      cancel_email.body.should include("4.99")
-      cancel_email.body.should_not include("5.00")
+      expect(cancel_email).to have_body_text("4.99")
+      expect(cancel_email).to_not have_body_text("5.00")
     end
   end
 
@@ -98,14 +98,14 @@ describe Spree::OrderMailer do
       context "confirm_email" do
         specify do
           confirmation_email = Spree::OrderMailer.confirm_email(order)
-          confirmation_email.body.should include("Caro Cliente,")
+          expect(confirmation_email).to have_body_text("Caro Cliente,")
         end
       end
 
       context "cancel_email" do
         specify do
           cancel_email = Spree::OrderMailer.cancel_email(order)
-          cancel_email.body.should include("Resumo da Pedido [CANCELADA]")
+          expect(cancel_email).to have_body_text("Resumo da Pedido [CANCELADA]")
         end
       end
     end
@@ -115,7 +115,7 @@ describe Spree::OrderMailer do
     it "sends no email" do
       Spree::Config.set(:send_core_emails, false)
       message = Spree::OrderMailer.confirm_email(order)
-      message.body.should be_blank
+      expect(message.body).to be_blank
     end
   end
 
