@@ -6,14 +6,14 @@ describe Spree::Shipment do
                                          canceled?: false,
                                          can_ship?: true,
                                          currency: 'USD',
+                                         number: 'S12345',
+                                         paid?: false,
                                          touch: true }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
-    shipment = Spree::Shipment.new
-    shipment.stub(shipping_method: shipping_method)
-    shipment.stub(order: order)
-    shipment.state = 'pending'
-    shipment.cost = 1
+    shipment = Spree::Shipment.new(cost: 1, state: 'pending')
+    shipment.stub order: order
+    shipment.stub shipping_method: shipping_method
     shipment.save
     shipment
   end
@@ -41,6 +41,42 @@ describe Spree::Shipment do
       mock_model(Spree::InventoryUnit, backordered?: true)
     ])
     shipment.should be_backordered
+  end
+
+  context '#determine_state' do
+    it 'returns canceled if order is canceled?' do
+      order.stub canceled?: true
+      expect(shipment.determine_state(order)).to eq 'canceled'
+    end
+
+    it 'returns pending unless order.can_ship?' do
+      order.stub can_ship?: false
+      expect(shipment.determine_state(order)).to eq 'pending'
+    end
+
+    it 'returns pending if backordered' do
+      shipment.stub inventory_units: [mock_model(Spree::InventoryUnit, backordered?: true)]
+      expect(shipment.determine_state(order)).to eq 'pending'
+    end
+
+    it 'returns shipped when already shipped' do
+      shipment.stub state: 'shipped'
+      expect(shipment.determine_state(order)).to eq 'shipped'
+    end
+
+    it 'returns pending when unpaid' do
+      expect(shipment.determine_state(order)).to eq 'pending'
+    end
+
+    it 'returns ready when paid' do
+      order.stub paid?: true
+      expect(shipment.determine_state(order)).to eq 'ready'
+    end
+
+    it 'returns ready when Config.auto_capture_on_dispatch' do
+      Spree::Config.auto_capture_on_dispatch = true
+      expect(shipment.determine_state(order)).to eq 'ready'
+    end
   end
 
   context "display_amount" do
@@ -406,10 +442,53 @@ describe Spree::Shipment do
   end
 
   context "#ready" do
-    # Regression test for #2040
-    it "cannot ready a shipment for an order if the order is unpaid" do
-      order.stub(paid?: false)
-      assert !shipment.can_ready?
+    context 'with Config.auto_capture_on_dispatch == false' do
+      # Regression test for #2040
+      it "cannot ready a shipment for an order if the order is unpaid" do
+        order.stub(paid?: false)
+        assert !shipment.can_ready?
+      end
+    end
+
+    context 'with Config.auto_capture_on_dispatch == true' do
+      before do
+        Spree::Config[:auto_capture_on_dispatch] = true
+        @order = create :completed_order_with_pending_payment
+        @shipment = @order.shipments.first
+      end
+
+      it "shipments ready for an order if the order is unpaid" do
+        expect(@shipment.ready?).to be true
+      end
+
+      it "tells the order to process payment in #after_ship" do
+        expect(@shipment).to receive(:process_order_payments)
+        @shipment.ship!
+      end
+
+      context "order has pending payments" do
+        before do
+          @order.payments << create(:payment)
+        end
+
+        it "can fully capture an authorized payment" do
+          payment = @order.payments.first
+          payment.update_attribute(:amount, @order.total)
+
+          expect(payment.amount).to eq payment.uncaptured_amount
+          @shipment.ship!
+          expect(payment.reload.uncaptured_amount.to_f).to eq 0
+        end
+
+        it "can partially capture an authorized payment" do
+          payment = @order.payments.first
+          payment.update_attribute(:amount, @order.total + 50)
+
+          expect(payment.amount).to eq payment.uncaptured_amount
+          @shipment.ship!
+          expect(payment.reload.uncaptured_amount).to eq 50
+        end
+      end
     end
   end
 

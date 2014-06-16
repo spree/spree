@@ -69,5 +69,6 @@ Syntax:
 * Follow the conventions you see used in the source already.
 * -> symbol over lambda
 * Ruby 1.9 hash syntax over Ruby 1.8 hash syntax
+* Alphabetize the class methods to keep them organized
 
 And in case we didn't emphasize it enough: we love tests!
