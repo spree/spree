@@ -19,6 +19,7 @@ describe Spree::Payment do
     payment.source = card
     payment.order = order
     payment.payment_method = gateway
+    payment.amount = 5
     payment
   end
 
@@ -52,10 +53,17 @@ describe Spree::Payment do
   end
 
   context '#uncaptured_amount' do
-    it "sets uncaptured amount on save" do
-      expect(payment.uncaptured_amount).to eq(0)
-      payment.save
-      expect(payment.uncaptured_amount).to eq(payment.amount)
+    context "calculates based on capture events" do
+      it "with 0 capture events" do
+        expect(payment.uncaptured_amount).to eq(5.0)
+      end
+
+      it "with some capture events" do
+        payment.save
+        payment.capture_events.create!(amount: 2.0)
+        payment.capture_events.create!(amount: 3.0)
+        expect(payment.uncaptured_amount).to eq(0)
+      end
     end
   end
 
