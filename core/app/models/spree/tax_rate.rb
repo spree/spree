@@ -82,20 +82,6 @@ module Spree
       end
     end
 
-    # For Vat the default rate is the rate that is configured for the default category
-    # It is needed for every price calculation (as all customer facing prices include vat )
-    # The function returns the actual amount, which may be 0 in case of wrong setup, but is never nil
-    def self.default
-      category = TaxCategory.includes(:tax_rates).where(is_default: true).first
-      return 0 unless category
-
-      address ||= Address.new(country_id: Spree::Config[:default_country_id])
-      rate = category.tax_rates.detect { |rate| rate.zone.include? address }.try(:amount)
-
-      rate || 0
-    end
-
-
     # Tax rates can *potentially* be applicable to an order.
     # We do not know if they are/aren't until we attempt to apply these rates to
     # the items contained within the Order itself.
