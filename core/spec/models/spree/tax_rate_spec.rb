@@ -330,6 +330,14 @@ describe Spree::TaxRate do
           it "should not create a tax refund" do
             line_item.adjustments.credit.count.should == 0
           end
+
+          it "should remove adjustments when tax_zone is removed" do
+            Spree::TaxRate.adjust(@order, @order.line_items)
+            line_item.adjustments.count.should == 2
+            @order.stub :tax_zone => nil
+            Spree::TaxRate.adjust(@order, @order.line_items)
+            line_item.adjustments.count.should == 0
+          end
         end
 
         context "when two rates apply" do
