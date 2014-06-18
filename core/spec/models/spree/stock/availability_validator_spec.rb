@@ -25,6 +25,12 @@ module Spree
         allow(line_item).to receive_messages(inventory_units: [double] * 5)
         subject.validate(line_item)
       end
+
+      it 'should be valid when the quantity is zero' do
+        expect(line_item).to receive(:quantity).and_return(0)
+        expect(line_item.errors).to_not receive(:[]).with(:quantity)
+        subject.validate(line_item)
+      end
     end
   end
 end
