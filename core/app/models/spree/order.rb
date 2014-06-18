@@ -383,9 +383,26 @@ module Spree
           self.payment_total += payment.amount
         end
       end
+
+      pending_payments.each do |payment|
+        if payment_total < total
+          process_payment!(payment)
+        end
+      end
     rescue Core::GatewayError => e
       result = !!Spree::Config[:allow_checkout_on_gateway_error]
       errors.add(:base, e.message) and return result
+    end
+
+    def process_payment!(payment)
+      payment.process!
+      recalculate_paid_amount(payment)
+    end
+
+    def recalculate_paid_amount(payment)
+      if payment.completed?
+        self.payment_total += payment.amount
+      end
     end
 
     def billing_firstname
