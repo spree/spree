@@ -800,10 +800,46 @@ describe Spree::Payment do
       its(:amount) { should eql(BigDecimal('1.55')) }
     end
 
-    context "when the amount is nil" do
-      let(:amount) { nil }
+    context "when the locale uses a coma as a decimal separator" do
+      before(:each) do
+        I18n.backend.store_translations(:fr, { :number => { :currency => { :format => { :delimiter => ' ', :separator => ',' } } } })
+        I18n.locale = :fr
+        subject.amount = amount
+      end
 
-      its(:amount) { should be_nil }
+      after do
+        I18n.locale = I18n.default_locale
+      end
+
+      context "amount is a decimal" do
+        let(:amount) { '2,99' }
+
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
+
+      context "amount contains a $ sign" do
+        let(:amount) { '2,99 $' }
+        
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
+
+      context "amount is a number" do
+        let(:amount) { 2.99 }
+        
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
+
+      context "amount contains a negative sign" do
+        let(:amount) { '-2,99 $' }
+
+        its(:amount) { should eql(BigDecimal('-2.99')) }
+      end
+
+      context "amount uses a dot as a decimal separator" do
+        let(:amount) { '2.99' }
+
+        its(:amount) { should eql(BigDecimal('2.99')) }
+      end
     end
   end
 
