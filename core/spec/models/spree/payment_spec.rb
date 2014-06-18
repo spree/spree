@@ -16,6 +16,7 @@ describe Spree::Payment do
 
   let(:payment) do
     payment = Spree::Payment.new
+    payment.amount = 100
     payment.source = card
     payment.order = order
     payment.payment_method = gateway
