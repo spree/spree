@@ -164,9 +164,10 @@ module Spree
               coupon = Coupon.new(order)
               coupon.apply
               expect(coupon.successful?).to be_true
+              order.update_column(:completed_at, Time.now)
 
               order_2 = create(:order)
-              order_2.stub :coupon_code => "10off"
+              order_2.stub :coupon_code => "10off",  :item_total => 50, :ship_total => 10 
               coupon = Coupon.new(order_2)
               coupon.apply
               expect(coupon.successful?).to be_false
