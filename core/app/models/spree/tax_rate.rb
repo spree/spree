@@ -74,13 +74,20 @@ module Spree
     def self.adjust(order_tax_zone, items)
       rates = self.match(order_tax_zone)
       tax_categories = rates.map(&:tax_category)
-      relevant_items = items.select { |item| tax_categories.include?(item.tax_category) }
+      relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
       relevant_items.each do |item|
         item.adjustments.tax.delete_all
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
         relevant_rates.each do |rate|
           rate.adjust(order_tax_zone, item)
+        end
+      end
+      non_relevant_items.each do |item|
+        if item.adjustments.tax.present?
+          item.adjustments.tax.delete_all
+          item.update_column(:pre_tax_amount, nil)
+          item.send(:recalculate_adjustments)
         end
       end
     end
