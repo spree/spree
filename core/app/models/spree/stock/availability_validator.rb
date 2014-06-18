@@ -8,7 +8,7 @@ module Spree
 
         quantifier = Stock::Quantifier.new(line_item.variant)
 
-        return if quantifier.can_supply?(quantity)
+        return if quantity.zero? || quantifier.can_supply?(quantity)
 
         variant = line_item.variant
         display_name = %Q{#{variant.name}}
