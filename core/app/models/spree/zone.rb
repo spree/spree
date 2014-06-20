@@ -56,7 +56,7 @@ module Spree
       @countries ||= case kind
                      when 'country' then zoneables
                      when 'state' then zoneables.collect(&:country)
-                     else nil
+                     else []
                      end.flatten.compact.uniq
     end
 
