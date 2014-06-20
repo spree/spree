@@ -104,7 +104,7 @@ table {
     }
 
     .handle {
-      @extend [class ^= "icon-"]:before;
+      @extend [class^="icon-"]:before;
       @extend .fa;
       @extend .fa-bars;
       cursor: move;
