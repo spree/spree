@@ -104,7 +104,7 @@ table {
     }
 
     .handle {
-      @extend [class^="icon-"]:before;
+      @extend [ class ^= "icon-" ]:before;
       @extend .fa;
       @extend .fa-bars;
       cursor: move;
@@ -156,6 +156,10 @@ table {
       &.deleted td {
         background-color: very-light($color-error, 6);
         border-color: very-light($color-error, 15);
+      }
+
+      &.ineligible {
+        text-decoration: line-through;
       }
 
       &.ui-sortable-placeholder td {
