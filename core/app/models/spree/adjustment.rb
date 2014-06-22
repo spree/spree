@@ -71,6 +71,14 @@ module Spree
       source.class < Spree::PromotionAction
     end
 
+    def included_tax?
+      Spree::TaxRate === source && included?
+    end
+
+    def additional_tax?
+      Spree::TaxRate === source && !included?
+    end
+
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid
@@ -85,12 +93,10 @@ module Spree
       return amount if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
-        self.update_columns(
-          amount: amount,
-          updated_at: Time.now,
-        )
+        self.amount = amount
+        self.updated_at = Time.now
         if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
+          self.eligible = source.promotion.eligible?(adjustable)
         end
       end
       amount
