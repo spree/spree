@@ -113,16 +113,9 @@ describe Spree::Order do
 
       it "updates totals" do
         order.stub(:ensure_available_shipping_rates => true)
-        variant = FactoryGirl.create(:variant, :price => 10)
-        order.contents.add(variant)
-        tax_rate = create(:tax_rate, :tax_category => variant.tax_category, :amount => 0.05)
-        FactoryGirl.create(:tax_adjustment, :adjustable => order.line_items.first, :source => tax_rate)
-        order.email = "user@example.com"
+        order.should_receive(:update_totals)
+        order.should_receive(:persist_totals)
         order.next!
-        order.adjustment_total.should == 0.5
-        order.additional_tax_total.should == 0.5
-        order.included_tax_total.should == 0
-        order.total.should == 10.5
       end
 
       it "transitions to delivery" do
