@@ -63,7 +63,7 @@ module Spree
           item_amount = item.discounted_cost
         end
         pre_tax_amount = item_amount / (1 + rates.map(&:amount).sum)
-        item.update_column(:pre_tax_amount, pre_tax_amount)
+        item.pre_tax_amount = pre_tax_amount
       end
     end
 
