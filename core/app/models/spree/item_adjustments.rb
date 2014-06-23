@@ -25,6 +25,17 @@ module Spree
       item.adjustment_total = item.promo_total + item.additional_tax_total
     end
 
+    def update_adjustments
+      calculate_adjustments
+      # TODO: I wish we didn't have to do this query here...
+      item.update_columns(
+        adjustment_total: item.adjustment_total,
+        promo_total: item.promo_total,
+        additional_tax_total: item.additional_tax_total,
+        included_tax_total: item.included_tax_total
+      )
+    end
+
     def calculate_promo_total
       promo_total = 0
       run_callbacks :promo_adjustments do
