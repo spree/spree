@@ -3,7 +3,9 @@ require 'spec_helper'
 module Spree
   describe ItemAdjustments do
     let(:variant) do
-      Spree::Variant.new(id: 1)
+      variant = Spree::Variant.new(id: 1)
+      variant.stub :tax_category => stub_model(Spree::TaxCategory)
+      variant
     end
 
     let(:line_item) do 
@@ -192,6 +194,7 @@ module Spree
             eligible_adjustments.first.source.promotion.should eq(order_promo1), "Expected promo1 to be used (using sequence #{promo_sequence})"
 
             new_variant = Spree::Variant.new(price: 10)
+            new_variant.stub :tax_category => stub_model(Spree::TaxCategory)
             order.contents.add new_variant, 1
 
             order.adjustments.length.should eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
@@ -213,6 +216,7 @@ module Spree
             eligible_adjustments.first.source.promotion.should eq(line_item_promo1)#, "Expected promo1 to be used (using sequence #{promo_sequence})"
 
             new_variant = Spree::Variant.new(id: 2, price: 10)
+            new_variant.stub :tax_category => stub_model(Spree::TaxCategory)
             order.contents.add new_variant, 1
 
             # Calling activate here, even though it would normally be handled by OrderContents#add
