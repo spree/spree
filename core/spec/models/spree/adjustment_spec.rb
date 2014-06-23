@@ -86,7 +86,8 @@ describe Spree::Adjustment do
         adjustment.stub :adjustable => double("Adjustable")
         adjustment.stub :source => double("Source")
         adjustment.source.should_receive("compute_amount").with(adjustment.adjustable).and_return(5)
-        adjustment.should_receive(:update_columns).with(amount: 5, updated_at: kind_of(Time))
+        adjustment.should_receive(:amount=).with(5)
+        adjustment.should_receive(:updated_at=).with(kind_of(Time))
         adjustment.update!
       end
     end
