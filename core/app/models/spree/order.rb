@@ -127,6 +127,14 @@ module Spree
       adjustments + line_item_adjustments + shipment_adjustments
     end
 
+    def eligible_promotion_adjustments
+      all_adjustments.select { |a| a.promotion? && a.eligible? }
+    end
+
+    def tax_adjustments
+      all_adjustments.select { |a| Spree::TaxRate === a.source }
+    end
+
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
