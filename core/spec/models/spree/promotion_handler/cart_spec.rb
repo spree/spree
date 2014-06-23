@@ -3,8 +3,17 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe Cart do
-      let(:line_item) { create(:line_item) }
-      let(:order) { line_item.order }
+      let(:line_item) do
+        product = Spree::Product.new
+        variant = Spree::Variant.new(product: product)
+        Spree::LineItem.new(variant: variant, quantity: 1, price: 20)
+      end
+
+      let(:order) do
+        Spree::Order.new.tap do |order|
+          order.line_items << line_item
+        end
+      end
 
       let(:promotion) { Promotion.create(name: "At line items") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
@@ -19,7 +28,7 @@ module Spree
           it "creates the adjustment" do
             expect {
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            }.to change { adjustable.adjustments.to_a.count }.by(1)
           end
         end
 
@@ -55,7 +64,7 @@ module Spree
           it "creates the adjustment" do
             expect {
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            }.to change { adjustable.adjustments.to_a.count }.by(1)
           end
         end
 
