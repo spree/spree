@@ -79,6 +79,12 @@ module Spree
       Spree::TaxRate === source && !included?
     end
 
+    def determine_eligibility
+      if promotion?
+        self.eligible = source.promotion.eligible?(adjustable)
+      end
+    end
+
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid
@@ -95,9 +101,7 @@ module Spree
         amount = source.compute_amount(target || adjustable)
         self.amount = amount
         self.updated_at = Time.now
-        if promotion?
-          self.eligible = source.promotion.eligible?(adjustable)
-        end
+        determine_eligibility
       end
       amount
     end
