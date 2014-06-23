@@ -328,7 +328,7 @@ describe Spree::TaxRate do
             @price_before_taxes = BigDecimal.new(@price_before_taxes).round(2, BigDecimal::ROUND_HALF_UP)
             line_item.update_column(:pre_tax_amount, @price_before_taxes)
             # Clear out any previously automatically-applied adjustments
-            @order.all_adjustments.delete_all
+            @order.all_adjustments.clear
             @rate1.adjust(@order.tax_zone, line_item)
             @rate2.adjust(@order.tax_zone, line_item)
           end
@@ -338,7 +338,7 @@ describe Spree::TaxRate do
           end
 
           it "price adjustments should be accurate" do
-            included_tax = @order.line_item_adjustments.sum(:amount)
+            included_tax = @order.line_item_adjustments.map(&:amount).inject(&:+)
             expect(@price_before_taxes + included_tax).to eq(line_item.price)
           end
         end
