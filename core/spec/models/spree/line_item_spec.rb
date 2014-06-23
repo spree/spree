@@ -35,7 +35,6 @@ describe Spree::LineItem do
       end
 
       it "triggers adjustment total recalculation" do
-        line_item.should_receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
         line_item.should_receive(:recalculate_adjustments)
         line_item.save
       end
@@ -105,16 +104,7 @@ describe Spree::LineItem do
       line_item.currency.should == variant.currency
     end
   end
-
-  # Test for #3481
-  context '#copy_tax_category' do
-    it "copies over a variant's tax category" do
-      line_item.tax_category = nil
-      line_item.copy_tax_category
-      expect(line_item.tax_category).to eq(line_item.variant.tax_category)
-    end
-  end
-
+  
   describe '.discounted_amount' do
     it "returns the amount minus any discounts" do
       line_item.price = 10

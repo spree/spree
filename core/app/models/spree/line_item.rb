@@ -11,7 +11,6 @@ module Spree
     has_many :inventory_units, inverse_of: :line_item
 
     before_validation :copy_price
-    before_validation :copy_tax_category
 
     validates :variant, presence: true
     validates :quantity, numericality: {
@@ -28,8 +27,6 @@ module Spree
     after_save :update_inventory
     after_save :update_adjustments
 
-    after_create :update_tax_charge
-
     delegate :name, :description, :sku, :should_track_inventory?, to: :variant
 
     attr_accessor :target_shipment
@@ -39,12 +36,6 @@ module Spree
         self.price = variant.price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
         self.currency = variant.currency if currency.nil?
-      end
-    end
-
-    def copy_tax_category
-      if variant
-        self.tax_category = variant.tax_category
       end
     end
 
@@ -104,17 +95,12 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
-          update_tax_charge # Called to ensure pre_tax_amount is updated. 
           recalculate_adjustments
         end
       end
 
       def recalculate_adjustments
         Spree::ItemAdjustments.new(self).update
-      end
-
-      def update_tax_charge
-        Spree::TaxRate.adjust(order.tax_zone, [self])
       end
 
       def ensure_proper_currency

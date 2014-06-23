@@ -21,6 +21,11 @@ describe Spree::OrderContents do
       order.line_items.size.should == 1
     end
 
+    it "should associate the variant's tax category" do
+      line_item = subject.add(variant, 1)
+      line_item.tax_category.should == variant.tax_category
+    end
+
     it 'should update line item if one exists' do
       subject.add(variant, 1)
       line_item = subject.add(variant, 1)

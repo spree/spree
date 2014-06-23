@@ -10,6 +10,7 @@ module Spree
       line_item = add_to_line_item(variant, quantity, currency, shipment)
       reload_totals
       PromotionHandler::Cart.new(order, line_item).activate
+      Spree::TaxRate.adjust(order.tax_zone, [line_item])
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item
@@ -65,6 +66,7 @@ module Spree
           line_item.currency = currency unless currency.nil?
         else
           line_item = order.line_items.build(quantity: quantity, variant: variant)
+          line_item.tax_category = variant.tax_category
           line_item.target_shipment = shipment
           if currency
             line_item.currency = currency
