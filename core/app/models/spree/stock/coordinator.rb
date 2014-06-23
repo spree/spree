@@ -24,7 +24,7 @@ module Spree
       # Returns an array of Package instances
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|
-          next unless stock_location.stock_items.where(:variant_id => order.line_items.pluck(:variant_id)).exists?
+          next unless stock_location.stock_items.where(:variant_id => order.line_items.map(&:variant_id)).exists?
 
           packer = build_packer(stock_location, order)
           packages += packer.packages
