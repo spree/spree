@@ -58,12 +58,12 @@ module Spree
       # If an action has been taken, report back to whatever activated this promotion.
       action_taken = results.include?(true)
 
-      if action_taken
-      # connect to the order
-      # create the join_table entry.
-        self.orders << order
-        self.save
-      end
+      # if action_taken
+      # # connect to the order
+      # # create the join_table entry.
+      #   self.orders << order
+      #   self.save
+      # end
 
       return action_taken
     end
@@ -78,7 +78,7 @@ module Spree
       # Promotions without rules are eligible by default.
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
-      specific_rules = rules.for(promotable)
+      specific_rules = rules.select { |rule| rule.applicable?(promotable) || rule.applicable?(promotable.order) }
       return true if specific_rules.none?
       if match_policy == 'all'
         # If there are rules for this promotion, but no rules for this

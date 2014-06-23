@@ -46,8 +46,6 @@ module Spree
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
-    has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
     has_many :products, through: :variants
     has_many :variants, through: :line_items
@@ -117,9 +115,16 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    def line_item_adjustments
+      line_items.map(&:adjustments).flatten
+    end
+
+    def shipment_adjustments
+      shipments.map(&:adjustments).flatten
+    end
+
     def all_adjustments
-      Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
-        order_id: self.id)
+      adjustments + line_item_adjustments + shipment_adjustments
     end
 
     # For compatiblity with Calculator::PriceSack

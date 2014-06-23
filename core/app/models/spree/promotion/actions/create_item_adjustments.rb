@@ -13,28 +13,35 @@ module Spree
 
         def perform(payload = {})
           order = payload[:order]
-          # Find only the line items which have not already been adjusted by this promotion
-          # HACK: Need to use [0] because `pluck` may return an empty array, which AR helpfully
-          # coverts to meaning NOT IN (NULL) and the DB isn't happy about that.
-          already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
           result = false
-          order.line_items.where("id NOT IN (?)", already_adjusted_line_items).find_each do |line_item|
+
+          order.line_items.each do |line_item|
             current_result = self.create_adjustment(line_item, order)
             result ||= current_result
           end
+
           return result
         end
 
         def create_adjustment(adjustable, order)
+          # Remove any adjustment applied for this item earlier and recompute it
+          if applied_adjustment = adjustable.adjustments.detect { |adjustment| adjustment.source == self }
+            adjustable.adjustments.delete(applied_adjustment)
+          end
+
           amount = self.compute_amount(adjustable)
           return if amount == 0
           return if promotion.product_ids.present? and !promotion.product_ids.include?(adjustable.product.id)
-          self.adjustments.create!(
+          adjustment = adjustable.adjustments.build(
             amount: amount,
-            adjustable: adjustable,
             order: order,
-            label: "#{Spree.t(:promotion)} (#{promotion.name})",
+            adjustable: adjustable,
+            source: self,
+            label: "#{Spree.t(:promotion)} (#{promotion.name})"
           )
+
+          Spree::ItemAdjustments.new(adjustable).calculate_adjustments
+
           true
         end
 

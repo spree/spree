@@ -7,7 +7,7 @@ module Spree
 
     has_one :product, through: :variant
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy
+    has_many :adjustments, as: :adjustable, dependent: :destroy, class_name: "Spree::Adjustment"
     has_many :inventory_units, inverse_of: :line_item
 
     before_validation :copy_price

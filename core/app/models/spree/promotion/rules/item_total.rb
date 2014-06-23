@@ -13,8 +13,12 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
-          item_total = order.item_total
+        def eligible?(promotable, options = {})
+          item_total = if Spree::Order === promotable
+            promotable.item_total
+          else
+            promotable.order.item_total
+          end
           item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
         end
       end

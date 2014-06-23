@@ -7,11 +7,6 @@ module Spree
 
     validate :promotion, presence: true
     validate :unique_per_promotion, on: :create
-
-    def self.for(promotable)
-      all.select { |rule| rule.applicable?(promotable) }
-    end
-
     def applicable?(promotable)
       raise 'applicable? should be implemented in a sub-class of Spree::PromotionRule'
     end

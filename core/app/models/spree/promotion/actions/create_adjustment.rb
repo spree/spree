@@ -22,13 +22,15 @@ module Spree
 
           amount = compute_amount(order)
           return if amount == 0
-          Spree::Adjustment.create!(
+          adjustment = order.adjustments.build(
             amount: amount,
             order: order,
             adjustable: order,
             source: self,
             label: "#{Spree.t(:promotion)} (#{promotion.name})"
           )
+          
+          adjustment.determine_eligibility
           true
         end
 

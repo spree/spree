@@ -51,9 +51,9 @@ module Spree
         order_updater.update_adjustment_total
 
         order_updater.update_payment_state if order.completed?
-        order_updater.persist_totals
+        # order_updater.persist_totals
 
-        order.reload
+        order
       end
 
       def add_to_line_item(variant, quantity, currency=nil, shipment=nil)
@@ -64,7 +64,7 @@ module Spree
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          line_item = order.line_items.build(quantity: quantity, variant: variant)
           line_item.target_shipment = shipment
           if currency
             line_item.currency = currency
@@ -74,7 +74,6 @@ module Spree
           end
         end
 
-        line_item.save
         line_item
       end
 
