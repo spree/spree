@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrderContents do
-  let(:order) { Spree::Order.create }
+  let(:order) { Spree::Order.new }
   let(:variant) { create(:variant) }
 
   subject { described_class.new(order) }
@@ -47,31 +47,22 @@ describe Spree::OrderContents do
       let(:promotion) { create(:promotion) }
       let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
 
-      shared_context "discount changes order total" do
+      shared_context "discount changes order total and adjustments" do
         before { subject.add(variant, 1) }
         it { expect(subject.order.total).not_to eq variant.price }
+        it { expect(subject.order.all_adjustments.to_a.sum(&:amount)).not_to eq 0 }
       end
 
       context "one active order promotion" do
         let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
-        it "creates valid discount on order" do
-          subject.add(variant, 1)
-          expect(subject.order.adjustments.to_a.sum(&:amount)).not_to eq 0
-        end
-
-        include_context "discount changes order total"
+        include_context "discount changes order total and adjustments"
       end
 
       context "one active line item promotion" do
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
-        it "creates valid discount on order" do
-          subject.add(variant, 1)
-          expect(subject.order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
-        end
-
-        include_context "discount changes order total"
+        include_context "discount changes order total and adjustments"
       end
     end
   end
@@ -90,7 +81,7 @@ describe Spree::OrderContents do
         line_item = subject.add(variant, 3)
         subject.remove(variant)
 
-        line_item.reload.quantity.should == 2
+        order.find_line_item_by_variant(variant).quantity.should == 2
       end
     end
 
@@ -98,14 +89,14 @@ describe Spree::OrderContents do
       line_item = subject.add(variant, 3)
       subject.remove(variant, 1)
 
-      line_item.reload.quantity.should == 2
+      order.find_line_item_by_variant(variant).quantity.should == 2
     end
 
     it 'should remove line_item if quantity matches line_item quantity' do
       subject.add(variant, 1)
       subject.remove(variant, 1)
 
-      order.reload.find_line_item_by_variant(variant).should be_nil
+      order.find_line_item_by_variant(variant).should be_nil
     end
 
     it "should update order totals" do
