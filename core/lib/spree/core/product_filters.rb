@@ -42,10 +42,6 @@ module Spree
     # or taxons), eg see the taxon model/controller.
 
     # See specific filters below for concrete examples.
-
-    # This module is included by Taxon. In development mode that inclusion does not
-    # happen until Taxon class is loaded. Ensure that Taxon class is loaded before
-    # you try something like Product.price_range_any
     module ProductFilters
       # Example: filtering by price
       #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
