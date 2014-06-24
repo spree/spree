@@ -220,9 +220,9 @@ describe Spree::Order do
 
   # Regression tests for #2179
   context "#merge!" do
-    let(:variant) { create(:variant) }
-    let(:order_1) { Spree::Order.create }
-    let(:order_2) { Spree::Order.create }
+    let(:variant) { build(:variant) }
+    let(:order_1) { Spree::Order.new }
+    let(:order_2) { Spree::Order.new }
 
     it "destroys the other order" do
       order_1.merge!(order_2)
@@ -238,13 +238,13 @@ describe Spree::Order do
 
     context "merging together two orders with line items for the same variant" do
       before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant, 1)
+        order_1.line_items << Spree::LineItem.new(variant: variant, quantity: 1, currency: order_1.currency)
+        order_2.line_items << Spree::LineItem.new(variant: variant, quantity: 1, currency: order_1.currency)
       end
 
       specify do
         order_1.merge!(order_2)
-        order_1.line_items.count.should == 1
+        order_1.line_items.to_a.count.should == 1
 
         line_item = order_1.line_items.first
         line_item.quantity.should == 2
@@ -253,24 +253,25 @@ describe Spree::Order do
     end
 
     context "merging together two orders with different line items" do
-      let(:variant_2) { create(:variant) }
+      let(:variant_2) { build(:variant, id: 2) }
 
       before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant_2, 1)
+        order_1.line_items << Spree::LineItem.new(variant: variant, quantity: 1, currency: order_1.currency)
+        order_2.line_items << Spree::LineItem.new(variant: variant_2, quantity: 1, currency: order_1.currency)
       end
 
       specify do
         order_1.merge!(order_2)
-        line_items = order_1.line_items
+        line_items = order_1.line_items.to_a
+        binding.pry
         line_items.count.should == 2
 
         expect(order_1.item_count).to eq 2
         expect(order_1.item_total).to eq line_items.map(&:amount).sum
 
         # No guarantee on ordering of line items, so we do this:
-        line_items.pluck(:quantity).should =~ [1, 1]
-        line_items.pluck(:variant_id).should =~ [variant.id, variant_2.id]
+        line_items.map(:quantity).should =~ [1, 1]
+        line_items.map(:variant_id).should =~ [variant.id, variant_2.id]
       end
     end
   end
