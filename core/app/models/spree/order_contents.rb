@@ -80,7 +80,7 @@ module Spree
 
       def remove_from_line_item(variant, quantity, shipment=nil)
         line_item = grab_line_item_by_variant(variant, true)
-        line_item.quantity += -quantity
+        line_item.quantity -= quantity
         line_item.target_shipment= shipment
 
         if line_item.quantity == 0
