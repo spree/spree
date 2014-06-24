@@ -52,7 +52,7 @@ module Spree
         order_updater.update_adjustment_total
 
         order_updater.update_payment_state if order.completed?
-        # order_updater.persist_totals
+        order_updater.update_totals
 
         order
       end
