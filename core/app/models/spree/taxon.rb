@@ -22,8 +22,6 @@ module Spree
     validates_attachment :icon,
       content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
 
-    include Spree::Core::ProductFilters  # for detailed defs of filters
-
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
     def applicable_filters
