@@ -153,12 +153,13 @@ To advance to the next state, `confirm`, the order will need to have a payment. 
   {"payments_attributes"=>{"payment_method_id"=>"1"},
    "payment_source"=>
     {"1"=>
-      {"number"=>"1",
-       "month"=>"1",
-       "year"=>"2017",
-       "verification_value"=>"123",
-       "first_name"=>"John",
-       "last_name"=>"Smith"}
+      {
+        "number"=>"1",
+        "month"=>"1",
+        "year"=>"2017",
+        "verification_value"=>"123",
+        "name"=>"John Smith"
+       }
     }
   }
 }) %>
