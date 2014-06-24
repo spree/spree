@@ -15,6 +15,7 @@ module Spree
         end
 
         private
+        
         def return_next(packages)
           next_splitter ? next_splitter.split(packages) : packages
         end

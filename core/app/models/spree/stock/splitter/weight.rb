@@ -17,6 +17,7 @@ module Spree
         end
 
         private
+  
         def reduce(package)
           removed = []
           while package.weight > self.threshold
