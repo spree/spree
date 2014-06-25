@@ -39,21 +39,22 @@ module Spree
         end
 
         context "with a per-item adjustment action" do
-          let(:order) { create(:order_with_line_items, :line_items_count => 3) }
+          let(:order) do
+            Spree::Order.new.tap do |order|
+              order.line_items << build(:line_item)
+            end
+          end
 
           context "right coupon given" do
             context "with correct coupon code casing" do
               before { order.stub :coupon_code => "10off" }
 
               it "successfully activates promo" do
-                order.total.should == 130
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  line_item.adjustments.count.should == 1
+                  line_item.adjustments.to_a.count.should == 1
                 end
-                # Ensure that applying the adjustment actually affects the order's total!
-                order.reload.total.should == 100
               end
 
               it "coupon already applied to the order" do
