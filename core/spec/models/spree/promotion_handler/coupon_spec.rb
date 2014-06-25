@@ -106,7 +106,6 @@ module Spree
             before { order.stub :coupon_code => "10off" }
 
             it "successfully activates promo" do
-              order.total.should == 130
               subject.apply
               expect(subject.success).to be_present
 
