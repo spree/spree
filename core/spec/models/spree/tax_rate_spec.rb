@@ -326,7 +326,7 @@ describe Spree::TaxRate do
             @price_before_taxes = line_item.price / (1 + @rate1.amount + @rate2.amount)
             # Use the same rounding method as in DefaultTax calculator
             @price_before_taxes = BigDecimal.new(@price_before_taxes).round(2, BigDecimal::ROUND_HALF_UP)
-            line_item.update_column(:pre_tax_amount, @price_before_taxes)
+            line_item.pre_tax_amount = @price_before_taxes
             # Clear out any previously automatically-applied adjustments
             @order.all_adjustments.clear
             @rate1.adjust(@order.tax_zone, line_item)
