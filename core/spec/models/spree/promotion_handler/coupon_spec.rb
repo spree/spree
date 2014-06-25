@@ -101,7 +101,11 @@ module Spree
         context "with a free-shipping adjustment action" do
           let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
           context "right coupon code given" do
-            let(:order) { create(:order_with_line_items, :line_items_count => 3) }
+            let(:order) do 
+              Spree::Order.new.tap do |order|
+                order.shipments << Spree::Shipment.new(cost: 10)
+              end
+            end
 
             before { order.stub :coupon_code => "10off" }
 
@@ -124,7 +128,7 @@ module Spree
         context "with a whole-order adjustment action" do
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
           context "right coupon given" do
-            let(:order) { create(:order) }
+            let(:order) { Spree::Order.new }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do 
@@ -139,7 +143,7 @@ module Spree
             it "successfully activates promo" do
               subject.apply
               expect(subject.success).to be_present
-              order.adjustments.count.should == 1
+              order.all_adjustments.count.should == 1
             end
 
             it "coupon already applied to the order" do

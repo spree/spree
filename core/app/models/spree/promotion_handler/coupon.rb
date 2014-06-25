@@ -62,7 +62,10 @@ module Spree
       end
 
       def promotion_exists_on_order?(order, promotion)
-        order.promotions.include? promotion
+        action_ids = promotion.actions.pluck(:id)
+        order.all_adjustments.any? do |adjustment|
+          action_ids.include?(adjustment.source_id)
+        end
       end
 
       def determine_promotion_application_result
