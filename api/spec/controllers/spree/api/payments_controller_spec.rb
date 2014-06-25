@@ -225,14 +225,14 @@ module Spree
             response.status.should == 200
             payment.reload.state.should == "completed"
 
-            # Ensure that a credit payment was created, and it has correct credit amount
-            credit_payment = Payment.where(:source_type => 'Spree::Payment', :source_id => payment.id).last
-            credit_payment.amount.to_f.should == -45.75
+            # Ensure that a refund was created, and it has correct credit amount
+            refund = payment.refunds.last
+            refund.amount.to_f.should == 45.75
           end
 
           context "crediting fails" do
             it "returns a 422 status" do
-              fake_response = double(:success? => false, :to_s => "NO CREDIT FOR YOU")
+              fake_response = ActiveMerchant::Billing::Response.new(false, 'NO CREDIT FOR YOU', {}, {})
               Spree::Gateway::Bogus.any_instance.should_receive(:credit).and_return(fake_response)
               api_put :credit, :id => payment.to_param
               response.status.should == 422
