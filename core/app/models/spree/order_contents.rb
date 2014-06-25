@@ -9,8 +9,7 @@ module Spree
     def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
       reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
-      Spree::TaxRate.adjust(order.tax_zone, [line_item])
+      activate_cart_promotions(line_item)
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item
@@ -19,7 +18,7 @@ module Spree
     def remove(variant, quantity = 1, shipment = nil)
       line_item = remove_from_line_item(variant, quantity, shipment)
       reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
+      activate_cart_promotions(line_item)
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item
@@ -39,6 +38,10 @@ module Spree
       else
         false
       end
+    end
+
+    def activate_cart_promotions(line_item)
+      PromotionHandler::Cart.new(order, line_item).activate
     end
 
     private

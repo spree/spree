@@ -43,27 +43,9 @@ describe Spree::OrderContents do
       order.total.to_f.should == 19.99
     end
 
-    context "running promotions" do
-      let(:promotion) { create(:promotion) }
-      let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
-
-      shared_context "discount changes order total and adjustments" do
-        before { subject.add(variant, 1) }
-        it { expect(subject.order.total).not_to eq variant.price }
-        it { expect(subject.order.all_adjustments.to_a.sum(&:amount)).not_to eq 0 }
-      end
-
-      context "one active order promotion" do
-        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
-
-        include_context "discount changes order total and adjustments"
-      end
-
-      context "one active line item promotion" do
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
-
-        include_context "discount changes order total and adjustments"
-      end
+    it "runs promotions" do
+      subject.should_receive(:activate_cart_promotions)
+      subject.add(variant, 1)
     end
   end
 
@@ -111,6 +93,21 @@ describe Spree::OrderContents do
       subject.remove(variant,1)
       order.item_total.to_f.should == 19.99
       order.total.to_f.should == 19.99
+    end
+
+    it "runs promotions" do
+      subject.add(variant, 1)
+      subject.should_receive(:activate_cart_promotions)
+      subject.remove(variant, 1)
+    end
+  end
+
+  context "#activate_cart_promotions" do
+    it "calls to PromotionHandler::Cart" do
+      line_item = double(:line_item)
+      Spree::PromotionHandler::Cart.should_receive(:new).with(order, line_item).and_return(handler = double)
+      handler.should_receive(:activate)
+      subject.activate_cart_promotions(line_item)
     end
   end
 
