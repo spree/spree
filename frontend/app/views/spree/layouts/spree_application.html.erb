@@ -19,7 +19,7 @@
 
         <%= render :partial => 'spree/shared/sidebar' if content_for? :sidebar %>
 
-        <div id="content" class="columns <%= !content_for?(:sidebar) ? "sixteen" : "twelve" %>" data-hook>
+        <div id="content" class="columns <%= !content_for?(:sidebar) ? "sixteen" : "twelve omega" %>" data-hook>
           <%= flash_messages %>
           <%= yield %>
         </div>
@@ -33,8 +33,5 @@
     </div>
 
     <%= render :partial => 'spree/shared/google_analytics' %>
-    <script>
-      Spree.api_key = <%= raw(try_spree_current_user.try(:spree_api_key).to_s.inspect) %>;
-    </script>
   </body>
 </html>

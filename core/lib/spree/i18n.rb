@@ -4,6 +4,7 @@ require 'spree/i18n/base'
 
 module Spree
   extend ActionView::Helpers::TranslationHelper
+  extend ActionView::Helpers::TagHelper
 
   class << self
     # Add spree namespace and delegate to Rails TranslationHelper for some nice

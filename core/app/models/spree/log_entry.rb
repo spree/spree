@@ -1,5 +1,5 @@
 module Spree
-  class LogEntry < ActiveRecord::Base
+  class LogEntry < Spree::Base
     belongs_to :source, polymorphic: true
 
     # Fix for #1767
@@ -11,6 +11,10 @@ module Spree
       log.source  = source
       log.details = details
       log.save!
+    end
+
+    def parsed_details
+      @details ||= YAML.load(details)
     end
   end
 end

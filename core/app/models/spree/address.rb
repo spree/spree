@@ -1,9 +1,9 @@
 module Spree
-  class Address < ActiveRecord::Base
+  class Address < Spree::Base
     belongs_to :country, class_name: "Spree::Country"
     belongs_to :state, class_name: "Spree::State"
 
-    has_many :shipments
+    has_many :shipments, inverse_of: :address
 
     validates :firstname, :lastname, :address1, :city, :country, presence: true
     validates :zipcode, presence: true, if: :require_zipcode?
@@ -14,9 +14,17 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
-    def self.default
+    def self.build_default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
       new(country: country)
+    end
+
+    def self.default(user = nil, kind = "bill")
+      if user
+        user.send(:"#{kind}_address") || build_default
+      else
+        build_default
+      end
     end
 
     # Can modify an address if it's not been used in an order (but checkouts controller has finer control)
@@ -74,15 +82,15 @@ module Spree
       }
     end
 
+    def require_phone?
+      true
+    end
+
+    def require_zipcode?
+      true
+    end
+
     private
-      def require_phone?
-        true
-      end
-
-      def require_zipcode?
-        true
-      end
-
       def state_validate
         # Skip state validation without country (also required)
         # or when disabled by preference

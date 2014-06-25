@@ -1,0 +1,16 @@
+<% content_for :table_filter_title do %>
+  <%= Spree.t(:choose_a_taxon_to_sort_products_for) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_orders_index_search" class="columns six">
+    <input type='text' id='taxon_id' />
+  </div>
+<% end %>
+
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+<span id='sorting_explanation' style='display:none'>Click &amp; drag on the products to sort them.</span>
+<ul id='taxon_products'></ul>
+
+<%= render :partial => "spree/admin/products/autocomplete", :formats => :js %>
+

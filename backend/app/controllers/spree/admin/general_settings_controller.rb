@@ -1,10 +1,9 @@
 module Spree
   module Admin
     class GeneralSettingsController < Spree::Admin::BaseController
+      before_filter :set_store
 
       def edit
-        @preferences_general = [:site_name, :default_seo_title, :default_meta_keywords,
-                        :default_meta_description, :site_url]
         @preferences_security = [:allow_ssl_in_production,
                         :allow_ssl_in_staging, :allow_ssl_in_development_and_test,
                         :check_for_spree_alerts]
@@ -16,8 +15,10 @@ module Spree
           next unless Spree::Config.has_preference? name
           Spree::Config[name] = value
         end
-        flash[:success] = Spree.t(:successfully_updated, :resource => Spree.t(:general_settings))
 
+        current_store.update_attributes store_params
+
+        flash[:success] = Spree.t(:successfully_updated, :resource => Spree.t(:general_settings))
         redirect_to edit_admin_general_settings_path
       end
 
@@ -28,6 +29,19 @@ module Spree
           filter_dismissed_alerts
           render :nothing => true
         end
+      end
+
+      private
+      def store_params
+        params.require(:store).permit(permitted_params)
+      end
+
+      def permitted_params
+        Spree::PermittedAttributes.store_attributes
+      end
+
+      def set_store
+        @store = current_store
       end
     end
   end

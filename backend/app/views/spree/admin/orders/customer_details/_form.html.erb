@@ -19,7 +19,7 @@
                 <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
               </li>
             <% else %>
-              <% guest = @order.user.nil? || @order.user.anonymous? %>
+              <% guest = @order.user.nil? %>
               <li>
                 <%= radio_button_tag :guest_checkout, true, guest %>
                 <%= label_tag :guest_checkout_true, Spree.t(:say_yes) %>
@@ -40,7 +40,7 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:billing_address) %></legend>
       <%= f.fields_for :bill_address do |ba_form| %>
-        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :name => Spree.t(:billing_address), :use_billing => false } %>
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :type => "billing" } %>
       <% end %>
     </fieldset>
   </div>
@@ -49,7 +49,14 @@
     <fieldset class="no-border-bottom">
       <legend align="center"><%= Spree.t(:shipping_address) %></legend>
       <%= f.fields_for :ship_address do |sa_form| %>
-        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :name => Spree.t(:shipping_address), :use_billing => true } %>
+        <div class="field" style="position: absolute;margin-top: -15px;right: 0;">
+          <span data-hook="use_billing">
+            <%= check_box_tag 'order[use_billing]', '1', (!(@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+            <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+          </span>
+        </div>
+
+        <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :type => 'shipping' } %>
       <% end %>
     </fieldset>
   </div>
@@ -57,10 +64,10 @@
   <div class="clear"></div>
 
   <div class="form-buttons filter-actions actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'icon-refresh' %>
+    <%= button Spree.t('actions.update'), 'refresh' %>
   </div>
 
   <% content_for :head do %>
-    <%= javascript_include_tag 'admin/address_states.js' %>
+    <%= javascript_include_tag 'spree/backend/address_states.js' %>
   <% end %>
 </fieldset>

@@ -20,7 +20,10 @@ describe Spree::Order do
       end
 
       context "when payment processing succeeds" do
-        before { order.stub :process_payments! => true }
+        before do
+          order.stub payments: [1]
+          order.stub process_payments: true
+        end
 
         it "should finalize order when transitioning to complete state" do
           order.should_receive(:finalize!)
@@ -35,7 +38,6 @@ describe Spree::Order do
              order.state.should == "confirm"
            end
         end
-
       end
 
       context "when payment processing fails" do
@@ -46,31 +48,30 @@ describe Spree::Order do
          order.state.should == "confirm"
         end
       end
-
-    end
-
-    context "when current state is address" do
-      before do
-        order.stub(:has_available_payment)
-        order.stub(:ensure_available_shipping_rates)
-        order.state = "address"
-      end
-
-      it "adjusts tax rates when transitioning to delivery" do
-        # Once because the record is being saved
-        # Twice because it is transitioning to the delivery state
-        Spree::TaxRate.should_receive(:adjust).twice
-        order.next!
-      end
     end
 
     context "when current state is delivery" do
       before do
+        order.stub :payment_required? => true
+        order.stub :apply_free_shipping_promotions
         order.state = "delivery"
-        order.stub :total => 10.0
+      end
+
+      it "adjusts tax rates when transitioning to delivery" do
+        # Once for the line items
+        Spree::TaxRate.should_receive(:adjust).once
+        order.stub :set_shipments_cost
+        order.next!
+      end
+
+      it "adjusts tax rates twice if there are any shipments" do
+        # Once for the line items, once for the shipments
+        order.shipments.build
+        Spree::TaxRate.should_receive(:adjust).twice
+        order.stub :set_shipments_cost
+        order.next!
       end
     end
-
   end
 
   context "#can_cancel?" do
@@ -152,8 +153,9 @@ describe Spree::Order do
 
       context "without shipped items" do
         it "should set payment state to 'credit owed'" do
+          # Regression test for #3711
+          order.should_receive(:update_column).with(:payment_state, 'credit_owed')
           order.cancel!
-          order.payment_state.should == 'credit_owed'
         end
       end
 
@@ -165,6 +167,16 @@ describe Spree::Order do
         it "should not alter the payment state" do
           order.cancel!
           order.payment_state.should be_nil
+        end
+      end
+
+      context "with payments" do
+        let(:payment) { create(:payment) }
+
+        it "should automatically refund all payments" do
+          order.stub_chain(:payments, :completed).and_return([payment])
+          payment.should_receive(:cancel!)
+          order.cancel!
         end
       end
     end

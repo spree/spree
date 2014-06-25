@@ -21,5 +21,4 @@ describe "Taxonomies and taxons" do
     click_button "Update"
     page.should have_content("Taxon \"Shirt\" has been successfully updated!")
   end
-
 end

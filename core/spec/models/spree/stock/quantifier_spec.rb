@@ -35,6 +35,14 @@ module Spree
           it_should_behave_like 'unlimited supply'
         end
 
+        context 'when variant inventory tracking is off' do
+          before { stock_item.variant.track_inventory = false }
+
+          specify { subject.total_on_hand.should == Float::INFINITY }
+
+          it_should_behave_like 'unlimited supply'
+        end
+
         context 'when stock item allows backordering' do
 
           specify { subject.backorderable?.should be_true }

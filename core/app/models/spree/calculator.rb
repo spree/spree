@@ -1,12 +1,20 @@
 module Spree
-  class Calculator < ActiveRecord::Base
+  class Calculator < Spree::Base
     belongs_to :calculable, polymorphic: true
 
-    # This method must be overriden in concrete calculator.
+    # This method calls a compute_<computable> method. must be overriden in concrete calculator.
     #
-    # It should return amount computed based on #calculable and/or optional parameter
-    def compute(something = nil)
-      raise NotImplementedError, 'please use concrete calculator'
+    # It should return amount computed based on #calculable and the computable parameter
+    def compute(computable)
+      # Spree::LineItem -> :compute_line_item
+      computable_name = computable.class.name.demodulize.underscore
+      method = "compute_#{computable_name}".to_sym
+      calculator_class = self.class
+      if respond_to?(method)
+        self.send(method, computable)
+      else
+        raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{calculator_class.name}"
+      end
     end
 
     # overwrite to provide description for your calculators

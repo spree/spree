@@ -1,77 +1,94 @@
 module Spree
-  class Promotion < Spree::Activator
+  class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
-    Activator.event_names << 'spree.checkout.coupon_code_added'
-    Activator.event_names << 'spree.content.visited'
-
-    has_many :promotion_rules, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_rules, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 
-    has_many :promotion_actions, foreign_key: :activator_id, autosave: true, dependent: :destroy
+    has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
+
+    has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
 
     validates :name, presence: true
-    validates :code, presence: true, if: lambda{|r| r.event_name == 'spree.checkout.coupon_code_added' }
-    validates :path, presence: true, if: lambda{|r| r.event_name == 'spree.content.visited' }
+    validates :path, uniqueness: true, allow_blank: true
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
+    validates :description, length: { maximum: 255 }
 
-    # TODO: This shouldn't be necessary with :autosave option but nested attribute updating of actions is broken without it
-    after_save :save_rules_and_actions
+    before_save :normalize_blank_values
 
-    def save_rules_and_actions
-      (rules + actions).each &:save
-    end
+    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
 
     def self.advertised
       where(advertise: true)
     end
 
-    def self.with_code
-      where(event_name: 'spree.checkout.coupon_code_added')
+    def self.with_coupon_code(coupon_code)
+      where("lower(code) = ?", coupon_code.strip.downcase).first
+    end
+
+    def self.active
+      where('starts_at IS NULL OR starts_at < ?', Time.now).
+        where('expires_at IS NULL OR expires_at > ?', Time.now)
+    end
+
+    def self.order_activatable?(order)
+      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    end
+
+    def expired?
+      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
     end
 
     def activate(payload)
-      return unless order_activatable? payload[:order]
+      order = payload[:order]
+      return unless self.class.order_activatable?(order)
 
-      # make sure code is always downcased (old databases might have mixed case codes)
-      if code.present?
-        event_code = payload[:coupon_code]
-        return unless event_code == self.code.downcase.strip
-      end
-
-      if path.present?
-        return unless path == payload[:path]
-      end
-
-      actions.each do |action|
+      # Track results from actions to see if any action has been taken.
+      # Actions should return nil/false if no action has been taken.
+      # If an action returns true, then an action has been taken.
+      results = actions.map do |action|
         action.perform(payload)
       end
+      # If an action has been taken, report back to whatever activated this promotion.
+      action_taken = results.include?(true)
+
+      if action_taken
+      # connect to the order
+      # create the join_table entry.
+        self.orders << order
+        self.save
+      end
+
+      return action_taken
     end
 
     # called anytime order.update! happens
-    def eligible?(order)
-      return false if expired? || usage_limit_exceeded?(order)
-      rules_are_eligible?(order, {})
+    def eligible?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable)
+      rules_are_eligible?(promotable, {})
     end
 
-    def rules_are_eligible?(order, options = {})
+    def rules_are_eligible?(promotable, options = {})
+      # Promotions without rules are eligible by default.
       return true if rules.none?
-      eligible = lambda { |r| r.eligible?(order, options) }
+      eligible = lambda { |r| r.eligible?(promotable, options) }
+      specific_rules = rules.for(promotable)
+      return true if specific_rules.none?
       if match_policy == 'all'
-        rules.all?(&eligible)
+        # If there are rules for this promotion, but no rules for this
+        # particular promotable, then the promotion is ineligible by default.
+        specific_rules.any? && specific_rules.all?(&eligible)
       else
-        rules.any?(&eligible)
+        # If there are no rules for this promotable, then this will return false.
+        # If there are rules for this promotable, but they are ineligible, this will return false.
+        specific_rules.any?(&eligible)
       end
-    end
-
-    def order_activatable?(order)
-      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
     # Products assigned to all product rules
@@ -81,25 +98,31 @@ module Spree
       end.flatten.uniq
     end
 
-    def usage_limit_exceeded?(order = nil)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(order) >= usage_limit
+    def product_ids
+      products.map(&:id)
     end
 
-    def adjusted_credits_count(order)
-      return credits_count if order.nil?
-      credits_count - (order.promotion_credit_exists?(self) ? 1 : 0)
+    def usage_limit_exceeded?(promotable)
+      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+    end
+
+    def adjusted_credits_count(promotable)
+      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
     end
 
     def credits
-      Adjustment.promotion.where(originator_id: actions.map(&:id))
+      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
     end
 
     def credits_count
       credits.count
     end
 
-    def code=(coupon_code)
-      write_attribute(:code, (coupon_code.downcase.strip rescue nil))
+    private
+    def normalize_blank_values
+      [:code, :path].each do |column|
+        self[column] = nil if self[column].blank?
+      end
     end
   end
 end

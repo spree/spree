@@ -1,0 +1,24 @@
+<% content_for :page_title do %>
+  <%= link_to "#{Spree.t(:editing_user)} #{@user.email}", edit_admin_user_url(@user) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>
+<%= render :partial => 'spree/admin/users/user_page_actions' %>
+
+<fieldset data-hook="admin_user_addresses" id="admin_user_edit_addresses" class="alpha twelve columns">
+  <legend><%= Spree.t('addresses', :scope => 'admin.user') %></legend>
+
+  <div data-hook="admin_user_edit_form_header">
+    <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
+  </div>
+
+  <div data-hook="admin_user_address_edit_form">
+    <%= form_for [:admin, @user], as: :user, url: addresses_admin_user_url(@user), method: :put do |f| %>
+      <%= render :partial => 'addresses_form', :locals => { :f => f } %>
+
+      <div data-hook="admin_user_edit_form_button">
+        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
+      </div>
+    <% end %>
+  </div>
+</fieldset>

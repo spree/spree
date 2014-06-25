@@ -3,7 +3,12 @@ module Spree
     module TestingSupport
       module Helpers
         def json_response
-          JSON.parse(response.body)
+          case body = JSON.parse(response.body)
+          when Hash
+            body.with_indifferent_access
+          when Array
+            body
+          end
         end
 
         def assert_not_found!
@@ -17,8 +22,7 @@ module Spree
         end
 
         def stub_authentication!
-          controller.stub :check_for_user_or_api_key
-          Spree::LegacyUser.stub :find_by_spree_api_key => current_api_user
+          Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
         # This method can be overriden (with a let block) inside a context
@@ -32,7 +36,7 @@ module Spree
         end
 
         def upload_image(filename)
-          fixture_file_upload(image(filename).path)
+          fixture_file_upload(image(filename).path, 'image/jpg')
         end
       end
     end

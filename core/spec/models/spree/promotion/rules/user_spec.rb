@@ -26,5 +26,12 @@ describe Spree::Promotion::Rules::User do
 
       rule.should_not be_eligible(order)
     end
+
+    # Regression test for #3885
+    it "can assign to user_ids" do
+      user1 = Spree::LegacyUser.create!(:email => "test1@example.com")
+      user2 = Spree::LegacyUser.create!(:email => "test2@example.com")
+      lambda { rule.user_ids = "#{user1.id}, #{user2.id}" }.should_not raise_error
+    end
   end
 end

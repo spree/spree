@@ -3,6 +3,9 @@ FactoryGirl.define do
     quantity 1
     price { BigDecimal.new('10.00') }
     order
-    variant
+    ignore do
+      association :product
+    end
+    variant{ product.master }
   end
 end

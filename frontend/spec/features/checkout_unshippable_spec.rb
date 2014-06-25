@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "checkout with unshippable items" do
+describe "checkout with unshippable items", inaccessible: true do
   let!(:stock_location) { create(:stock_location) }
   let(:order) { OrderWalkthrough.up_to(:address) }
 

@@ -1,11 +1,15 @@
+#!/bin/sh
+
+set -e
+
 # Switching Gemfile
-function set_gemfile(){
+set_gemfile(){
   echo "Switching Gemfile..."
   export BUNDLE_GEMFILE="`pwd`/Gemfile"
 }
 
-# Target postgres
-export DB=postgres
+# Target postgres. Override with: `DB=sqlite bash build.sh`
+export DB=${DB:-postgres}
 
 # Spree defaults
 echo "Setup Spree defaults and creating test application..."
@@ -30,4 +34,4 @@ cd ../frontend; set_gemfile; bundle update; bundle exec rspec spec
 
 # Spree Sample
 echo "Setup Spree Sample and running RSpec..."
-cd ../sample; bundle install; bundle exec rake test_app; bundle exec rspec spec
+cd ../sample; set_gemfile; bundle update; bundle exec rspec spec

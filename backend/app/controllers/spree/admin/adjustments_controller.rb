@@ -1,30 +1,45 @@
 module Spree
   module Admin
     class AdjustmentsController < ResourceController
-      belongs_to 'spree/order', :find_by => :number
-      destroy.after :reload_order
 
-      def toggle_state
-        redirect_to admin_order_adjustments_path(@order) if @adjustment.finalized?
+      belongs_to 'spree/order', find_by: :number
 
-        if @adjustment.immutable?
-          @adjustment.fire_state_event(:open)
-          flash[:success] = Spree.t(:adjustment_successfully_opened)
-        else
-          @adjustment.fire_state_event(:close)
-          flash[:success] = Spree.t(:adjustment_successfully_closed)
-        end
-        redirect_to admin_order_adjustments_path(@order)
+      create.after :update_totals
+      destroy.after :update_totals
+      update.after :update_totals
+
+      skip_before_filter :load_resource, only: [:toggle_state, :edit, :update, :destroy]
+
+      def destroy
+        find_adjustment
+        super
+      end
+
+      def edit
+        find_adjustment
+        super
+      end
+
+      def index
+        @adjustments = @order.all_adjustments.order("created_at ASC")
+      end
+
+      def update
+        find_adjustment
+        super
       end
 
       private
-      def reload_order
-        @order.reload
+
+      def find_adjustment
+        # Need to assign to @object here to keep ResourceController happy
+        @adjustment = @object = parent.all_adjustments.find(params[:id])
       end
 
-      def collection
-        parent.adjustments.eligible
+      def update_totals
+        @order.reload.update!
       end
+
     end
   end
 end

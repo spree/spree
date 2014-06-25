@@ -1,6 +1,7 @@
 module Spree
-  class Price < ActiveRecord::Base
-    belongs_to :variant, class_name: 'Spree::Variant'
+  class Price < Spree::Base
+    acts_as_paranoid
+    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     validate :check_price
     validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
@@ -22,7 +23,13 @@ module Spree
       self[:amount] = parse_price(price)
     end
 
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
+
     def check_price
       raise "Price must belong to a variant" if variant.nil?
 
@@ -45,4 +52,3 @@ module Spree
 
   end
 end
-

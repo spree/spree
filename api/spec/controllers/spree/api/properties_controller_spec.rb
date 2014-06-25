@@ -31,6 +31,19 @@ module Spree
       json_response['properties'].first['presentation'].should eq property_2.presentation
     end
 
+    it "retrieves a list of properties by id" do
+      api_get :index, :ids => [property_1.id]
+      json_response["properties"].first.should have_attributes(attributes)
+      json_response["count"].should == 1
+    end
+
+    it "retrieves a list of properties by ids string" do
+      api_get :index, :ids => [property_1.id, property_2.id].join(",")
+      json_response["properties"].first.should have_attributes(attributes)
+      json_response["properties"][1].should have_attributes(attributes)
+      json_response["count"].should == 2
+    end
+
     it "can see a single property" do
       api_get :show, :id => property_1.id
       json_response.should have_attributes(attributes)

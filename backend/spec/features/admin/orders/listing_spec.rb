@@ -3,9 +3,11 @@ require 'spec_helper'
 describe "Orders Listing" do
   stub_authorization!
 
+  let!(:promotion) { create(:promotion_with_item_adjustment) }
+
   before(:each) do
-    create(:order, :created_at => Time.now + 1.day, :completed_at => Time.now + 1.day, :number => "R100")
-    create(:order, :created_at => Time.now - 1.day, :completed_at => Time.now - 1.day, :number => "R200")
+    @order1 = create(:order, :created_at => 1.day.from_now, :completed_at => 1.day.from_now, :number => "R100")
+    @order2 = create(:order, :created_at => 1.day.ago, :completed_at => 1.day.ago, :number => "R200")
     visit spree.admin_path
   end
 
@@ -60,14 +62,52 @@ describe "Orders Listing" do
       within("table#listing_orders") { page.should_not have_content("R100") }
     end
 
+    context "when pagination is really short" do
+      before do
+        @old_per_page = Spree::Config[:orders_per_page]
+        Spree::Config[:orders_per_page] = 1
+      end
+
+      after do
+        Spree::Config[:orders_per_page] = @old_per_page
+      end
+
+      # Regression test for #4004
+      it "should be able to go from page to page for incomplete orders" do
+        10.times { Spree::Order.create :email => "incomplete@example.com" }
+        uncheck "q_completed_at_not_null"
+        click_button "Filter Results"
+        within(".pagination") do
+          click_link "2"
+        end
+        page.should have_content("incomplete@example.com")
+        find("#q_completed_at_not_null").should_not be_checked
+      end
+    end
+
     it "should be able to search orders using only completed at input" do
-      pending "Failing on CI server. To be investigated."
-      fill_in "q_created_at_gt", :with => Date.today
+      fill_in "q_created_at_gt", :with => Date.current
       click_icon :search
       within_row(1) { page.should have_content("R100") }
 
       # Ensure that the other order doesn't show up
       within("table#listing_orders") { page.should_not have_content("R200") }
     end
+
+    context "filter on promotions", :js => true do
+      before(:each) do
+        @order1.promotions << promotion
+        @order1.save
+      end
+
+      it "only shows the orders with the selected promotion" do
+        select2 promotion.name, :from => "Promotion"
+        click_icon :search
+        within_row(1) { page.should have_content("R100") }
+        within("table#listing_orders") { page.should_not have_content("R200") }
+      end
+    end
+
+
   end
 end

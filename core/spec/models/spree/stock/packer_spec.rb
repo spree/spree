@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Packer do
-      let(:order) { create(:order_with_line_items, line_items_count: 5) }
+      let!(:order) { create(:order_with_line_items, line_items_count: 5) }
       let(:stock_location) { create(:stock_location) }
 
       subject { Packer.new(stock_location, order) }
@@ -25,7 +25,6 @@ module Spree
         it 'contains all the items' do
           package = subject.default_package
           package.contents.size.should eq 5
-          package.weight.should > 0
         end
 
         it 'variants are added as backordered without enough on_hand' do

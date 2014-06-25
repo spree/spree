@@ -1,5 +1,5 @@
 module Spree
-  class Product < ActiveRecord::Base
+  class Product < Spree::Base
     cattr_accessor :search_scopes do
       []
     end
@@ -23,8 +23,16 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        order_text = "#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}"
-        self.scope(name.to_s, -> { relation.order(order_text) })
+        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}") })
+      end
+    end
+
+    def self.property_conditions(property)
+      properties = Property.table_name
+      conditions = case property
+      when String   then { "#{properties}.name" => property }
+      when Property then { "#{properties}.id" => property.id }
+      else               { "#{properties}.id" => property.to_i }
       end
     end
 
@@ -68,14 +76,9 @@ module Spree
     #
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      if ActiveRecord::Base.connection.adapter_name == "PostgreSQL"
-        scope = select("DISTINCT ON (spree_products.id) spree_products.*")
-      else
-        scope = select("DISTINCT(spree_products.id), spree_products.*")
-      end
-
-      scope.joins(:taxons).
-      where(Taxon.table_name => { :id => taxon.self_and_descendants.map(&:id) })
+      includes(:classifications).
+      where("spree_products_taxons.taxon_id" => taxon.self_and_descendants.pluck(:id)).
+      order("spree_products_taxons.position ASC")
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -89,28 +92,15 @@ module Spree
 
     # a scope that finds all products having property specified by name, object or id
     add_search_scope :with_property do |property|
-      properties = Property.table_name
-      conditions = case property
-      when String   then { "#{properties}.name" => property }
-      when Property then { "#{properties}.id" => property.id }
-      else               { "#{properties}.id" => property.to_i }
-      end
-
-      joins(:properties).where(conditions)
+      joins(:properties).where(property_conditions(property))
     end
 
     # a simple test for product with a certain property-value pairing
     # note that it can test for properties with NULL values, but not for absent values
     add_search_scope :with_property_value do |property, value|
-      properties = Spree::Property.table_name
-      conditions = case property
-      when String   then ["#{properties}.name = ?", property]
-      when Property then ["#{properties}.id = ?", property.id]
-      else               ["#{properties}.id = ?", property.to_i]
-      end
-      conditions = ["#{ProductProperty.table_name}.value = ? AND #{conditions[0]}", value, conditions[1]]
-
-      joins(:properties).where(conditions)
+      joins(:properties)
+        .where("#{ProductProperty.table_name}.value = ?", value)
+        .where(property_conditions(property))
     end
 
     add_search_scope :with_option do |option|
@@ -211,16 +201,28 @@ module Spree
       group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
-    # This method needs to be defined *as a method*, otherwise it will cause the
-    # problem shown in #1247.
-    def self.group_by_products_id
-      if (ActiveRecord::Base.connection.adapter_name == 'PostgreSQL')
-        # Need to check, otherwise `column_names` will fail
-        if table_exists?
-          group(column_names.map { |col_name| "#{table_name}.#{col_name}"})
-        end
+    def self.distinct_by_product_ids(sort_order = nil)
+      sort_column = sort_order.split(" ").first
+
+      # Postgres will complain when using ordering by expressions not present in
+      # SELECT DISTINCT. e.g.
+      #
+      #   PG::InvalidColumnReference: ERROR:  for SELECT DISTINCT, ORDER BY
+      #   expressions must appear in select list. e.g.
+      #
+      #   SELECT  DISTINCT "spree_products".* FROM "spree_products" LEFT OUTER JOIN
+      #   "spree_variants" ON "spree_variants"."product_id" = "spree_products"."id" AND "spree_variants"."is_master" = 't'
+      #   AND "spree_variants"."deleted_at" IS NULL LEFT OUTER JOIN "spree_prices" ON
+      #   "spree_prices"."variant_id" = "spree_variants"."id" AND "spree_prices"."currency" = 'USD'
+      #   AND "spree_prices"."deleted_at" IS NULL WHERE "spree_products"."deleted_at" IS NULL AND ('t'='t') 
+      #   ORDER BY "spree_prices"."amount" ASC LIMIT 10 OFFSET 0
+      #
+      # Don't allow sort_column, a variable coming from params,
+      # to be anything but a column in the database
+      if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' && !column_names.include?(sort_column)
+        all
       else
-        group("#{self.quoted_table_name}.id")
+        distinct
       end
     end
 

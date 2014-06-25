@@ -13,7 +13,7 @@ describe "Shipping Methods" do
     Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     Spree::Order.any_instance.stub(:require_email => false)
-    create(:payment_method, :environment => 'test')
+    create(:check_payment_method, :environment => 'test')
 
     visit spree.admin_path
     click_link "Configuration"
@@ -25,7 +25,7 @@ describe "Shipping Methods" do
       within_row(1) do
         column_text(1).should == shipping_method.name 
         column_text(2).should == zone.name
-        column_text(3).should == "Flat Rate (per order)"
+        column_text(3).should == "Flat Rate"
         column_text(4).should == "Both"
       end
     end

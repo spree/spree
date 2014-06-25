@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe "Checkout" do
+describe "Checkout", inaccessible: true do
 
   let!(:country) { create(:country, :states_required => true) }
   let!(:state) { create(:state, :country => country) }
   let!(:shipping_method) { create(:shipping_method) }
   let!(:stock_location) { create(:stock_location) }
   let!(:mug) { create(:product, :name => "RoR Mug") }
-  let!(:payment_method) { create(:payment_method) }
+  let!(:payment_method) { create(:check_payment_method) }
   let!(:zone) { create(:zone) }
 
   context "visitor makes checkout as guest without registration" do
@@ -18,11 +18,11 @@ describe "Checkout" do
     context "defaults to use billing address" do
       before do
         add_mug_to_cart
-        Spree::Order.last.update_column(:email, "ryan@spreecommerce.com")
+        Spree::Order.last.update_column(:email, "test@example.com")
         click_button "Checkout"
       end
 
-      it "should default checkbox to checked" do
+      it "should default checkbox to checked", inaccessible: true do
         find('input#order_use_billing').should be_checked
       end
 
@@ -32,9 +32,23 @@ describe "Checkout" do
       end
     end
 
+    # Regression test for #4079
+    context "persists state when on address page" do
+      before do
+        add_mug_to_cart
+        click_button "Checkout"
+      end
+
+      specify do
+        Spree::Order.count.should == 1
+        Spree::Order.last.state.should == "address"
+      end
+    end
+
     # Regression test for #1596
     context "full checkout" do
       before do
+        shipping_method.calculator.update!(preferred_amount: 10)
         mug.shipping_category = shipping_method.shipping_categories.first
         mug.save!
       end
@@ -43,35 +57,37 @@ describe "Checkout" do
         add_mug_to_cart
         click_button "Checkout"
 
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
+        fill_in "order_email", :with => "test@example.com"
         fill_in_address
 
         click_button "Save and Continue"
         page.should_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content(shipping_method.adjustment_label)
+        page.should have_content("Shipping total $10.00")
       end
+    end
 
-      # Regression test, no issue number
-      it "does not create a closed adjustment for an order's shipment upon reaching the delivery step", :js => true do
+    # Regression test for #4306
+    context "free shipping" do
+      before do
         add_mug_to_cart
         click_button "Checkout"
+      end
 
-        fill_in "order_email", :with => "ryan@spreecommerce.com"
-        fill_in_address
-
-        click_button "Save and Continue"
-        Spree::Order.last.shipments.first.adjustment.state.should_not == "closed"
+      it "should not show 'Free Shipping' when there are no shipments" do
+        within("#checkout-summary") do
+          expect(page).to_not have_content('Free Shipping')
+        end
       end
     end
   end
 
-  #regression test for #2694
+  # Regression test for #2694 and #4117
   context "doesn't allow bad credit card numbers" do
     before(:each) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true
-      order.stub(:available_payment_methods => [ create(:bogus_payment_method, :environment => 'test') ])
+      order.stub(:available_payment_methods => [ create(:credit_card_payment_method, :environment => 'test') ])
 
       user = create(:user)
       order.user = user
@@ -79,10 +95,9 @@ describe "Checkout" do
 
       Spree::CheckoutController.any_instance.stub(:current_order => order)
       Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
-      Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
     end
 
-    it "redirects to payment page" do
+    it "redirects to payment page", inaccessible: true do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"
@@ -92,22 +107,46 @@ describe "Checkout" do
       click_button "Save and Continue"
       click_button "Place Order"
       page.should have_content("Bogus Gateway: Forced failure")
-      click_button "Place Order"
-      page.should have_content("No pending payments")
+      page.current_url.should include("/checkout/payment")
+    end
+  end
+
+  #regression test for #3945
+  context "when Spree::Config[:always_include_confirm_step] is true" do
+    before do
+      Spree::Config[:always_include_confirm_step] = true
+    end
+
+    it "displays confirmation step", :js => true do
+      add_mug_to_cart
+      click_button "Checkout"
+
+      fill_in "order_email", :with => "test@example.com"
+      fill_in_address
+
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+
+      continue_button = find(".continue")
+      continue_button.value.should == "Place Order"
     end
   end
 
   context "and likes to double click buttons" do
-    before(:each) do
-      user = create(:user)
+    let!(:user) { create(:user) }
 
+    let!(:order) do
       order = OrderWalkthrough.up_to(:delivery)
       order.stub :confirmation_required? => true
 
       order.reload
       order.user = user
       order.update!
+      order
+    end
 
+    before(:each) do
       Spree::CheckoutController.any_instance.stub(:current_order => order)
       Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
       Spree::CheckoutController.any_instance.stub(:skip_state_validation? => true)
@@ -125,6 +164,7 @@ describe "Checkout" do
     end
 
     it "prevents double clicking the confirm button on checkout", :js => true do
+      order.payments << create(:payment)
       visit spree.checkout_state_path(:confirm)
 
       # prevent form submit to verify button is disabled
@@ -137,8 +177,8 @@ describe "Checkout" do
   end
 
   context "when several payment methods are available" do
-    let(:credit_cart_payment) {create(:bogus_payment_method, :environment => 'test') }
-    let(:check_payment) {create(:payment_method, :environment => 'test') }
+    let(:credit_cart_payment) {create(:credit_card_payment_method, :environment => 'test') }
+    let(:check_payment) {create(:check_payment_method, :environment => 'test') }
 
     after do
       Capybara.ignore_hidden_elements = true
@@ -170,6 +210,52 @@ describe "Checkout" do
     end
   end
 
+  context "user has payment sources", js: true do
+    let(:bogus) { create(:credit_card_payment_method) }
+    let(:user) { create(:user) }
+
+    let!(:credit_card) do
+      create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: "BGS-WEFWF")
+    end
+
+    before do
+      order = OrderWalkthrough.up_to(:delivery)
+      order.stub(:available_payment_methods => [bogus])
+
+      Spree::CheckoutController.any_instance.stub(current_order: order)
+      Spree::CheckoutController.any_instance.stub(try_spree_current_user: user)
+
+      visit spree.checkout_state_path(:payment)
+    end
+
+    it "selects first source available and customer moves on" do
+      expect(find "#use_existing_card_yes").to be_checked
+
+      expect {
+        click_on "Save and Continue"
+      }.not_to change { Spree::CreditCard.count }
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+
+    it "allows user to enter a new source" do
+      choose "use_existing_card_no"
+
+      fill_in "Name on card", :with => 'Spree Commerce'
+      fill_in "Card Number", :with => '4111111111111111'
+      fill_in "card_expiry", :with => '04 / 20'
+      fill_in "Card Code", :with => '123'
+
+      expect {
+        click_on "Save and Continue"
+      }.to change { Spree::CreditCard.count }.by 1
+
+      click_on "Place Order"
+      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+    end
+  end
+
   # regression for #2921
   context "goes back from payment to add another item", js: true do
     let!(:bag) { create(:product, :name => "RoR Bag") }
@@ -177,7 +263,7 @@ describe "Checkout" do
     it "transit nicely through checkout steps again" do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -200,7 +286,7 @@ describe "Checkout" do
     before do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -256,9 +342,9 @@ describe "Checkout" do
   end
 
   context "in coupon promotion, submits coupon along with payment", js: true do
-    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", event_name: "spree.checkout.coupon_code_added", code: "huhu") }
+    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", code: "huhu") }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
-    let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator) }
+    let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do
       promotion.actions << action
@@ -266,7 +352,7 @@ describe "Checkout" do
       add_mug_to_cart
       click_on "Checkout"
 
-      fill_in "order_email", :with => "ryan@spreecommerce.com"
+      fill_in "order_email", :with => "test@example.com"
       fill_in_address
       click_on "Save and Continue"
 
@@ -297,6 +383,96 @@ describe "Checkout" do
         click_on "Save and Continue"
         expect(current_path).to eql(spree.order_path(Spree::Order.last))
       end
+    end
+  end
+
+  context "order has only payment step" do
+    before do
+      create(:credit_card_payment_method)
+      @old_checkout_flow = Spree::Order.checkout_flow
+      Spree::Order.class_eval do
+        checkout_flow do
+          go_to_state :payment
+          go_to_state :confirm
+        end
+      end
+
+      Spree::Order.any_instance.stub email: "spree@commerce.com"
+
+      add_mug_to_cart
+      click_on "Checkout"
+    end
+
+    after do
+      Spree::Order.checkout_flow(&@old_checkout_flow)
+    end
+
+    it "goes right payment step and place order just fine" do
+      expect(current_path).to eq spree.checkout_state_path('payment')
+
+      choose "Credit Card"
+      fill_in "Name on card", :with => 'Spree Commerce'
+      fill_in "Card Number", :with => '4111111111111111'
+      fill_in "card_expiry", :with => '04 / 20'
+      fill_in "Card Code", :with => '123'
+      click_button "Save and Continue"
+
+      expect(current_path).to eq spree.checkout_state_path('confirm')
+      click_button "Place Order"
+    end
+  end
+
+
+  context "save my address" do
+    before do
+      stock_location.stock_items.update_all(count_on_hand: 1)
+      add_mug_to_cart
+    end
+
+    context 'as a guest' do
+      before do
+        Spree::Order.last.update_column(:email, "test@example.com")
+        click_button "Checkout"
+      end
+
+      it 'should not be displayed' do
+        expect(page).to_not have_css("[data-hook=save_user_address]")
+      end
+    end
+
+    context 'as a User' do
+      before do
+        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => create(:user))
+        click_button "Checkout"
+      end
+
+      it 'should be displayed' do
+        expect(page).to have_css("[data-hook=save_user_address]")
+      end
+    end
+  end
+
+  context "when order is completed" do
+    let!(:user) { create(:user) }
+    let!(:order) { OrderWalkthrough.up_to(:delivery) }
+
+    before(:each) do
+      Spree::CheckoutController.any_instance.stub(:current_order => order)
+      Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
+      Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
+
+      visit spree.checkout_state_path(:delivery)
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+    end
+
+    it "displays a thank you message" do
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
+    end
+
+    it "does not display a thank you message on that order future visits" do
+      visit spree.order_path(order)
+      expect(page).to_not have_content(Spree.t(:thank_you_for_your_order))
     end
   end
 

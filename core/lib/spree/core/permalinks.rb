@@ -14,11 +14,7 @@ module Spree
           options[:field] ||= :permalink
           self.permalink_options = options
 
-          if self.connected?
-            if self.table_exists? && self.column_names.include?(permalink_options[:field].to_s)
-              before_validation(:on => :create) { save_permalink }
-            end
-          end
+          before_validation(:on => :create) { save_permalink }
         end
 
         def find_by_param(value, *args)
@@ -37,6 +33,10 @@ module Spree
           permalink_options[:prefix] || ""
         end
 
+        def permalink_length
+          permalink_options[:length] || 9
+        end
+
         def permalink_order
           order = permalink_options[:order]
           "#{order} ASC," if order
@@ -44,7 +44,7 @@ module Spree
       end
 
       def generate_permalink
-        "#{self.class.permalink_prefix}#{Array.new(9){rand(9)}.join}"
+        "#{self.class.permalink_prefix}#{Array.new(self.class.permalink_length){rand(9)}.join}"
       end
 
       def save_permalink(permalink_value=self.to_param)

@@ -8,7 +8,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'icon-arrow-left' %>
+    <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'arrow-left' %>
   </li>
 <% end %>
 
@@ -22,6 +22,7 @@
       <script>
         Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>";
         Spree.routes.admin_taxonomy_taxons_path = "<%= spree.admin_taxonomy_taxons_path(@taxonomy) %>";
+        Spree.routes.jstree_theme_path = "<%= stylesheet_path("jquery.jstree/themes/apple/style.css") %>";
       </script>
       <div id="taxonomy_tree" class="tree"></div>
     </div>
@@ -34,9 +35,9 @@
     <br>
 
     <div class="filter-actions actions">
-      <%= button Spree.t('actions.update'), 'icon-refresh' %>
+      <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'icon-remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'remove' %>
     </div>
   </fieldset>
 <% end %>

@@ -1,16 +1,20 @@
 module Spree
-  class Payment < ActiveRecord::Base
+  class Payment < Spree::Base
     include Spree::Payment::Processing
 
-    IDENTIFIER_CHARS = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze
+    IDENTIFIER_CHARS    = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze
+    NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
+    RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
 
-    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :payments
     belongs_to :source, polymorphic: true
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
 
     has_many :offsets, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") },
       class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
+    has_many :state_changes, as: :stateful
+    has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
 
     before_validation :validate_source
     before_create :set_unique_identifier
@@ -22,27 +26,36 @@ module Spree
     # invalidate previously entered payments
     after_create :invalidate_old_payments
 
-    attr_accessor :source_attributes
+    attr_accessor :source_attributes, :request_env
+
     after_initialize :build_source
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
     scope :completed, -> { with_state('completed') }
     scope :pending, -> { with_state('pending') }
+    scope :processing, -> { with_state('processing') }
     scope :failed, -> { with_state('failed') }
-    scope :valid, -> { where('state NOT IN (?)', %w(failed invalid)) }
+    scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
+    scope :valid, -> { where.not(state: %w(failed invalid)) }
 
     after_rollback :persist_invalid
+
+    validates :amount, numericality: true
 
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
       state_will_change!
-      save 
+      save
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
       # With card payments, happens before purchase or authorization happens
+      #
+      # Setting it after creating a profile and authorizing a full amount will
+      # prevent the payment from being authorized again once Order transitions
+      # to complete
       event :started_processing do
         transition from: [:checkout, :pending, :completed, :processing], to: :processing
       end
@@ -59,11 +72,19 @@ module Spree
         transition from: [:processing, :pending, :checkout], to: :completed
       end
       event :void do
-        transition from: [:pending, :completed, :checkout], to: :void
+        transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
       # when the card brand isnt supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
+      end
+
+      after_transition do |payment, transition|
+        payment.state_changes.create!(
+          previous_state: transition.from,
+          next_state:     transition.to,
+          name:           'payment',
+        )
       end
     end
 
@@ -76,12 +97,22 @@ module Spree
     end
     alias display_amount money
 
+    def amount=(amount)
+      self[:amount] =
+        case amount
+        when String
+          separator = I18n.t('number.currency.format.separator')
+          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
+          number.to_d if number.present?
+        end || amount
+    end
+
     def offsets_total
       offsets.pluck(:amount).sum
     end
 
     def credit_allowed
-      amount - offsets_total
+      amount - offsets_total.abs
     end
 
     def can_credit?
@@ -90,9 +121,11 @@ module Spree
 
     # see https://github.com/spree/spree/issues/981
     def build_source
-      return if source_attributes.nil?
-      if payment_method and payment_method.payment_source_class
+      return unless new_record?
+      if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
         self.source = payment_method.payment_source_class.new(source_attributes)
+        self.source.payment_method_id = payment_method.id
+        self.source.user_id = self.order.user_id if self.order
       end
     end
 
@@ -104,6 +137,22 @@ module Spree
     def payment_source
       res = source.is_a?(Payment) ? source.source : source
       res || payment_method
+    end
+
+    def is_avs_risky?
+      return false if avs_response.blank? || NON_RISKY_AVS_CODES.include?(avs_response)
+      return true
+    end
+
+    def is_cvv_risky?
+      return false if cvv_response_code == "M"
+      return false if cvv_response_code.nil?
+      return false if cvv_response_message.present?
+      return true
+    end
+
+    def uncaptured_amount
+      amount - capture_events.sum(:amount)
     end
 
     private
@@ -123,7 +172,8 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.is_a?(CreditCard) && source.number && !source.has_payment_profile?
+        return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
         gateway_error e
@@ -136,8 +186,19 @@ module Spree
       end
 
       def update_order
-        order.payments.reload
-        order.update!
+        if self.completed?
+          order.updater.update_payment_total
+        end
+
+        if order.completed?
+          order.updater.update_payment_state
+          order.updater.update_shipments
+          order.updater.update_shipment_state
+        end
+
+        if self.completed? || order.completed?
+          order.persist_totals
+        end
       end
 
       # Necessary because some payment gateways will refuse payments with

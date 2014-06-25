@@ -1,8 +1,8 @@
 object @order
 extends "spree/api/orders/order"
 
-if lookup_context.find_all("spree/api/orders/#{@order.state}").present?
-  extends "spree/api/orders/#{@order.state}"
+if lookup_context.find_all("spree/api/orders/#{root_object.state}").present?
+  extends "spree/api/orders/#{root_object.state}"
 end
 
 child :billing_address => :bill_address do
@@ -18,20 +18,26 @@ child :line_items => :line_items do
 end
 
 child :payments => :payments do
-  attributes :id, :amount, :state, :payment_method_id
+  attributes *payment_attributes
+
   child :payment_method => :payment_method do
     attributes :id, :name, :environment
+  end
+
+  child :source => :source do
+    attributes *payment_source_attributes
   end
 end
 
 child :shipments => :shipments do
-  extends "spree/api/shipments/show"
+  extends "spree/api/shipments/small"
 end
 
 child :adjustments => :adjustments do
   extends "spree/api/adjustments/show"
 end
 
-child :credit_cards => :credit_cards do
-  extends "spree/api/credit_cards/show"
+# Necessary for backend's order interface
+node :permissions do
+  { can_update: current_ability.can?(:update, root_object) }
 end

@@ -2,11 +2,13 @@ module Spree
   class Promotion
     module Rules
       class UserLoggedIn < PromotionRule
-
-        def eligible?(order, options = {})
-          return order.try(:user).try(:anonymous?) == false
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
         end
 
+        def eligible?(order, options = {})
+          return order.user.present?
+        end
       end
     end
   end

@@ -11,6 +11,7 @@ module Spree
       before_filter :authorize_admin
 
       protected
+
         def action
           params[:action].to_sym
         end
@@ -19,7 +20,7 @@ module Spree
           if respond_to?(:model_class, true) && model_class
             record = model_class
           else
-            record = Object
+            record = controller_name.to_sym
           end
           authorize! :admin, record
           authorize! action, record
@@ -85,6 +86,7 @@ module Spree
         def config_locale
           Spree::Backend::Config[:locale]
         end
+
     end
   end
 end

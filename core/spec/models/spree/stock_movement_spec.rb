@@ -24,6 +24,14 @@ describe Spree::StockMovement do
     stock_item.count_on_hand.should == 10
   end
 
+  it 'does not update count on hand when variant inventory tracking is off' do
+    stock_item.variant.track_inventory = false
+    subject.quantity = 1
+    subject.save
+    stock_item.reload
+    stock_item.count_on_hand.should == 10
+  end
+
   context "when quantity is negative" do
     context "after save" do
       it "should decrement the stock item count on hand" do

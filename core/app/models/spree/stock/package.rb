@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Package
-      ContentItem = Struct.new(:variant, :quantity, :state)
+      ContentItem = Struct.new(:line_item, :variant, :quantity, :state)
 
       attr_reader :stock_location, :order, :contents
       attr_accessor :shipping_rates
@@ -13,8 +13,8 @@ module Spree
         @shipping_rates = Array.new
       end
 
-      def add(variant, quantity, state=:on_hand)
-        contents << ContentItem.new(variant, quantity, state)
+      def add(line_item, quantity, state = :on_hand, variant = nil)
+        contents << ContentItem.new(line_item, variant || line_item.variant, quantity, state)
       end
 
       def weight
@@ -29,10 +29,13 @@ module Spree
         contents.select { |item| item.state == :backordered }
       end
 
-      def find_item(variant, state=:on_hand)
+      # Consider extensions and applications might create a inventory unit
+      # where the variant and the line_item might not refer to the same product
+      def find_item(variant, state = :on_hand, line_item = nil)
         contents.select do |item|
           item.variant == variant &&
-          item.state == state
+          item.state == state &&
+          (line_item.nil? || line_item == item.line_item)
         end.first
       end
 
@@ -51,28 +54,6 @@ module Spree
         quantity == 0
       end
 
-      def flattened
-        flat = []
-        contents.each do |item|
-          item.quantity.times do
-            flat << ContentItem.new(item.variant, 1, item.state)
-          end
-        end
-        flat
-      end
-
-      def flattened=(flattened)
-        contents.clear
-        flattened.each do |item|
-          current_item = find_item(item.variant, item.state)
-          if current_item
-            current_item.quantity += 1
-          else
-            add(item.variant, item.quantity, item.state)
-          end
-        end
-      end
-
       def currency
         #TODO calculate from first variant?
       end
@@ -82,7 +63,7 @@ module Spree
       end
 
       def shipping_methods
-        shipping_categories.map { |sc| sc.shipping_methods }.flatten.uniq
+        shipping_categories.map(&:shipping_methods).reduce(:&).to_a
       end
 
       def inspect
@@ -105,6 +86,7 @@ module Spree
             unit.pending = true
             unit.order = order
             unit.variant = item.variant
+            unit.line_item = item.line_item
             unit.state = item.state.to_s
           end
         end

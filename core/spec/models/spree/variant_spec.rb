@@ -33,6 +33,23 @@ describe Spree::Variant do
         product.variants.create(:name => "Foobar")
       end
     end
+
+    describe 'mark_master_out_of_stock' do
+      before do
+        product.master.stock_items.first.set_count_on_hand(5)
+      end
+      context 'when product is created without variants but with stock' do
+        it {product.master.should be_in_stock}
+      end
+
+      context 'when a variant is created' do
+        before(:each) do
+          product.variants.create!(:name => 'any-name')
+        end
+
+        it { product.master.should_not be_in_stock }
+       end
+     end
   end
 
   context "product has other variants" do
@@ -250,16 +267,16 @@ describe Spree::Variant do
 
   # Regression test for #2432
   describe 'options_text' do
+    let!(:variant) { create(:variant, option_values: []) }
+
     before do
-      option_type = double("OptionType", :presentation => "Foo")
-      option_values = [double("OptionValue", :option_type => option_type, :presentation => "bar")]
-      variant.stub(:option_values).and_return(option_values)
+      # Order bar than foo
+      variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
+      variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
     end
 
-    it "orders options correctly" do
-      variant.option_values.should_receive(:joins).with(:option_type).and_return(scope = double)
-      scope.should_receive(:order).with('spree_option_types.position asc').and_return(variant.option_values)
-      variant.options_text
+    it 'should order by bar than foo' do
+      variant.options_text.should == 'Bar Type: Bar, Foo Type: Foo'
     end
   end
 
@@ -283,7 +300,7 @@ describe Spree::Variant do
 
       context 'when stock_items in stock' do
         before do
-          Spree::StockItem.any_instance.stub(count_on_hand: 10)
+          variant.stock_items.first.update_column(:count_on_hand, 10)
         end
 
         it 'returns true if stock_items in stock' do
@@ -301,18 +318,13 @@ describe Spree::Variant do
           variant.in_stock?.should be_false
         end
       end
+    end
 
-      context 'when providing quantity param' do
-        before do
-          variant.stock_items.first.update_attribute(:count_on_hand, 10)
-        end
-
-        it 'returns correctt value' do
-          variant.in_stock?.should be_true
-          variant.in_stock?(2).should be_true
-          variant.in_stock?(10).should be_true
-          variant.in_stock?(11).should be_false
-        end
+    describe "#can_supply?" do
+      it "calls out to quantifier" do
+        Spree::Stock::Quantifier.should_receive(:new).and_return(quantifier = double)
+        quantifier.should_receive(:can_supply?).with(10)
+        variant.can_supply?(10)
       end
     end
 
@@ -326,8 +338,12 @@ describe Spree::Variant do
           Spree::StockItem.any_instance.stub(count_on_hand: 0)
         end
 
-        it 'returns true if stock_items in stock' do
-          variant.in_stock?.should be_true
+        it 'in_stock? returns false' do
+          expect(variant.in_stock?).to be_false
+        end
+
+        it 'can_supply? return true' do
+          expect(variant.can_supply?).to be_true
         end
       end
     end
@@ -342,6 +358,74 @@ describe Spree::Variant do
     it 'should match quantifier total_on_hand' do
       variant = build(:variant)
       expect(variant.total_on_hand).to eq(Spree::Stock::Quantifier.new(variant).total_on_hand)
+    end
+  end
+
+  describe '#tax_category' do
+    context 'when tax_category is nil' do
+      let(:product) { build(:product) }
+      let(:variant) { build(:variant, product: product, tax_category_id: nil) }
+      it 'returns the parent products tax_category' do
+        expect(variant.tax_category).to eq(product.tax_category)
+      end
+    end
+
+    context 'when tax_category is set' do
+      let(:tax_category) { create(:tax_category) }
+      let(:variant) { build(:variant, tax_category: tax_category) }
+      it 'returns the tax_category set on itself' do
+        expect(variant.tax_category).to eq(tax_category)
+      end
+    end
+  end
+
+  describe "touching" do
+    it "updates a product" do
+      variant.product.update_column(:updated_at, 1.day.ago)
+      variant.touch
+      variant.product.reload.updated_at.should be_within(3.seconds).of(Time.now)
+    end
+
+    it "clears the in_stock cache key" do
+      Rails.cache.should_receive(:delete).with(variant.send(:in_stock_cache_key))
+      variant.touch
+    end
+  end
+
+  describe "#should_track_inventory?" do
+
+    it 'should not track inventory when global setting is off' do
+      Spree::Config[:track_inventory_levels] = false
+
+      build(:variant).should_track_inventory?.should eq(false)
+    end
+
+    it 'should not track inventory when variant is turned off' do
+      Spree::Config[:track_inventory_levels] = true
+
+      build(:on_demand_variant).should_track_inventory?.should eq(false)
+    end
+
+    it 'should track inventory when global and variant are on' do
+      Spree::Config[:track_inventory_levels] = true
+
+      build(:variant).should_track_inventory?.should eq(true)
+    end
+  end
+
+  describe "deleted_at scope" do
+    before { variant.destroy && variant.reload }
+    it "should have a price if deleted" do
+      variant.price = 10
+      expect(variant.price).to eq(10)
+    end
+  end
+
+  describe "stock movements" do
+    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
+
+    it "builds out collection just fine through stock items" do
+      expect(variant.stock_movements.to_a).not_to be_empty
     end
   end
 end

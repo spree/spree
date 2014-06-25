@@ -6,10 +6,10 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'icon-plus', id: 'admin_new_stock_movement_link' %>
+    <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'plus', id: 'admin_new_stock_movement_link' %>
   </li>
   <li>
-    <%= link_to_with_icon 'icon-arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %>
+    <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %>
   </li>
 <% end %>
 
@@ -30,7 +30,9 @@
   <tbody>
     <% @stock_movements.each do |stock_movement|%>
       <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows" class="<%= cycle('odd', 'even')%>">
-        <td class="align-center"><%= stock_movement.stock_item.variant_name %></td>
+        <td class="align-center">
+          <%= display_variant(stock_movement) %>
+        </td>
         <td class="align-center"><%= stock_movement.quantity %></td>
         <td class="align-center"><%= pretty_originator(stock_movement) %></td>
       </tr>
@@ -40,7 +42,7 @@
 <% else %>
   <div class="alpha twelve columns no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_movement')) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_stock_movement_path %>!
+    <%= link_to Spree.t(:add_one), spree.new_admin_stock_location_stock_movement_path(@stock_location) %>!
   </div>
 <% end %>
 

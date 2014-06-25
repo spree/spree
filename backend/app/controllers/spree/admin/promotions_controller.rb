@@ -2,7 +2,6 @@ module Spree
   module Admin
     class PromotionsController < ResourceController
       before_filter :load_data
-      before_filter :load_event_names
 
       helper 'spree/promotion_rules'
 
@@ -15,8 +14,23 @@ module Spree
           @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
         end
 
-        def load_event_names
-          @event_names = Spree::Activator.event_names.map { |name| [Spree.t("events.#{name}"), name] }
+        def collection
+          return @collection if defined?(@collection)
+          params[:q] ||= HashWithIndifferentAccess.new
+          params[:q][:s] ||= 'id desc'
+
+          @collection = super
+          @search = @collection.ransack(params[:q])
+          @collection = @search.result(distinct: true).
+            includes(promotion_includes).
+            page(params[:page]).
+            per(params[:per_page] || Spree::Config[:promotions_per_page])
+
+          @collection
+        end
+
+        def promotion_includes
+          [:promotion_actions]
         end
     end
   end

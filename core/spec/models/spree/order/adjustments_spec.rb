@@ -1,148 +1,39 @@
 require 'spec_helper'
+
 describe Spree::Order do
-  let(:order) { Spree::Order.new }
-
-  context "clear_adjustments" do
-
-    let(:adjustment) { double("Adjustment") }
-
-    it "destroys all order adjustments" do
-      order.stub(:adjustments => adjustment)
-      adjustment.should_receive(:destroy_all)
-      order.clear_adjustments!
-    end
-
-    it "destroy all line item adjustments" do
-      order.stub(:line_item_adjustments => adjustment)
-      adjustment.should_receive(:destroy_all)
-      order.clear_adjustments!
+  context "#all_adjustments" do
+    # Regression test for #4537
+    it "does not show adjustments from other, non-order adjustables" do
+      order = Spree::Order.new(:id => 1)
+      where_sql = order.all_adjustments.where_values.to_s
+      where_sql.should include("(adjustable_id = 1 AND adjustable_type = 'Spree::Order')")
     end
   end
 
-  context "totaling adjustments" do
-    let(:adjustment1) { mock_model(Spree::Adjustment, :amount => 5) }
-    let(:adjustment2) { mock_model(Spree::Adjustment, :amount => 10) }
-
-    context "#ship_total" do
-      it "should return the correct amount" do
-        order.stub_chain :adjustments, :shipping => [adjustment1, adjustment2]
-        order.ship_total.should == 15
-      end
+  # Regression test for #2191
+  context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
+    let!(:persisted_order) { create(:order) }
+    let!(:line_item) { create(:line_item) }
+    let!(:shipping_method) do
+      sm = create(:shipping_method)
+      sm.calculator.preferred_amount = 10
+      sm.save
+      sm
     end
 
-    context "#tax_total" do
-      it "should return the correct amount" do
-        order.stub_chain :adjustments, :tax => [adjustment1, adjustment2]
-        order.tax_total.should == 15
-      end
-    end
-  end
-  
-
-  context "line item adjustment totals" do
-    before { @order = Spree::Order.create! }
-
-
-    context "when there are no line item adjustments" do
-      before { @order.stub_chain(:line_item_adjustments, :eligible => []) }
-
-      it "should return an empty hash" do
-        @order.line_item_adjustment_totals.should == {}
-      end
-    end
-
-    context "when there are two adjustments with different labels" do
-      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
-      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
-
-      before do
-        @order.stub_chain(:line_item_adjustments, :eligible => [adj1, adj2])
-      end
-
-      it "should return exactly two totals" do
-        @order.line_item_adjustment_totals.size.should == 2
-      end
-
-      it "should return the correct totals" do
-        @order.line_item_adjustment_totals["Foo"].should == Spree::Money.new(10)
-        @order.line_item_adjustment_totals["Bar"].should == Spree::Money.new(20)
-      end
-    end
-
-    context "when there are two adjustments with one label and a single adjustment with another" do
-      let(:adj1) { mock_model Spree::Adjustment, :amount => 10, :label => "Foo" }
-      let(:adj2) { mock_model Spree::Adjustment, :amount => 20, :label => "Bar" }
-      let(:adj3) { mock_model Spree::Adjustment, :amount => 40, :label => "Bar" }
-
-      before do
-        @order.stub_chain(:line_item_adjustments, :eligible => [adj1, adj2, adj3])
-      end
-
-      it "should return exactly two totals" do
-        @order.line_item_adjustment_totals.size.should == 2
-      end
-      it "should return the correct totals" do
-        @order.line_item_adjustment_totals["Foo"].should == Spree::Money.new(10)
-        @order.line_item_adjustment_totals["Bar"].should == Spree::Money.new(60)
-      end
-    end
-  end
-
-  context "line item adjustments" do
     before do
-      @order = Spree::Order.create!
-      @order.stub :line_items => [line_item1, line_item2]
+      # Don't care about available payment methods in this test
+      persisted_order.stub(:has_available_payment => false)
+      persisted_order.line_items << line_item
+      create(:adjustment, :amount => -line_item.amount, :label => "Promotion", :adjustable => line_item)
+      persisted_order.state = 'delivery'
+      persisted_order.save # To ensure new state_change event
     end
 
-    let(:line_item1) { create(:line_item, :order => @order) }
-    let(:line_item2) { create(:line_item, :order => @order) }
-
-    context "when there are no line item adjustments" do
-      it "should return nothing if line items have no adjustments" do
-        @order.line_item_adjustments.should be_empty
-      end
-    end
-
-    context "when only one line item has adjustments" do
-      before do
-        @adj1 = line_item1.adjustments.create(
-          :amount => 2,
-          :source => line_item1,
-          :label => "VAT 5%"
-        )
-
-        @adj2 = line_item1.adjustments.create(
-          :amount => 5,
-          :source => line_item1,
-          :label => "VAT 10%"
-        )
-      end
-
-      it "should return the adjustments for that line item" do
-         @order.line_item_adjustments.should =~ [@adj1, @adj2]
-      end
-    end
-
-    context "when more than one line item has adjustments" do
-      before do
-        @adj1 = line_item1.adjustments.create(
-          :amount => 2,
-          :source => line_item1,
-          :label => "VAT 5%"
-        )
-
-        @adj2 = line_item2.adjustments.create(
-          :amount => 5,
-          :source => line_item2,
-          :label => "VAT 10%"
-        )
-      end
-
-      it "should return the adjustments for each line item" do
-        expect(@order.line_item_adjustments).to include @adj1
-        expect(@order.line_item_adjustments).to include @adj2
-      end
+    it "transitions from delivery to payment" do
+      persisted_order.stub(payment_required?: true)
+      persisted_order.next!
+      persisted_order.state.should == "payment"
     end
   end
 end
-

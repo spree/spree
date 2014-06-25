@@ -161,14 +161,14 @@ describe Spree::Ability do
 
       context 'requested with proper token' do
         let(:token) { 'TOKEN123' }
-        before(:each) { resource.stub :token => 'TOKEN123' }
+        before(:each) { resource.stub guest_token: 'TOKEN123' }
         it_should_behave_like 'access granted'
         it_should_behave_like 'no index allowed'
       end
 
       context 'requested with inproper token' do
         let(:token) { 'FAIL' }
-        before(:each) { resource.stub :token => 'TOKEN123' }
+        before(:each) { resource.stub guest_token: 'TOKEN123' }
         it_should_behave_like 'create only'
       end
     end
@@ -196,27 +196,6 @@ describe Spree::Ability do
 
     context 'for State' do
       let(:resource) { Spree::State.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for StockItem' do
-      let(:resource) { Spree::StockItem.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for StockLocation' do
-      let(:resource) { Spree::StockLocation.new }
-      context 'requested by any user' do
-        it_should_behave_like 'read only'
-      end
-    end
-
-    context 'for StockMovement' do
-      let(:resource) { Spree::StockMovement.new }
       context 'requested by any user' do
         it_should_behave_like 'read only'
       end

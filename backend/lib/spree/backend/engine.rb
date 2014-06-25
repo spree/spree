@@ -3,18 +3,6 @@ module Spree
     class Engine < ::Rails::Engine
       config.middleware.use "Spree::Backend::Middleware::SeoAssist"
 
-      config.autoload_paths += %W(#{config.root}/lib)
-
-      # We need to reload the routes here due to how Spree sets them up.
-      # The different facets of Spree (auth, promo, etc.) append/prepend routes to Backend
-      # *after* Backend has been loaded.
-      #
-      # So we wait until after initialization is complete to do one final reload.
-      # This then makes the appended/prepended routes available to the application.
-      config.after_initialize do
-        Rails.application.routes_reloader.reload!
-      end
-
       initializer "spree.backend.environment", :before => :load_config_initializers do |app|
         Spree::Backend::Config = Spree::BackendConfiguration.new
       end
@@ -27,15 +15,17 @@ module Spree
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer "spree.assets.precompile", :group => :all do |app|
         app.config.assets.precompile += %w[
-          admin/all.*
-          admin/orders/edit_form.js
-          admin/address_states.js
+          spree/backend/all*
+          spree/backend/orders/edit_form.js
+          spree/backend/address_states.js
           jqPlot/excanvas.min.js
-          admin/images/new.js
+          spree/backend/images/new.js
           jquery.jstree/themes/apple/*
+          fontawesome-webfont*
+          select2_locale*
+          jquery.alerts/images/*
         ]
       end
-
     end
   end
 end

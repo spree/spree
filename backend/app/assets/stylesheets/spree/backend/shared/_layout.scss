@@ -1,0 +1,91 @@
+// Basics
+//---------------------------------------------------
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+// Helpers
+.block-table {
+  display: table;
+  width: 100%;
+
+  .table-cell {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+// For block grids
+.frameless {
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+// Header
+//---------------------------------------------------
+#header {
+  background-color: $color-1;
+  padding: 5px 0;
+}
+
+#logo { height: 40px }
+
+[data-hook="admin-title"] { font-size: 14px }
+
+.page-title {
+  i {
+    color: $color-2;
+  }
+}
+
+// Content
+//---------------------------------------------------
+#content {
+  background-color: $color-1;
+  position: relative;
+  z-index: 0;
+  padding: 0;
+  margin-top: 15px;
+}
+
+#content-header {
+  padding: 15px 0;
+  background-color: very-light($color-3, 4);
+  border-bottom: 1px solid $color-border;
+
+  .page-title {
+    font-size: 20px;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .page-actions {
+    text-align: right;
+    line-height: 38px;
+    form {
+      display: inline-block;
+    }
+  }
+}
+
+// Footer
+//---------------------------------------------------
+#footer {
+  margin-top: 15px;
+  border-top: 1px solid $color-border;
+  padding: 10px 0;
+}

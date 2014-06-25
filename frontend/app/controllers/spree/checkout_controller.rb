@@ -6,7 +6,7 @@ module Spree
   class CheckoutController < Spree::StoreController
     ssl_required
 
-    before_filter :load_order
+    before_filter :load_order_with_lock
 
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
@@ -25,16 +25,17 @@ module Spree
 
     # Updates the order and advances to the next state (when possible.)
     def update
-      if @order.update_attributes(object_params)
+      if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
+        persist_user_address
         unless @order.next
           flash[:error] = @order.errors.full_messages.join("\n")
           redirect_to checkout_state_path(@order.state) and return
         end
 
         if @order.completed?
-          session[:order_id] = nil
+          @current_order = nil
           flash.notice = Spree.t(:order_processed_successfully)
-          flash[:commerce_tracking] = "nothing special"
+          flash[:order_completed] = true
           redirect_to completion_route
         else
           redirect_to checkout_state_path(@order.state)
@@ -53,6 +54,13 @@ module Spree
             redirect_to checkout_state_path(@order.checkout_steps.first)
           end
         end
+
+        # Fix for #4117
+        # If confirmation of payment fails, redirect back to payment screen
+        if params[:state] == "confirm" && @order.payment_required? && @order.payments.valid.empty?
+          flash.keep
+          redirect_to checkout_state_path("payment")
+        end
       end
 
       # Should be overriden if you have areas of your checkout that don't match
@@ -61,8 +69,8 @@ module Spree
         false
       end
 
-      def load_order
-        @order = current_order
+      def load_order_with_lock
+        @order = current_order(lock: true)
         redirect_to spree.cart_path and return unless @order
 
         if params[:state]
@@ -93,32 +101,6 @@ module Spree
         spree.order_path(@order)
       end
 
-      # For payment step, filter order parameters to produce the expected nested
-      # attributes for a single payment and its source, discarding attributes
-      # for payment methods other than the one selected
-      def object_params
-        # respond_to check is necessary due to issue described in #2910
-        if @order.has_checkout_step?("payment") && @order.payment?
-          if params[:payment_source].present?
-            source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].underscore]
-
-            if source_params
-              params[:order][:payments_attributes].first[:source_attributes] = source_params
-            end
-          end
-
-          if (params[:order][:payments_attributes])
-            params[:order][:payments_attributes].first[:amount] = @order.total
-          end
-        end
-
-        if params[:order]
-          params[:order].permit(permitted_checkout_attributes)
-        else
-          {}
-        end
-      end
-
       def setup_for_current_state
         method_name = :"before_#{@order.state}"
         send(method_name) if respond_to?(method_name, true)
@@ -127,10 +109,10 @@ module Spree
       # Skip setting ship address if order doesn't have a delivery checkout step
       # to avoid triggering validations on shipping address
       def before_address
-        @order.bill_address ||= Address.default
+        @order.bill_address ||= Address.default(try_spree_current_user, "bill")
 
         if @order.checkout_steps.include? "delivery"
-          @order.ship_address ||= Address.default
+          @order.ship_address ||= Address.default(try_spree_current_user, "ship")
         end
       end
 
@@ -149,27 +131,26 @@ module Spree
             @order.contents.remove(variant, quantity)
           end
         end
+
+        if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
+          @payment_sources = try_spree_current_user.payment_sources
+        end
       end
 
-      def rescue_from_spree_gateway_error
-        flash[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
+      def rescue_from_spree_gateway_error(exception)
+        flash.now[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
+        @order.errors.add(:base, exception.message)
         render :edit
       end
 
       def check_authorization
-        authorize!(:edit, current_order, session[:access_token])
+        authorize!(:edit, current_order, cookies.signed[:guest_token])
       end
 
-      def apply_coupon_code
-        if params[:order] && params[:order][:coupon_code]
-          @order.coupon_code = params[:order][:coupon_code]
-
-          coupon_result = Spree::Promo::CouponApplicator.new(@order).apply
-          if coupon_result[:coupon_applied?]
-            flash[:success] = coupon_result[:success] if coupon_result[:success].present?
-          else
-            flash[:error] = coupon_result[:error]
-            respond_with(@order) { |format| format.html { render :edit } } and return
+      def persist_user_address
+        if @order.checkout_steps.include? "address"
+          if @order.address? && try_spree_current_user.respond_to?(:persist_order_address)
+            try_spree_current_user.persist_order_address(@order) if params[:save_user_address]
           end
         end
       end

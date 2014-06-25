@@ -53,9 +53,9 @@ module Spree
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
         inside dummy_path do
-          %w(spree_frontend spree_backend spree_api).each do |requirement|
-            inject_into_file 'config/application.rb', "require '#{requirement}'\n", :before => /require '#{@lib_name}'/, :verbose => true
-          end
+          inject_require_for('spree_frontend')
+          inject_require_for('spree_backend')
+          inject_require_for('spree_api')
         end
       end
     end
@@ -82,6 +82,17 @@ module Spree
     attr :database
 
     protected
+
+    def inject_require_for(requirement)
+      inject_into_file 'config/application.rb', %Q[
+begin
+  require '#{requirement}'
+rescue LoadError
+  # #{requirement} is not available.
+end
+      ], :before => /require '#{@lib_name}'/, :verbose => true
+    end
+
     def dummy_path
       ENV['DUMMY_PATH'] || 'spec/dummy'
     end
@@ -111,11 +122,12 @@ module Spree
     end
 
     def gemfile_path
-      version_file = File.expand_path("../../Versionfile", Dir.pwd)
-      if File.exist?(version_file)
-        '../../../../Gemfile'
-      else
+      core_gems = ["spree/core", "spree/api", "spree/backend", "spree/frontend"]
+
+      if core_gems.include?(lib_name)
         '../../../../../Gemfile'
+      else
+        '../../../../Gemfile'
       end
     end
   end
@@ -125,4 +137,3 @@ module Spree::DummyGeneratorHelper
   mattr_accessor :inject_extension_requirements
   self.inject_extension_requirements = false
 end
-

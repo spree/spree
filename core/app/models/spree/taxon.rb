@@ -1,14 +1,16 @@
 module Spree
-  class Taxon < ActiveRecord::Base
+  class Taxon < Spree::Base
     acts_as_nested_set dependent: :destroy
 
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', :touch => true
-    has_many :classifications, dependent: :delete_all
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
+    has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
     before_create :set_permalink
 
     validates :name, presence: true
+
+    after_touch :touch_ancestors_and_taxonomy
 
     has_attached_file :icon,
       styles: { mini: '32x32>', normal: '128x128>' },
@@ -17,8 +19,8 @@ module Spree
       path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
       default_url: '/assets/default_taxon.png'
 
-    include Spree::Core::S3Support
-    supports_s3 :icon
+    validates_attachment :icon,
+      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
 
     include Spree::Core::ProductFilters  # for detailed defs of filters
 
@@ -69,5 +71,23 @@ module Spree
       ancestor_chain + "#{name}"
     end
 
+    # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child
+    # node so that its resulting position matches the observable 0-indexed position.
+    # ** Note ** no :position column needed - a_n_s doesn't handle the reordering if
+    #  you bring your own :order_column.
+    #
+    #  See #3390 for background.
+    def child_index=(idx)
+      move_to_child_with_index(parent, idx.to_i) unless self.new_record?
+    end
+
+    private
+
+    def touch_ancestors_and_taxonomy
+      # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
+      self.class.where(id: ancestors.pluck(:id)).update_all(updated_at: Time.now)
+      # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
+      taxonomy.touch
+    end
   end
 end

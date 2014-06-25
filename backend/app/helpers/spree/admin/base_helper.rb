@@ -24,7 +24,7 @@ module Spree
 
       def datepicker_field_value(date)
         unless date.blank?
-          l(date, :format => Spree.t('date_picker.format'))
+          l(date, :format => Spree.t('date_picker.format', default: '%Y/%m/%d'))
         else
           nil
         end
@@ -62,7 +62,7 @@ module Spree
       def remove_nested(fields)
         out = ''
         out << fields.hidden_field(:_destroy) unless fields.object.new_record?
-        out << (link_to icon('icon-remove'), "#", :class => 'remove')
+        out << (link_to icon('remove'), "#", :class => 'remove')
         out.html_safe
       end
 
@@ -71,7 +71,7 @@ module Spree
         when :integer
           text_field_tag(name, value, preference_field_options(options))
         when :boolean
-          hidden_field_tag(name, 0) +
+          hidden_field_tag(name, 0, id: "#{name}_hidden") +
           check_box_tag(name, 1, value, preference_field_options(options))
         when :string
           text_field_tag(name, value, preference_field_options(options))
@@ -143,7 +143,7 @@ module Spree
       def link_to_add_fields(name, target, options = {})
         name = '' if options[:no_text]
         css_classes = options[:class] ? options[:class] + " spree_add_fields" : "spree_add_fields"
-        link_to_with_icon('icon-plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
+        link_to_with_icon('plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
       end
 
       # renders hidden field and link to remove record using nested_attributes
@@ -152,7 +152,7 @@ module Spree
         options[:class] = '' unless options[:class]
         options[:class] += 'no-text with-tip' if options[:no_text]
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('icon-trash', name, url, :class => "spree_remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('trash', name, url, :class => "spree_remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

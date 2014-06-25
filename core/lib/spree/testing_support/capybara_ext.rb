@@ -4,7 +4,7 @@ module CapybaraExt
   end
 
   def click_icon(type)
-    find(".icon-#{type}").click
+    find(".fa-#{type}").click
   end
 
   def eventually_fill_in(field, options={})
@@ -13,11 +13,19 @@ module CapybaraExt
   end
 
   def within_row(num, &block)
-    within("table.index tbody tr:nth-child(#{num})", &block)
+    if example.metadata[:js]
+      within("table.index tbody tr:nth-child(#{num})", &block)
+    else
+      within(:xpath, all("table.index tbody tr")[num-1].path, &block)
+    end
   end
 
   def column_text(num)
-    find("td:nth-child(#{num})").text
+    if example.metadata[:js]
+      find("td:nth-child(#{num})").text
+    else
+      all("td")[num-1].text
+    end
   end
 
   def set_select2_field(field, value)
@@ -28,8 +36,8 @@ module CapybaraExt
     label = find_label_by_text(options[:from])
     within label.first(:xpath,".//..") do
       options[:from] = "##{find(".select2-container")["id"]}"
-      targetted_select2_search(value, options)
     end
+    targetted_select2_search(value, options)
   end
 
   def targetted_select2_search(value, options)
@@ -43,8 +51,8 @@ module CapybaraExt
 
     within label.first(:xpath,".//..") do
       options[:from] = "##{find(".select2-container")["id"]}"
-      targetted_select2(value, options)
     end
+    targetted_select2(value, options)
   end
 
   def select2_no_label value, options={}
@@ -65,9 +73,10 @@ module CapybaraExt
   end
 
   def select_select2_result(value)
-    #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
-    sleep(1)
-    page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
+    # results are in a div appended to the end of the document
+    within(:xpath, '//body') do
+      page.find("div.select2-result-label", text: %r{#{Regexp.escape(value)}}i).click
+    end
   end
 
   def find_label_by_text(text)
@@ -94,11 +103,23 @@ module CapybaraExt
 
   def wait_for_ajax
     counter = 0
-    while page.execute_script("return $.active").to_i > 0
+    while page.evaluate_script("typeof($) === 'undefined' || $.active > 0")
       counter += 1
       sleep(0.1)
       raise "AJAX request took longer than 5 seconds." if counter >= 50
     end
+  end
+
+  def accept_alert
+    page.evaluate_script('window.confirm = function() { return true; }')
+    yield
+  end
+
+  def dismiss_alert
+    page.evaluate_script('window.confirm = function() { return false; }')
+    yield
+    # Restore existing default
+    page.evaluate_script('window.confirm = function() { return true; }')
   end
 end
 

@@ -1,9 +1,0 @@
-<% @body_id = 'cart' %>
-
-<h1><%= Spree.t(:shopping_cart) %></h1>
-
-<%= form_for @order, :url =>'#', :method => :put do |order_form| %>
-  <%= render :partial => 'form', :locals => { :order_form => order_form } %>
-<% end %>
-
-<p><%= link_to Spree.t(:continue_shopping), products_path %></p>

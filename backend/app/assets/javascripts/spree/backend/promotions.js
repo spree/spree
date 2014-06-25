@@ -1,0 +1,90 @@
+var initProductActions = function () {
+  'use strict';
+
+  // Add classes on promotion items for design
+  $(document).on('mouseover mouseout', 'a.delete', function (event) {
+    if (event.type === 'mouseover') {
+      $(this).parent().addClass('action-remove');
+    } else {
+      $(this).parent().removeClass('action-remove');
+    }
+  });
+
+  $('#promotion-filters').find('.variant_autocomplete').variantAutocomplete();
+
+  $('.calculator-fields').each(function () {
+    var $fields_container = $(this);
+    var $type_select = $fields_container.find('.type-select');
+    var $settings = $fields_container.find('.settings');
+    var $warning = $fields_container.find('.warning');
+    var originalType = $type_select.val();
+
+    $warning.hide();
+    $type_select.change(function () {
+      if ($(this).val() === originalType) {
+        $warning.hide();
+        $settings.show();
+        $settings.find('input').removeProp('disabled');
+      } else {
+        $warning.show();
+        $settings.hide();
+        $settings.find('input').prop('disabled', 'disabled');
+      }
+    });
+  });
+
+  //
+  // CreateLineItems Promotion Action
+  //
+  (function () {
+    var hideOrShowItemTables = function () {
+      $('.promotion_action table').each(function () {
+        if ($(this).find('td').length === 0) {
+          $(this).hide();
+        } else {
+          $(this).show();
+        }
+      });
+    };
+    hideOrShowItemTables();
+
+    // Remove line item
+    var setupRemoveLineItems = function () {
+      $('.remove_promotion_line_item').on('click', function () {
+        var line_items_el = $($('.line_items_string')[0]);
+        var finder = new RegExp($(this).data('variant-id') + "x\\d+");
+        line_items_el.val(line_items_el.val().replace(finder, ''));
+        $(this).parents('tr').remove();
+        hideOrShowItemTables();
+      });
+    };
+
+    setupRemoveLineItems();
+    // Add line item to list
+    $('.promotion_action.create_line_items button.add').unbind('click').click(function () {
+      var $container = $(this).parents('.promotion_action');
+      var product_name = $container.find('input[name="add_product_name"]').val();
+      var variant_id = $container.find('input[name="add_variant_id"]').val();
+      var quantity = $container.find('input[name="add_quantity"]').val();
+      if (variant_id) {
+        // Add to the table
+        var newRow = '<tr><td>' + product_name + '</td><td>' + quantity + '</td><td><img src="/assets/admin/icons/cross.png"/></td></tr>';
+        $container.find('table').append(newRow);
+        // Add to serialized string in hidden text field
+        var $hiddenField = $container.find('.line_items_string');
+        $hiddenField.val($hiddenField.val() + ',' + variant_id + 'x' + quantity);
+        setupRemoveLineItems();
+        hideOrShowItemTables();
+      }
+      return false;
+    });
+
+  })();
+
+};
+
+$(document).ready(function () {
+
+  initProductActions();
+
+});

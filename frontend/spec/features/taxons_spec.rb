@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "viewing products" do
+describe "viewing products", inaccessible: true do
   let!(:taxonomy) { create(:taxonomy, :name => "Category") }
   let!(:super_clothing) { taxonomy.root.children.create(:name => "Super Clothing") }
   let!(:t_shirts) { super_clothing.children.create(:name => "T-Shirts") }
@@ -47,8 +47,9 @@ describe "viewing products" do
     end
 
     it 'display title from taxon root and taxon name' do
+      create(:store)
       visit '/t/category/super-clothing/t-shirts'
-      page.should have_title('Category - T-Shirts - Spree Demo Site')
+      page.should have_title('Category - T-Shirts - ' + Spree::Store.first.name)
     end
 
     # Regression test for #2814

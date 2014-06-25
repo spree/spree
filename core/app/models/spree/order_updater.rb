@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :shipments, :update_hooks, to: :order
+    delegate :payments, :line_items, :adjustments, :all_adjustments, :shipments, :update_hooks, to: :order
 
     def initialize(order)
       @order = order
@@ -16,34 +16,21 @@ module Spree
     # associations try to save and then in turn try to call +update!+ again.)
     def update
       update_totals
-
       if order.completed?
         update_payment_state
-
-        # give each of the shipments a chance to update themselves
-        shipments.each { |shipment| shipment.update!(order) }
+        update_shipments
         update_shipment_state
       end
-      
-      update_promotion_adjustments
-      update_shipping_adjustments
-      # update totals a second time in case updated adjustments have an effect on the total
-      update_totals
-
-      order.update_attributes_without_callbacks({
-        payment_state: order.payment_state,
-        shipment_state: order.shipment_state,
-        item_total: order.item_total,
-        adjustment_total: order.adjustment_total,
-        payment_total: order.payment_total,
-        total: order.total
-      })
-
       run_hooks
+      persist_totals
     end
 
     def run_hooks
       update_hooks.each { |hook| order.send hook }
+    end
+
+    def recalculate_adjustments
+      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each { |adjustable| Spree::ItemAdjustments.new(adjustable).update }
     end
 
     # Updates the following Order total values:
@@ -53,10 +40,65 @@ module Spree
     # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
     # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
-      order.payment_total = payments.completed.map(&:amount).sum
+      update_payment_total
+      update_item_total
+      update_shipment_total
+      update_adjustment_total
+    end
+
+
+    # give each of the shipments a chance to update themselves
+    def update_shipments
+      shipments.each { |shipment| shipment.update!(order) }
+    end
+
+    def update_payment_total
+      order.payment_total = payments.completed.sum(:amount)
+    end
+
+    def update_shipment_total
+      order.shipment_total = shipments.sum(:cost)
+      update_order_total
+    end
+
+    def update_order_total
+      order.total = order.item_total + order.shipment_total + order.adjustment_total
+    end
+
+    def update_adjustment_total
+      recalculate_adjustments
+      order.adjustment_total = line_items.sum(:adjustment_total) +
+                               shipments.sum(:adjustment_total)  +
+                               adjustments.eligible.sum(:amount)
+      order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
+      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
+
+      update_order_total
+    end
+
+    def update_item_count
+      order.item_count = line_items.sum(:quantity)
+    end
+
+    def update_item_total
       order.item_total = line_items.map(&:amount).sum
-      order.adjustment_total = adjustments.eligible.map(&:amount).sum
-      order.total = order.item_total + order.adjustment_total
+      update_order_total
+    end
+
+    def persist_totals
+      order.update_columns(
+        payment_state: order.payment_state,
+        shipment_state: order.shipment_state,
+        item_total: order.item_total,
+        item_count: order.item_count,
+        adjustment_total: order.adjustment_total,
+        included_tax_total: order.included_tax_total,
+        additional_tax_total: order.additional_tax_total,
+        payment_total: order.payment_total,
+        shipment_total: order.shipment_total,
+        total: order.total,
+        updated_at: Time.now,
+      )
     end
 
     # Updates the +shipment_state+ attribute according to the following logic:
@@ -90,6 +132,7 @@ module Spree
       end
 
       order.state_changed('shipment')
+      order.shipment_state
     end
 
     # Updates the +payment_state+ attribute according to the following logic:
@@ -101,53 +144,18 @@ module Spree
     #
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
-
-      #line_item are empty when user empties cart
-      if line_items.empty? || round_money(order.payment_total) < round_money(order.total)
-        if payments.present? && payments.last.state == 'failed'
-          order.payment_state = 'failed'
-        else
-          order.payment_state = 'balance_due'
-        end
-      elsif round_money(order.payment_total) > round_money(order.total)
-        order.payment_state = 'credit_owed'
+      last_state = order.payment_state
+      if payments.present? && payments.last.state == 'failed'
+        order.payment_state = 'failed'
       else
-        order.payment_state = 'paid'
+        order.payment_state = 'balance_due' if order.outstanding_balance > 0
+        order.payment_state = 'credit_owed' if order.outstanding_balance < 0
+        order.payment_state = 'paid' if !order.outstanding_balance?
       end
-
-      order.state_changed('payment')
-    end
-
-    # Updates each of the Order adjustments.
-    #
-    # This is intended to be called from an Observer so that the Order can
-    # respond to external changes to LineItem, Shipment, other Adjustments, etc.
-    #
-    # Adjustments will check if they are still eligible. Ineligible adjustments
-    # are preserved but not counted towards adjustment_total.
-    def update_promotion_adjustments
-      order.adjustments.reload.promotion.each { |adjustment| adjustment.update!(order) }
-      choose_best_promotion_adjustment
-    end
-
-    # Shipping adjustments don't receive order on update! because they calculated
-    # over a shipping / package object rather than an order object
-    def update_shipping_adjustments
-      order.adjustments.reload.shipping.each { |adjustment| adjustment.update! }
+      order.state_changed('payment') if last_state != order.payment_state
     end
 
     private
-
-      # Picks one (and only one) promotion to be eligible for this order
-      # This promotion provides the most discount, and if two promotions
-      # have the same amount, then it will pick the latest one.
-      def choose_best_promotion_adjustment
-        if best_promotion_adjustment = order.adjustments.promotion.eligible.reorder("amount ASC, created_at DESC").first
-          other_promotions = order.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-          other_promotions.update_all(eligible: false)
-        end
-      end
-
       def round_money(n)
         (n * 100).round / 100.0
       end

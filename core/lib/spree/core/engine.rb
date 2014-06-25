@@ -4,35 +4,9 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
-      config.autoload_paths += %W(#{config.root}/lib)
-
-      config.after_initialize do
-        ActiveSupport::Notifications.subscribe(/^spree\./) do |*args|
-          event_name, start_time, end_time, id, payload = args
-          Activator.active.event_name_starts_with(event_name).each do |activator|
-            payload[:event_name] = event_name
-            activator.activate(payload)
-          end
-        end
-      end
-
-      # We need to reload the routes here due to how Spree sets them up.
-      # The different facets of Spree (backend, frontend, etc.) append/prepend
-      # routes to Core *after* Core has been loaded.
-      #
-      # So we wait until after initialization is complete to do one final reload.
-      # This then makes the appended/prepended routes available to the application.
-      config.after_initialize do
-        Rails.application.routes_reloader.reload!
-      end
-
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
-      end
-
-      initializer "spree.load_preferences", :before => "spree.environment" do
-        ::ActiveRecord::Base.send :include, Spree::Preferences::Preferable
       end
 
       initializer "spree.register.calculators" do |app|
@@ -61,11 +35,6 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
-      initializer "spree.mail.settings" do |app|
-        Spree::Core::MailSettings.init
-        Mail.register_interceptor(Spree::Core::MailInterceptor)
-      end
-
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|
@@ -79,14 +48,20 @@ module Spree
         app.config.spree.calculators.promotion_actions_create_adjustments = [
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate,
-          Spree::Calculator::PerItem,
-          Spree::Calculator::PercentPerItem,
-          Spree::Calculator::FreeShipping
+          Spree::Calculator::FlexiRate
+        ]
+
+        app.config.spree.calculators.add_class('promotion_actions_create_item_adjustments')
+        app.config.spree.calculators.promotion_actions_create_item_adjustments = [
+          Spree::Calculator::PercentOnLineItem
         ]
       end
 
-      initializer 'spree.promo.register.promotion.calculators' do
+      # Promotion rules need to be evaluated on after initialize otherwise
+      # Spree.user_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.user_class is only defined on
+      # the app initializer)
+      config.after_initialize do
         Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
@@ -96,8 +71,11 @@ module Spree
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
-        app.config.spree.promotions.actions = [Spree::Promotion::Actions::CreateAdjustment,
-          Spree::Promotion::Actions::CreateLineItems]
+        app.config.spree.promotions.actions = [
+          Promotion::Actions::CreateAdjustment,
+          Promotion::Actions::CreateItemAdjustments,
+          Promotion::Actions::CreateLineItems,
+          Promotion::Actions::FreeShipping]
       end
 
       # filter sensitive information during logging
@@ -108,6 +86,12 @@ module Spree
           :number,
           :verification_value]
       end
+
+      initializer "spree.core.checking_migrations" do |app|
+        Migrations.new(config, engine_name).check
+      end
     end
   end
 end
+
+require 'spree/core/routes'

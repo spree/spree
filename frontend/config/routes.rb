@@ -1,8 +1,8 @@
-Spree::Core::Engine.routes.draw do
+Spree::Core::Engine.add_routes do
 
   root :to => 'home#index'
 
-  resources :products
+  resources :products, :only => [:index, :show]
 
   get '/locale/set', :to => 'locale#set'
 
@@ -16,10 +16,10 @@ Spree::Core::Engine.routes.draw do
     request.referer || '/cart'
   end
 
-  get '/orders/populate', :via => :get, :to => populate_redirect
+  get '/orders/populate', :to => populate_redirect
   get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
 
-  resources :orders do
+  resources :orders, :except => [:index, :new, :create, :destroy] do
     post :populate, :on => :collection
   end
 
@@ -33,4 +33,5 @@ Spree::Core::Engine.routes.draw do
   get '/unauthorized', :to => 'home#unauthorized', :as => :unauthorized
   get '/content/cvv', :to => 'content#cvv', :as => :cvv
   get '/content/*path', :to => 'content#show', :as => :content
+  get '/cart_link', :to => 'store#cart_link', :as => :cart_link
 end

@@ -45,10 +45,6 @@ module Spree
       end
     end
 
-    def remove_unneeded_files
-      remove_file "public/index.html"
-    end
-
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS
@@ -70,18 +66,18 @@ Disallow: /account
     def setup_assets
       @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
-        empty_directory "app/assets/#{path}/store" if defined? Spree::Frontend || Rails.env.test?
-        empty_directory "app/assets/#{path}/admin" if defined? Spree::Backend || Rails.env.test?
+        empty_directory "vendor/assets/#{path}/spree/frontend" if defined? Spree::Frontend || Rails.env.test?
+        empty_directory "vendor/assets/#{path}/spree/backend" if defined? Spree::Backend || Rails.env.test?
       end
 
       if defined? Spree::Frontend || Rails.env.test?
-        template "app/assets/javascripts/store/all.js"
-        template "app/assets/stylesheets/store/all.css"
+        template "vendor/assets/javascripts/spree/frontend/all.js"
+        template "vendor/assets/stylesheets/spree/frontend/all.css"
       end
 
       if defined? Spree::Backend || Rails.env.test?
-        template "app/assets/javascripts/admin/all.js"
-        template "app/assets/stylesheets/admin/all.css"
+        template "vendor/assets/javascripts/spree/backend/all.js"
+        template "vendor/assets/stylesheets/spree/backend/all.css"
       end
     end
 
@@ -168,7 +164,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
-      insert_into_file File.join('config', 'routes.rb'), :after => "Application.routes.draw do\n" do
+      insert_into_file File.join('config', 'routes.rb'), :after => "Rails.application.routes.draw do\n" do
         %Q{
   # This line mounts Spree's routes at the root of your application.
   # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
@@ -195,6 +191,5 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "Enjoy!"
       end
     end
-
   end
 end

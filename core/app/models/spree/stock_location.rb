@@ -1,5 +1,6 @@
 module Spree
-  class StockLocation < ActiveRecord::Base
+  class StockLocation < Spree::Base
+    has_many :shipments
     has_many :stock_items, dependent: :delete_all
     has_many :stock_movements, through: :stock_items
 
@@ -42,6 +43,14 @@ module Spree
 
     def restock(variant, quantity, originator = nil)
       move(variant, quantity, originator)
+    end
+
+    def restock_backordered(variant, quantity, originator = nil)
+      item = stock_item_or_create(variant)
+      item.update_columns(
+        count_on_hand: item.count_on_hand + quantity,
+        updated_at: Time.now
+      )
     end
 
     def unstock(variant, quantity, originator = nil)

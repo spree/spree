@@ -14,7 +14,14 @@ end
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../dummy/config/environment", __FILE__)
+
+begin
+  require File.expand_path("../dummy/config/environment", __FILE__)
+rescue LoadError
+  puts "Could not load dummy application. Please ensure you have run `bundle exec rake test_app`"
+  exit
+end
+
 require 'rspec/rails'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -35,6 +42,9 @@ require 'spree/testing_support/capybara_ext'
 
 require 'paperclip/matchers'
 
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
@@ -46,6 +56,7 @@ RSpec.configure do |config|
 
   config.before :suite do
     Capybara.match = :prefer_exact
+    DatabaseCleaner.clean_with :truncation
   end
 
   config.before(:each) do
@@ -66,13 +77,15 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    # Ensure js requests finish processing before advancing to the next test
+    wait_for_ajax if example.metadata[:js]
+
     DatabaseCleaner.clean
   end
 
   config.after(:each, :type => :feature) do
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
-      #binding.pry
       puts "Found missing translations: #{missing_translations.inspect}"
       puts "In spec: #{example.location}"
     end

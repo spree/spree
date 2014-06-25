@@ -1,0 +1,6 @@
+<tr class="adjustment">
+  <td colspan="4" align='right'><h5><%= type %>: <%= label %></h5></td>
+  <td colspan='2'>
+    <h5><%= Spree::Money.new(adjustments.sum(&:amount), :currency => @order.currency) %></h5>
+  </td>
+</tr>

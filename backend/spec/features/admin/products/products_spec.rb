@@ -2,8 +2,6 @@
 require 'spec_helper'
 
 describe "Products" do
-  stub_authorization!
-
   context "as admin user" do
     stub_authorization!
 
@@ -209,6 +207,40 @@ describe "Products" do
         page.should have_content("Name can't be blank")
       end
 
+      context "using a locale with a different decimal format " do
+        before do
+          # change English locale’s separator and delimiter to match 19,99 format
+          I18n.backend.store_translations(:en,
+            :number => {
+              :currency => {
+                :format => {
+                  :separator => ",",
+                  :delimiter => "."
+                }
+              }
+            })
+        end
+
+        after do
+          # revert changes to English locale
+          I18n.backend.store_translations(:en,
+            :number => {
+              :currency => {
+                :format => {
+                  :separator => ".",
+                  :delimiter => ","
+                }
+              }
+            })
+        end
+
+        it "should show localized price value on validation errors", :js => true do
+          fill_in "product_price", :with => "19,99"
+          click_button "Create"
+          find('input#product_price').value.should == '19,99'
+        end
+      end
+
       # Regression test for #2097
       it "can set the count on hand to a null value", :js => true do
         fill_in "product_name", :with => "Baseball Cap"
@@ -220,6 +252,7 @@ describe "Products" do
         page.should have_content("successfully updated!")
       end
     end
+    
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
@@ -286,12 +319,34 @@ describe "Products" do
 
         page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
-          first('input[type=text]')[:value].should eq('baseball_cap_color')
+          first('input[type=text]').value.should eq('baseball_cap_color')
         end
       end
     end
+
+    context 'deleting a product', :js => true do
+      let!(:product) { create(:product) }
+
+      it "is still viewable" do
+        visit spree.admin_products_path
+        accept_alert do
+          click_icon :trash
+        end
+        # This will show our deleted product
+        check "Show Deleted"
+        click_icon :search
+        click_link product.name
+        find("#product_price").value.to_f.should == product.price.to_f
+      end
+    end
   end
+
   context 'with only product permissions' do
+  
+    before do 
+      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+    end
+
     custom_authorization! do |user|
       can [:admin, :update, :index, :read], Spree::Product
     end
@@ -309,6 +364,7 @@ describe "Products" do
       page.should have_css('a.edit')
       page.should_not have_css('a.delete-resource')
     end
+  
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 

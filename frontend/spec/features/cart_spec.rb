@@ -1,14 +1,9 @@
 require 'spec_helper'
 
-describe "Cart" do
+describe "Cart", inaccessible: true do
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
     page.should have_selector("li#link-to-cart a", :visible => true)
-  end
-
-  it "hides cart icon on cart page" do
-    visit spree.cart_path
-    page.should_not have_selector("li#link-to-cart a")
   end
 
   it "prevents double clicking the remove button on cart", :js => true do
@@ -45,6 +40,25 @@ describe "Cart" do
     page.should_not have_content("Line items quantity must be an integer")
     page.should_not have_content("RoR Mug")
     page.should have_content("Your cart is empty")
+
+    within "#link-to-cart" do
+      page.should have_content("EMPTY")
+    end
+  end
+
+  it 'allows you to empty the cart', js: true do
+    create(:product, :name => "RoR Mug")
+    visit spree.root_path
+    click_link "RoR Mug"
+    click_button "add-to-cart-button"
+
+    page.should have_content("RoR Mug")
+    click_on "Empty"
+    page.should have_content("Your cart is empty")
+
+    within "#link-to-cart" do
+      page.should have_content("EMPTY")
+    end
   end
 
   # regression for #2276
@@ -54,12 +68,16 @@ describe "Cart" do
 
     before { variant.option_values.destroy_all }
 
-    it "still adds product to cart" do
+    it "still adds product to cart", inaccessible: true do
       visit spree.product_path(product)
       click_button "add-to-cart-button"
 
       visit spree.cart_path
       page.should have_content(product.name)
     end
+  end
+  it "should have a surrounding element with data-hook='cart_container'" do
+    visit spree.cart_path
+    page.should have_selector("div[data-hook='cart_container']")
   end
 end

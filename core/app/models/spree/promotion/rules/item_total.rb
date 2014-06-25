@@ -9,8 +9,12 @@ module Spree
 
         OPERATORS = ['gt', 'gte']
 
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
+        end
+
         def eligible?(order, options = {})
-          item_total = order.line_items.map(&:amount).sum
+          item_total = order.item_total
           item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
         end
       end

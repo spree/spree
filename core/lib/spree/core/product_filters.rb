@@ -97,28 +97,26 @@ module Spree
       #   the (uniquely named) field "p_brand.value". There's also a test for brand info
       #   being blank: note that this relies on with_property doing a left outer join
       #   rather than an inner join.
-      if Spree::Property.table_exists?
-        Spree::Product.add_search_scope :brand_any do |*opts|
-          conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject { |c| c.nil? }
-          scope = conds.shift
-          conds.each do |new_scope|
-            scope = scope.or(new_scope)
-          end
-          Spree::Product.with_property('brand').where(scope)
+      Spree::Product.add_search_scope :brand_any do |*opts|
+        conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject { |c| c.nil? }
+        scope = conds.shift
+        conds.each do |new_scope|
+          scope = scope.or(new_scope)
         end
+        Spree::Product.with_property('brand').where(scope)
+      end
 
-        def ProductFilters.brand_filter
-          brand_property = Spree::Property.find_by(name: 'brand')
-          brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
-          pp = Spree::ProductProperty.arel_table
-          conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
-          {
-            name:   'Brands',
-            scope:  :brand_any,
-            conds:  conds,
-            labels: (brands.sort).map { |k| [k, k] }
-          }
-        end
+      def ProductFilters.brand_filter
+        brand_property = Spree::Property.find_by(name: 'brand')
+        brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
+        pp = Spree::ProductProperty.arel_table
+        conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
+        {
+          name:   'Brands',
+          scope:  :brand_any,
+          conds:  conds,
+          labels: (brands.sort).map { |k| [k, k] }
+        }
       end
 
       # Example: a parameterized filter
@@ -140,25 +138,23 @@ module Spree
       #
       #   The brand-finding code can be simplified if a few more named scopes were added to
       #   the product properties model.
-      if Spree::Property.table_exists?
-        Spree::Product.add_search_scope :selective_brand_any do |*opts|
-          Spree::Product.brand_any(*opts)
-        end
+      Spree::Product.add_search_scope :selective_brand_any do |*opts|
+        Spree::Product.brand_any(*opts)
+      end
 
-        def ProductFilters.selective_brand_filter(taxon = nil)
-          taxon ||= Spree::Taxonomy.first.root
-          brand_property = Spree::Property.find_by(name: 'brand')
-          scope = Spree::ProductProperty.where(property: brand_property).
-            joins(product: :taxons).
-            where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants).
-            scoped
-          brands = scope.pluck(:value).uniq
-          {
-            name:   'Applicable Brands',
-            scope:  :selective_brand_any,
-            labels: brands.sort.map { |k| [k, k] }
-          }
-        end
+      def ProductFilters.selective_brand_filter(taxon = nil)
+        taxon ||= Spree::Taxonomy.first.root
+        brand_property = Spree::Property.find_by(name: 'brand')
+        scope = Spree::ProductProperty.where(property: brand_property).
+          joins(product: :taxons).
+          where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants).
+          scoped
+        brands = scope.pluck(:value).uniq
+        {
+          name:   'Applicable Brands',
+          scope:  :selective_brand_any,
+          labels: brands.sort.map { |k| [k, k] }
+        }
       end
 
       # Provide filtering on the immediate children of a taxon

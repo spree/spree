@@ -3,7 +3,7 @@ module Spree
     module CalculatedAdjustments
       def self.included(klass)
         klass.class_eval do
-          has_one   :calculator, :class_name => "Spree::Calculator", :as => :calculable, :dependent => :destroy
+          has_one   :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
           accepts_nested_attributes_for :calculator
           validates :calculator, :presence => true
 
@@ -18,46 +18,6 @@ module Spree
           def calculator_type=(calculator_type)
             klass = calculator_type.constantize if calculator_type
             self.calculator = klass.new if klass && !self.calculator.is_a?(klass)
-          end
-
-          # Creates a new adjustment for the target object (which is any class that has_many :adjustments) and
-          # sets amount based on the calculator as applied to the calculable argument (Order, LineItems[], Shipment, etc.)
-          # By default the adjustment will not be considered mandatory
-          def create_adjustment(label, target, calculable, mandatory=false, state="closed")
-            # Adjustment calculations done on Spree::Shipment objects MUST
-            # be done on their to_package'd variants instead
-            # It's only the package that contains the correct information.
-            # See https://github.com/spree/spree_active_shipping/pull/96 et. al
-            old_calculable = calculable
-            calculable = calculable.to_package if calculable.is_a?(Spree::Shipment)
-            amount = compute_amount(calculable)
-            return if amount == 0 && !mandatory
-            target.adjustments.create(
-              :amount => amount,
-              :source => old_calculable,
-              :originator => self,
-              :label => label,
-              :mandatory => mandatory,
-              :state => state
-            )
-          end
-
-          # Updates the amount of the adjustment using our Calculator and calling the +compute+ method with the +calculable+
-          # referenced passed to the method.
-          def update_adjustment(adjustment, calculable)
-            # Adjustment calculations done on Spree::Shipment objects MUST
-            # be done on their to_package'd variants instead
-            # It's only the package that contains the correct information.
-            # See https://github.com/spree/spree_active_shipping/pull/96 et. al
-            calculable = calculable.to_package if calculable.is_a?(Spree::Shipment)
-            adjustment.update_column(:amount, compute_amount(calculable))
-          end
-
-          # Calculate the amount to be used when creating an adjustment
-          # NOTE: May be overriden by classes where this module is included into.
-          # Such as Spree::Promotion::Action::CreateAdjustment.
-          def compute_amount(calculable)
-            self.calculator.compute(calculable)
           end
 
           private

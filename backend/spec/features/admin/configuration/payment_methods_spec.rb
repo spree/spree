@@ -10,15 +10,15 @@ describe "Payment Methods" do
 
   context "admin visiting payment methods listing page" do
     it "should display existing payment methods" do
-      create(:payment_method)
+      create(:check_payment_method)
       click_link "Payment Methods"
 
       within("table#listing_payment_methods") do
-        find('th:nth-child(1)').text.should == "Name"
-        find('th:nth-child(2)').text.should == "Provider"
-        find('th:nth-child(3)').text.should == "Environment"
-        find('th:nth-child(4)').text.should == "Display"
-        find('th:nth-child(5)').text.should == "Active"
+        all("th")[0].text.should == "Name"
+        all("th")[1].text.should == "Provider"
+        all("th")[2].text.should == "Environment"
+        all("th")[3].text.should == "Display"
+        all("th")[4].text.should == "Active"
       end
 
       within('table#listing_payment_methods') do
@@ -42,7 +42,7 @@ describe "Payment Methods" do
 
   context "admin editing a payment method" do
     before(:each) do
-      create(:payment_method)
+      create(:check_payment_method)
       click_link "Payment Methods"
       within("table#listing_payment_methods") do
         click_icon(:edit)

@@ -24,5 +24,13 @@
       </div>
     <% end %>
   </div>
-
 </div>
+
+<script>
+Spree.current_order_id = "<%= @order.number %>"
+Spree.current_order_token = "<%= @order.guest_token %>"
+</script>
+
+<% if I18n.locale != :en %>
+  <script src="<%= assets_prefix %>/jquery.validate/localization/messages_<%= I18n.locale %>.js"></script>
+<% end %>

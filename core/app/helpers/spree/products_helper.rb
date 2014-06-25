@@ -9,7 +9,6 @@ module Spree
       end
     end
 
-
     # returns the formatted price for the specified variant as a difference from product price
     def variant_price_diff(variant)
       diff = variant.amount_in(current_currency) - variant.product.amount_in(current_currency)
@@ -40,16 +39,23 @@ module Spree
     end
 
     def line_item_description(variant)
-      description = variant.product.description
-      if description.present?
-        truncate(strip_tags(description.gsub('&nbsp;', ' ')), length: 100)
+      ActiveSupport::Deprecation.warn "line_item_description(variant) is deprecated and may be removed from future releases, use line_item_description_text(line_item.description) instead.", caller
+
+      line_item_description_text(variant.product.description)
+    end
+
+    def line_item_description_text description_text
+      if description_text.present?
+        truncate(strip_tags(description_text.gsub('&nbsp;', ' ')), length: 100)
       else
         Spree.t(:product_has_no_description)
       end
     end
 
-    def get_taxonomies
-      @taxonomies ||= Spree::Taxonomy.includes(root: :children)
+    def cache_key_for_products
+      count = @products.count
+      max_updated_at = (@products.maximum(:updated_at) || Date.today).to_s(:number)
+      "#{I18n.locale}/#{current_currency}/spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}"
     end
   end
 end

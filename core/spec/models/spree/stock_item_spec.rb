@@ -33,6 +33,27 @@ describe Spree::StockItem do
     end
   end
 
+  describe 'reduce_count_on_hand_to_zero' do
+    context 'when count_on_hand > 0' do
+      before(:each) do
+        subject.update_column('count_on_hand', 4)
+         subject.reduce_count_on_hand_to_zero
+       end
+
+       it { subject.count_on_hand.should eq(0) }
+     end
+
+     context 'when count_on_hand > 0' do
+       before(:each) do
+         subject.update_column('count_on_hand', -4)
+         @count_on_hand = subject.count_on_hand
+         subject.reduce_count_on_hand_to_zero
+       end
+
+       it { subject.count_on_hand.should eq(@count_on_hand) }
+     end
+  end
+
   context "adjust count_on_hand" do
     let!(:current_on_hand) { subject.count_on_hand }
 
@@ -51,11 +72,25 @@ describe Spree::StockItem do
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
-      before { subject.adjust_count_on_hand(- (current_on_hand + 2)) }
+      before do
+        subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
+        subject.update_column(:count_on_hand, -2)
+      end
 
-      it "doesn't process backorders" do
-        subject.should_not_receive(:backordered_inventory_units)
+      # Regression test for #3755
+      it "processes existing backorders, even with negative stock" do
+        inventory_unit.should_receive(:fill_backorder)
+        inventory_unit_2.should_not_receive(:fill_backorder)
         subject.adjust_count_on_hand(1)
+        subject.count_on_hand.should == -1
+      end
+
+      # Test for #3755
+      it "does not process backorders when stock is adjusted negatively" do
+        inventory_unit.should_not_receive(:fill_backorder)
+        inventory_unit_2.should_not_receive(:fill_backorder)
+        subject.adjust_count_on_hand(-1)
+        subject.count_on_hand.should == -3
       end
 
       context "adds new items" do
@@ -115,6 +150,83 @@ describe Spree::StockItem do
 
     it "doesnt raise ReadOnlyRecord error" do
       expect { subject.destroy }.not_to raise_error
+    end
+  end
+
+  context "destroyed" do
+    before { subject.destroy }
+
+    it "recreates stock item just fine" do
+      expect {
+        stock_location.stock_items.create!(variant: subject.variant)
+      }.not_to raise_error
+    end
+
+    it "doesnt allow recreating more than one stock item at once" do
+      stock_location.stock_items.create!(variant: subject.variant)
+
+      expect {
+        stock_location.stock_items.create!(variant: subject.variant)
+      }.to raise_error
+    end
+  end
+
+  describe "#after_save" do
+    before do
+      subject.variant.update_column(:updated_at, 1.day.ago)
+    end
+
+    context "binary_inventory_cache is set to false (default)" do
+      context "in_stock? changes" do
+        it "touches its variant" do
+          expect do
+            subject.adjust_count_on_hand(subject.count_on_hand * -1)
+          end.to change { subject.variant.reload.updated_at }
+        end
+      end
+
+      context "in_stock? does not change" do
+        it "touches its variant" do
+          expect do
+            subject.adjust_count_on_hand((subject.count_on_hand * -1) + 1)
+          end.to change { subject.variant.reload.updated_at }
+        end
+      end
+    end
+
+    context "binary_inventory_cache is set to true" do
+      before { Spree::Config.binary_inventory_cache = true }
+      context "in_stock? changes" do
+        it "touches its variant" do
+          expect do
+            subject.adjust_count_on_hand(subject.count_on_hand * -1)
+          end.to change { subject.variant.reload.updated_at }
+        end
+      end
+
+      context "in_stock? does not change" do
+        it "does not touch its variant" do
+          expect do
+            subject.adjust_count_on_hand((subject.count_on_hand * -1) + 1)
+          end.not_to change { subject.variant.reload.updated_at }
+        end
+      end
+    end
+  end
+
+  describe "#after_touch" do
+    it "touches its variant" do
+      expect do
+        subject.touch
+      end.to change { subject.variant.updated_at }
+    end
+  end
+
+  # Regression test for #4651
+  context "variant" do
+    it "can be found even if the variant is deleted" do
+      subject.variant.destroy
+      subject.reload.variant.should_not be_nil
     end
   end
 end

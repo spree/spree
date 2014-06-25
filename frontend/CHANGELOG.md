@@ -1,14 +1,11 @@
-## Spree 2.1.0 ##
+## Spree 2.3.0 (unreleased) ##
 
-*  Fix issue where "Use Billing Address" checkbox was unticked when certain
-   browsers autocompleted the checkout form. #3068 #3085
+*   The api key that was previously placed in the dom for ajax requests has been
+    removed since the api now uses the session to authenticate the user.
 
-   *Washington Luiz*
+*   Mostly inspired by Jeff Squires extension spree_reuse_credit card, checkout
+    now can remember user credit card info. Make sure your user model responds
+    to a `payment_sources` method and customers will be able to reuse their
+    credit card info.
 
-*  Switch to new Google Analytics analytics.js SDK from ga.js SDK for custom dimensions & metrics.
-
-   *Jeff Dutil*
-
-*  We now use [jQuery.payment](https://stripe.com/blog/jquery-payment) (from Stripe) to provide slightly better formatting on credit card number, expiry and CVV fields.
-
-   *Ryan Bigg*
+    Washington Luiz

@@ -13,12 +13,15 @@ module Spree
           country_id = Address.default.country.id
           @order.build_bill_address(:country_id => country_id) if @order.bill_address.nil?
           @order.build_ship_address(:country_id => country_id) if @order.ship_address.nil?
+
+          @order.bill_address.country_id = country_id if @order.bill_address.country.nil?
+          @order.ship_address.country_id = country_id if @order.ship_address.country.nil?
         end
 
         def update
           if @order.update_attributes(order_params)
             if params[:guest_checkout] == "false"
-              @order.associate_user!(Spree.user_class.find_by_email(@order.email))
+              @order.associate_user!(Spree.user_class.find(params[:user_id]), @order.email.blank?)
             end
             while @order.next; end
 
@@ -43,6 +46,10 @@ module Spree
 
           def load_order
             @order = Order.includes(:adjustments).find_by_number!(params[:order_id])
+          end
+
+          def model_class
+            Spree::Order
           end
 
       end

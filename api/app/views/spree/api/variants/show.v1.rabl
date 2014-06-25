@@ -1,4 +1,3 @@
 object @variant
-extends "spree/api/variants/variant"
-child(:option_values => :option_values) { attributes *option_value_attributes }
-child(:images => :images) { extends "spree/api/images/show" }
+cache [I18n.locale, 'show', root_object]
+extends "spree/api/variants/big"

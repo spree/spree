@@ -1,0 +1,16 @@
+<%
+  @edit_url = edit_admin_order_adjustment_path(@order, adjustment)
+  @delete_url = admin_order_adjustment_path(@order, adjustment)
+%>
+<tr id="<%= spree_dom_id(adjustment) %>" data-hook="adjustment_row" class="<%= cycle('odd', 'even')%>">
+  <td class="align-center"><%= display_adjustable(adjustment.adjustable) %></td>
+  <td class="align-center"><%= adjustment.label %></td>
+  <td class="align-center"><%= adjustment.display_amount.to_html %></td>
+  <td class="align-center"><%= adjustment_state(adjustment) %></td>
+  <td class='actions'>
+    <% if adjustment.open? %>
+      <%= link_to_edit adjustment, :no_text => true %>
+      <%= link_to_delete adjustment, :no_text => true %>
+    <% end %>
+  </td>
+</tr>

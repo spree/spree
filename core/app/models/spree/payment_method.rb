@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod < ActiveRecord::Base
+  class PaymentMethod < Spree::Base
     acts_as_paranoid
     DISPLAY = [:both, :front_end, :back_end]
     default_scope -> { where(deleted_at: nil) }
@@ -7,6 +7,9 @@ module Spree
     scope :production, -> { where(environment: 'production') }
 
     validates :name, presence: true
+
+    has_many :payments, class_name: "Spree::Payment"
+    has_many :credit_cards, class_name: "Spree::CreditCard"
 
     def self.providers
       Rails.application.config.spree.payment_methods
@@ -51,8 +54,14 @@ module Spree
       true
     end
 
+    # Custom gateways should redefine this method. See Gateway implementation
+    # as an example
+    def reusable_sources(order)
+      []
+    end
+
     def auto_capture?
-      Spree::Config[:auto_capture]
+      self.auto_capture.nil? ? Spree::Config[:auto_capture] : self.auto_capture
     end
 
     def supports?(source)

@@ -16,17 +16,18 @@ module Spree::Preferences
       @persistence = true
     end
 
-    def set(key, value, type)
+    def set(key, value)
       @cache.write(key, value)
-      persist(key, value, type)
+      persist(key, value)
     end
+    alias_method :[]=, :set
 
     def exist?(key)
       @cache.exist?(key) ||
       should_persist? && Spree::Preference.where(:key => key).exists?
     end
 
-    def get(key,fallback=nil)
+    def get(key)
       # return the retrieved value, if it's in the cache
       # use unless nil? incase the value is actually boolean false
       #
@@ -39,24 +40,24 @@ module Spree::Preferences
         # has been cleared from the cache
 
         # does it exist in the database?
-        if Spree::Preference.table_exists? && preference = Spree::Preference.find_by_key(key)
-          # it does exist, so let's put it back into the cache
-          @cache.write(preference.key, preference.value)
-
-          # and return the value
-          return preference.value
+        if preference = Spree::Preference.find_by_key(key)
+          # it does exist
+          val = preference.value
+        else
+          # use the fallback value
+          val = yield
         end
-      end
 
-      unless fallback.nil?
-        # cache fallback so we won't hit the db above on
-        # subsequent queries for the same key
-        #
-        @cache.write(key, fallback)
-      end
+        # Cache either the value from the db or the fallback value.
+        # This avoids hitting the db with subsequent queries.
+        @cache.write(key, val)
 
-      return fallback
+        return val
+      else
+        yield
+      end
     end
+    alias_method :fetch, :get
 
     def delete(key)
       @cache.delete(key)
@@ -69,12 +70,11 @@ module Spree::Preferences
 
     private
 
-    def persist(cache_key, value, type)
+    def persist(cache_key, value)
       return unless should_persist?
 
       preference = Spree::Preference.where(:key => cache_key).first_or_initialize
       preference.value = value
-      preference.value_type = type
       preference.save
     end
 
@@ -86,7 +86,7 @@ module Spree::Preferences
     end
 
     def should_persist?
-      @persistence && Spree::Preference.connected? && Spree::Preference.table_exists?
+      @persistence and Spree::Preference.table_exists?
     end
 
   end

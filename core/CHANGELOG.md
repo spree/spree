@@ -1,98 +1,86 @@
-## Spree 2.1.0 ##
+## Spree 2.3.0 (unreleased) ##
 
-* Product requires `shipping_category_id` on create #3188.
+*   Drop first_name and last_name fields from spree_credit_cards.  Add
+    first_name & last_name methods for now to keep ActiveMerchant happy.
 
-    *Jeff Dutil*
+    Jordan Brough
 
-*   No longer set ActiveRecord::Base.include_root_in_json = true during install.
-    Originally set to false back in 2011 according to convention. After
-    https://groups.google.com/forum/#!topic/spree-user/D9dZQayC4z, it
-    was changed. Applications should now decide their own setting for this value.
+*   Replaced cookies.signed[:order_id] with cookies.signed[:guest_token].
 
-    *Weston Platter*
-    
-*   Change `order.promotion_credit_exists?` api. Now it receives an adjustment
-    originator (PromotionAction instance) instead of a promotion. Allowing
-    multiple adjustments being created for the same promotion as the current
-    PromotionAction / Promotion api suggests #3262
+    Now we are using a signed cookie to store the guests unique token
+    in the browser.  This allows customers who close their browser to
+    continue their shopping when they visit again.  More importantly
+    it allows you as a store owner to uniquely identify your guests orders.
+    Since we set cookies.signed[:guest_token] whenever a vistor comes
+    you may also use this cookie token on other objects than just orders.
+    For instance if a guest user wants to favorite a product you can
+    assign the cookies.signed[:guest_token] value to a token field on your
+    favorites model.  Which will then allow you to analyze the orders and
+    favorites this user has placed before which is useful for recommendations.
 
-*   Remove after_save callback for stock items backorders processing and
-    fixes count on hand updates when there are backordered units #3066
+    Jeff Dutil
 
-    *Washington Luiz*
+*   Order#token is no longer fetched from another table.
 
-*   InventoryUnit#backordered_for_stock_item no longer returns readonly objects
-    neither return an ActiveRecored::Association. It returns only an array of
-    writable backordered units for a given stock item #3066
+    Both Spree::Core::TokeResource and Spree::TokenizedPersmission are deprecated.
+    Order#token value is now persisted into spree_orders.guest_token. Main motivation
+    here is save a few extra queries when creating an order. The TokenResource
+    module was being of no use in spree core.
 
-    *Washington Luiz*
+    NOTE: Watch out for the possible expensive migration that come along with this
 
-*   Scope shipping rates as per shipping method display_on #3119
-    e.g. Shipping methods set to back_end only should not be displayed on frontend too
+    Washington L Braga Jr
 
-    *Washington Luiz*
+*   Replaced session[:order_id] usage with cookies.signed[:order_id].
 
-*   Add `propagate_all_variants` attribute to StockLocation. It controls
-    whether a stock items should be created fot the stock location every time
-    a variant or a stock location is created
+    Now we are using a signed cookie to store the order id on a guests
+    browser client.  This allows customers who close their browser to
+    continue their shopping when they visit again.
+    Fixes #4319
 
-    *Washington Luiz*
+    Jeff Dutil
 
-*   Add `backorderable_default` attribute to StockLocation. It sets the
-    backorderable attribute of each new stock item
 
-    *Washington Luiz*
+*   Order#process_payments! no longer raises. Gateways must raise on failing authorizations.
 
-*   Removed `t()` override in `Spree::BaseHelper`. #3083
+    Now it's a Gateway or PaymentMethod responsability to raise a custom
+    exception any time an authorization fails so that it can be rescued
+    during checkout and proper action taken.
 
-    *Washington Luiz*
+*   Assign request headers env to Payment when creating it via checkout.
 
-*   Improve performance of `Order#payment_required?` by not updating the totals every time. #3040 #3086
+    This might come in handy for some gateways, e.g. Adyen, actions that require
+    data such as user agent and accept header to create user profiles. Previously
+    we had no way to access the request headers from within a gateway class
 
-    *Washington Luiz*
+*   More accurate and simpler Order#payment_state options.
 
-*   Fixed the FlexiRate Calculator for cases when max_items is set. #3159
+    Balance Due. Paid. Credit Owed. Failed. These are the only possible values
+    for order payment_state now. The previous `pending` state has been dropped
+    and order updater logic greatly improved as it now mostly consider total
+    values rather than doing last payment state checks.
 
-    *Dana Jones*
+    Huge thanks to dan-ding. See https://github.com/spree/spree/issues/4605
 
-* Translation for admin tabs are now located under the `spree.admin.tab` key. Previously, they were on the top-level, which lead to conflicts when users wanted to override view translations, like this:
+*   Config settings related to mail have been removed. This includes
+    `enable_mail_delivery`, `mail_bcc`, `intercept_email`,
+    `override_actionmailer_config`, `mail_host`, `mail_domain`, `mail_port`,
+    `secure_connection_type`, `mail_auth_type`, `smtp_username`, and
+    `smtp_password`.
 
-```yml
-en:
-  spree:
-    orders:
-      show:
-        thank_you: "Thanks, buddy!"
-```
+    These should instead be [configured on actionmailer directly](http://api.rubyonrails.org/classes/ActionMailer/Base.html#class-ActionMailer::Base-label-Configuration+options).
+    The existing functionality can also be used by including the [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) gem.
 
-See #3133 for more information.
+    John Hawthorn
 
-    * Ryan Bigg*
+*   refactor the api to use a general importer in `lib/spree/importer/order.rb`
 
-* CreditCard model now validates that the card is not expired.
+    Peter Berkenbosch
 
-    *Ryan Bigg*
+*   Ensure transition to payment processing state happens outside transaction.
 
-* Payment model will now no longer provide a vague error message for when the source is invalid. Instead, it will provide error messages like "Credit Card Number can't be blank"
+    Chris Salzberg
 
-    *Ryan Bigg*
+*   Increase the precision of the amount/price columns in order for support other currencies. See https://github.com/spree/spree/issues/4657
 
-* Calling #destroy on any PaymentMethod, Product, TaxCategory, TaxRate or Variant object will now no longer delete that object. Instead, the `deleted_at` attribute on that object will be set to the current time. Attempting to find that object again using something such as `Spree::Product.find(1)` will fail because there is now a default scope to only find *non*-deleted records on these models. To remove this scope, use `Spree::Product.unscoped.find(1)`. #3321
-
-    *Ryan Bigg*
-
-* Removed `variants_including_master_and_deleted`, in favour of using the Paranoia gem. This scope would now be achieved using `variants_including_master.with_deleted`.
-
-    *Ryan Bigg*
-
-* You can now find the total amount on hand of a variant by calling `Variant#total_on_hand`. #3427
-
-    *Ruben Ascencio*
-
-* Tax categories are now stored on line items. This should make tax calculations slightly faster. #3481
-
-    *Ryan Bigg*
-
-* `update_attribute(s)_without_callbacks` have gone away, in favour of `update_column(s)`
-
-    *Ryan Bigg*
+    Gonzalo Moreno

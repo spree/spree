@@ -25,19 +25,30 @@ describe Spree::Admin::OrdersController do
       end
     end
 
-    let(:order) { mock_model(Spree::Order, :complete? => true, :total => 100, :number => 'R123456789') }
+    let(:order) { mock_model(Spree::Order, :completed? => true, :total => 100, :number => 'R123456789') }
     before { Spree::Order.stub :find_by_number! => order }
 
-    context "#fire" do
-      it "should fire the requested event on the payment" do
-        order.should_receive(:foo).and_return true
-        spree_put :fire, {:id => "R1234567", :e => "foo"}
+    context "#approve" do
+      it "approves an order" do
+        expect(order).to receive(:approved_by).with(controller.try_spree_current_user)
+        spree_put :approve, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_approved)
       end
+    end
 
-      it "should respond with a flash message if the event cannot be fired" do
-        order.stub :foo => false
-        spree_put :fire, {:id => "R1234567", :e => "foo"}
-        flash[:error].should_not be_nil
+    context "#cancel" do
+      it "cancels an order" do
+        expect(order).to receive(:cancel!)
+        spree_put :cancel, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_canceled)
+      end
+    end
+
+    context "#resume" do
+      it "resumes an order" do
+        expect(order).to receive(:resume!)
+        spree_put :resume, id: order.number
+        expect(flash[:success]).to eq Spree.t(:order_resumed)
       end
     end
 
@@ -59,16 +70,36 @@ describe Spree::Admin::OrdersController do
 
     # Regression test for #3684
     context "#edit" do
-      it "does not refresh rates if the order is complete" do
-        order.stub :complete? => true
+      it "does not refresh rates if the order is completed" do
+        order.stub :completed? => true
         order.should_not_receive :refresh_shipment_rates
         spree_get :edit, :id => order.number
       end
 
       it "does refresh the rates if the order is incomplete" do
-        order.stub :complete? => false
+        order.stub :completed? => false
         order.should_receive :refresh_shipment_rates
         spree_get :edit, :id => order.number
+      end
+    end
+
+    # Test for #3919
+    context "search" do
+      let(:user) { create(:user) }
+
+      before do
+        controller.stub :spree_current_user => user
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
+
+        create(:completed_order_with_totals)
+        expect(Spree::Order.count).to eq 1
+      end
+
+      it "does not display duplicated results" do
+        spree_get :index, q: {
+          line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
+        }
+        expect(assigns[:orders].map { |o| o.number }.count).to eq 1
       end
     end
   end
@@ -127,6 +158,16 @@ describe Spree::Admin::OrdersController do
       assigns['orders'].size.should eq 1
       assigns['orders'].first.number.should eq number
       Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number).should eq  [number]
+    end
+  end
+
+  context "order number not given" do
+    stub_authorization!
+
+    it "raise active record not found" do
+      expect {
+        spree_get :edit, id: nil
+      }.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end
