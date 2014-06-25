@@ -17,22 +17,19 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     it "does not apply an adjustment if the amount is 0" do
       action.calculator.preferred_amount = 0
       action.perform(:order => order)
-      promotion.credits_count.should == 0
-      order.adjustments.count.should == 0
+      order.all_adjustments.count.should == 0
     end
 
     it "should create a discount with correct negative amount" do
       order.shipments.create!(:cost => 10)
 
       action.perform(:order => order)
-      promotion.credits_count.should == 1
-      order.adjustments.count.should == 1
+      order.all_adjustments.count.should == 1
       order.adjustments.first.amount.to_i.should == -10
     end
 
     it "should create a discount accessible through both order_id and adjustable_id" do
       action.perform(:order => order)
-      order.adjustments.count.should == 1
       order.all_adjustments.count.should == 1
     end
 
@@ -41,7 +38,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
       action.perform(:order => order)
       action.perform(:order => order)
-      promotion.credits_count.should == 1
+      order.all_adjustments.count.should == 1
     end
   end
 
