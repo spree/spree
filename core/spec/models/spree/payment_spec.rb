@@ -9,6 +9,9 @@ describe Spree::Payment do
     gateway
   end
 
+  let(:avs_code) { 'D' }
+  let(:cvv_code) { 'M' }
+
   let(:card) do
     mock_model(Spree::CreditCard, :number => "4111111111111111",
                                   :has_payment_profile? => true)
@@ -26,13 +29,16 @@ describe Spree::Payment do
   let(:amount_in_cents) { (payment.amount * 100).round }
 
   let!(:success_response) do
-    double('success_response', :success? => true,
-                             :authorization => '123',
-                             :avs_result => { 'code' => 'avs-code' },
-                             :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
+    ActiveMerchant::Billing::Response.new(true, '', {}, {
+      authorization: '123',
+      cvv_result: cvv_code,
+      avs_result: { code: avs_code }
+    })
   end
 
-  let(:failed_response) { double('gateway_response', :success? => false) }
+  let(:failed_response) do
+    ActiveMerchant::Billing::Response.new(false, '', {}, {})
+  end
 
   before(:each) do
     # So it doesn't create log entries every time a processing method is called
@@ -173,9 +179,9 @@ describe Spree::Payment do
         it "should store the response_code, avs_response and cvv_response fields" do
           payment.authorize!
           payment.response_code.should == '123'
-          payment.avs_response.should == 'avs-code'
-          payment.cvv_response_code.should == 'cvv-code'
-          payment.cvv_response_message.should == 'CVV Result'
+          payment.avs_response.should == avs_code
+          payment.cvv_response_code.should == cvv_code
+          payment.cvv_response_message.should == ActiveMerchant::Billing::CVVResult::MESSAGES[cvv_code]
         end
 
         it "should make payment pending" do
@@ -224,7 +230,7 @@ describe Spree::Payment do
         it "should store the response_code and avs_response" do
           payment.purchase!
           payment.response_code.should == '123'
-          payment.avs_response.should == 'avs-code'
+          payment.avs_response.should == avs_code
         end
 
         it "should make payment complete" do
@@ -395,43 +401,27 @@ describe Spree::Payment do
         payment.response_code = '123'
       end
 
-      context "when outstanding_balance is less than payment amount" do
-        before do
-          payment.order.stub :outstanding_balance => 10
-          payment.stub :credit_allowed => 1000
-        end
-
+      context "when credit_amount is provided" do
         it "should call credit on the gateway with the credit amount and response_code" do
-          gateway.should_receive(:credit).with(1000, card, '123', anything).and_return(success_response)
-          payment.credit!
+          gateway.should_receive(:credit).with(2000, card, '123', anything).and_return(success_response)
+          payment.credit!(20)
         end
       end
 
-      context "when outstanding_balance is equal to payment amount" do
+      context "when credit_amount is not provided" do
         before do
-          payment.order.stub :outstanding_balance => payment.amount
+          payment.stub :credit_allowed => 50
         end
 
-        it "should call credit on the gateway with the credit amount and response_code" do
-          gateway.should_receive(:credit).with(amount_in_cents, card, '123', anything).and_return(success_response)
-          payment.credit!
-        end
-      end
-
-      context "when outstanding_balance is greater than payment amount" do
-        before do
-          payment.order.stub :outstanding_balance => 101
-        end
-
-        it "should call credit on the gateway with the original payment amount and response_code" do
-          gateway.should_receive(:credit).with(amount_in_cents.to_f, card, '123', anything).and_return(success_response)
+        it "should call credit on the gateway with the credit allowed amount and response_code" do
+          gateway.should_receive(:credit).with(5000, card, '123', anything).and_return(success_response)
           payment.credit!
         end
       end
 
       it "should log the response" do
-        payment.log_entries.should_receive(:create!).with(:details => anything)
-        payment.credit!
+        refund = payment.credit!
+        refund.log_entries.should be_present
       end
 
       context "when gateway does not match the environment" do
@@ -442,30 +432,28 @@ describe Spree::Payment do
       end
 
       context "when response is successful" do
-        it "should create an offsetting payment" do
-          Spree::Payment.should_receive(:create!)
-          payment.credit!
+        it "should create a refund" do
+          expect{ payment.credit! }.to change{ Spree::Refund.count }.by(1)
         end
 
-        it "resulting payment should have correct values" do
-          payment.order.stub :outstanding_balance => 100
+        it "resulting refund should have correct values" do
           payment.stub :credit_allowed => 10
 
-          offsetting_payment = payment.credit!
-          offsetting_payment.amount.to_f.should == -10
-          offsetting_payment.should be_completed
-          offsetting_payment.response_code.should == '12345'
-          offsetting_payment.source.should == payment
+          refund = payment.credit!
+          refund.amount.to_f.should eq 10
+          refund.transaction_id.should eq '12345'
+          refund.payment.should eq payment
         end
       end
     end
   end
 
   context "when response is unsuccessful" do
-    it "should not create a payment" do
+    it "should not create a refund" do
       gateway.stub :credit => failed_response
-      Spree::Payment.should_not_receive(:create)
-      expect { payment.credit! }.to raise_error(Spree::Core::GatewayError)
+      expect do
+        expect { payment.credit! }.to raise_error(Spree::Core::GatewayError)
+      end.to_not change{ Spree::Refund.count }
     end
   end
 

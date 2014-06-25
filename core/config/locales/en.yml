@@ -242,6 +242,11 @@ en:
           attributes:
             currency:
               must_match_order_currency: "Must match order currency"
+        spree/return_authorization:
+          attributes:
+            base:
+              amount_due_less_than_zero: Amount due is less than zero
+              amount_due_greater_than_zero: Unable to refund full amount
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -302,6 +307,7 @@ en:
       list: List
       listing: Listing
       new: New
+      refund: Refund
       save: Save
       update: Update
     activate: Activate
@@ -633,6 +639,7 @@ en:
       this_file_language: English (US)
       translations: Translations
     icon: Icon
+    identifier: Identifier
     image: Image
     images: Images
     inactive: Inactive
@@ -843,6 +850,7 @@ en:
     pay: pay
     payment: Payment
     payment_could_not_be_created: Payment could not be created.
+    payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
     payment_methods: Payment Methods
@@ -951,6 +959,8 @@ en:
     received: Received
     reference: Reference
     refund: Refund
+    refunds: Refunds
+    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     register: Register
     registration: Registration
     remember_me: Remember me

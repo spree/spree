@@ -15,6 +15,7 @@ module Spree
     has_many :log_entries, as: :source
     has_many :state_changes, as: :stateful
     has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
+    has_many :refunds, inverse_of: :payment
 
     before_validation :validate_source
     before_create :set_unique_identifier
@@ -42,6 +43,11 @@ module Spree
     after_rollback :persist_invalid
 
     validates :amount, numericality: true
+
+    # transaction_id is much easier to understand
+    def transaction_id
+      response_code
+    end
 
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
@@ -112,7 +118,7 @@ module Spree
     end
 
     def credit_allowed
-      amount - offsets_total.abs
+      amount - (offsets_total.abs + refunds.sum(:amount))
     end
 
     def can_credit?

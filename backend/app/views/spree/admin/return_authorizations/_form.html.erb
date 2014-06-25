@@ -18,13 +18,13 @@
           <td class="align-center"><%= units.select(&:shipped?).size %></td>
           <td class="align-center"><%= units.select(&:returned?).size %></td>
           <td class="return_quantity align-center">
-            <% if @return_authorization.received? %>
-              <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
-            <% elsif units.select(&:shipped?).empty? %>
+            <% if units.select(&:shipped?).empty? %>
               0
-            <% else %>
+            <% elsif @return_authorization.updatable? %>
               <%= number_field_tag "return_quantity[#{variant.id}]",
                 @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:100px;', :min => 0} %>
+            <% else %>
+              <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
             <% end %>
           </td>
         </tr>
@@ -34,11 +34,11 @@
 
   <%= f.field_container :amount do %>
     <%= f.label :amount, Spree.t(:amount) %> <span class="required">*</span><br />
-    <% if @return_authorization.received? %>
-      <%= @return_authorization.display_amount %>
-    <% else %>
+    <% if @return_authorization.updatable? %>
       <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= Spree.t(:rma_value) %>: <span id="rma_value">0.00</span>
       <%= f.error_message_on :amount %>
+    <% else %>
+      <%= @return_authorization.display_amount %>
     <% end %>
   <% end %>
 
