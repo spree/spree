@@ -795,6 +795,7 @@ en:
     order: Order
     order_adjustments: Order adjustments
     order_approved: Order approved
+    order_not_approved: Order could not be approved at this time
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
