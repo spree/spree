@@ -31,36 +31,35 @@ module Spree
       alias_action :new, to: :create
       alias_action :new_action, to: :create
       alias_action :show, to: :read
+      alias_action :index, :read, to: :display
+
 
       user ||= Spree.user_class.new
 
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
-        can [:index, :read], Country
-        can [:index, :read], OptionType
-        can [:index, :read], OptionValue
+        can :display, Country
+        can :display, OptionType
+        can :display, OptionValue
         can :create, Order
-        can :read, Order do |order, token|
-          order.user == user || order.guest_token && token == order.guest_token
-        end
-        can :update, Order do |order, token|
+        can [:read, :update], Order do |order, token|
           order.user == user || order.guest_token && token == order.guest_token
         end
         can [:create, :read], Address
         can :update, Address do |address|
           user.bill_address == address || user.ship_address == address
         end
-        can [:index, :read], Product
-        can [:index, :read], ProductProperty
-        can [:index, :read], Property
+        can :display, Product
+        can :display, ProductProperty
+        can :display, Property
         can :create, Spree.user_class
         can [:read, :update, :destroy], Spree.user_class, id: user.id
-        can [:index, :read], State
-        can [:index, :read], Taxon
-        can [:index, :read], Taxonomy
-        can [:index, :read], Variant
-        can [:index, :read], Zone
+        can :display, State
+        can :display, Taxon
+        can :display, Taxonomy
+        can :display, Variant
+        can :display, Zone
       end
 
       # Include any abilities registered by extensions, etc.
