@@ -87,7 +87,7 @@ module Spree
               general_promo = Promotion.create name: "General Promo"
               general_action = Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator)
 
-              order.contents.add create(:variant)
+              order.line_items << build(:line_item)
             end
 
             # regression spec for #4515
