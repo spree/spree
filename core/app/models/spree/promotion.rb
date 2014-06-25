@@ -78,7 +78,8 @@ module Spree
       # Promotions without rules are eligible by default.
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
-      specific_rules = rules.select { |rule| rule.applicable?(promotable) || rule.applicable?(promotable.order) }
+      order = Spree::Order === promotable ? promotable : promotable.order
+      specific_rules = rules.select { |rule| rule.applicable?(promotable) || rule.applicable?(order) }
       return true if specific_rules.none?
       if match_policy == 'all'
         # If there are rules for this promotion, but no rules for this
