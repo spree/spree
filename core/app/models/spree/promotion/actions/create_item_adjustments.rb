@@ -15,7 +15,15 @@ module Spree
           order = payload[:order]
           result = false
 
-          order.line_items.each do |line_item|
+          if (product_ids = promotion.product_ids).any?
+            line_items = order.line_items.select do |line_item|
+              product_ids.include?(line_item.product.id)
+            end
+          else
+            line_items = order.line_items
+          end
+
+          line_items.each do |line_item|
             current_result = self.create_adjustment(line_item, order)
             result ||= current_result
           end
