@@ -1,5 +1,9 @@
 ## Spree 2.4.0 (unreleased) ##
 
+* Add authorize_payments! and capture_payments! to the public interface of orders.
+
+    Richard Wilson
+
 * Spree no longer holds aws-sdk as a core dependency. In case you use it
   you need to add it to your Gemfile. See paperclip README for reference on
   scenarios where this is needed https://github.com/thoughtbot/paperclip/tree/v4.1.1#understanding-storage
