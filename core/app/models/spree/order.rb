@@ -382,22 +382,7 @@ module Spree
     #   :allow_checkout_on_gateway_error is set to false
     #
     def process_payments!
-      if pending_payments.empty?
-        raise Core::GatewayError.new Spree.t(:no_pending_payments)
-      else
-        pending_payments.each do |payment|
-          break if payment_total >= total
-
-          payment.process!
-
-          if payment.completed?
-            self.payment_total += payment.amount
-          end
-        end
-      end
-    rescue Core::GatewayError => e
-      result = !!Spree::Config[:allow_checkout_on_gateway_error]
-      errors.add(:base, e.message) and return result
+      process_payments_with(:process!)
     end
 
     def billing_firstname
@@ -642,5 +627,23 @@ module Spree
         self.currency = Spree::Config[:currency] if self[:currency].nil?
       end
 
+      def process_payments_with(method)
+        if pending_payments.empty?
+          raise Core::GatewayError.new Spree.t(:no_pending_payments)
+        else
+          pending_payments.each do |payment|
+            break if payment_total >= total
+
+            payment.public_send(method)
+
+            if payment.completed?
+              self.payment_total += payment.amount
+            end
+          end
+        end
+      rescue Core::GatewayError => e
+        result = !!Spree::Config[:allow_checkout_on_gateway_error]
+        errors.add(:base, e.message) and return result
+      end
   end
 end
