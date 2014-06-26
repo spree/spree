@@ -385,6 +385,14 @@ module Spree
       process_payments_with(:process!)
     end
 
+    def authorize_payments!
+      process_payments_with(:attempt_authorization!)
+    end
+
+    def capture_payments!
+      process_payments_with(:attempt_purchase!)
+    end
+
     def billing_firstname
       bill_address.try(:firstname)
     end
