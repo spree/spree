@@ -132,7 +132,20 @@ describe Spree::Payment do
         expect { payment.process!}.to raise_error(Spree::Core::GatewayError)
         payment.state.should eq('invalid')
       end
+    end
 
+    describe "#attempt_authorization!" do
+      it "authorizes" do
+        expect(payment).to receive(:authorize!)
+        payment.attempt_authorization!
+      end
+    end
+
+    describe "#attempt_purchase!" do
+      it "purchases" do
+        expect(payment).to receive(:purchase!)
+        payment.attempt_purchase!
+      end
     end
 
     describe "#authorize!" do
@@ -800,13 +813,13 @@ describe Spree::Payment do
 
       context "amount contains a $ sign" do
         let(:amount) { '2,99 $' }
-        
+
         its(:amount) { should eql(BigDecimal('2.99')) }
       end
 
       context "amount is a number" do
         let(:amount) { 2.99 }
-        
+
         its(:amount) { should eql(BigDecimal('2.99')) }
       end
 

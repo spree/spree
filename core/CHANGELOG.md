@@ -15,3 +15,7 @@
 *   Ensure transition to payment processing state happens outside transaction.
 
     Chris Salzberg
+
+*   Add attempt_authorization! and attempt_purchase! to the public interface of payments.
+
+    Richard Wilson

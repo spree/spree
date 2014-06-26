@@ -2,13 +2,19 @@ module Spree
   class Payment < ActiveRecord::Base
     module Processing
       def process!
-        handle_payment_preconditions do
-          if payment_method.auto_capture?
-            purchase!
-          else
-            authorize!
-          end
+        if payment_method.auto_capture?
+          attempt_purchase!
+        else
+          attempt_authorization!
         end
+      end
+
+      def attempt_authorization!
+        handle_payment_preconditions { authorize! }
+      end
+
+      def attempt_purchase!
+        handle_payment_preconditions { purchase! }
       end
 
       def authorize!
