@@ -2,22 +2,11 @@ module Spree
   class Payment < Spree::Base
     module Processing
       def process!
-        if payment_method && payment_method.source_required?
-          if source
-            if !processing?
-              if payment_method.supports?(source) || token_based?
-                if payment_method.auto_capture?
-                  purchase!
-                else
-                  authorize!
-                end
-              else
-                invalidate!
-                raise Core::GatewayError.new(Spree.t(:payment_method_not_supported))
-              end
-            end
+        handle_payment_preconditions do
+          if payment_method.auto_capture?
+            purchase!
           else
-            raise Core::GatewayError.new(Spree.t(:payment_processing_failed))
+            authorize!
           end
         end
       end
@@ -109,6 +98,27 @@ module Spree
       end
 
       private
+
+      def handle_payment_preconditions(&block)
+        unless block_given?
+          raise ArgumentError.new("handle_payment_preconditions must be called with a block")
+        end
+
+        if payment_method && payment_method.source_required?
+          if source
+            if !processing?
+              if payment_method.supports?(source) || token_based?
+                yield
+              else
+                invalidate!
+                raise Core::GatewayError.new(Spree.t(:payment_method_not_supported))
+              end
+            end
+          else
+            raise Core::GatewayError.new(Spree.t(:payment_processing_failed))
+          end
+        end
+      end
 
       def gateway_action(source, action, success_state)
         protect_from_connection_error do
