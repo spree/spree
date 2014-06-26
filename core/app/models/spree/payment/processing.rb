@@ -2,26 +2,20 @@ module Spree
   class Payment < Spree::Base
     module Processing
       def process!
-        handle_payment_preconditions do
-          if payment_method.auto_capture?
-            purchase!
-          else
-            authorize!
-          end
+        if payment_method && payment_method.auto_capture?
+          purchase!
+        else
+          authorize!
         end
       end
 
       def authorize!
-        started_processing!
-        gateway_action(source, :authorize, :pend)
+        handle_payment_preconditions { process_authorization }
       end
 
       # Captures the entire amount of a payment.
       def purchase!
-        started_processing!
-        result = gateway_action(source, :purchase, :complete)
-        # This won't be called if gateway_action raises a GatewayError
-        capture_events.create!(amount: amount)
+        handle_payment_preconditions { process_purchase }
       end
 
       # Takes the amount in cents to capture.
@@ -98,6 +92,18 @@ module Spree
       end
 
       private
+
+      def process_authorization
+        started_processing!
+        gateway_action(source, :authorize, :pend)
+      end
+
+      def process_purchase
+        started_processing!
+        result = gateway_action(source, :purchase, :complete)
+        # This won't be called if gateway_action raises a GatewayError
+        capture_events.create!(amount: amount)
+      end
 
       def handle_payment_preconditions(&block)
         unless block_given?
