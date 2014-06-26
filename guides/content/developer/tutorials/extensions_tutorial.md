@@ -113,6 +113,7 @@ $ bundle install
 Finally, let's run the `spree_simple_sales` install generator to copy over the migration we just created (answer **yes** if prompted to run migrations):
 
 ```bash
+# context: Your Spree store's app root (i.e. Rails.root); not the extension's root path.
 $ rails g spree_simple_sales:install
 ```
 
