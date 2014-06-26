@@ -215,5 +215,25 @@ module Spree
         end
       end
     end
+    
+    context '#state_text' do
+      context 'state is blank' do
+        subject { StockLocation.create(name: "testing", state: nil, state_name: 'virginia') }
+        specify { subject.state_text.should == 'virginia' }
+      end
+
+      context 'both name and abbr is present' do
+        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
+        subject { StockLocation.create(name: "testing", state: state, state_name: nil) }
+        specify { subject.state_text.should == 'va' }
+      end
+
+      context 'only name is present' do
+        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
+        subject { StockLocation.create(name: "testing", state: state, state_name: nil) }
+        specify { subject.state_text.should == 'virginia' }
+      end
+    end
+
   end
 end
