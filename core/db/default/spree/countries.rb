@@ -92,7 +92,7 @@ Spree::Country.create!([
   { name: "Guyana", iso3: "GUY", iso: "GY", iso_name: "GUYANA", numcode: "328" },
   { name: "Reunion", iso3: "REU", iso: "RE", iso_name: "REUNION", numcode: "638" },
   { name: "Haiti", iso3: "HTI", iso: "HT", iso_name: "HAITI", numcode: "332" },
-  { name: "Romania", iso3: "ROM", iso: "RO", iso_name: "ROMANIA", numcode: "642" },
+  { name: "Romania", iso3: "ROU", iso: "RO", iso_name: "ROMANIA", numcode: "642" },
   { name: "Swaziland", iso3: "SWZ", iso: "SZ", iso_name: "SWAZILAND", numcode: "748" },
   { name: "Holy See (Vatican City State)", iso3: "VAT", iso: "VA", iso_name: "HOLY SEE (VATICAN CITY STATE)", numcode: "336" },
   { name: "Russian Federation", iso3: "RUS", iso: "RU", iso_name: "RUSSIAN FEDERATION", numcode: "643", states_required: true },
