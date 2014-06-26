@@ -134,7 +134,7 @@ module Spree
 
     def all_adjustments
       Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
-        order_id: self.id)
+                       order_id: self.id)
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -355,7 +355,7 @@ module Spree
     end
 
     def outstanding_balance?
-     self.outstanding_balance != 0
+      self.outstanding_balance != 0
     end
 
     def name
@@ -444,6 +444,14 @@ module Spree
       process_payments_with(:process!)
     end
 
+    def authorize_payments!
+      process_payments_with(:authorize!)
+    end
+
+    def capture_payments!
+      process_payments_with(:purchase!)
+    end
+
     def billing_firstname
       bill_address.try(:firstname)
     end
@@ -453,7 +461,7 @@ module Spree
     end
 
     def insufficient_stock_lines
-     line_items.select(&:insufficient_stock?)
+      line_items.select(&:insufficient_stock?)
     end
 
     def ensure_line_items_are_in_stock
@@ -653,87 +661,83 @@ module Spree
 
     private
 
-      def link_by_email
-        self.email = user.email if self.user
-      end
+    def link_by_email
+      self.email = user.email if self.user
+    end
 
-      # Determine if email is required (we don't want validation errors before we hit the checkout)
-      def require_email
-        true unless new_record? or ['cart', 'address'].include?(state)
-      end
+    # Determine if email is required (we don't want validation errors before we hit the checkout)
+    def require_email
+      true unless new_record? or ['cart', 'address'].include?(state)
+    end
 
-      def ensure_line_items_present
-        unless line_items.present?
-          errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) and return false
+    def ensure_line_items_present
+      unless line_items.present?
+        errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) and return false
+      end
+    end
+
+    def has_available_shipment
+      return unless has_step?("delivery")
+      return unless address?
+      return unless ship_address && ship_address.valid?
+      # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
+    end
+
+    def ensure_available_shipping_rates
+      if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
+        # After this point, order redirects back to 'address' state and asks user to pick a proper address
+        # Therefore, shipments are not necessary at this point.
+        shipments.delete_all
+        errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
+      end
+    end
+
+    def after_cancel
+      shipments.each { |shipment| shipment.cancel! }
+      payments.completed.each { |payment| payment.cancel! }
+
+      send_cancel_email
+      self.update_column(:payment_state, 'credit_owed') unless shipped?
+      self.update!
+    end
+
+    def send_cancel_email
+      OrderMailer.cancel_email(self.id).deliver
+    end
+
+    def after_resume
+      shipments.each { |shipment| shipment.resume! }
+      consider_risk
+    end
+
+    def use_billing?
+      @use_billing == true || @use_billing == 'true' || @use_billing == '1'
+    end
+
+    def set_currency
+      self.currency = Spree::Config[:currency] if self[:currency].nil?
+    end
+
+    def create_token
+      self.guest_token ||= loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless self.class.exists?(guest_token: random_token)
+      end
+    end
+
+    def process_payments_with(method)
+      unprocessed_payments.each do |payment|
+        break if payment_total >= total
+
+        payment.public_send(method)
+
+        if payment.completed?
+          self.payment_total += payment.amount
         end
       end
-
-      def has_available_shipment
-        return unless has_step?("delivery")
-        return unless address?
-        return unless ship_address && ship_address.valid?
-        # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
-      end
-
-      def ensure_available_shipping_rates
-        if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
-          # After this point, order redirects back to 'address' state and asks user to pick a proper address
-          # Therefore, shipments are not necessary at this point.
-          shipments.destroy_all
-          errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
-        end
-      end
-
-      def after_cancel
-        shipments.each { |shipment| shipment.cancel! }
-        payments.completed.each { |payment| payment.cancel! }
-
-        send_cancel_email
-        self.update_column(:payment_state, 'credit_owed') unless shipped?
-        self.update!
-      end
-
-      def send_cancel_email
-        OrderMailer.cancel_email(self.id).deliver
-      end
-
-      def after_resume
-        shipments.each { |shipment| shipment.resume! }
-        consider_risk
-      end
-
-      def use_billing?
-        @use_billing == true || @use_billing == 'true' || @use_billing == '1'
-      end
-
-      def set_currency
-        self.currency = Spree::Config[:currency] if self[:currency].nil?
-      end
-
-      def create_token
-        self.guest_token ||= loop do
-          random_token = SecureRandom.urlsafe_base64(nil, false)
-          break random_token unless self.class.exists?(guest_token: random_token)
-        end
-      end
-
-      def process_payments_with(method)
-        if unprocessed_payments.empty?
-          raise Core::GatewayError.new Spree.t(:no_pending_payments)
-        else
-          unprocessed_payments.each do |payment|
-            break if payment_total >= total
-
-            payment.public_send(method)
-
-            if payment.completed?
-              self.payment_total += payment.amount
-            end
-          end
-        end
-      rescue Core::GatewayError => e
-        result = !!Spree::Config[:allow_checkout_on_gateway_error]
-        errors.add(:base, e.message) and return result
-      end
+    rescue Core::GatewayError => e
+      result = !!Spree::Config[:allow_checkout_on_gateway_error]
+      errors.add(:base, e.message) and return result
+    end
   end
 end
