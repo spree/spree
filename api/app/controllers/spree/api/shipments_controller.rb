@@ -48,7 +48,8 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
-        @shipment.order.contents.add(variant, quantity, nil, @shipment)
+        line_item = @shipment.order.contents.add(variant, quantity, nil, @shipment)
+        line_item.save
 
         respond_with(@shipment, default_template: :show)
       end
