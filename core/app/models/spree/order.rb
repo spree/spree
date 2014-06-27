@@ -5,6 +5,7 @@ module Spree
   class Order < Spree::Base
     include Checkout
     include CurrencyUpdater
+    include IdentityCache
 
     checkout_flow do
       go_to_state :address
@@ -43,9 +44,11 @@ module Spree
 
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order('created_at ASC') }, dependent: :destroy, inverse_of: :order
+    cache_has_many :line_items, embed: true, inverse_name: :order
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
+    cache_has_many :adjustments, embed: true, inverse_name: :adjustable
     has_many :inventory_units, inverse_of: :order
     has_many :products, through: :variants
     has_many :variants, through: :line_items
@@ -57,6 +60,7 @@ module Spree
         pluck(:state).uniq
       end
     end
+    cache_has_many :shipments, embed: true, inverse_name: :order
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
@@ -296,7 +300,7 @@ module Spree
     end
 
     def find_line_item_by_variant(variant)
-      line_items.detect { |line_item| line_item.variant_id == variant.id }
+      fetch_line_items.detect { |line_item| line_item.variant_id == variant.id }
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
@@ -304,8 +308,8 @@ module Spree
     def create_tax_charge!
       # We want to only look up the applicable tax zone once and pass it to TaxRate calculation to avoid duplicated lookups.
       order_tax_zone = self.tax_zone
-      Spree::TaxRate.adjust(order_tax_zone, line_items)
-      Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
+      Spree::TaxRate.adjust(order_tax_zone, fetch_line_items)
+      Spree::TaxRate.adjust(order_tax_zone, fetch_shipments) if shipments.any?
     end
 
     def outstanding_balance
@@ -413,7 +417,7 @@ module Spree
     end
 
     def insufficient_stock_lines
-     line_items.select(&:insufficient_stock?)
+     fetch_line_items.select(&:insufficient_stock?)
     end
 
     def merge!(order, user = nil)
