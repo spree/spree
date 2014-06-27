@@ -9,8 +9,6 @@ module Spree
 
     def initialize(item)
       @item = item
-      # Don't attempt to reload the item from the DB if it's not there
-      @item.reload if @item.persisted?
     end
 
     def update
