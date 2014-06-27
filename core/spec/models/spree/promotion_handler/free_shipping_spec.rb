@@ -3,8 +3,12 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe FreeShipping do
-      let(:order) { create(:order) }
-      let(:shipment) { create(:shipment, order: order ) }
+      let(:order) { Spree::Order.create }
+      let(:shipment) do 
+        shipment = Spree::Shipment.new(cost: 10, order: order)
+        order.shipments << shipment
+        shipment
+      end
 
       let(:promotion) { Promotion.create(name: "Free Shipping") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
@@ -17,7 +21,7 @@ module Spree
         it "creates the adjustment" do
           expect {
             subject.activate
-          }.to change { shipment.adjustments.count }.by(1)
+          }.to change { shipment.adjustments.to_a.count }.by(1)
         end
       end
 
