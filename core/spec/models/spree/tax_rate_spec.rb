@@ -252,7 +252,7 @@ describe Spree::TaxRate do
         context "when zone is contained by default tax zone" do
           it "should create two adjustments, one for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
           end
 
           it "should not create a tax refund" do
@@ -268,9 +268,11 @@ describe Spree::TaxRate do
             # Zone.stub_chain :default_tax, :contains? => false
             @zone.zone_members.delete_all
           end
+
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.charge.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
+            line_item.adjustments.first.amount.should == 0.95
           end
 
           it "should not create a tax refund for each tax rate" do
@@ -295,7 +297,8 @@ describe Spree::TaxRate do
 
           it "should create a tax refund for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.credit.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
+            line_item.adjustments.first.amount.should == -0.95
           end
         end
 
@@ -312,7 +315,7 @@ describe Spree::TaxRate do
 
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.count.should == 2
+            line_item.adjustments.to_a.count.should == 2
           end
 
           it "should not create a tax refund" do

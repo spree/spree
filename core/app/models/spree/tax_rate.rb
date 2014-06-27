@@ -142,8 +142,8 @@ module Spree
         label = Spree.t(:refund) + ' ' + create_label
       end
 
-      self.adjustments.create!({
-        :adjustable => item,
+      item.adjustments.build({
+        :source => self,
         :amount => amount,
         :order_id => item.order_id,
         :label => label || create_label,
