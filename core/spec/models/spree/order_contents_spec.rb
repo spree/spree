@@ -112,7 +112,7 @@ describe Spree::OrderContents do
   end
 
   context "update cart" do
-    let!(:shirt) { subject.add variant, 1 }
+    let!(:shirt) { subject.add(variant, 1).tap(&:save) }
 
     let(:params) do
       { line_items_attributes: {
