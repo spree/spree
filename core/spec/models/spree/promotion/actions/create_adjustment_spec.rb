@@ -63,6 +63,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
       before(:each) do
         action.perform(:order => order)
+        order.save
         action.destroy
       end
 
