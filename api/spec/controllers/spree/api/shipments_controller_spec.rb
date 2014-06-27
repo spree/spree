@@ -70,7 +70,8 @@ describe Spree::Api::ShipmentsController do
 
     context 'for completed shipments' do
       let(:order) { create :completed_order_with_totals }
-      let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
+      let(:shipment) { order.shipments.first }
+      let!(:resource_scoping) { { id: shipment.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }
@@ -79,7 +80,8 @@ describe Spree::Api::ShipmentsController do
       end
 
       it 'removes a variant from a shipment' do
-        order.contents.add(variant, 2)
+        order.contents.add(variant, 2, nil, shipment)
+        order.save
 
         api_put :remove, { variant_id: variant.to_param, quantity: 1 }
         response.status.should == 200
