@@ -6,7 +6,7 @@ module Spree
     respond_to :html
 
     def show
-      @taxon = Taxon.find_by_permalink!(params[:id])
+      @taxon = Spree::Taxon.find_by_permalink!(params[:id])
       return unless @taxon
 
       @searcher = build_searcher(params.merge(:taxon => @taxon.id))

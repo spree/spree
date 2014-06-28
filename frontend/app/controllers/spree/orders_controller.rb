@@ -13,7 +13,7 @@ module Spree
     skip_before_filter :verify_authenticity_token
 
     def show
-      @order = Order.find_by_number!(params[:id])
+      @order = Spree::Order.find_by_number!(params[:id])
     end
 
     def update
@@ -35,7 +35,7 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order || Order.new
+      @order = current_order || Spree::Order.new
       associate_user
       if stale?(current_order)
         respond_with(current_order)
