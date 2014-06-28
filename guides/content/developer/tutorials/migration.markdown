@@ -180,10 +180,10 @@ etc.
 
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
-<% ruby do %>
-        p = Spree::Product.create :name => 'some product', :price => 10.0,
+```ruby
+p = Spree::Product.create :name => 'some product', :price => 10.0,
 :description => 'some text here'
-<% end %>
+```
 
 Observe that the*permalink+ and timestamps are added automatically.
 You may want to set the 'meta' fields for SEO purposes.
@@ -194,9 +194,9 @@ being a date in the past, the product won't be listed in the standard
 displays.
 ***
 
-<%ruby do %>
-    p.available_on = Time.now
-<% end %>
+```ruby
+p.available_on = Time.now
+```
 
 ##### The Master variant
 
@@ -229,10 +229,9 @@ string. You can either generate the list of categories in advance, or use
 *where.first_or_create* to reuse previous objects or create new ones
 when required.
 
-<% ruby do %>
-    p.shipping_category = Spree::ShippingCategory.where(:name => 'Type
-A').first_or_create
-<% end %>
+```ruby
+p.shipping_category = Spree::ShippingCategory.where(:name => 'Type A').first_or_create
+```
 
 ##### Tax category
 
@@ -255,9 +254,9 @@ belongs in.
 Adding a product to a particular taxon is easy: just add the taxon to
 the list of taxons for a product.
 
-<% ruby do %>
-    p.taxons << some_taxon
-<% end %>
+```ruby
+p.taxons << some_taxon
+```
 
 Recall that taxons work like subclassing in OO languages, so a product
 in taxon T is also contained in T's ancestors, so you should usually assign a
@@ -290,23 +289,23 @@ The following code uses a list of (newline-separated) taxon descriptions-
 possibly using 'A > B > C' style of context to assign the taxons for a product. Notice the use of
 *where.first_or_create*.
 
-<% ruby do %>
-    # create outside of loop
-      main_taxonomy = Spree::Taxonomy.where(:name => 'Products').first_or_create
+```ruby
+# create outside of loop
+  main_taxonomy = Spree::Taxonomy.where(:name => 'Products').first_or_create
 
-    # inside of main loop
-     the_taxons = []
-     taxon_col.split(/[\r\n]*/).each do |chain|
-         taxon = nil
-         names = chain.split
-         names.each do |name|
-            taxon = Spree::Taxon.where.first_or_create
-         end
-         the_taxons << taxon
-     end
-     p.taxons = the_taxons
+# inside of main loop
+the_taxons = []
+taxon_col.split(/[\r\n]*/).each do |chain|
+  taxon = nil
+  names = chain.split
+  names.each do |name|
+    taxon = Spree::Taxon.where.first_or_create
+  end
+  the_taxons << taxon
+end
+p.taxons = the_taxons
 
-<% end %>
+```
 
 You can use similar code to set up other taxonomies, e.g. to have a
 taxonomy for brands and product ranges, like 'Guitars' with child
@@ -320,17 +319,16 @@ known in advance so you can define these at the start of the script. You
 should give the internal name and presentation name. For simplicity, the code
 examples have these names as the same string.
 
-<% ruby do %>
-    size_prop = Spree::Property.where(name: 'size', presentation: 'Size').first_or_create
-<% end %>
+```ruby
+size_prop = Spree::Property.where(name: 'size', presentation: 'Size').first_or_create
+```
 
 Then you just set the value for the property-product pair.
 Assuming value*size_info+ which is derived from the relevant
 column, this means:
-<% ruby do %>
-    Spree::ProductProperty.create :property => size_prop, :product =>
-      p, :value => size_info
-<% end %>
+```ruby
+Spree::ProductProperty.create :property => size_prop, :product => p, :value => size_info
+```
 
 ##### Product prototypes
 
@@ -367,9 +365,9 @@ useful to set an identifying *sku* code too. The price field is optional: if it 
 explicitly set, the new variant will use the master variant's price (the same applies to
 *cost_price* too). You can also set the *weight*, *width*, *height*, and *depth* too.
 
-<% ruby do %>
-  v = Spree::Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
-<% end %>
+```ruby
+v = Spree::Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
+```
 
 ***
 The price is only copied at creation, so any subsequent changes to
@@ -394,11 +392,11 @@ You can probably declare most of the option types in advance, and so
 just look up the names when required, though for fine control, you can
 use the *where.first_or_create* technique, with something like this:
 
-<% ruby do %>
-    p.option_types = option_names_col.map do |name|
-      Spree::OptionType.where(:name => name, :presentation => name).first_or_create
-    end
-<% end %>
+```ruby
+p.option_types = option_names_col.map do |name|
+  Spree::OptionType.where(:name => name, :presentation => name).first_or_create
+end
+```
 
 ##### Option values
 
@@ -411,13 +409,13 @@ to encode each variant in the spreadsheet, and this is stored in the variable
 *opt_info*. The following extracts the three key pieces of information and sets
 the option values for the new variant (see below for variant creation).
 
-<% ruby do %>
-  *,opts,sku,price = opt_info.match\s*=\s*\s*@.\*?)/).to_a
-  v = Spree::Variant.create :product => p, :sku => sku, :price => price
-  v.option_values = opts.split.map do |nm|
-    Spree::OptionValue.where.first_or_create
-  end
-<% end %>
+```ruby
+*,opts,sku,price = opt_info.match\s*=\s*\s*@.\*?)/).to_a
+v = Spree::Variant.create :product => p, :sku => sku, :price => price
+v.option_values = opts.split.map do |nm|
+  Spree::OptionValue.where.first_or_create
+end
+```
 
 ***
 You don't have to stick with system-wide option types: you can
@@ -438,21 +436,21 @@ their associated values. The position is scoped to the relevant option type.
 If you create option values in advance, just create them in the required
 order and the plugin will set the *position* automatically.
 
-<% ruby do %>
-  color_type = Spree::OptionType.create :name => 'Color', :presentation => 'Color'
-  color_options = %w[Red Blue Green].split.map { |n|
-    Spree::OptionValue.create :name => n, :presentation => n,
-                              :option_type => color_type }
-<% end %>
+```ruby
+color_type = Spree::OptionType.create :name => 'Color', :presentation => 'Color'
+color_options = %w[Red Blue Green].split.map { |n|
+  Spree::OptionValue.create :name => n, :presentation => n,
+  :option_type => color_type }
+```
 
 Otherwise, you could enforce the ordering*after_ loading up all of the
 variants, using something like this:
 
-<% ruby do %>
-  color_type.option_values.sort_by(&:name).each_with_index do |val,pos|
-    val.update_attribute(:position, pos + 1)
-  end
-<% end %>
+```ruby
+color_type.option_values.sort_by(&:name).each_with_index do |val,pos|
+  val.update_attribute(:position, pos + 1)
+end
+```
 
 ##### Further reading
 
@@ -470,12 +468,12 @@ You can attach images to products and to variants - the mechanism is
 polymorphic. Given some local image file, the following will associate the image and
 create all of the size formats.
 
-<% ruby do %>
-    #for image for product (all variants) represented by master variant
-    img = Spree::Image.create(:attachment => File.open(path), :viewable => product.master)
+```ruby
+#for image for product (all variants) represented by master variant
+img = Spree::Image.create(:attachment => File.open(path), :viewable => product.master)
 
-    #for image for single variant
-    img = Spree::Image.create(:attachment => File.open(path), :viewable => variant)
-<% end %>
+#for image for single variant
+img = Spree::Image.create(:attachment => File.open(path), :viewable => variant)
+```
 
 Paperclip also supports external [storage of images in S3](https://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb)
