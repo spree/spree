@@ -273,6 +273,26 @@ describe Spree::CreditCard do
     end
   end
 
+  context "#first_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the first name" do
+      expect(credit_card.first_name).to eq "Ludwig"
+    end
+  end
+
+  context "#last_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the last name" do
+      expect(credit_card.last_name).to eq "van Beethoven"
+    end
+  end
+
   context "#to_active_merchant" do
     before do
       credit_card.number = "4111111111111111"
