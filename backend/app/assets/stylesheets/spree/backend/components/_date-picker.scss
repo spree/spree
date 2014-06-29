@@ -53,6 +53,7 @@
         width: 10px;
         margin-left: -5px;
         @extend [class^="icon-"]:before;
+        @extend .fa;
 
         &:hover {
           color: very-light($color-2, 25);
@@ -66,6 +67,7 @@
         @extend .fa-arrow-left;        
       }
     }
+
     .ui-datepicker-next {
       right: 0;
 
