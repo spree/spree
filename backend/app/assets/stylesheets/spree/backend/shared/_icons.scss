@@ -46,3 +46,8 @@ button, a {
 .icon-user          { @extend .fa-user; }
 .icon-signout       { @extend .fa-sign-out; }
 .icon-external-link { @extend .fa-external-link; }
+
+// Avoid ugly default browser font (usually a serif) when an element has an icon AND text
+.fa {
+  font-family: "FontAwesome", $base-font-family !important;
+}
