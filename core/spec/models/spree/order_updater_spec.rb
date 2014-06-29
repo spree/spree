@@ -30,18 +30,24 @@ module Spree
         order.shipment_total.should == 10
       end
 
-      it "update order adjustments" do
-        # A line item will not have both additional and included tax,
-        # so please just humour me for now.
-        order.line_items.first.update_columns({
-          :adjustment_total => 10.05,
-          :additional_tax_total => 0.05,
-          :included_tax_total => 0.05,
-        })
-        updater.update_adjustment_total
-        order.adjustment_total.should == 10.05
-        order.additional_tax_total.should == 0.05
-        order.included_tax_total.should == 0.05
+      context "#update_adjustment_total" do
+        it "update order adjustments" do
+          order.stub(:all_adjustments).and_return([double('Adjustment', amount: 10)])
+          updater.update_adjustment_total
+
+          order.adjustment_total.should == 10.0
+        end
+
+        it "updates order tax total from both line items and shipments" do
+          line_item = double('LineItem', included_tax_total: 10, additional_tax_total: 5, adjustments: [])
+          shipment = double('Shipment', included_tax_total: 20, additional_tax_total: 10, adjustments: [])
+          order.stub(:line_items).and_return([line_item])
+          order.stub(:shipments).and_return([shipment])
+          updater.update_adjustment_total
+
+          order.additional_tax_total.should == 15.0
+          order.included_tax_total.should == 30.0
+        end
       end
     end
 

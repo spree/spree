@@ -69,8 +69,8 @@ module Spree
       recalculate_adjustments
 
       order.adjustment_total = all_adjustments.sum(&:amount)
-      order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
-      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
+      order.included_tax_total = line_items.to_a.sum(&:included_tax_total) + shipments.to_a.sum(&:included_tax_total)
+      order.additional_tax_total = line_items.to_a.sum(&:additional_tax_total) + shipments.to_a.sum(&:additional_tax_total)
 
       update_order_total
     end
