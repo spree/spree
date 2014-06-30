@@ -263,7 +263,6 @@ describe Spree::Order do
       specify do
         order_1.merge!(order_2)
         line_items = order_1.line_items.to_a
-        binding.pry
         line_items.count.should == 2
 
         expect(order_1.item_count).to eq 2
