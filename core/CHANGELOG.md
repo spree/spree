@@ -84,3 +84,28 @@
 *   Increase the precision of the amount/price columns in order for support other currencies. See https://github.com/spree/spree/issues/4657
 
     Gonzalo Moreno
+
+*   Preferences on models are now stored in a serialized `preferences` column instead of the `Spree::Preferences` table.
+
+    `Spree::Preferences` are still used for configuration (like `Spree::Config`).
+    For models with preferences (`Calculator`, `PromotionRule`, and
+    `PaymentMethod` in spree core) they are now serialized using
+    `ActiveRecord::Base.serialize`, storing the preferences as YAML in the
+    `preferences` column.
+
+    ```
+    > c = Spree::Calculator.first
+    => #<Spree::Calculator::Shipping::FlatRate id: 1, type: "Spree::Calculator::Shipping::FlatRate",
+    calculable_id: 1, calculable_type: "Spree::ShippingMethod", created_at: "2014-06-29 21:56:59",
+    updated_at: "2014-06-29 21:57:00", preferences: {:amount=>5, :currency=>"USD"}>
+    > c.preferred_amount
+    => 5
+    > c.preferred_amount = 10
+    => 10
+    > c
+    => #<Spree::Calculator::Shipping::FlatRate id: 1, type: "Spree::Calculator::Shipping::FlatRate",
+    calculable_id: 1, calculable_type: "Spree::ShippingMethod", created_at: "2014-06-29 21:56:59",
+    updated_at: "2014-06-29 21:57:00", preferences: {:amount=>10, :currency=>"USD"}>
+    ```
+
+    John Hawthorn
