@@ -96,14 +96,14 @@ module Spree
     # If the adjustment has no source, do not attempt to re-calculate the amount.
     # Chances are likely that this was a manually created adjustment in the admin backend.
     def update!(target = nil)
-      return amount if closed?
+      return self if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
         self.amount = amount
         self.updated_at = Time.now
         determine_eligibility
       end
-      amount
+      self
     end
 
     private

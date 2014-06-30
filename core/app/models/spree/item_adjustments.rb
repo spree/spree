@@ -92,7 +92,11 @@ module Spree
     end
 
     def calculate(adjustments)
-      adjustments.map(&:update!).compact.inject(&:+).to_f
+      eligible_adjustments = adjustments.select do |adjustment|
+        adjustment.update!
+        adjustment.eligible?
+      end
+      eligible_adjustments.map(&:amount).compact.inject(&:+).to_f
     end
   end
 end
