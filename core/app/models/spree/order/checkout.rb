@@ -87,7 +87,6 @@ module Spree
               end
 
               if states[:payment]
-                before_transition :to => :payment, :do => :set_shipments_cost
                 before_transition :to => :payment, :do => :create_tax_charge!
               end
 
