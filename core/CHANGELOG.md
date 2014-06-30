@@ -109,3 +109,23 @@
     ```
 
     John Hawthorn
+
+*   Add Spree::Store model for basic multi-store/multi-domain support
+
+    This provides a basic framework for multi-store/multi-domain, based on the
+    spree-multi-domain extension. Some existing configuration has been moved to
+    this model, so that they can have different values depending on the site
+    being served:
+
+    * `Spree::Config[:site_name]` is moved to `name`
+    * `Spree::Config[:site_url]` is moved to `url`
+    * `Spree::Config[:default_meta_description]` is moved to `meta_description`
+    * `Spree::Config[:default_meta_keywords]` is moved to `meta_keywords`
+    * `Spree::Config[:default_seo_title]` is moved to `seo_title`
+
+    A migration will move existing configuration onto a new default store.
+
+    A new `ControllerHelpers::Store` concern provides a `current_store` helper
+    to fetch a helper based on the request's domain.
+
+    Jeff Dutil, Clarke Brunsdon, and John Hawthorn

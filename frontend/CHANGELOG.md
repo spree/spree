@@ -9,3 +9,7 @@
     credit card info.
 
     Washington Luiz
+
+*   Use settings from current_store instead of Spree::Config
+
+    Jeff Dutil, John Hawthorn, and Washington Luiz
