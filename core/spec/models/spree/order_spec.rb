@@ -153,11 +153,11 @@ describe Spree::Order do
   end
 
   context "empty!" do
-    let(:order) { stub_model(Spree::Order, item_count: 2) }
+    let(:order) { stub_model(Spree::Order) }
 
     before do
-      order.stub(:line_items => line_items = [1, 2])
-      order.stub(:adjustments => adjustments = [])
+      order.stub :line_items => []
+      order.stub :adjustments => []
     end
 
     it "clears out line items, adjustments and update totals" do
@@ -168,6 +168,7 @@ describe Spree::Order do
       expect(order.updater).to receive(:persist_totals)
 
       order.empty!
+      expect(order.item_count).to eq 0
       expect(order.item_total).to eq 0
     end
   end
