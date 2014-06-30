@@ -257,8 +257,8 @@ describe Spree::Order do
       let(:variant_2) { build(:variant, id: 2) }
 
       before do
-        order_1.line_items << Spree::LineItem.new(variant: variant, quantity: 1, currency: order_1.currency)
-        order_2.line_items << Spree::LineItem.new(variant: variant_2, quantity: 1, currency: order_1.currency)
+        order_1.line_items << Spree::LineItem.new(variant: variant, quantity: 1, price: 10, currency: order_1.currency)
+        order_2.line_items << Spree::LineItem.new(variant: variant_2, quantity: 1, price: 10, currency: order_1.currency)
       end
 
       specify do
@@ -270,8 +270,8 @@ describe Spree::Order do
         expect(order_1.item_total).to eq line_items.map(&:amount).sum
 
         # No guarantee on ordering of line items, so we do this:
-        line_items.map(:quantity).should =~ [1, 1]
-        line_items.map(:variant_id).should =~ [variant.id, variant_2.id]
+        line_items.map(&:quantity).should =~ [1, 1]
+        line_items.map(&:variant_id).should =~ [variant.id, variant_2.id]
       end
     end
   end
