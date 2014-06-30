@@ -18,7 +18,16 @@ module Spree
       let(:promotion) { Promotion.create(name: "At line items") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
-      subject { Cart.new(order, line_item) }
+      # Do not trigger the AR call of self.orders << order in Promotion model
+      # With this triggered, it leads to the entire order being saved...
+      # We don't need that in this test, as we can operate with non-persisted objects with no worries.
+      before { promotion.stub :link_to_order }
+
+      subject do
+        Cart.new(order, line_item).tap do |cart|
+          cart.stub :promotions => [promotion]
+        end
+      end
 
       context "activates in LineItem level" do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }

@@ -61,7 +61,7 @@ module Spree
       if action_taken
       # connect to the order
       # create the join_table entry.
-        self.orders << order
+        link_to_order(order)
       end
 
       return action_taken
@@ -119,6 +119,11 @@ module Spree
     end
 
     private
+
+    def link_to_order(order)
+      self.orders << order
+    end
+
     def normalize_blank_values
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?
