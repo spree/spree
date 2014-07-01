@@ -10,7 +10,7 @@ module Spree
 
     after_save :set_name
 
-    default_scope order: "#{self.table_name}.position"
+    default_scope order: "#{quoted_table_name}.position"
 
     private
       def set_name

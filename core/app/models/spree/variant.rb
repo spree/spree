@@ -61,7 +61,7 @@ module Spree
     end
 
     def options_text
-      values = self.option_values.joins(:option_type).order("#{Spree::OptionType.table_name}.position asc")
+      values = self.option_values.joins(:option_type).order("#{Spree::OptionType.quoted_table_name}.position asc")
 
       values.map! do |ov|
         "#{ov.option_type.presentation}: #{ov.presentation}"
