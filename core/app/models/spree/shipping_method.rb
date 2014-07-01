@@ -64,11 +64,11 @@ module Spree
       end
 
       def self.on_backend_query
-        "#{table_name}.display_on != 'front_end' OR #{table_name}.display_on IS NULL"
+        "#{quoted_table_name}.display_on != 'front_end' OR #{quoted_table_name}.display_on IS NULL"
       end
 
       def self.on_frontend_query
-        "#{table_name}.display_on != 'back_end' OR #{table_name}.display_on IS NULL"
+        "#{quoted_table_name}.display_on != 'back_end' OR #{quoted_table_name}.display_on IS NULL"
       end
   end
 end

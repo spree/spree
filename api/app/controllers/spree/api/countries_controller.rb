@@ -6,7 +6,7 @@ module Spree
 
       def index
         @countries = Country.ransack(params[:q]).result.
-                     includes(:states).order('name ASC').
+                     includes(:states).order("#{Spree::Country.quoted_table_name}.name ASC").
                      page(params[:page]).per(params[:per_page])
 
         respond_with(@countries)

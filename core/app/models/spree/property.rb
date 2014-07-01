@@ -9,12 +9,12 @@ module Spree
 
     validates :name, :presentation, presence: true
 
-    scope :sorted, -> { order(:name) }
+    scope :sorted, -> { order("#{quoted_table_name}.name") }
 
     def self.find_all_by_prototype(prototype)
       id = prototype
       id = prototype.id if prototype.class == Prototype
-      joins("LEFT JOIN properties_prototypes ON property_id = #{self.table_name}.id").
+      joins("LEFT JOIN properties_prototypes ON property_id = #{quoted_table_name}.id").
         where(prototype_id: id)
     end
   end

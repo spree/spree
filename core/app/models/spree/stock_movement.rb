@@ -10,7 +10,7 @@ module Spree
     validates :stock_item, presence: true
     validates :quantity, presence: true
 
-    scope :recent, order('created_at DESC')
+    scope :recent, order("#{quoted_table_name}.created_at DESC")
 
     def readonly?
       !new_record?

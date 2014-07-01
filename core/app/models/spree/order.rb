@@ -47,9 +47,9 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy, order: 'created_at ASC'
+    has_many :adjustments, as: :adjustable, dependent: :destroy, order: "#{::Spree::Adjustment.quoted_table_name}.created_at ASC"
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :line_items, dependent: :destroy, order: 'created_at ASC'
+    has_many :line_items, dependent: :destroy, order: "#{::Spree::LineItem.quoted_table_name}.created_at ASC"
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :state_changes, as: :stateful
@@ -99,7 +99,7 @@ module Spree
     end
 
     def self.by_customer(customer)
-      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
+      joins(:user).where("#{Spree.user_class.quoted_table_name}.email" => customer)
     end
 
     def self.by_state(state)

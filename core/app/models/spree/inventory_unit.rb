@@ -12,7 +12,7 @@ module Spree
         .where("spree_shipments.state != 'canceled'")
         .where(variant_id: stock_item.variant_id)
         .where('spree_orders.completed_at is not null')
-        .backordered.order("spree_orders.completed_at ASC")
+        .backordered.order("#{Spree::Order.quoted_table_name}.completed_at ASC")
     end
 
     attr_accessible :shipment, :variant_id
