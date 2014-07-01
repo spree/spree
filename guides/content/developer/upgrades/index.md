@@ -17,3 +17,4 @@ If there are any issues with these guides, please let us know by [filing an issu
 * [1.3.x to 2.0.x](/developer/upgrades/one-dot-three-to-two-dot-oh)
 * [2.0.x to 2.1.x](/developer/upgrades/two-dot-oh-to-two-dot-one)
 * [2.1.x to 2.2.x](/developer/upgrades/two-dot-one-to-two-dot-two)
+* [2.2.x to 2.3.x](/developer/upgrades/two-dot-two-to-two-dot-three)
