@@ -8,35 +8,57 @@ section: core
 Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most
 complex areas within Spree, as there are a large number of moving parts to consider.
 
-The first of these moving parts is that promotions are based on [Activators](activators), using the functionality provided by that area of Spree to know when to trigger the application of a promotion to an order. **Please read that guide first**.
+Promotions can be activated in three different ways:
 
-Promotions depend on activators to know when to activate. Promotions can only be applied for an order if the order is in any state except `complete`, `awaiting return`, or `returned`.
+* When a user adds a product to their cart
+* When a user enters a coupon code during the checkout process
+* When a user visits a page within the Spree store
+
+Promotions for these individual ways are activated through their corresponding `PromotionHandler` class, once they've been checked for eligibility.
 
 Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
 
 In some special cases where a promotion has a `code` or a `path` configured for it, the promotion will only be activated if the payload's code or path match the promotion's. The `code` attribute is used for promotion codes, where a user must enter a code to receive the promotion, and the `path` attribute is used to apply a promotion once a user has visited a specific path.
 
 !!!
-Path-based promotions will only work if the `spree.content.visited` event is triggered, with a call such as `fire_event('spree.content.visited')`. This is done within `Spree::ContentController`, as an example.
+Path-based promotions will only work when the `Spree::PromotionHandler::Page` class is used, as in `Spree::ContentController` from `spree_frontend`.
 !!!
 
 A promotion may also have a `usage_limit` attribute set, which restricts how many times the promotion can be used.
 
 ## Actions
 
-There are two actions which come with Spree: one action to apply adjustments (`Spree::Promotions::Actions::CreateAdjustment`), and another to add a line item to an order (`Spree::Promotion::Actions::CreateLineItem`).
+There are four actions that come with spree:
+
+* An order-level adjustment
+* An item-level adjustment
+* Create line items
+* Free shipping
 
 ### Creating an Adjustment
 
 When a `CreateAdjustment` action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.
 
-Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#eligible_for_originator?` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
+Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#determine_eligibility` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
 An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
+
+### Creating an item adjustment
+
+When a `CreateItemAdjustments` action is undertaken, an adjustment is automatically applied to each item within the order, unless the action has already been performed on that line item
+
+The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based off the rules of the promotion.
+
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
+
+### Free Shipping
+
+When a `FreeShipping` action is undertaken, all shipments within the order have their prices negated. Just like with prior actions, the eligibility of this promotion is checked again whenever a shipment changes.
 
 ### Adding a Line Item
 
 When a `CreateLineItem` action is undertaken, a series of line items are automatically added to the order, which may alter the order's price. The promotion with an action to add a line item can also have another action to add an adjustment to the order to nullify the cost of adding the product to the order.
+
 
 ### Registering a New Action
 
