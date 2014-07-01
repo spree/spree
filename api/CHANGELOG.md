@@ -1,4 +1,4 @@
-## Spree 2.3.0 (unreleased) ##
+## Spree 2.3.2 (unreleased) ##
 
 *   Support existing credit card feature on checkout.
 
