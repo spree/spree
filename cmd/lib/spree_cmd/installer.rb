@@ -94,11 +94,11 @@ module SpreeCmd
         gem :spree, @spree_gem_options
 
         if @install_default_gateways
-          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git", :branch => "2-3-stable"
+          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git"
         end
 
         if @install_default_auth
-          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git", :branch => "2-3-stable"
+          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git"
         end
 
         run 'bundle install', :capture => true
