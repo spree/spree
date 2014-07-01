@@ -12,7 +12,6 @@ require 'ransack'
 require 'state_machine'
 require 'friendly_id'
 require 'font-awesome-rails'
-require 'identity_cache'
 
 module Spree
 
