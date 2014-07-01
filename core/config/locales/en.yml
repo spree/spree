@@ -1106,6 +1106,7 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
+    total_per_item: Total per item
     total_price: Total price
     total_sales: Total Sales
     track_inventory: Track Inventory

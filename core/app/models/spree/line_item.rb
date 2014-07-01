@@ -58,7 +58,7 @@ module Spree
     end
 
     def final_amount
-      amount + adjustment_total.to_f
+      amount + adjustment_total
     end
     alias total final_amount
 
@@ -93,6 +93,16 @@ module Spree
     # Remove variant default_scope `deleted_at: nil`
     def variant
       Spree::Variant.unscoped { super }
+    end
+
+    # Rounding down so that:
+    #   total_per_item * quantity <= total
+    def rounded_total_per_item
+      (total / quantity).round(2, :down)
+    end
+
+    def display_rounded_total_per_item
+      Spree::Money.new(rounded_total_per_item, { currency: currency })
     end
 
     private
