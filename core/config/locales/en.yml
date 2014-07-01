@@ -390,6 +390,7 @@ en:
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     authorization_failure: Authorization Failure
+    authorized: Authorized
     auto_capture: Auto Capture
     available_on: Available On
     average_order_value: Average Order Value
@@ -895,7 +896,7 @@ en:
       label: Order must contain %{select} of these products
       match_all: all
       match_any: at least one
-      match_none: none 
+      match_none: none
       product_source:
         group: From product group
         manual: Manually choose
@@ -1119,6 +1120,7 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
+    total_per_item: Total per item
     total_price: Total price
     total_sales: Total Sales
     track_inventory: Track Inventory

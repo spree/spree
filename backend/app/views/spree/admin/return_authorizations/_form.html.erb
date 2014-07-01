@@ -3,28 +3,30 @@
     <thead>
       <tr data-hook="rma_header">
         <th><%= Spree.t(:product) %></th>
+        <th><%= Spree.t(:total_per_item) %></th>
         <th><%= Spree.t(:quantity_shipped) %></th>
         <th><%= Spree.t(:quantity_returned) %></th>
         <th><%= Spree.t(:return_quantity) %></th>
       </tr>
     </thead>
     <tbody>
-      <% @return_authorization.order.shipments.shipped.collect{|s| s.inventory_units.to_a}.flatten.group_by(&:variant).each do | variant, units| %>
-        <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+      <% @return_authorization.order.line_items.each do |line_item| %>
+        <% next if line_item.inventory_units.shipped.none? %>
+        <tr id="<%= dom_id(line_item) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
           <td>
-            <div class="variant-name"><%= variant.name %></div>
-            <div class="variant-options"><%= variant.options_text %></div>
+            <div class="variant-name"><%= line_item.variant.name %></div>
+            <div class="variant-options"><%= line_item.variant.options_text %></div>
           </td>
-          <td class="align-center"><%= units.select(&:shipped?).size %></td>
-          <td class="align-center"><%= units.select(&:returned?).size %></td>
+          <td class="align-center"><%= line_item.display_rounded_total_per_item %></td>
+          <td class="align-center"><%= line_item.inventory_units.shipped.size %></td>
+          <td class="align-center"><%= line_item.inventory_units.returned.size %></td>
           <td class="return_quantity align-center">
-            <% if units.select(&:shipped?).empty? %>
-              0
-            <% elsif @return_authorization.updatable? %>
-              <%= number_field_tag "return_quantity[#{variant.id}]",
-                @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:100px;', :min => 0} %>
+            <% if @return_authorization.received? %>
+              <%= @return_authorization.inventory_units.group_by(&:variant)[line_item.variant].try(:size) || 0 %>
             <% else %>
-              <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
+              <% returning_count = @return_authorization.inventory_units.group_by(&:variant)[line_item.variant].try(:size) || 0 %>
+              <%= number_field_tag "return_quantity[#{line_item.variant.id}]", returning_count, { :style => 'width:100px;',
+                  :min => 0, :max => line_item.inventory_units.shipped.size, "data-line-item-id" => line_item.id} %>
             <% end %>
           </td>
         </tr>
@@ -56,9 +58,9 @@
 </div>
 
 <script>
-  var line_item_prices = {};
-  <% @return_authorization.order.line_items.group_by(&:variant).each do | variant, items| %>
-    line_item_prices[<%= variant.id.to_s %>] = <%= items.first.price %>;
+  var line_item_amounts = {};
+  <% @return_authorization.order.line_items.each do |line_item| %>
+    line_item_amounts[<%= line_item.id.to_s %>] = <%= line_item.rounded_total_per_item %>;
   <% end %>
 
   $(document).ready(function(){
@@ -66,8 +68,8 @@
     $("td.return_quantity input").on('change', function() {
       var rma_amount = 0;
       $.each($("td.return_quantity input"), function(i, input) {
-        var variant_id = $(input).prop('id').replace("return_quantity_", "");
-         rma_amount += line_item_prices[variant_id] * $(input).val()
+        var line_item_id = $(input).data('line-item-id');
+        rma_amount += line_item_amounts[line_item_id] * $(input).val();
       });
 
       if(!isNaN(rma_amount)){
