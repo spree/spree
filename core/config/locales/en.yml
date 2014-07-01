@@ -585,6 +585,7 @@ en:
           signup: User signup
     exceptions:
       count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
+    excl: excl.
     expiration: Expiration
     extension: Extension
     existing_shipments: Existing shipments
@@ -634,6 +635,7 @@ en:
     image: Image
     images: Images
     inactive: Inactive
+    incl: incl.
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
     instructions_to_reset_password: Please enter your email on the form below
