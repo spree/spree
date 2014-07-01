@@ -71,12 +71,16 @@ module Spree
       source.class < Spree::PromotionAction
     end
 
+    def tax?
+      Spree::TaXRate === source
+    end
+
     def included_tax?
-      Spree::TaxRate === source && included?
+      tax? && included?
     end
 
     def additional_tax?
-      Spree::TaxRate === source && !included?
+      tax? && !included?
     end
 
     def determine_eligibility
