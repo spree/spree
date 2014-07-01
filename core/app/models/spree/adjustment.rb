@@ -72,7 +72,7 @@ module Spree
     end
 
     def tax?
-      Spree::TaXRate === source
+      Spree::TaxRate === source
     end
 
     def included_tax?

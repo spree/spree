@@ -94,10 +94,10 @@
     </tr>
   </tfoot>
 
-  <% if @order.line_item_adjustments.exists? %>
-    <% if order.all_adjustments.promotion.eligible.exists? %>
+  <% if @order.line_item_adjustments.any? %>
+    <% if eligible_promotion_adjustments = order.all_adjustments.select(&:promotion?).select(&:eligible?).any? %>
       <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-        <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <% eligible_promotion_adjustments.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td colspan="4"><%= Spree.t(:promotion) %>: <strong><%= label %></strong></td>
             <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>
@@ -116,9 +116,9 @@
     <% end %>
   </tfoot>
 
-  <% if order.all_adjustments.tax.exists? %>
+  <% if order.all_adjustments.select(&:tax?).any? %>
     <tfoot id="tax-adjustments" data-hook="order_details_tax_adjustments">
-      <% order.all_adjustments.tax.group_by(&:label).each do |label, adjustments| %>
+      <% order.all_adjustments.select(&:tax?).group_by(&:label).each do |label, adjustments| %>
         <tr class="total">
           <td colspan="4"><%= Spree.t(:tax) %>: <strong><%= label %></strong></td>
           <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>
