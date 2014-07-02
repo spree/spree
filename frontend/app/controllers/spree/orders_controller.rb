@@ -17,8 +17,7 @@ module Spree
     end
 
     def update
-      if @order.contents.update_cart(order_params)
-        @order.persist_totals
+      if @order.contents.update_cart(order_params) && @order.save
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
