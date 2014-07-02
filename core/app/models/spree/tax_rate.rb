@@ -26,7 +26,7 @@ module Spree
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order_tax_zone)
       return [] unless order_tax_zone
-      rates = includes(zone: { zone_members: :zoneable }).load.select do |rate|
+      rates = includes(zone: { zone_members: :zoneable }).order("id").load.select do |rate|
         # Why "potentially"?
         # Go see the documentation for that method.
         rate.potentially_applicable?(order_tax_zone)
