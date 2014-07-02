@@ -121,7 +121,7 @@ class AbilityDecorator
   end
 end
 
-Ability.register_ability(AbilityDecorator)
+Spree::Ability.register_ability(AbilityDecorator)
 ```
 
 ### Custom Roles in the Admin Namespace
@@ -147,7 +147,7 @@ class AbilityDecorator
   end
 end
 
-Ability.register_ability(AbilityDecorator)
+Spree::Ability.register_ability(AbilityDecorator)
 ```
 
 This is required by the following code in Spree's `Admin::BaseController` which
