@@ -62,7 +62,10 @@ module Spree
       end
 
       def promotion_exists_on_order?(order, promotion)
-        order.promotions.include? promotion
+        action_ids = promotion.actions.pluck(:id)
+        order.all_adjustments.any? do |adjustment|
+          action_ids.include?(adjustment.source_id)
+        end
       end
 
       def determine_promotion_application_result
@@ -72,13 +75,10 @@ module Spree
           end
         }
 
-        discount = order.line_item_adjustments.promotion.detect(&detector)
-        discount ||= order.shipment_adjustments.promotion.detect(&detector)
-        discount ||= order.adjustments.promotion.detect(&detector)
+        discount = order.all_adjustments.detect(&detector)
 
         if discount.eligible
           order.update_totals
-          order.persist_totals
           self.success = Spree.t(:coupon_code_applied)
         else
           # if the promotion was created after the order

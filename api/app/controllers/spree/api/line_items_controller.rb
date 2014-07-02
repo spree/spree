@@ -5,7 +5,7 @@ module Spree
         variant = Spree::Variant.find(params[:line_item][:variant_id])
         @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1)
 
-        if @line_item.errors.empty?
+        if @line_item.save
           @order.ensure_updated_shipments
           respond_with(@line_item, status: 201, default_template: :show)
         else

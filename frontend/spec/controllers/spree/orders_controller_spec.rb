@@ -98,6 +98,7 @@ describe Spree::OrdersController do
     let!(:line_item) { order.contents.add(variant, 1) }
 
     before do
+      order.save # persists the line item to the order
       controller.stub(:check_authorization)
       controller.stub(:current_order => order)
     end

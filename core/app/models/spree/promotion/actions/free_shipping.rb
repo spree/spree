@@ -5,8 +5,9 @@ module Spree
         def perform(payload={})
           order = payload[:order]
           results = order.shipments.map do |shipment|
-            return false if promotion_credit_exists?(shipment)
-            shipment.adjustments.create!(
+            next if promotion_credit_exists?(shipment)
+
+            shipment.adjustments.build(
               order: shipment.order, 
               amount: compute_amount(shipment),
               source: self,
@@ -30,7 +31,9 @@ module Spree
         private
 
         def promotion_credit_exists?(shipment)
-          shipment.adjustments.where(:source_id => self.id).exists?
+          shipment.adjustments.any? do |adjustment|
+            adjustment.source == self
+          end
         end
       end
     end

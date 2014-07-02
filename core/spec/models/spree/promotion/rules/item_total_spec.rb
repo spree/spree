@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Promotion::Rules::ItemTotal do
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
-  let(:order) { double(:order) }
+  let(:order) { Spree::Order.new }
 
   before { rule.preferred_amount = 50 }
 

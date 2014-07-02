@@ -169,6 +169,7 @@ module Spree
       order.stub(:associate_user!)
       order.stub_chain(:contents, :add).and_return(line_item = double('LineItem'))
       line_item.should_receive(:update_attributes).with("special" => true)
+      line_item.should_receive(:save)
 
       controller.stub(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
       api_post :create, :order => {

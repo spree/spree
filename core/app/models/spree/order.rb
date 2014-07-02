@@ -9,13 +9,7 @@ module Spree
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
-      go_to_state :payment, if: ->(order) do
-        # TODO there should be a better fix work around for the issues this is
-        # resolving we shouldn't be setting shipments cost every time a order
-        # object is loaded
-        order.set_shipments_cost if order.shipments.any?
-        order.payment_required?
-      end
+      go_to_state :payment, if: ->(order) { order.payment_required? }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
       remove_transition from: :delivery, to: :confirm
@@ -46,8 +40,6 @@ module Spree
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
-    has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
     has_many :products, through: :variants
     has_many :variants, through: :line_items
@@ -117,9 +109,24 @@ module Spree
       self.update_hooks.add(hook)
     end
 
+    def line_item_adjustments
+      line_items.map(&:adjustments).flatten
+    end
+
+    def shipment_adjustments
+      shipments.map(&:adjustments).flatten
+    end
+
     def all_adjustments
-      Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
-        order_id: self.id)
+      adjustments + line_item_adjustments + shipment_adjustments
+    end
+
+    def eligible_promotion_adjustments
+      all_adjustments.select { |a| a.promotion? && a.eligible? }
+    end
+
+    def tax_adjustments
+      all_adjustments.select { |a| Spree::TaxRate === a.source }
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -406,13 +413,14 @@ module Spree
     def merge!(order, user = nil)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
-        current_line_item = self.line_items.find_by(variant: line_item.variant)
+        current_line_item = self.find_line_item_by_variant(line_item.variant)
         if current_line_item
           current_line_item.quantity += line_item.quantity
           current_line_item.save
         else
-          line_item.order_id = self.id
-          line_item.save
+
+          order.line_items -= [line_item]
+          self.line_items += [line_item]
         end
       end
 
@@ -420,11 +428,11 @@ module Spree
 
       updater.update_item_count
       updater.update_item_total
-      updater.persist_totals
+      updater.update_totals
 
       # So that the destroy doesn't take out line items which may have been re-assigned
-      order.line_items.reload
-      order.destroy
+      # order.line_items.reload
+      # order.destroy
     end
 
     def empty!

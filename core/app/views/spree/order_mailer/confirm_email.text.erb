@@ -10,9 +10,9 @@
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.confirm_email.subtotal', :subtotal => @order.display_item_total) %>
-<% if @order.line_item_adjustments.exists? %>
-  <% if @order.all_adjustments.promotion.eligible.exists? %>
-    <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+<% if @order.line_item_adjustments.any? %>
+  <% if @order.eligible_promotion_adjustments.any? %>
+    <% @order.eligible_promotion_adjustments.group_by(&:label).each do |label, adjustments| %>
 <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
     <% end %>
   <% end %>
@@ -22,15 +22,15 @@
 <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: @order.currency) %>
 <% end %>
 
-<% if @order.all_adjustments.eligible.tax.exists? %>
-  <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
+<% if @order.tax_adjustments.any? %>
+  <% @order.tax_adjustments.group_by(&:label).each do |label, adjustments| %>
 <%= Spree.t(:tax) %>: <%= label %> <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
   <% end %>
 <% end %>
 
-<% @order.adjustments.eligible.each do |adjustment| %>
-  <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
-<%= adjustment.label %> <%= adjustment.display_amount %>
+<% @order.adjustments.select(&:eligible?).each do |adjustment| %>
+  <% next if (Spree::TaxRate === adjustment.source) and (adjustment.amount == 0) %>
+  <%= adjustment.label %> <%= adjustment.display_amount %>
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.confirm_email.total', :total => @order.display_total) %>

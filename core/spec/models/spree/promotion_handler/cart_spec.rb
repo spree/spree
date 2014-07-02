@@ -3,13 +3,31 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe Cart do
-      let(:line_item) { create(:line_item) }
-      let(:order) { line_item.order }
+      let(:line_item) do
+        product = Spree::Product.new
+        variant = Spree::Variant.new(product: product)
+        Spree::LineItem.new(variant: variant, quantity: 1, price: 20)
+      end
+
+      let(:order) do
+        Spree::Order.new.tap do |order|
+          order.line_items << line_item
+        end
+      end
 
       let(:promotion) { Promotion.create(name: "At line items") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
-      subject { Cart.new(order, line_item) }
+      # Do not trigger the AR call of self.orders << order in Promotion model
+      # With this triggered, it leads to the entire order being saved...
+      # We don't need that in this test, as we can operate with non-persisted objects with no worries.
+      before { promotion.stub :link_to_order }
+
+      subject do
+        Cart.new(order, line_item).tap do |cart|
+          cart.stub :promotions => [promotion]
+        end
+      end
 
       context "activates in LineItem level" do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
@@ -19,7 +37,7 @@ module Spree
           it "creates the adjustment" do
             expect {
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            }.to change { adjustable.adjustments.to_a.count }.by(1)
           end
         end
 
@@ -55,7 +73,7 @@ module Spree
           it "creates the adjustment" do
             expect {
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            }.to change { adjustable.adjustments.to_a.count }.by(1)
           end
         end
 

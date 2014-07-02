@@ -21,7 +21,7 @@ module Spree
       end
 
       def index
-        @adjustments = @order.all_adjustments.order("created_at ASC")
+        @adjustments = @order.all_adjustments
       end
 
       def update

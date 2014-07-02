@@ -17,7 +17,7 @@ module Spree
     end
 
     def update
-      if @order.contents.update_cart(order_params)
+      if @order.contents.update_cart(order_params) && @order.save
         respond_with(@order) do |format|
           format.html do
             if params.has_key?(:checkout)
@@ -46,6 +46,7 @@ module Spree
     def populate
       populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true), current_currency)
       if populator.populate(params[:variant_id], params[:quantity])
+        current_order.save
         current_order.ensure_updated_shipments
 
         respond_with(@order) do |format|

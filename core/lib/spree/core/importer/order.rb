@@ -73,6 +73,7 @@ module Spree
 
               extra_params = line_item.except(:variant_id, :quantity)
               line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
+              line_item.save
               line_item.update_attributes(extra_params) unless extra_params.empty?
             rescue Exception => e
               raise "Order import line items: #{e.message} #{line_item}"

@@ -69,8 +69,6 @@ module Spree
         line_item = order.line_items.first
         api_put :update, :id => line_item.id, :line_item => { :quantity => 101 }
         response.status.should == 200
-        order.reload
-        order.total.should == 1050 # 50 original due to factory, + 1000 in this test
         json_response.should have_attributes(attributes)
         json_response["quantity"].should == 101
       end

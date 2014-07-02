@@ -27,8 +27,8 @@ describe Spree::Promotion::Actions::CreateLineItems do
 
       it "adds line items to order with correct variant and quantity" do
         action.perform(:order => order)
-        order.line_items.count.should == 2
-        line_item = order.line_items.find_by_variant_id(mug.id)
+        order.line_items.to_a.count.should == 2
+        line_item = order.find_line_item_by_variant(mug)
         line_item.should_not be_nil
         line_item.quantity.should == 1
       end
@@ -36,7 +36,7 @@ describe Spree::Promotion::Actions::CreateLineItems do
       it "only adds the delta of quantity to an order" do
         order.contents.add(shirt, 1)
         action.perform(:order => order)
-        line_item = order.line_items.find_by_variant_id(shirt.id)
+        line_item = order.find_line_item_by_variant(shirt)
         line_item.should_not be_nil
         line_item.quantity.should == 2
       end
@@ -44,7 +44,7 @@ describe Spree::Promotion::Actions::CreateLineItems do
       it "doesn't add if the quantity is greater" do
         order.contents.add(shirt, 3)
         action.perform(:order => order)
-        line_item = order.line_items.find_by_variant_id(shirt.id)
+        line_item = order.find_line_item_by_variant(shirt)
         line_item.should_not be_nil
         line_item.quantity.should == 3
       end

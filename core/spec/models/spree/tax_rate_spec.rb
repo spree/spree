@@ -252,7 +252,7 @@ describe Spree::TaxRate do
         context "when zone is contained by default tax zone" do
           it "should create two adjustments, one for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
           end
 
           it "should not create a tax refund" do
@@ -268,9 +268,11 @@ describe Spree::TaxRate do
             # Zone.stub_chain :default_tax, :contains? => false
             @zone.zone_members.delete_all
           end
+
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.charge.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
+            line_item.adjustments.first.amount.should == 0.95
           end
 
           it "should not create a tax refund for each tax rate" do
@@ -295,7 +297,8 @@ describe Spree::TaxRate do
 
           it "should create a tax refund for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.credit.count.should == 1
+            line_item.adjustments.to_a.count.should == 1
+            line_item.adjustments.first.amount.should == -0.95
           end
         end
 
@@ -312,7 +315,7 @@ describe Spree::TaxRate do
 
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.count.should == 2
+            line_item.adjustments.to_a.count.should == 2
           end
 
           it "should not create a tax refund" do
@@ -326,9 +329,9 @@ describe Spree::TaxRate do
             @price_before_taxes = line_item.price / (1 + @rate1.amount + @rate2.amount)
             # Use the same rounding method as in DefaultTax calculator
             @price_before_taxes = BigDecimal.new(@price_before_taxes).round(2, BigDecimal::ROUND_HALF_UP)
-            line_item.update_column(:pre_tax_amount, @price_before_taxes)
+            line_item.pre_tax_amount = @price_before_taxes
             # Clear out any previously automatically-applied adjustments
-            @order.all_adjustments.delete_all
+            @order.all_adjustments.clear
             @rate1.adjust(@order.tax_zone, line_item)
             @rate2.adjust(@order.tax_zone, line_item)
           end
@@ -338,7 +341,7 @@ describe Spree::TaxRate do
           end
 
           it "price adjustments should be accurate" do
-            included_tax = @order.line_item_adjustments.sum(:amount)
+            included_tax = @order.line_item_adjustments.map(&:amount).inject(&:+)
             expect(@price_before_taxes + included_tax).to eq(line_item.price)
           end
         end

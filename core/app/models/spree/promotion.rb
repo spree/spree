@@ -61,8 +61,7 @@ module Spree
       if action_taken
       # connect to the order
       # create the join_table entry.
-        self.orders << order
-        self.save
+        link_to_order(order)
       end
 
       return action_taken
@@ -78,7 +77,8 @@ module Spree
       # Promotions without rules are eligible by default.
       return true if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
-      specific_rules = rules.for(promotable)
+      order = Spree::Order === promotable ? promotable : promotable.order
+      specific_rules = rules.select { |rule| rule.applicable?(promotable) || rule.applicable?(order) }
       return true if specific_rules.none?
       if match_policy == 'all'
         # If there are rules for this promotion, but no rules for this
@@ -107,7 +107,10 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+      credits_for_promotable = promotable.adjustments.select do |adjustment|
+        adjustment.source.promotion == self
+      end
+      credits_count - credits_for_promotable.count
     end
 
     def credits
@@ -119,6 +122,11 @@ module Spree
     end
 
     private
+
+    def link_to_order(order)
+      self.orders << order
+    end
+
     def normalize_blank_values
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?

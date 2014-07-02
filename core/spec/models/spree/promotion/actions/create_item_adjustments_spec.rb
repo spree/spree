@@ -4,12 +4,23 @@ module Spree
   class Promotion
     module Actions
       describe CreateItemAdjustments do
-        let(:order) { create(:order) }
-        let(:promotion) { create(:promotion) }
-        let(:action) { CreateItemAdjustments.new }
-        let!(:line_item) { create(:line_item, :order => order) }
+        let(:order) { Spree::Order.new }
+        let(:promotion) { build(:promotion) }
+        let(:action) do
+          CreateItemAdjustments.new(promotion: promotion).tap do |action|
+            action.stub :calculator => double('Calculator')
+          end
+        end
+        let!(:line_item) do
+          Spree::LineItem.new.tap do |line_item|
+            line_item.stub(:product => double('Product', id: 999999))
+          end
+        end
 
-        before { action.stub(:promotion => promotion) }
+
+        before do 
+          order.line_items << line_item
+        end
 
         context "#perform" do
           # Regression test for #3966
@@ -32,38 +43,42 @@ module Spree
 
             it "creates adjustment with item as adjustable" do
               action.perform(order: order)
-              action.adjustments.count.should == 1
-              line_item.reload.adjustments.should == action.adjustments
+              line_item.adjustments.to_a.count.should == 1
             end
 
             it "creates adjustment with self as source" do
               action.perform(order: order)
-              expect(line_item.reload.adjustments.first.source).to eq action
+              expect(line_item.adjustments.first.source).to eq action
             end
 
             it "does not perform twice on the same item" do
               2.times { action.perform(order: order) }
-              action.adjustments.count.should == 1
+              line_item.adjustments.to_a.count.should == 1
             end
 
             context "with products rules" do
+              let!(:matching_line_item) { build(:line_item) }
+
               before do
-                promotion.stub(:product_ids => [line_item.product.id])
+                order.line_items << matching_line_item
+                promotion.stub(:product_ids => [matching_line_item.product.id])
               end
-              let!(:second_line_item) { create(:line_item, :order => order) }
+
 
               it "does not create an adjustmenty for line_items not in product rule" do
                 action.perform(order: order)
-                expect(action.adjustments.count).to eql 1
-                expect(line_item.reload.adjustments).to match_array action.adjustments
-                expect(second_line_item.reload.adjustments).to be_empty
+                expect(matching_line_item.adjustments.to_a.count).to eql 1
+                expect(line_item.adjustments.to_a.count).to eql 0
               end
             end
           end
         end
 
         context "#compute_amount" do
-          before { promotion.promotion_actions = [action] }
+          before do 
+            promotion.promotion_actions = [action]
+            line_item.stub(amount: 100)
+          end
 
           it "calls compute on the calculator" do
             action.calculator.should_receive(:compute).with(line_item)
@@ -73,7 +88,6 @@ module Spree
           context "calculator returns amount greater than item total" do
             before do
               action.calculator.should_receive(:compute).with(line_item).and_return(300)
-              line_item.stub(amount: 100)
             end
 
             it "does not exceed it" do

@@ -22,13 +22,15 @@ module Spree
 
           amount = compute_amount(order)
           return if amount == 0
-          Spree::Adjustment.create!(
+          adjustment = order.adjustments.build(
             amount: amount,
             order: order,
             adjustable: order,
             source: self,
             label: "#{Spree.t(:promotion)} (#{promotion.name})"
           )
+          
+          adjustment.determine_eligibility
           true
         end
 
@@ -47,7 +49,9 @@ module Spree
           # Receives an adjustment +source+ (here a PromotionAction object) and tells
           # if the order has adjustments from that already
           def promotion_credit_exists?(adjustable)
-            self.adjustments.where(:adjustable_id => adjustable.id).exists?
+            adjustable.all_adjustments.any? do |adjustment|
+              adjustment.source == self
+            end
           end
 
           def ensure_action_has_calculator

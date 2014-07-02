@@ -49,7 +49,7 @@ module Spree
         find_order(true)
         authorize! :update, @order, order_token
 
-        if @order.contents.update_cart(order_params)
+        if @order.contents.update_cart(order_params) && @order.save
           user_id = params[:order][:user_id]
           if current_api_user.has_spree_role?('admin') && user_id
             @order.associate_user!(Spree.user_class.find(user_id))
@@ -73,7 +73,16 @@ module Spree
         authorize! :update, @order, order_token
         @order.coupon_code = params[:coupon_code]
         @handler = PromotionHandler::Coupon.new(@order).apply
-        status = @handler.successful? ? 200 : 422
+        if @handler.successful?
+          # The handler may create a non-persisted adjustment
+          # Calling save here will persist that object to the database
+          # It will also persist the totals of the order back to the database.
+          @order.save
+          status = 200
+        else
+          status = 422
+        end
+
         render "spree/api/promotions/handler", :status => status
       end
 

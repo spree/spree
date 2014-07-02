@@ -113,16 +113,9 @@ describe Spree::Order do
 
       it "updates totals" do
         order.stub(:ensure_available_shipping_rates => true)
-        line_item = FactoryGirl.create(:line_item, :price => 10, :adjustment_total => 10)
-        order.line_items << line_item
-        tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
-        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate)
-        order.email = "user@example.com"
+        order.should_receive(:update_totals)
+        order.should_receive(:persist_totals)
         order.next!
-        order.adjustment_total.should == 0.5
-        order.additional_tax_total.should == 0.5
-        order.included_tax_total.should == 0
-        order.total.should == 10.5
       end
 
       it "transitions to delivery" do
@@ -171,7 +164,6 @@ describe Spree::Order do
         end
 
         it "transitions to payment" do
-          order.should_receive(:set_shipments_cost)
           order.next!
           assert_state_changed(order, 'delivery', 'payment')
           order.state.should == 'payment'
@@ -204,6 +196,7 @@ describe Spree::Order do
         context "with a shipment that has a price" do
           before do
             shipment.shipping_rates.first.update_column(:cost, 10)
+            order.set_shipments_cost
           end
 
           it "transitions to payment" do
@@ -215,6 +208,7 @@ describe Spree::Order do
         context "with a shipment that is free" do
           before do
             shipment.shipping_rates.first.update_column(:cost, 0)
+            order.set_shipments_cost
           end
 
           it "skips payment, transitions to complete" do

@@ -35,7 +35,6 @@ describe Spree::LineItem do
       end
 
       it "triggers adjustment total recalculation" do
-        line_item.should_receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
         line_item.should_receive(:recalculate_adjustments)
         line_item.save
       end
@@ -57,41 +56,6 @@ describe Spree::LineItem do
     end
   end
 
-  context "#create" do
-    let(:variant) { create(:variant) }
-
-    before do
-      create(:tax_rate, :zone => order.tax_zone, :tax_category => variant.tax_category)
-    end
-
-    context "when order has a tax zone" do
-      before do
-        order.tax_zone.should be_present
-      end
-
-      it "creates a tax adjustment" do
-        order.contents.add(variant)
-        line_item = order.find_line_item_by_variant(variant)
-        line_item.adjustments.tax.count.should == 1
-      end
-    end
-
-    context "when order does not have a tax zone" do
-      before do
-        order.bill_address = nil
-        order.ship_address = nil
-        order.save
-        order.reload.tax_zone.should be_nil
-      end
-
-      it "does not create a tax adjustment" do
-        order.contents.add(variant)
-        line_item = order.find_line_item_by_variant(variant)
-        line_item.adjustments.tax.count.should == 0
-      end
-    end
-  end
-
   # Test for #3391
   context '#copy_price' do
     it "copies over a variant's prices" do
@@ -105,16 +69,7 @@ describe Spree::LineItem do
       line_item.currency.should == variant.currency
     end
   end
-
-  # Test for #3481
-  context '#copy_tax_category' do
-    it "copies over a variant's tax category" do
-      line_item.tax_category = nil
-      line_item.copy_tax_category
-      expect(line_item.tax_category).to eq(line_item.variant.tax_category)
-    end
-  end
-
+  
   describe '.discounted_amount' do
     it "returns the amount minus any discounts" do
       line_item.price = 10

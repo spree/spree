@@ -9,7 +9,7 @@ module Spree
     def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
       reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
+      activate_cart_promotions(line_item)
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item
@@ -18,26 +18,32 @@ module Spree
     def remove(variant, quantity = 1, shipment = nil)
       line_item = remove_from_line_item(variant, quantity, shipment)
       reload_totals
-      PromotionHandler::Cart.new(order, line_item).activate
+      activate_cart_promotions(line_item)
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item
     end
 
     def update_cart(params)
-      if order.update_attributes(params)
+      if params[:line_items_attributes]
+        order.line_items_attributes = params[:line_items_attributes]
         order.line_items = order.line_items.select {|li| li.quantity > 0 }
-        # Update totals, then check if the order is eligible for any cart promotions.
-        # If we do not update first, then the item total will be wrong and ItemTotal
-        # promotion rules would not be triggered.
-        reload_totals
-        PromotionHandler::Cart.new(order).activate
-        order.ensure_updated_shipments
-        reload_totals
-        true
-      else
-        false
       end
+
+      # Update totals, then check if the order is eligible for any cart promotions.
+      # If we do not update first, then the item total will be wrong and ItemTotal
+      # promotion rules would not be triggered.
+      reload_totals
+      PromotionHandler::Cart.new(order).activate
+      order.promotions.each { |promotion| promotion.activate(order) }
+      order.ensure_updated_shipments
+      reload_totals
+
+      order
+    end
+
+    def activate_cart_promotions(line_item)
+      PromotionHandler::Cart.new(order, line_item).activate
     end
 
     private
@@ -51,9 +57,9 @@ module Spree
         order_updater.update_adjustment_total
 
         order_updater.update_payment_state if order.completed?
-        order_updater.persist_totals
+        order_updater.update_totals
 
-        order.reload
+        order
       end
 
       def add_to_line_item(variant, quantity, currency=nil, shipment=nil)
@@ -64,7 +70,8 @@ module Spree
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          line_item = order.line_items.build(quantity: quantity, variant: variant)
+          line_item.tax_category = variant.tax_category
           line_item.target_shipment = shipment
           if currency
             line_item.currency = currency
@@ -74,7 +81,6 @@ module Spree
           end
         end
 
-        line_item.save
         line_item
       end
 
@@ -84,9 +90,9 @@ module Spree
         line_item.target_shipment= shipment
 
         if line_item.quantity == 0
-          line_item.destroy
+          order.line_items.delete(line_item)
         else
-          line_item.save!
+          line_item.save
         end
 
         line_item

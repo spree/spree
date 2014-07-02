@@ -26,7 +26,7 @@ module Spree
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order_tax_zone)
       return [] unless order_tax_zone
-      rates = includes(zone: { zone_members: :zoneable }).load.select do |rate|
+      rates = includes(zone: { zone_members: :zoneable }).order("id").load.select do |rate|
         # Why "potentially"?
         # Go see the documentation for that method.
         rate.potentially_applicable?(order_tax_zone)
@@ -63,7 +63,7 @@ module Spree
           item_amount = item.discounted_cost
         end
         pre_tax_amount = item_amount / (1 + rates.map(&:amount).sum)
-        item.update_column(:pre_tax_amount, pre_tax_amount)
+        item.pre_tax_amount = pre_tax_amount
       end
     end
 
@@ -142,8 +142,8 @@ module Spree
         label = Spree.t(:refund) + ' ' + create_label
       end
 
-      self.adjustments.create!({
-        :adjustable => item,
+      item.adjustments.build({
+        :source => self,
         :amount => amount,
         :order_id => item.order_id,
         :label => label || create_label,

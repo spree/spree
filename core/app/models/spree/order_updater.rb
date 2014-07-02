@@ -30,7 +30,7 @@ module Spree
     end
 
     def recalculate_adjustments
-      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each { |adjustable| Spree::ItemAdjustments.new(adjustable).update }
+      adjustments.map(&:adjustable).uniq.each { |adjustable| Spree::ItemAdjustments.new(adjustable).calculate_adjustments }
     end
 
     # Updates the following Order total values:
@@ -67,21 +67,20 @@ module Spree
 
     def update_adjustment_total
       recalculate_adjustments
-      order.adjustment_total = line_items.sum(:adjustment_total) +
-                               shipments.sum(:adjustment_total)  +
-                               adjustments.eligible.sum(:amount)
-      order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
-      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
+
+      order.adjustment_total = all_adjustments.sum(&:amount)
+      order.included_tax_total = line_items.to_a.sum(&:included_tax_total) + shipments.to_a.sum(&:included_tax_total)
+      order.additional_tax_total = line_items.to_a.sum(&:additional_tax_total) + shipments.to_a.sum(&:additional_tax_total)
 
       update_order_total
     end
 
     def update_item_count
-      order.item_count = line_items.sum(:quantity)
+      order.item_count = line_items.to_a.sum(&:quantity)
     end
 
     def update_item_total
-      order.item_total = line_items.sum('price * quantity')
+      order.item_total = line_items.to_a.sum { |item| item.price * item.quantity }
       update_order_total
     end
 

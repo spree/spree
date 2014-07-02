@@ -286,55 +286,68 @@ describe Spree::Promotion do
   end
 
   context "#rules_are_eligible?" do
-    let(:promotable) { double('Promotable') }
-    it "true if there are no rules" do
-      promotion.rules_are_eligible?(promotable).should be_true
-    end
-
-    it "true if there are no applicable rules" do
-      promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => false)]
-      promotion.promotion_rules.stub(:for).and_return([])
-      promotion.rules_are_eligible?(promotable).should be_true
-    end
-
-    context "with 'all' match policy" do
-      before { promotion.match_policy = 'all' }
-
-      it "should have eligible rules if all rules are eligible" do
-        promo1 = Spree::PromotionRule.create!
-        promo1.stub(eligible?: true, applicable?: true)
-        promo2 = Spree::PromotionRule.create!
-        promo2.stub(eligible?: true, applicable?: true)
-
-        promotion.promotion_rules = [promo1, promo2]
-        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+    shared_examples_for "rules are eligible" do
+      it "true if there are no rules" do
         promotion.rules_are_eligible?(promotable).should be_true
       end
 
-      it "should not have eligible rules if any of the rules is not eligible" do
-        promo1 = Spree::PromotionRule.create!
-        promo1.stub(eligible?: true, applicable?: true)
-        promo2 = Spree::PromotionRule.create!
-        promo2.stub(eligible?: false, applicable?: true)
+      it "true if there are no applicable rules" do
+        promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => false)]
+        promotion.promotion_rules.stub(:for).and_return([])
+        promotion.rules_are_eligible?(promotable).should be_true
+      end
 
-        promotion.promotion_rules = [promo1, promo2]
-        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
-        promotion.rules_are_eligible?(promotable).should be_false
+      context "with 'all' match policy" do
+        before { promotion.match_policy = 'all' }
+
+        it "should have eligible rules if all rules are eligible" do
+          promo1 = Spree::PromotionRule.create!
+          promo1.stub(eligible?: true, applicable?: true)
+          promo2 = Spree::PromotionRule.create!
+          promo2.stub(eligible?: true, applicable?: true)
+
+          promotion.promotion_rules = [promo1, promo2]
+          promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+          promotion.rules_are_eligible?(promotable).should be_true
+        end
+
+        it "should not have eligible rules if any of the rules is not eligible" do
+          promo1 = Spree::PromotionRule.create!
+          promo1.stub(eligible?: true, applicable?: true)
+          promo2 = Spree::PromotionRule.create!
+          promo2.stub(eligible?: false, applicable?: true)
+
+          promotion.promotion_rules = [promo1, promo2]
+          promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+          promotion.rules_are_eligible?(promotable).should be_false
+        end
+      end
+
+      context "with 'any' match policy" do
+        let(:promotion) { Spree::Promotion.create(:name => "Promo", :match_policy => 'any') }
+        let(:promotable) { Spree::Order.new }
+
+        it "should have eligible rules if any of the rules are eligible" do
+          Spree::PromotionRule.any_instance.stub(:applicable? => true)
+          true_rule = Spree::PromotionRule.create(:promotion => promotion)
+          true_rule.stub(:eligible? => true)
+          promotion.stub(:rules => [true_rule])
+          promotion.stub_chain(:rules, :for).and_return([true_rule])
+          promotion.rules_are_eligible?(promotable).should be_true
+        end
       end
     end
 
-    context "with 'any' match policy" do
-      let(:promotion) { Spree::Promotion.create(:name => "Promo", :match_policy => 'any') }
-      let(:promotable) { double('Promotable') }
+    context "when promotable is an order" do
+      let(:promotable) { Spree::Order.new }
 
-      it "should have eligible rules if any of the rules are eligible" do
-        Spree::PromotionRule.any_instance.stub(:applicable? => true)
-        true_rule = Spree::PromotionRule.create(:promotion => promotion)
-        true_rule.stub(:eligible? => true)
-        promotion.stub(:rules => [true_rule])
-        promotion.stub_chain(:rules, :for).and_return([true_rule])
-        promotion.rules_are_eligible?(promotable).should be_true
-      end
+      it_behaves_like "rules are eligible"
+    end
+
+    context "when promotable is a line item" do
+      let(:promotable) { Spree::LineItem.new }
+
+      it_behaves_like "rules are eligible"
     end
   end
 

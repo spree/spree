@@ -87,7 +87,6 @@ module Spree
               end
 
               if states[:payment]
-                before_transition :to => :payment, :do => :set_shipments_cost
                 before_transition :to => :payment, :do => :create_tax_charge!
               end
 
@@ -239,6 +238,12 @@ module Spree
               end
 
               success = self.update_attributes(attributes)
+              if success
+                # Fix for #2191
+                set_shipments_cost if self.shipments.any?
+                self.update_totals
+                self.persist_totals
+              end
             end
 
             @updating_params = nil

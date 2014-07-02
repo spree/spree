@@ -71,6 +71,24 @@ module Spree
       source.class < Spree::PromotionAction
     end
 
+    def tax?
+      Spree::TaxRate === source
+    end
+
+    def included_tax?
+      tax? && included?
+    end
+
+    def additional_tax?
+      tax? && !included?
+    end
+
+    def determine_eligibility
+      if promotion?
+        self.eligible = source.promotion.eligible?(adjustable)
+      end
+    end
+
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid
@@ -82,18 +100,14 @@ module Spree
     # If the adjustment has no source, do not attempt to re-calculate the amount.
     # Chances are likely that this was a manually created adjustment in the admin backend.
     def update!(target = nil)
-      return amount if closed?
+      return self if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
-        self.update_columns(
-          amount: amount,
-          updated_at: Time.now,
-        )
-        if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
-        end
+        self.amount = amount
+        self.updated_at = Time.now
+        determine_eligibility
       end
-      amount
+      self
     end
 
     private
