@@ -1,4 +1,4 @@
-<% if adjustments.eligible.exists? %>
+<% if (eligible_adjustments = adjustments.select(&:eligible?)).any? %>
   <fieldset class="no-border-bottom">
     <legend><%= title %></legend>
     <table>
@@ -7,7 +7,7 @@
         <th><%= Spree.t('amount')%></th>
       </thead>
       <tbody id="order-charges" data-hook="order_details_adjustments"  class="with-border">
-        <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+        <% eligible_adjustments.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td><strong><%= label %>:</strong></td>
             <td class="total align-center"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: adjustments.first.order.try(:currency)) %></span></td>
