@@ -25,19 +25,21 @@ module Spree
     end
 
     def update_cart(params)
-      if order.update_attributes(params)
+      if params[:line_items_attributes]
+        order.line_items_attributes = params[:line_items_attributes]
         order.line_items = order.line_items.select {|li| li.quantity > 0 }
-        # Update totals, then check if the order is eligible for any cart promotions.
-        # If we do not update first, then the item total will be wrong and ItemTotal
-        # promotion rules would not be triggered.
-        reload_totals
-        PromotionHandler::Cart.new(order).activate
-        order.ensure_updated_shipments
-        reload_totals
-        true
-      else
-        false
       end
+
+      # Update totals, then check if the order is eligible for any cart promotions.
+      # If we do not update first, then the item total will be wrong and ItemTotal
+      # promotion rules would not be triggered.
+      reload_totals
+      PromotionHandler::Cart.new(order).activate
+      order.promotions.each { |promotion| promotion.activate(order) }
+      order.ensure_updated_shipments
+      reload_totals
+
+      order
     end
 
     def activate_cart_promotions(line_item)
