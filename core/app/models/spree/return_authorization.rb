@@ -3,22 +3,41 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order'
 
     has_many :inventory_units
+    has_many :refunds
     belongs_to :stock_location
     before_create :generate_number
-    before_save :force_positive_amount
+    before_validation :force_positive_amount
 
     validates :order, presence: true
-    validates :amount, numericality: true
+    validates :amount, numericality: { greater_than_or_equal_to: 0 }
     validate :must_have_shipped_units
 
     state_machine initial: :authorized do
       after_transition to: :received, do: :process_return
+      before_transition to: :refunded, do: :process_refund
 
       event :receive do
         transition to: :received, from: :authorized, if: :allow_receive?
       end
+
       event :cancel do
         transition to: :canceled, from: :authorized
+      end
+
+      event :refund do
+        transition to: :refunded, from: :received
+      end
+
+      state all - [:received, :refunded] do
+        def updatable?
+          true
+        end
+      end
+
+      state :received, :refunded do
+        def updatable?
+          false
+        end
       end
     end
 
@@ -67,6 +86,28 @@ module Spree
       amount.abs * -1
     end
 
+    def amount_due
+      amount - refunds.sum(:amount)
+    end
+
+    def process_refund
+      # For now type and order of retrieved payments are not specified
+      order.payments.completed.each do |payment|
+        break if amount_due <= 0
+        credit_allowed = [payment.credit_allowed, amount_due].min
+        payment.credit!(credit_allowed, self)
+      end
+
+      case amount_due
+      when 0
+        return true
+      when ->(x) { x < 0 }
+        errors.add(:base, :amount_due_less_than_zero) and return false
+      when ->(x) { x > 0 }
+        errors.add(:base, :amount_due_greater_than_zero) and return false
+      end
+    end
+
     private
 
       def must_have_shipped_units
@@ -90,9 +131,6 @@ module Spree
             end
           end
         end
-
-        Adjustment.create(adjustable: order, amount: compute_amount, label: Spree.t(:rma_credit), source: self)
-        order.update!
 
         order.return if inventory_units.all?(&:returned?)
       end

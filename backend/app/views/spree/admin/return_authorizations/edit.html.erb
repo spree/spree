@@ -9,6 +9,11 @@
       <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'cancel'), :method => :put, :data => { :confirm => Spree.t(:are_you_sure) }, :icon => 'remove' %>
     <% end %>
   </li>
+  <li>
+    <% if @return_authorization.can_refund? %>
+      <%= button_link_to Spree.t('actions.refund'), fire_admin_order_return_authorization_url(@order, @return_authorization, :e => 'refund'), :method => :put, :data => { :confirm => Spree.t(:are_you_sure) }, :icon => 'reply' %>
+    <% end %>
+  </li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>

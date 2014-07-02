@@ -88,23 +88,11 @@ describe Spree::ReturnAuthorization do
       before do
         return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
         return_authorization.stub(:stock_location_id => inventory_unit.shipment.stock_location.id)
-        Spree::Adjustment.stub(:create)
         order.stub(:update!)
       end
 
       it "should mark all inventory units are returned" do
         inventory_unit.should_receive(:return!)
-        return_authorization.receive!
-      end
-
-      it "should add credit for specified amount" do
-        return_authorization.amount = 20
-        Spree::Adjustment.should_receive(:create).with(adjustable: order, amount: -20, label: Spree.t(:rma_credit), source: return_authorization)
-        return_authorization.receive!
-      end
-
-      it "should update order state" do
-        order.should_receive :update!
         return_authorization.receive!
       end
 
@@ -156,18 +144,160 @@ describe Spree::ReturnAuthorization do
     end
   end
 
-  context "force_positive_amount" do
-    it "should ensure the amount is always positive" do
-      return_authorization.amount = -10
-      return_authorization.send :force_positive_amount
-      return_authorization.amount.should == 10
+  context "refund!" do
+    let(:payment_amount) { 25.50 }
+    let(:order) { create(:shipped_order) }
+
+    subject { create(:return_authorization, order: order, amount: payment_amount, refunds: refunds).tap(&:refund!) }
+
+    context "the order has completed payments" do
+
+      context "payment amount is enough to refund customer" do
+        before { order.payments.completed.first.update_attributes(amount: payment_amount) }
+
+        context "customer has already been refunded for the total amount of the return authorization" do
+          let!(:refunds) { [create(:refund, amount: payment_amount)] }
+
+          it "should transition to the refunded state" do
+            expect(subject.state).to eq 'refunded'
+          end
+        end
+
+        context "customer has not received any refund for the return authorization" do
+          let!(:refunds) { [] }
+
+          it "should transition to the refunded state" do
+            expect(subject.state).to eq 'refunded'
+          end
+
+          it "should create a refund" do
+            expect{ subject }.to change{ Spree::Refund.count }.by(1)
+          end
+
+          it "should create a refund with the amount of the return authorization" do
+            refund = subject.reload.refunds.first
+            refund.amount.should eq payment_amount
+          end
+        end
+
+        context "customer has been partially refunded for the total amount of the return authorization" do
+          let(:refunded_amount) { payment_amount - 10.0 }
+          let!(:refunds) { [create(:refund, amount: refunded_amount)] }
+
+          it "should transition to the refunded state" do
+            expect(subject.state).to eq 'refunded'
+          end
+
+          it "should create a refund" do
+            expect{ subject }.to change{ Spree::Refund.count }.by(1)
+          end
+
+          it "should create a refund with the remaining amount required to refund the total amount of the return authorization" do
+            refund = subject.reload.refunds.last # first refund is the partial refund
+            refund.amount.should eq (payment_amount - refunded_amount)
+          end
+        end
+      end
+
+      context "payment amount is not enough to refund customer" do
+        before { order.payments.completed.first.update_attributes(amount: 1.0) }
+
+        context "customer has already been refunded for the total amount of the return authorization" do
+          let!(:refunds) { [create(:refund, amount: payment_amount)] }
+
+          it "should transition to the refunded state" do
+            expect(subject.state).to eq 'refunded'
+          end
+        end
+
+        context "customer has not received any refund for the return authorization" do
+          let!(:refunds) { [] }
+
+          it "should not transition to the refunded state" do
+            expect{ subject }.to raise_error { |e|
+              expect(e).to be_a StateMachine::InvalidTransition
+              expect(e.message).to include(I18n.t('activerecord.errors.models.spree/return_authorization.attributes.base.amount_due_greater_than_zero'))
+            }
+          end
+
+          it "should not create a refund" do
+            expect do
+              expect{ subject }.to raise_error(StateMachine::InvalidTransition)
+            end.to_not change{ Spree::Refund.count }
+          end
+        end
+
+        context "customer has been partially refunded for the total amount of the return authorization" do
+          let(:refunded_amount) { payment_amount - 10.0 }
+          let!(:refunds) { [create(:refund, amount: refunded_amount)] }
+
+          it "should not transition to the refunded state" do
+            expect{ subject }.to raise_error(StateMachine::InvalidTransition)
+          end
+
+          it "should not create a refund" do
+            expect do
+              expect{ subject }.to raise_error(StateMachine::InvalidTransition)
+            end.to_not change{ Spree::Refund.count }
+          end
+        end
+      end
+
+      context "too much was already refunded" do
+        let!(:refunds) { [create(:refund, amount: payment_amount+1)] }
+
+        it "should not transition to the refunded state" do
+          expect{ subject }.to raise_error { |e|
+            expect(e).to be_a StateMachine::InvalidTransition
+            expect(e.message).to include(I18n.t('activerecord.errors.models.spree/return_authorization.attributes.base.amount_due_less_than_zero'))
+          }
+        end
+      end
+    end
+
+    context "the order doesn't have any completed payments" do
+      before { order.payments.destroy_all }
+
+      context "customer has already been refunded for the total amount of the return authorization" do
+        let!(:refunds) { [create(:refund, amount: payment_amount)] }
+
+        it "should transition to the refunded state" do
+          expect(subject.state).to eq 'refunded'
+        end
+      end
+
+      context "customer has not received any refund for the return authorization" do
+        let!(:refunds) { [] }
+
+        it "should not transition to the refunded state" do
+          expect{ subject }.to raise_error(StateMachine::InvalidTransition)
+        end
+      end
+
+      context "customer has been partially refunded for the total amount of the return authorization" do
+        let!(:refunds) { [create(:refund, amount: payment_amount - 10.0)] }
+
+        it "should not transition to the refunded state" do
+          expect{ subject }.to raise_error(StateMachine::InvalidTransition)
+        end
+      end
+    end
+
+    context "return authorization amount is zero" do
+      let(:payment_amount) { 0.0 }
+      let(:refunds) { [] }
+
+      it "should transition to the refunded state" do
+        expect(subject.state).to eq 'refunded'
+      end
     end
   end
 
-  context "after_save" do
-    it "should run correct callbacks" do
-      return_authorization.should_receive(:force_positive_amount)
-      return_authorization.run_callbacks(:save)
+  context "force_positive_amount" do
+    it "should ensure the amount is always positive" do
+      return_authorization.amount = -10
+      return_authorization.save!
+      return_authorization.amount.should == 10
     end
   end
 
