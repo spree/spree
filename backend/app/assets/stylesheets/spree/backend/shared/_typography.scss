@@ -77,6 +77,12 @@ ul {
   }
 }
 
+ul.text_list {
+  border-top: none;
+  margin: 0;
+  list-style: disc inside none;
+}
+
 dl {
   width: 100%;
   overflow: hidden;
