@@ -2,15 +2,18 @@ module Spree
   class ReturnAuthorization < Spree::Base
     belongs_to :order, class_name: 'Spree::Order'
 
-    has_many :inventory_units
+    has_many :return_authorization_inventory_units, inverse_of: :return_authorization, dependent: :destroy
+    has_many :inventory_units, through: :return_authorization_inventory_units
     has_many :refunds
     belongs_to :stock_location
     before_create :generate_number
     before_validation :force_positive_amount
 
+    accepts_nested_attributes_for :return_authorization_inventory_units, allow_destroy: true
+
     validates :order, presence: true
     validates :amount, numericality: { greater_than_or_equal_to: 0 }
-    validate :must_have_shipped_units
+    validate :must_have_shipped_units, on: :create
 
     state_machine initial: :authorized do
       after_transition to: :received, do: :process_return
@@ -49,36 +52,8 @@ module Spree
       Spree::Money.new(amount, { currency: currency })
     end
 
-    def add_variant(variant_id, quantity)
-      order_units = returnable_inventory.group_by(&:variant_id)
-      returned_units = inventory_units.group_by(&:variant_id)
-      return false if order_units.empty?
-
-      count = 0
-
-      if returned_units[variant_id].nil? || returned_units[variant_id].size < quantity
-        count = returned_units[variant_id].nil? ? 0 : returned_units[variant_id].size
-
-        order_units[variant_id].each do |inventory_unit|
-          next unless inventory_unit.return_authorization.nil? && count < quantity
-
-          inventory_unit.return_authorization = self
-          inventory_unit.save!
-
-          count += 1
-        end
-      elsif returned_units[variant_id].size > quantity
-        (returned_units[variant_id].size - quantity).times do |i|
-          returned_units[variant_id][i].return_authorization_id = nil
-          returned_units[variant_id][i].save!
-        end
-      end
-
-      order.authorize_return! if inventory_units.reload.size > 0 && !order.awaiting_return?
-    end
-
     def returnable_inventory
-      order.shipped_shipments.collect{|s| s.inventory_units.to_a}.flatten
+      order.inventory_units.shipped
     end
 
     # Used when Adjustment#update! wants to update the related adjustmenrt
@@ -111,7 +86,9 @@ module Spree
     private
 
       def must_have_shipped_units
-        errors.add(:order, Spree.t(:has_no_shipped_units)) if order.nil? || !order.shipped_shipments.any?
+        if order.nil? || order.inventory_units.shipped.none?
+          errors.add(:order, Spree.t(:has_no_shipped_units))
+        end
       end
 
       def generate_number
@@ -122,15 +99,7 @@ module Spree
       end
 
       def process_return
-        inventory_units(include: :variant).each do |iu|
-          iu.return!
-
-          if iu.variant.should_track_inventory?
-            if stock_item = Spree::StockItem.find_by(variant_id: iu.variant_id, stock_location_id: stock_location_id)
-              Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1)
-            end
-          end
-        end
+        return_authorization_inventory_units.includes(:inventory_unit).each(&:receive!)
 
         order.return if inventory_units.all?(&:returned?)
       end

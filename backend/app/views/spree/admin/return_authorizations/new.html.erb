@@ -14,7 +14,7 @@
     <%= render :partial => 'form', :locals => { :f => f } %>
 
     <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button Spree.t(:continue), 'arrow-right' %>
+      <%= button Spree.t(:create), 'ok' %>
       <span class="or"><%= Spree.t(:or) %></span>
       <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'remove' %>
     </div>
