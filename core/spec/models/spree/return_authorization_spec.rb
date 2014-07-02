@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Spree::ReturnAuthorization do
   let(:stock_location) { Spree::StockLocation.create(:name => "test") }
-  let(:order) { FactoryGirl.create(:shipped_order) }
+  let(:order) { create(:shipped_order) }
+  let(:inventory_unit_1) { order.inventory_units.first }
 
   let(:variant) { order.variants.first }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
@@ -40,35 +41,6 @@ describe Spree::ReturnAuthorization do
     end
   end
 
-  context "add_variant" do
-    context "on empty rma" do
-      it "should associate inventory units as shipped" do
-        return_authorization.add_variant(variant.id, 1)
-        expect(return_authorization.inventory_units.where(state: 'shipped').size).to eq 1
-      end
-
-      it "should update order state" do
-        order.should_receive(:authorize_return!)
-        return_authorization.add_variant(variant.id, 1)
-      end
-    end
-
-    context "on rma that already has inventory_units" do
-      before do
-        return_authorization.add_variant(variant.id, 1)
-      end
-
-      it "should not associate more inventory units than there are on the order" do
-        return_authorization.add_variant(variant.id, 1)
-        expect(return_authorization.inventory_units.size).to eq 1
-      end
-
-      it "should not update order state" do
-        expect{return_authorization.add_variant(variant.id, 1)}.to_not change{order.state}
-      end
-    end
-  end
-
   context "can_receive?" do
     it "should allow_receive when inventory units assigned" do
       return_authorization.stub(:inventory_units => [1,2,3])
@@ -85,21 +57,20 @@ describe Spree::ReturnAuthorization do
     let(:inventory_unit) { order.shipments.first.inventory_units.first }
 
     context "to the initial stock location" do
+      let!(:return_authorization_inventory_unit) { create(:return_authorization_inventory_unit, inventory_unit: inventory_unit, return_authorization: return_authorization) }
+
       before do
-        return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
         return_authorization.stub(:stock_location_id => inventory_unit.shipment.stock_location.id)
         order.stub(:update!)
       end
 
       it "should mark all inventory units are returned" do
-        inventory_unit.should_receive(:return!)
         return_authorization.receive!
+        expect(inventory_unit.reload.state).to eq 'returned'
       end
 
       it "should update the stock item counts in the stock location" do
-        count_on_hand = inventory_unit.find_stock_item.count_on_hand
-        return_authorization.receive!
-        inventory_unit.find_stock_item.count_on_hand.should == count_on_hand + 1
+        expect { return_authorization.receive! }.to change { inventory_unit.find_stock_item.count_on_hand }.by(1)
       end
 
       context 'with Config.track_inventory_levels == false' do
@@ -118,17 +89,19 @@ describe Spree::ReturnAuthorization do
     end
 
     context "to a different stock location" do
-      let(:new_stock_location) { FactoryGirl.create(:stock_location, :name => "other") }
+      let(:new_stock_location) { create(:stock_location, :name => "other") }
+      let!(:return_authorization_inventory_unit) { create(:return_authorization_inventory_unit, inventory_unit: inventory_unit, return_authorization: return_authorization) }
 
       before do
         return_authorization.stub(:stock_location_id => new_stock_location.id)
-        return_authorization.stub(:inventory_units => [inventory_unit], :amount => -20)
       end
 
       it "should update the stock item counts in new stock location" do
-        count_on_hand = Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
-        return_authorization.receive!
-        Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand.should == count_on_hand + 1
+        expect {
+          return_authorization.receive!
+        }.to change {
+          Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
+        }.by(1)
       end
 
       it "should NOT raise an error when no stock item exists in the stock location" do
