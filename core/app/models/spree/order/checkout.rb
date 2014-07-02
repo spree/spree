@@ -230,6 +230,7 @@ module Spree
               end
 
               success = self.update_attributes(attributes)
+              set_shipments_cost if self.shipments.any?
             end
             @updating_params = nil
             success
