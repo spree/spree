@@ -73,8 +73,16 @@ module Spree
         authorize! :update, @order, order_token
         @order.coupon_code = params[:coupon_code]
         @handler = PromotionHandler::Coupon.new(@order).apply
-        @order.persist_totals
-        status = @handler.successful? ? 200 : 422
+        if @handler.successful?
+          # The handler may create a non-persisted adjustment
+          # Calling save here will persist that object to the database
+          # It will also persist the totals of the order back to the database.
+          @order.save
+          status = 200
+        else
+          status = 422
+        end
+
         render "spree/api/promotions/handler", :status => status
       end
 
