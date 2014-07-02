@@ -238,6 +238,9 @@ module Spree
               end
 
               success = self.update_attributes(attributes)
+
+              # Fix for #2191
+              set_shipments_cost if self.shipments.any?
             end
 
             @updating_params = nil
