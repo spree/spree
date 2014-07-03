@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_bootstrap_frontend'
-  s.version     = '2.3.0'
+  s.version     = '2.4.0.beta'
   s.summary     = 'Switches out Spree’s entire frontend for a bootstrap 3 powered frontend'
   s.description = s.summary
   s.required_ruby_version = '>= 1.9.3'
@@ -18,12 +18,12 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'bootstrap-sass',           '~> 3.2.0'
   s.add_runtime_dependency 'bootstrap-kaminari-views', '~> 0.0.3'
-  s.add_runtime_dependency 'spree_core',               '~> 2.3.0.beta'
+  s.add_runtime_dependency 'spree_core',               '~> 2.4.0.beta'
 
   # This is technically still being used for the controllers, and possibly some views.
   # Javascript was being used also, but I've moved that over to fix specs.
   # Will drop this after they've been ported, but I'd rather just merge this directly into Spree.
-  s.add_runtime_dependency 'spree_frontend',           '~> 2.3.0.beta'
+  s.add_runtime_dependency 'spree_frontend',           '~> 2.4.0.beta'
 
   s.add_development_dependency 'capybara',             '~> 2.1'
   s.add_development_dependency 'capybara-accessible'
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coveralls'
   s.add_development_dependency 'database_cleaner',     '~> 1.0.1'
   s.add_development_dependency 'email_spec'#,           '~> 1.2.1'
-  s.add_development_dependency 'factory_girl',         '~> 4.2'
+  s.add_development_dependency 'factory_girl',         '~> 4.4'
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'poltergeist',          '1.5.0'
   s.add_development_dependency 'rspec-rails',          '~> 3.0'

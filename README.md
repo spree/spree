@@ -35,10 +35,10 @@ Installation
 
 **NOTE: The master branch is developed agaist edge. Use a stable branch for production.**
 
-Add the following to your gemfile. The currenly supported and updated branches are `master` (edge) and `2-2-stable`
+Add the following to your gemfile. The currently supported and updated branches are `master` (edge), `2-2-stable`, and `2-3-stable`.
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: '2-2-stable'
+gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: 'master'
 ```
 
 And run
