@@ -71,6 +71,8 @@ module Spree
             line_item.price    = variant.price + 
                                  variant.price_modifier_amount(options)
           end
+          
+          line_item.build_options(options) if options
         end
 
         line_item.save
