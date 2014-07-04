@@ -9,9 +9,7 @@ module Spree
     after_touch :touch_all_variants
 
     def touch_all_variants
-      Spree::Product.no_touching do
-        variants.find_each(&:touch)
-      end
+      variants.update_all(updated_at: Time.current)
     end
   end
 end
