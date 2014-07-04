@@ -13,7 +13,7 @@ module Spree
     after_touch :touch_all_products
 
     def touch_all_products
-      products.find_each(&:touch)
+      products.update_all(updated_at: Time.current)
     end
   end
 end
