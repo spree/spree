@@ -167,7 +167,7 @@ describe Spree::TaxRate do
 
     context "with line items" do
       let(:line_item) do
-        stub_model(Spree::LineItem, 
+        stub_model(Spree::LineItem,
           :tax_category => tax_category_1,
           :variant => stub_model(Spree::Variant)
         )
@@ -331,12 +331,21 @@ describe Spree::TaxRate do
             line_item.adjustments.credit.count.should == 0
           end
 
-          it "should remove adjustments when tax_zone is removed" do
-            Spree::TaxRate.adjust(@order, @order.line_items)
-            line_item.adjustments.count.should == 2
-            @order.stub :tax_zone => nil
-            Spree::TaxRate.adjust(@order, @order.line_items)
-            line_item.adjustments.count.should == 0
+          describe 'tax adjustments' do
+            before { Spree::TaxRate.adjust(@order.tax_zone, @order.line_items) }
+
+            it "should apply adjustments when a tax zone is present" do            
+              line_item.adjustments.count.should == 2
+            end
+
+            describe 'when the tax zone is removed' do
+              before { @order.stub :tax_zone => nil }
+
+              it 'does not apply any adjustments' do
+                Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
+                line_item.adjustments.count.should == 0
+              end
+            end
           end
         end
 
