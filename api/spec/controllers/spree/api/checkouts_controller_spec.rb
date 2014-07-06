@@ -172,7 +172,7 @@ module Spree
         order.update_column(:state, "payment")
         api_put :update, :id => order.to_param, :order_token => order.guest_token,
           :order => {
-            :payments_attributes => [{ :payment_method_id => @payment_method.id.to_s }]
+            :payments_attributes => [{ :payment_method_id => @payment_method.id }]
           },
           :payment_source => {
             @payment_method.id.to_s => { name: "Spree" }
