@@ -10,6 +10,7 @@ module ThirdParty
 end
 
 describe Spree::Product do
+
   context 'product instance' do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, :product => product) }
@@ -225,6 +226,45 @@ describe Spree::Product do
         product.stock_items.first.should_not be_nil
       end
     end
+
+    context "slugs" do
+
+      it "normalizes slug on update validation" do
+        product.slug = "hey//joe"
+        product.valid?
+        expect(product.slug).not_to match "/"
+      end
+
+      it "renames slug on destroy" do
+        old_slug = product.slug
+        product.destroy
+        expect(old_slug).to_not eq product.slug
+      end
+
+      it "validates slug uniqueness" do
+        existing_product = product
+        new_product = create(:product)
+        new_product.slug = existing_product.slug
+
+        expect(new_product.valid?).to eq false
+      end
+
+      it "falls back to 'name-sku' for slug if regular name-based slug already in use" do
+        product1 = build(:product)
+        product1.name = "test"
+        product1.sku = "123"
+        product1.save!
+
+        product2 = build(:product)
+        product2.name = "test"
+        product2.sku = "456"
+        product2.save!
+
+        expect(product2.slug).to eq 'test-456'
+      end
+
+    end
+
   end
 
   context "properties" do
@@ -388,7 +428,7 @@ describe Spree::Product do
     end
   end
 
-  describe '#total_on_hand' do
+  context '#total_on_hand' do
     it 'should be infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
       build(:product, :variants_including_master => [build(:master_variant)]).total_on_hand.should eql(Float::INFINITY)
@@ -404,20 +444,5 @@ describe Spree::Product do
       product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]
       product.total_on_hand.should eql(5)
     end
-  end
-
-  describe "slugs" do
-    it "normalizes slug on update" do
-      product = stub_model Spree::Product
-      product.slug = "hey//joe"
-
-      product.valid?
-      expect(product.slug).not_to match "/"
-    end
-  end
-
-  it "maps to_param to slug" do
-    subject.slug = "heyslug"
-    expect(subject.to_param).to eq subject.slug
   end
 end

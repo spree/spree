@@ -4,7 +4,7 @@ module Spree
       def adjustment_state(adjustment)
         state = adjustment.state.to_sym
         icon = { closed: 'lock', open: 'unlock' }
-        content_tag(:span, '', class: icon[state])
+        content_tag(:span, '', class: "fa fa-#{ icon[state] }")
       end
 
       def display_adjustable(adjustable)

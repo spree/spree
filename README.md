@@ -42,9 +42,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.0.5
+gem install rails -v 4.1.2
 gem install spree
-rails _4.0.5_ new my_store
+rails _4.1.2_ new my_store
 spree install my_store
 ```
 
@@ -69,11 +69,11 @@ Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails 4.0.x application. To use the 2-2-stable branch of Spree, add this line to
+Rails 4.1.x application. To use the 2-3-stable branch of Spree, add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-2-stable'
+gem 'spree', github: 'spree/spree', branch: '2-3-stable'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
@@ -87,13 +87,11 @@ gem 'spree', github: 'spree/spree'
 state. It is unwise to use this branch in a production system you care deeply
 about.**
 
-**Note: The master branch is depending on the latest Rails 4.1 release.**
-
 If you wish to have authentication included also, you will need to add the
 `spree_auth_devise` gem as well. Either this:
 
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-2-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-3-stable'
 ```
 
 Or this:

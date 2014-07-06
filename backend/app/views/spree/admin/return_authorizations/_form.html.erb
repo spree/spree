@@ -2,31 +2,29 @@
   <table class="index">
     <thead>
       <tr data-hook="rma_header">
+        <th><%= check_box_tag 'select-all' %></th>
         <th><%= Spree.t(:product) %></th>
-        <th><%= Spree.t(:quantity_shipped) %></th>
-        <th><%= Spree.t(:quantity_returned) %></th>
-        <th><%= Spree.t(:return_quantity) %></th>
+        <th><%= Spree.t(:state) %></th>
+        <th><%= Spree.t(:price) %></th>
       </tr>
     </thead>
     <tbody>
-      <% @return_authorization.order.shipments.shipped.collect{|s| s.inventory_units.to_a}.flatten.group_by(&:variant).each do | variant, units| %>
-        <tr id="<%= dom_id(variant) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
-          <td>
-            <div class="variant-name"><%= variant.name %></div>
-            <div class="variant-options"><%= variant.options_text %></div>
-          </td>
-          <td class="align-center"><%= units.select(&:shipped?).size %></td>
-          <td class="align-center"><%= units.select(&:returned?).size %></td>
-          <td class="return_quantity align-center">
-            <% if @return_authorization.received? %>
-              <%= @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0 %>
-            <% elsif units.select(&:shipped?).empty? %>
-              0
-            <% else %>
-              <%= number_field_tag "return_quantity[#{variant.id}]",
-                @return_authorization.inventory_units.group_by(&:variant)[variant].try(:size) || 0, {:style => 'width:100px;', :min => 0} %>
+      <%= f.fields_for :return_authorization_inventory_units, @form_return_authorization_inventory_units do |unit_fields| %>
+        <% return_authorization_inventory_unit = unit_fields.object %>
+        <% inventory_unit = return_authorization_inventory_unit.inventory_unit %>
+        <tr>
+          <td class="align-center" class="inventory-unit-checkbox">
+            <% if inventory_unit.shipped? %>
+              <%= unit_fields.hidden_field :inventory_unit_id %>
+              <%= unit_fields.check_box :_destroy, {checked: return_authorization_inventory_unit.persisted?, class: 'add-item', "data-price" => inventory_unit.line_item.rounded_total_per_item}, '0', '1' %>
             <% end %>
           </td>
+          <td>
+            <div class="variant-name"><%= inventory_unit.variant.name %></div>
+            <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
+          </td>
+          <td class="align-center"><%= inventory_unit.state.humanize %></td>
+          <td class="align-center"><%= inventory_unit.line_item.display_rounded_total_per_item %></td>
         </tr>
       <% end %>
     </tbody>
@@ -56,23 +54,26 @@
 </div>
 
 <script>
-  var line_item_prices = {};
-  <% @return_authorization.order.line_items.group_by(&:variant).each do | variant, items| %>
-    line_item_prices[<%= variant.id.to_s %>] = <%= items.first.price %>;
-  <% end %>
-
   $(document).ready(function(){
-    var rma_amount = 0;
-    $("td.return_quantity input").on('change', function() {
+    function updateSuggestedAmount() {
+      $("span#rma_value").html()
       var rma_amount = 0;
-      $.each($("td.return_quantity input"), function(i, input) {
-        var variant_id = $(input).prop('id').replace("return_quantity_", "");
-         rma_amount += line_item_prices[variant_id] * $(input).val()
+      $.each($("input.add-item:checked"), function(i, checkbox) {
+        rma_amount += $(checkbox).data("price");
       });
 
       if(!isNaN(rma_amount)){
         $("span#rma_value").html(rma_amount.toFixed(2));
       }
-    })
+    }
+
+    updateSuggestedAmount();
+
+    $("input#select-all").on("change", function() {
+      $("input.add-item").prop('checked', this.checked);
+      updateSuggestedAmount();
+    });
+
+    $("input.add-item").on("change", updateSuggestedAmount);
   });
 </script>

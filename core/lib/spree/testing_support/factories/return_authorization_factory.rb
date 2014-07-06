@@ -10,4 +10,9 @@ FactoryGirl.define do
   factory :new_return_authorization, class: Spree::ReturnAuthorization do
     association(:order, factory: :shipped_order)
   end
+
+  factory :return_authorization_inventory_unit, class: Spree::ReturnAuthorizationInventoryUnit do
+    association(:return_authorization, factory: :return_authorization)
+    association(:inventory_unit, factory: :inventory_unit)
+  end
 end

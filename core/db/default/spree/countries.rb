@@ -92,7 +92,7 @@ Spree::Country.create!([
   { name: "Guyana", iso3: "GUY", iso: "GY", iso_name: "GUYANA", numcode: "328" },
   { name: "Reunion", iso3: "REU", iso: "RE", iso_name: "REUNION", numcode: "638" },
   { name: "Haiti", iso3: "HTI", iso: "HT", iso_name: "HAITI", numcode: "332" },
-  { name: "Romania", iso3: "ROM", iso: "RO", iso_name: "ROMANIA", numcode: "642" },
+  { name: "Romania", iso3: "ROU", iso: "RO", iso_name: "ROMANIA", numcode: "642" },
   { name: "Swaziland", iso3: "SWZ", iso: "SZ", iso_name: "SWAZILAND", numcode: "748" },
   { name: "Holy See (Vatican City State)", iso3: "VAT", iso: "VA", iso_name: "HOLY SEE (VATICAN CITY STATE)", numcode: "336" },
   { name: "Russian Federation", iso3: "RUS", iso: "RU", iso_name: "RUSSIAN FEDERATION", numcode: "643", states_required: true },
@@ -226,6 +226,7 @@ Spree::Country.create!([
   { name: "New Zealand", iso3: "NZL", iso: "NZ", iso_name: "NEW ZEALAND", numcode: "554" },
   { name: "Saint Kitts and Nevis", iso3: "KNA", iso: "KN", iso_name: "SAINT KITTS AND NEVIS", numcode: "659", states_required: true },
   { name: "Serbia", iso3: "SRB", iso: "RS", "iso_name" => "SERBIA", numcode: "999" },
-  { name: "Montenegro", iso3: "MNE", iso: "ME", iso_name: "MONTENEGRO", numcode: "499" }
+  { name: "Montenegro", iso3: "MNE", iso: "ME", iso_name: "MONTENEGRO", numcode: "499" },
+  { name: "Jersey", iso3: "JEY", iso: "JE", iso_name: "JERSEY", numcode: "44" }
 ])
 Spree::Config[:default_country_id] = Spree::Country.find_by(name: "United States").id

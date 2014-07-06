@@ -446,6 +446,31 @@ describe Spree::Shipment do
     end
   end
 
+  context "changes shipping rate via general update" do
+    let(:order) do
+      Spree::Order.create(
+        payment_total: 100, payment_state: 'paid', total: 100, item_total: 100
+      )
+    end
+
+    let(:shipment) { Spree::Shipment.create order_id: order.id }
+
+    let(:shipping_rate) do
+      Spree::ShippingRate.create shipment_id: shipment.id, cost: 10
+    end
+
+    before do
+      shipment.update_attributes_and_order selected_shipping_rate_id: shipping_rate.id
+    end
+
+    it "updates everything around order shipment total and state" do
+      expect(shipment.cost.to_f).to eq 10
+      expect(shipment.state).to eq 'pending'
+      expect(shipment.order.total.to_f).to eq 110
+      expect(shipment.order.payment_state).to eq 'balance_due'
+    end
+  end
+
   context "after_save" do
     context "line item changes" do
       before do

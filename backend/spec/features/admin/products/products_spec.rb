@@ -252,7 +252,7 @@ describe "Products" do
         page.should have_content("successfully updated!")
       end
     end
-    
+
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
@@ -342,8 +342,8 @@ describe "Products" do
   end
 
   context 'with only product permissions' do
-  
-    before do 
+
+    before do
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
 
@@ -364,7 +364,7 @@ describe "Products" do
       page.should have_css('a.edit')
       page.should_not have_css('a.delete-resource')
     end
-  
+
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 

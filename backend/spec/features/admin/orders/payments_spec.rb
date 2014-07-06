@@ -68,9 +68,9 @@ describe 'Payments' do
 
     it 'lists and create payments for an order', js: true do
       within_row(1) do
-        column_text(2).should == '$150.00'
-        column_text(3).should == 'Credit Card'
-        column_text(4).should == 'CHECKOUT'
+        column_text(3).should == '$150.00'
+        column_text(4).should == 'Credit Card'
+        column_text(5).should == 'CHECKOUT'
       end
 
       click_icon :void
@@ -78,9 +78,9 @@ describe 'Payments' do
       page.should have_content('Payment Updated')
 
       within_row(1) do
-        column_text(2).should == '$150.00'
-        column_text(3).should == 'Credit Card'
-        column_text(4).should == 'VOID'
+        column_text(3).should == '$150.00'
+        column_text(4).should == 'Credit Card'
+        column_text(5).should == 'VOID'
       end
 
       click_on 'New Payment'

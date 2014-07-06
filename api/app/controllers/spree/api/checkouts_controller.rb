@@ -63,10 +63,6 @@ module Spree
           state_callback(:before)
         end
 
-        def ip_address
-          ''
-        end
-
         def raise_insufficient_quantity
           respond_with(@order, default_template: 'spree/api/orders/insufficient_quantity')
         end

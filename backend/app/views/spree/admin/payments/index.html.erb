@@ -18,7 +18,20 @@
 <% end %>
 
 <% if @payments.any? %>
-  <%= render :partial => 'list', :locals => { :payments => @payments } %>
+
+  <fieldset data-hook="payment_list" class="no-border-bottom">
+    <legend align="center"><%= Spree.t(:payments) %></legend>
+    <%= render :partial => 'list', :locals => { :payments => @payments } %>
+  </fieldset>
+
+  <% @refunds = @payments.flat_map(&:refunds) %>
+  <% if @refunds.any? %>
+    <fieldset data-hook="payment_list" class="no-border-bottom">
+      <legend align="center"><%= Spree.t(:refunds) %></legend>
+      <%= render :partial => 'refunds', :locals => { :refunds => @refunds } %>
+    </fieldset>
+  <% end %>
+
 <% else %>
   <div class="alpha twelve columns no-objects-found"><%= Spree.t(:order_has_no_payments) %></div>
 <% end %>
