@@ -20,8 +20,8 @@ module Spree
     end
 
     def self.default(user = nil, kind = "bill")
-      if user
-        user.send(:"#{kind}_address") || build_default
+      if user && user_address = user.send(:"#{kind}_address")
+        user_address.clone
       else
         build_default
       end

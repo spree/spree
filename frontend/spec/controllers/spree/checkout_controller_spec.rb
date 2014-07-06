@@ -140,6 +140,41 @@ describe Spree::CheckoutController do
         end
       end
 
+      context "with the order in the address state" do
+        before do
+          order.update_column(:state, "address")
+          order.stub :user => user
+        end
+
+        context "with a billing and shipping address" do
+          before do
+            order.ship_address = FactoryGirl.create(:address)
+
+            @expected_bill_address_id = order.bill_address.id
+            @expected_ship_address_id = order.ship_address.id
+
+            spree_post :update, {
+                :state => "address",
+                :order => {
+                    :bill_address_attributes => order.bill_address.attributes.except("created_at", "updated_at"),
+                    :ship_address_attributes => order.ship_address.attributes.except("created_at", "updated_at"),
+                    :use_billing => false
+                }
+            }
+
+            order.reload
+          end
+
+          it "should update the same billing address" do
+            expect(order.bill_address.id).to eq(@expected_bill_address_id)
+          end
+
+          it "should update the same shipping address" do
+            expect(order.ship_address.id).to eq(@expected_ship_address_id)
+          end
+        end
+      end
+
       context "when in the confirm state" do
         before do
           order.stub :confirmation_required? => true
