@@ -185,12 +185,12 @@ describe Spree::Address do
     end
 
     context "user given" do
-      let(:bill_address) { double("BillAddress") }
+      let(:bill_address) { Spree::Address.new(phone: Time.now.to_i) }
       let(:ship_address) { double("ShipAddress") }
       let(:user) { double("User", bill_address: bill_address, ship_address: ship_address) }
 
-      it "returns that user bill address" do
-        expect(subject.default(user)).to eq bill_address
+      it "returns a copy of that user bill address" do
+        expect(subject.default(user).phone).to eq bill_address.phone
       end
 
       it "falls back to build default when user has no address" do
