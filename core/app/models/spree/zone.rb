@@ -14,7 +14,7 @@ module Spree
     def self.default_tax
       where(default_tax: true).first
     end
-  
+
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
     def self.match(address)
