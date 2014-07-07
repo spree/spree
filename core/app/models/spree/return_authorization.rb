@@ -2,14 +2,14 @@ module Spree
   class ReturnAuthorization < Spree::Base
     belongs_to :order, class_name: 'Spree::Order'
 
-    has_many :return_authorization_inventory_units, inverse_of: :return_authorization, dependent: :destroy
-    has_many :inventory_units, through: :return_authorization_inventory_units
+    has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
+    has_many :inventory_units, through: :return_items
     has_many :refunds
     belongs_to :stock_location
     before_create :generate_number
     before_validation :force_positive_amount
 
-    accepts_nested_attributes_for :return_authorization_inventory_units, allow_destroy: true
+    accepts_nested_attributes_for :return_items, allow_destroy: true
 
     validates :order, presence: true
     validates :amount, numericality: { greater_than_or_equal_to: 0 }
@@ -99,7 +99,7 @@ module Spree
       end
 
       def process_return
-        return_authorization_inventory_units.includes(:inventory_unit).each(&:receive!)
+        return_items.includes(:inventory_unit).each(&:receive!)
 
         order.return if inventory_units.all?(&:returned?)
       end

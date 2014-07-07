@@ -9,14 +9,14 @@
       </tr>
     </thead>
     <tbody>
-      <%= f.fields_for :return_authorization_inventory_units, @form_return_authorization_inventory_units do |unit_fields| %>
-        <% return_authorization_inventory_unit = unit_fields.object %>
-        <% inventory_unit = return_authorization_inventory_unit.inventory_unit %>
+      <%= f.fields_for :return_items, @form_return_items do |item_fields| %>
+        <% return_item = item_fields.object %>
+        <% inventory_unit = return_item.inventory_unit %>
         <tr>
           <td class="align-center" class="inventory-unit-checkbox">
             <% if inventory_unit.shipped? %>
-              <%= unit_fields.hidden_field :inventory_unit_id %>
-              <%= unit_fields.check_box :_destroy, {checked: return_authorization_inventory_unit.persisted?, class: 'add-item', "data-price" => inventory_unit.line_item.rounded_total_per_item}, '0', '1' %>
+              <%= item_fields.hidden_field :inventory_unit_id %>
+              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => inventory_unit.line_item.rounded_total_per_item}, '0', '1' %>
             <% end %>
           </td>
           <td>

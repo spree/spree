@@ -57,7 +57,7 @@ describe Spree::ReturnAuthorization do
     let(:inventory_unit) { order.shipments.first.inventory_units.first }
 
     context "to the initial stock location" do
-      let!(:return_authorization_inventory_unit) { create(:return_authorization_inventory_unit, inventory_unit: inventory_unit, return_authorization: return_authorization) }
+      let!(:return_item) { create(:return_item, inventory_unit: inventory_unit, return_authorization: return_authorization) }
 
       before do
         return_authorization.stub(:stock_location_id => inventory_unit.shipment.stock_location.id)
@@ -90,7 +90,7 @@ describe Spree::ReturnAuthorization do
 
     context "to a different stock location" do
       let(:new_stock_location) { create(:stock_location, :name => "other") }
-      let!(:return_authorization_inventory_unit) { create(:return_authorization_inventory_unit, inventory_unit: inventory_unit, return_authorization: return_authorization) }
+      let!(:return_item) { create(:return_item, inventory_unit: inventory_unit, return_authorization: return_authorization) }
 
       before do
         return_authorization.stub(:stock_location_id => new_stock_location.id)

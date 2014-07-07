@@ -1,7 +1,7 @@
 module Spree
-  class ReturnAuthorizationInventoryUnit < Spree::Base
-    belongs_to :return_authorization, inverse_of: :return_authorization_inventory_units
-    belongs_to :inventory_unit, inverse_of: :return_authorization_inventory_units
+  class ReturnItem < Spree::Base
+    belongs_to :return_authorization, inverse_of: :return_items
+    belongs_to :inventory_unit, inverse_of: :return_items
     belongs_to :exchange_variant, class: 'Spree::Variant'
 
     validates :return_authorization, presence: true
