@@ -148,44 +148,6 @@ describe Spree::LineItem do
     end
   end
 
-  describe '#rounded_total_per_item' do
-    context "adjustments are evenly divided between items" do
-      before do
-        line_item.price = 10
-        line_item.quantity = 2
-        line_item.adjustment_total = -4
-      end
-
-      it "returns the exact total" do
-        line_item.rounded_total_per_item.should eq 8
-      end
-    end
-
-    context "adjustments are not evenly divided between items" do
-      before do
-        line_item.price = 2
-        line_item.quantity = 3
-        line_item.adjustment_total = -4
-      end
-
-      it "returns the rounded down total" do
-        line_item.rounded_total_per_item.should eq 0.66
-      end
-    end
-  end
-
-  describe '#display_rounded_total_per_item' do
-    before do
-      line_item.price = 10.4
-      line_item.quantity = 1
-      line_item.adjustment_total = 0
-    end
-
-    it "returns a Spree::Money representing total per item" do
-      line_item.display_rounded_total_per_item.to_s.should == "$10.40"
-    end
-  end
-
   context "has inventory (completed order so items were already unstocked)" do
     let(:order) { Spree::Order.create(email: 'spree@example.com') }
     let(:variant) { create(:variant) }

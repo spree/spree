@@ -7,7 +7,7 @@ module Spree
     let!(:order) { create(:shipped_order) }
 
     let(:product) { create(:product) }
-    let(:attributes) { [:id, :reason, :amount, :state] }
+    let(:attributes) { [:id, :reason, :state] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
     before do
@@ -92,7 +92,7 @@ module Spree
 
       it "can learn how to create a new return authorization" do
         api_get :new
-        json_response["attributes"].should == ["id", "number", "state", "amount", "order_id", "reason", "created_at", "updated_at"]
+        json_response["attributes"].should == ["id", "number", "state", "order_id", "reason", "created_at", "updated_at"]
         required_attributes = json_response["required_attributes"]
         required_attributes.should include("order")
       end
@@ -100,7 +100,7 @@ module Spree
       it "can update a return authorization on the order" do
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
-        api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
+        api_put :update, :id => return_authorization.id, :return_authorization => { :reason => "ABC" }
         response.status.should == 200
         json_response.should have_attributes(attributes)
       end
@@ -132,7 +132,7 @@ module Spree
       end
 
       it "can add a new return authorization to an existing order" do
-        api_post :create, :order_id => order.number, :return_authorization => { :amount => 14.22, :reason => "Defective" }
+        api_post :create, :order_id => order.number, :return_authorization => { :reason => "Defective" }
         response.status.should == 201
         json_response.should have_attributes(attributes)
         json_response["state"].should_not be_blank
@@ -141,16 +141,16 @@ module Spree
 
     context "as just another user" do
       it "cannot add a return authorization to the order" do
-        api_post :create, :return_autorization => { :order_id => order.number, :amount => 14.22, :reason => "Defective" }
+        api_post :create, :return_autorization => { :order_id => order.number, :reason => "Defective" }
         assert_unauthorized!
       end
 
       it "cannot update a return authorization on the order" do
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
-        api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
+        api_put :update, :id => return_authorization.id, :return_authorization => { :reason => "ABC" }
         assert_unauthorized!
-        return_authorization.reload.amount.should_not == 19.99
+        return_authorization.reload.reason.should_not == "ABC"
       end
 
       it "cannot delete a return authorization on the order" do

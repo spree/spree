@@ -448,6 +448,7 @@ en:
       other: 'Subtotal (%{count} items)'
     categories: Categories
     category: Category
+    charged: Charged
     check_for_spree_alerts: Check for Spree alerts
     checkout: Checkout
     choose_a_customer: Choose a customer
@@ -880,6 +881,8 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
+    pre_tax_refund_amount: Pre-Tax Refund Amount
+    pre_tax_total: Pre-Tax Total
     presentation: Presentation
     previous: Previous
     price: Price
@@ -1121,6 +1124,7 @@ en:
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
     total_per_item: Total per item
+    total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price
     total_sales: Total Sales
     track_inventory: Track Inventory

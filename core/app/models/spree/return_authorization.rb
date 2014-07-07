@@ -7,12 +7,10 @@ module Spree
     has_many :refunds
     belongs_to :stock_location
     before_create :generate_number
-    before_validation :force_positive_amount
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
     validates :order, presence: true
-    validates :amount, numericality: { greater_than_or_equal_to: 0 }
     validate :must_have_shipped_units, on: :create
 
     state_machine initial: :authorized do
@@ -44,12 +42,20 @@ module Spree
       end
     end
 
-    def currency
-      order.nil? ? Spree::Config[:currency] : order.currency
+    def pre_tax_total
+      return_items.sum(:pre_tax_amount)
     end
 
-    def display_amount
-      Spree::Money.new(amount, { currency: currency })
+    def additional_tax_total
+      return_items.sum(:additional_tax_total)
+    end
+
+    def display_pre_tax_total
+      Spree::Money.new(pre_tax_total, { currency: currency })
+    end
+
+    def currency
+      order.nil? ? Spree::Config[:currency] : order.currency
     end
 
     def returnable_inventory
@@ -61,8 +67,12 @@ module Spree
       amount.abs * -1
     end
 
+    def total
+      pre_tax_total + additional_tax_total
+    end
+
     def amount_due
-      amount - refunds.sum(:amount)
+      total - refunds.sum(:amount)
     end
 
     def process_refund
@@ -81,6 +91,10 @@ module Spree
       when ->(x) { x > 0 }
         errors.add(:base, :amount_due_greater_than_zero) and return false
       end
+    end
+
+    def refundable_amount
+      order.pre_tax_item_amount + order.promo_total
     end
 
     private
@@ -106,10 +120,6 @@ module Spree
 
       def allow_receive?
         !inventory_units.empty?
-      end
-
-      def force_positive_amount
-        self.amount = amount.abs
       end
   end
 end

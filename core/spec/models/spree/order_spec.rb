@@ -637,4 +637,15 @@ describe Spree::Order do
       expect { order.with_lock {} }.to_not raise_error
     end
   end
+
+  describe "#pre_tax_item_amount" do
+    it "sums all of the line items' pre tax amounts" do
+      subject.line_items = [
+        Spree::LineItem.new(price: 10, quantity: 2, pre_tax_amount: 5.0),
+        Spree::LineItem.new(price: 30, quantity: 1, pre_tax_amount: 14.0),
+      ]
+
+      expect(subject.pre_tax_item_amount).to eq 19.0
+    end
+  end
 end

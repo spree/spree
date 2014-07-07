@@ -15,15 +15,22 @@ module Spree
       # To satisfy how nested attributes works we want to create placeholder ReturnItems for
       # any InventoryUnits that have not already been added to the ReturnAuthorization.
       def load_return_items
-        all_inventory_unit_ids = @return_authorization.order.inventory_units.map(&:id)
-        rma_inventory_unit_ids = @return_authorization.return_items.map(&:inventory_unit_id)
+        all_inventory_units = @return_authorization.order.inventory_units
+        rma_inventory_units = @return_authorization.return_items.map(&:inventory_unit)
 
-        new_ids = all_inventory_unit_ids - rma_inventory_unit_ids
-        new_return_items = new_ids.map { |new_id| Spree::ReturnItem.new(inventory_unit_id: new_id) }
+        new_units = all_inventory_units - rma_inventory_units
+        new_return_items = new_units.map do |new_unit|
+          Spree::ReturnItem.new(inventory_unit: new_unit, pre_tax_amount: new_unit.rounded_pre_tax_amount)
+        end
 
+        @allow_amount_edit = Spree::Config[:allow_return_item_amount_editing]
         @form_return_items = (@return_authorization.return_items + new_return_items).sort_by(&:inventory_unit_id)
-      end
 
+        # Adjust last return item value in case rounding prevented total from being evenly distributed
+        refund_total = @form_return_items.sum(&:pre_tax_amount)
+        refundable_amount = @return_authorization.refundable_amount
+        @form_return_items.last.pre_tax_amount += (refundable_amount - refund_total) if refund_total < refundable_amount
+      end
     end
   end
 end
