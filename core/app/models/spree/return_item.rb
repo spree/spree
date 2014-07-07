@@ -19,6 +19,10 @@ module Spree
       end
     end
 
+    def display_pre_tax_amount
+      Spree::Money.new(pre_tax_amount, { currency: currency })
+    end
+
     private
 
     def stock_item
@@ -26,6 +30,10 @@ module Spree
         variant_id: inventory_unit.variant_id,
         stock_location_id: return_authorization.stock_location_id,
       })
+    end
+
+    def currency
+      return_authorization.try(:currency) || Spree::Config[:currency]
     end
   end
 end

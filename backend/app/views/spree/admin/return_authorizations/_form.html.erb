@@ -1,11 +1,18 @@
 <div data-hook="admin_return_authorization_form_fields">
-  <table class="index">
+  <table class="index return-items-table">
     <thead>
       <tr data-hook="rma_header">
-        <th><%= check_box_tag 'select-all' %></th>
+        <th>
+          <% if @return_authorization.updatable? %>
+            <%= check_box_tag 'select-all' %>
+          <% end %>
+        </th>
         <th><%= Spree.t(:product) %></th>
         <th><%= Spree.t(:state) %></th>
-        <th><%= Spree.t(:price) %></th>
+        <% if @allow_amount_edit %>
+          <th><%= Spree.t(:charged) %></th>
+        <% end %>
+        <th><%= Spree.t(:pre_tax_refund_amount) %></th>
       </tr>
     </thead>
     <tbody>
@@ -14,9 +21,9 @@
         <% inventory_unit = return_item.inventory_unit %>
         <tr>
           <td class="align-center" class="inventory-unit-checkbox">
-            <% if inventory_unit.shipped? %>
+            <% if inventory_unit.shipped? && @return_authorization.updatable? %>
               <%= item_fields.hidden_field :inventory_unit_id %>
-              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => inventory_unit.line_item.rounded_total_per_item}, '0', '1' %>
+              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
             <% end %>
           </td>
           <td>
@@ -24,20 +31,30 @@
             <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
           </td>
           <td class="align-center"><%= inventory_unit.state.humanize %></td>
-          <td class="align-center"><%= inventory_unit.line_item.display_rounded_total_per_item %></td>
+          <% if @allow_amount_edit %>
+            <td class="align-center">
+              <%= return_item.display_pre_tax_amount %>
+            </td>
+          <% end %>
+          <td class="align-center">
+            <% if inventory_unit.shipped? && @return_authorization.updatable? %>
+              <% if @allow_amount_edit %>
+                <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
+              <% else %>
+                <%= item_fields.hidden_field :pre_tax_amount %>
+                <%= return_item.display_pre_tax_amount %>
+              <% end %>
+            <% else %>
+              <%= return_item.display_pre_tax_amount %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 
   <%= f.field_container :amount do %>
-    <%= f.label :amount, Spree.t(:amount) %> <span class="required">*</span><br />
-    <% if @return_authorization.received? %>
-      <%= @return_authorization.display_amount %>
-    <% else %>
-      <%= f.text_field :amount, {:style => 'width:80px;'} %> <%= Spree.t(:rma_value) %>: <span id="rma_value">0.00</span>
-      <%= f.error_message_on :amount %>
-    <% end %>
+    <%= Spree.t(:total_pre_tax_refund) %>: <span id="rma_value">0.00</span>
   <% end %>
 
   <%= f.field_container :reason do %>

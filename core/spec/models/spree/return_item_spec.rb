@@ -52,4 +52,13 @@ describe Spree::ReturnItem do
       end
     end
   end
+
+  describe "#display_pre_tax_amount" do
+    let(:pre_tax_amount) { 21.22 }
+    let(:return_item) { Spree::ReturnItem.new(pre_tax_amount: pre_tax_amount) }
+
+    it "returns a Spree::Money" do
+      return_item.display_pre_tax_amount.should == Spree::Money.new(pre_tax_amount)
+    end
+  end
 end

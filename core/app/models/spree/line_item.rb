@@ -95,16 +95,6 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
-    # Rounding down so that:
-    #   total_per_item * quantity <= total
-    def rounded_total_per_item
-      (total / quantity).round(2, :down)
-    end
-
-    def display_rounded_total_per_item
-      Spree::Money.new(rounded_total_per_item, { currency: currency })
-    end
-
     private
       def update_inventory
         if changed? || target_shipment.present?

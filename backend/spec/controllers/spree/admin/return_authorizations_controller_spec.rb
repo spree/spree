@@ -12,7 +12,7 @@ describe Spree::Admin::ReturnAuthorizationsController do
   let(:params) do
     {
       order_id: order.to_param,
-      return_authorization: {amount: 0.0, reason: ""},
+      return_authorization: {reason: ""},
     }
   end
 
@@ -26,7 +26,7 @@ describe Spree::Admin::ReturnAuthorizationsController do
     let(:params) do
       super().merge({
         id: return_authorization.to_param,
-        return_authorization: {amount: 0.0, reason: ""}.merge(return_items_params),
+        return_authorization: {reason: ""}.merge(return_items_params),
       })
     end
 

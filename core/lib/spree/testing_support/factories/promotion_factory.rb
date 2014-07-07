@@ -17,12 +17,12 @@ FactoryGirl.define do
 
     trait :with_order_adjustment do
       ignore do
-        order_adjustment_amount 10
+        weighted_order_adjustment_amount 10
       end
 
       after(:create) do |promotion, evaluator|
         calculator = Spree::Calculator::FlatRate.new
-        calculator.preferred_amount = evaluator.order_adjustment_amount
+        calculator.preferred_amount = evaluator.weighted_order_adjustment_amount
         action = Spree::Promotion::Actions::CreateAdjustment.create!(:calculator => calculator)
         promotion.actions << action
         promotion.save!
