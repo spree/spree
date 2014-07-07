@@ -84,6 +84,11 @@ nav.menu {
       position: relative;
       text-align: center;
 
+      @media(max-width: 1009px) {
+        top: -3px;
+        margin-bottom: -5px;
+      }
+
       i {
         display: inline;
       }
