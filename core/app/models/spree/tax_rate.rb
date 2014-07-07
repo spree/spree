@@ -85,7 +85,7 @@ module Spree
         if item.adjustments.tax.present?
           item.adjustments.tax.delete_all
           item.update_column(:pre_tax_amount, nil)
-          item.send(:recalculate_adjustments)
+          Spree::ItemAdjustments.new(item).update
         end
       end
     end
