@@ -9,12 +9,9 @@ module Spree
     after_touch :touch_all_variants
 
     def touch_all_variants
-      # This can cause a cascade of products to be updated
-      # To disable it in Rails 4.1, we can do this:
-      # https://github.com/rails/rails/pull/12772
-      # Spree::Product.no_touching do
+      Spree::Product.no_touching do
         variants.find_each(&:touch)
-      # end
+      end
     end
   end
 end
