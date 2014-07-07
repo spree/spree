@@ -26,55 +26,55 @@ describe Spree::Admin::ReturnAuthorizationsController do
     let(:params) do
       super().merge({
         id: return_authorization.to_param,
-        return_authorization: {amount: 0.0, reason: ""}.merge(inventory_units_params),
+        return_authorization: {amount: 0.0, reason: ""}.merge(return_items_params),
       })
     end
 
     subject { spree_put :update, params }
 
     context "adding an item" do
-      let(:inventory_units_params) do
+      let(:return_items_params) do
         {
-          return_authorization_inventory_units_attributes: {
+          return_items_attributes: {
             '0' => {inventory_unit_id: inventory_unit_1.to_param},
           }
         }
       end
 
       context 'without existing items' do
-        it 'creates a new unit' do
-          expect { subject }.to change { Spree::ReturnAuthorizationInventoryUnit.count }.by(1)
+        it 'creates a new item' do
+          expect { subject }.to change { Spree::ReturnItem.count }.by(1)
         end
       end
 
       context 'with existing items' do
-        let!(:return_authorization_inventory_unit) {
-          create(:return_authorization_inventory_unit, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
+        let!(:return_item) {
+          create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
         }
 
-        it 'does not create new units' do
-          expect { subject }.to_not change { Spree::ReturnAuthorizationInventoryUnit.count }
-          expect(assigns[:return_authorization].errors['return_authorization_inventory_units.inventory_unit']).to eq ["has already been taken"]
+        it 'does not create new items' do
+          expect { subject }.to_not change { Spree::ReturnItem.count }
+          expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["has already been taken"]
         end
       end
     end
 
     context "removing an item" do
-      let!(:return_authorization_inventory_unit) {
-        create(:return_authorization_inventory_unit, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
+      let!(:return_item) {
+        create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
       }
 
-      let(:inventory_units_params) do
+      let(:return_items_params) do
         {
-          return_authorization_inventory_units_attributes: {
-            '0' => {id: return_authorization_inventory_unit.to_param, _destroy: '1'},
+          return_items_attributes: {
+            '0' => {id: return_item.to_param, _destroy: '1'},
           }
         }
       end
 
       context 'with existing items' do
-        it 'removes the unit' do
-          expect { subject }.to change { Spree::ReturnAuthorizationInventoryUnit.count }.by(-1)
+        it 'removes the item' do
+          expect { subject }.to change { Spree::ReturnItem.count }.by(-1)
         end
       end
     end

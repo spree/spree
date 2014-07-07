@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Spree::ReturnAuthorizationInventoryUnit do
+describe Spree::ReturnItem do
   describe '#receive!' do
-    let(:return_authorization_inventory_unit) {
-      create(:return_authorization_inventory_unit, {
+    let(:return_item) {
+      create(:return_item, {
         return_authorization: return_authorization,
         inventory_unit: inventory_unit,
       })
@@ -16,11 +16,11 @@ describe Spree::ReturnAuthorizationInventoryUnit do
     let(:stock_item) { stock_location.stock_items.find_by(variant_id: inventory_unit.variant_id) }
     let(:now) { Time.now }
 
-    subject { return_authorization_inventory_unit.receive! }
+    subject { return_item.receive! }
 
     it 'updates received_at' do
       Timecop.freeze(now) { subject }
-      expect(return_authorization_inventory_unit.received_at).to eq now
+      expect(return_item.received_at).to eq now
     end
 
     it 'returns the inventory unit' do
