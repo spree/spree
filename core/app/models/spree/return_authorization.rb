@@ -2,7 +2,7 @@ module Spree
   class ReturnAuthorization < ActiveRecord::Base
     belongs_to :order, class_name: 'Spree::Order'
 
-    has_many :inventory_units
+    has_many :inventory_units, dependent: :nullify
     belongs_to :stock_location
     before_create :generate_number
     before_save :force_positive_amount
