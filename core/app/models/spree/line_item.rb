@@ -8,7 +8,7 @@ module Spree
     has_one :product, through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
-    has_many :inventory_units, inverse_of: :line_item
+    has_many :inventory_units, dependent: :destroy, inverse_of: :line_item
 
     before_validation :copy_price
     before_validation :copy_tax_category
