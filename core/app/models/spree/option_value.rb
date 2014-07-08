@@ -13,7 +13,7 @@ module Spree
       # To disable it in Rails 4.1, we can do this:
       # https://github.com/rails/rails/pull/12772
       # Spree::Product.no_touching do
-        variants.find_each(&:touch)
+        variants.update_all(updated_at: Time.current)
       # end
     end
   end
