@@ -118,7 +118,7 @@ module Spree
         end
 
         def admin_order_attributes
-          [:import, :number, :completed_at, :locked_at, :channel]
+          [:import, :number, :completed_at, :locked_at, :channel, :user_id]
         end
 
         def find_order(lock = false)
