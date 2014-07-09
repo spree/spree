@@ -9,6 +9,7 @@
 
 #ui-datepicker-div {
   @include border-radius($border-radius);
+
   border-color: $color-3;
   padding: 0;
   margin-top: 10px;
@@ -23,6 +24,7 @@
     margin-top: -10px;
     left: 25px;
     z-index: 1;
+    display: block;
   }
 
   .ui-datepicker-header {
@@ -47,14 +49,15 @@
       }
 
       .ui-icon {
+        @extend [class^="icon-"]:before;
+        @extend .fa;
+
         background-image: none;
         text-indent: 0;
         color: $color-1;
         width: 10px;
         margin-left: -5px;
-        @extend [class^="icon-"]:before;
-        @extend .fa;
-
+        
         &:hover {
           color: very-light($color-2, 25);
         }
