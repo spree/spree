@@ -168,6 +168,8 @@ describe Spree::TaxRate do
     context "with line items" do
       let(:line_item) do
         stub_model(Spree::LineItem,
+          :price => 10.0,
+          :quantity => 1,
           :tax_category => tax_category_1,
           :variant => stub_model(Spree::Variant)
         )
@@ -187,7 +189,7 @@ describe Spree::TaxRate do
     end
 
     context "with shipments" do
-      let(:shipments) { [stub_model(Spree::Shipment, :tax_category => tax_category_1)] }
+      let(:shipments) { [stub_model(Spree::Shipment, :cost => 10.0, :tax_category => tax_category_1)] }
 
       before do
         Spree::TaxRate.stub :match => [rate_1, rate_2]
