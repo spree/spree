@@ -51,6 +51,10 @@ nav.menu {
         color: $color-body-text;
       }
 
+      &.fa:before {
+        padding-right: 4px;
+      }
+
       &:hover {
         i {
           color: $color-2;
