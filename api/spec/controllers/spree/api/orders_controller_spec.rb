@@ -570,9 +570,15 @@ module Spree
               }
             }
           }
-
           expect(response.status).to eq 201
           expect(Order.last.line_items.first.price.to_f).to eq(33.0)
+        end
+
+        it "can set the user_id for the order" do
+          user = Spree.user_class.create
+          api_post :create, :order => { user_id: user.id }
+          expect(response.status).to eq 201
+          json_response["user_id"].should == user.id
         end
       end
 
