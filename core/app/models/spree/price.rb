@@ -5,6 +5,7 @@ module Spree
 
     validate :check_price
     validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+    validate :validate_amount_maximum
 
     def display_amount
       money
@@ -50,5 +51,14 @@ module Spree
       price.to_d
     end
 
+    def maximum_amount
+      BigDecimal '999999.99'
+    end
+
+    def validate_amount_maximum
+      if amount > maximum_amount
+        errors.add :amount, I18n.t('errors.messages.less_than_or_equal_to', count: maximum_amount)
+      end
+    end
   end
 end
