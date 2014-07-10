@@ -62,7 +62,7 @@ module Spree
       order.shipped_shipments.collect{|s| s.inventory_units.to_a}.flatten
     end
 
-    # Used when Adjustment#update! wants to update the related adjustment
+    # Used when Adjustment#update! wants to update the related adjustmenrt
     def compute_amount(*args)
       amount.abs * -1
     end
