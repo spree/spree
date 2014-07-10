@@ -99,7 +99,7 @@ module Spree
 
     def spree_cc_type
       return 'visa' if Rails.env.development?
-      cc_type
+      cc_type == 'maestro' ? 'master' : cc_type # ActiveMerchant::Billing::AuthorizeNetGateway is not supporting to maestro card.
     end
 
     private
