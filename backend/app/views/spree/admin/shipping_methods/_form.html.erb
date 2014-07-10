@@ -77,7 +77,7 @@
     <fieldset class="tax_categories no-border-bottom">
       <legend align="center"><%= Spree.t(:tax_category) %></legend>
         <%= f.field_container :categories do %>
-          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, {}, :class => "select2 fullwidth" %>
+          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, {include_blank: true}, class: "select2 fullwidth" %>
           <%= error_message_on :shipping_method, :tax_category_id %>
         <% end %>
     </fieldset>
