@@ -414,7 +414,7 @@ module Spree
           adjustment['amount'].should == "5.0"
         end
 
-        it "lists payments source" do
+        it "lists payments source without gateway info" do
           order.payments.push payment = create(:payment)
           api_get :show, :id => order.to_param
 
@@ -424,6 +424,8 @@ module Spree
           expect(source[:last_digits]).to eq payment.source.last_digits
           expect(source[:month].to_i).to eq payment.source.month
           expect(source[:year].to_i).to eq payment.source.year
+          expect(source.has_key?(:gateway_customer_profile_id)).to be false
+          expect(source.has_key?(:gateway_payment_profile_id)).to be false
         end
 
         context "when in delivery" do
@@ -518,6 +520,20 @@ module Spree
         end
 
         after { ActionController::Base.perform_caching = false }
+      end
+
+      it "lists payments source with gateway info" do
+        order.payments.push payment = create(:payment)
+        api_get :show, :id => order.to_param
+
+        source = json_response[:payments].first[:source]
+        expect(source[:name]).to eq payment.source.name
+        expect(source[:cc_type]).to eq payment.source.cc_type
+        expect(source[:last_digits]).to eq payment.source.last_digits
+        expect(source[:month].to_i).to eq payment.source.month
+        expect(source[:year].to_i).to eq payment.source.year
+        expect(source[:gateway_customer_profile_id]).to eq payment.source.gateway_customer_profile_id
+        expect(source[:gateway_payment_profile_id]).to eq payment.source.gateway_payment_profile_id
       end
 
       context "with two orders" do
