@@ -23,10 +23,18 @@ group :test do
   gem 'email_spec', '1.4.0'
   gem 'factory_girl_rails', '~> 4.4.0'
   gem 'launchy'
-  gem 'pry'
   gem 'rspec-rails', '~> 2.14.0'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
   gem 'timecop'
+end
+
+group :test, :development do
+  platforms :ruby_19 do
+    gem 'pry-debugger'
+  end
+  platforms :ruby_20, :ruby_21 do
+    gem 'pry-byebug'
+  end
 end
