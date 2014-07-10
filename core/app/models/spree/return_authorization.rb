@@ -56,7 +56,7 @@ module Spree
       order.inventory_units.shipped
     end
 
-    # Used when Adjustment#update! wants to update the related adjustmenrt
+    # Used when Adjustment#update! wants to update the related adjustment
     def compute_amount(*args)
       amount.abs * -1
     end
