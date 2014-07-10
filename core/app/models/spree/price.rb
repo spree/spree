@@ -56,7 +56,7 @@ module Spree
     end
 
     def validate_amount_maximum
-      if amount > maximum_amount
+      if amount && amount > maximum_amount
         errors.add :amount, I18n.t('errors.messages.less_than_or_equal_to', count: maximum_amount)
       end
     end

@@ -5,6 +5,11 @@ describe Spree::Price do
     let(:variant) { stub_model Spree::Variant }
     subject { Spree::Price.new variant: variant, amount: amount }
 
+    context 'when the amount is nil' do
+      let(:amount) { nil }
+      it { should be_valid }
+    end
+
     context 'when the amount is less than 0' do
       let(:amount) { -1 }
 
