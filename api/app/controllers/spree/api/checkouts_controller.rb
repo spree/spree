@@ -62,7 +62,7 @@ module Spree
             if object_params[:payments_attributes].is_a?(Hash)
               object_params[:payments_attributes] = [object_params[:payments_attributes]]
             end
-            if object_params[:payment_source].present? && source_params = object_params.delete(:payment_source)[object_params[:payments_attributes].first[:payment_method_id]]
+            if object_params[:payment_source].present? && source_params = object_params.delete(:payment_source)[object_params[:payments_attributes].first[:payment_method_id].to_s]
               object_params[:payments_attributes].first[:source_attributes] = source_params
             end
             if object_params[:payments_attributes]
