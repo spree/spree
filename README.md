@@ -33,7 +33,7 @@ This stays as closely to the original spree frontend markup as possible. Helper 
 Installation
 -------
 
-**NOTE: The master branch is developed agaist edge. Use a stable branch for production.**
+**NOTE: The master branch is developed against edge. Use a stable branch for production.**
 
 Add the following to your gemfile. The currently supported and updated branches are `master` (edge), `2-2-stable`, and `2-3-stable`.
 
@@ -54,7 +54,6 @@ rails generate spree_bootstrap_frontend:install
 ```
 
 You'll want to select to overwrite `all.css`. Done.
-
 
 Customizing
 -------
@@ -84,7 +83,7 @@ Contributing
 
 **Please fork and make a pull request.**
 
-Spree edge templates were last synced at [master@284dd45](https://github.com/spree/spree/commit/284dd45615ffe8443d29aa788ce19d621219ca77) feel free to patch in any newer changes and update this SHA.
+Spree edge templates were last synced at spree/spree@284dd45. Feel free to patch in any newer changes and update this SHA.
 
 **Tests.** To get this to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
