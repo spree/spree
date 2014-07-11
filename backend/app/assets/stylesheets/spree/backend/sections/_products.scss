@@ -16,6 +16,12 @@
   }
 }
 
+[data-hook="admin_product_form_multiple_variants"] {
+  .info-actions {
+    text-align: right;
+  }
+}
+
 .outstanding-balance {
   margin-bottom: 15px;
   text-transform: uppercase;

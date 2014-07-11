@@ -22,7 +22,12 @@ module Spree
 
       def create
         authorize! :create, Order
-        @order = Spree::Core::Importer::Order.import(current_api_user, order_params)
+        order_user = if current_api_user.has_spree_role?('admin') && order_params[:user_id]
+          Spree.user_class.find(order_params[:user_id])
+        else
+          current_api_user
+        end
+        @order = Spree::Core::Importer::Order.import(order_user, order_params)
         respond_with(@order, default_template: :show, status: 201)
       end
 
@@ -113,7 +118,7 @@ module Spree
         end
 
         def admin_order_attributes
-          [:import, :number, :completed_at, :locked_at, :channel]
+          [:import, :number, :completed_at, :locked_at, :channel, :user_id]
         end
 
         def find_order(lock = false)

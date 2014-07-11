@@ -139,6 +139,21 @@ describe Spree::Payment do
         payment.state.should eq('invalid')
       end
 
+      # Regression test for #4598
+      it "should allow payments with a gateway_customer_profile_id" do
+        payment.source.stub :gateway_customer_profile_id => "customer_1"
+        payment.payment_method.should_receive(:supports?).with(payment.source).and_return(false)
+        payment.should_receive(:started_processing!)
+        payment.process!
+      end
+
+      # Another regression test for #4598
+      it "should allow payments with a gateway_customer_profile_id" do
+        payment.source.stub :gateway_payment_profile_id => "customer_1"
+        payment.payment_method.should_receive(:supports?).with(payment.source).and_return(false)
+        payment.should_receive(:started_processing!)
+        payment.process!
+      end
     end
 
     describe "#authorize!" do

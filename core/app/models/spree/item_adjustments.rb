@@ -65,7 +65,7 @@ module Spree
     # have the same amount, then it will pick the latest one.
     def choose_best_promotion_adjustment
       if best_promotion_adjustment
-        other_promotions = self.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
+        other_promotions = self.adjustments.promotion.where.not(id: best_promotion_adjustment.id)
         other_promotions.update_all(:eligible => false)
       end
     end

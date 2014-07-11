@@ -21,7 +21,7 @@ module Spree
     private
 
     def touch_all_products
-      products.each(&:touch)
+      products.update_all(updated_at: Time.current)
     end
   end
 end

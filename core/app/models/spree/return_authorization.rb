@@ -56,7 +56,7 @@ module Spree
       order.inventory_units.shipped
     end
 
-    # Used when Adjustment#update! wants to update the related adjustmenrt
+    # Used when Adjustment#update! wants to update the related adjustment
     def compute_amount(*args)
       amount.abs * -1
     end
@@ -93,7 +93,7 @@ module Spree
 
       def generate_number
         self.number ||= loop do
-          random = "RMA#{Array.new(9){rand(9)}.join}"
+          random = "RA#{Array.new(9){rand(9)}.join}"
           break random unless self.class.exists?(number: random)
         end
       end
