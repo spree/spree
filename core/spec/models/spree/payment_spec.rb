@@ -148,7 +148,7 @@ describe Spree::Payment do
       end
 
       # Another regression test for #4598
-      it "should allow payments with a gateway_customer_profile_id" do
+      it "should allow payments with a gateway_payment_profile_id" do
         payment.source.stub :gateway_payment_profile_id => "customer_1"
         payment.payment_method.should_receive(:supports?).with(payment.source).and_return(false)
         payment.should_receive(:started_processing!)
@@ -822,13 +822,13 @@ describe Spree::Payment do
 
       context "amount contains a $ sign" do
         let(:amount) { '2,99 $' }
-        
+
         its(:amount) { should eql(BigDecimal('2.99')) }
       end
 
       context "amount is a number" do
         let(:amount) { 2.99 }
-        
+
         its(:amount) { should eql(BigDecimal('2.99')) }
       end
 
