@@ -83,7 +83,7 @@ Contributing
 
 **Please fork and make a pull request.**
 
-Spree edge templates were last synced at spree/spree@284dd45. Feel free to patch in any newer changes and update this SHA.
+Spree edge templates were last synced at spree/spree@284dd45615ffe8443d29aa788ce19d621219ca77. Feel free to patch in any newer changes and update this SHA.
 
 **Tests.** To get this to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
 
