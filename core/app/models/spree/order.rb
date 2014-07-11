@@ -572,7 +572,7 @@ module Spree
       self.ensure_updated_shipments
     end
 
-    def reload
+    def reload(options=nil)
       remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
       super
     end

@@ -628,4 +628,13 @@ describe Spree::Order do
       order.tax_total.should eq 30
     end
   end
+
+  # Regression test for #4923
+  context "locking" do
+    let(:order) { Spree::Order.create } # need a persisted in order to test locking
+
+    it 'can lock' do
+      expect { order.with_lock {} }.to_not raise_error
+    end
+  end
 end
