@@ -129,7 +129,7 @@ module Spree
 
       def ensure_proper_currency
         unless currency == order.currency
-          errors.add(:currency, t(:must_match_order_currency))
+          errors.add(:currency, :must_match_order_currency)
         end
       end
   end
