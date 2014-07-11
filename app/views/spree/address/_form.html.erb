@@ -59,12 +59,12 @@
   <% end %>
 
   <p class="field" id=<%="#{address_id}zipcode" %>>
-    <%= form.label :zipcode, Spree.t(:zip) %><span class="required">*</span><br />
-    <%= form.text_field :zipcode, :class => 'form-control required' %>
+    <%= form.label :zipcode, Spree.t(:zip) %><% if address.require_zipcode? %><span class="required">*</span><br /><% end %>
+    <%= form.text_field :zipcode, :class => "form-control #{'required' if address.require_zipcode?}" %>
   </p>
   <p class="field" id=<%="#{address_id}phone" %>>
-    <%= form.label :phone, Spree.t(:phone) %><span class="required">*</span><br />
-    <%= form.phone_field :phone, :class => 'form-control required' %>
+    <%= form.label :phone, Spree.t(:phone) %><% if address.require_phone? %><span class="required">*</span><br /><% end %>
+    <%= form.phone_field :phone, :class => "form-control #{'required' if address.require_phone?}" %>
   </p>
   <% if Spree::Config[:alternative_shipping_phone] %>
     <p class="field" id=<%="#{address_id}altphone" %>>

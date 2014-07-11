@@ -9,11 +9,17 @@
   <% end %>
 <% end %>
 
-<% if products.empty? %>
-  <%= Spree.t(:no_products_found) %>
-<% elsif params.key?(:keywords) %>
-  <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
-<% end %>
+<div data-hook="products_search_results_heading">
+  <% if products.empty? %>
+    <div data-hook="products_search_results_heading_no_results_found">
+      <%= Spree.t(:no_products_found) %>
+    </div>
+  <% elsif params.key?(:keywords) %>
+    <div data-hook="products_search_results_heading_results_found">
+      <h6 class="search-results-title"><%= Spree.t(:search_results, :keywords => h(params[:keywords])) %></h6>
+    </div>
+  <% end %>
+</div>
 
 <% if products.any? %>
 <div id="products" class="row" data-hook>
@@ -21,7 +27,7 @@
     <% url = product_url(product, :taxon_id => @taxon.try(:id)) %>
     <div id="product_<%= product.id %>" class="col-md-3 col-sm-6 product-list-item" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
       <div class="panel panel-default">
-        <% cache(@taxon.present? ? [current_currency, @taxon, product] : [current_currency, product]) do %>
+        <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : [I18n.locale, current_currency, product]) do %>
           <div class="panel-body text-center product-body">
             <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %><br/>
             <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>

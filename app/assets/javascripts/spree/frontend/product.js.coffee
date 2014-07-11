@@ -37,8 +37,9 @@ $ ->
   radios = ($ '#product-variants input[type="radio"]')
 
   if radios.length > 0
-    Spree.showVariantImages ($ '#product-variants input[type="radio"]').eq(0).attr('value')
-    Spree.updateVariantPrice radios.first()
+    selectedRadio = ($ '#product-variants input[type="radio"][checked="checked"]')
+    Spree.showVariantImages selectedRadio.attr('value')
+    Spree.updateVariantPrice selectedRadio
 
   Spree.addImageHandlers()
 
