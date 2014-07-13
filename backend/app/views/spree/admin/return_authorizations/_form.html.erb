@@ -59,7 +59,6 @@
   var line_item_prices = {};
   <% @return_authorization.order.line_items.group_by(&:variant).each do | variant, items| %>
          line_item_prices[<%= variant.id.to_s %>] = <%= ( items.first.pre_tax_amount / items.first.quantity ) %>;
- 
   <% end %>
 
   $(document).ready(function(){
