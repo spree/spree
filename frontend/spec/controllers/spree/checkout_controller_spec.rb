@@ -165,11 +165,8 @@ describe Spree::CheckoutController do
             order.reload
           end
 
-          it "should update the same billing address" do
+          it "updates the same billing and shipping address" do
             expect(order.bill_address.id).to eq(@expected_bill_address_id)
-          end
-
-          it "should update the same shipping address" do
             expect(order.ship_address.id).to eq(@expected_ship_address_id)
           end
         end
