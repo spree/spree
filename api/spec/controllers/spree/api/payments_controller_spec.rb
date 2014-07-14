@@ -216,12 +216,14 @@ module Spree
         end
 
         context "crediting" do
+          let!(:refund_reason) { create(:refund_reason) }
+
           before do
             payment.purchase!
           end
 
           it "can credit" do
-            api_put :credit, :id => payment.to_param
+            api_put :credit, :id => payment.to_param, :refund_reason_id => refund_reason.id
             response.status.should == 200
             payment.reload.state.should == "completed"
 
@@ -234,13 +236,13 @@ module Spree
             it "returns a 422 status" do
               fake_response = ActiveMerchant::Billing::Response.new(false, 'NO CREDIT FOR YOU', {}, {})
               Spree::Gateway::Bogus.any_instance.should_receive(:credit).and_return(fake_response)
-              api_put :credit, :id => payment.to_param
+              api_put :credit, :id => payment.to_param, :refund_reason_id => refund_reason.id
               response.status.should == 422
               json_response["error"].should == "There was a problem with the payment gateway: NO CREDIT FOR YOU"
             end
 
             it "cannot credit over credit_allowed limit" do
-              api_put :credit, :id => payment.to_param, :amount => 1000000
+              api_put :credit, :id => payment.to_param, :amount => 1000000, :refund_reason_id => refund_reason.id
               response.status.should == 422
               json_response["error"].should == "This payment can only be credited up to 45.75. Please specify an amount less than or equal to this number."
             end

@@ -177,9 +177,15 @@ en:
       spree/prototype:
         one: Prototype
         other: Prototypes
+      spree/refund_reason:
+        one: Refund Reason
+        other: Refund Reasons
       spree/return_authorization:
         one: Return Authorization
         other: Return Authorizations
+      spree/return_authorization_reason:
+        one: Return Authorization Reason
+        other: Return Authorization Reasons
       spree/role:
         one: Roles
         other: Roles
@@ -411,6 +417,8 @@ en:
     back_to_properties_list: Back To Properties List
     back_to_prototypes_list: Back To Prototypes List
     back_to_reports_list: Back To Reports List
+    back_to_refund_reason_list: Back To Refund Reason List
+    back_to_rma_reason_list: Back To RMA Reason List
     back_to_shipping_categories: Back To Shipping Categories
     back_to_shipping_categories_list: Back To Shipping Categories List
     back_to_shipping_methods_list: Back To Shipping Methods List
@@ -554,6 +562,8 @@ en:
     editing_promotion: Editing Promotion
     editing_property: Editing Property
     editing_prototype: Editing Prototype
+    editing_refund_reason: Editing Refund Reason
+    editing_rma_reason: Editing RMA Reason
     editing_shipping_category: Editing Shipping Category
     editing_shipping_method: Editing Shipping Method
     editing_state: Editing State
@@ -709,6 +719,7 @@ en:
       none: None
     max_items: Max Items
     member_since: Member Since
+    memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
     metadata: Metadata
@@ -735,6 +746,8 @@ en:
     new_promotion: New Promotion
     new_property: New Property
     new_prototype: New Prototype
+    new_refund_reason: New Refund Reason
+    new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
@@ -966,6 +979,7 @@ en:
     received: Received
     reference: Reference
     refund: Refund
+    refund_reasons: Refund Reasons
     refunds: Refunds
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     register: Register
@@ -981,6 +995,7 @@ en:
     resumed: Resumed
     return: return
     return_authorization: Return Authorization
+    return_authorization_reasons: Return Authorization Reasons
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_quantity: Return Quantity
@@ -1009,6 +1024,8 @@ en:
     security_settings: Security Settings
     select: Select
     select_from_prototype: Select From Prototype
+    select_a_return_authorization_reason: Select a reason for the return authorization
+    select_a_stock_location: Select a stock location
     select_stock: Select stock
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As

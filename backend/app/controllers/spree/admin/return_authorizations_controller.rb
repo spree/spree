@@ -3,6 +3,7 @@ module Spree
     class ReturnAuthorizationsController < ResourceController
       belongs_to 'spree/order', :find_by => :number
       before_filter :load_return_items, except: [:fire, :destroy, :index]
+      before_filter :load_return_authorization_reasons, except: [:index, :fire, :destroy]
 
       def fire
         @return_authorization.send("#{params[:e]}!")
@@ -30,6 +31,14 @@ module Spree
         refund_total = @form_return_items.sum(&:pre_tax_amount)
         refundable_amount = @return_authorization.refundable_amount
         @form_return_items.last.pre_tax_amount += (refundable_amount - refund_total) if refund_total < refundable_amount
+      end
+
+      def load_return_authorization_reasons
+        @reasons = Spree::ReturnAuthorizationReason.active
+        # Only allow an inactive reason if it's already associated to the RMA
+        if @return_authorization.reason && !@return_authorization.reason.active?
+          @reasons << @return_authorization.reason
+        end
       end
     end
   end

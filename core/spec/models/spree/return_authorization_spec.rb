@@ -3,10 +3,15 @@ require 'spec_helper'
 describe Spree::ReturnAuthorization do
   let(:stock_location) { Spree::StockLocation.create(:name => "test") }
   let(:order) { create(:shipped_order) }
+  let(:rma_reason) { create(:return_authorization_reason) }
   let(:inventory_unit_1) { order.inventory_units.first }
 
   let(:variant) { order.variants.first }
-  let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
+  let(:return_authorization) do
+    Spree::ReturnAuthorization.new(:order => order,
+      :stock_location_id => stock_location.id,
+      :return_authorization_reason_id => rma_reason.id)
+  end
 
   context "save" do
     let(:order) { Spree::Order.create }
@@ -122,6 +127,7 @@ describe Spree::ReturnAuthorization do
     let(:rma) { create(:return_authorization, order: order, refunds: refunds) }
     let!(:return_item) { create(:return_item, pre_tax_amount: payment_amount, return_authorization: rma) }
     let(:order) { create(:shipped_order) }
+    let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
     subject { rma.tap(&:refund!) }
 

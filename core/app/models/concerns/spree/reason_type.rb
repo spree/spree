@@ -1,0 +1,12 @@
+module Spree
+  module ReasonType
+    extend ActiveSupport::Concern
+
+    included do
+      scope :active, -> { where(active: true) }
+      default_scope -> { order("LOWER(#{self.table_name}.name)") }
+
+      validates :name, presence: true, uniqueness: { case_sensitive: false }
+    end
+  end
+end

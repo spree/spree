@@ -80,8 +80,8 @@ module Spree
         end
       end
 
-      def credit!(credit_amount=nil, return_authorization=nil)
-        Spree::Refund.perform!(self, (credit_amount || credit_allowed).to_f, return_authorization)
+      def credit!(reason, credit_amount=nil, return_authorization=nil)
+        Spree::Refund.perform!(self, reason, (credit_amount || credit_allowed).to_f, return_authorization)
       end
 
       def cancel!
@@ -92,10 +92,10 @@ module Spree
         end
       end
 
-      def partial_credit(amount)
+      def partial_credit(reason, amount)
         return if amount > credit_allowed
         started_processing!
-        credit!(amount)
+        credit!(reason, amount)
       end
 
       def gateway_options

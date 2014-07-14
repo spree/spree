@@ -59,7 +59,8 @@ module Spree
         if params[:amount].to_f > @payment.credit_allowed
           render 'credit_over_limit', status: 422
         else
-          perform_payment_action(:credit, params[:amount])
+          reason = Spree::RefundReason.find(params[:refund_reason_id])
+          perform_payment_action(:credit, reason, params[:amount])
         end
       end
 

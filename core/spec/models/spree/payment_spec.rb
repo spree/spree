@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Payment do
   let(:order) { Spree::Order.create }
+  let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
     gateway = Spree::Gateway::Bogus.new(:environment => 'test', :active => true)
@@ -419,7 +420,7 @@ describe Spree::Payment do
       context "when credit_amount is provided" do
         it "should call credit on the gateway with the credit amount and response_code" do
           gateway.should_receive(:credit).with(2000, card, '123', anything).and_return(success_response)
-          payment.credit!(20)
+          payment.credit!(refund_reason, 20)
         end
       end
 
@@ -430,31 +431,31 @@ describe Spree::Payment do
 
         it "should call credit on the gateway with the credit allowed amount and response_code" do
           gateway.should_receive(:credit).with(5000, card, '123', anything).and_return(success_response)
-          payment.credit!
+          payment.credit!(refund_reason)
         end
       end
 
       it "should log the response" do
-        refund = payment.credit!
+        refund = payment.credit!(refund_reason)
         refund.log_entries.should be_present
       end
 
       context "when gateway does not match the environment" do
         it "should raise an exception" do
           gateway.stub :environment => "foo"
-          lambda { payment.credit! }.should raise_error(Spree::Core::GatewayError)
+          lambda { payment.credit!(refund_reason) }.should raise_error(Spree::Core::GatewayError)
         end
       end
 
       context "when response is successful" do
         it "should create a refund" do
-          expect{ payment.credit! }.to change{ Spree::Refund.count }.by(1)
+          expect{ payment.credit!(refund_reason) }.to change{ Spree::Refund.count }.by(1)
         end
 
         it "resulting refund should have correct values" do
           payment.stub :credit_allowed => 10
 
-          refund = payment.credit!
+          refund = payment.credit!(refund_reason)
           refund.amount.to_f.should eq 10
           refund.transaction_id.should eq '12345'
           refund.payment.should eq payment
@@ -467,7 +468,7 @@ describe Spree::Payment do
     it "should not create a refund" do
       gateway.stub :credit => failed_response
       expect do
-        expect { payment.credit! }.to raise_error(Spree::Core::GatewayError)
+        expect { payment.credit!(refund_reason) }.to raise_error(Spree::Core::GatewayError)
       end.to_not change{ Spree::Refund.count }
     end
   end
@@ -530,20 +531,20 @@ describe Spree::Payment do
     end
   end
 
-  describe "#credit!" do
+  describe "#partial_credit" do
     context "when amount <= credit_allowed" do
       it "makes the state processing" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
-        payment.partial_credit(10)
+        payment.partial_credit(refund_reason, 10)
         payment.should be_processing
       end
 
       it "calls credit on the source with the payment and amount" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
-        payment.should_receive(:credit!).with(10)
-        payment.partial_credit(10)
+        payment.should_receive(:credit!).with(refund_reason, 10)
+        payment.partial_credit(refund_reason, 10)
       end
     end
 
@@ -551,7 +552,7 @@ describe Spree::Payment do
       it "should not call credit on the source" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
-        payment.partial_credit(20)
+        payment.partial_credit(refund_reason, 20)
         payment.should be_completed
       end
     end

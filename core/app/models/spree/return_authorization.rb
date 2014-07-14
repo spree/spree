@@ -6,11 +6,13 @@ module Spree
     has_many :inventory_units, through: :return_items
     has_many :refunds
     belongs_to :stock_location
+    belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
     before_create :generate_number
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
     validates :order, presence: true
+    validates :reason, presence: true
     validate :must_have_shipped_units, on: :create
 
     state_machine initial: :authorized do
@@ -80,7 +82,7 @@ module Spree
       order.payments.completed.each do |payment|
         break if amount_due <= 0
         credit_allowed = [payment.credit_allowed, amount_due].min
-        payment.credit!(credit_allowed, self)
+        payment.credit!(Spree::RefundReason.return_processing_reason, credit_allowed, self)
       end
 
       case amount_due

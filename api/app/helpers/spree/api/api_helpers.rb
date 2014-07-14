@@ -106,7 +106,7 @@ module Spree
       ]
 
       @@return_authorization_attributes = [
-        :id, :number, :state, :order_id, :reason, :created_at, :updated_at
+        :id, :number, :state, :order_id, :memo, :created_at, :updated_at
       ]
 
       @@address_attributes = [

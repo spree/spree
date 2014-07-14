@@ -2,16 +2,18 @@ module Spree
   class Refund < Spree::Base
     belongs_to :payment, inverse_of: :refunds
     belongs_to :return_authorization # optional
+    belongs_to :refund_reason
 
     has_many :log_entries, as: :source
 
     validates :payment, presence: true
+    validates :refund_reason, presence: true
     validates :transaction_id, presence: true
     validates :amount, presence: true, numericality: {greater_than: 0}
 
     # attempts to perform the refund
     # if successful it returns the refund, otherwise it raises
-    def self.perform!(payment, amount, return_authorization=nil)
+    def self.perform!(payment, reason, amount, return_authorization=nil)
       check_amount(amount)
       check_environment(payment)
 
@@ -23,6 +25,7 @@ module Spree
         payment: payment,
         return_authorization: return_authorization,
         transaction_id: response.authorization,
+        refund_reason: reason,
         amount: amount,
       })
 
