@@ -25,7 +25,7 @@ Spree.ready ($) ->
         statePara = ($ '#' + region + 'state')
         stateSelect = statePara.find('select')
         stateInput = statePara.find('input')
-        stateSpanRequired = statePara.find('state-required')
+        stateSpanRequired = statePara.find('[id$="state-required"]')
         if states.length > 0
           selected = parseInt stateSelect.val()
           stateSelect.html ''
