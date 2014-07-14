@@ -959,6 +959,9 @@ en:
       landing_page:
         description: Customer must have visited the specified page
         name: Landing Page
+      one_use_per_user:
+        description: Only One Use Per User
+        name: One Use Per User
       product:
         description: Order includes specified product(s)
         name: Product(s)

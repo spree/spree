@@ -69,7 +69,8 @@ module Spree
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
           Spree::Promotion::Rules::FirstOrder,
-          Spree::Promotion::Rules::UserLoggedIn]
+          Spree::Promotion::Rules::UserLoggedIn,
+          Spree::Promotion::Rules::OneUsePerUser]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
