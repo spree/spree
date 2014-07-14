@@ -58,6 +58,7 @@
       <script>
          var line_item_prices = {};
          <% @return_authorization.order.line_items.group_by(&:variant).each do | variant, items| %>
+            <%# account for promotions per item %>
             <% unless items.first.pre_tax_amount.blank? %>
                line_item_prices[<%= variant.id.to_s %>] = <%= ( items.first.pre_tax_amount / items.first.quantity ) %>;
             <% else %>
