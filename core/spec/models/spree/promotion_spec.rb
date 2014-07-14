@@ -144,7 +144,7 @@ describe Spree::Promotion do
     end
 
     it "should not be expired if current time is within starts_at and expires_at range" do
-      promotion.expires_at = Time.now - 1.day
+      promotion.starts_at  = Time.now - 1.day
       promotion.expires_at = Time.now + 1.day
       promotion.should_not be_expired
     end
