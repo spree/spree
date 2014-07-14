@@ -126,6 +126,9 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    resources :refund_reasons, :except => [:show, :destroy]
+    resources :return_authorization_reasons, :except => [:show, :destroy]
+
     resources :shipping_methods
     resources :shipping_categories
     resources :stock_transfers, :only => [:index, :show, :new, :create]

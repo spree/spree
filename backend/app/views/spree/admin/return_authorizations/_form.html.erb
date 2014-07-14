@@ -57,16 +57,22 @@
     <%= Spree.t(:total_pre_tax_refund) %>: <span id="rma_value">0.00</span>
   <% end %>
 
-  <%= f.field_container :reason do %>
-    <%= f.label :reason, Spree.t(:reason) %>
-    <%= f.text_area :reason, {:style => 'height:100px;', :class => 'fullwidth'} %>
-    <%= f.error_message_on :reason %>
-  <% end %>
-
   <%= f.field_container :stock_location do %>
     <%= f.label :stock_location, Spree.t(:stock_location) %>
-    <%= f.select :stock_location_id, Spree::StockLocation.active.to_a.collect{|l|[l.name, l.id]}, {:style => 'height:100px;', :class => 'fullwidth'} %>
-    <%= f.error_message_on :reason %>
+    <%= f.select :stock_location_id, Spree::StockLocation.active.to_a.collect{|l|[l.name, l.id]}, {include_blank: true}, {class: 'select2 fullwidth', "data-placeholder" => Spree.t(:select_a_stock_location)} %>
+    <%= f.error_message_on :stock_location_id %>
+  <% end %>
+
+  <%= f.field_container :reason do %>
+    <%= f.label :return_authorization_reason, Spree.t(:reason) %>
+    <%= f.select :return_authorization_reason_id, @reasons.collect{|r|[r.name, r.id]}, {include_blank: true}, {class: 'select2 fullwidth', "data-placeholder" => Spree.t(:select_a_return_authorization_reason)} %>
+    <%= f.error_message_on :return_authorization_reason_id %>
+  <% end %>
+
+  <%= f.field_container :memo do %>
+    <%= f.label :memo, Spree.t(:memo) %>
+    <%= f.text_area :memo, {:style => 'height:100px;', :class => 'fullwidth'} %>
+    <%= f.error_message_on :memo %>
   <% end %>
 </div>
 

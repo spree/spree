@@ -6,8 +6,9 @@ describe Spree::Refund do
     let(:payment_amount) { 100.0 }
     let(:authorization) { "TEST12" }
     let(:payment) { create(:payment) }
+    let(:refund_reason) { create(:refund_reason) }
 
-    subject { Spree::Refund.perform!(payment, payment_amount) }
+    subject { Spree::Refund.perform!(payment, refund_reason, payment_amount) }
 
     context "processing is successful" do
       let(:response) {

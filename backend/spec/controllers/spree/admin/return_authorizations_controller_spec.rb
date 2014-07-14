@@ -5,14 +5,50 @@ describe Spree::Admin::ReturnAuthorizationsController do
 
   # Regression test for #1370 #3
   let!(:order) { create(:shipped_order, line_items_count: 3) }
+  let!(:return_authorization_reason) { create(:return_authorization_reason) }
   let(:inventory_unit_1) { order.inventory_units.order('id asc')[0] }
   let(:inventory_unit_2) { order.inventory_units.order('id asc')[1] }
   let(:inventory_unit_3) { order.inventory_units.order('id asc')[2] }
 
+  describe "#load_return_authorization_reasons" do
+    let!(:inactive_rma_reason) { create(:return_authorization_reason, active: false) }
+
+    context "return authorization has an associated inactive reason" do
+      let!(:other_inactive_rma_reason) { create(:return_authorization_reason, active: false) }
+      let(:return_authorization) { create(:return_authorization, reason: inactive_rma_reason) }
+
+      it "loads all the active rma reasons" do
+        spree_get :edit, id: return_authorization.to_param, order_id: return_authorization.order.to_param
+        assigns(:reasons).should include(return_authorization_reason)
+        assigns(:reasons).should include(inactive_rma_reason)
+        assigns(:reasons).should_not include(other_inactive_rma_reason)
+      end
+    end
+
+    context "return authorization has an associated active reason" do
+      let(:return_authorization) { create(:return_authorization, reason: return_authorization_reason) }
+
+      it "loads all the active rma reasons" do
+        spree_get :edit, id: return_authorization.to_param, order_id: return_authorization.order.to_param
+        assigns(:reasons).should eq [return_authorization_reason]
+      end
+    end
+
+    context "return authorization doesn't have an associated reason" do
+      it "loads all the active rma reasons" do
+        spree_get :new, order_id: order.to_param
+        assigns(:reasons).should eq [return_authorization_reason]
+      end
+    end
+  end
+
   let(:params) do
     {
       order_id: order.to_param,
-      return_authorization: {reason: ""},
+      return_authorization: {
+        memo: "",
+        return_authorization_reason_id: return_authorization_reason.id
+      }
     }
   end
 
@@ -26,7 +62,7 @@ describe Spree::Admin::ReturnAuthorizationsController do
     let(:params) do
       super().merge({
         id: return_authorization.to_param,
-        return_authorization: {reason: ""}.merge(return_items_params),
+        return_authorization: {memo: ""}.merge(return_items_params),
       })
     end
 

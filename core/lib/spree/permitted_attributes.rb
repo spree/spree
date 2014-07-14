@@ -60,7 +60,7 @@ module Spree
 
     @@property_attributes = [:name, :presentation]
 
-    @@return_authorization_attributes = [:amount, :reason, :stock_location_id, :inventory_units_attributes]
+    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes, :return_authorization_reason_id]
 
     @@shipment_attributes = [
       :order, :special_instructions, :stock_location_id, :id,
