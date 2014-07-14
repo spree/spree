@@ -62,7 +62,7 @@
           <% unless items.first.pre_tax_amount.blank? %>
             line_item_prices[<%= variant.id.to_s %>] = <%= ( items.first.pre_tax_amount / items.first.quantity ) %>;
           <% else %>
-              line_item_prices[<%= variant.id.to_s %>] = <%= items.first.price %>
+            line_item_prices[<%= variant.id.to_s %>] = <%= items.first.price %>
           <% end %>
         <% end %>
 
