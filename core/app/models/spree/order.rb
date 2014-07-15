@@ -331,7 +331,7 @@ module Spree
       end
 
       updater.update_shipment_state
-      save
+      save!
       updater.run_hooks
 
       touch :completed_at
