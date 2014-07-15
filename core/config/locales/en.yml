@@ -87,6 +87,8 @@ en:
         path: Path
         starts_at: Starts At
         usage_limit: Usage Limit
+      spree/promotion_category:
+        name: Name
       spree/property:
         name: Name
         presentation: Presentation
@@ -171,6 +173,9 @@ en:
       spree/promotion:
         one: Promotion
         other: Promotions
+      spree/promotion_category:
+        one: Promotion Category
+        other: Promotion Categories
       spree/property:
         one: Property
         other: Properties
@@ -420,6 +425,7 @@ en:
     back_to_payments_list: Back To Payments List
     back_to_products_list: Back To Products List
     back_to_promotions_list: Back To Promotions List
+    back_to_promotion_categories_list: Back To Promotions Categories List
     back_to_properties_list: Back To Properties List
     back_to_prototypes_list: Back To Prototypes List
     back_to_reports_list: Back To Reports List
@@ -566,6 +572,7 @@ en:
     editing_payment_method: Editing Payment Method
     editing_product: Editing Product
     editing_promotion: Editing Promotion
+    editing_promotion_category: Editing Promotion
     editing_property: Editing Property
     editing_prototype: Editing Prototype
     edit_refund_reason: Edit Refund Reason
@@ -720,6 +727,7 @@ en:
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
+    manage_promotion_categories: Manage Promotion Categories
     master_price: Master Price
     match_choices:
       all: All
@@ -751,6 +759,7 @@ en:
     new_payment_method: New Payment Method
     new_product: New Product
     new_promotion: New Promotion
+    new_promotion_category: New Promotion Category
     new_property: New Property
     new_prototype: New Prototype
     new_refund: New Refund

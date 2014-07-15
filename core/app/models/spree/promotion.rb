@@ -3,6 +3,8 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
+    belongs_to :promotion_category
+
     has_many :promotion_rules, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 

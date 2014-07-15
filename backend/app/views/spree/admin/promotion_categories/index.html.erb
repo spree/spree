@@ -1,0 +1,34 @@
+<% content_for :page_title do %>
+  <%= Spree::PromotionCategory.model_name.human(count: :many) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <li>
+    <%= button_link_to Spree.t(:new_promotion_category), spree.new_admin_promotion_category_path, :icon => 'plus' %>
+  </li>
+  <li>
+    <%= button_link_to Spree.t(:back_to_promotions_list), spree.admin_promotions_path, :icon => 'arrow-left' %>
+  </li>
+<% end %>
+
+<table>
+  <colgroup>
+    <col style="width: 85%">
+    <col style="width: 15%">
+  </colgroup>
+  <thead>
+    <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
+    <th class='actions'></th>
+  </thead>
+  <tbody>
+    <% @promotion_categories.each do |promotion_category| %>
+      <tr>
+        <td><%= promotion_category.name %></td>
+        <td class="actions">
+          <%= link_to_edit promotion_category, :no_text => true %>
+          <%= link_to_delete promotion_category, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
