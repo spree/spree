@@ -408,10 +408,10 @@ module Spree
         current_line_item = self.line_items.find_by(variant: line_item.variant)
         if current_line_item
           current_line_item.quantity += line_item.quantity
-          current_line_item.save
+          current_line_item.save!
         else
           line_item.order_id = self.id
-          line_item.save
+          line_item.save!
         end
       end
 
