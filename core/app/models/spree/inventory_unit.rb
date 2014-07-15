@@ -37,8 +37,8 @@ module Spree
     end
 
     # This was refactored from a simpler query because the previous implementation
-    # lead to issues once users tried to modify the objects returned. That's due
-    # to ActiveRecord `joins(shipment: :stock_location)` only return readonly
+    # led to issues once users tried to modify the objects returned. That's due
+    # to ActiveRecord `joins(shipment: :stock_location)` only returning readonly
     # objects
     #
     # Returns an array of backordered inventory units as per a given stock item
