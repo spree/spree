@@ -4,4 +4,4 @@ $ ->
     $('input[name="payment[payment_method_id]"]').click ()->
       $('.payment-method-settings fieldset').addClass('hidden')
       id = $(this).parents('li').data('id')
-      $("fieldset##{id}").removeClass('hidden')
+      $("fieldset[data-id='#{id}']").removeClass('hidden')
