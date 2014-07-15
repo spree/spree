@@ -13,6 +13,7 @@ module Spree
     class_option :admin_email, :type => :string
     class_option :admin_password, :type => :string
     class_option :lib_name, :type => :string, :default => 'spree'
+    class_option :enforce_available_locales, :type => :boolean, :default => nil
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -100,6 +101,13 @@ Disallow: /account
       end
     end
       APP
+
+      if !options[:enforce_available_locales].nil?
+        application <<-APP
+    # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
+    I18n.enforce_available_locales = #{options[:enforce_available_locales]}
+        APP
+      end
     end
 
     def include_seed_data
