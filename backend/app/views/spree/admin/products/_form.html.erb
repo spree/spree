@@ -63,14 +63,15 @@
     <% if @product.has_variants? %>
       <div data-hook="admin_product_form_multiple_variants">
         <%= f.label :skus, Spree.t(:sku).pluralize %>
-        <span class="info">This product has <%= pluralize( @product.variants.count, 'variant' ) %>:
+        <span class="info">
+          <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.count) %>
           <ul class="text_list">
             <% @product.variants.first(5).each do |variant| %>
               <li><%= variant.sku %></li>
             <% end %>
           </ul>
           <% if @product.variants.count > 5 %>
-            and <%= pluralize( @product.variants.count - 5, 'other' ) %>
+            <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.count - 5) %>
           <% end %>
         </span>
         <div class="info-actions">
