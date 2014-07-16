@@ -88,7 +88,7 @@ module Spree
         if payment_method.respond_to?(:cancel)
           payment_method.cancel(response_code)
         else
-          credit!
+          credit!(credit_allowed.abs)
         end
       end
 
