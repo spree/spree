@@ -438,7 +438,7 @@ module Spree
 
           before do
             order.ship_address = FactoryGirl.create(:address)
-            order.state = 'delivery'
+            order.next!
             order.save
           end
 

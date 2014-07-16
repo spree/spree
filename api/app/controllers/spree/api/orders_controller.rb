@@ -45,8 +45,6 @@ module Spree
 
       def show
         authorize! :show, @order, order_token
-        method = "before_#{@order.state}"
-        send(method) if respond_to?(method, true)
         respond_with(@order)
       end
 
@@ -123,10 +121,6 @@ module Spree
 
         def find_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
-        end
-
-        def before_delivery
-          @order.create_proposed_shipments
         end
 
         def order_id
