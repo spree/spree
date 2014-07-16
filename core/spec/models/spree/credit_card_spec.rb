@@ -151,20 +151,39 @@ describe Spree::CreditCard do
     end
   end
 
-  context "#save" do
-    before do
-      credit_card.attributes = valid_credit_card_attributes
-      credit_card.save!
+  context "#create" do
+    context 'with valid attributes' do
+      before do
+        credit_card.attributes = valid_credit_card_attributes
+        credit_card.save!
+      end
+
+      let!(:persisted_card) { Spree::CreditCard.find(credit_card.id) }
+
+      it "should not actually store the number" do
+        persisted_card.number.should be_blank
+      end
+
+      it "should not actually store the security code" do
+        persisted_card.verification_value.should be_blank
+      end
     end
 
-    let!(:persisted_card) { Spree::CreditCard.find(credit_card.id) }
+    context 'with payment profile' do
+      before do
+        credit_card.attributes = valid_credit_card_attributes.merge(gateway_customer_profile_id: 'abc', gateway_payment_profile_id: '123')
+        credit_card.save!
+        @profile_card = Spree::CreditCard.new(gateway_customer_profile_id: credit_card.gateway_customer_profile_id, gateway_payment_profile_id: credit_card.gateway_payment_profile_id)
+        @profile_card.save!
+      end
 
-    it "should not actually store the number" do
-      persisted_card.number.should be_blank
-    end
-
-    it "should not actually store the security code" do
-      persisted_card.verification_value.should be_blank
+      it 'should fill in missing attributes from existing card' do
+        expect(@profile_card.cc_type).to eq(credit_card.cc_type)
+        expect(@profile_card.last_digits).to eq(credit_card.last_digits)
+        expect(@profile_card.month).to eq(credit_card.month.to_s)
+        expect(@profile_card.name).to eq(credit_card.name)
+        expect(@profile_card.year).to eq(credit_card.year.to_s)
+      end
     end
   end
 
