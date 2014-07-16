@@ -106,14 +106,28 @@ describe Spree::Order do
     end
 
     before do
-      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
+
+      2.times do
+        create(:line_item, :order => order, price: 10)
+      end
+
       order.line_items.stub :find_by_variant_id => order.line_items.first
 
       order.stub :completed? => true
       order.stub :allow_cancel? => true
+
+      shipments = [shipment]
+      order.stub :shipments => shipments
+      shipments.stub :states => []
+      shipments.stub :ready => []
+      shipments.stub :pending => []
+      shipments.stub :shipped => []
+
+      Spree::OrderUpdater.any_instance.stub(:update_adjustment_total) { 10 }
     end
 
     it "should send a cancel email" do
+
       # Stub methods that cause side-effects in this test
       shipment.stub(:cancel!)
       order.stub :has_available_shipment
@@ -162,11 +176,13 @@ describe Spree::Order do
       context "with shipped items" do
         before do
           order.stub :shipment_state => 'partial'
+          order.stub :outstanding_balance? => false
+          order.stub :payment_state => "paid"
         end
 
         it "should not alter the payment state" do
           order.cancel!
-          order.payment_state.should be_nil
+          expect(order.payment_state).to eql "paid"
         end
       end
 
@@ -175,6 +191,7 @@ describe Spree::Order do
 
         it "should automatically refund all payments" do
           order.stub_chain(:payments, :completed).and_return([payment])
+          order.stub_chain(:payments, :last).and_return(payment)
           payment.should_receive(:cancel!)
           order.cancel!
         end

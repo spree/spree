@@ -623,6 +623,7 @@ module Spree
 
         send_cancel_email
         self.update_column(:payment_state, 'credit_owed') unless shipped?
+        self.update!
       end
 
       def send_cancel_email
