@@ -14,7 +14,7 @@ FactoryGirl.define do
 
   factory :return_item, class: Spree::ReturnItem do
     association(:return_authorization, factory: :return_authorization)
-    association(:inventory_unit, factory: :inventory_unit)
+    association(:inventory_unit, factory: :inventory_unit, state: 'shipped')
   end
 
   factory :return_authorization_reason, class: Spree::ReturnAuthorizationReason do
