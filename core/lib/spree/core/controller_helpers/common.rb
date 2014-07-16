@@ -10,7 +10,7 @@ module Spree
 
           layout :get_layout
 
-          before_filter :set_user_language
+          prepend_before_filter :set_user_language
 
           protected
 
@@ -65,11 +65,11 @@ module Spree
           end
 
           # Returns which layout to render.
-          # 
+          #
           # You can set the layout you want to render inside your Spree configuration with the +:layout+ option.
-          # 
+          #
           # Default layout is: +app/views/spree/layouts/spree_application+
-          # 
+          #
           def get_layout
             layout ||= Spree::Config[:layout]
           end
