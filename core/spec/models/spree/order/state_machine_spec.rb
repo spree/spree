@@ -174,14 +174,16 @@ describe Spree::Order do
       end
 
       context "with shipped items" do
+        let(:payment) { create(:payment, state: "completed", amount: 20.0) }
         before do
           order.stub :shipment_state => 'partial'
         end
 
         it "should not alter the payment state" do
-          payment_state = order.payment_state
+          order.stub_chain(:payments, :completed).and_return([payment])
+          order.stub_chain(:payments, :last).and_return(payment)          
           order.cancel!
-          expect(order.reload.payment_state).to eql payment_state
+          expect(order.reload.payment_state).to be_nil
         end
       end
 
