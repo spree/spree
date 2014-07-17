@@ -14,12 +14,11 @@ module Spree
 
         def perform(payload = {})
           order = payload[:order]
-          # Find only the line items which have not already been adjusted by this promotion
-          # HACK: Need to use [0] because `pluck` may return an empty array, which AR helpfully
-          # coverts to meaning NOT IN (NULL) and the DB isn't happy about that.
-          already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
+
+          already_adjusted_line_items = self.adjustments.pluck(:adjustable_id)
           result = false
-          order.line_items.where("id NOT IN (?)", already_adjusted_line_items).find_each do |line_item|
+
+          order.line_items.where.not(id: already_adjusted_line_items).find_each do |line_item|
             current_result = self.create_adjustment(line_item, order)
             result ||= current_result
           end
