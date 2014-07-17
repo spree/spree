@@ -225,6 +225,7 @@ en:
           attributes:
             base:
               card_expired: "Card has expired"
+              expiry_invalid: "Card expiration is invalid"
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.

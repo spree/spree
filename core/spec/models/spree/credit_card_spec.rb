@@ -83,6 +83,14 @@ describe Spree::CreditCard do
       credit_card.errors[:verification_value].should == ["can't be blank"]
     end
 
+    # Regression spec for #4971
+    it "should not bomb out when given an invalid expiry" do
+      credit_card.month = 13
+      credit_card.year = Time.now.year + 1
+      credit_card.should_not be_valid
+      credit_card.errors[:base].should == ["Card expiration is invalid"]
+    end
+
     it "should validate expiration is not in the past" do
       credit_card.month = 1.month.ago.month
       credit_card.year = 1.month.ago.year
