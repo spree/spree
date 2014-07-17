@@ -20,10 +20,6 @@ class window.Spree
         uri.addQueryParam(key, value)
     return uri
 
-  # Helper method in case people want to call uri rather than url
-  @uri: (uri, query) ->
-    url(uri, query)
-
   # This function automatically appends the API token
   # for the user to the end of any URL.
   # Immediately after, this string is then passed to jQuery.ajax.
