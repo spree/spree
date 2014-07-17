@@ -120,8 +120,9 @@ contains the following code to help you do that:
        end
     end
 
-    Spree::BaseController.send :include, Spree::AuthenticationHelpers
-    ApplicationController.send :include, Spree::AuthenticationHelpers
+    Spree::BaseController.send      :include, Spree::AuthenticationHelpers
+    Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
+    ApplicationController.send      :include, Spree::AuthenticationHelpers
 <% end %>
 
 Each of the methods defined in this module return values that are the
