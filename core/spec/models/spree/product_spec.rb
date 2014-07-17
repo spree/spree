@@ -440,8 +440,8 @@ describe Spree::Product do
     end
 
     it 'should return sum of stock items count_on_hand' do
-      product = build(:product)
-      product.stub stock_items: [double(Spree::StockItem, count_on_hand: 5)]
+      product = create(:product)
+      product.stock_items.first.set_count_on_hand 5
       product.total_on_hand.should eql(5)
     end
   end
