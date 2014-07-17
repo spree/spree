@@ -29,7 +29,7 @@ describe Spree::CheckoutController do
       it "displays rate cost in correct currency" do
         spree_get :edit
         html = Nokogiri::HTML(response.body)
-        html.css('.rate-cost').text.should == "£10.00"
+        expect(html.css('.rate-cost').text).to eq "£10.00"
       end
     end
   end
