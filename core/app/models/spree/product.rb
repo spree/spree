@@ -199,10 +199,10 @@ module Spree
     end
 
     def total_on_hand
-      if self.variants_including_master.any? { |v| !v.should_track_inventory? }
+      if any_variants_not_track_inventory?
         Float::INFINITY
       else
-        self.stock_items.to_a.sum(&:count_on_hand)
+        stock_items.sum(:count_on_hand)
       end
     end
 
@@ -215,70 +215,78 @@ module Spree
 
     private
 
-      def normalize_slug
-        self.slug = normalize_friendly_id(slug)
-      end
-
-      # Builds variants from a hash of option types & values
-      def build_variants_from_option_values_hash
-        ensure_option_types_exist_for_values_hash
-        values = option_values_hash.values
-        values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
-
-        values.each do |ids|
-          variant = variants.create(
-            option_value_ids: ids,
-            price: master.price
-          )
+    def add_properties_and_option_types_from_prototype
+      if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
+        prototype.properties.each do |property|
+          product_properties.create(property: property)
         end
-        save
+        self.option_types = prototype.option_types
       end
+    end
 
-      def add_properties_and_option_types_from_prototype
-        if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
-          prototype.properties.each do |property|
-            product_properties.create(property: property)
-          end
-          self.option_types = prototype.option_types
-        end
+    def any_variants_not_track_inventory?
+      if variants_including_master.loaded?
+        variants_including_master.any? { |v| !v.should_track_inventory? }
+      else
+        !Spree::Config.track_inventory_levels || variants_including_master.where(track_inventory: false).any?
       end
+    end
 
-      # ensures the master variant is flagged as such
-      def set_master_variant_defaults
-        master.is_master = true
+    # Builds variants from a hash of option types & values
+    def build_variants_from_option_values_hash
+      ensure_option_types_exist_for_values_hash
+      values = option_values_hash.values
+      values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
+
+      values.each do |ids|
+        variant = variants.create(
+          option_value_ids: ids,
+          price: master.price
+        )
       end
+      save
+    end
 
-      # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-      # when saving so we force a save using a hook.
-      def save_master
-        master.save if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
-      end
+    def ensure_master
+      return unless new_record?
+      self.master ||= Variant.new
+    end
 
-      def ensure_master
-        return unless new_record?
-        self.master ||= Variant.new
-      end
+    def normalize_slug
+      self.slug = normalize_friendly_id(slug)
+    end
 
-      # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
-      def touch_taxons
-        taxons_to_touch = taxons.map(&:self_and_ancestors).flatten.uniq
-        Spree::Taxon.where(id: taxons_to_touch.map(&:id)).update_all(updated_at: Time.current)
+    def punch_slug
+      update(slug: "#{Time.now.to_i}_#{slug}") # punch slug with date prefix to allow reuse of original
+    end
 
-        taxonomy_ids_to_touch = taxons_to_touch.map(&:taxonomy_id).flatten.uniq
-        Spree::Taxonomy.where(id: taxonomy_ids_to_touch).update_all(updated_at: Time.current)
-      end
+    # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
+    # when saving so we force a save using a hook.
+    def save_master
+      master.save if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+    end
 
-      # Try building a slug based on the following fields in increasing order of specificity.
-      def slug_candidates
-        [
-            :name,
-            [:name, :sku]
-        ]
-      end
+    # ensures the master variant is flagged as such
+    def set_master_variant_defaults
+      master.is_master = true
+    end
 
-      def punch_slug
-        update(slug: "#{Time.now.to_i}_#{slug}") # punch slug with date prefix to allow reuse of original
-      end
+    # Try building a slug based on the following fields in increasing order of specificity.
+    def slug_candidates
+      [
+          :name,
+          [:name, :sku]
+      ]
+    end
+
+    # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
+    def touch_taxons
+      taxons_to_touch = taxons.map(&:self_and_ancestors).flatten.uniq
+      Spree::Taxon.where(id: taxons_to_touch.map(&:id)).update_all(updated_at: Time.current)
+
+      taxonomy_ids_to_touch = taxons_to_touch.map(&:taxonomy_id).flatten.uniq
+      Spree::Taxonomy.where(id: taxonomy_ids_to_touch).update_all(updated_at: Time.current)
+    end
 
   end
 end
