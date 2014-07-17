@@ -80,7 +80,9 @@ module Spree
         expect(shipment.address).to eq subject.order.ship_address
         expect(shipment.order).to eq subject.order
         expect(shipment.stock_location).to eq subject.stock_location
-        expect(shipment.inventory_units.size).to eq 3
+        expect(shipment.inventory_units.size).to eq 2
+        expect(shipment.inventory_units[0].quantity).to eq 2
+        expect(shipment.inventory_units[1].quantity).to eq 1
 
         first_unit = shipment.inventory_units.first
         expect(first_unit.variant).to eq variant

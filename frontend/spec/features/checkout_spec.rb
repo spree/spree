@@ -313,7 +313,8 @@ describe "Checkout", inaccessible: true do
         click_on "Save and Continue"
         click_on "Save and Continue"
 
-        expect(Spree::InventoryUnit.count).to eq 3
+        expect(Spree::InventoryUnit.count).to eq 1
+        expect(Spree::InventoryUnit.first.quantity).to eq 3
       end
     end
 
