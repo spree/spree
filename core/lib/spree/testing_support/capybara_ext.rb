@@ -13,7 +13,7 @@ module CapybaraExt
   end
 
   def within_row(num, &block)
-    if RSpec.current_example.metadata[:js]
+    if example.metadata[:js]
       within("table.index tbody tr:nth-child(#{num})", &block)
     else
       within(:xpath, all("table.index tbody tr")[num-1].path, &block)
@@ -21,7 +21,7 @@ module CapybaraExt
   end
 
   def column_text(num)
-    if RSpec.current_example.metadata[:js]
+    if example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
       all("td")[num-1].text
