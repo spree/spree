@@ -67,7 +67,8 @@ module Spree
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
-    after_save :touch
+    after_save :touch, if: :anything_changed?
+    after_save :reset_nested_changes
     after_touch :touch_taxons
 
     delegate :images, to: :master, prefix: true
@@ -260,10 +261,21 @@ module Spree
       update(slug: "#{Time.now.to_i}_#{slug}") # punch slug with date prefix to allow reuse of original
     end
 
+    def anything_changed?
+      changed? || @nested_changes
+    end
+
+    def reset_nested_changes
+      @nested_changes = false
+    end
+
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
     # when saving so we force a save using a hook.
     def save_master
-      master.save if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+      if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+        master.save
+        @nested_changes = true
+      end
     end
 
     # ensures the master variant is flagged as such

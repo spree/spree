@@ -11,7 +11,7 @@ module Spree
 
     delegate :weight, :should_track_inventory?, to: :variant
 
-    after_save :conditional_variant_touch
+    after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
 
     def backordered_inventory_units
