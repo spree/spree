@@ -5,15 +5,23 @@
       <th><%= Spree.t(:payment_identifier) %></th>
       <th><%= Spree.t(:amount) %></th>
       <th><%= Spree.t(:payment_method) %></th>
+      <th><%= Spree.t(:transaction_id) %></th>
+      <th><%= Spree.t(:reason) %></th>
+      <th class="actions"></th>
     </tr>
   </thead>
   <tbody>
     <% refunds.each do |refund| %>
       <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
         <td><%= pretty_time(refund.created_at) %></td>
-        <td><%= refund.payment.identifier %></td>
+        <td class="align-center"><%= refund.payment.identifier %></td>
         <td class="align-center amount"><%= refund.display_amount %></td>
         <td class="align-center"><%= payment_method_name(refund.payment) %></td>
+        <td class="align-center"><%= refund.transaction_id %></td>
+        <td class="align-center"><%= truncate(refund.reason.name, length: 100) %></td>
+        <td class="actions">
+          <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true %>
+        </td>
       </tr>
     <% end %>
   </tbody>

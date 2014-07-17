@@ -3,7 +3,7 @@ module Spree
     class PaymentsController < Spree::Api::BaseController
 
       before_filter :find_order
-      before_filter :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void, :credit]
+      before_filter :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void]
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
@@ -53,15 +53,6 @@ module Spree
 
       def void
         perform_payment_action(:void_transaction)
-      end
-
-      def credit
-        if params[:amount].to_f > @payment.credit_allowed
-          render 'credit_over_limit', status: 422
-        else
-          reason = Spree::RefundReason.find(params[:refund_reason_id])
-          perform_payment_action(:credit, reason, params[:amount])
-        end
       end
 
       private

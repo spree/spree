@@ -2,40 +2,40 @@ module Spree
   class Refund < Spree::Base
     belongs_to :payment, inverse_of: :refunds
     belongs_to :return_authorization # optional
-    belongs_to :refund_reason
+    belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
 
     has_many :log_entries, as: :source
 
     validates :payment, presence: true
-    validates :refund_reason, presence: true
-    validates :transaction_id, presence: true
+    validates :reason, presence: true
+    validates :transaction_id, presence: true, on: :update # can't require this on create because the before_create needs to run first
     validates :amount, presence: true, numericality: {greater_than: 0}
 
-    # attempts to perform the refund
-    # if successful it returns the refund, otherwise it raises
-    def self.perform!(payment, reason, amount, return_authorization=nil)
-      check_amount(amount)
-      check_environment(payment)
+    validate :check_payment_environment, on: :create, if: :payment
+    validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
 
+    before_create :perform!
+    after_create :create_log_entry
+
+    def money
+      Spree::Money.new(amount, { currency: payment.currency })
+    end
+    alias display_amount money
+
+    private
+
+    # attempts to perform the refund.
+    # raises an error if the refund fails.
+    def perform!
       credit_cents = Spree::Money.new(amount.to_f, currency: payment.currency).money.cents
 
-      response = process!(payment, credit_cents)
+      @response = process!(credit_cents)
 
-      refund = create!({
-        payment: payment,
-        return_authorization: return_authorization,
-        transaction_id: response.authorization,
-        refund_reason: reason,
-        amount: amount,
-      })
-
-      refund.log_entries.create!(details: response.to_yaml)
-
-      refund
+      self.transaction_id = @response.authorization
     end
 
     # return an activemerchant response object if successful or else raise an error
-    def self.process!(payment, credit_cents)
+    def process!(credit_cents)
       response = if payment.payment_method.payment_profiles_supported?
         payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, {})
       else
@@ -56,22 +56,21 @@ module Spree
 
     # Saftey check to make sure we're not accidentally performing operations on a live gateway.
     # Ex. When testing in staging environment with a copy of production data.
-    def self.check_environment(payment)
-      return if payment.payment_method.environment == Rails.env
-      message = Spree.t(:gateway_config_unavailable) + " - #{Rails.env}"
-      raise Core::GatewayError.new(message)
-    end
-
-    def self.check_amount(amount)
-      unless amount > 0
-        raise Core::GatewayError.new(Spree.t(:refund_amount_must_be_greater_than_zero))
+    def check_payment_environment
+      if payment.payment_method.environment != Rails.env
+        message = Spree.t(:gateway_config_unavailable) + " - #{Rails.env}"
+        errors.add(:base, message)
       end
     end
 
-    def money
-      Spree::Money.new(amount, { currency: payment.currency })
+    def create_log_entry
+      log_entries.create!(details: @response.to_yaml)
     end
-    alias display_amount money
 
+    def amount_is_less_than_or_equal_to_allowed_amount
+      if amount > payment.credit_allowed
+        errors.add(:amount, :greater_than_allowed)
+      end
+    end
   end
 end

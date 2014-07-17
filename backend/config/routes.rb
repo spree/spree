@@ -94,6 +94,7 @@ Spree::Core::Engine.add_routes do
         end
 
         resources :log_entries
+        resources :refunds, only: [:new, :edit, :create, :update]
       end
     end
 
