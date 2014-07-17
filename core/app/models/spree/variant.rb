@@ -196,7 +196,7 @@ module Spree
       def parse_weight(weight)
         return weight unless weight.is_a?(String)
 
-        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
+        separator, delimiter = Spree::Config.currency_decimal_mark, Spree::Config.currency_thousands_separator
         non_weight_characters = /[^0-9\-#{separator}]/
         weight.gsub!(non_weight_characters, '') # strip everything else first
         weight.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
