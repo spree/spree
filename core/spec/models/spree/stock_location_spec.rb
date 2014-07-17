@@ -133,6 +133,20 @@ module Spree
       Spree::StockLocation.active.count.should eq 1
     end
 
+    it 'ensures only one stock location is default at a time' do
+      first = create(:stock_location, :active => true, :default => true)
+      second = create(:stock_location, :active => true, :default => true)
+
+      first.reload.default.should eq false
+      second.reload.default.should eq true
+
+      first.default = true
+      first.save!
+
+      first.reload.default.should eq true
+      second.reload.default.should eq false
+    end
+
     context 'fill_status' do
       it 'all on_hand with no backordered' do
         on_hand, backordered = subject.fill_status(variant, 5)
