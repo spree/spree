@@ -207,8 +207,12 @@ module Spree
         end
       end
 
+      def default_price_changed?
+        default_price && (default_price.changed? || default_price.new_record?)
+      end
+
       def save_default_price
-        default_price.save if default_price && (default_price.changed? || default_price.new_record?)
+        default_price.save if default_price_changed?
       end
 
       def set_cost_currency
