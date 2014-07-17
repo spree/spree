@@ -120,12 +120,14 @@ describe Spree::Variant do
 
   context "price parsing" do
     before(:each) do
+      I18n.enforce_available_locales = false
       I18n.locale = I18n.default_locale
       I18n.backend.store_translations(:de, { :number => { :currency => { :format => { :delimiter => '.', :separator => ',' } } } })
     end
 
     after do
       I18n.locale = I18n.default_locale
+      I18n.enforce_available_locales = true
     end
 
     context "price=" do

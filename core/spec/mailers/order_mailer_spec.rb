@@ -82,6 +82,7 @@ describe Spree::OrderMailer do
 
     context "pt-BR locale" do
       before do
+        I18n.enforce_available_locales = false
         pt_br_confirm_mail = { :spree => { :order_mailer => { :confirm_email => { :dear_customer => 'Caro Cliente,' } } } }
         pt_br_cancel_mail = { :spree => { :order_mailer => { :cancel_email => { :order_summary_canceled => 'Resumo da Pedido [CANCELADA]' } } } }
         I18n.backend.store_translations :'pt-BR', pt_br_confirm_mail
@@ -91,6 +92,7 @@ describe Spree::OrderMailer do
 
       after do
         I18n.locale = I18n.default_locale
+        I18n.enforce_available_locales = true
       end
 
       context "confirm_email" do
