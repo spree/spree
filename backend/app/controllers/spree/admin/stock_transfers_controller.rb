@@ -37,7 +37,7 @@ module Spree
 
       private
       def load_stock_locations
-        @stock_locations = Spree::StockLocation.active.order('name ASC')
+        @stock_locations = Spree::StockLocation.active.order_default
       end
 
       def source_location

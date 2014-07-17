@@ -10,8 +10,10 @@ module Spree
     validates_presence_of :name
 
     scope :active, -> { where(active: true) }
+    scope :order_default, -> { order(default: :desc, name: :asc) }
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
+    after_save :ensure_one_default
 
     # Wrapper for creating a new stock item respecting the backorderable config
     def propagate_variant(variant)
@@ -83,6 +85,15 @@ module Spree
     private
       def create_stock_items
         Variant.find_each { |variant| self.propagate_variant(variant) }
+      end
+
+      def ensure_one_default
+        if self.default
+          StockLocation.where.not(id: self.id).each do |stock_location|
+            stock_location.default = false
+            stock_location.save! if stock_location.changed?
+          end
+        end
       end
   end
 end
