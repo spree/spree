@@ -254,6 +254,11 @@ en:
             base:
               amount_due_less_than_zero: Amount due is less than zero
               amount_due_greater_than_zero: Unable to refund full amount
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: is greater than the allowed amount.
+
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -562,6 +567,7 @@ en:
     editing_promotion: Editing Promotion
     editing_property: Editing Property
     editing_prototype: Editing Prototype
+    edit_refund_reason: Edit Refund Reason
     editing_refund_reason: Editing Refund Reason
     editing_rma_reason: Editing RMA Reason
     editing_shipping_category: Editing Shipping Category
@@ -746,6 +752,7 @@ en:
     new_promotion: New Promotion
     new_property: New Property
     new_prototype: New Prototype
+    new_refund: New Refund
     new_refund_reason: New Refund Reason
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
@@ -1152,6 +1159,7 @@ en:
     tracking_number: Tracking Number
     tracking_url: Tracking URL
     tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
+    transaction_id: Transaction ID
     transfer_from_location: Transfer From
     transfer_stock: Transfer Stock
     transfer_to_location: Transfer To

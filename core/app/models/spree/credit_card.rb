@@ -91,9 +91,7 @@ module Spree
     # Indicates whether its possible to credit the payment.  Note that most gateways require that the
     # payment be settled first which generally happens within 12-24 hours of the transaction.
     def can_credit?(payment)
-      return false unless payment.completed?
-      return false unless payment.order.payment_state == 'credit_owed'
-      payment.credit_allowed > 0
+      payment.completed? && payment.credit_allowed > 0
     end
 
     def has_payment_profile?

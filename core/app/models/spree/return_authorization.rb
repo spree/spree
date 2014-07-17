@@ -82,7 +82,11 @@ module Spree
       order.payments.completed.each do |payment|
         break if amount_due <= 0
         credit_allowed = [payment.credit_allowed, amount_due].min
-        payment.credit!(Spree::RefundReason.return_processing_reason, credit_allowed, self)
+        payment.refunds.create!({
+          amount: credit_allowed,
+          return_authorization: self,
+          reason: Spree::RefundReason.return_processing_reason,
+        })
       end
 
       case amount_due

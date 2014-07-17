@@ -24,7 +24,6 @@
     <%= render :partial => 'list', :locals => { :payments => @payments } %>
   </fieldset>
 
-  <% @refunds = @payments.flat_map(&:refunds) %>
   <% if @refunds.any? %>
     <fieldset data-hook="payment_list" class="no-border-bottom">
       <legend align="center"><%= Spree.t(:refunds) %></legend>

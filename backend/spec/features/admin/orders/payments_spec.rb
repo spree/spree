@@ -70,7 +70,7 @@ describe 'Payments' do
       within_row(1) do
         column_text(3).should == '$150.00'
         column_text(4).should == 'Credit Card'
-        column_text(5).should == 'CHECKOUT'
+        column_text(6).should == 'CHECKOUT'
       end
 
       click_icon :void
@@ -80,7 +80,7 @@ describe 'Payments' do
       within_row(1) do
         column_text(3).should == '$150.00'
         column_text(4).should == 'Credit Card'
-        column_text(5).should == 'VOID'
+        column_text(6).should == 'VOID'
       end
 
       click_on 'New Payment'

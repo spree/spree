@@ -64,11 +64,6 @@ describe Spree::CreditCard do
       credit_card.can_credit?(payment).should be_false
     end
 
-    it "should be false when order payment_state is not 'credit_owed'" do
-      payment = mock_model(Spree::Payment, completed?: true, order: mock_model(Spree::Order, payment_state: 'paid'))
-      credit_card.can_credit?(payment).should be_false
-    end
-
     it "should be false when credit_allowed is zero" do
       payment = mock_model(Spree::Payment, completed?: true, credit_allowed: 0, order: mock_model(Spree::Order, payment_state: 'credit_owed'))
       credit_card.can_credit?(payment).should be_false
