@@ -11,16 +11,11 @@ describe 'current order tracking' do
 
   let(:order) { FactoryGirl.create(:order) }
 
-  it 'automatically tracks IP when current_order is called' do
-    @request.cookie_jar.signed[:guest_token] = order.guest_token
-    get :index
-    controller.current_order.last_ip_address.should == "0.0.0.0"
-  end
-
-  it 'automatically tracks who the order was created by' do
+  it 'automatically tracks who the order was created by & IP address' do
     controller.stub(:try_spree_current_user => user)
     get :index
-    controller.current_order(create_order_if_necessary: true).created_by.should == controller.try_spree_current_user
+    expect(controller.current_order(create_order_if_necessary: true).created_by).to eq controller.try_spree_current_user
+    expect(controller.current_order.last_ip_address).to eq "0.0.0.0"
   end
 
   context "current order creation" do
