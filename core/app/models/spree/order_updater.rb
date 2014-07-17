@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :all_adjustments, :shipments, :update_hooks, to: :order
+    delegate :payments, :line_items, :adjustments, :all_adjustments, :shipments, :update_hooks, :quantity, to: :order
 
     def initialize(order)
       @order = order
@@ -77,7 +77,7 @@ module Spree
     end
 
     def update_item_count
-      order.item_count = line_items.sum(:quantity)
+      order.item_count = quantity
     end
 
     def update_item_total

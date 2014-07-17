@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   class Calculator
     describe PercentOnLineItem do
-      let(:line_item) { double("LineItem", price: 10, quantity: 10) }
+      let(:line_item) { double("LineItem", amount: 100) }
 
       before { subject.preferred_percent = 15 }
 

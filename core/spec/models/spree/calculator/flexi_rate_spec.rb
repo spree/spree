@@ -5,11 +5,7 @@ describe Spree::Calculator::FlexiRate do
 
   let(:order) do
     mock_model(
-      Spree::Order,
-      :line_items => [
-        mock_model(Spree::LineItem, :amount => 10, :quantity => 4),
-        mock_model(Spree::LineItem, :amount => 20, :quantity => 6)
-      ]
+      Spree::Order, quantity: 10
     )
   end
 

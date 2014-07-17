@@ -8,7 +8,7 @@ module Spree
       end
 
       def compute(object)
-        ((object.price * object.quantity) * preferred_percent) / 100
+        (object.amount * preferred_percent) / 100
       end
     end
   end
