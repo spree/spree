@@ -238,6 +238,7 @@ en:
           attributes:
             base:
               card_expired: "Card has expired"
+              expiry_invalid: "Card expiration is invalid"
         spree/line_item:
           attributes:
             currency:

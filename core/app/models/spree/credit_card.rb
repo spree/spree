@@ -126,9 +126,13 @@ module Spree
 
     def expiry_not_in_the_past
       if year.present? && month.present?
-        time = Time.zone.parse("#{year}-#{month}-1")
-        if time < Time.zone.now.to_time.beginning_of_month
-          errors.add(:base, :card_expired)
+        if month.to_i < 1 || month.to_i > 12
+          errors.add(:base, :expiry_invalid)
+        else
+          time = Time.zone.parse("#{year}-#{month}-1")
+          if time < Time.zone.now.to_time.beginning_of_month
+            errors.add(:base, :card_expired)
+          end
         end
       end
     end
