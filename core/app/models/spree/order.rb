@@ -580,6 +580,10 @@ module Spree
       included_tax_total + additional_tax_total
     end
 
+    def quantity
+      line_items.sum(:quantity)
+    end
+
     private
 
       def link_by_email

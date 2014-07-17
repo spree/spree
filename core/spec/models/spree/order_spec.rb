@@ -648,4 +648,13 @@ describe Spree::Order do
       expect(subject.pre_tax_item_amount).to eq 19.0
     end
   end
+
+  describe '#quantity' do
+    # Uses a persisted record, as the quantity is retrieved via a DB count
+    let(:order) { create :order_with_line_items }
+
+    it 'sums the quantity of all line items' do
+      expect(order.quantity).to eq 5
+    end
+  end
 end
