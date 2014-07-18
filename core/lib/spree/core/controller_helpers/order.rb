@@ -14,7 +14,7 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-          @order ||= Spree::Order.find_by(completed_at: nil, currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id))
+          @simple_current_order ||= Spree::Order.find_by(completed_at: nil, currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id))
         end
 
         # The current incomplete order from the guest_token for use in cart and during checkout
