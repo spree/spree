@@ -12,7 +12,7 @@ module Spree
           end
         end
 
-        @taxons = @taxons.page(params[:page]).per(params[:per_page])
+        @taxons = @taxons.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@taxons)
       end
 
@@ -65,7 +65,7 @@ module Spree
         # Products#index does not do the sorting.
         taxon = Spree::Taxon.find(params[:id])
         @products = taxon.products.ransack(params[:q]).result
-        @products = @products.page(params[:page]).per(500 || params[:per_page])
+        @products = @products.send(Kaminari.config.page_method_name, params[:page]).per(500 || params[:per_page])
         render "spree/api/products/index"
       end
 

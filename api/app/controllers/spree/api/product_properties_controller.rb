@@ -8,7 +8,8 @@ module Spree
       def index
         @product_properties = @product.product_properties.accessible_by(current_ability, :read).
                               ransack(params[:q]).result.
-                              page(params[:page]).per(params[:per_page])
+                              send(Kaminari.config.page_method_name, params[:page]).
+                              per(params[:per_page])
         respond_with(@product_properties)
       end
 

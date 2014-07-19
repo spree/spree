@@ -5,7 +5,7 @@ module Spree
 
       def index
         authorize! :read, StockMovement
-        @stock_movements = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @stock_movements = scope.ransack(params[:q]).result.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@stock_movements)
       end
 

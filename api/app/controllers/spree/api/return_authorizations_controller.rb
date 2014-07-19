@@ -22,7 +22,8 @@ module Spree
         authorize! :admin, ReturnAuthorization
         @return_authorizations = order.return_authorizations.accessible_by(current_ability, :read).
                                  ransack(params[:q]).result.
-                                 page(params[:page]).per(params[:per_page])
+                                 send(Kaminari.config.page_method_name, params[:page]).
+                                 per(params[:per_page])
         respond_with(@return_authorizations)
       end
 

@@ -13,7 +13,7 @@ module Spree
           @properties = @properties.ransack(params[:q]).result
         end
 
-        @properties = @properties.page(params[:page]).per(params[:per_page])
+        @properties = @properties.send(Kaminari.config.page_method_name, params[:page]).per(params[:per_page])
         respond_with(@properties)
       end
 

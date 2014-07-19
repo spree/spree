@@ -39,7 +39,7 @@ module Spree
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
         # see https://github.com/spree/spree/pull/3919
         @orders = @search.result(distinct: true).
-          page(params[:page]).
+          send(Kaminari.config.page_method_name, params[:page]).
           per(params[:per_page] || Spree::Config[:orders_per_page])
 
         # Restore dates

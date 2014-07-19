@@ -23,7 +23,7 @@ module Spree
           @search = @collection.ransack(params[:q])
           @collection = @search.result(distinct: true).
             includes(promotion_includes).
-            page(params[:page]).
+            send(Kaminari.config.page_method_name, params[:page]).
             per(params[:per_page] || Spree::Config[:promotions_per_page])
 
           @collection
