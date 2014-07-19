@@ -56,4 +56,21 @@ Spree::State.create!([
   { name: 'U.S. Armed Forces - Europe', abbr: 'AE', country: united_states },
   { name: 'U.S. Armed Forces - Pacific', abbr: 'AP', country: united_states }
 ])
+
+canada = Spree::Country.find_by(name: 'Canada')
+
+Spree::State.create!([
+  { name: "Yukon",                     abbr: "YT", country: canada },
+  { name: "Nunavut",                   abbr: "NU", country: canada },
+  { name: "British Columbia",          abbr: "BC", country: canada },
+  { name: "Alberta",                   abbr: "AB", country: canada },
+  { name: "Saskatchewan",              abbr: "SK", country: canada },
+  { name: "Manitoba",                  abbr: "MB", country: canada },
+  { name: "Ontario",                   abbr: "ON", country: canada },
+  { name: "Quebec",                    abbr: "QC", country: canada },
+  { name: "New Brunswick",             abbr: "NB", country: canada },
+  { name: "Newfoundland and Labrador", abbr: "NL", country: canada },
+  { name: "Nova Scotia",               abbr: "NS", country: canada },
+  { name: "Prince Edward Island",      abbr: "PE", country: canada },
+  { name: "Northwest Territories",     abbr: "NT", country: canada }
 ])
