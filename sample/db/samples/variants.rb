@@ -100,7 +100,7 @@ masters = {
     :cost_price => 17
   },
   ror_bag => {
-    :sku => "ROR-00012",
+    :sku => "ROR-10012",
     :cost_price => 21
   },
   ror_jr_spaghetti => {
