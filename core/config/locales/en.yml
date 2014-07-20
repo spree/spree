@@ -927,16 +927,16 @@ en:
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order Summary [CANCELED]
         subject: Cancellation of Order
-        subtotal: ! 'Subtotal: %{subtotal}'
-        total: ! 'Order Total: %{total}'
+        subtotal: ! 'Subtotal:'
+        total: ! 'Order Total:'
       confirm_email:
         dear_customer: Dear Customer,
         instructions: Please review and retain the following order information for your records.
         order_summary: Order Summary
         subject: Order Confirmation
-        subtotal: ! 'Subtotal: %{subtotal}'
+        subtotal: ! 'Subtotal:'
         thanks: Thank you for your business.
-        total: ! 'Order Total: %{total}'
+        total: ! 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_populator:

@@ -68,3 +68,7 @@
   and Spree::Core::UserPaymentSource. Fixes #5264.
 
     Masahiro Saito
+
+* Enable default html email templates with Zurb Ink, and PreMailer for Rails.
+
+    Ben Morgan & Jeff Dutil

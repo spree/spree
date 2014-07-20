@@ -14,27 +14,29 @@
         <% @order.line_items.each do |item| %>
           <tr>
             <td><%= item.variant.sku %></td>
-            <td><%= raw(item.variant.product.name) %></td>
-            <td><%= raw(item.variant.options_text) -%></td>
+            <td>
+              <%= raw(item.variant.product.name) %>
+              <%= raw(item.variant.options_text) -%>
+            </td>
             <td>(<%=item.quantity%>) @ <%= item.single_money %> = <%= item.display_amount %></td>
           </tr>
         <% end %>
-      </table>
-      <p>
-        <%= Spree.t('order_mailer.cancel_email.subtotal', :subtotal => @order.display_item_total) %>
-      </p>
-      <table>
+        <tr>
+          <td></td>
+          <td><%= Spree.t('order_mailer.cancel_email.subtotal') %></td>
+          <td><%= @order.display_item_total %></td>
+        </tr>
         <% @order.adjustments.eligible.each do |adjustment| %>
           <tr>
+            <td></td>
             <td><%= raw(adjustment.label) %></td>
             <td><%= adjustment.display_amount %></td>
           </tr>
         <% end %>
         <tr>
           <td></td>
-          <td>
-            <%= Spree.t('order_mailer.cancel_email.total', :total => @order.display_total) %>
-          </td>
+          <td><%= Spree.t('order_mailer.cancel_email.total') %></td>
+          <td><%= @order.display_total %></td>
         </tr>
       </table>
     </td>
