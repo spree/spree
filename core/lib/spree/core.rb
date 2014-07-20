@@ -10,6 +10,7 @@ require 'mail'
 require 'monetize'
 require 'paperclip'
 require 'paranoia'
+require 'premailer/rails'
 require 'ransack'
 require 'state_machine'
 
