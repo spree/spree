@@ -88,6 +88,7 @@ module Spree
 
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
+    scope :reverse_chronological, -> { order(created_at: :desc) }
 
     def self.between(start_date, end_date)
       ActiveSupport::Deprecation.warn("Order#between will be deprecated in Spree 2.3, please use either Order#created_between or Order#completed_between instead.")
