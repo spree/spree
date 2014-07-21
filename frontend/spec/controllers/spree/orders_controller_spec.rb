@@ -26,14 +26,14 @@ describe Spree::OrdersController do
         end
 
         it "should handle population" do
-          populator.should_receive(:populate).with("2", "5").and_return(true)
+          populator.should_receive(:populate).with("2", "5", nil).and_return(true)
           spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
           response.should redirect_to spree.cart_path
         end
 
         it "shows an error when population fails" do
           request.env["HTTP_REFERER"] = spree.root_path
-          populator.should_receive(:populate).with("2", "5").and_return(false)
+          populator.should_receive(:populate).with("2", "5", nil).and_return(false)
           populator.stub_chain(:errors, :full_messages).and_return(["Order population failed"])
           spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
           expect(flash[:error]).to eq("Order population failed")
