@@ -211,7 +211,7 @@ describe Spree::OrderInventory do
         let(:different_line_item) { create(:line_item) }
 
         let!(:different_inventory) do
-          shipment.set_up_inventory("on_hand", variant, order, different_line_item)
+          shipment.set_up_inventory("on_hand", variant, different_line_item)
         end
 
         context "completed order" do

@@ -4,7 +4,7 @@ module Spree
   module Stock
     describe Package do
       let(:variant) { build(:variant, weight: 25.0) }
-      let(:line_item) { build(:line_item, variant: variant) }
+      let(:line_item) { build(:line_item, variant: variant, order: order) }
       let(:stock_location) { build(:stock_location) }
       let(:order) { build(:order) }
 

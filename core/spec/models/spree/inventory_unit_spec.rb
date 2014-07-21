@@ -89,11 +89,28 @@ describe Spree::InventoryUnit do
         shipment.tap(&:save!)
       end
 
+      let(:other_shipment) do
+        shipment = Spree::Shipment.new
+        shipment.stock_location = stock_location
+        shipment.shipping_methods << create(:shipping_method)
+        shipment.order = other_order
+        # We don't care about this in this test
+        shipment.stub(:ensure_correct_adjustment)
+        shipment.tap(&:save!)
+      end
+
+      let(:other_item) do
+        Spree::LineItem.create!(
+          variant: stock_item.variant,
+          order: other_order
+        )
+      end
+
       let!(:other_unit) do
         unit = other_shipment.inventory_units.build
         unit.state = 'backordered'
         unit.variant_id = stock_item.variant.id
-        unit.order_id = other_order.id
+        unit.line_item = other_item
         unit.tap(&:save!)
       end
 
