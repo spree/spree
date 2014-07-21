@@ -254,6 +254,7 @@ en:
             base:
               amount_due_less_than_zero: Amount due is less than zero
               amount_due_greater_than_zero: Unable to refund full amount
+              insufficent_funds_available: Amount due is greater than amount available for refunds
         spree/refund:
           attributes:
             amount:
