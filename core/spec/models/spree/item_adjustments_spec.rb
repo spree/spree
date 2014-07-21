@@ -158,11 +158,10 @@ module Spree
             line_item_promos[promo_sequence[1]].activate order: order
 
             order.reload
-            order.all_adjustments.count.should eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
+            order.all_adjustments.count.should eq(1), "Expected one adjustment (using sequence #{promo_sequence})"
             order.all_adjustments.eligible.count.should eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            # TODO: Really, with the rule we've applied to these promos, we'd expect line_item_promo2
-            # to be selected; however, all of the rules are currently completely broken for line-item-
-            # level promos. To make this spec work for now we just roll with current behavior.
+            # line_item_promo1 is the only one that has thus far met the order total threshold, it is the only promo which should be applied.
+            order.all_adjustments.first.source.promotion.should eq(line_item_promo1), "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
 
             order.contents.add create(:variant, price: 10), 1
             order.save
