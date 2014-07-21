@@ -619,8 +619,8 @@ describe Spree::Shipment do
     before { shipment.stub inventory_units: inventory_units }
 
     it "associates variant and order" do
-      expect(inventory_units).to receive(:create).with(params)
-      unit = shipment.set_up_inventory('on_hand', variant, line_item)
+      expect(inventory_units).to receive(:create!).with(params)
+      unit = shipment.set_up_inventory('on_hand', variant, line_item, 1)
     end
   end
 

@@ -35,9 +35,9 @@ describe Spree::OrderInventory do
 
         subject.send(:add_to_shipment, shipment, 5).should == 5
 
-        units = shipment.inventory_units_for(subject.variant).group_by(&:state)
-        units['backordered'].size.should == 2
-        units['on_hand'].size.should == 3
+        item = shipment.manifest.detect{|i| i.variant == subject.variant }
+        expect(item.states['backordered']).to eq 2
+        expect(item.states['on_hand']).to eq 3
       end
     end
 
@@ -130,14 +130,15 @@ describe Spree::OrderInventory do
       subject.line_item.reload
     end
 
+    let(:manifest_item){ order.shipments.first.manifest.detect{|i| i.variant == line_item.variant } }
+
     it 'should be a messed up order' do
-      order.shipments.first.inventory_units_for(line_item.variant).size.should == 3
-      line_item.quantity.should == 2
+      manifest_item.quantity.should == 3
     end
 
     it 'should decrease the number of inventory units' do
       subject.verify
-      expect(subject.inventory_units.count).to eq 2
+      manifest_item.quantity.should == 2
     end
 
     context '#remove_from_shipment' do
@@ -208,7 +209,7 @@ describe Spree::OrderInventory do
         let(:different_line_item) { create(:line_item) }
 
         let!(:different_inventory) do
-          shipment.set_up_inventory("on_hand", variant, different_line_item)
+          shipment.set_up_inventory("on_hand", variant, different_line_item, 1)
         end
 
         context "completed order" do

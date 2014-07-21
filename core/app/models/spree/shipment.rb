@@ -265,12 +265,14 @@ module Spree
     end
 
     def set_up_inventory(state, variant, line_item)
-      self.inventory_units.create(
-        state: state,
-        variant_id: variant.id,
-        line_item_id: line_item.id,
-        quantity: 1
-      )
+      unless quantity == 0
+        self.inventory_units.create!(
+          state: state,
+          variant_id: variant.id,
+          line_item_id: line_item.id,
+          quantity: quantity
+        )
+      end
     end
 
     def shipped=(value)
