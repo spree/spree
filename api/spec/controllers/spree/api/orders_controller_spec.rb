@@ -73,6 +73,18 @@ module Spree
         response.status.should == 200
         json_response["orders"].length.should == 0
       end
+
+      it "returns orders in reverse chronological order" do
+        order2 = create(:order, line_items: [line_item], user: order.user)
+        order2.created_at.should > order.created_at
+
+        api_get :mine
+        response.status.should == 200
+        json_response["pages"].should == 1
+        json_response["orders"].length.should == 2
+        json_response["orders"][0]["number"].should == order2.number
+        json_response["orders"][1]["number"].should == order.number
+      end
     end
 
     it "can view their own order" do
