@@ -3,10 +3,10 @@ require 'spec_helper'
 module Spree
 
   describe Spree::ProductDuplicator do
-    
+
     let(:product) { create(:product, properties: [create(:property, name: "MyProperty")])}
     let!(:duplicator) { Spree::ProductDuplicator.new(product)}
-    
+
     let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
     let(:params) { {:viewable_id => product.master.id, :viewable_type => 'Spree::Variant', :attachment => image, :alt => "position 1", :position => 1} }
 
@@ -66,13 +66,13 @@ module Spree
 
     context "product attributes" do
       let!(:new_product) {duplicator.duplicate}
-      
+
       it "will set an unique name" do
         expect(new_product.name).to eql "COPY OF #{product.name}"
       end
 
       it "will set an unique sku" do
-        expect(new_product.sku).to eql "COPY OF ABC"
+        expect(new_product.sku).to include "COPY OF ABC"
       end
 
       it "copied the properties" do
@@ -88,7 +88,7 @@ module Spree
 
       let!(:variant1) { create(:variant, product: product, option_values: [option_value1]) }
       let!(:variant2) { create(:variant, product: product, option_values: [option_value2]) }
-      
+
       it  "will duplciate the variants" do
         # will change the count by 3, since there will be a master variant as well
         expect{duplicator.duplicate}.to change{Spree::Variant.count}.by(3)

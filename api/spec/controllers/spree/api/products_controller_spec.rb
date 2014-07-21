@@ -6,7 +6,7 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:inactive_product) { create(:product, :available_on => Time.now.tomorrow, :name => "inactive") }
+    let!(:inactive_product) { create(:product, available_on: Time.now.tomorrow, name: "inactive") }
     let(:base_attributes) { Api::ApiHelpers.product_attributes }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
@@ -360,7 +360,7 @@ module Spree
         end
 
         it "can create new variants on a product" do
-          api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant] }
+          api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant.merge(sku: "ABC-#{Kernel.rand(9999)}")] }
           expect(response.status).to eq 200
           expect(json_response['variants'].count).to eq(2) # 2 variants
 

@@ -124,10 +124,10 @@ describe "Visiting Products", inaccessible: true do
 
     before do
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-      v1 = product.variants.create!(:price => 9.99)
-      v2 = product.variants.create!(:price => 10.99)
-      v1.images.create!(:attachment => image)
-      v2.images.create!(:attachment => image)
+      v1 = product.variants.create!(price: 9.99)
+      v2 = product.variants.create!(price: 10.99)
+      v1.images.create!(attachment: image)
+      v2.images.create!(attachment: image)
     end
 
     it "should not display no image available" do
