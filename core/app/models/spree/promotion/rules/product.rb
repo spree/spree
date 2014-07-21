@@ -30,6 +30,10 @@ module Spree
           end
         end
 
+        def actionable?(line_item)
+          product_ids.include? line_item.variant.product_id
+        end
+
         def product_ids_string
           product_ids.join(',')
         end

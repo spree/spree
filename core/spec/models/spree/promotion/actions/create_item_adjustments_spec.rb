@@ -8,6 +8,7 @@ module Spree
         let(:promotion) { create(:promotion) }
         let(:action) { CreateItemAdjustments.new }
         let!(:line_item) { create(:line_item, :order => order) }
+        let(:payload) { { order: order, promotion: promotion } }
 
         before { action.stub(:promotion => promotion) }
 
@@ -19,7 +20,7 @@ module Spree
             end
 
             it "does not create an adjustment when calculator returns 0" do
-              action.perform(order: order)
+              action.perform(payload)
               action.adjustments.should be_empty
             end
           end
@@ -31,29 +32,32 @@ module Spree
             end
 
             it "creates adjustment with item as adjustable" do
-              action.perform(order: order)
+              action.perform(payload)
               action.adjustments.count.should == 1
               line_item.reload.adjustments.should == action.adjustments
             end
 
             it "creates adjustment with self as source" do
-              action.perform(order: order)
+              action.perform(payload)
               expect(line_item.reload.adjustments.first.source).to eq action
             end
 
             it "does not perform twice on the same item" do
-              2.times { action.perform(order: order) }
+              2.times { action.perform(payload) }
               action.adjustments.count.should == 1
             end
 
             context "with products rules" do
-              before do
-                promotion.stub(:product_ids => [line_item.product.id])
-              end
               let!(:second_line_item) { create(:line_item, :order => order) }
+              let(:rule) { double Spree::Promotion::Rules::Product }
+
+              before do
+                promotion.stub(:eligible_rules) { [rule] }
+                rule.stub(:actionable?).and_return(true, false)
+              end
 
               it "does not create an adjustmenty for line_items not in product rule" do
-                action.perform(order: order)
+                action.perform(payload)
                 expect(action.adjustments.count).to eql 1
                 expect(line_item.reload.adjustments).to match_array action.adjustments
                 expect(second_line_item.reload.adjustments).to be_empty
