@@ -49,6 +49,7 @@ module Spree
                 unit = shipment.inventory_units.build
                 unit.line_item = order.line_items.find_by_variant_id(iu[:variant_id])
                 unit.variant_id = iu[:variant_id]
+                unit.quantity = 1
               end
 
               shipment.save!

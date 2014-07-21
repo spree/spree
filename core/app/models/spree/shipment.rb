@@ -268,7 +268,8 @@ module Spree
       self.inventory_units.create(
         state: state,
         variant_id: variant.id,
-        line_item_id: line_item.id
+        line_item_id: line_item.id,
+        quantity: 1
       )
     end
 

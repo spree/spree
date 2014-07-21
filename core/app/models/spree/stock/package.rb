@@ -88,6 +88,7 @@ module Spree
             unit.variant = item.variant
             unit.line_item = item.line_item
             unit.state = item.state.to_s
+            unit.quantity = 1
           end
         end
 
