@@ -1,5 +1,8 @@
 module Spree
   class ReturnAuthorization < Spree::Base
+    class_attribute :return_item_tax_calculator
+    self.return_item_tax_calculator = ReturnAuthorizationTaxCalculator
+
     belongs_to :order, class_name: 'Spree::Order'
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
@@ -74,10 +77,18 @@ module Spree
     end
 
     def amount_due
-      total - refunds.sum(:amount)
+      # rounds down to avoid edge cases where we might try to refund more than is available
+      (total - refunds.sum(:amount)).round(2, :down)
     end
 
     def process_refund
+      return_item_tax_calculator.call return_items.includes(inventory_unit: {line_item: :order}).to_a
+
+      if order.payments.to_a.sum(&:credit_allowed) < amount_due
+        errors.add(:base, :insufficent_funds_available)
+        return false
+      end
+
       # For now type and order of retrieved payments are not specified
       order.payments.completed.each do |payment|
         break if amount_due <= 0
