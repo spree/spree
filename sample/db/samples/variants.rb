@@ -85,7 +85,7 @@ variants = [
   {
     :product => ror_baseball_jersey,
     :option_values => [extra_large, green],
-    :sku => "ROR-00012",
+    :sku => "ROR-00010",
     :cost_price => 17
   },
 ]
