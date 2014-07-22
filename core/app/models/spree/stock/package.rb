@@ -82,14 +82,12 @@ module Spree
         shipment.shipping_rates = shipping_rates
 
         contents.each do |item|
-          item.quantity.times do |n|
-            unit = shipment.inventory_units.build
-            unit.pending = true
-            unit.order = order
-            unit.variant = item.variant
-            unit.line_item = item.line_item
-            unit.state = item.state.to_s
-          end
+          unit = shipment.inventory_units.build
+          unit.pending = true
+          unit.variant = item.variant
+          unit.line_item = item.line_item
+          unit.state = item.state.to_s
+          unit.quantity = item.quantity
         end
 
         shipment

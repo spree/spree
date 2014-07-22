@@ -79,16 +79,13 @@ describe Spree::StockItem do
 
       # Regression test for #3755
       it "processes existing backorders, even with negative stock" do
-        inventory_unit.should_receive(:fill_backorder)
-        inventory_unit_2.should_not_receive(:fill_backorder)
+        expect(inventory_unit).to receive(:fill_backorders).with(1).and_return(1)
         subject.adjust_count_on_hand(1)
-        subject.count_on_hand.should == -1
+        expect(subject.count_on_hand).to eq -1
       end
 
       # Test for #3755
       it "does not process backorders when stock is adjusted negatively" do
-        inventory_unit.should_not_receive(:fill_backorder)
-        inventory_unit_2.should_not_receive(:fill_backorder)
         subject.adjust_count_on_hand(-1)
         subject.count_on_hand.should == -3
       end
@@ -97,11 +94,11 @@ describe Spree::StockItem do
         before { subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
-          inventory_unit.should_receive(:fill_backorder)
-          inventory_unit_2.should_receive(:fill_backorder)
+          expect(inventory_unit).to   receive(:fill_backorders).with(3).and_return(2)
+          expect(inventory_unit_2).to receive(:fill_backorders).with(1).and_return(1)
 
           subject.adjust_count_on_hand(3)
-          subject.count_on_hand.should == 1
+          expect(subject.count_on_hand).to eq 1
         end
       end
     end
@@ -135,8 +132,8 @@ describe Spree::StockItem do
         before { subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
-          inventory_unit.should_receive(:fill_backorder)
-          inventory_unit_2.should_receive(:fill_backorder)
+          expect(inventory_unit).to receive(:fill_backorders).with(3).and_return(1)
+          expect(inventory_unit_2).to receive(:fill_backorders).with(2).and_return(1)
 
           subject.set_count_on_hand(1)
           subject.count_on_hand.should == 1

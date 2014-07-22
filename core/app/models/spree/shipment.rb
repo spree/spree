@@ -167,19 +167,32 @@ module Spree
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest
-      # Grouping by the ID means that we don't have to call out to the association accessor
-      # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |variant_id, units|
-        units.group_by(&:line_item_id).map do |line_item_id, units|
+      counts = inventory_units.group(:line_item_id, :variant_id, :state).sum(:quantity)
 
-          states = {}
-          units.group_by(&:state).each { |state, iu| states[state] = iu.count }
+      # Change counts into a hash of {variant_id => {state => quantity}}
+      states = Hash.new{|h,k| h[k] = {} }
+      line_item_ids = []
+      variant_ids = []
+      counts.each do |(line_item_id, variant_id, state), quantity|
+        states[[line_item_id, variant_id]][state] = quantity
+        line_item_ids << line_item_id
+        variant_ids << variant_id
+      end
 
-          line_item = units.first.line_item
-          variant = units.first.variant
-          ManifestItem.new(line_item, variant, units.length, states)
-        end
-      end.flatten
+      # Eager load a hash of {variant_id => variant}
+      variants = Hash[Variant.unscoped.where(id: variant_ids).map{|v| [v.id, v] }]
+      # And the same of line items
+      line_items = Hash[LineItem.unscoped.where(id: line_item_ids).map{|i| [i.id, i] }]
+
+      # Use states and eager loaded variants to create ManifestItem
+      states.map do |(line_item_id, variant_id), counts|
+        ManifestItem.new(
+          line_items[line_item_id],
+          variants[variant_id],
+          counts.values.sum,
+          counts
+        )
+      end
     end
 
     def process_order_payments
@@ -251,13 +264,15 @@ module Spree
       self.save!
     end
 
-    def set_up_inventory(state, variant, order, line_item)
-      self.inventory_units.create(
-        state: state,
-        variant_id: variant.id,
-        order_id: order.id,
-        line_item_id: line_item.id
-      )
+    def set_up_inventory(state, variant, line_item)
+      unless quantity == 0
+        self.inventory_units.create!(
+          state: state,
+          variant_id: variant.id,
+          line_item_id: line_item.id,
+          quantity: quantity
+        )
+      end
     end
 
     def shipped=(value)
@@ -282,12 +297,10 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location, order)
-      grouped_inventory_units = inventory_units.includes(:line_item).group_by do |iu|
-        [iu.line_item, iu.state_name]
-      end
-
-      grouped_inventory_units.each do |(line_item, state_name), inventory_units|
-        package.add line_item, inventory_units.count, state_name
+      manifest.each do |item|
+        item.states.each do |state, count|
+          package.add item.line_item, count, state.to_sym, item.variant
+        end
       end
       package
     end

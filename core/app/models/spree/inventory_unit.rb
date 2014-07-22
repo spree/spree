@@ -1,10 +1,10 @@
 module Spree
   class InventoryUnit < Spree::Base
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :inventory_units
-    belongs_to :order, class_name: "Spree::Order", inverse_of: :inventory_units
     belongs_to :shipment, class_name: "Spree::Shipment", touch: true, inverse_of: :inventory_units
     belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
     belongs_to :line_item, class_name: "Spree::LineItem", inverse_of: :inventory_units
+    delegate :order, to: :shipment
 
     has_many :return_items, inverse_of: :inventory_unit
 
@@ -13,19 +13,18 @@ module Spree
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
     scope :backordered_per_variant, ->(stock_item) do
-      includes(:shipment, :order)
+      includes(shipment: :order)
         .where("spree_shipments.state != 'canceled'").references(:shipment)
         .where(variant_id: stock_item.variant_id)
         .where('spree_orders.completed_at is not null')
         .backordered.order("spree_orders.completed_at ASC")
     end
 
+    validates :quantity, numericality: { greater_than_or_equal_to: 1, only_integer: true }
+
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
-      event :fill_backorder do
-        transition to: :on_hand, from: :backordered
-      end
-      after_transition on: :fill_backorder, do: :update_order
+      state :backordered
 
       event :ship do
         transition to: :shipped, if: :allow_ship?
@@ -60,6 +59,43 @@ module Spree
     def find_stock_item
       Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
         variant_id: variant_id).first
+    end
+
+    def remove(count)
+      count = quantity if count > quantity
+
+      self.quantity -= count
+      if quantity == 0
+        destroy
+      else
+        save!
+      end
+
+      count
+    end
+
+    # Splits `count` units into a new duplicate (other than quantity) record.
+    # The new record is yielded before saving, and the saved record is
+    # returned.
+    def split!(count)
+      raise ArgumentError if count <= 0
+      count = remove(count)
+      InventoryUnit.create! do |unit|
+        unit.quantity = count
+        unit.variant_id = variant_id
+        unit.line_item_id = line_item_id
+        unit.shipment_id = shipment_id
+        unit.state = state
+        yield unit
+      end
+    end
+
+    def fill_backorders(count)
+      raise "item not backordered" unless backordered?
+      return if count.zero?
+      split!(count) do |unit|
+        unit.state = 'on_hand'
+      end.quantity
     end
 
     # Remove variant default_scope `deleted_at: nil`
