@@ -314,7 +314,11 @@ bash build.sh
 
 Further Documentation
 ------------
-Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com). 
+Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
+
+Roadmap
+------------
+Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.com/b/PQsUfCL0/spree-roadmap).
 
 Contributing
 ------------
