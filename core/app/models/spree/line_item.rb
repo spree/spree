@@ -1,7 +1,8 @@
 module Spree
   class LineItem < Spree::Base
     before_validation :adjust_quantity
-    belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items, touch: true
+    delegate :order, to: :consignment
+    belongs_to :consignment, class_name: "Spree::Consignment", inverse_of: :line_items, touch: true
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 

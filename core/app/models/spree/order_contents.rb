@@ -64,7 +64,8 @@ module Spree
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          consignment = order.consignments.first || order.consignments.create!
+          line_item = consignment.line_items.new(quantity: quantity, variant: variant)
           line_item.target_shipment = shipment
           if currency
             line_item.currency = currency
