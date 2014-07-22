@@ -7,7 +7,8 @@ FactoryGirl.define do
 
     factory :order_with_totals do
       after(:create) do |order|
-        create(:line_item, order: order)
+        consignment = order.consignments.create!
+        create(:line_item, consignment: consignment)
         order.line_items.reload # to ensure order.line_items is accessible after
       end
     end
@@ -21,7 +22,8 @@ FactoryGirl.define do
       end
 
       after(:create) do |order, evaluator|
-        create_list(:line_item, evaluator.line_items_count, order: order)
+        consignment = order.consignments.create!
+        create_list(:line_item, evaluator.line_items_count, consignment: consignment)
         order.line_items.reload
 
         create(:shipment, order: order)

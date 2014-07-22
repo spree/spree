@@ -8,7 +8,8 @@ module Spree
     context "order totals" do
       before do 
         2.times do
-          create(:line_item, :order => order, price: 10)
+          consignment = order.consignments.create!
+          create(:line_item, :consignment => consignment, price: 10)
         end
       end
 
