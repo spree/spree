@@ -366,7 +366,7 @@ describe Spree::ReturnAuthorization do
       total_1 = pre_tax_amount_1 + additional_tax_total_1
       total_2 = pre_tax_amount_2 + additional_tax_total_2
       total_3 = pre_tax_amount_3 + additional_tax_total_3
-      subject.should eq total_1 + total_2 + total_3
+      subject.round(2).should eq total_1 + total_2 + total_3
     end
   end
 
