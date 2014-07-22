@@ -59,7 +59,7 @@ module Spree
         if @new.save
           flash[:success] = Spree.t('notice_messages.product_cloned')
         else
-          flash[:success] = Spree.t('notice_messages.product_not_cloned')
+          flash[:error] = Spree.t('notice_messages.product_not_cloned')
         end
 
         redirect_to edit_admin_product_url(@new)
