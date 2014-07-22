@@ -21,6 +21,7 @@ module Spree
         round_to_two_places(line_items_total * rate.amount)
       end
     end
+    alias_method :compute_order, :compute_consignment
 
     # When it comes to computing shipments or line items: same same.
     def compute_shipment_or_line_item(item)
