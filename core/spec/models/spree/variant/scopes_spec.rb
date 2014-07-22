@@ -4,12 +4,13 @@ describe "Variant scopes" do
   let!(:product) { create(:product) }
   let!(:variant_1) { create(:variant, :product => product) }
   let!(:variant_2) { create(:variant, :product => product) }
+  let!(:consignment) { Spree::Order.create!.consignments.create! }
 
   it ".descend_by_popularity" do
     # Requires a product with at least two variants, where one has a higher number of
     # orders than the other
     Spree::LineItem.delete_all # FIXME leaky database - too many line_items
-    create(:line_item, :variant => variant_1)
+    create(:line_item, :variant => variant_1, consignment: consignment)
     Spree::Variant.descend_by_popularity.first.should == variant_1
   end
 
