@@ -8,16 +8,17 @@ describe Spree::Calculator::DefaultTax do
   let(:included_in_price) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
   let!(:order) { create(:order) }
-  let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
+  let!(:consignment) { order.consignments.new }
+  let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category, :consignment => consignment) }
   let!(:shipment) { create(:shipment, :cost => 15) }
 
   context "#compute" do
-    context "when given an order" do
+    context "when given an consignment" do
       let!(:line_item_1) { line_item }
-      let!(:line_item_2) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
+      let!(:line_item_2) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category, :consignment => consignment) }
 
       before do
-        order.stub :line_items => [line_item_1, line_item_2]
+        consignment.stub :line_items => [line_item_1, line_item_2]
       end
 
       context "when no line items match the tax category" do
@@ -27,7 +28,7 @@ describe Spree::Calculator::DefaultTax do
         end
 
         it "should be 0" do
-          calculator.compute(order).should == 0
+          calculator.compute(consignment).should == 0
         end
       end
 
@@ -38,7 +39,7 @@ describe Spree::Calculator::DefaultTax do
         end
 
         it "should be equal to the item total * rate" do
-          calculator.compute(order).should == 1.5
+          calculator.compute(consignment).should == 1.5
         end
 
         context "correctly rounds to within two decimal places" do
@@ -49,7 +50,7 @@ describe Spree::Calculator::DefaultTax do
 
           specify do
             # Amount is 0.51665, which will be rounded to...
-            calculator.compute(order).should == 0.52
+            calculator.compute(consignment).should == 0.52
           end
 
         end
@@ -57,7 +58,7 @@ describe Spree::Calculator::DefaultTax do
 
       context "when more than one item matches the tax category" do
         it "should be equal to the sum of the item totals * rate" do
-          calculator.compute(order).should == 3
+          calculator.compute(consignment).should == 3
         end
       end
 
@@ -69,7 +70,7 @@ describe Spree::Calculator::DefaultTax do
           # ex pre-tax = $57.14
           # 57.14 + %5 = 59.997 (or "close enough" to $60)
           # 60 - 57.14 = $2.86
-          expect(calculator.compute(order).to_f).to eql 2.86
+          expect(calculator.compute(consignment).to_f).to eql 2.86
         end
       end
     end
