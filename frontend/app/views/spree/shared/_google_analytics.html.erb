@@ -6,6 +6,7 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
     ga('create', '<%= tracker.analytics_id %>','<%= current_store.url.sub(/(^www.)?/,'') %>');
+    ga('require', 'displayfeatures');
     ga('send', 'pageview');
 
     <% if @order && order_just_completed?(@order) %>
