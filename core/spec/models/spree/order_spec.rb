@@ -657,4 +657,14 @@ describe Spree::Order do
       expect(order.quantity).to eq 5
     end
   end
+
+  describe "#create_proposed_shipments" do
+    it "assigns the coordinator returned shipments to its shipments" do
+      shipment = build(:shipment)
+      Spree::Stock::Coordinator.any_instance.stub(:shipments).and_return([shipment])
+      subject.create_proposed_shipments
+      expect(subject.shipments).to eq [shipment]
+    end
+
+  end
 end

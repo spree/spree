@@ -1,10 +1,10 @@
 module Spree
   module Stock
     class Prioritizer
-      attr_reader :packages, :order
+      attr_reader :packages, :inventory_units
 
-      def initialize(order, packages, adjuster_class=Adjuster)
-        @order = order
+      def initialize(inventory_units, packages, adjuster_class=Adjuster)
+        @inventory_units = inventory_units
         @packages = packages
         @adjuster_class = adjuster_class
       end
@@ -18,8 +18,8 @@ module Spree
 
       private
       def adjust_packages
-        order.line_items.each do |line_item|
-          adjuster = @adjuster_class.new(line_item.variant, line_item.quantity, :on_hand)
+        inventory_units.each do |inventory_unit|
+          adjuster = @adjuster_class.new(inventory_unit, :on_hand)
 
           visit_packages(adjuster)
 
@@ -30,8 +30,8 @@ module Spree
 
       def visit_packages(adjuster)
         packages.each do |package|
-          item = package.find_item adjuster.variant, adjuster.status
-          adjuster.adjust(item) if item
+          item = package.find_item adjuster.inventory_unit, adjuster.status
+          adjuster.adjust(package) if item
         end
       end
 

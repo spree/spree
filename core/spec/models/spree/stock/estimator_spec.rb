@@ -4,8 +4,9 @@ module Spree
   module Stock
     describe Estimator do
       let!(:shipping_method) { create(:shipping_method) }
-      let(:package) { build(:stock_package_fulfilled) }
-      let(:order) { package.order }
+      let(:package) { build(:stock_package, contents: inventory_units.map { |i| ContentItem.new(inventory_unit) }) }
+      let(:order) { build(:order_with_line_items) }
+      let(:inventory_units) { order.inventory_units }
 
       subject { Estimator.new(order) }
 

@@ -15,7 +15,7 @@ module Spree
 
     private
     def total(content_items)
-      content_items.sum { |item| item.quantity * item.variant.price }
+      content_items.map(&:amount).sum
     end
   end
 end

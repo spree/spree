@@ -489,13 +489,7 @@ module Spree
     def create_proposed_shipments
       adjustments.shipping.delete_all
       shipments.destroy_all
-
-      packages = Spree::Stock::Coordinator.new(self).packages
-      packages.each do |package|
-        shipments << package.to_shipment
-      end
-
-      shipments
+      self.shipments = Spree::Stock::Coordinator.new(self).shipments
     end
 
     def apply_free_shipping_promotions
@@ -666,5 +660,6 @@ module Spree
           break random_token unless self.class.exists?(guest_token: random_token)
         end
       end
+
   end
 end

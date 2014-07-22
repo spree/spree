@@ -3,25 +3,24 @@
 module Spree
   module Stock
     class Adjuster
-      attr_accessor :variant, :need, :status
+      attr_accessor :inventory_unit, :status, :fulfilled
 
-      def initialize(variant, quantity, status)
-        @variant = variant
-        @need = quantity
+      def initialize(inventory_unit, status)
+        @inventory_unit = inventory_unit
         @status = status
+        @fulfilled = false
       end
 
-      def adjust(item)
-        if item.quantity >= need
-          item.quantity = need
-          @need = 0
-        elsif item.quantity < need
-          @need -= item.quantity
+      def adjust(package)
+        if fulfilled?
+          package.remove(inventory_unit)
+        else
+          self.fulfilled = true
         end
       end
 
       def fulfilled?
-        @need == 0
+        fulfilled
       end
     end
   end
