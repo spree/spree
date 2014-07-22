@@ -14,3 +14,9 @@
   relying on Spree's default behaviour. Fixes #5036
 
     Gregor MacDougall
+
+* Refactored Stock::Coordinator to optionally accept a list of inventory units 
+  for an order so that shipments can be created for an order that do not comprise
+  only of the order's line items.
+
+     Andrew Thal

@@ -206,7 +206,7 @@ describe Spree::Shipment do
         end
 
         it 'should use symbols for states when adding contents to package' do
-          shipment.stub_chain(:inventory_units, includes: inventory_units)
+          shipment.stub(:inventory_units) { inventory_units }
           package = shipment.to_package
           package.on_hand.count.should eq 1
           package.backordered.count.should eq 1

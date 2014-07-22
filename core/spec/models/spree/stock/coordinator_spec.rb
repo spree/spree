@@ -16,6 +16,23 @@ module Spree
         end
       end
 
+      describe "#shipments" do
+        let(:packages) { [build(:stock_package_fulfilled), build(:stock_package_fulfilled)] }
+
+        before { subject.stub(:packages).and_return(packages) }
+
+        it "turns packages into shipments" do
+          shipments = subject.shipments
+          expect(shipments.count).to eq packages.count
+          shipments.each { |shipment| expect(shipment).to be_a Shipment }
+        end
+
+        it "puts the order's ship address on the shipments" do
+          shipments = subject.shipments
+          shipments.each { |shipment| expect(shipment.address).to eq order.ship_address }
+        end
+      end
+
       context "build packages" do
         it "builds a package for every stock location" do
           subject.packages.count == StockLocation.count

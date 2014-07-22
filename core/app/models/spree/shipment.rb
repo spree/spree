@@ -281,13 +281,9 @@ module Spree
     end
 
     def to_package
-      package = Stock::Package.new(stock_location, order)
-      grouped_inventory_units = inventory_units.includes(:line_item).group_by do |iu|
-        [iu.line_item, iu.state_name]
-      end
-
-      grouped_inventory_units.each do |(line_item, state_name), inventory_units|
-        package.add line_item, inventory_units.count, state_name
+      package = Stock::Package.new(stock_location)
+      inventory_units.group_by(&:state).each do |state, state_inventory_units|
+        package.add_multiple state_inventory_units, state.to_sym
       end
       package
     end

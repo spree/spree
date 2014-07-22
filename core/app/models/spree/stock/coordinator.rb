@@ -1,10 +1,17 @@
 module Spree
   module Stock
     class Coordinator
-      attr_reader :order
+      attr_reader :order, :inventory_units
 
-      def initialize(order)
+      def initialize(order, inventory_units = nil)
         @order = order
+        @inventory_units = inventory_units || InventoryUnitBuilder.new(order).units
+      end
+
+      def shipments
+        packages.map do |package|
+          package.to_shipment.tap { |s| s.address = order.ship_address }
+        end
       end
 
       def packages
@@ -24,9 +31,9 @@ module Spree
       # Returns an array of Package instances
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|
-          next unless stock_location.stock_items.where(:variant_id => order.line_items.pluck(:variant_id)).exists?
+          next unless stock_location.stock_items.where(:variant_id => inventory_units.map(&:variant_id)).exists?
 
-          packer = build_packer(stock_location, order)
+          packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
         end
         packages
@@ -34,7 +41,7 @@ module Spree
 
       private
       def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(order, packages)
+        prioritizer = Prioritizer.new(inventory_units, packages)
         prioritizer.prioritized_packages
       end
 
@@ -46,8 +53,8 @@ module Spree
         packages
       end
 
-      def build_packer(stock_location, order)
-        Packer.new(stock_location, order, splitters(stock_location))
+      def build_packer(stock_location, inventory_units)
+        Packer.new(stock_location, inventory_units, splitters(stock_location))
       end
 
       def splitters(stock_location)
