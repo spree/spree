@@ -384,7 +384,7 @@ module Spree
         it "can empty an order" do
           order_with_line_items.adjustments.count.should be == 1
           api_put :empty, :id => order_with_line_items.to_param
-          response.status.should == 200
+          response.status.should == 204
           order_with_line_items.reload
           order_with_line_items.line_items.should be_empty
           order_with_line_items.adjustments.should be_empty
