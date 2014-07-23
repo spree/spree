@@ -42,7 +42,7 @@ describe "Cart", inaccessible: true do
     expect(page).to have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      page.should have_content("EMPTY")
+      page.should have_content("Empty")
     end
   end
 
@@ -57,7 +57,7 @@ describe "Cart", inaccessible: true do
     page.should have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      page.should have_content("EMPTY")
+      page.should have_content("Empty")
     end
   end
 
