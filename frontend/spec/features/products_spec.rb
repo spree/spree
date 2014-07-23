@@ -50,7 +50,7 @@ describe "Visiting Products", inaccessible: true do
         click_button "Add To Cart"
         click_link "Home"
         within(".cart-info") do
-          page.should have_content("РУБ19.99")
+          page.should have_content("руб19.99")
         end
       end
 
