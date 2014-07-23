@@ -92,7 +92,11 @@ Spree::Core::Engine.add_routes do
     resources :taxons, only: [:index]
 
     resources :inventory_units, only: [:show, :update]
-    resources :users
+
+    resources :users do
+      resources :credit_cards, only: [:index]
+    end
+
     resources :properties
     resources :stock_locations do
       resources :stock_movements
