@@ -76,6 +76,9 @@ module Spree
       !!eligible_rules(promotable, {})
     end
 
+    # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
+    # if there are no such rules, an empty array is returned
+    # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
       return [] if rules.none?
