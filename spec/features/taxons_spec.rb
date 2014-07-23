@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "viewing products" do
+describe "viewing products", inaccessible: true do
   let!(:taxonomy) { create(:taxonomy, :name => "Category") }
   let!(:super_clothing) { taxonomy.root.children.create(:name => "Super Clothing") }
   let!(:t_shirts) { super_clothing.children.create(:name => "T-Shirts") }
