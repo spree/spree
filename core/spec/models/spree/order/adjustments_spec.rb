@@ -13,7 +13,8 @@ describe Spree::Order do
   # Regression test for #2191
   context "when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero" do
     let!(:persisted_order) { create(:order) }
-    let!(:line_item) { create(:line_item) }
+    let!(:consignment) { persisted_order.consignments.create! }
+    let!(:line_item) { create(:line_item, consignment: consignment) }
     let!(:shipping_method) do
       sm = create(:shipping_method)
       sm.calculator.preferred_amount = 10
