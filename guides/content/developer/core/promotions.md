@@ -115,7 +115,15 @@ To register a new rule with Spree, first define a class that inherits from `Spre
 
 ```ruby
 class MyPromotionRule < Spree::PromotionRule
+  def applicable?(promotable)
+    promotable.is_a?(Spree::Order)
+  end
+
   def eligible?(order)
+    ...
+  end
+
+  def actionable?(line_item)
     ...
   end
 end
@@ -123,7 +131,12 @@ end
 
 The `eligible?` method should then return `true` or `false` to indicate if the promotion should be eligible for an order. You can retrieve promotion information by calling `promotion`.
 
-Then register it using this code inside `config/initializers/spree.rb`:
+If your promotion supports some giving discounts on some line items, but not others, you should define `actionable?` to return true if the specified line item meets the critera for promotion. It should return `true` or `false` to indicate if this line item can have a line item adjustment carried out on it.
+
+For example, if you are giving a promotion on specific products only, `eligible?` should return true if the order contains one of the products eligible for promotion, and `actionable?` should return true when the line item specified is one of the specific products for this promotion.
+
+
+You can then register the promotion using this code inside `config/initializers/spree.rb`:
 
 ```ruby
 Rails.application.config.spree.promotions.rules << MyPromotionRule
