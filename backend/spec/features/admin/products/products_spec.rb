@@ -331,6 +331,7 @@ describe "Products" do
         visit spree.admin_products_path
         accept_alert do
           click_icon :trash
+          wait_for_ajax
         end
         # This will show our deleted product
         check "Show Deleted"
