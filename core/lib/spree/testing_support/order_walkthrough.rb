@@ -21,7 +21,8 @@ class OrderWalkthrough
     end
 
     order = Spree::Order.create!(:email => "spree@example.com")
-    add_line_item!(order)
+    consignment = order.consignments.create!
+    add_line_item!(consignment)
     order.next!
 
     end_state_position = states.index(state.to_sym)
@@ -34,9 +35,9 @@ class OrderWalkthrough
 
   private
 
-  def self.add_line_item!(order)
-    FactoryGirl.create(:line_item, order: order)
-    order.reload
+  def self.add_line_item!(consignment)
+    FactoryGirl.create(:line_item, consignment: consignment)
+    consignment.reload
   end
 
   def self.address(order)

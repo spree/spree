@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::Calculator do
 
   let(:order) { create(:order) }
-  let!(:line_item) { create(:line_item, :order => order) }
+  let(:consignment) { order.consignments.create! }
+  let!(:line_item) { create(:line_item, :consignment => consignment) }
   let(:shipment) { create(:shipment, :order => order, :stock_location => create(:stock_location_with_items)) }
 
   context "with computable" do

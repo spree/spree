@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrderInventory do
   let(:order) { create :completed_order_with_totals }
+  let(:consignment) { order.consignments.create! }
   let(:line_item) { order.line_items.first }
 
   subject { described_class.new(order, line_item) }
@@ -208,7 +209,7 @@ describe Spree::OrderInventory do
       end
 
       context "inventory unit line item and variant points to different products" do
-        let(:different_line_item) { create(:line_item) }
+        let(:different_line_item) { create(:line_item, consignment: consignment) }
 
         let!(:different_inventory) do
           shipment.set_up_inventory("on_hand", variant, order, different_line_item)

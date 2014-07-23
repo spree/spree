@@ -30,13 +30,16 @@ module Spree
     belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address'
     alias_attribute :billing_address, :bill_address
 
+    has_many :consignments
+    has_many :line_items, through: :consignments
+
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
     alias_attribute :ship_total, :shipment_total
 
     has_many :state_changes, as: :stateful
-    has_many :line_items, -> { order('created_at ASC') }, dependent: :destroy, inverse_of: :order
+
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy
     has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
@@ -116,6 +119,10 @@ module Spree
     def all_adjustments
       Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
         order_id: self.id)
+    end
+
+    def multi_consignment?
+      consignments.count > 1
     end
 
     # For compatiblity with Calculator::PriceSack

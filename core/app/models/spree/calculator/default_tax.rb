@@ -6,12 +6,11 @@ module Spree
       Spree.t(:default_tax)
     end
 
-    # Default tax calculator still needs to support orders for legacy reasons
+    # Default tax calculator still needs to support orders (now consignments) for legacy reasons
     # Orders created before Spree 2.1 had tax adjustments applied to the order, as a whole.
     # Orders created with Spree 2.2 and after, have them applied to the line items individually.
-    def compute_order(order)
-
-      matched_line_items = order.line_items.select do |line_item|
+    def compute_consignment(consignment)
+      matched_line_items = consignment.line_items.select do |line_item|
         line_item.tax_category == rate.tax_category
       end
 
@@ -22,6 +21,7 @@ module Spree
         round_to_two_places(line_items_total * rate.amount)
       end
     end
+    alias_method :compute_order, :compute_consignment
 
     # When it comes to computing shipments or line items: same same.
     def compute_shipment_or_line_item(item)

@@ -26,7 +26,11 @@ module Spree
 
     def update_cart(params)
       if order.update_attributes(params)
-        order.line_items = order.line_items.select {|li| li.quantity > 0 }
+        order.consignments.each do |consignment|
+          consignment.line_items = consignment.line_items.select {|li| li.quantity > 0 }
+          consignment.save!
+        end
+
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
         # promotion rules would not be triggered.
@@ -64,7 +68,8 @@ module Spree
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          consignment = order.consignments.first || order.consignments.create!
+          line_item = consignment.line_items.new(quantity: quantity, variant: variant)
           line_item.target_shipment = shipment
           if currency
             line_item.currency = currency

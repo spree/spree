@@ -2,7 +2,8 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order do
-  let(:order) { Spree::Order.new }
+  let(:order) { FactoryGirl.create(:order) }
+  let(:consignment) { order.consignments.create! }
 
   def assert_state_changed(order, from, to)
     state_change_exists = order.state_changes.where(:previous_state => from, :next_state => to).exists?
@@ -90,7 +91,7 @@ describe Spree::Order do
     end
 
     it "transitions to address" do
-      order.line_items << FactoryGirl.create(:line_item)
+      FactoryGirl.create(:line_item, consignment: consignment)
       order.email = "user@example.com"
       order.next!
       assert_state_changed(order, 'cart', 'address')
@@ -113,8 +114,7 @@ describe Spree::Order do
 
       it "updates totals" do
         order.stub(:ensure_available_shipping_rates => true)
-        line_item = FactoryGirl.create(:line_item, :price => 10, :adjustment_total => 10)
-        order.line_items << line_item
+        line_item = FactoryGirl.create(:line_item, :price => 10, :adjustment_total => 10, consignment: consignment)
         tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
         Spree::TaxRate.stub :match => [tax_rate]
         FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate)
@@ -136,8 +136,7 @@ describe Spree::Order do
       context "cannot transition to delivery" do
         context "with an existing shipment" do
           before do
-            line_item = FactoryGirl.create(:line_item, :price => 10)
-            order.line_items << line_item
+            FactoryGirl.create(:line_item, :price => 10, consignment: consignment)
           end
 
           context "if there are no shipping rates for any shipment" do
