@@ -324,46 +324,46 @@ describe Spree::Promotion do
 
     subject { promotion.line_item_actionable? order, line_item }
 
-    context 'when there are no rules' do
-      context 'when the order is eligible for promotion' do
+    context 'when the order is eligible for promotion' do
+      context 'when there are no rules' do
         it { should be }
       end
+
+      context 'when there are rules' do
+        context 'when the match policy is all' do
+          before { promotion.match_policy = 'all' }
+
+          context 'when all rules allow action on the line item' do
+            let(:rules) { [true_rule] }
+            it { should be}
+          end
+
+          context 'when at least one rule does not allow action on the line item' do
+            let(:rules) { [true_rule, false_rule] }
+            it { should_not be}
+          end
+        end
+
+        context 'when the match policy is any' do
+          before { promotion.match_policy = 'any' }
+
+          context 'when at least one rule allows action on the line item' do
+            let(:rules) { [true_rule, false_rule] }
+            it { should be }
+          end
+
+          context 'when no rules allow action on the line item' do
+            let(:rules) { [false_rule] }
+            it { should_not be}
+          end
+        end
+      end
+    end
 
       context 'when the order is not eligible for the promotion' do
         before { promotion.starts_at = Time.current + 2.days }
         it { should_not be }
       end
-    end
-
-    context 'when therea are rules' do
-      context 'when the match policy is all' do
-        before { promotion.match_policy = 'all' }
-
-        context 'when all rules allow action on the line item' do
-          let(:rules) { [true_rule] }
-          it { should be}
-        end
-
-        context 'when at least one rule does not allow action on the line item' do
-          let(:rules) { [true_rule, false_rule] }
-          it { should_not be}
-        end
-      end
-
-      context 'when the match policy is any' do
-        before { promotion.match_policy = 'any' }
-
-        context 'when at least one rule allows action on the line item' do
-          let(:rules) { [true_rule, false_rule] }
-          it { should be }
-        end
-
-        context 'when no rules allow action on the line item' do
-          let(:rules) { [false_rule] }
-          it { should_not be}
-        end
-      end
-    end
   end
 
   # regression for #4059

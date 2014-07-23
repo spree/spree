@@ -111,13 +111,17 @@ module Spree
     end
 
     def line_item_actionable?(order, line_item)
-      rules = eligible_rules(order)
-      if rules.blank?
-        eligible? order
-      else
-        rules.send(match_all? ? :all? : :any?) do |rule|
-          rule.actionable? line_item
+      if eligible? order
+        rules = eligible_rules(order)
+        if rules.blank?
+          true
+        else
+          rules.send(match_all? ? :all? : :any?) do |rule|
+            rule.actionable? line_item
+          end
         end
+      else
+        false
       end
     end
 
