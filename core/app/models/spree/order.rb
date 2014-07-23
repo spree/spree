@@ -119,6 +119,10 @@ module Spree
         order_id: self.id)
     end
 
+    def multi_consignment?
+      consignments.count > 1
+    end
+
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
