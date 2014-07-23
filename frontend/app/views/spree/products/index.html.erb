@@ -1,11 +1,13 @@
-<% content_for :sidebar do %>
-  <div data-hook="homepage_sidebar_navigation">
-    <% if "spree/products" == params[:controller] && @taxon %>
-      <%= render :partial => 'spree/shared/filters' %>
-    <% else %>
-      <%= render :partial => 'spree/shared/taxonomies' %>
-    <% end %>
-  </div>
+<% if "spree/products" == params[:controller] && @taxon || !@taxonomies.empty? %>
+  <% content_for :sidebar do %>
+    <div data-hook="homepage_sidebar_navigation">
+      <% if "spree/products" == params[:controller] && @taxon %>
+        <%= render :partial => 'spree/shared/filters' %>
+      <% else %>
+        <%= render :partial => 'spree/shared/taxonomies' %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>
 
 
@@ -22,6 +24,8 @@
 <% else %>
 
   <div data-hook="homepage_products">
-    <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
+    <% cache(cache_key_for_products) do %>
+      <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
+    <% end %>
   </div>
 <% end %>

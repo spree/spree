@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "viewing products", inaccessible: true do
+describe "viewing products" do
   let!(:taxonomy) { create(:taxonomy, :name => "Category") }
   let!(:super_clothing) { taxonomy.root.children.create(:name => "Super Clothing") }
   let!(:t_shirts) { super_clothing.children.create(:name => "T-Shirts") }
@@ -21,6 +21,18 @@ describe "viewing products", inaccessible: true do
     visit '/t/category/super-clothing?keywords=shirt'
     page.should have_content("Superman T-Shirt")
     page.should_not have_selector("div[data-hook='taxon_children']")
+  end
+
+  describe 'breadcrumbs' do
+    before do
+      visit '/t/category/super-clothing/t-shirts'
+    end
+    it "should render breadcrumbs" do
+      page.find("#breadcrumbs").should have_link("T-Shirts")
+    end
+    it "should mark last breadcrumb as active" do
+      page.find('#breadcrumbs li.active').should have_link("T-Shirts")
+    end
   end
 
   describe 'meta tags and title' do
@@ -71,8 +83,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit brand Ruby on Rails" do
       within(:css, '#taxonomies') { click_link "Ruby on Rails" }
 
-      page.all('ul.product-listing li').size.should == 7
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 7
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       array = ["Ruby on Rails Bag",
        "Ruby on Rails Baseball Jersey",
@@ -87,8 +99,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit brand Ruby" do
       within(:css, '#taxonomies') { click_link "Ruby" }
 
-      page.all('ul.product-listing li').size.should == 1
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 1
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby Baseball Jersey"]
     end
@@ -96,8 +108,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit brand Apache" do
       within(:css, '#taxonomies') { click_link "Apache" }
 
-      page.all('ul.product-listing li').size.should == 1
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 1
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Apache Baseball Jersey"]
     end
@@ -105,8 +117,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit category Clothing" do
       click_link "Clothing"
 
-      page.all('ul.product-listing li').size.should == 5
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 5
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Apache Baseball Jersey",
      "Ruby Baseball Jersey",
@@ -118,8 +130,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit category Mugs" do
       click_link "Mugs"
 
-      page.all('ul.product-listing li').size.should == 2
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 2
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby on Rails Mug", "Ruby on Rails Stein"]
     end
@@ -127,8 +139,8 @@ describe "viewing products", inaccessible: true do
     it "should be able to visit category Bags" do
       click_link "Bags"
 
-      page.all('ul.product-listing li').size.should == 2
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      page.all('#products .product-list-item').size.should == 2
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       tmp.sort!.should == ["Ruby on Rails Bag", "Ruby on Rails Tote"]
     end

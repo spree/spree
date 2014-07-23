@@ -1,6 +1,6 @@
 <h3><%= Spree.t(:order_summary) %></h3>
 
-<table data-hook="order_summary">
+<table class="table" data-hook="order_summary">
   <tbody>
     <tr data-hook="item_total">
       <td><strong><%= Spree.t(:item_total) %>:</strong></td>
@@ -59,7 +59,7 @@
 
     <tr data-hook="order_total">
       <td><strong><%= Spree.t(:order_total) %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= order.display_total.to_html %></span></strong></td>
+      <td><strong><span id='summary-order-total' class="lead text-primary"><%= order.display_total.to_html %></span></strong></td>
     </tr>
   </tbody>
 </table>
