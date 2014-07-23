@@ -6,9 +6,8 @@ $ ->
     thumbnails.find('a').on 'click', (event) ->
       ($ '#main-image').data 'selectedThumb', ($ event.currentTarget).attr('href')
       ($ '#main-image').data 'selectedThumbId', ($ event.currentTarget).parent().attr('id')
-      ($ this).mouseout ->
-        thumbnails.find('li').removeClass 'selected'
-        ($ event.currentTarget).parent('li').addClass 'selected'
+      thumbnails.find('li').removeClass 'selected'
+      ($ event.currentTarget).parent('li').addClass 'selected'
       false
 
     thumbnails.find('li').on 'mouseenter', (event) ->

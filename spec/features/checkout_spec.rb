@@ -449,7 +449,10 @@ describe "Checkout", inaccessible: true do
 
     context 'as a User' do
       before do
-        Spree::CheckoutController.any_instance.stub(:try_spree_current_user => create(:user))
+        user = create(:user)
+        Spree::Order.last.update_column :user_id, user.id
+        Spree::OrdersController.any_instance.stub(try_spree_current_user: user)
+        Spree::CheckoutController.any_instance.stub(try_spree_current_user: user)
         click_button "Checkout"
       end
 
