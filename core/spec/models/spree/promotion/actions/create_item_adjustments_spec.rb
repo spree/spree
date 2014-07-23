@@ -50,7 +50,7 @@ module Spree
               before do
                 promotion.stub(:product_ids => [line_item.product.id])
               end
-              let!(:second_line_item) { create(:line_item, :order => order) }
+              let!(:second_line_item) { create(:line_item, :consignment => order.consignments.create!) }
 
               it "does not create an adjustmenty for line_items not in product rule" do
                 action.perform(order: order)
