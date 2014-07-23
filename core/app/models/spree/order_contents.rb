@@ -26,7 +26,11 @@ module Spree
 
     def update_cart(params)
       if order.update_attributes(params)
-        order.line_items = order.line_items.select {|li| li.quantity > 0 }
+        order.consignments.each do |consignment|
+          consignment.line_items = consignment.line_items.select {|li| li.quantity > 0 }
+          consignment.save!
+        end
+
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
         # promotion rules would not be triggered.
