@@ -14,44 +14,67 @@ module Spree
           shipping_method.zones.first.members.create(:zoneable => order.ship_address.country)
           ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(true)
           ShippingMethod.any_instance.stub_chain(:calculator, :compute).and_return(4.00)
-          ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => "USD"})
+          ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => currency})
           ShippingMethod.any_instance.stub_chain(:calculator, :marked_for_destruction?)
 
           package.stub(:shipping_methods => [shipping_method])
         end
 
-        it "returns shipping rates from a shipping method if the order's ship address is in the same zone" do
-          shipping_rates = subject.shipping_rates(package)
-          shipping_rates.first.cost.should eq 4.00
+        let(:currency) { "USD" }
+
+        shared_examples_for "shipping rate matches" do
+          it "returns shipping rates" do
+            shipping_rates = subject.shipping_rates(package)
+            shipping_rates.first.cost.should eq 4.00
+          end
         end
 
-        it "does not return shipping rates from a shipping method if the order's ship address is in a different zone" do
-          shipping_method.zones.each{|z| z.members.delete_all}
-          shipping_rates = subject.shipping_rates(package)
-          shipping_rates.should == []
+        shared_examples_for "shipping rate doesn't match" do
+          it "does not return shipping rates" do
+            shipping_rates = subject.shipping_rates(package)
+            shipping_rates.should == []
+          end
         end
 
-        it "does not return shipping rates from a shipping method if the calculator is not available for that order" do
-          ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(false)
-          shipping_rates = subject.shipping_rates(package)
-          shipping_rates.should == []
+        context "when the order's ship address is in the same zone" do
+          it_should_behave_like "shipping rate matches"
         end
 
-        it "returns shipping rates from a shipping method if the currency matches the order's currency" do
-          shipping_rates = subject.shipping_rates(package)
-          shipping_rates.first.cost.should eq 4.00
+        context "when the order's ship address is in a different zone" do
+          before { shipping_method.zones.each{|z| z.members.delete_all} }
+          it_should_behave_like "shipping rate doesn't match"
         end
 
-        it "does not return shipping rates from a shipping method if the currency is different than the order's currency" do
-          order.currency = "GBP"
-          shipping_rates = subject.shipping_rates(package)
-          shipping_rates.should == []
+        context "when the calculator is not available for that order" do
+          before { ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(false) }
+          it_should_behave_like "shipping rate doesn't match"
         end
 
-        it "does not return shipping rates if the shipping method's calculator raises an exception" do
-          ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
-          subject.should_receive(:log_calculator_exception)
-          lambda { subject.shipping_rates(package) }.should_not raise_error
+        context "when the currency is nil" do
+          let(:currency) { nil }
+          it_should_behave_like "shipping rate matches"
+        end
+
+        context "when the currency is an empty string" do
+          let(:currency) { "" }
+          it_should_behave_like "shipping rate matches"
+        end
+
+        context "when the current matches the order's currency" do
+          it_should_behave_like "shipping rate matches"
+        end
+
+        context "if the currency is different than the order's currency" do
+          let(:currency) { "GBP" }
+          it_should_behave_like "shipping rate doesn't match"
+        end
+
+        context "when the shipping method's calculator raises an exception" do
+          before do
+            ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
+            subject.should_receive(:log_calculator_exception)
+          end
+          it_should_behave_like "shipping rate doesn't match"
         end
 
         it "sorts shipping rates by cost" do

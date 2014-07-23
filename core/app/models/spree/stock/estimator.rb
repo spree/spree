@@ -54,7 +54,7 @@ module Spree
           begin
             ship_method.include?(order.ship_address) &&
             calculator.available?(package) &&
-            (calculator.preferences[:currency].nil? ||
+            (calculator.preferences[:currency].blank? ||
              calculator.preferences[:currency] == currency)
           rescue Exception => exception
             log_calculator_exception(ship_method, exception)
