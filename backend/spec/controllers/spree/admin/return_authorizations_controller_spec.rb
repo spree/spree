@@ -171,14 +171,18 @@ describe Spree::Admin::ReturnAuthorizationsController do
         end
       end
 
-      context 'with existing items' do
-        let!(:return_item) do
-          create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
+      context 'with existing completed items' do
+        let!(:completed_return_item) do
+          create(:return_item, {
+            return_authorization: return_authorization,
+            inventory_unit: inventory_unit_1,
+            reception_status: 'received',
+          })
         end
 
         it 'does not create new items' do
           expect { subject }.to_not change { Spree::ReturnItem.count }
-          expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["has already been taken"]
+          expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["#{inventory_unit_1.id} has already been taken by return item #{completed_return_item.id}"]
         end
       end
     end
