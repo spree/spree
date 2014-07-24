@@ -273,7 +273,8 @@ en:
           attributes:
             reimbursement:
               cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
-
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
 
   devise:
     confirmations:

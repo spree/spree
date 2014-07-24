@@ -449,4 +449,57 @@ describe Spree::ReturnItem do
       it { expect(subject).to be_nil }
     end
   end
+
+  describe 'inventory_unit uniqueness' do
+    let!(:old_return_item) { create(:return_item, reception_status: old_reception_status) }
+    let(:old_reception_status) { 'awaiting' }
+
+    subject do
+      build(:return_item, {
+        return_authorization: old_return_item.return_authorization,
+        inventory_unit: old_return_item.inventory_unit,
+      })
+    end
+
+    context 'with other awaiting return items exist for the same inventory unit' do
+      let(:old_reception_status) { 'awaiting' }
+
+      it 'cancels the others' do
+        expect {
+          subject.save!
+        }.to change { old_return_item.reload.reception_status }.from('awaiting').to('cancelled')
+      end
+
+      it 'does not cancel itself' do
+        subject.save!
+        expect(subject).to be_awaiting
+      end
+    end
+
+    context 'with other cancelled return items exist for the same inventory unit' do
+      let(:old_reception_status) { 'cancelled' }
+
+      it 'succeeds' do
+        expect { subject.save! }.to_not raise_error
+      end
+    end
+
+    context 'with other received return items exist for the same inventory unit' do
+      let(:old_reception_status) { 'received' }
+
+      it 'is invalid' do
+        expect(subject).to_not be_valid
+        expect(subject.errors.to_a).to eq ["Inventory unit #{subject.inventory_unit_id} has already been taken by return item #{old_return_item.id}"]
+      end
+    end
+
+    context 'with other given_to_customer return items exist for the same inventory unit' do
+      let(:old_reception_status) { 'given_to_customer' }
+
+      it 'is invalid' do
+        expect(subject).to_not be_valid
+        expect(subject.errors.to_a).to eq ["Inventory unit #{subject.inventory_unit_id} has already been taken by return item #{old_return_item.id}"]
+      end
+    end
+  end
 end
