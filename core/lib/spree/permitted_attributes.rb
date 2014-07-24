@@ -83,7 +83,7 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action]
 
     @@store_attributes = [:name, :url, :seo_title, :meta_keywords,
-                         :meta_description, :default_currency]
+                         :meta_description, :default_currency, :mail_from_address]
 
     @@taxonomy_attributes = [:name]
 
