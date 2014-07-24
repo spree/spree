@@ -67,7 +67,7 @@ module Spree
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
-    after_save :touch, if: :anything_changed?
+    after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
@@ -258,7 +258,7 @@ module Spree
     end
 
     def punch_slug
-      update(slug: "#{Time.now.to_i}_#{slug}") # punch slug with date prefix to allow reuse of original
+      update_column :slug, "#{Time.now.to_i}_#{slug}" # punch slug with date prefix to allow reuse of original
     end
 
     def anything_changed?
@@ -289,6 +289,10 @@ module Spree
           :name,
           [:name, :sku]
       ]
+    end
+
+    def run_touch_callbacks
+      run_callbacks(:touch)
     end
 
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
