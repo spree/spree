@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnAuthorizationTaxCalculator do
+describe Spree::ReturnItemTaxCalculator do
 
   let!(:tax_zone) { create(:zone, default_tax: true) }
   let!(:tax_rate) { nil }
@@ -18,7 +18,7 @@ describe Spree::ReturnAuthorizationTaxCalculator do
   let(:return_item_2) { create(:return_item, pre_tax_amount: inventory_unit_2.pre_tax_amount, return_authorization: rma, inventory_unit: inventory_unit_2) }
 
   subject do
-    Spree::ReturnAuthorizationTaxCalculator.call(return_items)
+    Spree::ReturnItemTaxCalculator.call(return_items)
   end
 
   context 'without taxes' do

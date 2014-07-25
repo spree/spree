@@ -67,6 +67,11 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
+    def current_or_new_return_item
+      current_return_item || Spree::ReturnItem.new(inventory_unit: self,
+                                                   pre_tax_amount: pre_tax_amount)
+    end
+
     def pre_tax_amount
       weighted_order_adjustment_amount + weighted_line_item_pre_tax_amount
     end
@@ -104,6 +109,10 @@ module Spree
 
       def percentage_of_line_item
         1 / BigDecimal.new(line_item.quantity)
+      end
+
+      def current_return_item
+        return_items.not_cancelled.first
       end
   end
 end

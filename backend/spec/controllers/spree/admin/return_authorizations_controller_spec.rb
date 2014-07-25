@@ -114,6 +114,8 @@ describe Spree::Admin::ReturnAuthorizationsController do
   end
 
   context '#create' do
+    let(:stock_location) { create(:stock_location) }
+
     subject { spree_post :create, params }
 
     let(:params) do
@@ -122,9 +124,11 @@ describe Spree::Admin::ReturnAuthorizationsController do
         return_authorization: return_authorization_params,
       }
     end
+
     let(:return_authorization_params) do
       {
         memo: "",
+        stock_location_id: stock_location.id,
         return_authorization_reason_id: return_authorization_reason.id,
       }
     end

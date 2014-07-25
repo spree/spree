@@ -146,6 +146,9 @@ en:
       spree/credit_card:
         one: Credit Card
         other: Credit Cards
+      spree/customer_return:
+        one: Customer Return
+        other: Customer Returns
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units
@@ -254,12 +257,6 @@ en:
           attributes:
             currency:
               must_match_order_currency: "Must match order currency"
-        spree/return_authorization:
-          attributes:
-            base:
-              amount_due_less_than_zero: Amount due is less than zero
-              amount_due_greater_than_zero: Unable to refund full amount
-              insufficent_funds_available: Amount due is greater than amount available for refunds
         spree/refund:
           attributes:
             amount:
@@ -386,6 +383,7 @@ en:
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
+    all_items_have_been_returned: All items have been returned
     allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
     allow_ssl_in_production: Allow SSL to be used in production mode
     allow_ssl_in_staging: Allow SSL to be used in staging mode
@@ -417,6 +415,7 @@ en:
     back_end: Backend
     backordered: Backordered
     back_to_adjustments_list: Back To Adjustments List
+    back_to_customer_return_list: Back To Customer Return List
     back_to_images_list: Back To Images List
     back_to_option_types_list: Back To Option Types List
     back_to_orders_list: Back To Orders List
@@ -455,6 +454,7 @@ en:
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
     cancel: cancel
     cannot_create_payment_without_payment_methods: You cannot create a payment for an order without any payment methods defined.
+    cannot_create_customer_returns: Cannot create customer returns as this order has no shipped units.
     cannot_create_returns: Cannot create returns as this order has no shipped units.
     cannot_perform_operation: Cannot perform requested operation
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
@@ -496,6 +496,7 @@ en:
     cost_currency: Cost Currency
     cost_price: Cost Price
     could_not_connect_to_jirafe: Could not connect to Jirafe to sync data. This will be automatically retried later.
+    could_not_create_customer_return: Could not create customer return
     could_not_create_stock_movement: There was a problem saving this stock movement. Please try again.
     count_on_hand: Count On Hand
     countries: Countries
@@ -517,6 +518,8 @@ en:
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
+    customer_return: Customer Return
+    customer_returns: Customer Returns
     create: Create
     create_a_new_account: Create a new account
     created_at: Created At
@@ -696,6 +699,7 @@ en:
         gt: greater than
         gte: greater than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
+    items_in_rmas: Items in Return Authorizations
     jirafe: Jirafe
     landing_page_rule:
       path: Path
@@ -750,6 +754,7 @@ en:
     new: New
     new_adjustment: New Adjustment
     new_customer: New Customer
+    new_customer_return: New Customer Return
     new_country: New Country
     new_image: New Image
     new_option_type: New Option Type
@@ -872,6 +877,7 @@ en:
     order_total: Order Total
     order_updated: Order Updated
     orders: Orders
+    other_items_in_other: Other Items in Order
     out_of_stock: Out of Stock
     overview: Overview
     package_from: package from
@@ -999,9 +1005,10 @@ en:
     received: Received
     reference: Reference
     refund: Refund
-    refund_reasons: Refund Reasons
-    refunds: Refunds
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
+    refund_reasons: Refund Reasons
+    refunded_amount: Refunded Amount
+    refunds: Refunds
     register: Register
     registration: Registration
     remember_me: Remember me
@@ -1018,6 +1025,8 @@ en:
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
+    return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
+    return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
     review: Review
@@ -1130,6 +1139,7 @@ en:
     subtract: Subtract
     success: Success
     successfully_created: ! '%{resource} has been successfully created!'
+    successfully_refunded: ! '%{resource} has been successfully refunded!'
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
@@ -1196,6 +1206,8 @@ en:
       choose_users: Choose users
     users: Users
     validation:
+      amount_due_less_than_zero: Amount due is less than zero
+      amount_due_greater_than_zero: Unable to refund full amount
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
       cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
       exceeds_available_stock: exceeds available stock. Please ensure line items have a valid quantity.

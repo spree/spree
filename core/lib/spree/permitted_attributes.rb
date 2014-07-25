@@ -3,6 +3,7 @@ module Spree
     ATTRIBUTES = [
       :address_attributes,
       :checkout_attributes,
+      :customer_return_attributes,
       :image_attributes,
       :inventory_unit_attributes,
       :line_item_attributes,
@@ -36,6 +37,8 @@ module Spree
     ]
 
     @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
+
+    @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount]]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 

@@ -665,6 +665,35 @@ describe Spree::Order do
       subject.create_proposed_shipments
       expect(subject.shipments).to eq [shipment]
     end
+  end
 
+  describe "#all_inventory_units_returned?" do
+    let(:order) { create(:order_with_line_items, line_items_count: 3) }
+
+    subject { order.all_inventory_units_returned? }
+
+    context "all inventory units are returned" do
+      before { order.inventory_units.update_all(state: 'returned') }
+
+      it "is true" do
+        expect(subject).to eq true
+      end
+    end
+
+    context "some inventory units are returned" do
+      before do
+        order.inventory_units.first.update_attribute(:state, 'returned')
+      end
+
+      it "is false" do
+        expect(subject).to eq false
+      end
+    end
+
+    context "no inventory units are returned" do
+      it "is false" do
+        expect(subject).to eq false
+      end
+    end
   end
 end

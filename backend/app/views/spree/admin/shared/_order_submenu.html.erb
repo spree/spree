@@ -31,5 +31,13 @@
         </li>
       <% end %>
     <% end %>
+
+    <% if can? :index, Spree::CustomerReturn %>
+      <% if @order.completed? %>
+        <li<%== ' class="active"' if current == 'Customer Returns' %>>
+          <%= link_to_with_icon 'download', Spree.t(:customer_returns), admin_order_customer_returns_url(@order) %>
+        </li>
+      <% end %>
+    <% end %>
   </ul>
 </nav>

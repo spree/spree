@@ -47,6 +47,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before(:each) do
+    Rails.cache.clear
     reset_spree_preferences
   end
 
