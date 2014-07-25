@@ -10,7 +10,7 @@ FactoryGirl.define do
     phone '555-555-0199'
     alternative_phone '555-555-0199'
 
-    state { |address| address.association(:state) }
+    state { |address| Spree::State.first || address.association(:state) }
     country do |address|
       if address.state
         address.state.country
