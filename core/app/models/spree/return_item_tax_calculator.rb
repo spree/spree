@@ -8,7 +8,7 @@ module Spree
   #    Spree::ReturnAuthorization.return_item_tax_calculator = calculator_object
   # where `calculator_object` is an object that responds to "call" and accepts an array of return items
 
-  class ReturnAuthorizationTaxCalculator
+  class ReturnItemTaxCalculator
 
     class << self
 

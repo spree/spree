@@ -1,9 +1,11 @@
+<% allow_return_item_changes = !@return_authorization.customer_returned_items? %>
+
 <div data-hook="admin_return_authorization_form_fields">
   <table class="index return-items-table">
     <thead>
       <tr data-hook="rma_header">
         <th>
-          <% if @return_authorization.updatable? %>
+          <% if allow_return_item_changes %>
             <%= check_box_tag 'select-all' %>
           <% end %>
         </th>
@@ -21,7 +23,7 @@
         <% inventory_unit = return_item.inventory_unit %>
         <tr>
           <td class="align-center" class="inventory-unit-checkbox">
-            <% if inventory_unit.shipped? && @return_authorization.updatable? %>
+            <% if inventory_unit.shipped? && allow_return_item_changes %>
               <%= item_fields.hidden_field :inventory_unit_id %>
               <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
             <% end %>
@@ -37,7 +39,7 @@
             </td>
           <% end %>
           <td class="align-center">
-            <% if inventory_unit.shipped? && @return_authorization.updatable? %>
+            <% if inventory_unit.shipped? && allow_return_item_changes %>
               <% if @allow_amount_edit %>
                 <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
               <% else %>
@@ -54,7 +56,7 @@
   </table>
 
   <%= f.field_container :amount do %>
-    <%= Spree.t(:total_pre_tax_refund) %>: <span id="rma_value">0.00</span>
+    <%= Spree.t(:total_pre_tax_refund) %>: <span id="total_pre_tax_refund">0.00</span>
   <% end %>
 
   <%= f.field_container :stock_location do %>
@@ -75,28 +77,3 @@
     <%= f.error_message_on :memo %>
   <% end %>
 </div>
-
-<script>
-  $(document).ready(function(){
-    function updateSuggestedAmount() {
-      $("span#rma_value").html()
-      var rma_amount = 0;
-      $.each($("input.add-item:checked"), function(i, checkbox) {
-        rma_amount += $(checkbox).data("price");
-      });
-
-      if(!isNaN(rma_amount)){
-        $("span#rma_value").html(rma_amount.toFixed(2));
-      }
-    }
-
-    updateSuggestedAmount();
-
-    $("input#select-all").on("change", function() {
-      $("input.add-item").prop('checked', this.checked);
-      updateSuggestedAmount();
-    });
-
-    $("input.add-item").on("change", updateSuggestedAmount);
-  });
-</script>

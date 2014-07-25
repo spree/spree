@@ -238,8 +238,8 @@ module Spree
       shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
-    def awaiting_returns?
-      return_authorizations.any? { |return_authorization| return_authorization.authorized? }
+    def all_inventory_units_returned?
+      inventory_units.all? { |inventory_unit| inventory_unit.returned? }
     end
 
     def contents

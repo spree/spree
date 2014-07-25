@@ -56,6 +56,7 @@ module Spree
     preference :properties_per_page, :integer, default: 15
     preference :products_per_page, :integer, default: 12
     preference :promotions_per_page, :integer, default: 15
+    preference :customer_returns_per_page, :integer, default: 15
     preference :redirect_https_to_http, :boolean, :default => false
     preference :require_master_price, :boolean, default: true
     preference :shipment_inc_vat, :boolean, default: false
