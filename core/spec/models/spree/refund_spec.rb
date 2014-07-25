@@ -138,4 +138,31 @@ describe Spree::Refund do
       end
     end
   end
+
+  describe 'total_amount_reimbursed_for' do
+    let(:customer_return) { reimbursement.customer_return}
+    let(:reimbursement) { create(:reimbursement) }
+    let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+
+    subject { Spree::Refund.total_amount_reimbursed_for(reimbursement) }
+
+    context 'with reimbursements performed' do
+      before do
+        reimbursement.perform!
+      end
+
+      it 'returns the total amount' do
+        amount = Spree::Refund.total_amount_reimbursed_for(reimbursement)
+        expect(amount).to be > 0
+        expect(amount).to eq reimbursement.total
+      end
+    end
+
+    context 'without reimbursements performed' do
+      it 'returns zero' do
+        amount = Spree::Refund.total_amount_reimbursed_for(reimbursement)
+        expect(amount).to eq 0
+      end
+    end
+  end
 end

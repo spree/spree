@@ -188,6 +188,9 @@ en:
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
+      spree/reimbursement:
+        one: Reimbursement
+        other: Reimbursements
       spree/return_authorization:
         one: Return Authorization
         other: Return Authorizations
@@ -261,6 +264,15 @@ en:
           attributes:
             amount:
               greater_than_allowed: is greater than the allowed amount.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
+        spree/return_item:
+          attributes:
+            reimbursement:
+              cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
+
 
   devise:
     confirmations:
@@ -310,6 +322,8 @@ en:
         other: ! '%{count} errors prohibited this %{resource} from being saved:'
   spree:
     abbreviation: Abbreviation
+    accept: Accept
+    accepted: Accepted
     account: Account
     account_updated: Account updated
     action: Action
@@ -415,6 +429,7 @@ en:
     back_end: Backend
     backordered: Backordered
     back_to_adjustments_list: Back To Adjustments List
+    back_to_customer_return: Back To Customer Return
     back_to_customer_return_list: Back To Customer Return List
     back_to_images_list: Back To Images List
     back_to_option_types_list: Back To Option Types List
@@ -450,6 +465,7 @@ en:
     billing: Billing
     billing_address: Billing Address
     both: Both
+    calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
     cancel: cancel
@@ -522,6 +538,7 @@ en:
     customer_returns: Customer Returns
     create: Create
     create_a_new_account: Create a new account
+    create_reimbursement: Create reimbursement
     created_at: Created At
     credit: Credit
     credit_card: Credit Card
@@ -580,6 +597,7 @@ en:
     editing_prototype: Editing Prototype
     edit_refund_reason: Edit Refund Reason
     editing_refund_reason: Editing Refund Reason
+    editing_reimbursement: Editing Reimbursement
     editing_rma_reason: Editing RMA Reason
     editing_shipping_category: Editing Shipping Category
     editing_shipping_method: Editing Shipping Method
@@ -677,6 +695,7 @@ en:
     incl: incl.
     included_in_price: Included in Price
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
+    incomplete: Incomplete
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     intercept_email_address: Intercept Email Address
@@ -689,6 +708,7 @@ en:
     inventory: Inventory
     inventory_adjustment: Inventory Adjustment
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
+    inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
     iso_name: Iso Name
     item: Item
@@ -700,6 +720,7 @@ en:
         gte: greater than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
+    items_to_be_reimbursed: Items to be reimbursed
     jirafe: Jirafe
     landing_page_rule:
       path: Path
@@ -732,6 +753,7 @@ en:
     look_for_similar_items: Look for similar items
     make_refund: Make refund
     manage_promotion_categories: Manage Promotion Categories
+    manual_intervention_required: Manual intervention required
     master_price: Master Price
     match_choices:
       all: All
@@ -915,6 +937,7 @@ en:
     percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
+    pending: Pending
     phone: Phone
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
@@ -1003,6 +1026,7 @@ en:
     receive: receive
     receive_stock: Receive Stock
     received: Received
+    reception_status: Reception Status
     reference: Reference
     refund: Refund
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
@@ -1012,6 +1036,14 @@ en:
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     register: Register
     registration: Registration
+    reimburse: Reimburse
+    reimbursed: Reimbursed
+    reimbursement_perform_failed: "Reimbursement could not be performed.  Error: %{error}"
+    reimbursement_status: Reimbursement status
+    reimbursement_type: Reimbursement type
+    reimbursements: Reimbursements
+    reject: Reject
+    rejected: Rejected
     remember_me: Remember me
     remove: Remove
     rename: Rename
@@ -1192,6 +1224,7 @@ en:
     type: Type
     type_to_search: Type to search
     unable_to_connect_to_gateway: Unable to connect to gateway.
+    unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
     unlock: Unlock
     unrecognized_card_type: Unrecognized card type
@@ -1208,8 +1241,7 @@ en:
       choose_users: Choose users
     users: Users
     validation:
-      amount_due_less_than_zero: Amount due is less than zero
-      amount_due_greater_than_zero: Unable to refund full amount
+      unpaid_amount_not_zero: "Amount was not fully reimbursed. Still due: %{amount}"
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
       cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
       exceeds_available_stock: exceeds available stock. Please ensure line items have a valid quantity.

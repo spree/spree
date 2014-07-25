@@ -1,8 +1,5 @@
 module Spree
   class ReturnAuthorization < Spree::Base
-    class_attribute :return_item_tax_calculator
-    self.return_item_tax_calculator = ReturnItemTaxCalculator
-
     belongs_to :order, class_name: 'Spree::Order'
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy

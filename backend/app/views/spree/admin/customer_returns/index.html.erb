@@ -23,23 +23,26 @@
         <tr>
           <th><%= Spree.t(:return_number) %></th>
           <th><%= Spree.t(:pre_tax_total) %></th>
-          <th><%= Spree.t(:refunded_amount) %></th>
           <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+          <th><%= Spree.t(:reimbursement_status) %></th>
           <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
         <% @customer_returns.each do |customer_return| %>
           <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row" class="<%= cycle('odd', 'even')%>">
-            <td><%= customer_return.number %></td>
+            <td><%= link_to customer_return.number, spree.admin_order_customer_return_path(@order, customer_return) %></td>
             <td><%= customer_return.display_pre_tax_total.to_html %></td>
-            <td><%= customer_return.display_refund_total.to_html %></td>
             <td><%= pretty_time(customer_return.created_at) %></td>
-            <td class="actions">
-              <% unless customer_return.refunded? %>
-                <%= link_to_with_icon :reply, Spree.t('actions.refund'), refund_admin_order_customer_return_path(@order, customer_return),
-                  method: :put, no_text: true, data: { action: :green, confirm: Spree.t(:are_you_sure) } %>
+            <td>
+              <% if customer_return.fully_reimbursed? %>
+                <span class="state success"><%= Spree.t(:reimbursed) %></span>
+              <% else %>
+                <span class="state notice"><%= Spree.t(:incomplete) %></span>
               <% end %>
+            </td>
+            <td class='actions align-center' data-hook="admin_orders_customer_returns_index_row_actions">
+              <%= link_to_edit_url admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true %>
             </td>
           </tr>
         <% end %>
@@ -55,7 +58,7 @@
   <%= paginate @customer_returns %>
 
 <% else %>
-  <div data-hook="customer_return_cannont_create" class="no-objects-found">
+  <div data-hook="customer_return_cannot_create" class="no-objects-found">
     <%= Spree.t(:cannot_create_customer_returns) %>
   </div>
 <% end %>

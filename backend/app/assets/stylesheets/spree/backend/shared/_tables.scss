@@ -92,6 +92,14 @@ table {
         background-color: $color-notice;
         color: $color-1;
       }
+      .fa-thumbs-up:hover {
+        background-color: $color-success;
+        color: $color-1;
+      }
+      .fa-thumbs-down:hover {
+        background-color: $color-error;
+        color: $color-1;
+      }
     }
 
     input[type="number"],

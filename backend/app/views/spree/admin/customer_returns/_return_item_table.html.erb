@@ -16,6 +16,7 @@
     </thead>
     <tbody>
       <%= f.fields_for :return_items, return_items do |item_fields| %>
+        <%= item_fields.hidden_field :acceptance_status, value: 'accepted' %>
         <% return_item = item_fields.object %>
         <% inventory_unit = return_item.inventory_unit %>
         <tr>
@@ -41,7 +42,7 @@
               <% if allow_amount_edit %>
                 <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
               <% else %>
-                <%= item_fields.hidden_field :pre_tax_amount %>
+                <%= item_fields.hidden_field :pre_tax_amount, { class: 'refund-amount-input' } %>
                 <%= return_item.display_pre_tax_amount %>
               <% end %>
             <% else %>

@@ -19,7 +19,7 @@ module Spree
         load_return_items
         load_return_authorization_reasons
 
-        @allow_amount_edit = Spree::Config[:allow_return_item_amount_editing]
+        @allow_amount_edit = can?(:manage, Spree::CustomerReturn)
       end
 
       # To satisfy how nested attributes works we want to create placeholder ReturnItems for
