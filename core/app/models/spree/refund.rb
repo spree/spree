@@ -1,8 +1,8 @@
 module Spree
   class Refund < Spree::Base
     belongs_to :payment, inverse_of: :refunds
-    belongs_to :customer_return # optional
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
+    belongs_to :reimbursement, inverse_of: :refunds
 
     has_many :log_entries, as: :source
 
@@ -21,6 +21,16 @@ module Spree
       Spree::Money.new(amount, { currency: payment.currency })
     end
     alias display_amount money
+
+    class << self
+      def total_amount_reimbursed_for(reimbursement)
+        reimbursement.refunds.to_a.sum(&:amount)
+      end
+    end
+
+    def description
+      payment.payment_method.name
+    end
 
     private
 

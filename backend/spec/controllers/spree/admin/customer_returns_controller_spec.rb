@@ -5,10 +5,10 @@ module Spree
     describe CustomerReturnsController do
       stub_authorization!
 
-      let(:order)           { customer_return.order }
-      let(:customer_return) { create(:customer_return_with_return_items) }
-
       describe "#index" do
+        let(:order)           { customer_return.order }
+        let(:customer_return) { create(:customer_return) }
+
         subject do
           spree_get :index, { order_id: customer_return.order.to_param }
         end
@@ -25,13 +25,15 @@ module Spree
       end
 
       describe "#new" do
+        let(:order) { create(:shipped_order, line_items_count: 1) }
+
         subject do
-          spree_get :new, { order_id: customer_return.order.to_param }
+          spree_get :new, { order_id: order.to_param }
         end
 
         it "loads the order" do
           subject
-          expect(assigns(:order)).to eq customer_return.order
+          expect(assigns(:order)).to eq order
         end
 
         it "creates a new customer return" do
@@ -39,55 +41,109 @@ module Spree
           expect(assigns(:customer_return)).to_not be_persisted
         end
 
-        context "order does not have unreturned rma items" do
-          before { subject }
+        context "with previous customer return" do
+          let(:order) { create(:shipped_order, line_items_count: 4) }
+          let(:rma) { create(:return_authorization, order: order) }
 
-          it "loads the possible return items" do
-            total_unit_count = order.inventory_units.count
-            customer_returned_count =  customer_return.return_items.count
-            expect(assigns(:new_return_items).length).to eq (total_unit_count - customer_returned_count)
+          let!(:rma_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.first) }
+          let!(:customer_return_return_item) { create(:return_item, return_authorization: nil, inventory_unit: order.inventory_units.last) }
+
+          context "all return items are associated with a customer return" do
+            let!(:previous_customer_return) { create(:customer_return_without_return_items, return_items: [rma_return_item, customer_return_return_item]) }
+
+            before { subject }
+
+            it "loads the possible return items" do
+              total_inventory_count = 4
+              rma_return_items_count = 1
+              customer_return_return_items_count = 1
+              expect(assigns(:new_return_items).length).to eq (total_inventory_count - rma_return_items_count - customer_return_return_items_count)
+            end
+
+            it "creates new return items" do
+              expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
+            end
+
+            it "does not have any rma return items" do
+              expect(assigns(:rma_return_items)).to eq []
+            end
           end
 
-          it "creates new return items" do
-            expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
-          end
+          context "there is a return item associated with an rma but not a customer return" do
+            let!(:previous_customer_return) { create(:customer_return_without_return_items, return_items: [customer_return_return_item]) }
 
-          it "does not have any rma return items" do
-            expect(assigns(:rma_return_items)).to eq []
-          end
-        end
+            before do
+              subject
+            end
 
-        context "order has unreturned rma items" do
-          let(:unreturned_rma_item) { customer_return.return_items.last }
+            it "loads the possible return items" do
+              rma_return_item_count = rma.return_items.count
+              total_unit_count = order.inventory_units.count
+              customer_returned_count =  previous_customer_return.return_items.count
+              expected_total = total_unit_count - customer_returned_count - rma_return_item_count
+              expect(assigns(:new_return_items).length).to eq expected_total
+            end
 
-          before do
-            unreturned_rma_item.update_attributes(customer_return_id: nil)
-            subject
-          end
+            it "creates new return items" do
+              expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
+            end
 
-          it "loads the possible return items" do
-            rma_return_item_count = 1
-            total_unit_count = order.inventory_units.count
-            customer_returned_count =  customer_return.return_items.count
-            expected_total = total_unit_count - customer_returned_count - rma_return_item_count
-            expect(assigns(:new_return_items).length).to eq expected_total
-          end
+            it "loads the persisted rma return items" do
+              expect(assigns(:rma_return_items).all? { |return_item| return_item.persisted? }).to eq true
+            end
 
-          it "creates new return items" do
-            expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
-          end
-
-          it "loads the persisted rma return items" do
-            expect(assigns(:rma_return_items).all? { |return_item| return_item.persisted? }).to eq true
-          end
-
-          it "has one rma return item" do
-            expect(assigns(:rma_return_items)).to include(unreturned_rma_item)
+            it "has one rma return item" do
+              expect(assigns(:rma_return_items)).to include(rma_return_item)
+            end
           end
         end
       end
 
+      describe "#show" do
+        let(:order)           { customer_return.order }
+        let(:customer_return) { create(:customer_return, line_items_count: 4) }
+
+        let!(:pending_return_item)             { customer_return.return_items.order('id').fourth }
+        let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
+        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!)}
+        let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
+
+        subject do
+          spree_get :show, { order_id: order.to_param, id: customer_return.to_param }
+        end
+
+        before do
+          subject
+        end
+
+        it "loads the order" do
+          expect(assigns(:order)).to eq order
+        end
+
+        it "loads the customer return" do
+          expect(assigns(:customer_return)).to eq customer_return
+        end
+
+        it "loads the accepted return items" do
+          expect(assigns(:accepted_return_items)).to eq [accepted_return_item]
+        end
+
+        it "loads the rejected return items" do
+          expect(assigns(:rejected_return_items)).to eq [rejected_return_item]
+        end
+
+        it "loads the return items that require manual intervention" do
+          expect(assigns(:manual_intervention_return_items)).to eq [manual_intervention_return_item]
+        end
+
+        it "loads the return items that are still pending" do
+          expect(assigns(:pending_return_items)).to eq [pending_return_item]
+        end
+      end
+
       describe "#create" do
+        let(:order) { create(:shipped_order, line_items_count: 1) }
+
         subject do
           spree_post :create, customer_return_params
         end
@@ -97,7 +153,7 @@ module Spree
 
           let!(:customer_return_params) do
             {
-              order_id: customer_return.order.to_param,
+              order_id: order.to_param,
               customer_return: {
                 stock_location_id: stock_location.id,
                 return_items_attributes: {
@@ -117,14 +173,14 @@ module Spree
 
           it "redirects to the index page" do
             subject
-            expect(response).to redirect_to(spree.admin_order_customer_returns_path(order))
+            expect(response).to redirect_to(spree.admin_order_customer_return_path(order, assigns(:customer_return)))
           end
         end
 
         context "invalid customer return" do
           let!(:customer_return_params) do
             {
-              order_id: customer_return.order.to_param,
+              order_id: order.to_param,
               customer_return: {
                 stock_location_id: "",
                 return_items_attributes: {
@@ -145,50 +201,6 @@ module Spree
           it "renders the new page" do
             subject
             expect(response).to render_template(:new)
-          end
-        end
-      end
-
-      describe "#refund" do
-        let(:customer_return_id) { customer_return.to_param }
-
-        subject do
-          spree_put :refund, { order_id: order.to_param, id: customer_return_id }
-        end
-
-        before do
-          Spree::CustomerReturn.should_receive(:find).with(customer_return_id) { customer_return }
-        end
-
-        context "refund is successful" do
-          before do
-            customer_return.stub(refund: true)
-          end
-
-          it "redirects to the index page" do
-            subject
-            expect(response).to redirect_to(spree.admin_order_customer_returns_path(order))
-          end
-
-          it "adds a success message to the flash" do
-            subject
-            expect(flash[:success]).to_not be_nil
-          end
-        end
-
-        context "refund is not successful" do
-          before do
-            customer_return.stub(refund: false)
-          end
-
-          it "redirects to the index page" do
-            subject
-            expect(response).to redirect_to(spree.admin_order_customer_returns_path(order))
-          end
-
-          it "adds an error message to the flash" do
-            subject
-            expect(flash[:error]).to_not be_nil
           end
         end
       end

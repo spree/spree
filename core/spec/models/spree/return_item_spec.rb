@@ -38,7 +38,7 @@ describe Spree::ReturnItem do
 
     context 'with a stock location' do
       let(:stock_item)      { inventory_unit.find_stock_item }
-      let!(:customer_return) { create(:customer_return, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
+      let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do
         inventory_unit.update_attributes!(state: 'shipped')
@@ -83,8 +83,8 @@ describe Spree::ReturnItem do
   describe "acceptance_status state_machine" do
     subject(:return_item) { create(:return_item) }
 
-    it "starts off in the not_received state" do
-      expect(return_item).to be_not_received
+    it "starts off in the pending state" do
+      expect(return_item).to be_pending
     end
   end
 
@@ -169,8 +169,8 @@ describe Spree::ReturnItem do
       return_item.stub(:validator).and_return(validator_double)
     end
 
-    context "not_received status" do
-      let(:status) { 'not_received' }
+    context "pending status" do
+      let(:status) { 'pending' }
 
       before do
         return_item.stub(:eligible_for_return?).and_return(true)
@@ -186,14 +186,14 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['not_received']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['pending']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
       end
     end
 
     context "not eligible for return" do
-      let(:status) { 'not_received' }
+      let(:status) { 'pending' }
       let(:validator_errors) { { number_of_days: "Return Item is outside the eligible time period" } }
 
       before do
@@ -237,8 +237,8 @@ describe Spree::ReturnItem do
 
     subject { return_item.reject! }
 
-    context "not_received status" do
-      let(:status) { 'not_received' }
+    context "pending status" do
+      let(:status) { 'pending' }
 
       before { subject }
 
@@ -251,7 +251,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['not_received', 'manual_intervention_required']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['pending', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'rejected'
       end
@@ -263,8 +263,8 @@ describe Spree::ReturnItem do
 
     subject { return_item.accept! }
 
-    context "not_received status" do
-      let(:status) { 'not_received' }
+    context "pending status" do
+      let(:status) { 'pending' }
 
       before { subject }
 
@@ -277,7 +277,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['not_received', 'manual_intervention_required']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['pending', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
       end
@@ -289,8 +289,8 @@ describe Spree::ReturnItem do
 
     subject { return_item.require_manual_intervention! }
 
-    context "not_received status" do
-      let(:status) { 'not_received' }
+    context "pending status" do
+      let(:status) { 'pending' }
 
       before { subject }
 
@@ -303,9 +303,35 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['not_received']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['pending']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'manual_intervention_required'
+      end
+    end
+  end
+
+  describe 'validity for reimbursements' do
+    let(:return_item) { create(:return_item, acceptance_status: acceptance_status) }
+    let(:acceptance_status) { 'pending' }
+
+    before { return_item.reimbursement = build(:reimbursement) }
+
+    subject { return_item }
+
+    context 'when acceptance_status is accepted' do
+      let(:acceptance_status) { 'accepted' }
+
+      it 'is valid' do
+        expect(subject).to be_valid
+      end
+    end
+
+    context 'when acceptance_status is accepted' do
+      let(:acceptance_status) { 'pending' }
+
+      it 'is valid' do
+        expect(subject).to_not be_valid
+        expect(subject.errors.messages).to eq({reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')]})
       end
     end
   end

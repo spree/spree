@@ -111,7 +111,7 @@ describe Spree::ReturnAuthorization do
     subject { return_authorization.customer_returned_items? }
 
     context "has associated customer returns" do
-      let(:customer_return) { create(:customer_return_with_return_items) }
+      let(:customer_return) { create(:customer_return) }
       let(:return_authorization) { customer_return.return_authorizations.first }
 
       it "returns true" do

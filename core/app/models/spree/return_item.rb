@@ -7,19 +7,27 @@ module Spree
     belongs_to :inventory_unit, inverse_of: :return_items
     belongs_to :exchange_variant, class: 'Spree::Variant'
     belongs_to :customer_return, inverse_of: :return_items
+    belongs_to :reimbursement, inverse_of: :return_items
 
     validate :belongs_to_same_customer_order
+    validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true, uniqueness: {scope: :return_authorization}
 
     scope :awaiting_return, -> { where(reception_status: 'awaiting') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
+    scope :pending, -> { where(acceptance_status: 'pending') }
+    scope :accepted, -> { where(acceptance_status: 'accepted') }
+    scope :rejected, -> { where(acceptance_status: 'rejected') }
+    scope :manual_intervention_required, -> { where(acceptance_status: 'manual_intervention_required') }
+    scope :undecided, -> { where(acceptance_status: %w(pending manual_intervention_required)) }
+    scope :decided, -> { where.not(acceptance_status: %w(pending manual_intervention_required)) }
 
     serialize :acceptance_status_errors
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
 
     state_machine :reception_status, initial: :awaiting do
-      before_transition to: :received, do: :process_inventory_units!
+      before_transition to: :received, do: :process_inventory_unit!
 
       event :receive do
         transition to: :received, from: :awaiting
@@ -35,26 +43,26 @@ module Spree
 
     end
 
-    state_machine :acceptance_status, initial: :not_received do
+    state_machine :acceptance_status, initial: :pending do
       event :attempt_accept do
-        transition to: :accepted, from: :not_received, if: -> (return_item) { return_item.eligible_for_return? }
-        transition to: :manual_intervention_required, from: :not_received, if: -> (return_item) { return_item.requires_manual_intervention? }
-        transition to: :rejected, from: :not_received
+        transition to: :accepted, from: :pending, if: -> (return_item) { return_item.eligible_for_return? }
+        transition to: :manual_intervention_required, from: :pending, if: -> (return_item) { return_item.requires_manual_intervention? }
+        transition to: :rejected, from: :pending
       end
 
       # bypasses eligibility checks
       event :accept do
-        transition to: :accepted, from: [:not_received, :manual_intervention_required]
+        transition to: :accepted, from: [:pending, :manual_intervention_required]
       end
 
       # bypasses eligibility checks
       event :reject do
-        transition to: :rejected, from: [:not_received, :manual_intervention_required]
+        transition to: :rejected, from: [:pending, :manual_intervention_required]
       end
 
       # bypasses eligibility checks
       event :require_manual_intervention do
-        transition to: :manual_intervention_required, from: :not_received
+        transition to: :manual_intervention_required, from: :pending
       end
 
       after_transition any => any, :do => :persist_acceptance_status_errors
@@ -62,6 +70,14 @@ module Spree
 
     def display_pre_tax_amount
       Spree::Money.new(pre_tax_amount, { currency: currency })
+    end
+
+    def total
+      pre_tax_amount + additional_tax_total
+    end
+
+    def display_total
+      Spree::Money.new(total, { currency: currency })
     end
 
     private
@@ -83,7 +99,7 @@ module Spree
       return_authorization.try(:currency) || Spree::Config[:currency]
     end
 
-    def process_inventory_units!
+    def process_inventory_unit!
       inventory_unit.return!
 
       if inventory_unit.variant.should_track_inventory? && stock_item
@@ -107,6 +123,12 @@ module Spree
 
     def validator
       @validator ||= return_eligibility_validator.new(self)
+    end
+
+    def validate_acceptance_status_for_reimbursement
+      if reimbursement && !accepted?
+        errors.add(:reimbursement, :cannot_be_associated_unless_accepted)
+      end
     end
   end
 end

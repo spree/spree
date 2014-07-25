@@ -74,7 +74,7 @@ describe Spree::CustomerReturn do
 
   describe "#pre_tax_total" do
     let(:pre_tax_amount)  { 15.0 }
-    let(:customer_return) { create(:customer_return_with_return_items) }
+    let(:customer_return) { create(:customer_return, line_items_count: 2) }
 
     before do
       Spree::ReturnItem.where(customer_return_id: customer_return.id).update_all(pre_tax_amount: pre_tax_amount)
@@ -135,13 +135,13 @@ describe Spree::CustomerReturn do
     context "to the initial stock location" do
 
       it "should mark all inventory units are returned" do
-        create(:customer_return, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
         expect(inventory_unit.reload.state).to eq 'returned'
       end
 
       it "should update the stock item counts in the stock location" do
         expect do
-          create(:customer_return, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
         end.to change { inventory_unit.find_stock_item.count_on_hand }.by(1)
       end
 
@@ -154,7 +154,7 @@ describe Spree::CustomerReturn do
 
         it "should NOT update the stock item counts in the stock location" do
           count_on_hand = inventory_unit.find_stock_item.count_on_hand
-          create(:customer_return, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
           expect(inventory_unit.find_stock_item.count_on_hand).to eql count_on_hand
         end
       end
@@ -165,7 +165,7 @@ describe Spree::CustomerReturn do
 
       it "should update the stock item counts in new stock location" do
         expect {
-          create(:customer_return, return_items: [return_item], stock_location_id: new_stock_location.id)
+          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
         }.to change {
           Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
         }.by(1)
@@ -173,179 +173,56 @@ describe Spree::CustomerReturn do
 
       it "should NOT raise an error when no stock item exists in the stock location" do
         inventory_unit.find_stock_item.destroy
-        expect { create(:customer_return, return_items: [return_item], stock_location_id: new_stock_location.id) }.not_to raise_error
+        expect { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id) }.not_to raise_error
       end
 
       it "should not update the stock item counts in the original stock location" do
         count_on_hand = inventory_unit.find_stock_item.count_on_hand
-        create(:customer_return, return_items: [return_item], stock_location_id: new_stock_location.id)
+        create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
         inventory_unit.find_stock_item.count_on_hand.should == count_on_hand
       end
     end
   end
 
-  context "refund" do
-    let(:customer_return_refunds) { [] }
-    let!(:adjustments)            { [] } # placeholder to ensure it gets run prior the "before" at this level
-
-    let!(:tax_rate)               { nil }
-    let!(:tax_zone)               { create(:zone, default_tax: true) }
-
-    let(:order)                   { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
-    let(:line_items_price)        { BigDecimal.new(10) }
-    let(:line_item)               { order.line_items.first }
-    let(:inventory_unit)          { line_item.inventory_units.first }
-    let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
-    let(:payment_amount)          { order.total }
-    let(:customer_return)         { build(:customer_return, refunds: customer_return_refunds) }
-    let(:return_item)             { build(:return_item, pre_tax_amount: inventory_unit.pre_tax_amount, customer_return: customer_return, inventory_unit: inventory_unit) }
+  describe '#fully_reimbursed?' do
+    let(:customer_return) { create(:customer_return) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    subject do
-      customer_return.refund
+    subject { customer_return.fully_reimbursed? }
+
+    context 'when some return items are undecided' do
+      it { should be_false }
     end
 
-    before do
-      order.shipments.each do |shipment|
-        shipment.inventory_units.update_all state: 'shipped'
-        shipment.update_column('state', 'shipped')
-      end
-      order.reload
-      order.update!
-      if payment
-        payment.save!
-        order.next! # confirm
-      end
-      order.next! # completed
-      customer_return.return_items << return_item
-      customer_return.save!
-    end
+    context 'when all return items are decided' do
 
-    context "the order has completed payments" do
+      context 'when all return items are rejected' do
+        before { customer_return.return_items.each(&:reject!) }
 
-      context 'with additional tax' do
-        let!(:tax_rate) { create(:tax_rate, name: "Sales Tax", amount: 0.10, included_in_price: false, zone: tax_zone) }
-
-        describe 'return_item_tax_calculator' do
-          it 'sets the return item tax fields correctly' do
-            subject
-            return_item.reload
-            expect(return_item.additional_tax_total).to be > 0
-            expect(return_item.additional_tax_total).to eq line_item.additional_tax_total
-          end
-        end
+        it { should be_true }
       end
 
-      context 'with included tax', focus: true do
-        let!(:tax_rate) { create(:tax_rate, name: "VAT Tax", amount: 0.1, included_in_price: true, zone: tax_zone) }
+      context 'when all return items are accepted' do
+        before { customer_return.return_items.each(&:accept!) }
 
-        describe 'return_item_tax_calculator' do
-          it 'sets the return item tax fields correctly' do
-            subject
-            return_item.reload
-            expect(return_item.included_tax_total).to be < 0
-            expect(return_item.included_tax_total).to eq line_item.included_tax_total
-          end
-        end
-      end
-
-      context "payment amount is enough to refund customer" do
-        context "customer has already been refunded for the total amount of the customer return" do
-          let!(:customer_return_refunds) { [create(:refund, amount: order.total, payment: payment)] }
-
-          it "should refund the total amount" do
-            subject
-            expect(customer_return).to be_refunded
-          end
+        context 'when some return items have no reimbursement' do
+          it { should be_false }
         end
 
-        context "customer has not received any refund for the customer return" do
-          it "should refund the total amount" do
-            subject
-            expect(customer_return).to be_refunded
+        context 'when all return items have a reimbursement' do
+          let!(:reimbursement) { create(:reimbursement, customer_return: customer_return) }
+
+          context 'when some reimbursements are not reimbursed' do
+            it { should be_false }
           end
 
-          it "should create a refund" do
-            expect { subject }.to change{ Spree::Refund.count }.by(1)
-          end
+          context 'when all reimbursements are reimbursed' do
+            before { reimbursement.perform! }
 
-          it "should create a refund with the amount of the customer return" do
-            subject
-            refund = customer_return.reload.refunds.first
-            refund.amount.should eq order.total
+            it { should be_true }
           end
         end
-
-        context "customer has been partially refunded for the total amount of the customer return" do
-          let(:refunded_amount) { order.total - 1.0 }
-          let!(:customer_return_refunds) { [create(:refund, amount: refunded_amount, payment: payment)] }
-
-          it "should refund the total amount" do
-            subject
-            expect(customer_return).to be_refunded
-          end
-
-          it "should create a refund" do
-            expect { subject }.to change{ Spree::Refund.count }.by(1)
-          end
-
-          it "should create a refund with the remaining amount required to refund the total amount of the customer return" do
-            subject
-            refund = customer_return.reload.refunds.last # first refund is the partial refund
-            refund.amount.should eq (order.total - refunded_amount)
-          end
-        end
-      end
-
-      context "payment amount is not enough to refund customer" do
-        # for example, if a standalone refund had already been issued against the payment
-        let(:previous_refund_amount) { 1.0 }
-        let!(:previous_refund) { create(:refund, payment: payment, amount: previous_refund_amount) }
-
-        it "should return false" do
-          expect(subject).to eq false
-        end
-
-        it "should add an error message" do
-          subject
-          expect(customer_return.errors.full_messages).to include(Spree.t("validation.amount_due_greater_than_zero"))
-        end
-
-        it "should create a refund" do
-          expect{ subject }.to change{ Spree::Refund.count }.by(1)
-          customer_return.reload.refunds.last.amount.should eq (payment_amount - previous_refund_amount)
-        end
-      end
-
-      context "too much was already refunded" do
-        let!(:customer_return_refunds) { [create(:refund, amount: order.total+1)] }
-
-        it "should return false" do
-          expect(subject).to eq false
-        end
-
-        it "should add an error message" do
-          subject
-          expect(customer_return.errors.full_messages).to include(Spree.t("validation.amount_due_less_than_zero"))
-        end
-      end
-    end
-
-    context "the order doesn't have any completed payments" do
-      let(:line_items_price) { 0 }
-      let(:payment) { nil }
-
-      it "should refund the total amount" do
-        subject
-        expect(customer_return).to be_refunded
-      end
-    end
-
-    context "customer return amount is zero" do
-      it "should refund the total amount" do
-        subject
-        expect(customer_return).to be_refunded
       end
     end
   end

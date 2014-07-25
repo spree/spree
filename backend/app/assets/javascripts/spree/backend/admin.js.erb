@@ -47,7 +47,7 @@ jQuery(function($) {
   setTimeout('$(".flash").fadeOut()', 5000);
 
   // Highlight hovered table column
-  $('table tbody tr td.actions a').hover(function(){
+  $('table tbody tr td.actions').find('a, button').hover(function(){
     var tr = $(this).closest('tr');
     var klass = 'highlight action-' + $(this).data('action')
     tr.addClass(klass)

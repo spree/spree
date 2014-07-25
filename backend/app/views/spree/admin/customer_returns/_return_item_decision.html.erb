@@ -1,0 +1,30 @@
+<table class="show return-items-table">
+  <thead>
+    <tr>
+      <th><%= Spree.t(:product) %></th>
+      <th><%= Spree.t(:reception_status) %></th>
+      <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% return_items.each do |return_item| %>
+      <tr>
+        <td>
+          <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+          <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+        </td>
+        <td class="align-center"><%= return_item.reception_status.humanize %></td>
+        <td class="align-center"><%= return_item.display_pre_tax_amount %></td>
+        <td class='actions'>
+          <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-up icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
+            Spree.t(:accept)
+          <% end %>
+          <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-down icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
+            Spree.t(:reject)
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

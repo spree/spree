@@ -145,7 +145,7 @@ module Spree
       end
 
       def configurations_sidebar_menu_item(link_text, url, options = {})
-        is_active = url.ends_with?(controller.controller_name) || 
+        is_active = url.ends_with?(controller.controller_name) ||
                     url.ends_with?("#{controller.controller_name}/edit") ||
                     url.ends_with?("#{controller.controller_name.singularize}/edit")
         options.merge!(:class => is_active ? 'active' : nil)
