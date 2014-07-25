@@ -32,9 +32,9 @@ module Spree
       # Included & additional
 
       # Included tax adjustments are those which are included in the price.
-      # These ones should not effect the eventual total price.
+      # These ones should not affect the eventual total price.
       #
-      # Additional tax adjustments are the opposite; effecting the final total.
+      # Additional tax adjustments are the opposite, affecting the final total.
       promo_total = 0
       run_callbacks :promo_adjustments do
         promotion_total = adjustments.promotion.reload.map(&:update!).compact.sum
