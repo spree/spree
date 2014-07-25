@@ -128,6 +128,8 @@ describe Spree::Order do
 
       it "transitions to delivery" do
         order.stub(:ensure_available_shipping_rates => true)
+        # Regression test for #5050
+        order.should_receive(:set_shipments_cost)
         order.next!
         assert_state_changed(order, 'address', 'delivery')
         order.state.should == "delivery"
