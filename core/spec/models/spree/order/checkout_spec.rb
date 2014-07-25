@@ -47,6 +47,16 @@ describe Spree::Order do
       Spree::Order.remove_transition(nil).should be_false
     end
 
+    it "passes delivery state when transitioning from address over delivery to payment" do
+      order.stub :payment_required? => true
+      order.state = "address"
+      order.passed_checkout_step?("delivery").should be_false
+      order.state = "delivery"
+      order.passed_checkout_step?("delivery").should be_false
+      order.state = "payment"
+      order.passed_checkout_step?("delivery").should be_true
+    end
+
     context "#checkout_steps" do
       context "when confirmation not required" do
         before do
