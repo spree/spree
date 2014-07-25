@@ -65,7 +65,7 @@ describe "Customer Details", type: :feature do
     end
 
     it "should be able to update customer details for an existing order" do
-      order.ship_address = create(:address)
+      order.ship_address = create(:address, firstname: 'Sue')
       order.save!
 
       click_link "Customer Details"
