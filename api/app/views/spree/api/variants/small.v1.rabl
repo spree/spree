@@ -1,4 +1,8 @@
-attributes *variant_attributes
+if @current_api_user.has_spree_role?('admin')
+  attributes *variant_attributes_admin
+else
+  attributes *variant_attributes
+end
 cache [I18n.locale, 'small_variant', root_object]
 
 node(:display_price) { |p| p.display_price.to_s }

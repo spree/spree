@@ -5,6 +5,7 @@ module Spree
         :product_attributes,
         :product_property_attributes,
         :variant_attributes,
+        :variant_attributes_admin,
         :image_attributes,
         :option_value_attributes,
         :order_attributes,
@@ -58,8 +59,9 @@ module Spree
 
       @@variant_attributes = [
         :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
-        :cost_price, :slug, :description, :track_inventory
+        :slug, :description, :track_inventory
       ]
+      @@variant_attributes_admin = @@variant_attributes + [:cost_price]
 
       @@image_attributes = [
         :id, :position, :attachment_content_type, :attachment_file_name, :type,

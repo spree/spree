@@ -37,7 +37,7 @@ module Spree
       json_response['pages'].should == 3
     end
 
-    it 'can query the results through a paramter' do
+    it 'can query the results through a parameter' do
       expected_result = create(:variant, :sku => 'FOOBAR')
       api_get :index, :q => { :sku_cont => 'FOO' }
       json_response['count'].should == 1
@@ -68,6 +68,11 @@ module Spree
                                                                                :product_url,
                                                                                :large_url])
 
+    end
+
+    it 'variants returned do not contain cost price data' do
+      api_get :index
+      expect(json_response["variants"].first.has_key?(:cost_price)).to eq false
     end
 
     # Regression test for #2141
@@ -178,6 +183,11 @@ module Spree
         api_delete :destroy, :id => variant.to_param
         response.status.should == 204
         lambda { Spree::Variant.find(variant.id) }.should raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'variants returned contain cost price data' do
+        api_get :index
+        expect(json_response["variants"].first.has_key?(:cost_price)).to eq true
       end
     end
 
