@@ -352,11 +352,7 @@ module Spree
     private
 
       def after_ship
-        inventory_units.each &:ship!
-        process_order_payments if Spree::Config[:auto_capture_on_dispatch]
-        send_shipped_email
-        touch :shipped_at
-        update_order_shipment_state
+        ShipmentHandler.factory(self).perform
       end
 
       def can_get_rates?
@@ -397,14 +393,6 @@ module Spree
         if cost_changed? && state != 'shipped'
           recalculate_adjustments
         end
-      end
-
-      def update_order_shipment_state
-        new_state = OrderUpdater.new(order).update_shipment_state
-        order.update_columns(
-          shipment_state: new_state,
-          updated_at: Time.now,
-        )
       end
 
   end

@@ -274,8 +274,8 @@ describe Spree::Shipment do
 
     context "when shipment state changes to shipped" do
       before do
-        shipment.stub(:send_shipped_email)
-        shipment.stub(:update_order_shipment_state)
+        Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+        Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
       end
 
       it "should call after_ship" do
@@ -284,6 +284,35 @@ describe Spree::Shipment do
         shipment.stub determine_state: 'shipped'
         shipment.should_receive(:update_columns).with(state: 'shipped', updated_at: kind_of(Time))
         shipment.update!(order)
+      end
+
+      context "when using the default shipment handler" do
+        it "should call the 'perform' method" do
+          shipment.state = 'pending'
+          shipment.stub determine_state: 'shipped'
+          Spree::ShipmentHandler.any_instance.should_receive(:perform)
+          shipment.update!(order)
+        end
+      end
+
+      context "when using a custom shipment handler" do
+        before do
+          Spree::ShipmentHandler::UPS = Class.new {
+            def initialize(shipment) true end
+            def perform() true end
+          }
+        end
+
+        it "should call the custom handler's 'perform' method" do
+          shipment.state = 'pending'
+          shipment.stub determine_state: 'shipped'
+          Spree::ShipmentHandler::UPS.any_instance.should_receive(:perform)
+          shipment.update!(order)
+        end
+
+        after do
+          Spree::ShipmentHandler.send(:remove_const, :UPS)
+        end
       end
 
       # Regression test for #4347
@@ -409,8 +438,9 @@ describe Spree::Shipment do
     end
 
     it "should update shipped_at timestamp" do
-      shipment.stub(:send_shipped_email)
-      shipment.stub(:update_order_shipment_state)
+      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+      Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+
       shipment.ship!
       shipment.shipped_at.should_not be_nil
       # Ensure value is persisted
@@ -426,14 +456,16 @@ describe Spree::Shipment do
         mail_message
       }
       mail_message.should_receive :deliver
-      shipment.stub(:update_order_shipment_state)
+      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+
       shipment.ship!
       shipment_id.should == shipment.id
     end
 
     it "finalizes adjustments" do
-      shipment.stub(:send_shipped_email)
-      shipment.stub(:update_order_shipment_state)
+      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+      Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+
       shipment.adjustments.each do |adjustment|
         expect(adjustment).to receive(:finalize!)
       end
