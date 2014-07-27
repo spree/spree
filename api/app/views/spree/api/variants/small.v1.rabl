@@ -1,9 +1,6 @@
-if @current_user_roles.include?('admin')
-  attributes *variant_attributes_admin
-else
-  attributes *variant_attributes
-end
-cache [I18n.locale, 'small_variant', root_object]
+cache [I18n.locale, @current_user_roles.include?('admin'), 'small_variant', root_object]
+
+attributes *variant_attributes
 
 node(:display_price) { |p| p.display_price.to_s }
 node(:options_text) { |v| v.options_text }

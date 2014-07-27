@@ -5,7 +5,6 @@ module Spree
         :product_attributes,
         :product_property_attributes,
         :variant_attributes,
-        :variant_attributes_admin,
         :image_attributes,
         :option_value_attributes,
         :order_attributes,
@@ -61,7 +60,6 @@ module Spree
         :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
         :slug, :description, :track_inventory
       ]
-      @@variant_attributes_admin = @@variant_attributes + [:cost_price]
 
       @@image_attributes = [
         :id, :position, :attachment_content_type, :attachment_file_name, :type,
@@ -151,6 +149,14 @@ module Spree
         :id, :count_on_hand, :backorderable, :lock_version, :stock_location_id,
         :variant_id
       ]
+
+      def variant_attributes
+        if @current_user_roles && @current_user_roles.include?("admin")
+          @@variant_attributes + [:cost_price]
+        else
+          @@variant_attributes
+        end
+      end
     end
   end
 end
