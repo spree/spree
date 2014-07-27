@@ -73,16 +73,24 @@ module Spree
         json_response["orders"].length.should == 0
       end
 
-      it "returns orders in reverse chronological order" do
-        order2 = create(:order, line_items: [line_item], user: order.user)
+      it "returns orders in reverse chronological order by completed_at" do
+        order.update_columns completed_at: Time.now
+
+        order2 = Order.create user: order.user, completed_at: Time.now - 1.day
         order2.created_at.should > order.created_at
+        order3 = Order.create user: order.user, completed_at: nil
+        order3.created_at.should > order2.created_at
+        order4 = Order.create user: order.user, completed_at: nil
+        order4.created_at.should > order3.created_at
 
         api_get :mine
         response.status.should == 200
         json_response["pages"].should == 1
-        json_response["orders"].length.should == 2
-        json_response["orders"][0]["number"].should == order2.number
-        json_response["orders"][1]["number"].should == order.number
+        json_response["orders"].length.should == 4
+        json_response["orders"][0]["number"].should == order.number
+        json_response["orders"][1]["number"].should == order2.number
+        json_response["orders"][2]["number"].should == order4.number
+        json_response["orders"][3]["number"].should == order3.number
       end
     end
 
