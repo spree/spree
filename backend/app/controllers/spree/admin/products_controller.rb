@@ -104,7 +104,7 @@ module Spree
           @search = @collection.ransack(params[:q])
           @collection = @search.result.
                 distinct_by_product_ids(params[:q][:s]).
-                includes(product_includes).
+                joins(:variants, :master).
                 page(params[:page]).
                 per(Spree::Config[:admin_products_per_page])
 
@@ -122,10 +122,6 @@ module Spree
           params[:product] ||= {}
         end
 
-        def product_includes
-          [{ :variants => [:images, { :option_values => :option_type }], :master => [:images, :default_price]}]
-        end
-        
         def clone_object_url resource
           clone_admin_product_url resource
         end
