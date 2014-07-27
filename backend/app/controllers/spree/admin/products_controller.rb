@@ -123,9 +123,9 @@ module Spree
         end
 
         def product_includes
-          [{ :variants => [:images, { :option_values => :option_type }], :master => [:images, :default_price]}]
+          [{ :variants => [:images], :master => [:images, :default_price]}]
         end
-        
+
         def clone_object_url resource
           clone_admin_product_url resource
         end
