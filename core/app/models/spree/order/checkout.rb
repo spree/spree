@@ -201,7 +201,7 @@ module Spree
           end
 
           def checkout_step_index(step)
-            self.checkout_steps.index(step)
+            self.checkout_steps.index(step).to_i
           end
 
           def self.removed_transitions

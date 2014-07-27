@@ -47,6 +47,11 @@ describe Spree::Order do
       Spree::Order.remove_transition(nil).should be_false
     end
 
+    it "always return integer on checkout_step_index" do
+      expect(order.checkout_step_index("imnotthere")).to be_a Integer
+      expect(order.checkout_step_index("delivery")).to be > 0
+    end
+
     it "passes delivery state when transitioning from address over delivery to payment" do
       order.stub :payment_required? => true
       order.state = "address"
