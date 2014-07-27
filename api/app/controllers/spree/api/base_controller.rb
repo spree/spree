@@ -14,6 +14,8 @@ module Spree
       before_filter :load_user
       before_filter :authorize_for_order, :if => Proc.new { order_token.present? }
       before_filter :authenticate_user
+      before_filter :load_user_roles
+
       after_filter  :set_jsonp_format
 
       rescue_from Exception, :with => :error_during_processing
@@ -42,7 +44,7 @@ module Spree
 
       # users should be able to set price when importing orders via api
       def permitted_line_item_attributes
-        if current_api_user.has_spree_role?("admin")
+        if @current_user_roles.include?("admin")
           super << [:price, :variant_id, :sku]
         else
           super
@@ -76,6 +78,10 @@ module Spree
             @current_api_user = Spree.user_class.new
           end
         end
+      end
+
+      def load_user_roles
+        @current_user_roles = @current_api_user.spree_roles.pluck(:name)
       end
 
       def unauthorized
@@ -130,7 +136,7 @@ module Spree
       end
 
       def product_scope
-        if current_api_user.has_spree_role?("admin")
+        if @current_user_roles.include?("admin")
           scope = Product.with_deleted.accessible_by(current_ability, :read).includes(*product_includes)
 
           unless params[:show_deleted]
