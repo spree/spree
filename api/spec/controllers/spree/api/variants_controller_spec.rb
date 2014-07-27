@@ -190,6 +190,5 @@ module Spree
         expect(json_response["variants"].first.has_key?(:cost_price)).to eq true
       end
     end
-
   end
 end

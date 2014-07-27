@@ -42,11 +42,10 @@ module Spree
     end
 
     context "the current api user is not persisted" do
-      let(:current_api_user) { double(persisted?: false) }
+      let(:current_api_user) { Spree.user_class.new }
 
       it "returns a 401" do
         api_get :mine
-
         response.status.should == 401
       end
     end
@@ -132,6 +131,7 @@ module Spree
 
       it "can view an order" do
         user = mock_model(Spree::LegacyUser)
+        user.stub_chain(:spree_roles, :pluck).and_return(["bar"])
         user.stub(:has_spree_role?).with('bar').and_return(true)
         user.stub(:has_spree_role?).with('admin').and_return(false)
         controller.stub try_spree_current_user: user

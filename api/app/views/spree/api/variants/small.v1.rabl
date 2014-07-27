@@ -1,4 +1,4 @@
-if @current_api_user.has_spree_role?('admin')
+if @current_user_roles.include?('admin')
   attributes *variant_attributes_admin
 else
   attributes *variant_attributes
