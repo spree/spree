@@ -195,6 +195,10 @@ module Spree
           def has_checkout_step?(step)
             step.present? && self.checkout_steps.include?(step)
           end
+          
+          def passed_checkout_step?(step)
+            has_checkout_step?(step) && checkout_step_index(step) < checkout_step_index(self.state)
+          end
 
           def checkout_step_index(step)
             self.checkout_steps.index(step)
