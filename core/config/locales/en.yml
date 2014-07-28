@@ -642,6 +642,7 @@ en:
           signup: User signup
     exceptions:
       count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
+    exchange_for: Exchange for
     excl: excl.
     expiration: Expiration
     extension: Extension

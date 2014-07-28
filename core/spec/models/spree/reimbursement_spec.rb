@@ -133,6 +133,23 @@ describe Spree::Reimbursement do
       end
     end
 
+    context "when exchange is required" do
+      let(:exchange_variant) { build(:variant) }
+      before { return_item.exchange_variant = exchange_variant }
+      it "generates an exchange shipment for the order for the exchange items" do
+        expect { subject }.to change { order.reload.shipments.count }.by 1
+        expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
+      end
+    end
+
+  end
+
+  describe "#return_items_requiring_exchange" do
+    it "returns only the return items that require an exchange" do
+      return_items = [double(exchange_required?: true), double(exchange_required?: true),double(exchange_required?: false)]
+      subject.stub(:return_items) { return_items }
+      expect(subject.return_items_requiring_exchange).to eq return_items.take(2)
+    end
   end
 
 end

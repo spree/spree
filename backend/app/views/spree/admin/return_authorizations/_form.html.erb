@@ -15,6 +15,7 @@
           <th><%= Spree.t(:charged) %></th>
         <% end %>
         <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+        <th><%= Spree.t(:exchange_for) %></th>
       </tr>
     </thead>
     <tbody>
@@ -49,6 +50,9 @@
             <% else %>
               <%= return_item.display_pre_tax_amount %>
             <% end %>
+          </td>
+          <td class="align-center">
+            <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
           </td>
         </tr>
       <% end %>

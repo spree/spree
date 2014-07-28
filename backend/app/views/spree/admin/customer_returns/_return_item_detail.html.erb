@@ -4,6 +4,7 @@
       <th><%= Spree.t(:product) %></th>
       <th><%= Spree.t(:reception_status) %></th>
       <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+      <th><%= Spree.t(:exchange_for) %></th>
     </tr>
   </thead>
   <tbody>
@@ -17,6 +18,7 @@
         <td class="align-center">
           <%= return_item.display_pre_tax_amount %>
         </td>
+        <td class="align-center"><%= return_item.exchange_variant.try(:options_text) %></td>
       </tr>
     <% end %>
   </tbody>

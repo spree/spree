@@ -108,6 +108,10 @@ module Spree
       reimbursement_performer.simulate(self)
     end
 
+    def return_items_requiring_exchange
+      return_items.select(&:exchange_required?)
+    end
+
     private
 
     def generate_number
