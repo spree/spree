@@ -26,7 +26,7 @@ child :payments => :payments do
 
   child :source => :source do
     attributes *payment_source_attributes
-    if @current_api_user.has_spree_role?('admin')
+    if @current_user_roles.include?('admin')
       attributes *payment_source_attributes.concat([:gateway_customer_profile_id, :gateway_payment_profile_id])
     else
       attributes *payment_source_attributes

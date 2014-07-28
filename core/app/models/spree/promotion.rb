@@ -3,6 +3,8 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
+    belongs_to :promotion_category
+
     has_many :promotion_rules, autosave: true, dependent: :destroy
     alias_method :rules, :promotion_rules
 
@@ -49,6 +51,8 @@ module Spree
       order = payload[:order]
       return unless self.class.order_activatable?(order)
 
+      payload[:promotion] = self
+
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
       # If an action returns true, then an action has been taken.
@@ -71,35 +75,28 @@ module Spree
     # called anytime order.update! happens
     def eligible?(promotable)
       return false if expired? || usage_limit_exceeded?(promotable)
-      rules_are_eligible?(promotable, {})
+      !!eligible_rules(promotable, {})
     end
 
-    def rules_are_eligible?(promotable, options = {})
+    # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
+    # if there are no such rules, an empty array is returned
+    # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
+    def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
-      return true if rules.none?
+      return [] if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
       specific_rules = rules.for(promotable)
-      return true if specific_rules.none?
-      if match_policy == 'all'
+      return [] if specific_rules.none?
+
+      if match_all?
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
-        specific_rules.any? && specific_rules.all?(&eligible)
+        return nil unless specific_rules.all?(&eligible)
+        specific_rules
       else
-        # If there are no rules for this promotable, then this will return false.
-        # If there are rules for this promotable, but they are ineligible, this will return false.
-        specific_rules.any?(&eligible)
+        return nil unless specific_rules.any?(&eligible)
+        specific_rules.select(&eligible)
       end
-    end
-
-    # Products assigned to all product rules
-    def products
-      @products ||= self.rules.to_a.inject([]) do |products, rule|
-        rule.respond_to?(:products) ? products << rule.products : products
-      end.flatten.uniq
-    end
-
-    def product_ids
-      products.map(&:id)
     end
 
     def usage_limit_exceeded?(promotable)
@@ -118,11 +115,34 @@ module Spree
       credits.count
     end
 
+    def line_item_actionable?(order, line_item)
+      if eligible? order
+        rules = eligible_rules(order)
+        if rules.blank?
+          true
+        else
+          rules.send(match_all? ? :all? : :any?) do |rule|
+            rule.actionable? line_item
+          end
+        end
+      else
+        false
+      end
+    end
+
+    def used_by?(user, excluded_orders = [])
+      orders.where.not(id: excluded_orders.map(&:id)).complete.where(user_id: user.id).exists?
+    end
+
     private
     def normalize_blank_values
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?
       end
+    end
+
+    def match_all?
+      match_policy == 'all'
     end
   end
 end

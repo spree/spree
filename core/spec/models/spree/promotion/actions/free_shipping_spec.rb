@@ -4,6 +4,7 @@ describe Spree::Promotion::Actions::FreeShipping do
   let(:order) { create(:completed_order_with_totals) }
   let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::FreeShipping.create }
+  let(:payload) { { order: order } }
 
   # From promotion spec:
   context "#perform" do
@@ -16,7 +17,7 @@ describe Spree::Promotion::Actions::FreeShipping do
       order.shipments.count.should == 2
       order.shipments.first.cost.should == 100
       order.shipments.last.cost.should == 100
-      action.perform(:order => order).should be_true
+      action.perform(payload).should be_true
       promotion.credits_count.should == 2
       order.shipment_adjustments.count.should == 2
       order.shipment_adjustments.first.amount.to_i.should == -100
@@ -24,8 +25,8 @@ describe Spree::Promotion::Actions::FreeShipping do
     end
 
     it "should not create a discount when order already has one from this promotion" do
-      action.perform(:order => order).should be_true
-      action.perform(:order => order).should be_false
+      action.perform(payload).should be_true
+      action.perform(payload).should be_false
       promotion.credits_count.should == 2
       order.shipment_adjustments.count.should == 2
     end

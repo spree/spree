@@ -67,8 +67,16 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
-    def rounded_pre_tax_amount
-      (weighted_order_adjustment_amount + weighted_line_item_pre_tax_amount).round(2, :down)
+    def pre_tax_amount
+      weighted_order_adjustment_amount + weighted_line_item_pre_tax_amount
+    end
+
+    def additional_tax_total
+      line_item.additional_tax_total * percentage_of_line_item
+    end
+
+    def included_tax_total
+      line_item.included_tax_total * percentage_of_line_item
     end
 
     private

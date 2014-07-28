@@ -1,0 +1,10 @@
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @promotion } %>
+
+<div class='row'>
+  <div class='alpha six columns'>
+    <%= f.field_container :name do %>
+      <%= f.label :name %>
+      <%= f.text_field :name, :class => 'fullwidth' %>
+    <% end %>
+  </div>
+</div>

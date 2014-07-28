@@ -5,6 +5,7 @@ module Spree
         def sign_in_as_admin!
           let!(:current_api_user) do
             user = stub_model(Spree::LegacyUser)
+            user.stub_chain(:spree_roles, :pluck).and_return(["admin"])
             user.stub(:has_spree_role?).with("admin").and_return(true)
             user
           end

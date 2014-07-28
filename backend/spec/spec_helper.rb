@@ -100,5 +100,7 @@ RSpec.configure do |config|
 
   config.include Paperclip::Shoulda::Matchers
 
+  config.extend WithModel
+
   config.fail_fast = ENV['FAIL_FAST'] || false
 end

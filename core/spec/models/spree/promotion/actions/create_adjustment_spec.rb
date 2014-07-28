@@ -4,6 +4,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
   let(:order) { create(:order_with_line_items, :line_items_count => 1) }
   let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
+  let(:payload) { { order: order } }
 
   # From promotion spec:
   context "#perform" do
@@ -16,7 +17,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     # Regression test for #3966
     it "does not apply an adjustment if the amount is 0" do
       action.calculator.preferred_amount = 0
-      action.perform(:order => order)
+      action.perform(payload)
       promotion.credits_count.should == 0
       order.adjustments.count.should == 0
     end
@@ -24,14 +25,14 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     it "should create a discount with correct negative amount" do
       order.shipments.create!(:cost => 10)
 
-      action.perform(:order => order)
+      action.perform(payload)
       promotion.credits_count.should == 1
       order.adjustments.count.should == 1
       order.adjustments.first.amount.to_i.should == -10
     end
 
     it "should create a discount accessible through both order_id and adjustable_id" do
-      action.perform(:order => order)
+      action.perform(payload)
       order.adjustments.count.should == 1
       order.all_adjustments.count.should == 1
     end
@@ -39,8 +40,8 @@ describe Spree::Promotion::Actions::CreateAdjustment do
     it "should not create a discount when order already has one from this promotion" do
       order.shipments.create!(:cost => 10)
 
-      action.perform(:order => order)
-      action.perform(:order => order)
+      action.perform(payload)
+      action.perform(payload)
       promotion.credits_count.should == 1
     end
   end
@@ -53,7 +54,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
 
     context "when order is not complete" do
       it "should not keep the adjustment" do
-        action.perform(:order => order)
+        action.perform(payload)
         action.destroy
         order.adjustments.count.should == 0
       end
@@ -65,7 +66,7 @@ describe Spree::Promotion::Actions::CreateAdjustment do
       end
 
       before(:each) do
-        action.perform(:order => order)
+        action.perform(payload)
         action.destroy
       end
 

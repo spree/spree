@@ -58,7 +58,7 @@ module Spree
 
       @@variant_attributes = [
         :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
-        :cost_price, :slug, :description, :track_inventory
+        :slug, :description, :track_inventory
       ]
 
       @@image_attributes = [
@@ -149,6 +149,14 @@ module Spree
         :id, :count_on_hand, :backorderable, :lock_version, :stock_location_id,
         :variant_id
       ]
+
+      def variant_attributes
+        if @current_user_roles && @current_user_roles.include?("admin")
+          @@variant_attributes + [:cost_price]
+        else
+          @@variant_attributes
+        end
+      end
     end
   end
 end

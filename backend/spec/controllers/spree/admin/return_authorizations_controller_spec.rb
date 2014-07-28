@@ -42,28 +42,114 @@ describe Spree::Admin::ReturnAuthorizationsController do
     end
   end
 
-  let(:params) do
-    {
-      order_id: order.to_param,
-      return_authorization: {
-        memo: "",
-        return_authorization_reason_id: return_authorization_reason.id
-      }
-    }
+  describe "#load_return_items" do
+    shared_context 'without existing return items' do
+      context 'without existing return items' do
+        it 'has 3 new @form_return_items' do
+          subject
+          expect(assigns(:form_return_items).size).to eq 3
+          expect(assigns(:form_return_items).select(&:new_record?).size).to eq 3
+        end
+      end
+    end
+
+    shared_context 'with existing return items' do
+      context 'with existing return items' do
+        let!(:return_item_1) { create(:return_item, inventory_unit: inventory_unit_1, return_authorization: return_authorization) }
+
+        it 'has 1 existing return item and 2 new return items' do
+          subject
+          expect(assigns(:form_return_items).size).to eq 3
+          expect(assigns(:form_return_items).select(&:persisted?)).to eq [return_item_1]
+          expect(assigns(:form_return_items).select(&:new_record?).size).to eq 2
+        end
+      end
+    end
+
+    context '#new' do
+      subject { spree_get :new, order_id: order.to_param }
+
+      include_context 'without existing return items'
+    end
+
+    context '#edit' do
+      subject do
+        spree_get :edit, {
+          id: return_authorization.to_param,
+          order_id: order.to_param,
+        }
+      end
+
+      let(:return_authorization) { create(:return_authorization, order: order) }
+
+      include_context 'without existing return items'
+      include_context 'with existing return items'
+    end
+
+    context '#create failed' do
+      subject do
+        spree_post :create, {
+          return_authorization: {return_authorization_reason_id: -1}, # invalid reason_id
+          order_id: order.to_param,
+        }
+      end
+
+      include_context 'without existing return items'
+    end
+
+    context '#update failed' do
+      subject do
+        spree_put :update, {
+          return_authorization: {return_authorization_reason_id: -1}, # invalid reason_id
+          id: return_authorization.to_param,
+          order_id: order.to_param,
+        }
+      end
+
+      let(:return_authorization) { create(:return_authorization, order: order) }
+
+      include_context 'without existing return items'
+      include_context 'with existing return items'
+    end
   end
 
-  it "can create a return authorization" do
-    spree_post :create, params
-    response.should redirect_to spree.admin_order_return_authorizations_path(order)
-  end
+  context '#create' do
+    subject { spree_post :create, params }
 
-  context 'update' do
-    let(:return_authorization) { create(:return_authorization, order: order) }
     let(:params) do
-      super().merge({
+      {
+        order_id: order.to_param,
+        return_authorization: return_authorization_params,
+      }
+    end
+    let(:return_authorization_params) do
+      {
+        memo: "",
+        return_authorization_reason_id: return_authorization_reason.id,
+      }
+    end
+
+    it "can create a return authorization" do
+      subject
+      response.should redirect_to spree.admin_order_return_authorizations_path(order)
+    end
+  end
+
+  context '#update' do
+    let(:return_authorization) { create(:return_authorization, order: order) }
+
+    let(:params) do
+      {
         id: return_authorization.to_param,
-        return_authorization: {memo: ""}.merge(return_items_params),
-      })
+        order_id: order.to_param,
+        return_authorization: return_authorization_params,
+      }
+    end
+    let(:return_authorization_params) do
+      {
+        memo: "",
+        return_items_attributes: return_items_params,
+      }
     end
 
     subject { spree_put :update, params }
@@ -71,9 +157,7 @@ describe Spree::Admin::ReturnAuthorizationsController do
     context "adding an item" do
       let(:return_items_params) do
         {
-          return_items_attributes: {
-            '0' => {inventory_unit_id: inventory_unit_1.to_param},
-          }
+          '0' => {inventory_unit_id: inventory_unit_1.to_param}
         }
       end
 
@@ -84,9 +168,9 @@ describe Spree::Admin::ReturnAuthorizationsController do
       end
 
       context 'with existing items' do
-        let!(:return_item) {
+        let!(:return_item) do
           create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
-        }
+        end
 
         it 'does not create new items' do
           expect { subject }.to_not change { Spree::ReturnItem.count }
@@ -96,15 +180,13 @@ describe Spree::Admin::ReturnAuthorizationsController do
     end
 
     context "removing an item" do
-      let!(:return_item) {
+      let!(:return_item) do
         create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
-      }
+      end
 
       let(:return_items_params) do
         {
-          return_items_attributes: {
-            '0' => {id: return_item.to_param, _destroy: '1'},
-          }
+          '0' => {id: return_item.to_param, _destroy: '1'}
         }
       end
 
