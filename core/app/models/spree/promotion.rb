@@ -99,6 +99,10 @@ module Spree
       end
     end
 
+    def products
+      rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
+    end
+
     def usage_limit_exceeded?(promotable)
       usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
     end
