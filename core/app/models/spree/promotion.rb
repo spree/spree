@@ -76,7 +76,7 @@ module Spree
 
     # called anytime order.update! happens
     def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
       !!eligible_rules(promotable, {})
     end
 
@@ -147,6 +147,16 @@ module Spree
     end
 
     private
+    def blacklisted?(promotable)
+      case promotable
+      when Spree::LineItem
+        !promotable.product.promotionable?
+      when Spree::Order
+        promotable.line_items.any? &&
+          !promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).any?
+      end
+    end
+
     def normalize_blank_values
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?

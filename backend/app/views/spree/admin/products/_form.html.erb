@@ -20,7 +20,7 @@
     <div data-hook="admin_product_form_description">
       <%= f.field_container :description do %>
         <%= f.label :description, Spree.t(:description) %>
-        <%= f.text_area :description, {:rows => "#{unless @product.has_variants? then '20' else '13' end}", :class => 'fullwidth'} %>
+        <%= f.text_area :description, {:rows => "#{unless @product.has_variants? then '22' else '15' end}", :class => 'fullwidth'} %>
         <%= f.error_message_on :description %>
       <% end %>
     </div>
@@ -57,6 +57,14 @@
         <%= f.label :available_on, Spree.t(:available_on) %>
         <%= f.error_message_on :available_on %>
         <%= f.text_field :available_on, :value => datepicker_field_value(@product.available_on), :class => 'datepicker' %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_promotionable">
+      <%= f.field_container :promotionable do %>
+        <%= f.label :promotionable do %>
+          <%= f.check_box :promotionable %> <%= Spree.t(:promotionable) %>
+        <% end %>
       <% end %>
     </div>
 
