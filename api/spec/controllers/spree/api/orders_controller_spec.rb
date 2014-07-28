@@ -94,6 +94,49 @@ module Spree
       end
     end
 
+    describe 'current' do
+      let(:current_api_user) { order.user }
+      let!(:order) { create(:order, line_items: [line_item]) }
+
+      subject do
+        api_get :current, format: 'json'
+      end
+
+      context "an incomplete order exists" do
+        it "returns that order" do
+          expect(JSON.parse(subject.body)['id']).to eq order.id
+          expect(subject).to be_success
+        end
+      end
+
+      context "multiple incomplete orders exist" do
+        it "returns the latest incomplete order" do
+          new_order = Spree::Order.create! user: order.user
+          expect(new_order.created_at).to be > order.created_at
+          expect(JSON.parse(subject.body)['id']).to eq new_order.id
+        end
+      end
+
+      context "an incomplete order does not exist" do
+
+        before do
+          order.update_attribute(:state, order_state)
+          order.update_attribute(:completed_at, 5.minutes.ago)
+        end
+
+        ["complete", "returned", "awaiting_return"].each do |order_state|
+          context "order is in the #{order_state} state" do
+            let(:order_state) { order_state }
+
+            it "returns no content" do
+              expect(subject.status).to eq 204
+              expect(subject.body).to be_blank
+            end
+          end
+        end
+      end
+    end
+
     it "can view their own order" do
       Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param

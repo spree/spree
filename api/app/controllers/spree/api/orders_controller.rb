@@ -4,7 +4,7 @@ module Spree
       skip_before_filter :check_for_user_or_api_key, only: :apply_coupon_code
       skip_before_filter :authenticate_user, only: :apply_coupon_code
 
-      before_filter :find_order, except: [:create, :mine, :index, :update]
+      before_filter :find_order, except: [:create, :mine, :current, :index, :update]
 
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
       Order.checkout_steps.keys.each do |step|
@@ -60,6 +60,15 @@ module Spree
           respond_with(@order, default_template: :show)
         else
           invalid_resource!(@order)
+        end
+      end
+
+      def current
+        @order = find_current_order
+        if @order
+          respond_with(@order, default_template: :show, locals: { root_object: @order })
+        else
+          head :no_content
         end
       end
 
@@ -121,6 +130,10 @@ module Spree
 
         def find_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
+        end
+
+        def find_current_order
+          current_api_user ? current_api_user.orders.incomplete.order(:created_at).last : nil
         end
 
         def order_id
