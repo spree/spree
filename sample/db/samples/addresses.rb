@@ -1,5 +1,5 @@
-united_states = Spree::Country.find_by_name!("United States")
-new_york = Spree::State.find_by_name!("New York")
+country = Spree::Country.find_by_name!("Israel")
+state = Spree::State.find_by_name!("ירושלים")
 
 # Billing address
 Spree::Address.create!(
@@ -8,9 +8,9 @@ Spree::Address.create!(
   :address1 => Faker::Address.street_address,
   :address2 => Faker::Address.secondary_address,
   :city => Faker::Address.city,
-  :state => new_york,
+  :state => state,
   :zipcode => 16804,
-  :country => united_states,
+  :country => country,
   :phone => Faker::PhoneNumber.phone_number)
 
 #Shipping address
@@ -20,7 +20,7 @@ Spree::Address.create!(
   :address1 => Faker::Address.street_address,
   :address2 => Faker::Address.secondary_address,
   :city => Faker::Address.city,
-  :state => new_york,
+  :state => state,
   :zipcode => 16804,
-  :country => united_states,
+  :country => country,
   :phone => Faker::PhoneNumber.phone_number)

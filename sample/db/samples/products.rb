@@ -1,8 +1,8 @@
 Spree::Sample.load_sample("tax_categories")
 Spree::Sample.load_sample("shipping_categories")
 
-clothing = Spree::TaxCategory.find_by_name!("Clothing")
-shipping_category = Spree::ShippingCategory.find_by_name!("Default")
+default_cat = Spree::TaxCategory.find_by_name!("ברירת מחדל")
+shipping_category = Spree::ShippingCategory.find_by_name!("ברירת מחדל")
 
 default_attrs = {
   :description => Faker::Lorem.paragraph,
@@ -11,110 +11,110 @@ default_attrs = {
 
 products = [
   {
-    :name => "Ruby on Rails Tote",
-    :tax_category => clothing,
+    :name => "חלב תנובה",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 15.99,
     :eur_price => 14,
   },
   {
-    :name => "Ruby on Rails Bag",
-    :tax_category => clothing,
+    :name => "יוגורט 1.5% טרה",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 22.99,
     :eur_price => 19,
   },
   {
-    :name => "Ruby on Rails Baseball Jersey",
-    :tax_category => clothing,
+    :name => "לחם פרוס ברמן",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Ruby on Rails Jr. Spaghetti",
-    :tax_category => clothing,
+    :name => "ספגטי פרפקטו אסם",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
 
   },
   {
-    :name => "Ruby on Rails Ringer T-Shirt",
+    :name => "מטליות לחות לירן",
     :shipping_category => shipping_category,
-    :tax_category => clothing,
+    :tax_category => default_cat,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Ruby Baseball Jersey",
-    :tax_category => clothing,
-    :shipping_category => shipping_category,
-    :price => 19.99,
-    :eur_price => 16
-  },
-  {
-    :name => "Apache Baseball Jersey",
-    :tax_category => clothing,
+    :name => "נייר טואלט עלילי",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Spree Baseball Jersey",
-    :tax_category => clothing,
+    :name => "חלב עמיד יטבתה",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Spree Jr. Spaghetti",
-    :tax_category => clothing,
+    :name => "מנעמים מצופים שוקולד",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Spree Ringer T-Shirt",
-    :tax_category => clothing,
+    :name => "מיץ עגבניות פריגת",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 19.99,
     :eur_price => 16
   },
   {
-    :name => "Spree Tote",
-    :tax_category => clothing,
+    :name => "מנה חמה אסם",
+    :tax_category => default_cat,
+    :shipping_category => shipping_category,
+    :price => 19.99,
+    :eur_price => 16
+  },
+  {
+    :name => "מפיות שולחן",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 15.99,
     :eur_price => 14,
   },
   {
-    :name => "Spree Bag",
-    :tax_category => clothing,
+    :name => "שמן זית",
+    :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 22.99,
     :eur_price => 19
   },
   {
-    :name => "Ruby on Rails Mug",
+    :name => "אוכל לכלבים",
     :shipping_category => shipping_category,
     :price => 13.99,
     :eur_price => 12
   },
   {
-    :name => "Ruby on Rails Stein",
+    :name => "מטרנה",
     :shipping_category => shipping_category,
     :price => 16.99,
     :eur_price => 14
   },
   {
-    :name => "Spree Stein",
+    :name => "שניצל תירס",
     :shipping_category => shipping_category,
     :price => 16.99,
     :eur_price => 14,
   },
   {
-    :name => "Spree Mug",
+    :name => "קפס נמס עלית",
     :shipping_category => shipping_category,
     :price => 13.99,
     :eur_price => 12
@@ -123,9 +123,9 @@ products = [
 
 products.each do |product_attrs|
   eur_price = product_attrs.delete(:eur_price)
-  Spree::Config[:currency] = "USD"
+  Spree::Config[:currency] = "NIS"
 
-  default_shipping_category = Spree::ShippingCategory.find_by_name!("Default")
+  default_shipping_category = Spree::ShippingCategory.find_by_name!("ברירת מחדל")
   product = Spree::Product.create!(default_attrs.merge(product_attrs))
   Spree::Config[:currency] = "EUR"
   product.reload
@@ -134,4 +134,4 @@ products.each do |product_attrs|
   product.save!
 end
 
-Spree::Config[:currency] = "USD"
+Spree::Config[:currency] = "NIS"

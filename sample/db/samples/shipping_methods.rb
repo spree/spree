@@ -1,53 +1,33 @@
 begin
-north_america = Spree::Zone.find_by_name!("North America")
+center_zone = Spree::Zone.find_by_name!("מרכז")
 rescue ActiveRecord::RecordNotFound
-  puts "Couldn't find 'North America' zone. Did you run `rake db:seed` first?"
-  puts "That task will set up the countries, states and zones required for Spree."
+  puts "Couldn't find 'מרכז' zone. Did you run `rake db:seed` first?"
+  puts "That task will set up the countries, states and zones required for Spree (This is a custom Doorstep build)."
   exit
 end
 
-europe_vat = Spree::Zone.find_by_name!("EU_VAT")
-shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
+north_zone = Spree::Zone.find_by_name!("צפון")
+south_zone = Spree::Zone.find_by_name!("דרום")
+shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'ברירת מחדל')
 
 Spree::ShippingMethod.create!([
   {
-    :name => "UPS Ground (USD)",
-    :zones => [north_america],
+    :name => "משלוח רגיל",
+    :zones => [north_zone, center_zone, south_zone],
     :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   },
   {
-    :name => "UPS Two Day (USD)",
-    :zones => [north_america],
-    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
-    :shipping_categories => [shipping_category]
-  },
-  {
-    :name => "UPS One Day (USD)",
-    :zones => [north_america],
-    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
-    :shipping_categories => [shipping_category]
-  },
-  {
-    :name => "UPS Ground (EU)",
-    :zones => [europe_vat],
-    :calculator => Spree::Calculator::Shipping::FlatRate.create!,
-    :shipping_categories => [shipping_category]
-  },
-  {
-    :name => "UPS Ground (EUR)",
-    :zones => [europe_vat],
+    :name => "משלוח מהיר",
+    :zones => [center_zone],
     :calculator => Spree::Calculator::Shipping::FlatRate.create!,
     :shipping_categories => [shipping_category]
   }
 ])
 
 {
-  "UPS Ground (USD)" => [5, "USD"],
-  "UPS Ground (EU)" => [5, "USD"],
-  "UPS One Day (USD)" => [15, "USD"],
-  "UPS Two Day (USD)" => [10, "USD"],
-  "UPS Ground (EUR)" => [8, "EUR"]
+  "משלוח רגיל" => [5, "NIS"],
+  "משלוח מהיר" => [5, "NIS"]
 }.each do |shipping_method_name, (price, currency)|
   shipping_method = Spree::ShippingMethod.find_by_name!(shipping_method_name)
   shipping_method.calculator.preferences = {

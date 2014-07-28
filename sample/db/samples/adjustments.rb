@@ -5,14 +5,14 @@ last_order = Spree::Order.find_by_number!("R987654321")
 
 first_order.adjustments.create!(
   :amount => 0,
-  :source => Spree::TaxRate.find_by_name!("North America"),
+  :source => Spree::TaxRate.find_by_name!("מס הכנסה"),
   :label => "Tax",
   :state => "open",
   :mandatory => true)
 
 last_order.adjustments.create!(
   :amount => 0,
-  :source => Spree::TaxRate.find_by_name!("North America"),
+  :source => Spree::TaxRate.find_by_name!("מס הכנסה"),
   :label => "Tax",
   :state => "open",
   :mandatory => true)

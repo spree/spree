@@ -1,5 +1,5 @@
 # create payments based on the totals since they can't be known in YAML (quantities are random)
-method = Spree::PaymentMethod.where(:name => 'Credit Card', :active => true).first
+method = Spree::PaymentMethod.where(:name => 'כרטיס אשראי', :active => true).first
 
 # Hack the current method so we're able to return a gateway without a RAILS_ENV
 Spree::Gateway.class_eval do

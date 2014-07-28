@@ -1,26 +1,32 @@
 Spree::Sample.load_sample("taxonomies")
 Spree::Sample.load_sample("products")
 
-categories = Spree::Taxonomy.find_by_name!("Categories")
-brands = Spree::Taxonomy.find_by_name!("Brand")
+categories = Spree::Taxonomy.find_by_name!("מחלקות")
+#on_promotion = Spree::Taxonomy.find_by_name!("מוצרים במבצע")
 
 products = { 
-  :ror_tote => "Ruby on Rails Tote",
-  :ror_bag => "Ruby on Rails Bag",
-  :ror_mug => "Ruby on Rails Mug",
-  :ror_stein => "Ruby on Rails Stein",
-  :ror_baseball_jersey => "Ruby on Rails Baseball Jersey",
-  :ror_jr_spaghetti => "Ruby on Rails Jr. Spaghetti",
-  :ror_ringer => "Ruby on Rails Ringer T-Shirt",
-  :spree_stein => "Spree Stein",
-  :spree_mug => "Spree Mug",
-  :spree_ringer => "Spree Ringer T-Shirt",
-  :spree_baseball_jersey =>  "Spree Baseball Jersey",
-  :spree_tote => "Spree Tote",
-  :spree_bag => "Spree Bag",
-  :spree_jr_spaghetti => "Spree Jr. Spaghetti",
-  :apache_baseball_jersey => "Apache Baseball Jersey",
-  :ruby_baseball_jersey => "Ruby Baseball Jersey",
+  :ror_milk_tnuva => "חלב תנובה",
+  :ror_yogurt => "יוגורט 1.5% טרה",
+  :ror_milk_yot => "חלב עמיד יטבתה",
+  
+  :ror_bread => "לחם פרוס ברמן",
+  :ror_pasta => "ספגטי פרפקטו אסם",
+  :spree_baflim => "מנעמים מצופים שוקולד",
+  :spree_mana => "מנה חמה אסם",
+  :apache_corn_s => "שניצל תירס",
+  
+  :ruby_coffee => "קפס נמס עלית",
+  :spree_olive_oil => "שמן זית",
+  
+  :ror_wet_napkins => "מטליות לחות לירן",
+  :ror_tp => "נייר טואלט עלילי",
+  :spree_napkins =>  "מפיות שולחן",
+  
+  :spree_juice_tom => "מיץ עגבניות פריגת",
+  :spree_beer => "בירה מכבי",
+  
+  :spree_dogli => "אוכל לכלבים",
+  :spree_baby => "מטרנה"
 }
 
 
@@ -30,110 +36,80 @@ end
 
 taxons = [
   {
-    :name => "Categories",
+    :name => "מחלקות",
     :taxonomy => categories,
     :position => 0
   },
   {
-    :name => "Bags",
+    :name => "מוצרי חלב",
     :taxonomy => categories,
-    :parent => "Categories",
+    :parent => "מחלקות",
     :position => 1,
     :products => [
-      products[:ror_tote],
-      products[:ror_bag],
-      products[:spree_tote],
-      products[:spree_bag]
+      products[:ror_milk_tnuva],
+      products[:ror_yogurt],
+      products[:ror_milk_yot]
     ]
   },
   {
-    :name => "Mugs",
+    :name => "מוצרי בסיס",
     :taxonomy => categories,
-    :parent => "Categories",
+    :parent => "מחלקות",
     :position => 2,
     :products => [
-      products[:ror_mug],
-      products[:ror_stein],
-      products[:spree_stein],
-      products[:spree_mug]
+      products[:ror_bread],
+      products[:ror_pasta],
+      products[:spree_baflim],
+      products[:spree_mana],
+      products[:apache_corn_s]
     ]
   },
   {
-    :name => "Clothing",
+    :name => "מוצרים לבית",
     :taxonomy => categories,
-    :parent => "Categories" 
+    :parent => "מחלקות",
+    :position => 2,
+    :products => [
+      products[:ror_wet_napkins],
+      products[:ror_tp],
+      products[:spree_napkins],
+    ]
   },
   {
-    :name => "Shirts",
+    :name => "שונות",
     :taxonomy => categories,
-    :parent => "Clothing",
+    :parent => "מחלקות",
+    :position => 2,
+    :products => [
+      products[:spree_dogli],
+      products[:spree_baby],
+      products[:spree_napkins],
+      products[:ruby_coffee],
+      products[:spree_olive_oil]
+    ]
+  },
+  {
+    :name => "שתייה",
+    :taxonomy => categories,
+    :parent => "מחלקות" 
+  },
+  {
+    :name => "שתייה קלה",
+    :taxonomy => categories,
+    :parent => "שתייה",
     :position => 0,
     :products => [
-      products[:ror_jr_spaghetti],
-      products[:spree_jr_spaghetti]
+      products[:spree_juice_tom]
     ]
   },
   {
-    :name => "T-Shirts",
+    :name => "שתייה חריפה",
     :taxonomy => categories,
-    :parent => "Clothing" ,
+    :parent => "שתייה" ,
     :products => [
-      products[:ror_baseball_jersey],
-      products[:ror_ringer],
-      products[:apache_baseball_jersey],
-      products[:ruby_baseball_jersey],
-      products[:spree_baseball_jersey],
-      products[:spree_ringer]
+      products[:spree_beer]
     ],
     :position => 0
-  },
-  {
-    :name => "Brands",
-    :taxonomy => brands
-  },
-  {
-    :name => "Ruby",
-    :taxonomy => brands,
-    :parent => "Brand",
-    :products => [
-      products[:ruby_baseball_jersey]
-    ]
-  },
-  {
-    :name => "Apache",
-    :taxonomy => brands,
-    :parent => "Brand",
-    :products => [
-      products[:apache_baseball_jersey]
-    ]
-  },
-  {
-    :name => "Spree",
-    :taxonomy => brands,
-    :parent => "Brand",
-    :products => [
-      products[:spree_stein],
-      products[:spree_mug],
-      products[:spree_ringer],
-      products[:spree_baseball_jersey],
-      products[:spree_tote],
-      products[:spree_bag],
-      products[:spree_jr_spaghetti],
-    ]
-  },
-  {
-    :name => "Rails",
-    :taxonomy => brands,
-    :parent => "Brand",
-    :products => [
-      products[:ror_tote],
-      products[:ror_bag],
-      products[:ror_mug],
-      products[:ror_stein],
-      products[:ror_baseball_jersey],
-      products[:ror_jr_spaghetti],
-      products[:ror_ringer],
-    ]
   },
 ]
 

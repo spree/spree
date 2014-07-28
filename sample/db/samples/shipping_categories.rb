@@ -1,1 +1,1 @@
-Spree::ShippingCategory.create!(:name => "Default")
+Spree::ShippingCategory.create!(:name => "ברירת מחדל")
