@@ -162,6 +162,43 @@ describe Spree::Promotion do
     end
   end
 
+  context "#blacklisted?" do
+    subject { promotion.blacklisted?(promotable) }
+    context "when promotable is a Spree::LineItem" do
+      let(:promotable) { create :line_item }
+      let(:product) { promotable.product }
+      before do
+        product.promotionable = promotionable
+      end
+      context "and product is promotionable" do
+        let(:promotionable) { true }
+        it { should be false }
+      end
+      context "and product is not promotionable" do
+        let(:promotionable) { false }
+        it { should be true }
+      end
+    end
+    context "when promotable is a Spree::Order" do
+      let(:promotable) { create :order }
+      context "and it is empty" do
+        it { should be false }
+      end
+      context "and it contains items" do
+        let!(:line_item) { create(:line_item, order: promotable) }
+        context "and the items are all non-promotionable" do
+          before do
+            line_item.product.update_column(:promotionable, false)
+          end
+          it { should be true }
+        end
+        context "and at least one item is promotionable" do
+          it { should be false }
+        end
+      end
+    end
+  end
+
   context "#expired" do
     it "should not be exipired" do
       promotion.should_not be_expired

@@ -74,7 +74,7 @@ module Spree
 
     # called anytime order.update! happens
     def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
       !!eligible_rules(promotable, {})
     end
 
@@ -101,6 +101,16 @@ module Spree
 
     def usage_limit_exceeded?(promotable)
       usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+    end
+
+    def blacklisted?(promotable)
+      case promotable
+      when Spree::LineItem
+        !promotable.product.promotionable?
+      when Spree::Order
+        promotable.line_items.any? &&
+          !promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).any?
+      end
     end
 
     def adjusted_credits_count(promotable)

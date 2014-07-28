@@ -14,6 +14,10 @@
   input, select, textarea, .select2-container {
     width: 100%;
   }
+  input[type="checkbox"] {
+    width: auto;
+    vertical-align: bottom;
+  }
 }
 
 [data-hook="admin_product_form_multiple_variants"] {
