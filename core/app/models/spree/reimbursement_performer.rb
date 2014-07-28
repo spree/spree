@@ -22,8 +22,9 @@ module Spree
 
       def execute(reimbursement, simulate)
         # For now type and order of retrieved payments are not specified
+        reimbursement_items = []
         unpaid_amount = reimbursement.unpaid_amount
-        reimbursement.order.payments.completed.map do |payment|
+        reimbursement.order.payments.completed.each do |payment|
           break if unpaid_amount <= 0
           next if payment.credit_allowed.zero?
 
@@ -41,8 +42,16 @@ module Spree
             refund.save!
           end
           unpaid_amount -= amount
-          refund
+          reimbursement_items << refund
         end
+
+        if exchange_items = reimbursement.return_items_requiring_exchange.presence
+          exchange = Spree::Exchange.new(reimbursement.order, exchange_items)
+          exchange.perform! unless simulate
+          reimbursement_items << exchange
+        end
+
+        reimbursement_items
       end
 
     end
