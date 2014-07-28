@@ -421,4 +421,28 @@ describe Spree::Promotion do
       it { should be false }
     end
   end
+
+  describe "adding items to the cart" do
+    let(:order) { create :order }
+    let(:line_item) { create :line_item, order: order }
+    let(:promo) { create :promotion_with_item_adjustment, adjustment_rate: 5, code: 'promo' }
+    let(:variant) { create :variant }
+
+    it "updates the promotions for new line items" do
+      expect(line_item.adjustments).to be_empty
+      expect(order.adjustment_total).to eq 0
+
+      promo.activate order: order
+      order.update!
+
+      expect(line_item.adjustments).to have(1).item
+      expect(order.adjustment_total).to eq -5
+
+      other_line_item = order.contents.add(variant, 1, order.currency)
+
+      expect(other_line_item).not_to eq line_item
+      expect(other_line_item.adjustments).to have(1).item
+      expect(order.adjustment_total).to eq -10
+    end
+  end
 end
