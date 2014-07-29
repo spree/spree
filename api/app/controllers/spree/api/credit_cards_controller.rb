@@ -5,6 +5,7 @@ module Spree
 
 	  def index
         @credit_cards = Spree::CreditCard
+		  .accessible_by(current_ability, :read)
 		  .where(user_id: params[:user_id])
 		  .with_payment_profile
 		  .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
