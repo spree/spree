@@ -19,7 +19,7 @@ describe Spree::Address do
                          :phone => 'phone',
                          :state_id => state.id,
                          :state_name => state.name,
-                         :zipcode => 'zip_code')
+                         :zipcode => '10001')
 
       cloned = original.clone
 
@@ -137,7 +137,42 @@ describe Spree::Address do
     it "requires zipcode" do
       address.zipcode = ""
       address.valid?
-      address.should have(1).error_on(:zipcode)
+      address.errors['zipcode'].should include("can't be blank")
+    end
+
+    context "zipcode validation" do
+      it "validates the zipcode" do
+        address.country.stub(:iso).and_return('US')
+        address.zipcode = 'abc'
+        address.valid?
+        address.errors['zipcode'].should include('is invalid')
+      end
+
+      context 'does not validate' do
+        it 'does not have a country' do
+          address.country = nil
+          address.valid?
+          address.errors['zipcode'].should_not include('is invalid')
+        end
+
+        it 'does not have an iso' do
+          address.country.stub(:iso).and_return(nil)
+          address.valid?
+          address.errors['zipcode'].should_not include('is invalid')
+        end
+
+        it 'does not have a zipcode' do
+          address.zipcode = ""
+          address.valid?
+          address.errors['zipcode'].should_not include('is invalid')
+        end
+
+        it 'does not have a supported country iso' do
+          address.country.stub(:iso).and_return('BO')
+          address.valid?
+          address.errors['zipcode'].should_not include('is invalid')
+        end
+      end
     end
 
     context "phone not required" do
