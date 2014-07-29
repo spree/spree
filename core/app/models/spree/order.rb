@@ -279,11 +279,11 @@ module Spree
       shipments.shipped
     end
 
-    def contains?(variant, options = nil)
+    def contains?(variant, options = {})
       find_line_item_by_variant(variant, options).present?
     end
 
-    def quantity_of(variant, options = nil)
+    def quantity_of(variant, options = {})
       line_item = find_line_item_by_variant(variant, options)
       line_item ? line_item.quantity : 0
     end
