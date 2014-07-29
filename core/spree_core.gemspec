@@ -38,5 +38,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'state_machine', '1.2.0'
   s.add_dependency 'stringex', '~> 1.5.1'
   s.add_dependency 'truncate_html', '0.9.2'
+  s.add_dependency 'twitter_cldr', '~> 3.0'
 
 end

@@ -34,7 +34,7 @@ module Spree
          :city => 'Washington',
          :country_id => country.id,
          :state_id => state.id,
-         :zipcode => '666',
+         :zipcode => '66666',
          :phone => '666-666-6666'
       }}
 
@@ -281,7 +281,7 @@ module Spree
 
         order = Importer::Order.import(user,params)
         expect(order.item_total).to eq(166.1)
-        expect(order.total).to eq(163.1) # = item_total (166.1) - adjustment_total (3.00) 
+        expect(order.total).to eq(163.1) # = item_total (166.1) - adjustment_total (3.00)
 
       end
 
