@@ -5,7 +5,7 @@ default_cat = Spree::TaxCategory.find_by_name!("ברירת מחדל")
 shipping_category = Spree::ShippingCategory.find_by_name!("ברירת מחדל")
 
 default_attrs = {
-  :description => Faker::Lorem.paragraph,
+  :description => "בתחום השיווק, מוצר הוא כל דבר אשר ניתן להציע לשוק ואשר יספק את צרכי השוק. בתחום הייצור והתעשייה, נרכשים מוצרים כחומרי גלם (או מיוצרים בהליכי מיחזור) ונמכרים כסחורה מוגמרת. מצרכים הם בדרך כלל חומרי גלם (כמו מתכות ותוצרים חקלאיים), אבל מצרך יכול להיות נגיש גם לצרכן בשוק החופשי.",
   :available_on => Time.zone.now
 }
 
@@ -15,14 +15,14 @@ products = [
     :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 15.99,
-    :eur_price => 14,
+    :eur_price => 14
   },
   {
     :name => "יוגורט 1.5% טרה",
     :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 22.99,
-    :eur_price => 19,
+    :eur_price => 19
   },
   {
     :name => "לחם פרוס ברמן",
@@ -86,7 +86,7 @@ products = [
     :tax_category => default_cat,
     :shipping_category => shipping_category,
     :price => 15.99,
-    :eur_price => 14,
+    :eur_price => 14
   },
   {
     :name => "שמן זית",
@@ -111,19 +111,25 @@ products = [
     :name => "שניצל תירס",
     :shipping_category => shipping_category,
     :price => 16.99,
-    :eur_price => 14,
+    :eur_price => 14
   },
   {
-    :name => "קפס נמס עלית",
+    :name => "קפה נמס עלית",
     :shipping_category => shipping_category,
     :price => 13.99,
     :eur_price => 12
-  }
+  },
+  {
+    :name => "בירה מכבי",
+    :shipping_category => shipping_category,
+    :price => 13.99,
+    :eur_price => 12
+  },
 ]
 
 products.each do |product_attrs|
   eur_price = product_attrs.delete(:eur_price)
-  Spree::Config[:currency] = "NIS"
+  Spree::Config[:currency] = "ILS"
 
   default_shipping_category = Spree::ShippingCategory.find_by_name!("ברירת מחדל")
   product = Spree::Product.create!(default_attrs.merge(product_attrs))
@@ -134,4 +140,4 @@ products.each do |product_attrs|
   product.save!
 end
 
-Spree::Config[:currency] = "NIS"
+Spree::Config[:currency] = "ILS"

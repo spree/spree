@@ -15,7 +15,7 @@ products = {
   :spree_mana => "מנה חמה אסם",
   :apache_corn_s => "שניצל תירס",
   
-  :ruby_coffee => "קפס נמס עלית",
+  :ruby_coffee => "קפה נמס עלית",
   :spree_olive_oil => "שמן זית",
   
   :ror_wet_napkins => "מטליות לחות לירן",

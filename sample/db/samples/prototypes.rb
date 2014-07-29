@@ -1,7 +1,7 @@
 prototypes = [
   {
     :name => "מוצר חלב",
-    :properties => ["יצרן", "אחוז"]
+    :properties => ["יצרן", "משקל"]
   }
 ]
 
