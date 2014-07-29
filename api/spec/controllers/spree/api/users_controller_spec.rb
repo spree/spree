@@ -46,8 +46,33 @@ module Spree
       end
 
       it "can update own details" do
-        api_put :update, :id => user.id, :user => { :email => "mine@example.com" }
-        json_response['email'].should eq 'mine@example.com'
+        country = create(:country)
+        api_put :update, id: user.id, user: {
+          email: "mine@example.com",
+          bill_address_attributes: {
+            first_name: 'First',
+            last_name: 'Last',
+            address1: '1 Test Rd',
+            city: 'City',
+            country_id: country.id,
+            state_id: 1,
+            zipcode: '55555',
+            phone: '5555555555'
+          },
+          ship_address_attributes: {
+            first_name: 'First',
+            last_name: 'Last',
+            address1: '1 Test Rd',
+            city: 'City',
+            country_id: country.id,
+            state_id: 1,
+            zipcode: '55555',
+            phone: '5555555555'
+          }
+        }
+        expect(json_response['email']).to eq 'mine@example.com'
+        expect(json_response['bill_address']).to_not be_nil
+        expect(json_response['ship_address']).to_not be_nil
       end
 
       it "cannot update other users details" do
