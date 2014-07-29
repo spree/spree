@@ -938,7 +938,7 @@ en:
         manual: Manually choose
     products: Products
     promotion: Promotion
-    promotionable: Promotionable
+    promotionable: Promotable
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
