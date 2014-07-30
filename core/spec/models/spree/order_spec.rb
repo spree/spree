@@ -651,10 +651,10 @@ describe Spree::Order do
 
   describe '#quantity' do
     # Uses a persisted record, as the quantity is retrieved via a DB count
-    let(:order) { create :order_with_line_items }
+    let(:order) { create :order_with_line_items, line_items_count: 3 }
 
     it 'sums the quantity of all line items' do
-      expect(order.quantity).to eq 5
+      expect(order.quantity).to eq 3
     end
   end
 

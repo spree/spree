@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Shipments" do
   stub_authorization!
 
-  let!(:order) { create(:order_ready_to_ship, :number => "R100", :state => "complete") }
+  let!(:order) { create(:order_ready_to_ship, :number => "R100", :state => "complete", :line_items_count => 5) }
 
   # Regression test for #4025
   context "a shipment without a shipping method" do
