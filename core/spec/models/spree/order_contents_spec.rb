@@ -15,6 +15,22 @@ describe Spree::OrderContents do
       end
     end
 
+    context 'given a shipment' do
+      it "ensure shipment calls update_amounts instead of order calling ensure_updated_shipments" do
+        shipment = create(:shipment)
+        expect(subject.order).to_not receive(:ensure_updated_shipments)
+        expect(shipment).to receive(:update_amounts)
+        subject.add(variant, 1, nil, shipment)
+      end
+    end
+
+    context 'not given a shipment' do
+      it "ensures updated shipments" do
+        expect(subject.order).to receive(:ensure_updated_shipments)
+        subject.add(variant)
+      end
+    end
+
     it 'should add line item if one does not exist' do
       line_item = subject.add(variant, 1)
       line_item.quantity.should == 1
@@ -86,6 +102,24 @@ describe Spree::OrderContents do
         subject.remove(variant)
 
         line_item.reload.quantity.should == 2
+      end
+    end
+
+    context 'given a shipment' do
+      it "ensure shipment calls update_amounts instead of order calling ensure_updated_shipments" do
+        line_item = subject.add(variant, 1)
+        shipment = create(:shipment)
+        expect(subject.order).to_not receive(:ensure_updated_shipments)
+        expect(shipment).to receive(:update_amounts)
+        subject.remove(variant, 1, shipment)
+      end
+    end
+
+    context 'not given a shipment' do
+      it "ensures updated shipments" do
+        line_item = subject.add(variant, 1)
+        expect(subject.order).to receive(:ensure_updated_shipments)
+        subject.remove(variant)
       end
     end
 

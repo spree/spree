@@ -6,7 +6,6 @@ module Spree
         @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1)
 
         if @line_item.errors.empty?
-          @order.ensure_updated_shipments
           respond_with(@line_item, status: 201, default_template: :show)
         else
           invalid_resource!(@line_item)
@@ -27,7 +26,6 @@ module Spree
         @line_item = find_line_item
         variant = Spree::Variant.find(@line_item.variant_id)
         @order.contents.remove(variant, @line_item.quantity)
-        @order.ensure_updated_shipments
         respond_with(@line_item, status: 204)
       end
 
