@@ -1009,6 +1009,7 @@ en:
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
     refunds: Refunds
+    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     register: Register
     registration: Registration
     remember_me: Remember me
@@ -1025,6 +1026,7 @@ en:
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
+    return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     return_number: Return Number
     return_quantity: Return Quantity

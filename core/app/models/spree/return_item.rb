@@ -1,5 +1,8 @@
 module Spree
   class ReturnItem < Spree::Base
+    class_attribute :return_eligibility_validator
+    self.return_eligibility_validator = ReturnItem::ReturnEligibilityValidator
+
     belongs_to :return_authorization, inverse_of: :return_items
     belongs_to :inventory_unit, inverse_of: :return_items
     belongs_to :exchange_variant, class: 'Spree::Variant'
@@ -10,6 +13,10 @@ module Spree
 
     scope :awaiting_return, -> { where(reception_status: 'awaiting') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
+
+    serialize :acceptance_status_errors
+
+    delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
 
     state_machine :reception_status, initial: :awaiting do
       before_transition to: :received, do: :process_inventory_units!
@@ -29,19 +36,28 @@ module Spree
     end
 
     state_machine :acceptance_status, initial: :not_received do
-
-      event :accept do
-        transition to: :accepted, from: :not_received
-      end
-
-      event :reject do
+      event :attempt_accept do
+        transition to: :accepted, from: :not_received, if: -> (return_item) { return_item.eligible_for_return? }
+        transition to: :manual_intervention_required, from: :not_received, if: -> (return_item) { return_item.requires_manual_intervention? }
         transition to: :rejected, from: :not_received
       end
 
+      # bypasses eligibility checks
+      event :accept do
+        transition to: :accepted, from: [:not_received, :manual_intervention_required]
+      end
+
+      # bypasses eligibility checks
+      event :reject do
+        transition to: :rejected, from: [:not_received, :manual_intervention_required]
+      end
+
+      # bypasses eligibility checks
       event :require_manual_intervention do
         transition to: :manual_intervention_required, from: :not_received
       end
 
+      after_transition any => any, :do => :persist_acceptance_status_errors
     end
 
     def display_pre_tax_amount
@@ -49,6 +65,10 @@ module Spree
     end
 
     private
+
+    def persist_acceptance_status_errors
+      self.update_attributes(acceptance_status_errors: validator.errors)
+    end
 
     def stock_item
       return unless customer_return
@@ -83,6 +103,9 @@ module Spree
       if customer_return.order_id != inventory_unit.order_id
         errors.add(:base, Spree.t(:return_items_cannot_be_associated_with_multiple_orders))
       end
+
+    def validator
+      @validator ||= return_eligibility_validator.new(self)
     end
   end
 end
