@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Adjustments" do
   stub_authorization!
 
-  let!(:order) { create(:completed_order_with_totals) }
+  let!(:order) { create(:completed_order_with_totals, line_items_count: 5) }
   let!(:line_item) do
     line_item = order.line_items.first
     # so we can be sure of a determinate price in our assertions
