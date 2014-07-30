@@ -1190,6 +1190,7 @@ en:
     type: Type
     type_to_search: Type to search
     unable_to_connect_to_gateway: Unable to connect to gateway.
+    uncollapsible_line_item: Uncollapsible Line Item
     under_price: Under %{price}
     unlock: Unlock
     unrecognized_card_type: Unrecognized card type

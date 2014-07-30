@@ -15,6 +15,19 @@ describe Spree::OrderContents do
       end
     end
 
+    context 'given an product with uncollapsible_line_item true' do
+      let(:product) { create :product, uncollapsible_line_item: true }
+      let(:variant) { product.master }
+
+      it 'should have two separate line items of quantity 1' do
+        2.times { subject.add(variant) }
+        expect(order.line_items.size).to eq 2
+        order.line_items.each do |line_item| 
+          expect(line_item.quantity).to eq 1
+        end
+      end
+    end
+
     it 'should add line item if one does not exist' do
       line_item = subject.add(variant, 1)
       line_item.quantity.should == 1

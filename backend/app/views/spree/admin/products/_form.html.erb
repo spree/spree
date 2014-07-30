@@ -123,6 +123,16 @@
         <%= f.error_message_on :tax_category %>
       <% end %>
     </div>
+
+    <div data-hook="admin_product_form_uncollapsible_line_item" class="field checkbox">
+      <%= f.field_container :uncollapsible_line_item do %>
+        <%= f.label :uncollapsible_line_item do %>
+          <%= f.check_box :uncollapsible_line_item %>
+          <%= Spree.t(:uncollapsible_line_item) %>
+        <% end %>
+        <%= f.error_message_on :uncollapsible_line_item %>
+      <% end %>
+    </div>
   </div>
 
   <div class="twelve columns alpha omega">
