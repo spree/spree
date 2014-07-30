@@ -9,7 +9,7 @@
 
     <%= f.field_container :name do %>
       <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name, :class => 'fullwidth title' %>
+      <%= f.text_field :name, :class => 'fullwidth title', :required => true %>
       <%= f.error_message_on :name %>
     <% end %>
 
@@ -34,7 +34,7 @@
       <div data-hook="new_product_price" class="four columns">
         <%= f.field_container :price do %>
           <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span><br />
-          <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => ''), :class => 'fullwidth' %>
+          <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => ''), :class => 'fullwidth', :required => true %>
           <%= f.error_message_on :price %>
         <% end %>
       </div>
@@ -53,7 +53,7 @@
       <div data-hook="new_product_shipping_category" class="alpha four columns">
         <%= f.field_container :shipping_category do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %><span class="required">*</span><br />
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
+          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth', :required => true }) %>
           <%= f.error_message_on :shipping_category_id %>
         <% end %>
       </div>
