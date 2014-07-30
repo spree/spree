@@ -9,8 +9,9 @@ module Spree
 
     def initialize(item)
       @item = item
+
       # Don't attempt to reload the item from the DB if it's not there
-      @item.reload if @item.persisted?
+      @item.reload if @item.instance_of?(Shipment) && @item.persisted?
     end
 
     def update
@@ -27,7 +28,7 @@ module Spree
       #
       # It also fits the criteria for sales tax as outlined here:
       # http://www.boe.ca.gov/formspubs/pub113/
-      # 
+      #
       # Tax adjustments come in not one but *two* exciting flavours:
       # Included & additional
 
