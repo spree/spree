@@ -4,7 +4,7 @@
     <div data-hook="admin_product_form_name">
       <%= f.field_container :name do %>
         <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
-        <%= f.text_field :name, :class => 'fullwidth title' %>
+        <%= f.text_field :name, :class => 'fullwidth title', :required => true %>
         <%= f.error_message_on :name %>
       <% end %>
     </div>
@@ -12,7 +12,7 @@
     <div data-hook="admin_product_form_slug">
       <%= f.field_container :slug do %>
         <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *',  :class => "required")) %>
-        <%= f.text_field :slug, :class => 'fullwidth title' %>
+        <%= f.text_field :slug, :class => 'fullwidth title', :required => true %>
         <%= f.error_message_on :slug %>
       <% end %>
     </div>
@@ -30,7 +30,7 @@
     <div data-hook="admin_product_form_price">
     <%= f.field_container :price do %>
       <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
-      <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
+      <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => ''), :required => true %>
       <%= f.error_message_on :price %>
     <% end %>
     </div>
@@ -42,6 +42,7 @@
         <%= f.error_message_on :cost_price %>
       <% end %>
     </div>
+
     <div data-hook="admin_product_form_cost_currency" class="omega two columns">
       <%= f.field_container :cost_currency do %>
         <%= f.label :cost_currency, Spree.t(:cost_currency) %>

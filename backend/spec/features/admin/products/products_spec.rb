@@ -170,10 +170,13 @@ describe "Products" do
       end
 
       it "should keep option values selected if validation fails", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_sku", :with => "B100"
+        fill_in "product_price", :with => "100"
         select "Size", :from => "Prototype"
         check "Large"
         click_button "Create"
-        page.should have_content("Name can't be blank")
+        page.should have_content("Shipping category can't be blank")
         field_labeled("Size").should be_checked
         field_labeled("Large").should be_checked
         field_labeled("Small").should_not be_checked
@@ -203,8 +206,11 @@ describe "Products" do
       end
 
       it "should show validation errors", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_sku", :with => "B100"
+        fill_in "product_price", :with => "100"
         click_button "Create"
-        page.should have_content("Name can't be blank")
+        page.should have_content("Shipping category can't be blank")
       end
 
       context "using a locale with a different decimal format " do
