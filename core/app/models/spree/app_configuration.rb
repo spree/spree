@@ -23,9 +23,9 @@ module Spree
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
     preference :admin_products_per_page, :integer, default: 10
-    preference :allow_backorder_shipping, :boolean, default: false # should only be true if you don't need to track inventory
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
+    preference :allow_return_item_amount_editing, :boolean, default: false # Determines whether an admin is allowed to change a return item's pre-calculated amount
     preference :allow_ssl_in_development_and_test, :boolean, default: false
     preference :allow_ssl_in_production, :boolean, default: true
     preference :allow_ssl_in_staging, :boolean, default: true
@@ -67,7 +67,6 @@ module Spree
     preference :show_raw_product_description, :boolean, :default => false
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
-    preference :allow_return_item_amount_editing, :boolean, default: false # Determines whether an admin is allowed to change a return item's pre-calculated amount
 
     # Default mail headers settings
     preference :send_core_emails, :boolean, :default => true
