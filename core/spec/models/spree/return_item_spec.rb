@@ -29,6 +29,8 @@ describe Spree::ReturnItem do
 
     subject { return_item.receive! }
 
+    before { return_item.stub(:eligible_for_return?).and_return(true) }
+
     it 'returns the inventory unit' do
       subject
       expect(inventory_unit.reload.state).to eq 'returned'
@@ -156,24 +158,76 @@ describe Spree::ReturnItem do
     end
   end
 
-  describe "#accept" do
+  describe "#attempt_accept" do
     let(:return_item) { create(:return_item, acceptance_status: status) }
+    let(:validator_errors) { {} }
+    let(:validator_double) { double(errors: validator_errors) }
 
-    subject { return_item.accept! }
+    subject { return_item.attempt_accept! }
+
+    before do
+      return_item.stub(:validator).and_return(validator_double)
+    end
 
     context "not_received status" do
       let(:status) { 'not_received' }
 
-      before { subject }
+      before do
+        return_item.stub(:eligible_for_return?).and_return(true)
+        subject
+      end
 
       it "transitions successfully" do
         expect(return_item).to be_accepted
+      end
+
+      it "has no acceptance status errors" do
+        expect(return_item.acceptance_status_errors).to be_empty
       end
     end
 
     (all_acceptance_statuses - ['not_received']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
+      end
+    end
+
+    context "not eligible for return" do
+      let(:status) { 'not_received' }
+      let(:validator_errors) { { number_of_days: "Return Item is outside the eligible time period" } }
+
+      before do
+        return_item.stub(:eligible_for_return?).and_return(false)
+      end
+
+      context "manual intervention required" do
+        before do
+          return_item.stub(:requires_manual_intervention?).and_return(true)
+          subject
+        end
+
+        it "transitions to manual intervention required" do
+          expect(return_item).to be_manual_intervention_required
+        end
+
+        it "sets the acceptance status errors" do
+          expect(return_item.acceptance_status_errors).to eq validator_errors
+        end
+      end
+
+      context "manual intervention not required" do
+        before do
+          return_item.stub(:requires_manual_intervention?).and_return(false)
+          subject
+        end
+
+        it "transitions to rejected" do
+          expect(return_item).to be_rejected
+        end
+
+        it "sets the acceptance status errors" do
+          expect(return_item.acceptance_status_errors).to eq validator_errors
+        end
       end
     end
   end
@@ -191,11 +245,41 @@ describe Spree::ReturnItem do
       it "transitions successfully" do
         expect(return_item).to be_rejected
       end
+
+      it "has no acceptance status errors" do
+        expect(return_item.acceptance_status_errors).to be_empty
+      end
     end
 
-    (all_acceptance_statuses - ['not_received']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['not_received', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'rejected'
+      end
+    end
+  end
+
+  describe "#accept" do
+    let(:return_item) { create(:return_item, acceptance_status: status) }
+
+    subject { return_item.accept! }
+
+    context "not_received status" do
+      let(:status) { 'not_received' }
+
+      before { subject }
+
+      it "transitions successfully" do
+        expect(return_item).to be_accepted
+      end
+
+      it "has no acceptance status errors" do
+        expect(return_item.acceptance_status_errors).to be_empty
+      end
+    end
+
+    (all_acceptance_statuses - ['not_received', 'manual_intervention_required']).each do |invalid_transition_status|
+      context "return_item has an acceptance status of #{invalid_transition_status}" do
+        it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
       end
     end
   end
@@ -212,6 +296,10 @@ describe Spree::ReturnItem do
 
       it "transitions successfully" do
         expect(return_item).to be_manual_intervention_required
+      end
+
+      it "has no acceptance status errors" do
+        expect(return_item.acceptance_status_errors).to be_empty
       end
     end
 
