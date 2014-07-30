@@ -53,7 +53,7 @@ describe "Cart", inaccessible: true do
     click_button "add-to-cart-button"
 
     page.should have_content("RoR Mug")
-    click_on "Empty"
+    click_on "Empty Cart"
     page.should have_content("Your cart is empty")
 
     within "#link-to-cart" do
