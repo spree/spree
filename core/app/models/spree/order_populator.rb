@@ -9,8 +9,9 @@ module Spree
       @errors = ActiveModel::Errors.new(self)
     end
 
-    def populate(variant_id, quantity, options={})
+    def populate(variant_id, quantity, options= {})
       attempt_cart_add(variant_id, quantity, options)
+      order.ensure_updated_shipments
       valid?
     end
 

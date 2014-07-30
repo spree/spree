@@ -48,7 +48,7 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
-        @shipment.order.contents.add(variant, quantity, nil, @shipment)
+        @shipment.order.contents.add(variant, quantity, {shipment: @shipment})
 
         respond_with(@shipment, default_template: :show)
       end
@@ -57,7 +57,7 @@ module Spree
         variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
-        @shipment.order.contents.remove(variant, quantity, @shipment)
+        @shipment.order.contents.remove(variant, quantity, {shipment: @shipment})
         @shipment.reload if @shipment.persisted?
         respond_with(@shipment, default_template: :show)
       end

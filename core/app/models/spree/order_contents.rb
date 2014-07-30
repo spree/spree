@@ -56,7 +56,7 @@ module Spree
       def add_to_line_item(variant, quantity, options = {})
         line_item = grab_line_item_by_variant(variant, false, options)
 
-        currency = options.delete(:currency)
+        currency = options.delete(:currency) || order.currency
         shipment = options.delete(:shipment)
 
         if line_item
