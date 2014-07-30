@@ -103,6 +103,7 @@ module Spree
       if customer_return.order_id != inventory_unit.order_id
         errors.add(:base, Spree.t(:return_items_cannot_be_associated_with_multiple_orders))
       end
+    end
 
     def validator
       @validator ||= return_eligibility_validator.new(self)
