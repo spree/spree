@@ -49,7 +49,7 @@ module Spree
 
     # give each of the shipments a chance to update themselves
     def update_shipments
-      shipments.each { |shipment| shipment.update!(order) }
+      shipments.each { |shipment| shipment.update!(order) if shipment.persisted? }
     end
 
     def update_payment_total

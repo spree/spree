@@ -14,6 +14,7 @@ describe Spree::OrderPopulator do
 
     context "can populate an order" do
       it "can take a list of variants with quantites and add them to the order" do
+        expect(order).to receive(:ensure_updated_shipments)
         order.contents.should_receive(:add).with(variant, 5, subject.currency, nil, {}).and_return double.as_null_object
         subject.populate(2, 5)
       end

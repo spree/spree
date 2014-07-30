@@ -285,9 +285,9 @@ module Spree
     end
 
     def find_line_item_by_variant(variant, options = nil)
-      line_items.detect { |line_item| 
+      line_items.detect { |line_item|
                     line_item.variant_id == variant.id &&
-                    line_item_options_match(line_item, options)                  
+                    line_item_options_match(line_item, options)
                   }
     end
 
@@ -301,7 +301,7 @@ module Spree
         self.send("#{options[key]}_match".to_sym, line_item, options[key])
       end
     end
-                                     
+
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
