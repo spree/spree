@@ -359,10 +359,6 @@ module Spree
         order.ship_address && order.ship_address.valid?
       end
 
-      def description_for_shipping_charge
-        "#{Spree.t(:shipping)} (#{shipping_method.name})"
-      end
-
       def manifest_restock(item)
         if item.states["on_hand"].to_i > 0
          stock_location.restock item.variant, item.states["on_hand"], self
