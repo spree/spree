@@ -101,20 +101,25 @@ describe Spree::BaseHelper do
 
   context "link_to_tracking" do
     it "returns tracking link if available" do
-      a = link_to_tracking_html(:tracking => '123', :tracking_url => 'http://g.c/?t=123').css('a')
+      a = link_to_tracking_html(shipping_method: true, tracking: '123', tracking_url: 'http://g.c/?t=123').css('a')
 
-      a.text.should == '123'
-      a.attr('href').value.should == 'http://g.c/?t=123'
+      expect(a.text).to eq '123'
+      expect(a.attr('href').value).to eq 'http://g.c/?t=123'
     end
 
     it "returns tracking without link if link unavailable" do
-      html = link_to_tracking_html(:tracking => '123', :tracking_url => nil)
-      html.css('span').text.should == '123'
+      html = link_to_tracking_html(shipping_method: true, tracking: '123', tracking_url: nil)
+      expect(html.css('span').text).to eq '123'
+    end
+
+    it "returns nothing when no shipping method" do
+      html = link_to_tracking_html(shipping_method: nil, tracking: '123')
+      expect(html.css('span').text).to eq ''
     end
 
     it "returns nothing when no tracking" do
-      html = link_to_tracking_html(:tracking => nil)
-      html.css('span').text.should == ''
+      html = link_to_tracking_html(tracking: nil)
+      expect(html.css('span').text).to eq ''
     end
 
     def link_to_tracking_html(options = {})
