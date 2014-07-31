@@ -38,7 +38,7 @@ module SpreeCmd
         Please update the Versionfile to designate compatibility with different versions of Spree.
         See http://spreecommerce.com/documentation/extensions.html#versionfile
 
-        Consider listing your extension in the official extension registry http://spreecommerce.com/extensions"
+        Consider listing your extension in the official extension registry http://spreecommerce.com/extensions
 
         #{'*' * 80}
       }
