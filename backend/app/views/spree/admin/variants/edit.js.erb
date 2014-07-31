@@ -1,3 +1,2 @@
-$("#<%= spree_dom_id(@variant) %>").replaceWith('<%= escape_javascript(render :template => 'spree/admin/variants/edit', :formats => [:html], :handlers => [:erb]) %>');
-$(".select2").select2();
-// $("#new_var_link").hide();
+$("#<%= spree_dom_id(@variant) %>").slideUp();
+$("#<%= spree_dom_id(@variant) %>-edit").slideDown();

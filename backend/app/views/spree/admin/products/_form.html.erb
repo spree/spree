@@ -131,58 +131,54 @@
     <% end %>
   </fieldset>
 
-  <script>
-    $( "a#add_variants" ).click(function( event ) {
-      event.preventDefault();
-      $( '#admin_product_form_multiple_variants' ).slideDown();
-      $( '#admin_product_form_master_variant' ).slideUp();
-    });
-  </script>
+  <% if can?(:admin, Spree::Variant) %>
 
-  <fieldset id="admin_product_form_multiple_variants" style="<%= 'display:none;' unless @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_multiple_variants">
-    <legend><%= icon('th-large') %>Variants</legend>
-    <div data-hook="admin_product_form_option_types">
-      <%= f.field_container :option_types do %>
-        <%= f.label :option_type_ids, Spree.t(:option_types) %>
-        <%= f.hidden_field :option_type_ids, :value => @product.option_type_ids.join(',') %>
-      <% end %>
-    </div>
-
-    <% if @product.variants.any? %>
-      <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-        <colgroup>
-          <col style="width: 5%" />
-          <col style="width: 25%" />
-          <col style="width: 20%" />
-          <col style="width: 20%" />
-          <col style="width: 15%" />
-          <col style="width: 15%" />
-        </colgroup>
-        <thead data-hook="variants_header">
-          <tr>
-            <th colspan="2"><%= Spree.t(:options) %></th>
-            <th><%= Spree.t(:price) %></th>
-            <th><%= Spree.t(:sku) %></th>
-            <th class="actions"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if @product.has_variants? %>
-            <%= render partial: "spree/admin/variants/variant", collection: @product.variants %>
-          <% else %>
-            <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
-          <% end %>
-
-        </tbody>
-      </table>
-    <% else %>
-      <div class="alpha twelve columns no-objects-found">
-        <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
-        <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
+    <fieldset id="admin_product_form_multiple_variants" style="<%= 'display:none;' unless @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_multiple_variants">
+      <legend><%= icon('th-large') %>Variants</legend>
+      <div data-hook="admin_product_form_option_types">
+        <%= f.field_container :option_types do %>
+          <%= f.label :option_type_ids, Spree.t(:option_types) %>
+          <%= f.hidden_field :option_type_ids, :value => @product.option_type_ids.join(',') %>
+        <% end %>
       </div>
-    <% end %>
 
-  </fieldset>
+      <% if @product.variants.any? %>
+        <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+          <colgroup>
+            <col style="width: 5%" />
+            <col style="width: 25%" />
+            <col style="width: 20%" />
+            <col style="width: 20%" />
+            <col style="width: 15%" />
+            <col style="width: 15%" />
+          </colgroup>
+          <thead data-hook="variants_header">
+            <tr>
+              <th></th>
+              <th><%= Spree.t(:sku) %></th>
+              <th><%= Spree.t(:options) %></th>
+              <th><%= Spree.t(:price) %></th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @product.has_variants? %>
+              <%= render partial: "spree/admin/variants/variant", collection: @product.variants, locals: {f: f} %>
+            <% else %>
+              <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
+            <% end %>
+
+          </tbody>
+        </table>
+      <% else %>
+        <div class="alpha twelve columns no-objects-found">
+          <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
+          <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
+        </div>
+      <% end %>
+
+    </fieldset>
+  <% end %>
 
   <fieldset data-hook="admin_product_form_images" class="alpha omega sixteen columns">
     <legend>Images</legend>
@@ -267,3 +263,18 @@
   $('.select2-container').css({width: '20em'})
   </script>
 <% end %>
+
+
+<script>
+  $( "a#add_variants" ).click(function( event ) {
+    event.preventDefault();
+    $( '#admin_product_form_multiple_variants' ).slideDown();
+    $( '#admin_product_form_master_variant' ).slideUp();
+  });
+  $( ".variant-edit .fa-ok" ).click(function( event ) {
+    event.preventDefault();
+    target = $(this).data('target');
+    $( '#' + target + '-edit' ).slideUp();
+    $( '#' + target ).slideDown();
+  });
+</script>

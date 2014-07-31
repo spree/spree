@@ -90,6 +90,8 @@ module Spree
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
 
+    accepts_nested_attributes_for :variants, allow_destroy: true
+
     alias :options :product_option_types
 
     after_initialize :ensure_master
