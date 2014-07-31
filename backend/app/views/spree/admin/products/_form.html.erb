@@ -167,36 +167,9 @@
           </tr>
         </thead>
         <tbody>
-          <% @product.variants.each do |variant| %>
-            <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="<%= cycle('odd', 'even')%>">
-              <td class="no-border">
-                <span class="handle"></span>
-              </td>
-              <td><%= variant.options_text %></td>
-              <td class="align-center"><%= variant.display_price.to_html %></td>
-              <td class="align-center"><%= variant.sku %></td>
-              <td class="actions">
-                <%= link_to_with_icon('edit',
-                                      Spree.t(:edit),
-                                      edit_admin_product_variant_url(@product, variant),
-                                      :no_text => true,
-                                      :remote => :true,
-                                      :'data-update' => spree_dom_id(variant),
-                                      :'data-action' => 'edit'
-                                     ) %>
-                &nbsp;
-                <%= link_to_with_icon('trash',
-                                      Spree.t(:delete),
-                                      admin_product_variant_url(@product, variant),
-                                      :no_text => true,
-                                      :class => "delete-resource",
-                                      :'data-confirm' => Spree.t(:are_you_sure),
-                                      :'date-action' => 'remove'
-                                     ) unless variant.deleted? %>
-              </td>
-            </tr>
-          <% end %>
-          <% unless @product.has_variants? %>
+          <% if @product.has_variants? %>
+            <%= render partial: "spree/admin/variants/variant", collection: @product.variants %>
+          <% else %>
             <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
           <% end %>
 
