@@ -5,28 +5,37 @@ describe Spree::Calculator::TieredPercent do
 
   describe "#valid?" do
     subject { calculator.valid? }
-    context "when there are more than 5 tiers" do
-      before do
-        calculator.preferred_buckets = {
-          (0..100) => 10,
-          (100..200) => 15,
-          (200..300) => 20,
-          (300..400) => 25,
-          (400..500) => 30,
-          (500..600) => 35
-        }
-      end
+    context "when base percent is less than zero" do
+      before { calculator.preferred_base_percent = -1 }
       it { should be false }
+    end
+    context "when base percent is greater than 100" do
+      before { calculator.preferred_base_percent = 110 }
+      it { should be false }
+    end
+    context "when tiers is not a hash" do
+      before { calculator.preferred_tiers = ["nope"] }
+      it { should be false }
+    end
+    context "when tiers is a hash" do
+      context "and one of the keys is not a positive number" do
+        before { calculator.preferred_tiers = { "nope" => 20 } }
+        it { should be false }
+      end
+      context "and one of the values is not a percent" do
+        before { calculator.preferred_tiers = { 10 => 110 } }
+        it { should be false }
+      end
     end
   end
 
   describe "#compute" do
     let(:line_item) { mock_model Spree::LineItem, amount: amount }
     before do
-      calculator.preferred_buckets = {
-        (0..100) => 10,
-        (100..200) => 15,
-        (200..300) => 20
+      calculator.preferred_base_percent = 10
+      calculator.preferred_tiers = {
+        100 => 15,
+        200 => 20
       }
     end
     subject { calculator.compute(line_item) }
@@ -37,14 +46,6 @@ describe Spree::Calculator::TieredPercent do
     context "when amount falls within the second tier" do
       let(:amount) { 150 }
       it { should eq 22 }
-    end
-    context "when amount falls in two tiers" do
-      let(:amount) { 100 }
-      it { should eq 10 }
-    end
-    context "when amount falls outside of all tiers" do
-      let(:amount) { 500 }
-      it { should eq 0 }
     end
   end
 end

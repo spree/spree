@@ -12,6 +12,7 @@ en:
         state: State
         zipcode: Zip Code
       spree/calculator/tiered_percent:
+        preferred_base_percent: Base Percent
         preferred_tiers: Tiers
       spree/country:
         iso: ISO
@@ -252,10 +253,11 @@ en:
       models:
         spree/calculator/tiered_percent:
           attributes:
+            base:
+              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
+              values_should_be_percent: "Tier values should all be percentages between 0% and 100%"
             preferred_tiers:
-              too_long:
-                one: "has a maximum of 1 tier"
-                other: "has a maximum of %{count} tiers"
+              should_be_hash: "should be a hash"
         spree/classification:
           attributes:
             taxon_id:
@@ -470,6 +472,7 @@ en:
     backorderable: Backorderable
     backorders_allowed: backorders allowed
     balance_due: Balance Due
+    base_percent: Base Percent
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
