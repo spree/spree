@@ -97,7 +97,7 @@ module Spree
 
     def build_options(options)
       options.keys.each do |key|
-        self.send("build_#{key}",options[key])
+        self.send("build_#{key}",options[key]) if self.respond_to?("build_#{key}")
       end
     end
 

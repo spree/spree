@@ -319,7 +319,8 @@ module Spree
       return true unless options
 
       options.keys.all? do |key|
-        self.send("#{key}_match".to_sym, line_item, options[key])
+        !self.respond_to?("#{key}_match".to_sym) || 
+        self.send("#{key}_match".to_sym, line_item, options[key]) 
       end
     end
                                      
