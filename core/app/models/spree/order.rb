@@ -78,6 +78,7 @@ module Spree
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
+    validates :number, uniqueness: true
     validate :has_available_shipment
     validate :has_available_payment
 
@@ -286,15 +287,11 @@ module Spree
       end
     end
 
-    # FIXME refactor this method and implement validation using validates_* utilities
     def generate_order_number
-      record = true
-      while record
+      self.number ||= loop do
         random = "R#{Array.new(9){rand(9)}.join}"
-        record = self.class.where(number: random).first
+        break random unless self.class.exists?(number: random)
       end
-      self.number = random if self.number.blank?
-      self.number
     end
 
     def shipment
