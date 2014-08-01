@@ -11,6 +11,12 @@ en:
         phone: Phone
         state: State
         zipcode: Zip Code
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Base Amount
+        preferred_tiers: Tiers
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Base Percent
+        preferred_tiers: Tiers
       spree/country:
         iso: ISO
         iso3: ISO3
@@ -251,6 +257,19 @@ en:
         other: Zones
     errors:
       models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
+            preferred_tiers:
+              should_be_hash: "should be a hash"
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
+              values_should_be_percent: "Tier values should all be percentages between 0% and 100%"
+            preferred_tiers:
+              should_be_hash: "should be a hash"
         spree/classification:
           attributes:
             taxon_id:
@@ -468,6 +487,8 @@ en:
     backorderable: Backorderable
     backorders_allowed: backorders allowed
     balance_due: Balance Due
+    base_amount: Base Amount
+    base_percent: Base Percent
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
@@ -1236,6 +1257,9 @@ en:
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
     thumbnail: Thumbnail
+    tiers: Tiers
+    tiered_flat_rate: Tiered Flat Rate
+    tiered_percent: Tiered Percent
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
