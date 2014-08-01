@@ -106,6 +106,15 @@ module Spree
         }.to raise_error /XXX/
       end
 
+      it 'handles line_item updating exceptions' do
+        line_items['0'][:currency] = 'GBP'
+        params = { :line_items_attributes => line_items }
+
+        expect {
+          order = Importer::Order.import(user, params)
+        }.to raise_error /Validation failed/
+      end
+
       it 'can build an order from API with variant sku' do
         params = { :line_items_attributes => {
                      "0" => { :sku => sku, :quantity => 5 } }}
@@ -162,6 +171,30 @@ module Spree
 
         order = Importer::Order.import(user,params)
         order.ship_address.state.name.should eq 'Alabama'
+      end
+
+      context "with a different currency" do
+        before { variant.price_in("GBP").update_attribute(:price, 18.99) }
+
+        it "sets the order currency" do
+          params = {
+            currency: "GBP"
+          }
+          order = Importer::Order.import(user,params)
+          order.currency.should eq "GBP"
+        end
+
+        it "can handle it when a line order price is specified" do
+          params = {
+            currency: "GBP",
+            line_items_attributes: line_items
+          }
+          line_items["0"].merge! currency: "GBP", price: 1.99
+          order = Importer::Order.import(user, params)
+          order.currency.should eq "GBP"
+          order.line_items.first.price.should eq 1.99
+          order.line_items.first.currency.should eq "GBP"
+        end
       end
 
       context "state passed is not associated with country" do

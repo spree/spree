@@ -10,7 +10,8 @@ module Spree
             ensure_country_id_from_params params[:bill_address_attributes]
             ensure_state_id_from_params params[:bill_address_attributes]
 
-            order = Spree::Order.create!
+            create_params = params.slice :currency
+            order = Spree::Order.create! create_params
             order.associate_user!(user)
 
             create_line_items_from_params(params.delete(:line_items_attributes),order)
@@ -95,7 +96,7 @@ module Spree
 
               extra_params = line_item.except(:variant_id, :quantity)
               line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-              line_item.update_attributes(extra_params) unless extra_params.empty?
+              line_item.update_attributes!(extra_params) unless extra_params.empty?
             rescue Exception => e
               raise "Order import line items: #{e.message} #{line_item}"
             end
