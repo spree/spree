@@ -34,6 +34,25 @@
     margin-bottom: 0;
   }
 
+  .tier {
+    position: relative;
+    padding-bottom: 10px;
+
+    .remove {
+      position: absolute;
+      left: -15px;
+      top: 10px;
+
+      &:hover {
+        color: #c60f13;
+      }
+    }
+  }
+
+  .right-align {
+    text-align: right;
+  }
+
   .field {
     padding-bottom: 10px;
 
