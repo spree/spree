@@ -254,10 +254,10 @@ module Spree
 
           def assign_default_addresses!
             if self.user
-              self.bill_address ||= user.bill_address.try(:clone) if user.bill_address.try(:valid?)
+              self.bill_address = user.bill_address.try(:clone) if !self.bill_address_id && user.bill_address.try(:valid?)
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              self.ship_address ||= user.ship_address.try(:clone) if user.ship_address.try(:valid?) && self.checkout_steps.include?("delivery")
+              self.ship_address = user.ship_address.try(:clone) if !self.ship_address_id && user.ship_address.try(:valid?) && self.checkout_steps.include?("delivery")
             end
           end
 
