@@ -18,15 +18,20 @@ module Spree
             create_adjustments_from_params(params.delete(:adjustments_attributes), order)
             create_payments_from_params(params.delete(:payments_attributes), order)
 
-            if(completed_at = params.delete(:completed_at))
+            if completed_at = params.delete(:completed_at)
               order.completed_at = completed_at
               order.state = 'complete'
             end
 
             order.update_attributes!(params)
-            # Really ensure that the order totals are correct
-            order.update_totals
-            order.persist_totals
+
+            # Really ensure that the order totals & states are correct
+            order.updater.update_totals
+            if order.completed?
+              order.updater.update_payment_state
+              order.updater.update_shipment_state
+            end
+            order.updater.persist_totals
             order.reload
           rescue Exception => e
             order.destroy if order && order.persisted?
@@ -100,7 +105,9 @@ module Spree
             begin
               payment = order.payments.build
               payment.amount = p[:amount].to_f
-              payment.state = p.fetch(:state, 'completed')
+              # Order API should be using state as that's the normal payment field.
+              # spree_wombat serializes payment state as status so imported orders should fall back to status field.
+              payment.state = p[:state] || p[:status]
               payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
               payment.save!
             rescue Exception => e
