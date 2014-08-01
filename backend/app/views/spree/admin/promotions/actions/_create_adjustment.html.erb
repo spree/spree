@@ -22,6 +22,7 @@
         <%= render "spree/admin/promotions/calculators/default_fields",
           calculator: promotion_action.calculator, prefix: param_prefix %>
       <% end %>
+      <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
     </div>
   <% end %>
 </div>
