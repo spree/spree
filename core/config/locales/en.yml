@@ -11,6 +11,8 @@ en:
         phone: Phone
         state: State
         zipcode: Zip Code
+      spree/calculator/tiered_percent:
+        preferred_tiers: Tiers
       spree/country:
         iso: ISO
         iso3: ISO3
@@ -248,6 +250,12 @@ en:
         other: Zones
     errors:
       models:
+        spree/calculator/tiered_percent:
+          attributes:
+            preferred_tiers:
+              too_long:
+                one: "has a maximum of 1 tier"
+                other: "has a maximum of %{count} tiers"
         spree/classification:
           attributes:
             taxon_id:
@@ -1206,6 +1214,8 @@ en:
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     thumbnail: Thumbnail
+    tiers: Tiers
+    tiered_percent: Tiered Percent
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
