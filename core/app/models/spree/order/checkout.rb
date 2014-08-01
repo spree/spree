@@ -38,8 +38,8 @@ module Spree
             # To avoid multiple occurrences of the same transition being defined
             # On first definition, state_machines will not be defined
             state_machines.clear if respond_to?(:state_machines)
-            state_machine :state, :initial => :cart, :use_transactions => false, :action => :save_state do
-              klass.next_event_transitions.each { |t| transition(t.merge(:on => :next)) }
+            state_machine :state, initial: :cart, use_transactions: false, action: :save_state do
+              klass.next_event_transitions.each { |t| transition(t.merge(on: :next)) }
 
               # Persist the state on the order
               after_transition do |order, transition|
@@ -54,23 +54,23 @@ module Spree
               end
 
               event :cancel do
-                transition :to => :canceled, :if => :allow_cancel?
+                transition to: :canceled, if: :allow_cancel?
               end
 
               event :return do
-                transition :to => :returned, :from => [:complete, :awaiting_return], :if => :all_inventory_units_returned?
+                transition to: :returned, from: [:complete, :awaiting_return], if: :all_inventory_units_returned?
               end
 
               event :resume do
-                transition :to => :resumed, :from => :canceled, :if => :canceled?
+                transition to: :resumed, from: :canceled, if: :canceled?
               end
 
               event :authorize_return do
-                transition :to => :awaiting_return
+                transition to: :awaiting_return
               end
 
               if states[:payment]
-                before_transition :to => :complete do |order|
+                before_transition to: :complete do |order|
                   if order.payment_required? && order.payments.empty?
                     order.errors.add(:base, Spree.t(:no_payment_found))
                     false
@@ -80,28 +80,30 @@ module Spree
                 end
               end
 
-              before_transition :from => :cart, :do => :ensure_line_items_present
+              before_transition from: :cart, do: :ensure_line_items_present
 
               if states[:address]
-                before_transition :from => :address, :do => :create_tax_charge!
+                before_transition from: :address, do: :create_tax_charge!
+                before_transition to: :address, do: :assign_default_addresses!
+                before_transition from: :address, do: :persist_user_address!
               end
 
               if states[:payment]
-                before_transition :to => :payment, :do => :set_shipments_cost
-                before_transition :to => :payment, :do => :create_tax_charge!
+                before_transition to: :payment, do: :set_shipments_cost
+                before_transition to: :payment, do: :create_tax_charge!
               end
 
               if states[:delivery]
-                before_transition :to => :delivery, :do => :create_proposed_shipments
-                before_transition :to => :delivery, :do => :ensure_available_shipping_rates
-                before_transition :from => :delivery, :do => :apply_free_shipping_promotions
+                before_transition to: :delivery, do: :create_proposed_shipments
+                before_transition to: :delivery, do: :ensure_available_shipping_rates
+                before_transition from: :delivery, do: :apply_free_shipping_promotions
               end
 
-              after_transition :to => :complete, :do => :finalize!
-              after_transition :to => :resumed,  :do => :after_resume
-              after_transition :to => :canceled, :do => :after_cancel
+              after_transition to: :complete, do: :finalize!
+              after_transition to: :resumed,  do: :after_resume
+              after_transition to: :canceled, do: :after_cancel
 
-              after_transition :from => any - :cart, :to => any - [:confirm, :complete] do |order|
+              after_transition from: any - :cart, to: any - [:confirm, :complete] do |order|
                 order.update_totals
                 order.persist_totals
               end
@@ -113,7 +115,7 @@ module Spree
           def self.go_to_state(name, options={})
             self.checkout_steps[name] = options
             previous_states.each do |state|
-              add_transition({:from => state, :to => name}.merge(options))
+              add_transition({from: state, to: name}.merge(options))
             end
             if options[:if]
               self.previous_states << name
@@ -250,6 +252,21 @@ module Spree
 
             @updating_params = nil
             success
+          end
+
+          def assign_default_addresses!
+            if self.user
+              self.bill_address = user.bill_address.try(:clone) if !self.bill_address_id && user.bill_address.try(:valid?)
+              # Skip setting ship address if order doesn't have a delivery checkout step
+              # to avoid triggering validations on shipping address
+              self.ship_address = user.ship_address.try(:clone) if !self.ship_address_id && user.ship_address.try(:valid?) && self.checkout_steps.include?("delivery")
+            end
+          end
+
+          def persist_user_address!
+            if !self.temporary_address && self.user && self.user.respond_to?(:persist_order_address)
+              self.user.persist_order_address(self)
+            end
           end
 
           private

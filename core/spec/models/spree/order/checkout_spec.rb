@@ -104,17 +104,60 @@ describe Spree::Order do
       order.state.should == "cart"
     end
 
-    it "transitions to address" do
-      order.line_items << FactoryGirl.create(:line_item)
-      order.email = "user@example.com"
-      order.next!
-      assert_state_changed(order, 'cart', 'address')
-      order.state.should == "address"
-    end
+    context "to address" do
+      before do
+        order.email = "user@example.com"
+        order.save!
+      end
 
-    it "cannot transition to address without any line items" do
-      order.line_items.should be_blank
-      lambda { order.next! }.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
+      context "with a line item" do
+        before do
+          order.line_items << FactoryGirl.create(:line_item)
+        end
+
+        it "transitions to address" do
+          order.next!
+          assert_state_changed(order, 'cart', 'address')
+          order.state.should == "address"
+        end
+
+        it "doesn't raise an error if the default address is invalid" do
+          order.user = mock_model(Spree::LegacyUser, ship_address: Spree::Address.new, bill_address: Spree::Address.new)
+          expect { order.next! }.to_not raise_error
+        end
+
+        context "with default addresses" do
+          let(:default_address) { FactoryGirl.create(:address) }
+
+          before do
+            order.user = FactoryGirl.create(:user, "#{address_kind}_address" => default_address)
+            order.next!
+            order.reload
+          end
+
+          shared_examples "it cloned the default address" do
+            it do
+              default_attributes = default_address.attributes
+              order_attributes = order.send("#{address_kind}_address".to_sym).try(:attributes) || {}
+
+              order_attributes.except('id', 'created_at', 'updated_at').should eql(default_attributes.except('id', 'created_at', 'updated_at'))
+            end
+          end
+
+          it_behaves_like "it cloned the default address" do
+            let(:address_kind) { 'ship' }
+          end
+
+          it_behaves_like "it cloned the default address" do
+            let(:address_kind) { 'bill' }
+          end
+        end
+      end
+
+      it "cannot transition to address without any line items" do
+        order.line_items.should be_blank
+        lambda { order.next! }.should raise_error(StateMachine::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
+      end
     end
 
     context "from address" do
@@ -146,6 +189,27 @@ describe Spree::Order do
         order.next!
         assert_state_changed(order, 'address', 'delivery')
         order.state.should == "delivery"
+      end
+
+      it "calls persist_order_address on the order's user" do
+        order.stub(:ensure_available_shipping_rates => true)
+
+        order.user = FactoryGirl.create(:user)
+        order.save!
+
+        expect(order.user).to receive(:persist_order_address).with(order)
+        order.next!
+      end
+
+      it "does not call persist_order_address on the order's user for a temporary address" do
+        order.stub(:ensure_available_shipping_rates => true)
+
+        order.user = FactoryGirl.create(:user)
+        order.temporary_address = true
+        order.save!
+
+        expect(order.user).to_not receive(:persist_order_address)
+        order.next!
       end
 
       context "cannot transition to delivery" do

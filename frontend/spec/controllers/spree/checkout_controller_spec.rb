@@ -361,8 +361,7 @@ describe Spree::CheckoutController do
     end
 
     it "doesn't set shipping address on the order" do
-      expect(order).to receive(:bill_address)
-      expect(order).to_not receive(:ship_address)
+      expect(order).to_not receive(:ship_address=)
       spree_post :update
     end
 

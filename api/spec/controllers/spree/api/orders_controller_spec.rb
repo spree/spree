@@ -504,6 +504,7 @@ module Spree
           end
 
           before do
+            order.bill_address = FactoryGirl.create(:address)
             order.ship_address = FactoryGirl.create(:address)
             order.next!
             order.save

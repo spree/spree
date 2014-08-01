@@ -16,6 +16,7 @@ module Spree
     end
 
     attr_reader :coupon_code
+    attr_accessor :temporary_address
 
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s

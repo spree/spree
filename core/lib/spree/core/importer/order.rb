@@ -23,6 +23,8 @@ module Spree
               order.state = 'complete'
             end
 
+            params.delete(:user_id) unless user.try(:has_spree_role?, "admin") && params.key?(:user_id)
+
             order.update_attributes!(params)
 
             # Really ensure that the order totals & states are correct
