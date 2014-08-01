@@ -50,7 +50,7 @@ describe Spree::OrderInventory do
         variant.stock_items.destroy_all
 
         # The before_save callback in LineItem would verify inventory
-        line_item = order.contents.add variant, 1, nil, shipment
+        line_item = order.contents.add variant, 1, shipment: shipment
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.count).to eq 1
