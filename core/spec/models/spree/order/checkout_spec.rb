@@ -121,6 +121,11 @@ describe Spree::Order do
           order.state.should == "address"
         end
 
+        it "doesn't raise an error if the default address is invalid" do
+          order.user = mock_model(Spree::LegacyUser, ship_address: Spree::Address.new, bill_address: Spree::Address.new)
+          expect { order.next! }.to_not raise_error
+        end
+
         context "with default addresses" do
           let(:default_address) { FactoryGirl.create(:address) }
 
