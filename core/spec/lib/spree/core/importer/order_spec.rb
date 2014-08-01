@@ -295,9 +295,18 @@ module Spree
         }.to raise_error /XXX/
       end
 
-      it 'builds a payment' do
+      it 'builds a payment using state' do
         params = { :payments_attributes => [{ amount: '4.99',
-                                              payment_method: payment_method.name }] }
+                                              payment_method: payment_method.name,
+                                              state: 'completed' }] }
+        order = Importer::Order.import(user,params)
+        order.payments.first.amount.should eq 4.99
+      end
+
+      it 'builds a payment using status as fallback' do
+        params = { :payments_attributes => [{ amount: '4.99',
+                                              payment_method: payment_method.name,
+                                              status: 'completed' }] }
         order = Importer::Order.import(user,params)
         order.payments.first.amount.should eq 4.99
       end
