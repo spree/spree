@@ -1,0 +1,20 @@
+stage:
+  before:
+    - export SECRET_KEY_BASE=abc
+    - bundle exec rake sandbox
+    - echo 'Rails.logger = Logger.new(STDOUT)' > sandbox/config/initializers/logger_stdout.rb
+    - cd sandbox
+    - ln -sf $PWD/public $PWD/../public
+
+  run:
+    # pwd is sanbox
+    - bundle exec rails server
+
+  database:
+    # actually do nothing (and prevent default Teatro behavior): `rake sandbox` already did everything
+    - true
+
+config:
+  database: postgresql
+  services:
+    - postgresql
