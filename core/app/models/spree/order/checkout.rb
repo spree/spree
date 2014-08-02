@@ -225,8 +225,13 @@ module Spree
 
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              if @updating_params[:existing_card].present?
-                credit_card = CreditCard.find(@updating_params[:existing_card])
+              #
+              # Need to check both outside and inside :order beacuse frontend
+              # sends existing_card out of :order
+              existing_card_id = @updating_params[:existing_card] || (@updating_params[:order] ? @updating_params[:order][:existing_card] : nil)
+
+              if existing_card_id.present?
+                credit_card = CreditCard.find existing_card_id
                 if credit_card.user_id != self.user_id || credit_card.user_id.blank?
                   raise Core::GatewayError.new Spree.t(:invalid_credit_card)
                 end
@@ -254,6 +259,16 @@ module Spree
           # For payment step, filter order parameters to produce the expected nested
           # attributes for a single payment and its source, discarding attributes
           # for payment methods other than the one selected
+          #
+          # In case a existing credit card is provided it needs to build the payment
+          # attributes from scratch so we can set the amount. example payload:
+          #
+          #   {
+          #     "order": {
+          #       "existing_card": "2"
+          #     }
+          #   }
+          #
           def update_params_payment_source
             if has_checkout_step?("payment") && self.payment?
               if @updating_params[:payment_source].present?
@@ -264,7 +279,8 @@ module Spree
                 end
               end
 
-              if (@updating_params[:order][:payments_attributes])
+              if @updating_params[:order][:payments_attributes] || @updating_params[:order][:existing_card]
+                @updating_params[:order][:payments_attributes] ||= [{}]
                 @updating_params[:order][:payments_attributes].first[:amount] = self.total
               end
             end
