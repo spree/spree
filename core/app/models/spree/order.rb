@@ -265,7 +265,7 @@ module Spree
     def generate_order_number(digits = 9)
       self.number ||= loop do
          # Make a random number.
-         random = "R#{Array.new(digits){rand(digits)}.join}"
+         random = "R#{Array.new(digits){rand(10)}.join}"
          # Use the random  number if no other order exists with it.
          if self.class.exists?(number: random)
            # If over half of all possible options are taken add another digit.
