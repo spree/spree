@@ -186,6 +186,17 @@ module Spree
         cc_errors.should include("Verification Value can't be blank")
       end
 
+      it "allow users to reuse a credit card" do
+        order.update_column(:state, "payment")
+        credit_card = create(:credit_card, user_id: order.user_id, payment_method_id: @payment_method.id)
+
+        api_put :update, :id => order.to_param, :order_token => order.guest_token,
+          :order => { :existing_card => credit_card.id }
+
+        expect(response.status).to eq 200
+        expect(order.credit_cards).to match_array [credit_card]
+      end
+
       it "can transition from confirm to complete" do
         order.update_column(:state, "confirm")
         Spree::Order.any_instance.stub(:payment_required? => false)
