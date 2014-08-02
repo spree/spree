@@ -194,6 +194,9 @@ Spree follows a simple set of coding style conventions.
 * `my_method(my_arg)` not `my_method( my_arg )` or `my_method my_arg`.
 * `a = b` and not `a=b`.
 * `{ a + b }` and not `{a + b}`
+* -> symbol over lambda
+* Ruby 1.9 hash syntax { key: :value } over Ruby 1.8 hash syntax { :key => :value }
+* Alphabetize the class methods to keep them organized.
 * Follow the conventions you see used in the source already.
 
 These are some guidelines and please use your best judgment in using them.
