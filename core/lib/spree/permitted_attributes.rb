@@ -29,11 +29,7 @@ module Spree
     mattr_reader *ATTRIBUTES
 
     @@address_attributes = [
-<<<<<<< HEAD
       :id, :firstname, :lastname, :first_name, :last_name,
-=======
-      :firstname, :lastname, :first_name, :last_name,
->>>>>>> 66b61b1... Allow assigning source_id and source_type rather than creating a new source.
       :address1, :address2, :city, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
       :country => [:iso, :name, :iso3, :iso_name],
@@ -77,8 +73,7 @@ module Spree
     @@source_attributes = [
       :number, :month, :year, :expiry, :verification_value,
       :first_name, :last_name, :cc_type, :gateway_customer_profile_id,
-      :gateway_payment_profile_id, :last_digits, :name, :encrypted_data,
-      :source_id, :source_type]
+      :gateway_payment_profile_id, :last_digits, :name, :encrypted_data]
 
     @@stock_item_attributes = [:variant, :stock_location, :backorderable, :variant_id]
 
