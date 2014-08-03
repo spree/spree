@@ -1,5 +1,5 @@
 taxonomies = [
-  { :name => "מחלקות" },
+  { :name => "מחלקות", :main => true },
   { :name => "מוצרים במבצע" }
 ]
 
