@@ -57,7 +57,6 @@ module Spree
     preference :promotions_per_page, :integer, default: 15
     preference :redirect_https_to_http, :boolean, :default => false
     preference :require_master_price, :boolean, default: true
-    preference :shipment_inc_vat, :boolean, default: false
     preference :shipping_instructions, :boolean, default: false # Request instructions/info for shipping
     preference :show_only_complete_orders_by_default, :boolean, default: true
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
