@@ -41,6 +41,8 @@ module Spree
 
         def self.create_shipments_from_params(shipments_hash, order)
           return [] unless shipments_hash
+
+          line_items = order.line_items
           shipments_hash.each do |s|
             begin
               shipment = order.shipments.build
@@ -53,7 +55,15 @@ module Spree
 
                 unit = shipment.inventory_units.build
                 unit.order = order
+
+                # Spree expects a Inventory Unit to always reference a line
+                # item and variant otherwise users might get exceptions when
+                # trying to view these units. Note the Importer might not be
+                # able to find the line item if line_item.variant_id |= iu.variant_id
                 unit.variant_id = iu[:variant_id]
+                unit.line_item_id = line_items.select do |l|
+                  l.variant_id.to_i == iu[:variant_id].to_i
+                end.first.try(:id)
               end
 
               shipment.save!
