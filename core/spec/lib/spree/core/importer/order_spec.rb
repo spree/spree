@@ -258,6 +258,7 @@ module Spree
           expect(shipment.shipping_rates.first.cost).to eq 4.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           expect(shipment.stock_location).to eq stock_location
+
           expect(order.shipment_total.to_f).to eq 4.99
         end
 
