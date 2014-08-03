@@ -1103,7 +1103,6 @@ en:
     shipment: Shipment
     shipment_adjustments: "Shipment adjustments"
     shipment_details: "From %{stock_location} via %{shipping_method}"
-    shipment_inc_vat: Shipment including VAT
     shipment_mailer:
       shipped_email:
         dear_customer: Dear Customer,
@@ -1185,7 +1184,6 @@ en:
     tax_category: Tax Category
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
-    tax_settings: Tax Settings
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
