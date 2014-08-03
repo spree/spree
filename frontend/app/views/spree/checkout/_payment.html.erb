@@ -22,7 +22,7 @@
                   <td><%= card.month %></td>
                   <td><%= card.year %></td>
                   <td>
-                    <%= radio_button_tag "existing_card", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
+                    <%= radio_button_tag "order[existing_card]", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
                   </td>
                 </tr>
               <% end %>

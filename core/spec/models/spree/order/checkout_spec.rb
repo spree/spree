@@ -483,8 +483,7 @@ describe Spree::Order do
 
       let(:params) do
         ActionController::Parameters.new(
-          order: { payments_attributes: [{payment_method_id: 1}] },
-          existing_card: credit_card.id,
+          order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id },
           cvc_confirm: "737",
           payment_source: {
             "1" => { name: "Luis Braga",

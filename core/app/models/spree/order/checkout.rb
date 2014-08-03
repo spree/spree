@@ -225,10 +225,7 @@ module Spree
 
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              #
-              # Need to check both outside and inside :order beacuse frontend
-              # sends existing_card out of :order
-              existing_card_id = @updating_params[:existing_card] || (@updating_params[:order] ? @updating_params[:order][:existing_card] : nil)
+              existing_card_id = @updating_params[:order] ? @updating_params[:order][:existing_card] : nil
 
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
