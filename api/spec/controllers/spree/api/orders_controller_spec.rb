@@ -258,11 +258,15 @@ module Spree
     end
 
     context "admin user imports order" do
-      before { current_api_user.stub has_spree_role?: true }
+      before do
+        current_api_user.stub has_spree_role?: true
+        current_api_user.stub_chain :spree_roles, pluck: ["admin"]
+      end
 
-      it "sets channel" do
-        api_post :create, :order => { channel: "amazon" }
-        expect(json_response['channel']).to eq "amazon"
+      it "is able to set any default unpermitted attribute" do
+        api_post :create, :order => { number: "WOW" }
+        expect(response.status).to eq 201
+        expect(json_response['number']).to eq "WOW"
       end
     end
 
