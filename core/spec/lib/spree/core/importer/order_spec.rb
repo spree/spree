@@ -237,14 +237,17 @@ module Spree
         end
 
         it 'builds them properly' do
-          order = Importer::Order.import(user,params)
+          order = Importer::Order.import(user, params)
 
           shipment = order.shipments.first
+          expect(shipment.cost.to_f).to eq 4.99
           shipment.inventory_units.first.variant_id.should eq product.master.id
           shipment.tracking.should eq '123456789'
           shipment.shipping_rates.first.cost.should eq 4.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           shipment.stock_location.should eq stock_location
+
+          expect(order.shipment_total.to_f).to eq 4.99
         end
 
         it "raises if cant find stock location" do

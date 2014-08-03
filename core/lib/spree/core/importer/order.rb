@@ -26,12 +26,7 @@ module Spree
             order.update_attributes!(params)
 
             # Really ensure that the order totals & states are correct
-            order.updater.update_totals
-            if order.completed?
-              order.updater.update_payment_state
-              order.updater.update_shipment_state
-            end
-            order.updater.persist_totals
+            order.updater.update
             order.reload
           rescue Exception => e
             order.destroy if order && order.persisted?
@@ -72,6 +67,7 @@ module Spree
               rate = shipment.shipping_rates.create!(:shipping_method => shipping_method,
                                                      :cost => s[:cost])
               shipment.selected_shipping_rate_id = rate.id
+              shipment.update_amounts
 
             rescue Exception => e
               raise "Order import shipments: #{e.message} #{s}"
@@ -113,7 +109,7 @@ module Spree
           return [] unless payments_hash
           payments_hash.each do |p|
             begin
-              payment = order.payments.build
+              payment = order.payments.build order: order
               payment.amount = p[:amount].to_f
               # Order API should be using state as that's the normal payment field.
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
