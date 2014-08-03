@@ -220,6 +220,17 @@ module Spree
           ] }
         end
 
+        it 'ensure shipments are not wiped out when items are added' do
+          with_item_params = params.update({
+            line_items_attributes: {
+              0 => { variant_id: variant.id, quantity: 1 } }
+            }
+          )
+          Importer::Order.should_receive(:ensure_variant_id_from_params).twice
+          order = Importer::Order.import(user, with_item_params)
+          expect(order.shipments).to_not be_empty
+        end
+
         it 'ensures variant exists and is not deleted' do
           Importer::Order.should_receive(:ensure_variant_id_from_params)
           order = Importer::Order.import(user,params)
