@@ -6,8 +6,8 @@ describe Spree::Admin::ReturnItemsController do
   describe '#update' do
     let(:customer_return) { create(:customer_return) }
     let(:return_item) { customer_return.return_items.first }
-    let(:old_acceptance_status) { 'pending' }
-    let(:new_acceptance_status) { 'accepted' }
+    let(:old_acceptance_status) { 'accepted' }
+    let(:new_acceptance_status) { 'rejected' }
 
     subject do
       spree_put :update, id: return_item.to_param, return_item: {acceptance_status: new_acceptance_status}
