@@ -90,7 +90,7 @@ other sites where all external links go to one non-duplicated page.
 
 There has been quite a bit of interest in development of [CMS
 integration into
-Spree](http://groups.google.com/group/spree-user/search?q=cms). Having
+Spree](https://groups.google.com/forum/#!searchin/spree-user/cms). Having
 good content is an important part of search engine optimization, as it
 not only can improve on page keyword targeting, but it also can improve
 the popularity of a site which can in turn improve search engine
