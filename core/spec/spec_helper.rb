@@ -7,6 +7,7 @@ if ENV["COVERAGE"]
     add_group 'Mailers', 'app/mailers'
     add_group 'Models', 'app/models'
     add_group 'Views', 'app/views'
+    add_group 'Jobs', 'app/jobs'
     add_group 'Libraries', 'lib'
   end
 end
@@ -27,6 +28,7 @@ require 'ffaker'
 
 require "support/big_decimal"
 require "support/test_gateway"
+require "support/rake"
 
 if ENV["CHECK_TRANSLATIONS"]
   require "spree/testing_support/i18n"
