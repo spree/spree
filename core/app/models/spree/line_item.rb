@@ -57,6 +57,10 @@ module Spree
       amount + promo_total
     end
 
+    def discounted_money
+      Spree::Money.new(discounted_amount, { currency: currency })
+    end
+
     def final_amount
       amount + adjustment_total
     end
@@ -104,7 +108,7 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
-          update_tax_charge # Called to ensure pre_tax_amount is updated. 
+          update_tax_charge # Called to ensure pre_tax_amount is updated.
           recalculate_adjustments
         end
       end
