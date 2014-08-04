@@ -27,7 +27,7 @@
   <% if @refunds.any? %>
     <fieldset data-hook="payment_list" class="no-border-bottom">
       <legend align="center"><%= Spree.t(:refunds) %></legend>
-      <%= render :partial => 'refunds', :locals => { :refunds => @refunds } %>
+      <%= render :partial => 'spree/admin/shared/refunds', :locals => { :refunds => @refunds, show_actions: true } %>
     </fieldset>
   <% end %>
 

@@ -1061,6 +1061,7 @@ en:
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_item_time_period_ineligible: Return item is outside the eligible time period
+    return_items: Return Items
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     return_number: Return Number
     return_quantity: Return Quantity

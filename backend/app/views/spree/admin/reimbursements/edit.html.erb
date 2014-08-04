@@ -58,10 +58,12 @@
     </tbody>
   </table>
   <div class="form-buttons filter-actions actions" data-hook="buttons">
-    <%= button_to [:perform, :admin, @order, @reimbursement], {class: 'button fa fa-reply', method: 'post'} do %>
-      <%= Spree.t(:reimburse) %>
+    <% if !@reimbursement.reimbursed? %>
+      <%= button_to [:perform, :admin, @order, @reimbursement], {class: 'button fa fa-reply', method: 'post'} do %>
+        <%= Spree.t(:reimburse) %>
+      <% end %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'remove' %>
     <% end %>
-    <span class="or"><%= Spree.t(:or) %></span>
-    <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'remove' %>
   </div>
 </fieldset>

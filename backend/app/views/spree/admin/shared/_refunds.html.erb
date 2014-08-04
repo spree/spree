@@ -7,7 +7,9 @@
       <th><%= Spree.t(:payment_method) %></th>
       <th><%= Spree.t(:transaction_id) %></th>
       <th><%= Spree.t(:reason) %></th>
-      <th class="actions"></th>
+      <% if show_actions %>
+        <th class="actions"></th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -19,9 +21,11 @@
         <td class="align-center"><%= payment_method_name(refund.payment) %></td>
         <td class="align-center"><%= refund.transaction_id %></td>
         <td class="align-center"><%= truncate(refund.reason.name, length: 100) %></td>
-        <td class="actions">
-          <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true %>
-        </td>
+        <% if show_actions %>
+          <td class="actions">
+            <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
