@@ -15,6 +15,7 @@ describe Spree::ReturnItem do
 
   before do
     Spree::Order.any_instance.stub(return!: true)
+    return_item.stub(:eligible_for_return?).and_return(true)
   end
 
   describe '#receive!' do
@@ -29,11 +30,15 @@ describe Spree::ReturnItem do
 
     subject { return_item.receive! }
 
-    before { return_item.stub(:eligible_for_return?).and_return(true) }
 
     it 'returns the inventory unit' do
       subject
       expect(inventory_unit.reload.state).to eq 'returned'
+    end
+
+    it 'attempts to accept the return item' do
+      return_item.should_receive(:attempt_accept)
+      subject
     end
 
     context 'with a stock location' do
@@ -186,7 +191,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['pending']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['accepted', 'pending']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
       end
@@ -251,7 +256,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['pending', 'manual_intervention_required']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'rejected'
       end
@@ -277,7 +282,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['pending', 'manual_intervention_required']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
       end
@@ -303,7 +308,7 @@ describe Spree::ReturnItem do
       end
     end
 
-    (all_acceptance_statuses - ['pending']).each do |invalid_transition_status|
+    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
       context "return_item has an acceptance status of #{invalid_transition_status}" do
         it_behaves_like "an invalid state transition", invalid_transition_status, 'manual_intervention_required'
       end

@@ -101,9 +101,8 @@ module Spree
 
       describe "#show" do
         let(:order)           { customer_return.order }
-        let(:customer_return) { create(:customer_return, line_items_count: 4) }
+        let(:customer_return) { create(:customer_return, line_items_count: 3) }
 
-        let!(:pending_return_item)             { customer_return.return_items.order('id').fourth }
         let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
         let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!)}
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
@@ -137,7 +136,7 @@ module Spree
         end
 
         it "loads the return items that are still pending" do
-          expect(assigns(:pending_return_items)).to eq [pending_return_item]
+          expect(assigns(:pending_return_items)).to eq []
         end
       end
 

@@ -17,7 +17,6 @@
     </thead>
     <tbody>
       <%= f.fields_for :return_items, return_items do |item_fields| %>
-        <%= item_fields.hidden_field :acceptance_status, value: 'accepted' %>
         <% return_item = item_fields.object %>
         <% inventory_unit = return_item.inventory_unit %>
         <tr>

@@ -35,6 +35,7 @@ module Spree
 
     state_machine :reception_status, initial: :awaiting do
       before_transition to: :received, do: :process_inventory_unit!
+      after_transition to: :received, do: :attempt_accept
 
       event :receive do
         transition to: :received, from: :awaiting
@@ -52,6 +53,7 @@ module Spree
 
     state_machine :acceptance_status, initial: :pending do
       event :attempt_accept do
+        transition to: :accepted, from: :accepted
         transition to: :accepted, from: :pending, if: -> (return_item) { return_item.eligible_for_return? }
         transition to: :manual_intervention_required, from: :pending, if: -> (return_item) { return_item.requires_manual_intervention? }
         transition to: :rejected, from: :pending
@@ -59,17 +61,17 @@ module Spree
 
       # bypasses eligibility checks
       event :accept do
-        transition to: :accepted, from: [:pending, :manual_intervention_required]
+        transition to: :accepted, from: [:accepted, :pending, :manual_intervention_required]
       end
 
       # bypasses eligibility checks
       event :reject do
-        transition to: :rejected, from: [:pending, :manual_intervention_required]
+        transition to: :rejected, from: [:accepted, :pending, :manual_intervention_required]
       end
 
       # bypasses eligibility checks
       event :require_manual_intervention do
-        transition to: :manual_intervention_required, from: :pending
+        transition to: :manual_intervention_required, from: [:accepted, :pending, :manual_intervention_required]
       end
 
       after_transition any => any, :do => :persist_acceptance_status_errors
