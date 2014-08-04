@@ -15,6 +15,7 @@ describe Spree::ReturnItem do
 
   before do
     Spree::Order.any_instance.stub(return!: true)
+    return_item.stub(:eligible_for_return?).and_return(true)
   end
 
   describe '#receive!' do
