@@ -1,5 +1,5 @@
 module Spree
-  class Reimbursement < ActiveRecord::Base
+  class Reimbursement < Spree::Base
     class IncompleteReimbursement < StandardError; end
 
     belongs_to :order, inverse_of: :reimbursements
@@ -16,16 +16,16 @@ module Spree
 
     before_create :generate_number
 
-    # The return_item_tax_calculator property should be set to an object that responds to "call"
-    # and accepts an array of ReturnItems. Invoking "call" should update the tax fields on the
-    # supplied ReturnItems.
+    # The reimbursement_tax_calculator property should be set to an object that responds to "call"
+    # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
+    # associated ReturnItems.
     # This allows a store to easily integrate with third party tax services.
-    class_attribute :return_item_tax_calculator
-    self.return_item_tax_calculator = ReturnItemTaxCalculator
+    class_attribute :reimbursement_tax_calculator
+    self.reimbursement_tax_calculator = ReimbursementTaxCalculator
     # A separate attribute here allows you to use a more performant calculator for estimates
     # and a different one (e.g. one that hits a 3rd party API) for the final caluclations.
-    class_attribute :return_item_simulator_tax_calculator
-    self.return_item_simulator_tax_calculator = ReturnItemTaxCalculator
+    class_attribute :reimbursement_simulator_tax_calculator
+    self.reimbursement_simulator_tax_calculator = ReimbursementTaxCalculator
 
     # The reimbursement_models property should contain an array of all models that provide
     # reimbursements.
@@ -84,9 +84,7 @@ module Spree
     end
 
     def perform!
-      return_item_tax_calculator.call(
-        return_items.includes(inventory_unit: {line_item: :order}).to_a
-      )
+      reimbursement_tax_calculator.call(self)
       reload
       update!(total: calculated_total)
 
@@ -103,9 +101,7 @@ module Spree
     end
 
     def simulate
-      return_item_simulator_tax_calculator.call(
-        return_items.includes(inventory_unit: {line_item: :order}).to_a
-      )
+      reimbursement_simulator_tax_calculator.call(self)
       reload
       update!(total: calculated_total)
 
