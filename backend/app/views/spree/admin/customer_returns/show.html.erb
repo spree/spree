@@ -48,7 +48,7 @@
           {
             class: 'button fa fa-reply',
             params: {
-              "return_item_ids" => @customer_return.return_items.map(&:id).join(','),
+              "return_item_ids" => @accepted_return_items.map(&:id).join(','),
               "reimbursement[customer_return_id]" => @customer_return.id,
             },
             method: 'post',

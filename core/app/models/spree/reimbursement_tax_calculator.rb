@@ -5,15 +5,15 @@ module Spree
   # rather than one at a time.
   #
   # To use an alternative tax calculator do this:
-  #    Spree::ReturnAuthorization.return_item_tax_calculator = calculator_object
-  # where `calculator_object` is an object that responds to "call" and accepts an array of return items
+  #    Spree::ReturnAuthorization.reimbursement_tax_calculator = calculator_object
+  # where `calculator_object` is an object that responds to "call" and accepts a reimbursement object
 
-  class ReturnItemTaxCalculator
+  class ReimbursementTaxCalculator
 
     class << self
 
-      def call(return_items)
-        return_items.each do |return_item|
+      def call(reimbursement)
+        reimbursement.return_items.includes(:inventory_unit).each do |return_item|
           set_tax!(return_item)
         end
       end
