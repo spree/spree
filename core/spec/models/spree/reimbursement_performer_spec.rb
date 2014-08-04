@@ -5,6 +5,8 @@ describe Spree::ReimbursementPerformer do
   let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
   let(:payment) { reimbursement.order.payments.first }
 
+  let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+
   before do
     reimbursement.update!(total: reimbursement.calculated_total)
   end
