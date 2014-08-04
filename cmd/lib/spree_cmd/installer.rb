@@ -62,7 +62,7 @@ module SpreeCmd
     def ask_questions
       @install_default_gateways = ask_with_default('Would you like to install the default gateways? (Recommended)')
       @install_default_auth = ask_with_default('Would you like to install the default authentication system?')
-      
+
       if @install_default_auth
         @user_class = "Spree::User"
       else
@@ -70,7 +70,7 @@ module SpreeCmd
         if @user_class.blank?
           @user_class = "User"
         end
-      end 
+      end
 
       if options[:skip_install_data]
         @run_migrations = false
@@ -124,7 +124,7 @@ module SpreeCmd
         say_status :gemfile, name
         parts = ["'#{name}'"]
         parts << ["'#{gem_options.delete(:version)}'"] if gem_options[:version]
-        gem_options.each { |key, value| parts << ":#{key} => '#{value}'" }
+        gem_options.each { |key, value| parts << "#{key}: '#{value}'" }
         append_file 'Gemfile', "\ngem #{parts.join(', ')}", :verbose => false
       end
 
