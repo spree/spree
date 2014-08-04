@@ -66,6 +66,12 @@ module Spree
         def ip_address
           request.remote_ip
         end
+
+        def persist_user_address(order)
+          if order.checkout_steps.include?("address") && @order.address? && try_spree_current_user.respond_to?(:persist_order_address)
+            try_spree_current_user.persist_order_address(order)
+          end
+        end
       end
     end
   end

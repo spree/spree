@@ -62,9 +62,23 @@ describe Spree::Admin::OrdersController do
 
     # Test for #3346
     context "#new" do
-      it "a new order has the current user assigned as a creator" do
+      it "imports a new order and sets the current user as a creator" do
+        Spree::Core::Importer::Order.should_receive(:import)
+          .with(nil, {'created_by_id' => controller.try_spree_current_user.id})
+          .and_return(order)
         spree_get :new
-        assigns[:order].created_by.should == controller.try_spree_current_user
+      end
+
+      context "when a user_id is passed as a parameter" do
+        let(:user)  { mock_model(Spree.user_class) }
+        before { Spree.user_class.stub :find_by_id => user }
+
+        it "imports a new order and assigns the user to the order" do
+          Spree::Core::Importer::Order.should_receive(:import)
+            .with(user, {'created_by_id' => controller.try_spree_current_user.id})
+            .and_return(order)
+          spree_get :new, { user_id: user.id }
+        end
       end
     end
 

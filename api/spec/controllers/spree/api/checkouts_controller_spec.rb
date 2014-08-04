@@ -22,6 +22,7 @@ module Spree
     end
 
     context "PUT 'update'" do
+      let(:user) { create(:user) }
       let(:order) do
         order = create(:order_with_line_items)
         # Order should be in a pristine state
@@ -33,6 +34,7 @@ module Spree
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)
         Order.any_instance.stub(:payment_required? => true)
+        controller.stub :try_spree_current_user => user
       end
 
       it "should transition a recently created order from cart to address" do
@@ -246,6 +248,19 @@ module Spree
         PromotionHandler::Coupon.should_receive(:new).with(order).and_call_original
         PromotionHandler::Coupon.any_instance.should_receive(:apply).and_return({:coupon_applied? => true})
         api_put :update, :id => order.to_param, :order_token => order.guest_token, :order => { :coupon_code => "foobar" }
+      end
+
+      context "current_user responds to save address method" do
+        it "calls persist order address on user" do
+          expect(user).to receive(:persist_order_address)
+          api_put :update, :id => order.to_param, :order_token => order.token
+        end
+      end
+
+      context "current_user doesn't respond to persist_order_address" do
+        it "doesnt raise an error" do
+          expect{ api_put :update, :id => order.to_param, :order_token => order.token }.to_not raise_error
+        end
       end
     end
 
