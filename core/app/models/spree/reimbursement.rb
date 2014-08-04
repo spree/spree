@@ -70,7 +70,9 @@ module Spree
     end
 
     def calculated_total
-      return_items.to_a.sum(&:total)
+      # rounding down to handle edge cases for consecutive partial returns where rounding
+      # might cause us to try to reimburse more than was originally billed
+      return_items.to_a.sum(&:total).round(2, :down)
     end
 
     def paid_amount
