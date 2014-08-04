@@ -115,7 +115,7 @@ module Spree
               payment.amount = p[:amount].to_f
               # Order API should be using state as that's the normal payment field.
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
-              payment.state = p[:state] || p[:status]
+              payment.state = p[:state] || p[:status] || 'completed'
               payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
               payment.save!
             rescue Exception => e
