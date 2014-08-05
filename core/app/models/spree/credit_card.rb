@@ -1,9 +1,12 @@
 module Spree
   class CreditCard < Spree::Base
     belongs_to :payment_method
+    belongs_to :user, class_name: Spree.user_class, foreign_key: 'user_id'
     has_many :payments, as: :source
 
     before_save :set_last_digits
+
+    after_save :ensure_one_default
 
     attr_accessor :number, :verification_value, :encrypted_data
 
@@ -15,6 +18,7 @@ module Spree
     validate :expiry_not_in_the_past
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
+    scope :default, -> { where(default: true) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
@@ -143,6 +147,15 @@ module Spree
 
     def require_card_numbers?
       !self.encrypted_data.present? && !self.has_payment_profile?
+    end
+
+    def ensure_one_default
+      if self.user_id && self.default
+        CreditCard.where(default: true).where.not(id: self.id).where(user_id: self.user_id).each do |ucc|
+          ucc.default = false
+          ucc.save!
+        end
+      end
     end
   end
 end

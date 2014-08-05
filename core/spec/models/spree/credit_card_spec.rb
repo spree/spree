@@ -329,4 +329,27 @@ describe Spree::CreditCard do
       am_card.verification_value.should == 123
     end
   end
+
+  it 'ensures only one credit card per user is default at a time' do
+    user = FactoryGirl.create(:user)
+    first = FactoryGirl.create(:credit_card, user: user, default: true)
+    second = FactoryGirl.create(:credit_card, user: user, default: true)
+
+    first.reload.default.should eq false
+    second.reload.default.should eq true
+
+    first.default = true
+    first.save!
+
+    first.reload.default.should eq true
+    second.reload.default.should eq false
+  end
+
+  it 'allows default credit cards for different users' do
+    first = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
+    second = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
+
+    first.reload.default.should eq true
+    second.reload.default.should eq true
+  end
 end
