@@ -264,7 +264,7 @@ module Spree
           end
 
           def persist_user_address!
-            if !self.temporary_address && self.user && self.user.respond_to?(:persist_order_address)
+            if !self.temporary_address && self.user && self.user.respond_to?(:persist_order_address) && self.bill_address_id
               self.user.persist_order_address(self)
             end
           end
