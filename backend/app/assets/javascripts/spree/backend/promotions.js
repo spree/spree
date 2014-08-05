@@ -40,17 +40,17 @@ var initProductActions = function () {
   var tierInputNameTemplate = Handlebars.compile($('#tier-input-name').html());
 
   var originalTiers = $('.js-original-tiers').data('original-tiers');
-  $.each(originalTiers, function(base, percent) {
+  $.each(originalTiers, function(base, value) {
     var fieldName = tierInputNameTemplate({base: base}).trim();
     $('.js-tiers').append(tierFieldsTemplate({
       baseField: {value: base},
-      percentField: {name: fieldName, value: percent}
+      valueField: {name: fieldName, value: value}
     }));
   });
 
   $(document).on('click', '.js-add-tier', function(event) {
     event.preventDefault();
-    $('.js-tiers').append(tierFieldsTemplate({percentField: {name: null}}));
+    $('.js-tiers').append(tierFieldsTemplate({valueField: {name: null}}));
   });
 
   $(document).on('click', '.js-remove-tier', function(event) {
@@ -58,8 +58,8 @@ var initProductActions = function () {
   });
 
   $(document).on('change', '.js-base-input', function(event) {
-    var percentInput = $(this).parents('.tier').find('.js-percent-input');
-    percentInput.attr('name', tierInputNameTemplate({base: $(this).val()}).trim());
+    var valueInput = $(this).parents('.tier').find('.js-value-input');
+    valueInput.attr('name', tierInputNameTemplate({base: $(this).val()}).trim());
   });
 
   //
