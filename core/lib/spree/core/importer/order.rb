@@ -43,8 +43,13 @@ module Spree
           shipments_hash.each do |s|
             begin
               shipment = order.shipments.build
-              shipment.tracking = s[:tracking]
+              shipment.tracking       = s[:tracking]
               shipment.stock_location = Spree::StockLocation.find_by_name!(s[:stock_location])
+
+              if s[:shipped_at].present?
+                shipment.shipped_at = s[:shipped_at]
+                shipment.state      = 'shipped'
+              end
 
               inventory_units = s[:inventory_units] || []
               inventory_units.each do |iu|
