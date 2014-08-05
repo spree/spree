@@ -172,6 +172,19 @@ module Spree
               expect(coupon.successful?).to be_false
               expect(coupon.error).to eq Spree.t(:coupon_code_max_usage)
             end
+
+            context "when the a new coupon is less good" do
+              let!(:action_5) { Promotion::Actions::CreateAdjustment.create(promotion: promotion_5, calculator: calculator_5) }
+              let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
+              let!(:promotion_5) { Promotion.create name: "promo", :code => "5off"  }
+
+              it 'notifies of better deal' do
+                subject.apply
+                order.stub( { coupon_code: '5off' } )
+                coupon = Coupon.new(order).apply
+                expect(coupon.error).to eq Spree.t(:coupon_code_better_exists)
+              end
+            end
           end
         end
 
