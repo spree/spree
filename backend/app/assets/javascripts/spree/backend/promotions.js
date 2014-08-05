@@ -34,6 +34,35 @@ var initProductActions = function () {
   });
 
   //
+  // Tiered Calculator
+  //
+  var tierFieldsTemplate = Handlebars.compile($('#tier-fields-template').html());
+  var tierInputNameTemplate = Handlebars.compile($('#tier-input-name').html());
+
+  var originalTiers = $('.js-original-tiers').data('original-tiers');
+  $.each(originalTiers, function(base, percent) {
+    var fieldName = tierInputNameTemplate({base: base}).trim();
+    $('.js-tiers').append(tierFieldsTemplate({
+      baseField: {value: base},
+      percentField: {name: fieldName, value: percent}
+    }));
+  });
+
+  $(document).on('click', '.js-add-tier', function(event) {
+    event.preventDefault();
+    $('.js-tiers').append(tierFieldsTemplate({percentField: {name: null}}));
+  });
+
+  $(document).on('click', '.js-remove-tier', function(event) {
+    $(this).parents('.tier').remove();
+  });
+
+  $(document).on('change', '.js-base-input', function(event) {
+    var percentInput = $(this).parents('.tier').find('.js-percent-input');
+    percentInput.attr('name', tierInputNameTemplate({base: $(this).val()}).trim());
+  });
+
+  //
   // CreateLineItems Promotion Action
   //
   (function () {
