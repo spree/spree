@@ -539,6 +539,7 @@ en:
     customer_returns: Customer Returns
     create: Create
     create_a_new_account: Create a new account
+    create_new_order: Create new order
     create_reimbursement: Create reimbursement
     created_at: Created At
     credit: Credit
