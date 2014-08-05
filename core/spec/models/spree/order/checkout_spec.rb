@@ -191,10 +191,23 @@ describe Spree::Order do
         order.state.should == "delivery"
       end
 
+      it "does not call persist_order_address if there is no address on the order" do
+        # otherwise, it will crash
+        order.stub(:ensure_available_shipping_rates => true)
+
+        order.user = FactoryGirl.create(:user)
+        order.save!
+
+        expect(order.user).to_not receive(:persist_order_address).with(order)
+        order.next!
+      end
+
       it "calls persist_order_address on the order's user" do
         order.stub(:ensure_available_shipping_rates => true)
 
         order.user = FactoryGirl.create(:user)
+        order.ship_address = FactoryGirl.create(:address)
+        order.bill_address = FactoryGirl.create(:address)
         order.save!
 
         expect(order.user).to receive(:persist_order_address).with(order)
