@@ -11,6 +11,9 @@ en:
         phone: Phone
         state: State
         zipcode: Zip Code
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Base Amount
+        preferred_tiers: Tiers
       spree/calculator/tiered_percent:
         preferred_base_percent: Base Percent
         preferred_tiers: Tiers
@@ -251,6 +254,12 @@ en:
         other: Zones
     errors:
       models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
+            preferred_tiers:
+              should_be_hash: "should be a hash"
         spree/calculator/tiered_percent:
           attributes:
             base:
@@ -472,6 +481,7 @@ en:
     backorderable: Backorderable
     backorders_allowed: backorders allowed
     balance_due: Balance Due
+    base_amount: Base Amount
     base_percent: Base Percent
     bill_address: Bill Address
     billing: Billing
@@ -1218,6 +1228,7 @@ en:
     there_were_problems_with_the_following_fields: There were problems with the following fields
     thumbnail: Thumbnail
     tiers: Tiers
+    tiered_flat_rate: Tiered Flat Rate
     tiered_percent: Tiered Percent
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
