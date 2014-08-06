@@ -113,6 +113,23 @@ describe Spree::Admin::ReturnAuthorizationsController do
     end
   end
 
+  describe "#load_reimbursement_types" do
+    let(:order)                             { create(:order) }
+    let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
+    let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
+    let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
+
+    before do
+      spree_get :new, order_id: order.to_param
+    end
+
+    it "loads all the active reimbursement types" do
+      assigns(:reimbursement_types).should include(first_active_reimbursement_type)
+      assigns(:reimbursement_types).should include(second_active_reimbursement_type)
+      assigns(:reimbursement_types).should_not include(inactive_reimbursement_type)
+    end
+  end
+
   context '#create' do
     let(:stock_location) { create(:stock_location) }
 

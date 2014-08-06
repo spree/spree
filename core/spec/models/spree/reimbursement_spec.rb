@@ -58,12 +58,11 @@ describe Spree::Reimbursement do
     let(:inventory_unit)          { line_item.inventory_units.first }
     let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
     let(:payment_amount)          { order.total }
-    let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
-    let(:return_item)             { build(:return_item, pre_tax_amount: inventory_unit.pre_tax_amount, inventory_unit: inventory_unit) }
+    let(:reimbursement_item)      { build(:reimbursement_item, pre_tax_amount: inventory_unit.pre_tax_amount, inventory_unit: inventory_unit) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    let(:reimbursement) { create(:reimbursement, customer_return: customer_return, order: order, return_items: [return_item]) }
+    let(:reimbursement) { create(:reimbursement, order: order, reimbursement_items: [reimbursement_item]) }
 
     subject { reimbursement.perform! }
 
@@ -79,8 +78,6 @@ describe Spree::Reimbursement do
         order.next! # confirm
       end
       order.next! # completed
-      customer_return.save!
-      return_item.accept!
     end
 
     it "refunds the total amount" do
@@ -102,9 +99,9 @@ describe Spree::Reimbursement do
         expect {
           subject
         }.to change { Spree::Refund.count }.by(1)
-        return_item.reload
-        expect(return_item.additional_tax_total).to be > 0
-        expect(return_item.additional_tax_total).to eq line_item.additional_tax_total
+        reimbursement_item.reload
+        expect(reimbursement_item.additional_tax_total).to be > 0
+        expect(reimbursement_item.additional_tax_total).to eq line_item.additional_tax_total
         expect(reimbursement.total).to eq line_item.pre_tax_amount + line_item.additional_tax_total
         expect(Spree::Refund.last.amount).to eq line_item.pre_tax_amount + line_item.additional_tax_total
       end
@@ -117,9 +114,9 @@ describe Spree::Reimbursement do
         expect {
           subject
         }.to change { Spree::Refund.count }.by(1)
-        return_item.reload
-        expect(return_item.included_tax_total).to be < 0
-        expect(return_item.included_tax_total).to eq line_item.included_tax_total
+        reimbursement_item.reload
+        expect(reimbursement_item.included_tax_total).to be < 0
+        expect(reimbursement_item.included_tax_total).to eq line_item.included_tax_total
         expect(reimbursement.total).to eq line_item.pre_tax_amount.round(2, :down)
         expect(Spree::Refund.last.amount).to eq line_item.pre_tax_amount.round(2, :down)
       end
@@ -135,7 +132,7 @@ describe Spree::Reimbursement do
 
     context "when exchange is required" do
       let(:exchange_variant) { build(:variant) }
-      before { return_item.exchange_variant = exchange_variant }
+      before { reimbursement_item.exchange_variant = exchange_variant }
       it "generates an exchange shipment for the order for the exchange items" do
         expect { subject }.to change { order.reload.shipments.count }.by 1
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
@@ -144,23 +141,23 @@ describe Spree::Reimbursement do
 
   end
 
-  describe "#return_items_requiring_exchange" do
+  describe "#reimbursement_items_requiring_exchange" do
     it "returns only the return items that require an exchange" do
-      return_items = [double(exchange_required?: true), double(exchange_required?: true),double(exchange_required?: false)]
-      subject.stub(:return_items) { return_items }
-      expect(subject.return_items_requiring_exchange).to eq return_items.take(2)
+      reimbursement_items = [double(exchange_required?: true), double(exchange_required?: true), double(exchange_required?: false)]
+      subject.stub(:reimbursement_items) { reimbursement_items }
+      expect(subject.reimbursement_items_requiring_exchange).to eq reimbursement_items.take(2)
     end
   end
 
   describe "#calculated_total" do
-    context 'with return item amounts that would round up' do
+    context 'with reimbursement item amounts that would round up' do
       let(:reimbursement) { Spree::Reimbursement.new }
 
       subject { reimbursement.calculated_total }
 
       before do
-        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 10.003)
-        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 10.003)
+        reimbursement.reimbursement_items << Spree::ReimbursementItem.new(pre_tax_amount: 10.003)
+        reimbursement.reimbursement_items << Spree::ReimbursementItem.new(pre_tax_amount: 10.003)
       end
 
       it 'rounds down' do

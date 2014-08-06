@@ -21,7 +21,14 @@ describe Spree::Admin::ReimbursementsController do
       let(:reimbursement_params) do
         {
           customer_return_id: customer_return.to_param,
-          return_item_ids: [return_item.id],
+          reimbursement_items_attributes: [
+            {
+              inventory_unit_id:   return_item.inventory_unit_id,
+              return_item_id:      return_item.id,
+              exchange_variant_id: return_item.exchange_variant_id,
+              pre_tax_amount:      return_item.pre_tax_amount,
+            },
+          ],
         }
       end
 
@@ -31,34 +38,12 @@ describe Spree::Admin::ReimbursementsController do
 
       it 'creates the reimbursement' do
         expect { subject }.to change { order.reimbursements.count }.by(1)
-        expect(assigns(:reimbursement).return_items).to include(return_item)
+        expect(assigns(:reimbursement).reimbursement_items.map(&:return_item)).to include(return_item)
       end
 
       it 'redirects to the edit page' do
         subject
         expect(response).to redirect_to(spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement)))
-      end
-    end
-
-    context "comma separated ids" do
-      let(:customer_return)    { create(:customer_return, line_items_count: 2) }
-      let(:second_return_item) { customer_return.return_items.last }
-      let(:return_item_ids)    { [return_item.id, second_return_item.id].join(',') }
-
-      let(:reimbursement_params) do
-        {
-          customer_return_id: customer_return.to_param,
-        }
-      end
-
-      subject do
-        spree_post :create, order_id: order.to_param, reimbursement: reimbursement_params, return_item_ids: return_item_ids
-      end
-
-      it 'creates the reimbursement' do
-        expect { subject }.to change { order.reimbursements.count }.by(1)
-        expect(assigns(:reimbursement).return_items).to include(return_item)
-        expect(assigns(:reimbursement).return_items).to include(second_return_item)
       end
     end
   end
@@ -67,7 +52,8 @@ describe Spree::Admin::ReimbursementsController do
     let(:reimbursement) { create(:reimbursement) }
     let(:customer_return) { reimbursement.customer_return }
     let(:order) { reimbursement.order }
-    let(:return_items) { reimbursement.return_items }
+    let(:reimbursement_items) { reimbursement.reimbursement_items }
+    let(:return_items) { reimbursement_items.map(&:return_item) }
     let(:payment) { order.payments.first }
 
     subject do
@@ -76,7 +62,7 @@ describe Spree::Admin::ReimbursementsController do
 
     it 'redirects to customer return page' do
       subject
-      expect(response).to redirect_to spree.admin_order_customer_return_path(order, customer_return)
+      expect(response).to redirect_to spree.admin_order_reimbursement_path(order, reimbursement)
     end
 
     it 'performs the reimbursement' do

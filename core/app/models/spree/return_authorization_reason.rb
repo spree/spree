@@ -1,6 +1,6 @@
 module Spree
   class ReturnAuthorizationReason < Spree::Base
-    include Spree::ReasonType
+    include Spree::NamedType
 
     has_many :return_authorizations
   end

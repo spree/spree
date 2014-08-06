@@ -21,7 +21,7 @@ describe Spree::Admin::ReturnItemsController do
 
     it 'redirects to the custome return' do
       subject
-      expect(response).to redirect_to spree.admin_order_customer_return_path(customer_return.order, customer_return)
+      expect(response).to redirect_to spree.edit_admin_order_customer_return_path(customer_return.order, customer_return)
     end
   end
 end

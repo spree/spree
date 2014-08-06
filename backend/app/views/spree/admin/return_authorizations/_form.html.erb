@@ -11,10 +11,9 @@
         </th>
         <th><%= Spree.t(:product) %></th>
         <th><%= Spree.t(:state) %></th>
-        <% if @allow_amount_edit %>
-          <th><%= Spree.t(:charged) %></th>
-        <% end %>
+        <th><%= Spree.t(:charged) %></th>
         <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+        <th><%= Spree.t(:reimbursement_type) %></th>
         <th><%= Spree.t(:exchange_for) %></th>
       </tr>
     </thead>
@@ -34,21 +33,19 @@
             <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
           </td>
           <td class="align-center"><%= inventory_unit.state.humanize %></td>
-          <% if @allow_amount_edit %>
-            <td class="align-center">
-              <%= return_item.display_pre_tax_amount %>
-            </td>
-          <% end %>
+          <td class="align-center">
+            <%= return_item.display_pre_tax_amount %>
+          </td>
           <td class="align-center">
             <% if inventory_unit.shipped? && allow_return_item_changes %>
-              <% if @allow_amount_edit %>
-                <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
-              <% else %>
-                <%= item_fields.hidden_field :pre_tax_amount, { class: 'refund-amount-input' } %>
-                <%= return_item.display_pre_tax_amount %>
-              <% end %>
+              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
             <% else %>
               <%= return_item.display_pre_tax_amount %>
+            <% end %>
+          </td>
+          <td>
+            <% if inventory_unit.shipped? && allow_return_item_changes %>
+              <%= item_fields.select :preferred_reimbursement_type_id, @reimbursement_types.collect{|r|[r.name.humanize, r.id]}, {include_blank: true}, {class: 'select2 fullwidth'} %>
             <% end %>
           </td>
           <td class="align-center">
@@ -70,9 +67,9 @@
   <% end %>
 
   <%= f.field_container :reason do %>
-    <%= f.label :return_authorization_reason, Spree.t(:reason) %>
+    <%= f.label :reason, Spree.t(:reason) %>
     <%= f.select :return_authorization_reason_id, @reasons.collect{|r|[r.name, r.id]}, {include_blank: true}, {class: 'select2 fullwidth', "data-placeholder" => Spree.t(:select_a_return_authorization_reason)} %>
-    <%= f.error_message_on :return_authorization_reason_id %>
+    <%= f.error_message_on :reason %>
   <% end %>
 
   <%= f.field_container :memo do %>

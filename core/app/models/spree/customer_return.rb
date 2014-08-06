@@ -34,7 +34,7 @@ module Spree
     end
 
     def fully_reimbursed?
-      completely_decided? && return_items.accepted.includes(:reimbursement).all? { |return_item| return_item.reimbursement.try(:reimbursed?) }
+      completely_decided? && return_items.accepted.includes(reimbursement_item: :reimbursement).all? { |return_item| return_item.reimbursement_item.try(:reimbursement).try(:reimbursed?) }
     end
 
     def completely_decided?
