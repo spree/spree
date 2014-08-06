@@ -400,8 +400,18 @@ You can create a payment by passing in parameters such as this:
 %>
 
 ***
-The numbered key in the `payment_source` hash directly corresponds to the `payment_method_id` attribute within the `payment_attributes` key. 
+The numbered key in the `payment_source` hash directly corresponds to the
+`payment_method_id` attribute within the `payment_attributes` key. 
 ***
+
+You can also use an existing card for the order by submitting the credit card
+id. See an example request:
+
+<%= json \
+  :order => {
+    :existing_card => "1"
+  }
+%>
 
 _Please note that for 2-2-stable checkout api the request body to submit a payment
 via api/checkouts is slight different. See example:_
