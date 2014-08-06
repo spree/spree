@@ -71,7 +71,6 @@ module Spree
           Spree::Promotion::Rules::FirstOrder,
           Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::OneUsePerUser,
-          Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::Taxon,
         ]
       end
