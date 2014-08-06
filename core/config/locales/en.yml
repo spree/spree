@@ -1015,7 +1015,7 @@ en:
         description: Available only to logged in users
         name: User Logged In
       taxon:
-        description: Ordes includes products with specified taxon(s)
+        description: Order includes products with specified taxon(s)
         name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
