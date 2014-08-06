@@ -646,6 +646,13 @@ module Spree
       end
 
       context "creation" do
+        it "can create an order without any parameters" do
+          lambda { api_post :create }.should_not raise_error
+          response.status.should == 201
+          order = Order.last
+          json_response["state"].should == "cart"
+        end
+
         it "can arbitrarily set the line items price" do
           api_post :create, :order => {
             :line_items => {
