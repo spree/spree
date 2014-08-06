@@ -3,8 +3,8 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
-    include Checkout
-    include CurrencyUpdater
+    include Spree::Order::Checkout
+    include Spree::Order::CurrencyUpdater
 
     checkout_flow do
       go_to_state :address
