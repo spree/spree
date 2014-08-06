@@ -19,7 +19,7 @@ module Spree
       def cancel
         authorize! :update, @order, params[:token]
         @order.cancel!
-        render :show
+        respond_with(@order, :default_template => :show)
       end
 
       def create
