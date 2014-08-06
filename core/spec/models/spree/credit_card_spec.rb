@@ -344,4 +344,12 @@ describe Spree::CreditCard do
     first.reload.default.should eq true
     second.reload.default.should eq false
   end
+
+  it 'allows default credit cards for different users' do
+    first = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
+    second = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
+
+    first.reload.default.should eq true
+    second.reload.default.should eq true
+  end
 end
