@@ -154,40 +154,6 @@ describe Spree::InventoryUnit do
     end
   end
 
-  describe "#pre_tax_amount" do
-    let(:order)           { create(:order) }
-    let(:line_item_quantity) { 2 }
-    let(:pre_tax_amount)  { 100.0 }
-    let(:line_item)       { create(:line_item, price: 100.0, quantity: line_item_quantity, pre_tax_amount: pre_tax_amount) }
-
-    before { order.line_items << line_item }
-
-    subject { build(:inventory_unit, order: order, line_item: line_item) }
-
-    context "no promotions or taxes" do
-      its(:pre_tax_amount) { should eq pre_tax_amount / line_item_quantity }
-    end
-
-    context "order adjustments" do
-      let(:adjustment_amount) { -10.0 }
-
-      before do
-        order.adjustments << create(:adjustment, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
-        order.adjustments.first.update_attributes(amount: adjustment_amount)
-      end
-
-      its(:pre_tax_amount) { should eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
-    end
-
-    context "shipping adjustments" do
-      let(:adjustment_total) { -50.0 }
-
-      before { order.shipments << Spree::Shipment.new(adjustment_total: adjustment_total) }
-
-      its(:pre_tax_amount) { should eq pre_tax_amount / line_item_quantity }
-    end
-  end
-
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
     let(:line_item_additional_tax_total)  { 10.00 }

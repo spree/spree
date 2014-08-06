@@ -583,6 +583,7 @@ en:
       js_format: yy/mm/dd
     date_range: Date Range
     default: Default
+    default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete

@@ -29,7 +29,7 @@ module Spree
         unassociated_inventory_units = all_inventory_units - associated_inventory_units
 
         new_return_items = unassociated_inventory_units.map do |new_unit|
-          Spree::ReturnItem.new(inventory_unit: new_unit, pre_tax_amount: rounded_pre_tax_amount(new_unit.pre_tax_amount))
+          Spree::ReturnItem.new(inventory_unit: new_unit).tap(&:set_default_pre_tax_amount)
         end
 
         @form_return_items = (@return_authorization.return_items + new_return_items).sort_by(&:inventory_unit_id)
@@ -45,10 +45,6 @@ module Spree
         if @return_authorization.reason && !@return_authorization.reason.active?
           @reasons << @return_authorization.reason
         end
-      end
-
-      def rounded_pre_tax_amount(amount)
-        amount.round(Spree::ReturnItem.columns_hash['pre_tax_amount'].scale)
       end
     end
   end

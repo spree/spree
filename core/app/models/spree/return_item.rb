@@ -8,6 +8,9 @@ module Spree
     class_attribute :exchange_variant_engine
     self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
 
+    class_attribute :refund_amount_calculator
+    self.refund_amount_calculator = Calculator::Returns::DefaultRefundAmount
+
     belongs_to :return_authorization, inverse_of: :return_items
     belongs_to :inventory_unit, inverse_of: :return_items
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
@@ -40,6 +43,7 @@ module Spree
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit
 
+    before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
@@ -89,6 +93,11 @@ module Spree
       after_transition any => any, :do => :persist_acceptance_status_errors
     end
 
+    def self.from_inventory_unit(inventory_unit)
+      not_cancelled.find_by(inventory_unit: inventory_unit) ||
+        new(inventory_unit: inventory_unit).tap(&:set_default_pre_tax_amount)
+    end
+
     def exchange_requested?
       exchange_variant.present?
     end
@@ -124,6 +133,10 @@ module Spree
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
       super(variant: exchange_variant, line_item: inventory_unit.line_item) if exchange_required?
+    end
+
+    def set_default_pre_tax_amount
+      self.pre_tax_amount = refund_amount_calculator.new.compute(self)
     end
 
     private

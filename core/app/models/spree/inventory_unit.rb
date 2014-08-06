@@ -69,12 +69,7 @@ module Spree
     end
 
     def current_or_new_return_item
-      current_return_item || Spree::ReturnItem.new(inventory_unit: self,
-                                                   pre_tax_amount: pre_tax_amount)
-    end
-
-    def pre_tax_amount
-      weighted_order_adjustment_amount + weighted_line_item_pre_tax_amount
+      Spree::ReturnItem.from_inventory_unit(self)
     end
 
     def additional_tax_total
@@ -93,19 +88,6 @@ module Spree
 
       def update_order
         order.update!
-      end
-
-      def weighted_line_item_pre_tax_amount
-        line_item.pre_tax_amount * percentage_of_line_item
-      end
-
-      def weighted_order_adjustment_amount
-        order.adjustments.eligible.non_tax.sum(:amount) * percentage_of_order_total
-      end
-
-      def percentage_of_order_total
-        return 0.0 if order.pre_tax_item_amount.zero?
-        weighted_line_item_pre_tax_amount / order.pre_tax_item_amount
       end
 
       def percentage_of_line_item

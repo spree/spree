@@ -70,10 +70,59 @@ describe Spree::ReturnItem do
 
   describe "#display_pre_tax_amount" do
     let(:pre_tax_amount) { 21.22 }
-    let(:return_item) { Spree::ReturnItem.new(pre_tax_amount: pre_tax_amount) }
+    let(:return_item) { build(:return_item, pre_tax_amount: pre_tax_amount) }
 
     it "returns a Spree::Money" do
       return_item.display_pre_tax_amount.should == Spree::Money.new(pre_tax_amount)
+    end
+  end
+
+  describe ".default_refund_amount_calculator" do
+    it "defaults to the default refund amount calculator" do
+      expect(Spree::ReturnItem.refund_amount_calculator).to eq Spree::Calculator::Returns::DefaultRefundAmount
+    end
+  end
+
+  describe "pre_tax_amount calculations on create" do
+    let(:inventory_unit) { build(:inventory_unit) }
+    before { subject.save! }
+
+    context "pre tax amount is not specified" do
+      subject { build(:return_item, inventory_unit: inventory_unit) }
+
+      context "not an exchange" do
+        it { expect(subject.pre_tax_amount).to eq Spree::Calculator::Returns::DefaultRefundAmount.new.compute(subject) }
+      end
+
+      context "an exchange" do
+        subject { build(:exchange_return_item) }
+
+        it { expect(subject.pre_tax_amount).to eq 0.0 }
+      end
+    end
+
+    context "pre tax amount is specified" do
+      subject { build(:return_item, inventory_unit: inventory_unit, pre_tax_amount: 100) }
+
+      it { expect(subject.pre_tax_amount).to eq 100 }
+    end
+  end
+
+  describe ".from_inventory_unit" do
+    let(:inventory_unit) { build(:inventory_unit) }
+
+    subject { Spree::ReturnItem.from_inventory_unit(inventory_unit) }
+
+    context "with a cancelled return item" do
+      let!(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'cancelled') }
+
+      it { should_not be_persisted }
+    end
+
+    context "with a non-cancelled return item" do
+      let!(:return_item) { create(:return_item, inventory_unit: inventory_unit) }
+
+      it { should be_persisted }
     end
   end
 

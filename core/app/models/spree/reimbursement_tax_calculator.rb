@@ -21,7 +21,7 @@ module Spree
       private
 
       def set_tax!(return_item)
-        percent_of_tax = (return_item.pre_tax_amount <= 0) ? 0 : return_item.pre_tax_amount / return_item.inventory_unit.pre_tax_amount
+        percent_of_tax = (return_item.pre_tax_amount <= 0) ? 0 : return_item.pre_tax_amount / Spree::ReturnItem.refund_amount_calculator.new.compute(return_item)
 
         additional_tax_total = percent_of_tax * return_item.inventory_unit.additional_tax_total
         included_tax_total   = percent_of_tax * return_item.inventory_unit.included_tax_total

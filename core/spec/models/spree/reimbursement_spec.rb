@@ -59,7 +59,7 @@ describe Spree::Reimbursement do
     let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
     let(:payment_amount)          { order.total }
     let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
-    let(:return_item)             { build(:return_item, pre_tax_amount: inventory_unit.pre_tax_amount, inventory_unit: inventory_unit) }
+    let(:return_item)             { build(:return_item, inventory_unit: inventory_unit) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
