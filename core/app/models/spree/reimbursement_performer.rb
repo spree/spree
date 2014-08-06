@@ -45,7 +45,7 @@ module Spree
           reimbursement_items << refund
         end
 
-        if exchange_items = reimbursement.return_items_requiring_exchange.presence
+        if exchange_items = reimbursement.reimbursement_items_requiring_exchange.presence
           exchange = Spree::Exchange.new(reimbursement.order, exchange_items)
           exchange.perform! unless simulate
           reimbursement_items << exchange

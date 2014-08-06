@@ -2,10 +2,13 @@
   <thead>
     <tr>
       <th><%= Spree.t(:product) %></th>
-      <th><%= Spree.t(:reception_status) %></th>
-      <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+      <th><%= Spree.t(:sku) %></th>
+      <th><%= Spree.t(:pre_tax_amount) %></th>
+      <th><%= Spree.t(:preferred_reimbursement_type) %></th>
       <th><%= Spree.t(:exchange_for) %></th>
-      <th class="actions"></th>
+      <% if show_decision %>
+        <th class="actions"></th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -15,17 +18,28 @@
           <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
           <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
         </td>
-        <td class="align-center"><%= return_item.reception_status.humanize %></td>
-        <td class="align-center"><%= return_item.display_pre_tax_amount %></td>
-        <td class="align-center"><%= return_item.exchange_variant.try(:options_text) %></td>
-        <td class='actions'>
-          <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-up icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
-            Spree.t(:accept)
-          <% end %>
-          <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-down icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
-            Spree.t(:reject)
-          <% end %>
+        <td>
+          <%= return_item.inventory_unit.variant.sku %>
         </td>
+        <td class="align-center">
+          <%= return_item.display_pre_tax_amount %>
+        </td>
+        <td class="align-center">
+          <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
+        </td>
+        <td class="align-center">
+          <%= return_item.exchange_variant.try(:options_text) %>
+        </td>
+        <% if show_decision %>
+          <td class='actions'>
+            <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-up icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
+              Spree.t(:accept)
+            <% end %>
+            <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-down icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
+              Spree.t(:reject)
+            <% end %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

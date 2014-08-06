@@ -315,78 +315,6 @@ describe Spree::ReturnItem do
     end
   end
 
-  describe 'validity for reimbursements' do
-    let(:return_item) { create(:return_item, acceptance_status: acceptance_status) }
-    let(:acceptance_status) { 'pending' }
-
-    before { return_item.reimbursement = build(:reimbursement) }
-
-    subject { return_item }
-
-    context 'when acceptance_status is accepted' do
-      let(:acceptance_status) { 'accepted' }
-
-      it 'is valid' do
-        expect(subject).to be_valid
-      end
-    end
-
-    context 'when acceptance_status is accepted' do
-      let(:acceptance_status) { 'pending' }
-
-      it 'is valid' do
-        expect(subject).to_not be_valid
-        expect(subject.errors.messages).to eq({reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')]})
-      end
-    end
-  end
-
-  describe "#exchange_requested?" do
-    context "exchange variant exists" do
-      before { subject.stub(:exchange_variant) { mock_model(Spree::Variant) } }
-      it { expect(subject.exchange_requested?).to eq true }
-    end
-    context "exchange variant does not exist" do
-      before { subject.stub(:exchange_variant) { nil } }
-      it { expect(subject.exchange_requested?).to eq false }
-    end
-  end
-
-  describe "#exchange_processed?" do
-    context "exchange inventory unit exists" do
-      before { subject.stub(:exchange_inventory_unit) { mock_model(Spree::InventoryUnit) } }
-      it { expect(subject.exchange_processed?).to eq true }
-    end
-    context "exchange inventory unit does not exist" do
-      before { subject.stub(:exchange_inventory_unit) { nil } }
-      it { expect(subject.exchange_processed?).to eq false }
-    end
-  end
-
-  describe "#exchange_required?" do
-    context "exchange has been requested and not yet processed" do
-      before do
-        subject.stub(:exchange_requested?) { true }
-        subject.stub(:exchange_processed?) { false }
-      end
-
-      it { expect(subject.exchange_required?).to be_true }
-    end
-
-    context "exchange has not been requested" do
-      before { subject.stub(:exchange_requested?) { false } }
-      it { expect(subject.exchange_required?).to be_false }
-    end
-
-    context "exchange has been requested and processed" do
-      before do
-        subject.stub(:exchange_requested?) { true }
-        subject.stub(:exchange_processed?) { true }
-      end
-      it { expect(subject.exchange_required?).to be_false }
-    end
-  end
-
   describe "#eligible_exchange_variants" do
     it "uses the exchange variant calculator to compute possible variants to exchange for" do
       return_item = build(:return_item)
@@ -398,55 +326,6 @@ describe Spree::ReturnItem do
   describe ".exchange_variant_engine" do
     it "defaults to the same product calculator" do
       expect(Spree::ReturnItem.exchange_variant_engine).to eq Spree::ReturnItem::ExchangeVariantEligibility::SameProduct
-    end
-  end
-
-  describe "exchange pre_tax_amount" do
-    let(:return_item) { build(:return_item) }
-
-    context "the return item is intended to be exchanged" do
-      before { return_item.exchange_variant = build(:variant) }
-      it do
-        return_item.pre_tax_amount = 5.0
-        return_item.save!
-        expect(return_item.reload.pre_tax_amount).to eq 0.0
-      end
-    end
-
-    context "the return item is not intended to be exchanged" do
-      it do
-        return_item.pre_tax_amount = 5.0
-        return_item.save!
-        expect(return_item.reload.pre_tax_amount).to eq 5.0
-      end
-    end
-  end
-
-  describe "#build_exchange_inventory_unit" do
-    let(:return_item) { build(:return_item) }
-    subject { return_item.build_exchange_inventory_unit }
-
-    context "the return item is intended to be exchanged" do
-      before { return_item.stub(:exchange_variant).and_return(mock_model(Spree::Variant)) }
-
-      context "an exchange inventory unit already exists" do
-        before { return_item.stub(:exchange_inventory_unit).and_return(mock_model(Spree::InventoryUnit)) }
-        it { expect(subject).to be_nil }
-      end
-
-      context "no exchange inventory unit exists" do
-        it "builds a pending inventory unit with references to the return item, variant, and previous inventory unit" do
-          expect(subject.variant).to eq return_item.exchange_variant
-          expect(subject.pending).to eq true
-          expect(subject).not_to be_persisted
-          expect(subject.original_return_item).to eq return_item
-          expect(subject.line_item).to eq return_item.inventory_unit.line_item
-        end
-      end
-    end
-
-    context "the return item is not intended to be exchanged" do
-      it { expect(subject).to be_nil }
     end
   end
 

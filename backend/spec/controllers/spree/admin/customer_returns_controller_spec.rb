@@ -26,6 +26,9 @@ module Spree
 
       describe "#new" do
         let(:order) { create(:shipped_order, line_items_count: 1) }
+        let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
+        let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
+        let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
 
         subject do
           spree_get :new, { order_id: order.to_param }
@@ -108,7 +111,7 @@ module Spree
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
 
         subject do
-          spree_get :show, { order_id: order.to_param, id: customer_return.to_param }
+          spree_get :edit, { order_id: order.to_param, id: customer_return.to_param }
         end
 
         before do
@@ -172,7 +175,7 @@ module Spree
 
           it "redirects to the index page" do
             subject
-            expect(response).to redirect_to(spree.admin_order_customer_return_path(order, assigns(:customer_return)))
+            expect(response).to redirect_to(spree.edit_admin_order_customer_return_path(order, assigns(:customer_return)))
           end
         end
 
