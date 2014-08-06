@@ -3,7 +3,7 @@ module Spree
     belongs_to :payment_method
     has_many :payments, as: :source
 
-    before_create :set_missing_info
+    before_save :set_last_digits
 
     attr_accessor :number, :verification_value, :encrypted_data
 
@@ -58,6 +58,12 @@ module Spree
       when '' then try_type_from_number
       else type
       end
+    end
+
+    def set_last_digits
+      number.to_s.gsub!(/\s/,'')
+      verification_value.to_s.gsub!(/\s/,'')
+      self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
     def try_type_from_number
@@ -138,25 +144,5 @@ module Spree
     def require_card_numbers?
       !self.encrypted_data.present? && !self.has_payment_profile?
     end
-
-    def set_last_digits
-      number.to_s.gsub!(/\s/,'')
-      verification_value.to_s.gsub!(/\s/,'')
-      self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
-    end
-
-    def set_missing_info
-      set_last_digits
-      if has_payment_profile?
-        if matching_card = self.class.where(gateway_customer_profile_id: self.gateway_customer_profile_id, gateway_payment_profile_id: self.gateway_payment_profile_id).first
-          self.cc_type     = matching_card.cc_type
-          self.last_digits = matching_card.last_digits
-          self.month       = matching_card.month
-          self.name        = matching_card.name
-          self.year        = matching_card.year
-        end
-      end
-    end
-
   end
 end
