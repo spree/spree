@@ -1,5 +1,11 @@
 ## Spree 2.4.0 (unreleased) ##
 
+* Spree no longer holds aws-sdk as a core dependency. In case you use it
+  you need to add it to your Gemfile. See paperplip README for reference on
+  scenarios where this is needed https://github.com/thoughtbot/paperclip/tree/v4.1.1#understanding-storage
+
+    Washigton L Braga Jr
+
 * Added Spree::Config.capture_on_dispatch that when set to true will
   cause shipments to advance to ready state upon successfully authorizing
   payment for the order.  As each shipment is marked shipped the
