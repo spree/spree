@@ -5,6 +5,7 @@ module Spree
 
       def show
         @inventory_unit = inventory_unit
+        respond_with(@inventory_unit)
       end
 
       def update
