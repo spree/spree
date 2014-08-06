@@ -54,8 +54,8 @@ module Spree
     state_machine :acceptance_status, initial: :pending do
       event :attempt_accept do
         transition to: :accepted, from: :accepted
-        transition to: :accepted, from: :pending, if: -> (return_item) { return_item.eligible_for_return? }
-        transition to: :manual_intervention_required, from: :pending, if: -> (return_item) { return_item.requires_manual_intervention? }
+        transition to: :accepted, from: :pending, if: ->(return_item) { return_item.eligible_for_return? }
+        transition to: :manual_intervention_required, from: :pending, if: ->(return_item) { return_item.requires_manual_intervention? }
         transition to: :rejected, from: :pending
       end
 
