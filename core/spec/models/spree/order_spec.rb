@@ -256,7 +256,6 @@ describe Spree::Order do
     context "merging using extension-specific line_item_comparison_hooks" do
       before do
         Spree::Order.register_line_item_comparison_hook(:foos_match)
-        Spree::LineItem.any_instance.stub(:build_foos)
         Spree::Variant.stub(:price_modifier_amount).and_return(0.00)
       end
 
