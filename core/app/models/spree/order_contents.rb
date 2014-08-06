@@ -61,13 +61,17 @@ module Spree
         opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
         currency = opts.delete(:currency) || order.currency
         shipment = opts.delete(:shipment)
-
+        
         if line_item
           line_item.target_shipment = shipment
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new({quantity: quantity, variant: variant}.merge(opts.permit(PermittedAttributes.line_item_attributes)))
+          line_item = order.line_items.new({quantity: quantity, 
+                                            variant: variant}.
+                                              merge(
+                                                ActionController::Parameters.new(opts).
+                                                  permit(PermittedAttributes.line_item_attributes)))
           line_item.target_shipment = shipment
           
           if currency
