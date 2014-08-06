@@ -147,9 +147,7 @@ describe Spree::Refund do
     subject { Spree::Refund.total_amount_reimbursed_for(reimbursement) }
 
     context 'with reimbursements performed' do
-      before do
-        reimbursement.perform!
-      end
+      before { reimbursement.perform! }
 
       it 'returns the total amount' do
         amount = Spree::Refund.total_amount_reimbursed_for(reimbursement)
