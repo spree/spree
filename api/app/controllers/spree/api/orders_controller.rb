@@ -31,7 +31,7 @@ module Spree
         end
 
         import_params = if @current_user_roles.include?("admin")
-          params[:order].permit!
+          params[:order].present? ? params[:order].permit! : {}
         else
           order_params
         end
