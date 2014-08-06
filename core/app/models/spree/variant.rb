@@ -246,8 +246,8 @@ module Spree
       end
 
       def create_stock_items
-        StockLocation.all.each do |stock_location|
-          stock_location.propagate_variant(self) if stock_location.propagate_all_variants?
+        StockLocation.where(propagate_all_variants: true).each do |stock_location|
+          stock_location.propagate_variant(self)
         end
       end
 
