@@ -2,13 +2,9 @@ module Spree
   module Stock
     class AvailabilityValidator < ActiveModel::Validator
       def validate(line_item)
-        if shipment = line_item.target_shipment
-          units = shipment.inventory_units_for(line_item.variant)
-          return if units.count > line_item.quantity
-          quantity = line_item.quantity - units.count
-        else
-          quantity = line_item.quantity
-        end
+        unit_count = line_item.inventory_units.size
+        return if unit_count >= line_item.quantity
+        quantity = line_item.quantity - unit_count
 
         quantifier = Stock::Quantifier.new(line_item.variant)
 
