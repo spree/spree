@@ -67,11 +67,9 @@ module Spree
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
+          line_item = order.line_items.new({quantity: quantity, variant: variant}.merge(opts.permit(PermittedAttributes.line_item_attributes)))
           line_item.target_shipment = shipment
           
-          line_item.build_options(opts) if opts
-
           if currency
             line_item.currency = currency
             line_item.price    = variant.price_in(currency).amount + 
@@ -80,8 +78,6 @@ module Spree
             line_item.price    = variant.price + 
                                  variant.price_modifier_amount(opts)
           end
-
-          line_item.build_options(opts) if opts
         end
 
         line_item.save
