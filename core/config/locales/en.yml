@@ -641,6 +641,10 @@ en:
     editing_tracker: Editing Tracker
     editing_user: Editing User
     editing_zone: Editing Zone
+    eligibility_errors:
+      messages:
+        no_user_or_email_specified: You need to login or provide your email before applying this coupon code.
+        not_first_order: This coupon code can only be applied to your first order.
     email: Email
     empty: Empty
     empty_cart: Empty Cart

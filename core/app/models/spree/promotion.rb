@@ -3,6 +3,8 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
+    attr_reader :eligibility_errors
+
     belongs_to :promotion_category
 
     has_many :promotion_rules, autosave: true, dependent: :destroy
@@ -91,10 +93,16 @@ module Spree
       if match_all?
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
-        return nil unless specific_rules.all?(&eligible)
+        unless specific_rules.all?(&eligible)
+          @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
+          return nil
+        end
         specific_rules
       else
-        return nil unless specific_rules.any?(&eligible)
+        unless specific_rules.any?(&eligible)
+          @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
+          return nil
+        end
         specific_rules.select(&eligible)
       end
     end
