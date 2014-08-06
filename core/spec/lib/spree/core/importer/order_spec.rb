@@ -391,6 +391,30 @@ module Spree
         }.to raise_error /XXX/
       end
 
+      it 'build a source payment using years and month' do
+        params = { :payments_attributes => [{ amount: '4.99',
+                                              payment_method: payment_method.name,
+                                              status: 'completed', 
+                                              :source_attribute => { name: 'Fox',
+                                                            last_digits: "7424",
+                                                            cc_type: "visa",
+                                                            year: '2022',
+                                                            month: "5" }} ]}                                             
+        order.payments.first.source.last_digits should eq '7424'
+      end
+      
+      it 'handles source building exceptions when do not have years and month' do
+        params = { :payments_attributes => [{ amount: '4.99',
+                                              payment_method: payment_method.name,
+                                              status: 'completed', 
+                                              :source_attribute => { name: 'Fox',
+                                                            last_digits: "7424",
+                                                            cc_type: "visa", }} ]}  
+        expect {
+          order = Importer::Order.import(user,params)
+        }.to raise_error /NoYearOrMonth/
+      end
+
       context "raises error" do
         it "clears out order from db" do
           params = { :payments_attributes => [{ payment_method: "XXX" }] }
