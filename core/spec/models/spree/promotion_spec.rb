@@ -294,28 +294,44 @@ describe Spree::Promotion do
     end
 
     context "with 'all' match policy" do
+      let(:promo1) { Spree::PromotionRule.create! }
+      let(:promo2) { Spree::PromotionRule.create! }
+
       before { promotion.match_policy = 'all' }
 
-      it "should have eligible rules if all rules are eligible" do
-        promo1 = Spree::PromotionRule.create!
-        promo1.stub(eligible?: true, applicable?: true)
-        promo2 = Spree::PromotionRule.create!
-        promo2.stub(eligible?: true, applicable?: true)
+      context "when all rules are eligible" do
+        before do
+          promo1.stub(eligible?: true, applicable?: true)
+          promo2.stub(eligible?: true, applicable?: true)
 
-        promotion.promotion_rules = [promo1, promo2]
-        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
-        promotion.eligible_rules(promotable).should eq [promo1, promo2]
+          promotion.promotion_rules = [promo1, promo2]
+          promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+        end
+        it "returns the eligible rules" do
+          promotion.eligible_rules(promotable).should eq [promo1, promo2]
+        end
+        it "does set anything to eligiblity errors" do
+          promotion.eligible_rules(promotable)
+          expect(promotion.eligibility_errors).to be_nil
+        end
       end
 
-      it "should not have eligible rules if any of the rules is not eligible" do
-        promo1 = Spree::PromotionRule.create!
-        promo1.stub(eligible?: true, applicable?: true)
-        promo2 = Spree::PromotionRule.create!
-        promo2.stub(eligible?: false, applicable?: true)
+      context "when any of the rules is not eligible" do
+        let(:errors) { double ActiveModel::Errors, empty?: false }
+        before do
+          promo1.stub(eligible?: true, applicable?: true, eligibility_errors: nil)
+          promo2.stub(eligible?: false, applicable?: true, eligibility_errors: errors)
 
-        promotion.promotion_rules = [promo1, promo2]
-        promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
-        promotion.eligible_rules(promotable).should be_nil
+          promotion.promotion_rules = [promo1, promo2]
+          promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+        end
+        it "returns nil" do
+          promotion.eligible_rules(promotable).should be_nil
+        end
+        it "sets eligibility errors to the first non-nil one" do
+          promotion.eligible_rules(promotable)
+          expect(promotion.eligibility_errors).to eq errors
+        end
       end
     end
 
@@ -330,6 +346,24 @@ describe Spree::Promotion do
         promotion.stub(:rules => [true_rule])
         promotion.stub_chain(:rules, :for).and_return([true_rule])
         promotion.eligible_rules(promotable).should eq [true_rule]
+      end
+
+      context "when none of the rules are eligible" do
+        let(:promo) { Spree::PromotionRule.create! }
+        let(:errors) { double ActiveModel::Errors, empty?: false }
+        before do
+          promo.stub(eligible?: false, applicable?: true, eligibility_errors: errors)
+
+          promotion.promotion_rules = [promo]
+          promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
+        end
+        it "returns nil" do
+          promotion.eligible_rules(promotable).should be_nil
+        end
+        it "sets eligibility errors to the first non-nil one" do
+          promotion.eligible_rules(promotable)
+          expect(promotion.eligibility_errors).to eq errors
+        end
       end
     end
   end

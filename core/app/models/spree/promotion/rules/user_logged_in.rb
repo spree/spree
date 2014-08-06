@@ -7,7 +7,10 @@ module Spree
         end
 
         def eligible?(order, options = {})
-          return order.user.present?
+          unless order.user.present?
+            eligibility_errors.add(:base, eligibility_error_message(:no_user_specified))
+          end
+          eligibility_errors.empty?
         end
       end
     end

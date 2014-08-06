@@ -641,6 +641,19 @@ en:
     editing_tracker: Editing Tracker
     editing_user: Editing User
     editing_zone: Editing Zone
+    eligibility_errors:
+      messages:
+        has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
+        item_total_less_than: This coupon code can't be applied to orders less than %{amount}.
+        item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
+        limit_once_per_user: This coupon code can only be used once per user.
+        missing_product: This coupon code can't be applied because you don't have all of the necessary products in your cart.
+        missing_taxon: You need to add a product from all applicable categories before applying this coupon code.
+        no_applicable_products: You need to add an applicable product before applying this coupon code.
+        no_matching_taxons: You need to add a product from an applicable category before applying this coupon code.
+        no_user_or_email_specified: You need to login or provide your email before applying this coupon code.
+        no_user_specified: You need to login before applying this coupon code.
+        not_first_order: This coupon code can only be applied to your first order.
     email: Email
     empty: Empty
     empty_cart: Empty Cart
@@ -1245,7 +1258,7 @@ en:
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
     taxon_rule:
-      choose_products: Choose taxon
+      choose_taxons: Choose taxons
       label: Order must contain %{select} of these taxons
       match_all: all
       match_any: at least one

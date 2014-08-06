@@ -24,9 +24,14 @@ describe Spree::Promotion::Rules::Taxon do
         expect(rule).to be_eligible(order)
       end
 
-      it 'is not eligile if order does not has any prefered taxon' do
-        rule.taxons << taxon2
-        expect(rule).not_to be_eligible(order)
+      context "when order does not have any prefered taxon" do
+        before { rule.taxons << taxon2 }
+        it { expect(rule).not_to be_eligible(order) }
+        it "sets an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "You need to add a product from an applicable category before applying this coupon code."
+        end
       end
 
       context 'when a product has a taxon child of a taxon rule' do
@@ -54,9 +59,14 @@ describe Spree::Promotion::Rules::Taxon do
         expect(rule).to be_eligible(order)
       end
 
-      it 'is not eligile if order does not has all prefered taxons' do
-        rule.taxons << taxon
-        expect(rule).not_to be_eligible(order)
+      context "when order does not have all prefered taxons" do
+        before { rule.taxons << taxon  }
+        it { expect(rule).not_to be_eligible(order) }
+        it "sets an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "You need to add a product from all applicable categories before applying this coupon code."
+        end
       end
 
       context 'when a product has a taxon child of a taxon rule' do

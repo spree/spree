@@ -5,8 +5,13 @@ describe Spree::Promotion::Rules::FirstOrder do
   let(:order) { mock_model(Spree::Order, :user => nil, :email => nil) }
   let(:user) { mock_model(Spree::LegacyUser) }
 
-  it "should not be eligible without a user or email" do
-    rule.should_not be_eligible(order)
+  context "without a user or email" do
+    it { rule.should_not be_eligible(order) }
+    it "sets an error message" do
+      rule.eligible?(order)
+      expect(rule.eligibility_errors.full_messages.first).
+        to eq "You need to login or provide your email before applying this coupon code."
+    end
   end
 
   context "first order" do
@@ -36,9 +41,14 @@ describe Spree::Promotion::Rules::FirstOrder do
           rule.should be_eligible(order)
         end
 
-        it "should not be eligible with another order" do
-          user.stub_chain(:orders, :complete => [mock_model(Spree::Order)])
-          rule.should_not be_eligible(order)
+        context "with another order" do
+          before { user.stub_chain(:orders, :complete => [mock_model(Spree::Order)]) }
+          it { rule.should_not be_eligible(order) }
+          it "sets an error message" do
+            rule.eligible?(order)
+            expect(rule.eligibility_errors.full_messages.first).
+              to eq "This coupon code can only be applied to your first order."
+          end
         end
       end
     end
@@ -54,6 +64,11 @@ describe Spree::Promotion::Rules::FirstOrder do
       context "with another order" do
         before { rule.stub(:orders_by_email => [mock_model(Spree::Order)]) }
         it { rule.should_not be_eligible(order) }
+        it "sets an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can only be applied to your first order."
+        end
       end
     end
   end
