@@ -3,7 +3,7 @@ module Spree
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
     class_attribute :return_eligibility_validator
-    self.return_eligibility_validator = ReturnItem::ReturnEligibilityValidator
+    self.return_eligibility_validator = ReturnItem::EligibilityValidator::DefaultEligibilityValidator
 
     class_attribute :exchange_variant_engine
     self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
