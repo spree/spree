@@ -46,11 +46,6 @@ module Spree
               shipment.tracking       = s[:tracking]
               shipment.stock_location = Spree::StockLocation.find_by_name!(s[:stock_location])
 
-              if s[:shipped_at].present?
-                shipment.shipped_at = s[:shipped_at]
-                shipment.state      = 'shipped'
-              end
-
               inventory_units = s[:inventory_units] || []
               inventory_units.each do |iu|
                 ensure_variant_id_from_params(iu)
@@ -66,6 +61,15 @@ module Spree
                 unit.line_item_id = line_items.select do |l|
                   l.variant_id.to_i == iu[:variant_id].to_i
                 end.first.try(:id)
+              end
+
+              # Mark shipped if it should be.
+              if s[:shipped_at].present?
+                shipment.shipped_at = s[:shipped_at]
+                shipment.state      = 'shipped'
+                shipment.inventory_units.each do |unit|
+                  unit.state = 'shipped'
+                end
               end
 
               shipment.save!
