@@ -396,7 +396,7 @@ module Spree
                                               amount: '4.99',
                                               payment_method: payment_method.name,
                                               status: 'completed',
-                                              source_attributes: {
+                                              source: {
                                                 name: 'Fox',
                                                 last_digits: "7424",
                                                 cc_type: "visa",
@@ -414,7 +414,7 @@ module Spree
                                               amount: '4.99',
                                               payment_method: payment_method.name,
                                               status: 'completed',
-                                              source_attributes: {
+                                              source: {
                                                 name: 'Fox',
                                                 last_digits: "7424",
                                                 cc_type: "visa"
