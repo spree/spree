@@ -17,6 +17,11 @@ describe Spree::Promotion::Rules::OneUsePerUser do
         let(:used_by) { true }
 
         it { should be false }
+        it "sets an error message" do
+          subject
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can only be used once per user."
+        end
       end
 
       context 'when the user has not used this promotion before' do
@@ -27,6 +32,11 @@ describe Spree::Promotion::Rules::OneUsePerUser do
     context 'when the order is not assigned to a user' do
       let(:user) { nil }
       it { should be false }
+      it "sets an error message" do
+        subject
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "You need to login before applying this coupon code."
+      end
     end
   end
 end

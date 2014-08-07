@@ -7,7 +7,15 @@ module Spree
         end
 
         def eligible?(order, options = {})
-          order.user.present? && !promotion.used_by?(order.user, [order])
+          if order.user.present?
+            if promotion.used_by?(order.user, [order])
+              eligibility_errors.add(:base, eligibility_error_message(:limit_once_per_user))
+            end
+          else
+            eligibility_errors.add(:base, eligibility_error_message(:no_user_specified))
+          end
+
+          eligibility_errors.empty?
         end
       end
     end

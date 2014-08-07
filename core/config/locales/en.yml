@@ -645,7 +645,9 @@ en:
       messages:
         item_total_less_than: This coupon code can't be applied to orders less than %{amount}.
         item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
+        limit_once_per_user: This coupon code can only be used once per user.
         no_user_or_email_specified: You need to login or provide your email before applying this coupon code.
+        no_user_specified: You need to login before applying this coupon code.
         not_first_order: This coupon code can only be applied to your first order.
     email: Email
     empty: Empty
