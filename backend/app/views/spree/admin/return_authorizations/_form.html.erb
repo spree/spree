@@ -49,7 +49,9 @@
             <% end %>
           </td>
           <td class="align-center">
-            <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
+            <% if inventory_unit.shipped? && allow_return_item_changes %>
+              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
+            <% end %>
           </td>
         </tr>
       <% end %>
