@@ -8,7 +8,11 @@ class CreateSpreeReimbursementTypes < ActiveRecord::Migration
       t.timestamps
     end
 
-    Spree::ReimbursementType.create!(name: Spree::ReimbursementType::ORIGINAL)
+    reversible do |direction|
+      direction.up do
+        Spree::ReimbursementType.create!(name: Spree::ReimbursementType::ORIGINAL)
+      end
+    end
 
     add_column :spree_return_items, :preferred_reimbursement_type_id, :integer
   end
