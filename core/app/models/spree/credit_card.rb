@@ -1,9 +1,12 @@
 module Spree
   class CreditCard < Spree::Base
     belongs_to :payment_method
+    belongs_to :user, class_name: Spree.user_class, foreign_key: 'user_id'
     has_many :payments, as: :source
 
-    before_create :set_missing_info
+    before_save :set_last_digits
+
+    after_save :ensure_one_default
 
     attr_accessor :number, :verification_value, :encrypted_data
 
@@ -15,6 +18,7 @@ module Spree
     validate :expiry_not_in_the_past
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
+    scope :default, -> { where(default: true) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
@@ -58,6 +62,12 @@ module Spree
       when '' then try_type_from_number
       else type
       end
+    end
+
+    def set_last_digits
+      number.to_s.gsub!(/\s/,'')
+      verification_value.to_s.gsub!(/\s/,'')
+      self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
     def try_type_from_number
@@ -139,24 +149,13 @@ module Spree
       !self.encrypted_data.present? && !self.has_payment_profile?
     end
 
-    def set_last_digits
-      number.to_s.gsub!(/\s/,'')
-      verification_value.to_s.gsub!(/\s/,'')
-      self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
-    end
-
-    def set_missing_info
-      set_last_digits
-      if has_payment_profile?
-        if matching_card = self.class.where(gateway_customer_profile_id: self.gateway_customer_profile_id, gateway_payment_profile_id: self.gateway_payment_profile_id).first
-          self.cc_type     = matching_card.cc_type
-          self.last_digits = matching_card.last_digits
-          self.month       = matching_card.month
-          self.name        = matching_card.name
-          self.year        = matching_card.year
+    def ensure_one_default
+      if self.user_id && self.default
+        CreditCard.where(default: true).where.not(id: self.id).where(user_id: self.user_id).each do |ucc|
+          ucc.default = false
+          ucc.save!
         end
       end
     end
-
   end
 end

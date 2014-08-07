@@ -192,6 +192,9 @@ en:
       spree/reimbursement:
         one: Reimbursement
         other: Reimbursements
+      spree/reimbursement_type:
+        one: Reimbursement Type
+        other: Reimbursement Types
       spree/return_authorization:
         one: Return Authorization
         other: Return Authorizations
@@ -273,7 +276,8 @@ en:
           attributes:
             reimbursement:
               cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
-
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
 
   devise:
     confirmations:
@@ -324,6 +328,7 @@ en:
   spree:
     abbreviation: Abbreviation
     accept: Accept
+    acceptance_status: Acceptance status
     accepted: Accepted
     account: Account
     account_updated: Account updated
@@ -445,6 +450,7 @@ en:
     back_to_prototypes_list: Back To Prototypes List
     back_to_reports_list: Back To Reports List
     back_to_refund_reason_list: Back To Refund Reason List
+    back_to_reimbursement_type_list: Back To Reimbursement Type List
     back_to_rma_reason_list: Back To RMA Reason List
     back_to_shipping_categories: Back To Shipping Categories
     back_to_shipping_categories_list: Back To Shipping Categories List
@@ -577,6 +583,7 @@ en:
       js_format: yy/mm/dd
     date_range: Date Range
     default: Default
+    default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
@@ -600,6 +607,7 @@ en:
     edit_refund_reason: Edit Refund Reason
     editing_refund_reason: Editing Refund Reason
     editing_reimbursement: Editing Reimbursement
+    editing_reimbursement_type: Editing Reimbursement Type
     editing_rma_reason: Editing RMA Reason
     editing_shipping_category: Editing Shipping Category
     editing_shipping_method: Editing Shipping Method
@@ -701,6 +709,7 @@ en:
     incomplete: Incomplete
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
+    insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
@@ -724,6 +733,7 @@ en:
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
+    items_reimbursed: Items reimbursed
     jirafe: Jirafe
     landing_page_rule:
       path: Path
@@ -794,6 +804,7 @@ en:
     new_prototype: New Prototype
     new_refund: New Refund
     new_refund_reason: New Refund Reason
+    new_reimbursement_type: New Reimbursement Type
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
     new_shipping_category: New Shipping Category
@@ -829,6 +840,7 @@ en:
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
     none: None
+    none_selected: None Selected
     normal_amount: Normal Amount
     not: not
     not_available: N/A
@@ -947,7 +959,9 @@ en:
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
+    pre_tax_amount: Pre-Tax Amount
     pre_tax_total: Pre-Tax Total
+    preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     previous: Previous
     price: Price
@@ -1012,6 +1026,9 @@ en:
       user_logged_in:
         description: Available only to logged in users
         name: User Logged In
+      taxon:
+        description: Order includes products with specified taxon(s)
+        name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
     properties: Properties
@@ -1041,9 +1058,12 @@ en:
     registration: Registration
     reimburse: Reimburse
     reimbursed: Reimbursed
+    reimbursement: Reimbursement
     reimbursement_perform_failed: "Reimbursement could not be performed.  Error: %{error}"
     reimbursement_status: Reimbursement status
     reimbursement_type: Reimbursement type
+    reimbursement_type_override: Reimbursement Type Override
+    reimbursement_types: Reimbursement Types
     reimbursements: Reimbursements
     reject: Reject
     rejected: Rejected
@@ -1061,6 +1081,7 @@ en:
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
+    return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Return Items
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
@@ -1189,6 +1210,11 @@ en:
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
+    taxon_rule:
+      choose_products: Choose taxon
+      label: Order must contain %{select} of these taxons
+      match_all: all
+      match_any: at least one
     taxonomies: Taxonomies
     taxonomy: Taxonomy
     taxonomy_edit: Edit taxonomy

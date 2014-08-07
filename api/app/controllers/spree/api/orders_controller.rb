@@ -17,7 +17,7 @@ module Spree
       def cancel
         authorize! :update, @order, params[:token]
         @order.cancel!
-        render :show
+        respond_with(@order, :default_template => :show)
       end
 
       def create
@@ -29,7 +29,7 @@ module Spree
         end
 
         import_params = if @current_user_roles.include?("admin")
-          params[:order].permit!
+          params[:order].present? ? params[:order].permit! : {}
         else
           order_params
         end

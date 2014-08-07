@@ -7,37 +7,37 @@
 <% content_for :page_actions do %>
   <ul class="actions inline-menu">
     <li>
-      <%= button_link_to new_button_text, new_object_url, { icon: 'plus', id: 'admin_new_reason' } %>
+      <%= button_link_to new_button_text, new_object_url, { icon: 'plus', id: 'admin_new_named_type' } %>
     </li>
   </ul>
 <% end %>
 
 <% if @collection.any? %>
-  <table class="index" id='listing_reasons' data-hook>
+  <table class="index" id='listing_named_types' data-hook>
     <colgroup>
       <col style="width: 65%" />
       <col style="width: 20%" />
       <col style="width: 15%" />
     </colgroup>
     <thead>
-      <tr data-hook="reasons_header">
+      <tr data-hook="named_types_header">
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:state) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
     <tbody>
-      <% @collection.each do |reason| %>
-        <tr id="<%= spree_dom_id reason %>" data-hook="reason_row" class="<%= cycle('odd', 'even')%>">
+      <% @collection.each do |named_type| %>
+        <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row" class="<%= cycle('odd', 'even')%>">
           <td class="align-center">
-            <%= reason.name %>
+            <%= named_type.name %>
           </td>
           <td class="align-center">
-            <%= Spree.t(reason.active? ? :active : :inactive) %>
+            <%= Spree.t(named_type.active? ? :active : :inactive) %>
           </td>
           <td class="actions">
-            <% if reason.mutable? %>
-              <%= link_to_edit reason, no_text: true %>
+            <% if named_type.mutable? %>
+              <%= link_to_edit named_type, no_text: true %>
             <% end %>
           </td>
         </tr>

@@ -11,7 +11,13 @@
   <tbody>
     <% reimbursements.each do |reimbursement| %>
       <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row" class="<%= cycle('odd', 'even')%>">
-        <td><%= link_to reimbursement.number, url_for([:admin, @order, reimbursement]) %></td>
+        <td>
+          <% if reimbursement.reimbursed? %>
+            <%= link_to reimbursement.number, url_for([:admin, @order, reimbursement]) %>
+          <% else %>
+            <%= reimbursement.number %>
+          <% end %>
+        </td>
         <td><%= reimbursement.display_total %></td>
         <td>
           <span class="state <%= reimbursement_status_color(reimbursement) %>">

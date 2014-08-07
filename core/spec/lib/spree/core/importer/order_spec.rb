@@ -310,6 +310,7 @@ module Spree
             expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
             expect(shipment.stock_location).to eq stock_location
             expect(shipment.state).to eq('shipped')
+            expect(shipment.inventory_units.all?(&:shipped?)).to be true
             expect(order.shipment_state).to eq('shipped')
             expect(order.shipment_total.to_f).to eq 4.99
           end
@@ -387,8 +388,43 @@ module Spree
         params = { :payments_attributes => [{ amount: '4.99',
                                               payment_method: 'XXX' }] }
         expect {
-          order = Importer::Order.import(user,params)
+          order = Importer::Order.import(user, params)
         }.to raise_error /XXX/
+      end
+
+      it 'build a source payment using years and month' do
+        params = { :payments_attributes => [{
+                                              amount: '4.99',
+                                              payment_method: payment_method.name,
+                                              status: 'completed',
+                                              source: {
+                                                name: 'Fox',
+                                                last_digits: "7424",
+                                                cc_type: "visa",
+                                                year: '2022',
+                                                month: "5"
+                                              }
+                                            }]}
+
+        order = Importer::Order.import(user, params)
+        expect(order.payments.first.source.last_digits).to eq '7424'
+      end
+
+      it 'handles source building exceptions when do not have years and month' do
+        params = { :payments_attributes => [{
+                                              amount: '4.99',
+                                              payment_method: payment_method.name,
+                                              status: 'completed',
+                                              source: {
+                                                name: 'Fox',
+                                                last_digits: "7424",
+                                                cc_type: "visa"
+                                              }
+                                            }]}
+
+        expect {
+          order = Importer::Order.import(user, params)
+        }.to raise_error /Validation failed: Credit card Month is not a number, Credit card Year is not a number/
       end
 
       context "raises error" do

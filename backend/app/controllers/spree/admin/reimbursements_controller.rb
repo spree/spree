@@ -3,29 +3,40 @@ module Spree
     class ReimbursementsController < ResourceController
       belongs_to 'spree/order', find_by: :number
 
-      before_filter :load_return_item_ids, only: :create
       before_filter :load_simulated_refunds, only: :edit
 
       def perform
         @reimbursement.perform!
-        redirect_to url_for([:admin, @order, @reimbursement.customer_return])
+        redirect_to location_after_save
       end
 
       private
 
-      def load_return_item_ids
-        if params[:return_item_ids].present?
-          params[:reimbursement] ||= ActiveSupport::HashWithIndifferentAccess.new
-          params[:reimbursement][:return_item_ids] = params[:return_item_ids].split(',')
+      def build_resource
+        if params[:build_from_customer_return_id].present?
+          customer_return = CustomerReturn.find(params[:build_from_customer_return_id])
+
+          Reimbursement.build_from_customer_return(customer_return)
+        else
+          super
         end
       end
 
       def location_after_save
-        edit_admin_order_reimbursement_path(@order, @reimbursement)
+        if @reimbursement.reimbursed?
+          admin_order_reimbursement_path(parent, @reimbursement)
+        else
+          edit_admin_order_reimbursement_path(parent, @reimbursement)
+        end
       end
 
       def load_simulated_refunds
-        @reimbursement_items = @reimbursement.simulate
+        @reimbursement_objects = @reimbursement.simulate
+      end
+
+      # TODO: Remove this when https://github.com/spree/spree/pull/5158 gets merged in
+      def permitted_resource_params
+        params[object_name].present? ? super : ActionController::Parameters.new
       end
 
     end

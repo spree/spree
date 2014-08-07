@@ -81,11 +81,15 @@ module Spree
       end
 
       def load_user_roles
-        @current_user_roles = @current_api_user.spree_roles.pluck(:name)
+        @current_user_roles = if @current_api_user
+          @current_api_user.spree_roles.pluck(:name)
+        else
+          []
+        end
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", :status => 401 and return
+        render "spree/api/errors/unauthorized", status: 401 and return
       end
 
       def error_during_processing(exception)
@@ -101,7 +105,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", :status => 404 and return
+        render "spree/api/errors/not_found", status: 404 and return
       end
 
       def current_ability

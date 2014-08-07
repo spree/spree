@@ -1,5 +1,5 @@
 module Spree
-  module ReasonType
+  module NamedType
     extend ActiveSupport::Concern
 
     included do

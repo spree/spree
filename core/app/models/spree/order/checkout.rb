@@ -78,6 +78,10 @@ module Spree
                     order.process_payments!
                   end
                 end
+                after_transition to: :complete, do: :persist_user_credit_card
+                before_transition to: :payment, do: :set_shipments_cost
+                before_transition to: :payment, do: :create_tax_charge!
+                before_transition to: :payment, do: :assign_default_credit_card
               end
 
               before_transition from: :cart, do: :ensure_line_items_present
@@ -88,16 +92,13 @@ module Spree
                 before_transition from: :address, do: :persist_user_address!
               end
 
-              if states[:payment]
-                before_transition to: :payment, do: :set_shipments_cost
-                before_transition to: :payment, do: :create_tax_charge!
-              end
-
               if states[:delivery]
                 before_transition to: :delivery, do: :create_proposed_shipments
                 before_transition to: :delivery, do: :ensure_available_shipping_rates
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
               end
+
+              before_transition to: :resumed, do: :ensure_line_items_are_in_stock
 
               after_transition to: :complete, do: :finalize!
               after_transition to: :resumed,  do: :after_resume
@@ -197,7 +198,7 @@ module Spree
           def has_checkout_step?(step)
             step.present? && self.checkout_steps.include?(step)
           end
-          
+
           def passed_checkout_step?(step)
             has_checkout_step?(step) && checkout_step_index(step) < checkout_step_index(self.state)
           end
@@ -266,6 +267,22 @@ module Spree
           def persist_user_address!
             if !self.temporary_address && self.user && self.user.respond_to?(:persist_order_address) && self.bill_address_id
               self.user.persist_order_address(self)
+            end
+          end
+
+          def persist_user_credit_card
+            if !self.temporary_credit_card && self.user_id && self.valid_credit_cards.present?
+              default_cc = self.valid_credit_cards.first
+              default_cc.user_id = self.user_id
+              default_cc.default = true
+              default_cc.save
+            end
+          end
+
+          def assign_default_credit_card
+            if self.payments.from_credit_card.count == 0 && self.user && self.user.default_credit_card.try(:valid?)
+              cc = self.user.default_credit_card
+              self.payments.create!(payment_method_id: cc.payment_method_id, source: cc)
             end
           end
 

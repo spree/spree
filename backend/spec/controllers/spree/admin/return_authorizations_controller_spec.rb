@@ -113,6 +113,23 @@ describe Spree::Admin::ReturnAuthorizationsController do
     end
   end
 
+  describe "#load_reimbursement_types" do
+    let(:order)                             { create(:order) }
+    let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
+    let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
+    let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
+
+    before do
+      spree_get :new, order_id: order.to_param
+    end
+
+    it "loads all the active reimbursement types" do
+      assigns(:reimbursement_types).should include(first_active_reimbursement_type)
+      assigns(:reimbursement_types).should include(second_active_reimbursement_type)
+      assigns(:reimbursement_types).should_not include(inactive_reimbursement_type)
+    end
+  end
+
   context '#create' do
     let(:stock_location) { create(:stock_location) }
 
@@ -171,14 +188,18 @@ describe Spree::Admin::ReturnAuthorizationsController do
         end
       end
 
-      context 'with existing items' do
-        let!(:return_item) do
-          create(:return_item, return_authorization: return_authorization, inventory_unit: inventory_unit_1)
+      context 'with existing completed items' do
+        let!(:completed_return_item) do
+          create(:return_item, {
+            return_authorization: return_authorization,
+            inventory_unit: inventory_unit_1,
+            reception_status: 'received',
+          })
         end
 
         it 'does not create new items' do
           expect { subject }.to_not change { Spree::ReturnItem.count }
-          expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["has already been taken"]
+          expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["#{inventory_unit_1.id} has already been taken by return item #{completed_return_item.id}"]
         end
       end
     end

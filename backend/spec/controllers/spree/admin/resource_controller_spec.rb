@@ -1,15 +1,24 @@
 require 'spec_helper'
 
-class WidgetsController < Spree::Admin::ResourceController
-  prepend_view_path('spec/test_views')
+module Spree
+  module Admin
+    class WidgetsController < Spree::Admin::ResourceController
+      prepend_view_path('spec/test_views')
 
-  def model_class
-    Widget
+      def model_class
+        Widget
+      end
+    end
   end
 end
 
-describe WidgetsController do
+describe Spree::Admin::WidgetsController do
   stub_authorization!
+
+  after(:all) do
+    # Spree::Core::Engine.routes.reload_routes!
+    Rails.application.reload_routes!
+  end
 
   with_model 'Widget' do
     table do |t|
@@ -23,9 +32,21 @@ describe WidgetsController do
     end
   end
 
+  before do
+    Spree::Core::Engine.routes.draw do
+      namespace :admin do
+        resources :widgets
+      end
+    end
+  end
+
   describe '#new' do
-    it 'succeeds' do
+    subject do
       spree_get :new
+    end
+
+    it 'succeeds' do
+      subject
       expect(response).to be_success
     end
   end
@@ -33,8 +54,12 @@ describe WidgetsController do
   describe '#edit' do
     let(:widget) { Widget.create!(name: 'a widget') }
 
-    it 'succeeds' do
+    subject do
       spree_get :edit, id: widget.to_param
+    end
+
+    it 'succeeds' do
+      subject
       expect(response).to be_success
     end
   end
@@ -46,14 +71,30 @@ describe WidgetsController do
 
     subject { spree_post :create, params }
 
+    it 'creates the resource' do
+      expect { subject }.to change { Widget.count }.by(1)
+    end
+
     context 'failure' do
       let(:params) do
         {widget: {name: ''}} # blank name generates an error
       end
 
       it 'sets a flash error' do
-        spree_post :create, params
+        subject
         expect(flash[:error]).to eq assigns(:widget).errors.full_messages.join(', ')
+      end
+    end
+
+    context 'without any parameters' do
+      let(:params) { {} }
+
+      before do
+        Widget.any_instance.stub(:name).and_return('some name')
+      end
+
+      it 'creates the resource' do
+        expect { subject }.to change { Widget.count }.by(1)
       end
     end
   end
@@ -70,6 +111,10 @@ describe WidgetsController do
 
     subject { spree_put :update, params }
 
+    it 'updates the resource' do
+      expect { subject }.to change { widget.reload.name }.from('a widget').to('widget renamed')
+    end
+
     context 'failure' do
       let(:params) do
         {
@@ -79,9 +124,22 @@ describe WidgetsController do
       end
 
       it 'sets a flash error' do
-        spree_put :update, params
+        subject
         expect(flash[:error]).to eq assigns(:widget).errors.full_messages.join(', ')
       end
+    end
+  end
+
+  describe '#destroy' do
+    let!(:widget) { Widget.create!(name: 'a widget') }
+    let(:params) { {id: widget.id} }
+
+    subject {
+      spree_delete :destroy, params
+    }
+
+    it 'destroys the resource' do
+      expect { subject }.to change { Widget.count }.from(1).to(0)
     end
   end
 

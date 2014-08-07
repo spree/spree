@@ -320,6 +320,26 @@ describe Spree::Order do
       end
     end
 
+    context "to payment" do
+      before do
+        @default_credit_card = FactoryGirl.create(:credit_card)
+        order.user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
+
+        order.stub(payment_required?: true)
+        order.state = 'delivery'
+        order.save!
+      end
+
+      it "assigns the user's default credit card" do
+        order.next!
+        order.reload
+
+        expect(order.state).to eq 'payment'
+        expect(order.payments.count).to eq 1
+        expect(order.payments.first.source).to eq @default_credit_card
+      end
+    end
+
     context "from payment" do
       before do
         order.state = 'payment'
@@ -364,6 +384,40 @@ describe Spree::Order do
           assert_state_changed(order, 'payment', 'complete')
           order.state.should == "complete"
         end
+      end
+    end
+  end
+
+  context "to complete" do
+    before do
+      order.state = 'confirm'
+      order.save!
+    end
+
+    context "default credit card" do
+      before do
+        order.user = FactoryGirl.create(:user)
+        order.email = 'spree@example.org'
+        order.payments << FactoryGirl.create(:payment)
+
+        # make sure we will actually capture a payment
+        order.stub(payment_required?: true)
+        order.line_items << FactoryGirl.create(:line_item)
+        Spree::OrderUpdater.new(order).update
+
+        order.save!
+      end
+
+      it "makes the current credit card a user's default credit card" do
+        order.next!
+        expect(order.state).to eq 'complete'
+        expect(order.user.reload.default_credit_card.try(:id)).to eq(order.credit_cards.first.id)
+      end
+
+      it "does not assign a default credit card if temporary_credit_card is set" do
+        order.temporary_credit_card = true
+        order.next!
+        expect(order.user.reload.default_credit_card).to be_nil
       end
     end
   end

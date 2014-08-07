@@ -14,7 +14,7 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-          @simple_current_order ||= Spree::Order.find_by(completed_at: nil, currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id))
+          @simple_current_order ||= Spree::Order.incomplete.find_by(current_order_params)
         end
 
         # The current incomplete order from the guest_token for use in cart and during checkout
@@ -25,10 +25,10 @@ module Spree
           return @current_order if @current_order
 
           # Find any incomplete orders for the guest_token
-          @current_order = Spree::Order.includes(:adjustments).lock(options[:lock]).find_by(completed_at: nil, currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id))
+          @current_order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
 
           if options[:create_order_if_necessary] and (@current_order.nil? or @current_order.completed?)
-            @current_order = Spree::Order.new(currency: current_currency, guest_token: cookies.signed[:guest_token])
+            @current_order = Spree::Order.new(current_order_params)
             @current_order.user ||= try_spree_current_user
             # See issue #3346 for reasons why this line is here
             @current_order.created_by ||= try_spree_current_user
@@ -65,6 +65,11 @@ module Spree
 
         def ip_address
           request.remote_ip
+        end
+
+        private
+        def current_order_params
+          { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
         end
       end
     end

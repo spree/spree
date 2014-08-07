@@ -59,7 +59,7 @@ describe Spree::Reimbursement do
     let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
     let(:payment_amount)          { order.total }
     let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
-    let(:return_item)             { build(:return_item, pre_tax_amount: inventory_unit.pre_tax_amount, inventory_unit: inventory_unit) }
+    let(:return_item)             { build(:return_item, inventory_unit: inventory_unit) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
@@ -166,6 +166,32 @@ describe Spree::Reimbursement do
       it 'rounds down' do
         expect(subject).to eq 20
       end
+    end
+  end
+
+  describe '.build_from_customer_return' do
+    let(:customer_return) { create(:customer_return, line_items_count: 5) }
+
+    let!(:pending_return_item) { customer_return.return_items.first.tap { |ri| ri.update!(acceptance_status: 'pending') } }
+    let!(:accepted_return_item) { customer_return.return_items.second.tap(&:accept!) }
+    let!(:rejected_return_item) { customer_return.return_items.third.tap(&:reject!) }
+    let!(:manual_intervention_return_item) { customer_return.return_items.fourth.tap(&:require_manual_intervention!) }
+    let!(:already_reimbursed_return_item) { customer_return.return_items.fifth }
+
+    let!(:previous_reimbursement) { create(:reimbursement, order: customer_return.order, return_items: [already_reimbursed_return_item]) }
+
+    subject { Spree::Reimbursement.build_from_customer_return(customer_return) }
+
+    it 'connects to the accepted return items' do
+      expect(subject.return_items.to_a).to eq [accepted_return_item]
+    end
+
+    it 'connects to the order' do
+      expect(subject.order).to eq customer_return.order
+    end
+
+    it 'connects to the customer_return' do
+      expect(subject.customer_return).to eq customer_return
     end
   end
 end

@@ -1,6 +1,5 @@
 <% content_for :page_title do %>
-  <%= page_title %> <i class="fa fa-arrow-right"></i>
-  <%= @object.name %>
+  <%= page_title %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -11,7 +10,7 @@
 
 <%= form_for [:admin, @object] do |f| %>
   <fieldset class="no-border-top">
-    <%= render :partial => 'spree/admin/shared/reasons/form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render :partial => 'spree/admin/shared/named_types/form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </fieldset>
 <% end %>

@@ -1,10 +1,15 @@
 module Spree
   class ReturnItem < Spree::Base
+    COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
+
     class_attribute :return_eligibility_validator
-    self.return_eligibility_validator = ReturnItem::ReturnEligibilityValidator
+    self.return_eligibility_validator = ReturnItem::EligibilityValidator::DefaultEligibilityValidator
 
     class_attribute :exchange_variant_engine
     self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
+
+    class_attribute :refund_amount_calculator
+    self.refund_amount_calculator = Calculator::Returns::DefaultRefundAmount
 
     belongs_to :return_authorization, inverse_of: :return_items
     belongs_to :inventory_unit, inverse_of: :return_items
@@ -12,10 +17,15 @@ module Spree
     belongs_to :exchange_inventory_unit, class_name: 'Spree::InventoryUnit', inverse_of: :original_return_item
     belongs_to :customer_return, inverse_of: :return_items
     belongs_to :reimbursement, inverse_of: :return_items
+    belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
+    belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
     validate :belongs_to_same_customer_order
     validate :validate_acceptance_status_for_reimbursement
-    validates :inventory_unit, presence: true, uniqueness: {scope: :return_authorization}
+    validates :inventory_unit, presence: true
+    validate :validate_no_other_completed_return_items, on: :create
+
+    after_create :cancel_others, unless: :cancelled?
 
     scope :awaiting_return, -> { where(reception_status: 'awaiting') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
@@ -25,12 +35,15 @@ module Spree
     scope :manual_intervention_required, -> { where(acceptance_status: 'manual_intervention_required') }
     scope :undecided, -> { where(acceptance_status: %w(pending manual_intervention_required)) }
     scope :decided, -> { where.not(acceptance_status: %w(pending manual_intervention_required)) }
+    scope :reimbursed, -> { where.not(reimbursement_id: nil) }
+    scope :not_reimbursed, -> { where(reimbursement_id: nil) }
 
     serialize :acceptance_status_errors
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit
 
+    before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
@@ -48,14 +61,17 @@ module Spree
       event :give do
         transition to: :given_to_customer, from: :awaiting
       end
+    end
 
+    def reception_completed?
+      COMPLETED_RECEPTION_STATUSES.include?(reception_status)
     end
 
     state_machine :acceptance_status, initial: :pending do
       event :attempt_accept do
         transition to: :accepted, from: :accepted
-        transition to: :accepted, from: :pending, if: -> (return_item) { return_item.eligible_for_return? }
-        transition to: :manual_intervention_required, from: :pending, if: -> (return_item) { return_item.requires_manual_intervention? }
+        transition to: :accepted, from: :pending, if: ->(return_item) { return_item.eligible_for_return? }
+        transition to: :manual_intervention_required, from: :pending, if: ->(return_item) { return_item.requires_manual_intervention? }
         transition to: :rejected, from: :pending
       end
 
@@ -75,6 +91,11 @@ module Spree
       end
 
       after_transition any => any, :do => :persist_acceptance_status_errors
+    end
+
+    def self.from_inventory_unit(inventory_unit)
+      not_cancelled.find_by(inventory_unit: inventory_unit) ||
+        new(inventory_unit: inventory_unit).tap(&:set_default_pre_tax_amount)
     end
 
     def exchange_requested?
@@ -112,6 +133,10 @@ module Spree
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
       super(variant: exchange_variant, line_item: inventory_unit.line_item) if exchange_required?
+    end
+
+    def set_default_pre_tax_amount
+      self.pre_tax_amount = refund_amount_calculator.new.compute(self)
     end
 
     private
@@ -167,6 +192,29 @@ module Spree
 
     def set_exchange_pre_tax_amount
       self.pre_tax_amount = 0.0.to_d if exchange_requested?
+    end
+
+    def validate_no_other_completed_return_items
+      other_return_item = Spree::ReturnItem.where({
+        inventory_unit_id: inventory_unit_id,
+        reception_status: COMPLETED_RECEPTION_STATUSES,
+      }).first
+
+      if other_return_item
+        errors.add(:inventory_unit, :other_completed_return_item_exists, {
+          inventory_unit_id: inventory_unit_id,
+          return_item_id: other_return_item.id,
+        })
+      end
+    end
+
+    def cancel_others
+      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id)
+                       .where.not(id: id)
+                       .where.not(reception_status: 'cancelled')
+                       .each do |return_item|
+        return_item.cancel!
+      end
     end
   end
 end

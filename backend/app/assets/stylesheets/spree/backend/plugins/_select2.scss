@@ -21,8 +21,11 @@
     }
 
     .select2-search-choice-close {
-      background-image: none !important;
+      @extend .fa;
+      @extend .fa-times;
+      margin-top: 2px;
       font-size: 100% !important;
+      background-image: none !important;
     }
   }
 
@@ -173,7 +176,7 @@
         background-image: none !important;
         font-size: 85% !important;
         @extend .fa;
-        @extend .fa-void;
+        @extend .fa-times;
         margin-left: 2px;
         color: $color-1;
         &:before {

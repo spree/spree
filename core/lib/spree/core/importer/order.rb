@@ -46,11 +46,6 @@ module Spree
               shipment.tracking       = s[:tracking]
               shipment.stock_location = Spree::StockLocation.find_by_name!(s[:stock_location])
 
-              if s[:shipped_at].present?
-                shipment.shipped_at = s[:shipped_at]
-                shipment.state      = 'shipped'
-              end
-
               inventory_units = s[:inventory_units] || []
               inventory_units.each do |iu|
                 ensure_variant_id_from_params(iu)
@@ -66,6 +61,15 @@ module Spree
                 unit.line_item_id = line_items.select do |l|
                   l.variant_id.to_i == iu[:variant_id].to_i
                 end.first.try(:id)
+              end
+
+              # Mark shipped if it should be.
+              if s[:shipped_at].present?
+                shipment.shipped_at = s[:shipped_at]
+                shipment.state      = 'shipped'
+                shipment.inventory_units.each do |unit|
+                  unit.state = 'shipped'
+                end
               end
 
               shipment.save!
@@ -122,10 +126,29 @@ module Spree
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
               payment.state = p[:state] || p[:status] || 'completed'
               payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
+              payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
               payment.save!
             rescue Exception => e
               raise "Order import payments: #{e.message} #{p}"
             end
+          end
+        end
+
+        def self.create_source_payment_from_params(source_hash, payment)
+          begin
+            Spree::CreditCard.create(
+              month: source_hash[:month],
+              year: source_hash[:year],
+              cc_type: source_hash[:cc_type],
+              last_digits: source_hash[:last_digits],
+              name: source_hash[:name],
+              payment_method: payment.payment_method,
+              # Number & Verification value are required attributes so just reusing the last digits for validation.
+              number: source_hash[:last_digits],
+              verification_value: source_hash[:last_digits]
+            )
+          rescue Exception => e
+            raise "Order import source payments: #{e.message} #{s}"
           end
         end
 

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::ReturnEligibilityValidator do
+describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase do
   let(:return_item) { create(:return_item) }
-  let(:validator) { Spree::ReturnItem::ReturnEligibilityValidator.new(return_item) }
+  let(:validator) { Spree::ReturnItem::EligibilityValidator::TimeSincePurchase.new(return_item) }
 
   describe "#eligible_for_return?" do
     subject { validator.eligible_for_return? }
