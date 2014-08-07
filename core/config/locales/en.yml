@@ -1052,6 +1052,8 @@ en:
       pending: pending
       ready: ready
       shipped: shipped
+    shipment_transfer_success: 'Variants successfully transferred'
+    shipment_transfer_error: 'There was an error transferring variants'
     shipments: Shipments
     shipped: Shipped
     shipping: Shipping

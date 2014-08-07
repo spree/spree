@@ -214,19 +214,6 @@ module Spree
       manifest.each { |item| manifest_unstock(item) }
     end
 
-    # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
-    # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
-    # yield the correct results.
-    def update!(order)
-      old_state = state
-      new_state = determine_state(order)
-      update_columns(
-        state: new_state,
-        updated_at: Time.now,
-      )
-      after_ship if new_state == 'shipped' and old_state != 'shipped'
-    end
-
     # Determines the appropriate +state+ according to the following logic:
     #
     # pending    unless order is complete and +order.payment_state+ is +paid+
@@ -317,7 +304,78 @@ module Spree
       end
     end
 
+    def transfer_to_location(variant, quantity, stock_location)
+      success = true
+      message = Spree.t(:shipment_transfer_success)
+      if (quantity <= 0 || !enough_stock_at_destination_location(variant, quantity, stock_location))
+        return [false, Spree.t(:shipment_transfer_error)]
+      end
+
+      begin
+        transaction do
+          self.order.contents.remove(variant, quantity, self)
+          new_shipment = self.order.shipments.create!(stock_location: stock_location)
+          self.order.contents.add(variant, quantity, nil, new_shipment)
+
+          new_shipment.refresh_rates
+          new_shipment.save!
+        end
+      rescue Exception => e
+        Rails.logger.error e.message
+        message  = Spree.t(:shipment_transfer_error)
+        success = false
+      end
+
+      [success, message]
+    end
+
+    def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
+      success = true
+      message = Spree.t(:shipment_transfer_success)
+
+      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find{|mi| mi.line_item.variant == variant}.try(:quantity) || 0
+      final_quantity = quantity + quantity_already_shipment_to_transfer_to
+
+      if (quantity <= 0 || self.id == shipment_to_transfer_to.id || !enough_stock_at_destination_location(variant, final_quantity, shipment_to_transfer_to.stock_location))
+        return [false, Spree.t(:shipment_transfer_error)]
+      end
+
+      begin
+        transaction do
+          self.order.contents.remove(variant, quantity, self)
+          shipment_to_transfer_to.order.contents.add(variant, quantity, nil, shipment_to_transfer_to)
+          shipment_to_transfer_to.refresh_rates
+          shipment_to_transfer_to.save!
+        end
+      rescue Exception => e
+        Rails.logger.error e.message
+        message  = Spree.t(:shipment_transfer_error)
+        success = false
+      end
+
+      [success, message]
+    end
+
+    # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
+    # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
+    # yield the correct results.
+    def update!(order)
+      old_state = state
+      new_state = determine_state(order)
+      update_columns(
+          state: new_state,
+          updated_at: Time.now,
+      )
+      after_ship if new_state == 'shipped' and old_state != 'shipped'
+    end
+
     private
+
+      def enough_stock_at_destination_location(variant, quantity, stock_location)
+        stock_item = Spree::StockItem.where(variant: variant).
+                                      where(stock_location: stock_location).first
+        (stock_item.count_on_hand >= quantity || stock_item.backorderable)
+      end
 
       def manifest_unstock(item)
         stock_location.unstock item.variant, item.quantity, self

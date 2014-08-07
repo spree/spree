@@ -6,7 +6,7 @@ module Spree
       before_filter :load_order, :only => [:create, :new, :index, :fire]
       before_filter :load_payment, :except => [:create, :new, :index]
       before_filter :load_data
-      before_filter :can_transition_to_payment
+      before_filter :can_not_transition_without_customer_info
 
       respond_to :html
 
@@ -81,13 +81,6 @@ module Spree
           @payment_method = @payment.payment_method
         else
           @payment_method = @payment_methods.first
-        end
-      end
-
-      def can_transition_to_payment
-        unless @order.billing_address.present?
-          flash[:notice] = Spree.t(:fill_in_customer_info)
-          redirect_to edit_admin_order_customer_url(@order)
         end
       end
 

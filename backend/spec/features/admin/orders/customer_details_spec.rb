@@ -31,7 +31,7 @@ describe "Customer Details", type: :feature do
       click_link "Orders"
       click_link "New Order"
       click_link "Customer Details"
-      targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
+      targetted_select2 user.email, from: "#s2id_customer_search"
       # 5317 - Address prefills using user's default.
       expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
       expect(find('#order_bill_address_attributes_lastname').value).to eq user.bill_address.lastname
@@ -42,6 +42,7 @@ describe "Customer Details", type: :feature do
       expect(find('#order_bill_address_attributes_country_id').value).to eq user.bill_address.country_id.to_s
       expect(find('#order_bill_address_attributes_state_id').value).to eq user.bill_address.state_id.to_s
       expect(find('#order_bill_address_attributes_phone').value).to eq user.bill_address.phone
+      find(:css, "#order_use_billing").set(true)
       click_button "Update"
       expect(Spree::Order.last.user).not_to be_nil
     end

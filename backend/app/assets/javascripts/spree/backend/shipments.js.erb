@@ -233,8 +233,13 @@ startItemSplit = function(event){
 
 completeItemSplit = function(event) {
   event.preventDefault();
+
+  if($('#item_stock_location').val() === ""){
+      alert('Please select the split destination.');
+      return false;
+  }
+
   var link = $(this);
-  var order_number = link.closest('tbody').data('order-number');
   var stock_item_row = link.closest('tr');
   var variant_id = stock_item_row.data('variant-id');
   var quantity = stock_item_row.find('#item_quantity').val();
@@ -247,44 +252,42 @@ completeItemSplit = function(event) {
   var new_shipment = selected_shipment.data('new-shipment');
 
   if (stock_location_id != 'new_shipment') {
-    // first remove item(s) from original shipment
-    $.ajax({
-      type: "PUT",
-      async: false,
-      url: Spree.url(Spree.routes.shipments_api + "/" + original_shipment_number + "/remove.json"),
-      data: { variant_id: variant_id, quantity: quantity }
-    });
-
     if (new_shipment != undefined) {
+      // TRANSFER TO A NEW LOCATION
       $.ajax({
         type: "POST",
         async: false,
-        url: Spree.url(Spree.routes.shipments_api + "?shipment[order_id]=" + order_number),
-        data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
+        url: Spree.url(Spree.routes.shipments_api + "/transfer_to_location"),
+        data: {
+            original_shipment_number: original_shipment_number,
+            variant_id: variant_id,
+            quantity: quantity,
+            stock_location_id: stock_location_id
+        }
+      }).error(function(msg) {
+          alert(msg.responseJSON['message']);
       }).done(function(msg) {
-        advanceOrder();
+        window.Spree.advanceOrder();
       });
     } else {
-      $.ajax({
-        type: "PUT",
-        async: false,
-        url: Spree.url(Spree.routes.shipments_api + "/" + target_shipment_number + "/add.json"),
-        data: { variant_id: variant_id, quantity: quantity }
-      }).done(function(msg) {
-        advanceOrder();
-      });
+        // TRANSFER TO AN EXISTING SHIPMENT
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: Spree.url(Spree.routes.shipments_api + "/transfer_to_shipment"),
+            data: {
+                original_shipment_number: original_shipment_number,
+                target_shipment_number: target_shipment_number,
+                variant_id: variant_id,
+                quantity: quantity
+            }
+        }).error(function(msg) {
+            alert(msg.responseJSON['message']);
+        }).done(function(msg) {
+            window.Spree.advanceOrder();
+        });
     }
   }
-}
-
-advanceOrder = function() {
-  $.ajax({
-    type: "PUT",
-    async: false,
-    url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance")
-  }).done(function() {
-    window.location.reload();
-  });
 }
 
 cancelItemSplit = function(event) {

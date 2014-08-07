@@ -1,8 +1,8 @@
 <nav class="menu">
   <ul data-hook="admin_order_tabs">
-    <% if can? :update, @order %>
-      <li<%== ' class="active"' if current == 'Order Details' %> data-hook='admin_order_tabs_order_details'>
-        <%= link_to_with_icon 'edit', Spree.t(:order_details), edit_admin_order_url(@order) %>
+    <% if ((can? :update, @order) && (@order.shipments.count == 0 || @order.shipped_shipments.count == 0)) %>
+      <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_order_details'>
+        <%= link_to_with_icon 'shopping-cart', Spree.t(:cart), cart_admin_order_url(@order) %>
       </li>
     <% end %>
 
@@ -10,6 +10,12 @@
       <li<%== ' class="active"' if current == 'Customer Details' %> data-hook='admin_order_tabs_customer_details'>
         <%= link_to_with_icon 'user', Spree.t(:customer_details), admin_order_customer_url(@order) %>
       </li>
+    <% end %>
+
+    <% if can? :update, @order %>
+        <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_order_details'>
+          <%= link_to_with_icon 'edit', Spree.t(:shipments), edit_admin_order_url(@order) %>
+        </li>
     <% end %>
 
     <% if can? :index, Spree::Adjustment %>
