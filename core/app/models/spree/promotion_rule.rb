@@ -1,8 +1,6 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree::Base
-    attr_reader :eligibility_errors
-
     belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules
 
     scope :of_type, ->(t) { where(type: t) }
@@ -26,6 +24,10 @@ module Spree
     # It is true by default, but can be overridden by promotion rules to provide conditions
     def actionable?(line_item)
       true
+    end
+
+    def eligibility_errors
+      @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
 
     private

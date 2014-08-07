@@ -9,20 +9,18 @@ module Spree
         end
 
         def eligible?(order, options = {})
-          @eligibility_errors = ActiveModel::Errors.new(self)
-
           @user = order.try(:user) || options[:user]
           @email = order.email
 
           if user || email
             if !completed_orders.blank? && completed_orders.first != order
-              @eligibility_errors.add(:base, eligibility_error_message(:not_first_order))
+              eligibility_errors.add(:base, eligibility_error_message(:not_first_order))
             end
           else
-            @eligibility_errors.add(:base, eligibility_error_message(:no_user_or_email_specified))
+            eligibility_errors.add(:base, eligibility_error_message(:no_user_or_email_specified))
           end
 
-          @eligibility_errors.empty?
+          eligibility_errors.empty?
         end
 
         private
