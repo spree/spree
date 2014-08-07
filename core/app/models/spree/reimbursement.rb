@@ -40,10 +40,10 @@ module Spree
     # The reimbursement_performer property should be set to an object that responds to the following methods:
     # - #perform
     # - #simulate
-    # see ReimbursementPerformer for details.
+    # see ReimbursementPerformer::Fifo for details.
     # This allows a store to customize their reimbursement methods and logic.
     class_attribute :reimbursement_performer
-    self.reimbursement_performer = ReimbursementPerformer
+    self.reimbursement_performer = ReimbursementPerformer::Fifo
 
     # These are called if the call to "reimburse!" succeeds.
     class_attribute :reimbursement_success_hooks

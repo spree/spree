@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReimbursementPerformer do
+describe Spree::ReimbursementPerformer::Fifo do
 
   let(:reimbursement) { create(:reimbursement, reimbursement_items_count: 1) }
   let(:payment) { reimbursement.order.payments.first }
@@ -12,7 +12,7 @@ describe Spree::ReimbursementPerformer do
   end
 
   describe '.simulate' do
-    subject { Spree::ReimbursementPerformer.simulate(reimbursement) }
+    subject { Spree::ReimbursementPerformer::Fifo.simulate(reimbursement) }
 
     it 'returns an array of readonly refunds' do
       expect(subject).to be_an Array
@@ -32,7 +32,7 @@ describe Spree::ReimbursementPerformer do
   end
 
   describe '.perform' do
-    subject { Spree::ReimbursementPerformer.perform(reimbursement) }
+    subject { Spree::ReimbursementPerformer::Fifo.perform(reimbursement) }
 
     it 'returns an array refunds' do
       expect(subject).to be_an Array
