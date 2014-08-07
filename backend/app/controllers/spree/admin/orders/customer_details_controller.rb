@@ -27,7 +27,7 @@ module Spree
 
             @order.refresh_shipment_rates
             flash[:success] = Spree.t('customer_details_updated')
-            redirect_to admin_order_customer_path(@order)
+            redirect_to edit_admin_order_url(@order)
           else
             render :action => :edit
           end
