@@ -70,6 +70,7 @@ module Spree
       end
 
       def update_order
+        self.reload
         order.update!
       end
   end
