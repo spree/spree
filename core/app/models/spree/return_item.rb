@@ -6,7 +6,7 @@ module Spree
     self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
 
     class_attribute :return_eligibility_validator
-    self.return_eligibility_validator = ReturnItem::ReturnEligibilityValidator
+    self.return_eligibility_validator = ReturnItem::EligibilityValidator::DefaultEligibilityValidator
 
     belongs_to :return_authorization, inverse_of: :return_items
     belongs_to :inventory_unit, inverse_of: :return_items
