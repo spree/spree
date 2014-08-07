@@ -127,4 +127,19 @@ describe Spree::ReturnAuthorization do
       end
     end
   end
+
+  describe 'cancel_return_items' do
+    let(:return_authorization) { create(:return_authorization) }
+    let(:order) { return_authorization.order }
+    let!(:return_item) { return_authorization.return_items.create!(inventory_unit: order.inventory_units.first) }
+
+    subject {
+      return_authorization.cancel!
+    }
+
+    it 'cancels the associated return items' do
+      subject
+      expect(return_item.reception_status).to eq 'cancelled'
+    end
+  end
 end
