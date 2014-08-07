@@ -122,21 +122,27 @@ module Spree
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
               payment.state = p[:state] || p[:status] || 'completed'
               payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
-              payment.source = create_source_payment_from_params(p[:source], payment)
+              payment.source = create_source_payment_from_params(p[:source_attributes], payment) if p[:source_attributes]
               payment.save!
             rescue Exception => e
               raise "Order import payments: #{e.message} #{p}"
             end
           end
         end
-        
+
         def self.create_source_payment_from_params(source_hash, payment)
-          s = source_hash  
           begin
-            cc = Spree::CreditCard.new(month: s[:month], year: s[:year], cc_type: s[:cc_type], 
-                                       last_digits: s[:last_digists], name: s[:mame])
-            cc.payment_method = payment.payment_method
-            cc.save                           
+            Spree::CreditCard.create(
+              month: source_hash[:month],
+              year: source_hash[:year],
+              cc_type: source_hash[:cc_type],
+              last_digits: source_hash[:last_digits],
+              name: source_hash[:name],
+              payment_method: payment.payment_method,
+              # Number & Verification value are required attributes so just reusing the last digits for validation.
+              number: source_hash[:last_digits],
+              verification_value: source_hash[:last_digits]
+            )
           rescue Exception => e
             raise "Order import source payments: #{e.message} #{s}"
           end
