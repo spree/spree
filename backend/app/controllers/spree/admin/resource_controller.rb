@@ -239,7 +239,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     #
     # Other controllers can, should, override it to set custom logic
     def permitted_resource_params
-      params.require(object_name).permit!
+      params[object_name].present? ? params.require(object_name).permit! : ActionController::Parameters.new
     end
 
     def collection_actions
