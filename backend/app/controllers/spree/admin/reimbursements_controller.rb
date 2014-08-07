@@ -12,16 +12,31 @@ module Spree
 
       private
 
+      def build_resource
+        if params[:build_from_customer_return_id].present?
+          customer_return = CustomerReturn.find(params[:build_from_customer_return_id])
+
+          Reimbursement.build_from_customer_return(customer_return)
+        else
+          super
+        end
+      end
+
       def location_after_save
         if @reimbursement.reimbursed?
-          admin_order_reimbursement_path(@order, @reimbursement)
+          admin_order_reimbursement_path(parent, @reimbursement)
         else
-          edit_admin_order_reimbursement_path(@order, @reimbursement)
+          edit_admin_order_reimbursement_path(parent, @reimbursement)
         end
       end
 
       def load_simulated_refunds
-        @reimbursement_items = @reimbursement.simulate
+        @reimbursement_objects = @reimbursement.simulate
+      end
+
+      # TODO: Remove this when https://github.com/spree/spree/pull/5158 gets merged in
+      def permitted_resource_params
+        params[object_name].present? ? super : ActionController::Parameters.new
       end
 
     end

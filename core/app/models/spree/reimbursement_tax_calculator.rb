@@ -5,7 +5,7 @@ module Spree
   # rather than one at a time.
   #
   # To use an alternative tax calculator do this:
-  #    Spree::Reimbursement.reimbursement_tax_calculator = calculator_object
+  #    Spree::ReturnAuthorization.reimbursement_tax_calculator = calculator_object
   # where `calculator_object` is an object that responds to "call" and accepts a reimbursement object
 
   class ReimbursementTaxCalculator
@@ -13,20 +13,20 @@ module Spree
     class << self
 
       def call(reimbursement)
-        reimbursement.reimbursement_items.includes(:inventory_unit).each do |reimbursement_item|
-          set_tax!(reimbursement_item)
+        reimbursement.return_items.includes(:inventory_unit).each do |return_item|
+          set_tax!(return_item)
         end
       end
 
       private
 
-      def set_tax!(reimbursement_item)
-        percent_of_tax = (reimbursement_item.pre_tax_amount <= 0) ? 0 : reimbursement_item.pre_tax_amount / reimbursement_item.inventory_unit.pre_tax_amount
+      def set_tax!(return_item)
+        percent_of_tax = (return_item.pre_tax_amount <= 0) ? 0 : return_item.pre_tax_amount / return_item.inventory_unit.pre_tax_amount
 
-        additional_tax_total = percent_of_tax * reimbursement_item.inventory_unit.additional_tax_total
-        included_tax_total   = percent_of_tax * reimbursement_item.inventory_unit.included_tax_total
+        additional_tax_total = percent_of_tax * return_item.inventory_unit.additional_tax_total
+        included_tax_total   = percent_of_tax * return_item.inventory_unit.included_tax_total
 
-        reimbursement_item.update_attributes!({
+        return_item.update_attributes!({
           additional_tax_total: additional_tax_total,
           included_tax_total:   included_tax_total,
         })

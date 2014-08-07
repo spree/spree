@@ -6,19 +6,19 @@ module Spree
     belongs_to :customer_return, inverse_of: :reimbursements
 
     has_many :refunds, inverse_of: :reimbursement
-    has_many :reimbursement_items, inverse_of: :reimbursement
+    has_many :return_items, inverse_of: :reimbursement
 
     validates :order, presence: true
     validates :customer_return, presence: true
-    validate :validate_reimbursement_items_belong_to_same_order
+    validate :validate_return_items_belong_to_same_order
 
-    accepts_nested_attributes_for :reimbursement_items, allow_destroy: true
+    accepts_nested_attributes_for :return_items, allow_destroy: true
 
     before_create :generate_number
 
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
-    # associated ReimbursementItems.
+    # associated ReturnItems.
     # This allows a store to easily integrate with third party tax services.
     class_attribute :reimbursement_tax_calculator
     self.reimbursement_tax_calculator = ReimbursementTaxCalculator
@@ -65,18 +65,24 @@ module Spree
 
     end
 
-    def display_total
-      Spree::Money.new(total, { currency: currency })
+    class << self
+      def build_from_customer_return(customer_return)
+        order = customer_return.order
+        order.reimbursements.build({
+          customer_return: customer_return,
+          return_items: customer_return.return_items.accepted.not_reimbursed,
+        })
+      end
     end
 
-    def currency
-      order.currency
+    def display_total
+      Spree::Money.new(total, { currency: order.currency })
     end
 
     def calculated_total
       # rounding down to handle edge cases for consecutive partial returns where rounding
       # might cause us to try to reimburse more than was originally billed
-      reimbursement_items.to_a.sum(&:total).round(2, :down)
+      return_items.to_a.sum(&:total).round(2, :down)
     end
 
     def paid_amount
@@ -114,8 +120,8 @@ module Spree
       reimbursement_performer.simulate(self)
     end
 
-    def reimbursement_items_requiring_exchange
-      reimbursement_items.select(&:exchange_required?)
+    def return_items_requiring_exchange
+      return_items.select(&:exchange_required?)
     end
 
     private
@@ -127,9 +133,9 @@ module Spree
       end
     end
 
-    def validate_reimbursement_items_belong_to_same_order
-      if reimbursement_items.any? { |ri| ri.inventory_unit.order_id != order_id }
-        errors.add(:base, :reimbursement_items_order_id_does_not_match)
+    def validate_return_items_belong_to_same_order
+      if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }
+        errors.add(:base, :return_items_order_id_does_not_match)
       end
     end
 

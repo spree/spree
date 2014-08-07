@@ -36,31 +36,18 @@
   </fieldset>
 <% end %>
 
-<fieldset data-hook="reimbursements" class="no-border-bottom">
+<fieldset data-hook="reimbursements" class="no-border-bottom align-center">
   <legend align="center"><%= Spree.t(:reimbursements) %></legend>
   <% if @customer_return.completely_decided? %>
-    <% if @new_reimbursement %>
-      <div class='align-center'>
-        <%= form_for [:admin, @order, @new_reimbursement] do |f| %>
-          <%= f.hidden_field :order_id %>
-          <%= f.hidden_field :customer_return_id %>
-
-          <%= f.fields_for :reimbursement_items do |item_fields| %>
-            <% reimbursement_item = item_fields.object %>
-
-            <%= item_fields.hidden_field :inventory_unit_id %>
-            <%= item_fields.hidden_field :return_item_id %>
-            <%= item_fields.hidden_field :exchange_variant_id %>
-            <%= item_fields.hidden_field :pre_tax_amount %>
-          <% end %>
-
-          <%= f.button class: 'button fa fa-reply' do %>
-            <%= Spree.t(:create_reimbursement) %>
-          <% end %>
-        <% end %>
-      </div>
-    <% else %>
+    <% if @customer_return.reimbursements.any? %>
       <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
+    <% else %>
+      <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
+        <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>
+        <%= f.button class: 'button fa fa-reply' do %>
+          <%= Spree.t(:create_reimbursement) %>
+        <% end %>
+      <% end %>
     <% end %>
   <% else %>
     <div class="no-objects-found">

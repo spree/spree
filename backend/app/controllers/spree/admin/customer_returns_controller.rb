@@ -15,18 +15,6 @@ module Spree
         @rejected_return_items = @customer_return.return_items.select(&:rejected?)
         @manual_intervention_return_items = @customer_return.return_items.select(&:manual_intervention_required?)
 
-        if @customer_return.completely_decided? && @customer_return.reimbursements.none?
-          @new_reimbursement = @customer_return.reimbursements.build({order: @customer_return.order})
-          @accepted_return_items.each do |return_item|
-            @new_reimbursement.reimbursement_items.build({
-              inventory_unit_id:   return_item.inventory_unit_id,
-              return_item_id:      return_item.id,
-              exchange_variant_id: return_item.exchange_variant_id,
-              pre_tax_amount:      return_item.pre_tax_amount,
-            })
-          end
-        end
-
         super
       end
 

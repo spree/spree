@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::ReimbursementPerformer do
 
-  let(:reimbursement) { create(:reimbursement, reimbursement_items_count: 1) }
+  let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
   let(:payment) { reimbursement.order.payments.first }
 
   let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
@@ -43,7 +43,7 @@ describe Spree::ReimbursementPerformer do
       expect {
         subject
       }.to change { payment.refunds.count }.by(1)
-      expect(payment.refunds.sum(:amount)).to eq reimbursement.reimbursement_items.to_a.sum(&:total)
+      expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
     end
 
     context 'when no credit is allowed on the payment' do

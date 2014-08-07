@@ -2,21 +2,23 @@ module Spree
   class ReturnItem < Spree::Base
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
-    class_attribute :exchange_variant_engine
-    self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
-
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::ReturnEligibilityValidator
+
+    class_attribute :exchange_variant_engine
+    self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
 
     belongs_to :return_authorization, inverse_of: :return_items
     belongs_to :inventory_unit, inverse_of: :return_items
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
+    belongs_to :exchange_inventory_unit, class_name: 'Spree::InventoryUnit', inverse_of: :original_return_item
     belongs_to :customer_return, inverse_of: :return_items
+    belongs_to :reimbursement, inverse_of: :return_items
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
-
-    has_one :reimbursement_item, inverse_of: :return_item
+    belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
     validate :belongs_to_same_customer_order
+    validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
     validate :validate_no_other_completed_return_items, on: :create
 
@@ -30,11 +32,15 @@ module Spree
     scope :manual_intervention_required, -> { where(acceptance_status: 'manual_intervention_required') }
     scope :undecided, -> { where(acceptance_status: %w(pending manual_intervention_required)) }
     scope :decided, -> { where.not(acceptance_status: %w(pending manual_intervention_required)) }
+    scope :reimbursed, -> { where.not(reimbursement_id: nil) }
+    scope :not_reimbursed, -> { where(reimbursement_id: nil) }
 
     serialize :acceptance_status_errors
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit
+
+    before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
       before_transition to: :received, do: :process_inventory_unit!
@@ -83,6 +89,18 @@ module Spree
       after_transition any => any, :do => :persist_acceptance_status_errors
     end
 
+    def exchange_requested?
+      exchange_variant.present?
+    end
+
+    def exchange_processed?
+      exchange_inventory_unit.present?
+    end
+
+    def exchange_required?
+      exchange_requested? && !exchange_processed?
+    end
+
     def display_pre_tax_amount
       Spree::Money.new(pre_tax_amount, { currency: currency })
     end
@@ -97,6 +115,15 @@ module Spree
 
     def eligible_exchange_variants
       exchange_variant_engine.eligible_variants(variant)
+    end
+
+    def build_exchange_inventory_unit
+      # The inventory unit needs to have the new variant
+      # but it also needs to know the original line item
+      # for pricing information for if the inventory unit is
+      # ever returned. This means that the inventory unit's line_item
+      # will have a different variant than the inventory unit itself
+      super(variant: exchange_variant, line_item: inventory_unit.line_item) if exchange_required?
     end
 
     private
@@ -142,6 +169,16 @@ module Spree
 
     def validator
       @validator ||= return_eligibility_validator.new(self)
+    end
+
+    def validate_acceptance_status_for_reimbursement
+      if reimbursement && !accepted?
+        errors.add(:reimbursement, :cannot_be_associated_unless_accepted)
+      end
+    end
+
+    def set_exchange_pre_tax_amount
+      self.pre_tax_amount = 0.0.to_d if exchange_requested?
     end
 
     def validate_no_other_completed_return_items
