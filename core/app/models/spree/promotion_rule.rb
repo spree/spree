@@ -35,8 +35,8 @@ module Spree
       end
     end
 
-    def eligibility_error_message(key)
-      Spree.t(key, scope: 'eligibility_errors.messages')
+    def eligibility_error_message(key, options = {})
+      Spree.t(key, Hash[scope: 'eligibility_errors.messages'].merge(options))
     end
   end
 end

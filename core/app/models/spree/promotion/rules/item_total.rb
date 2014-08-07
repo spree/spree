@@ -14,8 +14,20 @@ module Spree
         end
 
         def eligible?(order, options = {})
+          @eligibility_errors = ActiveModel::Errors.new(self)
+
           item_total = order.item_total
-          item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
+          unless item_total.send(preferred_operator == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount.to_s))
+            amount = Spree::Money.new(preferred_amount).to_s
+            message = if preferred_operator == 'gte'
+                        eligibility_error_message(:item_total_less_than, amount: amount)
+                      else
+                        eligibility_error_message(:item_total_less_than_or_equal, amount: amount)
+                      end
+            @eligibility_errors.add(:base, message)
+          end
+
+          @eligibility_errors.empty?
         end
       end
     end
