@@ -271,7 +271,7 @@ en:
         spree/reimbursement:
           attributes:
             base:
-              reimbursement_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
+              return_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
         spree/return_item:
           attributes:
             reimbursement:

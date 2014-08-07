@@ -13,38 +13,18 @@ describe Spree::Admin::ReimbursementsController do
     let(:return_item) { customer_return.return_items.first }
     let(:payment) { order.payments.first }
 
-    before do
-      customer_return.return_items.map(&:accept!)
+    subject do
+      spree_post :create, order_id: order.to_param, build_from_customer_return_id: customer_return.id
     end
 
-    context "nested attributes" do
-      let(:reimbursement_params) do
-        {
-          customer_return_id: customer_return.to_param,
-          reimbursement_items_attributes: [
-            {
-              inventory_unit_id:   return_item.inventory_unit_id,
-              return_item_id:      return_item.id,
-              exchange_variant_id: return_item.exchange_variant_id,
-              pre_tax_amount:      return_item.pre_tax_amount,
-            },
-          ],
-        }
-      end
+    it 'creates the reimbursement' do
+      expect { subject }.to change { order.reimbursements.count }.by(1)
+      expect(assigns(:reimbursement).return_items.to_a).to eq customer_return.return_items.to_a
+    end
 
-      subject do
-        spree_post :create, order_id: order.to_param, reimbursement: reimbursement_params
-      end
-
-      it 'creates the reimbursement' do
-        expect { subject }.to change { order.reimbursements.count }.by(1)
-        expect(assigns(:reimbursement).reimbursement_items.map(&:return_item)).to include(return_item)
-      end
-
-      it 'redirects to the edit page' do
-        subject
-        expect(response).to redirect_to(spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement)))
-      end
+    it 'redirects to the edit page' do
+      subject
+      expect(response).to redirect_to(spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement)))
     end
   end
 
@@ -52,8 +32,7 @@ describe Spree::Admin::ReimbursementsController do
     let(:reimbursement) { create(:reimbursement) }
     let(:customer_return) { reimbursement.customer_return }
     let(:order) { reimbursement.order }
-    let(:reimbursement_items) { reimbursement.reimbursement_items }
-    let(:return_items) { reimbursement_items.map(&:return_item) }
+    let(:return_items) { reimbursement.return_items }
     let(:payment) { order.payments.first }
 
     subject do

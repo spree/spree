@@ -24,27 +24,27 @@
       </tr>
     </thead>
     <tbody>
-      <% @reimbursement.reimbursement_items.each do |reimbursement_item| %>
+      <% @reimbursement.return_items.each do |return_item| %>
 
         <tr>
           <td>
-            <div class="variant-name"><%= reimbursement_item.inventory_unit.variant.name %></div>
-            <div class="variant-options"><%= reimbursement_item.inventory_unit.variant.options_text %></div>
+            <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+            <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
           </td>
           <td class="align-center">
-            <%= reimbursement_type_name(reimbursement_item.return_item.try(:preferred_reimbursement_type)) %>
+            <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
           </td>
           <td class='align-center'>
-            <%= reimbursement_type_name(reimbursement_item.override_reimbursement_type) %>
+            <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
           </td>
           <td>
-            <%= reimbursement_item.exchange_variant.try(:options_text) %>
+            <%= return_item.exchange_variant.try(:options_text) %>
           </td>
           <td class="align-center">
-            <%= reimbursement_item.display_pre_tax_amount %>
+            <%= return_item.display_pre_tax_amount %>
           </td>
           <td class="align-center">
-            <%= reimbursement_item.display_total %>
+            <%= return_item.display_total %>
           </td>
         </tr>
 

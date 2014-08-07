@@ -15,5 +15,6 @@ class CreateSpreeReimbursementTypes < ActiveRecord::Migration
     end
 
     add_column :spree_return_items, :preferred_reimbursement_type_id, :integer
+    add_column :spree_return_items, :override_reimbursement_type_id, :integer
   end
 end

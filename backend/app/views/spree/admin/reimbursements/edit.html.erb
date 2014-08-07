@@ -25,16 +25,16 @@
         </tr>
       </thead>
       <tbody>
-        <%= f.fields_for :reimbursement_items, @reimbursement.reimbursement_items do |item_fields| %>
-          <% reimbursement_item = item_fields.object %>
+        <%= f.fields_for :return_items, @reimbursement.return_items.sort_by(&:id) do |item_fields| %>
+          <% return_item = item_fields.object %>
 
           <tr>
             <td>
-              <div class="variant-name"><%= reimbursement_item.inventory_unit.variant.name %></div>
-              <div class="variant-options"><%= reimbursement_item.inventory_unit.variant.options_text %></div>
+              <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+              <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
             </td>
             <td class="align-center">
-              <%= reimbursement_type_name(reimbursement_item.return_item.try(:preferred_reimbursement_type)) %>
+              <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
             </td>
             <td class='align-center'>
               <%= item_fields.select(:override_reimbursement_type_id,
@@ -47,10 +47,10 @@
               <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
             </td>
             <td class="align-center">
-              <%= reimbursement_item.display_total %>
+              <%= return_item.display_total %>
             </td>
             <td class="align-center">
-              <%= item_fields.collection_select :exchange_variant_id, reimbursement_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
+              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
             </td>
           </tr>
 
@@ -78,11 +78,11 @@
       </tr>
     </thead>
     <tbody>
-      <% @reimbursement_items.each do |reimbursement_item| %>
-        <tr id="<%= spree_dom_id(reimbursement_item) %>" data-hook="reimbursement_reimbursement_item_row" class="<%= cycle('odd', 'even')%>">
-          <td><%= reimbursement_item.class.name.demodulize %></td>
-          <td><%= reimbursement_item.description %></td>
-          <td><%= reimbursement_item.display_amount %></td>
+      <% @reimbursement_objects.each do |reimbursement_object| %>
+        <tr id="<%= spree_dom_id(reimbursement_object) %>" data-hook="reimbursement_reimbursement_object_row" class="<%= cycle('odd', 'even')%>">
+          <td><%= reimbursement_object.class.name.demodulize %></td>
+          <td><%= reimbursement_object.description %></td>
+          <td><%= reimbursement_object.display_amount %></td>
         </tr>
       <% end %>
     </tbody>

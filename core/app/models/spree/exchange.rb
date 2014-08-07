@@ -1,23 +1,23 @@
 module Spree
   class Exchange
 
-    def initialize(order, reimbursement_items)
+    def initialize(order, reimbursement_objects)
       @order = order
-      @reimbursement_items = reimbursement_items
+      @reimbursement_objects = reimbursement_objects
     end
 
     def description
-      @reimbursement_items.map do |reimbursement_item|
-        "#{reimbursement_item.variant.options_text} => #{reimbursement_item.exchange_variant.options_text}"
+      @reimbursement_objects.map do |reimbursement_object|
+        "#{reimbursement_object.variant.options_text} => #{reimbursement_object.exchange_variant.options_text}"
       end.join(" | ")
     end
 
     def display_amount
-      Spree::Money.new @reimbursement_items.map(&:total).sum
+      Spree::Money.new @reimbursement_objects.map(&:total).sum
     end
 
     def perform!
-      shipments = Spree::Stock::Coordinator.new(@order, @reimbursement_items.map(&:build_exchange_inventory_unit)).shipments
+      shipments = Spree::Stock::Coordinator.new(@order, @reimbursement_objects.map(&:build_exchange_inventory_unit)).shipments
       @order.shipments += shipments
       @order.save!
       shipments.each do |shipment|
