@@ -310,6 +310,7 @@ module Spree
             expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
             expect(shipment.stock_location).to eq stock_location
             expect(shipment.state).to eq('shipped')
+            expect(shipment.inventory_units.all?(&:shipped?)).to be true
             expect(order.shipment_state).to eq('shipped')
             expect(order.shipment_total.to_f).to eq 4.99
           end
