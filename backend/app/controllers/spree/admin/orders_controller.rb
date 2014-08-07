@@ -2,7 +2,7 @@ module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
       before_filter :initialize_order_events
-      before_filter :load_order, :only => [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments]
+      before_filter :load_order, :only => [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :edit_line_items]
 
       respond_to :html
 
@@ -49,10 +49,18 @@ module Spree
 
       def new
         @order = Order.create(order_params)
-        redirect_to edit_admin_order_url(@order)
+        redirect_to edit_line_items_admin_order_url(@order)
       end
 
       def edit
+        can_not_transition_without_customer_info
+
+        unless @order.completed?
+          @order.refresh_shipment_rates
+        end
+      end
+
+      def edit_line_items
         unless @order.completed?
           @order.refresh_shipment_rates
         end

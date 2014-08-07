@@ -1,0 +1,49 @@
+<script type='text/template' id='variant_line_items_autocomplete_stock_template'>
+    <fieldset>
+        <legend align="center"><%= Spree.t(:select_stock) %></legend>
+        <table class="stock-levels" data-hook="stock-levels">
+            <colgroup>
+                <col style="width: 30%;" />
+                <col style="width: 40%;" />
+                <col style="width: 30%;" />
+            </colgroup>
+            <thead>
+                <th><%= Spree.t(:name) %></th>
+                <th><%= Spree.t(:count_on_hand) %></th>
+                <th><%= Spree.t(:quantity) %></th>
+                <th class="actions"></th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{variant.name}}</td>
+
+              {{#unless variant.track_inventory}}
+                    <td>
+                    It doesn't track inventory
+                    </td>
+                    <td>
+                        <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+                        </td>
+                        <td class="actions">
+                            <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{this.variant_id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
+                        </td>
+              {{else}}
+                {{#if variant.total_on_hand}}
+                        <td>
+                    {{variant.total_on_hand}}
+                        </td>
+                        <td>
+                            <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+                            </td>
+                            <td class="actions">
+                                <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
+                            </td>
+                {{else}}
+                            <td><%= Spree.t(:out_of_stock) %></td>
+                            <td>0</td>
+                {{/if}}
+              {{/unless}}
+                        </tr>
+                   </tbody>
+                </fieldset>
+            </script>

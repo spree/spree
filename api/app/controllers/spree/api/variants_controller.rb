@@ -24,8 +24,10 @@ module Spree
       # or removed from the views.
       def index
         @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
-          .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          .ransack(params[:q]).result
 
+        @variants = @variants.map{|v| v.total_on_hand; v}
+        @variants = Kaminari.paginate_array(@variants).page(params[:page]).per(params[:per_page])
         respond_with(@variants)
       end
 

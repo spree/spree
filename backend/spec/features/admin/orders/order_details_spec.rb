@@ -185,7 +185,7 @@ describe "Order Details", js: true do
             select2 "United States of America", :from => "Country"
             click_icon :refresh
 
-            click_link "Order Details"
+            click_link "Shipments"
 
             within("#shipment_#{order.shipments.last.id}") do
               within("tr.show-method") do
