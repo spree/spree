@@ -13,9 +13,14 @@ describe Spree::Promotion::Rules::UserLoggedIn do
       rule.should be_eligible(order)
     end
 
-    it "should not be eligible if user is not logged in" do
-      order.stub(:user => nil) # better to be explicit here
-      rule.should_not be_eligible(order)
+    context "when user is not logged in" do
+      before { order.stub(:user => nil) } # better to be explicit here
+      it { expect(rule).not_to be_eligible(order) }
+      it "sets an error message" do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "You need to login before applying this coupon code."
+      end
     end
   end
 end
