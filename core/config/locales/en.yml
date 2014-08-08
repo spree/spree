@@ -765,6 +765,7 @@ en:
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
+    make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     master_price: Master Price
@@ -846,6 +847,7 @@ en:
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: ! '%{resource} is not found'
+    note: Note
     notice_messages:
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
@@ -1231,6 +1233,7 @@ en:
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
+    this_order_has_already_received_a_refund: This order has already received a refund
     thumbnail: Thumbnail
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define

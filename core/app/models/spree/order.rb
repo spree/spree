@@ -47,6 +47,7 @@ module Spree
     has_many :inventory_units, inverse_of: :order
     has_many :products, through: :variants
     has_many :variants, through: :line_items
+    has_many :refunds, through: :payments
 
     has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
 
@@ -635,6 +636,10 @@ module Spree
 
     def quantity
       line_items.sum(:quantity)
+    end
+
+    def has_non_reimbursement_related_refunds?
+      refunds.non_reimbursement.exists?
     end
 
     private
