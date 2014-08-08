@@ -36,22 +36,30 @@
   </fieldset>
 <% end %>
 
-<fieldset data-hook="reimbursements" class="no-border-bottom align-center">
-  <legend align="center"><%= Spree.t(:reimbursements) %></legend>
-  <% if @customer_return.completely_decided? %>
-    <% if @customer_return.reimbursements.any? %>
-      <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
-    <% else %>
+<% if !@customer_return.fully_reimbursed? %>
+  <fieldset data-hook="reimbursements" class="no-border-bottom no-border-top align-center">
+    <% if @customer_return.completely_decided? %>
       <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
         <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>
         <%= f.button class: 'button fa fa-reply' do %>
           <%= Spree.t(:create_reimbursement) %>
         <% end %>
       <% end %>
+    <% else %>
+      <div class="no-objects-found">
+        <%= Spree.t(:unable_to_create_reimbursements) %>
+      </div>
     <% end %>
+  </fieldset>
+<% end %>
+
+<fieldset data-hook="reimbursements" class="no-border-bottom align-center">
+  <legend align="center"><%= Spree.t(:reimbursements) %></legend>
+  <% if @customer_return.reimbursements.any? %>
+    <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
   <% else %>
     <div class="no-objects-found">
-      <%= Spree.t(:unable_to_create_reimbursements) %>
+      <%= Spree.t(:none) %>
     </div>
   <% end %>
 </fieldset>
