@@ -8,7 +8,7 @@
   <div class="four columns">
     <div data-hook="environment" class="field">
       <%= label_tag nil, Spree.t(:environment) %>
-      <%= collection_select(:tracker, :environment, Rails.configuration.database_configuration.keys.sort, :to_s, :titleize, {}, {:id => 'tracker-env', :class => 'select2 fullwidth'}) %>
+      <%= collection_select(:tracker, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'tracker-env', :class => 'select2 fullwidth'}) %>
     </div>
   </div>
   <div class="omega four columns">
@@ -26,9 +26,9 @@
       </ul>
     </div>
   </div>
-  
+
   <div class="clear"></div>
 
   <div data-hook="additional_tracker_fields"></div>
-  
+
 </div>
