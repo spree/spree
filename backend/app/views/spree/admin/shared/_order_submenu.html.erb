@@ -2,7 +2,7 @@
   <ul data-hook="admin_order_tabs">
     <% if can? :update, @order %>
       <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_order_details'>
-        <%= link_to_with_icon 'cart', Spree.t(:cart), edit_line_items_admin_order_url(@order) %>
+        <%= link_to_with_icon 'shopping-cart', Spree.t(:cart), cart_admin_order_url(@order) %>
       </li>
     <% end %>
 
