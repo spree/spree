@@ -87,6 +87,11 @@
       <% end %>
     </tbody>
   </table>
+  <% if @order.has_non_reimbursement_related_refunds? %>
+    <span class="red">
+      <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
+    </span>
+  <% end %>
   <div class="form-buttons filter-actions actions" data-hook="reimburse-buttons">
     <% if !@reimbursement.reimbursed? %>
       <%= button_to [:perform, :admin, @order, @reimbursement], {class: 'button fa fa-reply', method: 'post'} do %>
