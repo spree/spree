@@ -119,7 +119,7 @@ describe "Coupon code promotions", :js => true do
 
           fill_in "order_coupon_code", :with => "onetwo"
           click_button "Update"
-          page.should have_content(Spree.t(:coupon_code_not_eligible))
+          page.should have_content(Spree.t(:item_total_less_than_or_equal, scope: [:eligibility_errors, :messages], amount: "$100.00"))
         end
       end
 
