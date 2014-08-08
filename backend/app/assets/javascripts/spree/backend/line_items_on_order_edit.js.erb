@@ -43,6 +43,7 @@ adjustLineItems = function(order_number, variant_id, quantity){
         url: Spree.url(url),
         data: { line_item: {variant_id: variant_id, quantity: quantity }}
     }).done(function( msg ) {
+        window.Spree.advanceOrder();
         window.location.reload();
     });
 
