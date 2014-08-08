@@ -50,7 +50,6 @@ module Spree
 
         def set_current_order
           if user = try_spree_current_user
-            last_incomplete_order = user.last_incomplete_spree_order
             if cookies.signed[:guest_token].nil? && last_incomplete_order
               cookies.permanent.signed[:guest_token] = last_incomplete_order.guest_token
             elsif current_order && last_incomplete_order && current_order != last_incomplete_order
@@ -68,6 +67,10 @@ module Spree
         end
 
         private
+        def last_incomplete_order
+          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order
+        end
+
         def current_order_params
           { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
         end
