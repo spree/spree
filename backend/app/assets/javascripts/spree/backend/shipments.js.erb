@@ -257,7 +257,7 @@ completeItemSplit = function(event) {
         url: Spree.url(Spree.routes.shipments_api + "?shipment[order_id]=" + order_number),
         data: { variant_id: variant_id, quantity: quantity, stock_location_id: stock_location_id }
       }).done(function(msg) {
-        advanceOrder();
+        window.Spree.advanceOrder();
       });
     } else {
       $.ajax({
@@ -266,20 +266,10 @@ completeItemSplit = function(event) {
         url: Spree.url(Spree.routes.shipments_api + "/" + target_shipment_number + "/add.json"),
         data: { variant_id: variant_id, quantity: quantity }
       }).done(function(msg) {
-        advanceOrder();
+        window.Spree.advanceOrder();
       });
     }
   }
-}
-
-advanceOrder = function() {
-  $.ajax({
-    type: "PUT",
-    async: false,
-    url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance")
-  }).done(function() {
-    window.location.reload();
-  });
 }
 
 cancelItemSplit = function(event) {
