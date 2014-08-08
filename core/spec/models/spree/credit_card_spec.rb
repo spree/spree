@@ -53,7 +53,7 @@ describe Spree::CreditCard do
 
   context "#can_void?" do
     it "should be true if payment is not void" do
-      payment = mock_model(Spree::Payment, void?: false)
+      payment = mock_model(Spree::Payment, failed?: false, void?: false)
       credit_card.can_void?(payment).should be_true
     end
   end
