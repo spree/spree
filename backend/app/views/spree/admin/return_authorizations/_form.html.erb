@@ -50,7 +50,11 @@
           </td>
           <td class="align-center">
             <% if inventory_unit.shipped? && allow_return_item_changes %>
-              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
+              <% if return_item.exchange_processed? %>
+                <%= return_item.exchange_variant.options_text %>
+              <% else %>
+                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth return-item-exchange-selection" } %>
+              <% end %>
             <% end %>
           </td>
         </tr>
@@ -80,3 +84,7 @@
     <%= f.error_message_on :memo %>
   <% end %>
 </div>
+
+<% if Spree::Config[:expedited_exchanges] %>
+  <div class="expedited-exchanges-warning"><%= Spree.t(:expedited_exchanges_warning, days_window: Spree::Config[:expedited_exchanges_days_window]) %></div>
+<% end %>

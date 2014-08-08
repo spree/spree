@@ -9,7 +9,6 @@ module Spree
     has_many :return_items, inverse_of: :reimbursement
 
     validates :order, presence: true
-    validates :customer_return, presence: true
     validate :validate_return_items_belong_to_same_order
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
@@ -82,7 +81,7 @@ module Spree
     def calculated_total
       # rounding down to handle edge cases for consecutive partial returns where rounding
       # might cause us to try to reimburse more than was originally billed
-      return_items.to_a.sum(&:total).round(2, :down)
+      return_items.to_a.sum(&:total).to_d.round(2, :down)
     end
 
     def paid_amount
