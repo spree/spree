@@ -4,13 +4,13 @@ module Spree
     self.refund_time_constraint = 90.days
 
     class_attribute :default_reimbursement_type
-    self.default_reimbursement_type = Spree::OriginalPaymentReimbursementType
+    self.default_reimbursement_type = Spree::ReimbursementType::OriginalPayment
 
     class_attribute :expired_reimbursement_type
-    self.expired_reimbursement_type = Spree::OriginalPaymentReimbursementType
+    self.expired_reimbursement_type = Spree::ReimbursementType::OriginalPayment
 
     class_attribute :exchange_reimbursement_type
-    self.exchange_reimbursement_type = Spree::ExchangeReimbursementType
+    self.exchange_reimbursement_type = Spree::ReimbursementType::Exchange
 
     def initialize(return_items)
       @return_items = return_items

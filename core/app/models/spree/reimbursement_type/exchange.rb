@@ -1,4 +1,4 @@
-class Spree::ExchangeReimbursementType < Spree::ReimbursementType
+class Spree::ReimbursementType::Exchange < Spree::ReimbursementType
   def self.reimburse(reimbursement, return_items, simulate)
     return [] unless return_items.present?
 

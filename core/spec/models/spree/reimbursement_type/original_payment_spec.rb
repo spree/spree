@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 module Spree
-  describe OriginalPaymentReimbursementType do
+  describe ReimbursementType::OriginalPayment do
     let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
     let(:return_item)             { reimbursement.return_items.first }
     let(:payment)                 { reimbursement.order.payments.first }
     let(:simulate)                { false }
     let!(:default_refund_reason)  { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    subject { Spree::OriginalPaymentReimbursementType.reimburse(reimbursement, [return_item], simulate)}
+    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate)}
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
 

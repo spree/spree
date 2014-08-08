@@ -1,4 +1,4 @@
-class Spree::OriginalPaymentReimbursementType < Spree::ReimbursementType
+class Spree::ReimbursementType::OriginalPayment < Spree::ReimbursementType
   class << self
     def reimburse(reimbursement, return_items, simulate)
       refund_list = []

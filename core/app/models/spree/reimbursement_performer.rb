@@ -32,7 +32,7 @@ module Spree
 
       def calculate_reimbursement_types(reimbursement)
         # Engine returns hash of preferred reimbursement types pointing at return items
-        # {Spree::OriginalPaymentReimbursementType => [ReturnItem, ...], Spree::ExchangeReimbursementType => [ReturnItem, ...]}
+        # {Spree::ReimbursementType::OriginalPayment => [ReturnItem, ...], Spree::ReimbursementType::Exchange => [ReturnItem, ...]}
         reimbursement_type_engine.new(reimbursement.return_items).calculate_reimbursement_types
       end
 
