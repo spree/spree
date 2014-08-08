@@ -752,6 +752,8 @@ en:
       operators:
         gt: greater than
         gte: greater than or equal to
+        lt: less than
+        lte: less than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
