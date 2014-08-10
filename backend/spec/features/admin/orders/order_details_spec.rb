@@ -18,9 +18,11 @@ describe "Order Details", js: true do
   context 'as Admin' do
     stub_authorization!
 
-    before { visit spree.edit_admin_order_path(order) }
 
-    context "edit order page" do
+    context "cart edit page" do
+      before { visit spree.cart_admin_order_path(order) }
+
+
       it "should allow me to edit order details" do
         page.should have_content("spree t-shirt")
         page.should have_content("$40.00")
@@ -37,14 +39,14 @@ describe "Order Details", js: true do
       end
 
       it "can add an item to a shipment" do
-        select2_search "Tote", :from => Spree.t(:name_or_sku)
+        select2_search "spree t-shirt", :from => Spree.t(:name_or_sku)
         within("table.stock-levels") do
-          fill_in "stock_item_quantity", :with => 2
+          fill_in "variant_quantity", :with => 2
           click_icon :plus
         end
 
         within("#order_total") do
-          page.should have_content("$70.00")
+          page.should have_content("$80.00")
         end
       end
 
@@ -76,6 +78,8 @@ describe "Order Details", js: true do
       end
 
       it "can add tracking information" do
+        visit spree.edit_admin_order_path(order)
+
         within(".show-tracking") do
           click_icon :edit
         end
@@ -106,101 +110,6 @@ describe "Order Details", js: true do
         expect(page).to have_content("SKU: #{sku}")
       end
 
-      context "variant out of stock and not backorderable" do
-        before { product.master.stock_items.first.update_column(:backorderable, false) }
-
-        it "displays out of stock instead of add button" do
-          select2_search product.name, :from => Spree.t(:name_or_sku)
-          within("table.stock-levels") do
-            page.should have_content(Spree.t(:out_of_stock))
-          end
-        end
-      end
-
-      context "when two stock locations exist" do
-        let!(:london) { create(:stock_location, name: "London") }
-        before(:each) { london.stock_items.each { |si| si.adjust_count_on_hand(10) } }
-
-        it "creates a new shipment when adding a variant from the new location" do
-          select2_search "Tote", :from => Spree.t(:name_or_sku)
-          within("table.stock-levels tr:nth-child(2)") do
-            fill_in "stock_item_quantity", :with => 2
-            click_icon :plus
-          end
-          wait_for_ajax
-          page.should have_css("#shipment_#{order.shipments.last.id}")
-          order.shipments.last.stock_location.should == london
-          within "#shipment_#{order.shipments.last.id}" do
-            page.should have_content("LONDON")
-          end
-        end
-
-        context "when two shipments exist" do
-          before(:each) do
-            select2_search "Tote", :from => Spree.t(:name_or_sku)
-            within("table.stock-levels tr:nth-child(2)") do
-              fill_in "stock_item_quantity", :with => 2
-              click_icon :plus
-              wait_for_ajax
-            end
-          end
-
-          it "updates quantity of the second shipment's items" do
-            within("table.stock-contents", :text => tote.name) do
-              click_icon :edit
-              fill_in "quantity", with: 4
-              click_icon :ok
-            end
-
-            # poltergeist and selenium disagree on the existance of this space
-            page.should have_content(/TOTAL: ?\$100\.00/)
-          end
-
-          it "can add tracking information for the second shipment" do
-            within("#shipment_#{order.shipments.last.id}") do
-              within("tr.show-tracking") do
-                click_icon :edit
-              end
-
-              fill_in "tracking", :with => "TRACKING_NUMBER"
-              click_icon :ok
-            end
-
-            page.should_not have_css("input[name=tracking]")
-            page.should have_content("Tracking: TRACKING_NUMBER")
-          end
-
-          it "can change the second shipment's shipping method" do
-            click_link "Customer Details"
-
-            check "order_use_billing"
-            fill_in "order_bill_address_attributes_firstname", :with => "Joe"
-            fill_in "order_bill_address_attributes_lastname", :with => "User"
-            fill_in "order_bill_address_attributes_address1", :with => "7735 Old Georgetown Road"
-            fill_in "order_bill_address_attributes_address2", :with => "Suite 510"
-            fill_in "order_bill_address_attributes_city", :with => "Bethesda"
-            fill_in "order_bill_address_attributes_zipcode", :with => "20814"
-            fill_in "order_bill_address_attributes_phone", :with => "301-444-5002"
-            select2 "Alabama", :from => "State"
-            select2 "United States of America", :from => "Country"
-            click_icon :refresh
-
-            click_link "Shipments"
-
-            within("#shipment_#{order.shipments.last.id}") do
-              within("tr.show-method") do
-                click_icon :edit
-              end
-              select2 "Default", :from => "Shipping Method"
-            end
-            click_icon :ok
-
-            page.should_not have_css('#selected_shipping_rate_id')
-            page.should have_content("Default")
-          end
-        end
-      end
-      
       context "with special_instructions present" do
         let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
         it "will show the special_instructions" do
@@ -208,6 +117,12 @@ describe "Order Details", js: true do
           expect(page).to have_content("Very special instructions here")
         end
       end
+
+
+    end
+
+    context "shipment edit page" do
+      before { visit spree.cart_admin_order_path(order) }
 
       context "variant doesn't track inventory" do
         before do
@@ -218,22 +133,40 @@ describe "Order Details", js: true do
 
         it "adds variant to order just fine"  do
           select2_search tote.name, :from => Spree.t(:name_or_sku)
-
           within("table.stock-levels") do
-            fill_in "stock_item_quantity", :with => 1
+            fill_in "variant_quantity", :with => 1
             click_icon :plus
           end
 
-          within(".stock-contents") do
+          within(".line-items") do
             page.should have_content(tote.name)
           end
         end
+      end
+
+      context "variant out of stock and not backorderable" do
+        before do
+          product.master.stock_items.first.update_column(:backorderable, false)
+          product.master.stock_items.first.update_column(:count_on_hand, 0)
+        end
+
+        it "displays out of stock instead of add button" do
+          select2_search product.name, :from => Spree.t(:name_or_sku)
+
+          within("table.stock-levels") do
+            page.should have_content(Spree.t(:out_of_stock))
+          end
+        end
+
+
+
+
       end
     end
   end
 
   context 'with only read permissions' do
-    before do 
+    before do
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
 
@@ -241,7 +174,6 @@ describe "Order Details", js: true do
       can [:admin, :index, :read, :edit], Spree::Order
     end
     it "should not display forbidden links" do
-      visit spree.edit_admin_order_path(order)
       page.should_not have_button('cancel')
       page.should_not have_button('Resend')
 
