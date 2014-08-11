@@ -169,9 +169,7 @@ module Spree
     def process_inventory_unit!
       inventory_unit.return!
 
-      if variant.should_track_inventory? && stock_item
-        Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1)
-      end
+      Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1) if should_restock?
     end
 
     # This logic is also present in the customer return. The reason for the
@@ -223,6 +221,10 @@ module Spree
                        .each do |return_item|
         return_item.cancel!
       end
+    end
+
+    def should_restock?
+      variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
     end
   end
 end
