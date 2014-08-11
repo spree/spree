@@ -1109,6 +1109,16 @@ en:
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Return Items
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
+        dear_customer: Dear Customer,
+        exchange_summary: Exchange Summary
+        for: for
+        instructions: Your reimbursement has been processed.
+        refund_summary: Refund Summary
+        subject: Reimbursement Notification
+        total_refunded: ! 'Total refunded: %{total}'
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned

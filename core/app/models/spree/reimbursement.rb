@@ -53,6 +53,7 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
+      after_transition to: :reimbursed, do: :send_reimbursement_email
 
       event :errored do
         transition to: :errored, from: :pending
@@ -138,5 +139,8 @@ module Spree
       end
     end
 
+    def send_reimbursement_email
+      Spree::ReimbursementMailer.reimbursement_email(self).deliver
+    end
   end
 end
