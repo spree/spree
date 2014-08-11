@@ -6,6 +6,7 @@
       <th><%= Spree.t(:pre_tax_amount) %></th>
       <th><%= Spree.t(:preferred_reimbursement_type) %></th>
       <th><%= Spree.t(:exchange_for) %></th>
+      <th><%= Spree.t(:acceptance_errors) %></th>
       <% if show_decision %>
         <th class="actions"></th>
       <% end %>
@@ -29,6 +30,9 @@
         </td>
         <td class="align-center">
           <%= return_item.exchange_variant.try(:options_text) %>
+        </td>
+        <td class="align-center">
+          <%= return_item.acceptance_status_errors %>
         </td>
         <% if show_decision %>
           <td class='actions'>
