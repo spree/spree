@@ -66,8 +66,7 @@ describe 'Payments' do
       # end
     end
 
-    it 'should be able to list and create payment methods for an order', js: true do
-      find('#payment_status').text.should == 'PENDING'
+    it 'lists and create payments for an order', js: true do
       within_row(1) do
         column_text(2).should == '$150.00'
         column_text(3).should == 'Credit Card'
@@ -75,9 +74,7 @@ describe 'Payments' do
       end
 
       click_icon :void
-
-      # as it had a payment greater than order total ($50)
-      find('#payment_status').text.should == 'CREDIT OWED'
+      find('#payment_status').text.should == 'BALANCE DUE'
       page.should have_content('Payment Updated')
 
       within_row(1) do
