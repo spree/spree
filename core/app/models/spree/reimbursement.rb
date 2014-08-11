@@ -6,6 +6,8 @@ module Spree
     belongs_to :customer_return, inverse_of: :reimbursements
 
     has_many :refunds, inverse_of: :reimbursement
+    has_many :credits, inverse_of: :reimbursement, class_name: 'Spree::Reimbursement::Credit'
+
     has_many :return_items, inverse_of: :reimbursement
 
     validates :order, presence: true
