@@ -348,6 +348,7 @@ en:
     abbreviation: Abbreviation
     accept: Accept
     acceptance_status: Acceptance status
+    acceptance_errors: Acceptance errors
     accepted: Accepted
     account: Account
     account_updated: Account updated
