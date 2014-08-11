@@ -142,7 +142,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :reimbursement_types, :except => [:show, :destroy]
+    resources :reimbursement_types, :only => [:index]
     resources :refund_reasons, :except => [:show, :destroy]
     resources :return_authorization_reasons, :except => [:show, :destroy]
 
