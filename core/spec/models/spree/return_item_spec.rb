@@ -65,6 +65,16 @@ describe Spree::ReturnItem do
           expect { subject }.to_not change { stock_item.reload.count_on_hand }
         end
       end
+
+      context 'when the restock_inventory preference is false' do
+        before do
+          Spree::Config[:restock_inventory] = false
+        end
+
+        it 'does not increase the count on hand' do
+          expect { subject }.to_not change { stock_item.reload.count_on_hand }
+        end
+      end
     end
   end
 
