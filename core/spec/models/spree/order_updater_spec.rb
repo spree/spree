@@ -150,6 +150,7 @@ module Spree
             order.payment_total = 30
             order.total = 30
             order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :completed, :size).and_return(1)
             expect {
               updater.update_payment_state
             }.to change { order.payment_state }.to 'credit_owed'
@@ -162,6 +163,7 @@ module Spree
             order.payment_total = 0
             order.total = 30
             order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :completed, :size).and_return(2)
             expect {
               updater.update_payment_state
             }.to change { order.payment_state }.to 'void'
