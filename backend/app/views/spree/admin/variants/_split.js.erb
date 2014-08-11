@@ -13,7 +13,7 @@
       </optgroup>
       <optgroup label="<%=Spree.t('new_shipment_at_location')%>">
         {{#each variant.stock_items}}
-          <option data-new-shipment='true' value='{{this.stock_location_id}}'>{{this.stock_location_name}}</option>
+          <option data-new-shipment='true' value='{{this.stock_location_id}}'>{{this.stock_location_name}}&nbsp({{this.count_on_hand}} on hand)</option>
         {{/each}}
       </optgroup>
       </select>
