@@ -1021,6 +1021,7 @@ en:
         manual: Manually choose
     products: Products
     promotion: Promotion
+    promotionable: Promotable
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
