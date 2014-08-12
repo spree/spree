@@ -228,6 +228,12 @@ startItemSplit = function(event){
 
 completeItemSplit = function(event) {
   event.preventDefault();
+
+  if($('#item_stock_location').val() === ""){
+      alert('Please select the split destination.');
+      return false;
+  }
+
   var link = $(this);
   var stock_item_row = link.closest('tr');
   var variant_id = stock_item_row.data('variant-id');

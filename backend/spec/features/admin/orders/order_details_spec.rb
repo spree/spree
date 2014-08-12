@@ -118,12 +118,6 @@ describe "Order Details", js: true do
         end
       end
 
-
-    end
-
-    context "shipment edit page" do
-      before { visit spree.cart_admin_order_path(order) }
-
       context "variant doesn't track inventory" do
         before do
           tote.master.update_column :track_inventory, false
@@ -131,7 +125,7 @@ describe "Order Details", js: true do
           tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
         end
 
-        it "adds variant to order just fine"  do
+        it "adds variant to order just fine" do
           select2_search tote.name, :from => Spree.t(:name_or_sku)
           within("table.stock-levels") do
             fill_in "variant_quantity", :with => 1
@@ -157,10 +151,279 @@ describe "Order Details", js: true do
             page.should have_content(Spree.t(:out_of_stock))
           end
         end
+      end
+    end
 
 
+    context 'Shipment edit page' do
+      let!(:stock_location2) { create(:stock_location_with_items, name: 'Clarksville') }
+
+      before do
+        product.master.stock_items.first.update_column(:backorderable, true)
+        product.master.stock_items.first.update_column(:count_on_hand, 100)
+        product.master.stock_items.last.update_column(:count_on_hand, 100)
+      end
+
+      context 'splitting to location' do
+        before { visit spree.edit_admin_order_path(order) }
+        # can not properly implement until poltergeist supports checking alert text
+        # see https://github.com/teampoltergeist/poltergeist/pull/516
+        it 'should warn you if you have not selected a location or shipment'
+
+        context 'there is enough stock at the other location' do
+          it 'should allow me to make a split' do
+            order.shipments.count.should == 1
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 2
+            order.shipments.last.backordered?.should == false
+            order.shipments.first.inventory_units_for(product.master).count.should == 1
+            order.shipments.last.inventory_units_for(product.master).count.should == 1
+          end
+
+          it 'should allow me to make a transfer via splitting off all stock' do
+            order.shipments.first.stock_location.id.should == stock_location.id
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 2
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.last.backordered?.should == false
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            order.shipments.first.stock_location.id.should == stock_location2.id
+          end
+
+          it 'should allow me to split more than I have if available there' do
+            order.shipments.first.stock_location.id.should == stock_location.id
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 5
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.last.backordered?.should == false
+            order.shipments.first.inventory_units_for(product.master).count.should == 5
+            order.shipments.first.stock_location.id.should == stock_location2.id
+          end
+
+          it 'should not split anything if the input quantity is garbage' do
+            order.shipments.first.stock_location.id.should == stock_location.id
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 'ff'
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            order.shipments.first.stock_location.id.should == stock_location.id
+          end
+
+          it 'should not allow less than or equal to zero qty' do
+            order.shipments.first.stock_location.id.should == stock_location.id
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 0
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            order.shipments.first.stock_location.id.should == stock_location.id
 
 
+            fill_in 'item_quantity', with: -1
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            order.shipments.first.stock_location.id.should == stock_location.id
+          end
+        end
+
+        context 'there is not enough stock at the other location' do
+          context 'and it cannot backorder' do
+            it 'should not allow me to split stock' do
+              product.master.stock_items.last.update_column(:backorderable, false)
+              product.master.stock_items.last.update_column(:count_on_hand, 0)
+
+              within_row(1) { click_icon 'arrows-h' }
+              targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+              fill_in 'item_quantity', with: 2
+              click_icon :ok
+
+              wait_for_ajax
+
+              order.shipments.count.should == 1
+              order.shipments.first.inventory_units_for(product.master).count.should == 2
+              order.shipments.first.stock_location.id.should == stock_location.id
+            end
+
+          end
+
+          context 'but it can backorder' do
+            it 'should allow me to split and backorder the stock' do
+              product.master.stock_items.last.update_column(:count_on_hand, 0)
+              product.master.stock_items.last.update_column(:backorderable, true)
+
+              within_row(1) { click_icon 'arrows-h' }
+              targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+              fill_in 'item_quantity', with: 2
+              click_icon :ok
+
+              wait_for_ajax
+
+              order.shipments.count.should == 1
+              order.shipments.first.inventory_units_for(product.master).count.should == 2
+              order.shipments.first.stock_location.id.should == stock_location2.id
+            end
+          end
+        end
+
+        context 'multiple items in cart' do
+          it 'should have no problem splitting if multiple items are in the from shipment' do
+            order.contents.add(create(:variant), 2)
+            order.shipments.count.should == 1
+            order.shipments.first.manifest.count.should == 2
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 2
+            order.shipments.last.backordered?.should == false
+            order.shipments.first.inventory_units_for(product.master).count.should == 1
+            order.shipments.last.inventory_units_for(product.master).count.should == 1
+          end
+        end
+      end
+
+
+      context 'splitting to shipment' do
+        before do
+          @shipment2 = order.shipments.create(stock_location_id: stock_location2.id)
+          visit spree.edit_admin_order_path(order)
+        end
+
+        it 'should delete the old shipment if enough are split off' do
+          order.shipments.count.should == 2
+
+          within_row(1) { click_icon 'arrows-h' }
+          targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+          fill_in 'item_quantity', with: 2
+          click_icon :ok
+
+          wait_for_ajax
+
+          order.shipments.count.should == 1
+          order.shipments.last.inventory_units_for(product.master).count.should == 2
+        end
+
+        context 'receiving shipment can not backorder' do
+          before { product.master.stock_items.last.update_column(:backorderable, false) }
+
+          it 'should not allow a split if the receiving shipment qty plus the incoming is greater than the count_on_hand' do
+            order.shipments.count.should == 2
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 1
+            click_icon :ok
+
+            wait_for_ajax
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 200
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 2
+            order.shipments.first.inventory_units_for(product.master).count.should == 1
+            order.shipments.last.inventory_units_for(product.master).count.should == 1
+          end
+
+          it 'should not allow a shipment to split stock to itself' do
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 order.shipments.first.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 1
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 2
+            order.shipments.first.inventory_units_for(product.master).count.should == 2
+          end
+
+          it 'should split fine if more than one line_item is in the receiving shipment' do
+            variant2 = create(:variant)
+            order.contents.add(variant2, 2, shipment: @shipment2)
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 1
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 2
+            order.shipments.first.inventory_units_for(product.master).count.should == 1
+            order.shipments.last.inventory_units_for(product.master).count.should == 1
+            order.shipments.first.inventory_units_for(variant2).count.should == 0
+            order.shipments.last.inventory_units_for(variant2).count.should == 2
+          end
+        end
+
+        context 'receiving shipment can backorder' do
+          it 'should add more to the backorder' do
+            product.master.stock_items.last.update_column(:backorderable, true)
+            product.master.stock_items.last.update_column(:count_on_hand, 0)
+            @shipment2.reload.backordered?.should == false
+
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 1
+            click_icon :ok
+
+            wait_for_ajax
+
+            @shipment2.reload.backordered?.should == true
+
+            within_row(1) { click_icon 'arrows-h' }
+            targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
+            fill_in 'item_quantity', with: 1
+            click_icon :ok
+
+            wait_for_ajax
+
+            order.shipments.count.should == 1
+            order.shipments.last.inventory_units_for(product.master).count.should == 2
+            @shipment2.reload.backordered?.should == true
+          end
+        end
       end
     end
   end
@@ -174,6 +437,8 @@ describe "Order Details", js: true do
       can [:admin, :index, :read, :edit], Spree::Order
     end
     it "should not display forbidden links" do
+      visit spree.edit_admin_order_path(order)
+
       page.should_not have_button('cancel')
       page.should_not have_button('Resend')
 
