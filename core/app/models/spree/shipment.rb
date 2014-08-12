@@ -43,7 +43,7 @@ module Spree
       end
 
       event :ship do
-        transition from: :ready, to: :shipped
+        transition from: [:ready, :canceled], to: :shipped
       end
       after_transition to: :shipped, do: :after_ship
 
@@ -61,7 +61,7 @@ module Spree
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: [:pending, :ready], do: :after_resume
+      after_transition from: :canceled, to: [:pending, :ready, :shipped], do: :after_resume
 
       after_transition do |shipment, transition|
         shipment.state_changes.create!(

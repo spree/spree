@@ -432,44 +432,65 @@ describe Spree::Shipment do
   end
 
   context "#ship" do
-    before do
-      order.stub(:update!)
-      shipment.stub(require_inventory: false, update_order: true, state: 'ready')
-    end
-
-    it "should update shipped_at timestamp" do
-      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
-      Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
-
-      shipment.ship!
-      shipment.shipped_at.should_not be_nil
-      # Ensure value is persisted
-      shipment.reload
-      shipment.shipped_at.should_not be_nil
-    end
-
-    it "should send a shipment email" do
-      mail_message = double 'Mail::Message'
-      shipment_id = nil
-      Spree::ShipmentMailer.should_receive(:shipped_email) { |*args|
-        shipment_id = args[0]
-        mail_message
-      }
-      mail_message.should_receive :deliver
-      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
-
-      shipment.ship!
-      shipment_id.should == shipment.id
-    end
-
-    it "finalizes adjustments" do
-      Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
-      Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
-
-      shipment.adjustments.each do |adjustment|
-        expect(adjustment).to receive(:finalize!)
+    context "when the shipment is canceled" do
+      let(:shipment_with_inventory_units) { create(:shipment, order: create(:order_with_line_items), state: 'canceled') }
+      let(:subject) { shipment_with_inventory_units.ship! }
+      before do
+        order.stub(:update!)
+        shipment_with_inventory_units.stub(require_inventory: false, update_order: true)
       end
-      shipment.ship!
+
+      it 'unstocks them items' do
+        Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+        Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+
+        shipment_with_inventory_units.stock_location.should_receive(:unstock)
+        subject
+      end
+    end
+
+    ['ready', 'canceled'].each do |state|
+      context "from #{state}" do
+        before do
+          order.stub(:update!)
+          shipment.stub(require_inventory: false, update_order: true, state: state)
+        end
+
+        it "should update shipped_at timestamp" do
+          Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+          Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+
+          shipment.ship!
+          shipment.shipped_at.should_not be_nil
+          # Ensure value is persisted
+          shipment.reload
+          shipment.shipped_at.should_not be_nil
+        end
+
+        it "should send a shipment email" do
+          mail_message = double 'Mail::Message'
+          shipment_id = nil
+          Spree::ShipmentMailer.should_receive(:shipped_email) { |*args|
+            shipment_id = args[0]
+            mail_message
+          }
+          mail_message.should_receive :deliver
+          Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+
+          shipment.ship!
+          shipment_id.should == shipment.id
+        end
+
+        it "finalizes adjustments" do
+          Spree::ShipmentHandler.any_instance.stub(:update_order_shipment_state)
+          Spree::ShipmentHandler.any_instance.stub(:send_shipped_email)
+
+          shipment.adjustments.each do |adjustment|
+            expect(adjustment).to receive(:finalize!)
+          end
+          shipment.ship!
+        end
+      end
     end
   end
 
