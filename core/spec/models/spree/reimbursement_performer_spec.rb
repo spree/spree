@@ -1,66 +1,30 @@
 require 'spec_helper'
 
 describe Spree::ReimbursementPerformer do
-
-  let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
-  let(:payment) { reimbursement.order.payments.first }
-
-  let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+  let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
+  let(:return_item)             { reimbursement.return_items.first }
+  let(:reimbursement_type)      { double("ReimbursementType") }
+  let(:reimbursement_type_hash) { { reimbursement_type => [return_item]} }
 
   before do
-    reimbursement.update!(total: reimbursement.calculated_total)
+    Spree::ReimbursementPerformer.should_receive(:calculate_reimbursement_types).and_return(reimbursement_type_hash)
   end
 
-  describe '.simulate' do
+  describe ".simulate" do
     subject { Spree::ReimbursementPerformer.simulate(reimbursement) }
 
-    it 'returns an array of readonly refunds' do
-      expect(subject).to be_an Array
-      expect(subject.map(&:class)).to eq [Spree::Refund]
-      expect(subject.map(&:readonly?)).to be_true
-    end
-
-    context 'when no credit is allowed on the payment' do
-      before do
-        Spree::Payment.any_instance.should_receive(:credit_allowed).and_return 0
-      end
-
-      it 'returns an empty array' do
-        expect(subject).to eq []
-      end
+    it "reimburses each calculated reimbursement types with the correct return items as a simulation" do
+      reimbursement_type.should_receive(:reimburse).with(reimbursement, [return_item], true)
+      subject
     end
   end
 
   describe '.perform' do
     subject { Spree::ReimbursementPerformer.perform(reimbursement) }
 
-    it 'returns an array refunds' do
-      expect(subject).to be_an Array
-      expect(subject.map(&:class)).to eq [Spree::Refund]
-    end
-
-    it 'performs the refund' do
-      expect {
-        subject
-      }.to change { payment.refunds.count }.by(1)
-      expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
-    end
-
-    context 'when no credit is allowed on the payment' do
-      before do
-        Spree::Payment.any_instance.should_receive(:credit_allowed).and_return 0
-      end
-
-      it 'returns an empty array' do
-        expect(subject).to eq []
-      end
-
-      it 'performs the refund' do
-        expect {
-          subject
-        }.to_not change { payment.refunds.count }
-      end
+    it "reimburses each calculated reimbursement types with the correct return items as a simulation" do
+      reimbursement_type.should_receive(:reimburse).with(reimbursement, [return_item], false)
+      subject
     end
   end
-
 end

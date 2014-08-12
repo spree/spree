@@ -147,6 +147,10 @@ module Spree
       last_state = order.payment_state
       if payments.present? && payments.last.state == 'failed'
         order.payment_state = 'failed'
+      elsif !payments.present? && order.state == 'canceled'
+        order.payment_state = 'void'
+      elsif order.state == 'canceled' && order.payment_total == 0 && payments.completed.size > 0
+        order.payment_state = 'void'
       else
         order.payment_state = 'balance_due' if order.outstanding_balance > 0
         order.payment_state = 'credit_owed' if order.outstanding_balance < 0

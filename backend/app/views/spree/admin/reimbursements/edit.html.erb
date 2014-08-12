@@ -50,7 +50,11 @@
               <%= return_item.display_total %>
             </td>
             <td class="align-center">
-              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth" } %>
+              <% if return_item.exchange_processed? %>
+                <%= return_item.exchange_variant.options_text %>
+              <% else %>
+                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth return-item-exchange-selection" } %>
+              <% end %>
             </td>
           </tr>
 
@@ -87,6 +91,11 @@
       <% end %>
     </tbody>
   </table>
+  <% if @order.has_non_reimbursement_related_refunds? %>
+    <span class="red">
+      <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
+    </span>
+  <% end %>
   <div class="form-buttons filter-actions actions" data-hook="reimburse-buttons">
     <% if !@reimbursement.reimbursed? %>
       <%= button_to [:perform, :admin, @order, @reimbursement], {class: 'button fa fa-reply', method: 'post'} do %>

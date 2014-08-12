@@ -65,6 +65,16 @@ describe Spree::ReturnItem do
           expect { subject }.to_not change { stock_item.reload.count_on_hand }
         end
       end
+
+      context 'when the restock_inventory preference is false' do
+        before do
+          Spree::Config[:restock_inventory] = false
+        end
+
+        it 'does not increase the count on hand' do
+          expect { subject }.to_not change { stock_item.reload.count_on_hand }
+        end
+      end
     end
   end
 
@@ -490,12 +500,29 @@ describe Spree::ReturnItem do
           expect(subject).not_to be_persisted
           expect(subject.original_return_item).to eq return_item
           expect(subject.line_item).to eq return_item.inventory_unit.line_item
+          expect(subject.order).to eq return_item.inventory_unit.order
         end
       end
     end
 
     context "the return item is not intended to be exchanged" do
       it { expect(subject).to be_nil }
+    end
+  end
+
+  describe "#exchange_shipment" do
+    it "returns the exchange inventory unit's shipment" do
+      inventory_unit = build(:inventory_unit)
+      subject.exchange_inventory_unit = inventory_unit
+      expect(subject.exchange_shipment).to eq inventory_unit.shipment
+    end
+  end
+
+  describe "#shipment" do
+    it "returns the inventory unit's shipment" do
+      inventory_unit = build(:inventory_unit)
+      subject.inventory_unit = inventory_unit
+      expect(subject.shipment).to eq inventory_unit.shipment
     end
   end
 

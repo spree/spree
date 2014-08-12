@@ -3,6 +3,8 @@ module Spree
   class ReimbursementPerformer
 
     class << self
+      class_attribute :reimbursement_type_engine
+      self.reimbursement_type_engine = Spree::Reimbursement::ReimbursementTypeEngine
 
       # Simulate performing the reimbursement without actually saving anything or refunding money, etc.
       # This must return an array of objects that respond to the following methods:
@@ -21,37 +23,17 @@ module Spree
       private
 
       def execute(reimbursement, simulate)
-        # For now type and order of retrieved payments are not specified
-        reimbursement_objects = []
-        unpaid_amount = reimbursement.unpaid_amount
-        reimbursement.order.payments.completed.each do |payment|
-          break if unpaid_amount <= 0
-          next if payment.credit_allowed.zero?
+        reimbursement_type_hash = calculate_reimbursement_types(reimbursement)
 
-          amount = [unpaid_amount, payment.credit_allowed].min
-
-          refund = reimbursement.refunds.build({
-            payment: payment,
-            amount: amount,
-            reason: Spree::RefundReason.return_processing_reason,
-          })
-
-          if simulate
-            refund.readonly!
-          else
-            refund.save!
-          end
-          unpaid_amount -= amount
-          reimbursement_objects << refund
+        reimbursement_type_hash.flat_map do |reimbursement_type, return_items|
+          reimbursement_type.reimburse(reimbursement, return_items, simulate)
         end
+      end
 
-        if exchange_items = reimbursement.return_items_requiring_exchange.presence
-          exchange = Spree::Exchange.new(reimbursement.order, exchange_items)
-          exchange.perform! unless simulate
-          reimbursement_objects << exchange
-        end
-
-        reimbursement_objects
+      def calculate_reimbursement_types(reimbursement)
+        # Engine returns hash of preferred reimbursement types pointing at return items
+        # {Spree::ReimbursementType::OriginalPayment => [ReturnItem, ...], Spree::ReimbursementType::Exchange => [ReturnItem, ...]}
+        reimbursement_type_engine.new(reimbursement.return_items).calculate_reimbursement_types
       end
 
     end

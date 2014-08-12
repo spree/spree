@@ -17,6 +17,8 @@ module Spree
     before_create :perform!
     after_create :create_log_entry
 
+    scope :non_reimbursement, -> { where(reimbursement_id: nil) }
+
     def money
       Spree::Money.new(amount, { currency: payment.currency })
     end

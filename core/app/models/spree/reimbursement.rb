@@ -6,10 +6,11 @@ module Spree
     belongs_to :customer_return, inverse_of: :reimbursements
 
     has_many :refunds, inverse_of: :reimbursement
+    has_many :credits, inverse_of: :reimbursement, class_name: 'Spree::Reimbursement::Credit'
+
     has_many :return_items, inverse_of: :reimbursement
 
     validates :order, presence: true
-    validates :customer_return, presence: true
     validate :validate_return_items_belong_to_same_order
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
@@ -54,6 +55,7 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
+      after_transition to: :reimbursed, do: :send_reimbursement_email
 
       event :errored do
         transition to: :errored, from: :pending
@@ -82,7 +84,7 @@ module Spree
     def calculated_total
       # rounding down to handle edge cases for consecutive partial returns where rounding
       # might cause us to try to reimburse more than was originally billed
-      return_items.to_a.sum(&:total).round(2, :down)
+      return_items.to_a.sum(&:total).to_d.round(2, :down)
     end
 
     def paid_amount
@@ -139,5 +141,8 @@ module Spree
       end
     end
 
+    def send_reimbursement_email
+      Spree::ReimbursementMailer.reimbursement_email(self).deliver
+    end
   end
 end

@@ -37,11 +37,15 @@ module Spree
     scope :decided, -> { where.not(acceptance_status: %w(pending manual_intervention_required)) }
     scope :reimbursed, -> { where.not(reimbursement_id: nil) }
     scope :not_reimbursed, -> { where(reimbursement_id: nil) }
+    scope :exchange_requested, -> { where.not(exchange_variant: nil) }
+    scope :exchange_processed, -> { where.not(exchange_inventory_unit: nil) }
+    scope :exchange_required, -> { exchange_requested.where(exchange_inventory_unit: nil) }
 
     serialize :acceptance_status_errors
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit
+    delegate :shipment, to: :inventory_unit
 
     before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
     before_save :set_exchange_pre_tax_amount
@@ -132,7 +136,11 @@ module Spree
       # for pricing information for if the inventory unit is
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
-      super(variant: exchange_variant, line_item: inventory_unit.line_item) if exchange_required?
+      super(variant: exchange_variant, line_item: inventory_unit.line_item, order: inventory_unit.order) if exchange_required?
+    end
+
+    def exchange_shipment
+      exchange_inventory_unit.try(:shipment)
     end
 
     def set_default_pre_tax_amount
@@ -161,9 +169,7 @@ module Spree
     def process_inventory_unit!
       inventory_unit.return!
 
-      if variant.should_track_inventory? && stock_item
-        Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1)
-      end
+      Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1) if should_restock?
     end
 
     # This logic is also present in the customer return. The reason for the
@@ -215,6 +221,10 @@ module Spree
                        .each do |return_item|
         return_item.cancel!
       end
+    end
+
+    def should_restock?
+      variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
     end
   end
 end

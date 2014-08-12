@@ -17,7 +17,7 @@ module Spree
         def stub_authorization!(&block)
           ability_class = build_ability(&block)
           before do
-            allow(controller).to receive(:current_ability).and_return{ ability_class.new(nil) }
+            allow(controller).to receive(:current_ability).and_return(ability_class.new(nil))
           end
         end
       end

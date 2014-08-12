@@ -143,9 +143,10 @@ module Spree
               last_digits: source_hash[:last_digits],
               name: source_hash[:name],
               payment_method: payment.payment_method,
-              # Number & Verification value are required attributes so just reusing the last digits for validation.
-              number: source_hash[:last_digits],
-              verification_value: source_hash[:last_digits]
+              # Number & Verification value are required attributes
+              # so just assigning fakes that are dropped when last_digits present.
+              number: '4111111111111111',
+              verification_value: '123'
             )
           rescue Exception => e
             raise "Order import source payments: #{e.message} #{s}"

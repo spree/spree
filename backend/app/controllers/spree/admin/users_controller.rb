@@ -66,7 +66,7 @@ module Spree
 
       def orders
         params[:q] ||= {}
-        @search = Spree::Order.ransack(params[:q].merge(user_id_eq: @user.id))
+        @search = Spree::Order.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
       end
 

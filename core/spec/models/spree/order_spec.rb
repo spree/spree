@@ -707,6 +707,28 @@ describe Spree::Order do
     end
   end
 
+  describe '#has_non_reimbursement_related_refunds?' do
+    let(:order) { create(:order_ready_to_ship) }
+    subject { order.has_non_reimbursement_related_refunds? }
+
+    before(:each) do
+      order.payments.first.refunds = [refund]
+      order.save!
+      order.reload
+    end
+
+    context 'a non-reimbursement related refund exists' do
+      let(:refund) { create(:refund, reimbursement_id: nil, amount: 5)}
+
+      it { should eq true }
+    end
+
+    context 'a reimbursement related refund exists' do
+      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5)}
+      it { should eq false }
+    end
+  end
+
   describe "#create_proposed_shipments" do
     it "assigns the coordinator returned shipments to its shipments" do
       shipment = build(:shipment)

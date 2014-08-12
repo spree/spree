@@ -6,7 +6,7 @@ module Spree
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context "order totals" do
-      before do 
+      before do
         2.times do
           create(:line_item, :order => order, price: 10)
         end
@@ -127,6 +127,50 @@ module Spree
           }.to change { order.payment_state }.to 'paid'
         end
       end
+
+      context "order is canceled" do
+
+        before do
+          order.state = 'canceled'
+        end
+
+        context "and is still unpaid" do
+          it "is void" do
+            order.payment_total = 0
+            order.total = 30
+            expect {
+              updater.update_payment_state
+            }.to change { order.payment_state }.to 'void'
+          end
+        end
+
+        context "and is paid" do
+
+          it "is credit_owed" do
+            order.payment_total = 30
+            order.total = 30
+            order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :completed, :size).and_return(1)
+            expect {
+              updater.update_payment_state
+            }.to change { order.payment_state }.to 'credit_owed'
+          end
+
+        end
+
+        context "and payment is refunded" do
+          it "is void" do
+            order.payment_total = 0
+            order.total = 30
+            order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :completed, :size).and_return(2)
+            expect {
+              updater.update_payment_state
+            }.to change { order.payment_state }.to 'void'
+          end
+        end
+      end
+
     end
 
     it "state change" do

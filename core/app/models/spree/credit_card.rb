@@ -95,7 +95,7 @@ module Spree
 
     # Indicates whether its possible to void the payment.
     def can_void?(payment)
-      !payment.void?
+      !payment.failed? && !payment.void?
     end
 
     # Indicates whether its possible to credit the payment.  Note that most gateways require that the

@@ -4,6 +4,10 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
+      rake_tasks do
+        load File.join(root, "lib", "tasks", "exchanges.rake")
+      end
+
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
@@ -48,7 +52,9 @@ module Spree
         app.config.spree.calculators.promotion_actions_create_adjustments = [
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate
+          Spree::Calculator::FlexiRate,
+          Spree::Calculator::TieredPercent,
+          Spree::Calculator::TieredFlatRate
         ]
 
         app.config.spree.calculators.add_class('promotion_actions_create_item_adjustments')

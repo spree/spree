@@ -1,0 +1,22 @@
+<%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer') %>
+
+<%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
+
+============================================================
+<%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
+============================================================
+<%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
+
+<% if @reimbursement.return_items.exchange_requested.present? %>
+============================================================
+<%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
+============================================================
+<% @reimbursement.return_items.exchange_requested.each do |return_item| %>
+<%= return_item.variant.sku %> <%= raw(return_item.variant.product.name) %> <%= "(#{raw(return_item.variant.options_text)})" if return_item.variant.options_text.present? -%> -> <%= return_item.exchange_variant.sku %> <%= raw(return_item.exchange_variant.product.name) if return_item.exchange_variant.options_text.present? %> <%= "(#{raw(return_item.exchange_variant.options_text)})" -%>
+<% end %>
+
+
+<% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
+<%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
+<% end %>
+<% end %>
