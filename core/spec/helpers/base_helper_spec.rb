@@ -71,7 +71,7 @@ describe Spree::BaseHelper do
 
   # Regression test for #2034
   context "flash_message" do
-    let(:flash) { {:notice => "ok", :foo => "foo", :bar => "bar"} }
+    let(:flash) { {"notice" => "ok", "foo" => "foo", "bar" => "bar"} }
 
     it "should output all flash content" do
       flash_messages
