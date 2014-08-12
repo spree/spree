@@ -363,11 +363,13 @@ With parameters such as these:
 
 <%= json (
   {
-    "order"=> {
-      :shipments_attributes => [
-        :selected_shipping_rate_id => 1,
-        :id => 1
-      ]
+    "order": {
+      "shipments_attributes": {
+        "0": {
+          "selected_shipping_rate_id": 1,
+          "id": 1
+        }
+      }
     }
   }) %>
 
@@ -401,7 +403,7 @@ You can create a payment by passing in parameters such as this:
 
 ***
 The numbered key in the `payment_source` hash directly corresponds to the
-`payment_method_id` attribute within the `payment_attributes` key. 
+`payment_method_id` attribute within the `payment_attributes` key.
 ***
 
 You can also use an existing card for the order by submitting the credit card
