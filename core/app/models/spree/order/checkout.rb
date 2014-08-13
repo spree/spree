@@ -70,14 +70,7 @@ module Spree
               end
 
               if states[:payment]
-                before_transition to: :complete do |order|
-                  if order.payment_required? && order.payments.empty?
-                    order.errors.add(:base, Spree.t(:no_payment_found))
-                    false
-                  elsif order.payment_required?
-                    order.process_payments!
-                  end
-                end
+                before_transition to: :complete, do: :attempt_payment_processing
                 after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
@@ -253,6 +246,29 @@ module Spree
 
             @updating_params = nil
             success
+          end
+
+          def attempt_payment_processing
+            # Payment required but it's empty, exit
+            if payment_required? && payments.empty?
+              errors.add(:base, Spree.t(:no_payment_found))
+              return false
+            end
+
+            if payment_required?
+              # Return immediate if process payments is false.
+              return false if !process_payments!
+
+              # If successful, let's insure we have one completed payment.
+              # Process payments only considers pending payments, if they are all failed/invalid it will return true and allow state machine to move on to confirm/complete!
+              # This should insure that we do not allow checkout with no payments
+              if payments.valid.empty? && !!!Spree::Config[:allow_checkout_on_gateway_error]
+                errors.add(:base, Spree.t(:no_payments_valid))
+                return false
+              end
+            end
+
+            true
           end
 
           def assign_default_addresses!
