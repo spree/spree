@@ -15,10 +15,10 @@ describe Spree::Calculator::FlatPercentItemTotal do
       expect(calculator.compute(line_item)).to eq 3.10
     end
 
-    it 'returns object.amount if computed amount is greater than object amount' do
-      calculator.stub preferred_flat_percent: 110
-      line_item.stub amount: 31.00
-      expect(calculator.compute(line_item)).to eq 31.0
+    it 'returns object.amount + object.adjustment_total if computed amount is greater' do
+      calculator.stub preferred_flat_percent: 100
+      line_item.stub adjustment_total: -1, amount: 31.00
+      expect(calculator.compute(line_item)).to eq 30.0
     end
   end
 end
