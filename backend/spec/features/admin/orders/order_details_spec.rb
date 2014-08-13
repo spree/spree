@@ -7,7 +7,7 @@ describe "Order Details", js: true do
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
   let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
   let(:state) { create(:state) }
-  let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
+  #let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
   let!(:shipping_method) { create(:shipping_method, :name => "Default") }
 
   before do
@@ -20,7 +20,10 @@ describe "Order Details", js: true do
 
 
     context "cart edit page" do
-      before { visit spree.cart_admin_order_path(order) }
+      before do
+        product.master.stock_items.first.update_column(:count_on_hand, 100)
+        visit spree.cart_admin_order_path(order)
+      end
 
 
       it "should allow me to edit order details" do
@@ -257,6 +260,22 @@ describe "Order Details", js: true do
             order.shipments.count.should == 1
             order.shipments.first.inventory_units_for(product.master).count.should == 2
             order.shipments.first.stock_location.id.should == stock_location.id
+          end
+
+          context 'A shipment has shipped' do
+
+            it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
+              order = create(:order, :state => 'payment', :number => "R100")
+              order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
+
+              visit spree.cart_admin_order_path(order)
+
+              page.current_path.should == spree.edit_admin_order_path(order)
+              page.should_not have_text 'Cart'
+              page.should_not have_selector('.fa-arrows-h')
+              page.should_not have_selector('.fa-trash')
+            end
+
           end
         end
 

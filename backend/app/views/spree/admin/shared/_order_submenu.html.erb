@@ -1,6 +1,6 @@
 <nav class="menu">
   <ul data-hook="admin_order_tabs">
-    <% if can? :update, @order %>
+    <% if ((can? :update, @order) && (@order.shipments.count == 0 || @order.shipped_shipments.count == 0)) %>
       <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_order_details'>
         <%= link_to_with_icon 'shopping-cart', Spree.t(:cart), cart_admin_order_url(@order) %>
       </li>
