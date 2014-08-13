@@ -14,7 +14,7 @@ module Spree
     validate :check_payment_environment, on: :create, if: :payment
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
 
-    before_create :perform!
+    after_create :perform!
     after_create :create_log_entry
 
     scope :non_reimbursement, -> { where(reimbursement_id: nil) }
@@ -44,14 +44,15 @@ module Spree
       @response = process!(credit_cents)
 
       self.transaction_id = @response.authorization
+      update_columns(transaction_id: transaction_id)
     end
 
     # return an activemerchant response object if successful or else raise an error
     def process!(credit_cents)
       response = if payment.payment_method.payment_profiles_supported?
-        payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, {})
+        payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, {originator: self})
       else
-        payment.payment_method.credit(credit_cents, payment.transaction_id, {})
+        payment.payment_method.credit(credit_cents, payment.transaction_id, {originator: self})
       end
 
       if !response.success?

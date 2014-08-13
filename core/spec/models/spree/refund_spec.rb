@@ -6,7 +6,7 @@ describe Spree::Refund do
     let(:amount) { 100.0 }
     let(:amount_in_cents) { amount * 100 }
 
-    let(:authorization) { "TEST12" }
+    let(:authorization) { generate(:refund_transaction_id) }
 
     let(:payment) { create(:payment, amount: payment_amount, payment_method: payment_method) }
     let(:payment_amount) { amount*2 }
@@ -33,7 +33,7 @@ describe Spree::Refund do
     before do
       payment.payment_method
         .stub(:credit)
-        .with(amount_in_cents, payment.source, payment.transaction_id, {})
+        .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
         .and_return(gateway_response)
     end
 
@@ -49,7 +49,7 @@ describe Spree::Refund do
       end
 
       it 'should save the returned authorization value' do
-        expect(subject.transaction_id).to eq authorization
+        expect(subject.reload.transaction_id).to eq authorization
       end
 
       it 'should save the passed amount as the refund amount' do
@@ -80,7 +80,7 @@ describe Spree::Refund do
       it 'should not supply the payment source' do
         payment.payment_method
           .should_receive(:credit)
-          .with(amount * 100, payment.transaction_id, {})
+          .with(amount * 100, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_return(gateway_response)
 
         subject
@@ -95,7 +95,7 @@ describe Spree::Refund do
       it 'should supply the payment source' do
         payment.payment_method
           .should_receive(:credit)
-          .with(amount_in_cents, payment.source, payment.transaction_id, {})
+          .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_return(gateway_response)
 
         subject
@@ -106,7 +106,7 @@ describe Spree::Refund do
       before do
         payment.payment_method
           .should_receive(:credit)
-          .with(amount_in_cents, payment.source, payment.transaction_id, {})
+          .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_raise(ActiveMerchant::ConnectionError)
       end
 
