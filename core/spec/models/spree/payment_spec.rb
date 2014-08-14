@@ -10,8 +10,9 @@ describe Spree::Payment do
   end
 
   let(:card) do
-    mock_model(Spree::CreditCard, :number => "4111111111111111",
-                                  :has_payment_profile? => true)
+    mock_model(Spree::CreditCard, number: "4111111111111111",
+                                  has_payment_profile?: true,
+                                  imported: false)
   end
 
   let(:payment) do
