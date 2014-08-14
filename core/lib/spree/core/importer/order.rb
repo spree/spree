@@ -143,13 +143,12 @@ module Spree
               last_digits: source_hash[:last_digits],
               name: source_hash[:name],
               payment_method: payment.payment_method,
-              # Number & Verification value are required attributes
-              # so just assigning fakes that are dropped when last_digits present.
-              number: '4111111111111111',
-              verification_value: '123'
+              gateway_customer_profile_id: source_hash[:gateway_customer_profile_id],
+              gateway_payment_profile_id: source_hash[:gateway_customer_profile_id],
+              imported: true
             )
           rescue Exception => e
-            raise "Order import source payments: #{e.message} #{s}"
+            raise "Order import source payments: #{e.message} #{source_hash}"
           end
         end
 
