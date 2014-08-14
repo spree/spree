@@ -38,36 +38,46 @@ describe Spree::ReturnAuthorization do
         subject.class.pre_expedited_exchange_hooks = @pre_exchange_hooks
       end
 
-      it "calls pre_expedited_exchange hooks with the return items to exchange" do
-        hook = double(:as_null_object)
-        hook.should_receive(:call).with [exchange_return_item]
-        subject.class.pre_expedited_exchange_hooks = [hook]
-        subject.save
+      context "no items to exchange" do
+        subject { create(:return_authorization, order: order) }
+
+        it "does not create a reimbursement" do
+          expect{subject.save}.to_not change { Spree::Reimbursement.count }
+        end
       end
 
-      it "attempts to accept all return items requiring exchange" do
-        expect(exchange_return_item).to receive :attempt_accept
-        expect(return_item).not_to receive :attempt_accept
-        subject.save
-      end
-
-      it "performs an exchange reimbursement for the exchange return items" do
-        subject.save
-        reimbursement = Spree::Reimbursement.last
-        expect(reimbursement.order).to eq subject.order
-        expect(reimbursement.return_items).to eq [exchange_return_item]
-        expect(exchange_return_item.reload.exchange_shipment).to be_present
-      end
-
-      context "the reimbursement fails" do
-        before do
-          Spree::Reimbursement.any_instance.stub(:save) { false }
-          Spree::Reimbursement.any_instance.stub(:errors) { double(full_messages: "foo") }
+      context "items to exchange" do
+        it "calls pre_expedited_exchange hooks with the return items to exchange" do
+          hook = double(:as_null_object)
+          hook.should_receive(:call).with [exchange_return_item]
+          subject.class.pre_expedited_exchange_hooks = [hook]
+          subject.save
         end
 
-        it "puts errors on the return authorization" do
+        it "attempts to accept all return items requiring exchange" do
+          expect(exchange_return_item).to receive :attempt_accept
+          expect(return_item).not_to receive :attempt_accept
           subject.save
-          expect(subject.errors[:base]).to include "foo"
+        end
+
+        it "performs an exchange reimbursement for the exchange return items" do
+          subject.save
+          reimbursement = Spree::Reimbursement.last
+          expect(reimbursement.order).to eq subject.order
+          expect(reimbursement.return_items).to eq [exchange_return_item]
+          expect(exchange_return_item.reload.exchange_shipment).to be_present
+        end
+
+        context "the reimbursement fails" do
+          before do
+            Spree::Reimbursement.any_instance.stub(:save) { false }
+            Spree::Reimbursement.any_instance.stub(:errors) { double(full_messages: "foo") }
+          end
+
+          it "puts errors on the return authorization" do
+            subject.save
+            expect(subject.errors[:base]).to include "foo"
+          end
         end
       end
 
