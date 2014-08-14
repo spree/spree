@@ -5,12 +5,15 @@ module Spree
 
     before_create :set_missing_info
 
-    attr_accessor :number, :verification_value, :encrypted_data
+    attr_accessor :encrypted_data,
+                    :number,
+                    :imported,
+                    :verification_value
 
     validates :month, :year, numericality: { only_integer: true }, if: :require_card_numbers?, on: :create
-    validates :number, presence: true, if: :require_card_numbers?, on: :create
+    validates :number, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
     validates :name, presence: true, if: :require_card_numbers?, on: :create
-    validates :verification_value, presence: true, if: :require_card_numbers?, on: :create
+    validates :verification_value, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
 
     validate :expiry_not_in_the_past
 

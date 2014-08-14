@@ -173,6 +173,8 @@ module Spree
 
       def create_payment_profile
         return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+        # Imported payments shouldn't create a payment profile.
+        return if source.imported
 
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e

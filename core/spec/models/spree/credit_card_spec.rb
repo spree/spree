@@ -157,6 +157,15 @@ describe Spree::CreditCard do
         expect(credit_card.errors[:verification_value]).to be_empty
       end
     end
+
+    context "imported is true" do
+      it "does not validate presence of number or cvv" do
+        credit_card.imported = true
+        credit_card.valid?
+        expect(credit_card.errors[:number]).to be_empty
+        expect(credit_card.errors[:verification_value]).to be_empty
+      end
+    end
   end
 
   context "#create" do
