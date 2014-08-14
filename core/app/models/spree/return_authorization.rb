@@ -79,6 +79,9 @@ module Spree
         items_to_exchange = return_items.select(&:exchange_required?)
         items_to_exchange.each(&:attempt_accept)
         items_to_exchange.select!(&:accepted?)
+
+        return if items_to_exchange.blank?
+
         pre_expedited_exchange_hooks.each { |h| h.call items_to_exchange }
 
         reimbursement = Reimbursement.new(return_items: items_to_exchange, order: order)
