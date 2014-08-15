@@ -28,6 +28,8 @@ module Spree
     scope :shipped, -> { with_state('shipped') }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(state: s) }
+    # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
+    scope :reverse_chronological, -> { order('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc', id: :desc) }
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do

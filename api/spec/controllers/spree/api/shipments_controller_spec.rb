@@ -115,5 +115,53 @@ describe Spree::Api::ShipmentsController do
       end
 
     end
+
+    describe '#mine' do
+      subject do
+        api_get :mine, format: 'json', params: params
+      end
+
+      let(:params) { {} }
+
+      before { subject }
+
+      context "the current api user is authenticated and has orders" do
+        let(:current_api_user) { shipped_order.user }
+        let(:shipped_order) { create(:shipped_order) }
+
+        it 'succeeds' do
+          expect(response.status).to eq 200
+        end
+
+        describe 'json output' do
+          render_views
+
+          let(:rendered_shipment_ids) { json_response['shipments'].map { |s| s['id'] } }
+
+          it 'contains the shipments' do
+            expect(rendered_shipment_ids).to match_array current_api_user.orders.flat_map(&:shipments).map(&:id)
+          end
+        end
+
+        context 'with filtering' do
+          let(:params) { {q: {order_completed_at_not_null: 1}} }
+
+          let!(:incomplete_order) { create(:order, user: current_api_user) }
+
+          it 'filters' do
+            expect(assigns(:shipments).map(&:id)).to match_array current_api_user.orders.complete.flat_map(&:shipments).map(&:id)
+          end
+        end
+      end
+
+      context "the current api user is not persisted" do
+        let(:current_api_user) { Spree.user_class.new }
+
+        it "returns a 401" do
+          response.status.should == 401
+        end
+      end
+    end
+
   end
 end
