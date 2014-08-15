@@ -5,6 +5,19 @@ module Spree
       before_action :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
       before_action :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
 
+      def mine
+        if current_api_user.persisted?
+          @shipments = Spree::Shipment
+            .reverse_chronological
+            .joins(:order)
+            .where(spree_orders: {user_id: current_api_user.id})
+            .includes(mine_includes)
+            .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        else
+          render "spree/api/errors/unauthorized", status: :unauthorized
+        end
+      end
+
       def create
         @order = Spree::Order.find_by!(number: params[:shipment][:order_id])
         authorize! :read, @order
@@ -97,6 +110,39 @@ module Spree
 
       def variant
         @variant ||= Spree::Variant.unscoped.find(params.fetch(:variant_id))
+      end
+
+      def mine_includes
+        {
+          order: {
+            bill_address: {
+              state: {},
+              country: {},
+            },
+            ship_address: {
+              state: {},
+              country: {},
+            },
+            adjustments: {},
+            payments: {
+              order: {},
+              payment_method: {},
+            },
+          },
+          inventory_units: {
+            line_item: {
+              product: {},
+              variant: {},
+            },
+            variant: {
+              product: {},
+              default_price: {},
+              option_values: {
+                option_type: {},
+              },
+            },
+          },
+        }
       end
     end
   end

@@ -5,6 +5,36 @@ description: Use the Spree Commerce storefront API to access Shipment data.
 
 # Shipments API
 
+## Mine
+
+Retrieve a list of the current user's shipments by making this request:
+
+```text
+GET /api/shipments/mine```
+
+Shipments are paginated and can be iterated through by passing along a `page` parameter:
+
+```text
+GET /api/shipments/mine?page=2```
+
+### Parameters
+
+page
+: The page number of shipments to display.
+
+per_page
+: The number of shipments to return per page.
+
+### Response
+
+<%= headers 200 %>
+<%= json(:shipment) do |h|
+{ count: 25,
+  current_page: 1,
+  pages: 5,
+  shipments: [h] }
+end %>
+
 ## Create
 
 <%= admin_only %>

@@ -75,6 +75,7 @@ Spree::Core::Engine.add_routes do
       collection do
         post 'transfer_to_location'
         post 'transfer_to_shipment'
+        get :mine
       end
 
       member do
