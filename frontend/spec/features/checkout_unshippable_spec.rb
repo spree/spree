@@ -32,4 +32,3 @@ describe "checkout with unshippable items", inaccessible: true do
     order.line_items.count.should eq 1
   end
 end
-

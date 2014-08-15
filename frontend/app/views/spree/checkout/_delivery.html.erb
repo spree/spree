@@ -1,16 +1,18 @@
-<fieldset id='shipping_method' data-hook>
-  <legend align="center"><%= Spree.t(:delivery) %></legend>
-  <div class="inner" data-hook="shipping_method_inner">
+<div class="panel panel-default" id='shipping_method' data-hook>
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= Spree.t(:delivery) %></h3>
+  </div>
+  <div class="panel-body" data-hook="shipping_method_inner">
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
 
         <div class="shipment">
-          <h3 class="stock-location" data-hook="stock-location">
+          <h4 class="stock-location" data-hook="stock-location">
             <%= Spree.t(:package_from) %>
             <strong class="stock-location-name" data-hook="stock-location-name"><%= ship_form.object.stock_location.name %></strong>
-          </h3>
+          </h4>
 
-          <table class="stock-contents" data-hook="stock-contents">
+          <table class="table stock-contents" data-hook="stock-contents">
             <colgroup>
               <col style="width: 10%;" />
               <col style="width: 60%;" />
@@ -18,10 +20,12 @@
               <col style="width: 20%;" />
             </colgroup>
             <thead>
-              <th></th>
-              <th align='left'><%= Spree.t(:item) %></th>
-              <th><%= Spree.t(:qty) %></th>
-              <th><%= Spree.t(:price) %></th>
+              <tr class="active">
+                <th></th>
+                <th align='left'><%= Spree.t(:item) %></th>
+                <th><%= Spree.t(:qty) %></th>
+                <th><%= Spree.t(:price) %></th>
+              </tr>
             </thead>
             <tbody>
               <% ship_form.object.manifest.each do |item| %>
@@ -35,14 +39,14 @@
             </tbody>
           </table>
 
-          <h5 class="stock-shipping-method-title"><%= Spree.t(:shipping_method) %></h5>
-          <ul class="field radios shipping-methods">
+          <h4 class="stock-shipping-method-title"><%= Spree.t(:shipping_method) %></h4>
+          <ul class="list-group shipping-methods">
             <% ship_form.object.shipping_rates.each do |rate| %>
-              <li class="shipping-method">
+              <li class="list-group-item shipping-method">
                 <label>
                   <%= ship_form.radio_button :selected_shipping_rate_id, rate.id %>
                   <span class="rate-name"><%= rate.name %></span>
-                  <span class="rate-cost"><%= rate.display_cost %></span>
+                  <span class="badge rate-cost"><%= rate.display_cost %></span>
                 </label>
               </li>
             <% end %>
@@ -56,7 +60,7 @@
           <h3 class="stock-location" data-hook="stock-location">
             <%= Spree.t(:unshippable_items) %>
           </h3>
-          <table class="stock-contents" data-hook="stock-missing">
+          <table class="table stock-contents" data-hook="stock-missing">
             <colgroup>
               <col style="width: 10%;" />
               <col style="width: 60%;" />
@@ -86,15 +90,15 @@
     </div>
     <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>
-        <%= form.label :special_instructions, Spree.t(:shipping_instructions) %><br />
-        <%= form.text_area :special_instructions, :cols => 40, :rows => 7 %>
+        <h4><%= Spree.t(:shipping_instructions) %></h4>
+        <%= form.text_area :special_instructions, :cols => 40, :rows => 4, :class => "form-control" %>
       </p>
     <% end %>
   </div>
-</fieldset>
+</div>
 
 <br />
 
-<div class="form-buttons" data-hook="buttons">
-  <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
+<div class="well text-right form-buttons" data-hook="buttons">
+  <%= submit_tag Spree.t(:save_and_continue), :class => 'btn btn-lg btn-success' %>
 </div>

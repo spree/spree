@@ -6,11 +6,11 @@
       <% labels = filter[:labels] || filter[:conds].map {|m,c| [m,m]} %>
       <% next if labels.empty? %>
       <div class="navigation" data-hook="navigation">
-        <h6 class="filter-title"> <%= filter[:name] %> </h6>
-        <ul class="filter_choices">
+        <h4 class="filter-title"> <%= filter[:name] %> </h4>
+        <ul class="list-group">
           <% labels.each do |nm,val| %>
             <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
-            <li class="nowrap">
+            <li class="list-group-item">
               <input type="checkbox"
                      id="<%= label %>"
                      name="search[<%= filter[:scope].to_s %>][]"
@@ -22,6 +22,6 @@
         </ul>
       </div>
     <% end %>
-    <%= submit_tag Spree.t(:search), :name => nil %>
+    <%= submit_tag Spree.t(:search), :name => nil, :class => 'btn btn-primary' %>
   <% end %>
 <% end %>

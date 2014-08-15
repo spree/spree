@@ -16,4 +16,5 @@ describe "Template rendering" do
     visit spree.root_path
     find('link[rel=canonical]')[:href].should eql('http://spreestore.example.com/')
   end
+
 end

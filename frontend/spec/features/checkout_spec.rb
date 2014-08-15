@@ -23,12 +23,12 @@ describe "Checkout", inaccessible: true do
       end
 
       it "should default checkbox to checked", inaccessible: true do
-        find('input#order_use_billing').should be_checked
+        expect(find('input#order_use_billing')).to be_checked
       end
 
       it "should remain checked when used and visitor steps back to address step", :js => true do
         fill_in_address
-        find('input#order_use_billing').should be_checked
+        expect(find('input#order_use_billing')).to be_checked
       end
     end
 
@@ -40,8 +40,8 @@ describe "Checkout", inaccessible: true do
       end
 
       specify do
-        Spree::Order.count.should == 1
-        Spree::Order.last.state.should == "address"
+        expect(Spree::Order.count).to eq 1
+        expect(Spree::Order.last.state).to eq "address"
       end
     end
 
@@ -58,12 +58,13 @@ describe "Checkout", inaccessible: true do
         click_button "Checkout"
 
         fill_in "order_email", :with => "test@example.com"
+        click_on 'Continue'
         fill_in_address
 
         click_button "Save and Continue"
-        page.should_not have_content("undefined method `promotion'")
+        expect(page).to_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        page.should have_content("Shipping total $10.00")
+        expect(page).to have_content("Shipping total $10.00")
       end
     end
 
@@ -72,6 +73,8 @@ describe "Checkout", inaccessible: true do
       before do
         add_mug_to_cart
         click_button "Checkout"
+        fill_in "order_email", :with => "test@example.com"
+        click_on 'Continue'
       end
 
       it "should not show 'Free Shipping' when there are no shipments" do
@@ -97,7 +100,7 @@ describe "Checkout", inaccessible: true do
       Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
     end
 
-    it "redirects to payment page", inaccessible: true do
+    it "redirects to payment page", js: true do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"
@@ -106,8 +109,8 @@ describe "Checkout", inaccessible: true do
       fill_in "Card Code", :with => '123'
       click_button "Save and Continue"
       click_button "Place Order"
-      page.should have_content("Bogus Gateway: Forced failure")
-      page.current_url.should include("/checkout/payment")
+      expect(page).to have_content("Bogus Gateway: Forced failure")
+      expect(page.current_url).to include("/checkout/payment")
     end
   end
 
@@ -122,14 +125,15 @@ describe "Checkout", inaccessible: true do
       click_button "Checkout"
 
       fill_in "order_email", :with => "test@example.com"
+      click_on 'Continue'
       fill_in_address
 
       click_button "Save and Continue"
       click_button "Save and Continue"
       click_button "Save and Continue"
 
-      continue_button = find(".continue")
-      continue_button.value.should == "Place Order"
+      continue_button = find("#checkout .btn-success")
+      expect(continue_button.value).to eq "Place Order"
     end
   end
 
@@ -158,9 +162,9 @@ describe "Checkout", inaccessible: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_payment').submit(function(){return false;})")
 
-      page.should_not have_selector('input.button[disabled]')
+      expect(page).to_not have_selector('input.btn[disabled]')
       click_button "Save and Continue"
-      page.should have_selector('input.button[disabled]')
+      expect(page).to have_selector('input.btn[disabled]')
     end
 
     it "prevents double clicking the confirm button on checkout", :js => true do
@@ -170,9 +174,9 @@ describe "Checkout", inaccessible: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_confirm').submit(function(){return false;})")
 
-      page.should_not have_selector('input.button[disabled]')
+      expect(page).to_not have_selector('input.btn[disabled]')
       click_button "Place Order"
-      page.should have_selector('input.button[disabled]')
+      expect(page).to have_selector('input.btn[disabled]')
     end
   end
 
@@ -236,7 +240,7 @@ describe "Checkout", inaccessible: true do
       }.not_to change { Spree::CreditCard.count }
 
       click_on "Place Order"
-      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+      expect(current_path).to match(spree.order_path(Spree::Order.last))
     end
 
     it "allows user to enter a new source" do
@@ -252,7 +256,7 @@ describe "Checkout", inaccessible: true do
       }.to change { Spree::CreditCard.count }.by 1
 
       click_on "Place Order"
-      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+      expect(current_path).to match(spree.order_path(Spree::Order.last))
     end
   end
 
@@ -264,6 +268,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_on "Checkout"
       fill_in "order_email", :with => "test@example.com"
+      click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -278,7 +283,7 @@ describe "Checkout", inaccessible: true do
       click_on "Save and Continue"
       click_on "Save and Continue"
 
-      expect(current_path).to eql(spree.order_path(Spree::Order.last))
+      expect(current_path).to match(spree.order_path(Spree::Order.last))
     end
   end
 
@@ -287,6 +292,7 @@ describe "Checkout", inaccessible: true do
       add_mug_to_cart
       click_on "Checkout"
       fill_in "order_email", :with => "test@example.com"
+      click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
       click_on "Save and Continue"
@@ -353,6 +359,7 @@ describe "Checkout", inaccessible: true do
       click_on "Checkout"
 
       fill_in "order_email", :with => "test@example.com"
+      click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
 
@@ -381,7 +388,7 @@ describe "Checkout", inaccessible: true do
     context "doesn't fill in coupon code input" do
       it "advances just fine" do
         click_on "Save and Continue"
-        expect(current_path).to eql(spree.order_path(Spree::Order.last))
+        expect(current_path).to match(spree.order_path(Spree::Order.last))
       end
     end
   end
