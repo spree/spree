@@ -24,10 +24,10 @@ module Spree
         if return_item.exchange_required?
           add_reimbursement_type(return_item, exchange_reimbursement_type)
         elsif return_item.override_reimbursement_type.present?
-          add_reimbursement_type(return_item, return_item.override_reimbursement_type)
+          add_reimbursement_type(return_item, return_item.override_reimbursement_type.class)
         elsif return_item.preferred_reimbursement_type.present?
           next unless valid_preferred_reimbursement_type?(return_item)
-          add_reimbursement_type(return_item, return_item.preferred_reimbursement_type)
+          add_reimbursement_type(return_item, return_item.preferred_reimbursement_type.class)
         elsif past_reimbursable_time_period?(return_item)
           add_reimbursement_type(return_item, expired_reimbursement_type)
         else
