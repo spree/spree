@@ -6,9 +6,9 @@ module Spree
       let(:return_item)   { create(:return_item) }
       let(:return_items)  { [ return_item ] }
       let(:reimbursement_type_engine) { Spree::Reimbursement::ReimbursementTypeEngine.new(return_items) }
-      let(:expired_reimbursement_type) { double("Spree::ExpiredReimbursementType") }
-      let(:override_reimbursement_type) { double("Spree::OverrideReimbursementType") }
-      let(:preferred_reimbursement_type) { double("Spree::PreferredReimbursementType") }
+      let(:expired_reimbursement_type) { Spree::ReimbursementType::OriginalPayment }
+      let(:override_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
+      let(:preferred_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
       let(:calculated_reimbursement_types) { subject }
       let(:all_reimbursement_types) {[
                                         reimbursement_type_engine.default_reimbursement_type,
@@ -19,6 +19,14 @@ module Spree
                                     ]}
 
       subject { reimbursement_type_engine.calculate_reimbursement_types }
+
+      shared_examples_for "reimbursement type hash" do
+        it "contain all keys that respond to reimburse" do
+          calculated_reimbursement_types.keys.each do |r_type|
+            r_type.should respond_to :reimburse
+          end
+        end
+      end
 
       before do
         reimbursement_type_engine.expired_reimbursement_type = expired_reimbursement_type
@@ -38,6 +46,8 @@ module Spree
             calculated_reimbursement_types[r_type].should == []
           end
         end
+
+        it_should_behave_like 'reimbursement type hash'
       end
 
       context 'the return item does not require exchange' do
@@ -45,14 +55,16 @@ module Spree
           before { return_item.stub(:override_reimbursement_type).and_return(override_reimbursement_type) }
 
           it 'returns a hash with the override reimbursement type associated to the return items' do
-            calculated_reimbursement_types[override_reimbursement_type].should == return_items
+            calculated_reimbursement_types[override_reimbursement_type.class].should == return_items
           end
 
           it 'the return items are not included in any of the other reimbursement types' do
-            (all_reimbursement_types - [override_reimbursement_type]).each do |r_type|
+            (all_reimbursement_types - [override_reimbursement_type.class]).each do |r_type|
               calculated_reimbursement_types[r_type].should == []
             end
           end
+
+          it_should_behave_like 'reimbursement type hash'
         end
 
         context 'the return item does not have an override reimbursement type' do
@@ -71,18 +83,22 @@ module Spree
                   calculated_reimbursement_types[r_type].should == []
                 end
               end
+
+              it_should_behave_like 'reimbursement type hash'
             end
 
             context 'the reimbursement type is valid for the return item' do
               it 'returns a hash with the expired reimbursement type associated to the return items' do
-                calculated_reimbursement_types[preferred_reimbursement_type].should == return_items
+                calculated_reimbursement_types[preferred_reimbursement_type.class].should == return_items
               end
 
               it 'the return items are not included in any of the other reimbursement types' do
-                (all_reimbursement_types - [preferred_reimbursement_type]).each do |r_type|
+                (all_reimbursement_types - [preferred_reimbursement_type.class]).each do |r_type|
                   calculated_reimbursement_types[r_type].should == []
                 end
               end
+
+              it_should_behave_like 'reimbursement type hash'
             end
           end
 
@@ -99,6 +115,8 @@ module Spree
                   calculated_reimbursement_types[r_type].should == []
                 end
               end
+
+              it_should_behave_like 'reimbursement type hash'
             end
 
             context 'the return item is within the time constraint' do
@@ -111,6 +129,8 @@ module Spree
                   calculated_reimbursement_types[r_type].should == []
                 end
               end
+
+              it_should_behave_like 'reimbursement type hash'
             end
           end
         end
