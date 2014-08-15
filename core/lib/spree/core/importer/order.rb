@@ -144,7 +144,7 @@ module Spree
               name: source_hash[:name],
               payment_method: payment.payment_method,
               gateway_customer_profile_id: source_hash[:gateway_customer_profile_id],
-              gateway_payment_profile_id: source_hash[:gateway_customer_profile_id],
+              gateway_payment_profile_id: source_hash[:gateway_payment_profile_id],
               imported: true
             )
           rescue Exception => e
