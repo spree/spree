@@ -3,8 +3,6 @@ require 'spec_helper'
 describe "Customer Details" do
   stub_authorization!
 
-  let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
-  let(:order) { create(:completed_order_with_totals) }
   let(:country) { create(:country, :name => "Kangaland") }
   let(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
