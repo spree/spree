@@ -211,6 +211,14 @@ describe Spree::StockItem do
           end.not_to change { subject.variant.reload.updated_at }
         end
       end
+
+      context "when a new stock location is added" do
+        it "touches its variant" do
+          expect do
+            create(:stock_location)
+          end.to change { subject.variant.reload.updated_at }
+        end
+      end
     end
   end
 
