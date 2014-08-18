@@ -33,10 +33,13 @@ module Spree
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
+
+    scope :checkout, -> { with_state('checkout') }
     scope :completed, -> { with_state('completed') }
     scope :pending, -> { with_state('pending') }
     scope :processing, -> { with_state('processing') }
     scope :failed, -> { with_state('failed') }
+
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
 

@@ -520,12 +520,13 @@ describe Spree::Shipment do
       end
 
       context "order has pending payments" do
-        before do
-          @order.payments << create(:payment)
+        let(:payment) do
+          payment = @order.payments.first
+          payment.update_attribute :state, 'pending'
+          payment
         end
 
         it "can fully capture an authorized payment" do
-          payment = @order.payments.first
           payment.update_attribute(:amount, @order.total)
 
           expect(payment.amount).to eq payment.uncaptured_amount
@@ -534,7 +535,6 @@ describe Spree::Shipment do
         end
 
         it "can partially capture an authorized payment" do
-          payment = @order.payments.first
           payment.update_attribute(:amount, @order.total + 50)
 
           expect(payment.amount).to eq payment.uncaptured_amount

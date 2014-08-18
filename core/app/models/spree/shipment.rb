@@ -186,6 +186,7 @@ module Spree
       pending_payments =  order.pending_payments
                             .sort_by(&:uncaptured_amount).reverse
 
+      # NOTE Do we really need to force orders to have pending payments on dispatch?
       if pending_payments.empty?
         raise Spree::Core::GatewayError, Spree.t(:no_pending_payments)
       else

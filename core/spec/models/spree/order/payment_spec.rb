@@ -6,7 +6,6 @@ module Spree
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context "processing payments" do
-
       before do
         # So that Payment#purchase! is called during processing
         Spree::Config[:auto_capture] = true
@@ -15,10 +14,10 @@ module Spree
         order.stub :total => 100
       end
 
-      it 'processes all payments' do
+      it 'processes all checkout payments' do
         payment_1 = create(:payment, :amount => 50)
         payment_2 = create(:payment, :amount => 50)
-        order.stub(:pending_payments).and_return([payment_1, payment_2])
+        order.stub(:unprocessed_payments).and_return([payment_1, payment_2])
 
         order.process_payments!
         updater.update_payment_state
@@ -32,7 +31,7 @@ module Spree
         payment_1 = create(:payment, :amount => 50)
         payment_2 = create(:payment, :amount => 50)
         payment_3 = create(:payment, :amount => 50)
-        order.stub(:pending_payments).and_return([payment_1, payment_2, payment_3])
+        order.stub(:unprocessed_payments).and_return([payment_1, payment_2, payment_3])
 
         order.process_payments!
         updater.update_payment_state
@@ -55,7 +54,6 @@ module Spree
     end
 
     context "ensure source attributes stick around" do
-
       # For the reason of this test, please see spree/spree_gateway#132
       it "does not have inverse_of defined" do
         expect(Spree::Order.reflections[:payments].options[:inverse_of]).to be_nil
@@ -79,7 +77,7 @@ module Spree
         }
 
         persisted_order.update_attributes(attributes)
-        expect(persisted_order.pending_payments.last.source.number).to be_present
+        expect(persisted_order.unprocessed_payments.last.source.number).to be_present
       end
     end
 
@@ -97,7 +95,7 @@ module Spree
 
     context "#process_payments!" do
       let(:payment) { stub_model(Spree::Payment) }
-      before { order.stub :pending_payments => [payment], :total => 10 }
+      before { order.stub :unprocessed_payments => [payment], :total => 10 }
 
       it "should process the payments" do
         payment.should_receive(:process!)

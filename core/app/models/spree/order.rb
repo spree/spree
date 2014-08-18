@@ -405,7 +405,11 @@ module Spree
     end
 
     def pending_payments
-      payments.select { |payment| payment.checkout? || payment.pending? }
+      payments.select { |payment| payment.pending? }
+    end
+
+    def unprocessed_payments
+      payments.select { |payment| payment.checkout? }
     end
 
     # processes any pending payments and must return a boolean as it's
@@ -425,7 +429,7 @@ module Spree
     #   :allow_checkout_on_gateway_error is set to false
     #
     def process_payments!
-      pending_payments.each do |payment|
+      unprocessed_payments.each do |payment|
         break if payment_total >= total
 
         payment.process!
