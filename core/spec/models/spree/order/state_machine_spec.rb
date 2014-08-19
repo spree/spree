@@ -100,7 +100,7 @@ describe Spree::Order do
                               stub_model(Spree::InventoryUnit, :variant => variant) ]}
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
-      shipment.stub :inventory_units => inventory_units
+      shipment.stub :inventory_units => inventory_units, :order => order
       order.stub :shipments => [shipment]
       shipment
     end
