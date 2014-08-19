@@ -32,19 +32,25 @@ namespace :exchanges do
         end
 
         order.reload.update!
+        while order.next; end
 
-        card_to_reuse = original_order.valid_credit_cards.first
-        card_to_reuse = original_order.user.credit_cards.default.first if !card_to_reuse && original_order.user
-        Spree::Payment.create!(order: order,
-                               payment_method_id: card_to_reuse.try(:payment_method_id),
-                               source: card_to_reuse,
-                               amount: order.total)
+        unless order.payments.present?
+          card_to_reuse = original_order.valid_credit_cards.first
+          card_to_reuse = original_order.user.credit_cards.default.first if !card_to_reuse && original_order.user
+          Spree::Payment.create!(order: order,
+                                 payment_method_id: card_to_reuse.try(:payment_method_id),
+                                 source: card_to_reuse,
+                                 amount: order.total)
+        end
 
+        # the order builds a shipment on its own on transition to delivery, but we want
+        # the original exchange shipment, not the built one
+        order.shipments.destroy_all
         shipment.update_attributes!(order_id: order.id)
         order.update_attributes!(state: "confirm")
 
-        order.next!
-        order.reload.update!
+        order.reload.next!
+        order.update!
         order.finalize!
 
         failed_orders << order unless order.completed? && order.valid?

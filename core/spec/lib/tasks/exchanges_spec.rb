@@ -14,6 +14,7 @@ describe "exchanges:charge_unreturned_items" do
     let(:return_item_1) { create(:exchange_return_item, inventory_unit: order.inventory_units.first) }
     let(:return_item_2) { create(:exchange_return_item, inventory_unit: order.inventory_units.last) }
     let!(:rma) { create(:return_authorization, order: order, return_items: [return_item_1, return_item_2]) }
+    let!(:tax_rate) { create(:tax_rate, zone: order.tax_zone, tax_category: return_item_2.exchange_variant.tax_category) }
 
     context "fewer than the config allowed days have passed" do
 
@@ -56,6 +57,8 @@ describe "exchanges:charge_unreturned_items" do
 
       it "moves the shipment for the unreturned items to the new order" do
         subject.invoke
+        new_order = Spree::Order.last
+        expect(new_order.shipments.count).to eq 1
         expect(return_item_2.reload.exchange_shipment.order).to eq Spree::Order.last
       end
 
@@ -76,15 +79,15 @@ describe "exchanges:charge_unreturned_items" do
         expect(new_order.credit_cards.first).to eq order.valid_credit_cards.first
       end
 
-      it "authorizes the order for the full amount of the unreturned items" do
-        subject.invoke
+      it "authorizes the order for the full amount of the unreturned items including taxes" do
+        expect { subject.invoke }.to change { Spree::Payment.count }.by(1)
         new_order = Spree::Order.last
-        expected_amount = return_item_2.reload.exchange_variant.price
+        expected_amount = return_item_2.reload.exchange_variant.price + new_order.additional_tax_total + new_order.included_tax_total
         expect(new_order.total).to eq expected_amount
         payment = new_order.payments.first
         expect(payment.amount).to eq expected_amount
         expect(payment).to be_pending
-        expect(new_order.item_total).to eq expected_amount
+        expect(new_order.item_total).to eq return_item_2.reload.exchange_variant.price
       end
 
       it "does not attempt to create a new order for the item more than once" do
@@ -98,7 +101,7 @@ describe "exchanges:charge_unreturned_items" do
         before { Spree::Order.any_instance.stub(:valid_credit_cards) { [] } }
 
         it "attempts to use the user's default card" do
-          subject.invoke
+          expect { subject.invoke }.to change { Spree::Payment.count }.by(1)
           new_order = Spree::Order.last
           expect(new_order.credit_cards).to be_present
           expect(new_order.credit_cards.first).to eq credit_card
