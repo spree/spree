@@ -21,9 +21,10 @@
       <%= f.fields_for :return_items, @form_return_items do |item_fields| %>
         <% return_item = item_fields.object %>
         <% inventory_unit = return_item.inventory_unit %>
+        <% editable = inventory_unit.shipped? && allow_return_item_changes && return_item.reimbursement.nil? %>
         <tr>
           <td class="align-center" class="inventory-unit-checkbox">
-            <% if inventory_unit.shipped? && allow_return_item_changes %>
+            <% if editable %>
               <%= item_fields.hidden_field :inventory_unit_id %>
               <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
             <% end %>
@@ -37,24 +38,22 @@
             <%= return_item.display_pre_tax_amount %>
           </td>
           <td class="align-center">
-            <% if inventory_unit.shipped? && allow_return_item_changes %>
+            <% if editable %>
               <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
             <% else %>
               <%= return_item.display_pre_tax_amount %>
             <% end %>
           </td>
           <td>
-            <% if inventory_unit.shipped? && allow_return_item_changes %>
+            <% if editable %>
               <%= item_fields.select :preferred_reimbursement_type_id, @reimbursement_types.collect{|r|[r.name.humanize, r.id]}, {include_blank: true}, {class: 'select2 fullwidth'} %>
             <% end %>
           </td>
           <td class="align-center">
-            <% if inventory_unit.shipped? && allow_return_item_changes %>
-              <% if return_item.exchange_processed? %>
-                <%= return_item.exchange_variant.options_text %>
-              <% else %>
-                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth return-item-exchange-selection" } %>
-              <% end %>
+            <% if editable %>
+              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth return-item-exchange-selection" } %>
+            <% elsif return_item.exchange_processed? %>
+              <%= return_item.exchange_variant.options_text %>
             <% end %>
           </td>
         </tr>
