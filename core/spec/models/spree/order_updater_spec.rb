@@ -201,7 +201,7 @@ module Spree
       end
 
       it "updates each shipment" do
-        shipment = stub_model(Spree::Shipment)
+        shipment = stub_model(Spree::Shipment, :order => order)
         shipments = [shipment]
         order.stub :shipments => shipments
         shipments.stub :states => []
@@ -210,6 +210,24 @@ module Spree
         shipments.stub :shipped => []
 
         shipment.should_receive(:update!).with(order)
+        updater.update_shipments
+      end
+
+      it "refreshes shipment rates" do
+        shipment = stub_model(Spree::Shipment, :order => order)
+        shipments = [shipment]
+        order.stub :shipments => shipments
+
+        shipment.should_receive(:refresh_rates)
+        updater.update_shipments
+      end
+
+      it "updates the shipment amount" do
+        shipment = stub_model(Spree::Shipment, :order => order)
+        shipments = [shipment]
+        order.stub :shipments => shipments
+
+        shipment.should_receive(:update_amounts)
         updater.update_shipments
       end
     end

@@ -508,6 +508,7 @@ describe Spree::Shipment do
         Spree::Config[:auto_capture_on_dispatch] = true
         @order = create :completed_order_with_pending_payment
         @shipment = @order.shipments.first
+        @shipment.cost = @order.ship_total
       end
 
       it "shipments ready for an order if the order is unpaid" do
