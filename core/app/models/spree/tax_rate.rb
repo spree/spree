@@ -187,6 +187,8 @@ module Spree
         label = ""
         label << (name.present? ? name : tax_category.name) + " "
         label << (show_rate_in_label? ? "#{amount * 100}%" : "")
+        label << " (#{Spree.t(:included_in_price)})" if included_in_price?
+        label
       end
 
   end
