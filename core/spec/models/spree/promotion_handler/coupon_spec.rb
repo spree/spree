@@ -10,7 +10,41 @@ module Spree
       it "returns self in apply" do
         expect(subject.apply).to be_a Coupon
       end
+     
+      context 'status messages' do 
+        let(:coupon) { Coupon.new(order) }
 
+        describe "#set_success_code" do
+          let(:status) { :coupon_code_applied }
+          subject { coupon.set_success_code status }
+
+          it 'should have status_code' do
+            subject
+            expect(coupon.status_code).to eq(status)
+          end
+
+          it 'should have success message' do
+            subject
+            expect(coupon.success).to eq(Spree.t(status))
+          end
+        end
+
+        describe "#set_error_code" do
+          let(:status) { :coupon_code_not_found }
+ 
+          subject { coupon.set_error_code status }
+
+          it 'should have status_code' do
+            subject
+            expect(coupon.status_code).to eq(status)
+          end
+
+          it 'should have error message' do
+            subject
+            expect(coupon.error).to eq(Spree.t(status))
+          end
+        end
+      end
 
       context "coupon code promotion doesnt exist" do
         before { Promotion.create name: "promo", :code => nil }
