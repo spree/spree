@@ -363,11 +363,11 @@ With parameters such as these:
 
 <%= json (
   {
-    "order": {
-      "shipments_attributes": {
-        "0": {
-          "selected_shipping_rate_id": 1,
-          "id": 1
+    order: {
+      shipments_attributes: {
+        "0" => {
+          selected_shipping_rate_id: 1,
+          id: 1
         }
       }
     }
