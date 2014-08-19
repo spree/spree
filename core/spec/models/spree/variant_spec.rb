@@ -400,4 +400,15 @@ describe Spree::Variant, :type => :model do
       expect(variant.stock_movements.to_a).not_to be_empty
     end
   end
+
+  describe "in_stock scope" do
+    it "returns all in stock variants" do
+      in_stock_variant = create(:variant)
+      out_of_stock_variant = create(:variant)
+
+      in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
+
+      expect(Spree::Variant.in_stock).to eq [in_stock_variant]
+    end
+  end
 end

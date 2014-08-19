@@ -41,6 +41,8 @@ module Spree
 
     after_touch :clear_in_stock_cache
 
+    scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
