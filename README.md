@@ -1,7 +1,7 @@
 BLUE APRON SPECIFIC
 -------------------
 
-The following 2-3-dev contains Blue Apron specific code that is awaiting acceptence into Spree master.
+The following branch ```2-3-dev``` contains Blue Apron specific code that is awaiting acceptence into Spree master.
 
 - [ ] API GET #show for Promotions, https://github.com/spree/spree/pull/5233
 
