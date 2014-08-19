@@ -51,6 +51,7 @@ module Spree
     scope :eligible, -> { where(eligible: true) }
     scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
+    scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
     scope :included, -> { where(included: true)  }

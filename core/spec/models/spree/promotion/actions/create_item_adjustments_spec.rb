@@ -69,19 +69,29 @@ module Spree
         context "#compute_amount" do
           before { promotion.promotion_actions = [action] }
 
-          it "calls compute on the calculator" do
-            action.calculator.should_receive(:compute).with(line_item)
-            action.compute_amount(line_item)
-          end
-
-          context "calculator returns amount greater than item total" do
-            before do
-              action.calculator.should_receive(:compute).with(line_item).and_return(300)
-              line_item.stub(amount: 100)
+          context "when the adjustable is actionable" do
+            it "calls compute on the calculator" do
+              action.calculator.should_receive(:compute).with(line_item)
+              action.compute_amount(line_item)
             end
 
-            it "does not exceed it" do
-              action.compute_amount(line_item).should eql(-100)
+            context "calculator returns amount greater than item total" do
+              before do
+                action.calculator.should_receive(:compute).with(line_item).and_return(300)
+                line_item.stub(amount: 100)
+              end
+
+              it "does not exceed it" do
+                action.compute_amount(line_item).should eql(-100)
+              end
+            end
+          end
+
+          context "when the adjustable is not actionable" do
+            before { allow(promotion).to receive(:line_item_actionable?) { false } }
+
+            it 'returns 0' do
+              expect(action.compute_amount(line_item)).to eql(0)
             end
           end
         end
