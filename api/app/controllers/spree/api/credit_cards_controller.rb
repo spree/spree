@@ -4,8 +4,8 @@ module Spree
       before_filter :user
 
       def index
-        @credit_cards = Spree::CreditCard
-          .accessible_by(current_ability, :read)
+        @credit_cards = user
+          .credit_cards
           .with_payment_profile
           .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         respond_with(@credit_cards)

@@ -4,13 +4,20 @@ module Spree
   describe Api::CreditCardsController do
     render_views
 
-    let!(:card) { create(:credit_card) }
+    let!(:admin_user) do
+      user = Spree.user_class.new(:email => "spree@example.com", :id => 1)
+      user.generate_spree_api_key!
+      user.stub(:has_spree_role?).with('admin').and_return(true)
+      user
+    end
 
-    let(:current_api_user) do
-      user = Spree.user_class.new(:email => "spree@example.com")
+    let!(:normal_user) do
+      user = Spree.user_class.new(:email => "spree2@example.com", :id => 2)
       user.generate_spree_api_key!
       user
     end
+
+    let!(:card) { create(:credit_card, :user_id => admin_user.id, gateway_customer_profile_id: "random") }
 
     before do
       stub_authentication!
@@ -21,26 +28,46 @@ module Spree
       response.status.should == 404
     end
 
-    context "user does not have a credit card" do
+    context "calling user is in admin role" do
       let(:current_api_user) do
-        user = Spree.user_class.new(:email => "spree2@example.com", :id => 2)
-        user.generate_spree_api_key!
+        user = admin_user
         user
       end
 
-      it "can not view any credit cards" do
-        api_get :index, user_id: current_api_user.id
+      it "no credit cards exist for user" do
+        api_get :index, user_id: normal_user.id
 
         response.status.should == 200
         json_response["pages"].should == 0
       end
+
+      it "can view all credit cards for user" do
+        api_get :index, user_id: current_api_user.id
+
+        response.status.should == 200
+        json_response["pages"].should == 1
+        json_response["current_page"].should == 1
+        json_response["credit_cards"].length.should == 1
+        json_response["credit_cards"].first["id"].should == card.id
+      end
     end
 
-    context "user has a credit card " do
-      let!(:card) { create(:credit_card, user_id: current_api_user.id, gateway_customer_profile_id: "random") }
+    context "calling user is not in admin role" do
+      let(:current_api_user) do
+        user = normal_user
+        user
+      end
 
-      it "can view all of their own credit cards" do
-        api_get :index, user_id: current_api_user.id
+      let!(:card) { create(:credit_card, :user_id => normal_user.id, gateway_customer_profile_id: "random") }
+
+      it "can not view user" do
+        api_get :index, user_id: admin_user.id
+
+        response.status.should == 404
+      end
+
+      it "can view own credit cards" do
+        api_get :index, user_id: normal_user.id
 
         response.status.should == 200
         json_response["pages"].should == 1
