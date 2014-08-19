@@ -2,7 +2,7 @@ module Spree
   module PromotionHandler
     class Coupon
       attr_reader :order
-      attr_accessor :error, :success
+      attr_accessor :error, :success, :status_code
 
       def initialize(order)
         @order = order
@@ -14,14 +14,24 @@ module Spree
             handle_present_promotion(promotion)
           else
             if Promotion.with_coupon_code(order.coupon_code).try(:expired?)
-              self.error = Spree.t(:coupon_code_expired)
+              set_error_code :coupon_code_expired
             else
-              self.error = Spree.t(:coupon_code_not_found)
+              set_error_code :coupon_code_not_found
             end
           end
         end
 
         self
+      end
+
+      def set_success_code(c)
+        @status_code = c
+        @success = Spree.t(c)
+      end
+
+      def set_error_code(c)
+        @status_code = c
+        @error = Spree.t(c)
       end
 
       def promotion
@@ -48,20 +58,20 @@ module Spree
         if result
           determine_promotion_application_result
         else
-          self.error = Spree.t(:coupon_code_unknown_error)
+          set_error_code :coupon_code_unknown_error
         end
       end
 
       def promotion_usage_limit_exceeded
-        self.error = Spree.t(:coupon_code_max_usage)
+        set_error_code :coupon_code_max_usage
       end
 
       def ineligible_for_this_order
-        self.error = Spree.t(:coupon_code_not_eligible)
+        set_error_code :coupon_code_not_eligible
       end
 
       def promotion_applied
-        self.error = Spree.t(:coupon_code_already_applied)
+        set_error_code :coupon_code_already_applied
       end
 
       def promotion_exists_on_order?(order, promotion)
@@ -82,15 +92,15 @@ module Spree
         if discount.eligible
           order.update_totals
           order.persist_totals
-          self.success = Spree.t(:coupon_code_applied)
+          set_success_code :coupon_code_applied
         else
           # if the promotion exists on an order, but wasn't found above,
           # we've already selected a better promotion
           if order.promotions.with_coupon_code(order.coupon_code)
-            self.error = Spree.t(:coupon_code_better_exists)
+            set_error_code :coupon_code_better_exists
           else
             # if the promotion was created after the order
-            self.error = Spree.t(:coupon_code_not_found)
+            set_error_code :coupon_code_not_found
           end
         end
       end
