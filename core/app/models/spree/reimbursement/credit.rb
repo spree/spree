@@ -15,7 +15,7 @@ module Spree
     end
 
     def description
-      Spree.t('credit')
+      creditable.class.name.demodulize
     end
 
     def display_amount
