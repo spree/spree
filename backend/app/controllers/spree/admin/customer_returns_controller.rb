@@ -3,8 +3,8 @@ module Spree
     class CustomerReturnsController < ResourceController
       belongs_to 'spree/order', find_by: :number
 
-      before_filter :parent # ensure order gets loaded to support our pseudo parent-child relationship
-      before_filter :load_form_data, only: [:new, :edit]
+      before_action :parent # ensure order gets loaded to support our pseudo parent-child relationship
+      before_action :load_form_data, only: [:new, :edit]
 
       create.before :build_return_items_from_params
       create.fails  :load_form_data

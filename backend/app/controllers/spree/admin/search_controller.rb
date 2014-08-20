@@ -2,7 +2,7 @@ module Spree
   module Admin
     class SearchController < Spree::Admin::BaseController
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
-      before_filter :check_json_authenticity, :only => :index
+      before_action :check_json_authenticity, only: :index
       respond_to :json
 
       # TODO: Clean this up by moving searching out to user_class_extensions

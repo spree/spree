@@ -2,8 +2,8 @@ module Spree
   module Api
     class ShipmentsController < Spree::Api::BaseController
 
-      before_filter :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
-      before_filter :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
+      before_action :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
+      before_action :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
 
       def create
         @order = Spree::Order.find_by!(number: params[:shipment][:order_id])

@@ -8,7 +8,7 @@ module Spree
       destroy.after :update_totals
       update.after :update_totals
 
-      skip_before_filter :load_resource, only: [:toggle_state, :edit, :update, :destroy]
+      skip_before_action :load_resource, only: [:toggle_state, :edit, :update, :destroy]
 
       def destroy
         find_adjustment

@@ -3,10 +3,10 @@ module Spree
     class PaymentsController < Spree::Admin::BaseController
       include Spree::Backend::Callbacks
 
-      before_filter :load_order, :only => [:create, :new, :index, :fire]
-      before_filter :load_payment, :except => [:create, :new, :index]
-      before_filter :load_data
-      before_filter :can_not_transition_without_customer_info
+      before_action :load_order, only: [:create, :new, :index, :fire]
+      before_action :load_payment, except: [:create, :new, :index]
+      before_action :load_data
+      before_action :can_not_transition_without_customer_info
 
       respond_to :html
 

@@ -1,6 +1,6 @@
 class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
-  before_filter :load_promotion, :only => [:create, :destroy]
-  before_filter :validate_promotion_action_type, :only => :create
+  before_action :load_promotion, only: [:create, :destroy]
+  before_action :validate_promotion_action_type, only: :create
 
   def create
     @calculators = Spree::Promotion::Actions::CreateAdjustment.calculators

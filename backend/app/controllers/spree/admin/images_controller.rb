@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ImagesController < ResourceController
-      before_filter :load_data
+      before_action :load_data
 
       create.before :set_viewable
       update.before :set_viewable

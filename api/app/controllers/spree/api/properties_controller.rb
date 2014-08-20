@@ -2,7 +2,7 @@ module Spree
   module Api
     class PropertiesController < Spree::Api::BaseController
 
-      before_filter :find_property, only: [:show, :update, :destroy]
+      before_action :find_property, only: [:show, :update, :destroy]
 
       def index
         @properties = Spree::Property.accessible_by(current_ability, :read)

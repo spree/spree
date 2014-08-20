@@ -2,7 +2,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Backend::Callbacks
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
-  before_filter :load_resource, :except => [:update_positions]
+  before_action :load_resource, except: :update_positions
   rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
 
   respond_to :html

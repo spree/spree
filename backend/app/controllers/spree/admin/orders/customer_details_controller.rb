@@ -2,7 +2,7 @@ module Spree
   module Admin
     module Orders
       class CustomerDetailsController < Spree::Admin::BaseController
-        before_filter :load_order
+        before_action :load_order
 
         def show
           edit

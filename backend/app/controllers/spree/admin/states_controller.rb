@@ -2,7 +2,7 @@ module Spree
   module Admin
     class StatesController < ResourceController
       belongs_to 'spree/country'
-      before_filter :load_data
+      before_action :load_data
 
       def index
         respond_with(@collection) do |format|

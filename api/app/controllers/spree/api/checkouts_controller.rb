@@ -1,12 +1,12 @@
 module Spree
   module Api
     class CheckoutsController < Spree::Api::BaseController
-      before_filter :associate_user, only: :update
+      before_action :associate_user, only: :update
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
       # This before_filter comes from Spree::Core::ControllerHelpers::Order
-      skip_before_filter :set_current_order
+      skip_before_action :set_current_order
 
       def next
         load_order(true)

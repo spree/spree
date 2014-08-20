@@ -1,7 +1,7 @@
 module Spree
   module Api
     class CreditCardsController < Spree::Api::BaseController
-      before_filter :user
+      before_action :user
 
       def index
         @credit_cards = user

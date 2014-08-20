@@ -1,7 +1,7 @@
 module Spree
   module Api
     class StockMovementsController < Spree::Api::BaseController
-      before_filter :stock_location, except: [:update, :destroy]
+      before_action :stock_location, except: [:update, :destroy]
 
       def index
         authorize! :read, StockMovement

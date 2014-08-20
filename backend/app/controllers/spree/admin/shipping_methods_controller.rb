@@ -1,9 +1,9 @@
 module Spree
   module Admin
     class ShippingMethodsController < ResourceController
-      before_filter :load_data, :except => [:index]
-      before_filter :set_shipping_category, :only => [:create, :update]
-      before_filter :set_zones, :only => [:create, :update]
+      before_action :load_data, except: :index
+      before_action :set_shipping_category, only: [:create, :update]
+      before_action :set_zones, only: [:create, :update]
 
       def destroy
         @object.destroy
