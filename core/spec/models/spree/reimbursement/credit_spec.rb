@@ -18,10 +18,10 @@ module Spree
     end
 
     describe '#description' do
-      let(:credit) { Spree::Reimbursement::Credit.new(amount: 100) }
+      let(:credit) { Spree::Reimbursement::Credit.new(amount: 100, creditable: mock_model(Spree::PaymentMethod::Check)) }
 
-      it "should be 'Credit'" do
-        credit.description.should eq Spree.t('credit')
+      it "should be the creditable's class name" do
+        credit.description.should eq 'Check'
       end
     end
 
