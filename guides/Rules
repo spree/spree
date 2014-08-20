@@ -1,0 +1,251 @@
+#!/usr/bin/env ruby
+
+# A few helpful tips about the Rules file:
+#
+# * The order of rules is important: for each item, only the first matching
+#   rule is applied.
+#
+# * Item identifiers start and end with a slash (e.g. “/about/” for the file
+#   “content/about.html”). To select all children, grandchildren, … of an
+#   item, use the pattern “/about/*/”; “/about/*” will also select the parent,
+#   because “*” matches zero or more characters.
+require 'coderay_bash'
+
+compile '/static/*' do
+end
+
+compile '/misc/*' do
+  filter :erb
+end
+
+compile '/' do
+  filter :pretty_urls
+  filter :erb
+  filter :kramdown, :toc_levels => [2]
+  layout 'default'
+end
+
+compile '/CNAME/' do
+end
+
+compile '/assets/stylesheets/*/_*/' do
+  # don’t compile partials
+end
+
+route '/assets/stylesheets/*/_*/' do
+  # don't output partials, so return nil
+  nil
+end
+
+compile '/assets/stylesheets/*/' do
+  filter :sass, syntax: :scss
+end
+
+route '/assets/stylesheets/*/' do
+  item.identifier.chop + '.css' # so that the /assets/style/screen/ item is compiled to /assets/style/screen.css
+end
+
+compile '/assets/*' do
+end
+
+route '/assets/*' do
+  item.identifier.chop + '.' + item[:extension]
+end
+
+compile '/feed/' do
+  filter :pretty_urls
+  filter :erb
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+end
+
+compile '/developer/' do
+  filter :pretty_urls
+  filter :erb
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'developer'
+end
+
+compile '/developer/*' do
+  filter :pretty_urls
+  filter :erb
+  filter :parse_info_boxes
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'developer/default'
+end
+
+compile '/release_notes/*' do
+  filter :pretty_urls
+  filter :erb
+  filter :parse_info_boxes
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'release_notes/default'
+end
+
+compile '/api/' do
+  filter :pretty_urls
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'api'
+end
+
+compile '/api/*' do
+  filter :pretty_urls
+  filter :erb
+  filter :parse_info_boxes
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :parse_info_boxes
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'api/default'
+end
+
+compile '/user/' do
+  filter :pretty_urls
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'user'
+end
+
+compile '/user/*' do
+  filter :pretty_urls
+  filter :erb
+  filter :parse_info_boxes
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :fenced_code_blocks
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'user/default'
+end
+
+compile '/release_notes/' do
+  filter :pretty_urls
+  filter :fenced_code_blocks
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :parse_info_boxes
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'release_notes'
+end
+
+compile '/release_notes/*' do
+  filter :pretty_urls
+  filter :fenced_code_blocks
+  filter :erb
+  # Converts ``` codeblocks into Kramdown-friendly ~~~
+  filter :parse_info_boxes
+  filter :kramdown, :toc_levels => [2], :coderay_line_numbers => nil, :coderay_css => :class
+  layout 'release_notes/default'
+end
+
+route '/static/*' do
+  item.identifier[7..-2]
+end
+
+###############################################################
+# Put the misc stuff in root directory after processing
+###############################################################
+route '/misc/*' do
+  location = item.identifier.gsub('/misc/', '/')
+  location.chop + ".txt"
+end
+
+###############################################################
+# Flatten the developer guide stuff into single directory
+###############################################################
+route '/developer/deployment/*/' do
+  location = item.identifier.gsub('/deployment/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/source/*/' do
+  location = item.identifier.gsub('/source/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/core/*/' do
+  location = item.identifier.gsub('/core/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/tutorials/*/' do
+  location = item.identifier.gsub('/tutorials/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/advanced/*/' do
+  location = item.identifier.gsub('/advanced/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/customization/*/' do
+  location = item.identifier.gsub('/customization/', '/')
+  location.chop + ".html"
+end
+
+route '/developer/upgrades/*/' do
+  location = item.identifier
+  location.chop + ".html"
+end
+
+###############################################################
+# Flatten the user guide stuff into single directory
+###############################################################
+route '/user/config/*/' do
+  location = item.identifier.gsub('/config/', '/')
+  location.chop + ".html"
+end
+
+route '/user/orders/*/' do
+  location = item.identifier.gsub('/orders/', '/')
+  location.chop + ".html"
+end
+
+route '/user/products/*/' do
+  location = item.identifier.gsub('/products/', '/')
+  location.chop + ".html"
+end
+
+route '/user/payments/*/' do
+  location = item.identifier.gsub('/payments/', '/')
+  location.chop + ".html"
+end
+
+route '/user/shipments/*/' do
+  location = item.identifier.gsub('/shipments/', '/')
+  location.chop + ".html"
+end
+
+route '/user/inventory/*/' do
+  location = item.identifier.gsub('/inventory/', '/')
+  location.chop + ".html"
+end
+
+route '/release_notes/*/' do
+  location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
+  location.chop + ".html"
+end
+
+route '/api/*/' do
+  item.identifier.chop + ".html"
+end
+
+route '/integration/*/' do
+  item.identifier.chop + ".html"
+end
+
+route '/user/*/' do
+  item.identifier.chop + ".html"
+end
+
+route '*' do
+  item.identifier + 'index.html'
+end
+
+layout '*', :erb

@@ -1,0 +1,35 @@
+// Base
+img {
+  max-width: 100%;
+}
+
+#main {
+  position: relative;
+}
+
+// Footer
+#main-footer {
+  * {
+    line-height: 24px;
+  }
+
+  .block-title {
+    font-size: 14px;
+  }
+
+  .social-icons {
+    margin-top: 25px;
+
+    i {
+      line-height: 27px;
+    }
+  }
+
+  a {
+    font-weight: 600;
+  }
+}
+
+.logo img {
+  margin-top: 30px;
+}
