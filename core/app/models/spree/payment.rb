@@ -31,6 +31,8 @@ module Spree
 
     after_initialize :build_source
 
+    default_scope -> { order("#{self.table_name}.created_at") }
+
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
 

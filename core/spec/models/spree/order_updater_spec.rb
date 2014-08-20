@@ -88,8 +88,8 @@ module Spree
       let(:order) { Order.new }
       let(:updater) { order.updater }
 
-      it "is failed if last payment failed" do
-        order.stub_chain(:payments, :last, :state).and_return('failed')
+      it "is failed if no valid payments" do
+        order.stub_chain(:payments, :valid, :size).and_return(0)
 
         updater.update_payment_state
         order.payment_state.should == 'failed'
@@ -149,7 +149,7 @@ module Spree
           it "is credit_owed" do
             order.payment_total = 30
             order.total = 30
-            order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :valid, :size).and_return(1)
             order.stub_chain(:payments, :completed, :size).and_return(1)
             expect {
               updater.update_payment_state
@@ -162,7 +162,7 @@ module Spree
           it "is void" do
             order.payment_total = 0
             order.total = 30
-            order.stub_chain(:payments, :last, :state).and_return('completed')
+            order.stub_chain(:payments, :valid, :size).and_return(1)
             order.stub_chain(:payments, :completed, :size).and_return(2)
             expect {
               updater.update_payment_state
