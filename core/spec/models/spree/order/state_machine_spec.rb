@@ -190,6 +190,7 @@ describe Spree::Order do
         let(:payment) { create(:payment) }
 
         it "should automatically refund all payments" do
+          order.stub_chain(:payments, :valid, :size).and_return(1)
           order.stub_chain(:payments, :completed).and_return([payment])
           order.stub_chain(:payments, :last).and_return(payment)
           payment.should_receive(:cancel!)
