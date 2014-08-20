@@ -84,7 +84,7 @@ module Spree
           end
         end
 
-        line_item.save
+        line_item.save!
         line_item
       end
 

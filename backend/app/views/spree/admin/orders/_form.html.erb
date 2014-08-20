@@ -4,7 +4,7 @@
   <% end %>
 
   <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-    <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
+    <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments.order(:created_at), :locals => { :order => order } %>
   <% else %>
     <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
   <% end %>
