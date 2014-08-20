@@ -43,6 +43,9 @@ namespace :exchanges do
                                  amount: order.total)
         end
 
+        # the order builds a shipment on its own on transition to delivery, but we want
+        # the original exchange shipment, not the built one
+        order.shipments.destroy_all
         shipment.update_attributes!(order_id: order.id)
         order.update_attributes!(state: "confirm")
 

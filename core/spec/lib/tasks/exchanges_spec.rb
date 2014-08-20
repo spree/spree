@@ -57,6 +57,8 @@ describe "exchanges:charge_unreturned_items" do
 
       it "moves the shipment for the unreturned items to the new order" do
         subject.invoke
+        new_order = Spree::Order.last
+        expect(new_order.shipments.count).to eq 1
         expect(return_item_2.reload.exchange_shipment.order).to eq Spree::Order.last
       end
 
@@ -92,9 +94,6 @@ describe "exchanges:charge_unreturned_items" do
         subject.invoke
         subject.reenable
         expect { subject.invoke }.not_to change { Spree::Order.count }
-      end
-
-      it "does not process two payments" do
       end
 
       context "there is no card from the previous order" do
