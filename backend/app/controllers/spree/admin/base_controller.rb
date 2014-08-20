@@ -7,8 +7,8 @@ module Spree
       helper 'spree/admin/tables'
       layout '/spree/layouts/admin'
 
-      before_filter :check_alerts
-      before_filter :authorize_admin
+      before_action :check_alerts
+      before_action :authorize_admin
 
       protected
 

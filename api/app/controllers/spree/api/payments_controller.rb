@@ -2,8 +2,8 @@ module Spree
   module Api
     class PaymentsController < Spree::Api::BaseController
 
-      before_filter :find_order
-      before_filter :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void]
+      before_action :find_order
+      before_action :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void]
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])

@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
-      before_filter :initialize_order_events
-      before_filter :load_order, :only => [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart]
+      before_action :initialize_order_events
+      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart]
 
       respond_to :html
 

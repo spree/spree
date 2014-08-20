@@ -2,15 +2,15 @@ module Spree
   class OrdersController < Spree::StoreController
     ssl_required :show
 
-    before_filter :check_authorization
+    before_action :check_authorization
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products', 'spree/orders'
 
     respond_to :html
 
-    before_filter :assign_order_with_lock, only: :update
-    before_filter :apply_coupon_code, only: :update
-    skip_before_filter :verify_authenticity_token
+    before_action :assign_order_with_lock, only: :update
+    before_action :apply_coupon_code, only: :update
+    skip_before_action :verify_authenticity_token
 
     def show
       @order = Order.find_by_number!(params[:id])

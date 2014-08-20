@@ -2,7 +2,7 @@ module Spree
   module Admin
     class RefundsController < ResourceController
       belongs_to 'spree/payment'
-      before_filter :load_order
+      before_action :load_order
 
       helper_method :refund_reasons
 

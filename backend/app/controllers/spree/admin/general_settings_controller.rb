@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class GeneralSettingsController < Spree::Admin::BaseController
-      before_filter :set_store
+      before_action :set_store
 
       def edit
         @preferences_security = [:allow_ssl_in_production,

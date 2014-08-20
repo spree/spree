@@ -1,8 +1,8 @@
 class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
   helper 'spree/promotion_rules'
 
-  before_filter :load_promotion, :only => [:create, :destroy]
-  before_filter :validate_promotion_rule_type, :only => :create
+  before_action :load_promotion, only: [:create, :destroy]
+  before_action :validate_promotion_rule_type, only: :create
 
   def create
     # Remove type key from this hash so that we don't attempt

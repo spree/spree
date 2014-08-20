@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
-      before_filter :load_data
+      before_action :load_data
 
       helper 'spree/promotion_rules'
 

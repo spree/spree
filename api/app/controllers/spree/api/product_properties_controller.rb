@@ -2,8 +2,8 @@ module Spree
   module Api
     class ProductPropertiesController < Spree::Api::BaseController
 
-      before_filter :find_product
-      before_filter :product_property, only: [:show, :update, :destroy]
+      before_action :find_product
+      before_action :product_property, only: [:show, :update, :destroy]
 
       def index
         @product_properties = @product.product_properties.accessible_by(current_ability, :read).

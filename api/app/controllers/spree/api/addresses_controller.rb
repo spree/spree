@@ -1,7 +1,7 @@
 module Spree
   module Api
     class AddressesController < Spree::Api::BaseController
-      before_filter :find_order
+      before_action :find_order
 
       def show
         load_and_authorize_address(:read)

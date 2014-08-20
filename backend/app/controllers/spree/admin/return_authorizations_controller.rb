@@ -3,7 +3,7 @@ module Spree
     class ReturnAuthorizationsController < ResourceController
       belongs_to 'spree/order', :find_by => :number
 
-      before_filter :load_form_data, only: [:new, :edit]
+      before_action :load_form_data, only: [:new, :edit]
       create.fails  :load_form_data
       update.fails  :load_form_data
 

@@ -2,7 +2,7 @@ module Spree
   module Admin
     class StockLocationsController < ResourceController
 
-      before_filter :set_country, :only => :new
+      before_action :set_country, only: :new
 
       private
 

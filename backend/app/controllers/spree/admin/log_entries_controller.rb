@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class LogEntriesController < Spree::Admin::BaseController
-      before_filter :find_order_and_payment
+      before_action :find_order_and_payment
 
       def index
         @log_entries = @payment.log_entries

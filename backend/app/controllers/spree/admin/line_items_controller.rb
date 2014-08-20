@@ -3,8 +3,8 @@ module Spree
     class LineItemsController < Spree::Admin::BaseController
       layout nil, :only => [:create, :destroy, :update]
 
-      before_filter :load_order
-      before_filter :load_line_item, :only => [:destroy, :update]
+      before_action :load_order
+      before_action :load_line_item, only: [:destroy, :update]
 
       respond_to :html, :js
 

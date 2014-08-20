@@ -1,7 +1,7 @@
 module Spree
   module Api
     class StockItemsController < Spree::Api::BaseController
-      before_filter :stock_location, except: [:update, :destroy]
+      before_action :stock_location, except: [:update, :destroy]
 
       def index
         @stock_items = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
