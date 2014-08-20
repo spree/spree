@@ -11,6 +11,7 @@ module Spree
 
     has_many :inventory_units
     has_many :line_items, inverse_of: :variant
+    has_many :orders, through: :line_items
 
     has_many :stock_items, dependent: :destroy, inverse_of: :variant
     has_many :stock_locations, through: :stock_items
