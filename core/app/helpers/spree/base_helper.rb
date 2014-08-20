@@ -78,7 +78,7 @@ module Spree
       nil
     end
 
-    def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;")
+    def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;", breadcrumb_class="inline")
       return "" if current_page?("/") || taxon.nil?
 
       crumbs = [[Spree.t(:home), spree.root_path]]
@@ -101,7 +101,7 @@ module Spree
         end
       end
 
-      content_tag(:nav, content_tag(:ul, raw(crumbs.map(&:mb_chars).join), class: 'inline'), id: 'breadcrumbs', class: 'sixteen columns')
+      content_tag(:nav, content_tag(:ul, raw(crumbs.map(&:mb_chars).join), class: breadcrumb_class), id: 'breadcrumbs', class: 'sixteen columns')
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
