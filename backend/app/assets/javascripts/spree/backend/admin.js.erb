@@ -123,7 +123,41 @@ handle_date_picker_fields = function(){
   });
 }
 
+function openVariantEdit( variant ) {
+  variant.children('.show').slideUp();
+  variant.children('.edit').slideDown();
+}
+function closeVariantEdit( variant ) {
+  variant.children('.edit').slideUp();
+  variant.children('.show').slideDown();
+}
+function updateShowElementFromInput( editField ) {
+  var correspondingShowElement = '#show_' + editField.attr('id');
+  $(correspondingShowElement).html( editField.val() );
+}
+function updateShowElementFromSelect( editField ) {
+  var correspondingShowElement = '#show_' + editField.closest('.field-option_value').attr('id');
+  $(correspondingShowElement).html( editField.children('option:selected').text() );
+}
+
 $(document).ready(function(){
+
+  $('body').on('click', '#variants .variant .show .fa-edit', function(event) {
+    event.preventDefault();
+    openVariantEdit( $(this).closest('.variant') );
+  });
+  $('body').on('click', '#variants .variant .edit .fa-ok', function(event) {
+    event.preventDefault();
+    closeVariantEdit( $(this).closest('.variant') );
+  });
+  $('body').on('change', '#variants .variant .edit input', function(event) {
+    updateShowElementFromInput( $(this) );
+  });
+  $('body').on('change', '#variants .variant .edit .field-option_value select', function(event) {
+    updateShowElementFromSelect( $(this) );
+  });
+
+
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {
     target = $(this).data("update");
@@ -143,9 +177,10 @@ $(document).ready(function(){
   var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");
-    var new_table_row = $(target + ' tr:visible:last').clone();
+    var elementTag = $(this).data("elementtag");
+    var newElement = $(target + ' ' + elementTag + ':visible:last').clone();
     var new_id = new Date().getTime() + (uniqueId++);
-    new_table_row.find("input, select").each(function () {
+    newElement.find("input, select").each(function () {
       var el = $(this);
       el.val("");
       el.prop("id", el.prop("id").replace(/\d+/, new_id))
@@ -154,12 +189,37 @@ $(document).ready(function(){
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
     // duplicated row
-    new_table_row.find("a").each(function () {
+    newElement.find("a").each(function () {
       var el = $(this);
       el.prop('href', '#');
     })
-    $(target).prepend(new_table_row);
+    $(target).prepend(newElement);
+    $(newElement).find(".select2").select2();
   })
+
+  $('.spree_add_variant').click(function() {
+    var target = $(this).data("target");
+    var elementTag = $(this).data("elementtag");
+    var newElement = $(target + ' ' + elementTag + ':visible:last').clone();
+    var new_id = new Date().getTime() + (uniqueId++);
+    newElement.find("input, select").each(function () {
+      var el = $(this);
+      el.val("");
+      el.prop("id", el.prop("id").replace(/\d+/, new_id))
+      el.prop("name", el.prop("name").replace(/\d+/, new_id))
+    })
+    // When cloning a new row, set the href of all icons to be an empty "#"
+    // This is so that clicking on them does not perform the actions for the
+    // duplicated row
+    newElement.find("a").each(function () {
+      var el = $(this);
+      el.prop('href', '#');
+    })
+    $(target).prepend(newElement);
+    $(newElement).find(".select2").select2();
+  })
+
+
 
   $('body').on('click', '.delete-resource', function() {
     var el = $(this);
@@ -184,6 +244,11 @@ $(document).ready(function(){
     }
     return false;
   });
+
+  $('body').on('change', '.edit_field', function() {
+    updateShowElement( $(this) );
+  });
+
 
   $('body').on('click', 'a.spree_remove_fields', function() {
     el = $(this);
