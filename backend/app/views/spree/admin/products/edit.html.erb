@@ -1,3 +1,9 @@
+<% content_for :title do %>
+  <%= "Spree #{Spree.t('administration')}: " %>
+  <%= Spree.t(:editing_product) %>:
+  <%= @product.name %>
+<% end %>
+
 <% content_for :page_title do %>
   <%= Spree.t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
 <% end %>
