@@ -11,6 +11,9 @@ set_gemfile(){
 # Target postgres. Override with: `DB=sqlite bash build.sh`
 export DB=${DB:-postgres}
 
+# Set retry count at 2 for flakey poltergeist specs.
+export RSPEC_RETRY_COUNT=2
+
 # Spree defaults
 echo "Setup Spree defaults and creating test application..."
 bundle check || bundle update --quiet
