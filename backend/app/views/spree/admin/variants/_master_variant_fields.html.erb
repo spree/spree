@@ -1,0 +1,63 @@
+<legend><%= icon('th-large') %>Master Variant</legend>
+<div class="five columns alpha">
+  <div data-hook="admin_product_form_sku">
+    <%= f.field_container :sku do %>
+      <%= f.label :sku, Spree.t(:sku) %>
+      <%= f.text_field :sku, :size => 16 %>
+    <% end %>
+  </div>
+</div>
+<div class="six columns">
+  <ul id="shipping_specs">
+    <li id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="field alpha omega six columns">
+      <%= f.label :weight, Spree.t(:weight) %>
+      <%= f.text_field :weight, :size => 4 %>
+    </li>
+    <li id="shipping_specs_height_field" data-hook="admin_product_form_height" class="field alpha two columns">
+      <%= f.label :height, Spree.t(:height) %>
+      <%= f.text_field :height, :size => 4 %>
+    </li>
+    <li id="shipping_specs_width_field" data-hook="admin_product_form_width" class="field two columns">
+      <%= f.label :width, Spree.t(:width) %>
+      <%= f.text_field :width, :size => 4 %>
+    </li>
+    <li id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="field omega two columns">
+      <%= f.label :depth, Spree.t(:depth) %>
+      <%= f.text_field :depth, :size => 4 %>
+    </li>
+  </ul>
+</div>
+<div class="five columns omega">
+  <div data-hook="admin_product_form_price">
+  <%= f.field_container :price do %>
+    <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
+    <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
+    <%= f.error_message_on :price %>
+  <% end %>
+  </div>
+
+  <div data-hook="admin_product_form_cost_price" class="alpha two columns">
+    <%= f.field_container :cost_price do %>
+      <%= f.label :cost_price, Spree.t(:cost_price) %>
+      <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => '') %>
+      <%= f.error_message_on :cost_price %>
+    <% end %>
+  </div>
+  <div data-hook="admin_product_form_cost_currency" class="omega two columns">
+    <%= f.field_container :cost_currency do %>
+      <%= f.label :cost_currency, Spree.t(:cost_currency) %>
+      <%= f.text_field :cost_currency %>
+      <%= f.error_message_on :cost_currency %>
+    <% end %>
+  </div>
+  <div data-hook="admin_product_form_tax_category">
+    <%= f.field_container :tax_category do %>
+      <%= f.label :tax_category_id, Spree.t(:tax_category) %>
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+      <%= f.error_message_on :tax_category %>
+    <% end %>
+  </div>
+</div>
+<% if can?(:admin, Spree::Variant) %>
+  <%= link_to_with_icon 'th-large', 'Add Variants',  admin_product_variants_url(@product), id: 'add_variants' %>
+<% end %>

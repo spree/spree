@@ -1,0 +1,49 @@
+<ul class="inline-menu" data-hook="toolbar">
+  <li id="new_var_link" data-hook>
+    <%= link_to_add_fields Spree.t(:new_variant), '#variants', :element_tag => 'tbody', :class => 'plus button' %>
+  </li>
+  <li>
+    <%= link_to_with_icon('filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %>
+  </li>
+</ul>
+
+<% if @variants.any? %>
+  <table id="variants" class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+    <colgroup>
+      <col style="width: 5%" />
+      <col style="width: 25%" />
+      <% @product.option_types.each do |option_type| %>
+        <col style="width: 10%" />
+      <% end %>
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+    </colgroup>
+    <thead data-hook="variants_header">
+      <tr>
+        <th rowspan="2"></th>
+        <th rowspan="2"><%= Spree.t(:sku) %></th>
+        <th colspan="<%= @product.options.count %>"><%= Spree.t(:options) %></th>
+        <th rowspan="2"><%= Spree.t(:dimensions) %></th>
+        <th rowspan="2"><%= Spree.t(:price) %></th>
+        <th rowspan="2" class="actions"></th>
+      </tr>
+      <tr>
+        <% @product.option_types.each do |option_type| %>
+          <th><%= option_type.presentation %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <% if @product.has_variants? %>
+      <%= render partial: "spree/admin/variants/variant", collection: @variants, locals: {f: f} %>
+    <% else %>
+      <tbody>
+        <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
+      </tbody>
+    <% end %>
+  </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
+  </div>
+<% end %>

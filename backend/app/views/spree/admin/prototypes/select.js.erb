@@ -1,4 +1,5 @@
+<%# binding.remote_pry %>
 <% @prototype_properties.sort_by{ |prop| -prop[:id] }.each do |prop| %>
-  $("a.spree_add_fields").click();
+  $("a.spree_add_fields#add_product_property_fields").click();
   $(".product_property.fields:first input[type=text]:first").val("<%= prop.name %>");
 <% end %>

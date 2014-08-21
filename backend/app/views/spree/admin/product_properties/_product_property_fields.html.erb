@@ -11,7 +11,7 @@
   </td>
   <td class="actions">
     <% if f.object.persisted? %>
-      <%= link_to_delete f.object, :no_text => true %>
+      <%= link_to_delete f.object, { :url => admin_product_product_property_url(@product, f.object), :no_text => true } %>
     <% end %>
   </td>
 </tr>

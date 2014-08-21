@@ -54,81 +54,26 @@
         <% end %>
       </div>
 
-      <div class="form-section-buttons actions">
-        <% if can?(:admin, Spree::ProductProperty) %>
-          <%= button_link_to Spree.t(:product_properties), admin_product_product_properties_url(@product), :icon => 'tasks' %>
-        <% end %>
-      </div>
 
     </div>
 
+    <div id="admin_product_form_properties" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
+      <div class="form-section-buttons actions">
+        <% if can?(:admin, Spree::ProductProperty) %>
+          <%= button_link_to Spree.t(:product_properties), admin_product_product_properties_url(@product), :icon => 'tasks', id: 'manage_properties' %>
+        <% end %>
+      </div>
+    </div>
 
   </fieldset>
 
-  <fieldset id="admin_product_form_master_variant" style="<%= 'display:none;' if @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-    <legend><%= icon('th-large') %>Master Variant</legend>
-    <div class="five columns alpha">
-      <div data-hook="admin_product_form_sku">
-        <%= f.field_container :sku do %>
-          <%= f.label :sku, Spree.t(:sku) %>
-          <%= f.text_field :sku, :size => 16 %>
-        <% end %>
-      </div>
-    </div>
-    <div class="six columns">
-      <ul id="shipping_specs">
-        <li id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="field alpha omega six columns">
-          <%= f.label :weight, Spree.t(:weight) %>
-          <%= f.text_field :weight, :size => 4 %>
-        </li>
-        <li id="shipping_specs_height_field" data-hook="admin_product_form_height" class="field alpha two columns">
-          <%= f.label :height, Spree.t(:height) %>
-          <%= f.text_field :height, :size => 4 %>
-        </li>
-        <li id="shipping_specs_width_field" data-hook="admin_product_form_width" class="field two columns">
-          <%= f.label :width, Spree.t(:width) %>
-          <%= f.text_field :width, :size => 4 %>
-        </li>
-        <li id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="field omega two columns">
-          <%= f.label :depth, Spree.t(:depth) %>
-          <%= f.text_field :depth, :size => 4 %>
-        </li>
-      </ul>
-    </div>
-    <div class="five columns omega">
-      <div data-hook="admin_product_form_price">
-      <%= f.field_container :price do %>
-        <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
-        <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => '') %>
-        <%= f.error_message_on :price %>
-      <% end %>
-      </div>
+  <fieldset id="admin_product_form_product_properties" style="display:none;" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_product_properties">
+    <legend><%= icon('th-large') %>Properties</legend>
+    <%= render partial: "spree/admin/products/product_properties", locals: {f: f} %>
+  </fieldset>
 
-      <div data-hook="admin_product_form_cost_price" class="alpha two columns">
-        <%= f.field_container :cost_price do %>
-          <%= f.label :cost_price, Spree.t(:cost_price) %>
-          <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => '') %>
-          <%= f.error_message_on :cost_price %>
-        <% end %>
-      </div>
-      <div data-hook="admin_product_form_cost_currency" class="omega two columns">
-        <%= f.field_container :cost_currency do %>
-          <%= f.label :cost_currency, Spree.t(:cost_currency) %>
-          <%= f.text_field :cost_currency %>
-          <%= f.error_message_on :cost_currency %>
-        <% end %>
-      </div>
-      <div data-hook="admin_product_form_tax_category">
-        <%= f.field_container :tax_category do %>
-          <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
-          <%= f.error_message_on :tax_category %>
-        <% end %>
-      </div>
-    </div>
-    <% if can?(:admin, Spree::Variant) %>
-      <%= link_to_with_icon 'th-large', 'Add Variants',  admin_product_variants_url(@product), id: 'add_variants' %>
-    <% end %>
+  <fieldset id="admin_product_form_master_variant" style="<%= 'display:none;' if @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
+    <%= render partial: "spree/admin/variants/master_variant_fields", locals: {f: f} %>
   </fieldset>
 
   <% if can?(:admin, Spree::Variant) %>
@@ -144,62 +89,7 @@
         <% end %>
       </div>
 
-      <ul class="inline-menu" data-hook="toolbar">
-        <li id="new_var_link" data-hook>
-          <%#= link_to_with_icon('plus',
-                                Spree.t(:new_variant),
-                                new_admin_product_variant_url(@product),
-                                :remote => :true,
-                                :'data-update' => 'new_variant',
-                                :class => 'button'
-                               ) %>
-          <%= link_to_add_fields Spree.t(:new_variant), '#variants', :element_tag => 'tbody', :class => 'plus button' %>
-
-        </li>
-        <li><%= link_to_with_icon('filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
-      </ul>
-
-      <% if @product.variants.any? %>
-        <table id="variants" class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-          <colgroup>
-            <col style="width: 5%" />
-            <col style="width: 25%" />
-            <% @product.option_types.each do |option_type| %>
-              <col style="width: 10%" />
-            <% end %>
-            <col style="width: 15%" />
-            <col style="width: 15%" />
-          </colgroup>
-          <thead data-hook="variants_header">
-            <tr>
-              <th rowspan="2"></th>
-              <th rowspan="2"><%= Spree.t(:sku) %></th>
-              <th colspan="<%= @product.options.count %>"><%= Spree.t(:options) %></th>
-              <th rowspan="2"><%= Spree.t(:dimensions) %></th>
-              <th rowspan="2"><%= Spree.t(:price) %></th>
-              <th rowspan="2" class="actions"></th>
-            </tr>
-            <tr>
-              <% @product.option_types.each do |option_type| %>
-                <th><%= option_type.presentation %></th>
-              <% end %>
-            </tr>
-          </thead>
-          <% if @product.has_variants? %>
-            <%= render partial: "spree/admin/variants/variant", collection: @variants, locals: {f: f} %>
-          <% else %>
-            <tbody>
-              <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
-            </tbody>
-          <% end %>
-
-        </table>
-      <% else %>
-        <div class="alpha twelve columns no-objects-found">
-          <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
-          <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
-        </div>
-      <% end %>
+      <%= render partial: "spree/admin/products/variants", locals: {f: f} %>
 
     </fieldset>
   <% end %>
@@ -290,6 +180,10 @@
 
 
 <script>
+  $( "a#manage_properties" ).click(function( event ) {
+    event.preventDefault();
+    $( '#admin_product_form_product_properties' ).slideToggle();
+  });
   $( "a#add_variants" ).click(function( event ) {
     event.preventDefault();
     $( '#admin_product_form_multiple_variants' ).slideDown();
