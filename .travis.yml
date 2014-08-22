@@ -20,4 +20,3 @@ script:
   - RSPEC_RETRY_COUNT=2 bundle exec rake spec
 rvm:
   - 1.9.3
-  - 2.1.2
