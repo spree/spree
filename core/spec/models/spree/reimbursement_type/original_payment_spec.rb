@@ -40,6 +40,16 @@ module Spree
           expect(subject).to eq []
         end
       end
+
+      context 'when a payment is negative' do
+        before do
+          Spree::Payment.any_instance.should_receive(:amount).and_return -100
+        end
+
+        it 'returns an empty array' do
+          expect(subject).to eq []
+        end
+      end
     end
   end
 end
