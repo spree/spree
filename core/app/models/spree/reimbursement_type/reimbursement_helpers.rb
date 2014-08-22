@@ -3,7 +3,7 @@ module Spree
     def create_refunds(reimbursement, payments, unpaid_amount, simulate, reimbursement_list = [])
       payments.map do |payment|
         break if unpaid_amount <= 0
-        next if payment.credit_allowed.zero?
+        next unless payment.can_credit?
 
         amount = [unpaid_amount, payment.credit_allowed].min
         reimbursement_list << create_refund(reimbursement, payment, amount, simulate)
