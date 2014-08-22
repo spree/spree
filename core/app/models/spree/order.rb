@@ -3,6 +3,11 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
+
+    ORDER_NUMBER_LENGTH  = 9
+    ORDER_NUMBER_LETTERS = false
+    ORDER_NUMBER_PREFIX  = 'R'
+
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
 
@@ -274,13 +279,13 @@ module Spree
     end
 
     def generate_order_number(options = {})
-      options[:length] ||= 9
-      options[:letters] ||= false
-      options[:prefix] ||= 'R'
-      
+      options[:length]  ||= ORDER_NUMBER_LENGTH
+      options[:letters] ||= ORDER_NUMBER_LETTERS
+      options[:prefix]  ||= ORDER_NUMBER_PREFIX
+
       possible = (0..9).to_a
       possible += ('A'..'Z').to_a if options[:letters]
-      
+
       self.number ||= loop do
         # Make a random number.
         random = "#{options[:prefix]}#{(0...options[:length]).map { possible.shuffle.first }.join}"
@@ -291,7 +296,7 @@ module Spree
         else
           break random
         end
-      end	  
+      end
     end
 
     def shipped_shipments
