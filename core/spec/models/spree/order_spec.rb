@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 class FakeCalculator < Spree::Calculator
@@ -523,9 +521,31 @@ describe Spree::Order do
   end
 
   context "#generate_order_number" do
-    it "should generate a random string" do
-      order.generate_order_number.is_a?(String).should be_true
-      (order.generate_order_number.to_s.length > 0).should be_true
+    context "when no configure" do
+      let(:default_length) { Spree::Order::ORDER_NUMBER_LENGTH + Spree::Order::ORDER_NUMBER_PREFIX.length }
+      subject(:order_number) { order.generate_order_number }
+      its(:class)  { should eq String }
+      its(:length) { should eq default_length }
+      it { should match /^#{Spree::Order::ORDER_NUMBER_PREFIX}/ }
+    end
+
+    context "when length option is 5" do
+      let(:option_length) { 5 + Spree::Order::ORDER_NUMBER_PREFIX.length }
+      it "should be option length for order number" do
+        expect(order.generate_order_number(length: 5).length).to eq option_length
+      end
+    end
+
+    context "when letters option is true" do
+      it "generates order number include letter" do
+        expect(order.generate_order_number(length: 100, letters: true)).to match /[A-Z]/
+      end
+    end
+
+    context "when prefix option is 'P'" do
+      it "generates order number and it prefix is 'P'" do
+        expect(order.generate_order_number(prefix: 'P')).to match /^P/
+      end
     end
   end
 
