@@ -14,7 +14,6 @@ module Spree
         @shipment = @order.shipments.create(stock_location_id: params[:stock_location_id])
         @order.contents.add(variant, quantity, {shipment: @shipment})
 
-        @shipment.refresh_rates
         @shipment.save!
 
         respond_with(@shipment.reload, default_template: :show)
