@@ -1,0 +1,59 @@
+<ul class="toolbar inline-menu" data-hook="toolbar-product-images">
+  <% if can?(:admin, Spree::Product) %>
+    <li>
+      <%= button_link_to Spree.t(:stock_management), stock_admin_product_url(@product), :icon => 'tasks' %>
+    </li>
+  <% end %>
+</ul>
+
+<table class="index" id="listing_product_stock">
+  <colgroup>
+    <col style="width: 50%" />
+    <col style="width: 25%" />
+    <col style="width: 25%" />
+  </colgroup>
+  <thead>
+    <tr data-hook="admin_product_stock_management_index_headers">
+      <th rowspan="2"><%= Spree.t(:variant) %></th>
+      <th colspan="2"><%= Spree.t(:stock_location_info) %></th>
+    </tr>
+    <tr data-hook="admin_product_stock_management_index_headers">
+      <th><%= Spree.t(:stock_location) %></th>
+      <th><%= Spree.t(:count_on_hand) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @variants.each do |variant| %>
+      <% if variant.stock_items.present? %>
+        <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows" class="<%= cycle('odd', 'even') %>">
+          <td class="align-center">
+            <%= variant.sku_and_options_text %>
+            <br>
+            <% if variant.images.present? %>
+              <%= image_tag variant.images.first.attachment.url(:mini) %>
+            <% end %>
+          </td>
+          <td colspan="4" class="stock_location_info">
+            <table>
+              <colgroup>
+                <col style="width: 50%" />
+                <col style="width: 50%" />
+              </colgroup>
+              <tbody>
+                <% variant.stock_items.each do |item| %>
+                  <% next unless @stock_locations.include?(item.stock_location) %>
+
+                  <tr id="stock-item-<%= item.id %>" class="<%= cycle('odd', 'even', :name => 'stock_locations')%>">
+                    <td class="align-center"><%= item.stock_location.name %></td>
+                    <td class="align-center"><%= item.count_on_hand %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </td>
+          <% reset_cycle("stock_locations") %>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

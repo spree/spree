@@ -105,46 +105,12 @@
 
   <fieldset data-hook="admin_product_form_stock" class="alpha omega sixteen columns">
     <legend>Stock</legend>
-
-    <div class="ten columns alpha">
-
-      <% @stock_locations.each do |stock_location| %>
-        <%= stock_location.name %>
-        <% @variants.each do |variant| %>
-          <%= variant.sku %>:
-          <%= stock_location.count_on_hand(variant) %>
-          <br />
-        <% end %>
-      <% end %>
-
-    </div>
-    <div class="six columns omega">
-
-      <div class="form-section-buttons actions">
-        <% if can?(:admin, Spree::Product) %>
-          <%= button_link_to Spree.t(:stock_management), stock_admin_product_url(@product), :icon => 'tasks' %>
-        <% end %>
-      </div>
-
-    </div>
-
+    <%= render partial: "spree/admin/products/stock", locals: {f: f} %>
   </fieldset>
 
   <fieldset data-hook="admin_product_form_meta" class="alpha omega sixteen columns">
     <legend>SEO</legend>
-    <div data-hook="admin_product_form_meta_keywords">
-      <%= f.field_container :meta_keywords do %>
-        <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
-        <%= f.text_field :meta_keywords, :class => 'fullwidth' %>
-      <% end %>
-    </div>
-
-    <div data-hook="admin_product_form_meta_description">
-      <%= f.field_container :meta_description do %>
-        <%= f.label :meta_description, Spree.t(:meta_description) %>
-        <%= f.text_field :meta_description, :class => 'fullwidth' %>
-      <% end %>
-    </div>
+    <%= render partial: "spree/admin/products/seo_fields", locals: {f: f} %>
   </fieldset>
 
   <div class="clear"></div>
