@@ -53,19 +53,23 @@
           <%= f.error_message_on :shipping_category %>
         <% end %>
       </div>
-
-
     </div>
-
-    <div id="admin_product_form_properties" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
-      <div class="form-section-buttons actions">
-        <% if can?(:admin, Spree::ProductProperty) %>
-          <%= button_link_to Spree.t(:product_properties), admin_product_product_properties_url(@product), :icon => 'tasks', id: 'manage_properties' %>
-        <% end %>
-      </div>
-    </div>
-
   </fieldset>
+
+  <div id="admin_product_form_controls" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_master_variant">
+    <ul class="toolbar inline-menu" data-hook="toolbar-product-properties">
+      <% if can?(:admin, Spree::ProductProperty) %>
+        <li>
+          <%= button_link_to 'Manage Properties', admin_product_product_properties_url(@product), :icon => 'tasks', id: 'manage_properties' %>
+        </li>
+      <% end %>
+      <% if can?(:admin, Spree::Variant) %>
+        <li>
+          <%= button_link_to 'Manage Variants',  admin_product_variants_url(@product), :icon => 'th-large', id: 'add_variants' %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 
   <fieldset id="admin_product_form_product_properties" style="display:none;" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_product_properties">
     <legend><%= icon('th-large') %>Properties</legend>
@@ -96,29 +100,7 @@
 
   <fieldset data-hook="admin_product_form_images" class="alpha omega sixteen columns">
     <legend>Images</legend>
-    <div class="ten columns alpha">
-
-      <% unless @product.images.any? || @product.variant_images.any? %>
-        <div class="no-objects-found">
-          <%= Spree.t(:no_images_found) %>.
-        </div>
-      <% else %>
-        <% (@product.variant_images).each do |image| %>
-            <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
-        <% end %>
-      <% end %>
-
-    </div>
-    <div class="six columns omega">
-
-      <div class="form-section-buttons actions">
-        <% if can?(:admin, Spree::Image) %>
-          <%= button_link_to Spree.t(:images), admin_product_images_url(@product), :icon => 'picture-o' %>
-        <% end %>
-      </div>
-
-    </div>
-
+    <%= render partial: "spree/admin/products/images", locals: {f: f} %>
   </fieldset>
 
   <fieldset data-hook="admin_product_form_stock" class="alpha omega sixteen columns">
@@ -186,8 +168,8 @@
   });
   $( "a#add_variants" ).click(function( event ) {
     event.preventDefault();
-    $( '#admin_product_form_multiple_variants' ).slideDown();
-    $( '#admin_product_form_master_variant' ).slideUp();
+    $( '#admin_product_form_multiple_variants' ).slideToggle();
+    $( '#admin_product_form_master_variant' ).slideToggle();
   });
   $( ".variant-edit .fa-ok" ).click(function( event ) {
     event.preventDefault();

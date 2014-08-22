@@ -1,4 +1,4 @@
-<ul class="inline-menu" data-hook="toolbar">
+<ul class="toolbar inline-menu" data-hook="toolbar-product-variants">
   <li id="new_var_link" data-hook>
     <%= link_to_add_fields Spree.t(:new_variant), '#variants', :element_tag => 'tbody', :class => 'plus button' %>
   </li>
@@ -11,12 +11,12 @@
   <table id="variants" class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <colgroup>
       <col style="width: 5%" />
-      <col style="width: 25%" />
+      <col style="width: 30%" />
       <% @product.option_types.each do |option_type| %>
         <col style="width: 10%" />
       <% end %>
-      <col style="width: 15%" />
-      <col style="width: 15%" />
+      <col style="width: 20%" />
+      <col style="width: 5%" />
     </colgroup>
     <thead data-hook="variants_header">
       <tr>

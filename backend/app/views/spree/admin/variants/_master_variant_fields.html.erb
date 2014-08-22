@@ -58,6 +58,3 @@
     <% end %>
   </div>
 </div>
-<% if can?(:admin, Spree::Variant) %>
-  <%= link_to_with_icon 'th-large', 'Add Variants',  admin_product_variants_url(@product), id: 'add_variants' %>
-<% end %>

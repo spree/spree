@@ -1,3 +1,10 @@
+form.edit_product {
+  .inline-menu {
+    float: right;
+    margin-bottom: 10px;
+  }
+}
+
 [data-hook="admin_products_sidebar"] {
   // .field.checkbox:first-child {
   //   margin-top: 36px;
