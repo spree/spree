@@ -62,3 +62,9 @@
 * Rename *_filter callbacks to *_action callbacks.
 
     Masahiro Saito
+
+* Move some modules to model's concerns directory.
+  We move modules Spree::Core::AdjustmentSource, Spree::Core::CalculatedAdjustments, Spree::Core::UserAddress
+  and Spree::Core::UserPaymentSource. Fixes #5264.
+
+    Masahiro Saito
