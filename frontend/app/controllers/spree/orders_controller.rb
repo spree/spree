@@ -48,7 +48,7 @@ module Spree
         end
       else
         flash[:error] = populator.errors.full_messages.join(" ")
-        redirect_to :back
+        redirect_back_or_default(spree.root_path)
       end
     end
 
