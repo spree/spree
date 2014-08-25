@@ -2,8 +2,8 @@ module Spree
   class Promotion
     module Actions
       class CreateAdjustment < PromotionAction
-        include Spree::Core::CalculatedAdjustments
-        include Spree::Core::AdjustmentSource
+        include Spree::CalculatedAdjustments
+        include Spree::AdjustmentSource
 
         has_many :adjustments, as: :source
 

@@ -1,7 +1,7 @@
 module Spree
   class ShippingMethod < Spree::Base
     acts_as_paranoid
-    include Spree::Core::CalculatedAdjustments
+    include Spree::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
     default_scope -> { where(deleted_at: nil) }

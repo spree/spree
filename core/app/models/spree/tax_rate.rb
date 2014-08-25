@@ -11,8 +11,8 @@ end
 module Spree
   class TaxRate < Spree::Base
     acts_as_paranoid
-    include Spree::Core::CalculatedAdjustments
-    include Spree::Core::AdjustmentSource
+    include Spree::CalculatedAdjustments
+    include Spree::AdjustmentSource
     belongs_to :zone, class_name: "Spree::Zone"
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
