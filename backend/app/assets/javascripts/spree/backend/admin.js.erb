@@ -140,8 +140,12 @@ function updateShowElementFromSelect( editField ) {
   $(correspondingShowElement).html( editField.children('option:selected').text() );
 }
 
-$(document).ready(function(){
+function replaceId( element, newId ) {
+  element.prop("id", element.prop("id").replace(/\d+/, newId))
+}
 
+
+$(document).ready(function(){
   $('body').on('click', '#variants .variant .show .fa-edit', function(event) {
     event.preventDefault();
     openVariantEdit( $(this).closest('.variant') );
@@ -157,6 +161,16 @@ $(document).ready(function(){
     updateShowElementFromSelect( $(this) );
   });
 
+  // $('body').on('change','#product_option_type_ids', function(event) {
+  //   console.log('foo');
+  //   $.get( "/admin/products/20/variants",
+  //     function( data ) {
+  //       $( ".result" ).html( data );
+  //       alert( "Load was performed." );
+  //     }
+  //   );
+  //   // $('table#variants').replaceWith('foo');
+  // });
 
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {
@@ -174,6 +188,7 @@ $(document).ready(function(){
              }
     });
   });
+
   var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");
@@ -200,26 +215,37 @@ $(document).ready(function(){
   $('.spree_add_variant').click(function() {
     var target = $(this).data("target");
     var elementTag = $(this).data("elementtag");
-    var newElement = $(target + ' ' + elementTag + ':visible:last').clone();
-    var new_id = new Date().getTime() + (uniqueId++);
-    newElement.find("input, select").each(function () {
-      var el = $(this);
-      el.val("");
-      el.prop("id", el.prop("id").replace(/\d+/, new_id))
-      el.prop("name", el.prop("name").replace(/\d+/, new_id))
-    })
+    var existingVariant = $(target + ' ' + elementTag + ':visible:last')
+    var newVariant = existingVariant.clone();
+    var newId = new Date().getTime() + (uniqueId++);
+
+    replaceId(newVariant, newId);
+    newVariant.find(".field-display").each(function () {
+      $(this).html("");
+      replaceId( $(this), newId);
+    });
+    newVariant.find("input, select").each(function () {
+      $(this).val("");
+      replaceId( $(this), newId);
+      $(this).prop("name", $(this).prop("name").replace(/\d+/, newId))
+    });
+    newVariant.find(".field-option_value").each(function () {
+      replaceId( $(this), newId);
+    });
+
+
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
     // duplicated row
-    newElement.find("a").each(function () {
-      var el = $(this);
-      el.prop('href', '#');
-    })
-    $(target).prepend(newElement);
-    $(newElement).find(".select2").select2();
+    newVariant.find("a").each(function () {
+      $(this).prop('href', '#');
+    });
+    $(newVariant).find(".select2").select2('destroy');
+    $(newVariant).find('.select2-container ').remove();
+    $(newVariant).find(".select2").select2();
+    $(target).append(newVariant);
+    openVariantEdit( $(newVariant) );
   })
-
-
 
   $('body').on('click', '.delete-resource', function() {
     var el = $(this);
@@ -244,11 +270,6 @@ $(document).ready(function(){
     }
     return false;
   });
-
-  $('body').on('change', '.edit_field', function() {
-    updateShowElement( $(this) );
-  });
-
 
   $('body').on('click', 'a.spree_remove_fields', function() {
     el = $(this);
@@ -319,6 +340,33 @@ $(document).ready(function(){
             url: $(ui.item).closest("table.sortable").data("sortable-link"),
             data: positions,
             success: function(data){ $("#progress").hide(); }
+          });
+        },
+        start: function (event, ui) {
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $("table.sortable tr:even").removeClass("odd even").addClass("even");
+          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
+        }
+
+      });
+  });
+
+  $('table.sortable-variants').ready(function(){
+    var td_count = $(this).find('tbody tr:first-child td').length
+    $('table.sortable-variants').sortable(
+      {
+        handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
+        update: function(event, ui) {
+          $(this).children('.variant').each(function (index, variant) {
+            $(variant).find('.position_field').val(index);
           });
         },
         start: function (event, ui) {

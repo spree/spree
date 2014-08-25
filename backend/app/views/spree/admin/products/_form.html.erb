@@ -86,13 +86,7 @@
     <fieldset id="admin_product_form_multiple_variants" style="<%= 'display:none;' unless @product.has_variants? %>" class="sixteen columns alpha omega clearfix" data-hook="admin_product_form_multiple_variants">
 
       <legend><%= icon('th-large') %>Variants</legend>
-      <div data-hook="admin_product_form_option_types">
-        <%= f.field_container :option_types do %>
-          <%= f.label :option_type_ids, Spree.t(:option_types) %>
-          <%= f.hidden_field :option_type_ids, :value => @product.option_type_ids.join(',') %>
-        <% end %>
-      </div>
-
+      <%= render partial: "spree/admin/products/option_types", locals: {f: f} %>
       <%= render partial: "spree/admin/products/variants", locals: {f: f} %>
 
     </fieldset>

@@ -1,57 +1,54 @@
 <tbody id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="variant <%= cycle('odd', 'even')%>">
-
-  <tr class="show">
-    <td class="no-border">
-      <span class="handle"></span>
-    </td>
-    <td id="show_product_variants_attributes_<%= variant_counter %>_sku"><%= variant.sku %></td>
-    <% @product.option_types.each do |option_type| %>
-      <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>"><%= variant.option_value(option_type.name) %></td>
-    <% end %>
-    <td>
-      <span id="show_product_variants_attributes_<%= variant_counter %>_height">
-        <%= number_with_precision(variant.height, :precision => 2) %>h
-      </span>
-      &times;
-      <span id="show_product_variants_attributes_<%= variant_counter %>_width">
-        <%= number_with_precision(variant.width, :precision => 2) %>w
-      </span>
-      &times;
-      <span id="show_product_variants_attributes_<%= variant_counter %>_depth">
-        <%= number_with_precision(variant.depth, :precision => 2) %>d
-      </span>
-      <br />
-      <span id="show_product_variants_attributes_<%= variant_counter %>_weight">
-        <%= number_with_precision(variant.weight, :precision => 2) %>
-      </span>
-    </td>
-    <td id="show_product_variants_attributes_<%= variant_counter %>_price"><%= variant.display_price.to_html %></td>
-    <td class="actions">
-      <%= link_to_with_icon('edit',
-                            Spree.t(:edit),
-                            variant.new_record? ? '#' : edit_admin_product_variant_url(@product, variant),
-                            :no_text => true
-                            # :remote => :true,
-                            # :'data-update' => spree_dom_id(variant),
-                            # :'data-action' => 'edit'
-                           ) %>
-      &nbsp;
-      <%= link_to_with_icon('trash',
-                            Spree.t(:delete),
-                            admin_product_variant_url(@product, variant),
-                            :no_text => true,
-                            :class => "delete-resource",
-                            :'data-confirm' => Spree.t(:are_you_sure),
-                            :'date-action' => 'remove'
-                           ) unless variant.deleted? || variant.new_record? %>
-    </td>
-  </tr>
-
-  <tr class="edit" style="display: none;">
-    <%= f.fields_for :variants, variant do |vf| %>
-      <td>
+  <%= f.fields_for :variants, variant do |vf| %>
+    <tr class="show">
+      <td class="no-border">
         <span class="handle"></span>
-        <%= f.hidden_field :id %>
+        <%= vf.hidden_field :position, :value => variant.position, :class => 'position_field' %>
+      </td>
+      <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="field-display"><%= variant.sku %></td>
+      <% @product.option_types.each do |option_type| %>
+        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="field-display"><%= variant.option_value(option_type.name) %></td>
+      <% end %>
+      <td>
+        <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
+          <%= number_with_precision(variant.height, :precision => 2) %>
+        </span>h
+        &times;
+        <span id="show_product_variants_attributes_<%= variant_counter %>_width" class="field-display">
+          <%= number_with_precision(variant.width, :precision => 2) %>
+        </span>w
+        &times;
+        <span id="show_product_variants_attributes_<%= variant_counter %>_depth" class="field-display">
+          <%= number_with_precision(variant.depth, :precision => 2) %>d
+        </span>d
+        <br />
+        <span id="show_product_variants_attributes_<%= variant_counter %>_weight" class="field-display">
+          <%= number_with_precision(variant.weight, :precision => 2) %>
+        </span>
+      </td>
+      <td id="show_product_variants_attributes_<%= variant_counter %>_price" class="field-display"><%= variant.display_price.to_html %></td>
+      <td class="actions">
+        <% unless variant.deleted? %>
+          <%= link_to_with_icon('edit',
+                                Spree.t(:edit),
+                                variant.new_record? ? '#' : edit_admin_product_variant_url(@product, variant),
+                                :no_text => true
+                               ) %>
+          &nbsp;
+          <%= link_to_with_icon('trash',
+                                Spree.t(:delete),
+                                admin_product_variant_url(@product, variant),
+                                :no_text => true,
+                                :class => "delete-resource",
+                                :'data-confirm' => Spree.t(:are_you_sure),
+                                :'data-action' => 'remove'
+                               ) unless variant.deleted? || variant.new_record? %>
+        <% end %>
+      </td>
+    </tr>
+
+    <tr class="edit" style="display: none;">
+      <td>
       </td>
       <td class="sku">
         <%= render :partial => 'spree/shared/error_messages', :locals => { :target => variant } %>

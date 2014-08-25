@@ -1,0 +1,6 @@
+<div data-hook="admin_product_form_option_types">
+  <%= f.field_container :option_types do %>
+    <%= f.label :option_type_ids, Spree.t(:option_types) %>
+    <%= f.hidden_field :option_type_ids, :value => @product.option_type_ids.join(',') %>
+  <% end %>
+</div>

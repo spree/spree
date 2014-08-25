@@ -1,0 +1,2 @@
+$("table#variants").replaceWith('<%= escape_javascript(render :partial => "spree/admin/products/variants_table", :formats => [:html], :handlers => [:erb]) %>');
+$(".fa-filter").replaceWith('<%= escape_javascript(link_to_with_icon("filter", @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => "button", remote: true) ) %>');
