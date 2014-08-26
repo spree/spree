@@ -3,6 +3,11 @@ $(document).ready(function() {
                      [data-hook='admin_return_authorization_form_fields']");
 
   if(formFields.length > 0) {
+    function checkAddItemBox() {
+      $(this).closest('tr').find('input.add-item').attr('checked', 'checked');
+      updateSuggestedAmount();
+    }
+
     function updateSuggestedAmount() {
       var totalPretaxRefund = 0;
       var checkedItems = formFields.find('input.add-item:checked');
@@ -24,5 +29,7 @@ $(document).ready(function() {
 
     formFields.find('input.add-item').on('change', updateSuggestedAmount);
     formFields.find('.refund-amount-input').on('keyup', updateSuggestedAmount);
+
+    formFields.find('input, select').not('.add-item').on('change', checkAddItemBox);
   }
 });
