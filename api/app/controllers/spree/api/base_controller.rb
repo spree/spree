@@ -102,8 +102,8 @@ module Spree
       end
 
       def gateway_error(exception)
-        @error = exception.message
-        render 'spree/api/errors/gateway_error', status: 422
+        @order.errors.add(:base, exception.message)
+        invalid_resource!(@order)
       end
 
       def requires_authentication?
