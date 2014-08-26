@@ -1,4 +1,4 @@
-<%= form_for(@product) do |f|  %>
+<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
   <% if @variants.any? %>
     <table id="variants" class="index sortable-variants" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
       <colgroup>
@@ -14,14 +14,14 @@
         <tr>
           <th rowspan="2"></th>
           <th rowspan="2"><%= Spree.t(:sku) %></th>
-          <th colspan="<%= @product.options.count %>"><%= Spree.t(:options) %></th>
+          <th colspan="<%= @product.options.count %>" class="option_types"><%= Spree.t(:options) %></th>
           <th rowspan="2"><%= Spree.t(:dimensions) %></th>
           <th rowspan="2"><%= Spree.t(:price) %></th>
           <th rowspan="2" class="actions"></th>
         </tr>
         <tr>
           <% @product.option_types.each do |option_type| %>
-            <th><%= option_type.presentation %></th>
+            <th class="option_type"><%= option_type.presentation %></th>
           <% end %>
         </tr>
       </thead>

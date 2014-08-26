@@ -30,7 +30,11 @@ module Spree
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
-            format.html { redirect_to location_after_save }
+            if request.xhr?
+              format.json
+            else
+              format.html { redirect_to location_after_save }
+            end
             format.js   { render :layout => false }
           end
         else

@@ -143,7 +143,28 @@ function updateShowElementFromSelect( editField ) {
 function replaceId( element, newId ) {
   element.prop("id", element.prop("id").replace(/\d+/, newId))
 }
-
+function updateOptionTypes() {
+  var product_slug = $('form.edit_product').data('product-slug');
+  var option_type_ids = $('#product_option_type_ids').val();
+  $.ajax({  dataType: 'json',
+            url: "/admin/products/" + product_slug,
+            data: { product: { option_type_ids: option_type_ids }},
+            type: 'patch',
+            success: function( data ) {
+              updateVariantsTable();
+            }
+  });
+}
+function updateVariantsTable() {
+  var product_slug = $('form.edit_product').data('product-slug');
+  $.ajax({  dataType: 'html',
+            url: "/admin/products/" + product_slug + "/variants",
+            type: 'get',
+            success: function( data ) {
+              $('table#variants').replaceWith(data);
+            }
+  });
+}
 
 $(document).ready(function(){
   $('body').on('click', '#variants .variant .show .fa-edit', function(event) {
@@ -161,16 +182,9 @@ $(document).ready(function(){
     updateShowElementFromSelect( $(this) );
   });
 
-  // $('body').on('change','#product_option_type_ids', function(event) {
-  //   console.log('foo');
-  //   $.get( "/admin/products/20/variants",
-  //     function( data ) {
-  //       $( ".result" ).html( data );
-  //       alert( "Load was performed." );
-  //     }
-  //   );
-  //   // $('table#variants').replaceWith('foo');
-  // });
+  $('body').on('change','#product_option_type_ids', function(event) {
+    updateOptionTypes();
+  });
 
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {

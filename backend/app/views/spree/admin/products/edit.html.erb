@@ -21,7 +21,7 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
-<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true }, :data => { :product_slug => @product.slug} do |f| %>
   <fieldset class="no-border-top">
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/edit_resource_links' %>

@@ -23,10 +23,9 @@ module Spree
 
       def index
         @tax_categories = TaxCategory.order(:name)
-        respond_with(@object) do |format|
-          format.html { render :layout => !request.xhr? }
+        respond_with(@collection) do |format|
           if request.xhr?
-            format.js   { render 'spree/admin/products/variants', :layout => false }
+            format.html { render partial: 'spree/admin/products/variants_table', :layout => false }
           end
         end
       end

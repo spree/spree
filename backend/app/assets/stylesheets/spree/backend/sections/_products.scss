@@ -61,12 +61,32 @@ form.edit_product {
 }
 
 #variants {
+  thead {
+    th {
+      border-bottom: 1px solid #cee1f4;
+    }
+    th.option_types {
+      border-bottom: none
+    }
+    th.option_type {
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      &:last-child {
+        border-right: 1px solid #cee1f4;
+      }
+    }
+  }
   td {
+    border-top: none;
     vertical-align: top;
   }
   td.sku label,
-  td.option_value label {
-    display: none;
+  td.option_value {
+    text-align: center;
+    label {
+      display: none;
+    }
   }
 }
 

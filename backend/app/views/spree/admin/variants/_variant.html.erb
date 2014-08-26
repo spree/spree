@@ -7,7 +7,7 @@
       </td>
       <td id="show_product_variants_attributes_<%= variant_counter %>_sku" class="field-display"><%= variant.sku %></td>
       <% @product.option_types.each do |option_type| %>
-        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="field-display"><%= variant.option_value(option_type.name) %></td>
+        <td id="show_variant_<%= variant_counter %>_option_<%= option_type.name %>" class="option_value field-display"><%= variant.option_value(option_type.name) %></td>
       <% end %>
       <td>
         <span id="show_product_variants_attributes_<%= variant_counter %>_height" class="field-display">
