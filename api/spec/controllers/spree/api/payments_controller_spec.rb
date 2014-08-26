@@ -194,23 +194,22 @@ module Spree
 
         context "voiding" do
           it "can void" do
-            api_put :void, :id => payment.to_param
-            response.status.should == 200
-            payment.reload.state.should == "void"
+            api_put :void, id: payment.to_param
+            expect(response.status).to eq 200
+            expect(payment.reload.state).to eq "void"
           end
 
           context "voiding fails" do
             before do
-              fake_response = double(:success? => false, :to_s => "NO REFUNDS")
+              fake_response = double(success?: false, to_s: "NO REFUNDS")
               Spree::Gateway::Bogus.any_instance.should_receive(:void).and_return(fake_response)
             end
 
             it "returns a 422 status" do
-              api_put :void, :id => payment.to_param
-              response.status.should == 422
-              json_response["error"].should == "There was a problem with the payment gateway: NO REFUNDS"
-
-              payment.reload.state.should == "checkout"
+              api_put :void, id: payment.to_param
+              expect(response.status).to eq 422
+              expect(json_response["error"]).to eq "There was a problem with the payment gateway: NO REFUNDS"
+              expect(payment.reload.state).to eq "checkout"
             end
           end
         end

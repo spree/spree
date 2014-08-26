@@ -18,9 +18,10 @@ module Spree
 
       after_filter  :set_jsonp_format
 
-      rescue_from Exception, :with => :error_during_processing
-      rescue_from CanCan::AccessDenied, :with => :unauthorized
-      rescue_from ActiveRecord::RecordNotFound, :with => :not_found
+      rescue_from Exception, with: :error_during_processing
+      rescue_from ActiveRecord::RecordNotFound, with: :not_found
+      rescue_from CanCan::AccessDenied, with: :unauthorized
+      rescue_from Spree::Core::GatewayError, with: :gateway_error
 
       helper Spree::Api::ApiHelpers
 
@@ -98,6 +99,11 @@ module Spree
 
         render :text => { :exception => exception.message }.to_json,
           :status => 422 and return
+      end
+
+      def gateway_error(exception)
+        @error = exception.message
+        render 'spree/api/errors/gateway_error', status: 422
       end
 
       def requires_authentication?
