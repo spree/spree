@@ -84,7 +84,16 @@ describe Spree::Api::ShipmentsController do
         api_put :remove, { variant_id: variant.to_param, quantity: 1 }
         response.status.should == 200
         json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
-     end
+      end
+
+      it 'removes a destroyed variant from a shipment' do
+        order.contents.add(variant, 2)
+        variant.destroy
+
+        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        response.status.should == 200
+        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
+      end
     end
 
     context "can transition a shipment from ready to ship" do
