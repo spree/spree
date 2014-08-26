@@ -3,15 +3,16 @@ require 'active_merchant'
 require 'acts_as_list'
 require 'awesome_nested_set'
 require 'cancan'
+require 'friendly_id'
+require 'font-awesome-rails'
 require 'kaminari'
 require 'mail'
 require 'monetize'
 require 'paperclip'
 require 'paranoia'
+require 'premailer/rails'
 require 'ransack'
 require 'state_machine'
-require 'friendly_id'
-require 'font-awesome-rails'
 
 module Spree
 

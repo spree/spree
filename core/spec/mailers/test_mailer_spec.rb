@@ -9,15 +9,14 @@ describe Spree::TestMailer do
 
   context ":from not set explicitly" do
     it "falls back to spree config" do
-      message = Spree::TestMailer.test_email(user)
+      message = Spree::TestMailer.test_email('test@example.com')
       message.from.should == [Spree::Config[:mails_from]]
     end
   end
 
   it "confirm_email accepts a user id as an alternative to a User object" do
-    Spree.user_class.should_receive(:find).with(user.id).and_return(user)
     lambda {
-      test_email = Spree::TestMailer.test_email(user.id)
+      test_email = Spree::TestMailer.test_email('test@example.com')
     }.should_not raise_error
   end
 end

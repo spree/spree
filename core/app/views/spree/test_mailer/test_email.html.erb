@@ -1,0 +1,40 @@
+<table>
+  <tr>
+    <td>
+
+      <center>
+        <h1 class="center">
+          <%= Spree.t('test_mailer.test_email.greeting') %>
+        </h1>
+      </center>
+
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>
+
+      <p class="lede">
+        <%= Spree.t('test_mailer.test_email.message') %>
+      </p>
+
+      <p>
+        Please remember to configure all of the emails that Spree has provided to your needs.
+        Spree comes shipped with <a href="http://zurb.com/ink/" target="_blank"> Ink </a>
+        prepackaged, but you can use your own version. Ink is not placed in the asset pipeline.
+      </p>
+
+      <p>
+        Also take note that Gmail does not support <code>&lt;style&gt;</code> tags.
+        Therefore, you will need a gem that will be able to remove your <code>&lt;style&gt;</code>
+        tags and place them inline. Gmail only supports inline styles. We use
+        <a href="https://github.com/fphilipe/premailer-rails" target="_blank">Premailer for Rails</a> by default.
+      </p>
+
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

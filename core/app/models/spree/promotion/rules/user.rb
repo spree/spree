@@ -8,7 +8,7 @@ module Spree
           join_table: 'spree_promotion_rules_users',
           foreign_key: 'promotion_rule_id',
           association_foreign_key: :user_id
-        
+
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
         end

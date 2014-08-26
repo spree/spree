@@ -62,3 +62,7 @@
 * Rename *_filter callbacks to *_action callbacks.
 
     Masahiro Saito
+
+* Enable default html email templates with Zurb Ink, and PreMailer for Rails.
+
+    Ben Morgan & Jeff Dutil

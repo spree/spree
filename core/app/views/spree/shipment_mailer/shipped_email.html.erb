@@ -1,0 +1,34 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+        <%= Spree.t('shipment_mailer.shipped_email.dear_customer') %>
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.instructions') %>
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %>
+      </p>
+      <table>
+        <% @shipment.manifest.each do |item| %>
+          <tr>
+            <td><%= item.variant.sku %></td>
+            <td><%= item.variant.product.name %></td>
+            <td><%= item.variant.options_text %></td>
+          </tr>
+        <% end %>
+      </table>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.track_information', :tracking => @shipment.tracking)     if @shipment.tracking %>
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.track_link',        :url      => @shipment.tracking_url) if @shipment.tracking_url %>
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.thanks') %>
+      </p>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>
