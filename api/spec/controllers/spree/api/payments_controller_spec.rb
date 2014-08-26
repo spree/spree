@@ -140,7 +140,8 @@ module Spree
 
             it "returns a 422 status" do
               response.status.should == 422
-              json_response["error"].should == "There was a problem with the payment gateway: Could not authorize card"
+              expect(json_response["error"]).to eq "Invalid resource. Please fix errors and try again."
+              expect(json_response["errors"]["base"][0]).to eq "Could not authorize card"
             end
 
             it "does not raise a stack level error" do
@@ -166,7 +167,8 @@ module Spree
             it "returns a 422 status" do
               api_put :capture, :id => payment.to_param
               response.status.should == 422
-              json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
+              expect(json_response["error"]).to eq "Invalid resource. Please fix errors and try again."
+              expect(json_response["errors"]["base"][0]).to eq "Insufficient funds"
             end
           end
         end
@@ -187,7 +189,8 @@ module Spree
             it "returns a 422 status" do
               api_put :purchase, :id => payment.to_param
               response.status.should == 422
-              json_response["error"].should == "There was a problem with the payment gateway: Insufficient funds"
+              expect(json_response["error"]).to eq "Invalid resource. Please fix errors and try again."
+              expect(json_response["errors"]["base"][0]).to eq "Insufficient funds"
             end
           end
         end
@@ -208,11 +211,13 @@ module Spree
             it "returns a 422 status" do
               api_put :void, id: payment.to_param
               expect(response.status).to eq 422
-              expect(json_response["error"]).to eq "There was a problem with the payment gateway: NO REFUNDS"
+              expect(json_response["error"]).to eq "Invalid resource. Please fix errors and try again."
+              expect(json_response["errors"]["base"][0]).to eq "NO REFUNDS"
               expect(payment.reload.state).to eq "checkout"
             end
           end
         end
+
       end
     end
   end
