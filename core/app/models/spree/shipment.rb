@@ -363,7 +363,6 @@ module Spree
 
         refresh_rates
         save!
-        new_shipment.refresh_rates
         new_shipment.save!
       end
     end
