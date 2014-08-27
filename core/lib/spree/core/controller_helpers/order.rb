@@ -27,6 +27,11 @@ module Spree
           # Find any incomplete orders for the guest_token
           @current_order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
 
+          # Find any incomplete orders for the current user
+          if @current_order.nil? && try_spree_current_user
+            @current_order = Spree::Order.incomplete.order('id DESC').where({ currency: current_currency, user_id: try_spree_current_user.try(:id)}).first
+          end
+
           if options[:create_order_if_necessary] and (@current_order.nil? or @current_order.completed?)
             @current_order = Spree::Order.new(current_order_params)
             @current_order.user ||= try_spree_current_user
