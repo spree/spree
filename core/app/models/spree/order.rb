@@ -506,7 +506,7 @@ module Spree
       persist_totals
     end
 
-    def eligible_promotions 
+    def eligible_promotions
       all_adjustments.eligible.promotion.collect(&:source).compact.collect(&:promotion).compact.uniq
     end
 
@@ -516,7 +516,7 @@ module Spree
           errors.add(:base, Spree.t(:coupon_code_expired))
           break
         elsif promotion.usage_limit_exceeded?
-          errors.add(:base, Spree.t(:coupon_code_max_usage)) 
+          errors.add(:base, Spree.t(:coupon_code_max_usage))
           break
         end
       end
@@ -526,7 +526,7 @@ module Spree
       else
         return false
       end
-    end  
+    end
 
     # Clean shipments and make order back to address state
     #

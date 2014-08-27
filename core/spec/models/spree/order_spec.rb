@@ -320,12 +320,13 @@ describe Spree::Order do
       promotion.should_receive(:expired?).and_return(false)
       order.remove_expired_coupons.should be_false
     end
-    
+
     it "should recalculate expired promotions" do
       promotion.should_receive(:expired?).and_return(true)
       order.should_receive(:updater).and_return(updater)
       updater.should_receive(:recalculate_adjustments)
       order.remove_expired_coupons.should be_true
+      order.errors.should_not be_empty
     end
 
     it "should recalculate overused promotions" do
