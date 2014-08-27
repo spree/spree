@@ -114,7 +114,7 @@ module Spree
                         variant.price_modifier_amount(opts)
       end
 
-      opts.each { |key, value| self.send "#{key}=", value }
+      self.assign_attributes opts
     end
 
     private
