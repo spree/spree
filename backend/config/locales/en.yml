@@ -1,6 +1,0 @@
-en:
-  spree:
-    info_product_has_multiple_skus: "This product has %{count} variants:"
-    info_number_of_skus_not_shown:
-      one: "and one other"
-      other: "and %{count} others"
