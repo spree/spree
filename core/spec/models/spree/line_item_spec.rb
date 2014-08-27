@@ -234,6 +234,10 @@ describe Spree::LineItem do
   end
 
   describe "#options=" do
+    it "can handle updating a blank line item with no order" do
+      line_item.options = { price: 123 }
+    end
+
     it "updates the data provided in the options" do
       line_item.options = { price: 123 }
       expect(line_item.price).to eq 123

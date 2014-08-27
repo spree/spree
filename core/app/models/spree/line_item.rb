@@ -102,7 +102,7 @@ module Spree
     def options=(options={})
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
-      currency = opts.delete(:currency) || order.currency
+      currency = opts.delete(:currency) || order.try(:currency)
       self.target_shipment = opts.delete(:shipment) if opts.has_key?(:shipment)
 
       if currency
