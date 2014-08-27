@@ -232,4 +232,22 @@ describe Spree::LineItem do
       expect(line_item).to have(1).error_on(:currency)
     end
   end
+
+  describe "#options=" do
+    it "can handle updating a blank line item with no order" do
+      line_item.options = { price: 123 }
+    end
+
+    it "updates the data provided in the options" do
+      line_item.options = { price: 123 }
+      expect(line_item.price).to eq 123
+    end
+
+    it "updates the price based on the options provided" do
+      expect(line_item).to receive(:gift_wrap=).with(true)
+      expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with("USD", true).and_return 1.99
+      line_item.options = { gift_wrap: true }
+      expect(line_item.price).to eq 21.98
+    end
+  end
 end

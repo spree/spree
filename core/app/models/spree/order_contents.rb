@@ -57,31 +57,17 @@ module Spree
 
       def add_to_line_item(variant, quantity, options = {})
         line_item = grab_line_item_by_variant(variant, false, options)
-        
-        opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
-        currency = opts.delete(:currency) || order.currency
-        shipment = opts.delete(:shipment)
-        
+
         if line_item
-          line_item.target_shipment = shipment
+          line_item.target_shipment = options[:shipment] if options.has_key? :shipment
           line_item.quantity += quantity.to_i
           line_item.currency = currency unless currency.nil?
         else
-          line_item = order.line_items.new({quantity: quantity, 
-                                            variant: variant}.
-                                              merge(
-                                                ActionController::Parameters.new(opts).
-                                                  permit(PermittedAttributes.line_item_attributes)))
-          line_item.target_shipment = shipment
-          
-          if currency
-            line_item.currency = currency
-            line_item.price    = variant.price_in(currency).amount + 
-                                 variant.price_modifier_amount_in(currency, opts)
-          else
-            line_item.price    = variant.price + 
-                                 variant.price_modifier_amount(opts)
-          end
+          opts = { currency: order.currency }.merge ActionController::Parameters.new(options).
+                                              permit(PermittedAttributes.line_item_attributes)
+          line_item = order.line_items.new(quantity: quantity,
+                                            variant: variant,
+                                            options: opts)
         end
 
         line_item.save!
