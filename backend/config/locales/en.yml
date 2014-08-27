@@ -1,5 +1,7 @@
 en:
   spree:
+    manage_variants: "Manage Variants"
+    skus: "SKUs"
     info_product_has_multiple_skus: "This product has %{count} variants:"
     info_number_of_skus_not_shown:
       one: "and one other"
