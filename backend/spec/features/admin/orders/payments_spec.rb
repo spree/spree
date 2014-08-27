@@ -212,5 +212,20 @@ describe 'Payments' do
         page.should have_content("Payment has been successfully created!")
       end
     end
+
+    context "with a check" do
+      let!(:payment_method) { create(:check_payment_method) }
+
+      before do
+        visit spree.admin_order_payments_path(order.reload)
+      end
+
+      it "can successfully be created and captured" do
+        click_on 'Continue'
+        expect(page).to have_content("Payment has been successfully created!")
+        click_icon(:capture)
+        expect(page).to have_content("Payment Updated")
+      end
+    end
   end
 end
