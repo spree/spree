@@ -75,7 +75,7 @@ module Spree
 
               shipment.save!
 
-              shipping_method = find_shipping_method(s)
+              shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
               rate = shipment.shipping_rates.create!(:shipping_method => shipping_method,
                                                      :cost => s[:cost])
               shipment.selected_shipping_rate_id = rate.id
@@ -85,11 +85,6 @@ module Spree
               raise "Order import shipments: #{e.message} #{s}"
             end
           end
-        end
-
-        def self.find_shipping_method(shipment_hash)
-          ActiveSupport::Deprecation.warn "Importing a shipment's shipment method will start using find_by_admin_name! rather than find_by_name!", caller
-          Spree::ShippingMethod.find_by_name! shipment_hash[:shipping_method]
         end
 
         def self.create_line_items_from_params(line_items_hash, order)
