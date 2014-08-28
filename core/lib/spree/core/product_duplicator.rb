@@ -52,6 +52,9 @@ module Spree
       new_variant = variant.dup
       new_variant.sku = "COPY OF #{new_variant.sku}"
       new_variant.deleted_at = nil
+      new_variant.images = variant.images.map { |image| duplicate_image image } if @include_images
+      new_variant.price = variant.price
+      new_variant.currency = variant.currency
       new_variant.option_values = variant.option_values.map { |option_value| option_value}
       new_variant
     end
