@@ -1,0 +1,29 @@
+table {
+  width: 100%;
+  border: 1px solid $c-border;
+  border-collapse: collapse;
+
+  thead {
+    th {
+      text-align: center;
+      text-transform: uppercase;
+      font-size: em(14);
+      font-weight: 600;
+      background-color: lighten($c-border, 5);
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+
+      }
+    }
+  }
+
+  td, th {
+    padding: 10px;
+    border-bottom: 1px solid $c-border;
+    border-right: 1px solid $c-border;
+  }
+}

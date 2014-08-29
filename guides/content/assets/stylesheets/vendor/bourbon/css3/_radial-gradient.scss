@@ -1,0 +1,78 @@
+// Requires Sass 3.1+
+@mixin radial-gradient($G1,        $G2,
+                       $G3: false, $G4: false,
+                       $G5: false, $G6: false,
+                       $G7: false, $G8: false,
+                       $G9: false, $G10: false,
+                       $pos: 50% 50%,
+                       $shape-size: ellipse cover,
+                       $deprecated-pos1: center center,
+                       $deprecated-pos2: center center,
+                       $deprecated-radius1: 0,
+                       $deprecated-radius2: 460,
+                       $fallback: false) {
+
+  @each $value in $G1, $G2 {
+    $first-val: nth($value, 1);
+    $pos-type:  type-of($first-val);
+
+    @if ($pos-type != color) or ($first-val != "transparent") {
+      @if ($pos-type == number)
+      or ($first-val == "center")
+      or ($first-val == "top")
+      or ($first-val == "right")
+      or ($first-val == "bottom")
+      or ($first-val == "left") {
+
+        $pos: $value;
+
+        @if $pos == $G1 {
+          $G1: false;
+        }
+      }
+
+      @else if
+         ($first-val == "ellipse")
+      or ($first-val == "circle")
+      or ($first-val == "closest-side")
+      or ($first-val == "closest-corner")
+      or ($first-val == "farthest-side")
+      or ($first-val == "farthest-corner")
+      or ($first-val == "contain")
+      or ($first-val == "cover") {
+
+        $shape-size: $value;
+
+        @if $value == $G1 {
+          $G1: false;
+        }
+
+        @else if $value == $G2 {
+          $G2: false;
+        }
+      }
+    }
+  }
+
+  $full: compact($G1, $G2, $G3, $G4, $G5, $G6, $G7, $G8, $G9, $G10);
+
+  // Set $G1 as the default fallback color
+  $first-color: nth($full, 1);
+  $fallback-color: nth($first-color, 1);
+
+  @if (type-of($fallback) == color) or ($fallback == "transparent") {
+    $fallback-color: $fallback;
+  }
+
+  background-color:  $fallback-color;
+  background-image: deprecated-webkit-gradient(radial, $deprecated-pos1, $deprecated-pos2, $full, $deprecated-radius1, $deprecated-radius2); // Safari <= 5.0
+  background-image:  -webkit-radial-gradient($pos, $shape-size, $full);
+  background-image:     -moz-radial-gradient($pos, $shape-size, $full);
+  background-image:      -ms-radial-gradient($pos, $shape-size, $full);
+  background-image:       -o-radial-gradient($pos, $shape-size, $full);
+  background-image: unquote("radial-gradient(#{$pos}, #{$shape-size}, #{$full})");
+}
+
+//  Usage: Gradient position and shape-size are required. Color stops are optional.
+//  @include radial-gradient(50% 50%, circle cover, #1e5799, #efefef);
+//  @include radial-gradient(50% 50%, circle cover, #eee 10%, #1e5799 30%, #efefef);
