@@ -3,8 +3,8 @@ BLUE APRON SPECIFIC
 
 The following branch ```2-3-dev``` contains Blue Apron specific code that is awaiting acceptence into Spree master.
 
-- [ ] API GET #show for Promotions, https://github.com/spree/spree/pull/5233
-- [ ] API PUT #apply_coupon_code on Orders now has status_code, https://github.com/spree/spree/pull/5234
+- [x] API GET #show for Promotions, https://github.com/spree/spree/pull/5233
+- [x] API PUT #apply_coupon_code on Orders now has status_code, https://github.com/spree/spree/pull/5234
 
 SUMMARY
 -------
