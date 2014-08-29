@@ -110,7 +110,7 @@ describe "Coupon code promotions", js: true do
         before do
           rule = Spree::Promotion::Rules::ItemTotal.new
           rule.promotion = promotion
-          rule.preferred_amount = 100
+          rule.preferred_amount_min = 100
           rule.save
         end
 

@@ -15,7 +15,7 @@ describe "Automatic promotions", :js => true do
    calculator.preferred_amount = 10
 
    rule = Spree::Promotion::Rules::ItemTotal.create
-   rule.preferred_amount = 100
+   rule.preferred_amount_min = 100
    rule.save
 
    promotion.rules << rule
