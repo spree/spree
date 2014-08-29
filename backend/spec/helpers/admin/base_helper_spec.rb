@@ -17,7 +17,6 @@ describe Spree::Admin::BaseHelper do
 
   context "rails environments" do
     it "returns the existing environments" do
-      Dir.stub(:glob).and_return ["./config/environments/development.rb", "./config/environments/production.rb","./config/environments/staging.rb", "./config/environments/test.rb"]
       expect(rails_environments).to eql ["development","production", "staging", "test"]
     end
   end

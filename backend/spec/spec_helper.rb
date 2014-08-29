@@ -85,6 +85,12 @@ RSpec.configure do |config|
 
     DatabaseCleaner.start
     reset_spree_preferences
+    Dir.stub(:glob).and_return [
+      "./config/environments/development.rb",
+      "./config/environments/production.rb",
+      "./config/environments/staging.rb",
+      "./config/environments/test.rb"
+    ]
   end
 
   config.after(:each) do
