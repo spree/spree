@@ -38,9 +38,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.2
+gem install rails -v 4.1.5
 gem install spree
-rails _4.1.2_ new my_store
+rails _4.1.5_ new my_store
 spree install my_store
 ```
 
@@ -310,7 +310,7 @@ bash build.sh
 
 Further Documentation
 ------------
-Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com). 
+Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
 
 Contributing
 ------------
