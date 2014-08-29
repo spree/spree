@@ -142,7 +142,7 @@ module Spree
     end
 
     def send_reimbursement_email
-      Spree::ReimbursementMailer.reimbursement_email(self).deliver
+      Spree::ReimbursementMailer.reimbursement_email(self.id).deliver
     end
   end
 end
