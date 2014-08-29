@@ -4,63 +4,278 @@ describe Spree::Promotion::Rules::ItemTotal do
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
   let(:order) { double(:order) }
 
-  before { rule.preferred_amount = 50 }
+  before { rule.preferred_amount_min = 50 }
+  before { rule.preferred_amount_max = 60 }
 
-  context "preferred operator set to gt" do
-    before { rule.preferred_operator = 'gt' }
-
-    it "should be eligible when item total is greater than preferred amount" do
-      order.stub :item_total => 51
-      rule.should be_eligible(order)
+  context "preferred operator_min set to gt and preferred operator_max set to lt" do
+    before do
+      rule.preferred_operator_min = 'gt'
+      rule.preferred_operator_max = 'lt'
     end
 
-    context "when item total is equal to preferred amount" do
-      before { order.stub item_total: 50 }
-      it "is not eligible" do
-        rule.should_not be_eligible(order)
+    context "and item total is lower than prefered maximum amount" do
+
+      context "and item total is higher than prefered minimum amount" do
+        it "should be eligible" do
+          order.stub :item_total => 51
+          expect(rule).to be_eligible(order)
+        end
       end
+
+      context "and item total is equal to the prefered minimum amount" do
+
+        before { order.stub :item_total => 50 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+        end
+      end
+
+      context "and item total is lower to the prefered minimum amount" do
+        before { order.stub :item_total => 49 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+        end
+      end
+    end
+
+    context "and item total is equal to the prefered maximum amount" do
+      before { order.stub :item_total => 60 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
+      end
+
       it "set an error message" do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+          to eq "This coupon code can't be applied to orders higher than $60.00."
       end
     end
 
-    context "when item total is lower than preferred amount" do
-      before { order.stub item_total: 49 }
-      it "is not eligible" do
-        rule.should_not be_eligible(order)
+    context "and item total is higher than the prefered maximum amount" do
+      before { order.stub :item_total => 61 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
       end
+
       it "set an error message" do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+          to eq "This coupon code can't be applied to orders higher than $60.00."
+      end
+    end
+
+  end
+
+  context "preferred operator set to gt and preferred operator_max set to lte" do
+    before do
+      rule.preferred_operator_min = 'gt'
+      rule.preferred_operator_max = 'lte'
+    end
+
+    context "and item total is lower than prefered maximum amount" do
+
+      context "and item total is higher than prefered minimum amount" do
+        it "should be eligible" do
+          order.stub :item_total => 51
+          expect(rule).to be_eligible(order)
+        end
+      end
+
+      context "and item total is equal to the prefered minimum amount" do
+
+        before { order.stub :item_total => 50 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+        end
+      end
+
+      context "and item total is lower to the prefered minimum amount" do
+        before { order.stub :item_total => 49 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+        end
+      end
+    end
+
+    context "and item total is equal to the prefered maximum amount" do
+      before { order.stub :item_total => 60 }
+
+      it "should not be eligible" do
+        expect(rule).to be_eligible(order)
+      end
+    end
+
+    context "and item total is higher than the prefered maximum amount" do
+      before { order.stub :item_total => 61 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
+      end
+
+      it "set an error message" do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "This coupon code can't be applied to orders higher than $60.00."
       end
     end
   end
 
-  context "preferred operator set to gte" do
-    before { rule.preferred_operator = 'gte' }
-
-    it "should be eligible when item total is greater than preferred amount" do
-      order.stub :item_total => 51
-      rule.should be_eligible(order)
+  context "preferred operator set to gte and preferred operator_max set to lt" do
+    before do
+      rule.preferred_operator_min = 'gte'
+      rule.preferred_operator_max = 'lt'
     end
 
-    it "should be eligible when item total is equal to preferred amount" do
-      order.stub :item_total => 50
-      rule.should be_eligible(order)
-    end
+    context "and item total is lower than prefered maximum amount" do
 
-    context "when item total is lower than preferred amount" do
-      before { order.stub item_total: 49 }
-      it "is not eligible" do
-        rule.should_not be_eligible(order)
+      context "and item total is higher than prefered minimum amount" do
+        it "should be eligible" do
+          order.stub :item_total => 51
+          expect(rule).to be_eligible(order)
+        end
       end
+
+      context "and item total is equal to the prefered minimum amount" do
+
+        before { order.stub :item_total => 50 }
+
+        it "should not be eligible" do
+          expect(rule).to be_eligible(order)
+        end
+      end
+
+      context "and item total is lower to the prefered minimum amount" do
+        before { order.stub :item_total => 49 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than $50.00."
+        end
+      end
+    end
+
+    context "and item total is equal to the prefered maximum amount" do
+      before { order.stub :item_total => 60 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
+      end
+
       it "set an error message" do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders less than $50.00."
+          to eq "This coupon code can't be applied to orders higher than $60.00."
+      end
+    end
+
+    context "and item total is higher than the prefered maximum amount" do
+      before { order.stub :item_total => 61 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
+      end
+
+      it "set an error message" do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "This coupon code can't be applied to orders higher than $60.00."
+      end
+    end
+
+  end
+
+  context "preferred operator set to gte and preferred operator_max set to lte" do
+    before do
+      rule.preferred_operator_min = 'gte'
+      rule.preferred_operator_max = 'lte'
+    end
+
+    context "and item total is lower than prefered maximum amount" do
+      context "and item total is higher than prefered minimum amount" do
+        it "should be eligible" do
+          order.stub :item_total => 51
+          expect(rule).to be_eligible(order)
+        end
+      end
+
+      context "and item total is equal to the prefered minimum amount" do
+
+        before { order.stub :item_total => 50 }
+
+        it "should not be eligible" do
+          expect(rule).to be_eligible(order)
+        end
+      end
+
+      context "and item total is lower to the prefered minimum amount" do
+        before { order.stub :item_total => 49 }
+
+        it "should not be eligible" do
+          expect(rule).to_not be_eligible(order)
+        end
+
+        it "set an error message" do
+          rule.eligible?(order)
+          expect(rule.eligibility_errors.full_messages.first).
+            to eq "This coupon code can't be applied to orders less than $50.00."
+        end
+      end
+    end
+
+    context "and item total is equal to the prefered maximum amount" do
+      before { order.stub :item_total => 60 }
+
+      it "should not be eligible" do
+        expect(rule).to be_eligible(order)
+      end
+    end
+
+    context "and item total is higher than the prefered maximum amount" do
+      before { order.stub :item_total => 61 }
+
+      it "should not be eligible" do
+        expect(rule).to_not be_eligible(order)
+      end
+
+      it "set an error message" do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "This coupon code can't be applied to orders higher than $60.00."
       end
     end
   end
