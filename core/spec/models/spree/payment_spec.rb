@@ -14,9 +14,14 @@ describe Spree::Payment do
   let(:cvv_code) { 'M' }
 
   let(:card) do
-    mock_model(Spree::CreditCard, number: "4111111111111111",
-                                  has_payment_profile?: true,
-                                  imported: false)
+    Spree::CreditCard.create!(
+      number: "4111111111111111",
+      month: "12",
+      year: "2014",
+      verification_value: "123",
+      name: "Name",
+      imported: false
+    )
   end
 
   let(:payment) do
@@ -100,7 +105,6 @@ describe Spree::Payment do
       payment.failure
       payment.state.should eql('failed')
     end
-
   end
 
   context 'invalidate' do
