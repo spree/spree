@@ -44,7 +44,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
 
   describe '#store_location' do
     it 'sets session return url' do
-      controller.stub(request: stub(fullpath: '/redirect'))
+      controller.stub(request: double(fullpath: '/redirect'))
       controller.store_location
       expect(session[:spree_user_return_to]).to eq '/redirect'
     end
