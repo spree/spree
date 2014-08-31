@@ -32,7 +32,7 @@ module Spree
             @current_order = Spree::Order.incomplete.order('id DESC').where({ currency: current_currency, user_id: try_spree_current_user.try(:id)}).first
           end
 
-          if options[:create_order_if_necessary] and (@current_order.nil? or @current_order.completed?)
+          if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
             @current_order = Spree::Order.new(current_order_params)
             @current_order.user ||= try_spree_current_user
             # See issue #3346 for reasons why this line is here
