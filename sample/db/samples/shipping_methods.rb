@@ -26,8 +26,8 @@ Spree::ShippingMethod.create!([
 ])
 
 {
-  "משלוח רגיל" => [5, "NIS"],
-  "משלוח מהיר" => [5, "NIS"]
+  "משלוח רגיל" => [5, "ILS"],
+  "משלוח מהיר" => [5, "ILS"]
 }.each do |shipping_method_name, (price, currency)|
   shipping_method = Spree::ShippingMethod.find_by_name!(shipping_method_name)
   shipping_method.calculator.preferences = {
