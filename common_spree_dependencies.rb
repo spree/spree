@@ -17,6 +17,8 @@ end
 gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 4.0.2'
 
+gem 'rails', github: 'rails/rails', branch: '4-1-6'
+
 group :test do
   gem 'capybara', '~> 2.1'
   gem 'database_cleaner', '~> 1.0.1'
