@@ -14,7 +14,15 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-          @simple_current_order ||= Spree::Order.incomplete.find_by(current_order_params)
+
+          return @simple_current_order if @simple_current_order
+
+          @simple_current_order = find_order_by_token_or_user
+
+          if @simple_current_order
+            @simple_current_order.last_ip_address = ip_address
+            return @simple_current_order
+          end
         end
 
         # The current incomplete order from the guest_token for use in cart and during checkout
@@ -24,13 +32,7 @@ module Spree
 
           return @current_order if @current_order
 
-          # Find any incomplete orders for the guest_token
-          @current_order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
-
-          # Find any incomplete orders for the current user
-          if @current_order.nil? && try_spree_current_user
-            @current_order = Spree::Order.incomplete.order('id DESC').where({ currency: current_currency, user_id: try_spree_current_user.try(:id)}).first
-          end
+          @current_order = find_order_by_token_or_user(options)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
             @current_order = Spree::Order.new(current_order_params)
@@ -79,6 +81,20 @@ module Spree
         def current_order_params
           { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
         end
+
+        def find_order_by_token_or_user(options={})
+
+          # Find any incomplete orders for the guest_token
+          order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
+
+          # Find any incomplete orders for the current user
+          if order.nil? && try_spree_current_user
+            order = Spree::Order.incomplete.order('id DESC').where({ currency: current_currency, user_id: try_spree_current_user.try(:id)}).first
+          end
+
+          order
+        end
+
       end
     end
   end
