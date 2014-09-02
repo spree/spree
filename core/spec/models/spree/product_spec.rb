@@ -41,14 +41,26 @@ describe Spree::Product do
     end
 
     context "master variant" do
+
       context "when master variant changed" do
         before do
           product.master.sku = "Something changed"
         end
 
         it "saves the master" do
-          product.master.should_receive(:save)
+          product.master.should_receive(:save!)
           product.save
+        end
+      end
+
+      context "when master variant is not valid" do
+        let(:other_product){ create(:product, sku: "TEST") }
+        before do
+          product.master.sku = other_product.sku
+        end
+
+        it "should not be saved" do
+          expect { product.save! }.to raise_error
         end
       end
 
@@ -59,7 +71,7 @@ describe Spree::Product do
         end
 
         it "saves the master" do
-          product.master.should_receive(:save)
+          product.master.should_receive(:save!)
           product.save
         end
 
@@ -80,7 +92,7 @@ describe Spree::Product do
         end
 
         it "saves the master" do
-          product.master.should_receive(:save)
+          product.master.should_receive(:save!)
           product.save
         end
 
@@ -92,7 +104,7 @@ describe Spree::Product do
 
       context "when master variant and price haven't changed" do
         it "does not save the master" do
-          product.master.should_not_receive(:save)
+          product.master.should_not_receive(:save!)
           product.save
         end
       end

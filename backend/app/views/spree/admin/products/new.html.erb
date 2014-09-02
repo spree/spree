@@ -2,7 +2,8 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
 
-<%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @product], method: :post, url: admin_products_path, :html => { :multipart => true } do |f| %>
+
   <fieldset data-hook="new_product">
 
     <legend align="center"><%= Spree.t(:new_product) %></legend>
