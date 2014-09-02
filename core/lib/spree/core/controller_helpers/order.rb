@@ -32,7 +32,7 @@ module Spree
 
           return @current_order if @current_order
 
-          @current_order = find_order_by_token_or_user(options)
+          @current_order = find_order_by_token_or_user(options, true)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
             @current_order = Spree::Order.new(current_order_params)
@@ -82,10 +82,14 @@ module Spree
           { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
         end
 
-        def find_order_by_token_or_user(options={})
+        def find_order_by_token_or_user(options={}, with_adjustments = false)
 
           # Find any incomplete orders for the guest_token
-          order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
+          if with_adjustments
+            order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
+          else
+            order = Spree::Order.incomplete.lock(options[:lock]).find_by(current_order_params)
+          end
 
           # Find any incomplete orders for the current user
           if order.nil? && try_spree_current_user
