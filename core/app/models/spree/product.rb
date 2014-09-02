@@ -273,11 +273,22 @@ module Spree
     end
 
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-    # when saving so we force a save using a hook.
+    # when saving so we force a save using a hook
+    # Fix for issue #5306
     def save_master
-      if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
-        master.save
-        @nested_changes = true
+      begin
+        if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+          master.save!
+          @nested_changes = true
+        end
+
+      # If the master cannot be saved, the Product object will get its errors
+      # and will be destroyed
+      rescue ActiveRecord::RecordInvalid
+        master.errors.each do |att, error|
+          self.errors.add(att, error)
+        end
+        raise
       end
     end
 
