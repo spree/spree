@@ -29,7 +29,7 @@ module Spree
     end
 
     def update_cart(params)
-      if order.update_attributes(filter_order_items(params))
+      if order.update_attributes(params)
         order.line_items = order.line_items.select { |li| li.quantity > 0 }
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
@@ -45,16 +45,6 @@ module Spree
     end
 
     private
-
-      def filter_order_items(params)
-        filtered_params = params.symbolize_keys
-        params[:line_items_attributes].each_pair do |id, value|
-          line_item_id = value[:id]
-          filtered_params[:line_items_attributes].delete(id) unless Spree::LineItem.find_by_id(line_item_id.to_i)
-        end
-        filtered_params
-      end
-
       def order_updater
         @updater ||= OrderUpdater.new(order)
       end
