@@ -101,7 +101,6 @@ describe Spree::Order do
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
       shipment.stub :inventory_units => inventory_units, :order => order
-      order.stub :shipments => [shipment]
       shipment
     end
 
@@ -117,11 +116,13 @@ describe Spree::Order do
       order.stub :allow_cancel? => true
 
       shipments = [shipment]
+
       order.stub :shipments => shipments
       shipments.stub :states => []
       shipments.stub :ready => []
       shipments.stub :pending => []
       shipments.stub :shipped => []
+      shipments.stub :cancelable => [shipment]
 
       Spree::OrderUpdater.any_instance.stub(:update_adjustment_total) { 10 }
     end
