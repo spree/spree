@@ -930,6 +930,36 @@ p[data-hook="use_billing"] {
   }
 }
 
+.modal-background {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.5;
+  top: 0;
+  position: fixed;
+  left: 0;
+  z-index: 9998;
+}
+
+.modal-foreground {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  top: 50%;
+  margin-left: -100px;
+  margin-top: 0px;
+  background: white;
+  width: auto;
+  height: auto;
+  border: 2px solid black;
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 25px;
+  text-align: center;
+}
+
 /*--------------------------------------*/
 /* Cart
 /*--------------------------------------*/

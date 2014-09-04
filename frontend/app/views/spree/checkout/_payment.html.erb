@@ -64,5 +64,10 @@
 
 <div class="form-buttons" data-hook="buttons">
   <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
-  <script>Spree.disableSaveOnClick();</script>
+  <script>Spree.disableUserInputOnClick();</script>
+  <div class="modal-background"></div>
+  <div class="modal-foreground">
+    <%= Spree.t(:transaction_processing) %>
+  </div>
+
 </div>

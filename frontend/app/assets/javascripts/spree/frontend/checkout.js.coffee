@@ -5,7 +5,15 @@
 
 Spree.disableSaveOnClick = ->
   ($ 'form.edit_order').submit ->
-    ($ this).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass 'disabled'
+    disableSave(this)
 
+Spree.disableUserInputOnClick = ->
+  ($ 'form.edit_order').submit ->
+    disableSave(this)
+    $('.modal-background').css('display','block')
+    $('.modal-foreground').css('display','block')
+
+disableSave = (selector)->
+  ($ selector).find(':submit, :image').attr('disabled', true).removeClass('primary').addClass 'disabled'
 Spree.ready ($) ->
   Spree.Checkout = {}
