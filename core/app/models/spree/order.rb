@@ -696,7 +696,7 @@ module Spree
       end
 
       def after_cancel
-        shipments.each { |shipment| shipment.cancel! }
+        shipments.cancelable.each { |shipment| shipment.cancel! }
         payments.completed.each { |payment| payment.cancel! }
 
         send_cancel_email
