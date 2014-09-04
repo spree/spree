@@ -48,7 +48,7 @@ module Spree
 
       def filter_order_items(params)
         filtered_params = params.symbolize_keys
-        return filtered_params if filtered_params[:line_items_attributes][:id]
+        return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
           
         params[:line_items_attributes].each_pair do |id, value|
           line_item_id = value[:id]
