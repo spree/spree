@@ -307,6 +307,7 @@ module Spree
                                  :country_id => Country.first.id, :state_id => State.first.id} }
 
       before do
+        Spree::LineItem.stub(:find_by_id).and_return(Spree::LineItem.new)
         Order.any_instance.stub :user => current_api_user
         order.next # Switch from cart to address
         order.bill_address = nil
