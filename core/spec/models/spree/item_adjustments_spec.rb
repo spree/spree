@@ -241,7 +241,7 @@ module Spree
           @before_tax_adjustments_called = true
         end
 
-        set_callback :promo_adjustments, :after do |object|
+        set_callback :tax_adjustments, :after do |object|
           @after_tax_adjustments_called = true
         end
       end
