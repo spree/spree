@@ -32,8 +32,8 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
-      :country => [:iso, :name, :iso3, :iso_name],
-      :state => [:name, :abbr]
+      country: [:iso, :name, :iso3, :iso_name],
+      state: [:name, :abbr]
     ]
 
     @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
