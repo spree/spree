@@ -1,4 +1,4 @@
-var update_state = function (region) {
+var update_state = function (region, done) {
   'use strict';
 
   var country = $('span#' + region + 'country .select2').select2('val');
@@ -27,5 +27,7 @@ var update_state = function (region) {
       state_input.prop('disabled', false).show();
       state_select.select2('destroy').hide();
     }
+
+    if(done) done();
   });
 };
