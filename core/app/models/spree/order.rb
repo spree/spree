@@ -283,34 +283,8 @@ module Spree
       line_item ? line_item.quantity : 0
     end
 
-<<<<<<< HEAD
     def find_line_item_by_variant(variant)
       line_items.detect { |line_item| line_item.variant_id == variant.id }
-=======
-    def find_line_item_by_variant(variant, options = {})
-      line_items.detect { |line_item|
-                    line_item.variant_id == variant.id &&
-                    line_item_options_match(line_item, options)
-                  }
-    end
-
-    # This method enables extensions to participate in the
-    # "Are these line items equal" decision.
-    #
-    # When adding to cart, an extension would send something like:
-    # params[:product_customizations]={...}
-    #
-    # and would provide:
-    #
-    # def product_customizations_match
-    def line_item_options_match(line_item, options)
-      return true unless options
-
-      options.keys.all? do |key|
-        !self.respond_to?("#{key}_match".to_sym) ||
-        self.send("#{key}_match".to_sym, line_item, options[key])
-      end
->>>>>>> d870c4e... Only cancel cancellable shipments.
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
