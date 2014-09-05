@@ -29,7 +29,7 @@ module Spree
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(state: s) }
 
-    scope :cancelable, -> { where.not(state: [:pending, :ready]) }
+    scope :cancelable, -> { where(state: [:pending, :ready]) }
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
