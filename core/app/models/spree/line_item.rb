@@ -99,6 +99,24 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
+    def options=(options={})
+      opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
+
+      currency = opts.delete(:currency) || order.try(:currency)
+      self.target_shipment = opts.delete(:shipment) if opts.has_key?(:shipment)
+
+      if currency
+        self.currency = currency
+        self.price    = variant.price_in(currency).amount +
+                        variant.price_modifier_amount_in(currency, opts)
+      else
+        self.price    = variant.price +
+                        variant.price_modifier_amount(opts)
+      end
+
+      self.assign_attributes opts
+    end
+
     private
       def update_inventory
         if (changed? || target_shipment.present?) && self.order.has_checkout_step?("delivery")

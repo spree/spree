@@ -1,8 +1,8 @@
 Spree::Sample.load_sample("variants")
 
-location = Spree::StockLocation.first_or_create! name: 'default'
+country =  Spree::Country.find_by(iso: 'US')
+location = Spree::StockLocation.first_or_create! name: 'default', address1: 'Example Street', city: 'City', zipcode: '12345', country: country, state: country.states.first
 location.active = true
-location.country =  Spree::Country.where(iso: 'US').first
 location.save!
 
 Spree::Variant.all.each do |variant|

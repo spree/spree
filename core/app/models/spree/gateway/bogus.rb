@@ -18,6 +18,7 @@ module Spree
     end
 
     def create_profile(payment)
+      return if payment.source.has_payment_profile?
       # simulate the storage of credit card profile using remote service
       success = VALID_CCS.include? payment.source.number
       payment.source.update_attributes(:gateway_customer_profile_id => generate_profile_id(success))

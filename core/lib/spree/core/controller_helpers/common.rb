@@ -14,13 +14,6 @@ module Spree
 
           protected
 
-          # Creates the hash that is sent as the payload for all notifications. Specific notifications will
-          # add additional keys as appropriate. Override this method if you need additional data when
-          # responding to a notification
-          def default_notification_payload
-            {:user => try_spree_current_user, :order => current_order}
-          end
-
           # can be used in views as well as controllers.
           # e.g. <% self.title = 'This is a custom title for this view' %>
           attr_writer :title
@@ -65,11 +58,11 @@ module Spree
           end
 
           # Returns which layout to render.
-          # 
+          #
           # You can set the layout you want to render inside your Spree configuration with the +:layout+ option.
-          # 
+          #
           # Default layout is: +app/views/spree/layouts/spree_application+
-          # 
+          #
           def get_layout
             layout ||= Spree::Config[:layout]
           end

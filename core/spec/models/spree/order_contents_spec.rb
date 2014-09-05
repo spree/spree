@@ -175,7 +175,8 @@ describe Spree::OrderContents do
     context "submits item quantity 0" do
       let(:params) do
         { line_items_attributes: {
-          "0" => { id: shirt.id, quantity: 0 }
+          "0" => { id: shirt.id, quantity: 0 },
+          "1" => { id: "666", quantity: 0}
         } }
       end
 
@@ -184,6 +185,21 @@ describe Spree::OrderContents do
           subject.update_cart params
         }.to change { subject.order.line_items.count }
       end
+
+      it "doesnt try to update unexistent items" do
+        filtered_params = { line_items_attributes: {
+          "0" => { id: shirt.id, quantity: 0 },
+        } }
+        expect(subject.order).to receive(:update_attributes).with(filtered_params)
+        subject.update_cart params
+      end
+
+      it "should not filter if there is only one line item" do
+        single_line_item_params = { line_items_attributes: { id: shirt.id, quantity: 0 } }
+        expect(subject.order).to receive(:update_attributes).with(single_line_item_params)
+        subject.update_cart single_line_item_params
+      end
+
     end
 
     it "ensures updated shipments" do
