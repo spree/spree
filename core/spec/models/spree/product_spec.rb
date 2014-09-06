@@ -60,7 +60,7 @@ describe Spree::Product do
         end
 
         it "should not be saved" do
-          expect{ product.save! }.to raise_error
+          expect { product.save! }.to raise_error
         end
       end
 
