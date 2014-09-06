@@ -9,6 +9,7 @@
 <% if options[:lib_name] == 'spree' || options[:lib_name] == 'spree/backend' %>
 //= require spree/backend
 <% else %>
+//= require spree/backend
 //= require spree/backend/<%= options[:lib_name].gsub("/", "_") %>
 <% end %>
 //= require_tree .
