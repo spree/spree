@@ -408,10 +408,10 @@ describe "Order Details", js: true do
             wait_for_ajax
 
             order.shipments.count.should == 2
-            order.shipments.first.inventory_units_for(product.master).count.should == 1
-            order.shipments.last.inventory_units_for(product.master).count.should == 1
-            order.shipments.first.inventory_units_for(variant2).count.should == 0
-            order.shipments.last.inventory_units_for(variant2).count.should == 2
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq 1
+            expect(order.shipments.last.inventory_units_for(product.master).count).to eq 1
+            expect(order.shipments.first.inventory_units_for(variant2).count).to eq 0
+            expect(order.shipments.last.inventory_units_for(variant2).count).to eq 2
           end
         end
 
