@@ -48,8 +48,8 @@ Options
 * `--auto_accept` to answer yes to all questions
 * `--edge` to use the edge version of Spree
 * `--path=../spree` to use a local version of spree
+* `--branch=n-n-stable` to use git branch
 * `--git=git@github.com:cmar/spree.git` to use git version of spree
-  * `--branch=my_changes` to use git branch
   * `--ref=23423423423423` to use git reference
   * `--tag=my_tag` to use git tag
 

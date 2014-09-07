@@ -42,14 +42,13 @@ module SpreeCmd
     def prepare_options
       @spree_gem_options = {}
 
-      if options[:edge]
+      if options[:edge] || options[:branch]
         @spree_gem_options[:git] = 'https://github.com/spree/spree.git'
       elsif options[:path]
         @spree_gem_options[:path] = options[:path]
       elsif options[:git]
         @spree_gem_options[:git] = options[:git]
         @spree_gem_options[:ref] = options[:ref] if options[:ref]
-        @spree_gem_options[:branch] = options[:branch] if options[:branch]
         @spree_gem_options[:tag] = options[:tag] if options[:tag]
       elsif options[:version]
         @spree_gem_options[:version] = options[:version]
@@ -57,6 +56,8 @@ module SpreeCmd
         version = Gem.loaded_specs['spree_cmd'].version
         @spree_gem_options[:version] = version.to_s
       end
+
+      @spree_gem_options[:branch] = options[:branch] if options[:branch]
     end
 
     def ask_questions
@@ -93,12 +94,16 @@ module SpreeCmd
 
         gem :spree, @spree_gem_options
 
-        if @install_default_gateways
-          gem :spree_gateway, :git => "https://github.com/spree/spree_gateway.git"
+        if @install_default_gateways && @spree_gem_options[:branch]
+          gem :spree_gateway, github: 'spree/spree_gateway', branch: @spree_gem_options[:branch]
+        elsif @install_default_gateways
+          gem :spree_gateway, github: 'spree/spree_gateway'
         end
 
-        if @install_default_auth
-          gem :spree_auth_devise, :git => "https://github.com/spree/spree_auth_devise.git"
+        if @install_default_auth && @spree_gem_options[:branch]
+          gem :spree_auth_devise, github: 'spree/spree_auth_devise', branch: @spree_gem_options[:branch]
+        elsif @install_default_auth
+          gem :spree_auth_devise, github: 'spree/spree_auth_devise'
         end
 
         run 'bundle install', :capture => true
