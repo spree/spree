@@ -65,6 +65,13 @@ To auto accept all prompts while running the install generator, pass -A as an op
 spree install my_store -A
 ```
 
+To select a specific branch, pass in the `--branch` option. If there is no branch, you
+will be given the latest version of either spree_auth_devise or spree_gateway.
+
+```shell
+spree install my_store --branch "2-2-stable"
+```
+
 Using stable builds and bleeding edge
 -------------
 
