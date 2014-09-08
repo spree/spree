@@ -3,6 +3,7 @@ Spree::Sample.load_sample("shipping_categories")
 
 default_cat = Spree::TaxCategory.find_by_name!("ברירת מחדל")
 shipping_category = Spree::ShippingCategory.find_by_name!("ברירת מחדל")
+random = Random.new(1234)
 
 default_attrs = {
   :description => "בתחום השיווק, מוצר הוא כל דבר אשר ניתן להציע לשוק ואשר יספק את צרכי השוק. בתחום הייצור והתעשייה, נרכשים מוצרים כחומרי גלם (או מיוצרים בהליכי מיחזור) ונמכרים כסחורה מוגמרת. מצרכים הם בדרך כלל חומרי גלם (כמו מתכות ותוצרים חקלאיים), אבל מצרך יכול להיות נגיש גם לצרכן בשוק החופשי.",
@@ -128,6 +129,7 @@ products = [
 ]
 
 products.each do |product_attrs|
+  product_attrs.merge!(:sku => random.rand.to_s[10..-1])
   eur_price = product_attrs.delete(:eur_price)
   Spree::Config[:currency] = "ILS"
 
