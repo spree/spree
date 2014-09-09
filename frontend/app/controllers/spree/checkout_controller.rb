@@ -11,6 +11,7 @@ module Spree
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
     before_filter :ensure_sufficient_stock_lines
+    before_filter :ensure_coupons_eligible
     before_filter :ensure_valid_state
 
     before_filter :associate_user
@@ -92,6 +93,13 @@ module Spree
       def ensure_sufficient_stock_lines
         if @order.insufficient_stock_lines.present?
           flash[:error] = Spree.t(:inventory_error_flash_for_insufficient_quantity)
+          redirect_to spree.cart_path
+        end
+      end
+
+      def ensure_coupons_eligible
+        if @order.remove_expired_coupons
+          flash[:error] = @order.errors.full_messages.first
           redirect_to spree.cart_path
         end
       end

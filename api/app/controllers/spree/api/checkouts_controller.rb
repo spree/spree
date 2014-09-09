@@ -17,6 +17,7 @@ module Spree
       def next
         load_order(true)
         authorize! :update, @order, order_token
+        return if handle_ineligible_coupons
         @order.next!
         respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
       rescue StateMachine::InvalidTransition
@@ -26,6 +27,7 @@ module Spree
       def advance
         load_order(true)
         authorize! :update, @order, order_token
+        return if handle_ineligible_coupons
         while @order.next; end
         respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
       end
@@ -37,6 +39,7 @@ module Spree
       def update
         load_order(true)
         authorize! :update, @order, order_token
+        return if handle_ineligible_coupons
         order_params = object_params
         line_items = order_params.delete('line_items_attributes')
         if @order.update_attributes(order_params)
@@ -99,6 +102,13 @@ module Spree
 
         def raise_insufficient_quantity
           respond_with(@order, default_template: 'spree/api/orders/insufficient_quantity')
+        end
+
+        def handle_ineligible_coupons
+          if @order.remove_expired_coupons
+            @coupon_message =  @order.errors.full_messages.first
+            respond_with(@order, default_template: 'spree/api/orders/could_not_apply_coupon')
+          end
         end
 
         def state_callback(before_or_after = :before)

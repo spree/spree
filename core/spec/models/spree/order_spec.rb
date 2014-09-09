@@ -308,6 +308,37 @@ describe Spree::Order do
     end
   end
 
+  context "#remove_expired_coupons" do
+    let(:promotion) { double('promotion') }
+    let(:updater) { double('order_updater') }
+    before do
+      order.stub(:eligible_promotions).and_return([promotion])
+    end
+
+    it "should check expiry of promotions" do
+      promotion.should_receive(:usage_limit_exceeded?).and_return(false)
+      promotion.should_receive(:expired?).and_return(false)
+      order.remove_expired_coupons.should be_false
+    end
+
+    it "should recalculate expired promotions" do
+      promotion.should_receive(:expired?).and_return(true)
+      order.should_receive(:updater).and_return(updater)
+      updater.should_receive(:recalculate_adjustments)
+      order.remove_expired_coupons.should be_true
+      order.errors.should_not be_empty
+    end
+
+    it "should recalculate overused promotions" do
+      promotion.should_receive(:usage_limit_exceeded?).and_return(true)
+      promotion.should_receive(:expired?).and_return(false)
+      order.should_receive(:updater).and_return(updater)
+      updater.should_receive(:recalculate_adjustments)
+      order.remove_expired_coupons.should be_true
+    end
+
+  end
+
   context "#process_payments!" do
     let(:payment) { stub_model(Spree::Payment) }
     before { order.stub :pending_payments => [payment], :total => 10 }

@@ -225,6 +225,14 @@ module Spree
         response.status.should == 200
       end
 
+      it "can recieve notice of ineligible coupons" do
+        Order.any_instance.stub(:eligible_promotions).and_return([double('expired promotion', expired?: true)])
+        api_put :update, :id => order.to_param, :order_token => order.token,
+          :order => { }
+        json_response['error'].should == "The coupon code is expired"
+        response.status.should == 200
+      end
+
       it "can apply a coupon code to an order" do
         pending "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
 

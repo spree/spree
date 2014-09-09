@@ -68,7 +68,7 @@ module Spree
 
     # called anytime order.update! happens
     def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?(promotable)
+      return false if expired? || usage_limit_exceeded?
       rules_are_eligible?(promotable, {})
     end
 
@@ -100,12 +100,13 @@ module Spree
       products.map(&:id)
     end
 
-    def usage_limit_exceeded?(promotable)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+    def usage_limit_exceeded?
+      usage_limit.present? && usage_limit > 0 && completed_orders_count >= usage_limit
     end
 
-    def adjusted_credits_count(promotable)
-      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+    #can't just rely on orders relation because an order with an ineligible adjustment stays on that list.
+    def completed_orders_count
+      credits.joins(:order).where.not(spree_orders: {completed_at: nil}).select('order_id').references(:spree_orders).distinct.count
     end
 
     def credits
