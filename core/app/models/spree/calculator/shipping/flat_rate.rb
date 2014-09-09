@@ -13,6 +13,10 @@ module Spree
       def compute_package(package)
         self.preferred_amount
       end
+
+      def compute_shipment(shipment)
+        self.preferred_amount
+      end
     end
   end
 end

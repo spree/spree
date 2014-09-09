@@ -21,6 +21,14 @@ module Spree
             Spree::Calculator::Shipping::PerItem,
             Spree::Calculator::Shipping::PriceSack]
 
+        app.config.spree.calculators.add_class('stock_locations')
+        app.config.spree.calculators.stock_locations = [
+            Spree::Calculator::Shipping::FlatPercentItemTotal,
+            Spree::Calculator::Shipping::FlatRate,
+            Spree::Calculator::Shipping::FlexiRate,
+            Spree::Calculator::Shipping::PerItem,
+            Spree::Calculator::Shipping::PriceSack]
+
          app.config.spree.calculators.tax_rates = [
             Spree::Calculator::DefaultTax]
       end

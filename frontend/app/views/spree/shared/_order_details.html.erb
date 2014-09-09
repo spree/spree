@@ -116,6 +116,17 @@
     <% end %>
   </tfoot>
 
+  <% if order.all_adjustments.handling.exists? %>
+    <tfoot id="tax-adjustments" data-hook="order_details_tax_adjustments">
+      <% order.all_adjustments.handling.group_by(&:label).each do |label, adjustments| %>
+        <tr class="total">
+          <td colspan="4"><%= label %>:</td>
+          <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>
+        </tr>
+      <% end %>
+    </tfoot>
+  <% end %>
+
   <% if order.all_adjustments.tax.exists? %>
     <tfoot id="tax-adjustments" data-hook="order_details_tax_adjustments">
       <% order.all_adjustments.tax.group_by(&:label).each do |label, adjustments| %>

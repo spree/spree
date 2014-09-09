@@ -3,6 +3,7 @@ module Spree
     class StockLocationsController < ResourceController
 
       before_action :set_country, only: :new
+      before_action :load_data, except: [:index]
 
       private
 
@@ -18,6 +19,10 @@ module Spree
           flash[:error] = Spree.t(:stock_locations_need_a_default_country)
           redirect_to admin_stock_locations_path and return
         end
+      end
+      
+      def load_data
+        @calculators = StockLocation.calculators.sort_by(&:name)
       end
 
     end

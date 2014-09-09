@@ -24,5 +24,10 @@ FactoryGirl.define do
         stock_location.stock_items.where(:variant_id => product_2.master.id).first.adjust_count_on_hand(20)
       end
     end
+    
+    factory :stock_location_with_handling_fee do
+      association(:calculator, factory: :calculator, strategy: :build)
+    end
+
   end
 end

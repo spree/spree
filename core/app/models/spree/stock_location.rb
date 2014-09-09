@@ -1,5 +1,9 @@
 module Spree
   class StockLocation < Spree::Base
+    include Spree::Core::CalculatedAdjustments
+    include Spree::Core::AdjustmentSource
+    has_many :adjustments, as: :source
+    
     has_many :shipments
     has_many :stock_items, dependent: :delete_all
     has_many :stock_movements, through: :stock_items
@@ -14,6 +18,10 @@ module Spree
 
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
     after_save :ensure_one_default
+    
+    def compute_amount(item)
+      calculator.compute(item)
+    end    
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
