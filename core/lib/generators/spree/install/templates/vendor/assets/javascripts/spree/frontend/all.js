@@ -6,10 +6,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-<% if options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
 //= require spree/frontend
-<% else %>
-//= require spree/frontend
+<% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
 //= require spree/frontend/<%= options[:lib_name].gsub("/", "_") %>
 <% end %>
 //= require_tree .
