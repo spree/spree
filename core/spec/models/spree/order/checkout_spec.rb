@@ -359,16 +359,33 @@ describe Spree::Order do
 
       context "without confirmation required" do
         before do
+          order.email = "spree@example.com"
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
-          order.stub :payments => [1]
+          order.payments << FactoryGirl.create(:payment, state: payment_state, order: order)
+          order.should_receive(:process_payments!).once.and_return true
         end
 
-        it "transitions to complete" do
-          order.should_receive(:process_payments!).once.and_return true
-          order.next!
-          assert_state_changed(order, 'payment', 'complete')
-          order.state.should == "complete"
+        context 'when payments are valid' do
+          let(:payment_state) { 'completed' }
+
+          it "transitions to complete" do
+            order.next!
+            assert_state_changed(order, 'payment', 'complete')
+            order.state.should == "complete"
+          end
+        end
+
+        context 'when process payment returns false' do
+          let(:payment_state) { 'failed' }
+
+          it "raises a StateMachine::InvalidTransition" do
+            expect {
+              order.next!
+            }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:no_payments_valid)}/)
+
+            expect(order.errors[:base]).to include(Spree.t(:no_payments_valid))
+          end
         end
       end
 
@@ -398,7 +415,7 @@ describe Spree::Order do
       before do
         order.user = FactoryGirl.create(:user)
         order.email = 'spree@example.org'
-        order.payments << FactoryGirl.create(:payment)
+        order.payments << FactoryGirl.create(:payment, order: order, state: 'completed')
 
         # make sure we will actually capture a payment
         order.stub(payment_required?: true)
@@ -583,10 +600,64 @@ describe Spree::Order do
 
       Spree::Payment.any_instance.should_receive(:authorize!) do
         ActiveRecord::Base.connection.open_transactions.should == 0
+        # Need to indicate that the payment was completed.
+        Spree::Payment.update_all(state: 'completed')
       end
 
       order.payments.create!({ :amount => order.outstanding_balance, :payment_method => payment_method, :source => creditcard })
       order.next!
+    end
+  end
+
+  describe '#attempt_payment_processing' do
+    before do
+      allow(order).to receive(:payment_required?) { true }
+      order.payments << FactoryGirl.create(:payment, state: payment_state, order: order)
+      expect(order).to receive(:process_payments!).once { true }
+    end
+
+    subject { order.attempt_payment_processing }
+
+    context 'when payment is invalid' do
+      let(:payment_state) { 'invalid' }
+
+      before do
+        Spree::Config[:allow_checkout_on_gateway_error] = allow_checkout_on_gateway_error
+      end
+
+      context 'when Spree::Config[:allow_checkout_on_gateway_error] is set to true' do
+        let(:allow_checkout_on_gateway_error) { true }
+
+        it 'should be true' do
+          expect(subject).to be_true
+        end
+
+        it 'should have no errors on base' do
+          subject
+          expect(order.errors[:base]).to be_empty
+        end
+      end
+
+      context 'when Spree::Config[:allow_checkout_on_gateway_error] is set to false' do
+        let(:allow_checkout_on_gateway_error) { false }
+
+        it 'should be false' do
+          expect(subject).to be_false
+        end
+
+        it 'should have no errors on base' do
+          subject
+          expect(order.errors[:base]).to include(Spree.t(:no_payments_valid))
+        end
+      end
+    end
+
+    context 'when payments are completed' do
+      let(:payment_state) { 'completed' }
+
+      it 'should be true' do
+        expect(subject).to be_true
+      end
     end
   end
 
