@@ -63,7 +63,7 @@ module Spree
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
 
-    delegate_belongs_to :master, :cost_price
+    delegate_belongs_to :master, :cost_price, :handling_charge
 
     after_create :set_master_variant_defaults
     after_create :add_properties_and_option_types_from_prototype
