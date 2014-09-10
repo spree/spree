@@ -754,23 +754,38 @@ describe Spree::Order do
   end
 
   describe '#has_non_reimbursement_related_refunds?' do
-    let(:order) { create(:order_ready_to_ship) }
-    subject { order.has_non_reimbursement_related_refunds? }
+    subject do
+      order.has_non_reimbursement_related_refunds?
+    end
 
-    before(:each) do
-      order.payments.first.refunds = [refund]
-      order.save!
-      order.reload
+    context 'no refunds exist' do
+      it { should eq false }
     end
 
     context 'a non-reimbursement related refund exists' do
-      let(:refund) { create(:refund, reimbursement_id: nil, amount: 5)}
+      let(:order) { refund.payment.order }
+      let(:refund) { create(:refund, reimbursement_id: nil, amount: 5) }
+
+      it { should eq true }
+    end
+
+    context 'an old-style refund exists' do
+      let(:order) { create(:order_ready_to_ship) }
+      let(:payment) { order.payments.first.tap { |p| p.stub(profiles_supported: false) } }
+      let!(:refund_payment) {
+        build(:payment, amount: -1, order: order, state: 'completed', source: payment).tap do |p|
+          p.stub(profiles_supported?: false)
+          p.save!
+        end
+      }
 
       it { should eq true }
     end
 
     context 'a reimbursement related refund exists' do
+      let(:order) { refund.payment.order }
       let(:refund) { create(:refund, reimbursement_id: 123, amount: 5)}
+
       it { should eq false }
     end
   end

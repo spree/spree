@@ -658,7 +658,8 @@ module Spree
     end
 
     def has_non_reimbursement_related_refunds?
-      refunds.non_reimbursement.exists?
+      refunds.non_reimbursement.exists? ||
+        payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
     private
