@@ -39,7 +39,7 @@ There are four actions that come with spree:
 
 When a `CreateAdjustment` action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.
 
-Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Adjustment#determine_eligibility` method. This calls the `Promotion#eligible?` method, which uses `Promotion#rules_are_eligible?` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
+Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Promotion#eligible?` method, which uses `Promotion#eligible_rules` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
 An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
 
