@@ -257,6 +257,11 @@ describe Spree::Order do
         Spree::Variant.stub(:price_modifier_amount).and_return(0.00)
       end
 
+      after do
+        # reset to avoid test pollution
+        Spree::Order.line_item_comparison_hooks = Set.new
+      end
+
       context "2 equal line items" do
         before do
           order_1.stub(:foos_match).and_return(true)
@@ -517,6 +522,27 @@ describe Spree::Order do
     it "can find a line item matching a given variant" do
       order.find_line_item_by_variant(@variant1).should_not be_nil
       order.find_line_item_by_variant(mock_model(Spree::Variant)).should be_nil
+    end
+
+    context "match line item with options" do
+      before do
+        Spree::Order.register_line_item_comparison_hook(:foos_match)
+      end
+
+      after do
+        # reset to avoid test pollution
+        Spree::Order.line_item_comparison_hooks = Set.new
+      end
+
+      it "matches line item when options match" do
+        order.stub(:foos_match).and_return(true)
+        order.line_item_options_match(@line_items.first, {foos: {bar: :zoo}}).should be_true
+      end
+
+      it "does not match line item without options" do
+        order.stub(:foos_match).and_return(false)
+        order.line_item_options_match(@line_items.first, {}).should be_false
+      end
     end
   end
 
