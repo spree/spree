@@ -133,7 +133,9 @@ module Spree
     end
 
     def final_price
-      discounted_cost + tax_total
+      discounted_cost + tax_total + handling_total
+      # TODO: Cleaner to just return `cost + adjustment_total`?
+      # (adjustment_total includes discounts, tax, & handling, along with other potential adjustments)
     end
 
     def final_price_with_items
@@ -145,9 +147,8 @@ module Spree
       manifest.each { |item| manifest_unstock(item) }
     end
 
-    def final_price
-      discounted_cost + tax_total + handling_total
-      # TODO: Cleaner to just return `cost + adjustment_total`?
+    def include?(variant)
+      inventory_units_for(variant).present?
     end
 
     def inventory_units_for(variant)
@@ -387,7 +388,7 @@ module Spree
         shipment_to_transfer_to.save!
       end
     end
-    
+
     private
 
       def after_ship
