@@ -15,14 +15,9 @@ describe Spree::Order do
   end
 
   context "#create" do
-    let(:order) { Spree::Order.create }
-
     it "should assign an order number" do
+      order = Spree::Order.create
       order.number.should_not be_nil
-    end
-
-    it 'should create a randomized 22 character token' do
-      order.guest_token.size.should == 22
     end
   end
 
@@ -78,6 +73,7 @@ describe Spree::Order do
     end
 
     after { Spree::Config.set :track_inventory_levels => true }
+
     it "should not sell inventory units if track_inventory_levels is false" do
       Spree::Config.set :track_inventory_levels => false
       Spree::InventoryUnit.should_not_receive(:sell_units)
@@ -139,6 +135,128 @@ describe Spree::Order do
     end
   end
 
+  context "#process_payments!" do
+    let(:payment) { stub_model(Spree::Payment) }
+    before do
+      allow(order).to receive(:pending_payments).and_return [payment]
+      allow(order).to receive(:total).and_return 10
+    end
+
+    it "should process the payments" do
+      expect(payment).to receive(:process!)
+      expect(order.process_payments!).to be_true
+    end
+
+    it "should return false if no pending_payments available" do
+      allow(order).to receive(:pending_payments).and_return []
+      expect(order.process_payments!).to be_false
+    end
+
+    context "when a payment raises a GatewayError" do
+      before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
+
+      it "should return true when configured to allow checkout on gateway failures" do
+        Spree::Config.set :allow_checkout_on_gateway_error => true
+        expect(order.process_payments!).to be_true
+      end
+
+      it "should return false when not configured to allow checkout on gateway failures" do
+        Spree::Config.set :allow_checkout_on_gateway_error => false
+        expect(order.process_payments!).to be_false
+      end
+    end
+  end
+
+  context "#outstanding_balance" do
+    it "should return positive amount when payment_total is less than total" do
+      order.payment_total = 20.20
+      order.total = 30.30
+      order.outstanding_balance.should == 10.10
+    end
+
+    it "should return negative amount when payment_total is greater than total" do
+      order.total = 8.20
+      order.payment_total = 10.20
+      order.outstanding_balance.should be_within(0.001).of(-2.00)
+    end
+  end
+
+  context "#outstanding_balance?" do
+    it "should be true when total greater than payment_total" do
+      order.total = 10.10
+      order.payment_total = 9.50
+      order.outstanding_balance?.should be_true
+    end
+
+    it "should be true when total less than payment_total" do
+      order.total = 8.25
+      order.payment_total = 10.44
+      order.outstanding_balance?.should be_true
+    end
+
+    it "should be false when total equals payment_total" do
+      order.total = 10.10
+      order.payment_total = 10.10
+      order.outstanding_balance?.should be_false
+    end
+  end
+
+  context "#completed?" do
+    it "should indicate if order is completed" do
+      order.completed_at = nil
+      order.completed?.should be_false
+
+      order.completed_at = Time.now
+      order.completed?.should be_true
+    end
+  end
+
+  it 'is backordered if one of the shipments is backordered' do
+    order.stub(:shipments => [mock_model(Spree::Shipment, :backordered? => false),
+                              mock_model(Spree::Shipment, :backordered? => true)])
+    order.should be_backordered
+  end
+
+  context "#allow_checkout?" do
+    it "should be true if there are line_items in the order" do
+      order.stub_chain(:line_items, :count => 1)
+      order.checkout_allowed?.should be_true
+    end
+
+    it "should be false if there are no line_items in the order" do
+      order.stub_chain(:line_items, :count => 0)
+      order.checkout_allowed?.should be_false
+    end
+  end
+
+  context "#amount" do
+    before do
+      @order = create(:order, :user => user)
+      @order.line_items = [create(:line_item, :price => 1.0, :quantity => 2),
+                           create(:line_item, :price => 1.0, :quantity => 1)]
+    end
+
+    it "should return the correct lum sum of items" do
+      @order.amount.should == 3.0
+    end
+  end
+
+  context "#can_cancel?" do
+    it "should be false for completed order in the canceled state" do
+      order.state = 'canceled'
+      order.shipment_state = 'ready'
+      order.completed_at = Time.now
+      order.can_cancel?.should be_false
+    end
+
+    it "should be true for completed order with no shipment" do
+      order.state = 'complete'
+      order.shipment_state = nil
+      order.completed_at = Time.now
+      order.can_cancel?.should be_true
+    end
+  end
+
   context "insufficient_stock_lines" do
     let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
 
@@ -161,7 +279,6 @@ describe Spree::Order do
     it "clears out line items, adjustments and update totals" do
       expect(order.line_items).to receive(:destroy_all)
       expect(order.adjustments).to receive(:destroy_all)
-      expect(order.shipments).to receive(:destroy_all)
       expect(order.updater).to receive(:update_totals)
       expect(order.updater).to receive(:persist_totals)
 
@@ -328,7 +445,6 @@ describe Spree::Order do
   end
 
   context "#confirmation_required?" do
-
     # Regression test for #4117
     it "is required if the state is currently 'confirm'" do
       order = Spree::Order.new
@@ -338,7 +454,6 @@ describe Spree::Order do
     end
 
     context 'Spree::Config[:always_include_confirm_step] == true' do
-
       before do
         Spree::Config[:always_include_confirm_step] = true
       end
@@ -350,7 +465,6 @@ describe Spree::Order do
     end
 
     context 'Spree::Config[:always_include_confirm_step] == false' do
-
       it "returns false if payments empty and Spree::Config[:always_include_confirm_step] == false" do
         order = Spree::Order.new
         assert !order.confirmation_required?
@@ -612,6 +726,7 @@ describe Spree::Order do
       order.created_by.should == creator
     end
 
+
     it "should associate a user with a non-persisted order" do
       order = Spree::Order.new
 
@@ -675,6 +790,7 @@ describe Spree::Order do
       order.stub_chain(:line_items, :count => 1)
       order.checkout_allowed?.should be_true
     end
+
     it "should be false if there are no line_items in the order" do
       order.stub_chain(:line_items, :count => 0)
       order.checkout_allowed?.should be_false
@@ -687,6 +803,7 @@ describe Spree::Order do
       @order.line_items = [create(:line_item, :price => 1.0, :quantity => 2),
                            create(:line_item, :price => 1.0, :quantity => 1)]
     end
+
     it "should return the correct lum sum of items" do
       @order.amount.should == 3.0
     end
