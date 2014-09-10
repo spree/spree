@@ -331,10 +331,9 @@ module Spree
     def line_item_options_match(line_item, options)
       return true unless options
 
-      options.keys.all? do |key|
-        !self.respond_to?("#{key}_match".to_sym) || 
-        self.send("#{key}_match".to_sym, line_item, options[key]) 
-      end
+      self.line_item_comparison_hooks.all? { |hook| 
+        self.send(hook, line_item, options)
+      }
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
