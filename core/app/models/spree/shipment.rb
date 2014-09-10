@@ -388,26 +388,26 @@ module Spree
       end
     end
     
-    def apply_handling_fee
-      adjustments.handling.destroy_all
-      if stock_location.calculator
-        amount = stock_location.calculator.compute(self)
-        unless amount == 0
-          adjustments.create!({
-            source: stock_location,
-            adjustable: self,
-            amount: amount,
-            order: order,
-            label: "Handling"
-            })
-        end
-      end
-    end
-
     private
 
       def after_ship
         ShipmentHandler.factory(self).perform
+      end
+
+      def apply_handling_fee
+        adjustments.handling.destroy_all
+        if stock_location.calculator
+          amount = stock_location.calculator.compute(self)
+          unless amount == 0
+            adjustments.create!({
+              source: stock_location,
+              adjustable: self,
+              amount: amount,
+              order: order,
+              label: "Handling"
+              })
+          end
+        end
       end
 
       def can_get_rates?
