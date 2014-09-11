@@ -361,4 +361,13 @@ describe Spree::CreditCard do
     first.reload.default.should eq true
     second.reload.default.should eq true
   end
+
+  it 'allows this card to save even if the previously default card has expired' do
+    user = FactoryGirl.create(:user)
+    first = FactoryGirl.create(:credit_card, user: user, default: true)
+    second = FactoryGirl.create(:credit_card, user: user, default: false)
+    first.update_columns(year: DateTime.now.year, month: 1.month.ago.month)
+
+    expect { second.update_attributes!(default: true) }.not_to raise_error
+  end
 end
