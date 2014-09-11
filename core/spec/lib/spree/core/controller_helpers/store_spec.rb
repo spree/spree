@@ -1,10 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Core::ControllerHelpers::Store, type: :controller do
+class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Store
+end
 
-  controller do
-    include Spree::Core::ControllerHelpers::Store
-  end
+describe Spree::Core::ControllerHelpers::Store, type: :controller do
+  controller(FakesController) {}
 
   describe '#current_store' do
     let!(:store) { create :store, default: true }

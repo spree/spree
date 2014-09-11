@@ -4,7 +4,7 @@ module Spree
   describe Reimbursement::ReimbursementTypeValidator do
     class DummyClass
       include Spree::Reimbursement::ReimbursementTypeValidator
-      
+
       class_attribute :expired_reimbursement_type
       self.expired_reimbursement_type = Spree::ReimbursementType::OriginalPayment
 
@@ -26,18 +26,18 @@ module Spree
       context 'is valid' do
         it 'if it is not past the reimbursable time period' do
           dummy.stub(:past_reimbursable_time_period?).and_return(false)
-          subject.should be_true
+          subject.should be true
         end
 
         it 'if the return items preferred method of reimbursement is the expired method of reimbursement' do
           return_item.stub(:preferred_reimbursement_type).and_return(dummy.expired_reimbursement_type)
-          subject.should be_true
+          subject.should be true
         end
       end
 
       context 'is invalid' do
         it 'if the return item is past the eligible time period and the preferred method of reimbursement is not the expired method of reimbursement' do
-          subject.should be_false
+          subject.should be false
         end
       end
     end
@@ -53,7 +53,7 @@ module Spree
         let(:shipped_at) { nil }
 
         it 'is not past the reimbursable time period' do
-          subject.should be_false
+          subject.should be_falsey
         end
       end
 
@@ -61,7 +61,7 @@ module Spree
         let(:shipped_at) { (dummy.refund_time_constraint - 1.day).ago }
 
         it 'is not past the reimbursable time period' do
-          subject.should be_false
+          subject.should be false
         end
       end
 
@@ -69,7 +69,7 @@ module Spree
         let(:shipped_at) { (dummy.refund_time_constraint + 1.day).ago }
 
         it 'is past the reimbursable time period' do
-          subject.should be_true
+          subject.should be true
         end
       end
     end

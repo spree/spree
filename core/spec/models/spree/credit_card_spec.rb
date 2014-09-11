@@ -42,31 +42,31 @@ describe Spree::CreditCard do
   context "#can_capture?" do
     it "should be true if payment is pending" do
       payment = mock_model(Spree::Payment, pending?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be_true
+      credit_card.can_capture?(payment).should be true
     end
 
     it "should be true if payment is checkout" do
       payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be_true
+      credit_card.can_capture?(payment).should be true
     end
   end
 
   context "#can_void?" do
     it "should be true if payment is not void" do
       payment = mock_model(Spree::Payment, failed?: false, void?: false)
-      credit_card.can_void?(payment).should be_true
+      credit_card.can_void?(payment).should be true
     end
   end
 
   context "#can_credit?" do
     it "should be false if payment is not completed" do
       payment = mock_model(Spree::Payment, completed?: false)
-      credit_card.can_credit?(payment).should be_false
+      credit_card.can_credit?(payment).should be false
     end
 
     it "should be false when credit_allowed is zero" do
       payment = mock_model(Spree::Payment, completed?: true, credit_allowed: 0, order: mock_model(Spree::Order, payment_state: 'credit_owed'))
-      credit_card.can_credit?(payment).should be_false
+      credit_card.can_credit?(payment).should be false
     end
   end
 

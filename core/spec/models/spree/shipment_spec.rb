@@ -342,7 +342,7 @@ describe Spree::Shipment do
 
       it "should validate with inventory" do
         shipment.inventory_units = [create(:inventory_unit)]
-        shipment.valid?.should be_true
+        shipment.valid?.should be true
       end
     end
 
@@ -350,7 +350,7 @@ describe Spree::Shipment do
       before { Spree::Config.set track_inventory_levels: false }
 
       it "should validate with no inventory" do
-        shipment.valid?.should be_true
+        shipment.valid?.should be true
       end
     end
   end
@@ -689,7 +689,7 @@ describe Spree::Shipment do
 
     it "are logged to the database" do
       shipment.state_changes.should be_empty
-      expect(shipment.ready!).to be_true
+      expect(shipment.ready!).to be true
       shipment.state_changes.count.should == 1
       state_change = shipment.state_changes.first
       expect(state_change.previous_state).to eq('pending')

@@ -47,7 +47,7 @@ module Spree
         children = json_response['root']['taxons']
         children.count.should eq 1
         children.first['name'].should eq taxon.name
-        children.first.key?('taxons').should be_false
+        children.first.key?('taxons').should be false
       end
 
       it "gets a single taxonomy with set=nested" do
@@ -56,7 +56,7 @@ module Spree
         json_response['name'].should eq taxonomy.name
 
         children = json_response['root']['taxons']
-        children.first.key?('taxons').should be_true
+        children.first.key?('taxons').should be true
       end
 
       it "gets the jstree-friendly version of a taxonomy" do

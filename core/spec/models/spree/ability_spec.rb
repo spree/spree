@@ -41,7 +41,7 @@ describe Spree::Ability do
 
     it 'should apply the registered abilities permissions' do
       Spree::Ability.register_ability(FooAbility)
-      Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, :id => 1)).should be_true
+      Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, :id => 1)).should be true
     end
   end
 

@@ -40,7 +40,7 @@ describe Spree::CustomController do
         describe "GET" do
           it "has value success" do
             spree_get :index
-            response.should be_success
+            expect(response).to be_success
             assert (response.body =~ /success!!!/)
           end
         end

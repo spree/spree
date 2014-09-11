@@ -34,17 +34,17 @@ describe Spree::Order do
     end
 
     it '.find_transition when contract was broken' do
-      Spree::Order.find_transition({foo: :bar, baz: :dog}).should be_false
+      expect(Spree::Order.find_transition({foo: :bar, baz: :dog})).to be_falsey
     end
 
     it '.remove_transition' do
       options = {:from => transitions.first.keys.first, :to => transitions.first.values.first}
       Spree::Order.stub(:next_event_transition).and_return([options])
-      Spree::Order.remove_transition(options).should be_true
+      Spree::Order.remove_transition(options).should be_truthy
     end
 
     it '.remove_transition when contract was broken' do
-      Spree::Order.remove_transition(nil).should be_false
+      expect(Spree::Order.remove_transition(nil)).to be_falsey
     end
 
     it "always return integer on checkout_step_index" do
@@ -55,11 +55,11 @@ describe Spree::Order do
     it "passes delivery state when transitioning from address over delivery to payment" do
       order.stub :payment_required? => true
       order.state = "address"
-      order.passed_checkout_step?("delivery").should be_false
+      order.passed_checkout_step?("delivery").should be false
       order.state = "delivery"
-      order.passed_checkout_step?("delivery").should be_false
+      order.passed_checkout_step?("delivery").should be false
       order.state = "payment"
-      order.passed_checkout_step?("delivery").should be_true
+      order.passed_checkout_step?("delivery").should be true
     end
 
     context "#checkout_steps" do
@@ -432,7 +432,7 @@ describe Spree::Order do
       end
     end
 
-    pending "should only call default transitions once when checkout_flow is redefined" do
+    skip "should only call default transitions once when checkout_flow is redefined" do
       order = SubclassedOrder.new
       order.stub :payment_required? => true
       order.should_receive(:process_payments!).once
@@ -464,7 +464,7 @@ describe Spree::Order do
 
     it "should not keep old events when checkout_flow is redefined" do
       state_machine = Spree::Order.state_machine
-      state_machine.states.any? { |s| s.name == :address }.should be_false
+      state_machine.states.any? { |s| s.name == :address }.should be false
       known_states = state_machine.events[:next].branches.map(&:known_states).flatten
       known_states.should_not include(:address)
       known_states.should_not include(:delivery)

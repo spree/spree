@@ -1,10 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Core::ControllerHelpers::Search, type: :controller do
+class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Search
+end
 
-  controller do
-    include Spree::Core::ControllerHelpers::Search
-  end
+describe Spree::Core::ControllerHelpers::Search, type: :controller do
+  controller(FakesController) {}
 
   describe '#build_searcher' do
     it 'returns Spree::Core::Search::Base instance' do

@@ -429,12 +429,12 @@ describe Spree::ReturnItem do
         subject.stub(:exchange_processed?) { false }
       end
 
-      it { expect(subject.exchange_required?).to be_true }
+      it { expect(subject.exchange_required?).to be true }
     end
 
     context "exchange has not been requested" do
       before { subject.stub(:exchange_requested?) { false } }
-      it { expect(subject.exchange_required?).to be_false }
+      it { expect(subject.exchange_required?).to be false }
     end
 
     context "exchange has been requested and processed" do
@@ -442,7 +442,7 @@ describe Spree::ReturnItem do
         subject.stub(:exchange_requested?) { true }
         subject.stub(:exchange_processed?) { true }
       end
-      it { expect(subject.exchange_required?).to be_false }
+      it { expect(subject.exchange_required?).to be false }
     end
   end
 

@@ -192,7 +192,7 @@ describe Spree::CustomerReturn do
     subject { customer_return.fully_reimbursed? }
 
     context 'when some return items are undecided' do
-      it { should be_false }
+      it { should be false }
     end
 
     context 'when all return items are decided' do
@@ -200,27 +200,27 @@ describe Spree::CustomerReturn do
       context 'when all return items are rejected' do
         before { customer_return.return_items.each(&:reject!) }
 
-        it { should be_true }
+        it { should be true }
       end
 
       context 'when all return items are accepted' do
         before { customer_return.return_items.each(&:accept!) }
 
         context 'when some return items have no reimbursement' do
-          it { should be_false }
+          it { should be false }
         end
 
         context 'when all return items have a reimbursement' do
           let!(:reimbursement) { create(:reimbursement, customer_return: customer_return) }
 
           context 'when some reimbursements are not reimbursed' do
-            it { should be_false }
+            it { should be false }
           end
 
           context 'when all reimbursements are reimbursed' do
             before { reimbursement.perform! }
 
-            it { should be_true }
+            it { should be true }
           end
         end
       end

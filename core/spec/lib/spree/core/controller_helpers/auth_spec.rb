@@ -1,10 +1,12 @@
 require 'spec_helper'
 
+class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Auth
+  def index; render text: 'index'; end
+end
+
 describe Spree::Core::ControllerHelpers::Auth, type: :controller do
-  controller do
-    include Spree::Core::ControllerHelpers::Auth
-    def index; render text: 'index'; end
-  end
+  controller(FakesController) {}
 
   describe '#current_ability' do
     it 'returns Spree::Ability instance' do
@@ -13,8 +15,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   end
 
   describe '#redirect_back_or_default' do
-    controller do
-      include Spree::Core::ControllerHelpers::Auth
+    controller(FakesController) do
       def index; redirect_back_or_default('/'); end
     end
     it 'redirects to session url' do
@@ -29,8 +30,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   end
 
   describe '#set_guest_token' do
-    controller do
-      include Spree::Core::ControllerHelpers::Auth
+    controller(FakesController) do
       def index
         set_guest_token
         render text: 'index'
@@ -65,8 +65,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   end
 
   describe '#unauthorized' do
-    controller do
-      include Spree::Core::ControllerHelpers::Auth
+    controller(FakesController) do
       def index; unauthorized; end
     end
     context 'when logged in' do

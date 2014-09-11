@@ -46,17 +46,17 @@ describe Spree::Admin::BaseController do
       end
 
       it "only checks alerts if production and preference is true" do
-        controller.send(:should_check_alerts?).should be_true
+        controller.send(:should_check_alerts?).should be true
       end
 
       it "only checks for production" do
         Rails.env.stub(:production? => false)
-        controller.send(:should_check_alerts?).should be_false
+        controller.send(:should_check_alerts?).should be false
       end
 
       it "only checks if preference is true" do
         Spree::Config[:check_for_spree_alerts] = false
-        controller.send(:should_check_alerts?).should be_false
+        controller.send(:should_check_alerts?).should be false
       end
     end
   end

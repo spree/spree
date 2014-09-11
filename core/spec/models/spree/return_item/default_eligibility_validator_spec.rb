@@ -27,7 +27,7 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
       time_eligibility_instance.should_receive(:eligible_for_return?).and_return(true)
       rma_eligibility_instance.should_receive(:eligible_for_return?).and_return(true)
 
-      subject.should be_true
+      subject.should be true
     end
   end
 
@@ -39,7 +39,7 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
         time_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
         rma_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(true)
 
-        subject.should be_true
+        subject.should be true
       end
     end
 
@@ -48,7 +48,7 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
         time_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
         rma_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
 
-        subject.should be_false
+        subject.should be false
       end
     end
   end

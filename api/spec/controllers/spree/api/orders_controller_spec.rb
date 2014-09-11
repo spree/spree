@@ -538,7 +538,7 @@ module Spree
             shipping_rate = shipment["shipping_rates"][0]
             shipping_rate["name"].should == json_shipping_method["name"]
             shipping_rate["cost"].should == "10.0"
-            shipping_rate["selected"].should be_true
+            shipping_rate["selected"].should be true
             shipping_rate["display_cost"].should == "$10.00"
 
             shipment["stock_location_name"].should_not be_blank
@@ -563,9 +563,9 @@ module Spree
 
       it "responds with orders updated_at with miliseconds precision" do
         if ActiveRecord::Base.connection.adapter_name == "Mysql2"
-          pending "MySQL does not support millisecond timestamps."
+          skip "MySQL does not support millisecond timestamps."
         else
-          pending "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
+          skip "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
         end
 
         api_get :index

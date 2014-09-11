@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.15.0'
+  s.add_dependency 'mail', '~> 2.5.4'
   s.add_dependency 'monetize'
   s.add_dependency 'paperclip', '~> 4.2.0'
   s.add_dependency 'paranoia', '~> 2.0'

@@ -67,7 +67,7 @@ module Spree
       end
 
       it "will return an error if the order cannot transition" do
-        pending "not sure if this test is valid"
+        skip "not sure if this test is valid"
         order.bill_address = nil
         order.save
         order.update_column(:state, "address")
@@ -135,7 +135,7 @@ module Spree
         # Find the correct shipping rate for that shipment...
         json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr["id"] == shipping_rate.id }
         # ... And finally ensure that it's selected
-        json_shipping_rate['selected'].should be_true
+        json_shipping_rate['selected'].should be true
         # Order should automatically transfer to payment because all criteria are met
         json_response['state'].should == 'payment'
       end
@@ -240,7 +240,7 @@ module Spree
       end
 
       it "can apply a coupon code to an order" do
-        pending "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
+        skip "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
 
         order.update_column(:state, "payment")
         PromotionHandler::Coupon.should_receive(:new).with(order).and_call_original

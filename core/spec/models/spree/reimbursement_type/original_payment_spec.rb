@@ -18,7 +18,7 @@ module Spree
 
         it "returns an array of readonly refunds" do
           expect(subject.map(&:class)).to eq [Spree::Refund]
-          expect(subject.map(&:readonly?)).to be_true
+          expect(subject.map(&:readonly?)).to eq [true]
         end
       end
 

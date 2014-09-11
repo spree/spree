@@ -367,7 +367,7 @@ module Spree
             { label: 'Promotion Discount', amount: -3.00 }] }
 
         order = Importer::Order.import(user,params)
-        order.adjustments.all?(&:closed?).should be_true
+        order.adjustments.all?(&:closed?).should be true
         order.adjustments.first.label.should eq 'Shipping Discount'
         order.adjustments.first.amount.should eq -4.99
       end

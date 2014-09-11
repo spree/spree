@@ -35,7 +35,7 @@ module Spree
     end
 
     it 'checks availability for a package' do
-      subject.available?(package).should be_true
+      subject.available?(package).should be true
     end
 
     it 'calculates totals for content_items' do

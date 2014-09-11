@@ -27,7 +27,7 @@ module Spree
 
         it 'creates one readonly lump credit for all outstanding balance payable to the customer' do
           expect(subject.map(&:class)).to eq [Spree::Reimbursement::Credit]
-          expect(subject.map(&:readonly?)).to be_true
+          expect(subject.map(&:readonly?)).to eq [true]
           expect(subject.sum(&:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
         end
 
