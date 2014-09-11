@@ -4,7 +4,9 @@ module Spree
     belongs_to :property, class_name: 'Spree::Property', inverse_of: :product_properties
 
     validates :property, presence: true
-    validates :value, length: { maximum: 255 }
+    # Remove to allow support of DB.text column.
+    # Need to address with Spree community.
+    #validates :value, length: { maximum: 255 }
 
     default_scope -> { order("#{self.table_name}.position") }
 
