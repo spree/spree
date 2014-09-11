@@ -359,16 +359,36 @@ describe Spree::Order do
 
       context "without confirmation required" do
         before do
+          order.email = "spree@example.com"
           order.stub :confirmation_required? => false
           order.stub :payment_required? => true
-          order.stub :payments => [1]
+          order.payments << FactoryGirl.create(:payment, state: payment_state, order: order)
         end
 
-        it "transitions to complete" do
-          order.should_receive(:process_payments!).once.and_return true
-          order.next!
-          assert_state_changed(order, 'payment', 'complete')
-          order.state.should == "complete"
+        context 'when there is at least one valid payment' do
+          let(:payment_state) { 'checkout' }
+
+          before do
+            expect(order).to receive(:process_payments!).once { true }
+          end
+
+          it "transitions to complete" do
+            order.next!
+            assert_state_changed(order, 'payment', 'complete')
+            expect(order.state).to eq('complete')
+          end
+        end
+
+        context 'when there is only an invalid payment' do
+          let(:payment_state) { 'failed' }
+
+          it "raises a StateMachine::InvalidTransition" do
+            expect {
+              order.next!
+            }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
+
+            expect(order.errors[:base]).to include(Spree.t(:no_payment_found))
+          end
         end
       end
 
