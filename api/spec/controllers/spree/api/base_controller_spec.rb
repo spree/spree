@@ -106,7 +106,7 @@ describe Spree::Api::BaseController do
       MockHoneybadger.notify_or_ignore(e, rack_env: controller.request.env)
     end
 
-    ##b
+    ##
     # Fake HB alert class
     class MockHoneybadger
       # https://github.com/honeybadger-io/honeybadger-ruby/blob/master/lib/honeybadger.rb#L136
