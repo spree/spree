@@ -21,7 +21,7 @@ describe Spree::Order do
 
       context "when payment processing succeeds" do
         before do
-          order.stub payments: [1]
+          order.payments << FactoryGirl.create(:payment, state: 'checkout', order: order)
           order.stub process_payments: true
         end
 
