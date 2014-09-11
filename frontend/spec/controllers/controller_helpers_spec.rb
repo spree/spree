@@ -6,7 +6,7 @@ require 'spec_helper'
 describe Spree::ProductsController do
 
   before do
-    I18n.stub(:available_locales => [:en, :de])
+    expect(I18n).to receive(:available_locales).and_return([:en, :de]).at_least(1).times
     Spree::Frontend::Config[:locale] = :de
   end
 

@@ -22,8 +22,8 @@ module Spree
       end
 
       def assert_preference_unset(preference)
-        find("#preferences_#{preference}")['checked'].should be_false
-        Spree::Config[preference].should be_false
+        find("#preferences_#{preference}")['checked'].should be false
+        Spree::Config[preference].should be false
       end
     end
   end

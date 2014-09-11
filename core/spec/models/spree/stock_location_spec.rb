@@ -43,12 +43,12 @@ module Spree
           context "passes backorderable default config" do
             context "true" do
               before { subject.backorderable_default = true }
-              it { stock_item.backorderable.should be_true }
+              it { stock_item.backorderable.should be true }
             end
 
             context "false" do
               before { subject.backorderable_default = false }
-              it { stock_item.backorderable.should be_false }
+              it { stock_item.backorderable.should be false }
             end
           end
         end
@@ -106,7 +106,7 @@ module Spree
     end
 
     it 'finds determines if you a variant is backorderable' do
-      subject.backorderable?(variant).should be_true
+      subject.backorderable?(variant).should be true
     end
 
     it 'restocks a variant with a positive stock movement' do

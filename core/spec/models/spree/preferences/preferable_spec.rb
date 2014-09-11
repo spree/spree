@@ -53,13 +53,13 @@ describe Spree::Preferences::Preferable do
 
   describe "preference definitions" do
     it "parent should not see child definitions" do
-      @a.has_preference?(:color).should be_true
-      @a.has_preference?(:flavor).should_not be_true
+      @a.has_preference?(:color).should be true
+      @a.has_preference?(:flavor).should_not be true
     end
 
     it "child should have parent and own definitions" do
-      @b.has_preference?(:color).should be_true
-      @b.has_preference?(:flavor).should be_true
+      @b.has_preference?(:color).should be true
+      @b.has_preference?(:flavor).should be true
     end
 
     it "instances have defaults" do
@@ -69,8 +69,8 @@ describe Spree::Preferences::Preferable do
     end
 
     it "can be asked if it has a preference definition" do
-      @a.has_preference?(:color).should be_true
-      @a.has_preference?(:bad).should be_false
+      @a.has_preference?(:color).should be true
+      @a.has_preference?(:bad).should be false
     end
 
     it "can be asked and raises" do
@@ -196,28 +196,28 @@ describe Spree::Preferences::Preferable do
 
       it "with strings" do
         @a.set_preference(:is_boolean, '0')
-        @a.preferences[:is_boolean].should be_false
+        @a.preferences[:is_boolean].should be false
         @a.set_preference(:is_boolean, 'f')
-        @a.preferences[:is_boolean].should be_false
+        @a.preferences[:is_boolean].should be false
         @a.set_preference(:is_boolean, 't')
-        @a.preferences[:is_boolean].should be_true
+        @a.preferences[:is_boolean].should be true
       end
 
       it "with integers" do
         @a.set_preference(:is_boolean, 0)
-        @a.preferences[:is_boolean].should be_false
+        @a.preferences[:is_boolean].should be false
         @a.set_preference(:is_boolean, 1)
-        @a.preferences[:is_boolean].should be_true
+        @a.preferences[:is_boolean].should be true
       end
 
       it "with an empty string" do
         @a.set_preference(:is_boolean, '')
-        @a.preferences[:is_boolean].should be_false
+        @a.preferences[:is_boolean].should be false
       end
 
       it "with an empty hash" do
         @a.set_preference(:is_boolean, [])
-        @a.preferences[:is_boolean].should be_false
+        @a.preferences[:is_boolean].should be false
       end
     end
 
@@ -340,10 +340,10 @@ describe Spree::Preferences::Preferable do
 
   it "can add and remove preferences" do
     A.preference :test_temp, :boolean, :default => true
-    @a.preferred_test_temp.should be_true
+    @a.preferred_test_temp.should be true
     A.remove_preference :test_temp
-    @a.has_preference?(:test_temp).should be_false
-    @a.respond_to?(:preferred_test_temp).should be_false
+    @a.has_preference?(:test_temp).should be false
+    @a.respond_to?(:preferred_test_temp).should be false
   end
 
 end

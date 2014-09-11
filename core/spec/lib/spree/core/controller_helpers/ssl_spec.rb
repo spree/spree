@@ -1,42 +1,57 @@
 require 'spec_helper'
 
-describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
-  controller do
-    include Spree::Core::ControllerHelpers::SSL
-    def index; render text: 'index'; end
-    def create; end
-    def ssl_supported?; true; end
-  end
+class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::SSL
+  def index; render text: 'index'; end
+  def create; end
+  def ssl_supported?; true; end
+end
+
+describe Spree::Core::ControllerHelpers::SSL, type: :controller do
 
   describe 'redirect to http' do
     before { Spree::Config[:redirect_https_to_http] = true  }
     after  { Spree::Config[:redirect_https_to_http] = false }
     before { request.env['HTTPS'] = 'on' }
 
-    context 'allowed two actions' do
-      controller(described_class) do
+    describe 'allowed two actions' do
+      controller(FakesController) do
         ssl_allowed :index
         ssl_allowed :foobar
       end
-      specify{ controller.ssl_allowed_actions.should == [:index, :foobar] }
-      specify{ get(:index).should be_success }
+
+      it '#ssl_allowed_actions returns both' do
+        expect(controller.ssl_allowed_actions).to eq [:index, :foobar]
+      end
+
+      it 'should allow https access' do
+        expect(get(:index)).to be_success
+      end
     end
+
     context 'allowed a single action' do
-      controller(described_class){ ssl_allowed :index }
+      controller(FakesController) do
+        ssl_allowed :index
+      end
       specify{ controller.ssl_allowed_actions.should == [:index] }
       specify{ get(:index).should be_success }
     end
+
     context 'allowed all actions' do
-      controller(described_class){ ssl_allowed }
+      controller(FakesController) do
+        ssl_allowed
+      end
       specify{ controller.ssl_allowed_actions.should == [] }
       specify{ get(:index).should be_success }
     end
+
     context 'ssl not allowed' do
-      controller(described_class){ }
+      controller(FakesController) { }
       specify{ get(:index).should be_redirect }
     end
+
     context 'using a post returns a HTTP status 426' do
-      controller(described_class){ }
+      controller(FakesController) { }
       specify do
         post(:create)
         response.body.should == "Please switch to using HTTP (rather than HTTPS) and retry this request."
@@ -47,17 +62,23 @@ describe Spree::Core::ControllerHelpers::SSL, :type => :controller do
 
   describe 'redirect to https' do
     context 'required a single action' do
-      controller(described_class){ ssl_required :index }
+      controller(FakesController) do
+        ssl_required :index
+      end
       specify{ controller.ssl_allowed_actions.should == [:index] }
       specify{ get(:index).should be_redirect }
     end
+
     context 'required all actions' do
-      controller(described_class){ ssl_required }
+      controller(FakesController) do
+        ssl_required
+      end
       specify{ controller.ssl_allowed_actions.should == [] }
       specify{ get(:index).should be_redirect }
     end
+
     context 'not required' do
-      controller(described_class){ }
+      controller(FakesController) { }
       specify{ get(:index).should be_success }
     end
   end

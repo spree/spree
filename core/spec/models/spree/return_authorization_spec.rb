@@ -74,12 +74,12 @@ describe Spree::ReturnAuthorization do
   context "can_receive?" do
     it "should allow_receive when inventory units assigned" do
       return_authorization.stub(:inventory_units => [1,2,3])
-      return_authorization.can_receive?.should be_true
+      return_authorization.can_receive?.should be true
     end
 
     it "should not allow_receive with no inventory units" do
       return_authorization.stub(:inventory_units => [])
-      return_authorization.can_receive?.should be_false
+      return_authorization.can_receive?.should be false
     end
   end
 

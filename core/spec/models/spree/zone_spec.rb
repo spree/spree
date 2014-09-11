@@ -96,7 +96,7 @@ describe Spree::Zone do
       before { country_zone.members.create(zoneable: country) }
 
       it "should be true" do
-        country_zone.include?(address).should be_true
+        country_zone.include?(address).should be true
       end
     end
 
@@ -105,7 +105,7 @@ describe Spree::Zone do
       before { state_zone.members.create(zoneable: state) }
 
       it "should be true" do
-        state_zone.include?(address).should be_true
+        state_zone.include?(address).should be true
       end
     end
   end
@@ -141,7 +141,7 @@ describe Spree::Zone do
       before { @source.members.create(zoneable: country1) }
 
       it "should be false" do
-        @source.contains?(@target).should be_false
+        @source.contains?(@target).should be false
       end
     end
 
@@ -149,7 +149,7 @@ describe Spree::Zone do
       before { @target.members.create(zoneable: country1) }
 
       it "should be false" do
-        @source.contains?(@target).should be_false
+        @source.contains?(@target).should be false
       end
     end
 
@@ -160,7 +160,7 @@ describe Spree::Zone do
       end
 
       it "should be true" do
-        @source.contains?(@target).should be_true
+        @source.contains?(@target).should be true
       end
     end
 
@@ -177,7 +177,7 @@ describe Spree::Zone do
         end
 
         it "should be true" do
-          @source.contains?(@target).should be_true
+          @source.contains?(@target).should be true
         end
       end
 
@@ -189,7 +189,7 @@ describe Spree::Zone do
         end
 
         it "should be false" do
-          @source.contains?(@target).should be_false
+          @source.contains?(@target).should be false
         end
       end
 
@@ -200,7 +200,7 @@ describe Spree::Zone do
         end
 
         it "should be false" do
-          @source.contains?(@target).should be_false
+          @source.contains?(@target).should be false
         end
       end
     end
@@ -212,7 +212,7 @@ describe Spree::Zone do
       end
 
       it "should be false" do
-        @source.contains?(@target).should be_false
+        @source.contains?(@target).should be false
       end
     end
 
@@ -227,7 +227,7 @@ describe Spree::Zone do
         end
 
         it "should be true" do
-          @source.contains?(@target).should be_true
+          @source.contains?(@target).should be true
         end
       end
 
@@ -240,7 +240,7 @@ describe Spree::Zone do
         end
 
         it "should be false" do
-          @source.contains?(@target).should be_false
+          @source.contains?(@target).should be false
         end
       end
 
@@ -252,7 +252,7 @@ describe Spree::Zone do
         end
 
         it "should be false" do
-          @source.contains?(@target).should be_false
+          @source.contains?(@target).should be false
         end
       end
     end
@@ -264,7 +264,7 @@ describe Spree::Zone do
       it "should clear previous default tax zone" do
         zone1 = create(:zone, name: 'foo', default_tax: true)
         zone = create(:zone, name: 'bar', default_tax: true)
-        zone1.reload.default_tax.should be_false
+        zone1.reload.default_tax.should be false
       end
     end
 

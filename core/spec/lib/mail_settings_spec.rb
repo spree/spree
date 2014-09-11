@@ -38,7 +38,7 @@ module Spree
           it { subject[:domain].should == "example.com" }
           it { subject[:port].should == 123 }
           it { subject[:authentication].should == "None" }
-          it { subject[:enable_starttls_auto].should be_true }
+          it { subject[:enable_starttls_auto].should be true }
           it { should_not have_key(:user_name) }
           it { should_not have_key(:password) }
         end

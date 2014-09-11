@@ -62,7 +62,7 @@ describe Spree::OrderMailer do
         Spree::Config[:intercept_email] = "intercept@foobar.com"
         message.deliver
         @email = ActionMailer::Base.deliveries.first
-        @email.subject.match(/customer@example\.com/).should be_true
+        @email.subject.match(/customer@example\.com/).should be_truthy
       end
     end
 

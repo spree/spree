@@ -95,12 +95,12 @@ module Spree
 
         it "should be true when tax_zone is not the same as the default" do
           @order.stub :tax_zone => create(:zone, :name => "other_zone")
-          @order.exclude_tax?.should be_true
+          @order.exclude_tax?.should be true
         end
 
         it "should be false when tax_zone is the same as the default" do
           @order.stub :tax_zone => @default_zone
-          @order.exclude_tax?.should be_false
+          @order.exclude_tax?.should be false
         end
       end
 
@@ -108,7 +108,7 @@ module Spree
         before { Spree::Config.set(:prices_inc_tax => false) }
 
         it "should be false" do
-          @order.exclude_tax?.should be_false
+          @order.exclude_tax?.should be false
         end
       end
     end
