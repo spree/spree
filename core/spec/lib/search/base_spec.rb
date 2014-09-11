@@ -16,6 +16,20 @@ describe Spree::Core::Search::Base do
     searcher.retrieve_products.count.should == 2
   end
 
+  context "when include_images is included in the initalization params" do
+    let(:params) {{ include_images: true }}
+    subject { described_class.new(params).retrieve_products }
+
+    before do
+      @product1.master.images.create(attachment_file_name: "Test")
+      @product1.reload
+    end
+
+    it "eager loads the images" do
+      expect(subject.to_sql).to match /LEFT OUTER JOIN "spree_assets"/
+    end
+  end
+
   it "switches to next page according to the page parameter" do
     @product3 = create(:product, :name => "RoR Pants", :price => 14.00)
 
