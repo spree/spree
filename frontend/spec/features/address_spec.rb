@@ -63,7 +63,7 @@ describe "Address", inaccessible: true do
       let!(:france) { create(:country, :name => "France", :states_required => false, :iso => "FRA") }
 
       it "clears the state name" do
-        pending "This is failing on the CI server, but not when you run the tests manually... It also does not fail locally on a machine."
+        skip "This is failing on the CI server, but not when you run the tests manually... It also does not fail locally on a machine."
         click_button "Checkout"
         select canada.name, :from => @country_css
         page.find(@state_name_css).set("Toscana")

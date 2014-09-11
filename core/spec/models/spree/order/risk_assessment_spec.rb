@@ -78,7 +78,7 @@ describe Spree::Order do
       order.approved_by(stub_model(Spree::LegacyUser, id: 1))
       expect(order.approver_id).to eq(1)
       expect(order.approved_at).to be_present
-      expect(order.approved?).to be_true
+      expect(order.approved?).to be true
     end
   end
 end

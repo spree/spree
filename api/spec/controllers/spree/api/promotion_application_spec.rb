@@ -10,7 +10,7 @@ module Spree::Api
 
     context "with an available promotion" do
       let!(:order) { create(:order_with_line_items, :line_items_count => 1) }
-      let!(:promotion) do 
+      let!(:promotion) do
         promotion = Spree::Promotion.create(name: "10% off", code: "10off")
         calculator = Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10")
         action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
@@ -25,7 +25,7 @@ module Spree::Api
         order.reload.total.should == 109.00
         json_response["success"].should == "The coupon code was successfully applied to your order."
         json_response["error"].should be_blank
-        json_response["successful"].should be_true
+        json_response["successful"].should be true
       end
 
       context "with an expired promotion" do
@@ -40,7 +40,7 @@ module Spree::Api
           response.status.should == 422
           json_response["success"].should be_blank
           json_response["error"].should == "The coupon code is expired"
-          json_response["successful"].should be_false
+          json_response["successful"].should be false
         end
       end
     end

@@ -10,9 +10,14 @@ describe Spree::Payment do
   end
 
   let(:card) do
-    mock_model(Spree::CreditCard, number: "4111111111111111",
-                                  has_payment_profile?: true,
-                                  imported: false)
+    Spree::CreditCard.create!(
+      number: "4111111111111111",
+      month: "12",
+      year: "2014",
+      verification_value: "123",
+      name: "Name",
+      imported: false
+    )
   end
 
   let(:payment) do
@@ -534,12 +539,12 @@ describe Spree::Payment do
   describe "#can_credit?" do
     it "is true if credit_allowed > 0" do
       payment.stub(:credit_allowed).and_return(100)
-      payment.can_credit?.should be_true
+      payment.can_credit?.should be true
     end
 
     it "is false if credit_allowed is 0" do
       payment.stub(:credit_allowed).and_return(0)
-      payment.can_credit?.should be_false
+      payment.can_credit?.should be false
     end
   end
 
@@ -913,7 +918,7 @@ describe Spree::Payment do
   context "state changes" do
     it "are logged to the database" do
       payment.state_changes.should be_empty
-      expect(payment.process!).to be_true
+      expect(payment.process!).to be true
       payment.state_changes.count.should == 2
       changes = payment.state_changes.map { |change| { change.previous_state => change.next_state} }
       expect(changes).to match_array([

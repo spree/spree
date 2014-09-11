@@ -1,9 +1,11 @@
 require 'spec_helper'
 
+class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Order
+end
+
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
-  controller do
-    include Spree::Core::ControllerHelpers::Order
-  end
+  controller(FakesController) {}
 
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user) }

@@ -23,5 +23,5 @@ module ControllerHacks
 end
 
 RSpec.configure do |config|
-  config.include ControllerHacks, :type => :controller
+  config.include ControllerHacks, type: :controller
 end

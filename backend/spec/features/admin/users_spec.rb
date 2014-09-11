@@ -126,7 +126,7 @@ describe 'Users' do
       check 'user_spree_role_admin'
       click_button 'Update'
       expect(page).to have_text 'Account updated'
-      expect(find_field('user_spree_role_admin')['checked']).to be_true
+      expect(find_field('user_spree_role_admin')['checked']).to be true
     end
 
     it 'can edit user shipping address' do

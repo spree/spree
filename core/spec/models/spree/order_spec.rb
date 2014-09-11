@@ -94,9 +94,9 @@ describe Spree::Order do
     end
 
     it "sets confirmation delivered when finalizing" do
-      expect(order.confirmation_delivered?).to be_false
+      expect(order.confirmation_delivered?).to be false
       order.finalize!
-      expect(order.confirmation_delivered?).to be_true
+      expect(order.confirmation_delivered?).to be true
     end
 
     it "should not send duplicate confirmation emails" do
@@ -148,7 +148,7 @@ describe Spree::Order do
 
     it "should return line_item that has insufficient stock on hand" do
       order.insufficient_stock_lines.size.should == 1
-      order.insufficient_stock_lines.include?(line_item).should be_true
+      order.insufficient_stock_lines.include?(line_item).should be true
     end
   end
 
@@ -457,7 +457,7 @@ describe Spree::Order do
     end
 
     it "contains?" do
-      order.contains?(@variant1).should be_true
+      order.contains?(@variant1).should be true
     end
 
     it "gets the quantity of a given variant" do
@@ -475,8 +475,8 @@ describe Spree::Order do
 
   context "#generate_order_number" do
     it "should generate a random string" do
-      order.generate_order_number.is_a?(String).should be_true
-      (order.generate_order_number.to_s.length > 0).should be_true
+      order.generate_order_number.is_a?(String).should be true
+      (order.generate_order_number.to_s.length > 0).should be true
     end
   end
 
@@ -541,48 +541,48 @@ describe Spree::Order do
 
     it "should be true for order in the 'complete' state" do
       order.stub(:complete? => true)
-      order.can_ship?.should be_true
+      order.can_ship?.should be true
     end
 
     it "should be true for order in the 'resumed' state" do
       order.stub(:resumed? => true)
-      order.can_ship?.should be_true
+      order.can_ship?.should be true
     end
 
     it "should be true for an order in the 'awaiting return' state" do
       order.stub(:awaiting_return? => true)
-      order.can_ship?.should be_true
+      order.can_ship?.should be true
     end
 
     it "should be true for an order in the 'returned' state" do
       order.stub(:returned? => true)
-      order.can_ship?.should be_true
+      order.can_ship?.should be true
     end
 
     it "should be false if the order is neither in the 'complete' nor 'resumed' state" do
       order.stub(:resumed? => false, :complete? => false)
-      order.can_ship?.should be_false
+      order.can_ship?.should be false
     end
   end
 
   context "#completed?" do
     it "should indicate if order is completed" do
       order.completed_at = nil
-      order.completed?.should be_false
+      order.completed?.should be false
 
       order.completed_at = Time.now
-      order.completed?.should be_true
+      order.completed?.should be true
     end
   end
 
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do
       order.stub_chain(:line_items, :count => 1)
-      order.checkout_allowed?.should be_true
+      order.checkout_allowed?.should be true
     end
     it "should be false if there are no line_items in the order" do
       order.stub_chain(:line_items, :count => 0)
-      order.checkout_allowed?.should be_false
+      order.checkout_allowed?.should be false
     end
   end
 
@@ -610,14 +610,14 @@ describe Spree::Order do
       order.state = 'canceled'
       order.shipment_state = 'ready'
       order.completed_at = Time.now
-      order.can_cancel?.should be_false
+      order.can_cancel?.should be false
     end
 
     it "should be true for completed order with no shipment" do
       order.state = 'complete'
       order.shipment_state = nil
       order.completed_at = Time.now
-      order.can_cancel?.should be_true
+      order.can_cancel?.should be true
     end
   end
 

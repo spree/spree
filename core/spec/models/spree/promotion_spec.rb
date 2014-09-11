@@ -121,14 +121,14 @@ describe Spree::Promotion do
     it "does activate if newer then order" do
       @action1.should_receive(:perform).with(@payload)
       promotion.created_at = DateTime.now + 2
-      expect(promotion.activate(@payload)).to be_true
+      expect(promotion.activate(@payload)).to be true
     end
 
     context "keeps track of the orders" do
       context "when activated" do
         it "assigns the order" do
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be_true
+          expect(promotion.activate(@payload)).to be true
           expect(promotion.orders.first).to eql @order
         end
       end
@@ -136,7 +136,7 @@ describe Spree::Promotion do
         it "will not assign the order" do
           @order.state = 'complete'
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be_false
+          expect(promotion.activate(@payload)).to be_falsey
           expect(promotion.orders).to be_empty
         end
       end
@@ -149,16 +149,16 @@ describe Spree::Promotion do
     let(:promotable) { double('Promotable') }
     it "should not have its usage limit exceeded with no usage limit" do
       promotion.usage_limit = 0
-      promotion.usage_limit_exceeded?(promotable).should be_false
+      promotion.usage_limit_exceeded?(promotable).should be false
     end
 
     it "should have its usage limit exceeded" do
       promotion.usage_limit = 2
       promotion.stub(:adjusted_credits_count => 2)
-      promotion.usage_limit_exceeded?(promotable).should be_true
+      promotion.usage_limit_exceeded?(promotable).should be true
 
       promotion.stub(:adjusted_credits_count => 3)
-      promotion.usage_limit_exceeded?(promotable).should be_true
+      promotion.usage_limit_exceeded?(promotable).should be true
     end
   end
 
@@ -288,13 +288,13 @@ describe Spree::Promotion do
   context "#rules_are_eligible?" do
     let(:promotable) { double('Promotable') }
     it "true if there are no rules" do
-      promotion.rules_are_eligible?(promotable).should be_true
+      promotion.rules_are_eligible?(promotable).should be true
     end
 
     it "true if there are no applicable rules" do
       promotion.promotion_rules = [stub_model(Spree::PromotionRule, :eligible? => true, :applicable? => false)]
       promotion.promotion_rules.stub(:for).and_return([])
-      promotion.rules_are_eligible?(promotable).should be_true
+      promotion.rules_are_eligible?(promotable).should be true
     end
 
     context "with 'all' match policy" do
@@ -308,7 +308,7 @@ describe Spree::Promotion do
 
         promotion.promotion_rules = [promo1, promo2]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
-        promotion.rules_are_eligible?(promotable).should be_true
+        promotion.rules_are_eligible?(promotable).should be true
       end
 
       it "should not have eligible rules if any of the rules is not eligible" do
@@ -319,7 +319,7 @@ describe Spree::Promotion do
 
         promotion.promotion_rules = [promo1, promo2]
         promotion.promotion_rules.stub(:for).and_return(promotion.promotion_rules)
-        promotion.rules_are_eligible?(promotable).should be_false
+        promotion.rules_are_eligible?(promotable).should be false
       end
     end
 
@@ -333,7 +333,7 @@ describe Spree::Promotion do
         true_rule.stub(:eligible? => true)
         promotion.stub(:rules => [true_rule])
         promotion.stub_chain(:rules, :for).and_return([true_rule])
-        promotion.rules_are_eligible?(promotable).should be_true
+        promotion.rules_are_eligible?(promotable).should be true
       end
     end
   end
