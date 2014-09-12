@@ -6,9 +6,9 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [x] API GET #show for Promotions, https://github.com/spree/spree/pull/5233
 - [x] API PUT #apply_coupon_code on Orders now has status_code, https://github.com/spree/spree/pull/5234
 - [x] Allow error notify to Honeybadger, https://github.com/spree/spree/pull/5285
-- [x] Require at least one valid payment when transitioning to complete, https://github.com/spree/spree/pull/5350.
-- [x] Allow payment_source to be updated at any checkout state, https://github.com/spree/spree/pull/5351.
-- [ ] Let ProductProperty.value by dynamically length validated, https://github.com/spree/spree/pull/5357
+- [x] Require at least one valid payment when transitioning to complete, https://github.com/spree/spree/pull/5350
+- [x] Allow payment_source to be updated at any checkout state, https://github.com/spree/spree/pull/5351
+- [ ] Let ProductProperty.value by dynamically length validated, https://github.com/spree/spree/pull/5361
 
 SUMMARY
 -------
