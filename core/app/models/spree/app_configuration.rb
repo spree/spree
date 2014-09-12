@@ -46,6 +46,7 @@ module Spree
     preference :display_currency, :boolean, default: false
     preference :default_country_id, :integer
     preference :dismissed_spree_alerts, :string, default: ''
+    preference :enable_frontend, :boolean, default: true
     preference :hide_cents, :boolean, default: false
     preference :last_check_for_spree_alerts, :string, default: nil
     preference :layout, :string, default: 'spree/layouts/spree_application'
