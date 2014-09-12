@@ -553,8 +553,10 @@ describe Spree::Payment do
       it "makes the state processing" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
+        expect(payment).to receive(:started_processing!)
+        expect(payment).to receive(:update_column).and_return(true)
         payment.partial_credit(10)
-        payment.should be_processing
+        payment.should be_completed
       end
 
       it "calls credit on the source with the payment and amount" do
@@ -562,6 +564,7 @@ describe Spree::Payment do
         payment.stub(:credit_allowed).and_return(10)
         payment.should_receive(:credit!).with(10)
         payment.partial_credit(10)
+        payment.should be_completed
       end
     end
 
@@ -569,6 +572,7 @@ describe Spree::Payment do
       it "should not call credit on the source" do
         payment.state = 'completed'
         payment.stub(:credit_allowed).and_return(10)
+        expect(payment).to_not receive(:started_processing!)
         payment.partial_credit(20)
         payment.should be_completed
       end
