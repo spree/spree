@@ -100,6 +100,7 @@ module Spree
           record_response(response)
 
           if response.success?
+            self.update_column(:state, 'completed')
             self.class.create!(
               :order => order,
               :source => self,
