@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::PaymentMethod do
   describe "#available" do
     before do
+      Spree::PaymentMethod.destroy_all # ensure data is properly cleaned
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
           :name => 'Display Both',
