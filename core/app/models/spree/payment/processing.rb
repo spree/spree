@@ -81,6 +81,7 @@ module Spree
       end
 
       def credit!(credit_amount=nil)
+        started_processing!
         protect_from_connection_error do
           check_environment
 
@@ -121,7 +122,6 @@ module Spree
 
       def partial_credit(amount)
         return if amount > credit_allowed
-        started_processing!
         credit!(amount)
       end
 
