@@ -3,6 +3,13 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
     has_many :addresses, dependent: :nullify
 
+    has_many :zone_members,
+      -> { where(zoneable_type: 'Spree::State') },
+      class_name: 'Spree::ZoneMember',
+      foreign_key: :zoneable_id
+
+    has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
+
     validates :country, :name, presence: true
 
     def self.find_all_by_name_or_abbr(name_or_abbr)
