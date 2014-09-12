@@ -81,6 +81,8 @@ module Spree
       end
 
       def credit!(credit_amount=nil)
+        raise Core::GatewayError.new(Spree.t(:payment_processing_failed)) if processing?
+
         started_processing!
         protect_from_connection_error do
           check_environment
