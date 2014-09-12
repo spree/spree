@@ -2,17 +2,46 @@ module Spree
   class Zone < Spree::Base
     has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember", inverse_of: :zone
     has_many :tax_rates, dependent: :destroy, inverse_of: :zone
+    has_many :countries, through: :zone_members, source: :zoneable, source_type: 'Spree::Country'
+    has_many :states, through: :zone_members, source: :zoneable, source_type: 'Spree::State'
+
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'
 
     validates :name, presence: true, uniqueness: { allow_blank: true }
     after_save :remove_defunct_members
     after_save :remove_previous_default
+    before_save :set_cached_kind
 
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
 
     def self.default_tax
       where(default_tax: true).first
+    end
+
+    def self.potential_matching_zones(zone)
+      if zone.kind == 'country'
+        # Match zones of the same kind with simialr countries
+        joins(:zone_members).where(
+          "(spree_zone_members.zoneable_type = 'Spree::Country' AND
+            spree_zone_members.zoneable_id IN (?))
+           OR default_tax = ?",
+          zone.country_ids,
+          true
+        ).uniq
+      else
+        # Match zones of the same kind with similar states in AND match zones that have the states countries in
+        joins(:zone_members).where(
+          "(spree_zone_members.zoneable_type = 'Spree::State' AND
+            spree_zone_members.zoneable_id IN (?))
+           OR (spree_zone_members.zoneable_type = 'Spree::Country' AND
+            spree_zone_members.zoneable_id IN (?))
+           OR default_tax = ?",
+          zone.state_ids,
+          zone.states.pluck(:country_id),
+          true
+        ).uniq
+      end
     end
 
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
@@ -31,10 +60,14 @@ module Spree
       matches.first
     end
 
+    def set_cached_kind
+      self.cached_kind = kind
+    end
+
     def kind
-      if members.any? && !members.any? { |member| member.try(:zoneable_type).nil? }
-        members.last.zoneable_type.demodulize.underscore
-      end
+      return cached_kind if cached_kind
+
+      humanize_kind if valid_members?
     end
 
     def kind=(value)
@@ -106,16 +139,21 @@ module Spree
       return false if zone_members.empty? || target.zone_members.empty?
 
       if kind == target.kind
-        return false if (target.zoneables.collect(&:id) - zoneables.collect(&:id)).present?
+        return false if (target.countries.pluck(:id) - countries.pluck(:id)).present?
       else
-        return false if (target.zoneables.collect(&:country).collect(&:id) - zoneables.collect(&:id)).present?
+        return false if (target.states.pluck(:country_id) - countries.pluck(:id)).present?
       end
       true
     end
 
     private
 
+      def humanize_kind
+        members.last.zoneable_type.demodulize.underscore
+      end
+
       def remove_defunct_members
+        self.reload
         if zone_members.any?
           zone_members.where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.classify}").destroy_all
         end
@@ -133,6 +171,10 @@ module Spree
           member.zoneable_id = id
           members << member
         end
+      end
+
+      def valid_members?
+        members.any? && !members.any? { |member| member.try(:zoneable_type).nil? }
       end
   end
 end
