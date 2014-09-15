@@ -314,25 +314,25 @@ module Spree
     end
 
     def find_line_item_by_variant(variant, options = {})
-      line_items.detect { |line_item| 
+      line_items.detect { |line_item|
                     line_item.variant_id == variant.id &&
                     line_item_options_match(line_item, options)
                   }
     end
-    
-    # This method enables extensions to participate in the 
+
+    # This method enables extensions to participate in the
     # "Are these line items equal" decision.
     #
     # When adding to cart, an extension would send something like:
     # params[:product_customizations]={...}
-    #                                 
+    #
     # and would provide:
     #
     # def product_customizations_match
     def line_item_options_match(line_item, options)
       return true unless options
 
-      self.line_item_comparison_hooks.all? { |hook| 
+      self.line_item_comparison_hooks.all? { |hook|
         self.send(hook, line_item, options)
       }
     end
@@ -438,12 +438,12 @@ module Spree
       order.line_items.each do |other_order_line_item|
         next unless other_order_line_item.currency == currency
 
-        # Compare the line items of the other order with mine. 
+        # Compare the line items of the other order with mine.
         # Make sure you allow any extensions to chime in on whether or
         # not the extension-specific parts of the line item match
-        current_line_item = self.line_items.detect { |my_li| 
-                      my_li.variant == other_order_line_item.variant && 
-                      self.line_item_comparison_hooks.all? { |hook| 
+        current_line_item = self.line_items.detect { |my_li|
+                      my_li.variant == other_order_line_item.variant &&
+                      self.line_item_comparison_hooks.all? { |hook|
                         self.send(hook, my_li, other_order_line_item)
                       }
                     }
@@ -660,9 +660,7 @@ module Spree
     def after_cancel
       shipments.each { |shipment| shipment.cancel! }
       payments.completed.each { |payment| payment.cancel! }
-
       send_cancel_email
-      self.update_column(:payment_state, 'credit_owed') unless shipped?
       self.update!
     end
 
