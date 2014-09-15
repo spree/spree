@@ -168,6 +168,7 @@ module Spree
         order.payment_state = 'paid' if !order.outstanding_balance?
       end
       order.state_changed('payment') if last_state != order.payment_state
+      order.payment_state
     end
 
     private
