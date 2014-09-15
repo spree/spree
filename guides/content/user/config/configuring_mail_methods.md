@@ -2,7 +2,11 @@
 title: Mail Methods
 ---
 
+<%= warning "Spree mail settings has been extracted out into a gem in favor of generic action mailer settings. %>
+
 ## Introduction
+
+As this has been extracted, please be sure to add [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) to your Gemfile before proceeding if you desire this behavior.
 
 The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going first to the Admin Interface, clicking "Configuration" and then "Mail Method Settings".
 
