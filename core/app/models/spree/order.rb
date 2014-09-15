@@ -428,6 +428,7 @@ module Spree
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
         current_line_item = self.line_items.find_by(variant: line_item.variant)
+
         if current_line_item
           current_line_item.quantity += line_item.quantity
           current_line_item.save
@@ -632,9 +633,8 @@ module Spree
       def after_cancel
         shipments.each { |shipment| shipment.cancel! }
         payments.completed.each { |payment| payment.cancel! }
-
         send_cancel_email
-        self.update_column(:payment_state, 'credit_owed') unless shipped?
+        self.update!
       end
 
       def send_cancel_email

@@ -139,6 +139,9 @@ describe Spree::Order do
     end
 
     context "resets payment state" do
+
+      let(:payment) { create(:payment) }
+
       before do
         # TODO: This is ugly :(
         # Stubs methods that cause unwanted side effects in this test
@@ -147,13 +150,15 @@ describe Spree::Order do
         order.stub :has_available_shipment
         order.stub :restock_items!
         shipment.stub(:cancel!)
+        payment.stub(:cancel!)
+        order.stub_chain(:payments, :valid, :size).and_return(1)
+        order.stub_chain(:payments, :completed).and_return([payment])
+        order.stub_chain(:payments, :last).and_return(payment)
       end
 
       context "without shipped items" do
-        it "should set payment state to 'credit owed'" do
-          # Regression test for #3711
-          order.should_receive(:update_column).with(:payment_state, 'credit_owed')
-          order.cancel!
+        it "should set payment state to 'void'" do
+          expect { order.cancel! }.to change{ order.reload.payment_state }.to("void")
         end
       end
 
