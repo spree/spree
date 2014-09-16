@@ -247,6 +247,36 @@ describe Spree::Order do
       end
     end
 
+    context "to delivery" do
+      context 'when order has default selected_shipping_rate_id' do
+        let(:shipment) { create(:shipment, order: order) }
+        let(:shipping_method) { create(:shipping_method) }
+        let(:shipping_rate) { [
+          Spree::ShippingRate.create!(shipping_method: shipping_method, cost: 10.00, shipment: shipment)
+        ] }
+
+        before do
+          order.state = 'address'
+          shipment.selected_shipping_rate_id = shipping_rate.first.id
+          order.email = "user@example.com"
+          order.save!
+
+          allow(order).to receive(:has_available_payment)
+          allow(order).to receive(:create_proposed_shipments)
+          allow(order).to receive(:ensure_available_shipping_rates) { true }
+        end
+
+        it 'should invoke set_shipment_cost' do
+          expect(order).to receive(:set_shipments_cost)
+          order.next!
+        end
+
+        it 'should update shipment_total' do
+          expect { order.next! }.to change{ order.shipment_total }.by(10.00)
+        end
+      end
+    end
+
     context "from delivery" do
       before do
         order.state = 'delivery'
