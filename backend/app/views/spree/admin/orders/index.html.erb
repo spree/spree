@@ -101,18 +101,19 @@
     <thead>
       <tr data-hook="admin_orders_index_headers">
         <% if @show_only_completed %>
-          <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
+          <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% else %>
-          <th><%= sort_link @search, :created_at,   I18n.t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
+          <th><%= sort_link @search, :created_at,     I18n.t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% end %>
-        <th><%= sort_link @search, :number,         I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :state,          I18n.t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :payment_state,  I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :number,           I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :considered_risky, I18n.t(:considered_risky, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :state,            I18n.t(:state, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :payment_state,    I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
          <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <th><%= sort_link @search, :shipment_state, I18n.t(:shipment_state, :scope => 'activerecord.attributes.spree/order') %></th>
          <% end %>
-        <th><%= sort_link @search, :email,          I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th><%= sort_link @search, :total,          I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :email,            I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
+        <th><%= sort_link @search, :total,            I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
         <th data-hook="admin_orders_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -121,6 +122,7 @@
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
         <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
+        <td class="align-center"><span class="state <%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>"></span></td>
         <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
         <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
           <% if Spree::Order.checkout_step_names.include?(:delivery) %>
