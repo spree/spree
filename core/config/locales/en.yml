@@ -53,6 +53,7 @@ en:
         special_instructions: Special Instructions
         state: State
         total: Total
+        considered_risky: Risky
       spree/order/bill_address:
         address1: Billing address street
         city: Billing address city
