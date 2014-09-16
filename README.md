@@ -8,7 +8,8 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [x] Allow error notify to Honeybadger, https://github.com/spree/spree/pull/5285
 - [x] Require at least one valid payment when transitioning to complete, https://github.com/spree/spree/pull/5350
 - [x] Allow payment_source to be updated at any checkout state, https://github.com/spree/spree/pull/5351
-- [ ] Let ProductProperty.value by dynamically length validated, https://github.com/spree/spree/pull/5361
+- [x] Let ProductProperty.value by dynamically length validated, https://github.com/spree/spree/pull/5361
+- [x] Update shipment total moving to delivery, https://github.com/spree/spree/pull/5376
 
 SUMMARY
 -------
