@@ -512,10 +512,10 @@ module Spree
           end
 
           it "includes the ship_total in the response" do
-            api_get :show, :id => order.to_param
+            api_get :show, id: order.to_param
 
-            json_response['ship_total'].should == '0.0'
-            json_response['display_ship_total'].should == '$0.00'
+            expect(json_response['ship_total']).to eq '10.0'
+            expect(json_response['display_ship_total']).to eq '$10.00'
           end
 
           it "returns available shipments for an order" do
