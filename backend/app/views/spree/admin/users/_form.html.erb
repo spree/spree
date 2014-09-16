@@ -21,7 +21,7 @@
 
   </div>
 
-  <div class="omega six columns">
+  <div data-hook="admin_user_form_password_fields" class="omega six columns">
     <%= f.field_container :password do %>
       <%= f.label :password, Spree.t(:password) %>
       <%= f.password_field :password, :class => 'fullwidth' %>
