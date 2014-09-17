@@ -98,6 +98,7 @@ describe "Orders Listing" do
       before(:each) do
         @order1.promotions << promotion
         @order1.save
+        click_link "Orders"
       end
 
       it "only shows the orders with the selected promotion" do
@@ -107,7 +108,6 @@ describe "Orders Listing" do
         within("table#listing_orders") { page.should_not have_content("R200") }
       end
     end
-
 
   end
 end
