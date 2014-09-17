@@ -36,6 +36,16 @@ describe Spree::Promotion do
     end
   end
 
+  describe ".applied" do
+    it "scopes promotions that have been applied to an order only" do
+      promotion = Spree::Promotion.create! name: "test", code: ''
+      expect(Spree::Promotion.applied).to be_empty
+
+      promotion.orders << create(:order)
+      expect(Spree::Promotion.applied.first).to eq promotion
+    end
+  end
+
   describe ".advertised" do
     let(:promotion) { create(:promotion) }
     let(:advertised_promotion) { create(:promotion, :advertise => true) }
