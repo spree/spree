@@ -28,13 +28,40 @@ describe Spree::Refund do
     let(:gateway_response_params) { {} }
     let(:gateway_response_options) { {} }
 
-    subject { create(:refund, payment: payment, amount: amount, reason: refund_reason) }
+    subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     before do
       payment.payment_method
         .stub(:credit)
         .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
         .and_return(gateway_response)
+    end
+
+    context "transaction id exists on creation" do
+      let(:transaction_id) { "12kfjas0" }
+      subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: transaction_id) }
+
+      it "creates a refund record" do
+        expect{ subject }.to change { Spree::Refund.count }.by(1)
+      end
+
+      it "maintains the transaction id" do
+        expect(subject.reload.transaction_id).to eq transaction_id
+      end
+
+      it "saves the amount" do
+        expect(subject.reload.amount).to eq amount
+      end
+
+      it "creates a log entry" do
+        expect(subject.log_entries).to be_present
+      end
+
+      it "does not attempt to process a transaction" do
+        expect(payment.payment_method).not_to receive(:credit)
+        subject
+      end
+
     end
 
     context "processing is successful" do
@@ -59,6 +86,12 @@ describe Spree::Refund do
       it 'should create a log entry' do
         expect(subject.log_entries).to be_present
       end
+
+      it "attempts to process a transaction" do
+        expect(payment.payment_method).to receive(:credit).once
+        subject
+      end
+
     end
 
     context "processing fails" do
