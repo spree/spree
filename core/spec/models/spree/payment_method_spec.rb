@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::PaymentMethod do
   describe "#available" do
     before do
-      Spree::PaymentMethod.destroy_all # TODO: Fix Regression in Rails 4.1.6 and/or rspec/database_cleaner isn't cleaning up before specs properly.
+      Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
           :name => 'Display Both',

@@ -23,12 +23,16 @@ module Spree
 
     # update the order totals, etc.
     after_save :update_order
+
     # invalidate previously entered payments
     after_create :invalidate_old_payments
 
     attr_accessor :source_attributes, :request_env
 
     after_initialize :build_source
+    after_rollback :persist_invalid
+
+    validates :amount, numericality: true
 
     default_scope -> { order("#{self.table_name}.created_at") }
 
@@ -45,10 +49,6 @@ module Spree
 
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
-
-    after_rollback :persist_invalid
-
-    validates :amount, numericality: true
 
     # transaction_id is much easier to understand
     def transaction_id
