@@ -13,3 +13,4 @@ $ ->
       )
       success: (r) ->
         ($ '#images').html r
+        ($ '.select2').select2()
