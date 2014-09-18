@@ -22,7 +22,10 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#current_order' do
-    before { controller.stub(try_spree_current_user: user) }
+    before {
+      Spree::Order.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
+      controller.stub(try_spree_current_user: user)
+    }
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user }
       it 'returns current order' do

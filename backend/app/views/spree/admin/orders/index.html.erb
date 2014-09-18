@@ -67,7 +67,7 @@
         </div>
         <div class="field">
           <%= label_tag nil, Spree.t(:promotion) %>
-          <%= f.select :promotions_id_in, Spree::Promotion.all.collect {|p| [p.name, p.id]}, {:include_blank => true}, :class => 'select2' %>
+          <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {:include_blank => true}, :class => 'select2' %>
         </div>
       </div>
 
