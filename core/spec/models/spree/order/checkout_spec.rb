@@ -547,6 +547,7 @@ describe Spree::Order do
 
   describe "payment processing" do
     self.use_transactional_fixtures = false
+
     before do
       Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
       # Turn off transactional fixtures so that we can test that
@@ -572,6 +573,7 @@ describe Spree::Order do
         expect(ActiveRecord::Base.connection.open_transactions).to eq 0
       end
 
+      order.payments.create!(payment_method: Spree::PaymentMethod.first, amount: order.total, source: creditcard)
       order.next!
     end
   end
