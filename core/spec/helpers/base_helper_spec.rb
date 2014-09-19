@@ -142,6 +142,25 @@ describe Spree::BaseHelper do
     end
   end
 
+  # Regression test for #5384
+  context "custom image helpers conflict with inproper statements" do
+    let(:product) { mock_model(Spree::Product, :images => [], :variant_images => []) }
+    before do
+      Spree::Image.class_eval do
+        attachment_definitions[:attachment][:styles].merge!({:foobar => '1x1'})
+      end
+    end
+
+    it "should not raise errors when helper method called" do
+      expect { foobar_image(product) }.not_to raise_error
+    end
+
+    it "should raise NoMethodError when statement with name equal to style name called" do
+      expect { foobar(product) }.to raise_error(NoMethodError)
+    end
+
+  end
+
   context "pretty_time" do
     it "prints in a format" do
       expect(pretty_time(DateTime.new(2012, 5, 6, 13, 33))).to eq "May 06, 2012  1:33 PM"
