@@ -42,9 +42,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.4
+gem install rails -v 4.1.6
 gem install spree
-rails _4.1.4_ new my_store
+rails _4.1.6_ new my_store
 spree install my_store
 ```
 
@@ -69,7 +69,7 @@ To select a specific branch, pass in the `--branch` option. If there is no branc
 will be given the latest version of either spree_auth_devise or spree_gateway.
 
 ```shell
-spree install my_store --branch "2-2-stable"
+spree install my_store --branch "2-3-stable"
 ```
 
 Using stable builds and bleeding edge
