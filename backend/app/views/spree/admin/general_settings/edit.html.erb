@@ -10,31 +10,31 @@
     <fieldset class="general no-border-top">
 
       <%= fields_for :store do |f| %>
-        <div class="field">
+        <div class="field" data-hook="admin_general_setting_input_name">
           <%= f.label :name %>
           <br />
           <%= f.text_field :name, class: 'fullwidth' %>
         </div>
 
-        <div class="field">
+        <div class="field" data-hook="admin_general_setting_input_seo_title">
           <%= f.label :seo_title %>
           <br />
           <%= f.text_field :seo_title, class: 'fullwidth'  %>
         </div>
 
-        <div class="field">
+        <div class="field" data-hook="admin_general_setting_input_meta_keywords">
           <%= f.label :meta_keywords %>
           <br />
           <%= f.text_field :meta_keywords, class: 'fullwidth'  %>
         </div>
 
-        <div class="field">
+        <div class="field" data-hook="admin_general_setting_input_meta_description">
           <%= f.label :meta_description %>
           <br />
           <%= f.text_field :meta_description, class: 'fullwidth'  %>
         </div>
 
-        <div class="field">
+        <div class="field" data-hook="admin_general_setting_input_url">
           <%= f.label :url %>
           <br />
           <%= f.text_field :url, class: 'fullwidth'  %>
