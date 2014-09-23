@@ -22,7 +22,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, :type => :model do
       let(:adjustment_amount) { -10.0 }
 
       before do
-        order.adjustments << create(:adjustment, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
+        order.adjustments << create(:adjustment, order: order, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
         order.adjustments.first.update_attributes(amount: adjustment_amount)
       end
 
