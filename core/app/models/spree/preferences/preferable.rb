@@ -106,6 +106,8 @@ module Spree::Preferences::Preferable
       else
          true
       end
+    when :array
+      value.is_a?(Array) ? value : []
     else
       value
     end
