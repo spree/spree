@@ -107,7 +107,7 @@ module Spree::Preferences::Preferable
          true
       end
     when :array
-      value.is_a?(Array) ? value : []
+      value.is_a?(Array) ? value : (value.try(:to_a) || [])
     else
       value
     end
