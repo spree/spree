@@ -27,7 +27,7 @@ module Spree
       #
       # It also fits the criteria for sales tax as outlined here:
       # http://www.boe.ca.gov/formspubs/pub113/
-      # 
+      #
       # Tax adjustments come in not one but *two* exciting flavours:
       # Included & additional
 
