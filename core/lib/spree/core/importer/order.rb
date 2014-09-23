@@ -119,8 +119,11 @@ module Spree
           return [] unless adjustments
           adjustments.each do |a|
             begin
-              adjustment = order.adjustments.build(:amount => a[:amount].to_f,
-                                                  :label => a[:label])
+              adjustment = order.adjustments.build(
+                order:  order,
+                amount: a[:amount].to_f,
+                label:  a[:label]
+              )
               adjustment.save!
               adjustment.close!
             rescue Exception => e

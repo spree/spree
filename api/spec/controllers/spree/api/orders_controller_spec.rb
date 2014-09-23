@@ -95,7 +95,7 @@ module Spree
     end
 
     context 'when shipment adjustments are present' do
-      let(:adjustment) { FactoryGirl.create(:adjustment) }
+      let(:adjustment) { FactoryGirl.create(:adjustment, order: order) }
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
@@ -402,7 +402,7 @@ module Spree
       context "with a line item" do
         let(:order_with_line_items) do
           order = create(:order_with_line_items)
-          create(:adjustment, :adjustable => order)
+          create(:adjustment, order: order, adjustable: order)
           order
         end
 

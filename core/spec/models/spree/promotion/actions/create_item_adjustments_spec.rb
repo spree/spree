@@ -9,7 +9,10 @@ module Spree
         let(:action) { CreateItemAdjustments.new }
         let!(:line_item) { create(:line_item, :order => order) }
 
-        before { allow(action).to receive_messages(:promotion => promotion) }
+        before do
+          allow(action).to receive(:promotion).and_return(promotion)
+          promotion.promotion_actions = [action]
+        end
 
         context "#perform" do
           # Regression test for #3966
@@ -85,10 +88,11 @@ module Spree
         context "#destroy" do
           let!(:action) { CreateItemAdjustments.create! }
           let(:other_action) { CreateItemAdjustments.create! }
+          before { promotion.promotion_actions = [other_action] }
 
           it "destroys adjustments for incompleted orders" do
             order = Order.create
-            action.adjustments.create!(label: "Check", amount: 0, order: order)
+            action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy
@@ -97,7 +101,7 @@ module Spree
 
           it "nullifies adjustments for completed orders" do
             order = Order.create(completed_at: Time.now)
-            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order)
+            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy
@@ -105,7 +109,7 @@ module Spree
           end
 
           it "doesnt mess with unrelated adjustments" do
-            other_action.adjustments.create!(label: "Check", amount: 0)
+            other_action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy

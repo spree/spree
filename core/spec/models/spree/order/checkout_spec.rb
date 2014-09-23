@@ -160,7 +160,7 @@ describe Spree::Order, :type => :model do
         order.line_items << line_item
         tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
         allow(Spree::TaxRate).to receive_messages :match => [tax_rate]
-        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate)
+        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate, order: order)
         order.email = "user@example.com"
         order.next!
         expect(order.adjustment_total).to eq(0.5)

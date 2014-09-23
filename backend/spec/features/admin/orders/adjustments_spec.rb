@@ -20,7 +20,7 @@ describe "Adjustments", :type => :feature do
       :amount => 10)
   end
 
-  let!(:adjustment) { order.adjustments.create!(label: 'Rebate', amount: 10) }
+  let!(:adjustment) { order.adjustments.create!(order: order, label: 'Rebate', amount: 10) }
 
   before(:each) do
     # To ensure the order totals are correct
@@ -31,6 +31,12 @@ describe "Adjustments", :type => :feature do
     click_link "Orders"
     within_row(1) { click_icon :edit }
     click_link "Adjustments"
+  end
+
+  after :each do
+    order.reload.all_adjustments.each do |adjustment|
+      expect(adjustment.order_id).to equal(order.id)
+    end
   end
 
   context "admin managing adjustments" do
