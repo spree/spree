@@ -127,15 +127,12 @@ $(document).ready(function(){
   handle_date_picker_fields();
   $(".observe_field").on('change', function() {
     target = $(this).data("update");
-    ajax_indicator = $(this).data("ajax-indicator") || '#busy_indicator';
     $(target).hide();
-    $(ajax_indicator).show();
     $.ajax({ dataType: 'html',
              url: $(this).data("base-url")+encodeURIComponent($(this).val()),
              type: 'get',
              success: function(data){
                $(target).html(data);
-               $(ajax_indicator).hide();
                $(target).show();
              }
     });
