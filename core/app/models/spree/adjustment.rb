@@ -24,7 +24,7 @@ module Spree
   class Adjustment < Spree::Base
     belongs_to :adjustable, polymorphic: true, touch: true
     belongs_to :source, polymorphic: true
-    belongs_to :order, class_name: "Spree::Order"
+    belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
 
     validates :adjustable, presence: true
     validates :order, presence: true
