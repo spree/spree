@@ -2,7 +2,7 @@ module Spree
   # Manage (recalculate) item (LineItem or Shipment) adjustments
   class ItemAdjustments
     include ActiveSupport::Callbacks
-    define_callbacks :promo_adjustments, :tax_adjustments
+    define_callbacks :promo_adjustments, :tax_adjustments, :handling_adjustments
     attr_reader :item
 
     delegate :adjustments, :order, to: :item
@@ -52,11 +52,17 @@ module Spree
         additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
       end
 
+      handling_total = 0
+      run_callbacks :handling_adjustments do
+        handling_total = adjustments.handling.reload.map(&:update!).compact.sum
+      end
+
       item.update_columns(
         :promo_total => promo_total,
         :included_tax_total => included_tax_total,
         :additional_tax_total => additional_tax_total,
-        :adjustment_total => promo_total + additional_tax_total,
+        :handling_total => handling_total,
+        :adjustment_total => promo_total + additional_tax_total + handling_total,
         :updated_at => Time.now,
       )
     end

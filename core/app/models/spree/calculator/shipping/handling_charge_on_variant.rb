@@ -2,21 +2,17 @@ require_dependency 'spree/shipping_calculator'
 
 module Spree
   module Calculator::Shipping
-    class FlatRate < ShippingCalculator
-      preference :amount, :decimal, default: 0
+    class HandlingChargeOnVariant < ShippingCalculator
       preference :currency, :string, default: ->{ Spree::Config[:currency] }
 
       def self.description
-        Spree.t(:shipping_flat_rate_per_order)
-      end
-
-      def compute_package(package)
-        self.preferred_amount
+        Spree.t(:shipping_handling_charge_on_variant)
       end
 
       def compute_shipment(shipment)
-        self.preferred_amount
+        compute_quantity(shipment.manifest.sum{|item| item.quantity * item.variant.handling_charge})
       end
+      
     end
   end
 end

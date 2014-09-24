@@ -13,11 +13,16 @@ module Spree
       end
 
       def compute_package(package)
-        content_items = package.contents
+        compute_quantity(package.contents.sum(&:quantity), preferred_max_items)
+      end
+      
+      def compute_shipment(shipment)
+        compute_quantity(shipment.manifest.sum(&:quantity), preferred_max_items)
+      end
+      
+      def compute_quantity(quantity, max)
         sum = 0
-        max = self.preferred_max_items.to_i
-        items_count = content_items.map(&:quantity).sum
-        items_count.times do |i|
+        quantity.times do |i|
           # check max value to avoid divide by 0 errors
           if (max == 0 && i == 0) || (max > 0) && (i % max == 0)
             sum += self.preferred_first_item.to_f
@@ -26,7 +31,7 @@ module Spree
           end
         end
 
-        sum
+        return sum
       end
     end
   end

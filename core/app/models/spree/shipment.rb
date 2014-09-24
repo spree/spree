@@ -12,6 +12,7 @@ module Spree
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
 
+    after_save :apply_handling_fee, if: :stock_location_id_changed?
     after_save :update_adjustments
 
     before_validation :set_cost_zero_when_nil
@@ -132,7 +133,9 @@ module Spree
     end
 
     def final_price
-      discounted_cost + tax_total
+      discounted_cost + tax_total + handling_total
+      # TODO: Cleaner to just return `cost + adjustment_total`?
+      # (adjustment_total includes discounts, tax, & handling, along with other potential adjustments)
     end
 
     def final_price_with_items
@@ -390,6 +393,22 @@ module Spree
 
       def after_ship
         ShipmentHandler.factory(self).perform
+      end
+
+      def apply_handling_fee
+        adjustments.handling.destroy_all
+        if stock_location.calculator
+          amount = stock_location.calculator.compute(self)
+          unless amount == 0
+            adjustments.create!({
+              source: stock_location,
+              adjustable: self,
+              amount: amount,
+              order: order,
+              label: "Handling"
+              })
+          end
+        end
       end
 
       def can_get_rates?
