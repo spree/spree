@@ -107,7 +107,7 @@ module Spree::Preferences::Preferable
          true
       end
     when :array
-      value.is_a?(Array) ? value : (value.try(:to_a) || [])
+      value.is_a?(Array) ? value : (Array.wrap(value) || [])
     when :hash
       value.is_a?(Hash) ? value : {}
     else
