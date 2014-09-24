@@ -10,13 +10,14 @@ describe "Tax Categories" do
 
   context "admin visiting tax categories list" do
     it "should display the existing tax categories" do
-      create(:tax_category, :name => "Clothing", :description => "For Clothing")
+      create(:tax_category, :name => "Clothing", :tax_code => "CL001", :description => "For Clothing")
       click_link "Tax Categories"
       page.should have_content("Listing Tax Categories")
       within_row(1) do
         column_text(1).should == "Clothing"
-        column_text(2).should == "For Clothing"
-        column_text(3).should == "No"
+        column_text(2).should == "CL001"
+        column_text(3).should == "For Clothing"
+        column_text(4).should == "No"
       end
     end
   end
