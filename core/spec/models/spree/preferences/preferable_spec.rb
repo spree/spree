@@ -180,6 +180,27 @@ describe Spree::Preferences::Preferable do
       end
     end
 
+    context "converts array preferences to array values" do
+      before do
+        A.preference :is_array, :array, default: []
+      end
+
+      it "with arrays" do
+        @a.set_preference(:is_array, [])
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+
+      it "with string" do
+        @a.set_preference(:is_array, "string")
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+
+      it "with hash" do
+        @a.set_preference(:is_array, {})
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+    end
+
     context "converts any preferences to any values" do
       before do
         A.preference :product_ids, :any, :default => []
