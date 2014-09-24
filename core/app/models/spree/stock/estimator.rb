@@ -51,21 +51,11 @@ module Spree
       def shipping_methods(package)
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
-          begin
-            ship_method.include?(order.ship_address) &&
-            calculator.available?(package) &&
-            (calculator.preferences[:currency].blank? ||
-             calculator.preferences[:currency] == currency)
-          rescue Exception => exception
-            log_calculator_exception(ship_method, exception)
-          end
+          ship_method.include?(order.ship_address) &&
+          calculator.available?(package) &&
+          (calculator.preferences[:currency].blank? ||
+           calculator.preferences[:currency] == currency)
         end
-      end
-
-      def log_calculator_exception(ship_method, exception)
-        Rails.logger.info("Something went wrong calculating rates with the #{ship_method.name} (ID=#{ship_method.id}) shipping method.")
-        Rails.logger.info("*" * 50)
-        Rails.logger.info(exception.backtrace.join("\n"))
       end
     end
   end
