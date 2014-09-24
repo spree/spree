@@ -1267,6 +1267,7 @@ en:
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
     tax_category: Tax Category
+    tax_code: Tax Code
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
     taxon: Taxon
