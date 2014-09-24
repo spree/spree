@@ -106,6 +106,18 @@ module Spree::Preferences::Preferable
       else
          true
       end
+    when :hash
+      if value.instance_of?(Hash)
+        value
+      else
+        {}
+      end
+    when :array
+      if value.instance_of?(Array)
+        value
+      else
+        []
+      end      
     else
       value
     end
