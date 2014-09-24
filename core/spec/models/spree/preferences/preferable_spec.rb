@@ -201,6 +201,43 @@ describe Spree::Preferences::Preferable do
       end
     end
 
+    context "converts hash preferences to hash values" do
+      before do
+        A.preference :is_hash, :hash, default: {}
+      end
+
+      it "with hash" do
+        @a.set_preference(:is_hash, {})
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with string" do
+        @a.set_preference(:is_hash, "{\"0\"=>{\"answer\"=>\"1\", \"value\"=>\"No\"}}")
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with boolean" do
+        @a.set_preference(:is_hash, false)
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.set_preference(:is_hash, true)
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with single array" do
+        @a.set_preference(:is_hash, ["key", "value", "another key", "another value"])
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.preferences[:is_hash]["key"].should == "value"
+        @a.preferences[:is_hash]["another key"].should == "another value"
+      end
+
+      it "with a nested array" do
+        @a.set_preference(:is_hash, [["key", "value"], ["another key", "another value"]])
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.preferences[:is_hash]["key"].should == "value"
+        @a.preferences[:is_hash]["another key"].should == "another value"
+      end
+    end
+
     context "converts any preferences to any values" do
       before do
         A.preference :product_ids, :any, :default => []

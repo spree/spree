@@ -109,7 +109,21 @@ module Spree::Preferences::Preferable
     when :array
       value.is_a?(Array) ? value : (Array.wrap(value) || [])
     when :hash
-      value.is_a?(Hash) ? value : {}
+      case value.class.to_s
+      when "Hash"
+        value
+      when "String"
+        # only works with hashes whose keys are strings
+        JSON.parse value.gsub('=>', ':')
+      when "Array"
+        begin
+          value.try(:to_h)
+        rescue TypeError
+          Hash[*value]
+        end
+      else
+        {}
+      end
     else
       value
     end
