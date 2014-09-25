@@ -14,6 +14,7 @@ describe Spree::Shipment, :type => :model do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending')
     allow(shipment).to receive_messages order: order
     allow(shipment).to receive_messages shipping_method: shipping_method
+    shipment.generate_number
     shipment.save
     shipment
   end
@@ -28,7 +29,6 @@ describe Spree::Shipment, :type => :model do
     end
 
     it "generates a number containing a letter + 11 numbers" do
-      shipment.save
       expect(shipment.number[0]).to eq("H")
       expect(/\d{11}/.match(shipment.number)).not_to be_nil
       expect(shipment.number.length).to eq(12)
