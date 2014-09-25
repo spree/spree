@@ -91,12 +91,15 @@ module Spree
           return {} unless line_items_hash
           line_items_hash.each_key do |k|
             begin
-              line_item = line_items_hash[k]
-              line_item = ensure_variant_id_from_params(line_item)
-              extra_params = line_item.except(:variant_id, :quantity)
-
+              extra_params = line_items_hash[k].except(:variant_id, :quantity, :sku)
+              line_item = ensure_variant_id_from_params(line_items_hash[k])
               line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-              line_item.update_attributes!(extra_params) unless extra_params.empty?
+              # Raise any errors with saving to prevent import succeeding with line items failing silently.
+              if extra_params.present?
+                line_item.update_attributes!(extra_params)
+              else
+                line_item.save!
+              end
             rescue Exception => e
               raise "Order import line items: #{e.message} #{line_item}"
             end
@@ -155,11 +158,13 @@ module Spree
 
         def self.ensure_variant_id_from_params(hash)
           begin
+            sku = hash.delete(:sku)
             unless hash[:variant_id].present?
-              hash[:variant_id] = Spree::Variant.active.find_by_sku!(hash[:sku]).id
-              result = hash.delete(:sku)
-              hash
+              hash[:variant_id] = Spree::Variant.active.find_by_sku!(sku).id
             end
+            hash
+          rescue ActiveRecord::RecordNotFound => e
+            raise "Ensure order import variant: Variant w/SKU #{sku} not found."
           rescue Exception => e
             raise "Ensure order import variant: #{e.message} #{hash}"
           end
