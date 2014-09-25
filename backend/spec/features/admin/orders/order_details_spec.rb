@@ -129,6 +129,7 @@ describe "Order Details", type: :feature, js: true do
           end
           wait_for_ajax
           expect(page).to have_css("#shipment_#{order.shipments.last.id}")
+          order.reload
           expect(order.shipments.last.stock_location).to eq(london)
           within "#shipment_#{order.shipments.last.id}" do
             expect(page).to have_content("LONDON")
@@ -157,6 +158,7 @@ describe "Order Details", type: :feature, js: true do
           end
 
           it "can add tracking information for the second shipment" do
+            order.reload
             within("#shipment_#{order.shipments.last.id}") do
               within("tr.show-tracking") do
                 click_icon :edit
@@ -200,7 +202,7 @@ describe "Order Details", type: :feature, js: true do
           end
         end
       end
-      
+
       context "with special_instructions present" do
         let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
         it "will show the special_instructions" do
@@ -233,7 +235,7 @@ describe "Order Details", type: :feature, js: true do
   end
 
   context 'with only read permissions' do
-    before do 
+    before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 

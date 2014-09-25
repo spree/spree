@@ -50,7 +50,6 @@ module Spree
       def reload_totals
         order_updater.update_item_count
         order_updater.update
-        order.reload
       end
 
       def add_to_line_item(variant, quantity, currency=nil, shipment=nil)
