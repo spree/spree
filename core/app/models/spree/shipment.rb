@@ -132,7 +132,7 @@ module Spree
     end
 
     def final_price
-      discounted_cost + tax_total
+      cost + adjustment_total
     end
 
     def final_price_with_items
