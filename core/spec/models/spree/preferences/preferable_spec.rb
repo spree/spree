@@ -223,7 +223,7 @@ describe Spree::Preferences::Preferable do
         @a.preferences[:is_hash].should be_is_a(Hash)
       end
 
-      it "with single array" do
+      it "with simple array" do
         @a.set_preference(:is_hash, ["key", "value", "another key", "another value"])
         @a.preferences[:is_hash].should be_is_a(Hash)
         @a.preferences[:is_hash]["key"].should == "value"
@@ -235,6 +235,10 @@ describe Spree::Preferences::Preferable do
         @a.preferences[:is_hash].should be_is_a(Hash)
         @a.preferences[:is_hash]["key"].should == "value"
         @a.preferences[:is_hash]["another key"].should == "another value"
+      end
+
+      it "with single array" do
+        expect { @a.set_preference(:is_hash, ["key"]) }.to raise_error(ArgumentError)
       end
     end
 

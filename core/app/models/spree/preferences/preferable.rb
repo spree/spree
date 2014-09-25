@@ -120,6 +120,8 @@ module Spree::Preferences::Preferable
           value.try(:to_h)
         rescue TypeError
           Hash[*value]
+        rescue ArgumentError
+          raise 'An even count is required when passing an array to be converted to a hash'
         end
       else
         {}
