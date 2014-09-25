@@ -7,7 +7,21 @@ section: core
 
 Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `logo` and`currency`. Additional preferences can be added by your application or included extensions.
 
-Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding a column to your database table.
+To implement preferences for a model, simply add a new column called `preferences`. This is an example migration for the `spree_products` table:
+
+```ruby
+class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration
+  def up
+    add_column :spree_products, :preferences, :text
+  end
+
+  def down
+    remove_column :spree_products, :preferences
+  end
+end
+```
+
+All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding an extra column to your database table.
 
 Extensions may add to the Spree General Settings or create their own namespaced preferences.
 
@@ -203,7 +217,7 @@ class Spree::AppConfiguration < Configuration
 end
 ```
 
-If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to `spree_preferences`. It will use a memory cached version to maintain performance.
+If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to `spree_preferences` or in our `preferences` column. It will use a memory cached version to maintain performance.
 
 ### Overriding the Default Preferences
 
