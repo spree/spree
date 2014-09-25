@@ -2,7 +2,15 @@ module Spree
   class Payment < Spree::Base
     include Spree::Payment::Processing
 
-    IDENTIFIER_CHARS    = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'P'
+      options[:letters] ||= true
+      options[:length] ||= 7
+      super(options) 
+    end
+
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
 
@@ -17,7 +25,6 @@ module Spree
     has_many :refunds, inverse_of: :payment
 
     before_validation :validate_source
-    before_create :set_unique_identifier
 
     after_save :create_payment_profile, if: :profiles_supported?
 
@@ -212,20 +219,6 @@ module Spree
           order.persist_totals
         end
       end
-
-      # Necessary because some payment gateways will refuse payments with
-      # duplicate IDs. We *were* using the Order number, but that's set once and
-      # is unchanging. What we need is a unique identifier on a per-payment basis,
-      # and this is it. Related to #1998.
-      # See https://github.com/spree/spree/issues/1998#issuecomment-12869105
-      def set_unique_identifier
-        begin
-          self.identifier = generate_identifier
-        end while self.class.exists?(identifier: self.identifier)
-      end
-
-      def generate_identifier
-        Array.new(8){ IDENTIFIER_CHARS.sample }.join
-      end
+      
   end
 end
