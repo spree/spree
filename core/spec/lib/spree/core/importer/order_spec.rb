@@ -285,7 +285,6 @@ module Spree
               0 => { variant_id: variant.id, quantity: 1 } }
             }
           )
-          Importer::Order.should_receive(:ensure_variant_id_from_params).twice
           order = Importer::Order.import(user, with_item_params)
           expect(order.shipments).to_not be_empty
         end
