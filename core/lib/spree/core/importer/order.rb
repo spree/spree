@@ -92,9 +92,9 @@ module Spree
           line_items_hash.each_key do |k|
             begin
               line_item = line_items_hash[k]
-              ensure_variant_id_from_params(line_item)
-
+              line_item = ensure_variant_id_from_params(line_item)
               extra_params = line_item.except(:variant_id, :quantity)
+
               line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
               line_item.update_attributes!(extra_params) unless extra_params.empty?
             rescue Exception => e
@@ -157,7 +157,8 @@ module Spree
           begin
             unless hash[:variant_id].present?
               hash[:variant_id] = Spree::Variant.active.find_by_sku!(hash[:sku]).id
-              hash.delete(:sku)
+              result = hash.delete(:sku)
+              hash
             end
           rescue Exception => e
             raise "Ensure order import variant: #{e.message} #{hash}"
