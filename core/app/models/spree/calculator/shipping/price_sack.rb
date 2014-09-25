@@ -13,8 +13,11 @@ module Spree
       end
 
       def compute_package(package)
-        content_items = package.contents
-        if total(content_items) < self.preferred_minimal_amount
+        compute_from_price(total(package.contents))
+      end
+
+      def compute_from_price(price)
+        if price < self.preferred_minimal_amount
           self.preferred_normal_amount
         else
           self.preferred_discount_amount
