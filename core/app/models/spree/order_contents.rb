@@ -22,10 +22,10 @@ module Spree
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
         # promotion rules would not be triggered.
-        reload_totals
+        persist_totals
         PromotionHandler::Cart.new(order).activate
         order.ensure_updated_shipments
-        reload_totals
+        persist_totals
         true
       else
         false
@@ -34,12 +34,12 @@ module Spree
 
     private
       def after_add_or_remove(line_item, options = {})
-        reload_totals
+        persist_totals
         shipment = options[:shipment]
         shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
         PromotionHandler::Cart.new(order, line_item).activate
         Adjustable::AdjustmentsUpdater.update(line_item)
-        reload_totals
+        persist_totals
         line_item
       end
 
@@ -61,10 +61,9 @@ module Spree
         @updater ||= OrderUpdater.new(order)
       end
 
-      def reload_totals
+      def persist_totals
         order_updater.update_item_count
         order_updater.update
-        order.reload
       end
 
       def add_to_line_item(variant, quantity, options = {})
@@ -90,8 +89,8 @@ module Spree
         line_item.quantity -= quantity
         line_item.target_shipment= options[:shipment]
 
-        if line_item.quantity == 0
-          line_item.destroy
+        if line_item.quantity.zero?
+          order.line_items.destroy(line_item)
         else
           line_item.save!
         end
