@@ -110,7 +110,7 @@ module Spree::Preferences::Preferable
       value.is_a?(Array) ? value : Array.wrap(value)
     when :hash
       case value.class.to_s
-      when "Hash"
+      when "Hash", "ActionController::Parameters"
         value
       when "String"
         # only works with hashes whose keys are strings
