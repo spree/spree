@@ -79,6 +79,8 @@ $(document).ready(function () {
 
   // handle shipping method save
   $('[data-hook=admin_shipment_form] a.save-method').on('click', function () {
+    event.preventDefault();
+
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
@@ -171,6 +173,8 @@ toggleMethodEdit = function(){
   var link = $(this);
   link.parents('tbody').find('tr.edit-method').toggle();
   link.parents('tbody').find('tr.show-method').toggle();
+
+  return false;
 }
 
 toggleItemEdit = function(){
