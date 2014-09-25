@@ -5,9 +5,23 @@ section: core
 
 ## Overview
 
-Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `site_name` and`site_url`. Additional preferences can be added by your application or included extensions.
+Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `logo` and`currency`. Additional preferences can be added by your application or included extensions.
 
-Preferences for models can be added without modifying the database. All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding a column to your database table.
+To implement preferences for a model, simply add a new column called `preferences`. This is an example migration for the `spree_products` table:
+
+```ruby
+class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration
+  def up
+    add_column :spree_products, :preferences, :text
+  end
+
+  def down
+    remove_column :spree_products, :preferences
+  end
+end
+```
+
+All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding an extra column to your database table.
 
 Extensions may add to the Spree General Settings or create their own namespaced preferences.
 
@@ -16,8 +30,6 @@ The first several sections of this guide describe preferences in a very general 
 ### Motivation
 
 Preferences for models within an application are very common. Although the rule of thumb is to keep the number of preferences available to a minimum, sometimes it's necessary if you want users to have optional preferences like disabling e-mail notifications.
-
-General application settings like `site_name` are also available to help customize your Spree store.
 
 Both use cases are handled by Spree Preferences. They are easy to define, provide quick cached reads, persist across restarts and do not require additional columns to be added to your models' tables.
 
@@ -82,6 +94,8 @@ For each preference, a data type is provided. The types available are:
 * `password`
 * `integer`
 * `text`
+* `array`
+* `hash`
 
 An optional default value may be defined.
 
@@ -189,8 +203,8 @@ The `Spree::Config` constant returns an instance of `Spree::AppConfiguration` wh
 You can access these preferences directly in code. To see this in action, just fire up `rails console` and try the following:
 
 ```ruby
->> Spree::Config.site_name
-=> "Spree Demo Site"
+>> Spree::Config.admin_interface_logo
+=> "logo/spree_50.png"
 >> Spree::Config.admin_products_per_page
 => 10
 ```
@@ -200,12 +214,12 @@ The above examples show the default configuration values for these preferences. 
 ```ruby
 class Spree::AppConfiguration < Configuration
   #... snip ...
-  preference :site_name, :string, :default => 'Spree Demo Site'
+  preference :allow_guest_checkout, :boolean, default: true
   #... snip ...
 end
 ```
 
-If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to `spree_preferences`. It will use a memory cached version to maintain performance.
+If you are using the default preferences without any modifications, then nothing will be stored in the database. If you set a value for the preference it will save it to `spree_preferences` or in our `preferences` column. It will use a memory cached version to maintain performance.
 
 ### Overriding the Default Preferences
 
@@ -234,11 +248,12 @@ end
 
 The `Spree.config` block acts as a shortcut to setting `Spree::Config` multiple times. If you have multiple default preferences you would like to override within your code you may override them here. Using the initializer for setting the defaults is a nice shortcut, and helps keep your preferences organized in a standard location.
 
-For example if you would like to change the site name and default locale you can accomplish this by doing the following:
+For example if you would like to change the logo location and if you want to tax using the shipping address you can accomplish this by doing the following:
 
 ```ruby
 Spree.config do |config|
-  config.site_name = 'My Awesome Spree Site'
+  config.admin_interface_logo = 'logo/my_store.png'
+  config.tax_using_ship_address = true
 end
 ```
 
@@ -248,7 +263,7 @@ Initializing preferences in `config/initializer.rb` will overwrite any changes t
 
 ### Configuration Through the Admin Interface
 
-The Spree admin interface has several different screens where various settings can be configured. For instance, the `admin/general_settings` URL in your Spree application can be used to configure the values for the site name and the site URL. This is basically equivalent to calling `Spree::Config.set(site_name => "Whatever", :site_url => "http://whatever.com")` directly in your Ruby code.
+The Spree admin interface has several different screens where various settings can be configured. For instance, the `admin/general_settings` URL in your Spree application can be used to configure the values for the site name and the site URL. This is basically equivalent to calling `Spree::Config.set(currency: "CDN", currency_thousands_separator: " ")` directly in your Ruby code.
 
 ## Site-Wide Preferences
 
@@ -337,7 +352,7 @@ Determines if an alternative phone number should be present for the shipping add
 
 `always_put_site_name_in_title`
 
-Determines if the site name (`Spree::Config[:site_name]`) should be placed into the title. Defaults to `true`.
+Determines if the site name (`current_store.site_name`) should be placed into the title. Defaults to `true`.
 
 `attachment_default_url`
 
@@ -392,14 +407,6 @@ Determines whether or not a currency is displayed with a price. Defaults to `fal
 
 The default country's id. Defaults to 214, as this is the id for the United States within the seed data.
 
-`default_meta_description`
-
-The meta description to include in the `head` tag of the Spree layout. Defaults to "Spree demo site".
-
-`default_meta_keywords`
-
-The meta keywords to include in the `head` tag of the Spree layout. Defaults to "spree, demo".
-
 `dismissed_spree_alerts`
 
 The list of alert IDs that you have dismissed.
@@ -453,14 +460,6 @@ Determines if, on the admin listing screen, only completed orders should be show
 `show_variant_full_price`
 
 Determines if the variant's full price or price difference from a product should be displayed on the product's show page. Defaults to `false`.
-
-`site_name`
-
-The name of your Spree Store. Defaults to "Spree Demo Site".
-
-`site_url`
-
-The URL for your Spree Store. Defaults to "demo.spreecommere.com".
 
 `tax_using_ship_address`
 
