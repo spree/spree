@@ -110,7 +110,7 @@ module Spree::Preferences::Preferable
       value.is_a?(Array) ? value : Array.wrap(value)
     when :hash
       case value.class.to_s
-      when "Hash", "ActionController::Parameters"
+      when "Hash"
         value
       when "String"
         # only works with hashes whose keys are strings
@@ -124,7 +124,7 @@ module Spree::Preferences::Preferable
           raise 'An even count is required when passing an array to be converted to a hash'
         end
       else
-        {}
+        value.class.ancestors.include?(Hash) ? value : {}
       end
     else
       value
