@@ -211,6 +211,11 @@ describe Spree::Preferences::Preferable do
         @a.preferences[:is_hash].should be_is_a(Hash)
       end
 
+      it "with hash and keys are integers" do
+        @a.set_preference(:is_hash, {1 => 2, 3 => 4})
+        expect(@a.preferences[:is_hash]).to eql({1 => 2, 3 => 4})
+      end
+
       it "with string" do
         @a.set_preference(:is_hash, "{\"0\"=>{\"answer\"=>\"1\", \"value\"=>\"No\"}}")
         @a.preferences[:is_hash].should be_is_a(Hash)
