@@ -47,7 +47,7 @@ $(document).ready(function () {
   });
 
   //handle delete click
-  $('a.delete-item').click(function(){
+  $('a.delete-item').click(function(event){
     if (confirm(Spree.translations.are_you_sure_delete)) {
       var del = $(this);
       var shipment_number = del.data('shipment-number');
@@ -56,6 +56,7 @@ $(document).ready(function () {
       toggleItemEdit();
       adjustShipmentItems(shipment_number, variant_id, 0);
     }
+    return false;
   });
 
   // handle ship click
@@ -78,7 +79,9 @@ $(document).ready(function () {
   $('a.cancel-method').click(toggleMethodEdit);
 
   // handle shipping method save
-  $('[data-hook=admin_shipment_form] a.save-method').on('click', function () {
+  $('[data-hook=admin_shipment_form] a.save-method').on('click', function (event) {
+    event.preventDefault();
+
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
@@ -171,6 +174,8 @@ toggleMethodEdit = function(){
   var link = $(this);
   link.parents('tbody').find('tr.edit-method').toggle();
   link.parents('tbody').find('tr.show-method').toggle();
+
+  return false;
 }
 
 toggleItemEdit = function(){
@@ -292,7 +297,9 @@ cancelItemSplit = function(event) {
   prev_row.find('a.delete-item').toggle();
 }
 
-addVariantFromStockLocation = function() {
+addVariantFromStockLocation = function(event) {
+  event.preventDefault();
+
   $('#stock_details').hide();
 
   var variant_id = $('input.variant_autocomplete').val();
