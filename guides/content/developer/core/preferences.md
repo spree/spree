@@ -94,6 +94,8 @@ For each preference, a data type is provided. The types available are:
 * `password`
 * `integer`
 * `text`
+* `array`
+* `hash`
 
 An optional default value may be defined.
 
