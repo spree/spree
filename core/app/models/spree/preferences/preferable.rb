@@ -106,6 +106,26 @@ module Spree::Preferences::Preferable
       else
          true
       end
+    when :array
+      value.is_a?(Array) ? value : Array.wrap(value)
+    when :hash
+      case value.class.to_s
+      when "Hash"
+        value
+      when "String"
+        # only works with hashes whose keys are strings
+        JSON.parse value.gsub('=>', ':')
+      when "Array"
+        begin
+          value.try(:to_h)
+        rescue TypeError
+          Hash[*value]
+        rescue ArgumentError
+          raise 'An even count is required when passing an array to be converted to a hash'
+        end
+      else
+        value.class.ancestors.include?(Hash) ? value : {}
+      end
     else
       value
     end

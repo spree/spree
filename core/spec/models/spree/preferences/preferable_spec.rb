@@ -180,6 +180,79 @@ describe Spree::Preferences::Preferable do
       end
     end
 
+    context "converts array preferences to array values" do
+      before do
+        A.preference :is_array, :array, default: []
+      end
+
+      it "with arrays" do
+        @a.set_preference(:is_array, [])
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+
+      it "with string" do
+        @a.set_preference(:is_array, "string")
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+
+      it "with hash" do
+        @a.set_preference(:is_array, {})
+        @a.preferences[:is_array].should be_is_a(Array)
+      end
+    end
+
+    context "converts hash preferences to hash values" do
+      before do
+        A.preference :is_hash, :hash, default: {}
+      end
+
+      it "with hash" do
+        @a.set_preference(:is_hash, {})
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with hash and keys are integers" do
+        @a.set_preference(:is_hash, {1 => 2, 3 => 4})
+        expect(@a.preferences[:is_hash]).to eql({1 => 2, 3 => 4})
+      end
+
+      it "with ancestor of a hash" do
+        ancestor_of_hash = ActionController::Parameters.new({ key: :value })
+        @a.set_preference(:is_hash, ancestor_of_hash)
+        expect(@a.preferences[:is_hash]).to eql({"key" => :value})
+      end
+
+      it "with string" do
+        @a.set_preference(:is_hash, "{\"0\"=>{\"answer\"=>\"1\", \"value\"=>\"No\"}}")
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with boolean" do
+        @a.set_preference(:is_hash, false)
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.set_preference(:is_hash, true)
+        @a.preferences[:is_hash].should be_is_a(Hash)
+      end
+
+      it "with simple array" do
+        @a.set_preference(:is_hash, ["key", "value", "another key", "another value"])
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.preferences[:is_hash]["key"].should == "value"
+        @a.preferences[:is_hash]["another key"].should == "another value"
+      end
+
+      it "with a nested array" do
+        @a.set_preference(:is_hash, [["key", "value"], ["another key", "another value"]])
+        @a.preferences[:is_hash].should be_is_a(Hash)
+        @a.preferences[:is_hash]["key"].should == "value"
+        @a.preferences[:is_hash]["another key"].should == "another value"
+      end
+
+      it "with single array" do
+        expect { @a.set_preference(:is_hash, ["key"]) }.to raise_error(ArgumentError)
+      end
+    end
+
     context "converts any preferences to any values" do
       before do
         A.preference :product_ids, :any, :default => []
@@ -273,5 +346,3 @@ describe Spree::Preferences::Preferable do
   end
 
 end
-
-
