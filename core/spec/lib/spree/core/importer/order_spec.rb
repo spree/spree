@@ -89,7 +89,7 @@ module Spree
       it 'can build an order from API with just line items' do
         params = { :line_items_attributes => line_items }
 
-        Importer::Order.should_receive(:ensure_variant_id_from_params)
+        Importer::Order.should_receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
         order = Importer::Order.import(user,params)
         order.user.should == nil
         line_item = order.line_items.first
