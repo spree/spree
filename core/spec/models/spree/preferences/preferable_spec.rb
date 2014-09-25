@@ -335,5 +335,3 @@ describe Spree::Preferences::Preferable do
   end
 
 end
-
-
