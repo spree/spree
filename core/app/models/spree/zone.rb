@@ -4,7 +4,7 @@ module Spree
     has_many :tax_rates, dependent: :destroy, inverse_of: :zone
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'
 
-    validates :name, presence: true, uniqueness: true
+    validates :name, presence: true, uniqueness: { allow_blank: true }
     after_save :remove_defunct_members
     after_save :remove_previous_default
 
