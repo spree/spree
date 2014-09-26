@@ -5,7 +5,7 @@ describe "Free shipping promotions", :js => true do
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
-  let!(:shipping_method) do 
+  let!(:shipping_method) do
     sm = create(:shipping_method)
     sm.calculator.preferred_amount = 10
     sm.calculator.save
@@ -78,7 +78,7 @@ describe "Free shipping promotions", :js => true do
       page.current_url.should =~ /checkout\/payment/
 
       within("#checkout-summary") do
-        page.should have_content("Shipping total  $10.00")
+        page.should have_content("Shipping total:  $10.00")
         page.should have_content("Promotion (Free Shirt!): -$20.00")
         page.should have_content("Order Total: $10.00")
       end
