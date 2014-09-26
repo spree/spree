@@ -10,6 +10,7 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [x] Allow payment_source to be updated at any checkout state, https://github.com/spree/spree/pull/5351
 - [x] Let ProductProperty.value by dynamically length validated, https://github.com/spree/spree/pull/5361
 - [x] Update shipment total moving to delivery, https://github.com/spree/spree/pull/5376
+- [x] Support Tax Code, https://github.com/spree/spree/pull/5409
 
 SUMMARY
 -------
