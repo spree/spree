@@ -1,7 +1,7 @@
 module Spree
   class Store < Spree::Base
 
-    validates :code, presence: true, uniqueness: true
+    validates :code, presence: true, uniqueness: { allow_blank: true }
     validates :name, presence: true
     validates :url, presence: true
     validates :mail_from_address, presence: true
