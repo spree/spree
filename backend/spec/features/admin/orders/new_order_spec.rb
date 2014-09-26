@@ -51,8 +51,7 @@ describe "New Order" do
         fill_in "stock_item_quantity", :with => 2
         click_icon :plus
       end
-
-      within(".stock-contents") do
+      within(".line-items") do
         page.should have_content(product.name)
       end
     end
