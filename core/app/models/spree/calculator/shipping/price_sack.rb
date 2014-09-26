@@ -13,10 +13,10 @@ module Spree
       end
 
       def compute_package(package)
-        compute_price(total(package.contents))
+        compute_from_price(total(package.contents))
       end
 
-      def compute_price(price)
+      def compute_from_price(price)
         if price < self.preferred_minimal_amount
           self.preferred_normal_amount
         else

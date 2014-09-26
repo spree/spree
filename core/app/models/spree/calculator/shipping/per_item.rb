@@ -11,10 +11,10 @@ module Spree
       end
 
       def compute_package(package)
-        compute_quantity(package.contents.sum(&:quantity))
+        compute_from_quantity(package.contents.sum(&:quantity))
       end
 
-      def compute_quantity(quantity)
+      def compute_from_quantity(quantity)
         self.preferred_amount * quantity
       end
     end

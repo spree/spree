@@ -10,10 +10,10 @@ module Spree
       end
 
       def compute_package(package)
-        compute_price(total(package.contents))
+        compute_from_price(total(package.contents))
       end
 
-      def compute_price(price)
+      def compute_from_price(price)
         value = price * BigDecimal(self.preferred_flat_percent.to_s) / 100.0
         (value * 100).round.to_f / 100
       end
