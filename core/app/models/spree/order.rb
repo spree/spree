@@ -7,7 +7,12 @@ module Spree
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
-    include Spree::Generator::NumberGenerator
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'R'
+      super(options) 
+    end  
 
     checkout_flow do
       go_to_state :address

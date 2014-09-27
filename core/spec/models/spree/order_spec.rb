@@ -548,15 +548,15 @@ describe Spree::Order do
 
   context "#generate_order_number" do
     context "when no configure" do
-      let(:default_length) { Spree::Order::NUMBER_LENGTH + Spree::Order::NUMBER_PREFIX.length }
+      let(:default_length) { 9 + 'R'.length }
       subject(:order_number) { order.generate_number }
       its(:class)  { should eq String }
       its(:length) { should eq default_length }
-      it { should match /^#{Spree::Order::NUMBER_PREFIX}/ }
+      it { should match /^R/ }
     end
 
     context "when length option is 5" do
-      let(:option_length) { 5 + Spree::Order::NUMBER_PREFIX.length }
+      let(:option_length) { 5 + 'R'.length }
       it "should be option length for order number" do
         expect(order.generate_number(length: 5).length).to eq option_length
       end
