@@ -20,8 +20,9 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
       expect(action.perform(payload)).to be true
       expect(promotion.credits_count).to eq(2)
       expect(order.shipment_adjustments.count).to eq(2)
-      expect(order.shipment_adjustments.first.amount.to_i).to eq(-100)
-      expect(order.shipment_adjustments.last.amount.to_i).to eq(-100)
+      first, last = order.shipment_adjustments.to_a
+      expect(first.amount).to eq(-100)
+      expect(last.amount).to eq(-100)
     end
 
     it "should not create a discount when order already has one from this promotion" do

@@ -30,7 +30,7 @@ module Spree
     end
 
     def recalculate_adjustments
-      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each { |adjustable| Spree::ItemAdjustments.new(adjustable).update }
+      all_adjustments.each(&:update_adjustable_adjustment_total)
     end
 
     # Updates the following Order total values:

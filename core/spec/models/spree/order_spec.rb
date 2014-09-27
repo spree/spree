@@ -78,6 +78,20 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  context "#create_adjustment!" do
+    let(:order) { create(:order) }
+
+    it 'calls #update_adjustable_adjustment_total on adjustment' do
+      scope      = double('scope')
+      attributes = double('attributes')
+      adjustment = double('adjustment')
+      expect(order).to receive(:all_adjustments).and_return(scope)
+      expect(scope).to receive(:create!).with(attributes).and_return(adjustment)
+      expect(adjustment).to receive(:update_adjustable_adjustment_total)
+      order.create_adjustment!(attributes)
+    end
+  end
+
   context "creates shipments cost" do
     let(:shipment) { double }
 
@@ -797,6 +811,18 @@ describe Spree::Order, :type => :model do
       allow(order).to receive_messages(:additional_tax_total => 10, :included_tax_total => 20)
 
       expect(order.tax_total).to eq 30
+    end
+  end
+
+  context '#destroy' do
+    it 'destroys adjustents' do
+      order = create(:order)
+      order.create_adjustment!(
+        adjustable: order,
+        label:      'Test Adjustment',
+        amount:     100
+      )
+      expect { order.destroy }.to change { Spree::Adjustment.where(adjustable_id: order.id).count }.by(-1)
     end
   end
 

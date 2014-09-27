@@ -13,14 +13,14 @@ module Spree
       before_action :find_adjustment, only: [:destroy, :edit, :update]
 
       def index
-        @adjustments = @order.all_adjustments.eligible.order(:created_at)
+        @adjustments = @order.all_adjustments.eligible
       end
 
       private
 
       def find_adjustment
         # Need to assign to @object here to keep ResourceController happy
-        @adjustment = @object = parent.all_adjustments.find(params[:id])
+        @adjustment = @object = parent.all_adjustments.find(params.fetch(:id))
       end
 
       def update_totals
@@ -30,7 +30,7 @@ module Spree
       # Override method used to create a new instance to correctly
       # associate adjustment with order
       def build_resource
-        parent.adjustments.build(order: parent)
+        parent.adjustments.build(order: parent, adjustable: parent)
       end
 
     end

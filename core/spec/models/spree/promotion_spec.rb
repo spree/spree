@@ -229,8 +229,7 @@ describe Spree::Promotion, :type => :model do
 
     let!(:adjustment) do
       order = create(:order)
-      Spree::Adjustment.create!(
-        order:      order,
+      order.create_adjustment!(
         adjustable: order,
         source:     action,
         amount:     10,
@@ -250,36 +249,45 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  context "#adjusted_credits_count" do
-    let(:order) { create :order }
-    let(:line_item) { create :line_item, order: order }
-    let(:promotion) { Spree::Promotion.create name: "promo", :code => "10off" }
-    let(:order_action) {
+  context '#adjusted_credits_count' do
+    let!(:order)     { create(:order)                   }
+    let!(:line_item) { create(:line_item, order: order) }
+
+    before do
+      order.reload
+    end
+
+    let(:promotion) { Spree::Promotion.create name: 'promo', code: '10off' }
+
+    let(:order_action) do
       action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
-    }
-    let(:item_action) {
+    end
+
+    let(:item_action) do
       action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
-    }
+    end
+
     let(:order_adjustment) do
-      Spree::Adjustment.create!(
-        :source => order_action,
-        :amount => 10,
-        :adjustable => order,
-        :order => order,
-        :label => "Promotional adjustment"
+      order.create_adjustment!(
+        source:     order_action,
+        amount:     10,
+        adjustable: order,
+        order:      order,
+        label:      'Promotional adjustment'
       )
     end
+
     let(:item_adjustment) do
       Spree::Adjustment.create!(
-        :source => item_action,
-        :amount => 10,
-        :adjustable => line_item,
-        :order => order,
-        :label => "Promotional adjustment"
+        source:     item_action,
+        amount:     10,
+        adjustable: line_item,
+        order:      order,
+        label:      'Promotional adjustment'
       )
     end
 
@@ -590,13 +598,13 @@ describe Spree::Promotion, :type => :model do
       promo.activate order: order
       order.update!
 
-      expect(line_item.adjustments.size).to eq(1)
+      expect(line_item.adjustments.count).to eq(1)
       expect(order.adjustment_total).to eq -5
 
       other_line_item = order.contents.add(variant, 1, currency: order.currency)
 
       expect(other_line_item).not_to eq line_item
-      expect(other_line_item.adjustments.size).to eq(1)
+      expect(other_line_item.adjustments.count).to eq(1)
       expect(order.adjustment_total).to eq -10
     end
   end

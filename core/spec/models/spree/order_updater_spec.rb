@@ -42,8 +42,17 @@ module Spree
 
         before do
           updater.update
-          create(:adjustment, source: promotion_action, adjustable: order, order: order)
+
+          order.create_adjustment!(
+            source:     promotion_action,
+            amount:     100,
+            label:      'Test adjustment',
+            adjustable: order
+          )
           create(:line_item, order: order, price: 10) # in addition to the two already created
+          # factory girls creation method does not register the line item in the already
+          # cached collection Order#lineitems.
+          order.reload
           updater.update
         end
 

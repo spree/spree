@@ -8,7 +8,6 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
 
-    has_many :adjustments, as: :adjustable, dependent: :delete_all
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
     has_many :shipping_rates, -> { order('cost ASC') }, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
@@ -17,6 +16,7 @@ module Spree
     after_save :update_adjustments
 
     before_validation :set_cost_zero_when_nil
+    before_destroy :destroy_adjustments
 
     validates :stock_location, presence: true
 
@@ -98,6 +98,15 @@ module Spree
 
     def currency
       order ? order.currency : Spree::Config[:currency]
+    end
+
+    # Return a memory scope for shipments adjustments
+    #
+    # @return [MemoryScope]
+    #
+    # @api [private]
+    def adjustments
+      order.all_adjustments.adjustable(self)
     end
 
     # Determines the appropriate +state+ according to the following logic:
@@ -388,6 +397,10 @@ module Spree
     end
 
     private
+
+      def destroy_adjustments
+        adjustments.destroy_all
+      end
 
       def after_ship
         ShipmentHandler.factory(self).perform

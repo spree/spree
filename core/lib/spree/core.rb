@@ -64,6 +64,8 @@ require 'spree/core/engine'
 require 'spree/i18n'
 require 'spree/localized_number'
 require 'spree/money'
+require 'spree/memory_scope'
+
 require 'spree/permitted_attributes'
 
 require 'spree/core/delegate_belongs_to'

@@ -19,22 +19,10 @@ module Spree
           result = false
 
           line_items_to_adjust(promotion, order).each do |line_item|
-            current_result = self.create_adjustment(line_item, order)
+            current_result = create_adjustment(line_item, order)
             result ||= current_result
           end
           return result
-        end
-
-        def create_adjustment(adjustable, order)
-          amount = self.compute_amount(adjustable)
-          return if amount == 0
-          self.adjustments.create!(
-            amount: amount,
-            adjustable: adjustable,
-            order: order,
-            label: "#{Spree.t(:promotion)} (#{promotion.name})",
-          )
-          true
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
@@ -56,6 +44,19 @@ module Spree
           # if the order has adjustments from that already
           def promotion_credit_exists?(adjustable)
             self.adjustments.where(:adjustable_id => adjustable.id).exists?
+          end
+
+          def create_adjustment(adjustable, order)
+            amount = self.compute_amount(adjustable)
+            return if amount == 0
+
+            order.create_adjustment!(
+              amount:     amount,
+              source:     self,
+              adjustable: adjustable,
+              label:      "#{Spree.t(:promotion)} (#{promotion.name})",
+            )
+            true
           end
 
           def ensure_action_has_calculator

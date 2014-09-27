@@ -22,6 +22,15 @@ describe Spree::LineItem, :type => :model do
       expect(line_item.reload.variant).to be_a Spree::Variant
     end
 
+    it "deletes associated adjustments" do
+      order.create_adjustment!(
+        adjustable: line_item,
+        label:      'Test Adjustment',
+        amount:     100
+      )
+      expect { line_item.destroy }.to change { order.all_adjustments.count }.by(-1)
+    end
+
     it "returns inventory when a line item is destroyed" do
       expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
       line_item.destroy

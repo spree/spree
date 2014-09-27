@@ -32,7 +32,9 @@ module Spree
         return false
       end
 
-      variant = Spree::Variant.find(variant_id)
+      variant = order.line_items.detect { |line_item| line_item.variant_id.equal?(variant_id) }.try(:variant) ||
+        Spree::Variant.find(variant_id)
+
       begin
         @order.contents.add(variant, quantity, options.merge(currency: currency))
       rescue ActiveRecord::RecordInvalid => e

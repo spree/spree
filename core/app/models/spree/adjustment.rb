@@ -41,27 +41,129 @@ module Spree
       end
     end
 
-    after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
 
-    scope :open, -> { where(state: 'open') }
-    scope :closed, -> { where(state: 'closed') }
-    scope :tax, -> { where(source_type: 'Spree::TaxRate') }
-    scope :non_tax, -> do
-      source_type = arel_table[:source_type]
-      where(source_type.not_eq('Spree::TaxRate').or source_type.eq(nil))
-    end
-    scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
-    scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
-    scope :optional, -> { where(mandatory: false) }
-    scope :eligible, -> { where(eligible: true) }
-    scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
-    scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
-    scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
+    # TODO: These are only called from specs. To reduce public interface and possible duplicates
+    # specs should be refactored to avoid the use of those scopes.
+    scope :eligible,  -> { where(eligible: true) }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
-    scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
-    scope :is_included, -> { where(included: true) }
-    scope :additional, -> { where(included: false) }
+
+    # Error being raised on adjustable lookup errors
+    class AdjustableLookupError < RuntimeError
+    end # AdjustableLookupError
+
+    # Return the adjustable from loaded object graph
+    #
+    # Requires the order association being loaded already.
+    # No call side is allowed to create an Spree::Adjustment instance without order present.
+    #
+    # @return [Spree::Order, Spree::Shipment, Spree::LineItem]
+    #
+    # @api private
+    def adjustable
+      @adjustable ||=
+        begin
+          raise AdjustableLookupError, 'Order not loaded' unless @association_cache.key?(:order)
+          case adjustable_type
+          when 'Spree::Order'
+            order
+          when 'Spree::Shipment'
+            lookup_by_adjustable_id(order.shipments)
+          when 'Spree::LineItem'
+            lookup_by_adjustable_id(order.line_items)
+          else
+            raise AdjustableLookupError, "No strategy to load adjustable_type: #{adjustable_type.inspect}"
+          end
+        end
+    end
+
+    # Memory scopes to be used from Order#all_adjustments
+    class Scopes < MemoryScope
+
+      # Return an adjustment scope to a specific source
+      #
+      # @param [Object] source
+      #   the source of the adjustable to scope to
+      #
+      # @return [MemoryScope]
+      #
+      # @api private
+      def source(source)
+        restrict { |adjustment| adjustment.source.eql?(source) }
+      end
+
+      # Return an adjustment scope to a specific adjustable
+      #
+      # @param [Object] adjustable
+      #   the source of the adjustable to scope to
+      #
+      # @return [MemoryScope]
+      #
+      # @api private
+      def adjustable(adjustable)
+        restrict { |adjustment| adjustment.adjustable.eql?(adjustable) }
+      end
+
+      # Return an adjustment scope to a set of sources
+      #
+      # @param [#include?] sources
+      #   the sources to scope to
+      #
+      # @return [MemoryScope]
+      #
+      # @api private
+      def sources(sources)
+        restrict { |adjustment| sources.include?(adjustment.source) }
+      end
+
+      # Return an adjustment scope to a set of adjustments
+      #
+      # @param [#include?] adjustables
+      #   the adjustables to scope to
+      #
+      # @return [MemoryScope]
+      #
+      # @api private
+      def adjustables(adjustables)
+        restrict { |adjustment| adjustables.include?(adjustment.adjustable) }
+      end
+
+      # Enumerate members in scope
+      #
+      # To reduce the chance for ordering issues. And to make sure that members that got just
+      # created are returned in correct order we manually sort the adjustments before yielding
+      # them to the enumerator.
+      #
+      # @return [self]
+      #   if block given
+      #
+      # @return [Enumerator]
+      #   otherwise
+      #
+      # @api private
+      def each(&block)
+        return to_enum unless block
+        @base.to_a.select(&@predicate).sort_by(&:created_at).each(&block)
+        self
+      end
+
+      memory_scope(:non_tax) { |adjustment| !adjustment.source_type.eql?('Spree::TaxRate') }
+      memory_scope(:charge)  { |adjustment| adjustment.amount >= 0                         }
+      memory_scope(:credit)  { |adjustment| adjustment.amount <  0                         }
+      memory_scope(:nonzero) { |adjustment| !adjustment.amount.zero?                       }
+
+      memory_scope_attribute_value(:open,                 :state,           'open'                      )
+      memory_scope_attribute_value(:closed,               :state,           'closed'                    )
+      memory_scope_attribute_value(:tax,                  :source_type,     'Spree::TaxRate'            )
+      memory_scope_attribute_value(:line_item,            :adjustable_type, 'Spree::LineItem'           )
+      memory_scope_attribute_value(:shipping,             :adjustable_type, 'Spree::Shipment'           )
+      memory_scope_attribute_value(:optional,             :mandatory,       false                       )
+      memory_scope_attribute_value(:eligible,             :eligible,        true                        )
+      memory_scope_attribute_value(:promotion,            :source_type,     'Spree::PromotionAction'    )
+      memory_scope_attribute_value(:return_authorization, :source_type,     'Spree::ReturnAuthorization')
+      memory_scope_attribute_value(:is_included,          :included,        true                        )
+      memory_scope_attribute_value(:additional,           :included,        false                       )
+    end
 
     def closed?
       state == "closed"
@@ -81,35 +183,49 @@ module Spree
 
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
-    # Passing a target here would always be recommended as it would avoid
-    # hitting the database again and would ensure you're compute values over
-    # the specific object amount passed here.
-    #
     # Noop if the adjustment is locked.
     #
     # If the adjustment has no source, do not attempt to re-calculate the amount.
     # Chances are likely that this was a manually created adjustment in the admin backend.
-    def update!(target = nil)
-      amount = self.amount
-      return amount if closed?
-      if source.present?
-        amount = source.compute_amount(target || adjustable)
-        self.update_columns(
-          amount: amount,
-          updated_at: Time.now,
-        )
-        if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
-        end
+    def update!
+      return amount if closed? || !source
+
+      amount = source.compute_amount(adjustable)
+
+      update_columns(
+        amount: amount,
+        updated_at: Time.now,
+      )
+
+      if promotion?
+        update_column(:eligible, source.promotion.eligible?(adjustable))
       end
+
       amount
     end
-
-    private
 
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
       ItemAdjustments.new(adjustable).update
+    end
+
+  private
+
+    # Return adjustable from collection or raise error
+    #
+    # @param [Enumerable<#id>]
+    #
+    # @return [Object]
+    #   when found
+    #
+    # @raise [AdjustableLookupError]
+    #   otherwise
+    #
+    # @api private
+    def lookup_by_adjustable_id(collection)
+      item = collection.detect { |item| item.id.equal?(adjustable_id) }
+      raise AdjustableLookupError, "#{adjustable_type} with id #{adjustable_id} not found" unless item
+      item
     end
 
   end

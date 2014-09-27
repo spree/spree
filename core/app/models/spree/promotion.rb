@@ -127,8 +127,8 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+      adjustments = promotable.kind_of?(Order) ? promotable.all_adjustments : promotable.adjustments
+      credits_count - adjustments.promotion.sources(actions).count
     end
 
     def credits
@@ -155,21 +155,15 @@ module Spree
     end
 
     def used_by?(user, excluded_orders = [])
-      [
-        :adjustments,
-        :line_item_adjustments,
-        :shipment_adjustments
-      ].any? do |adjustment_type|
-        user.orders.complete.joins(adjustment_type).where(
-          spree_adjustments: {
-            source_type: 'Spree::PromotionAction',
-            source_id: actions.map(&:id),
-            eligible: true
-          }
-        ).where.not(
-          id: excluded_orders.map(&:id)
-        ).any?
-      end
+      user.orders.complete.joins(:all_adjustments).where(
+        spree_adjustments: {
+          source_type: 'Spree::PromotionAction',
+          source_id: actions.map(&:id),
+          eligible: true
+        }
+      ).where.not(
+        id: excluded_orders.map(&:id)
+      ).any?
     end
 
     private

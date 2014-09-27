@@ -136,7 +136,7 @@ module Spree
               state: {},
               country: {},
             },
-            adjustments: {},
+            all_adjustments: {},
             payments: {
               order: {},
               payment_method: {},

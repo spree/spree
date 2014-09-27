@@ -11,7 +11,12 @@ module Spree
     context '#update' do
       it "updates a linked adjustment" do
         tax_rate = create(:tax_rate, :amount => 0.05)
-        adjustment = create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
+        adjustment = order.create_adjustment!(
+          source:     tax_rate,
+          adjustable: line_item,
+          label:      'Test Tax',
+          amount:     100
+        )
         line_item.price = 10
         line_item.tax_category = tax_rate.tax_category
 
@@ -39,16 +44,22 @@ module Spree
         line_item.price = 20
         line_item.tax_category = tax_rate.tax_category
         line_item.save
-        create(:adjustment, order: order, source: promotion_action, adjustable: line_item)
+        order.create_adjustment!(
+          label: 'Test Promotion',
+          amount: 100,
+          source: promotion_action,
+          adjustable: line_item
+        )
       end
 
       context "tax included in price" do
         before do
-          create(:adjustment,
-            :source => tax_rate,
-            :adjustable => line_item,
-            :order => order,
-            :included => true
+          order.create_adjustment!(
+            source:     tax_rate,
+            adjustable: line_item,
+            label:      'Test Tax',
+            amount:     100,
+            included:   true
           )
         end
 
@@ -71,17 +82,17 @@ module Spree
 
       context "tax excluded from price" do
         before do
-          create(:adjustment,
-            :source => tax_rate,
-            :adjustable => line_item,
-            :order => order,
-            :included => false
+          order.create_adjustment!(
+            source:     tax_rate,
+            label:      'Test Tax',
+            amount:     100,
+            adjustable: line_item,
+            included:   false
           )
         end
 
         it "tax applies to line item" do
           subject.update_adjustments
-          line_item.reload
           # Taxable amount is: $20 (base) - $10 (promotion) = $10
           # Tax rate is 5% (of $10).
           expect(line_item.included_tax_total).to eq(0)
@@ -105,25 +116,28 @@ module Spree
       let(:source) { Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
 
       def create_adjustment(label, amount)
-        create(:adjustment, :order      => order,
-                            :adjustable => line_item,
-                            :source     => source,
-                            :amount     => amount,
-                            :state      => "closed",
-                            :label      => label,
-                            :mandatory  => false)
+        order.create_adjustment!(
+          adjustable: line_item,
+          source:     source,
+          amount:     amount,
+          state:      'closed',
+          label:      label,
+          mandatory:  false
+        )
       end
 
       it "should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone" do
         create_adjustment("Promotion A", -100)
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -300)
-        create(:adjustment, :order => order,
-                            :adjustable => line_item,
-                            :source => nil,
-                            :amount => -500,
-                            :state => "closed",
-                            :label => "Some other credit")
+
+        order.create_adjustment!(
+          adjustable: line_item,
+          source:     nil,
+          amount:     -500,
+          state:      'closed',
+          label:      'Some other credit'
+        )
         line_item.adjustments.each {|a| a.update_column(:eligible, true)}
 
         subject.choose_best_promotion_adjustment
@@ -162,46 +176,42 @@ module Spree
         ]
 
         promo_sequences.each do |promo_sequence|
-          it "should pick the best order-level promo according to current eligibility" do
-            # apply both promos to the order, even though only promo1 is eligible
-            order_promos[promo_sequence[0]].activate order: order
-            order_promos[promo_sequence[1]].activate order: order
+          context "with promo sequence #{promo_sequence}" do
+            it 'should pick the best order-level promo according to current eligibility' do
+              # apply both promos to the order, even though only promo1 is eligible
+              order_promos[promo_sequence[0]].activate(order: order)
+              order_promos[promo_sequence[1]].activate(order: order)
 
-            order.reload
-            expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), "Expected promo1 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to be(2)
+              expect(order.all_adjustments.eligible.count).to be(1)
+              expect(order.all_adjustments.eligible.first.source.promotion).to eql(order_promo1)
 
-            order.contents.add create(:variant, price: 10), 1
-            order.save
+              order.contents.add(create(:variant, price: 10), 1)
+              order.save
 
-            order.reload
-            expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2), "Expected promo2 to be used (using sequence #{promo_sequence})"
-          end
-        end
+              expect(order.all_adjustments.count).to be(2)
+              expect(order.all_adjustments.eligible.count).to be(1)
+              expect(order.all_adjustments.eligible.first.source.promotion).to eql(order_promo2)
+            end
 
-        promo_sequences.each do |promo_sequence|
-          it "should pick the best line-item-level promo according to current eligibility" do
-            # apply both promos to the order, even though only promo1 is eligible
-            line_item_promos[promo_sequence[0]].activate order: order
-            line_item_promos[promo_sequence[1]].activate order: order
+            it 'should pick the best line-item-level promo according to current eligibility' do
+              # apply both promos to the order, even though only promo1 is eligible
+              line_item_promos[promo_sequence[0]].activate(order: order)
+              line_item_promos[promo_sequence[1]].activate(order: order)
 
-            order.reload
-            expect(order.all_adjustments.count).to eq(1), "Expected one adjustment (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            # line_item_promo1 is the only one that has thus far met the order total threshold, it is the only promo which should be applied.
-            expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to be(1)
+              expect(order.all_adjustments.eligible.count).to be(1)
+              # line_item_promo1 is the only one that has thus far met the order total threshold, it is the only promo which should be applied.
+              expect(order.all_adjustments.first.source.promotion).to eql(line_item_promo1)
 
-            order.contents.add create(:variant, price: 10), 1
-            order.save
+              order.contents.add(create(:variant, price: 10), 1)
+              order.save
 
-            order.reload
-            expect(order.all_adjustments.count).to eq(4), "Expected four adjustments (using sequence #{promo_sequence})"
-            expect(order.all_adjustments.eligible.count).to eq(2), "Expected two elegible adjustments (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.each do |adjustment|
-              expect(adjustment.source.promotion).to eq(line_item_promo2), "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to be(4)
+              expect(order.all_adjustments.eligible.count).to be(2)
+              order.all_adjustments.eligible.each do |adjustment|
+                expect(adjustment.source.promotion).to eq(line_item_promo2)
+              end
             end
           end
         end

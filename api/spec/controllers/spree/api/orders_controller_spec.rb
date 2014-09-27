@@ -161,12 +161,17 @@ module Spree
 
     describe 'GET #show' do
       let(:order) { create :order_with_line_items }
-      let(:adjustment) { FactoryGirl.create(:adjustment, order: order) }
 
       subject { api_get :show, id: order.to_param }
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
+        shipment = order.shipments.first
+        order.create_adjustment!(
+          adjustable: shipment,
+          amount:     5,
+          label:      'Shipping'
+        )
       end
 
       context 'when inventory information is present' do
@@ -182,10 +187,6 @@ module Spree
       end
 
       context 'when shipment adjustments are present' do
-        before do
-          order.shipments.first.adjustments << adjustment
-        end
-
         it 'contains adjustments on shipment' do
           subject
 
@@ -193,7 +194,7 @@ module Spree
           shipment = json_response['shipments'][0]
           expect(shipment).to_not be_nil
           expect(shipment['adjustments'][0]).not_to be_empty
-          expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+          expect(shipment['adjustments'][0]['label']).to eq(order.shipments.first.adjustments.first.label)
         end
       end
     end
@@ -488,7 +489,11 @@ module Spree
       context "with a line item" do
         let(:order_with_line_items) do
           order = create(:order_with_line_items)
-          create(:adjustment, order: order, adjustable: order)
+          order.create_adjustment!(
+            adjustable: order,
+            label:      'Test Adjustment',
+            amount:     100
+          )
           order
         end
 
@@ -525,10 +530,11 @@ module Spree
         end
 
         it "lists line item adjustments" do
-          adjustment = create(:adjustment,
-            :label => "10% off!",
-            :order => order,
-            :adjustable => order.line_items.first)
+          adjustment = order.create_adjustment!(
+            amount:     100,
+            label:      '10% off!',
+            adjustable: order.line_items.first
+          )
           adjustment.update_column(:amount, 5)
           api_get :show, :id => order.to_param
 
