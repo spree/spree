@@ -281,12 +281,12 @@ DB=postgres bundle exec rake test_app
 
 If you want to run specs for only a single spec file
 ```shell
-bundle exec rspec spec/models/state_spec.rb
+bundle exec rspec spec/models/spree/state_spec.rb
 ```
 
 If you want to run a particular line of spec
 ```shell
-bundle exec rspec spec/models/state_spec.rb:7
+bundle exec rspec spec/models/spree/state_spec.rb:7
 ```
 
 You can also enable fail fast in order to stop tests at the first failure
