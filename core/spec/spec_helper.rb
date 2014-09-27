@@ -22,6 +22,7 @@ rescue LoadError
 end
 
 require 'rspec/rails'
+require 'rspec/its'
 require 'database_cleaner'
 require 'ffaker'
 require 'timeout'

@@ -45,7 +45,7 @@ module Spree
           end
 
           def load_order
-            @order = Order.includes(:adjustments).find_by_number!(params[:order_id])
+            @order = Order.includes(:all_adjustments).find_by_number!(params.fetch(:order_id))
           end
 
           def model_class

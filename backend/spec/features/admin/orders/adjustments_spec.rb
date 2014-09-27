@@ -12,15 +12,19 @@ describe "Adjustments", :type => :feature do
   end
 
   let!(:tax_adjustment) do
-    create(:tax_adjustment,
-      :adjustable => line_item,
-      :state => 'closed',
-      :order => order,
-      :label => "VAT 5%",
-      :amount => 10)
+    order.create_adjustment!(
+      adjustable: line_item,
+      state:      'closed',
+      source:     create(:tax_rate),
+      order:      order,
+      label:      'VAT 5%',
+      amount:     10
+    )
   end
 
-  let!(:adjustment) { order.adjustments.create!(order: order, label: 'Rebate', amount: 10) }
+  let!(:adjustment) do
+    order.create_adjustment!(order: order, adjustable: order, label: 'Rebate', amount: 10)
+  end
 
   before(:each) do
     # To ensure the order totals are correct

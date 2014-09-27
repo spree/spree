@@ -33,4 +33,6 @@ group :test do
   gem 'timecop'
   gem 'with_model'
   gem 'rspec-retry'
+  gem 'mutant',       '~> 0.6.3'
+  gem 'mutant-rspec', '~> 0.6.3'
 end

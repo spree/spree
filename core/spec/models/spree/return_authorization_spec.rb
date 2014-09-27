@@ -99,8 +99,16 @@ describe Spree::ReturnAuthorization, :type => :model do
 
       it "should add credit for specified amount" do
         return_authorization.amount = 20
-        expect(Spree::Adjustment).to receive(:create).with(adjustable: order, amount: -20, label: Spree.t(:rma_credit), order: order, source: return_authorization)
         return_authorization.receive!
+
+        adjustments = order.all_adjustments.source(return_authorization)
+        expect(adjustments.count).to eq(1)
+
+        adjustment = adjustments.first
+        expect(adjustment.adjustable).to be(order)
+        expect(adjustment.amount).to eql(-20)
+        expect(adjustment.label).to eql(Spree.t(:rma_credit))
+        expect(adjustment.source).to be(return_authorization)
       end
 
       it "should update order state" do

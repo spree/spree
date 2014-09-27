@@ -9,7 +9,7 @@ module Spree
       let(:promotion) { Promotion.create(name: "Free Shipping") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
-      subject { Spree::PromotionHandler::FreeShipping.new(order) }
+      subject { Spree::PromotionHandler::FreeShipping.new(shipment.order) }
 
       context "activates in Shipment level" do
         let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }

@@ -229,8 +229,7 @@ describe Spree::Promotion, :type => :model do
 
     let!(:adjustment) do
       order = create(:order)
-      Spree::Adjustment.create!(
-        order:      order,
+      order.create_adjustment!(
         adjustable: order,
         source:     action,
         amount:     10,
@@ -384,13 +383,13 @@ describe Spree::Promotion, :type => :model do
       promo.activate order: order
       order.update!
 
-      expect(line_item.adjustments.size).to eq(1)
+      expect(line_item.adjustments.count).to eq(1)
       expect(order.adjustment_total).to eq -5
 
       other_line_item = order.contents.add(variant, 1, order.currency)
 
       expect(other_line_item).not_to eq line_item
-      expect(other_line_item.adjustments.size).to eq(1)
+      expect(other_line_item.adjustments.count).to eq(1)
       expect(order.adjustment_total).to eq -10
     end
   end

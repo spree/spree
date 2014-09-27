@@ -55,7 +55,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
       it "should not keep the adjustment" do
         action.perform(:order => order)
         action.destroy
-        expect(order.adjustments.count).to eq(0)
+        expect(order.reload.adjustments.count).to be(0)
       end
     end
 
@@ -67,6 +67,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
       before(:each) do
         action.perform(:order => order)
         action.destroy
+        order.reload
       end
 
       it "should keep the adjustment" do
@@ -74,7 +75,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
       end
 
       it "should nullify the adjustment source" do
-        expect(order.adjustments.reload.first.source).to be_nil
+        expect(order.adjustments.first.source).to be_nil
       end
     end
   end

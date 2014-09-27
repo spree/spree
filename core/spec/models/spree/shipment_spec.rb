@@ -2,11 +2,20 @@ require 'spec_helper'
 require 'benchmark'
 
 describe Spree::Shipment, :type => :model do
-  let(:order) { mock_model Spree::Order, backordered?: false,
-                                         canceled?: false,
-                                         can_ship?: true,
-                                         currency: 'USD',
-                                         touch: true }
+  let(:order) { Spree::Order.new }
+
+  before do
+    {
+      backordered?: false,
+      canceled?:    false,
+      can_ship?:    true,
+      currency:     'USD',
+      touch:        true
+    }.each do |name, value|
+      allow(order).to receive(name).and_return(value)
+    end
+  end
+
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new
@@ -253,7 +262,7 @@ describe Spree::Shipment, :type => :model do
       # Regression test for #4347
       context "with adjustments" do
         before do
-          shipment.adjustments << Spree::Adjustment.create(order: order, label: "Label", amount: 5)
+          allow(shipment).to receive(:adjustments).and_return([Spree::Adjustment.new(adjustable: order, order: order, label: 'Label', amount: 5)])
         end
 
         it "transitions to shipped" do
@@ -414,9 +423,12 @@ describe Spree::Shipment, :type => :model do
   end
 
   context "updates cost when selected shipping rate is present" do
-    let(:shipment) { create(:shipment) }
+    let(:shipment) { create(:shipment, order: order) }
 
-    before { allow(shipment).to receive_message_chain :selected_shipping_rate, cost: 5 }
+    before do
+      allow(shipment).to receive_message_chain :selected_shipping_rate, cost: 5
+      order.save!
+    end
 
     it "updates shipment totals" do
       shipment.update_amounts
@@ -424,24 +436,24 @@ describe Spree::Shipment, :type => :model do
     end
 
     it "factors in additional adjustments to adjustment total" do
-      shipment.adjustments.create!(
-        order:    order,
-        label:    "Additional",
-        amount:   5,
-        included: false,
-        state:    "closed"
+      shipment.order.create_adjustment!(
+        adjustable: shipment,
+        label:      'Additional',
+        amount:     5,
+        included:   false,
+        state:      'closed'
       )
       shipment.update_amounts
-      expect(shipment.reload.adjustment_total).to eq(5)
+      expect(shipment.adjustment_total).to eql(5)
     end
 
     it "does not factor in included adjustments to adjustment total" do
-      shipment.adjustments.create!(
-        order:    order,
-        label:    "Included",
-        amount:   5,
-        included: true,
-        state:    "closed"
+      order.create_adjustment!(
+        adjustable: shipment,
+        label:      'Included',
+        amount:     5,
+        included:   true,
+        state:      'closed'
       )
       shipment.update_amounts
       expect(shipment.reload.adjustment_total).to eq(0)
@@ -540,11 +552,22 @@ describe Spree::Shipment, :type => :model do
     end
   end
 
-  # Regression test for #3349
   context "#destroy" do
+    # Regression test for #3349
     it "destroys linked shipping_rates" do
       reflection = Spree::Shipment.reflect_on_association(:shipping_rates)
       expect(reflection.options[:dependent]).to be(:delete_all)
+    end
+
+    it 'destroys linked adjustments' do
+      shipment = create(:shipment)
+      order = shipment.order
+      order.create_adjustment!(
+        adjustable: shipment,
+        label:      'Test Adjustment',
+        amount:     100
+      )
+      expect { shipment.destroy }.to change { order.all_adjustments.count }.by(-1)
     end
   end
 

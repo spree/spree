@@ -40,9 +40,6 @@ module Spree
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy, inverse_of: :order
-    has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
-    has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
     has_many :products, through: :variants
     has_many :variants, through: :line_items
@@ -114,6 +111,47 @@ module Spree
     # that should be called after Order#update
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
+    end
+
+    # Return adjustments memory scope
+    #
+    # @return [Adjustment::Scopes]
+    #
+    # @api private
+    def adjustments
+      all_adjustments.adjustable(self)
+    end
+
+    # Return line item adjustments memory scope
+    #
+    # @return [Adjustment::Scopes]
+    #
+    # @api private
+    def line_item_adjustments
+      all_adjustments.line_item
+    end
+
+    # Return shipment adjustments memory scope
+    #
+    # @return [Adjustment::Scopes]
+    #
+    # @api private
+    def shipment_adjustments
+      all_adjustments.shipping
+    end
+
+    # Return all adjustments
+    #
+    # Returns a memory scope wrapping the original association to allow in-memory
+    # scoping the association. This prevents duplicate loads of the same adjustment
+    # and removes the need for reloads to sync these duplicates within a cart/order
+    # operation.
+    #
+    # @return [Adjustment::Scopes]
+    #
+    # @api private
+    def all_adjustments
+      Adjustment::Scopes.new(super)
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -200,7 +238,7 @@ module Spree
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
     def tax_zone
-      @tax_zone ||= Zone.match(tax_address) || Zone.default_tax
+      Zone.match(tax_address) || Zone.default_tax
     end
 
     # Returns the address for taxation based on configuration
@@ -286,10 +324,8 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      # We want to only look up the applicable tax zone once and pass it to TaxRate calculation to avoid duplicated lookups.
-      order_tax_zone = self.tax_zone
-      Spree::TaxRate.adjust(order_tax_zone, line_items)
-      Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
+      Spree::TaxRate.adjust(self, line_items)
+      Spree::TaxRate.adjust(self, shipments) if shipments.any?
     end
 
     def outstanding_balance
@@ -582,9 +618,19 @@ module Spree
       self.ensure_updated_shipments
     end
 
-    def reload(options=nil)
-      remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
-      super
+    # Create adjustment and update adjustment totals
+    #
+    # This is the only legit way to create adjustments on an order.
+    # Creating Spree::Adjustment instances and persisting them will skip important
+    # calculations and requires to call #reload on the order to be visible.
+    #
+    # @param [Hash]
+    #
+    # @return [Spree::Adjustment]
+    #
+    # @api private
+    def create_adjustment!(attributes)
+      all_adjustments.create!(attributes).tap(&:update_adjustable_adjustment_total)
     end
 
     def tax_total

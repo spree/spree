@@ -1,5 +1,5 @@
 module Spree
-  # Manage (recalculate) item (LineItem or Shipment) adjustments
+  # Manage (recalculate) item (LineItem / Shipment / Order) adjustments
   class ItemAdjustments
     include ActiveSupport::Callbacks
     define_callbacks :promo_adjustments, :tax_adjustments
@@ -38,9 +38,9 @@ module Spree
       # Additional tax adjustments are the opposite; effecting the final total.
       promo_total = 0
       run_callbacks :promo_adjustments do
-        promotion_total = adjustments.promotion.reload.map do |adjustment|
+        promotion_total = adjustments.promotion.map do |adjustment|
           adjustment.update!(@item)
-        end.compact.sum
+        end.sum
 
         unless promotion_total == 0
           choose_best_promotion_adjustment
@@ -50,18 +50,19 @@ module Spree
 
       included_tax_total = 0
       additional_tax_total = 0
+
       run_callbacks :tax_adjustments do
         tax = (item.respond_to?(:all_adjustments) ? item.all_adjustments : item.adjustments).tax
-        included_tax_total = tax.is_included.reload.map(&:update!).compact.sum
-        additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
+        included_tax_total = tax.is_included.map(&:update!).sum
+        additional_tax_total = tax.additional.map(&:update!).sum
       end
 
       item.update_columns(
-        :promo_total => promo_total,
-        :included_tax_total => included_tax_total,
-        :additional_tax_total => additional_tax_total,
-        :adjustment_total => promo_total + additional_tax_total,
-        :updated_at => Time.now,
+        promo_total:          promo_total,
+        included_tax_total:   included_tax_total,
+        additional_tax_total: additional_tax_total,
+        adjustment_total:     promo_total + additional_tax_total,
+        updated_at:           Time.now,
       )
     end
 
@@ -69,14 +70,26 @@ module Spree
     # This promotion provides the most discount, and if two promotions
     # have the same amount, then it will pick the latest one.
     def choose_best_promotion_adjustment
-      if best_promotion_adjustment
-        other_promotions = self.adjustments.promotion.where("id NOT IN (?)", best_promotion_adjustment.id)
-        other_promotions.update_all(:eligible => false)
-      end
+      return unless best_promotion_adjustment
+      other_promotions = adjustments.promotion.restrict { |adjustment| !adjustment.id.equal?(best_promotion_adjustment.id) }
+      other_promotions.update_all(eligible: false)
     end
 
+  private
+
+    # Return best eligible promotion adjustment
+    #
+    # @return [Adjustment]
+    #   in case there is a best eligible promption adjustment
+    #
+    # @return [nil]
+    #   otherwise
+    #
+    # @api private
     def best_promotion_adjustment
-      @best_promotion_adjustment ||= adjustments.promotion.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+      @best_promotion_adjustment ||= adjustments.promotion.eligible.sort_by.with_index do |promotion, index|
+        [promotion.amount, Time.at(0) - promotion.created_at, -index]
+      end.first
     end
   end
 end

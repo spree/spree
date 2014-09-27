@@ -10,9 +10,10 @@ module Spree
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
-    has_many :adjustments, as: :adjustable, dependent: :delete_all
 
     after_save :update_adjustments
+
+    before_destroy :destroy_adjustments
 
     before_validation :set_cost_zero_when_nil
 
@@ -70,6 +71,15 @@ module Spree
           name:           'shipment',
         )
       end
+    end
+
+    # Return a memory scope for shipments adjustments
+    #
+    # @return [MemoryScope]
+    #
+    # @api [private]
+    def adjustments
+      order.all_adjustments.adjustable(self)
     end
 
     def to_param
@@ -321,6 +331,10 @@ module Spree
 
       def manifest_unstock(item)
         stock_location.unstock item.variant, item.quantity, self
+      end
+
+      def destroy_adjustments
+        adjustments.destroy_all
       end
 
       def manifest_restock(item)

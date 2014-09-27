@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OrderPopulator, :type => :model do
-  let(:order) { double('Order') }
+  let(:order) { double('Order', line_items: []) }
+
   subject { Spree::OrderPopulator.new(order, "USD") }
 
   context "with stubbed out find_variant" do

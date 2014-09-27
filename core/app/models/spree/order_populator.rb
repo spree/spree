@@ -29,7 +29,9 @@ module Spree
         return false
       end
 
-      variant = Spree::Variant.find(variant_id)
+      variant = order.line_items.detect { |line_item| line_item.variant_id.equal?(variant_id) }.try(:variant) ||
+        Spree::Variant.find(variant_id)
+
       if quantity > 0
         line_item = @order.contents.add(variant, quantity, currency)
         unless line_item.valid?

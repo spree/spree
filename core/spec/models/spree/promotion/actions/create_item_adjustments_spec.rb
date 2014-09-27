@@ -36,7 +36,7 @@ module Spree
             it "creates adjustment with item as adjustable" do
               action.perform(order: order)
               expect(action.adjustments.count).to eq(1)
-              expect(line_item.reload.adjustments).to eq(action.adjustments)
+              expect(line_item.reload.adjustments.to_a).to eq(action.adjustments.to_a)
             end
 
             it "creates adjustment with self as source" do

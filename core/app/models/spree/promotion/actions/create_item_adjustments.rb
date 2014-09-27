@@ -25,11 +25,11 @@ module Spree
           amount = self.compute_amount(adjustable)
           return if amount == 0
           return if promotion.product_ids.present? and !promotion.product_ids.include?(adjustable.product.id)
-          self.adjustments.create!(
-            amount: amount,
+          order.create_adjustment!(
+            amount:     amount,
+            source:     self,
             adjustable: adjustable,
-            order: order,
-            label: "#{Spree.t(:promotion)} (#{promotion.name})",
+            label:      "#{Spree.t(:promotion)} (#{promotion.name})",
           )
           true
         end

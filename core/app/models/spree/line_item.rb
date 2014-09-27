@@ -7,7 +7,6 @@ module Spree
 
     has_one :product, through: :variant
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
 
     before_validation :copy_price
@@ -25,6 +24,7 @@ module Spree
     validate :ensure_proper_currency
     before_destroy :update_inventory
     before_destroy :destroy_inventory_units
+    before_destroy :destroy_adjustments
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -34,6 +34,15 @@ module Spree
     delegate :name, :description, :sku, :should_track_inventory?, to: :variant
 
     attr_accessor :target_shipment
+
+    # Return adjustments scope
+    #
+    # @return [MemoryScope]
+    #
+    # @api private
+    def adjustments
+      order.all_adjustments.adjustable(self)
+    end
 
     def copy_price
       if variant
@@ -109,7 +118,7 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
-          update_tax_charge # Called to ensure pre_tax_amount is updated. 
+          update_tax_charge # Called to ensure pre_tax_amount is updated.
           recalculate_adjustments
         end
       end
@@ -118,8 +127,12 @@ module Spree
         Spree::ItemAdjustments.new(self).update
       end
 
+      def destroy_adjustments
+        adjustments.destroy_all
+      end
+
       def update_tax_charge
-        Spree::TaxRate.adjust(order.tax_zone, [self])
+        Spree::TaxRate.adjust(order, [self])
       end
 
       def ensure_proper_currency

@@ -120,9 +120,10 @@ module Spree
           adjustments.each do |a|
             begin
               adjustment = order.adjustments.build(
-                order:  order,
-                amount: a[:amount].to_f,
-                label:  a[:label]
+                order:      order,
+                adjustable: order,
+                amount:     a[:amount].to_f,
+                label:      a[:label]
               )
               adjustment.save!
               adjustment.close!
