@@ -39,7 +39,7 @@ module Spree
       return unless expiry.present?
 
       self[:month], self[:year] =
-      if expiry.match(/\d\s?\/\s?\d/) # will match mm/yy and mm / yyyy
+      if expiry.match(/\d{2}\s?\/\s?\d{2,4}/) # will match mm/yy and mm / yyyy
         expiry.delete(' ').split('/')
       elsif match = expiry.match(/(\d{2})(\d{2,4})/) # will match mmyy and mmyyyy
         [match[1], match[2]]
@@ -48,7 +48,7 @@ module Spree
         self[:year] = "20" + self[:year] if self[:year].length == 2
         self[:year] = self[:year].to_i
       end
-      self[:month] = self[:month].to_i
+      self[:month] = self[:month].to_i if self[:month]
     end
 
     def number=(num)
