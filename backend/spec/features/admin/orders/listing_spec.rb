@@ -6,8 +6,8 @@ describe "Orders Listing" do
   let!(:promotion) { create(:promotion_with_item_adjustment) }
 
   before(:each) do
-    @order1 = create(:order, :created_at => 1.day.from_now, :completed_at => 1.day.from_now, :number => "R100")
-    @order2 = create(:order, :created_at => 1.day.ago, :completed_at => 1.day.ago, :number => "R200")
+    @order1 = create(:order, created_at: 1.day.from_now, completed_at: 1.day.from_now, considered_risky: true, number: "R100")
+    @order2 = create(:order, created_at: 1.day.ago, completed_at: 1.day.ago, number: "R200")
     visit spree.admin_path
   end
 
@@ -18,12 +18,14 @@ describe "Orders Listing" do
 
     it "should list existing orders" do
       within_row(1) do
-        column_text(2).should == "R100"
-        column_text(3).should == "cart"
+        expect(column_text(2)).to eq "R100"
+        expect(find("td:nth-child(3)")).to have_css '.considered_risky'
+        expect(column_text(4)).to eq "cart"
       end
 
       within_row(2) do
-        column_text(2).should == "R200"
+        expect(column_text(2)).to eq "R200"
+        expect(find("td:nth-child(3)")).to have_css '.considered_safe'
       end
     end
 
