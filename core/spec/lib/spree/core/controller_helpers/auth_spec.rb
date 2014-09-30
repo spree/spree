@@ -64,9 +64,9 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
   end
 
-  describe '#unauthorized' do
+  describe '#redirect_unauthorized_access' do
     controller(FakesController) do
-      def index; unauthorized; end
+      def index; redirect_unauthorized_access; end
     end
     context 'when logged in' do
       before do
