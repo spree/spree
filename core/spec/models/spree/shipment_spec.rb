@@ -129,9 +129,9 @@ describe Spree::Shipment do
   it "#final_price" do
     shipment = Spree::Shipment.new
     shipment.cost = 10
-    shipment.promo_total = -2
+    shipment.adjustment_total = -2
     shipment.included_tax_total = 1
-    expect(shipment.final_price).to eq(9)
+    expect(shipment.final_price).to eq(8)
   end
 
   context "manifest" do
