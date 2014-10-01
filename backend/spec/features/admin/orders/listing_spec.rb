@@ -64,6 +64,21 @@ describe "Orders Listing" do
       within("table#listing_orders") { page.should_not have_content("R100") }
     end
 
+    it "should be able to filter risky orders" do
+      # Check risky and filter
+      check "q_considered_risky_eq"
+      click_button "Filter Results"
+
+      # Insure checkbox still checked
+      find("#q_considered_risky_eq").should be_checked
+      # Insure we have the risky order, R100
+      within_row(1) do
+        page.should have_content("R100")
+      end
+      # Insure the non risky order is not present
+      page.should_not have_content("R200")
+    end
+
     context "when pagination is really short" do
       before do
         @old_per_page = Spree::Config[:orders_per_page]

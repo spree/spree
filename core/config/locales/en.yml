@@ -1225,6 +1225,7 @@ en:
     show_active: Show Active
     show_deleted: Show Deleted
     show_only_complete_orders: Only show complete orders
+    show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
     sku: SKU
     skus: SKUs
