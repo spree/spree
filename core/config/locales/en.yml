@@ -42,6 +42,7 @@ en:
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
+        considered_risky: Risky
         coupon_code: Coupon Code
         created_at: Order Date
         email: Customer E-Mail
