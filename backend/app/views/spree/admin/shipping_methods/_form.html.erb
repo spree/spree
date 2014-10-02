@@ -23,6 +23,14 @@
         <%= error_message_on :shipping_method, :admin_name %>
       <% end %>
     </div>
+
+    <div data-hook="admin_shipping_method_form_code" class="omega six columns">
+      <%= f.field_container :code do %>
+        <%= f.label :code, Spree.t(:code) %><br />
+        <%= f.text_field :code, :class => 'fullwidth', :label => false  %>
+        <%= error_message_on :shipping_method, :code %>
+      <% end %>
+    </div>
   </div>
 
   <div data-hook="admin_shipping_method_form_tracking_url_field" class="alpha twelve columns">
