@@ -477,6 +477,7 @@ module Spree
             json_shipping_method = shipment["shipping_methods"][0]
             json_shipping_method["id"].should == shipping_method.id
             json_shipping_method["name"].should == shipping_method.name
+            json_shipping_method["code"].should == shipping_method.code
             json_shipping_method["zones"].should_not be_empty
             json_shipping_method["shipping_categories"].should_not be_empty
 

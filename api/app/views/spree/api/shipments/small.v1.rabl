@@ -14,7 +14,7 @@ child :selected_shipping_rate => :selected_shipping_rate do
 end
 
 child :shipping_methods => :shipping_methods do
-  attributes :id, :name
+  attributes :id, :code, :name
   child :zones => :zones do
     attributes :id, :name, :description
   end
