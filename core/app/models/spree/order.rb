@@ -381,7 +381,12 @@ module Spree
     #   which gets rescued and converted to FALSE when
     #   :allow_checkout_on_gateway_error is set to false
     #
-    def process_payments!
+    def process_payments!\
+      # Don't run if there is nothing to pay.
+      return if payment_total >= total
+      # Prevent orders from transitioning to complete without a successfully processed payment.
+      raise Core::GatewayError.new(Spree.t(:no_payment_found)) if pending_payments.empty?
+
       pending_payments.each do |payment|
         break if payment_total >= total
 
