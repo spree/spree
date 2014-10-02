@@ -95,11 +95,18 @@ module Spree
 
     context "#process_payments!" do
       let(:payment) { stub_model(Spree::Payment) }
-      before { order.stub :unprocessed_payments => [payment], :total => 10 }
+      before { order.stub unprocessed_payments: [payment], total: 10 }
 
       it "should process the payments" do
         payment.should_receive(:process!)
         expect(order.process_payments!).to be_truthy
+      end
+
+      # Regression spec for https://github.com/spree/spree/issues/5436
+      it 'should raise an error if there are no payments to process' do
+        order.stub unprocessed_payments: []
+        expect(payment).to_not receive(:process!)
+        expect(order.process_payments!).to be_falsey
       end
 
       context "when a payment raises a GatewayError" do
