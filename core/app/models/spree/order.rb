@@ -643,7 +643,7 @@ module Spree
 
     def has_available_shipment
       return unless has_step?("delivery")
-      return unless address?
+      return unless has_step?(:address) && address?
       return unless ship_address && ship_address.valid?
       # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
     end

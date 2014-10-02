@@ -10,23 +10,10 @@ module Spree
 
       skip_before_action :load_resource, only: [:toggle_state, :edit, :update, :destroy]
 
-      def destroy
-        find_adjustment
-        super
-      end
-
-      def edit
-        find_adjustment
-        super
-      end
+      before_action :find_adjustment, only: [:destroy, :edit, :update]
 
       def index
         @adjustments = @order.all_adjustments.order("created_at ASC")
-      end
-
-      def update
-        find_adjustment
-        super
       end
 
       private

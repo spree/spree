@@ -9,7 +9,7 @@ module Spree
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|
-            unauthorized
+            redirect_unauthorized_access
           end
         end
 
@@ -17,7 +17,6 @@ module Spree
         def current_ability
           @current_ability ||= Spree::Ability.new(try_spree_current_user)
         end
-
 
         def redirect_back_or_default(default)
           redirect_to(session["spree_user_return_to"] || default)
@@ -64,7 +63,7 @@ module Spree
         # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
         # Override this method in your controllers if you want to have special behavior in case the user is not authorized
         # to access the requested action.  For example, a popup window might simply close itself.
-        def unauthorized
+        def redirect_unauthorized_access
           if try_spree_current_user
             flash[:error] = Spree.t(:authorization_failure)
             redirect_to '/unauthorized'

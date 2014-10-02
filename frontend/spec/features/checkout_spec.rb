@@ -224,6 +224,7 @@ describe "Checkout", inaccessible: true do
 
       Spree::CheckoutController.any_instance.stub(current_order: order)
       Spree::CheckoutController.any_instance.stub(try_spree_current_user: user)
+      Spree::OrdersController.any_instance.stub(try_spree_current_user: user)
 
       visit spree.checkout_state_path(:payment)
     end

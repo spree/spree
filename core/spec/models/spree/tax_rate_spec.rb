@@ -158,7 +158,7 @@ describe Spree::TaxRate do
     end
   end
 
-  context "adjust" do
+  context ".adjust" do
     let(:order) { stub_model(Spree::Order) }
     let(:tax_category_1) { stub_model(Spree::TaxCategory) }
     let(:tax_category_2) { stub_model(Spree::TaxCategory) }
@@ -336,7 +336,7 @@ describe Spree::TaxRate do
           describe 'tax adjustments' do
             before { Spree::TaxRate.adjust(@order.tax_zone, @order.line_items) }
 
-            it "should apply adjustments when a tax zone is present" do            
+            it "should apply adjustments when a tax zone is present" do
               line_item.adjustments.count.should == 2
             end
 
