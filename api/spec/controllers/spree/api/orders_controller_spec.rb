@@ -489,6 +489,7 @@ module Spree
             shipping_rate["cost"].should == "10.0"
             shipping_rate["selected"].should be_true
             shipping_rate["display_cost"].should == "$10.00"
+            shipping_rate["shipping_method_code"].should == json_shipping_method["code"]
 
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
