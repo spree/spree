@@ -529,6 +529,7 @@ module Spree
             json_shipping_method = shipment["shipping_methods"][0]
             json_shipping_method["id"].should == shipping_method.id
             json_shipping_method["name"].should == shipping_method.name
+            json_shipping_method["code"].should == shipping_method.code
             json_shipping_method["zones"].should_not be_empty
             json_shipping_method["shipping_categories"].should_not be_empty
 
@@ -540,6 +541,7 @@ module Spree
             shipping_rate["cost"].should == "10.0"
             shipping_rate["selected"].should be true
             shipping_rate["display_cost"].should == "$10.00"
+            shipping_rate["shipping_method_code"].should == json_shipping_method["code"]
 
             shipment["stock_location_name"].should_not be_blank
             manifest_item = shipment["manifest"][0]
