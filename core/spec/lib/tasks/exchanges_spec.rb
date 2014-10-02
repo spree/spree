@@ -96,6 +96,13 @@ describe "exchanges:charge_unreturned_items" do
         expect { subject.invoke }.not_to change { Spree::Order.count }
       end
 
+      it "associates the store of the original order with the exchange order" do
+        Spree::Order.any_instance.stub(:store_id).and_return(123)
+
+        expect(Spree::Order).to receive(:create!).once.with(hash_including({store_id: 123})) { |attrs| Spree::Order.new(attrs.except(:store_id)).tap(&:save!) }
+        subject.invoke
+      end
+
       context "there is no card from the previous order" do
         let!(:credit_card) { create(:credit_card, user: order.user, default: true, gateway_customer_profile_id: "BGS-123") }
         before { Spree::Order.any_instance.stub(:valid_credit_cards) { [] } }
