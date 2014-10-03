@@ -23,8 +23,8 @@ the information requested is provided.
 
 ## Pull requests
 
-We gladly accept pull requests to fix bugs and, in some circumstances, add new
-features to Spree.
+We gladly accept pull requests to add documentation, fix bugs and, in some circumstances,
+add new features to Spree.
 
 Here's a quick guide:
 
@@ -68,7 +68,7 @@ Syntax:
 * `a_method { |block| ... }` and not `a_method { | block | ... }`
 * Follow the conventions you see used in the source already.
 * -> symbol over lambda
-* Ruby 1.9 hash syntax over Ruby 1.8 hash syntax
+* Ruby 1.9 hash syntax `{ key: value }` over Ruby 1.8 hash syntax `{ :key => value }`
 * Alphabetize the class methods to keep them organized
 
 And in case we didn't emphasize it enough: we love tests!
