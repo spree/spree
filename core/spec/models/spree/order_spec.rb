@@ -278,7 +278,7 @@ describe Spree::Order do
           line_item = order_1.line_items.first
           line_item.quantity.should == 2
           line_item.variant_id.should == variant.id
-        end       
+        end
       end
 
       context "2 different line items" do
@@ -300,7 +300,7 @@ describe Spree::Order do
           line_item = order_1.line_items.last
           line_item.quantity.should == 1
           line_item.variant_id.should == variant.id
-        end       
+        end
       end
     end
 
@@ -412,16 +412,15 @@ describe Spree::Order do
 
   describe "#restart_checkout_flow" do
     it "updates the state column to the first checkout_steps value" do
-      order = create(:order, :state => "delivery")
+      order = create(:order_with_totals, state: "delivery")
       expect(order.checkout_steps).to eql ["address", "delivery", "complete"]
       expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("address")
     end
 
-    context "with custom checkout_steps" do
-      it "updates the state column to the first checkout_steps value" do
-        order = create(:order, :state => "delivery")
-        order.should_receive(:checkout_steps).and_return ["custom_step", "address", "delivery", "complete"]
-        expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("custom_step")
+    context "without line items" do
+      it "updates the state column to cart" do
+        order = create(:order, state: "delivery")
+        expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("cart")
       end
     end
   end
