@@ -13,6 +13,7 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [x] Support Tax Code, https://github.com/spree/spree/pull/5409
 - [ ] Disable FE configuration, https://github.com/spree/spree/pull/5360
 - [x] Allow filter on risky Orders, https://github.com/spree/spree/pull/5438
+- [ ] Code for Shipping Methods, https://github.com/spree/spree/pull/5439
 
 SUMMARY
 -------
