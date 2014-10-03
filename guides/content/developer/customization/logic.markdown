@@ -103,6 +103,38 @@ app/controllers/spree/products_controller_decorator.rb
     end
 <% end %>
 
+**Using Ruby 2.1+ you can fight the war on class_eval.**
+
+<% ruby do %>
+    module ProductExtensions
+      extend ActiveSupport::Concern
+
+      included do
+        singleton_class.prepend ClassMethods
+        prepend InstanceMethods
+      end
+
+      module ClassMethods
+        def some_class_method
+           ...
+        end
+      end
+
+      module InstanceMethods
+        def instance_method_override
+           # do before work
+           original_result = super # do original work
+           # do after work
+           return original_result
+         end
+         def new_instance_method
+           # do something new
+         end
+      end
+    end
+    Spree::Product.include ProductExtensions
+<% end %>
+
 #### Accessing Product Data
 
 If you extend the Products controller with a new method, you may very
