@@ -20,28 +20,28 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="four columns alpha">
         <div class="field">
-          <%= label_tag nil, Spree.t(:name) %>
+          <%= label_tag :q_name_cont, Spree.t(:name) %>
           <%= f.text_field :name_cont, tabindex: 1 %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, Spree.t(:code) %>
+          <%= label_tag :q_code_cont, Spree.t(:code) %>
           <%= f.text_field :code_cont, tabindex: 1 %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, Spree.t(:path) %>
+          <%= label_tag :q_path_cont, Spree.t(:path) %>
           <%= f.text_field :path_cont, tabindex: 1 %>
         </div>
       </div>
 
       <div class="four columns omega">
         <div class="field">
-          <%= label_tag nil, 'promotion category' %><br>
+          <%= label_tag :q_promotion_category_id_eq, 'promotion category' %><br>
           <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2 fullwidth' }) %>
         </div>
       </div>
