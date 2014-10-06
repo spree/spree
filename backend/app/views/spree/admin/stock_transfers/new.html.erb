@@ -69,8 +69,8 @@
       </div>
       <div class="two columns">
         <div class="field" id="stock_movement_quantity_field">
-          <%= label_tag 'quantity', Spree.t(:quantity) %>
-          <%= number_field_tag 'transfer_variant_quantity', 1, class: 'fullwidth', min: 0 %>
+          <%= label_tag :transfer_variant_quantity, Spree.t(:quantity) %>
+          <%= number_field_tag :transfer_variant_quantity, 1, class: 'fullwidth', min: 0 %>
         </div>
       </div>
       <div class="two columns omega">
