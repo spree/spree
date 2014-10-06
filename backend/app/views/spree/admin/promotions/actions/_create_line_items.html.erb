@@ -10,14 +10,14 @@
   <% line_items.each_with_index do |line_item, index| %>
     <div class="add-line-item">
       <div class="row">
-        <div class="field alpha eight columns">
-          <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
-          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, :class => "variant_autocomplete fullwidth" %>
+        <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
+        <div class="field alpha six columns">
+          <%= label_tag "#{line_item_prefix}_variant_id", Spree.t(:variant) %>
+          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: "variant_autocomplete fullwidth" %>
         </div>
-      </div>
-      <div class="row">
-        <div class="field omega eight columns">
-          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, :min => 1, :class => 'fullwidth' %>
+        <div class="field omega two columns">
+          <%= label_tag "#{line_item_prefix}_quantity", Spree.t(:quantity) %>
+          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, min: 1, class: 'fullwidth' %>
         </div>
       </div>
     </div>
