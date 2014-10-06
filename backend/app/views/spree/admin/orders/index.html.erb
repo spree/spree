@@ -17,7 +17,7 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="field-block alpha four columns">
         <div class="date-range-filter field">
-          <%= label_tag nil, Spree.t(:date_range) %>
+          <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
           <div class="date-range-fields">
             <%= f.text_field :created_at_gt, :class => 'datepicker datepicker-from', :value => params[:q][:created_at_gt], :placeholder => Spree.t(:start) %>
 
@@ -30,34 +30,34 @@
         </div>
 
         <div class="field">
-          <%= label_tag nil, Spree.t(:status) %>
+          <%= label_tag :q_state_eq, Spree.t(:status) %>
           <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2' %>
         </div>
 
         <div class="field">
-          <%= label_tag nil, Spree.t(:promotion) %>
+          <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
           <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {:include_blank => true}, :class => 'select2' %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, Spree.t(:order_number, :number => '') %>
+          <%= label_tag :q_number_cont, Spree.t(:order_number, :number => '') %>
           <%= f.text_field :number_cont %>
         </div>
         <div class="field">
-          <%= label_tag nil, Spree.t(:email) %>
+          <%= label_tag :q_email_cont, Spree.t(:email) %>
           <%= f.text_field :email_cont %>
         </div>
       </div>
 
       <div class="four columns">
         <div class="field">
-          <%= label_tag nil, Spree.t(:first_name_begins_with) %>
+          <%= label_tag :q_bill_address_firstname_start, Spree.t(:first_name_begins_with) %>
           <%= f.text_field :bill_address_firstname_start, :size => 25 %>
         </div>
         <div class="field">
-          <%= label_tag nil, Spree.t(:last_name_begins_with) %>
+          <%= label_tag :q_bill_address_lastname_start, Spree.t(:last_name_begins_with) %>
           <%= f.text_field :bill_address_lastname_start, :size => 25%>
         </div>
       </div>
@@ -65,11 +65,11 @@
       <div class="omega four columns">
         <div class="field checkbox">
           <label>
-            <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
+            <%= f.check_box :q_completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
             <%= Spree.t(:show_only_complete_orders) %>
           </label>
           <label>
-            <%= f.check_box :considered_risky_eq, {:checked => (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
+            <%= f.check_box :q_considered_risky_eq, {:checked => (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
             <%= Spree.t(:show_only_considered_risky) %>
           </label>
         </div>

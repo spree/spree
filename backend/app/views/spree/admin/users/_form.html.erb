@@ -12,7 +12,7 @@
         <% @roles.each do |role| %>
           <li>
             <%= check_box_tag 'user[spree_role_ids][]', role.id, @user.spree_roles.include?(role), :id => "user_spree_role_#{role.name}" %>
-            <%= label_tag role.name %>
+            <%= label_tag "user_spree_role_#{role.name}", role.name %>
           </li>
         <% end %>
       </ul>
