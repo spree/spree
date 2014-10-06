@@ -10,8 +10,8 @@ Some customization scenarios are so common that developers have bundled them int
 
 All of these extensions are open source - meaning they, like Spree itself, are offered free of charge. It also means they require support from the community contributors to keep them current and documented.
 
-## spree_paypal_express
-[spree_paypal_express](https://github.com/spree/spree_paypal_express) allows your store to accept payments for orders using [Paypal](https://www.paypal.com/). Paypal has over 130 million active registered accounts, and supports more than 25 currencies, making its use mission-critical for many e-commerce stores.
+## better_spree_paypal_express
+[better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express) allows your store to accept payments for orders using [Paypal](https://www.paypal.com/). Paypal has over 130 million active registered accounts, and supports more than 25 currencies, making its use mission-critical for many e-commerce stores.
 
 ## spree_gateway
 [spree_gateway](https://github.com/spree/spree_gateway) is a collection of payment gateways that your store can use for processing payments. It supports dozens of both [direct payment gateways](https://github.com/Shopify/active_merchant/blob/master/README.md#supported-direct-payment-gateways) and [offsite payment gateways](https://github.com/Shopify/active_merchant/blob/master/README.md#supported-offsite-payment-gateways).
