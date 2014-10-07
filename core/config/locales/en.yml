@@ -487,6 +487,7 @@ en:
     back_to_users_list: Back To Users List
     back_to_zones_list: Back To Zones List
     backorderable: Backorderable
+    backorderable_default: Backorderable default
     backorders_allowed: backorders allowed
     balance_due: Balance Due
     base_amount: Base Amount
@@ -1081,6 +1082,7 @@ en:
         name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
+    propagate_all_variants: Propagate all variants
     properties: Properties
     property: Property
     prototype: Prototype
