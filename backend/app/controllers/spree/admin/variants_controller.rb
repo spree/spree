@@ -5,7 +5,7 @@ module Spree
       new_action.before :new_before
       before_action :load_data, only: [:new, :create, :edit, :update]
 
-      # override the destory method to set deleted_at value
+      # override the destroy method to set deleted_at value
       # instead of actually deleting the product.
       def destroy
         @variant = Variant.find(params[:id])
