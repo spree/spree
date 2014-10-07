@@ -5,11 +5,11 @@ module Spree
       before_filter :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
 
       def create
-        @order = Spree::Order.find_by!(number: params[:shipment][:order_id])
+        @order = Spree::Order.find_by!(number: params.fetch(:shipment).fetch(:order_id))
         authorize! :read, @order
         authorize! :create, Shipment
         quantity = params[:quantity].to_i
-        @shipment = @order.shipments.create(stock_location_id: params[:stock_location_id])
+        @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
         @order.contents.add(variant, quantity, nil, @shipment)
 
         @shipment.save!
