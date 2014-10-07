@@ -65,11 +65,11 @@
       <div class="omega four columns">
         <div class="field checkbox">
           <label>
-            <%= f.check_box :q_completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
+            <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
             <%= Spree.t(:show_only_complete_orders) %>
           </label>
           <label>
-            <%= f.check_box :q_considered_risky_eq, {:checked => (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
+            <%= f.check_box :considered_risky_eq, {:checked => (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
             <%= Spree.t(:show_only_considered_risky) %>
           </label>
         </div>
