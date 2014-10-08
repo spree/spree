@@ -14,7 +14,8 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [ ] Disable FE configuration, https://github.com/spree/spree/pull/5360
 - [x] Allow filter on risky Orders, https://github.com/spree/spree/pull/5438
 - [x] Code for Shipping Methods, https://github.com/spree/spree/pull/5439
-- [ ] Enforce params for API shipments create, https://github.com/spree/spree/pull/5458
+- [x] Enforce params for API shipments create, https://github.com/spree/spree/pull/5458
+- [x] Track admin cancel of order, https://github.com/spree/spree/pull/5464
 
 SUMMARY
 -------
