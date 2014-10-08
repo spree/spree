@@ -37,5 +37,12 @@
       <dt><%= Spree.t(:approved_at) %></dt>
       <dd><%= pretty_time(@order.approved_at) %></dd>
     <% end %>
+
+    <% if @order.canceled? && @order.canceler && @order.canceled_at %>
+      <dt><%= Spree.t(:canceler) %></dt>
+      <dd><%= @order.canceler.email %></td>
+      <dt><%= Spree.t(:canceled_at) %></dt>
+      <dd><%= pretty_time(@order.canceled_at) %></dd>
+    <% end %>
   </dl>
 </header>

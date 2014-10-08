@@ -28,10 +28,12 @@ module Spree
       belongs_to :user, class_name: Spree.user_class.to_s
       belongs_to :created_by, class_name: Spree.user_class.to_s
       belongs_to :approver, class_name: Spree.user_class.to_s
+      belongs_to :canceler, class_name: Spree.user_class.to_s
     else
       belongs_to :user
       belongs_to :created_by
       belongs_to :approver
+      belongs_to :canceler
     end
 
     belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address'
@@ -560,6 +562,16 @@ module Spree
 
     def is_risky?
       self.payments.risky.count > 0
+    end
+
+    def canceled_by(user)
+      self.transaction do
+        cancel!
+        self.update_columns(
+          canceler_id: user.id,
+          canceled_at: Time.now,
+        )
+      end
     end
 
     def approved_by(user)

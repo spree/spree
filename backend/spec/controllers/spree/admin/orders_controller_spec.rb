@@ -38,7 +38,7 @@ describe Spree::Admin::OrdersController do
 
     context "#cancel" do
       it "cancels an order" do
-        expect(order).to receive(:cancel!)
+        expect(order).to receive(:canceled_by).with(controller.try_spree_current_user)
         spree_put :cancel, id: order.number
         expect(flash[:success]).to eq Spree.t(:order_canceled)
       end
