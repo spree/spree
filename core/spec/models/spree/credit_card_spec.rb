@@ -103,6 +103,13 @@ describe Spree::CreditCard do
       credit_card.errors[:base].should == ["Card has expired"]
     end
 
+    it "should not be expired expiring on the current month" do
+      credit_card.attributes = valid_credit_card_attributes
+      credit_card.month = Time.zone.now.month
+      credit_card.year = Time.zone.now.year
+      credit_card.should be_valid
+    end
+
     it "should handle TZ correctly" do
       # The card is valid according to the system clock's local time
       # (Time.now).
