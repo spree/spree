@@ -10,34 +10,36 @@ Returns are a reality of doing business for most e-commerce sites. A customer ma
 
 You can only create RMAs for orders that have already been shipped. That makes sense, as you wouldn't authorize a return for something you haven't sent out yet.
 
-![Return Authorizations Link](/images/user/orders/return_authorizations_link.jpg)
+![Return Authorizations Link](/images/user/orders/return_authorizations_link.png)
 
-To create an RMA for a shipped order, click the order's "Return Authorizations" link, then click the "New Return Authorization" button. The form that opens up enables you to select precisely those items that were returned, and issue an RMA for the corresponding amount.
+To create an RMA for a shipped order, click the order's "Return Authorizations" link, then click the "New Return Authorization" button. The form that opens up enables you to select which items will be authorized to be returned, and issue an RMA for the corresponding amount.
 
-![RMA Form](/images/user/orders/rma_form.jpg)
+![RMA Form](/images/user/orders/rma_form.png)
 
-To use it, just increment the quantities for each line item to indicate how many items are being returned. The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to manually input this value into the "Amount" field. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
+To use it, just select each line item to be returned, and either a reimbursement type or exchange item. Selecting the "Original" reimbursement type will refund a user back to their original payment method when the items are returned and approved.  Selecting an exchange item will create a new shipment to ship the exchange item to the customer.  The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to confirm the amount when the reimbursement is issued. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
 
-Input the reason for the return, and select the [Stock Location](stock_locations) the item is coming back to. Click the "Continue" button.
+Input the reason and any memo notes for the return, and select the [Stock Location](stock_locations) the item is coming back to. Click the "Create" button.
 
 Now you just need to wait for the package to be received at your location.
 
 ## Processing Returns
 
-Once you receive a return package, you need to mark the RMA as Received. To do so, go to the order in question and click "Return Authorizations". Click the "Edit" icon next to the RMA. Click the "Receive" button.
+Once you receive a return package, you need to create a "Customer Return". To do so, go to the order in question and click "Customer Returns". Click the "New Customer Return" button.
 
-![Receive RMA Button](/images/user/orders/mark_rma_received.jpg)
+![Receive RMA Button](/images/user/orders/customer_return_link.png)
 
-Click "OK" to confirm. The RMA is marked "Received", and the order is marked with a Payment Status of "Credit Owed". Furthermore, you now owe the customer a refund of $15.99 - the cost of the items returned.
+Select which of the authorized return items were received, and to which [Stock Location](stock_locations).  Once done click the "Create" button.
 
-![RMA Received](/images/user/orders/rma_received.jpg)
+![Receive RMA Button](/images/user/orders/customer_return_form.png)
 
-To issue this refund, click the Payments link. You can issue the refund right back to the credit card with which the customer purchased the item. Just click the "New Payment" button. The amount is pre-filled in for you (a negative amount, since it's a credit and not a charge), and the correct card is already selected.
+The return items are marked as accepted, and now you can create a reimbursement for the $22.99 you owe the customer.
 
-![Issue a Refund](/images/user/orders/issue_refund.jpg)
+![RMA Received](/images/user/orders/create_reimbursement_button.png)
 
-All you need to do is click the "Update" button. As with all transactions, you need to manually capture it by clicking the "Capture" icon.
+The reimbursement form will be populated according to your original reimbursement or exchange selections chosen during the return authorization form.  You may override the selected reimbursement type or exchange item now if you would like, otherwise click the "Reimburse" button to create the refund.
 
-![Capture Refund](/images/user/orders/capture_refund.jpg)
+![Issue a Reimbursement](/images/user/orders/reimbursement_form.png)
 
-Your return-processing is complete!
+Your return-processing is complete!  As you can see there will now be a $22.99 refund issued to the original credit card.
+
+![Reimbursement Complete](/images/user/orders/reimbursement_complete.png)

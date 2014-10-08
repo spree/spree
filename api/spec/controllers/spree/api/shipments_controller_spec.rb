@@ -27,18 +27,41 @@ describe Spree::Api::ShipmentsController do
     let!(:order) { shipment.order }
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:variant) { create(:variant) }
+
     sign_in_as_admin!
 
-    it 'can create a new shipment' do
-      params = {
-        variant_id: stock_location.stock_items.first.variant.to_param,
-        shipment: { order_id: order.number },
-        stock_location_id: stock_location.to_param,
-      }
+    # Start writing this spec a bit differently than before....
+    describe 'POST #create' do
+      let(:params) do
+        {
+          variant_id: stock_location.stock_items.first.variant.to_param,
+          shipment: { order_id: order.number },
+          stock_location_id: stock_location.to_param
+        }
+      end 
+      
+      subject do 
+        api_post :create, params
+      end
 
-      api_post :create, params
-      response.status.should == 200
-      json_response.should have_attributes(attributes)
+      [:variant_id, :stock_location_id].each do |field|
+        context "when #{field} is missing" do
+          before do
+            params.delete(field)
+          end
+
+          it 'should return proper error' do
+            subject
+            expect(response.status).to eq(422)
+            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field.to_s}")
+          end
+        end
+      end
+
+      it 'should create a new shipment' do
+        expect(subject).to be_ok
+        expect(json_response).to have_attributes(attributes)
+      end
     end
 
     it 'can update a shipment' do
@@ -115,5 +138,53 @@ describe Spree::Api::ShipmentsController do
       end
 
     end
+
+    describe '#mine' do
+      subject do
+        api_get :mine, format: 'json', params: params
+      end
+
+      let(:params) { {} }
+
+      before { subject }
+
+      context "the current api user is authenticated and has orders" do
+        let(:current_api_user) { shipped_order.user }
+        let(:shipped_order) { create(:shipped_order) }
+
+        it 'succeeds' do
+          expect(response.status).to eq 200
+        end
+
+        describe 'json output' do
+          render_views
+
+          let(:rendered_shipment_ids) { json_response['shipments'].map { |s| s['id'] } }
+
+          it 'contains the shipments' do
+            expect(rendered_shipment_ids).to match_array current_api_user.orders.flat_map(&:shipments).map(&:id)
+          end
+        end
+
+        context 'with filtering' do
+          let(:params) { {q: {order_completed_at_not_null: 1}} }
+
+          let!(:incomplete_order) { create(:order, user: current_api_user) }
+
+          it 'filters' do
+            expect(assigns(:shipments).map(&:id)).to match_array current_api_user.orders.complete.flat_map(&:shipments).map(&:id)
+          end
+        end
+      end
+
+      context "the current api user is not persisted" do
+        let(:current_api_user) { Spree.user_class.new }
+
+        it "returns a 401" do
+          response.status.should == 401
+        end
+      end
+    end
+
   end
 end

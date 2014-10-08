@@ -72,7 +72,7 @@ module Spree
       end
 
       it "will set an unique sku" do
-        expect(new_product.sku).to include "COPY OF ABC"
+        expect(new_product.sku).to include "COPY OF SKU"
       end
 
       it "copied the properties" do

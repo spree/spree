@@ -487,6 +487,7 @@ en:
     back_to_users_list: Back To Users List
     back_to_zones_list: Back To Zones List
     backorderable: Backorderable
+    backorderable_default: Backorderable default
     backorders_allowed: backorders allowed
     balance_due: Balance Due
     base_amount: Base Amount
@@ -525,7 +526,7 @@ en:
     choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
-    click_and_drag_on_the_products_to_sort_them: 'Click &amp; drag on the products to sort them.'
+    click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
@@ -1081,6 +1082,7 @@ en:
         name: Taxon(s)
     promotions: Promotions
     promotion_uses: Promotion uses
+    propagate_all_variants: Propagate all variants
     properties: Properties
     property: Property
     prototype: Prototype
@@ -1340,7 +1342,7 @@ en:
     validation:
       unpaid_amount_not_zero: "Amount was not fully reimbursed. Still due: %{amount}"
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
-      cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.
+      cannot_destroy_line_item_as_inventory_units_have_shipped: Cannot destroy line item as some inventory units have shipped.
       exceeds_available_stock: exceeds available stock. Please ensure line items have a valid quantity.
       is_too_large: is too large -- stock on hand cannot cover requested quantity!
       must_be_int: must be an integer

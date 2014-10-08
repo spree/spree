@@ -32,7 +32,7 @@ namespace :exchanges do
         end
 
         order.reload.update!
-        while order.next; end
+        while order.state != order.checkout_steps[-2] && order.next; end
 
         unless order.payments.present?
           card_to_reuse = original_order.valid_credit_cards.first
