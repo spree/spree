@@ -5,7 +5,6 @@ SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
 SUMMARY
 -------
 
-
 Spree is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by a dedicated
 [core team](https://github.com/spree/spree/wiki/Core-Team). You can find out more by
@@ -30,6 +29,7 @@ and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/spree/spree)
 
 Installation
 ------------

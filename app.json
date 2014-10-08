@@ -1,0 +1,23 @@
+{
+    "name": "Spree",
+    "description": "Spree Commerce's open source eCommerce storefront.",
+    "website": "http://spreecommerce.com/storefront",
+    "repository": "https://github.com/spree/spree",
+    "logo": "http://spreecommerce.com/images/logo.svg",
+    "success_url": "",
+    "keywords": [
+        "rails",
+        "spree",
+        "ruby",
+        "ecommerce"
+    ],
+    "scripts": {
+        "postdeploy": "bundle exec rake db:bootstrap"
+    },
+    "addons": [
+        ""
+    ],
+    "env": {
+        "BUILDPACK_URL": ""
+    }
+}
