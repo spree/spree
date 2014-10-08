@@ -1,7 +1,14 @@
 require 'spec_helper'
 
 describe "Cancelling + Resuming" do
+
   stub_authorization!
+
+  let(:user) { double('id' => 123, 'has_spree_role?' => true) }
+
+  before do
+    allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(user)
+  end
 
   let(:order) do 
     order = create(:order)

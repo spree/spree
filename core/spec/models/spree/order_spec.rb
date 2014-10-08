@@ -14,6 +14,37 @@ describe Spree::Order do
     Spree::LegacyUser.stub(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  context "#canceled_by" do
+    let(:admin_user) { create :admin_user }
+    let(:order) { create :order }
+
+    before do
+      allow(order).to receive(:cancel!)
+    end
+
+    subject { order.canceled_by(admin_user) }
+
+    it 'should cancel the order' do
+      expect(order).to receive(:cancel!)
+      subject
+    end
+
+    it 'should save canceler_id' do
+      subject
+      expect(order.reload.canceler_id).to eq(admin_user.id)
+    end
+
+    it 'should save canceled_at' do
+      subject
+      expect(order.reload.canceled_at).to_not be_nil
+    end
+
+    it 'should have canceler' do
+      subject
+      expect(order.reload.canceler).to eq(admin_user)
+    end
+  end
+
   context "#create" do
     let(:order) { Spree::Order.create }
 
