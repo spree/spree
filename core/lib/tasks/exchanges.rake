@@ -24,7 +24,7 @@ namespace :exchanges do
           ship_address: original_order.ship_address,
           email: original_order.email
         }
-        order_attributes[:store_id] = original_order.store_id if original_order.respond_to?(:store_id)
+        order_attributes[:store_id] = original_order.store_id
         order = Spree::Order.create!(order_attributes)
 
         order.associate_user!(original_order.user) if original_order.user
