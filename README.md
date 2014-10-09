@@ -70,18 +70,18 @@ To select a specific branch, pass in the `--branch` option. If there is no branc
 will be given the latest version of either spree_auth_devise or spree_gateway.
 
 ```shell
-spree install my_store --branch "2-3-stable"
+spree install my_store --branch "2-4-stable"
 ```
 
 Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails 4.1.x application. To use the 2-3-stable branch of Spree, add this line to
+Rails application. To use the 2-4-stable branch of Spree, add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-3-stable'
+gem 'spree', github: 'spree/spree', branch: '2-4-stable'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
@@ -99,7 +99,7 @@ If you wish to have authentication included also, you will need to add the
 `spree_auth_devise` gem as well. Either this:
 
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-3-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-4-stable'
 ```
 
 Or this:
