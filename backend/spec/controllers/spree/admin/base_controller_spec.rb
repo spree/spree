@@ -16,10 +16,10 @@ describe Spree::Admin::BaseController do
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
 
-    it "checks error" do
-      controller.stub root_path: "/rooot"
+    it "redirects to root" do
+      controller.stub_chain(:spree, :root_path).and_return('/root')
       get :index
-      expect(response).to redirect_to "/rooot"
+      expect(response).to redirect_to '/root'
     end
   end
 
