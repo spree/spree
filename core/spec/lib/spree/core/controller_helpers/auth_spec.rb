@@ -87,7 +87,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         expect(response).to redirect_to('/login')
       end
       it 'redirects root path' do
-        controller.stub(root_path: '/root_path')
+        controller.stub_chain(:spree, :root_path).and_return('/root_path')
         get :index
         expect(response).to redirect_to('/root_path')
       end
