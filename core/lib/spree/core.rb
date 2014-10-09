@@ -12,6 +12,7 @@ require 'paperclip'
 require 'paranoia'
 require 'premailer/rails'
 require 'ransack'
+require 'responders'
 require 'state_machine'
 
 module Spree
