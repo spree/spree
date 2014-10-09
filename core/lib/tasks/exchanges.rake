@@ -19,9 +19,13 @@ namespace :exchanges do
         inventory_units = return_items.map(&:exchange_inventory_unit)
 
         original_order = shipment.order
-        order = Spree::Order.create!(bill_address: original_order.bill_address,
-                                    ship_address: original_order.ship_address,
-                                    email: original_order.email)
+        order_attributes = {
+          bill_address: original_order.bill_address,
+          ship_address: original_order.ship_address,
+          email: original_order.email
+        }
+        order_attributes[:store_id] = original_order.store_id if original_order.respond_to?(:store_id)
+        order = Spree::Order.create!(order_attributes)
 
         order.associate_user!(original_order.user) if original_order.user
 
