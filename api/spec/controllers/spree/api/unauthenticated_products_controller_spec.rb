@@ -11,7 +11,7 @@ module Spree
     context "without authentication" do
       before { Spree::Api::Config[:requires_authentication] = false }
 
-      it "retreives a list of products" do
+      it "retrieves a list of products" do
         api_get :index
         json_response["products"].first.should have_attributes(attributes)
         json_response["count"].should == 1

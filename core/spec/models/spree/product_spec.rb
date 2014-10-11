@@ -233,7 +233,7 @@ describe Spree::Product do
     # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
-      it "can retreive stock items" do
+      it "can retrieve stock items" do
         product.master.stock_items.first.should_not be_nil
         product.stock_items.first.should_not be_nil
       end
