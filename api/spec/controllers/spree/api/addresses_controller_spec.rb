@@ -42,7 +42,7 @@ module Spree
         @order.ship_address = nil
       end
 
-      it "cannot retreive address information" do
+      it "cannot retrieve address information" do
         api_get :show, :id => @address.id, :order_id => @order.number
         assert_unauthorized!
       end

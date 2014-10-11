@@ -179,7 +179,7 @@ modification to other files in *lib*.
 Once you have specified *Spree.user_class* correctly, there will be
 some new methods added to your *User* class. The first of these methods
 are the ones added for the *has_and_belongs_to_many* association
-called "spree_roles". This association will retreive all the roles that
+called "spree_roles". This association will retrieve all the roles that
 a user has for Spree.
 
 The second of these is the *spree_orders* association. This will return
