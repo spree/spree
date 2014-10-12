@@ -17,9 +17,11 @@
   </div>
 
   <div class="six columns omega">
-    <%= f.field_container :option_type_ids do %>
-      <%= f.label :option_type_ids, Spree.t(:option_types) %><br>
-      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| ["#{ot.presentation} (#{ot.name})", ot.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
-    <% end %>
+    <div id="option_types" data-hook>
+      <%= f.field_container :option_type_ids do %>
+        <%= f.label :option_type_ids, Spree.t(:option_types) %><br>
+        <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| ["#{ot.presentation} (#{ot.name})", ot.id] }, {}, { :multiple => true, :class => "select2 fullwidth" } %>
+      <% end %>
+    </div>
   </div>
 </div>
