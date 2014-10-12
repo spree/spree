@@ -92,10 +92,8 @@ describe "Prototypes" do
   end
 
   it 'should be deletable', js: true do
-    property = create(:property, name: "model", presentation: "Model")
-
     shirt_prototype = create(:prototype, name: "Shirt", properties: [])
-    shirt_prototype.properties << property
+    shirt_prototype.taxons << create(:taxon)
 
     visit spree.admin_path
     click_link "Products"
