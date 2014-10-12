@@ -225,6 +225,7 @@ module Spree
           product_properties.create(property: property)
         end
         self.option_types = prototype.option_types
+        self.taxons = prototype.taxons
       end
     end
 
