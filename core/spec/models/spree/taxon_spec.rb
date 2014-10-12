@@ -7,6 +7,10 @@ describe Spree::Taxon do
 
   it { should have_and_belong_to_many :prototypes }
 
+  it 'should alias to_param to permalink' do
+    expect(taxon.to_param).to eql taxon.permalink
+  end
+
   context "set_permalink" do
 
     it "should set permalink correctly when no parent present" do
