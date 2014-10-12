@@ -13,9 +13,9 @@
 <%= tab :configurations, :general_settings, :tax_categories, :tax_rates, :zones, :countries, :states, :payment_methods, :shipping_methods, :shipping_categories, :stock_transfers, :stock_locations, :trackers, :refund_reasons, :reimbursement_types, :return_authorization_reasons, label: 'configuration', icon: 'wrench', url: spree.edit_admin_general_settings_path %>
 
 <% if can? :admin, Spree::Promotion %>
-  <%= tab(:promotions, :promotion_categories, url: spree.admin_promotions_path, icon: 'bullhorn') %>
+  <%= tab :promotions, :promotion_categories, url: spree.admin_promotions_path, icon: 'bullhorn' %>
 <% end %>
 
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>
-  <%= tab(:users, url: spree.admin_users_path, icon: 'user') %>
+  <%= tab :users, url: spree.admin_users_path, icon: 'user' %>
 <% end %>
