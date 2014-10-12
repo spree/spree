@@ -11,6 +11,8 @@ Carmen::Country.all.each do |country|
   }
 end
 
-Spree::Country.create!(countries)
+ActiveRecord::Base.transaction do
+  Spree::Country.create!(countries)
+end
 
 Spree::Config[:default_country_id] = Spree::Country.find_by(name: "United States").id
