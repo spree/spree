@@ -55,9 +55,7 @@ module Spree
     end
 
     # For #2759
-    def to_param
-      permalink
-    end
+    alias_method :to_param, :permalink
 
     def active_products
       scope = products.active
