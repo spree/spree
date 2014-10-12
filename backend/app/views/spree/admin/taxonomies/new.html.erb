@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+<%= render 'spree/admin/shared/configuration_menu' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_taxonomy) %>
@@ -9,6 +9,8 @@
     <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'arrow-left' %>
   </li>
 <% end %>
+
+<%= render 'spree/admin/shared/product_sub_menu' %>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
 
