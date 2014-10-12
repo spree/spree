@@ -6,6 +6,8 @@ module Spree
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
+    has_and_belongs_to_many :prototypes, join_table: :spree_taxons_prototypes
+
     before_create :set_permalink
 
     validates :name, presence: true
@@ -58,8 +60,7 @@ module Spree
     end
 
     def active_products
-      scope = products.active
-      scope
+      products.active
     end
 
     def pretty_name
