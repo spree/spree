@@ -5,6 +5,8 @@ require 'spec_helper'
 describe Spree::Taxon do
   let(:taxon) { FactoryGirl.build(:taxon, :name => "Ruby on Rails") }
 
+  it { should have_and_belong_to_many :prototypes }
+
   context "set_permalink" do
 
     it "should set permalink correctly when no parent present" do
