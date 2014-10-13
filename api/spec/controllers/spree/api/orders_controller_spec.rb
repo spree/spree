@@ -376,7 +376,7 @@ module Spree
       it "can add billing address" do
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
-        order.reload.bill_address.should_not be_nil
+        expect(order.reload.bill_address).to_not be_nil
       end
 
       it "receives error message if trying to add billing address with errors" do
