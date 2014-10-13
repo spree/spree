@@ -19,11 +19,11 @@ module Spree
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
     let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                              :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                              :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
                               :country_id => Country.first.id, :state_id => State.first.id} }
 
     let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                               :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                               :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
                                :country_id => Country.first.id, :state_id => State.first.id} }
 
     let(:current_api_user) do
@@ -300,10 +300,10 @@ module Spree
 
       let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
       let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
                                 :country_id => Country.first.id, :state_id => State.first.id} }
       let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                 :city => "Sao Paulo", :zipcode => "1234567", :phone => "12345678",
+                                 :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
                                  :country_id => Country.first.id, :state_id => State.first.id} }
 
       before do
