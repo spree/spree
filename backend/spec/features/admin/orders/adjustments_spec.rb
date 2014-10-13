@@ -33,6 +33,31 @@ describe "Adjustments" do
     click_link "Adjustments"
   end
 
+  context 'admin open all adjustments', js: true do
+    it 'should open all open adjustments' do
+      click_button 'Open All Adjustments'
+      within_row(1) do
+        expect(page).to have_css('.fa-lock')
+      end
+      within_row(2) do
+        expect(page).to have_css('.fa-unlock')
+      end
+    end
+  end
+
+
+  context 'admin closing all adjustments', js: true do
+    it 'should close all open adjustments' do
+      click_button 'Close All Adjustments'
+      within_row(1) do
+        expect(page).to have_css('.fa-lock')
+      end
+      within_row(2) do
+        expect(page).to have_css('.fa-lock')
+      end
+    end
+  end
+
   context "admin managing adjustments" do
     it "should display the correct values for existing order adjustments" do
       within_row(1) do
