@@ -25,6 +25,7 @@ end
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
+require 'shoulda/matchers'
 
 require "support/big_decimal"
 require "support/test_gateway"

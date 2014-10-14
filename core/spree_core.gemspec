@@ -42,4 +42,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'twitter_cldr', '~> 3.0'
 
   s.add_development_dependency 'email_spec', '~> 1.6'
+  s.add_development_dependency 'shoulda-matchers', '~> 2.7.0'
 end

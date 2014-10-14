@@ -90,4 +90,21 @@ describe "Prototypes" do
       expect(find_field("prototype_property_ids").value).to be_empty
     end
   end
+
+  it 'should be deletable', js: true do
+    shirt_prototype = create(:prototype, name: "Shirt", properties: [])
+    shirt_prototype.taxons << create(:taxon)
+
+    visit spree.admin_path
+    click_link "Products"
+    click_link "Prototypes"
+
+    within("#spree_prototype_#{shirt_prototype.id}") do
+      page.find('.delete-resource').click
+    end
+
+    page.evaluate_script('window.confirm = function() { return true; }')
+
+    expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
+  end
 end
