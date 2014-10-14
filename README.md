@@ -196,6 +196,42 @@ cd sandbox
 rails server
 ```
 
+### Test Drive Spree On Your Machine With Docker
+
+Users wishing to do an extended test drive of Spree on their own hardware without
+setting up all of Spree's dependencies can use [Docker](http://www.docker.com).
+Executing [our Dockerfile](Dockerfile) will get you a basic linux container running whichever
+git release of Spree you choose to download.
+
+1. [Install a build of Docker suitable for your OS](https://docs.docker.com/installation/).
+Solutions are available for Linux, OSX, and Windows.
+
+2. Use `git` to download Spree from Github: `git clone https://github.com/spree/spree.git`
+
+3. Switch to the newly created `spree` folder and build and run a Docker container from it:
+  ```sh
+  cd spree
+  # build the current spree checkout and tag the result as spree-master-local
+  docker build --tag="spree-master-local" .
+  # run spree-master-local in interactive mode, exposing port 3000 to the host
+  docker run -t -i -p 127.0.0.1:3333:3000 spree-master-local tmux
+  ```
+
+4. You should now be inside a shell session running on your container.  From here,
+you can do anything you want with Spree.  Try running the web application!
+  ```sh
+# from within the container:
+  bundle exec rails s
+# You should see the Spree application start and listen on port 3000 in the container.
+  ```
+
+5. Now that Spree is listening on port 3000 within the container, open it in a browser.
+Since the container's port 3000 is mapped to the host port 3333, open
+[http://localhost:3333](http://localhost:3333) and you should see Spree.
+
+From here you can do whatever you want in the container - play with different configurations,
+run the test suite, or rebuild the container using a different git branch of Spree. 
+
 Performance
 -----------
 
