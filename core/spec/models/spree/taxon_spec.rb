@@ -5,8 +5,6 @@ require 'spec_helper'
 describe Spree::Taxon do
   let(:taxon) { FactoryGirl.build(:taxon, :name => "Ruby on Rails") }
 
-  it { should have_and_belong_to_many :prototypes }
-
   its(:to_param) { should eql taxon.permalink }
 
   context "set_permalink" do
