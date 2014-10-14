@@ -6,7 +6,7 @@ module Spree
 
       let!(:country) { create(:country) }
       let!(:state) { country.states.first || create(:state, :country => country) }
-      let!(:stock_location) { create(:stock_location) }
+      let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
       let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
       let(:shipping_method) { create(:shipping_method) }
@@ -305,6 +305,14 @@ module Spree
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           expect(shipment.stock_location).to eq stock_location
           expect(order.shipment_total.to_f).to eq 14.99
+        end
+
+        it "accepts admin name for stock location" do
+          params[:shipments_attributes][0][:stock_location] = stock_location.admin_name
+          order = Importer::Order.import(user, params)
+          shipment = order.shipments.first
+
+          expect(shipment.stock_location).to eq stock_location
         end
 
         it "raises if cant find stock location" do
