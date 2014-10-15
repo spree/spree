@@ -22,8 +22,7 @@ module Spree
 
     has_one :default_price,
       -> { where currency: Spree::Config[:currency] },
-      class_name: 'Spree::Price',
-      dependent: :destroy
+      class_name: 'Spree::Price'
 
     delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency
 
