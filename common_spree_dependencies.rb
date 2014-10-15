@@ -27,6 +27,7 @@ group :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.1.0'
+  gem 'rspec-retry'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
@@ -41,5 +42,4 @@ group :test, :development do
   platforms :ruby_20, :ruby_21 do
     gem 'pry-byebug'
   end
-  gem 'rspec-retry'
 end
