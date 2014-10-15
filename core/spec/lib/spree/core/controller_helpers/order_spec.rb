@@ -68,21 +68,14 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#set_current_order' do
-    let(:incomplete_order) { create(:order) }
+    let(:incomplete_order) { create(:order, user: user) }
     before { controller.stub(try_spree_current_user: user) }
 
-    context 'when logged in user' do
-      before { controller.stub(last_incomplete_order: incomplete_order) }
-      it 'sends guest_token cookie to user' do
-        controller.set_current_order
-        expect(cookies.permanent.signed[:guest_token]).to eq incomplete_order.guest_token
-      end
-    end
-
-    context 'when current order not equal last imcomplete order' do
+    context 'when current order not equal to users incomplete orders' do
       before { controller.stub(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { guest_token: 'guest_token' })) }
+
       it 'calls Spree::Order#merge! method' do
-        Spree::Order.any_instance.should_receive(:merge!)
+        expect(order).to receive(:merge!).with(incomplete_order, user)
         controller.set_current_order
       end
     end
