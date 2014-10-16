@@ -53,40 +53,10 @@ describe Spree::Product do
         end
       end
 
-      context "when master variant is not valid" do
-        let(:other_product){ create(:product, sku: "TEST") }
-        before do
-          product.master.sku = other_product.sku
-        end
-
-        it "should not be saved" do
-          expect { product.save! }.to raise_error
-        end
-      end
-
-      context "when master default price is a new record" do
-        before do
-          @price = product.master.build_default_price
-          @price.price = 12
-        end
-
-        it "saves the master" do
-          product.master.should_receive(:save!)
-          product.save
-        end
-
-        it "saves the default price" do
-          proc do
-            product.save
-          end.should change{ @price.new_record? }.from(true).to(false)
-        end
-
-      end
-
       context "when master default price changed" do
         before do
           master = product.master
-          master.default_price = create(:price, :variant => master)
+          master.default_price.price = 11
           master.save!
           product.master.default_price.price = 12
         end
@@ -188,10 +158,10 @@ describe Spree::Product do
         product.should_not be_available
       end
 
-      it "should not be available if destroyed" do 
-        product.destroy 
-        product.should_not be_available 
-      end 
+      it "should not be available if destroyed" do
+        product.destroy
+        product.should_not be_available
+      end
     end
 
     context "variants_and_option_values" do
