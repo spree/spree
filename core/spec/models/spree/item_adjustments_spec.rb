@@ -44,7 +44,7 @@ module Spree
 
       context "tax included in price" do
         before do
-          create(:adjustment, 
+          create(:adjustment,
             :source => tax_rate,
             :adjustable => line_item,
             :order => order,
@@ -71,7 +71,7 @@ module Spree
 
       context "tax excluded from price" do
         before do
-          create(:adjustment, 
+          create(:adjustment,
             :source => tax_rate,
             :adjustable => line_item,
             :order => order,
