@@ -6,7 +6,8 @@ describe "Orders Listing" do
   let!(:promotion) { create(:promotion_with_item_adjustment) }
 
   before(:each) do
-    @order1 = create(:order, created_at: 1.day.from_now, completed_at: 1.day.from_now, considered_risky: true, number: "R100")
+    allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
+    @order1 = create(:order_with_line_items, created_at: 1.day.from_now, completed_at: 1.day.from_now, considered_risky: true, number: "R100")
     @order2 = create(:order, created_at: 1.day.ago, completed_at: 1.day.ago, number: "R200")
     visit spree.admin_path
   end
@@ -77,6 +78,21 @@ describe "Orders Listing" do
       end
       # Insure the non risky order is not present
       page.should_not have_content("R200")
+    end
+
+    it "should be able to filter on variant_id" do
+      # Insure we have the SKU in the options
+      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
+
+      # Select and filter
+      find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
+      click_button "Filter Results"
+
+      within_row(1) do
+        page.should have_content(@order1.number)
+      end
+      
+      page.should_not have_content(@order2.number)
     end
 
     context "when pagination is really short" do
