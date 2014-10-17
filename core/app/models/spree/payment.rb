@@ -175,6 +175,7 @@ module Spree
 
       def create_payment_profile
         return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+        return if %w(invalid failed).include?(state)
         # Imported payments shouldn't create a payment profile.
         return if source.imported
 
@@ -184,8 +185,10 @@ module Spree
       end
 
       def invalidate_old_payments
-        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
-          payment.invalidate!
+        if state != 'invalid' and state != 'failed'
+          order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+            payment.invalidate!
+          end
         end
       end
 
