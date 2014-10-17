@@ -605,6 +605,32 @@ describe Spree::Payment do
         end
       end
 
+      context "with multiple payment attempts" do
+        it "should not try to create profiles on old failed payment attempts" do
+          Spree::Payment.any_instance.stub(:payment_method) { gateway }
+
+          order.payments.create!(source_attributes: {number: "4111111111111115",
+                                                    month: "12",
+                                                    year: "2014",
+                                                    verification_value: "123",
+                                                    name: "Name"
+          },
+          :payment_method => gateway,
+          :amount => 100)
+          gateway.should_receive(:create_profile).exactly :once
+          order.payments.count.should == 1
+          order.payments.create!(source_attributes: {number: "4111111111111111",
+                                                    month: "12",
+                                                    year: "2014",
+                                                    verification_value: "123",
+                                                    name: "Name"
+          },
+          :payment_method => gateway,
+          :amount => 100)
+        end
+
+      end
+
       context "when successfully connecting to the gateway" do
         it "should create a payment profile" do
           payment.payment_method.should_receive :create_profile
@@ -630,6 +656,22 @@ describe Spree::Payment do
           :payment_method => gateway
         )
       end
+    end
+  end
+
+  describe '#invalidate_old_payments' do
+      before {
+        Spree::Payment.skip_callback(:rollback, :after, :persist_invalid)
+      }
+      after {
+        Spree::Payment.set_callback(:rollback, :after, :persist_invalid)
+      }
+
+    it 'should not invalidate other payments if not valid' do
+      payment.save
+      invalid_payment = Spree::Payment.new(:amount => 100, :order => order, :state => 'invalid', :payment_method => gateway)
+      invalid_payment.save
+      payment.reload.state.should == 'checkout'
     end
   end
 

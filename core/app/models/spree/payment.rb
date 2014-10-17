@@ -166,7 +166,8 @@ module Spree
       end
 
       def create_payment_profile
-        return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+        return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile? &&
+          state != 'invalid' && state != 'failed'
 
         payment_method.create_profile(self)
       rescue ActiveMerchant::ConnectionError => e
@@ -174,8 +175,10 @@ module Spree
       end
 
       def invalidate_old_payments
-        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
-          payment.invalidate!
+        if state != 'invalid' and state != 'failed'
+          order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+            payment.invalidate!
+          end
         end
       end
 
