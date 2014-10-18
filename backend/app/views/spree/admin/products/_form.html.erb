@@ -63,7 +63,7 @@
 
     <% if @product.has_variants? %>
       <div data-hook="admin_product_form_multiple_variants">
-        <%= f.label :skus, Spree.t(:sku).pluralize %>
+        <%= f.label :skus, Spree.t(:skus) %>
         <span class="info">
           <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.count) %>
           <ul class="text_list">
@@ -77,7 +77,7 @@
         </span>
         <div class="info-actions">
           <% if can?(:admin, Spree::Variant) %>
-            <%= link_to_with_icon 'th-large', 'Manage Variants',  admin_product_variants_url(@product) %>
+            <%= link_to_with_icon 'th-large', Spree.t(:manage_variants),  admin_product_variants_url(@product) %>
           <% end %>
         </div>
       </div>

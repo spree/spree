@@ -719,6 +719,7 @@ en:
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
+    manage_variants: Manage Variants
     master_price: Master Price
     match_choices:
       all: All
@@ -1073,6 +1074,7 @@ en:
     show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
     sku: SKU
+    skus: SKU's
     slug: Slug
     source: Source
     special_instructions: Special Instructions
