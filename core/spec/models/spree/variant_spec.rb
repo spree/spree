@@ -5,6 +5,8 @@ require 'spec_helper'
 describe Spree::Variant do
   let!(:variant) { create(:variant) }
 
+  it_behaves_like 'default_price'
+
   context "validations" do
     it "should validate price is greater than 0" do
       variant.price = -1

@@ -37,6 +37,8 @@ end
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 
+require 'support/concerns/default_price_spec'
+
 RSpec.configure do |config|
   config.color = true
   config.infer_spec_type_from_file_location!
