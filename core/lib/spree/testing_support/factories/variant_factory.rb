@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :base_variant, class: Spree::Variant do
     price 19.99
     cost_price 17.00
-    sku    { generate(:sku)          }
+    sku    { Faker::Product.model    }
     weight { generate(:random_float) }
     height { generate(:random_float) }
     width  { generate(:random_float) }
