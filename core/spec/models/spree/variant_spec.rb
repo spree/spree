@@ -48,8 +48,8 @@ describe Spree::Variant do
         end
 
         it { product.master.should_not be_in_stock }
-       end
-     end
+      end
+    end
   end
 
   context "product has other variants" do
