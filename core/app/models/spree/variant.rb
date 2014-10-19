@@ -2,6 +2,8 @@ module Spree
   class Variant < Spree::Base
     acts_as_paranoid
 
+    include Spree::DefaultPrice
+
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -20,12 +22,6 @@ module Spree
     has_and_belongs_to_many :option_values, join_table: :spree_option_values_variants
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
 
-    has_one :default_price,
-      -> { where currency: Spree::Config[:currency] },
-      class_name: 'Spree::Price', inverse_of: :variant
-
-    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency
-
     has_many :prices,
       class_name: 'Spree::Price',
       dependent: :destroy,
@@ -38,7 +34,6 @@ module Spree
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
     before_validation :set_cost_currency
-    after_save :save_default_price
     after_create :create_stock_items
     after_create :set_position
     after_create :set_master_out_of_stock, :unless => :is_master?
@@ -96,10 +91,6 @@ module Spree
       Spree::Product.unscoped { super }
     end
 
-    def default_price
-      Spree::Price.unscoped { super }
-    end
-
     def options=(options = {})
       options.each do |option|
         set_option_value(option[:name], option[:value])
@@ -138,10 +129,6 @@ module Spree
 
     def option_value(opt_name)
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
-    end
-
-    def has_default_price?
-      !self.default_price.nil?
     end
 
     def price_in(currency)
@@ -236,14 +223,6 @@ module Spree
         if currency.nil?
           self.currency = Spree::Config[:currency]
         end
-      end
-
-      def default_price_changed?
-        default_price && (default_price.changed? || default_price.new_record?)
-      end
-
-      def save_default_price
-        default_price.save if default_price_changed?
       end
 
       def set_cost_currency
