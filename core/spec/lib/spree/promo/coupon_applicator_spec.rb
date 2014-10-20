@@ -20,11 +20,27 @@ describe Spree::Promo::CouponApplicator do
       Spree::Adjustment.any_instance.stub(:eligible => true)
       order.update_column(:state, "payment")
       order.coupon_code = "tenoff"
-      
+
       result = subject.apply
       expect(result[:coupon_applied?]).to eq(true)
       expect(result[:success]).to eq("The coupon code was successfully applied to your order.")
       expect(order.adjustments.eligible.first.label).to eq("Promotion (#{promo.name})")
+    end
+
+    # Regression test for #4697
+    it "can apply a coupon code to create line item with proper message" do
+      variant = create(:variant)
+      promo = Spree::Promotion.create(name: "Test", event_name: "spree.checkout.coupon_code_added", code: "tenoff")
+      promo_action = Spree::Promotion::Actions::CreateLineItems.create(promotion_action_line_items_attributes: {:'0' => {variant_id: variant.id}})
+      promo_action.update_attribute(:activator_id, promo.id)
+      Spree::Order.any_instance.stub(:payment_required? => false)
+      order.update_column(:state, "payment")
+      order.coupon_code = "tenoff"
+
+      result = subject.apply
+      expect(result[:coupon_applied?]).to eq(true)
+      expect(result[:success]).to eq("The coupon code was successfully applied to your order.")
+      expect(order.line_items.pluck(:id)).to include(variant.id)
     end
   end
 end
