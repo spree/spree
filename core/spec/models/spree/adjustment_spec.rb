@@ -3,7 +3,7 @@
 
 require 'spec_helper'
 
-describe Spree::Adjustment do
+describe Spree::Adjustment, :type => :model do
 
   let(:order) { mock_model(Spree::Order, update!: nil) }
   let(:adjustment) { Spree::Adjustment.create(:label => "Adjustment", :amount => 5) }

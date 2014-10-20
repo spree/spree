@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::ShipmentMailer do
+describe Spree::ShipmentMailer, :type => :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
@@ -11,29 +11,29 @@ describe Spree::ShipmentMailer do
     variant = stub_model(Spree::Variant, :product => product)
     line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
     shipment = stub_model(Spree::Shipment)
-    shipment.stub(:line_items => [line_item], :order => order)
-    shipment.stub(:tracking_url => "TRACK_ME")
+    allow(shipment).to receive_messages(:line_items => [line_item], :order => order)
+    allow(shipment).to receive_messages(:tracking_url => "TRACK_ME")
     shipment
   end
 
   context ":from not set explicitly" do
     it "falls back to spree config" do
       message = Spree::ShipmentMailer.shipped_email(shipment)
-      message.from.should == [Spree::Config[:mails_from]]
+      expect(message.from).to eq([Spree::Config[:mails_from]])
     end
   end
 
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
-    shipment_email.body.should_not include(%Q{Out of Stock})
+    expect(shipment_email.body).not_to include(%Q{Out of Stock})
   end
 
   it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
-    Spree::Shipment.should_receive(:find).with(shipment.id).and_return(shipment)
-    lambda {
+    expect(Spree::Shipment).to receive(:find).with(shipment.id).and_return(shipment)
+    expect {
       shipped_email = Spree::ShipmentMailer.shipped_email(shipment.id)
-    }.should_not raise_error
+    }.not_to raise_error
   end
 
   context "emails must be translatable" do

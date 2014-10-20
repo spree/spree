@@ -2,10 +2,13 @@
 
 require 'spec_helper'
 
-describe Spree::Taxon do
+describe Spree::Taxon, :type => :model do
   let(:taxon) { FactoryGirl.build(:taxon, :name => "Ruby on Rails") }
 
-  its(:to_param) { should eql taxon.permalink }
+  describe '#to_param' do
+    subject { super().to_param }
+    it { is_expected.to eql taxon.permalink }
+  end
 
   context "set_permalink" do
 
@@ -44,13 +47,13 @@ describe Spree::Taxon do
       # Regression test for #3390
       context "setting a new node sibling position via :child_index=" do
         let(:idx) { rand(0..100) }
-        before { parent.stub(:move_to_child_with_index) }
+        before { allow(parent).to receive(:move_to_child_with_index) }
 
         context "taxon is not new" do
-          before { taxon.stub(:new_record?).and_return(false) }
+          before { allow(taxon).to receive(:new_record?).and_return(false) }
 
           it "passes the desired index move_to_child_with_index of :parent " do
-            taxon.should_receive(:move_to_child_with_index).with(parent, idx)
+            expect(taxon).to receive(:move_to_child_with_index).with(parent, idx)
 
             taxon.child_index = idx
           end

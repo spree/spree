@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Calculator::Shipping
-    describe FlatRate do
+    describe FlatRate, :type => :model do
       subject { Calculator::Shipping::FlatRate.new(:preferred_amount => 4.00) }
 
       it 'always returns the same rate' do

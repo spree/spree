@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Calculator::Returns::DefaultRefundAmount do
+describe Spree::Calculator::Returns::DefaultRefundAmount, :type => :model do
   let(:order)           { create(:order) }
   let(:line_item_quantity) { 2 }
   let(:pre_tax_amount)  { 100.0 }
@@ -15,7 +15,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount do
 
   context "not an exchange" do
     context "no promotions or taxes" do
-      it { should eq pre_tax_amount / line_item_quantity }
+      it { is_expected.to eq pre_tax_amount / line_item_quantity }
     end
 
     context "order adjustments" do
@@ -26,7 +26,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount do
         order.adjustments.first.update_attributes(amount: adjustment_amount)
       end
 
-      it { should eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
+      it { is_expected.to eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
     end
 
     context "shipping adjustments" do
@@ -34,14 +34,14 @@ describe Spree::Calculator::Returns::DefaultRefundAmount do
 
       before { order.shipments << Spree::Shipment.new(adjustment_total: adjustment_total) }
 
-      it { should eq pre_tax_amount / line_item_quantity }
+      it { is_expected.to eq pre_tax_amount / line_item_quantity }
     end
   end
 
   context "an exchange" do
     let(:return_item) { build(:exchange_return_item) }
 
-    it { should eq 0.0 }
+    it { is_expected.to eq 0.0 }
   end
 
   context "pre_tax_amount is zero" do

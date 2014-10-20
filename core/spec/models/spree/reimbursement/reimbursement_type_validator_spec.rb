@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Reimbursement::ReimbursementTypeValidator do
+  describe Reimbursement::ReimbursementTypeValidator, :type => :model do
     class DummyClass
       include Spree::Reimbursement::ReimbursementTypeValidator
 
@@ -17,27 +17,27 @@ module Spree
 
     describe '#valid_preferred_reimbursement_type?' do
       before do
-        dummy.stub(:past_reimbursable_time_period?).and_return(true)
-        return_item.stub(:preferred_reimbursement_type).and_return(Spree::ReimbursementType::Credit)
+        allow(dummy).to receive(:past_reimbursable_time_period?).and_return(true)
+        allow(return_item).to receive(:preferred_reimbursement_type).and_return(Spree::ReimbursementType::Credit)
       end
 
       subject { dummy.valid_preferred_reimbursement_type?(return_item) }
 
       context 'is valid' do
         it 'if it is not past the reimbursable time period' do
-          dummy.stub(:past_reimbursable_time_period?).and_return(false)
-          subject.should be true
+          allow(dummy).to receive(:past_reimbursable_time_period?).and_return(false)
+          expect(subject).to be true
         end
 
         it 'if the return items preferred method of reimbursement is the expired method of reimbursement' do
-          return_item.stub(:preferred_reimbursement_type).and_return(dummy.expired_reimbursement_type)
-          subject.should be true
+          allow(return_item).to receive(:preferred_reimbursement_type).and_return(dummy.expired_reimbursement_type)
+          expect(subject).to be true
         end
       end
 
       context 'is invalid' do
         it 'if the return item is past the eligible time period and the preferred method of reimbursement is not the expired method of reimbursement' do
-          subject.should be false
+          expect(subject).to be false
         end
       end
     end
@@ -46,14 +46,14 @@ module Spree
       subject { dummy.past_reimbursable_time_period?(return_item) }
 
       before do
-        return_item.stub_chain(:inventory_unit, :shipment, :shipped_at).and_return(shipped_at)
+        allow(return_item).to receive_message_chain(:inventory_unit, :shipment, :shipped_at).and_return(shipped_at)
       end
 
       context 'it has not shipped' do
         let(:shipped_at) { nil }
 
         it 'is not past the reimbursable time period' do
-          subject.should be_falsey
+          expect(subject).to be_falsey
         end
       end
 
@@ -61,7 +61,7 @@ module Spree
         let(:shipped_at) { (dummy.refund_time_constraint - 1.day).ago }
 
         it 'is not past the reimbursable time period' do
-          subject.should be false
+          expect(subject).to be false
         end
       end
 
@@ -69,7 +69,7 @@ module Spree
         let(:shipped_at) { (dummy.refund_time_constraint + 1.day).ago }
 
         it 'is past the reimbursable time period' do
-          subject.should be true
+          expect(subject).to be true
         end
       end
     end

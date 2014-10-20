@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     module Splitter
-      describe Base do
+      describe Base, :type => :model do
         let(:packer) { build(:stock_packer) }
 
         it 'continues to splitter chain' do
@@ -11,7 +11,7 @@ module Spree
           splitter2 = Base.new(packer, splitter1)
           packages = []
 
-          splitter1.should_receive(:split).with(packages)
+          expect(splitter1).to receive(:split).with(packages)
           splitter2.split(packages)
         end
 
