@@ -21,7 +21,7 @@ group :test do
   gem 'capybara', '~> 2.4'
   gem 'database_cleaner', '~> 1.0'
   gem 'email_spec'
-  gem 'factory_girl_rails', '~> 4.4'
+  gem 'factory_girl_rails', '~> 4.5'
   gem 'launchy'
   gem 'pry'
   gem 'rspec-activemodel-mocks'
