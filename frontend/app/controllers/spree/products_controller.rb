@@ -22,11 +22,7 @@ module Spree
 
     private
       def accurate_title
-        if @product
-          @product.meta_title.blank? ? @product.name : @product.meta_title
-        else
-          super
-        end
+        @product ? @product.name : super
       end
 
       def load_product

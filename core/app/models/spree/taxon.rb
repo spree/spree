@@ -36,7 +36,7 @@ module Spree
 
     # Return meta_title if set otherwise generates from root name and/or taxon name
     def seo_title
-      unless meta_title.blank?
+      if meta_title
         meta_title
       else
         root? ? name : "#{root.name} - #{name}"

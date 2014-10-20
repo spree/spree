@@ -10,9 +10,6 @@ describe "viewing products", inaccessible: true do
     product.taxons << t_shirts
   end
   let(:metas) { { :meta_description => 'Brand new Ruby on Rails TShirts', :meta_title => "Ruby On Rails TShirt", :meta_keywords => 'ror, tshirt, ruby' } }
-  let(:store_name) do
-    ((first_store = Spree::Store.first) && first_store.name).to_s
-  end
 
   # Regression test for #1796
   it "can see a taxon's products, even if that taxon has child taxons" do
@@ -27,6 +24,15 @@ describe "viewing products", inaccessible: true do
   end
 
   describe 'meta tags and title' do
+
+    after do
+      Capybara.ignore_hidden_elements = true
+    end
+
+    before do
+      Capybara.ignore_hidden_elements = false
+    end
+
     it 'displays metas' do
       t_shirts.update_attributes metas
       visit '/t/category/super-clothing/t-shirts'
@@ -40,9 +46,10 @@ describe "viewing products", inaccessible: true do
       page.should have_title("Ruby On Rails TShirt")
     end
 
-    it 'displays title from taxon root and taxon name' do
+    it 'display title from taxon root and taxon name' do
+      create(:store)
       visit '/t/category/super-clothing/t-shirts'
-      page.should have_title('Category - T-Shirts - ' + store_name)
+      page.should have_title('Category - T-Shirts - ' + Spree::Store.first.name)
     end
 
     # Regression test for #2814
@@ -52,12 +59,6 @@ describe "viewing products", inaccessible: true do
       within("h1.taxon-title") do
         page.should have_content(t_shirts.name)
       end
-    end
-
-    it 'uses taxon name in title when meta_title set to empty string' do
-      t_shirts.update_attributes meta_title: ''
-      visit '/t/category/super-clothing/t-shirts'
-      page.should have_title('Category - T-Shirts - ' + store_name)
     end
   end
 
