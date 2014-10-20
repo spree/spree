@@ -3,7 +3,7 @@ FactoryGirl.define do
     name 'Promo'
 
     trait :with_line_item_adjustment do
-      ignore do
+      transient do
         adjustment_rate 10
       end
 
@@ -16,7 +16,7 @@ FactoryGirl.define do
     factory :promotion_with_item_adjustment, traits: [:with_line_item_adjustment]
 
     trait :with_order_adjustment do
-      ignore do
+      transient do
         order_adjustment_amount 10
       end
 
@@ -30,13 +30,13 @@ FactoryGirl.define do
     end
 
     trait :with_item_total_rule do
-      ignore do
+      transient do
         item_total_threshold_amount 10
       end
 
       after(:create) do |promotion, evaluator|
         rule = Spree::Promotion::Rules::ItemTotal.create!(
-          preferred_operator: 'gte', 
+          preferred_operator: 'gte',
           preferred_amount: evaluator.item_total_threshold_amount
         )
         promotion.rules << rule
