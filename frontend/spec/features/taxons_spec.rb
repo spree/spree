@@ -57,7 +57,7 @@ describe "viewing products", type: :feature, inaccessible: true do
     it 'uses taxon name in title when meta_title set to empty string' do
       t_shirts.update_attributes meta_title: ''
       visit '/t/category/super-clothing/t-shirts'
-      page.should have_title('Category - T-Shirts - ' + store_name)
+      expect(page).to have_title('Category - T-Shirts - ' + store_name)
     end
   end
 

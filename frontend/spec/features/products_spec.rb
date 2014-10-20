@@ -26,10 +26,10 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
     it 'should return the correct title when displaying a single product' do
       click_link jersey.name
-      page.should have_title('Ruby on Rails Baseball Jersey - ' + store_name)
+      expect(page).to have_title('Ruby on Rails Baseball Jersey - ' + store_name)
       within('div#product-description') do
         within('h1.product-title') do
-          page.should have_content('Ruby on Rails Baseball Jersey')
+          expect(page).to have_content('Ruby on Rails Baseball Jersey')
         end
       end
     end
@@ -37,29 +37,29 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     it 'displays metas' do
       jersey.update_attributes metas
       click_link jersey.name
-      page.should have_meta(:description, 'Brand new Ruby on Rails Jersey')
-      page.should have_meta(:keywords, 'ror, jersey, ruby')
+      expect(page).to have_meta(:description, 'Brand new Ruby on Rails Jersey')
+      expect(page).to have_meta(:keywords, 'ror, jersey, ruby')
     end
 
     it 'displays title if set' do
       jersey.update_attributes metas
       click_link jersey.name
-      page.should have_title('Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel')
+      expect(page).to have_title('Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel')
     end
 
     it "doesn't use meta_title as heading on page" do
       jersey.update_attributes metas
       click_link jersey.name
       within("h1") do
-        page.should have_content(jersey.name)
-        page.should_not have_content(jersey.meta_title)
+        expect(page).to have_content(jersey.name)
+        expect(page).not_to have_content(jersey.meta_title)
       end
     end
 
     it 'uses product name in title when meta_title set to empty string' do
       jersey.update_attributes meta_title: ''
       click_link jersey.name
-      page.should have_title('Ruby on Rails Baseball Jersey - ' + store_name)
+      expect(page).to have_title('Ruby on Rails Baseball Jersey - ' + store_name)
     end
   end
 
