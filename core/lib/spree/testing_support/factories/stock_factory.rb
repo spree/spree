@@ -25,7 +25,7 @@ FactoryGirl.define do
     end
 
     factory :stock_package_fulfilled do
-      ignore { variants_contents { { build(:variant) => 2 } } }
+      transient { variants_contents { { build(:variant) => 2 } } }
     end
   end
 end
