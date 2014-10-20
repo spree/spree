@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Automatic promotions", :js => true do
+describe "Automatic promotions", :type => :feature, :js => true do
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
@@ -38,10 +38,10 @@ describe "Automatic promotions", :js => true do
     it "automatically applies the promotion once the order crosses the threshold" do
       fill_in "order_line_items_attributes_0_quantity", :with => 10
       click_button "Update"
-      page.should have_content("Promotion ($10 off when you spend more than $100) -$10.00")
+      expect(page).to have_content("Promotion ($10 off when you spend more than $100) -$10.00")
       fill_in "order_line_items_attributes_0_quantity", :with => 1
       click_button "Update"
-      page.should_not have_content("Promotion ($10 off when you spend more than $100) -$10.00")
+      expect(page).not_to have_content("Promotion ($10 off when you spend more than $100) -$10.00")
     end
   end
 end

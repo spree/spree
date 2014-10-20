@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Address", inaccessible: true do
+describe "Address", type: :feature, inaccessible: true do
   let!(:product) { create(:product, :name => "RoR Mug") }
   let!(:order) { create(:order_with_totals, :state => 'cart') }
 
@@ -35,12 +35,12 @@ describe "Address", inaccessible: true do
         click_button "Checkout"
 
         select canada.name, :from => @country_css
-        page.should have_selector(@state_select_css, visible: false)
-        page.should have_selector(@state_name_css, visible: true)
-        find(@state_name_css)['class'].should_not =~ /hidden/
-        find(@state_name_css)['class'].should =~ /required/
-        find(@state_select_css)['class'].should_not =~ /required/
-        page.should_not have_selector("input#{@state_name_css}[disabled]")
+        expect(page).to have_selector(@state_select_css, visible: false)
+        expect(page).to have_selector(@state_name_css, visible: true)
+        expect(find(@state_name_css)['class']).not_to match(/hidden/)
+        expect(find(@state_name_css)['class']).to match(/required/)
+        expect(find(@state_select_css)['class']).not_to match(/required/)
+        expect(page).not_to have_selector("input#{@state_name_css}[disabled]")
       end
     end
 
@@ -51,11 +51,11 @@ describe "Address", inaccessible: true do
         click_button "Checkout"
 
         select canada.name, :from => @country_css
-        page.should have_selector(@state_select_css, visible: true)
-        page.should have_selector(@state_name_css, visible: false)
-        find(@state_select_css)['class'].should =~ /required/
-        find(@state_select_css)['class'].should_not =~ /hidden/
-        find(@state_name_css)['class'].should_not =~ /required/
+        expect(page).to have_selector(@state_select_css, visible: true)
+        expect(page).to have_selector(@state_name_css, visible: false)
+        expect(find(@state_select_css)['class']).to match(/required/)
+        expect(find(@state_select_css)['class']).not_to match(/hidden/)
+        expect(find(@state_name_css)['class']).not_to match(/required/)
       end
     end
 
@@ -69,11 +69,11 @@ describe "Address", inaccessible: true do
         page.find(@state_name_css).set("Toscana")
 
         select france.name, :from => @country_css
-        page.find(@state_name_css).should have_content('')
+        expect(page.find(@state_name_css)).to have_content('')
         until page.evaluate_script("$.active").to_i == 0
-          find(@state_name_css)['class'].should_not =~ /hidden/
-          find(@state_name_css)['class'].should_not =~ /required/
-          find(@state_select_css)['class'].should_not =~ /required/
+          expect(find(@state_name_css)['class']).not_to match(/hidden/)
+          expect(find(@state_name_css)['class']).not_to match(/required/)
+          expect(find(@state_select_css)['class']).not_to match(/required/)
         end
       end
     end
@@ -86,8 +86,8 @@ describe "Address", inaccessible: true do
        click_button "Checkout"
 
        select france.name, :from => @country_css
-       page.should have_selector(@state_select_css, visible: false)
-       page.should have_selector(@state_name_css, visible: false)
+       expect(page).to have_selector(@state_select_css, visible: false)
+       expect(page).to have_selector(@state_name_css, visible: false)
     end
   end
 end

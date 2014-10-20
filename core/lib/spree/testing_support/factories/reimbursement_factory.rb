@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :reimbursement, class: Spree::Reimbursement do
-    ignore do
+    transient do
       return_items_count 1
     end
 

@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe 'orders' do
+describe 'orders', :type => :feature do
   let(:order) { OrderWalkthrough.up_to(:complete) }
   let(:user) { create(:user) }
 
   before do
     order.update_attribute(:user_id, user.id)
     order.shipments.destroy_all
-    Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
+    allow_any_instance_of(Spree::OrdersController).to receive_messages(:try_spree_current_user => user)
   end
 
   it "can visit an order" do
     # Regression test for current_user call on orders/show
-    lambda { visit spree.order_path(order) }.should_not raise_error
+    expect { visit spree.order_path(order) }.not_to raise_error
   end
 
   it "should display line item price" do
@@ -26,7 +26,7 @@ describe 'orders' do
 
     # Tests view spree/shared/_order_details
     within 'td.price' do
-      page.should have_content "19.00"
+      expect(page).to have_content "19.00"
     end
   end
 
@@ -34,7 +34,7 @@ describe 'orders' do
     create(:payment, :order => order)
     visit spree.order_path(order)
     within '.payment-info' do
-      page.should have_content "Ending in 1111"
+      expect(page).to have_content "Ending in 1111"
     end
   end
 
@@ -42,7 +42,7 @@ describe 'orders' do
     create(:check_payment, :order => order)
     visit spree.order_path(order)
     within '.payment-info' do
-      page.should have_content "Check"
+      expect(page).to have_content "Check"
     end
   end
 
@@ -59,7 +59,7 @@ describe 'orders' do
     specify do
       visit spree.order_path(order)
       within '.payment-info' do
-        lambda { find("img") }.should raise_error(Capybara::ElementNotFound)
+        expect { find("img") }.to raise_error(Capybara::ElementNotFound)
       end
     end
   end
@@ -68,7 +68,7 @@ describe 'orders' do
     visit spree.order_path(order)
 
     within '#order_summary' do
-      page.should have_content("#{Spree.t(:order)} #{order.number}")
+      expect(page).to have_content("#{Spree.t(:order)} #{order.number}")
     end
   end
 end
