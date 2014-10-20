@@ -64,7 +64,7 @@ module Spree
       end
 
       def cancel!
-        payment_method.cancel(response_code) if payment_method.respond_to?(:cancel)
+        payment_method.cancel(response_code)
       end
 
       def gateway_options
