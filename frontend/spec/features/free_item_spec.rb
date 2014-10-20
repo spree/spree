@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # Gigantic regression test for #2191
-describe "Free shipping promotions", :js => true do
+describe "Free shipping promotions", :type => :feature, :js => true do
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }
@@ -49,10 +49,10 @@ describe "Free shipping promotions", :js => true do
       click_button "Update"
 
       all("a.delete").first.click # Delete the first line item
-      page.should_not have_content("RoR Mug")
-      page.should have_content("RoR Shirt")
-      page.should have_content("Adjustment: Promotion (Free Shirt!) -$20.00")
-      page.should have_content("Total $0.00")
+      expect(page).not_to have_content("RoR Mug")
+      expect(page).to have_content("RoR Shirt")
+      expect(page).to have_content("Adjustment: Promotion (Free Shirt!) -$20.00")
+      expect(page).to have_content("Total $0.00")
 
       click_button "Checkout"
       fill_in "order_email", :with => "spree@example.com"
@@ -75,12 +75,12 @@ describe "Free shipping promotions", :js => true do
     it "does not skip the payment step" do
       # The bug is that it skips the payment step because the shipment cost has not been set for the order.
       # Therefore we are checking here that it's *definitely* on the payment step and hasn't jumped to complete.
-      page.current_url.should =~ /checkout\/payment/
+      expect(page.current_url).to match(/checkout\/payment/)
 
       within("#checkout-summary") do
-        page.should have_content("Shipping total:  $10.00")
-        page.should have_content("Promotion (Free Shirt!): -$20.00")
-        page.should have_content("Order Total: $10.00")
+        expect(page).to have_content("Shipping total:  $10.00")
+        expect(page).to have_content("Promotion (Free Shirt!): -$20.00")
+        expect(page).to have_content("Order Total: $10.00")
       end
     end
   end
