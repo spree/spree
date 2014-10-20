@@ -45,6 +45,7 @@ module Spree
               order.contents.add(item.variant, item.quantity - current_quantity)
             end
           end
+          true
         end
       end
     end
