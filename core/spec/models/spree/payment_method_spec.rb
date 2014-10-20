@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::PaymentMethod do
+describe Spree::PaymentMethod, :type => :model do
   describe "#available" do
     before do
       Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
@@ -16,23 +16,23 @@ describe Spree::PaymentMethod do
     end
 
     it "should have 4 total methods" do
-      Spree::PaymentMethod.all.size.should == 4
+      expect(Spree::PaymentMethod.all.size).to eq(4)
     end
 
     it "should return all methods available to front-end/back-end when no parameter is passed" do
-      Spree::PaymentMethod.available.size.should == 2
+      expect(Spree::PaymentMethod.available.size).to eq(2)
     end
 
     it "should return all methods available to front-end/back-end when display_on = :both" do
-      Spree::PaymentMethod.available(:both).size.should == 2
+      expect(Spree::PaymentMethod.available(:both).size).to eq(2)
     end
 
     it "should return all methods available to front-end when display_on = :front_end" do
-      Spree::PaymentMethod.available(:front_end).size.should == 2
+      expect(Spree::PaymentMethod.available(:front_end).size).to eq(2)
     end
 
     it "should return all methods available to back-end when display_on = :back_end" do
-      Spree::PaymentMethod.available(:back_end).size.should == 2
+      expect(Spree::PaymentMethod.available(:back_end).size).to eq(2)
     end
   end
 
@@ -49,15 +49,15 @@ describe Spree::PaymentMethod do
 
     context 'when auto_capture is nil' do
       before(:each) do
-        Spree::Config.should_receive('[]').with(:auto_capture).and_return(auto_capture)
+        expect(Spree::Config).to receive('[]').with(:auto_capture).and_return(auto_capture)
       end
 
       context 'and when Spree::Config[:auto_capture] is false' do
         let(:auto_capture) { false }
 
         it 'should be false' do
-          gateway.auto_capture.should be_nil
-          subject.should be false
+          expect(gateway.auto_capture).to be_nil
+          expect(subject).to be false
         end
       end
 
@@ -65,8 +65,8 @@ describe Spree::PaymentMethod do
         let(:auto_capture) { true }
 
         it 'should be true' do
-          gateway.auto_capture.should be_nil
-          subject.should be true
+          expect(gateway.auto_capture).to be_nil
+          expect(subject).to be true
         end
       end
     end
@@ -80,7 +80,7 @@ describe Spree::PaymentMethod do
         let(:auto_capture) { true }
 
         it 'should be true' do
-          subject.should be true
+          expect(subject).to be true
         end
       end
 
@@ -88,7 +88,7 @@ describe Spree::PaymentMethod do
         let(:auto_capture) { false }
 
         it 'should be true' do
-          subject.should be false
+          expect(subject).to be false
         end
       end
     end

@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::Product do
+describe Spree::Promotion::Rules::Product, :type => :model do
   let(:rule) { Spree::Promotion::Rules::Product.new }
 
   context "#eligible?(order)" do
     let(:order) { Spree::Order.new }
 
     it "should be eligible if there are no products" do
-      rule.stub(:eligible_products => [])
-      rule.should be_eligible(order)
+      allow(rule).to receive_messages(:eligible_products => [])
+      expect(rule).to be_eligible(order)
     end
 
     before do
@@ -19,17 +19,17 @@ describe Spree::Promotion::Rules::Product do
       before { rule.preferred_match_policy = 'any' }
 
       it "should be eligible if any of the products is in eligible products" do
-        order.stub(:products => [@product1, @product2])
-        rule.stub(:eligible_products => [@product2, @product3])
-        rule.should be_eligible(order)
+        allow(order).to receive_messages(:products => [@product1, @product2])
+        allow(rule).to receive_messages(:eligible_products => [@product2, @product3])
+        expect(rule).to be_eligible(order)
       end
 
       context "when none of the products are eligible products" do
         before do
-          order.stub(products: [@product1])
-          rule.stub(eligible_products: [@product2, @product3])
+          allow(order).to receive_messages(products: [@product1])
+          allow(rule).to receive_messages(eligible_products: [@product2, @product3])
         end
-        it { rule.should_not be_eligible(order) }
+        it { expect(rule).not_to be_eligible(order) }
         it "sets an error message" do
           rule.eligible?(order)
           expect(rule.eligibility_errors.full_messages.first).
@@ -42,17 +42,17 @@ describe Spree::Promotion::Rules::Product do
       before { rule.preferred_match_policy = 'all' }
 
       it "should be eligible if all of the eligible products are ordered" do
-        order.stub(:products => [@product3, @product2, @product1])
-        rule.stub(:eligible_products => [@product2, @product3])
-        rule.should be_eligible(order)
+        allow(order).to receive_messages(:products => [@product3, @product2, @product1])
+        allow(rule).to receive_messages(:eligible_products => [@product2, @product3])
+        expect(rule).to be_eligible(order)
       end
 
       context "when any of the eligible products is not ordered" do
         before do
-          order.stub(products: [@product1, @product2])
-          rule.stub(eligible_products: [@product1, @product2, @product3])
+          allow(order).to receive_messages(products: [@product1, @product2])
+          allow(rule).to receive_messages(eligible_products: [@product1, @product2, @product3])
         end
-        it { rule.should_not be_eligible(order) }
+        it { expect(rule).not_to be_eligible(order) }
         it "sets an error message" do
           rule.eligible?(order)
           expect(rule.eligibility_errors.full_messages.first).
@@ -65,17 +65,17 @@ describe Spree::Promotion::Rules::Product do
       before { rule.preferred_match_policy = 'none' }
 
       it "should be eligible if none of the order's products are in eligible products" do
-        order.stub(:products => [@product1])
-        rule.stub(:eligible_products => [@product2, @product3])
-        rule.should be_eligible(order)
+        allow(order).to receive_messages(:products => [@product1])
+        allow(rule).to receive_messages(:eligible_products => [@product2, @product3])
+        expect(rule).to be_eligible(order)
       end
 
       context "when any of the order's products are in eligible products" do
         before do
-          order.stub(products: [@product1, @product2])
-          rule.stub(eligible_products: [@product2, @product3])
+          allow(order).to receive_messages(products: [@product1, @product2])
+          allow(rule).to receive_messages(eligible_products: [@product2, @product3])
         end
-        it { rule.should_not be_eligible(order) }
+        it { expect(rule).not_to be_eligible(order) }
         it "sets an error message" do
           rule.eligible?(order)
           expect(rule.eligibility_errors.full_messages.first).

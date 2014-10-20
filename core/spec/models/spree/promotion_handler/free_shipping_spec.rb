@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module PromotionHandler
-    describe FreeShipping do
+    describe FreeShipping, :type => :model do
       let(:order) { create(:order) }
       let(:shipment) { create(:shipment, order: order ) }
 

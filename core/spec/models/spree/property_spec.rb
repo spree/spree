@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe Spree::Property do
+describe Spree::Property, :type => :model do
 
 end

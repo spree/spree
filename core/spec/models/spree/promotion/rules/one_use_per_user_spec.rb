@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::OneUsePerUser do
+describe Spree::Promotion::Rules::OneUsePerUser, :type => :model do
   let(:rule) { described_class.new }
 
   describe '#eligible?(order)' do
@@ -16,7 +16,7 @@ describe Spree::Promotion::Rules::OneUsePerUser do
       context 'when the user has used this promotion before' do
         let(:used_by) { true }
 
-        it { should be false }
+        it { is_expected.to be false }
         it "sets an error message" do
           subject
           expect(rule.eligibility_errors.full_messages.first).
@@ -25,13 +25,13 @@ describe Spree::Promotion::Rules::OneUsePerUser do
       end
 
       context 'when the user has not used this promotion before' do
-        it { should be true }
+        it { is_expected.to be true }
       end
     end
 
     context 'when the order is not assigned to a user' do
       let(:user) { nil }
-      it { should be false }
+      it { is_expected.to be false }
       it "sets an error message" do
         subject
         expect(rule.eligibility_errors.full_messages.first).

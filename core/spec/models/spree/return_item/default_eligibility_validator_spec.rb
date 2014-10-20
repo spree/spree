@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::DefaultEligibilityValidator do
+describe Spree::ReturnItem::DefaultEligibilityValidator, :type => :model do
   let(:return_item) { create(:return_item) }
   let(:validator) { Spree::ReturnItem::DefaultEligibilityValidator.new(return_item) }
 
@@ -16,18 +16,18 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
   before do
     validator.permitted_eligibility_validators = [ time_eligibility_class, rma_eligibility_class ]
 
-    time_eligibility_class.should_receive(:new).and_return(time_eligibility_instance)
-    rma_eligibility_class.should_receive(:new).and_return(rma_eligibility_instance)
+    expect(time_eligibility_class).to receive(:new).and_return(time_eligibility_instance)
+    expect(rma_eligibility_class).to receive(:new).and_return(rma_eligibility_instance)
   end
 
   describe "#eligible_for_return?" do
     subject { validator.eligible_for_return? }
 
     it "checks that all permitted eligibility validators are eligible for return" do
-      time_eligibility_instance.should_receive(:eligible_for_return?).and_return(true)
-      rma_eligibility_instance.should_receive(:eligible_for_return?).and_return(true)
+      expect(time_eligibility_instance).to receive(:eligible_for_return?).and_return(true)
+      expect(rma_eligibility_instance).to receive(:eligible_for_return?).and_return(true)
 
-      subject.should be true
+      expect(subject).to be true
     end
   end
 
@@ -36,19 +36,19 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
 
     context "any of the permitted eligibility validators require manual intervention" do
       it "returns true" do
-        time_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
-        rma_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(true)
+        expect(time_eligibility_instance).to receive(:requires_manual_intervention?).and_return(false)
+        expect(rma_eligibility_instance).to receive(:requires_manual_intervention?).and_return(true)
 
-        subject.should be true
+        expect(subject).to be true
       end
     end
 
     context "no permitted eligibility validators require manual intervention" do
       it "returns false" do
-        time_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
-        rma_eligibility_instance.should_receive(:requires_manual_intervention?).and_return(false)
+        expect(time_eligibility_instance).to receive(:requires_manual_intervention?).and_return(false)
+        expect(rma_eligibility_instance).to receive(:requires_manual_intervention?).and_return(false)
 
-        subject.should be false
+        expect(subject).to be false
       end
     end
   end
@@ -58,7 +58,7 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
 
     context "the validator errors are empty" do
       it "returns an empty hash" do
-        subject.should == {}
+        expect(subject).to eq({})
       end
     end
 
@@ -70,7 +70,7 @@ describe Spree::ReturnItem::DefaultEligibilityValidator do
       let(:rma_error_text)  { "RMA eligibility error" }
 
       it "gathers all errors from permitted eligibility validators into a single errors hash" do
-        subject.should == {time: time_error_text, rma: rma_error_text}
+        expect(subject).to eq({time: time_error_text, rma: rma_error_text})
       end
     end
   end

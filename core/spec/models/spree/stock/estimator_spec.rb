@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Estimator do
+    describe Estimator, :type => :model do
       let!(:shipping_method) { create(:shipping_method) }
       let(:package) { build(:stock_package, contents: inventory_units.map { |i| ContentItem.new(inventory_unit) }) }
       let(:order) { build(:order_with_line_items) }
@@ -13,12 +13,12 @@ module Spree
       context "#shipping rates" do
         before(:each) do
           shipping_method.zones.first.members.create(:zoneable => order.ship_address.country)
-          ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(true)
-          ShippingMethod.any_instance.stub_chain(:calculator, :compute).and_return(4.00)
-          ShippingMethod.any_instance.stub_chain(:calculator, :preferences).and_return({:currency => currency})
-          ShippingMethod.any_instance.stub_chain(:calculator, :marked_for_destruction?)
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return({:currency => currency})
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
-          package.stub(:shipping_methods => [shipping_method])
+          allow(package).to receive_messages(:shipping_methods => [shipping_method])
         end
 
         let(:currency) { "USD" }
@@ -26,14 +26,14 @@ module Spree
         shared_examples_for "shipping rate matches" do
           it "returns shipping rates" do
             shipping_rates = subject.shipping_rates(package)
-            shipping_rates.first.cost.should eq 4.00
+            expect(shipping_rates.first.cost).to eq 4.00
           end
         end
 
         shared_examples_for "shipping rate doesn't match" do
           it "does not return shipping rates" do
             shipping_rates = subject.shipping_rates(package)
-            shipping_rates.should == []
+            expect(shipping_rates).to eq([])
           end
         end
 
@@ -47,7 +47,7 @@ module Spree
         end
 
         context "when the calculator is not available for that order" do
-          before { ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_return(false) }
+          before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
           it_should_behave_like "shipping rate doesn't match"
         end
 
@@ -72,19 +72,19 @@ module Spree
 
         context "when the shipping method's calculator raises an exception" do
           before do
-            ShippingMethod.any_instance.stub_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
-            subject.should_receive(:log_calculator_exception)
+            allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
+            expect(subject).to receive(:log_calculator_exception)
           end
           it_should_behave_like "shipping rate doesn't match"
         end
 
         it "sorts shipping rates by cost" do
           shipping_methods = 3.times.map { create(:shipping_method) }
-          shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
-          shipping_methods[1].stub_chain(:calculator, :compute).and_return(3.00)
-          shipping_methods[2].stub_chain(:calculator, :compute).and_return(4.00)
+          allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
+          allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
+          allow(shipping_methods[2]).to receive_message_chain(:calculator, :compute).and_return(4.00)
 
-          subject.stub(:shipping_methods).and_return(shipping_methods)
+          allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
 
           expect(subject.shipping_rates(package).map(&:cost)).to eq %w[3.00 4.00 5.00].map(&BigDecimal.method(:new))
         end
@@ -93,19 +93,19 @@ module Spree
           let(:shipping_methods) { 2.times.map { create(:shipping_method) } }
 
           it "selects the most affordable shipping rate" do
-            shipping_methods[0].stub_chain(:calculator, :compute).and_return(5.00)
-            shipping_methods[1].stub_chain(:calculator, :compute).and_return(3.00)
+            allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
+            allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
 
-            subject.stub(:shipping_methods).and_return(shipping_methods)
+            allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
 
             expect(subject.shipping_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false]
           end
 
           it "selects the most affordable shipping rate and doesn't raise exception over nil cost" do
-            shipping_methods[0].stub_chain(:calculator, :compute).and_return(1.00)
-            shipping_methods[1].stub_chain(:calculator, :compute).and_return(nil)
+            allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(1.00)
+            allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(nil)
 
-            subject.stub(:shipping_methods).and_return(shipping_methods)
+            allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
 
             subject.shipping_rates(package)
           end
@@ -116,9 +116,9 @@ module Spree
           let(:generic_method) { create(:shipping_method) }
 
           before do
-            backend_method.stub_chain(:calculator, :compute).and_return(0.00)
-            generic_method.stub_chain(:calculator, :compute).and_return(5.00)
-            subject.stub(:shipping_methods).and_return([backend_method, generic_method])
+            allow(backend_method).to receive_message_chain(:calculator, :compute).and_return(0.00)
+            allow(generic_method).to receive_message_chain(:calculator, :compute).and_return(5.00)
+            allow(subject).to receive(:shipping_methods).and_return([backend_method, generic_method])
           end
 
           it "does not return backend rates at all" do

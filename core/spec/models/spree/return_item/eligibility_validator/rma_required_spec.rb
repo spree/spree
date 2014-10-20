@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::EligibilityValidator::RMARequired do
+describe Spree::ReturnItem::EligibilityValidator::RMARequired, :type => :model do
   let(:return_item) { create(:return_item) }
   let(:validator) { Spree::ReturnItem::EligibilityValidator::RMARequired.new(return_item) }
 
@@ -14,7 +14,7 @@ describe Spree::ReturnItem::EligibilityValidator::RMARequired do
     end
 
     context "there is no rma on the return item" do
-      before { return_item.stub(:return_authorization).and_return(nil) }
+      before { allow(return_item).to receive(:return_authorization).and_return(nil) }
 
       it "returns false" do
         expect(subject).to be false

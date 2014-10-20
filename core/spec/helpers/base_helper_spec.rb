@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::BaseHelper do
+describe Spree::BaseHelper, :type => :helper do
   include Spree::BaseHelper
 
   let(:current_store){ create :store }
@@ -18,7 +18,7 @@ describe Spree::BaseHelper do
       end
 
       it "return complete list of countries" do
-        available_countries.count.should == Spree::Country.count
+        expect(available_countries.count).to eq(Spree::Country.count)
       end
     end
 
@@ -31,7 +31,7 @@ describe Spree::BaseHelper do
         end
 
         it "return only the countries defined by the checkout zone" do
-          available_countries.should == [country]
+          expect(available_countries).to eq([country])
         end
       end
 
@@ -44,7 +44,7 @@ describe Spree::BaseHelper do
         end
 
         it "return complete list of countries" do
-          available_countries.count.should == Spree::Country.count
+          expect(available_countries.count).to eq(Spree::Country.count)
         end
       end
     end
@@ -76,26 +76,26 @@ describe Spree::BaseHelper do
     it "should output all flash content" do
       flash_messages
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should == "foo"
-      html.css(".bar").text.should == "bar"
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to eq("foo")
+      expect(html.css(".bar").text).to eq("bar")
     end
 
     it "should output flash content except one key" do
       flash_messages(:ignore_types => :bar)
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should == "foo"
-      html.css(".bar").text.should be_empty
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to eq("foo")
+      expect(html.css(".bar").text).to be_empty
     end
 
     it "should output flash content except some keys" do
       flash_messages(:ignore_types => [:foo, :bar])
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should be_empty
-      html.css(".bar").text.should be_empty
-      helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to be_empty
+      expect(html.css(".bar").text).to be_empty
+      expect(helper.output_buffer).to eq("<div class=\"flash notice\">ok</div>")
     end
   end
 

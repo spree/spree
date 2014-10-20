@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product scopes" do
+describe "Product scopes", :type => :model do
   let!(:product) { create(:product) }
 
   context "A product assigned to parent and child taxons" do
@@ -18,13 +18,13 @@ describe "Product scopes" do
 
     it "calling Product.in_taxon returns products in child taxons" do
       product.taxons -= [@child_taxon]
-      product.taxons.count.should == 1
+      expect(product.taxons.count).to eq(1)
 
-      Spree::Product.in_taxon(@parent_taxon).should include(product)
+      expect(Spree::Product.in_taxon(@parent_taxon)).to include(product)
     end
 
     it "calling Product.in_taxon should not return duplicate records" do
-      Spree::Product.in_taxon(@parent_taxon).to_a.count.should == 1
+      expect(Spree::Product.in_taxon(@parent_taxon).to_a.count).to eq(1)
     end
 
     it "orders products based on their ordering within the classification" do
@@ -37,9 +37,9 @@ describe "Product scopes" do
       product_2_root_classification = Spree::Classification.find_by(:taxon => @parent_taxon, :product => product_2)
       product_2_root_classification.update_column(:position, 2)
 
-      Spree::Product.in_taxon(@parent_taxon).should == [product, product_2]
+      expect(Spree::Product.in_taxon(@parent_taxon)).to eq([product, product_2])
       product_2_root_classification.insert_at(1)
-      Spree::Product.in_taxon(@parent_taxon).should == [product_2, product]
+      expect(Spree::Product.in_taxon(@parent_taxon)).to eq([product_2, product])
     end
   end
 
@@ -122,23 +122,23 @@ describe "Product scopes" do
     context 'define scope' do
       context 'ascend_by_updated_at' do
         context 'on class' do
-          it { Spree::Product.ascend_by_updated_at.to_sql.should eq Spree::Product.order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
+          it { expect(Spree::Product.ascend_by_updated_at.to_sql).to eq Spree::Product.order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
         end
 
         context 'on ActiveRecord::Relation' do
-          it { Spree::Product.limit(2).ascend_by_updated_at.to_sql.should eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
-          it { Spree::Product.limit(2).ascend_by_updated_at.to_sql.should eq Spree::Product.ascend_by_updated_at.limit(2).to_sql }
+          it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
+          it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to eq Spree::Product.ascend_by_updated_at.limit(2).to_sql }
         end
       end
 
       context 'descend_by_name' do
         context 'on class' do
-          it { Spree::Product.descend_by_name.to_sql.should eq Spree::Product.order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
+          it { expect(Spree::Product.descend_by_name.to_sql).to eq Spree::Product.order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
         end
 
         context 'on ActiveRecord::Relation' do
-          it { Spree::Product.limit(2).descend_by_name.to_sql.should eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
-          it { Spree::Product.limit(2).descend_by_name.to_sql.should eq Spree::Product.descend_by_name.limit(2).to_sql }
+          it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
+          it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to eq Spree::Product.descend_by_name.limit(2).to_sql }
         end
       end
     end

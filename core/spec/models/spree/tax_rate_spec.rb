@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::TaxRate do
+describe Spree::TaxRate, :type => :model do
   context "match" do
     let(:order) { create(:order) }
     let(:country) { create(:country) }
@@ -8,8 +8,8 @@ describe Spree::TaxRate do
     let(:calculator) { Spree::Calculator::FlatRate.new }
 
     it "should return an empty array when tax_zone is nil" do
-      order.stub :tax_zone => nil
-      Spree::TaxRate.match(order.tax_zone).should == []
+      allow(order).to receive_messages :tax_zone => nil
+      expect(Spree::TaxRate.match(order.tax_zone)).to eq([])
     end
 
     context "when no rate zones match the tax zone" do
@@ -24,8 +24,8 @@ describe Spree::TaxRate do
         end
 
         it "should return an empty array" do
-          order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order.tax_zone).should == []
+          allow(order).to receive_messages :tax_zone => @zone
+          expect(Spree::TaxRate.match(order.tax_zone)).to eq([])
         end
 
         it "should return the rate that matches the rate zone" do
@@ -36,8 +36,8 @@ describe Spree::TaxRate do
             :calculator => calculator
           )
 
-          order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order.tax_zone).should == [rate]
+          allow(order).to receive_messages :tax_zone => @zone
+          expect(Spree::TaxRate.match(order.tax_zone)).to eq([rate])
         end
 
         it "should return all rates that match the rate zone" do
@@ -55,15 +55,15 @@ describe Spree::TaxRate do
             :calculator => Spree::Calculator::FlatRate.new
           )
 
-          order.stub :tax_zone => @zone
-          Spree::TaxRate.match(order.tax_zone).should match_array([rate1, rate2])
+          allow(order).to receive_messages :tax_zone => @zone
+          expect(Spree::TaxRate.match(order.tax_zone)).to match_array([rate1, rate2])
         end
 
         context "when the tax_zone is contained within a rate zone" do
           before do
             sub_zone = create(:zone, :name => "State Zone", :zone_members => [])
             sub_zone.zone_members.create(:zoneable => create(:state, :country => country))
-            order.stub :tax_zone => sub_zone
+            allow(order).to receive_messages :tax_zone => sub_zone
             @rate = Spree::TaxRate.create(
               :amount => 1,
               :zone => @zone,
@@ -73,7 +73,7 @@ describe Spree::TaxRate do
           end
 
           it "should return the rate zone" do
-            Spree::TaxRate.match(order.tax_zone).should == [@rate]
+            expect(Spree::TaxRate.match(order.tax_zone)).to eq([@rate])
           end
         end
       end
@@ -97,26 +97,26 @@ describe Spree::TaxRate do
 
         context "when the order has the same tax zone" do
           before do
-            order.stub :tax_zone => @zone
-            order.stub :tax_address => tax_address
+            allow(order).to receive_messages :tax_zone => @zone
+            allow(order).to receive_messages :tax_address => tax_address
           end
 
           let(:tax_address) { stub_model(Spree::Address) }
 
           context "when the tax is not a VAT" do
-            it { should == [rate] }
+            it { is_expected.to eq([rate]) }
           end
 
           context "when the tax is a VAT" do
             let(:included_in_price) { true }
-            it { should == [rate] }
+            it { is_expected.to eq([rate]) }
           end
         end
 
         context "when the order has a different tax zone" do
           before do
-            order.stub :tax_zone => create(:zone, :name => "Other Zone")
-            order.stub :tax_address => tax_address
+            allow(order).to receive_messages :tax_zone => create(:zone, :name => "Other Zone")
+            allow(order).to receive_messages :tax_address => tax_address
           end
 
           context "when the order has a tax_address" do
@@ -126,12 +126,12 @@ describe Spree::TaxRate do
               let(:included_in_price) { true }
               # The rate should match in this instance because:
               # 1) It's the default rate (and as such, a negative adjustment should apply)
-              it { should == [rate] }
+              it { is_expected.to eq([rate]) }
             end
 
             context "when the tax is not VAT" do
               it "returns no tax rate" do
-                subject.should be_empty
+                expect(subject).to be_empty
               end
             end
           end
@@ -146,11 +146,11 @@ describe Spree::TaxRate do
               # 2) With no tax address, it has no tax zone
               # 3) Therefore, we assume the default tax zone
               # 4) This default zone has a default tax rate.
-              it { should == [rate] }
+              it { is_expected.to eq([rate]) }
             end
 
             context "when the tax is not a VAT" do
-              it { should be_empty }
+              it { is_expected.to be_empty }
             end
           end
         end
@@ -178,12 +178,12 @@ describe Spree::TaxRate do
       let(:line_items) { [line_item] }
 
       before do
-        Spree::TaxRate.stub :match => [rate_1, rate_2]
+        allow(Spree::TaxRate).to receive_messages :match => [rate_1, rate_2]
       end
 
       it "should apply adjustments for two tax rates to the order" do
-        rate_1.should_receive(:adjust)
-        rate_2.should_not_receive(:adjust)
+        expect(rate_1).to receive(:adjust)
+        expect(rate_2).not_to receive(:adjust)
         Spree::TaxRate.adjust(order.tax_zone, line_items)
       end
     end
@@ -192,12 +192,12 @@ describe Spree::TaxRate do
       let(:shipments) { [stub_model(Spree::Shipment, :cost => 10.0, :tax_category => tax_category_1)] }
 
       before do
-        Spree::TaxRate.stub :match => [rate_1, rate_2]
+        allow(Spree::TaxRate).to receive_messages :match => [rate_1, rate_2]
       end
 
       it "should apply adjustments for two tax rates to the order" do
-        rate_1.should_receive(:adjust)
-        rate_2.should_not_receive(:adjust)
+        expect(rate_1).to receive(:adjust)
+        expect(rate_2).not_to receive(:adjust)
         Spree::TaxRate.adjust(order.tax_zone, shipments)
       end
     end
@@ -232,12 +232,12 @@ describe Spree::TaxRate do
 
       it "should not create a tax adjustment" do
         Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-        line_item.adjustments.tax.charge.count.should == 0
+        expect(line_item.adjustments.tax.charge.count).to eq(0)
       end
 
       it "should not create a refund" do
         Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-        line_item.adjustments.credit.count.should == 0
+        expect(line_item.adjustments.credit.count).to eq(0)
       end
     end
 
@@ -254,12 +254,12 @@ describe Spree::TaxRate do
         context "when zone is contained by default tax zone" do
           it "should create two adjustments, one for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.count.should == 1
+            expect(line_item.adjustments.count).to eq(1)
           end
 
           it "should not create a tax refund" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.credit.count.should == 0
+            expect(line_item.adjustments.credit.count).to eq(0)
           end
         end
 
@@ -272,12 +272,12 @@ describe Spree::TaxRate do
           end
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.charge.count.should == 1
+            expect(line_item.adjustments.charge.count).to eq(1)
           end
 
           it "should not create a tax refund for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.credit.count.should == 0
+            expect(line_item.adjustments.credit.count).to eq(0)
           end
         end
 
@@ -292,18 +292,18 @@ describe Spree::TaxRate do
 
           it "should not create positive adjustments" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.charge.count.should == 0
+            expect(line_item.adjustments.charge.count).to eq(0)
           end
 
           it "should create a tax refund for each tax rate" do
             Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-            line_item.adjustments.credit.count.should == 1
+            expect(line_item.adjustments.credit.count).to eq(1)
           end
         end
 
         context "when price does not include tax" do
           before do
-            @order.stub :tax_zone => @zone
+            allow(@order).to receive_messages :tax_zone => @zone
             [@rate1, @rate2].each do |rate|
               rate.included_in_price = false
               rate.zone = @zone
@@ -315,37 +315,37 @@ describe Spree::TaxRate do
           it "should delete adjustments for open order when taxrate is deleted" do
             @rate1.destroy!
             @rate2.destroy!
-            line_item.adjustments.count.should == 0
+            expect(line_item.adjustments.count).to eq(0)
           end
 
           it "should not delete adjustments for complete order when taxrate is deleted" do
             @order.update_column :completed_at, Time.now
             @rate1.destroy!
             @rate2.destroy!
-            line_item.adjustments.count.should == 2
+            expect(line_item.adjustments.count).to eq(2)
           end
 
           it "should create an adjustment" do
-            line_item.adjustments.count.should == 2
+            expect(line_item.adjustments.count).to eq(2)
           end
 
           it "should not create a tax refund" do
-            line_item.adjustments.credit.count.should == 0
+            expect(line_item.adjustments.credit.count).to eq(0)
           end
 
           describe 'tax adjustments' do
             before { Spree::TaxRate.adjust(@order.tax_zone, @order.line_items) }
 
             it "should apply adjustments when a tax zone is present" do
-              line_item.adjustments.count.should == 2
+              expect(line_item.adjustments.count).to eq(2)
             end
 
             describe 'when the tax zone is removed' do
-              before { @order.stub :tax_zone => nil }
+              before { allow(@order).to receive_messages :tax_zone => nil }
 
               it 'does not apply any adjustments' do
                 Spree::TaxRate.adjust(@order.tax_zone, @order.line_items)
-                line_item.adjustments.count.should == 0
+                expect(line_item.adjustments.count).to eq(0)
               end
             end
           end
@@ -364,7 +364,7 @@ describe Spree::TaxRate do
           end
 
           it "should create two price adjustments" do
-            @order.line_item_adjustments.count.should == 2
+            expect(@order.line_item_adjustments.count).to eq(2)
           end
 
           it "price adjustments should be accurate" do

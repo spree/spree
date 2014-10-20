@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::ItemTotal do
+describe Spree::Promotion::Rules::ItemTotal, :type => :model do
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
   let(:order) { double(:order) }
 
@@ -17,14 +17,14 @@ describe Spree::Promotion::Rules::ItemTotal do
 
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
-          order.stub item_total: 51
+          allow(order).to receive_messages item_total: 51
           expect(rule).to be_eligible(order)
         end
       end
 
       context "and item total is equal to the prefered minimum amount" do
 
-        before { order.stub item_total: 50 }
+        before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -38,7 +38,7 @@ describe Spree::Promotion::Rules::ItemTotal do
       end
 
       context "and item total is lower to the prefered minimum amount" do
-        before { order.stub item_total: 49 }
+        before { allow(order).to receive_messages item_total: 49 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -53,7 +53,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is equal to the prefered maximum amount" do
-      before { order.stub item_total: 60 }
+      before { allow(order).to receive_messages item_total: 60 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)
@@ -67,7 +67,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is higher than the prefered maximum amount" do
-      before { order.stub item_total: 61 }
+      before { allow(order).to receive_messages item_total: 61 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)
@@ -92,14 +92,14 @@ describe Spree::Promotion::Rules::ItemTotal do
 
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
-          order.stub item_total: 51
+          allow(order).to receive_messages item_total: 51
           expect(rule).to be_eligible(order)
         end
       end
 
       context "and item total is equal to the prefered minimum amount" do
 
-        before { order.stub item_total: 50 }
+        before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -113,7 +113,7 @@ describe Spree::Promotion::Rules::ItemTotal do
       end
 
       context "and item total is lower to the prefered minimum amount" do
-        before { order.stub item_total: 49 }
+        before { allow(order).to receive_messages item_total: 49 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -128,7 +128,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is equal to the prefered maximum amount" do
-      before { order.stub item_total: 60 }
+      before { allow(order).to receive_messages item_total: 60 }
 
       it "should not be eligible" do
         expect(rule).to be_eligible(order)
@@ -136,7 +136,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is higher than the prefered maximum amount" do
-      before { order.stub item_total: 61 }
+      before { allow(order).to receive_messages item_total: 61 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)
@@ -160,14 +160,14 @@ describe Spree::Promotion::Rules::ItemTotal do
 
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
-          order.stub item_total: 51
+          allow(order).to receive_messages item_total: 51
           expect(rule).to be_eligible(order)
         end
       end
 
       context "and item total is equal to the prefered minimum amount" do
 
-        before { order.stub item_total: 50 }
+        before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
           expect(rule).to be_eligible(order)
@@ -175,7 +175,7 @@ describe Spree::Promotion::Rules::ItemTotal do
       end
 
       context "and item total is lower to the prefered minimum amount" do
-        before { order.stub item_total: 49 }
+        before { allow(order).to receive_messages item_total: 49 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -190,7 +190,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is equal to the prefered maximum amount" do
-      before { order.stub item_total: 60 }
+      before { allow(order).to receive_messages item_total: 60 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)
@@ -204,7 +204,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is higher than the prefered maximum amount" do
-      before { order.stub item_total: 61 }
+      before { allow(order).to receive_messages item_total: 61 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)
@@ -228,14 +228,14 @@ describe Spree::Promotion::Rules::ItemTotal do
     context "and item total is lower than prefered maximum amount" do
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
-          order.stub item_total: 51
+          allow(order).to receive_messages item_total: 51
           expect(rule).to be_eligible(order)
         end
       end
 
       context "and item total is equal to the prefered minimum amount" do
 
-        before { order.stub item_total: 50 }
+        before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
           expect(rule).to be_eligible(order)
@@ -243,7 +243,7 @@ describe Spree::Promotion::Rules::ItemTotal do
       end
 
       context "and item total is lower to the prefered minimum amount" do
-        before { order.stub item_total: 49 }
+        before { allow(order).to receive_messages item_total: 49 }
 
         it "should not be eligible" do
           expect(rule).to_not be_eligible(order)
@@ -258,7 +258,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is equal to the prefered maximum amount" do
-      before { order.stub item_total: 60 }
+      before { allow(order).to receive_messages item_total: 60 }
 
       it "should not be eligible" do
         expect(rule).to be_eligible(order)
@@ -266,7 +266,7 @@ describe Spree::Promotion::Rules::ItemTotal do
     end
 
     context "and item total is higher than the prefered maximum amount" do
-      before { order.stub item_total: 61 }
+      before { allow(order).to receive_messages item_total: 61 }
 
       it "should not be eligible" do
         expect(rule).to_not be_eligible(order)

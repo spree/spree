@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Validations::DbMaximumLengthValidator do
+describe Spree::Validations::DbMaximumLengthValidator, :type => :model do
   context 'when Spree::Product' do
     Spree::Product.class_eval do
       # Slug currently has no validation for maximum length

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order do
+describe Spree::Order, :type => :model do
   let(:order) { stub_model('Spree::Order') }
 
   describe ".is_risky?" do
@@ -9,35 +9,35 @@ describe Spree::Order do
       context "with avs_response == D" do
         let(:payment) { FactoryGirl.create(:payment, avs_response: "D") }
         it "is not considered risky" do
-          order.is_risky?.should == false
+          expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with avs_response == M" do
         let(:payment) { FactoryGirl.create(:payment, avs_response: "M") }
         it "is not considered risky" do
-          order.is_risky?.should == false
+          expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with avs_response == ''" do
         let(:payment) { FactoryGirl.create(:payment, avs_response: "") }
         it "is not considered risky" do
-          order.is_risky?.should == false
+          expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with cvv_response_code == M" do
         let(:payment) { FactoryGirl.create(:payment, cvv_response_code: "M") }
         it "is not considered risky" do
-          order.is_risky?.should == false
+          expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with cvv_response_message == ''" do
         let(:payment) { FactoryGirl.create(:payment, cvv_response_message: "") }
         it "is not considered risky" do
-          order.is_risky?.should == false
+          expect(order.is_risky?).to eq(false)
         end
       end
     end
@@ -46,21 +46,21 @@ describe Spree::Order do
       context "AVS response message" do
         let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
         it "returns true if the order has an avs_response" do
-          order.is_risky?.should == true
+          expect(order.is_risky?).to eq(true)
         end
       end
 
       context "CVV response code" do
         let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
         it "returns true if the order has an cvv_response_code" do
-          order.is_risky?.should == true
+          expect(order.is_risky?).to eq(true)
         end
       end
 
       context "state == 'failed'" do
         let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, state: 'failed')]) }
         it "returns true if the order has state == 'failed'" do
-          order.is_risky?.should == true
+          expect(order.is_risky?).to eq(true)
         end
       end
     end
