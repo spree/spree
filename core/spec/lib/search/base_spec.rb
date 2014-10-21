@@ -17,16 +17,18 @@ describe Spree::Core::Search::Base do
   end
 
   context "when include_images is included in the initalization params" do
-    let(:params) {{ include_images: true }}
+    let(:params) {{ include_images: true, keyword: @product1.name }}
     subject { described_class.new(params).retrieve_products }
 
     before do
-      @product1.master.images.create(attachment_file_name: "Test")
+      @product1.master.images.create(attachment_file_name: "Test", position: 2)
+      @product1.master.images.create(attachment_file_name: "Test1", position: 1)
       @product1.reload
     end
 
-    it "eager loads the images" do
-      expect(subject.to_sql).to match /LEFT OUTER JOIN "spree_assets"/
+    it "returns images in correct order" do
+      expect(subject.first).to eq @product1
+      expect(subject.first.images).to eq @product1.master.images
     end
   end
 
