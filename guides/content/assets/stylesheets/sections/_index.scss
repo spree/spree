@@ -40,13 +40,19 @@ body.index {
           }
 
           i {
-            font-size: em(150);
+            font-size: 170px;
             display: block;
             margin-bottom: em(5);
-          }
+            color: white;
 
-          &:hover {
-            color: darken($c-blue, 10);
+            &, &:before {
+              font-family: 'icomoon' !important;
+              opacity: 1;
+            }
+
+            &:hover {
+              color: darken($c-blue, 10);
+            }
           }
         }
       }

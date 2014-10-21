@@ -1,58 +1,40 @@
 @font-face {
-  font-family: 'spree-guides-index';
-  src:url('/shared/fonts/spree-guides-index.eot');
-  src:url('/shared/fonts/spree-guides-index.eot?#iefix') format('embedded-opentype'),
-    url('/shared/fonts/spree-guides-index.woff') format('woff'),
-    url('/shared/fonts/spree-guides-index.ttf') format('truetype'),
-    url('/shared/fonts/spree-guides-index.svg#spree-guides-index') format('svg');
+  font-family: 'icomoon';
+  src:url('/shared/fonts/icomoon.eot');
+  src:url('/shared/fonts/icomoon.eot') format('embedded-opentype'),
+    url('/shared/fonts/icomoon.woff') format('woff'),
+    url('/shared/fonts/icomoon.ttf') format('truetype'),
+    url('/shared/fonts/icomoon.svg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 
-/* Use the following CSS code if you want to use data attributes for inserting your icons */
-[data-icon]:before {
-  font-family: 'spree-guides-index';
-  content: attr(data-icon);
-  speak: none;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Use the following CSS code if you want to have a class per icon */
-/*
-Instead of a list of all class selectors,
-you can use the generic selector below, but it's slower:
-[class*="your-class-prefix"] {
-*/
-.index-header-api,
-.index-header-developer,
-.index-header-integration,
-.index-header-release-notes,
-.index-header-user {
-  font-family: 'spree-guides-index';
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'icomoon';
   speak: none;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
   line-height: 1;
+
+  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.index-header-api:before {
+
+.icon-wombat:before {
+  content: "\e600";
+}
+.icon-api:before {
   content: "\e000";
 }
-.index-header-developer:before {
+.icon-developer:before {
   content: "\e001";
 }
-.index-header-integration:before {
-  content: "\e002";
-}
-.index-header-release-notes:before {
+.icon-release-notes:before {
   content: "\e003";
 }
-.index-header-user:before {
+.icon-user:before {
   content: "\e004";
 }
