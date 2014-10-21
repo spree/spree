@@ -813,6 +813,7 @@ en:
     or_over_price: ! '%{price} or over'
     order: Order
     order_adjustments: Order adjustments
+    order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
     order_details: Order Details

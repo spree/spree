@@ -35,7 +35,10 @@ module Spree
       :state => [:name, :abbr]
     ]
 
-    @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
+    @@checkout_attributes = [
+      :coupon_code, :email, :shipping_method_id, :special_instructions,
+      :state_lock_version, :use_billing
+    ]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
