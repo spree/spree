@@ -42,7 +42,7 @@ module Spree
 
           def add_eagerload_scopes scope
             if include_images
-              scope.eager_load({master: [:prices, :images]})
+              scope.includes({master: [:prices, :images]})
             else
               scope.includes(master: :prices)
             end
