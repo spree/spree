@@ -70,6 +70,50 @@ describe Spree::CheckoutController do
       spree_post :update, { state: 'address' }
     end
 
+    context "duplicate request prevention" do
+
+      before do
+        order.update_column(:state, "address")
+        order.stub :user => user
+        order.stub :ensure_available_shipping_rates => true
+      end
+
+      let!(:version_uuid) { order.version_uuid }
+
+      let!(:post_params) { {
+        :state => "address",
+        :order => {
+          :version_uuid => version_uuid,
+          :bill_address_attributes => address_params,
+          :use_billing => true
+        }
+      } }
+
+      it "order should receieve with_lock message" do
+        expect(order).to receive(:with_lock)
+        spree_post :update, post_params 
+      end
+
+      it 'should accept the request and move to the next state' do
+        expect(order).to receive(:update_version_uuid)
+        spree_post :update, post_params 
+        order.reload.state.should == "delivery"
+      end
+
+      context "with duplicate request" do
+
+        let!(:version_uuid) { 'random string' }
+
+        it 'should not accept the request' do
+          expect(order).to_not receive(:update_version_uuid)
+          spree_post :update, post_params
+          expect(response.status).to eq 200
+          order.reload.state.should == "address"
+        end
+      end
+
+    end
+
     context "save successful" do
       def spree_post_address
         spree_post :update, {

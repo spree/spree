@@ -80,6 +80,7 @@ module Spree
 
     before_create :create_token
     before_create :link_by_email
+    before_create :set_version_uuid
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     validates :email, presence: true, if: :require_email
@@ -637,10 +638,22 @@ module Spree
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
+    def update_version_uuid
+      update_column(:version_uuid, secure_random_uuid)
+    end
+
     private
 
     def link_by_email
       self.email = user.email if self.user
+    end
+
+    def set_version_uuid
+      self.version_uuid = secure_random_uuid
+    end
+
+    def secure_random_uuid
+      SecureRandom.uuid
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)

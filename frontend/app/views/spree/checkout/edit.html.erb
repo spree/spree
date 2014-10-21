@@ -13,6 +13,7 @@
           <p class="field" style='clear: both'>
             <%= form.label :email %><br />
             <%= form.text_field :email %>
+            <%= form.hidden_field :version_uuid %>
           </p>
         <% end %>
         <%= render @order.state, :form => form %>
