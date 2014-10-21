@@ -7,6 +7,8 @@ module Spree
     ssl_required
 
     before_action :load_order_with_lock
+    before_filter :ensure_valid_order_version, only: [:update]
+    before_filter :set_state_if_present
 
     before_action :ensure_order_not_completed
     before_action :ensure_checkout_allowed
@@ -72,7 +74,23 @@ module Spree
       def load_order_with_lock
         @order = current_order(lock: true)
         redirect_to spree.cart_path and return unless @order
+      end
 
+      # Fix for #4190
+      # Prevent duplicate requests from causing random behaviour e.g.
+      # double shipments etc.
+      def ensure_valid_order_version
+        if params[:order] && params[:order][:version_uuid]
+          @order.with_lock do
+            if (@order.version_uuid != params[:order][:version_uuid])
+              head :ok, content_type: "text/html" and return
+            end
+            @order.update_version_uuid
+          end
+        end
+      end
+
+      def set_state_if_present
         if params[:state]
           redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
           @order.state = params[:state]
