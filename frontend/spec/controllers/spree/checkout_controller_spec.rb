@@ -55,9 +55,9 @@ describe Spree::CheckoutController do
       end
 
       it "should associate the order with a user" do
-        order.user = nil
+        order.update_column :user_id, nil
         order.should_receive(:associate_user!).with(user)
-        spree_get :edit, {}, :order_id => 1
+        spree_get :edit, {}, order_id: 1
       end
     end
   end
@@ -220,6 +220,26 @@ describe Spree::CheckoutController do
       it "should render the edit template" do
         spree_post :update, { :state => 'address' }
         response.should render_template :edit
+      end
+    end
+
+    # Regression test for #4190
+    context "state_lock_version incorrect" do
+      before do
+        order.update_columns(state_lock_version: 2, state: "address")
+      end
+
+      it "redirects back to current state" do
+        spree_post :update, {
+            state: "address",
+            order: {
+              bill_address_attributes: order.bill_address.attributes.except("created_at", "updated_at"),
+              state_lock_version: 1,
+              use_billing: true
+            }
+        }
+        expect(response).to redirect_to spree.checkout_state_path('address')
+        expect(flash[:error]).to eq "The order has already been updated."
       end
     end
 
