@@ -1,11 +1,11 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree::Base
-    belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules
+    belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules,
+      required: true
 
     scope :of_type, ->(t) { where(type: t) }
 
-    validate :promotion, presence: true
     validate :unique_per_promotion, on: :create
 
     def self.for(promotable)
