@@ -140,14 +140,12 @@ describe Spree::CheckoutController do
 
       context "with the order in the address state" do
         before do
-          order.update_column(:state, "address")
+          order.update_columns(ship_address_id: create(:address).id, state: "address")
           order.stub :user => user
         end
 
         context "with a billing and shipping address" do
           before do
-            order.ship_address = FactoryGirl.create(:address)
-
             @expected_bill_address_id = order.bill_address.id
             @expected_ship_address_id = order.ship_address.id
 
