@@ -36,7 +36,10 @@ module Spree
       state: [:name, :abbr]
     ]
 
-    @@checkout_attributes = [:email, :use_billing, :shipping_method_id, :coupon_code, :special_instructions]
+    @@checkout_attributes = [
+      :coupon_code, :email, :shipping_method_id, :special_instructions,
+      :state_lock_version, :use_billing
+    ]
 
     @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id]]
 

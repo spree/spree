@@ -67,5 +67,9 @@ module Spree
     def supports?(source)
       true
     end
+
+    def cancel
+      raise NotImplimentedError.new 'You must implement cancel method for this payment method.'
+    end
   end
 end
