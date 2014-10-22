@@ -7,6 +7,7 @@
     <%= button_link_to Spree.t(:back_to_promotion_categories_list), spree.admin_promotion_categories_path, :icon => 'arrow-left' %>
   </li>
 <% end %>
+<%= render 'spree/admin/shared/promotion_sub_menu' %>
 
 <%= form_for :promotion_category, :url => collection_url do |f| %>
   <fieldset class="no-border-top">
