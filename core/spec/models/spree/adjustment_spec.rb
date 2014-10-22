@@ -27,6 +27,22 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
+  describe 'non_tax scope' do
+    subject do
+      Spree::Adjustment.non_tax.to_a
+    end
+
+    let!(:tax_adjustment) { create(:adjustment, source: create(:tax_rate)) }
+    let!(:non_tax_adjustment_with_source) { create(:adjustment, source_type: 'Spree::Order', source_id: nil) }
+    let!(:non_tax_adjustment_without_source) { create(:adjustment, source: nil) }
+
+    it 'select non-tax adjustments' do
+      expect(subject).to_not include tax_adjustment
+      expect(subject).to     include non_tax_adjustment_with_source
+      expect(subject).to     include non_tax_adjustment_without_source
+    end
+  end
+
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, state: 'open') }
 
