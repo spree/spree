@@ -4,12 +4,11 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:manage_promotion_categories), spree.admin_promotion_categories_path, :icon => 'bars' %>
-  </li>
-  <li>
     <%= button_link_to Spree.t(:new_promotion), spree.new_admin_promotion_path, :icon => 'plus' %>
   </li>
 <% end %>
+
+<%= render 'spree/admin/shared/promotion_sub_menu' %>
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
