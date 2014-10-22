@@ -11,7 +11,7 @@ describe Spree::LegacyUser do
     let!(:order_3) { create(:order, :user => user, :created_by => create(:user)) }
 
     it "returns correct order" do
-      user.last_incomplete_spree_order.should == order_2
+      expect(user.last_incomplete_spree_order).to eq order_3
     end
 
     context "persists order address" do

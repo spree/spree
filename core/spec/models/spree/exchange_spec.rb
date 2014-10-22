@@ -45,6 +45,18 @@ module Spree
         expect(new_inventory_units.first.original_return_item).to eq return_item
         expect(new_inventory_units.first.line_item).to eq return_item.inventory_unit.line_item
       end
+
+      context "when it cannot create shipments for all items" do
+        before do
+          StockItem.where(:variant_id => return_item.exchange_variant_id).destroy_all
+        end
+
+        it 'raises an UnableToCreateShipments error' do
+          expect {
+            subject
+          }.to raise_error(Spree::Exchange::UnableToCreateShipments)
+        end
+      end
     end
 
     describe "#to_key" do # for dom_id

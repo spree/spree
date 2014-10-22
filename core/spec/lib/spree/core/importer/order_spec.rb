@@ -6,7 +6,7 @@ module Spree
 
       let!(:country) { create(:country) }
       let!(:state) { country.states.first || create(:state, :country => country) }
-      let!(:stock_location) { create(:stock_location) }
+      let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
       let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
       let(:shipping_method) { create(:shipping_method) }
@@ -271,22 +271,12 @@ module Spree
         let(:params) do
           { :shipments_attributes => [
               { :tracking => '123456789',
-                :cost => '4.99',
+                :cost => '14.99',
                 :shipping_method => shipping_method.name,
                 :stock_location => stock_location.name,
                 :inventory_units => [{ :sku => sku }]
               }
           ] }
-        end
-
-        it 'ensure shipments are not wiped out when items are added' do
-          with_item_params = params.update({
-            line_items_attributes: {
-              0 => { variant_id: variant.id, quantity: 1 } }
-            }
-          )
-          order = Importer::Order.import(user, with_item_params)
-          expect(order.shipments).to_not be_empty
         end
 
         it 'ensures variant exists and is not deleted' do
@@ -298,13 +288,21 @@ module Spree
           order = Importer::Order.import(user, params)
           shipment = order.shipments.first
 
-          expect(shipment.cost.to_f).to eq 4.99
+          expect(shipment.cost.to_f).to eq 14.99
           expect(shipment.inventory_units.first.variant_id).to eq product.master.id
           expect(shipment.tracking).to eq '123456789'
-          expect(shipment.shipping_rates.first.cost).to eq 4.99
+          expect(shipment.shipping_rates.first.cost).to eq 14.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           expect(shipment.stock_location).to eq stock_location
-          expect(order.shipment_total.to_f).to eq 4.99
+          expect(order.shipment_total.to_f).to eq 14.99
+        end
+
+        it "accepts admin name for stock location" do
+          params[:shipments_attributes][0][:stock_location] = stock_location.admin_name
+          order = Importer::Order.import(user, params)
+          shipment = order.shipments.first
+
+          expect(shipment.stock_location).to eq stock_location
         end
 
         it "raises if cant find stock location" do

@@ -13,8 +13,8 @@ module Spree
     acts_as_paranoid
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
-    belongs_to :zone, class_name: "Spree::Zone"
-    belongs_to :tax_category, class_name: "Spree::TaxCategory"
+    belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
+    belongs_to :tax_category, class_name: "Spree::TaxCategory", inverse_of: :tax_rates
 
     has_many :adjustments, as: :source
 

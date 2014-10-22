@@ -115,7 +115,7 @@ describe Spree::Product do
         it "should set deleted_at value" do
           product.destroy
           product.deleted_at.should_not be_nil
-          product.master.deleted_at.should_not be_nil
+          product.master.reload.deleted_at.should_not be_nil
         end
       end
     end
@@ -233,7 +233,7 @@ describe Spree::Product do
     # Regression test for #3737
     context "has stock items" do
       let(:product) { create(:product) }
-      it "can retreive stock items" do
+      it "can retrieve stock items" do
         product.master.stock_items.first.should_not be_nil
         product.stock_items.first.should_not be_nil
       end

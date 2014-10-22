@@ -40,9 +40,8 @@ module Spree
     has_one :master,
       -> { where is_master: true },
       inverse_of: :product,
-      class_name: 'Spree::Variant',
-      dependent: :destroy
-
+      class_name: 'Spree::Variant'
+      
     has_many :variants,
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       inverse_of: :product,
@@ -66,7 +65,7 @@ module Spree
     delegate_belongs_to :master, :cost_price
 
     after_create :set_master_variant_defaults
-    after_create :add_properties_and_option_types_from_prototype
+    after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
@@ -219,12 +218,13 @@ module Spree
 
     private
 
-    def add_properties_and_option_types_from_prototype
+    def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
           product_properties.create(property: property)
         end
         self.option_types = prototype.option_types
+        self.taxons = prototype.taxons
       end
     end
 
@@ -300,8 +300,8 @@ module Spree
     # Try building a slug based on the following fields in increasing order of specificity.
     def slug_candidates
       [
-          :name,
-          [:name, :sku]
+        :name,
+        [:name, :sku]
       ]
     end
 

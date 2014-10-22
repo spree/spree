@@ -1,76 +1,16 @@
-united_states = Spree::Country.find_by(name: 'United States')
-
-Spree::State.create!([
-  { name: 'Michigan', abbr: 'MI', country: united_states },
-  { name: 'South Dakota', abbr: 'SD', country: united_states },
-  { name: 'Washington', abbr: 'WA', country: united_states },
-  { name: 'Wisconsin', abbr: 'WI', country: united_states },
-  { name: 'Arizona', abbr: 'AZ', country: united_states },
-  { name: 'Illinois', abbr: 'IL', country: united_states },
-  { name: 'New Hampshire', abbr: 'NH', country: united_states },
-  { name: 'North Carolina', abbr: 'NC', country: united_states },
-  { name: 'Kansas', abbr: 'KS', country: united_states },
-  { name: 'Missouri', abbr: 'MO', country: united_states },
-  { name: 'Arkansas', abbr: 'AR', country: united_states },
-  { name: 'Nevada', abbr: 'NV', country: united_states },
-  { name: 'District of Columbia', abbr: 'DC', country: united_states },
-  { name: 'Idaho', abbr: 'ID', country: united_states },
-  { name: 'Nebraska', abbr: 'NE', country: united_states },
-  { name: 'Pennsylvania', abbr: 'PA', country: united_states },
-  { name: 'Hawaii', abbr: 'HI', country: united_states },
-  { name: 'Utah', abbr: 'UT', country: united_states },
-  { name: 'Vermont', abbr: 'VT', country: united_states },
-  { name: 'Delaware', abbr: 'DE', country: united_states },
-  { name: 'Rhode Island', abbr: 'RI', country: united_states },
-  { name: 'Oklahoma', abbr: 'OK', country: united_states },
-  { name: 'Louisiana', abbr: 'LA', country: united_states },
-  { name: 'Montana', abbr: 'MT', country: united_states },
-  { name: 'Tennessee', abbr: 'TN', country: united_states },
-  { name: 'Maryland', abbr: 'MD', country: united_states },
-  { name: 'Florida', abbr: 'FL', country: united_states },
-  { name: 'Virginia', abbr: 'VA', country: united_states },
-  { name: 'Minnesota', abbr: 'MN', country: united_states },
-  { name: 'New Jersey', abbr: 'NJ', country: united_states },
-  { name: 'Ohio', abbr: 'OH', country: united_states },
-  { name: 'California', abbr: 'CA', country: united_states },
-  { name: 'North Dakota', abbr: 'ND', country: united_states },
-  { name: 'Maine', abbr: 'ME', country: united_states },
-  { name: 'Indiana', abbr: 'IN', country: united_states },
-  { name: 'Texas', abbr: 'TX', country: united_states },
-  { name: 'Oregon', abbr: 'OR', country: united_states },
-  { name: 'Wyoming', abbr: 'WY', country: united_states },
-  { name: 'Alabama', abbr: 'AL', country: united_states },
-  { name: 'Iowa', abbr: 'IA', country: united_states },
-  { name: 'Mississippi', abbr: 'MS', country: united_states },
-  { name: 'Kentucky', abbr: 'KY', country: united_states },
-  { name: 'New Mexico', abbr: 'NM', country: united_states },
-  { name: 'Georgia', abbr: 'GA', country: united_states },
-  { name: 'Colorado', abbr: 'CO', country: united_states },
-  { name: 'Massachusetts', abbr: 'MA', country: united_states },
-  { name: 'Connecticut', abbr: 'CT', country: united_states },
-  { name: 'New York', abbr: 'NY', country: united_states },
-  { name: 'South Carolina', abbr: 'SC', country: united_states },
-  { name: 'Alaska', abbr: 'AK', country: united_states },
-  { name: 'West Virginia', abbr: 'WV', country: united_states },
-  { name: 'U.S. Armed Forces - Americas', abbr: 'AA', country: united_states },
-  { name: 'U.S. Armed Forces - Europe', abbr: 'AE', country: united_states },
-  { name: 'U.S. Armed Forces - Pacific', abbr: 'AP', country: united_states }
-])
-
-canada = Spree::Country.find_by(name: 'Canada')
-
-Spree::State.create!([
-  { name: "Yukon",                     abbr: "YT", country: canada },
-  { name: "Nunavut",                   abbr: "NU", country: canada },
-  { name: "British Columbia",          abbr: "BC", country: canada },
-  { name: "Alberta",                   abbr: "AB", country: canada },
-  { name: "Saskatchewan",              abbr: "SK", country: canada },
-  { name: "Manitoba",                  abbr: "MB", country: canada },
-  { name: "Ontario",                   abbr: "ON", country: canada },
-  { name: "Quebec",                    abbr: "QC", country: canada },
-  { name: "New Brunswick",             abbr: "NB", country: canada },
-  { name: "Newfoundland and Labrador", abbr: "NL", country: canada },
-  { name: "Nova Scotia",               abbr: "NS", country: canada },
-  { name: "Prince Edward Island",      abbr: "PE", country: canada },
-  { name: "Northwest Territories",     abbr: "NT", country: canada }
-])
+ActiveRecord::Base.transaction do
+  Spree::Country.all.each do |country|
+    carmen_country = Carmen::Country.named(country.name)
+    @states ||= []
+    if carmen_country.subregions?
+      carmen_country.subregions.each do |subregion|
+        @states << {
+          name: subregion.name,
+          abbr: subregion.code,
+          country: country
+        }
+      end
+    end
+  end
+  Spree::State.create!(@states)
+end

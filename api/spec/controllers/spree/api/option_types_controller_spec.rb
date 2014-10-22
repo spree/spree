@@ -33,7 +33,7 @@ module Spree
       json_response.first.should have_attributes(attributes)
     end
 
-    it "can retreive a list of specific option types" do
+    it "can retrieve a list of specific option types" do
       option_type_1 = create(:option_type)
       option_type_2 = create(:option_type)
       api_get :index, :ids => "#{option_type.id},#{option_type_1.id}"

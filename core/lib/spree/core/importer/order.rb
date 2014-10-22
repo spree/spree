@@ -14,6 +14,9 @@ module Spree
             order = Spree::Order.create! create_params
             order.associate_user!(user)
 
+            shipments_attrs = params.delete(:shipments_attributes)
+
+            create_shipments_from_params(shipments_attrs, order)
             create_line_items_from_params(params.delete(:line_items_attributes),order)
             create_shipments_from_params(params.delete(:shipments_attributes), order)
             create_adjustments_from_params(params.delete(:adjustments_attributes), order)
@@ -28,8 +31,15 @@ module Spree
 
             order.update_attributes!(params)
 
+            order.create_proposed_shipments unless shipments_attrs.present?
+
             # Really ensure that the order totals & states are correct
             order.updater.update
+            if shipments_attrs.present?
+              order.shipments.each_with_index do |shipment, index|
+                shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
+              end
+            end
             order.reload
           rescue Exception => e
             order.destroy if order && order.persisted?
@@ -45,7 +55,7 @@ module Spree
             begin
               shipment = order.shipments.build
               shipment.tracking       = s[:tracking]
-              shipment.stock_location = Spree::StockLocation.find_by_name!(s[:stock_location])
+              shipment.stock_location = Spree::StockLocation.find_by_admin_name(s[:stock_location]) || Spree::StockLocation.find_by_name!(s[:stock_location])
 
               inventory_units = s[:inventory_units] || []
               inventory_units.each do |iu|

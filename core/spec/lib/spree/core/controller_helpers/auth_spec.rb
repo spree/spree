@@ -70,7 +70,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
     context 'when logged in' do
       before do
-        controller.stub(try_spree_current_user: true)
+        controller.stub(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil))
       end
       it 'redirects unauthorized path' do
         get :index
@@ -79,7 +79,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
     context 'when guest user' do
       before do
-        controller.stub(try_spree_current_user: false)
+        controller.stub(try_spree_current_user: nil)
       end
       it 'redirects login path' do
         controller.stub(spree_login_path: '/login')

@@ -2,7 +2,7 @@ module Spree
   class StockItem < Spree::Base
     acts_as_paranoid
 
-    belongs_to :stock_location, class_name: 'Spree::StockLocation'
+    belongs_to :stock_location, class_name: 'Spree::StockLocation', inverse_of: :stock_items
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :stock_items
     has_many :stock_movements, inverse_of: :stock_item
 

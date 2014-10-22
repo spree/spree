@@ -1,16 +1,21 @@
 <% if can? :admin, Spree::Order %>
-  <%= tab :orders, :payments, :creditcard_payments, :shipments, :credit_cards, :return_authorizations, :customer_returns, :icon => 'shopping-cart' %>
+  <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
 <% end %>
+
 <% if can? :admin, Spree::Product %>
-  <%= tab :products, :option_types, :properties, :prototypes, :variants, :product_properties, :taxonomies, :taxons, :icon => 'th-large' %>
+  <%= tab *Spree::BackendConfiguration::PRODUCT_TABS, icon: 'th-large' %>
 <% end %>
+
 <% if can? :admin, Spree::Admin::ReportsController %>
-  <%= tab :reports, :icon => 'file'  %>
+  <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
 <% end %>
-<%= tab :configurations, :general_settings, :tax_categories, :tax_rates, :zones, :countries, :states, :payment_methods, :shipping_methods, :shipping_categories, :stock_transfers, :stock_locations, :trackers, :label => 'configuration', :icon => 'wrench', :url => spree.edit_admin_general_settings_path %>
+
+<%= tab *Spree::BackendConfiguration::CONFIGURATION_TABS, label: 'configuration', icon: 'wrench', url: spree.edit_admin_general_settings_path %>
+
 <% if can? :admin, Spree::Promotion %>
-  <%= tab(:promotions, :url => spree.admin_promotions_path, :icon => 'bullhorn') %>
+  <%= tab *Spree::BackendConfiguration::PROMOTION_TABS, url: spree.admin_promotions_path, icon: 'bullhorn' %>
 <% end %>
+
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>
-  <%= tab(:users, :url => spree.admin_users_path, :icon => 'user') %>
+  <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
 <% end %>
