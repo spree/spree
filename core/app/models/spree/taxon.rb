@@ -11,6 +11,9 @@ module Spree
     before_create :set_permalink
 
     validates :name, presence: true
+    validates :meta_keywords, length: { maximum: 255 }
+    validates :meta_description, length: { maximum: 255 }
+    validates :meta_title, length: { maximum: 255 }
 
     after_touch :touch_ancestors_and_taxonomy
 
