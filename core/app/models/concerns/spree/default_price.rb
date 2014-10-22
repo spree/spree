@@ -1,5 +1,5 @@
 module Spree
-  module DefualtPrice
+  module DefaultPrice
     extend ActiveSupport::Concern
 
     included do

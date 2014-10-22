@@ -2,7 +2,7 @@ module Spree
   class Variant < Spree::Base
     acts_as_paranoid
 
-    include Spree::DefualtPrice
+    include Spree::DefaultPrice
 
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
