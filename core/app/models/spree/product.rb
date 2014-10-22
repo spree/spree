@@ -83,6 +83,8 @@ module Spree
     validates :shipping_category_id, presence: true
     validates :slug, length: { minimum: 3 }
     validates :slug, uniqueness: true
+    validates :meta_keywords, length: { maximum: 255 }
+    validates :meta_title, length: { maximum: 255 }
 
     before_validation :normalize_slug, on: :update
 
