@@ -30,7 +30,7 @@ describe "Analytics Tracker" do
     end
    end
 
-  context "create" do
+  context "create", js: true do
     before(:each) do
       visit spree.admin_path
       click_link "Configuration"
