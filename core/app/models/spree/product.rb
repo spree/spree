@@ -56,7 +56,7 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
-    
+
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
@@ -69,7 +69,7 @@ module Spree
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
-    after_save :run_touch_callbacks, if: :anything_changed?
+    after_save :ruuun_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
@@ -305,7 +305,7 @@ module Spree
       ]
     end
 
-    def run_touch_callbacks
+    def ruuun_touch_callbacks
       run_callbacks(:touch)
     end
 
