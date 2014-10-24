@@ -23,7 +23,7 @@ describe Spree::LineItem, :type => :model do
     end
 
     it "returns inventory when a line item is destroyed" do
-      expect_any_instance_of(Spree::OrderInventory).to receive(:verify).with(line_item, nil)
+      expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
       line_item.destroy
     end
   end

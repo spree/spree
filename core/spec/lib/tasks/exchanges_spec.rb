@@ -4,8 +4,7 @@ describe "exchanges:charge_unreturned_items" do
   include_context "rake"
 
   describe '#prerequisites' do
-    subject { super().prerequisites }
-    it { is_expected.to include("environment") }
+    it { expect(subject.prerequisites).to include("environment") }
   end
 
   context "there are no unreturned items" do
