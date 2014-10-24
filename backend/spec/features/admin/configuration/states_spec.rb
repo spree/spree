@@ -7,7 +7,6 @@ describe "States", :type => :feature do
 
   before(:each) do
     @hungary = Spree::Country.create!(:name => "Hungary", :iso_name => "Hungary")
-    Spree::Config[:default_country_id] = country.id
   end
 
   # TODO: For whatever reason, rendering of the states page takes a non-trivial amount of time
