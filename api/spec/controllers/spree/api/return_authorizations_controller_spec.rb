@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ReturnAuthorizationsController do
+  describe Api::ReturnAuthorizationsController, :type => :controller do
     render_views
 
     let!(:order) { create(:shipped_order) }
@@ -16,7 +16,7 @@ module Spree
 
     context "as the order owner" do
       before do
-        Order.any_instance.stub :user => current_api_user
+        allow_any_instance_of(Order).to receive_messages :user => current_api_user
       end
 
       it "cannot see any return authorizations" do
@@ -57,28 +57,28 @@ module Spree
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_get :show, :order_id => order.number, :id => return_authorization.id
-        response.status.should == 200
-        json_response.should have_attributes(attributes)
-        json_response["state"].should_not be_blank
+        expect(response.status).to eq(200)
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response["state"]).not_to be_blank
       end
 
       it "can get a list of return authorizations" do
         FactoryGirl.create(:return_authorization, :order => order)
         FactoryGirl.create(:return_authorization, :order => order)
         api_get :index, { :order_id => order.number }
-        response.status.should == 200
+        expect(response.status).to eq(200)
         return_authorizations = json_response["return_authorizations"]
-        return_authorizations.first.should have_attributes(attributes)
-        return_authorizations.first.should_not == return_authorizations.last
+        expect(return_authorizations.first).to have_attributes(attributes)
+        expect(return_authorizations.first).not_to eq(return_authorizations.last)
       end
 
       it 'can control the page size through a parameter' do
         FactoryGirl.create(:return_authorization, :order => order)
         FactoryGirl.create(:return_authorization, :order => order)
         api_get :index, :order_id => order.number, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        expect(json_response['count']).to eq(1)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
@@ -86,85 +86,85 @@ module Spree
         expected_result = create(:return_authorization, :reason => 'damaged')
         order.return_authorizations << expected_result
         api_get :index, :q => { :reason_cont => 'damage' }
-        json_response['count'].should == 1
-        json_response['return_authorizations'].first['reason'].should eq expected_result.reason
+        expect(json_response['count']).to eq(1)
+        expect(json_response['return_authorizations'].first['reason']).to eq expected_result.reason
       end
 
       it "can learn how to create a new return authorization" do
         api_get :new
-        json_response["attributes"].should == ["id", "number", "state", "amount", "order_id", "reason", "created_at", "updated_at"]
+        expect(json_response["attributes"]).to eq(["id", "number", "state", "amount", "order_id", "reason", "created_at", "updated_at"])
         required_attributes = json_response["required_attributes"]
-        required_attributes.should include("order")
+        expect(required_attributes).to include("order")
       end
 
       it "can update a return authorization on the order" do
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
-        response.status.should == 200
-        json_response.should have_attributes(attributes)
+        expect(response.status).to eq(200)
+        expect(json_response).to have_attributes(attributes)
       end
 
       it "can add an inventory unit to a return authorization on the order" do
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         inventory_unit = return_authorization.returnable_inventory.first
-        inventory_unit.should be
-        return_authorization.inventory_units.should be_empty
+        expect(inventory_unit).to be
+        expect(return_authorization.inventory_units).to be_empty
         api_put :add, :id => return_authorization.id, variant_id: inventory_unit.variant.id, quantity: 1
-        response.status.should == 200
-        json_response.should have_attributes(attributes)
-        return_authorization.reload.inventory_units.should_not be_empty
+        expect(response.status).to eq(200)
+        expect(json_response).to have_attributes(attributes)
+        expect(return_authorization.reload.inventory_units).not_to be_empty
       end
 
       it "can mark a return authorization as received on the order with an inventory unit" do
         FactoryGirl.create(:new_return_authorization, :order => order, :stock_location_id => order.shipments.first.stock_location.id)
         return_authorization = order.return_authorizations.first
-        return_authorization.state.should == "authorized"
+        expect(return_authorization.state).to eq("authorized")
 
         # prep (use a rspec context or a factory instead?)
         inventory_unit = return_authorization.returnable_inventory.first
-        inventory_unit.should be
-        return_authorization.inventory_units.should be_empty
+        expect(inventory_unit).to be
+        expect(return_authorization.inventory_units).to be_empty
         api_put :add, :id => return_authorization.id, variant_id: inventory_unit.variant.id, quantity: 1
         # end prep
 
         api_delete :receive, :id => return_authorization.id
-        response.status.should == 200
-        return_authorization.reload.state.should == "received"
+        expect(response.status).to eq(200)
+        expect(return_authorization.reload.state).to eq("received")
       end
 
       it "cannot mark a return authorization as received on the order with no inventory units" do
         FactoryGirl.create(:new_return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
-        return_authorization.state.should == "authorized"
+        expect(return_authorization.state).to eq("authorized")
         api_delete :receive, :id => return_authorization.id
-        response.status.should == 422
-        return_authorization.reload.state.should == "authorized"
+        expect(response.status).to eq(422)
+        expect(return_authorization.reload.state).to eq("authorized")
       end
 
       it "can cancel a return authorization on the order" do
         FactoryGirl.create(:new_return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
-        return_authorization.state.should == "authorized"
+        expect(return_authorization.state).to eq("authorized")
         api_delete :cancel, :id => return_authorization.id
-        response.status.should == 200
-        return_authorization.reload.state.should == "canceled"
+        expect(response.status).to eq(200)
+        expect(return_authorization.reload.state).to eq("canceled")
       end
 
       it "can delete a return authorization on the order" do
         FactoryGirl.create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
-        response.status.should == 204
-        lambda { return_authorization.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        expect(response.status).to eq(204)
+        expect { return_authorization.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
 
       it "can add a new return authorization to an existing order" do
         api_post :create, :order_id => order.number, :return_authorization => { :amount => 14.22, :reason => "Defective" }
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
-        json_response["state"].should_not be_blank
+        expect(response.status).to eq(201)
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response["state"]).not_to be_blank
       end
     end
 
@@ -179,7 +179,7 @@ module Spree
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
         assert_unauthorized!
-        return_authorization.reload.amount.should_not == 19.99
+        expect(return_authorization.reload.amount).not_to eq(19.99)
       end
 
       it "cannot delete a return authorization on the order" do
@@ -187,7 +187,7 @@ module Spree
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!
-        lambda { return_authorization.reload }.should_not raise_error
+        expect { return_authorization.reload }.not_to raise_error
       end
     end
   end

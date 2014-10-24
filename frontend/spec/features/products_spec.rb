@@ -227,7 +227,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
     within("div#product-description") do
       within("h1.product-title") do
-        page.should have_content("Ruby on Rails Baseball Jersey")
+        expect(page).to have_content("Ruby on Rails Baseball Jersey")
       end
     end
   end

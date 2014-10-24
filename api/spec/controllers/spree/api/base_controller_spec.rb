@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::BaseController do
+describe Spree::Api::BaseController, :type => :controller do
   render_views
   controller(Spree::Api::BaseController) do
     def index
@@ -11,14 +11,14 @@ describe Spree::Api::BaseController do
   context "signed in as a user using an authentication extension" do
     before do
       user = double(:email => "spree@example.com")
-      user.stub_chain :spree_roles, pluck: []
-      controller.stub :try_spree_current_user => user
+      allow(user).to receive_message_chain :spree_roles, pluck: []
+      allow(controller).to receive_messages :try_spree_current_user => user
     end
 
     it "can make a request" do
       api_get :index
-      json_response.should == { "products" => [] }
-      response.status.should == 200
+      expect(json_response).to eq({ "products" => [] })
+      expect(response.status).to eq(200)
     end
   end
 
@@ -28,19 +28,19 @@ describe Spree::Api::BaseController do
     context "with a correct order token" do
       it "succeeds" do
         api_get :index, order_token: order.guest_token, order_id: order.number
-        response.status.should == 200
+        expect(response.status).to eq(200)
       end
 
       it "succeeds with an order_number parameter" do
         api_get :index, order_token: order.guest_token, order_number: order.number
-        response.status.should == 200
+        expect(response.status).to eq(200)
       end
     end
 
     context "with an incorrect order token" do
       it "returns unauthorized" do
         api_get :index, order_token: "NOT_A_TOKEN", order_id: order.number
-        response.status.should == 401
+        expect(response.status).to eq(401)
       end
     end
   end
@@ -48,29 +48,29 @@ describe Spree::Api::BaseController do
   context "cannot make a request to the API" do
     it "without an API key" do
       api_get :index
-      json_response.should == { "error" => "You must specify an API key." }
-      response.status.should == 401
+      expect(json_response).to eq({ "error" => "You must specify an API key." })
+      expect(response.status).to eq(401)
     end
 
     it "with an invalid API key" do
       request.headers["X-Spree-Token"] = "fake_key"
       get :index, {}
-      json_response.should == { "error" => "Invalid API key (fake_key) specified." }
-      response.status.should == 401
+      expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
+      expect(response.status).to eq(401)
     end
 
     it "using an invalid token param" do
       get :index, :token => "fake_key"
-      json_response.should == { "error" => "Invalid API key (fake_key) specified." }
+      expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
     end
   end
 
   it 'handles exceptions' do
-    subject.should_receive(:authenticate_user).and_return(true)
-    subject.should_receive(:load_user_roles).and_return(true)
-    subject.should_receive(:index).and_raise(Exception.new("no joy"))
+    expect(subject).to receive(:authenticate_user).and_return(true)
+    expect(subject).to receive(:load_user_roles).and_return(true)
+    expect(subject).to receive(:index).and_raise(Exception.new("no joy"))
     get :index, :token => "fake_key"
-    json_response.should == { "exception" => "no joy" }
+    expect(json_response).to eq({ "exception" => "no joy" })
   end
 
   it "maps semantic keys to nested_attributes keys" do
@@ -81,11 +81,11 @@ describe Spree::Api::BaseController do
                    'name' => 'test order' }
 
     mapped = subject.map_nested_attributes_keys(klass, attributes)
-    mapped.has_key?('line_items_attributes').should be true
-    mapped.has_key?('name').should be true
+    expect(mapped.has_key?('line_items_attributes')).to be true
+    expect(mapped.has_key?('name')).to be true
   end
 
   it "lets a subclass override the product associations that are eager-loaded" do
-    controller.respond_to?(:product_includes, true).should be
+    expect(controller.respond_to?(:product_includes, true)).to be
   end
 end

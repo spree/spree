@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ClassificationsController do
+  describe Api::ClassificationsController, :type => :controller do
     let(:taxon) do
       taxon = create(:taxon)
       3.times do
@@ -18,7 +18,7 @@ module Spree
     context "as a user" do
       it "cannot change the order of a product" do
         api_put :update, :taxon_id => taxon, :product_id => taxon.products.first, :position => 1
-        response.status.should == 401
+        expect(response.status).to eq(401)
       end
     end
 
@@ -28,10 +28,10 @@ module Spree
       it "can change the order a product" do
         last_product = taxon.products.last
         classification = taxon.classifications.find_by(:product_id => last_product.id)
-        classification.position.should == 3
+        expect(classification.position).to eq(3)
         api_put :update, :taxon_id => taxon, :product_id => last_product, :position => 0
-        response.status.should == 200
-        classification.reload.position.should == 1
+        expect(response.status).to eq(200)
+        expect(classification.reload.position).to eq(1)
       end
     end
   end
