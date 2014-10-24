@@ -6,7 +6,9 @@ module Spree
   class CheckoutController < Spree::StoreController
     ssl_required
 
-    before_filter :load_order_with_lock
+    before_action :load_order_with_lock
+    before_filter :ensure_valid_state_lock_version, only: [:update]
+    before_filter :set_state_if_present
 
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
@@ -72,9 +74,11 @@ module Spree
       def load_order_with_lock
         @order = current_order(lock: true)
         redirect_to spree.cart_path and return unless @order
+      end
 
-        @order.with_lock do
-          if params[:order] && params[:order][:state_lock_version]
+      def ensure_valid_state_lock_version
+        if params[:order] && params[:order][:state_lock_version]
+          @order.with_lock do
             unless @order.state_lock_version == params[:order][:state_lock_version].to_i
               flash[:error] = Spree.t(:order_already_updated)
               redirect_to checkout_state_path(@order.state) and return
@@ -82,6 +86,9 @@ module Spree
             @order.increment!(:state_lock_version)
           end
         end
+      end
+
+      def set_state_if_present
 
         if params[:state]
           redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
