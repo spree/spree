@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product Images" do
+describe "Product Images", :type => :feature do
   stub_authorization!
 
   let(:file_path) { Rails.root + "../../spec/support/ror_ringer.jpeg" }
@@ -25,18 +25,18 @@ describe "Product Images" do
       click_link "new_image_link"
       attach_file('image_attachment', file_path)
       click_button "Update"
-      page.should have_content("successfully created!")
+      expect(page).to have_content("successfully created!")
 
       click_icon(:edit)
       fill_in "image_alt", :with => "ruby on rails t-shirt"
       click_button "Update"
-      page.should have_content("successfully updated!")
-      page.should have_content("ruby on rails t-shirt")
+      expect(page).to have_content("successfully updated!")
+      expect(page).to have_content("ruby on rails t-shirt")
 
       accept_alert do
         click_icon :trash
       end
-      page.should_not have_content("ruby on rails t-shirt")
+      expect(page).not_to have_content("ruby on rails t-shirt")
     end
   end
 
@@ -46,21 +46,21 @@ describe "Product Images" do
     variant.images.create!(:attachment => File.open(file_path))
     visit spree.admin_product_images_path(variant.product)
 
-    page.should_not have_content("No Images Found.")
+    expect(page).not_to have_content("No Images Found.")
     within("table.index") do
-      page.should have_content(variant.options_text)
+      expect(page).to have_content(variant.options_text)
 
       #ensure no duplicate images are displayed
-      page.should have_css("tbody tr", :count => 1)
+      expect(page).to have_css("tbody tr", :count => 1)
 
       #ensure variant header is displayed
       within("thead") do
-        page.should have_content("Variant")
+        expect(page).to have_content("Variant")
       end
 
       #ensure variant header is displayed
       within("tbody") do
-        page.should have_content("Size: S")
+        expect(page).to have_content("Size: S")
       end
     end
   end
@@ -70,18 +70,18 @@ describe "Product Images" do
     product.images.create!(:attachment => File.open(file_path))
     visit spree.admin_product_images_path(product)
 
-    page.should_not have_content("No Images Found.")
+    expect(page).not_to have_content("No Images Found.")
     within("table.index") do
       #ensure no duplicate images are displayed
-      page.should have_css("tbody tr", :count => 1)
+      expect(page).to have_css("tbody tr", :count => 1)
 
       #ensure variant header is not displayed
       within("thead") do
-        page.should_not have_content("Variant")
+        expect(page).not_to have_content("Variant")
       end
 
       #ensure correct cell count
-      page.should have_css("thead th", :count => 3)
+      expect(page).to have_css("thead th", :count => 3)
     end
   end
 end

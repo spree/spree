@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'alerts' do
+describe 'alerts', :type => :controller do
   stub_authorization!
 
   controller(Spree::Admin::BaseController) do
@@ -20,6 +20,6 @@ describe 'alerts' do
   # Regression test for #3716
   it "alerts returned wrong data type" do
     get :index, {}
-    response.body.should == 'ok'
+    expect(response.body).to eq('ok')
   end
 end

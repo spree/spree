@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Tax Rates" do
+describe "Tax Rates", :type => :feature do
   stub_authorization!
 
   let!(:tax_rate) { create(:tax_rate, :calculator => stub_model(Spree::Calculator)) }
@@ -13,9 +13,9 @@ describe "Tax Rates" do
   # Regression test for #535
   it "can see a tax rate in the list if the tax category has been deleted" do
     tax_rate.tax_category.update_column(:deleted_at, Time.now)
-    lambda { click_link "Tax Rates" }.should_not raise_error
+    expect { click_link "Tax Rates" }.not_to raise_error
     within(:xpath, all("table tbody td")[2].path) do
-      page.should have_content("N/A")
+      expect(page).to have_content("N/A")
     end
   end
 
@@ -25,6 +25,6 @@ describe "Tax Rates" do
     click_link "New Tax Rate"
     fill_in "Rate", :with => "0.05"
     click_button "Create"
-    page.should have_content("Tax Rate has been successfully created!")
+    expect(page).to have_content("Tax Rate has been successfully created!")
   end
 end

@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Spree::Admin::ShippingMethodsController do
+describe Spree::Admin::ShippingMethodsController, :type => :controller do
   stub_authorization!
 
   # Regression test for #1240
   it "should not hard-delete shipping methods" do
     shipping_method = stub_model(Spree::ShippingMethod)
-    Spree::ShippingMethod.stub :find => shipping_method
-    shipping_method.deleted_at.should be_nil
+    allow(Spree::ShippingMethod).to receive_messages :find => shipping_method
+    expect(shipping_method.deleted_at).to be_nil
     spree_delete :destroy, :id => 1
-    shipping_method.reload.deleted_at.should_not be_nil
+    expect(shipping_method.reload.deleted_at).not_to be_nil
   end
 end

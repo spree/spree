@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Stock Locations" do
+describe "Stock Locations", :type => :feature do
   stub_authorization!
 
   before(:each) do
@@ -16,35 +16,35 @@ describe "Stock Locations" do
     check "Active"
     click_button "Create"
 
-    page.should have_content("successfully created")
-    page.should have_content("London")
+    expect(page).to have_content("successfully created")
+    expect(page).to have_content("London")
   end
 
   it "can delete an existing stock location", js: true do
     location = create(:stock_location)
     visit current_path
 
-    find('#listing_stock_locations').should have_content("NY Warehouse")
+    expect(find('#listing_stock_locations')).to have_content("NY Warehouse")
     accept_alert do
       click_icon :trash
     end
     # Wait for API request to complete.
     wait_for_ajax
     visit current_path 
-    page.should have_content("NO STOCK LOCATIONS FOUND")
+    expect(page).to have_content("NO STOCK LOCATIONS FOUND")
   end
 
   it "can update an existing stock location" do
     create(:stock_location)
     visit current_path
 
-    page.should have_content("NY Warehouse")
+    expect(page).to have_content("NY Warehouse")
 
     click_icon :edit
     fill_in "Name", with: "London"
     click_button "Update"
 
-    page.should have_content("successfully updated")
-    page.should have_content("London")
+    expect(page).to have_content("successfully updated")
+    expect(page).to have_content("London")
   end
 end

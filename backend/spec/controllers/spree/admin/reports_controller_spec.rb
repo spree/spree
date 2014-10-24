@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReportsController do
+describe Spree::Admin::ReportsController, :type => :controller do
   stub_authorization!
 
   describe 'ReportsController.available_reports' do
     it 'should contain sales_total' do
-      Spree::Admin::ReportsController.available_reports.keys.include?(:sales_total).should be true
+      expect(Spree::Admin::ReportsController.available_reports.keys.include?(:sales_total)).to be true
     end
 
     it 'should have the proper sales total report description' do
-      Spree::Admin::ReportsController.available_reports[:sales_total][:description].should eql('Sales Total For All Orders')
+      expect(Spree::Admin::ReportsController.available_reports[:sales_total][:description]).to eql('Sales Total For All Orders')
     end
 
   end
@@ -18,7 +18,7 @@ describe Spree::Admin::ReportsController do
     context 'when adding the report name' do
       it 'should contain the report' do
         Spree::Admin::ReportsController.add_available_report!(:some_report)
-        Spree::Admin::ReportsController.available_reports.keys.include?(:some_report).should be true
+        expect(Spree::Admin::ReportsController.available_reports.keys.include?(:some_report)).to be true
       end
     end
   end
@@ -26,12 +26,12 @@ describe Spree::Admin::ReportsController do
   describe 'GET index' do
     it 'should be ok' do
       spree_get :index
-      response.should be_ok
+      expect(response).to be_ok
     end
   end
 
   it 'should respond to model_class as Spree::AdminReportsController' do
-    controller.send(:model_class).should eql(Spree::Admin::ReportsController)
+    expect(controller.send(:model_class)).to eql(Spree::Admin::ReportsController)
   end
 
   after(:each) do

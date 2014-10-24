@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Analytics Tracker" do
+describe "Analytics Tracker", :type => :feature do
   stub_authorization!
 
   context "index" do
@@ -12,20 +12,20 @@ describe "Analytics Tracker" do
     end
 
     it "should have the right content" do
-      page.should have_content("Analytics Trackers")
+      expect(page).to have_content("Analytics Trackers")
     end
 
     it "should have the right tabular values displayed" do
       within_row(1) do
-        column_text(1).should == "A100"
-        column_text(2).should == "Test"
-        column_text(3).should == "Yes"
+        expect(column_text(1)).to eq("A100")
+        expect(column_text(2)).to eq("Test")
+        expect(column_text(3)).to eq("Yes")
       end
 
       within_row(2) do
-        column_text(1).should == "A100"
-        column_text(2).should == "Test"
-        column_text(3).should == "Yes"
+        expect(column_text(1)).to eq("A100")
+        expect(column_text(2)).to eq("Test")
+        expect(column_text(3)).to eq("Yes")
       end
     end
    end
@@ -43,11 +43,11 @@ describe "Analytics Tracker" do
       select "Test", :from => "tracker-env"
       click_button "Create"
 
-      page.should have_content("successfully created!")
+      expect(page).to have_content("successfully created!")
       within_row(1) do
-        column_text(1).should == "A100"
-        column_text(2).should == "Test"
-        column_text(3).should == "Yes"
+        expect(column_text(1)).to eq("A100")
+        expect(column_text(2)).to eq("Test")
+        expect(column_text(3)).to eq("Yes")
       end
     end
   end

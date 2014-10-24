@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Shipments" do
+describe "Shipments", :type => :feature do
   stub_authorization!
 
   let!(:order) { create(:order_ready_to_ship, :number => "R100", :state => "complete") }
@@ -15,7 +15,7 @@ describe "Shipments" do
     end
 
     it "can still be displayed" do
-      lambda { visit spree.edit_admin_order_path(order) }.should_not raise_error
+      expect { visit spree.edit_admin_order_path(order) }.not_to raise_error
     end
   end
 
@@ -32,8 +32,8 @@ describe "Shipments" do
       click_link "ship"
       wait_for_ajax
 
-      page.should have_content("SHIPPED PACKAGE")
-      order.reload.shipment_state.should == "shipped"
+      expect(page).to have_content("SHIPPED PACKAGE")
+      expect(order.reload.shipment_state).to eq("shipped")
     end
   end
 
@@ -48,7 +48,7 @@ describe "Shipments" do
     end
 
     it "can move a variant to a new and to an existing shipment" do
-      order.shipments.count.should == 1
+      expect(order.shipments.count).to eq(1)
 
       within_row(1) { click_icon 'arrows-h' }
       targetted_select2 'LA', from: '#s2id_item_stock_location'

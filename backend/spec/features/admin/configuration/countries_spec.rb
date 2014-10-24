@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe "Countries" do
+  describe "Countries", :type => :feature do
     stub_authorization!
 
     it "deletes a state", js: true do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Customer Details" do
+describe "Customer Details", :type => :feature do
   stub_authorization!
 
   let(:shipping_method) { create(:shipping_method, :display_on => "front_end") }
@@ -37,7 +37,7 @@ describe "Customer Details" do
       fill_in_address
       check "order_use_billing"
       click_button "Update"
-      Spree::Order.last.user.should_not be_nil
+      expect(Spree::Order.last.user).not_to be_nil
     end
   end
 
@@ -54,7 +54,7 @@ describe "Customer Details" do
         end
 
         click_button "Update"
-        find_field("order_bill_address_attributes_state_name").value.should == "Piaui"
+        expect(find_field("order_bill_address_attributes_state_name").value).to eq("Piaui")
       end
     end
 
@@ -72,7 +72,7 @@ describe "Customer Details" do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        find(".state").text.should == "COMPLETE"
+        expect(find(".state").text).to eq("COMPLETE")
       end
     end
 
@@ -106,7 +106,7 @@ describe "Customer Details" do
   it "should show validation errors" do
     click_link "Customer Details"
     click_button "Update"
-    page.should have_content("Shipping address first name can't be blank")
+    expect(page).to have_content("Shipping address first name can't be blank")
   end
 
   # Regression test for #942
@@ -128,7 +128,7 @@ describe "Customer Details" do
 
       page.select('Alabama', :from => 'order_ship_address_attributes_state_id')
       fill_in "order_ship_address_attributes_phone",     :with => "123-456-7890"
-      lambda { click_button "Update" }.should_not raise_error
+      expect { click_button "Update" }.not_to raise_error
     end
   end
 

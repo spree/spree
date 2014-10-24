@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 # Tests for #3958's features
-describe "Order Line Items", js: true do
+describe "Order Line Items", type: :feature, js: true do
   stub_authorization!
   
   before do
     # Removing the delivery step causes the order page to render a different
     # partial, called _line_items, which shows line items rather than shipments
-    Spree::Order.stub :checkout_step_names => [:address, :payment, :confirm, :complete]
+    allow(Spree::Order).to receive_messages :checkout_step_names => [:address, :payment, :confirm, :complete]
   end
 
   let!(:order) do
@@ -24,10 +24,10 @@ describe "Order Line Items", js: true do
         fill_in "quantity", :with => 10
         find(".save-line-item").click
         within '.line-item-qty-show' do
-          page.should have_content("10")
+          expect(page).to have_content("10")
         end
         within '.line-item-total' do
-          page.should have_content("$100.00")
+          expect(page).to have_content("$100.00")
         end
       end
     end
@@ -46,6 +46,6 @@ describe "Order Line Items", js: true do
       end
     end
 
-    page.should_not have_content(product_name)
+    expect(page).not_to have_content(product_name)
   end
 end

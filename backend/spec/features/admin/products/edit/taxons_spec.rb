@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product Taxons" do
+describe "Product Taxons", :type => :feature do
   stub_authorization!
 
   after do
@@ -28,12 +28,12 @@ describe "Product Taxons" do
         click_icon :edit
       end
 
-      find(".select2-search-choice").text.should == taxon_1.name
-      selected_taxons.should =~ [taxon_1.id]
+      expect(find(".select2-search-choice").text).to eq(taxon_1.name)
+      expect(selected_taxons).to match_array([taxon_1.id])
 
       select2_search "Clothing", :from => "Taxons"
       click_button "Update"
-      selected_taxons.should =~ [taxon_1.id, taxon_2.id]
+      expect(selected_taxons).to match_array([taxon_1.id, taxon_2.id])
 
       # Regression test for #2139
       sleep(1)

@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'spree/testing_support/bar_ability'
 
-describe Spree::Admin::UsersController do
+describe Spree::Admin::UsersController, :type => :controller do
   let(:user) { create(:user) }
   let(:mock_user) { mock_model Spree.user_class }
 
   before do
-    controller.stub :spree_current_user => user
+    allow(controller).to receive_messages :spree_current_user => user
     user.spree_roles.clear
   end
 
@@ -32,14 +32,14 @@ describe Spree::Admin::UsersController do
 
     it "allows admins to update a user's API key" do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
-      mock_user.should_receive(:generate_spree_api_key!).and_return(true)
+      expect(mock_user).to receive(:generate_spree_api_key!).and_return(true)
       spree_put :generate_api_key, id: mock_user.id
       expect(response).to redirect_to(spree.edit_admin_user_path(mock_user))
     end
 
     it "allows admins to clear a user's API key" do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
-      mock_user.should_receive(:clear_spree_api_key!).and_return(true)
+      expect(mock_user).to receive(:clear_spree_api_key!).and_return(true)
       spree_put :clear_api_key, id: mock_user.id
       expect(response).to redirect_to(spree.edit_admin_user_path(mock_user))
     end
@@ -59,7 +59,7 @@ describe Spree::Admin::UsersController do
     end
 
     it 'deny access to users without an admin role' do
-      user.stub :has_spree_role? => false
+      allow(user).to receive_messages :has_spree_role? => false
       spree_post :index
       expect(response).to redirect_to '/unauthorized'
     end
@@ -72,14 +72,14 @@ describe Spree::Admin::UsersController do
     end
 
     it "can create a shipping_address" do
-      Spree.user_class.should_receive(:new).with(hash_including(
+      expect(Spree.user_class).to receive(:new).with(hash_including(
         "ship_address_attributes" => { "city" => "New York" }
       ))
       spree_post :create, { :user => { :ship_address_attributes => { :city => "New York" } } }
     end
 
     it "can create a billing_address" do
-      Spree.user_class.should_receive(:new).with(hash_including(
+      expect(Spree.user_class).to receive(:new).with(hash_including(
         "bill_address_attributes" => { "city" => "New York" }
       ))
       spree_post :create, { :user => { :bill_address_attributes => { :city => "New York" } } }
@@ -93,14 +93,14 @@ describe Spree::Admin::UsersController do
     end
 
     it "allows shipping address attributes through" do
-      mock_user.should_receive(:update_attributes).with(hash_including(
+      expect(mock_user).to receive(:update_attributes).with(hash_including(
         "ship_address_attributes" => { "city" => "New York" }
       ))
       spree_put :update, { :id => mock_user.id, :user => { :ship_address_attributes => { :city => "New York" } } }
     end
 
     it "allows billing address attributes through" do
-      mock_user.should_receive(:update_attributes).with(hash_including(
+      expect(mock_user).to receive(:update_attributes).with(hash_including(
         "bill_address_attributes" => { "city" => "New York" }
       ))
       spree_put :update, { :id => mock_user.id, :user => { :bill_address_attributes => { :city => "New York" } } }
@@ -149,7 +149,7 @@ describe Spree::Admin::UsersController do
 end
 
 def use_mock_user
-  mock_user.stub(:save).and_return(true)
-  Spree.user_class.stub(:find).with(mock_user.id.to_s).and_return(mock_user)
-  Spree.user_class.stub(:new).and_return(mock_user)
+  allow(mock_user).to receive(:save).and_return(true)
+  allow(Spree.user_class).to receive(:find).with(mock_user.id.to_s).and_return(mock_user)
+  allow(Spree.user_class).to receive(:new).and_return(mock_user)
 end
