@@ -24,7 +24,7 @@
         ga('ecommerce:addItem', {
           'id': '<%= j @order.number %>',                        // Transaction ID. Required.
           'name': '<%= j line_item.variant.product.name %>',    // Product name. Required.
-          'sku': '<%= j line_item.variant.sku %>',             // SKU/code.
+          'sku': '<%= j (line_item.variant.sku || line_item.variant.id) %>',             // SKU/code.
           'category': '',                                     // Category or variation.
           'price': '<%= line_item.price %>',                 // Unit price.
           'quantity': '<%= line_item.quantity %>'           // Quantity.
