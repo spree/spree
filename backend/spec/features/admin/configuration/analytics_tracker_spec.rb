@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe "Analytics Tracker", :type => :feature do
+describe "Analytics Tracker", type: :feature do
   stub_authorization!
 
   context "index" do
     before(:each) do
-      2.times { create(:tracker, :environment => "test") }
+      2.times { create(:tracker, environment: "test") }
       visit spree.admin_path
       click_link "Configuration"
       click_link "Analytics Tracker"
@@ -39,8 +39,8 @@ describe "Analytics Tracker", :type => :feature do
 
     it "should be able to create a new analytics tracker" do
       click_link "admin_new_tracker_link"
-      fill_in "tracker_analytics_id", :with => "A100"
-      select "Test", :from => "tracker-env"
+      fill_in "tracker_analytics_id", with: "A100"
+      select2 "Test", from: "Environment"
       click_button "Create"
 
       expect(page).to have_content("successfully created!")

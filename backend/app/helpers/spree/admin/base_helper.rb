@@ -160,7 +160,7 @@ module Spree
       end
 
       def rails_environments
-        @@rails_environments ||= Dir.glob("./config/environments/*.rb")
+        @@rails_environments ||= Dir.glob("#{Rails.root}/config/environments/*.rb")
                                     .map { |f| File.basename(f, ".rb") }
                                     .sort
       end
