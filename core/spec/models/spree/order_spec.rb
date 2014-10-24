@@ -578,29 +578,29 @@ describe Spree::Order do
 
   context "#generate_order_number" do
     context "when no configure" do
-      let(:default_length) { Spree::Order::ORDER_NUMBER_LENGTH + Spree::Order::ORDER_NUMBER_PREFIX.length }
-      subject(:order_number) { order.generate_order_number }
+      let(:default_length) { 9 + 'R'.length }
+      subject(:order_number) { order.generate_number }
       its(:class)  { should eq String }
       its(:length) { should eq default_length }
-      it { should match /^#{Spree::Order::ORDER_NUMBER_PREFIX}/ }
+      it { should match /^R/ }
     end
 
     context "when length option is 5" do
-      let(:option_length) { 5 + Spree::Order::ORDER_NUMBER_PREFIX.length }
+      let(:option_length) { 5 + 'R'.length }
       it "should be option length for order number" do
-        expect(order.generate_order_number(length: 5).length).to eq option_length
+        expect(order.generate_number(length: 5).length).to eq option_length
       end
     end
 
     context "when letters option is true" do
       it "generates order number include letter" do
-        expect(order.generate_order_number(length: 100, letters: true)).to match /[A-Z]/
+        expect(order.generate_number(length: 100, letters: true)).to match /[A-Z]/
       end
     end
 
     context "when prefix option is 'P'" do
       it "generates order number and it prefix is 'P'" do
-        expect(order.generate_order_number(prefix: 'P')).to match /^P/
+        expect(order.generate_number(prefix: 'P')).to match /^P/
       end
     end
   end

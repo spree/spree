@@ -4,13 +4,15 @@ require 'spree/order/checkout'
 module Spree
   class Order < Spree::Base
 
-    ORDER_NUMBER_LENGTH  = 9
-    ORDER_NUMBER_LETTERS = false
-    ORDER_NUMBER_PREFIX  = 'R'
-
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'R'
+      super(options) 
+    end  
 
     checkout_flow do
       go_to_state :address
@@ -73,10 +75,8 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :set_currency
-    before_validation :generate_order_number, on: :create
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
-
 
     before_create :create_token
     before_create :link_by_email
@@ -84,10 +84,7 @@ module Spree
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
-    validates :number, uniqueness: true
     validate :has_available_shipment
-
-    make_permalink field: :number
 
     delegate :update_totals, :persist_totals, :to => :updater
 
@@ -96,10 +93,6 @@ module Spree
 
     class_attribute :line_item_comparison_hooks
     self.line_item_comparison_hooks = Set.new
-
-    def self.by_number(number)
-      where(number: number)
-    end
 
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
@@ -278,27 +271,6 @@ module Spree
       if persisted?
         # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
         self.class.unscoped.where(id: id).update_all(attrs_to_set)
-      end
-    end
-
-    def generate_order_number(options = {})
-      options[:length]  ||= ORDER_NUMBER_LENGTH
-      options[:letters] ||= ORDER_NUMBER_LETTERS
-      options[:prefix]  ||= ORDER_NUMBER_PREFIX
-
-      possible = (0..9).to_a
-      possible += ('A'..'Z').to_a if options[:letters]
-
-      self.number ||= loop do
-        # Make a random number.
-        random = "#{options[:prefix]}#{(0...options[:length]).map { possible.shuffle.first }.join}"
-        # Use the random  number if no other order exists with it.
-        if self.class.exists?(number: random)
-          # If over half of all possible options are taken add another digit.
-          options[:length] += 1 if self.class.count > (10 ** options[:length] / 2)
-        else
-          break random
-        end
       end
     end
 

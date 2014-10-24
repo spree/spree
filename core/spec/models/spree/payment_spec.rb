@@ -662,21 +662,24 @@ describe Spree::Payment do
     end
   end
 
-  describe "#set_unique_identifier" do
+  describe "#set_unique_number" do
     # Regression test for #1998
-    it "sets a unique identifier on create" do
-      payment.run_callbacks(:create)
-      payment.identifier.should_not be_blank
-      payment.identifier.size.should == 8
-      payment.identifier.should be_a(String)
+    it "sets a unique number on create" do
+      payment.generate_number
+      payment.save
+      
+      payment.number.should_not be_blank
+      payment.number.length.should eq 8
+      payment.number.should be_a(String)
     end
 
     # Regression test for #3733
-    it "does not regenerate the identifier on re-save" do
+    it "does not regenerate the number on re-save" do
+      payment.run_callbacks(:create)
       payment.save
-      old_identifier = payment.identifier
+      old_number = payment.number
       payment.save
-      payment.identifier.should == old_identifier
+      payment.number.should == old_number
     end
 
     context "other payment exists" do
@@ -688,16 +691,15 @@ describe Spree::Payment do
         payment
       }
 
-      before { other_payment.save! }
-
-      it "doesn't set duplicate identifier" do
-        payment.should_receive(:generate_identifier).and_return(other_payment.identifier)
-        payment.should_receive(:generate_identifier).and_call_original
+      it "doesn't set duplicate number" do
+        other_payment.run_callbacks(:create)
+        other_payment.save! 
 
         payment.run_callbacks(:create)
+        payment.save! 
 
-        payment.identifier.should_not be_blank
-        payment.identifier.should_not == other_payment.identifier
+        payment.number.should_not be_blank
+        payment.number.should_not == other_payment.number
       end
     end
   end

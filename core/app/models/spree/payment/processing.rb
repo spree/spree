@@ -192,7 +192,7 @@ module Spree
 
       # The unique identifier to be passed in to the payment gateway
       def gateway_order_id
-        "#{order.number}-#{self.identifier}"
+        "#{order.number}-#{self.number}"
       end
 
       def token_based?
