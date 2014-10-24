@@ -8,7 +8,7 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    page.should have_css('#' + field)
+    expect(page).to have_css('#' + field)
     fill_in field, options
   end
 
