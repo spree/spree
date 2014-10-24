@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::TaxonsController do
+  describe Api::TaxonsController, :type => :controller do
     render_views
 
     let(:taxonomy) { create(:taxonomy) }
@@ -20,19 +20,19 @@ module Spree
       it "gets all taxons for a taxonomy" do
         api_get :index, :taxonomy_id => taxonomy.id
 
-        json_response['taxons'].first['name'].should eq taxon.name
+        expect(json_response['taxons'].first['name']).to eq taxon.name
         children = json_response['taxons'].first['taxons']
-        children.count.should eq 1
-        children.first['name'].should eq taxon2.name
-        children.first['taxons'].count.should eq 1
+        expect(children.count).to eq 1
+        expect(children.first['name']).to eq taxon2.name
+        expect(children.first['taxons'].count).to eq 1
       end
 
       # Regression test for #4112
       it "does not include children when asked not to" do
         api_get :index, :taxonomy_id => taxonomy.id, :without_children => 1
 
-        json_response['taxons'].first['name'].should eq(taxon.name)
-        json_response['taxons'].first['taxons'].should be_nil
+        expect(json_response['taxons'].first['name']).to eq(taxon.name)
+        expect(json_response['taxons'].first['taxons']).to be_nil
       end
 
       it "paginates through taxons" do
@@ -57,8 +57,8 @@ module Spree
             let(:name) { "Ruby" }
 
             it "returns an array including the matching taxon" do
-              json_response['taxons'].count.should == 1
-              json_response['taxons'].first['name'].should eq "Ruby"
+              expect(json_response['taxons'].count).to eq(1)
+              expect(json_response['taxons'].first['name']).to eq "Ruby"
             end
           end
 
@@ -66,8 +66,8 @@ module Spree
             let(:name) { "Imaginary" }
 
             it 'returns an empty array of taxons' do
-              json_response.keys.should include('taxons')
-              json_response['taxons'].count.should == 0
+              expect(json_response.keys).to include('taxons')
+              expect(json_response['taxons'].count).to eq(0)
             end
           end
         end
@@ -76,11 +76,11 @@ module Spree
           it "gets all taxons" do
             api_get :index
 
-            json_response['taxons'].first['name'].should eq taxonomy.root.name
+            expect(json_response['taxons'].first['name']).to eq taxonomy.root.name
             children = json_response['taxons'].first['taxons']
-            children.count.should eq 1
-            children.first['name'].should eq taxon.name
-            children.first['taxons'].count.should eq 1
+            expect(children.count).to eq 1
+            expect(children.first['name']).to eq taxon.name
+            expect(children.first['taxons'].count).to eq 1
           end
         end
       end
@@ -88,23 +88,23 @@ module Spree
       it "gets a single taxon" do
         api_get :show, :id => taxon.id, :taxonomy_id => taxonomy.id
 
-        json_response['name'].should eq taxon.name
-        json_response['taxons'].count.should eq 1
+        expect(json_response['name']).to eq taxon.name
+        expect(json_response['taxons'].count).to eq 1
       end
 
       it "gets all taxons in JSTree form" do
         api_get :jstree, :taxonomy_id => taxonomy.id, :id => taxon.id
         response = json_response.first
-        response["data"].should eq(taxon2.name)
-        response["attr"].should eq({ "name" => taxon2.name, "id" => taxon2.id})
-        response["state"].should eq("closed")
+        expect(response["data"]).to eq(taxon2.name)
+        expect(response["attr"]).to eq({ "name" => taxon2.name, "id" => taxon2.id})
+        expect(response["state"]).to eq("closed")
       end
 
       it "can learn how to create a new taxon" do
         api_get :new, :taxonomy_id => taxonomy.id
-        json_response["attributes"].should == attributes.map(&:to_s)
+        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
         required_attributes = json_response["required_attributes"]
-        required_attributes.should include("name")
+        expect(required_attributes).to include("name")
       end
 
       it "cannot create a new taxon if not an admin" do
@@ -128,48 +128,48 @@ module Spree
 
       it "can create" do
         api_post :create, :taxonomy_id => taxonomy.id, :taxon => { :name => "Colors" }
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
+        expect(json_response).to have_attributes(attributes)
+        expect(response.status).to eq(201)
 
-        taxonomy.reload.root.children.count.should eq 2
+        expect(taxonomy.reload.root.children.count).to eq 2
         taxon = Spree::Taxon.where(:name => 'Colors').first
 
-        taxon.parent_id.should eq taxonomy.root.id
-        taxon.taxonomy_id.should eq taxonomy.id
+        expect(taxon.parent_id).to eq taxonomy.root.id
+        expect(taxon.taxonomy_id).to eq taxonomy.id
       end
 
       it "can update the position in the list" do
         taxonomy.root.children << taxon2
         api_put :update, :taxonomy_id => taxonomy.id, :id => taxon.id, :taxon => {:parent_id => taxon.parent_id, :child_index => 2 }
-        response.status.should == 200
-        taxonomy.reload.root.children[0].should eql taxon2
-        taxonomy.reload.root.children[1].should eql taxon
+        expect(response.status).to eq(200)
+        expect(taxonomy.reload.root.children[0]).to eql taxon2
+        expect(taxonomy.reload.root.children[1]).to eql taxon
       end
 
       it "cannot create a new taxon with invalid attributes" do
         api_post :create, :taxonomy_id => taxonomy.id, :taxon => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        expect(response.status).to eq(422)
+        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
 
-        taxonomy.reload.root.children.count.should eq 1
+        expect(taxonomy.reload.root.children.count).to eq 1
       end
 
       it "cannot create a new taxon with invalid taxonomy_id" do
         api_post :create, :taxonomy_id => 1000, :taxon => { :name => "Colors" }
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        expect(response.status).to eq(422)
+        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
 
         errors = json_response["errors"]
-        errors["taxonomy_id"].should_not be_nil
-        errors["taxonomy_id"].first.should eq "Invalid taxonomy id."
+        expect(errors["taxonomy_id"]).not_to be_nil
+        expect(errors["taxonomy_id"].first).to eq "Invalid taxonomy id."
 
-        taxonomy.reload.root.children.count.should eq 1
+        expect(taxonomy.reload.root.children.count).to eq 1
       end
 
       it "can destroy" do
         api_delete :destroy, :taxonomy_id => taxonomy.id, :id => taxon.id
-        response.status.should == 204
+        expect(response.status).to eq(204)
       end
     end
 
