@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::OrderMailer do
+describe Spree::OrderMailer, :type => :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
@@ -11,35 +11,35 @@ describe Spree::OrderMailer do
     variant = stub_model(Spree::Variant, :product => product)
     price = stub_model(Spree::Price, :variant => variant, :amount => 5.00)
     line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 4.99)
-    variant.stub(:default_price => price)
-    order.stub(:line_items => [line_item])
+    allow(variant).to receive_messages(:default_price => price)
+    allow(order).to receive_messages(:line_items => [line_item])
     order
   end
 
   context ":from not set explicitly" do
     it "falls back to spree config" do
       message = Spree::OrderMailer.confirm_email(order)
-      message.from.should == [Spree::Config[:mails_from]]
+      expect(message.from).to eq([Spree::Config[:mails_from]])
     end
   end
 
   it "doesn't aggressively escape double quotes in confirmation body" do
     confirmation_email = Spree::OrderMailer.confirm_email(order)
-    confirmation_email.body.should_not include("&quot;")
+    expect(confirmation_email.body).not_to include("&quot;")
   end
 
   it "confirm_email accepts an order id as an alternative to an Order object" do
-    Spree::Order.should_receive(:find).with(order.id).and_return(order)
-    lambda {
+    expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
+    expect {
       confirmation_email = Spree::OrderMailer.confirm_email(order.id)
-    }.should_not raise_error
+    }.not_to raise_error
   end
 
   it "cancel_email accepts an order id as an alternative to an Order object" do
-    Spree::Order.should_receive(:find).with(order.id).and_return(order)
-    lambda {
+    expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
+    expect {
       cancel_email = Spree::OrderMailer.cancel_email(order.id)
-    }.should_not raise_error
+    }.not_to raise_error
   end
 
   context "only shows eligible adjustments in emails" do
@@ -52,11 +52,11 @@ describe Spree::OrderMailer do
     let!(:cancel_email) { Spree::OrderMailer.cancel_email(order) }
 
     specify do
-      confirmation_email.body.should_not include("Ineligible Adjustment")
+      expect(confirmation_email.body).not_to include("Ineligible Adjustment")
     end
 
     specify do
-      cancel_email.body.should_not include("Ineligible Adjustment")
+      expect(cancel_email.body).not_to include("Ineligible Adjustment")
     end
   end
 
@@ -66,15 +66,15 @@ describe Spree::OrderMailer do
     # Tests mailer view spree/order_mailer/confirm_email.text.erb
     specify do
       confirmation_email = Spree::OrderMailer.confirm_email(order)
-      confirmation_email.body.should include("4.99")
-      confirmation_email.body.should_not include("5.00")
+      expect(confirmation_email.body).to include("4.99")
+      expect(confirmation_email.body).not_to include("5.00")
     end
 
     # Tests mailer view spree/order_mailer/cancel_email.text.erb
     specify do
       cancel_email = Spree::OrderMailer.cancel_email(order)
-      cancel_email.body.should include("4.99")
-      cancel_email.body.should_not include("5.00")
+      expect(cancel_email.body).to include("4.99")
+      expect(cancel_email.body).not_to include("5.00")
     end
   end
 
@@ -98,14 +98,14 @@ describe Spree::OrderMailer do
       context "confirm_email" do
         specify do
           confirmation_email = Spree::OrderMailer.confirm_email(order)
-          confirmation_email.body.should include("Caro Cliente,")
+          expect(confirmation_email.body).to include("Caro Cliente,")
         end
       end
 
       context "cancel_email" do
         specify do
           cancel_email = Spree::OrderMailer.cancel_email(order)
-          cancel_email.body.should include("Resumo da Pedido [CANCELADA]")
+          expect(cancel_email.body).to include("Resumo da Pedido [CANCELADA]")
         end
       end
     end
@@ -115,7 +115,7 @@ describe Spree::OrderMailer do
     it "sends no email" do
       Spree::Config.set(:send_core_emails, false)
       message = Spree::OrderMailer.confirm_email(order)
-      message.body.should be_blank
+      expect(message.body).to be_blank
     end
   end
 

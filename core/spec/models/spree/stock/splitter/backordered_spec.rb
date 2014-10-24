@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     module Splitter
-      describe Backordered do
+      describe Backordered, :type => :model do
         let(:variant) { build(:variant) }
         let(:line_item) { build(:line_item, variant: variant) }
         let(:packer) { build(:stock_packer) }
@@ -16,12 +16,12 @@ module Spree
           package.add line_item, 5, :backordered
 
           packages = subject.split([package])
-          packages.count.should eq 2
-          packages.first.quantity.should eq 4
-          packages.first.on_hand.count.should eq 1
-          packages.first.backordered.count.should eq 0
+          expect(packages.count).to eq 2
+          expect(packages.first.quantity).to eq 4
+          expect(packages.first.on_hand.count).to eq 1
+          expect(packages.first.backordered.count).to eq 0
 
-          packages[1].quantity.should eq 5
+          expect(packages[1].quantity).to eq 5
         end
       end
     end

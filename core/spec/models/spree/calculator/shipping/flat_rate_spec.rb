@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Calculator::Shipping
-    describe FlatRate do
+    describe FlatRate, :type => :model do
       let(:variant1) { build(:variant) }
       let(:variant2) { build(:variant) }
 

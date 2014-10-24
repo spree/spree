@@ -2,16 +2,16 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Coordinator do
+    describe Coordinator, :type => :model do
       let!(:order) { create(:order_with_line_items) }
 
       subject { Coordinator.new(order) }
 
       context "packages" do
         it "builds, prioritizes and estimates" do
-          subject.should_receive(:build_packages).ordered
-          subject.should_receive(:prioritize_packages).ordered
-          subject.should_receive(:estimate_packages).ordered
+          expect(subject).to receive(:build_packages).ordered
+          expect(subject).to receive(:prioritize_packages).ordered
+          expect(subject).to receive(:estimate_packages).ordered
           subject.packages
         end
       end
@@ -25,7 +25,7 @@ module Spree
           let!(:another_location) { create(:stock_location, propagate_all_variants: false) }
 
           it "builds packages only for valid stock locations" do
-            subject.build_packages.count.should == (StockLocation.count - 1)
+            expect(subject.build_packages.count).to eq(StockLocation.count - 1)
           end
         end
       end

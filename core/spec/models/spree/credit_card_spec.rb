@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::CreditCard do
+describe Spree::CreditCard, :type => :model do
   let(:valid_credit_card_attributes) do
     { :number => '4111111111111111',
       :verification_value => '123',
@@ -13,7 +13,7 @@ describe Spree::CreditCard do
   end
 
   def stub_rails_env(environment)
-    Rails.stub(env: ActiveSupport::StringInquirer.new(environment))
+    allow(Rails).to receive_messages(env: ActiveSupport::StringInquirer.new(environment))
   end
 
   let(:credit_card) { Spree::CreditCard.new }
@@ -36,83 +36,83 @@ describe Spree::CreditCard do
       environment: 'test'
     )
 
-    @payment.stub payment_method: @payment_gateway
+    allow(@payment).to receive_messages payment_method: @payment_gateway
   end
 
   context "#can_capture?" do
     it "should be true if payment is pending" do
       payment = mock_model(Spree::Payment, pending?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be true
+      expect(credit_card.can_capture?(payment)).to be true
     end
 
     it "should be true if payment is checkout" do
       payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.now)
-      credit_card.can_capture?(payment).should be true
+      expect(credit_card.can_capture?(payment)).to be true
     end
   end
 
   context "#can_void?" do
     it "should be true if payment is not void" do
       payment = mock_model(Spree::Payment, failed?: false, void?: false)
-      credit_card.can_void?(payment).should be true
+      expect(credit_card.can_void?(payment)).to be true
     end
   end
 
   context "#can_credit?" do
     it "should be false if payment is not completed" do
       payment = mock_model(Spree::Payment, completed?: false)
-      credit_card.can_credit?(payment).should be false
+      expect(credit_card.can_credit?(payment)).to be false
     end
 
     it "should be false when order payment_state is not 'credit_owed'" do
       payment = mock_model(Spree::Payment, completed?: true, order: mock_model(Spree::Order, payment_state: 'paid'))
-      credit_card.can_credit?(payment).should be false
+      expect(credit_card.can_credit?(payment)).to be false
     end
 
     it "should be false when credit_allowed is zero" do
       payment = mock_model(Spree::Payment, completed?: true, credit_allowed: 0, order: mock_model(Spree::Order, payment_state: 'credit_owed'))
-      credit_card.can_credit?(payment).should be false
+      expect(credit_card.can_credit?(payment)).to be false
     end
   end
 
   context "#valid?" do
     it "should validate presence of number" do
       credit_card.attributes = valid_credit_card_attributes.except(:number)
-      credit_card.should_not be_valid
-      credit_card.errors[:number].should == ["can't be blank"]
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:number]).to eq(["can't be blank"])
     end
 
     it "should validate presence of security code" do
       credit_card.attributes = valid_credit_card_attributes.except(:verification_value)
-      credit_card.should_not be_valid
-      credit_card.errors[:verification_value].should == ["can't be blank"]
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:verification_value]).to eq(["can't be blank"])
     end
 
     it "validates name presence" do
       credit_card.valid?
-      expect(credit_card).to have(1).error_on(:name)
+      expect(credit_card.error_on(:name).size).to eq(1)
     end
 
     # Regression spec for #4971
     it "should not bomb out when given an invalid expiry" do
       credit_card.month = 13
       credit_card.year = Time.now.year + 1
-      credit_card.should_not be_valid
-      credit_card.errors[:base].should == ["Card expiration is invalid"]
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:base]).to eq(["Card expiration is invalid"])
     end
 
     it "should validate expiration is not in the past" do
       credit_card.month = 1.month.ago.month
       credit_card.year = 1.month.ago.year
-      credit_card.should_not be_valid
-      credit_card.errors[:base].should == ["Card has expired"]
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:base]).to eq(["Card has expired"])
     end
 
     it "should not be expired expiring on the current month" do
       credit_card.attributes = valid_credit_card_attributes
       credit_card.month = Time.zone.now.month
       credit_card.year = Time.zone.now.year
-      credit_card.should be_valid
+      expect(credit_card).to be_valid
     end
 
     it "should handle TZ correctly" do
@@ -124,36 +124,36 @@ describe Spree::CreditCard do
       Timecop.freeze(time) do
         credit_card.month = 1.month.ago.month
         credit_card.year = 1.month.ago.year
-        credit_card.should_not be_valid
-        credit_card.errors[:base].should == ["Card has expired"]
+        expect(credit_card).not_to be_valid
+        expect(credit_card.errors[:base]).to eq(["Card has expired"])
       end
     end
 
     it "does not run expiration in the past validation if month is not set" do
       credit_card.month = nil
       credit_card.year = Time.now.year
-      credit_card.should_not be_valid
-      credit_card.errors[:base].should be_blank
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:base]).to be_blank
     end
 
     it "does not run expiration in the past validation if year is not set" do
       credit_card.month = Time.now.month
       credit_card.year = nil
-      credit_card.should_not be_valid
-      credit_card.errors[:base].should be_blank
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:base]).to be_blank
     end
 
     it "does not run expiration in the past validation if year and month are empty" do
       credit_card.year = ""
       credit_card.month = ""
-      credit_card.should_not be_valid
-      credit_card.errors[:card].should be_blank
+      expect(credit_card).not_to be_valid
+      expect(credit_card.errors[:card]).to be_blank
     end
 
     it "should only validate on create" do
       credit_card.attributes = valid_credit_card_attributes
       credit_card.save
-      credit_card.should be_valid
+      expect(credit_card).to be_valid
     end
 
     context "encrypted data is present" do
@@ -185,11 +185,11 @@ describe Spree::CreditCard do
       let!(:persisted_card) { Spree::CreditCard.find(credit_card.id) }
 
       it "should not actually store the number" do
-        persisted_card.number.should be_blank
+        expect(persisted_card.number).to be_blank
       end
 
       it "should not actually store the security code" do
-        persisted_card.verification_value.should be_blank
+        expect(persisted_card.verification_value).to be_blank
       end
     end
 
@@ -214,15 +214,15 @@ describe Spree::CreditCard do
   context "#number=" do
     it "should strip non-numeric characters from card input" do
       credit_card.number = "6011000990139424"
-      credit_card.number.should == "6011000990139424"
+      expect(credit_card.number).to eq("6011000990139424")
 
       credit_card.number = "  6011-0009-9013-9424  "
-      credit_card.number.should == "6011000990139424"
+      expect(credit_card.number).to eq("6011000990139424")
     end
 
     it "should not raise an exception on non-string input" do
       credit_card.number = Hash.new
-      credit_card.number.should be_nil
+      expect(credit_card.number).to be_nil
     end
   end
 
@@ -265,12 +265,12 @@ describe Spree::CreditCard do
     end
 
     it "does not blow up when passed an empty string" do
-      lambda { credit_card.expiry = '' }.should_not raise_error
+      expect { credit_card.expiry = '' }.not_to raise_error
     end
 
     # Regression test for #4725
     it "does not blow up when passed one number" do
-      lambda { credit_card.expiry = '12' }.should_not raise_error
+      expect { credit_card.expiry = '12' }.not_to raise_error
     end
 
   end
@@ -278,49 +278,49 @@ describe Spree::CreditCard do
   context "#cc_type=" do
     it "converts between the different types" do
       credit_card.cc_type = 'mastercard'
-      credit_card.cc_type.should == 'master'
+      expect(credit_card.cc_type).to eq('master')
 
       credit_card.cc_type = 'maestro'
-      credit_card.cc_type.should == 'master'
+      expect(credit_card.cc_type).to eq('master')
 
       credit_card.cc_type = 'amex'
-      credit_card.cc_type.should == 'american_express'
+      expect(credit_card.cc_type).to eq('american_express')
 
       credit_card.cc_type = 'dinersclub'
-      credit_card.cc_type.should == 'diners_club'
+      expect(credit_card.cc_type).to eq('diners_club')
 
       credit_card.cc_type = 'some_outlandish_cc_type'
-      credit_card.cc_type.should == 'some_outlandish_cc_type'
+      expect(credit_card.cc_type).to eq('some_outlandish_cc_type')
     end
 
     it "assigns the type based on card number in the event of js failure" do
       credit_card.number = '4242424242424242'
       credit_card.cc_type = ''
-      credit_card.cc_type.should == 'visa'
+      expect(credit_card.cc_type).to eq('visa')
 
       credit_card.number = '5555555555554444'
       credit_card.cc_type = ''
-      credit_card.cc_type.should == 'master'
+      expect(credit_card.cc_type).to eq('master')
 
       credit_card.number = '378282246310005'
       credit_card.cc_type = ''
-      credit_card.cc_type.should == 'american_express'
+      expect(credit_card.cc_type).to eq('american_express')
 
       credit_card.number = '30569309025904'
       credit_card.cc_type = ''
-      credit_card.cc_type.should == 'diners_club'
+      expect(credit_card.cc_type).to eq('diners_club')
 
       credit_card.number = '3530111333300000'
       credit_card.cc_type = ''
-      credit_card.cc_type.should == 'jcb'
+      expect(credit_card.cc_type).to eq('jcb')
 
       credit_card.number = ''
       credit_card.cc_type = ''
-      credit_card.cc_type.should == ''
+      expect(credit_card.cc_type).to eq('')
 
       credit_card.number = nil
       credit_card.cc_type = ''
-      credit_card.cc_type.should == ''
+      expect(credit_card.cc_type).to eq('')
     end
   end
 
@@ -361,12 +361,12 @@ describe Spree::CreditCard do
 
     it "converts to an ActiveMerchant::Billing::CreditCard object" do
       am_card = credit_card.to_active_merchant
-      am_card.number.should == "4111111111111111"
-      am_card.year.should == Time.now.year
-      am_card.month.should == Time.now.month
-      am_card.first_name.should == "Ludwig"
-      am_card.last_name.should == "van Beethoven"
-      am_card.verification_value.should == 123
+      expect(am_card.number).to eq("4111111111111111")
+      expect(am_card.year).to eq(Time.now.year)
+      expect(am_card.month).to eq(Time.now.month)
+      expect(am_card.first_name).to eq("Ludwig")
+      expect(am_card.last_name).to eq("van Beethoven")
+      expect(am_card.verification_value).to eq(123)
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::InventoryUnit do
+describe Spree::InventoryUnit, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
 
@@ -18,7 +18,7 @@ describe Spree::InventoryUnit do
       shipment.shipping_methods << create(:shipping_method)
       shipment.order = order
       # We don't care about this in this test
-      shipment.stub(:ensure_correct_adjustment)
+      allow(shipment).to receive(:ensure_correct_adjustment)
       shipment.tap(&:save!)
     end
 
@@ -37,7 +37,7 @@ describe Spree::InventoryUnit do
     end
 
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
-      Spree::InventoryUnit.backordered_for_stock_item(stock_item).should =~ [unit]
+      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).to match_array([unit])
     end
 
     it "does not find inventory units that aren't backordered" do
@@ -46,7 +46,7 @@ describe Spree::InventoryUnit do
       on_hand_unit.variant_id = 1
       on_hand_unit.save!
 
-      Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(on_hand_unit)
+      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(on_hand_unit)
     end
 
     it "does not find inventory units that don't match the stock item's variant" do
@@ -55,7 +55,7 @@ describe Spree::InventoryUnit do
       other_variant_unit.variant = create(:variant)
       other_variant_unit.save!
 
-      Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_variant_unit)
+      expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_variant_unit)
     end
 
     context "other shipments" do
@@ -72,7 +72,7 @@ describe Spree::InventoryUnit do
         shipment.shipping_methods << create(:shipping_method)
         shipment.order = other_order
         # We don't care about this in this test
-        shipment.stub(:ensure_correct_adjustment)
+        allow(shipment).to receive(:ensure_correct_adjustment)
         shipment.tap(&:save!)
       end
 
@@ -85,7 +85,7 @@ describe Spree::InventoryUnit do
       end
 
       it "does not find inventory units belonging to incomplete orders" do
-        Spree::InventoryUnit.backordered_for_stock_item(stock_item).should_not include(other_unit)
+        expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
       end
 
     end
@@ -119,7 +119,7 @@ describe Spree::InventoryUnit do
 
     it "should create a stock movement" do
       Spree::InventoryUnit.finalize_units!(inventory_units)
-      inventory_units.any?(&:pending).should be false
+      expect(inventory_units.any?(&:pending)).to be false
     end
   end
 end

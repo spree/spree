@@ -3,14 +3,14 @@
 require 'spec_helper'
 
 module Spree
-  describe ProductsHelper do
+  describe ProductsHelper, :type => :helper do
     include ProductsHelper
 
     let(:product) { create(:product) }
     let(:currency) { 'USD' }
 
     before do
-      helper.stub(:current_currency) { currency }
+      allow(helper).to receive(:current_currency) { currency }
     end
 
     context "#variant_price_diff" do
@@ -21,35 +21,35 @@ module Spree
         @variant = create(:variant, :product => product)
         product.price = 15
         @variant.price = 10
-        product.stub(:amount_in) { product_price }
-        @variant.stub(:amount_in) { variant_price }
+        allow(product).to receive(:amount_in) { product_price }
+        allow(@variant).to receive(:amount_in) { variant_price }
       end
 
       subject { helper.variant_price(@variant) }
 
       context "when variant is same as master" do
-        it { should be_nil }
+        it { is_expected.to be_nil }
       end
 
       context "when the master has no price" do
         let(:product_price) { nil }
 
-        it { should be_nil }
+        it { is_expected.to be_nil }
       end
 
       context "when currency is default" do
         context "when variant is more than master" do
           let(:variant_price) { 15 }
 
-          it { should == "(Add: $5.00)" }
+          it { is_expected.to eq("(Add: $5.00)") }
           # Regression test for #2737
-          it { should be_html_safe }
+          it { is_expected.to be_html_safe }
         end
 
         context "when variant is less than master" do
           let(:product_price) { 15 }
 
-          it { should == "(Subtract: $5.00)" }
+          it { is_expected.to eq("(Subtract: $5.00)") }
         end
       end
 
@@ -61,13 +61,13 @@ module Spree
         context "when variant is more than master" do
           let(:variant_price) { 150 }
 
-          it { should == "(Add: &#x00A5;50)" }
+          it { is_expected.to eq("(Add: &#x00A5;50)") }
         end
 
         context "when variant is less than master" do
           let(:product_price) { 150 }
 
-          it { should == "(Subtract: &#x00A5;50)" }
+          it { is_expected.to eq("(Subtract: &#x00A5;50)") }
         end
       end
     end
@@ -84,8 +84,8 @@ module Spree
           product.price = 10
           @variant1.price = 15
           @variant2.price = 20
-          helper.variant_price(@variant1).should == "$15.00"
-          helper.variant_price(@variant2).should == "$20.00"
+          expect(helper.variant_price(@variant1)).to eq("$15.00")
+          expect(helper.variant_price(@variant2)).to eq("$20.00")
         end
       end
 
@@ -104,7 +104,7 @@ module Spree
         it "should return the variant price if the price is different than master" do
           product.price = 100
           @variant1.price = 150
-          helper.variant_price(@variant1).should == "&#x00A5;150"
+          expect(helper.variant_price(@variant1)).to eq("&#x00A5;150")
         end
       end
 
@@ -112,8 +112,8 @@ module Spree
         product.price = 10
         @variant1.default_price.update_column(:amount, 10)
         @variant2.default_price.update_column(:amount, 10)
-        helper.variant_price(@variant1).should be_nil
-        helper.variant_price(@variant2).should be_nil
+        expect(helper.variant_price(@variant1)).to be_nil
+        expect(helper.variant_price(@variant2)).to be_nil
       end
     end
 
@@ -129,7 +129,7 @@ module Spree
 </ul>
         }
         description = product_description(product)
-        description.strip.should == product.description.strip
+        expect(description.strip).to eq(product.description.strip)
       end
 
       it "renders a product description with automatic paragraph breaks" do
@@ -139,7 +139,7 @@ THIS IS THE BEST PRODUCT EVER!
 "IT CHANGED MY LIFE" - Sue, MD}
 
         description = product_description(product)
-        description.strip.should == %Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD}
+        expect(description.strip).to eq(%Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD})
       end
 
       it "renders a product description without any formatting based on configuration" do
@@ -155,7 +155,7 @@ THIS IS THE BEST PRODUCT EVER!
 
         Spree::Config[:show_raw_product_description] = true
         description = product_description(product)
-        description.should == initialDescription
+        expect(description).to eq(initialDescription)
       end
 
     end
@@ -163,15 +163,15 @@ THIS IS THE BEST PRODUCT EVER!
     shared_examples_for "line item descriptions" do
       context 'variant has a blank description' do
         let(:description) { nil }
-        it { should == Spree.t(:product_has_no_description) }
+        it { is_expected.to eq(Spree.t(:product_has_no_description)) }
       end
       context 'variant has a description' do
         let(:description) { 'test_desc' }
-        it { should == description }
+        it { is_expected.to eq(description) }
       end
       context 'description has nonbreaking spaces' do
         let(:description) { 'test&nbsp;desc' }
-        it { should == 'test desc' }
+        it { is_expected.to eq('test desc') }
       end
     end
 
@@ -192,28 +192,28 @@ THIS IS THE BEST PRODUCT EVER!
       subject { helper.cache_key_for_products }
       before(:each) do
         @products = double('products collection')
-        helper.stub(:params) { {:page => 10} }
+        allow(helper).to receive(:params) { {:page => 10} }
       end
 
       context 'when there is a maximum updated date' do
         let(:updated_at) { Date.new(2011, 12, 13) }
         before :each do
-          @products.stub(:count) { 5 }
-          @products.stub(:maximum).with(:updated_at) { updated_at }
+          allow(@products).to receive(:count) { 5 }
+          allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
-        it { should == 'en/USD/spree/products/all-10-20111213-5' }
+        it { is_expected.to eq('en/USD/spree/products/all-10-20111213-5') }
       end
 
       context 'when there is no considered maximum updated date' do
         let(:today) { Date.new(2013, 12, 11) }
         before :each do
-          @products.stub(:count) { 1234567 }
-          @products.stub(:maximum).with(:updated_at) { nil }
-          Date.stub(:today) { today }
+          allow(@products).to receive(:count) { 1234567 }
+          allow(@products).to receive(:maximum).with(:updated_at) { nil }
+          allow(Date).to receive(:today) { today }
         end
 
-        it { should == 'en/USD/spree/products/all-10-20131211-1234567' }
+        it { is_expected.to eq('en/USD/spree/products/all-10-20131211-1234567') }
       end
     end
   end

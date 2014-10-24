@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderPopulator do
+describe Spree::OrderPopulator, :type => :model do
   let(:order) { double('Order') }
   subject { Spree::OrderPopulator.new(order, "USD") }
 
@@ -8,8 +8,8 @@ describe Spree::OrderPopulator do
     let(:variant) { double('Variant', :name => "T-Shirt", :options_text => "Size: M") }
 
     before do
-     Spree::Variant.stub(:find).and_return(variant)
-     order.should_receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
+     allow(Spree::Variant).to receive(:find).and_return(variant)
+     expect(order).to receive(:contents).at_least(:once).and_return(Spree::OrderContents.new(self))
     end
 
     context "can populate an order" do
