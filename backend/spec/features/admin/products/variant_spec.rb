@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "Variants" do
+describe "Variants", :type => :feature do
   stub_authorization!
 
   let(:product) { create(:product_with_option_types, :price => "1.99", :cost_price => "1.00", :weight => "2.5", :height => "3.0", :width => "1.0", :depth => "1.5") }
@@ -42,7 +42,7 @@ describe "Variants" do
         context "uses руб as the currency symbol" do
           it "on the products listing page" do
             visit spree.admin_product_variants_path(product)
-            within_row(1) { page.should have_content("руб19.99") }
+            within_row(1) { expect(page).to have_content("руб19.99") }
           end
         end
       end

@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'spec_helper'
 
-describe "Order Details", js: true do
+describe "Order Details", type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
@@ -27,8 +27,8 @@ describe "Order Details", js: true do
 
 
       it "should allow me to edit order details" do
-        page.should have_content("spree t-shirt")
-        page.should have_content("$40.00")
+        expect(page).to have_content("spree t-shirt")
+        expect(page).to have_content("$40.00")
 
         within_row(1) do
           click_icon :edit
@@ -37,7 +37,7 @@ describe "Order Details", js: true do
         click_icon :ok
 
         within("#order_total") do
-          page.should have_content("$20.00")
+          expect(page).to have_content("$20.00")
         end
       end
 
@@ -49,12 +49,12 @@ describe "Order Details", js: true do
         end
 
         within("#order_total") do
-          page.should have_content("$80.00")
+          expect(page).to have_content("$80.00")
         end
       end
 
       it "can remove an item from a shipment" do
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
 
         within_row(1) do
           accept_alert do
@@ -63,12 +63,12 @@ describe "Order Details", js: true do
         end
 
         # Click "ok" on confirmation dialog
-        page.should_not have_content("spree t-shirt")
+        expect(page).not_to have_content("spree t-shirt")
       end
 
       # Regression test for #3862
       it "can cancel removing an item from a shipment" do
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
 
         within_row(1) do
           # Click "cancel" on confirmation dialog
@@ -77,7 +77,7 @@ describe "Order Details", js: true do
           end
         end
 
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
       end
 
       it "can add tracking information" do
@@ -89,8 +89,8 @@ describe "Order Details", js: true do
         fill_in "tracking", :with => "FOOBAR"
         click_icon :ok
 
-        page.should_not have_css("input[name=tracking]")
-        page.should have_content("Tracking: FOOBAR")
+        expect(page).not_to have_css("input[name=tracking]")
+        expect(page).to have_content("Tracking: FOOBAR")
       end
 
       it "can change the shipping method" do
@@ -102,8 +102,8 @@ describe "Order Details", js: true do
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
 
-        page.should_not have_css('#selected_shipping_rate_id')
-        page.should have_content("Default")
+        expect(page).not_to have_css('#selected_shipping_rate_id')
+        expect(page).to have_content("Default")
       end
 
       it "will show the variant sku" do
@@ -136,7 +136,7 @@ describe "Order Details", js: true do
           end
 
           within(".line-items") do
-            page.should have_content(tote.name)
+            expect(page).to have_content(tote.name)
           end
         end
       end
@@ -151,7 +151,7 @@ describe "Order Details", js: true do
           select2_search product.name, :from => Spree.t(:name_or_sku)
 
           within("table.stock-levels") do
-            page.should have_content(Spree.t(:out_of_stock))
+            expect(page).to have_content(Spree.t(:out_of_stock))
           end
         end
       end
@@ -175,8 +175,8 @@ describe "Order Details", js: true do
 
         context 'there is enough stock at the other location' do
           it 'should allow me to make a split' do
-            order.shipments.count.should == 1
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -184,14 +184,14 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 2
-            order.shipments.last.backordered?.should == false
-            order.shipments.first.inventory_units_for(product.master).count.should == 1
-            order.shipments.last.inventory_units_for(product.master).count.should == 1
+            expect(order.shipments.count).to eq(2)
+            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
 
           it 'should allow me to make a transfer via splitting off all stock' do
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -200,14 +200,14 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.last.backordered?.should == false
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
-            order.shipments.first.stock_location.id.should == stock_location2.id
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
           it 'should allow me to split more than I have if available there' do
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -216,14 +216,14 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.last.backordered?.should == false
-            order.shipments.first.inventory_units_for(product.master).count.should == 5
-            order.shipments.first.stock_location.id.should == stock_location2.id
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(5)
+            expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
           it 'should not split anything if the input quantity is garbage' do
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -232,13 +232,13 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
           it 'should not allow less than or equal to zero qty' do
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -247,9 +247,9 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
 
             fill_in 'item_quantity', with: -1
@@ -257,9 +257,9 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
-            order.shipments.first.stock_location.id.should == stock_location.id
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
           context 'A shipment has shipped' do
@@ -270,10 +270,10 @@ describe "Order Details", js: true do
 
               visit spree.cart_admin_order_path(order)
 
-              page.current_path.should == spree.edit_admin_order_path(order)
-              page.should_not have_text 'Cart'
-              page.should_not have_selector('.fa-arrows-h')
-              page.should_not have_selector('.fa-trash')
+              expect(page.current_path).to eq(spree.edit_admin_order_path(order))
+              expect(page).not_to have_text 'Cart'
+              expect(page).not_to have_selector('.fa-arrows-h')
+              expect(page).not_to have_selector('.fa-trash')
             end
 
           end
@@ -292,9 +292,9 @@ describe "Order Details", js: true do
 
               wait_for_ajax
 
-              order.shipments.count.should == 1
-              order.shipments.first.inventory_units_for(product.master).count.should == 2
-              order.shipments.first.stock_location.id.should == stock_location.id
+              expect(order.shipments.count).to eq(1)
+              expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+              expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
             end
 
           end
@@ -311,9 +311,9 @@ describe "Order Details", js: true do
 
               wait_for_ajax
 
-              order.shipments.count.should == 1
-              order.shipments.first.inventory_units_for(product.master).count.should == 2
-              order.shipments.first.stock_location.id.should == stock_location2.id
+              expect(order.shipments.count).to eq(1)
+              expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+              expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
             end
           end
         end
@@ -321,8 +321,8 @@ describe "Order Details", js: true do
         context 'multiple items in cart' do
           it 'should have no problem splitting if multiple items are in the from shipment' do
             order.contents.add(create(:variant), 2)
-            order.shipments.count.should == 1
-            order.shipments.first.manifest.count.should == 2
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.first.manifest.count).to eq(2)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -330,10 +330,10 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 2
-            order.shipments.last.backordered?.should == false
-            order.shipments.first.inventory_units_for(product.master).count.should == 1
-            order.shipments.last.inventory_units_for(product.master).count.should == 1
+            expect(order.shipments.count).to eq(2)
+            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
         end
       end
@@ -346,7 +346,7 @@ describe "Order Details", js: true do
         end
 
         it 'should delete the old shipment if enough are split off' do
-          order.shipments.count.should == 2
+          expect(order.shipments.count).to eq(2)
 
           within_row(1) { click_icon 'arrows-h' }
           targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
@@ -355,15 +355,15 @@ describe "Order Details", js: true do
 
           wait_for_ajax
 
-          order.shipments.count.should == 1
-          order.shipments.last.inventory_units_for(product.master).count.should == 2
+          expect(order.shipments.count).to eq(1)
+          expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)
         end
 
         context 'receiving shipment can not backorder' do
           before { product.master.stock_items.last.update_column(:backorderable, false) }
 
           it 'should not allow a split if the receiving shipment qty plus the incoming is greater than the count_on_hand' do
-            order.shipments.count.should == 2
+            expect(order.shipments.count).to eq(2)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
@@ -379,9 +379,9 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 2
-            order.shipments.first.inventory_units_for(product.master).count.should == 1
-            order.shipments.last.inventory_units_for(product.master).count.should == 1
+            expect(order.shipments.count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
 
           it 'should not allow a shipment to split stock to itself' do
@@ -392,8 +392,8 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 2
-            order.shipments.first.inventory_units_for(product.master).count.should == 2
+            expect(order.shipments.count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
           end
 
           it 'should split fine if more than one line_item is in the receiving shipment' do
@@ -407,7 +407,7 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 2
+            expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq 1
             expect(order.shipments.last.inventory_units_for(product.master).count).to eq 1
             expect(order.shipments.first.inventory_units_for(variant2).count).to eq 0
@@ -419,7 +419,7 @@ describe "Order Details", js: true do
           it 'should add more to the backorder' do
             product.master.stock_items.last.update_column(:backorderable, true)
             product.master.stock_items.last.update_column(:count_on_hand, 0)
-            @shipment2.reload.backordered?.should == false
+            expect(@shipment2.reload.backordered?).to eq(false)
 
 
             within_row(1) { click_icon 'arrows-h' }
@@ -429,7 +429,7 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            @shipment2.reload.backordered?.should == true
+            expect(@shipment2.reload.backordered?).to eq(true)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
@@ -438,9 +438,9 @@ describe "Order Details", js: true do
 
             wait_for_ajax
 
-            order.shipments.count.should == 1
-            order.shipments.last.inventory_units_for(product.master).count.should == 2
-            @shipment2.reload.backordered?.should == true
+            expect(order.shipments.count).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)
+            expect(@shipment2.reload.backordered?).to eq(true)
           end
         end
       end
@@ -449,7 +449,7 @@ describe "Order Details", js: true do
 
   context 'with only read permissions' do
     before do
-      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+      allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
     custom_authorization! do |user|
@@ -458,23 +458,23 @@ describe "Order Details", js: true do
     it "should not display forbidden links" do
       visit spree.edit_admin_order_path(order)
 
-      page.should_not have_button('cancel')
-      page.should_not have_button('Resend')
+      expect(page).not_to have_button('cancel')
+      expect(page).not_to have_button('Resend')
 
       # Order Tabs
-      page.should_not have_link('Order Details')
-      page.should_not have_link('Customer Details')
-      page.should_not have_link('Adjustments')
-      page.should_not have_link('Payments')
-      page.should_not have_link('Return Authorizations')
+      expect(page).not_to have_link('Order Details')
+      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Adjustments')
+      expect(page).not_to have_link('Payments')
+      expect(page).not_to have_link('Return Authorizations')
 
       # Order item actions
-      page.should_not have_css('.delete-item')
-      page.should_not have_css('.split-item')
-      page.should_not have_css('.edit-item')
-      page.should_not have_css('.edit-tracking')
+      expect(page).not_to have_css('.delete-item')
+      expect(page).not_to have_css('.split-item')
+      expect(page).not_to have_css('.edit-item')
+      expect(page).not_to have_css('.edit-tracking')
 
-      page.should_not have_css('#add-line-item')
+      expect(page).not_to have_css('#add-line-item')
     end
   end
 
@@ -487,20 +487,20 @@ describe "Order Details", js: true do
     end
 
     before do
-      Spree::Api::BaseController.any_instance.stub :try_spree_current_user => Spree.user_class.new
+      allow_any_instance_of(Spree::Api::BaseController).to receive_messages :try_spree_current_user => Spree.user_class.new
     end
 
     it 'should not display order tabs or edit buttons without ability' do
       visit spree.edit_admin_order_path(order)
 
       # Order Form
-      page.should_not have_css('.edit-item')
+      expect(page).not_to have_css('.edit-item')
       # Order Tabs
-      page.should_not have_link('Order Details')
-      page.should_not have_link('Customer Details')
-      page.should_not have_link('Adjustments')
-      page.should_not have_link('Payments')
-      page.should_not have_link('Return Authorizations')
+      expect(page).not_to have_link('Order Details')
+      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Adjustments')
+      expect(page).not_to have_link('Payments')
+      expect(page).not_to have_link('Return Authorizations')
     end
 
     it "can add tracking information" do
@@ -511,8 +511,8 @@ describe "Order Details", js: true do
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
 
-      page.should_not have_css("input[name=tracking]")
-      page.should have_content("Tracking: FOOBAR")
+      expect(page).not_to have_css("input[name=tracking]")
+      expect(page).to have_content("Tracking: FOOBAR")
     end
 
     it "can change the shipping method" do
@@ -524,8 +524,8 @@ describe "Order Details", js: true do
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
 
-      page.should_not have_css('#selected_shipping_rate_id')
-      page.should have_content("Default")
+      expect(page).not_to have_css('#selected_shipping_rate_id')
+      expect(page).to have_content("Default")
     end
 
     it 'can ship' do
@@ -535,7 +535,7 @@ describe "Order Details", js: true do
       click_icon 'arrow-right'
       wait_for_ajax
       within '.shipment-state' do
-        page.should have_content('SHIPPED')
+        expect(page).to have_content('SHIPPED')
       end
     end
   end

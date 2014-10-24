@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Stock Transfers', :js => true do
+describe 'Stock Transfers', :type => :feature, :js => true do
   stub_authorization!
 
   it 'transfer between 2 locations' do
@@ -17,10 +17,10 @@ describe 'Stock Transfers', :js => true do
     click_button 'Add'
     click_button 'Transfer Stock'
 
-    page.should have_content('STOCK TRANSFER REFERENCE PO 666')
-    page.should have_content('NY')
-    page.should have_content('SF')
-    page.should have_content(variant.name)
+    expect(page).to have_content('STOCK TRANSFER REFERENCE PO 666')
+    expect(page).to have_content('NY')
+    expect(page).to have_content('SF')
+    expect(page).to have_content(variant.name)
 
     transfer = Spree::StockTransfer.last
     expect(transfer.stock_movements.size).to eq 2
@@ -28,9 +28,9 @@ describe 'Stock Transfers', :js => true do
 
   describe 'received stock transfer' do
     def it_is_received_stock_transfer(page)
-      page.should have_content('STOCK TRANSFER REFERENCE PO 666')
-      page.should_not have_selector("#stock-location-source")
-      page.should have_selector("#stock-location-destination")
+      expect(page).to have_content('STOCK TRANSFER REFERENCE PO 666')
+      expect(page).not_to have_selector("#stock-location-source")
+      expect(page).to have_selector("#stock-location-destination")
 
       transfer = Spree::StockTransfer.last
       expect(transfer.stock_movements.size).to eq 1

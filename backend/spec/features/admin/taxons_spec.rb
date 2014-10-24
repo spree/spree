@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Taxonomies and taxons" do
+describe "Taxonomies and taxons", :type => :feature do
   stub_authorization!
 
   it "admin should be able to edit taxon" do
@@ -19,6 +19,6 @@ describe "Taxonomies and taxons" do
 
     fill_in "permalink_part", :with => "shirt-rails"
     click_button "Update"
-    page.should have_content("Taxon \"Shirt\" has been successfully updated!")
+    expect(page).to have_content("Taxon \"Shirt\" has been successfully updated!")
   end
 end

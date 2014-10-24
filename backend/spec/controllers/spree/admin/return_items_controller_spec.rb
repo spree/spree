@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReturnItemsController do
+describe Spree::Admin::ReturnItemsController, :type => :controller do
   stub_authorization!
 
   describe '#update' do

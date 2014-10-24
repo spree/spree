@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe StockLocationsController do
+    describe StockLocationsController, :type => :controller do
       stub_authorization!
       
       # Regression for #4272
@@ -22,7 +22,7 @@ module Spree
 
         it "can create a new stock location" do
           spree_get :new
-          response.should be_success
+          expect(response).to be_success
         end
       end
 
@@ -33,7 +33,7 @@ module Spree
 
         it "can create a new stock location" do
           spree_get :new
-          response.should be_success
+          expect(response).to be_success
         end 
       end
     end

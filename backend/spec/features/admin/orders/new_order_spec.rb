@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "New Order" do
+describe "New Order", :type => :feature do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product) }
   let!(:state) { create(:state) }
@@ -19,7 +19,7 @@ describe "New Order" do
 
   it "does check if you have a billing address before letting you add shipments" do
     click_on "Shipments"
-    page.should have_content 'Please fill in customer info'
+    expect(page).to have_content 'Please fill in customer info'
     expect(current_path).to eql(spree.edit_admin_order_customer_path(Spree::Order.last))
   end
 
@@ -46,7 +46,7 @@ describe "New Order" do
     click_on "ship"
     wait_for_ajax
 
-    page.should have_content("shipped")
+    expect(page).to have_content("shipped")
   end
 
   context "adding new item to the order", js: true do
@@ -59,7 +59,7 @@ describe "New Order" do
       end
 
       within(".line-items") do
-        page.should have_content(product.name)
+        expect(page).to have_content(product.name)
       end
 
       click_on "Customer Details"
@@ -75,7 +75,7 @@ describe "New Order" do
       click_on "Shipments"
 
       within(".stock-contents") do
-        page.should have_content(product.name)
+        expect(page).to have_content(product.name)
       end
     end
   end
@@ -83,7 +83,7 @@ describe "New Order" do
   # Regression test for #3958
   context "without a delivery step", js: true do
     before do
-      Spree::Order.stub :checkout_step_names => [:address, :payment, :confirm, :complete]
+      allow(Spree::Order).to receive_messages :checkout_step_names => [:address, :payment, :confirm, :complete]
     end
 
     it "can still see line items" do
@@ -91,13 +91,13 @@ describe "New Order" do
       click_icon :plus
       within(".line-items") do
         within(".line-item-name") do
-          page.should have_content(product.name)
+          expect(page).to have_content(product.name)
         end
         within(".line-item-qty-show") do
-          page.should have_content("1")
+          expect(page).to have_content("1")
         end
         within(".line-item-price") do
-          page.should have_content(product.price)
+          expect(page).to have_content(product.price)
         end
       end
     end
@@ -125,7 +125,7 @@ describe "New Order" do
       click_on "Continue"
 
       within(".additional-info .state") do
-        page.should have_content("COMPLETE")
+        expect(page).to have_content("COMPLETE")
       end
     end
   end

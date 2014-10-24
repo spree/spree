@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Reports" do
+describe "Reports", :type => :feature do
   stub_authorization!
 
   context "visiting the admin reports page" do
@@ -9,10 +9,10 @@ describe "Reports" do
       click_link "Reports"
       click_link "Sales Total"
 
-      page.should have_content("Sales Totals")
-      page.should have_content("Item Total")
-      page.should have_content("Adjustment Total")
-      page.should have_content("Sales Total")
+      expect(page).to have_content("Sales Totals")
+      expect(page).to have_content("Item Total")
+      expect(page).to have_content("Adjustment Total")
+      expect(page).to have_content("Sales Total")
     end
   end
 
@@ -55,7 +55,7 @@ describe "Reports" do
       fill_in "q_completed_at_lt", :with => 1.week.from_now
       click_button "Search"
 
-      page.should have_content("$300.00")
+      expect(page).to have_content("$300.00")
     end
   end
 end
