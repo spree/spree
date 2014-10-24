@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe TaxCategoriesController do
+    describe TaxCategoriesController, :type => :controller do
       stub_authorization!
 
       describe 'GET #index' do

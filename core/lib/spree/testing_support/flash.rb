@@ -5,12 +5,12 @@ module Spree
         flash = convert_flash(flash)
 
         within("[class='flash success']") do
-          page.should have_content(flash)
+          expect(page).to have_content(flash)
         end
       end
 
       def assert_successful_update_message(resource)
-        flash = Spree.t(:successfully_updated, :resource => Spree.t(resource))
+        flash = Spree.t(:successfully_updated, resource: Spree.t(resource))
         assert_flash_success(flash)
       end
 

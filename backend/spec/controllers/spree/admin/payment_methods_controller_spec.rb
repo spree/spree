@@ -5,19 +5,19 @@ module Spree
     preference :password, :string, :default => "password"
   end
 
-  describe Admin::PaymentMethodsController do
+  describe Admin::PaymentMethodsController, :type => :controller do
     stub_authorization!
 
     let(:payment_method) { GatewayWithPassword.create!(:name => "Bogus", :preferred_password => "haxme") }
 
     # regression test for #2094
     it "does not clear password on update" do
-      payment_method.preferred_password.should == "haxme"
+      expect(payment_method.preferred_password).to eq("haxme")
       spree_put :update, :id => payment_method.id, :payment_method => { :type => payment_method.class.to_s, :preferred_password => "" }
-      response.should redirect_to(spree.edit_admin_payment_method_path(payment_method))
+      expect(response).to redirect_to(spree.edit_admin_payment_method_path(payment_method))
 
       payment_method.reload
-      payment_method.preferred_password.should == "haxme"
+      expect(payment_method.preferred_password).to eq("haxme")
     end
 
     context "tries to save invalid payment" do
@@ -33,8 +33,8 @@ module Spree
         spree_post :create, :payment_method => { :name => "Test Method", :type => "Spree::Gateway::Bogus" }
       }.to change(Spree::PaymentMethod, :count).by(1)
 
-      response.should be_redirect
-      response.should redirect_to spree.edit_admin_payment_method_path(assigns(:payment_method))
+      expect(response).to be_redirect
+      expect(response).to redirect_to spree.edit_admin_payment_method_path(assigns(:payment_method))
     end
 
     it "can not create a payment method of an invalid type" do
@@ -42,8 +42,8 @@ module Spree
         spree_post :create, :payment_method => { :name => "Invalid Payment Method", :type => "Spree::InvalidType" }
       }.to change(Spree::PaymentMethod, :count).by(0)
 
-      response.should be_redirect
-      response.should redirect_to spree.new_admin_payment_method_path
+      expect(response).to be_redirect
+      expect(response).to redirect_to spree.new_admin_payment_method_path
     end
   end
 end

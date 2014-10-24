@@ -12,7 +12,7 @@ module Spree
   end
 end
 
-describe Spree::Admin::WidgetsController do
+describe Spree::Admin::WidgetsController, :type => :controller do
   stub_authorization!
 
   after(:all) do
@@ -90,7 +90,7 @@ describe Spree::Admin::WidgetsController do
       let(:params) { {} }
 
       before do
-        Widget.any_instance.stub(:name).and_return('some name')
+        allow_any_instance_of(Widget).to receive(:name).and_return('some name')
       end
 
       it 'creates the resource' do

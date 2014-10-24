@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "General Settings" do
+describe "General Settings", :type => :feature do
   stub_authorization!
 
   before(:each) do
@@ -13,10 +13,10 @@ describe "General Settings" do
 
   context "visiting general settings (admin)" do
     it "should have the right content" do
-      page.should have_content("General Settings")
-      find("#store_name").value.should == "Test Store"
-      find("#store_url").value.should == "test.example.org"
-      find("#store_mail_from_address").value.should == "test@example.org"
+      expect(page).to have_content("General Settings")
+      expect(find("#store_name").value).to eq("Test Store")
+      expect(find("#store_url").value).to eq("test.example.org")
+      expect(find("#store_mail_from_address").value).to eq("test@example.org")
     end
   end
 
@@ -27,8 +27,8 @@ describe "General Settings" do
       click_button "Update"
 
       assert_successful_update_message(:general_settings)
-      find("#store_name").value.should == "Spree Demo Site99"
-      find("#store_mail_from_address").value.should == "spree@example.org"
+      expect(find("#store_name").value).to eq("Spree Demo Site99")
+      expect(find("#store_mail_from_address").value).to eq("spree@example.org")
     end
   end
 end
