@@ -7,7 +7,7 @@ module Spree
     ssl_required
 
     before_action :load_order_with_lock
-    before_filter :ensure_valid_order_version, only: [:update]
+    before_filter :ensure_valid_state_lock_version, only: [:update]
     before_filter :set_state_if_present
 
     before_action :ensure_order_not_completed
@@ -76,7 +76,7 @@ module Spree
         redirect_to spree.cart_path and return unless @order
       end
 
-      def ensure_valid_state
+      def ensure_valid_state_lock_version
         if params[:order] && params[:order][:state_lock_version]
           @order.with_lock do
             unless @order.state_lock_version == params[:order][:state_lock_version].to_i

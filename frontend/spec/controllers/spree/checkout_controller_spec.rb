@@ -237,6 +237,11 @@ describe Spree::CheckoutController do
         order.update_columns(state_lock_version: 2, state: "address")
       end
 
+      it "order should receieve ensure_valid_order_version callback" do
+        expect_any_instance_of(described_class).to receive(:ensure_valid_state_lock_version)
+        spree_post :update, post_params
+      end
+
       it "order should receieve with_lock message" do
         expect(order).to receive(:with_lock)
         spree_post :update, post_params
