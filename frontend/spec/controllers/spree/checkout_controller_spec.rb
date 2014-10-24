@@ -223,19 +223,32 @@ describe Spree::CheckoutController do
 
     # Regression test for #4190
     context "state_lock_version incorrect" do
+      let(:post_params) {
+        {
+          state: "address",
+          order: {
+            bill_address_attributes: order.bill_address.attributes.except("created_at", "updated_at"),
+            state_lock_version: 1,
+            use_billing: true
+          }
+        }
+      }
       before do
         order.update_columns(state_lock_version: 2, state: "address")
       end
 
+      it "order should receieve ensure_valid_order_version callback" do
+        expect_any_instance_of(described_class).to receive(:ensure_valid_state_lock_version)
+        spree_post :update, post_params
+      end
+
+      it "order should receieve with_lock message" do
+        expect(order).to receive(:with_lock)
+        spree_post :update, post_params
+      end
+
       it "redirects back to current state" do
-        spree_post :update, {
-            state: "address",
-            order: {
-              bill_address_attributes: order.bill_address.attributes.except("created_at", "updated_at"),
-              state_lock_version: 1,
-              use_billing: true
-            }
-        }
+        spree_post :update, post_params
         expect(response).to redirect_to spree.checkout_state_path('address')
         expect(flash[:error]).to eq "The order has already been updated."
       end
