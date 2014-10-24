@@ -246,7 +246,7 @@ describe Spree::StockItem, :type => :model do
         end
 
         it 'has :no errors_on' do
-          expect(subject.errors_on(:count_on_hand).size).to eq(:no)
+          expect(subject.errors_on(:count_on_hand).size).to eq(0)
         end
       end
 

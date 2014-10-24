@@ -28,7 +28,6 @@ module Spree
 
       expect(source_location.count_on_hand(variant)).to eq 5
       expect(destination_location.count_on_hand(variant)).to eq 5
-      expect(subject.size).to eq(2)
 
       expect(subject.source_location).to eq source_location
       expect(subject.destination_location).to eq destination_location
@@ -43,7 +42,6 @@ module Spree
       subject.receive(destination_location, variants)
 
       expect(destination_location.count_on_hand(variant)).to eq 5
-      expect(subject.size).to eq(1)
 
       expect(subject.source_location).to be_nil
       expect(subject.destination_location).to eq destination_location

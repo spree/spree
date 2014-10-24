@@ -711,45 +711,40 @@ describe Spree::Payment, :type => :model do
       context "amount is a decimal" do
         let(:amount) { '2.99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
 
       context "amount is an integer" do
         let(:amount) { '2' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.0')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.0'))
         end
       end
 
       context "amount contains a dollar sign" do
         let(:amount) { '$2.99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
 
       context "amount contains a comma" do
         let(:amount) { '$2,999.99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2999.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2999.99'))
         end
       end
 
       context "amount contains a negative sign" do
         let(:amount) { '-2.99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('-2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('-2.99'))
         end
       end
 
@@ -758,18 +753,16 @@ describe Spree::Payment, :type => :model do
 
         # this is a strange default for ActiveRecord
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('0')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('0'))
         end
       end
 
       context "amount is an empty string" do
         let(:amount) { '' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to be_nil }
+        it '#amount' do
+          expect(subject.amount).to be_nil
         end
       end
     end
@@ -777,9 +770,8 @@ describe Spree::Payment, :type => :model do
     context "when the amount is a number" do
       let(:amount) { 1.55 }
 
-      describe '#amount' do
-        subject { super().amount }
-        it { is_expected.to eql(BigDecimal('1.55')) }
+      it '#amount' do
+        expect(subject.amount).to eql(BigDecimal('1.55'))
       end
     end
 
@@ -797,45 +789,40 @@ describe Spree::Payment, :type => :model do
       context "amount is a decimal" do
         let(:amount) { '2,99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
 
       context "amount contains a $ sign" do
         let(:amount) { '2,99 $' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
 
       context "amount is a number" do
         let(:amount) { 2.99 }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
 
       context "amount contains a negative sign" do
         let(:amount) { '-2,99 $' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('-2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('-2.99'))
         end
       end
 
       context "amount uses a dot as a decimal separator" do
         let(:amount) { '2.99' }
 
-        describe '#amount' do
-          subject { super().amount }
-          it { is_expected.to eql(BigDecimal('2.99')) }
+        it '#amount' do
+          expect(subject.amount).to eql(BigDecimal('2.99'))
         end
       end
     end

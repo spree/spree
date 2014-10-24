@@ -176,7 +176,7 @@ describe Spree::Address, :type => :model do
     end
 
     context "phone not required" do
-      before { address.instance_eval{ allow(self).to receive_messages :require_phone? => false } }
+      before { allow(address).to receive_messages require_phone?: false }
 
       it "shows no errors when phone is blank" do
         address.phone = ""
@@ -186,7 +186,7 @@ describe Spree::Address, :type => :model do
     end
 
     context "zipcode not required" do
-      before { address.instance_eval{ allow(self).to receive_messages :require_zipcode? => false } }
+      before { allow(address).to receive_messages require_zipcode?: false }
 
       it "shows no errors when phone is blank" do
         address.zipcode = ""
