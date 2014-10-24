@@ -5,15 +5,17 @@ require 'spec_helper'
 describe Spree::Variant do
   let!(:variant) { create(:variant) }
 
+  it_behaves_like 'default_price'
+
   context "validations" do
     it "should validate price is greater than 0" do
       variant.price = -1
-      variant.should be_invalid
+      expect(variant).to be_invalid
     end
 
     it "should validate price is 0" do
       variant.price = 0
-      variant.should be_valid
+      expect(variant).to be_valid
     end
   end
 
@@ -39,7 +41,7 @@ describe Spree::Variant do
         product.master.stock_items.first.set_count_on_hand(5)
       end
       context 'when product is created without variants but with stock' do
-        it {product.master.should be_in_stock}
+        it { expect(product.master).to be_in_stock }
       end
 
       context 'when a variant is created' do
@@ -47,9 +49,9 @@ describe Spree::Variant do
           product.variants.create!(:name => 'any-name')
         end
 
-        it { product.master.should_not be_in_stock }
-       end
-     end
+        it { expect(product.master).to_not be_in_stock }
+      end
+    end
   end
 
   context "product has other variants" do
@@ -62,13 +64,13 @@ describe Spree::Variant do
       let(:multi_variant) { @multi_variant }
 
       it "should set option value" do
-        multi_variant.option_value('media_type').should be_nil
+        expect(multi_variant.option_value('media_type')).to be_nil
 
         multi_variant.set_option_value('media_type', 'DVD')
-        multi_variant.option_value('media_type').should == 'DVD'
+        expect(multi_variant.option_value('media_type')).to eql 'DVD'
 
         multi_variant.set_option_value('media_type', 'CD')
-        multi_variant.option_value('media_type').should == 'CD'
+        expect(multi_variant.option_value('media_type')).to eql 'CD'
       end
 
       it "should not duplicate associated option values when set multiple times" do
@@ -94,13 +96,13 @@ describe Spree::Variant do
         let(:multi_variant) { @multi_variant }
 
         it "should set option value" do
-          multi_variant.option_value('media_type').should be_nil
+          expect(multi_variant.option_value('media_type')).to be_nil
 
           multi_variant.set_option_value('media_type', 'DVD')
-          multi_variant.option_value('media_type').should == 'DVD'
+          expect(multi_variant.option_value('media_type')).to eql 'DVD'
 
           multi_variant.set_option_value('media_type', 'CD')
-          multi_variant.option_value('media_type').should == 'CD'
+          expect(multi_variant.option_value('media_type')).to eql 'CD'
         end
 
         it "should not duplicate associated option values when set multiple times" do
@@ -134,7 +136,7 @@ describe Spree::Variant do
       context "with decimal point" do
         it "captures the proper amount for a formatted price" do
           variant.price = '1,599.99'
-          variant.price.should == 1599.99
+          expect(variant.price).to eql 1599.99
         end
       end
 
@@ -142,7 +144,7 @@ describe Spree::Variant do
         it "captures the proper amount for a formatted price" do
           I18n.locale = :de
           variant.price = '1.599,99'
-          variant.price.should == 1599.99
+          expect(variant.price).to eql 1599.99
         end
       end
 
@@ -150,7 +152,7 @@ describe Spree::Variant do
         it "uses the price as is" do
           I18n.locale = :de
           variant.price = 1599.99
-          variant.price.should == 1599.99
+          expect(variant.price).to eql 1599.99
         end
       end
     end
@@ -159,7 +161,7 @@ describe Spree::Variant do
       context "with decimal point" do
         it "captures the proper amount for a formatted price" do
           variant.cost_price = '1,599.99'
-          variant.cost_price.should == 1599.99
+          expect(variant.cost_price).to eql 1599.99
         end
       end
 
@@ -167,7 +169,7 @@ describe Spree::Variant do
         it "captures the proper amount for a formatted price" do
           I18n.locale = :de
           variant.cost_price = '1.599,99'
-          variant.cost_price.should == 1599.99
+          expect(variant.cost_price).to eql 1599.99
         end
       end
 
@@ -175,7 +177,7 @@ describe Spree::Variant do
         it "uses the price as is" do
           I18n.locale = :de
           variant.cost_price = 1599.99
-          variant.cost_price.should == 1599.99
+          expect(variant.cost_price).to eql 1599.99
         end
       end
     end
@@ -183,14 +185,14 @@ describe Spree::Variant do
 
   context "#currency" do
     it "returns the globally configured currency" do
-      variant.currency.should == "USD"
+      expect(variant.currency).to eql "USD"
     end
   end
 
   context "#display_amount" do
     it "returns a Spree::Money" do
       variant.price = 21.22
-      variant.display_amount.to_s.should == "$21.22"
+      expect(variant.display_amount.to_s).to eql "$21.22"
     end
   end
 
@@ -199,7 +201,7 @@ describe Spree::Variant do
       before { variant.cost_currency = nil }
       it "populates cost currency with the default value on save" do
         variant.save!
-        variant.cost_currency.should == "USD"
+        expect(variant.cost_currency).to eql "USD"
       end
     end
   end
@@ -214,7 +216,7 @@ describe Spree::Variant do
       let(:currency) { nil }
 
       it "returns 0" do
-        subject.to_s.should == "$0.00"
+        expect(subject.to_s).to eql "$0.00"
       end
     end
 
@@ -222,7 +224,7 @@ describe Spree::Variant do
       let(:currency) { 'EUR' }
 
       it "returns the value in the EUR" do
-        subject.to_s.should == "€33.33"
+        expect(subject.to_s).to eql "€33.33"
       end
     end
 
@@ -230,7 +232,7 @@ describe Spree::Variant do
       let(:currency) { 'USD' }
 
       it "returns the value in the USD" do
-        subject.to_s.should == "$19.99"
+        expect(subject.to_s).to eql "$19.99"
       end
     end
   end
@@ -246,7 +248,7 @@ describe Spree::Variant do
       let(:currency) { nil }
 
       it "returns nil" do
-        subject.should be_nil
+        expect(subject).to be_nil
       end
     end
 
@@ -254,7 +256,7 @@ describe Spree::Variant do
       let(:currency) { 'EUR' }
 
       it "returns the value in the EUR" do
-        subject.should == 33.33
+        expect(subject).to eql 33.33
       end
     end
 
@@ -262,7 +264,7 @@ describe Spree::Variant do
       let(:currency) { 'USD' }
 
       it "returns the value in the USD" do
-        subject.should == 19.99
+        expect(subject).to eql 19.99
       end
     end
   end
@@ -278,7 +280,7 @@ describe Spree::Variant do
     end
 
     it 'should order by bar than foo' do
-      variant.options_text.should == 'Bar Type: Bar, Foo Type: Foo'
+      expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
     end
   end
 
@@ -286,7 +288,7 @@ describe Spree::Variant do
   describe "set_position" do
     it "sets variant position after creation" do
       variant = create(:variant)
-      variant.position.should_not be_nil
+      expect(variant.position).to_not be_nil
     end
   end
 
@@ -306,7 +308,7 @@ describe Spree::Variant do
         end
 
         it 'returns true if stock_items in stock' do
-          variant.in_stock?.should be true
+          expect(variant.in_stock?).to be true
         end
       end
 
@@ -317,7 +319,7 @@ describe Spree::Variant do
         end
 
         it 'return false if stock_items out of stock' do
-          variant.in_stock?.should be false
+          expect(variant.in_stock?).to be false
         end
       end
     end
@@ -354,7 +356,7 @@ describe Spree::Variant do
   describe '#total_on_hand' do
     it 'should be infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
-      build(:variant).total_on_hand.should eql(Float::INFINITY)
+      expect(build(:variant).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'should match quantifier total_on_hand' do
@@ -385,7 +387,7 @@ describe Spree::Variant do
     it "updates a product" do
       variant.product.update_column(:updated_at, 1.day.ago)
       variant.touch
-      variant.product.reload.updated_at.should be_within(3.seconds).of(Time.now)
+      expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.now)
     end
 
     it "clears the in_stock cache key" do
@@ -399,19 +401,19 @@ describe Spree::Variant do
     it 'should not track inventory when global setting is off' do
       Spree::Config[:track_inventory_levels] = false
 
-      build(:variant).should_track_inventory?.should eq(false)
+      expect(build(:variant).should_track_inventory?).to eq(false)
     end
 
     it 'should not track inventory when variant is turned off' do
       Spree::Config[:track_inventory_levels] = true
 
-      build(:on_demand_variant).should_track_inventory?.should eq(false)
+      expect(build(:on_demand_variant).should_track_inventory?).to eq(false)
     end
 
     it 'should track inventory when global and variant are on' do
       Spree::Config[:track_inventory_levels] = true
 
-      build(:variant).should_track_inventory?.should eq(true)
+      expect(build(:variant).should_track_inventory?).to eq(true)
     end
   end
 
