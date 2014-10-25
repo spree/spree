@@ -76,11 +76,52 @@ require 'spree/core/controller_helpers/strong_parameters'
 
 require 'spree/core/importer'
 
-# Hack waiting on https://github.com/pluginaweek/state_machine/pull/275
 module StateMachine
   module Integrations
+    # Hack waiting on https://github.com/pluginaweek/state_machine/pull/275
     module ActiveModel
       public :around_validation
+    end
+
+    module ActiveRecord
+      protected
+        # Initializes static states
+        def define_static_state_initializer
+          # This is the only available hook where the default set of attributes
+          # can be overridden for a new object *prior* to the processing of the
+          # attributes passed into #initialize
+          define_helper :class, <<-end_eval, __FILE__, __LINE__ + 1
+            def default_attributes(*) #:nodoc:
+              result = super
+              # No need to pass in an object, since the overrides will be forced
+              self.state_machines.initialize_states(nil, :static => :force, :dynamic => false, :to => result)
+              result
+            end
+          end_eval
+        end
+    end
+  end
+
+  class Machine
+    # Initializes the state on the given object.  Initial values are only set if
+    # the machine's attribute hasn't been previously initialized.
+    #
+    # Configuration options:
+    # * <tt>:force</tt> - Whether to initialize the state regardless of its
+    #   current value
+    # * <tt>:to</tt> - A AttributeSet of the initial value in instead of writing
+    #   directly to the object
+    def initialize_state(object, options = {})
+      state = initial_state(object)
+      if state && (options[:force] || initialize_state?(object))
+        value = state.value
+
+        if attribute_set = options[:to]
+          attribute_set.write_from_user(attribute.to_s, value)
+        else
+          write(object, :state, value)
+        end
+      end
     end
   end
 end
