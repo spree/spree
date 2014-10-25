@@ -3,9 +3,6 @@ class AddCounterCacheFromSpreeVariantsToSpreeStockItems < ActiveRecord::Migratio
     # Setup the column.
     add_column :spree_variants, :stock_items_count, :integer
 
-    # Reset all of the cached information.
-    Spree::Variant.reset_column_information
-
     # Reset the cached counters for stock items of already
     # existing records.
     Spree::Variant.find_each do |variant|
