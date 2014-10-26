@@ -92,23 +92,11 @@ module Spree
     end
 
     def country_ids=(ids)
-      zone_members.destroy_all
-      ids.reject{ |id| id.blank? }.map do |id|
-        member = ZoneMember.new
-        member.zoneable_type = 'Spree::Country'
-        member.zoneable_id = id
-        members << member
-      end
+      set_zone_members(ids, 'Spree::Country')
     end
 
     def state_ids=(ids)
-      zone_members.destroy_all
-      ids.reject{ |id| id.blank? }.map do |id|
-        member = ZoneMember.new
-        member.zoneable_type = 'Spree::State'
-        member.zoneable_id = id
-        members << member
-      end
+      set_zone_members(ids, 'Spree::State')
     end
 
     # Indicates whether the specified zone falls entirely within the zone performing
@@ -135,6 +123,16 @@ module Spree
 
       def remove_previous_default
         Spree::Zone.where('id != ?', self.id).update_all(default_tax: false) if default_tax
+      end
+
+      def set_zone_members(ids, type)
+        zone_members.destroy_all
+        ids.reject{ |id| id.blank? }.map do |id|
+          member = ZoneMember.new
+          member.zoneable_type = type
+          member.zoneable_id = id
+          members << member
+        end
       end
   end
 end
