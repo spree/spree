@@ -7,6 +7,7 @@ module Spree
       initializer "spree.assets.precompile", :group => :all do |app|
         app.config.assets.precompile += %w[
           spree/frontend/all*
+          jquery.validate/localization/messages_*
         ]
       end
 
