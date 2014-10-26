@@ -5,8 +5,9 @@ module Spree
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer "spree.assets.precompile", :group => :all do |app|
-        app.config.assets.precompile += %w[
-          spree/frontend/all*
+        app.config.assets.precompile += [
+          'spree/frontend/all*',
+          "jquery.validate/localization/messages_#{app.config.i18n.default_locale.to_s.downcase.gsub('-', '')}.js",
         ]
       end
 
