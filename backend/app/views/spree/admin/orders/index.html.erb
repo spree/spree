@@ -132,7 +132,13 @@
           <% if Spree::Order.checkout_step_names.include?(:delivery) %>
             <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
           <% end %>
-        <td><%= mail_to order.email %></td>
+        <td>
+          <% if order.user %>
+            <%= link_to order.email, edit_admin_user_path(order.user) %>
+          <% else %>
+            <%= mail_to order.email %>
+          <% end %>
+        </td>
         <td class="align-center"><%= order.display_total.to_html %></td>
         <td class='actions align-center' data-hook="admin_orders_index_row_actions">
           <%= link_to_edit_url edit_admin_order_path(order), :title => "admin_edit_#{dom_id(order)}", :no_text => true %>
