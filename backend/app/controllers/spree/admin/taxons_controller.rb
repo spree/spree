@@ -66,8 +66,8 @@ module Spree
           parent_permalink += "/" unless parent_permalink.blank?
           params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
         end
-        #check if we need to rename child taxons if parent name or permalink changes
-        @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
+        #check if we need to rename child taxons if parent name and permalink changes
+        @update_children = true if params[:taxon][:name] != @taxon.name && params[:taxon][:permalink] != @taxon.permalink
 
         if @taxon.update_attributes(taxon_params)
           flash[:success] = flash_message_for(@taxon, :successfully_updated)
