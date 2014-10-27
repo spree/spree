@@ -24,7 +24,6 @@
       <%= content_tag :li, :class => ('active' if current == 'Stock Management') do %>
         <%= link_to_with_icon 'tasks', Spree.t(:stock_management), stock_admin_product_url(@product) %>
       <% end if can?(:stock, Spree::Product) %>
-      </li>
     </ul>
   </nav>
 
