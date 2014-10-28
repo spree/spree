@@ -1,6 +1,6 @@
 /*
  * Translated default messages for the jQuery validation plugin.
- * Locale: MY (Malay; Melayu)
+ * Locale: MS (Malay; Melayu)
  */
 (function ($) {
 	$.extend($.validator.messages, {
