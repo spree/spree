@@ -94,6 +94,27 @@ module Spree
       json_response["adjustments"].should be_empty
     end
 
+    context 'when shipment adjustments are present' do
+      let(:adjustment) { FactoryGirl.create(:adjustment) }
+
+      before do
+        allow_any_instance_of(Order).to receive_messages :user => current_api_user
+        shipment = FactoryGirl.create(:shipment, order: order)
+        shipment.adjustments << adjustment
+      end
+
+      subject { api_get :show, :id => order.to_param }
+
+      it 'contains adjustments in JSON' do
+        subject
+        # Test to insure shipment has adjustments
+        shipment = json_response['shipments'][0]
+        expect(shipment).to_not be_nil
+        expect(shipment['adjustments'][0]).not_to be_empty
+        expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+      end
+    end
+
     it "orders contain the basic checkout steps" do
       Order.any_instance.stub :user => current_api_user
       api_get :show, :id => order.to_param
