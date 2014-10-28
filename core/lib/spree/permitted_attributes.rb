@@ -35,8 +35,7 @@ module Spree
     ]
 
     @@checkout_attributes = [
-      :coupon_code, :email, :shipping_method_id, :special_instructions,
-      :state_lock_version, :use_billing
+      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing
     ]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
