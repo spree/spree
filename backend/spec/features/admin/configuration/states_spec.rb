@@ -49,9 +49,6 @@ describe "States", :type => :feature do
     it "should allow an admin to create states for non default countries", :js => true do
       go_to_states_page
       set_select2_field "#country", @hungary.id
-      # Just so the change event actually gets triggered in this spec
-      # It is definitely triggered in the "real world"
-      page.execute_script("$('#country').trigger('change');")
 
       click_link "new_state_link"
       sleep 1
