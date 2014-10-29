@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Prototypes" do
+describe "Prototypes", :type => :feature do
   stub_authorization!
 
   context "listing prototypes" do

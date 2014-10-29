@@ -53,14 +53,10 @@ User-agent: *
 Disallow: /checkout
 Disallow: /cart
 Disallow: /orders
-Disallow: /countries
-Disallow: /line_items
-Disallow: /password_resets
-Disallow: /states
-Disallow: /user_sessions
-Disallow: /user_registrations
-Disallow: /users
+Disallow: /user
 Disallow: /account
+Disallow: /api
+Disallow: /password
       ROBOTS
     end
 

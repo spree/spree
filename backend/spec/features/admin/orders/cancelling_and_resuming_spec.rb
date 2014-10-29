@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Cancelling + Resuming" do
+describe "Cancelling + Resuming", :type => :feature do
 
   stub_authorization!
 
@@ -24,7 +24,7 @@ describe "Cancelling + Resuming" do
     click_button 'cancel'
     within(".additional-info") do
       within(".state") do
-        page.should have_content("canceled")
+        expect(page).to have_content("canceled")
       end
     end
   end
@@ -39,7 +39,7 @@ describe "Cancelling + Resuming" do
       click_button 'resume'
       within(".additional-info") do
         within(".state") do
-          page.should have_content("resumed")
+          expect(page).to have_content("resumed")
         end
       end
     end

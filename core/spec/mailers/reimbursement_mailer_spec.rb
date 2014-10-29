@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::ReimbursementMailer do
+describe Spree::ReimbursementMailer, :type => :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
@@ -15,11 +15,11 @@ describe Spree::ReimbursementMailer do
   end
 
   it "accepts a reimbursement id as an alternative to a Reimbursement object" do
-    Spree::Reimbursement.should_receive(:find).with(reimbursement.id).and_return(reimbursement)
+    expect(Spree::Reimbursement).to receive(:find).with(reimbursement.id).and_return(reimbursement)
 
-    lambda {
+    expect {
       reimbursement_email = Spree::ReimbursementMailer.reimbursement_email(reimbursement.id)
-    }.should_not raise_error
+    }.not_to raise_error
   end
 
   context "emails must be translatable" do
@@ -39,7 +39,7 @@ describe Spree::ReimbursementMailer do
 
         specify do
           reimbursement_email = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
-          reimbursement_email.body.should include("Caro Cliente,")
+          expect(reimbursement_email.body).to include("Caro Cliente,")
         end
       end
     end

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::CustomerReturn do
+describe Spree::CustomerReturn, :type => :model do
   before do
-    Spree::Order.any_instance.stub(return!: true)
+    allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
   end
 
   describe ".validation" do
@@ -53,7 +53,7 @@ describe Spree::CustomerReturn do
 
         it "should return the assigned number" do
           customer_return.save
-          customer_return.number.should == '123'
+          expect(customer_return.number).to eq('123')
         end
       end
 
@@ -61,12 +61,12 @@ describe Spree::CustomerReturn do
         let(:customer_return) { Spree::CustomerReturn.new(number: nil) }
 
         before do
-          customer_return.stub(valid?: true, process_return!: true)
+          allow(customer_return).to receive_messages(valid?: true, process_return!: true)
         end
 
         it "should assign number with random CR number" do
           customer_return.save
-          customer_return.number.should =~ /CR\d{9}/
+          expect(customer_return.number).to match(/CR\d{9}/)
         end
       end
     end
@@ -91,8 +91,8 @@ describe Spree::CustomerReturn do
     let(:customer_return) { Spree::CustomerReturn.new }
 
     it "returns a Spree::Money" do
-      customer_return.stub(pre_tax_total: 21.22)
-      customer_return.display_pre_tax_total.should == Spree::Money.new(21.22)
+      allow(customer_return).to receive_messages(pre_tax_total: 21.22)
+      expect(customer_return.display_pre_tax_total).to eq(Spree::Money.new(21.22))
     end
   end
 
@@ -179,7 +179,7 @@ describe Spree::CustomerReturn do
       it "should not update the stock item counts in the original stock location" do
         count_on_hand = inventory_unit.find_stock_item.count_on_hand
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
-        inventory_unit.find_stock_item.count_on_hand.should == count_on_hand
+        expect(inventory_unit.find_stock_item.count_on_hand).to eq(count_on_hand)
       end
     end
   end
@@ -192,7 +192,7 @@ describe Spree::CustomerReturn do
     subject { customer_return.fully_reimbursed? }
 
     context 'when some return items are undecided' do
-      it { should be false }
+      it { is_expected.to be false }
     end
 
     context 'when all return items are decided' do
@@ -200,27 +200,27 @@ describe Spree::CustomerReturn do
       context 'when all return items are rejected' do
         before { customer_return.return_items.each(&:reject!) }
 
-        it { should be true }
+        it { is_expected.to be true }
       end
 
       context 'when all return items are accepted' do
         before { customer_return.return_items.each(&:accept!) }
 
         context 'when some return items have no reimbursement' do
-          it { should be false }
+          it { is_expected.to be false }
         end
 
         context 'when all return items have a reimbursement' do
           let!(:reimbursement) { create(:reimbursement, customer_return: customer_return) }
 
           context 'when some reimbursements are not reimbursed' do
-            it { should be false }
+            it { is_expected.to be false }
           end
 
           context 'when all reimbursements are reimbursed' do
             before { reimbursement.perform! }
 
-            it { should be true }
+            it { is_expected.to be true }
           end
         end
       end

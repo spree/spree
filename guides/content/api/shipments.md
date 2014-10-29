@@ -115,12 +115,12 @@ To mark a shipment as shipped, make a request like this:
 
 You may choose to update shipment attributes with this request as well:
 
-    PUT /api/shipments/H123456789/ship?shipment[number]=1234567
+    PUT /api/shipments/H123456789/ship?shipment[tracking]=1234567
 
 ### Response
 
 <%= headers 200 %>
-<%= json(:shipment) %>
+<%= json(:shipment_shipped) %>
 
 ## Add Variant
 

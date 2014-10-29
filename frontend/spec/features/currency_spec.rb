@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Switching currencies in backend" do
+describe "Switching currencies in backend", :type => :feature do
   before do
     create(:base_product, :name => "RoR Mug")
   end
@@ -12,7 +12,7 @@ describe "Switching currencies in backend" do
     click_button "Add To Cart"
     # Now that we have an order...
     Spree::Config[:currency] = "AUD"
-    lambda { visit spree.root_path }.should_not raise_error
+    expect { visit spree.root_path }.not_to raise_error
   end
 
 end

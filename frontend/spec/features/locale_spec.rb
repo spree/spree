@@ -1,24 +1,60 @@
 require 'spec_helper'
 
-describe "setting locale" do
-  before do
+describe 'setting locale', :type => :feature do
+  def with_locale(locale)
+    I18n.locale = locale
+    Spree::Frontend::Config[:locale] = locale
+    yield
     I18n.locale = I18n.default_locale
-    I18n.backend.store_translations(:fr, 
-     :spree => {
-       :cart => "Panier",
-       :shopping_cart => "Panier"
-    })
-    Spree::Frontend::Config[:locale] = "fr"
+    Spree::Frontend::Config[:locale] = 'en'
   end
 
-  after do
-    I18n.locale = I18n.default_locale
-    Spree::Frontend::Config[:locale] = "en"
+  context 'shopping cart link and page' do
+    before do
+      I18n.backend.store_translations(:fr,
+       :spree => {
+         :cart => 'Panier',
+         :shopping_cart => 'Panier'
+      })
+    end
+
+    it 'should be in french' do
+      with_locale('fr') do
+        visit spree.root_path
+        click_link 'Panier'
+        expect(page).to have_content('Panier')
+      end
+    end
   end
 
-  it "should be in french" do
-    visit spree.root_path
-    click_link "Panier"
-    page.should have_content("Panier")
+  context 'checkout form validation messages' do
+    include_context 'checkout setup'
+
+    let(:error_messages) do
+      {
+        'en' => 'This field is required.',
+        'fr' => 'Ce champ est obligatoire.',
+        'de' => 'Dieses Feld ist ein Pflichtfeld.',
+      }
+    end
+
+    def check_error_text(text)
+      %w(firstname lastname address1 city).each do |attr|
+        expect(find(".field#b#{attr} label.error").text).to eq(text)
+      end
+    end
+
+    it 'shows translated jquery.validate error messages', js: true do
+      visit spree.root_path
+      click_link mug.name
+      click_button 'add-to-cart-button'
+      error_messages.each do |locale, message|
+        with_locale(locale) do
+          visit '/checkout/address'
+          find('.form-buttons input[type=submit]').click
+          check_error_text message
+        end
+      end
+    end
   end
 end

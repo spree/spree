@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Variant scopes" do
+describe "Variant scopes", :type => :model do
   let!(:product) { create(:product) }
   let!(:variant_1) { create(:variant, :product => product) }
   let!(:variant_2) { create(:variant, :product => product) }
@@ -10,7 +10,7 @@ describe "Variant scopes" do
     # orders than the other
     Spree::LineItem.delete_all # FIXME leaky database - too many line_items
     create(:line_item, :variant => variant_1)
-    Spree::Variant.descend_by_popularity.first.should == variant_1
+    expect(Spree::Variant.descend_by_popularity.first).to eq(variant_1)
   end
 
   context "finding by option values" do
@@ -31,20 +31,20 @@ describe "Variant scopes" do
 
     it "by objects" do
       variants = product_variants.has_option(option_type, option_value_1)
-      variants.should include(variant_1)
-      variants.should_not include(variant_2)
+      expect(variants).to include(variant_1)
+      expect(variants).not_to include(variant_2)
     end
 
     it "by names" do
       variants = product_variants.has_option("bar", "foo")
-      variants.should include(variant_1)
-      variants.should_not include(variant_2)
+      expect(variants).to include(variant_1)
+      expect(variants).not_to include(variant_2)
     end
 
     it "by ids" do
       variants = product_variants.has_option(option_type.id, option_value_1.id)
-      variants.should include(variant_1)
-      variants.should_not include(variant_2)
+      expect(variants).to include(variant_1)
+      expect(variants).not_to include(variant_2)
     end
 
     it "by mixed conditions" do

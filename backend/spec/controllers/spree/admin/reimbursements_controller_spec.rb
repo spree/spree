@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReimbursementsController do
+describe Spree::Admin::ReimbursementsController, :type => :controller do
   stub_authorization!
 
   let!(:default_refund_reason) do

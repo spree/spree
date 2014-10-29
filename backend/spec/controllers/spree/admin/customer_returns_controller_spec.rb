@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe CustomerReturnsController do
+    describe CustomerReturnsController, :type => :controller do
       stub_authorization!
 
       describe "#index" do

@@ -6,9 +6,9 @@ module Spree
           @taxons = taxonomy.root.children
         else
           if params[:ids]
-            @taxons = Spree::Taxon.accessible_by(current_ability, :read).where(id: params[:ids].split(','))
+            @taxons = Spree::Taxon.includes(:children).accessible_by(current_ability, :read).where(id: params[:ids].split(','))
           else
-            @taxons = Spree::Taxon.accessible_by(current_ability, :read).order(:taxonomy_id, :lft).ransack(params[:q]).result
+            @taxons = Spree::Taxon.includes(:children).accessible_by(current_ability, :read).order(:taxonomy_id, :lft).ransack(params[:q]).result
           end
         end
 

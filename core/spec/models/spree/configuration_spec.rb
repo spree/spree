@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe Spree::Configuration do
+describe Spree::Configuration, :type => :model do
 
 end

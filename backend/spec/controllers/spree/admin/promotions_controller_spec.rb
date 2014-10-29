@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::PromotionsController do
+describe Spree::Admin::PromotionsController, :type => :controller do
   stub_authorization!
 
   let!(:promotion1) { create(:promotion, name: "name1", code: "code1", path: "path1") }

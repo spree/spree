@@ -1,13 +1,12 @@
 require 'spec_helper'
 
-describe "States" do
+describe "States", :type => :feature do
   stub_authorization!
 
   let!(:country) { create(:country) }
 
   before(:each) do
     @hungary = Spree::Country.create!(:name => "Hungary", :iso_name => "Hungary")
-    Spree::Config[:default_country_id] = country.id
   end
 
   # TODO: For whatever reason, rendering of the states page takes a non-trivial amount of time
@@ -30,7 +29,7 @@ describe "States" do
 
     it "should correctly display the states" do
       visit spree.admin_country_states_path(country)
-      page.should have_content(state.name)
+      expect(page).to have_content(state.name)
     end
   end
 
@@ -43,8 +42,8 @@ describe "States" do
       fill_in "state_name", :with => "Calgary"
       fill_in "Abbreviation", :with => "CL"
       click_button "Create"
-      page.should have_content("successfully created!")
-      page.should have_content("Calgary")
+      expect(page).to have_content("successfully created!")
+      expect(page).to have_content("Calgary")
     end
 
     it "should allow an admin to create states for non default countries", :js => true do
@@ -58,9 +57,9 @@ describe "States" do
       fill_in "state_name", :with => "Pest megye"
       fill_in "Abbreviation", :with => "PE"
       click_button "Create"
-      page.should have_content("successfully created!")
-      page.should have_content("Pest megye")
-      find("#s2id_country span").text.should == "Hungary"
+      expect(page).to have_content("successfully created!")
+      expect(page).to have_content("Pest megye")
+      expect(find("#s2id_country span").text).to eq("Hungary")
     end
 
     it "should show validation errors", :js => true do
@@ -72,7 +71,7 @@ describe "States" do
       fill_in "state_name", :with => ""
       fill_in "Abbreviation", :with => ""
       click_button "Create"
-      page.should have_content("Name can't be blank")
+      expect(page).to have_content("Name can't be blank")
     end
   end
 end

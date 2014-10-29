@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe ReimbursementType::OriginalPayment do
+  describe ReimbursementType::OriginalPayment, :type => :model do
     let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
     let(:return_item)             { reimbursement.return_items.first }
     let(:payment)                 { reimbursement.order.payments.first }
@@ -33,7 +33,7 @@ module Spree
 
       context 'when no credit is allowed on the payment' do
         before do
-          Spree::Payment.any_instance.should_receive(:credit_allowed).and_return 0
+          expect_any_instance_of(Spree::Payment).to receive(:credit_allowed).and_return 0
         end
 
         it 'returns an empty array' do
@@ -43,7 +43,7 @@ module Spree
 
       context 'when a payment is negative' do
         before do
-          Spree::Payment.any_instance.should_receive(:amount).and_return -100
+          expect_any_instance_of(Spree::Payment).to receive(:amount).and_return -100
         end
 
         it 'returns an empty array' do

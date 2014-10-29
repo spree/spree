@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order do
+describe Spree::Order, :type => :model do
   context 'CurrencyUpdater' do
     context "when changing order currency" do
       let!(:line_item) { create(:line_item) }

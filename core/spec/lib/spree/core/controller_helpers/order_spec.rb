@@ -12,12 +12,12 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   let(:store) { create(:store) }
 
   describe '#simple_current_order' do
-    before { controller.stub(try_spree_current_user: user) }
+    before { allow(controller).to receive_messages(try_spree_current_user: user) }
     it 'returns nil' do
       expect(controller.simple_current_order).to be_nil
     end
     it 'returns Spree::Order instance' do
-      controller.stub(cookies: double(signed: { guest_token: order.guest_token }))
+      allow(controller).to receive_messages(cookies: double(signed: { guest_token: order.guest_token }))
       expect(controller.simple_current_order).to eq order
     end
   end
@@ -25,8 +25,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   describe '#current_order' do
     before {
       Spree::Order.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
-      controller.stub(current_store: store)
-      controller.stub(try_spree_current_user: user)
+      allow(controller).to receive_messages(current_store: store)
+      allow(controller).to receive_messages(try_spree_current_user: user)
     }
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user }
@@ -50,18 +50,18 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#associate_user' do
     before do
-      controller.stub(current_order: order, try_spree_current_user: user)
+      allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
     end
     context "user's email is blank" do
       let(:user) { create(:user, email: '') }
       it 'calls Spree::Order#associate_user! method' do
-        Spree::Order.any_instance.should_receive(:associate_user!)
+        expect_any_instance_of(Spree::Order).to receive(:associate_user!)
         controller.associate_user
       end
     end
     context "user isn't blank" do
       it 'does not calls Spree::Order#associate_user! method' do
-        Spree::Order.any_instance.should_not_receive(:associate_user!)
+        expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
         controller.associate_user
       end
     end
@@ -69,10 +69,10 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#set_current_order' do
     let(:incomplete_order) { create(:order, user: user) }
-    before { controller.stub(try_spree_current_user: user) }
+    before { allow(controller).to receive_messages(try_spree_current_user: user) }
 
     context 'when current order not equal to users incomplete orders' do
-      before { controller.stub(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { guest_token: 'guest_token' })) }
+      before { allow(controller).to receive_messages(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { guest_token: 'guest_token' })) }
 
       it 'calls Spree::Order#merge! method' do
         expect(order).to receive(:merge!).with(incomplete_order, user)

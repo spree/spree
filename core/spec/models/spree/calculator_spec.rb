@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Calculator do
+describe Spree::Calculator, :type => :model do
 
   let(:order) { create(:order) }
   let!(:line_item) { create(:line_item, :order => order) }
@@ -10,21 +10,21 @@ describe Spree::Calculator do
     context "and compute methods stubbed out" do
       context "with a Spree::LineItem" do
         it "calls compute_line_item" do
-          subject.should_receive(:compute_line_item).with(line_item)
+          expect(subject).to receive(:compute_line_item).with(line_item)
           subject.compute(line_item)
         end
       end
 
       context "with a Spree::Order" do
         it "calls compute_order" do
-          subject.should_receive(:compute_order).with(order)
+          expect(subject).to receive(:compute_order).with(order)
           subject.compute(order)
         end
       end
 
       context "with a Spree::Shipment" do
         it "calls compute_shipment" do
-          subject.should_receive(:compute_shipment).with(shipment)
+          expect(subject).to receive(:compute_shipment).with(shipment)
           subject.compute(shipment)
         end
       end
@@ -32,7 +32,7 @@ describe Spree::Calculator do
       context "with a arbitray object" do
         it "calls the correct compute" do
           s = "Calculator can all"
-          subject.should_receive(:compute_string).with(s)
+          expect(subject).to receive(:compute_string).with(s)
           subject.compute(s)
         end
       end

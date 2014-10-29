@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Promotion Adjustments" do
+describe "Promotion Adjustments", :type => :feature do
   stub_authorization!
 
   context "coupon promotions", :js => true do
@@ -14,7 +14,7 @@ describe "Promotion Adjustments" do
       fill_in "Name", :with => "Promotion"
       fill_in "Code", :with => "order"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
@@ -32,18 +32,18 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.code.should == "order"
+      expect(promotion.code).to eq("order")
 
       first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 30
-      first_rule.preferred_amount_max.should == 60
+      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
+      expect(first_rule.preferred_amount_min).to eq(30)
+      expect(first_rule.preferred_amount_max).to eq(60)
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::FlatRate
-      first_action_calculator.preferred_amount.should == 5
+      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.preferred_amount).to eq(5)
     end
 
     it "should allow an admin to create a single user coupon promo with flat rate discount" do
@@ -51,7 +51,7 @@ describe "Promotion Adjustments" do
       fill_in "Usage Limit", :with => "1"
       fill_in "Code", :with => "single_use"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
@@ -61,20 +61,20 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.usage_limit.should == 1
-      promotion.code.should == "single_use"
+      expect(promotion.usage_limit).to eq(1)
+      expect(promotion.code).to eq("single_use")
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::FlatRate
-      first_action_calculator.preferred_amount.should == 5
+      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.preferred_amount).to eq(5)
     end
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Promotion"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
@@ -91,18 +91,18 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.code.should be_blank
+      expect(promotion.code).to be_blank
 
       first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 30
-      first_rule.preferred_amount_max.should == 60
+      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
+      expect(first_rule.preferred_amount_min).to eq(30)
+      expect(first_rule.preferred_amount_max).to eq(60)
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::FlatPercentItemTotal
-      first_action_calculator.preferred_flat_percent.should == 10
+      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatPercentItemTotal)
+      expect(first_action_calculator.preferred_flat_percent).to eq(10)
     end
 
     it "should allow an admin to create an product promo with percent per item discount" do
@@ -110,7 +110,7 @@ describe "Promotion Adjustments" do
 
       fill_in "Name", :with => "Promotion"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Product(s)", :from => "Add rule of type"
       within("#rule_fields") { click_button "Add" }
@@ -125,23 +125,23 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.code.should be_blank
+      expect(promotion.code).to be_blank
 
       first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::Product
-      first_rule.products.map(&:name).should include("RoR Mug")
+      expect(first_rule.class).to eq(Spree::Promotion::Rules::Product)
+      expect(first_rule.products.map(&:name)).to include("RoR Mug")
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateItemAdjustments
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateItemAdjustments)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::PercentOnLineItem
-      first_action_calculator.preferred_percent.should == 10
+      expect(first_action_calculator.class).to eq(Spree::Calculator::PercentOnLineItem)
+      expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
     xit "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Promotion"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
@@ -154,22 +154,22 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.code.should be_blank
+      expect(promotion.code).to be_blank
 
       first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
+      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::FreeShipping
+      expect(first_action_calculator.class).to eq(Spree::Calculator::FreeShipping)
     end
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Promotion"
       fill_in "Path", :with => "content/cvv"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Create whole-order adjustment", :from => "Add action of type"
       within('#action_fields') { click_button "Add" }
@@ -179,15 +179,15 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.path.should == "content/cvv"
-      promotion.code.should be_blank
-      promotion.rules.should be_blank
+      expect(promotion.path).to eq("content/cvv")
+      expect(promotion.code).to be_blank
+      expect(promotion.rules).to be_blank
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      first_action_calculator.class.should == Spree::Calculator::FlatRate
-      first_action_calculator.preferred_amount.should == 4
+      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.preferred_amount).to eq(4)
     end
 
     it "should allow an admin to create a promotion that adds a 'free' item to the cart" do
@@ -195,7 +195,7 @@ describe "Promotion Adjustments" do
       fill_in "Name", :with => "Promotion"
       fill_in "Code", :with => "complex"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Create line items", :from => "Add action of type"
 
@@ -215,17 +215,17 @@ describe "Promotion Adjustments" do
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
-      promotion.code.should == "complex"
+      expect(promotion.code).to eq("complex")
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateLineItems
-      line_item = first_action.promotion_action_line_items.should_not be_empty
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateLineItems)
+      line_item = expect(first_action.promotion_action_line_items).not_to be_empty
     end
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Promotion"
       click_button "Create"
-      page.should have_content("Editing Promotion")
+      expect(page).to have_content("Editing Promotion")
 
       select2 "Item total", :from => "Add rule of type"
       within('#rule_fields') { click_button "Add" }
@@ -243,14 +243,14 @@ describe "Promotion Adjustments" do
       promotion = Spree::Promotion.find_by_name("Promotion")
 
       first_rule = promotion.rules.first
-      first_rule.class.should == Spree::Promotion::Rules::ItemTotal
-      first_rule.preferred_amount_min.should == 50
-      first_rule.preferred_amount_max.should == 150
+      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
+      expect(first_rule.preferred_amount_min).to eq(50)
+      expect(first_rule.preferred_amount_max).to eq(150)
 
       first_action = promotion.actions.first
-      first_action.class.should == Spree::Promotion::Actions::CreateAdjustment
-      first_action.calculator.class.should == Spree::Calculator::FlatRate
-      first_action.calculator.preferred_amount.should == 5
+      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
+      expect(first_action.calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action.calculator.preferred_amount).to eq(5)
     end
   end
 end

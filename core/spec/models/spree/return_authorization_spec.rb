@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnAuthorization do
+describe Spree::ReturnAuthorization, :type => :model do
   let(:order) { create(:shipped_order) }
   let(:stock_location) { create(:stock_location) }
   let(:rma_reason) { create(:return_authorization_reason) }
@@ -18,7 +18,7 @@ describe Spree::ReturnAuthorization do
 
     it "should be invalid when order has no inventory units" do
       return_authorization.save
-      return_authorization.errors[:order].should == ["has no shipped units"]
+      expect(return_authorization.errors[:order]).to eq(["has no shipped units"])
     end
 
     context "expedited exchanges are configured" do
@@ -49,7 +49,7 @@ describe Spree::ReturnAuthorization do
       context "items to exchange" do
         it "calls pre_expedited_exchange hooks with the return items to exchange" do
           hook = double(:as_null_object)
-          hook.should_receive(:call).with [exchange_return_item]
+          expect(hook).to receive(:call).with [exchange_return_item]
           subject.class.pre_expedited_exchange_hooks = [hook]
           subject.save
         end
@@ -70,8 +70,8 @@ describe Spree::ReturnAuthorization do
 
         context "the reimbursement fails" do
           before do
-            Spree::Reimbursement.any_instance.stub(:save) { false }
-            Spree::Reimbursement.any_instance.stub(:errors) { double(full_messages: "foo") }
+            allow_any_instance_of(Spree::Reimbursement).to receive(:save) { false }
+            allow_any_instance_of(Spree::Reimbursement).to receive(:errors) { double(full_messages: "foo") }
           end
 
           it "puts errors on the return authorization" do
@@ -91,27 +91,27 @@ describe Spree::ReturnAuthorization do
 
         it "should return the assigned number" do
           return_authorization.save
-          return_authorization.number.should == '123'
+          expect(return_authorization.number).to eq('123')
         end
       end
 
       context "number is not assigned" do
         let(:return_authorization) { Spree::ReturnAuthorization.new(number: nil) }
 
-        before { return_authorization.stub valid?: true }
+        before { allow(return_authorization).to receive_messages valid?: true }
 
         it "should assign number with random RA number" do
           return_authorization.save
-          return_authorization.number.should =~ /RA\d{9}/
+          expect(return_authorization.number).to match(/RA\d{9}/)
         end
       end
     end
   end
 
   context "#currency" do
-    before { order.stub(:currency) { "ABC" } }
+    before { allow(order).to receive(:currency) { "ABC" } }
     it "returns the order currency" do
-      return_authorization.currency.should == "ABC"
+      expect(return_authorization.currency).to eq("ABC")
     end
   end
 
@@ -128,14 +128,14 @@ describe Spree::ReturnAuthorization do
     subject { return_authorization.pre_tax_total }
 
     it "sums it's associated return_item's pre-tax amounts" do
-      subject.should eq (pre_tax_amount_1 + pre_tax_amount_2 + pre_tax_amount_3)
+      expect(subject).to eq (pre_tax_amount_1 + pre_tax_amount_2 + pre_tax_amount_3)
     end
   end
 
   describe "#display_pre_tax_total" do
     it "returns a Spree::Money" do
-      return_authorization.stub(pre_tax_total: 21.22)
-      return_authorization.display_pre_tax_total.should == Spree::Money.new(21.22)
+      allow(return_authorization).to receive_messages(pre_tax_total: 21.22)
+      expect(return_authorization.display_pre_tax_total).to eq(Spree::Money.new(21.22))
     end
   end
 
@@ -153,21 +153,21 @@ describe Spree::ReturnAuthorization do
     context "no promotions" do
       let(:promo_total) { 0.0 }
       it "returns the pre-tax line item total" do
-        subject.should eq (weighted_line_item_pre_tax_amount * line_item_count)
+        expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count)
       end
     end
 
     context "promotions" do
       let(:promo_total) { -10.0 }
       it "returns the pre-tax line item total minus the order level promotion value" do
-        subject.should eq (weighted_line_item_pre_tax_amount * line_item_count) + promo_total
+        expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count) + promo_total
       end
     end
   end
 
   describe "#customer_returned_items?" do
     before do
-      Spree::Order.any_instance.stub(return!: true)
+      allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
     end
 
     subject { return_authorization.customer_returned_items? }

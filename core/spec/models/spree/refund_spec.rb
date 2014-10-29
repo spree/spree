@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Refund do
+describe Spree::Refund, :type => :model do
 
   describe 'create' do
     let(:amount) { 100.0 }
@@ -31,8 +31,8 @@ describe Spree::Refund do
     subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     before do
-      payment.payment_method
-        .stub(:credit)
+      allow(payment.payment_method)
+        .to receive(:credit)
         .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
         .and_return(gateway_response)
     end
@@ -107,12 +107,12 @@ describe Spree::Refund do
 
     context 'without payment profiles supported' do
       before do
-        payment.payment_method.stub(:payment_profiles_supported?) { false }
+        allow(payment.payment_method).to receive(:payment_profiles_supported?) { false }
       end
 
       it 'should not supply the payment source' do
-        payment.payment_method
-          .should_receive(:credit)
+        expect(payment.payment_method)
+          .to receive(:credit)
           .with(amount * 100, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_return(gateway_response)
 
@@ -122,12 +122,12 @@ describe Spree::Refund do
 
     context 'with payment profiles supported' do
       before do
-        payment.payment_method.stub(:payment_profiles_supported?) { true }
+        allow(payment.payment_method).to receive(:payment_profiles_supported?) { true }
       end
 
       it 'should supply the payment source' do
-        payment.payment_method
-          .should_receive(:credit)
+        expect(payment.payment_method)
+          .to receive(:credit)
           .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_return(gateway_response)
 
@@ -137,8 +137,8 @@ describe Spree::Refund do
 
     context 'with an activemerchant gateway connection error' do
       before do
-        payment.payment_method
-          .should_receive(:credit)
+        expect(payment.payment_method)
+          .to receive(:credit)
           .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
           .and_raise(ActiveMerchant::ConnectionError)
       end

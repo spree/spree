@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Properties" do
+describe "Properties", :type => :feature do
   stub_authorization!
 
   before(:each) do
@@ -18,13 +18,13 @@ describe "Properties" do
     context "listing product properties" do
       it "should list the existing product properties" do
         within_row(1) do
-          column_text(1).should == "shirt size"
-          column_text(2).should == "size"
+          expect(column_text(1)).to eq("shirt size")
+          expect(column_text(2)).to eq("size")
         end
 
         within_row(2) do
-          column_text(1).should == "shirt fit"
-          column_text(2).should == "fit"
+          expect(column_text(1)).to eq("shirt fit")
+          expect(column_text(2)).to eq("fit")
         end
       end
     end
@@ -34,8 +34,8 @@ describe "Properties" do
         fill_in "q_name_cont", :with => "size"
         click_icon :search
 
-        page.should have_content("shirt size")
-        page.should_not have_content("shirt fit")
+        expect(page).to have_content("shirt size")
+        expect(page).not_to have_content("shirt fit")
       end
     end
   end
@@ -44,12 +44,12 @@ describe "Properties" do
     it "should allow an admin to create a new product property", :js => true do
       click_link "Properties"
       click_link "new_property_link"
-      within('#new_property') { page.should have_content("NEW PROPERTY") }
+      within('#new_property') { expect(page).to have_content("NEW PROPERTY") }
 
       fill_in "property_name", :with => "color of band"
       fill_in "property_presentation", :with => "color"
       click_button "Create"
-      page.should have_content("successfully created!")
+      expect(page).to have_content("successfully created!")
     end
   end
 
@@ -63,14 +63,14 @@ describe "Properties" do
     it "should allow an admin to edit an existing product property" do
       fill_in "property_name", :with => "model 99"
       click_button "Update"
-      page.should have_content("successfully updated!")
-      page.should have_content("model 99")
+      expect(page).to have_content("successfully updated!")
+      expect(page).to have_content("model 99")
     end
 
     it "should show validation errors" do
       fill_in "property_name", :with => ""
       click_button "Update"
-      page.should have_content("Name can't be blank")
+      expect(page).to have_content("Name can't be blank")
     end
   end
 
@@ -87,8 +87,8 @@ describe "Properties" do
       fill_in_property
       # Sometimes the page doesn't load before the all check is done
       # lazily finding the element gives the page 10 seconds
-      page.should have_css("tbody#product_properties tr:nth-child(2)")
-      all("tbody#product_properties tr").count.should == 2
+      expect(page).to have_css("tbody#product_properties tr:nth-child(2)")
+      expect(all("tbody#product_properties tr").count).to eq(2)
 
       delete_product_property
 
@@ -105,18 +105,18 @@ describe "Properties" do
       delete_product_property
 
       # Give fadeOut time to complete
-      page.should_not have_selector("#product_product_properties_attributes_0_property_name")
-      page.should_not have_selector("#product_product_properties_attributes_0_value")
+      expect(page).not_to have_selector("#product_product_properties_attributes_0_property_name")
+      expect(page).not_to have_selector("#product_product_properties_attributes_0_value")
 
       click_button "Update"
 
-      page.should_not have_content("Product is not found")
+      expect(page).not_to have_content("Product is not found")
 
       check_property_row_count(2)
     end
 
     def fill_in_property
-      page.should have_content('Editing Product')
+      expect(page).to have_content('Editing Product')
       fill_in "product_product_properties_attributes_0_property_name", :with => "A Property"
       fill_in "product_product_properties_attributes_0_value", :with => "A Value"
       click_button "Update"
@@ -131,8 +131,8 @@ describe "Properties" do
 
     def check_property_row_count(expected_row_count)
       click_link "Product Properties"
-      page.should have_css("tbody#product_properties")
-      all("tbody#product_properties tr").count.should == expected_row_count
+      expect(page).to have_css("tbody#product_properties")
+      expect(all("tbody#product_properties tr").count).to eq(expected_row_count)
     end
   end
 end

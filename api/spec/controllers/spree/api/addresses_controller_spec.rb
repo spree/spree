@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::AddressesController do
+  describe Api::AddressesController, :type => :controller do
     render_views
 
     before do
@@ -12,27 +12,27 @@ module Spree
 
     context "with their own address" do
       before do
-        Order.any_instance.stub :user => current_api_user
+        allow_any_instance_of(Order).to receive_messages :user => current_api_user
       end
 
       it "gets an address" do
         api_get :show, :id => @address.id, :order_id => @order.number
-        json_response['address1'].should eq @address.address1
+        expect(json_response['address1']).to eq @address.address1
       end
 
       it "updates an address" do
         api_put :update, :id => @address.id, :order_id => @order.number,
                          :address => { :address1 => "123 Test Lane" }
-        json_response['address1'].should eq '123 Test Lane'
+        expect(json_response['address1']).to eq '123 Test Lane'
       end
 
       it "receives the errors object if address is invalid" do
         api_put :update, :id => @address.id, :order_id => @order.number,
                          :address => { :address1 => "" }
 
-        json_response['error'].should_not be_nil
-        json_response['errors'].should_not be_nil
-        json_response['errors']['address1'].first.should eq "can't be blank"
+        expect(json_response['error']).not_to be_nil
+        expect(json_response['errors']).not_to be_nil
+        expect(json_response['errors']['address1'].first).to eq "can't be blank"
       end
     end
 

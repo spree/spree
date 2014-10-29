@@ -1,7 +1,7 @@
 # coding: UTF-8
 require 'spec_helper'
 
-describe Spree::Admin::StockMovementsHelper do
+describe Spree::Admin::StockMovementsHelper, :type => :helper do
 
   describe "#pretty_originator" do
 
@@ -22,7 +22,7 @@ describe Spree::Admin::StockMovementsHelper do
 
 
       it "returns link to stock transfer" do
-        helper.pretty_originator(@stock_transfer.stock_movements.last).should eq @stock_transfer.number
+        expect(helper.pretty_originator(@stock_transfer.stock_movements.last)).to eq @stock_transfer.number
       end
     end
   end

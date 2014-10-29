@@ -3,7 +3,9 @@ require 'spec_helper'
 describe "exchanges:charge_unreturned_items" do
   include_context "rake"
 
-  its(:prerequisites) { should include("environment") }
+  describe '#prerequisites' do
+    it { expect(subject.prerequisites).to include("environment") }
+  end
 
   context "there are no unreturned items" do
     it { expect { subject.invoke }.not_to change { Spree::Order.count } }
@@ -97,7 +99,7 @@ describe "exchanges:charge_unreturned_items" do
       end
 
       it "associates the store of the original order with the exchange order" do
-        Spree::Order.any_instance.stub(:store_id).and_return(123)
+        allow_any_instance_of(Spree::Order).to receive(:store_id).and_return(123)
 
         expect(Spree::Order).to receive(:create!).once.with(hash_including({store_id: 123})) { |attrs| Spree::Order.new(attrs.except(:store_id)).tap(&:save!) }
         subject.invoke
@@ -105,7 +107,7 @@ describe "exchanges:charge_unreturned_items" do
 
       context "there is no card from the previous order" do
         let!(:credit_card) { create(:credit_card, user: order.user, default: true, gateway_customer_profile_id: "BGS-123") }
-        before { Spree::Order.any_instance.stub(:valid_credit_cards) { [] } }
+        before { allow_any_instance_of(Spree::Order).to receive(:valid_credit_cards) { [] } }
 
         it "attempts to use the user's default card" do
           expect { subject.invoke }.to change { Spree::Payment.count }.by(1)
@@ -116,7 +118,7 @@ describe "exchanges:charge_unreturned_items" do
       end
 
       context "it is unable to authorize the credit card" do
-        before { Spree::Payment.any_instance.stub(:authorize!).and_raise(RuntimeError) }
+        before { allow_any_instance_of(Spree::Payment).to receive(:authorize!).and_raise(RuntimeError) }
 
         it "raises an error with the order" do
           expect { subject.invoke }.to raise_error(UnableToChargeForUnreturnedItems)

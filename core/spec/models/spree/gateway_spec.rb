@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Gateway do
+describe Spree::Gateway, :type => :model do
   class Provider
     def initialize(options)
     end
@@ -18,7 +18,7 @@ describe Spree::Gateway do
 
   it "passes through all arguments on a method_missing call" do
     gateway = TestGateway.new
-    gateway.provider.should_receive(:imaginary_method).with('foo')
+    expect(gateway.provider).to receive(:imaginary_method).with('foo')
     gateway.imaginary_method('foo')
   end
 
@@ -37,7 +37,7 @@ describe Spree::Gateway do
     end
 
     it "finds credit cards associated on a order completed" do
-      payment.order.stub completed?: true
+      allow(payment.order).to receive_messages completed?: true
 
       expect(no_card.reusable_sources(payment.order)).to be_empty
       expect(has_card.reusable_sources(payment.order)).not_to be_empty
@@ -45,7 +45,7 @@ describe Spree::Gateway do
 
     it "finds credit cards associated with the order user" do
       cc.update_column :user_id, 1
-      payment.order.stub completed?: false
+      allow(payment.order).to receive_messages completed?: false
 
       expect(no_card.reusable_sources(payment.order)).to be_empty
       expect(has_card.reusable_sources(payment.order)).not_to be_empty

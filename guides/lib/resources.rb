@@ -332,7 +332,7 @@ module Spree
         "meta_keywords"=>nil,
         "taxon_ids" => [1,2,3],
         "shipping_category_id" => 1,
-        "has_variants" => true, 
+        "has_variants" => true,
         "master" => VARIANT.merge("is_master" => true),
         "variants" => [VARIANT.merge("is_master" => false)],
         "product_properties"=> [PRODUCT_PROPERTY],
@@ -477,6 +477,21 @@ module Spree
         "cost"=>"5.0",
         "shipped_at"=>nil,
         "state"=>"pending",
+        "order_id"=>"R1234567",
+        "stock_location_name"=>"NY Warehouse",
+        "shipping_rates"=>[SHIPPING_RATE],
+        "shipping_method"=> SHIPPING_METHOD,
+        "manifest"=>[MANIFEST]
+      }
+
+    SHIPMENT_SHIPPED ||=
+      {
+        "id"=>1,
+        "tracking"=>"1234567",
+        "number"=>"H123456789",
+        "cost"=>"5.0",
+        "shipped_at"=>"2012-10-24T01:02:25Z",
+        "state"=>"shipped",
         "order_id"=>"R1234567",
         "stock_location_name"=>"NY Warehouse",
         "shipping_rates"=>[SHIPPING_RATE],

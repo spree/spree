@@ -3,7 +3,7 @@ FactoryGirl.define do
   factory :customer_return, class: Spree::CustomerReturn do
     association(:stock_location, factory: :stock_location)
 
-    ignore do
+    transient do
       line_items_count 1
       return_items_count { line_items_count }
     end

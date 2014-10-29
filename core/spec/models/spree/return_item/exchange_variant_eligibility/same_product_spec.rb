@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module ReturnItem::ExchangeVariantEligibility
-    describe SameProduct do
+    describe SameProduct, :type => :model do
       describe ".eligible_variants" do
         it "returns all other variants for the same product" do
           product = create(:product, variants: 3.times.map { build(:variant) })

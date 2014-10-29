@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module PromotionHandler
-    describe Page do
+    describe Page, :type => :model do
       let(:order) { create(:order_with_line_items, :line_items_count => 1) }
 
       let(:promotion) { Promotion.create(name: "10% off", :path => '10off') }
@@ -13,9 +13,9 @@ module Spree
       end
 
       it "activates at the right path" do
-        order.line_item_adjustments.count.should == 0
+        expect(order.line_item_adjustments.count).to eq(0)
         Spree::PromotionHandler::Page.new(order, '10off').activate
-        order.line_item_adjustments.count.should == 1
+        expect(order.line_item_adjustments.count).to eq(1)
       end
 
       context "when promotion is expired" do
@@ -27,16 +27,16 @@ module Spree
         end
 
         it "is not activated" do
-          order.line_item_adjustments.count.should == 0
+          expect(order.line_item_adjustments.count).to eq(0)
           Spree::PromotionHandler::Page.new(order, '10off').activate
-          order.line_item_adjustments.count.should == 0
+          expect(order.line_item_adjustments.count).to eq(0)
         end
       end
 
       it "does not activate at the wrong path" do
-        order.line_item_adjustments.count.should == 0
+        expect(order.line_item_adjustments.count).to eq(0)
         Spree::PromotionHandler::Page.new(order, 'wrongpath').activate
-        order.line_item_adjustments.count.should == 0
+        expect(order.line_item_adjustments.count).to eq(0)
       end
     end
   end

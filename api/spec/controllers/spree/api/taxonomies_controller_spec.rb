@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::TaxonomiesController do
+  describe Api::TaxonomiesController, :type => :controller do
     render_views
 
     let(:taxonomy) { create(:taxonomy) }
@@ -20,57 +20,57 @@ module Spree
       it "gets all taxonomies" do
         api_get :index
 
-        json_response["taxonomies"].first['name'].should eq taxonomy.name
-        json_response["taxonomies"].first['root']['taxons'].count.should eq 1
+        expect(json_response["taxonomies"].first['name']).to eq taxonomy.name
+        expect(json_response["taxonomies"].first['root']['taxons'].count).to eq 1
       end
 
       it 'can control the page size through a parameter' do
         create(:taxonomy)
         api_get :index, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        expect(json_response['count']).to eq(1)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:taxonomy, :name => 'Style')
         api_get :index, :q => { :name_cont => 'style' }
-        json_response['count'].should == 1
-        json_response['taxonomies'].first['name'].should eq expected_result.name
+        expect(json_response['count']).to eq(1)
+        expect(json_response['taxonomies'].first['name']).to eq expected_result.name
       end
 
       it "gets a single taxonomy" do
         api_get :show, :id => taxonomy.id
 
-        json_response['name'].should eq taxonomy.name
+        expect(json_response['name']).to eq taxonomy.name
 
         children = json_response['root']['taxons']
-        children.count.should eq 1
-        children.first['name'].should eq taxon.name
-        children.first.key?('taxons').should be false
+        expect(children.count).to eq 1
+        expect(children.first['name']).to eq taxon.name
+        expect(children.first.key?('taxons')).to be false
       end
 
       it "gets a single taxonomy with set=nested" do
         api_get :show, :id => taxonomy.id, :set => 'nested'
 
-        json_response['name'].should eq taxonomy.name
+        expect(json_response['name']).to eq taxonomy.name
 
         children = json_response['root']['taxons']
-        children.first.key?('taxons').should be true
+        expect(children.first.key?('taxons')).to be true
       end
 
       it "gets the jstree-friendly version of a taxonomy" do
         api_get :jstree, :id => taxonomy.id
-        json_response["data"].should eq(taxonomy.root.name)
-        json_response["attr"].should eq({ "id" => taxonomy.root.id, "name" => taxonomy.root.name})
-        json_response["state"].should eq("closed")
+        expect(json_response["data"]).to eq(taxonomy.root.name)
+        expect(json_response["attr"]).to eq({ "id" => taxonomy.root.id, "name" => taxonomy.root.name})
+        expect(json_response["state"]).to eq("closed")
       end
 
       it "can learn how to create a new taxonomy" do
         api_get :new
-        json_response["attributes"].should == attributes.map(&:to_s)
+        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
         required_attributes = json_response["required_attributes"]
-        required_attributes.should include("name")
+        expect(required_attributes).to include("name")
       end
 
       it "cannot create a new taxonomy if not an admin" do
@@ -94,20 +94,20 @@ module Spree
 
       it "can create" do
         api_post :create, :taxonomy => { :name => "Colors"}
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
+        expect(json_response).to have_attributes(attributes)
+        expect(response.status).to eq(201)
       end
 
       it "cannot create a new taxonomy with invalid attributes" do
         api_post :create, :taxonomy => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        expect(response.status).to eq(422)
+        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
       end
 
       it "can destroy" do
         api_delete :destroy, :id => taxonomy.id
-        response.status.should == 204
+        expect(response.status).to eq(204)
       end
     end
   end

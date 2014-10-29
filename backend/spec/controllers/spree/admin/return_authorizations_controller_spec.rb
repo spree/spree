@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReturnAuthorizationsController do
+describe Spree::Admin::ReturnAuthorizationsController, :type => :controller do
   stub_authorization!
 
   # Regression test for #1370 #3
@@ -19,9 +19,9 @@ describe Spree::Admin::ReturnAuthorizationsController do
 
       it "loads all the active rma reasons" do
         spree_get :edit, id: return_authorization.to_param, order_id: return_authorization.order.to_param
-        assigns(:reasons).should include(return_authorization_reason)
-        assigns(:reasons).should include(inactive_rma_reason)
-        assigns(:reasons).should_not include(other_inactive_rma_reason)
+        expect(assigns(:reasons)).to include(return_authorization_reason)
+        expect(assigns(:reasons)).to include(inactive_rma_reason)
+        expect(assigns(:reasons)).not_to include(other_inactive_rma_reason)
       end
     end
 
@@ -30,14 +30,14 @@ describe Spree::Admin::ReturnAuthorizationsController do
 
       it "loads all the active rma reasons" do
         spree_get :edit, id: return_authorization.to_param, order_id: return_authorization.order.to_param
-        assigns(:reasons).should eq [return_authorization_reason]
+        expect(assigns(:reasons)).to eq [return_authorization_reason]
       end
     end
 
     context "return authorization doesn't have an associated reason" do
       it "loads all the active rma reasons" do
         spree_get :new, order_id: order.to_param
-        assigns(:reasons).should eq [return_authorization_reason]
+        expect(assigns(:reasons)).to eq [return_authorization_reason]
       end
     end
   end
@@ -124,9 +124,9 @@ describe Spree::Admin::ReturnAuthorizationsController do
     end
 
     it "loads all the active reimbursement types" do
-      assigns(:reimbursement_types).should include(first_active_reimbursement_type)
-      assigns(:reimbursement_types).should include(second_active_reimbursement_type)
-      assigns(:reimbursement_types).should_not include(inactive_reimbursement_type)
+      expect(assigns(:reimbursement_types)).to include(first_active_reimbursement_type)
+      expect(assigns(:reimbursement_types)).to include(second_active_reimbursement_type)
+      expect(assigns(:reimbursement_types)).not_to include(inactive_reimbursement_type)
     end
   end
 
@@ -152,7 +152,7 @@ describe Spree::Admin::ReturnAuthorizationsController do
 
     it "can create a return authorization" do
       subject
-      response.should redirect_to spree.admin_order_return_authorizations_path(order)
+      expect(response).to redirect_to spree.admin_order_return_authorizations_path(order)
     end
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase do
+describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase, :type => :model do
   let(:return_item) { create(:return_item) }
   let(:validator) { Spree::ReturnItem::EligibilityValidator::TimeSincePurchase.new(return_item) }
 
@@ -10,7 +10,7 @@ describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase do
     context "it is within the return timeframe" do
       it "returns true" do
         created_at = return_item.inventory_unit.created_at - (Spree::Config[:return_eligibility_number_of_days].days / 2)
-        return_item.inventory_unit.stub(:created_at).and_return(created_at)
+        allow(return_item.inventory_unit).to receive(:created_at).and_return(created_at)
         expect(subject).to be true
       end
     end
@@ -18,7 +18,7 @@ describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase do
     context "it is past the return timeframe" do
       before do
         created_at = return_item.inventory_unit.created_at - Spree::Config[:return_eligibility_number_of_days].days - 1.day
-        return_item.inventory_unit.stub(:created_at).and_return(created_at)
+        allow(return_item.inventory_unit).to receive(:created_at).and_return(created_at)
       end
 
       it "returns false" do
