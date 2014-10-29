@@ -36,6 +36,28 @@ module Spree
       stub_authentication!
     end
 
+    describe 'PATCH #update' do
+      subject { api_patch :update, id: order.to_param, order: { email: "foo@bar.com" } }
+
+      before do
+        allow_any_instance_of(Spree::Order).to receive_messages :user => current_api_user
+      end
+
+      it 'should be ok' do
+        expect(subject).to be_ok
+      end
+
+      it 'should not invoke OrderContents#update_cart' do
+        expect_any_instance_of(Spree::OrderContents).to_not receive(:update_cart)
+        subject
+      end
+
+      it 'should update the email' do
+        subject
+        expect(order.reload.email).to eq('foo@bar.com')
+      end
+    end
+
     it "cannot view all orders" do
       api_get :index
       assert_unauthorized!
