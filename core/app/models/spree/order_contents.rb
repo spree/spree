@@ -8,12 +8,12 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       line_item = add_to_line_item(variant, quantity, options)
-      after_add_or_remove(options)
+      after_add_or_remove(line_item, options)
     end
 
     def remove(variant, quantity = 1, options = {})
       line_item = remove_from_line_item(variant, quantity, options)
-      after_add_or_remove(options)
+      after_add_or_remove(line_item, options)
     end
 
     def update_cart(params)
@@ -33,7 +33,7 @@ module Spree
     end
 
     private
-      def after_add_or_remove(options = {})
+      def after_add_or_remove(line_item, options = {})
         reload_totals
         shipment = options[:shipment]
         shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
