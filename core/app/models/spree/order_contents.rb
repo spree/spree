@@ -8,12 +8,24 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       line_item = add_to_line_item(variant, quantity, options)
-      after_add_or_remove(options)
+      reload_totals
+      shipment = options[:shipment]
+      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+      PromotionHandler::Cart.new(order, line_item).activate
+      ItemAdjustments.new(line_item).update
+      reload_totals
+      line_item
     end
 
     def remove(variant, quantity = 1, options = {})
       line_item = remove_from_line_item(variant, quantity, options)
-      after_add_or_remove(options)
+      reload_totals
+      shipment = options[:shipment]
+      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+      PromotionHandler::Cart.new(order, line_item).activate
+      ItemAdjustments.new(line_item).update
+      reload_totals
+      line_item
     end
 
     def update_cart(params)
@@ -33,15 +45,6 @@ module Spree
     end
 
     private
-      def after_add_or_remove(options = {})
-        reload_totals
-        shipment = options[:shipment]
-        shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-        PromotionHandler::Cart.new(order, line_item).activate
-        ItemAdjustments.new(line_item).update
-        reload_totals
-        line_item
-      end
 
       def filter_order_items(params)
         filtered_params = params.symbolize_keys
