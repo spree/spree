@@ -1,7 +1,10 @@
 module Spree
   module Reimbursement::ReimbursementTypeValidator
     def valid_preferred_reimbursement_type?(return_item)
-      !past_reimbursable_time_period?(return_item) || return_item.preferred_reimbursement_type == expired_reimbursement_type
+      preferred_type = return_item.preferred_reimbursement_type.class
+
+      !past_reimbursable_time_period?(return_item) ||
+        preferred_type == expired_reimbursement_type
     end
 
     def past_reimbursable_time_period?(return_item)
