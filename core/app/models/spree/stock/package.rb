@@ -23,6 +23,12 @@ module Spree
         @contents -= [item] if item
       end
 
+      # Fix regression that removed package.order.
+      # Find it dynamically through an inventory_unit.
+      def order
+        contents.detect {|item| !!item.try(:inventory_unit).try(:order) }.try(:inventory_unit).try(:order)
+      end
+
       def weight
         contents.sum(&:weight)
       end
