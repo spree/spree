@@ -25,8 +25,22 @@ describe Spree::Admin::OrdersController, :type => :controller do
       end
     end
 
-    let(:order) { mock_model(Spree::Order, :completed? => true, :total => 100, :number => 'R123456789') }
-    before { allow(Spree::Order).to receive_messages :find_by_number! => order }
+    let(:order) do
+      mock_model(
+        Spree::Order,
+        completed?:      true,
+        total:           100,
+        number:          'R123456789',
+        all_adjustments: adjustments,
+        billing_address: mock_model(Spree::Address)
+      )
+    end
+
+    let(:adjustments) { double('adjustments') }
+
+    before do
+      allow(Spree::Order).to receive_messages(find_by_number!: order)
+    end
 
     context "#approve" do
       it "approves an order" do
@@ -100,6 +114,58 @@ describe Spree::Admin::OrdersController, :type => :controller do
           line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
         }
         expect(assigns[:orders].map { |o| o.number }.count).to eq 1
+      end
+    end
+
+    context "#open_adjustments" do
+      let(:closed) { double('closed_adjustments') }
+
+      before do
+        allow(adjustments).to receive(:where).and_return(closed)
+        allow(closed).to receive(:update_all)
+      end
+
+      it "changes all the closed adjustments to open" do
+        expect(adjustments).to receive(:where).with(state: 'closed')
+          .and_return(closed)
+        expect(closed).to receive(:update_all).with(state: 'open')
+        spree_post :open_adjustments, id: order.number
+      end
+
+      it "sets the flash success message" do
+        spree_post :open_adjustments, id: order.number
+        expect(flash[:success]).to eql('All adjustments successfully opened!')
+      end
+
+      it "redirects back" do
+        spree_post :open_adjustments, id: order.number
+        expect(response).to redirect_to(:back)
+      end
+    end
+
+    context "#close_adjustments" do
+      let(:open) { double('open_adjustments') }
+
+      before do
+        allow(adjustments).to receive(:where).and_return(open)
+        allow(open).to receive(:update_all)
+      end
+
+      it "changes all the open adjustments to closed" do
+        expect(adjustments).to receive(:where).with(state: 'open')
+          .and_return(open)
+        expect(open).to receive(:update_all).with(state: 'closed')
+        spree_post :close_adjustments, id: order.number
+      end
+
+      it "sets the flash success message" do
+        spree_post :close_adjustments, id: order.number
+        expect(flash[:success]).to eql('All adjustments successfully closed!')
+      end
+
+      it "redirects back" do
+        spree_post :close_adjustments, id: order.number
+        expect(response).to redirect_to(:back)
       end
     end
   end
