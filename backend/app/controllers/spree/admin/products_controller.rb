@@ -130,9 +130,6 @@ module Spree
           clone_admin_product_url resource
         end
 
-        def permit_attributes
-          params.require(:product).permit!
-        end
     end
   end
 end
