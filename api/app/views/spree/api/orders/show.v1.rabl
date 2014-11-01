@@ -45,4 +45,7 @@ end
 # Necessary for backend's order interface
 node :permissions do
   { can_update: current_ability.can?(:update, root_object) }
+
+child :valid_credit_cards => :credit_cards do
+  extends "spree/api/credit_cards/show"
 end
