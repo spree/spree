@@ -17,6 +17,8 @@ module Spree
 
     before_create :generate_number
 
+    after_save :send_reimbursement_email, if: :reimbursed?
+
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
     # associated ReturnItems.
@@ -55,7 +57,6 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
-      after_transition to: :reimbursed, do: :send_reimbursement_email
 
       event :errored do
         transition to: :errored, from: :pending
