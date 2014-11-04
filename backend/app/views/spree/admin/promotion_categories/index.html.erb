@@ -10,24 +10,31 @@
 
 <%= render 'spree/admin/shared/promotion_sub_menu' %>
 
-<table>
-  <colgroup>
-    <col style="width: 85%">
-    <col style="width: 15%">
-  </colgroup>
-  <thead>
-    <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
-    <th class='actions'></th>
-  </thead>
-  <tbody>
-    <% @promotion_categories.each do |promotion_category| %>
-      <tr>
-        <td><%= promotion_category.name %></td>
-        <td class="actions">
-          <%= link_to_edit promotion_category, :no_text => true %>
-          <%= link_to_delete promotion_category, :no_text => true %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<% if @promotion_categories.any? %>
+  <table>
+    <colgroup>
+      <col style="width: 85%">
+      <col style="width: 15%">
+    </colgroup>
+    <thead>
+      <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
+      <th class='actions'></th>
+    </thead>
+    <tbody>
+      <% @promotion_categories.each do |promotion_category| %>
+        <tr>
+          <td><%= promotion_category.name %></td>
+          <td class="actions">
+            <%= link_to_edit promotion_category, :no_text => true %>
+            <%= link_to_delete promotion_category, :no_text => true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alpha sixteen columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion_category')) %>
+    <%= link_to Spree.t(:add_one) + '!', spree.new_admin_promotion_category_path %>
+  </div>
+<% end %>
