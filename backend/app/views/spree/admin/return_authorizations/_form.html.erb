@@ -47,6 +47,8 @@
           <td>
             <% if editable %>
               <%= item_fields.select :preferred_reimbursement_type_id, @reimbursement_types.collect{|r|[r.name.humanize, r.id]}, {include_blank: true}, {class: 'select2 fullwidth'} %>
+            <% else %>
+              <%= return_item.preferred_reimbursement_type.try(:name) %>
             <% end %>
           </td>
           <td class="align-center">
