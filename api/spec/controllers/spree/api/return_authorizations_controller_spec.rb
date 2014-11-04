@@ -40,12 +40,12 @@ module Spree
       end
 
       it "cannot update a return authorization" do
-        api_put :update
+        api_put :update, id: 1
         assert_not_found!
       end
 
       it "cannot delete a return authorization" do
-        api_delete :destroy
+        api_delete :destroy, id: 1
         assert_not_found!
       end
     end

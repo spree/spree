@@ -49,6 +49,9 @@ RSpec.configure do |config|
 
   config.before do
     Spree::Api::Config[:requires_authentication] = true
+    if RSpec.current_example.metadata[:type] == :controller
+      self.routes = Spree::Core::Engine.routes
+    end
   end
 
   config.use_transactional_fixtures = true

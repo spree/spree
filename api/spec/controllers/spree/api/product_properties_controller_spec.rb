@@ -70,7 +70,7 @@ module Spree
     end
 
     it "cannot delete a product property" do
-      api_delete :destroy, :property_name => property_1.property_name
+      api_delete :destroy, id: property_1.to_param, :property_name => property_1.property_name
       assert_unauthorized!
       expect { property_1.reload }.not_to raise_error
     end
