@@ -30,7 +30,7 @@ module Spree
     end
 
     def self.with_coupon_code(coupon_code)
-      where("lower(code) = ?", coupon_code.strip.downcase).first
+      where("lower(#{self.table_name}.code) = ?", coupon_code.strip.downcase).first
     end
 
     def self.active
