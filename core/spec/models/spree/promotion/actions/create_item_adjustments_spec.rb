@@ -59,7 +59,7 @@ module Spree
                 allow(rule).to receive(:actionable?).and_return(true, false)
               end
 
-              it "does not create an adjustmenty for line_items not in product rule" do
+              it "does not create adjustments for line_items not in product rule" do
                 action.perform(payload)
                 expect(action.adjustments.count).to eql 1
                 expect(line_item.reload.adjustments).to match_array action.adjustments
