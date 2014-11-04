@@ -55,7 +55,7 @@ module Spree
               end
               let!(:second_line_item) { create(:line_item, :order => order) }
 
-              it "does not create an adjustmenty for line_items not in product rule" do
+              it "does not create adjustments for line_items not in product rule" do
                 action.perform(order: order)
                 expect(action.adjustments.count).to eql 1
                 expect(line_item.reload.adjustments).to match_array action.adjustments
