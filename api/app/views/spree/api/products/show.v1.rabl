@@ -18,3 +18,7 @@ end
 child :product_properties => :product_properties do
   attributes *product_property_attributes
 end
+
+child :taxons => :taxons do
+  extends "spree/api/taxons/show"
+end

@@ -172,6 +172,8 @@ module Spree
         product.variants.create!
         product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
+        product.taxons << create(:taxon)
+
         api_get :show, :id => product.to_param
         json_response.should have_attributes(show_attributes)
         json_response['variants'].first.should have_attributes([:name,
@@ -192,6 +194,8 @@ module Spree
         json_response["product_properties"].first.should have_attributes([:value,
                                                                          :product_id,
                                                                          :property_name])
+
+        expect(json_response["taxons"].first).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
       end
 
       context "tracking is disabled" do

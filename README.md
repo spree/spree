@@ -18,7 +18,8 @@ The following branch ```2-3-dev``` contains Blue Apron specific code that is awa
 - [x] Track admin cancel of order, https://github.com/spree/spree/pull/5464
 - [x] Order filter by containing SKU, https://github.com/spree/spree/pull/5494
 - [x] Add adjustments to shipments JSON for order, https://github.com/spree/spree/pull/5540
-- [ ] Allow HTTP Patch of Spree::Order on API, https://github.com/spree/spree/pull/5544
+- [x] Allow HTTP Patch of Spree::Order on API, https://github.com/spree/spree/pull/5544
+- [ ] Provide Taxons in Product API payload, https://github.com/spree/spree/pull/5569
 
 SUMMARY
 -------
