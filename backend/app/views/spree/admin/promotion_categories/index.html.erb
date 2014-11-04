@@ -4,11 +4,13 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_promotion_category), spree.new_admin_promotion_category_path, :icon => 'plus' %>
+    <%= button_link_to Spree.t(:new_promotion_category), spree.new_admin_promotion_category_path, icon: 'plus', remote: true, id: 'new_promotion_category_link' %>
   </li>
 <% end %>
 
 <%= render 'spree/admin/shared/promotion_sub_menu' %>
+
+<div id="new_promotion_category"></div>
 
 <% if @promotion_categories.any? %>
   <table>
@@ -35,6 +37,6 @@
 <% else %>
   <div class="alpha sixteen columns no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion_category')) %>
-    <%= link_to Spree.t(:add_one) + '!', spree.new_admin_promotion_category_path %>
+    <%= link_to Spree.t(:add_one) + '!', spree.new_admin_promotion_category_path, remote: true, id: 'new_promotion_category_link' %>
   </div>
 <% end %>
