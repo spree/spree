@@ -199,7 +199,7 @@ describe Spree::Reimbursement, :type => :model do
     let(:reimbursement) { create(:reimbursement) }
 
     it "triggers on transition to reimbursed" do
-      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement) { double(deliver: true) }
+      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver: true) }
       reimbursement.reimbursed!
     end
 
