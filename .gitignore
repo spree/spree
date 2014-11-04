@@ -38,15 +38,13 @@ spree_test
 testapp
 **/spec/dummy
 tmp
-vendor/rails
-vendor/extensions/google_base
 public/google_base.xml
 public/template_google_base.xml
 coverage/*
 var
 TAGS
 nbproject
-vendor/extensions/theme_default/app/stylesheets/*.css
+vendor
 tags
 *.swp
 rerun.txt
