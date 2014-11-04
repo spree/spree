@@ -4,6 +4,7 @@
     <dd><span class="state <%= @order.state %>"><%= Spree.t(@order.state, :scope => :order_state) %></span></dd>
     <dt data-hook='admin_order_tab_subtotal_title'><%= Spree.t(:subtotal) %>:</dt>
     <dd id='item_total'><%= @order.display_item_total.to_html %></dd>
+
     <% if checkout_steps.include?("delivery") && @order.ship_total > 0 %>
       <dt data-hook='admin_order_tab_ship_total_title'><%= Spree.t(:ship_total) %>:</dt>
       <dd id='ship_total'><%= @order.display_ship_total.to_html %></dd>
@@ -18,6 +19,9 @@
       <dt data-hook='admin_order_tab_additional_tax_title'><%= Spree.t(:tax) %>:</dt>
       <dd id='additional_tax_total'><%= @order.display_additional_tax_total.to_html %></dd>
     <% end %>
+
+    <dt data-hook='admin_order_display_adjustment_total_title'><%= Spree.t(:adjustment) %>:</dt>
+    <dd id='adjustment_total'><%= @order.display_adjustment_total.to_html %></dd>
 
     <dt data-hook='admin_order_tab_total_title'><%= Spree.t(:total) %>:</dt>
     <dd id='order_total'><%= @order.display_total.to_html %></dd>
