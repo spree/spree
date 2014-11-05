@@ -29,7 +29,7 @@ module Spree
           end
         end
       else
-        respond_with(@order)
+        redirect_to cart_path
       end
     end
 
