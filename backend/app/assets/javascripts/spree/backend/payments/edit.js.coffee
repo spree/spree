@@ -7,9 +7,9 @@ jQuery ($) ->
       @json = $.getJSON @url.toString(), (data) =>
         @data = data
 
-    if_pending: (callback) ->
+    if_editable: (callback) ->
       @json.done (data) ->
-        callback() if data.state is 'pending'
+        callback() if data.state in ['checkout', 'pending']
 
     update: (attributes, success) ->
       jqXHR = $.ajax
@@ -138,8 +138,8 @@ jQuery ($) ->
       separator = Spree.translations.currency_separator
       amount.replace(///[^\d#{separator}]///g, '')
 
-  # Attach ShowPaymentView to each pending payment in the table
+  # Attach ShowPaymentView to each editable payment in the table
   $('.admin tr[data-hook=payments_row]').each ->
     $el = $(@)
     payment = new Payment($el.prop('id').match(/\d+$/))
-    payment.if_pending -> new ShowPaymentView($el, payment)
+    payment.if_editable -> new ShowPaymentView($el, payment)
