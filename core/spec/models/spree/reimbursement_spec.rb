@@ -142,6 +142,11 @@ describe Spree::Reimbursement, :type => :model do
       end
     end
 
+    it "triggers the reimbursement mailer to be sent" do
+      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement) { double(deliver: true) }
+      subject
+    end
+
   end
 
   describe "#return_items_requiring_exchange" do
@@ -192,25 +197,6 @@ describe Spree::Reimbursement, :type => :model do
 
     it 'connects to the customer_return' do
       expect(subject.customer_return).to eq customer_return
-    end
-  end
-
-  describe "reimbursement mailer" do
-    let(:reimbursement) { create(:reimbursement) }
-
-    it "triggers on transition to reimbursed" do
-      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver: true) }
-      reimbursement.reimbursed!
-    end
-
-    it "does not trigger on transition to errored" do
-      expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
-      reimbursement.errored!
-    end
-
-    it "does not trigger on transition to pending" do
-      expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
-      create(:reimbursement)
     end
   end
 end

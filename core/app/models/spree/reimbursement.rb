@@ -17,8 +17,6 @@ module Spree
 
     before_create :generate_number
 
-    after_save :send_reimbursement_email, if: :reimbursed?
-
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
     # associated ReturnItems.
@@ -108,6 +106,7 @@ module Spree
       if unpaid_amount.zero?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
+        send_reimbursement_email
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
