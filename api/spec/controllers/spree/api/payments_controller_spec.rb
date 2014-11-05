@@ -105,26 +105,37 @@ module Spree
 
       context "for a given payment" do
         context "updating" do
-          it "can update" do
-            payment.update_attributes(:state => 'pending')
-            api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
-            expect(response.status).to eq(200)
-            expect(payment.reload.amount).to eq(2.01)
+          context "when the state is checkout" do
+            it "can update" do
+              payment.update_attributes(state: 'checkout')
+              api_put(:update, id: payment.to_param, payment: { amount: 2.01 })
+              expect(response.status).to be(200)
+              expect(payment.reload.amount).to eq(2.01)
+            end
+          end
+
+          context "when the state is pending" do
+            it "can update" do
+              payment.update_attributes(state: 'pending')
+              api_put(:update, id: payment.to_param, payment: { amount: 2.01 })
+              expect(response.status).to be(200)
+              expect(payment.reload.amount).to eq(2.01)
+            end
           end
 
           context "update fails" do
             it "returns a 422 status when the amount is invalid" do
-              payment.update_attributes(:state => 'pending')
-              api_put :update, :id => payment.to_param, :payment => { :amount => 'invalid' }
-              expect(response.status).to eq(422)
-              expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
+              payment.update_attributes(state: 'pending')
+              api_put(:update, id: payment.to_param, payment: { amount: 'invalid' })
+              expect(response.status).to be(422)
+              expect(json_response['error']).to eql('Invalid resource. Please fix errors and try again.')
             end
 
             it "returns a 403 status when the payment is not pending" do
-              payment.update_attributes(:state => 'completed')
-              api_put :update, :id => payment.to_param, :payment => { :amount => 2.01 }
-              expect(response.status).to eq(403)
-              expect(json_response["error"]).to eq("This payment cannot be updated because it is completed.")
+              payment.update_attributes(state: 'completed')
+              api_put(:update, id: payment.to_param, payment: { amount: 2.01 })
+              expect(response.status).to be(403)
+              expect(json_response['error']).to eql('This payment cannot be updated because it is completed.')
             end
           end
         end
