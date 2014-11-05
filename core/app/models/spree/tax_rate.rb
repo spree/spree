@@ -166,6 +166,8 @@ module Spree
 
     # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
+      return 0 unless calculator
+      
       if included_in_price
         if default_zone_or_zone_match?(item.order.tax_zone)
           calculator.compute(item)
