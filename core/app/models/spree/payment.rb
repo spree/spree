@@ -157,6 +157,10 @@ module Spree
       amount - capture_events.sum(:amount)
     end
 
+    def editable?
+      checkout? || pending?
+    end
+
     private
 
       def validate_source
