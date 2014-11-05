@@ -1010,6 +1010,34 @@ describe Spree::Payment, :type => :model do
     end
   end
 
+  describe "#editable?" do
+    subject { payment }
+
+    before do
+      subject.state = state
+    end
+
+    context "when the state is 'checkout'" do
+      let(:state) { 'checkout' }
+
+      its(:editable?) { should be(true) }
+    end
+
+    context "when the state is 'pending'" do
+      let(:state) { 'pending' }
+
+      its(:editable?) { should be(true) }
+    end
+
+    %w[processing completed failed void invalid].each do |state|
+      context "when the state is '#{state}'" do
+        let(:state) { state }
+
+        its(:editable?) { should be(false) }
+      end
+    end
+  end
+
   # Regression test for #4072 (kinda)
   # The need for this was discovered in the research for #4072
   context "state changes" do
