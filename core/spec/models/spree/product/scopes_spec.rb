@@ -27,19 +27,21 @@ describe "Product scopes", :type => :model do
       expect(Spree::Product.in_taxon(@parent_taxon).to_a.count).to eq(1)
     end
 
-    it "orders products based on their ordering within the classification" do
-      product_2 = create(:product)
-      product_2.taxons << @parent_taxon
+    context 'orders products based on their ordering within the classifications' do
+      let(:other_taxon) { create(:taxon, products: [product]) }
+      let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon]) }
 
-      product_root_classification = Spree::Classification.find_by(:taxon => @parent_taxon, :product => product)
-      product_root_classification.update_column(:position, 1)
+      it 'by initial ordering' do
+        expect(Spree::Product.in_taxon(@child_taxon)).to eq([product, product_2])
+        expect(Spree::Product.in_taxon(other_taxon)).to eq([product, product_2])
+      end
 
-      product_2_root_classification = Spree::Classification.find_by(:taxon => @parent_taxon, :product => product_2)
-      product_2_root_classification.update_column(:position, 2)
-
-      expect(Spree::Product.in_taxon(@parent_taxon)).to eq([product, product_2])
-      product_2_root_classification.insert_at(1)
-      expect(Spree::Product.in_taxon(@parent_taxon)).to eq([product_2, product])
+      it 'after ordering changed' do
+        [@child_taxon, other_taxon].each do |taxon|
+          Spree::Classification.find_by(:taxon => taxon, :product => product).insert_at(2)
+          expect(Spree::Product.in_taxon(taxon)).to eq([product_2, product])
+        end
+      end
     end
   end
 
