@@ -13,3 +13,9 @@
   
   margin: 10px;
 }
+
+#taxon_products {
+  > li {
+    height: 170px;
+  }
+}
