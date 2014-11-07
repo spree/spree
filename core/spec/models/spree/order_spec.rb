@@ -152,6 +152,31 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe '#ensure_line_items_are_in_stock' do
+    subject { order.ensure_line_items_are_in_stock }
+
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+
+    before do
+      allow(order).to receive(:restart_checkout_flow)
+      allow(order).to receive_messages(:line_items => [line_item])
+    end
+
+    it 'should restart checkout flow' do
+      expect(order).to receive(:restart_checkout_flow).once
+      subject
+    end
+
+    it 'should have error message' do
+      subject
+      expect(order.errors[:base]).to include(Spree.t(:insufficient_stock_lines_present))
+    end
+
+    it 'should be false' do
+      expect(subject).to be_falsey
+    end
+  end
+
   context "empty!" do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
