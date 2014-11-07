@@ -7,8 +7,8 @@ module Spree
     ssl_required
 
     before_action :load_order_with_lock
-    before_filter :ensure_valid_state_lock_version, only: [:update]
-    before_filter :set_state_if_present
+    before_action :ensure_valid_state_lock_version, only: [:update]
+    before_action :set_state_if_present
 
     before_filter :ensure_order_not_completed
     before_filter :ensure_checkout_allowed
