@@ -105,15 +105,6 @@ module Spree
         expect(json_response).to have_attributes(attributes)
       end
 
-      it "cannot mark a return authorization as received on the order with no inventory units" do
-        FactoryGirl.create(:new_return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
-        expect(return_authorization.state).to eq("authorized")
-        api_delete :receive, :id => return_authorization.id
-        expect(response.status).to eq(422)
-        expect(return_authorization.reload.state).to eq("authorized")
-      end
-
       it "can cancel a return authorization on the order" do
         FactoryGirl.create(:new_return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
