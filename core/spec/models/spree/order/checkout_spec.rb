@@ -469,9 +469,10 @@ describe Spree::Order do
     end
 
     it "does not attempt to process payments" do
-      order.stub_chain(:line_items, :present?).and_return(true)
-      order.should_not_receive(:payment_required?)
-      order.should_not_receive(:process_payments!)
+      allow(order).to receive_message_chain(:line_items, :present?) { true }
+      allow(order).to receive(:ensure_line_items_are_in_stock) { true }
+      expect(order).not_to receive(:payment_required?)
+      expect(order).not_to receive(:process_payments!)
       order.next!
       assert_state_changed(order, 'cart', 'complete')
     end
