@@ -43,7 +43,7 @@ module Spree
     def populate
       populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true), current_currency)
 
-      if populator.populate(params[:variant_id], params[:quantity])
+      if populator.populate(params[:variant_id].to_i, params[:quantity].to_i)
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }
         end
