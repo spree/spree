@@ -159,8 +159,6 @@ Browse Admin Interface
 
 http://localhost:nnnn/admin
 
-
-
 Working with the edge source (latest and greatest features)
 -----------------------------------------------------------
 
@@ -338,5 +336,5 @@ Contributing
 ------------
 
 Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html)
+[contributors guidelines](http://guides.spreecommerce.com/developer/contributing.html)
 before contributing.
