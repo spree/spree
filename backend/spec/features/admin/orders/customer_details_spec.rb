@@ -1,12 +1,13 @@
 require 'spec_helper'
 
-describe "Customer Details", type: :feature do
+describe "Customer Details", type: :feature, js: true do
   stub_authorization!
 
   let(:country) { create(:country, name: "Kangaland") }
   let(:state) { create(:state, name: "Alabama", country: country) }
   let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
   let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
+  let!(:product) { create(:product_in_stock) }
 
   # We need a unique name that will appear for the customer dropdown
   let!(:ship_address) { create(:address, country: country, state: state, first_name: "Rumpelstiltskin") }
@@ -14,22 +15,18 @@ describe "Customer Details", type: :feature do
 
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
 
-  before do
-    configure_spree_preferences do |config|
-      config.default_country_id = country.id
-      config.company = true
-    end
-
-    visit spree.admin_path
-    click_link "Orders"
-    within('table#listing_orders') { click_icon(:edit) }
-  end
-
-  # Regression test for #3335 & #5317
-  context "brand new order", js: true do
+  context "brand new order" do
+    # Regression test for #3335 & #5317
     it "associates a user when not using guest checkout" do
+      visit spree.admin_path
       click_link "Orders"
       click_link "New Order"
+      select2_search product.name, from: Spree.t(:name_or_sku)
+      within("table.stock-levels") do
+        fill_in "variant_quantity", with: 1
+        click_icon :plus
+      end
+      wait_for_ajax
       click_link "Customer Details"
       targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
       # 5317 - Address prefills using user's default.
@@ -47,7 +44,18 @@ describe "Customer Details", type: :feature do
     end
   end
 
-  context "editing an order", js: true do
+  context "editing an order" do
+    before do
+      configure_spree_preferences do |config|
+        config.default_country_id = country.id
+        config.company = true
+      end
+
+      visit spree.admin_path
+      click_link "Orders"
+      within('table#listing_orders') { click_icon(:edit) }
+    end
+
     context "selected country has no state" do
       before { create(:country, iso: "BRA", name: "Brazil") }
 
@@ -82,6 +90,12 @@ describe "Customer Details", type: :feature do
       end
     end
 
+    it "should show validation errors" do
+      click_link "Customer Details"
+      click_button "Update"
+      expect(page).to have_content("Shipping address first name can't be blank")
+    end
+
     it "updates order email for an existing order with a user" do
       order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
       previous_user = order.user
@@ -91,50 +105,44 @@ describe "Customer Details", type: :feature do
       expect(order.user_id).to eq previous_user.id
       expect(order.user.email).to eq previous_user.email
     end
-  end
 
-  context "country associated was removed" do
-    let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
+    context "country associated was removed" do
+      let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
 
-    before do
-      order.bill_address.country.destroy
-      configure_spree_preferences do |config|
-        config.default_country_id = brazil.id
+      before do
+        order.bill_address.country.destroy
+        configure_spree_preferences do |config|
+          config.default_country_id = brazil.id
+        end
+      end
+
+      it "sets default country when displaying form" do
+        click_link "Customer Details"
+        expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
       end
     end
 
-    it "sets default country when displaying form" do
-      click_link "Customer Details"
-      expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
-    end
-  end
+    # Regression test for #942
+    context "errors when no shipping methods are available" do
+      before do
+        Spree::ShippingMethod.delete_all
+      end
 
-  it "should show validation errors" do
-    click_link "Customer Details"
-    click_button "Update"
-    expect(page).to have_content("Shipping address first name can't be blank")
-  end
+      specify do
+        click_link "Customer Details"
+        # Need to fill in valid information so it passes validations
+        fill_in "order_ship_address_attributes_firstname",  with: "John 99"
+        fill_in "order_ship_address_attributes_lastname",   with: "Doe"
+        fill_in "order_ship_address_attributes_lastname",   with: "Company"
+        fill_in "order_ship_address_attributes_address1",   with: "100 first lane"
+        fill_in "order_ship_address_attributes_address2",   with: "#101"
+        fill_in "order_ship_address_attributes_city",       with: "Bethesda"
+        fill_in "order_ship_address_attributes_zipcode",    with: "20170"
 
-  # Regression test for #942
-  context "errors when no shipping methods are available" do
-    before do
-      Spree::ShippingMethod.delete_all
-    end
-
-    specify do
-      click_link "Customer Details"
-      # Need to fill in valid information so it passes validations
-      fill_in "order_ship_address_attributes_firstname",  with: "John 99"
-      fill_in "order_ship_address_attributes_lastname",   with: "Doe"
-      fill_in "order_ship_address_attributes_lastname",   with: "Company"
-      fill_in "order_ship_address_attributes_address1",   with: "100 first lane"
-      fill_in "order_ship_address_attributes_address2",   with: "#101"
-      fill_in "order_ship_address_attributes_city",       with: "Bethesda"
-      fill_in "order_ship_address_attributes_zipcode",    with: "20170"
-
-      page.select('Alabama', from: 'order_ship_address_attributes_state_id')
-      fill_in "order_ship_address_attributes_phone", with: "123-456-7890"
-      expect { click_button "Update" }.not_to raise_error
+        page.select('Alabama', from: 'order_ship_address_attributes_state_id')
+        fill_in "order_ship_address_attributes_phone", with: "123-456-7890"
+        expect { click_button "Update" }.not_to raise_error
+      end
     end
   end
 

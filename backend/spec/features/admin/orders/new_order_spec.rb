@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 describe "New Order", :type => :feature do
-  let!(:stock_location) { create(:stock_location_with_items) }
-  let!(:product) { create(:product) }
+  let!(:product) { create(:product_in_stock) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
   let!(:payment_method) { create(:check_payment_method) }
   let!(:shipping_method) { create(:shipping_method) }
-  let!(:stock_item) { product.master.stock_items.first.adjust_count_on_hand(10) }
 
   stub_authorization!
 
