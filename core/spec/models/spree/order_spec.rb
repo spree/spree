@@ -320,14 +320,12 @@ describe Spree::Order, :type => :model do
 
       context "2 equal line items" do
         before do
-          allow(order_1).to receive(:foos_match).and_return(true)
-
-          order_1.contents.add(variant, 1, {foos: {}})
-          order_2.contents.add(variant, 1, {foos: {}})
+          @line_item_1 = order_1.contents.add(variant, 1, {foos: {}})
+          @line_item_2 = order_2.contents.add(variant, 1, {foos: {}})
         end
 
         specify do
-          #order_1.should_receive(:foos_match)
+          expect(order_1).to receive(:foos_match).with(@line_item_1, kind_of(Hash)).and_return(true)
           order_1.merge!(order_2)
           expect(order_1.line_items.count).to eq(1)
 
