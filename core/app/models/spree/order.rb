@@ -446,7 +446,7 @@ module Spree
         current_line_item = self.line_items.detect { |my_li|
                       my_li.variant == other_order_line_item.variant &&
                       self.line_item_comparison_hooks.all? { |hook|
-                        self.send(hook, my_li, other_order_line_item)
+                        self.send(hook, my_li, other_order_line_item.serializable_hash)
                       }
                     }
         if current_line_item
