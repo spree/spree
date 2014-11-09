@@ -7,7 +7,7 @@ describe Spree::Asset, :type => :model do
       asset = Spree::Asset.create! { |a| a.viewable = product.master }
 
       expect do
-        asset.save
+        asset.touch
       end.to change { product.reload.updated_at }
     end
   end
