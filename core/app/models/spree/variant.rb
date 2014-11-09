@@ -32,8 +32,9 @@ module Spree
       inverse_of: :variant
 
     validate :check_price
+
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0 }
+    validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
     before_validation :set_cost_currency

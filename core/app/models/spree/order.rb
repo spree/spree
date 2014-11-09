@@ -84,7 +84,7 @@ module Spree
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
-    validates :number, uniqueness: true
+    validates :number, presence: true, uniqueness: { allow_blank: true }
     validate :has_available_shipment
 
     make_permalink field: :number

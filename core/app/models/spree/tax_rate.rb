@@ -11,8 +11,13 @@ end
 module Spree
   class TaxRate < Spree::Base
     acts_as_paranoid
+
+    # Need to deal with adjustments before calculator is destroyed.
+    before_destroy :deals_with_adjustments_for_deleted_source
+
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
+
     belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
     belongs_to :tax_category, class_name: "Spree::TaxCategory", inverse_of: :tax_rates
 
@@ -21,8 +26,6 @@ module Spree
     validates :amount, presence: true, numericality: true
     validates :tax_category_id, presence: true
     validates_with DefaultTaxZoneValidator
-
-    before_destroy :deals_with_adjustments_for_deleted_source
 
     scope :by_zone, ->(zone) { where(zone_id: zone) }
 

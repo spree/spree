@@ -41,7 +41,7 @@ module Spree
       -> { where is_master: true },
       inverse_of: :product,
       class_name: 'Spree::Variant'
-      
+
     has_many :variants,
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       inverse_of: :product,
@@ -56,7 +56,7 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
-    
+
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
@@ -82,7 +82,8 @@ module Spree
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
     validates :slug, length: { minimum: 3 }
-    validates :slug, uniqueness: true
+
+    validates :slug, uniqueness: { allow_blank: true }
     validates :meta_keywords, length: { maximum: 255 }
     validates :meta_title, length: { maximum: 255 }
 

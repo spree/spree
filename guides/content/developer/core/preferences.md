@@ -300,7 +300,8 @@ end
 
 MyApp::Config[:theme] = "blue_theme"
 MyApp::Config[:show_spash_page] = true
-MyApp::Config[:number_of_articles] = 5```
+MyApp::Config[:number_of_articles] = 5
+```
 
 The `MyApp` name used here is an example and should be replaced with your actual application's name, found in `config/application.rb`.
 

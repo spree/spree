@@ -46,3 +46,7 @@ end
 node :permissions do
   { can_update: current_ability.can?(:update, root_object) }
 end
+
+child :valid_credit_cards => :credit_cards do
+  extends "spree/api/credit_cards/show"
+end

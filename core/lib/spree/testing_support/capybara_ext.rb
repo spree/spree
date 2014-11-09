@@ -145,7 +145,7 @@ end
 
 RSpec::Matchers.define :have_title do |expected|
   match do |actual|
-    has_css?("title", :text => expected, visible: false)
+    has_css?("title", text: expected, visible: false)
   end
 
   failure_message do |actual|

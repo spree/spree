@@ -318,7 +318,7 @@ describe Spree::Shipment, :type => :model do
       # Regression test for #4347
       context "with adjustments" do
         before do
-          shipment.adjustments << Spree::Adjustment.create(:label => "Label", :amount => 5)
+          shipment.adjustments << Spree::Adjustment.create(order: order, label: "Label", amount: 5)
         end
 
         it "transitions to shipped" do
@@ -557,23 +557,25 @@ describe Spree::Shipment, :type => :model do
     end
 
     it "factors in additional adjustments to adjustment total" do
-      shipment.adjustments.create!({
-        :label => "Additional",
-        :amount => 5,
-        :included => false,
-        :state => "closed"
-      })
+      shipment.adjustments.create!(
+        order:    order,
+        label:    "Additional",
+        amount:   5,
+        included: false,
+        state:    "closed"
+      )
       shipment.update_amounts
       expect(shipment.reload.adjustment_total).to eq(5)
     end
 
     it "does not factor in included adjustments to adjustment total" do
-      shipment.adjustments.create!({
-        :label => "Included",
-        :amount => 5,
-        :included => true,
-        :state => "closed"
-      })
+      shipment.adjustments.create!(
+        order:    order,
+        label:    "Included",
+        amount:   5,
+        included: true,
+        state:    "closed"
+      )
       shipment.update_amounts
       expect(shipment.reload.adjustment_total).to eq(0)
     end

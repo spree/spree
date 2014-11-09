@@ -26,6 +26,10 @@ describe Spree::LineItem, :type => :model do
       expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
       line_item.destroy
     end
+
+    it "deletes inventory units" do
+      expect { line_item.destroy }.to change { line_item.inventory_units.count }.from(1).to(0)
+    end
   end
 
   context "#save" do

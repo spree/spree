@@ -55,7 +55,6 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
-      after_transition to: :reimbursed, do: :send_reimbursement_email
 
       event :errored do
         transition to: :errored, from: :pending
@@ -107,6 +106,7 @@ module Spree
       if unpaid_amount.zero?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
+        send_reimbursement_email
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
