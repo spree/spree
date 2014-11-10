@@ -33,12 +33,6 @@ module Spree
       def load_simulated_refunds
         @reimbursement_objects = @reimbursement.simulate
       end
-
-      # TODO: Remove this when https://github.com/spree/spree/pull/5158 gets merged in
-      def permitted_resource_params
-        params[object_name].present? ? super : ActionController::Parameters.new
-      end
-
     end
   end
 end
