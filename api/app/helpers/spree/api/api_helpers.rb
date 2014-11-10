@@ -21,7 +21,6 @@ module Spree
         :country_attributes,
         :state_attributes,
         :adjustment_attributes,
-        :inventory_unit_attributes,
         :return_authorization_attributes,
         :creditcard_attributes,
         :payment_source_attributes,
