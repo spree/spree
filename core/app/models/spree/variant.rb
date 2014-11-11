@@ -65,6 +65,10 @@ module Spree
       inventory_units.with_state('backordered').size
     end
 
+    def is_backorderable?
+      Spree::Stock::Quantifier.new(self).backorderable?
+    end
+
     def options_text
       values = self.option_values.sort do |a, b|
         a.option_type.position <=> b.option_type.position

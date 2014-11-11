@@ -351,6 +351,16 @@ describe Spree::Variant do
     end
   end
 
+  describe '#is_backorderable' do
+    let(:variant) { build(:variant) }
+    subject { variant.is_backorderable? }
+
+    it 'should invoke Spree::Stock::Quantifier' do
+      expect_any_instance_of(Spree::Stock::Quantifier).to receive(:backorderable?) { true }
+      subject
+    end
+  end
+
   describe '#total_on_hand' do
     it 'should be infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
