@@ -23,7 +23,7 @@ module Spree
     has_one :default_price,
       -> { where currency: Spree::Config[:currency] },
       class_name: 'Spree::Price', inverse_of: :variant
-      
+
     delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency
 
     has_many :prices,
@@ -64,6 +64,10 @@ module Spree
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size
+    end
+
+    def is_backorderable?
+      Spree::Stock::Quantifier.new(self).backorderable?
     end
 
     def options_text
@@ -167,7 +171,7 @@ module Spree
       options.keys.map { |key|
         m = "#{options[key]}_price_modifier_amount".to_sym
         if self.respond_to? m
-          self.send(m, options[key]) 
+          self.send(m, options[key])
         else
           0
         end
