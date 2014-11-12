@@ -2,7 +2,7 @@ $.fn.productAutocomplete = function () {
   'use strict';
 
   this.select2({
-    minimumInputLength: 1,
+    minimumInputLength: 3,
     multiple: true,
     initSelection: function (element, callback) {
       $.get(Spree.routes.product_search, {
