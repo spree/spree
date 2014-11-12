@@ -94,24 +94,41 @@ module Spree
       expect(json_response["adjustments"]).to be_empty
     end
 
-    context 'when shipment adjustments are present' do
+    describe 'GET #show' do
+      let(:order) { create :order_with_line_items }
       let(:adjustment) { FactoryGirl.create(:adjustment, order: order) }
+
+      subject { api_get :show, id: order.to_param }
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
-        shipment = FactoryGirl.create(:shipment, order: order)
-        shipment.adjustments << adjustment
       end
 
-      subject { api_get :show, :id => order.to_param }
+      context 'when inventory information is present' do
+        it 'contains stock information on variant' do
+          subject
+          variant = json_response['line_items'][0]['variant']
+          expect(variant).to_not be_nil
+          expect(variant['in_stock']).to eq(false)
+          expect(variant['total_on_hand']).to eq(0)
+          expect(variant['is_backorderable']).to eq(true)
+        end
+      end
 
-      it 'contains adjustments in JSON' do
-        subject
-        # Test to insure shipment has adjustments
-        shipment = json_response['shipments'][0]
-        expect(shipment).to_not be_nil
-        expect(shipment['adjustments'][0]).not_to be_empty
-        expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+      context 'when shipment adjustments are present' do
+        before do
+          order.shipments.first.adjustments << adjustment
+        end
+
+        it 'contains adjustments on shipment' do
+          subject
+
+          # Test to insure shipment has adjustments
+          shipment = json_response['shipments'][0]
+          expect(shipment).to_not be_nil
+          expect(shipment['adjustments'][0]).not_to be_empty
+          expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+        end
       end
     end
 
