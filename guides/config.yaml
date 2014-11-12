@@ -1,5 +1,3 @@
-encoding: utf-8
-
 # A list of file extensions that nanoc will consider to be textual rather than
 # binary. If an item with an extension not in this list is found,  the file
 # will be considered as binary.
@@ -71,3 +69,8 @@ base_url: http://edgeguides.spreecommerce.com
 #api_versions:
 #  -
 #    - v1
+
+data_sources:
+  -
+    type: filesystem_unified
+    encoding: utf-8
