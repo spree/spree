@@ -43,7 +43,6 @@ module Spree
       end
 
       def add
-        variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
         @shipment.order.contents.add(variant, quantity, nil, @shipment)
@@ -52,7 +51,6 @@ module Spree
       end
 
       def remove
-        variant = Spree::Variant.find(params[:variant_id])
         quantity = params[:quantity].to_i
 
         @shipment.order.contents.remove(variant, quantity, @shipment)

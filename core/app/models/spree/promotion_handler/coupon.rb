@@ -82,11 +82,15 @@ module Spree
           end
         }
 
+        # Check for applied adjustments.
         discount = order.line_item_adjustments.promotion.detect(&detector)
         discount ||= order.shipment_adjustments.promotion.detect(&detector)
         discount ||= order.adjustments.promotion.detect(&detector)
 
-        if discount.eligible
+        # Check for applied line items.
+        created_line_items = promotion.actions.detect { |a| a.type == 'Spree::Promotion::Actions::CreateLineItems' }
+
+        if (discount && discount.eligible) || created_line_items
           order.update_totals
           order.persist_totals
           set_success_code :coupon_code_applied

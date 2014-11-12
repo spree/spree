@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module PromotionHandler
-    describe Cart do
+    describe Cart, :type => :model do
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
 

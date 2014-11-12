@@ -16,15 +16,13 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, uniqueness: true, allow_blank: true
+    validates :path, uniqueness: { allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }
 
     before_save :normalize_blank_values
 
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
-    # Early introduce this scope from Spree master
-    # https://github.com/spree/spree/blob/master/core/app/models/spree/promotion.rb#L30
     scope :applied, -> { joins(:orders).uniq }
 
     def self.advertised
@@ -32,7 +30,7 @@ module Spree
     end
 
     def self.with_coupon_code(coupon_code)
-      where("lower(code) = ?", coupon_code.strip.downcase).first
+      where("lower(#{self.table_name}.code) = ?", coupon_code.strip.downcase).first
     end
 
     def self.active

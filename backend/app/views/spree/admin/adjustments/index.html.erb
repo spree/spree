@@ -20,5 +20,3 @@
 <%= javascript_tag do -%>
   var order_number = '<%= @order.number %>';
 <% end -%>
-
-<%= button_link_to Spree.t(:continue), @order.cart? ? new_admin_order_payment_url(@order) : admin_orders_url, :icon => 'arrow-right' %>

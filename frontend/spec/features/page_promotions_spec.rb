@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'page promotions' do
+describe 'page promotions', :type => :feature do
   let!(:product) { create(:product, :name => "RoR Mug", :price => 20) }
   before do
     promotion = Spree::Promotion.create!(:name       => "$10 off",
@@ -20,17 +20,17 @@ describe 'page promotions' do
   end
 
   it "automatically applies a page promotion upon visiting" do
-    page.should_not have_content("Promotion ($10 off) -$10.00")
+    expect(page).not_to have_content("Promotion ($10 off) -$10.00")
     visit '/content/test'
     visit '/cart'
-    page.should have_content("Promotion ($10 off) -$10.00")
-    page.should have_content("Subtotal (1 item) $20.00")
+    expect(page).to have_content("Promotion ($10 off) -$10.00")
+    expect(page).to have_content("Subtotal (1 item) $20.00")
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
-    page.should_not have_content("Promotion ($10 off) -$10.00")
+    expect(page).not_to have_content("Promotion ($10 off) -$10.00")
     visit '/content/cvv'
     visit '/cart'
-    page.should_not have_content("Promotion ($10 off) -$10.00")
+    expect(page).not_to have_content("Promotion ($10 off) -$10.00")
   end
 end

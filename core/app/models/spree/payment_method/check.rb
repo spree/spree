@@ -18,6 +18,8 @@ module Spree
       ActiveMerchant::Billing::Response.new(true, "", {}, {})
     end
 
+    def cancel(response); end
+
     def void(*args)
       ActiveMerchant::Billing::Response.new(true, "", {}, {})
     end

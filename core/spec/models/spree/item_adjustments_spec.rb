@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe ItemAdjustments do
+  describe ItemAdjustments, :type => :model do
     let(:order) { create :order_with_line_items, line_items_count: 1 }
     let(:line_item) { order.line_items.first }
 
@@ -11,13 +11,13 @@ module Spree
     context '#update' do
       it "updates a linked adjustment" do
         tax_rate = create(:tax_rate, :amount => 0.05)
-        adjustment = create(:adjustment, :source => tax_rate, :adjustable => line_item)
+        adjustment = create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
         line_item.price = 10
         line_item.tax_category = tax_rate.tax_category
 
         subject.update
-        line_item.adjustment_total.should == 0.5
-        line_item.additional_tax_total.should == 0.5
+        expect(line_item.adjustment_total).to eq(0.5)
+        expect(line_item.additional_tax_total).to eq(0.5)
       end
     end
 
@@ -39,12 +39,12 @@ module Spree
         line_item.price = 20
         line_item.tax_category = tax_rate.tax_category
         line_item.save
-        create(:adjustment, :source => promotion_action, :adjustable => line_item)
+        create(:adjustment, order: order, source: promotion_action, adjustable: line_item)
       end
 
       context "tax included in price" do
         before do
-          create(:adjustment, 
+          create(:adjustment,
             :source => tax_rate,
             :adjustable => line_item,
             :order => order,
@@ -55,23 +55,23 @@ module Spree
         it "tax has no bearing on final price" do
           subject.update_adjustments
           line_item.reload
-          line_item.included_tax_total.should == 0.5
-          line_item.additional_tax_total.should == 0
-          line_item.promo_total.should == -10
-          line_item.adjustment_total.should == -10
+          expect(line_item.included_tax_total).to eq(0.5)
+          expect(line_item.additional_tax_total).to eq(0)
+          expect(line_item.promo_total).to eq(-10)
+          expect(line_item.adjustment_total).to eq(-10)
         end
 
         it "tax linked to order" do
           order_subject.update_adjustments
           order.reload
-          order.included_tax_total.should == 0.5
-          order.additional_tax_total.should == 00
+          expect(order.included_tax_total).to eq(0.5)
+          expect(order.additional_tax_total).to eq(00)
         end
       end
 
       context "tax excluded from price" do
         before do
-          create(:adjustment, 
+          create(:adjustment,
             :source => tax_rate,
             :adjustable => line_item,
             :order => order,
@@ -84,17 +84,17 @@ module Spree
           line_item.reload
           # Taxable amount is: $20 (base) - $10 (promotion) = $10
           # Tax rate is 5% (of $10).
-          line_item.included_tax_total.should == 0
-          line_item.additional_tax_total.should == 0.5
-          line_item.promo_total.should == -10
-          line_item.adjustment_total.should == -9.5
+          expect(line_item.included_tax_total).to eq(0)
+          expect(line_item.additional_tax_total).to eq(0.5)
+          expect(line_item.promo_total).to eq(-10)
+          expect(line_item.adjustment_total).to eq(-9.5)
         end
 
         it "tax linked to order" do
           order_subject.update_adjustments
           order.reload
-          order.included_tax_total.should == 0
-          order.additional_tax_total.should == 0.5
+          expect(order.included_tax_total).to eq(0)
+          expect(order.additional_tax_total).to eq(0.5)
         end
       end
     end
@@ -128,8 +128,22 @@ module Spree
 
         subject.choose_best_promotion_adjustment
 
-        line_item.adjustments.promotion.eligible.count.should == 1
-        line_item.adjustments.promotion.eligible.first.label.should == 'Promotion C'
+        expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+        expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion C')
+      end
+
+      it "should choose the most recent promotion adjustment when amounts are equal" do
+        # Using Timecop is a regression test
+        Timecop.freeze do
+          create_adjustment("Promotion A", -200)
+          create_adjustment("Promotion B", -200)
+        end
+        line_item.adjustments.each {|a| a.update_column(:eligible, true)}
+
+        subject.choose_best_promotion_adjustment
+
+        expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+        expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion B')
       end
 
       context "when previously ineligible promotions become available" do
@@ -154,17 +168,17 @@ module Spree
             order_promos[promo_sequence[1]].activate order: order
 
             order.reload
-            order.all_adjustments.count.should eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.count.should eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.first.source.promotion.should eq(order_promo1), "Expected promo1 to be used (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), "Expected promo1 to be used (using sequence #{promo_sequence})"
 
             order.contents.add create(:variant, price: 10), 1
             order.save
 
             order.reload
-            order.all_adjustments.count.should eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.count.should eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.first.source.promotion.should eq(order_promo2), "Expected promo2 to be used (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2), "Expected promo2 to be used (using sequence #{promo_sequence})"
           end
         end
 
@@ -175,8 +189,8 @@ module Spree
             line_item_promos[promo_sequence[1]].activate order: order
 
             order.reload
-            order.all_adjustments.count.should eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.count.should eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
             # TODO: Really, with the rule we've applied to these promos, we'd expect line_item_promo2
             # to be selected; however, all of the rules are currently completely broken for line-item-
             # level promos. To make this spec work for now we just roll with current behavior.
@@ -185,10 +199,10 @@ module Spree
             order.save
 
             order.reload
-            order.all_adjustments.count.should eq(4), "Expected four adjustments (using sequence #{promo_sequence})"
-            order.all_adjustments.eligible.count.should eq(2), "Expected two elegible adjustments (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.count).to eq(4), "Expected four adjustments (using sequence #{promo_sequence})"
+            expect(order.all_adjustments.eligible.count).to eq(2), "Expected two elegible adjustments (using sequence #{promo_sequence})"
             order.all_adjustments.eligible.each do |adjustment|
-              adjustment.source.promotion.should eq(line_item_promo2), "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
+              expect(adjustment.source.promotion).to eq(line_item_promo2), "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
             end
           end
         end
@@ -206,7 +220,7 @@ module Spree
         # regression for #3274
         it "still makes the previous best eligible adjustment valid" do
           subject.choose_best_promotion_adjustment
-          line_item.adjustments.promotion.eligible.first.label.should == 'Promotion A'
+          expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion A')
         end
       end
 
@@ -217,8 +231,8 @@ module Spree
 
         subject.choose_best_promotion_adjustment
 
-        line_item.adjustments.promotion.eligible.count.should == 1
-        line_item.adjustments.promotion.eligible.first.amount.to_i.should == -200
+        expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+        expect(line_item.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
       end
     end
 
@@ -242,7 +256,7 @@ module Spree
           @before_tax_adjustments_called = true
         end
 
-        set_callback :promo_adjustments, :after do |object|
+        set_callback :tax_adjustments, :after do |object|
           @after_tax_adjustments_called = true
         end
       end
@@ -250,10 +264,10 @@ module Spree
 
       it "calls all the callbacks" do
         subject.update_adjustments
-        expect(subject.before_promo_adjustments_called).to be_true
-        expect(subject.after_promo_adjustments_called).to be_true
-        expect(subject.before_tax_adjustments_called).to be_true
-        expect(subject.after_tax_adjustments_called).to be_true
+        expect(subject.before_promo_adjustments_called).to be true
+        expect(subject.after_promo_adjustments_called).to be true
+        expect(subject.before_tax_adjustments_called).to be true
+        expect(subject.after_tax_adjustments_called).to be true
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Users' do
+describe 'Users', :type => :feature do
   stub_authorization!
   let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addreses, email: 'a@example.com') }
@@ -126,7 +126,7 @@ describe 'Users' do
       check 'user_spree_role_admin'
       click_button 'Update'
       expect(page).to have_text 'Account updated'
-      expect(find_field('user_spree_role_admin')['checked']).to be_true
+      expect(find_field('user_spree_role_admin')['checked']).to be true
     end
 
     it 'can edit user shipping address' do

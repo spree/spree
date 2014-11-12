@@ -11,18 +11,21 @@ end
 module Spree
   class TaxRate < Spree::Base
     acts_as_paranoid
+
+    # Need to deal with adjustments before calculator is destroyed.
+    before_destroy :deals_with_adjustments_for_deleted_source
+
     include Spree::Core::CalculatedAdjustments
     include Spree::Core::AdjustmentSource
-    belongs_to :zone, class_name: "Spree::Zone"
-    belongs_to :tax_category, class_name: "Spree::TaxCategory"
+
+    belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
+    belongs_to :tax_category, class_name: "Spree::TaxCategory", inverse_of: :tax_rates
 
     has_many :adjustments, as: :source
 
     validates :amount, presence: true, numericality: true
     validates :tax_category_id, presence: true
     validates_with DefaultTaxZoneValidator
-
-    before_destroy :deals_with_adjustments_for_deleted_source
 
     scope :by_zone, ->(zone) { where(zone_id: zone) }
 
@@ -75,8 +78,8 @@ module Spree
       rates = self.match(order_tax_zone)
       tax_categories = rates.map(&:tax_category)
       relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
+      Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
       relevant_items.each do |item|
-        item.adjustments.tax.delete_all
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
         relevant_rates.each do |rate|
@@ -85,9 +88,8 @@ module Spree
       end
       non_relevant_items.each do |item|
         if item.adjustments.tax.present?
-          item.adjustments.tax.delete_all
-          item.update_column(:pre_tax_amount, nil)
-          item.send(:recalculate_adjustments)
+          item.adjustments.tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
+          item.update_columns pre_tax_amount: 0
         end
       end
     end
@@ -186,6 +188,8 @@ module Spree
         label = ""
         label << (name.present? ? name : tax_category.name) + " "
         label << (show_rate_in_label? ? "#{amount * 100}%" : "")
+        label << " (#{Spree.t(:included_in_price)})" if included_in_price?
+        label
       end
 
   end

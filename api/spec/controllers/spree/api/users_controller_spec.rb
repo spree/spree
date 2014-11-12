@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::UsersController do
+  describe Api::UsersController, :type => :controller do
     render_views
 
     let(:user) { create(:user) }
@@ -12,13 +12,13 @@ module Spree
 
     context "as a normal user" do
       before do
-        controller.stub :try_spree_current_user => user
+        allow(controller).to receive_messages :try_spree_current_user => user
       end
 
       it "can get own details" do
         api_get :show, :id => user.id
 
-        json_response['email'].should eq user.email
+        expect(json_response['email']).to eq user.email
       end
 
       it "cannot get other users details" do
@@ -29,19 +29,19 @@ module Spree
 
       it "can learn how to create a new user" do
         api_get :new
-        json_response["attributes"].should == attributes.map(&:to_s)
+        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
       end
 
       it "can create a new user" do
         api_post :create, :user => { :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123' }
-        json_response['email'].should eq 'new@example.com'
+        expect(json_response['email']).to eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
       xit "cannot create a new user with invalid attributes" do
         api_post :create, :user => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        expect(response.status).to eq(422)
+        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
       end
 
@@ -82,7 +82,7 @@ module Spree
 
       it "can delete itself" do
         api_delete :destroy, :id => user.id
-        response.status.should == 204
+        expect(response.status).to eq(204)
       end
 
       it "cannot delete other user" do
@@ -94,9 +94,9 @@ module Spree
         2.times { create(:user) }
         api_get :index
 
-        Spree.user_class.count.should eq 3
-        json_response['count'].should eq 1
-        json_response['users'].size.should eq 1
+        expect(Spree.user_class.count).to eq 3
+        expect(json_response['count']).to eq 1
+        expect(json_response['users'].size).to eq 1
       end
     end
 
@@ -104,48 +104,48 @@ module Spree
       sign_in_as_admin!
 
       it "gets all users" do
-        Spree::LegacyUser.stub(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
+        allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
 
         2.times { create(:user) }
 
         api_get :index
-        Spree.user_class.count.should eq 2
-        json_response['count'].should eq 2
-        json_response['users'].size.should eq 2
+        expect(Spree.user_class.count).to eq 2
+        expect(json_response['count']).to eq 2
+        expect(json_response['users'].size).to eq 2
       end
 
       it 'can control the page size through a parameter' do
         2.times { create(:user) }
         api_get :index, :per_page => 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        expect(json_response['count']).to eq(1)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:user, :email => 'brian@spreecommerce.com')
         api_get :index, :q => { :email_cont => 'brian' }
-        json_response['count'].should == 1
-        json_response['users'].first['email'].should eq expected_result.email
+        expect(json_response['count']).to eq(1)
+        expect(json_response['users'].first['email']).to eq expected_result.email
       end
 
       it "can create" do
         api_post :create, :user => { :email => "new@example.com", :password => 'spree123', :password_confirmation => 'spree123' }
-        json_response.should have_attributes(attributes)
-        response.status.should == 201
+        expect(json_response).to have_attributes(attributes)
+        expect(response.status).to eq(201)
       end
 
       it "can destroy user without orders" do
         user.orders.destroy_all
         api_delete :destroy, :id => user.id
-        response.status.should == 204
+        expect(response.status).to eq(204)
       end
 
       it "cannot destroy user with orders" do
         create(:completed_order_with_totals, :user => user)
         api_delete :destroy, :id => user.id
-        json_response["exception"].should eq "Spree::Core::DestroyWithOrdersError"
-        response.status.should == 422
+        expect(json_response["exception"]).to eq "Spree::Core::DestroyWithOrdersError"
+        expect(response.status).to eq(422)
       end
 
     end

@@ -52,6 +52,8 @@ and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
+[![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
+[![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
 Installation
 ------------
@@ -64,9 +66,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.2
+gem install rails -v 4.1.6
 gem install spree
-rails _4.1.2_ new my_store
+rails _4.1.6_ new my_store
 spree install my_store
 ```
 
@@ -172,8 +174,6 @@ Browse Admin Interface
 ----------------------
 
 http://localhost:nnnn/admin
-
-
 
 Working with the edge source (latest and greatest features)
 -----------------------------------------------------------
@@ -336,11 +336,11 @@ bash build.sh
 
 Further Documentation
 ------------
-Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com). 
+Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
 
 Contributing
 ------------
 
 Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html)
+[contributors guidelines](http://guides.spreecommerce.com/developer/contributing.html)
 before contributing.

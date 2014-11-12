@@ -9,14 +9,11 @@ module Spree
     end
 
     def compute(object)
-      amount_remaining = object.amount.to_f + object.adjustment_total.to_f
       computed_amount  = (object.amount * preferred_flat_percent / 100).round(2)
 
-      # If multiple promotion actions are applied we want to make sure
-      # that we don't cause the promotion adjustments to push the order
-      # into a negative total. So we return the object amount + adjustment_total
-      if computed_amount > amount_remaining
-        amount_remaining
+      # We don't want to cause the promotion adjustments to push the order into a negative total.
+      if computed_amount > object.amount
+        object.amount
       else
         computed_amount
       end

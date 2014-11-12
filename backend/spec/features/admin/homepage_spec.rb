@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Homepage" do
+describe "Homepage", :type => :feature do
 
   context 'as admin user' do
     stub_authorization!
@@ -11,7 +11,7 @@ describe "Homepage" do
       end
 
       it "should have the header text 'Listing Orders'" do
-        within('h1') { page.should have_content("Listing Orders") }
+        within('h1') { expect(page).to have_content("Listing Orders") }
       end
 
       it "should have a link to overview" do
@@ -61,7 +61,7 @@ describe "Homepage" do
   context 'as fakedispatch user' do
 
     before do 
-      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+      allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
     
     custom_authorization! do |user|
@@ -70,11 +70,11 @@ describe "Homepage" do
 
     it 'should only display tabs fakedispatch has access to' do
       visit spree.admin_path
-      page.should have_link('Orders')
-      page.should_not have_link('Products')
-      page.should_not have_link('Promotions')
-      page.should_not have_link('Reports')
-      page.should_not have_link('Configuration')
+      expect(page).to have_link('Orders')
+      expect(page).not_to have_link('Products')
+      expect(page).not_to have_link('Promotions')
+      expect(page).not_to have_link('Reports')
+      expect(page).not_to have_link('Configuration')
     end
   end
 

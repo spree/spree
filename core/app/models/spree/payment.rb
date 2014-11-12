@@ -8,7 +8,7 @@ module Spree
 
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :payments
     belongs_to :source, polymorphic: true
-    belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+    belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
 
     has_many :offsets, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") },
       class_name: "Spree::Payment", foreign_key: :source_id
@@ -23,12 +23,18 @@ module Spree
 
     # update the order totals, etc.
     after_save :update_order
+
     # invalidate previously entered payments
     after_create :invalidate_old_payments
 
     attr_accessor :source_attributes, :request_env
 
     after_initialize :build_source
+    after_rollback :persist_invalid
+
+    validates :amount, numericality: true
+
+    default_scope -> { order("#{self.table_name}.created_at") }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
@@ -38,10 +44,6 @@ module Spree
     scope :failed, -> { with_state('failed') }
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
-
-    after_rollback :persist_invalid
-
-    validates :amount, numericality: true
 
     def persist_invalid
       return unless ['failed', 'invalid'].include?(state)
@@ -173,6 +175,7 @@ module Spree
 
       def create_payment_profile
         return unless source.respond_to?(:has_payment_profile?) && !source.has_payment_profile?
+        return if %w(invalid failed).include?(state)
         # Imported payments shouldn't create a payment profile.
         return if source.imported
 
@@ -182,8 +185,10 @@ module Spree
       end
 
       def invalidate_old_payments
-        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
-          payment.invalidate!
+        if state != 'invalid' and state != 'failed'
+          order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+            payment.invalidate!
+          end
         end
       end
 

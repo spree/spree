@@ -40,8 +40,7 @@ module Spree
     has_one :master,
       -> { where is_master: true },
       inverse_of: :product,
-      class_name: 'Spree::Variant',
-      dependent: :destroy
+      class_name: 'Spree::Variant'
 
     has_many :variants,
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
@@ -57,6 +56,9 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
+
+    has_many :line_items, through: :variants_including_master
+    has_many :orders, through: :line_items
 
     delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
 
@@ -80,7 +82,7 @@ module Spree
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
     validates :slug, length: { minimum: 3 }
-    validates :slug, uniqueness: true
+    validates :slug, uniqueness: { allow_blank: true }
 
     before_validation :normalize_slug, on: :update
 
@@ -270,11 +272,22 @@ module Spree
     end
 
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-    # when saving so we force a save using a hook.
+    # when saving so we force a save using a hook
+    # Fix for issue #5306
     def save_master
-      if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
-        master.save
-        @nested_changes = true
+      begin
+        if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+          master.save!
+          @nested_changes = true
+        end
+
+      # If the master cannot be saved, the Product object will get its errors
+      # and will be destroyed
+      rescue ActiveRecord::RecordInvalid
+        master.errors.each do |att, error|
+          self.errors.add(att, error)
+        end
+        raise
       end
     end
 

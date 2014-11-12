@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'spec_helper'
 
-describe "Order Details", js: true do
+describe "Order Details", type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
@@ -22,8 +22,8 @@ describe "Order Details", js: true do
 
     context "edit order page" do
       it "should allow me to edit order details" do
-        page.should have_content("spree t-shirt")
-        page.should have_content("$40.00")
+        expect(page).to have_content("spree t-shirt")
+        expect(page).to have_content("$40.00")
 
         within_row(1) do
           click_icon :edit
@@ -32,7 +32,7 @@ describe "Order Details", js: true do
         click_icon :ok
 
         within("#order_total") do
-          page.should have_content("$20.00")
+          expect(page).to have_content("$20.00")
         end
       end
 
@@ -44,12 +44,12 @@ describe "Order Details", js: true do
         end
 
         within("#order_total") do
-          page.should have_content("$70.00")
+          expect(page).to have_content("$70.00")
         end
       end
 
       it "can remove an item from a shipment" do
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
 
         within_row(1) do
           accept_alert do
@@ -58,12 +58,12 @@ describe "Order Details", js: true do
         end
 
         # Click "ok" on confirmation dialog
-        page.should_not have_content("spree t-shirt")
+        expect(page).not_to have_content("spree t-shirt")
       end
 
       # Regression test for #3862
       it "can cancel removing an item from a shipment" do
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
 
         within_row(1) do
           # Click "cancel" on confirmation dialog
@@ -72,7 +72,7 @@ describe "Order Details", js: true do
           end
         end
 
-        page.should have_content("spree t-shirt")
+        expect(page).to have_content("spree t-shirt")
       end
 
       it "can add tracking information" do
@@ -82,8 +82,8 @@ describe "Order Details", js: true do
         fill_in "tracking", :with => "FOOBAR"
         click_icon :ok
 
-        page.should_not have_css("input[name=tracking]")
-        page.should have_content("Tracking: FOOBAR")
+        expect(page).not_to have_css("input[name=tracking]")
+        expect(page).to have_content("Tracking: FOOBAR")
       end
 
       it "can change the shipping method" do
@@ -95,8 +95,8 @@ describe "Order Details", js: true do
         select2 "Default", :from => "Shipping Method"
         click_icon :ok
 
-        page.should_not have_css('#selected_shipping_rate_id')
-        page.should have_content("Default")
+        expect(page).not_to have_css('#selected_shipping_rate_id')
+        expect(page).to have_content("Default")
       end
 
       it "will show the variant sku" do
@@ -112,7 +112,7 @@ describe "Order Details", js: true do
         it "displays out of stock instead of add button" do
           select2_search product.name, :from => Spree.t(:name_or_sku)
           within("table.stock-levels") do
-            page.should have_content(Spree.t(:out_of_stock))
+            expect(page).to have_content(Spree.t(:out_of_stock))
           end
         end
       end
@@ -128,10 +128,10 @@ describe "Order Details", js: true do
             click_icon :plus
           end
           wait_for_ajax
-          page.should have_css("#shipment_#{order.shipments.last.id}")
-          order.shipments.last.stock_location.should == london
+          expect(page).to have_css("#shipment_#{order.shipments.last.id}")
+          expect(order.shipments.last.stock_location).to eq(london)
           within "#shipment_#{order.shipments.last.id}" do
-            page.should have_content("LONDON")
+            expect(page).to have_content("LONDON")
           end
         end
 
@@ -153,7 +153,7 @@ describe "Order Details", js: true do
             end
 
             # poltergeist and selenium disagree on the existance of this space
-            page.should have_content(/TOTAL: ?\$100\.00/)
+            expect(page).to have_content(/TOTAL: ?\$100\.00/)
           end
 
           it "can add tracking information for the second shipment" do
@@ -166,8 +166,8 @@ describe "Order Details", js: true do
               click_icon :ok
             end
 
-            page.should_not have_css("input[name=tracking]")
-            page.should have_content("Tracking: TRACKING_NUMBER")
+            expect(page).not_to have_css("input[name=tracking]")
+            expect(page).to have_content("Tracking: TRACKING_NUMBER")
           end
 
           it "can change the second shipment's shipping method" do
@@ -195,8 +195,8 @@ describe "Order Details", js: true do
             end
             click_icon :ok
 
-            page.should_not have_css('#selected_shipping_rate_id')
-            page.should have_content("Default")
+            expect(page).not_to have_css('#selected_shipping_rate_id')
+            expect(page).to have_content("Default")
           end
         end
       end
@@ -225,7 +225,7 @@ describe "Order Details", js: true do
           end
 
           within(".stock-contents") do
-            page.should have_content(tote.name)
+            expect(page).to have_content(tote.name)
           end
         end
       end
@@ -234,7 +234,7 @@ describe "Order Details", js: true do
 
   context 'with only read permissions' do
     before do 
-      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+      allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
     custom_authorization! do |user|
@@ -242,23 +242,23 @@ describe "Order Details", js: true do
     end
     it "should not display forbidden links" do
       visit spree.edit_admin_order_path(order)
-      page.should_not have_button('cancel')
-      page.should_not have_button('Resend')
+      expect(page).not_to have_button('cancel')
+      expect(page).not_to have_button('Resend')
 
       # Order Tabs
-      page.should_not have_link('Order Details')
-      page.should_not have_link('Customer Details')
-      page.should_not have_link('Adjustments')
-      page.should_not have_link('Payments')
-      page.should_not have_link('Return Authorizations')
+      expect(page).not_to have_link('Order Details')
+      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Adjustments')
+      expect(page).not_to have_link('Payments')
+      expect(page).not_to have_link('Return Authorizations')
 
       # Order item actions
-      page.should_not have_css('.delete-item')
-      page.should_not have_css('.split-item')
-      page.should_not have_css('.edit-item')
-      page.should_not have_css('.edit-tracking')
+      expect(page).not_to have_css('.delete-item')
+      expect(page).not_to have_css('.split-item')
+      expect(page).not_to have_css('.edit-item')
+      expect(page).not_to have_css('.edit-tracking')
 
-      page.should_not have_css('#add-line-item')
+      expect(page).not_to have_css('#add-line-item')
     end
   end
 
@@ -271,20 +271,20 @@ describe "Order Details", js: true do
     end
 
     before do
-      Spree::Api::BaseController.any_instance.stub :try_spree_current_user => Spree.user_class.new
+      allow_any_instance_of(Spree::Api::BaseController).to receive_messages :try_spree_current_user => Spree.user_class.new
     end
 
     it 'should not display order tabs or edit buttons without ability' do
       visit spree.edit_admin_order_path(order)
 
       # Order Form
-      page.should_not have_css('.edit-item')
+      expect(page).not_to have_css('.edit-item')
       # Order Tabs
-      page.should_not have_link('Order Details')
-      page.should_not have_link('Customer Details')
-      page.should_not have_link('Adjustments')
-      page.should_not have_link('Payments')
-      page.should_not have_link('Return Authorizations')
+      expect(page).not_to have_link('Order Details')
+      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Adjustments')
+      expect(page).not_to have_link('Payments')
+      expect(page).not_to have_link('Return Authorizations')
     end
 
     it "can add tracking information" do
@@ -295,8 +295,8 @@ describe "Order Details", js: true do
       fill_in "tracking", :with => "FOOBAR"
       click_icon :ok
 
-      page.should_not have_css("input[name=tracking]")
-      page.should have_content("Tracking: FOOBAR")
+      expect(page).not_to have_css("input[name=tracking]")
+      expect(page).to have_content("Tracking: FOOBAR")
     end
 
     it "can change the shipping method" do
@@ -308,8 +308,8 @@ describe "Order Details", js: true do
       select2 "Default", :from => "Shipping Method"
       click_icon :ok
 
-      page.should_not have_css('#selected_shipping_rate_id')
-      page.should have_content("Default")
+      expect(page).not_to have_css('#selected_shipping_rate_id')
+      expect(page).to have_content("Default")
     end
 
     it 'can ship' do
@@ -319,7 +319,7 @@ describe "Order Details", js: true do
       click_icon 'arrow-right'
       wait_for_ajax
       within '.shipment-state' do
-        page.should have_content('SHIPPED')
+        expect(page).to have_content('SHIPPED')
       end
     end
   end

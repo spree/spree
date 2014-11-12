@@ -104,6 +104,8 @@ $color-ste-void-bg:              $color-error !default;
 $color-ste-void-text:            $color-1 !default;
 $color-ste-canceled-bg:          $color-error !default;
 $color-ste-canceled-text:        $color-1 !default;
+$color-ste-failed-bg:            $color-error !default;
+$color-ste-failed-text:          $color-1 !default;
 $color-ste-address-bg:           $color-error !default;
 $color-ste-address-text:         $color-1 !default;
 $color-ste-checkout-bg:          $color-notice !default;
@@ -122,20 +124,30 @@ $color-ste-inactive-bg:          $color-notice !default;
 $color-ste-inactive-text:        $color-1 !default;
 $color-ste-considered_risky-bg:  $color-error !default;
 $color-ste-considered_risky-text:$color-1 !default;
+$color-ste-considered_safe-bg:   $color-success !default;
+$color-ste-considered_safe-text: $color-1 !default;
+$color-ste-success-bg:           $color-success !default;
+$color-ste-success-text:         $color-1 !default;
+$color-ste-notice-bg:            $color-notice !default;
+$color-ste-notice-text:          $color-1 !default;
+$color-ste-error-bg:             $color-error !default;
+$color-ste-error-text:           $color-1 !default;
 
 // Available states
 $states: completed, complete, sold, pending, awaiting_return, returned, credit_owed, paid, shipped, balance_due, backorder, checkout, cart, address,
-delivery, payment, confirm, canceled, ready, void, active, inactive, considered_risky !default;
+delivery, payment, confirm, canceled, failed, ready, void, active, inactive, considered_risky, considered_safe, success, notice, error !default;
 
 $states-bg-colors: $color-ste-completed-bg, $color-ste-complete-bg, $color-ste-sold-bg, $color-ste-pending-bg, $color-ste-awaiting_return-bg,
-$color-ste-returned-bg, $color-ste-credit_owed-bg, $color-ste-paid-bg, $color-ste-shipped-bg, $color-ste-balance_due-bg, $color-ste-backorder-bg, 
-$color-ste-checkout-bg, $color-ste-cart-bg, $color-ste-address-bg, $color-ste-delivery-bg, $color-ste-payment-bg, $color-ste-confirm-bg, 
-$color-ste-canceled-bg, $color-ste-ready-bg, $color-ste-void-bg, $color-ste-active-bg, $color-ste-inactive-bg, $color-ste-considered_risky-bg !default;
+$color-ste-returned-bg, $color-ste-credit_owed-bg, $color-ste-paid-bg, $color-ste-shipped-bg, $color-ste-balance_due-bg, $color-ste-backorder-bg,
+$color-ste-checkout-bg, $color-ste-cart-bg, $color-ste-address-bg, $color-ste-delivery-bg, $color-ste-payment-bg, $color-ste-confirm-bg,
+$color-ste-canceled-bg, $color-ste-failed-bg, $color-ste-ready-bg, $color-ste-void-bg, $color-ste-active-bg, $color-ste-inactive-bg, $color-ste-considered_risky-bg,
+$color-ste-considered_safe-bg, $color-ste-success-bg, $color-ste-notice-bg, $color-ste-error-bg !default;
 
-$states-text-colors: $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-awaiting_return-text, 
-$color-ste-returned-text, $color-ste-credit_owed-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text, 
-$color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text, 
-$color-ste-canceled-text, $color-ste-ready-text, $color-ste-void-text, $color-ste-active-text, $color-ste-inactive-text, $color-ste-considered_risky-text !default;
+$states-text-colors: $color-ste-completed-text, $color-ste-complete-text, $color-ste-sold-text, $color-ste-pending-text, $color-ste-awaiting_return-text,
+$color-ste-returned-text, $color-ste-credit_owed-text, $color-ste-paid-text, $color-ste-shipped-text, $color-ste-balance_due-text, $color-ste-backorder-text,
+$color-ste-checkout-text, $color-ste-cart-text, $color-ste-address-text, $color-ste-delivery-text, $color-ste-payment-text, $color-ste-confirm-text,
+$color-ste-canceled-text, $color-ste-failed-text, $color-ste-ready-text, $color-ste-void-text, $color-ste-active-text, $color-ste-inactive-text, $color-ste-considered_risky-text,
+$color-ste-considered_safe-text, $color-ste-success-text, $color-ste-notice-text, $color-ste-error-text !default;
 
 // Available actions
 $actions: edit, clone, remove, void, capture, save, cancel, mail !default;

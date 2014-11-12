@@ -8,12 +8,12 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    page.should have_css('#' + field)
+    expect(page).to have_css('#' + field)
     fill_in field, options
   end
 
   def within_row(num, &block)
-    if example.metadata[:js]
+    if RSpec.current_example.metadata[:js]
       within("table.index tbody tr:nth-child(#{num})", &block)
     else
       within(:xpath, all("table.index tbody tr")[num-1].path, &block)
@@ -21,7 +21,7 @@ module CapybaraExt
   end
 
   def column_text(num)
-    if example.metadata[:js]
+    if RSpec.current_example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
       all("td")[num-1].text
@@ -133,7 +133,7 @@ RSpec::Matchers.define :have_meta do |name, expected|
     has_css?("meta[name='#{name}'][content='#{expected}']", visible: false)
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     actual = first("meta[name='#{name}']")
     if actual
       "expected that meta #{name} would have content='#{expected}' but was '#{actual[:content]}'"
@@ -145,10 +145,10 @@ end
 
 RSpec::Matchers.define :have_title do |expected|
   match do |actual|
-    has_css?("title", :text => expected, visible: false)
+    has_css?("title", text: expected, visible: false)
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     actual = first("title")
     if actual
       "expected that title would have been '#{expected}' but was '#{actual.text}'"

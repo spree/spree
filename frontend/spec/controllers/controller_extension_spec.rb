@@ -18,7 +18,7 @@ class Spree::CustomController < Spree::BaseController
   end
 end
 
-describe Spree::CustomController do
+describe Spree::CustomController, :type => :controller do
   after do
     Spree::CustomController.clear_overrides!
   end
@@ -40,7 +40,7 @@ describe Spree::CustomController do
         describe "GET" do
           it "has value success" do
             spree_get :index
-            response.should be_success
+            expect(response).to be_success
             assert (response.body =~ /success!!!/)
           end
         end
@@ -56,7 +56,7 @@ describe Spree::CustomController do
         describe "GET" do
           it "has value success" do
             spree_get :index
-            response.should be_success
+            expect(response).to be_success
             assert (response.body =~ /success!!!/)
           end
         end
@@ -72,7 +72,7 @@ describe Spree::CustomController do
         describe "GET" do
           it "has value success" do
             spree_get :index
-            response.should be_redirect
+            expect(response).to be_redirect
           end
         end
       end
@@ -89,7 +89,7 @@ describe Spree::CustomController do
         describe "POST" do
           it "has value success" do
             spree_post :create
-            response.should be_success
+            expect(response).to be_success
             assert (response.body =~ /success!/)
           end
         end

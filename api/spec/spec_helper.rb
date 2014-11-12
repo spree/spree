@@ -22,7 +22,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'rspec/autorun'
 require 'ffaker'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -39,6 +38,7 @@ require 'spree/api/testing_support/setup'
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true
+  config.infer_spec_type_from_file_location!
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::StockMovementsController do
+  describe Api::StockMovementsController, :type => :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location_with_items) }
@@ -16,12 +16,12 @@ module Spree
     context 'as a user' do
       it 'cannot see a list of stock movements' do
         api_get :index, stock_location_id: stock_location.to_param
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
 
       it 'cannot see a stock movement' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_movement.id
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
 
       it 'cannot create a stock movement' do
@@ -33,7 +33,7 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
     end
 
@@ -42,34 +42,34 @@ module Spree
 
       it 'gets list of stock movements' do
         api_get :index, stock_location_id: stock_location.to_param
-        json_response['stock_movements'].first.should have_attributes(attributes)
-        json_response['stock_movements'].first['stock_item']['count_on_hand'].should eq 11
+        expect(json_response['stock_movements'].first).to have_attributes(attributes)
+        expect(json_response['stock_movements'].first['stock_item']['count_on_hand']).to eq 11
       end
 
       it 'requires a stock_location_id to be passed as a parameter' do
         api_get :index
-        json_response['error'].should =~ /stock_location_id parameter must be provided/
-        response.status.should == 422
+        expect(json_response['error']).to match(/stock_location_id parameter must be provided/)
+        expect(response.status).to eq(422)
       end
 
       it 'can control the page size through a parameter' do
         create(:stock_movement, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, per_page: 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        expect(json_response['count']).to eq(1)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, q: { quantity_eq: '10' }
-        json_response['count'].should == 1
+        expect(json_response['count']).to eq(1)
       end
 
       it 'gets a stock movement' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_movement.to_param
-        json_response.should have_attributes(attributes)
-        json_response['stock_item_id'].should eq stock_movement.stock_item_id
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response['stock_item_id']).to eq stock_movement.stock_item_id
       end
 
       it 'can create a new stock movement' do
@@ -81,8 +81,8 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
+        expect(response.status).to eq(201)
+        expect(json_response).to have_attributes(attributes)
       end
     end
   end

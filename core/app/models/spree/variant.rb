@@ -9,8 +9,9 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
-    has_many :inventory_units
+    has_many :inventory_units, inverse_of: :variant
     has_many :line_items, inverse_of: :variant
+    has_many :orders, through: :line_items
 
     has_many :stock_items, dependent: :destroy, inverse_of: :variant
     has_many :stock_locations, through: :stock_items
@@ -32,8 +33,9 @@ module Spree
       inverse_of: :variant
 
     validate :check_price
+
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0 }
+    validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
     before_validation :set_cost_currency

@@ -1,9 +1,9 @@
 module Spree
   class TaxCategory < Spree::Base
     acts_as_paranoid
-    validates :name, presence: true, uniqueness: { scope: :deleted_at }
+    validates :name, presence: true, uniqueness: { scope: :deleted_at, allow_blank: true }
 
-    has_many :tax_rates, dependent: :destroy
+    has_many :tax_rates, dependent: :destroy, inverse_of: :tax_category
 
     before_save :set_default_category
 

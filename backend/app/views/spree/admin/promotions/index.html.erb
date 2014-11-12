@@ -17,21 +17,21 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="five columns">
         <div class="field">
-          <%= label_tag nil, 'name' %>
+          <%= label_tag nil, Spree.t(:name) %>
           <%= f.text_field :name_cont, tabindex: 1 %>
         </div>
       </div>
 
       <div class="five columns">
         <div class="field">
-          <%= label_tag nil, 'code' %>
+          <%= label_tag nil, Spree.t(:code) %>
           <%= f.text_field :code_cont, tabindex: 1 %>
         </div>
       </div>
 
       <div class="five columns">
         <div class="field">
-          <%= label_tag nil, 'path' %>
+          <%= label_tag nil, Spree.t(:path) %>
           <%= f.text_field :path_cont, tabindex: 1 %>
         </div>
       </div>

@@ -22,7 +22,7 @@ module Spree
       def create
         invoke_callbacks(:create, :before)
         @payment ||= @order.payments.build(object_params)
-        if params[:card].present? and params[:card] != 'new'
+        if @payment.payment_method.source_required? && params[:card].present? and params[:card] != 'new'
           @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
         end
 

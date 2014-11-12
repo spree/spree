@@ -57,6 +57,7 @@ end
 
 RSpec.configure do |config|
   config.color = true
+  config.infer_spec_type_from_file_location!
   config.mock_with :rspec
 
   config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
@@ -75,7 +76,7 @@ RSpec.configure do |config|
       config.default_retry_count = ENV['RSPEC_RETRY_COUNT'].to_i
     end
   end
-  
+
   if ENV['WEBDRIVER'] == 'accessible'
     config.around(:each, :inaccessible => true) do |example|
       Capybara::Accessible.skip_audit { example.run }
@@ -84,7 +85,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     WebMock.disable!
-    if example.metadata[:js]
+    if RSpec.current_example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction
@@ -102,7 +103,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.after(:each, :type => :feature) do
+  config.after(:each, :type => :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       #binding.pry

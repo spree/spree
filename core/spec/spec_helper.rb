@@ -37,6 +37,7 @@ require 'spree/testing_support/preferences'
 
 RSpec.configure do |config|
   config.color = true
+  config.infer_spec_type_from_file_location!
   config.mock_with :rspec
 
   config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
@@ -46,7 +47,7 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  config.before(:each) do
+  config.before :each do
     reset_spree_preferences
   end
 

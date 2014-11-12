@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe StockItemsController do
+    describe StockItemsController, :type => :controller do
       stub_authorization!
 
       context "formats" do

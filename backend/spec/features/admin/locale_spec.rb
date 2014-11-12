@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "setting locale" do
+describe "setting locale", :type => :feature do
   stub_authorization!
 
   before do
@@ -26,6 +26,6 @@ describe "setting locale" do
   it "should be in french" do
     visit spree.admin_path
     click_link "Ordres"
-    page.should have_content("Ordres")
+    expect(page).to have_content("Ordres")
   end
 end

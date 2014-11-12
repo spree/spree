@@ -22,10 +22,12 @@
 # it might be reinstated.
 module Spree
   class Adjustment < Spree::Base
-    belongs_to :adjustable, polymorphic: true
+    belongs_to :adjustable, polymorphic: true, touch: true
     belongs_to :source, polymorphic: true
     belongs_to :order, class_name: "Spree::Order"
 
+    validates :adjustable, presence: true
+    validates :order, presence: true
     validates :label, presence: true
     validates :amount, numericality: true
 
@@ -40,6 +42,7 @@ module Spree
     end
 
     after_create :update_adjustable_adjustment_total
+    after_destroy :update_adjustable_adjustment_total
 
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
@@ -100,7 +103,7 @@ module Spree
 
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
-      Spree::ItemAdjustments.new(adjustable).update if adjustable
+      ItemAdjustments.new(adjustable).update
     end
 
   end

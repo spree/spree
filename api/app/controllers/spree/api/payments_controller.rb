@@ -67,7 +67,7 @@ module Spree
 
         def find_order
           @order = Spree::Order.find_by(number: order_id)
-          authorize! :read, @order
+          authorize! :read, @order, order_token
         end
 
         def find_payment
@@ -76,14 +76,8 @@ module Spree
 
         def perform_payment_action(action, *args)
           authorize! action, Payment
-
-          begin
-            @payment.send("#{action}!", *args)
-            respond_with(@payment, :default_template => :show)
-          rescue Spree::Core::GatewayError => e
-            @error = e.message
-            render 'spree/api/errors/gateway_error', status: 422
-          end
+          @payment.send("#{action}!", *args)
+          respond_with(@payment, default_template: :show)
         end
 
         def payment_params

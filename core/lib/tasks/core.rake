@@ -86,8 +86,8 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
 
     if load_sample
-      #prevent errors for missing attributes (since rails 3.1 upgrade)
-
+      # Reload models' attributes in case they were loaded in old migrations with wrong attributes
+      ActiveRecord::Base.descendants.each(&:reset_column_information)
       Rake::Task["spree_sample:load"].invoke
     end
 

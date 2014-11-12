@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::ShipmentsController do
+describe Spree::Api::ShipmentsController, :type => :controller do
   render_views
   let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
@@ -30,16 +30,38 @@ describe Spree::Api::ShipmentsController do
 
     sign_in_as_admin!
 
-    it 'can create a new shipment' do
-      params = {
-        variant_id: stock_location.stock_items.first.variant.to_param,
-        shipment: { order_id: order.number },
-        stock_location_id: stock_location.to_param,
-      }
+    # Start writing this spec a bit differently than before....
+    describe 'POST #create' do
+      let(:params) do
+        {
+          variant_id: stock_location.stock_items.first.variant.to_param,
+          shipment: { order_id: order.number },
+          stock_location_id: stock_location.to_param
+        }
+      end 
+      
+      subject do 
+        api_post :create, params
+      end
 
-      api_post :create, params
-      response.status.should == 200
-      json_response.should have_attributes(attributes)
+      [:variant_id, :stock_location_id].each do |field|
+        context "when #{field} is missing" do
+          before do
+            params.delete(field)
+          end
+
+          it 'should return proper error' do
+            subject
+            expect(response.status).to eq(422)
+            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field.to_s}")
+          end
+        end
+      end
+
+      it 'should create a new shipment' do
+        expect(subject).to be_ok
+        expect(json_response).to have_attributes(attributes)
+      end
     end
 
     # Start writing this spec a bit differently than before....
@@ -84,23 +106,23 @@ describe Spree::Api::ShipmentsController do
       }
 
       api_put :update, params
-      response.status.should == 200
-      json_response['stock_location_name'].should == stock_location.name
+      expect(response.status).to eq(200)
+      expect(json_response['stock_location_name']).to eq(stock_location.name)
     end
 
     it "can make a shipment ready" do
-      Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
+      allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
       api_put :ready
-      json_response.should have_attributes(attributes)
-      json_response["state"].should == "ready"
-      shipment.reload.state.should == "ready"
+      expect(json_response).to have_attributes(attributes)
+      expect(json_response["state"]).to eq("ready")
+      expect(shipment.reload.state).to eq("ready")
     end
 
     it "cannot make a shipment ready if the order is unpaid" do
-      Spree::Order.any_instance.stub(:paid? => false)
+      allow_any_instance_of(Spree::Order).to receive_messages(:paid? => false)
       api_put :ready
-      json_response["error"].should == "Cannot ready shipment."
-      response.status.should == 422
+      expect(json_response["error"]).to eq("Cannot ready shipment.")
+      expect(response.status).to eq(422)
     end
 
     context 'for completed shipments' do
@@ -109,35 +131,44 @@ describe Spree::Api::ShipmentsController do
 
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }
-        response.status.should == 200
-        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 2
+        expect(response.status).to eq(200)
+        expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"]).to eq(2)
       end
 
       it 'removes a variant from a shipment' do
         order.contents.add(variant, 2)
 
         api_put :remove, { variant_id: variant.to_param, quantity: 1 }
-        response.status.should == 200
-        json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"].should == 1
-     end
+        expect(response.status).to eq(200)
+        expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"]).to eq(1)
+      end
+
+      it 'removes a destroyed variant from a shipment' do
+        order.contents.add(variant, 2)
+        variant.destroy
+
+        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        expect(response.status).to eq(200)
+        expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }["quantity"]).to eq(1)
+      end
     end
 
     context "can transition a shipment from ready to ship" do
       before do
-        Spree::Order.any_instance.stub(:paid? => true, :complete? => true)
+        allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
         # For the shipment notification email
         Spree::Config[:mails_from] = "spree@example.com"
 
         shipment.update!(shipment.order)
-        shipment.state.should == "ready"
-        Spree::ShippingRate.any_instance.stub(:cost => 5)
+        expect(shipment.state).to eq("ready")
+        allow_any_instance_of(Spree::ShippingRate).to receive_messages(:cost => 5)
       end
 
       it "can transition a shipment from ready to ship" do
         shipment.reload
         api_put :ship, id: shipment.to_param, shipment: { tracking: "123123", order_id: shipment.order.to_param }
-        json_response.should have_attributes(attributes)
-        json_response["state"].should == "shipped"
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response["state"]).to eq("shipped")
       end
 
     end

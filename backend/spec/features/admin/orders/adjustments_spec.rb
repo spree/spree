@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Adjustments" do
+describe "Adjustments", :type => :feature do
   stub_authorization!
 
   let!(:order) { create(:completed_order_with_totals) }
@@ -20,7 +20,7 @@ describe "Adjustments" do
       :amount => 10)
   end
 
-  let!(:adjustment) { order.adjustments.create!(label: 'Rebate', amount: 10) }
+  let!(:adjustment) { order.adjustments.create!(order: order, label: 'Rebate', amount: 10) }
 
   before(:each) do
     # To ensure the order totals are correct
@@ -33,16 +33,22 @@ describe "Adjustments" do
     click_link "Adjustments"
   end
 
+  after :each do
+    order.reload.all_adjustments.each do |adjustment|
+      expect(adjustment.order_id).to equal(order.id)
+    end
+  end
+
   context "admin managing adjustments" do
     it "should display the correct values for existing order adjustments" do
       within_row(1) do
-        column_text(2).should == "VAT 5%"
-        column_text(3).should == "$10.00"
+        expect(column_text(2)).to eq("VAT 5%")
+        expect(column_text(3)).to eq("$10.00")
       end
     end
 
     it "only shows eligible adjustments" do
-      page.should_not have_content("ineligible")
+      expect(page).not_to have_content("ineligible")
     end
   end
 
@@ -56,8 +62,8 @@ describe "Adjustments" do
         fill_in "adjustment_amount", :with => "10"
         fill_in "adjustment_label", :with => "rebate"
         click_button "Continue"
-        page.should have_content("successfully created!")
-        page.should have_content("Total: $180.00")
+        expect(page).to have_content("successfully created!")
+        expect(page).to have_content("Total: $180.00")
       end
     end
 
@@ -66,8 +72,8 @@ describe "Adjustments" do
         fill_in "adjustment_amount", :with => ""
         fill_in "adjustment_label", :with => ""
         click_button "Continue"
-        page.should have_content("Label can't be blank")
-        page.should have_content("Amount is not a number")
+        expect(page).to have_content("Label can't be blank")
+        expect(page).to have_content("Amount is not a number")
       end
     end
   end
@@ -83,13 +89,13 @@ describe "Adjustments" do
         fill_in "adjustment_amount", :with => "99"
         fill_in "adjustment_label", :with => "rebate 99"
         click_button "Continue"
-        page.should have_content("successfully updated!")
-        page.should have_content("rebate 99")
+        expect(page).to have_content("successfully updated!")
+        expect(page).to have_content("rebate 99")
         within(".adjustments") do
-          page.should have_content("$99.00")
+          expect(page).to have_content("$99.00")
         end
 
-        page.should have_content("Total: $259.00")
+        expect(page).to have_content("Total: $259.00")
       end
     end
 
@@ -98,8 +104,8 @@ describe "Adjustments" do
         fill_in "adjustment_amount", :with => ""
         fill_in "adjustment_label", :with => ""
         click_button "Continue"
-        page.should have_content("Label can't be blank")
-        page.should have_content("Amount is not a number")
+        expect(page).to have_content("Label can't be blank")
+        expect(page).to have_content("Amount is not a number")
       end
     end
   end
@@ -107,7 +113,7 @@ describe "Adjustments" do
   context "deleting an adjustment" do
     it "should not be possible if adjustment is closed" do
       within_row(1) do
-        page.should_not have_css('.fa-trash')
+        expect(page).not_to have_css('.fa-trash')
       end
     end
 
@@ -118,7 +124,7 @@ describe "Adjustments" do
         end
       end
 
-      page.should have_content(/TOTAL: ?\$170\.00/)
+      expect(page).to have_content(/TOTAL: ?\$170\.00/)
     end
   end
 end

@@ -3,23 +3,24 @@
     <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
 
-  <% if Spree::Order.checkout_step_names.include?(:delivery) %>
+  <% if Spree::Order.checkout_step_names.include?(:delivery) && !%w(cart address).include?(@order.state) %>
     <%= render :partial => "spree/admin/orders/shipment", :collection => @order.shipments, :locals => { :order => order } %>
   <% else %>
     <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
   <% end %>
+
   <%= render :partial => "spree/admin/orders/adjustments", :locals => {
-        :adjustments => @order.line_item_adjustments, 
+        :adjustments => @order.line_item_adjustments,
         :order => order,
         :title => Spree.t(:line_item_adjustments)
    } %>
   <%= render :partial => "spree/admin/orders/adjustments", :locals => {
-        :adjustments => @order.shipment_adjustments, 
+        :adjustments => @order.shipment_adjustments,
         :order => order,
         :title => Spree.t(:shipment_adjustments)
    } %>
   <%= render :partial => "spree/admin/orders/adjustments", :locals => {
-        :adjustments => @order.adjustments, 
+        :adjustments => @order.adjustments,
         :order => order,
         :title => Spree.t(:order_adjustments)
    } %>
@@ -36,9 +37,8 @@
     var shipments = [];
 
     <% @order.shipments.each do |shipment| %>
-      shipments.push(<%== shipment.to_json(:root => false, :include => [:inventory_units, :stock_location]) %>);
+            shipments.push(<%== shipment.as_json(:root => false, :only => [:id, :tracking, :number, :state, :stock_location_id], :include => [:inventory_units, :stock_location]).to_json %>);
     <% end %>
-
     <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
   <% end -%>
 </div>

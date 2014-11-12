@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree::Api
-  describe OrdersController do
+  describe OrdersController, :type => :controller do
     render_views
 
     before do
@@ -10,7 +10,7 @@ module Spree::Api
 
     context "with an available promotion" do
       let!(:order) { create(:order_with_line_items, :line_items_count => 1) }
-      let!(:promotion) do 
+      let!(:promotion) do
         promotion = Spree::Promotion.create(name: "10% off", code: "10off")
         calculator = Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10")
         action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
@@ -19,14 +19,13 @@ module Spree::Api
       end
 
       it "can apply a coupon code to the order" do
-        order.total.should == 110.00
+        expect(order.total).to eq(110.00)
         api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
-        response.status.should == 200
-        order.reload.total.should == 109.00
-        json_response["success"].should == "The coupon code was successfully applied to your order."
-        json_response["error"].should be_blank
-        json_response["successful"].should be_true
-        json_response["status_code"].should eq("coupon_code_applied")
+        expect(response.status).to eq(200)
+        expect(order.reload.total).to eq(109.00)
+        expect(json_response["success"]).to eq("The coupon code was successfully applied to your order.")
+        expect(json_response["error"]).to be_blank
+        expect(json_response["successful"]).to be true
       end
 
       context "with an expired promotion" do
@@ -38,11 +37,10 @@ module Spree::Api
 
         it "fails to apply" do
           api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
-          response.status.should == 422
-          json_response["success"].should be_blank
-          json_response["error"].should == "The coupon code is expired"
-          json_response["successful"].should be_false
-          json_response["status_code"].should eq("coupon_code_expired")
+          expect(response.status).to eq(422)
+          expect(json_response["success"]).to be_blank
+          expect(json_response["error"]).to eq("The coupon code is expired")
+          expect(json_response["successful"]).to be false
         end
       end
     end

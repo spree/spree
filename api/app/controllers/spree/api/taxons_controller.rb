@@ -65,7 +65,7 @@ module Spree
         # Products#index does not do the sorting.
         taxon = Spree::Taxon.find(params[:id])
         @products = taxon.products.ransack(params[:q]).result
-        @products = @products.page(params[:page]).per(500 || params[:per_page])
+        @products = @products.page(params[:page]).per(params[:per_page] || 500)
         render "spree/api/products/index"
       end
 

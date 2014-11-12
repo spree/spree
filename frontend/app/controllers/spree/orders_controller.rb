@@ -35,7 +35,7 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order || Order.new
+      @order = current_order || Order.incomplete.find_or_initialize_by(guest_token: cookies.signed[:guest_token])
       associate_user
     end
 
@@ -49,7 +49,7 @@ module Spree
         end
       else
         flash[:error] = populator.errors.full_messages.join(" ")
-        redirect_to :back
+        redirect_back_or_default(spree.root_path)
       end
     end
 

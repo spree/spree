@@ -17,7 +17,7 @@ class FooAbility
   end
 end
 
-describe Spree::Ability do
+describe Spree::Ability, :type => :model do
   let(:user) { create(:user) }
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
@@ -36,12 +36,12 @@ describe Spree::Ability do
   context 'register_ability' do
     it 'should add the ability to the list of abilties' do
       Spree::Ability.register_ability(FooAbility)
-      Spree::Ability.new(user).abilities.should_not be_empty
+      expect(Spree::Ability.new(user).abilities).not_to be_empty
     end
 
     it 'should apply the registered abilities permissions' do
       Spree::Ability.register_ability(FooAbility)
-      Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, :id => 1)).should be_true
+      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, :id => 1))).to be true
     end
   end
 
@@ -49,7 +49,7 @@ describe Spree::Ability do
     let(:resource) { Object.new }
 
     context 'with admin user' do
-      before(:each) { user.stub(:has_spree_role?).and_return(true) }
+      before(:each) { allow(user).to receive(:has_spree_role?).and_return(true) }
       it_should_behave_like 'access granted'
       it_should_behave_like 'index allowed'
     end
@@ -72,10 +72,10 @@ describe Spree::Ability do
     context 'with admin user' do
       it 'should be able to admin' do
         user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
-        ability.should be_able_to :admin, resource
-        ability.should be_able_to :index, resource_order
-        ability.should be_able_to :show, resource_product
-        ability.should be_able_to :create, resource_user
+        expect(ability).to be_able_to :admin, resource
+        expect(ability).to be_able_to :index, resource_order
+        expect(ability).to be_able_to :show, resource_product
+        expect(ability).to be_able_to :create, resource_user
       end
     end
 
@@ -85,24 +85,24 @@ describe Spree::Ability do
 
         Spree::Ability.register_ability(BarAbility)
 
-        ability.should_not be_able_to :admin, resource
+        expect(ability).not_to be_able_to :admin, resource
 
-        ability.should be_able_to :admin, resource_order
-        ability.should be_able_to :index, resource_order
-        ability.should_not be_able_to :update, resource_order
+        expect(ability).to be_able_to :admin, resource_order
+        expect(ability).to be_able_to :index, resource_order
+        expect(ability).not_to be_able_to :update, resource_order
         # ability.should_not be_able_to :create, resource_order # Fails
 
-        ability.should be_able_to :admin, resource_shipment
-        ability.should be_able_to :index, resource_shipment
-        ability.should be_able_to :create, resource_shipment
+        expect(ability).to be_able_to :admin, resource_shipment
+        expect(ability).to be_able_to :index, resource_shipment
+        expect(ability).to be_able_to :create, resource_shipment
 
-        ability.should_not be_able_to :admin, resource_product
-        ability.should_not be_able_to :update, resource_product
+        expect(ability).not_to be_able_to :admin, resource_product
+        expect(ability).not_to be_able_to :update, resource_product
         # ability.should_not be_able_to :show, resource_product # Fails
 
-        ability.should_not be_able_to :admin, resource_user
-        ability.should_not be_able_to :update, resource_user
-        ability.should be_able_to :update, user
+        expect(ability).not_to be_able_to :admin, resource_user
+        expect(ability).not_to be_able_to :update, resource_user
+        expect(ability).to be_able_to :update, user
         # ability.should_not be_able_to :create, resource_user # Fails
         # It can create new users if is has access to the :admin, User!!
 
@@ -114,10 +114,10 @@ describe Spree::Ability do
 
     context 'with customer' do
       it 'should not be able to admin' do
-        ability.should_not be_able_to :admin, resource
-        ability.should_not be_able_to :admin, resource_order
-        ability.should_not be_able_to :admin, resource_product
-        ability.should_not be_able_to :admin, resource_user
+        expect(ability).not_to be_able_to :admin, resource
+        expect(ability).not_to be_able_to :admin, resource_order
+        expect(ability).not_to be_able_to :admin, resource_product
+        expect(ability).not_to be_able_to :admin, resource_user
       end
     end
   end
@@ -161,14 +161,14 @@ describe Spree::Ability do
 
       context 'requested with proper token' do
         let(:token) { 'TOKEN123' }
-        before(:each) { resource.stub guest_token: 'TOKEN123' }
+        before(:each) { allow(resource).to receive_messages guest_token: 'TOKEN123' }
         it_should_behave_like 'access granted'
         it_should_behave_like 'no index allowed'
       end
 
       context 'requested with inproper token' do
         let(:token) { 'FAIL' }
-        before(:each) { resource.stub guest_token: 'TOKEN123' }
+        before(:each) { allow(resource).to receive_messages guest_token: 'TOKEN123' }
         it_should_behave_like 'create only'
       end
     end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Stock Management" do
+describe "Stock Management", :type => :feature do
   stub_authorization!
 
   before(:each) do
@@ -24,14 +24,14 @@ describe "Stock Management" do
       let(:backorderable) { find ".stock_item_backorderable" }
 
       before do
-        backorderable.should be_checked
+        expect(backorderable).to be_checked
         backorderable.set(false)
         wait_for_ajax
       end
 
       it "persists the value when page reload", js: true do
         visit current_path
-        backorderable.should_not be_checked
+        expect(backorderable).not_to be_checked
       end
     end
 
@@ -47,7 +47,7 @@ describe "Stock Management" do
       new_location_backorderable.set(false)
       wait_for_ajax
 
-      page.current_url.should include("/admin/products")
+      expect(page.current_url).to include("/admin/products")
     end
 
     it "can create a new stock movement", js: true do
@@ -55,10 +55,10 @@ describe "Stock Management" do
       select2 "default", from: "Stock Location"
       click_button "Add Stock"
 
-      page.should have_content('successfully created')
+      expect(page).to have_content('successfully created')
 
       within(:css, '.stock_location_info table') do
-        column_text(2).should eq '15'
+        expect(column_text(2)).to eq '15'
       end
     end
 
@@ -67,10 +67,10 @@ describe "Stock Management" do
       select2 "default", from: "Stock Location"
       click_button "Add Stock"
 
-      page.should have_content('successfully created')
+      expect(page).to have_content('successfully created')
 
       within(:css, '.stock_location_info table') do
-        column_text(2).should eq '5'
+        expect(column_text(2)).to eq '5'
       end
     end
 
@@ -86,11 +86,11 @@ describe "Stock Management" do
         select2 "SPREEC", from: "Variant"
         click_button "Add Stock"
 
-        page.should have_content('successfully created')
+        expect(page).to have_content('successfully created')
 
         within("#listing_product_stock tr", :text => "SPREEC") do
           within("table") do
-            column_text(2).should eq '40'
+            expect(column_text(2)).to eq '40'
           end
         end
       end
@@ -110,8 +110,8 @@ describe "Stock Management" do
       end
 
       it "redirects to stock locations page" do
-        page.should have_content(Spree.t(:stock_management_requires_a_stock_location))
-        page.current_url.should include("admin/stock_locations")
+        expect(page).to have_content(Spree.t(:stock_management_requires_a_stock_location))
+        expect(page.current_url).to include("admin/stock_locations")
       end
     end
   end

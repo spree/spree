@@ -143,8 +143,7 @@ module Spree
         brand_property = Spree::Property.find_by(name: 'brand')
         scope = Spree::ProductProperty.where(property: brand_property).
           joins(product: :taxons).
-          where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants).
-          scoped
+          where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants)
         brands = scope.pluck(:value).uniq
         {
           name:   'Applicable Brands',

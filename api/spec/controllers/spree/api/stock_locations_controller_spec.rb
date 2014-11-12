@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::StockLocationsController do
+  describe Api::StockLocationsController, :type => :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location) }
@@ -14,12 +14,12 @@ module Spree
     context "as a user" do
       it "cannot see stock locations" do
         api_get :index
-        response.status.should == 401
+        expect(response.status).to eq(401)
       end
 
       it "cannot see a single stock location" do
         api_get :show, :id => stock_location.id
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
 
       it "cannot create a new stock location" do
@@ -31,17 +31,17 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 401
+        expect(response.status).to eq(401)
       end
 
       it "cannot update a stock location" do
         api_put :update, :stock_location => { :name => "South Pole" }, :id => stock_location.to_param
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
 
       it "cannot delete a stock location" do
         api_put :destroy, :id => stock_location.to_param
-        response.status.should == 404
+        expect(response.status).to eq(404)
       end
     end
 
@@ -51,30 +51,30 @@ module Spree
 
       it "gets list of stock locations" do
         api_get :index
-        json_response['stock_locations'].first.should have_attributes(attributes)
-        json_response['stock_locations'].first['country'].should_not be_nil
-        json_response['stock_locations'].first['state'].should_not be_nil
+        expect(json_response['stock_locations'].first).to have_attributes(attributes)
+        expect(json_response['stock_locations'].first['country']).not_to be_nil
+        expect(json_response['stock_locations'].first['state']).not_to be_nil
       end
 
       it 'can control the page size through a parameter' do
         create(:stock_location)
         api_get :index, per_page: 1
-        json_response['count'].should == 1
-        json_response['current_page'].should == 1
-        json_response['pages'].should == 2
+        expect(json_response['count']).to eq(1)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:stock_location, name: 'South America')
         api_get :index, q: { name_cont: 'south' }
-        json_response['count'].should == 1
-        json_response['stock_locations'].first['name'].should eq expected_result.name
+        expect(json_response['count']).to eq(1)
+        expect(json_response['stock_locations'].first['name']).to eq expected_result.name
       end
 
       it "gets a stock location" do
         api_get :show, id: stock_location.to_param
-        json_response.should have_attributes(attributes)
-        json_response['name'].should eq stock_location.name
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response['name']).to eq stock_location.name
       end
 
       it "can create a new stock location" do
@@ -86,8 +86,8 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
+        expect(response.status).to eq(201)
+        expect(json_response).to have_attributes(attributes)
       end
 
       it "can update a stock location" do
@@ -99,14 +99,14 @@ module Spree
         }
 
         api_put :update, params
-        response.status.should == 200
-        json_response['name'].should eq 'South Pole'
+        expect(response.status).to eq(200)
+        expect(json_response['name']).to eq 'South Pole'
       end
 
       it "can delete a stock location" do
         api_delete :destroy, id: stock_location.to_param
-        response.status.should == 204
-        lambda { stock_location.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        expect(response.status).to eq(204)
+        expect { stock_location.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

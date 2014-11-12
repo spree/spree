@@ -81,11 +81,17 @@ module Spree
       end
 
       def credit!(credit_amount=nil)
+        raise Core::GatewayError.new(Spree.t(:payment_processing_failed)) if processing?
+
+        # Calculate credit amount before marking as processing since it messes up the order totals not having payment in completed state.
+        credit_amount ||= credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
+        credit_amount = credit_amount.to_f
+
+        # Mark as processing to avoid race condition that could send multiple credits to the gateway.
+        started_processing!
         protect_from_connection_error do
           check_environment
 
-          credit_amount ||= credit_allowed >= order.outstanding_balance.abs ? order.outstanding_balance.abs : credit_allowed.abs
-          credit_amount = credit_amount.to_f
           credit_cents = Spree::Money.new(credit_amount, currency: currency).money.cents
 
           if payment_method.payment_profiles_supported?
@@ -95,6 +101,8 @@ module Spree
           end
 
           record_response(response)
+          # Always set back to 'completed' as initial payment record was successful.
+          self.update_column(:state, 'completed')
 
           if response.success?
             self.class.create!(
@@ -121,7 +129,6 @@ module Spree
 
       def partial_credit(amount)
         return if amount > credit_allowed
-        started_processing!
         credit!(amount)
       end
 

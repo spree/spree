@@ -1,35 +1,35 @@
 require 'spec_helper'
 
-describe Spree::StockItem do
+describe Spree::StockItem, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
 
   subject { stock_location.stock_items.order(:id).first }
 
   it 'maintains the count on hand for a variant' do
-    subject.count_on_hand.should eq 10
+    expect(subject.count_on_hand).to eq 10
   end
 
   it "can return the stock item's variant's name" do
-    subject.variant_name.should == subject.variant.name
+    expect(subject.variant_name).to eq(subject.variant.name)
   end
 
   context "available to be included in shipment" do
     context "has stock" do
-      it { subject.should be_available }
+      it { expect(subject).to be_available }
     end
 
     context "backorderable" do
       before { subject.backorderable = true }
-      it { subject.should be_available }
+      it { expect(subject).to be_available }
     end
 
     context "no stock and not backorderable" do
       before do
         subject.backorderable = false
-        subject.stub(count_on_hand: 0)
+        allow(subject).to receive_messages(count_on_hand: 0)
       end
 
-      it { subject.should_not be_available }
+      it { expect(subject).not_to be_available }
     end
   end
 
@@ -40,7 +40,7 @@ describe Spree::StockItem do
          subject.reduce_count_on_hand_to_zero
        end
 
-       it { subject.count_on_hand.should eq(0) }
+       it { expect(subject.count_on_hand).to eq(0) }
      end
 
      context 'when count_on_hand > 0' do
@@ -50,7 +50,7 @@ describe Spree::StockItem do
          subject.reduce_count_on_hand_to_zero
        end
 
-       it { subject.count_on_hand.should eq(@count_on_hand) }
+       it { expect(subject.count_on_hand).to eq(@count_on_hand) }
      end
   end
 
@@ -61,11 +61,11 @@ describe Spree::StockItem do
       copy = Spree::StockItem.find(subject.id)
 
       subject.adjust_count_on_hand(5)
-      subject.count_on_hand.should eq(current_on_hand + 5)
+      expect(subject.count_on_hand).to eq(current_on_hand + 5)
 
-      copy.count_on_hand.should eq(current_on_hand)
+      expect(copy.count_on_hand).to eq(current_on_hand)
       copy.adjust_count_on_hand(5)
-      copy.count_on_hand.should eq(current_on_hand + 10)
+      expect(copy.count_on_hand).to eq(current_on_hand + 10)
     end
 
     context "item out of stock (by two items)" do
@@ -73,35 +73,35 @@ describe Spree::StockItem do
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
       before do
-        subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
+        allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
         subject.update_column(:count_on_hand, -2)
       end
 
       # Regression test for #3755
       it "processes existing backorders, even with negative stock" do
-        inventory_unit.should_receive(:fill_backorder)
-        inventory_unit_2.should_not_receive(:fill_backorder)
+        expect(inventory_unit).to receive(:fill_backorder)
+        expect(inventory_unit_2).not_to receive(:fill_backorder)
         subject.adjust_count_on_hand(1)
-        subject.count_on_hand.should == -1
+        expect(subject.count_on_hand).to eq(-1)
       end
 
       # Test for #3755
       it "does not process backorders when stock is adjusted negatively" do
-        inventory_unit.should_not_receive(:fill_backorder)
-        inventory_unit_2.should_not_receive(:fill_backorder)
+        expect(inventory_unit).not_to receive(:fill_backorder)
+        expect(inventory_unit_2).not_to receive(:fill_backorder)
         subject.adjust_count_on_hand(-1)
-        subject.count_on_hand.should == -3
+        expect(subject.count_on_hand).to eq(-3)
       end
 
       context "adds new items" do
-        before { subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
-          inventory_unit.should_receive(:fill_backorder)
-          inventory_unit_2.should_receive(:fill_backorder)
+          expect(inventory_unit).to receive(:fill_backorder)
+          expect(inventory_unit_2).to receive(:fill_backorder)
 
           subject.adjust_count_on_hand(3)
-          subject.count_on_hand.should == 1
+          expect(subject.count_on_hand).to eq(1)
         end
       end
     end
@@ -114,11 +114,11 @@ describe Spree::StockItem do
       copy = Spree::StockItem.find(subject.id)
 
       subject.set_count_on_hand(5)
-      subject.count_on_hand.should eq(5)
+      expect(subject.count_on_hand).to eq(5)
 
-      copy.count_on_hand.should eq(current_on_hand)
+      expect(copy.count_on_hand).to eq(current_on_hand)
       copy.set_count_on_hand(10)
-      copy.count_on_hand.should eq(current_on_hand)
+      expect(copy.count_on_hand).to eq(current_on_hand)
     end
 
     context "item out of stock (by two items)" do
@@ -128,18 +128,18 @@ describe Spree::StockItem do
       before { subject.set_count_on_hand(-2) }
 
       it "doesn't process backorders" do
-        subject.should_not_receive(:backordered_inventory_units)
+        expect(subject).not_to receive(:backordered_inventory_units)
       end
 
       context "adds new items" do
-        before { subject.stub(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
-          inventory_unit.should_receive(:fill_backorder)
-          inventory_unit_2.should_receive(:fill_backorder)
+          expect(inventory_unit).to receive(:fill_backorder)
+          expect(inventory_unit_2).to receive(:fill_backorder)
 
           subject.set_count_on_hand(1)
-          subject.count_on_hand.should == 1
+          expect(subject.count_on_hand).to eq(1)
         end
       end
     end
@@ -226,7 +226,7 @@ describe Spree::StockItem do
   context "variant" do
     it "can be found even if the variant is deleted" do
       subject.variant.destroy
-      subject.reload.variant.should_not be_nil
+      expect(subject.reload.variant).not_to be_nil
     end
   end
 
@@ -237,7 +237,9 @@ describe Spree::StockItem do
           subject.save
         end
 
-        it { should have(:no).errors_on(:count_on_hand) }
+        it 'has :no errors_on' do
+          expect(subject.errors_on(:count_on_hand).size).to eq(0)
+        end
       end
 
       shared_examples_for 'not valid count_on_hand' do
@@ -245,8 +247,10 @@ describe Spree::StockItem do
           subject.save
         end
 
-        it { should have(1).error_on(:count_on_hand) }
-        it { subject.errors[:count_on_hand].should include 'must be greater than or equal to 0' }
+        it 'has 1 error_on' do
+          expect(subject.error_on(:count_on_hand).size).to eq(1)
+        end
+        it { expect(subject.errors[:count_on_hand]).to include 'must be greater than or equal to 0' }
       end
 
       context 'when count_on_hand not changed' do

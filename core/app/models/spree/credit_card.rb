@@ -132,8 +132,8 @@ module Spree
         if month.to_i < 1 || month.to_i > 12
           errors.add(:base, :expiry_invalid)
         else
-          time = Time.zone.parse("#{year}-#{month}-1")
-          if time < Time.zone.now.to_time.beginning_of_month
+          current = Time.current
+          if year.to_i < current.year or (year.to_i == current.year and month.to_i < current.month)
             errors.add(:base, :card_expired)
           end
         end
