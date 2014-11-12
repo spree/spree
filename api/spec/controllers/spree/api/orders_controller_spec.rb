@@ -350,8 +350,7 @@ module Spree
                                  :country_id => Country.first.id, :state_id => State.first.id} }
 
       before do
-        allow(Spree::LineItem).to receive(:find_by_id).and_return(Spree::LineItem.new)
-        allow_any_instance_of(Order).to receive_messages :user => current_api_user
+        allow_any_instance_of(Order).to receive_messages user: current_api_user
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil
