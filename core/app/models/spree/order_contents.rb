@@ -50,7 +50,7 @@ module Spree
         line_item_ids = order.line_items.pluck(:id)
 
         params[:line_items_attributes].each_pair do |id, value|
-          unless line_item_ids.include?(value[:id].to_i)
+          unless line_item_ids.include?(value[:id].to_i) || value[:variant_id].present?
             filtered_params[:line_items_attributes].delete(id)
           end
         end
