@@ -47,9 +47,12 @@ module Spree
         filtered_params = params.symbolize_keys
         return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
 
+        line_item_ids = order.line_items.pluck(:id)
+
         params[:line_items_attributes].each_pair do |id, value|
-          line_item_id = value[:id]
-          filtered_params[:line_items_attributes].delete(id) unless Spree::LineItem.find_by_id(line_item_id.to_i)
+          unless line_item_ids.include?(value[:id].to_i)
+            filtered_params[:line_items_attributes].delete(id)
+          end
         end
         filtered_params
       end
