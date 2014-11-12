@@ -352,3 +352,8 @@ Here are some ways *you* can contribute:
 * by [refactoring code](https://github.com/spree/spree/labels/performance)
 * by resolving [issues](https://github.com/spree/spree/issues)
 * by reviewing [pull requests](https://github.com/spree/spree/pulls)
+
+License
+-------
+
+Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
