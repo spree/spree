@@ -520,18 +520,22 @@ describe Spree::Order, :type => :model do
   end
 
   describe "#associate_user!" do
-    let(:user) { FactoryGirl.create(:user) }
+    let(:user) { FactoryGirl.create(:user_with_addreses) }
     let(:email) { user.email }
     let(:created_by) { user }
+    let(:bill_address) { user.bill_address }
+    let(:ship_address) { user.ship_address }
     let(:override_email) { true }
 
     let(:order) { FactoryGirl.build(:order, order_attributes) }
 
     let(:order_attributes) do
       {
-        user:       nil,
-        email:      nil,
-        created_by: nil
+        user:         nil,
+        email:        nil,
+        created_by:   nil,
+        bill_address: nil,
+        ship_address: nil
       }
     end
 
@@ -543,6 +547,12 @@ describe Spree::Order, :type => :model do
 
       expect(order.created_by).to eql(created_by)
       expect(order.created_by_id).to eql(created_by.id)
+
+      expect(order.bill_address).to eql(bill_address)
+      expect(order.bill_address_id).to eql(bill_address.id)
+
+      expect(order.ship_address).to eql(ship_address)
+      expect(order.ship_address_id).to eql(ship_address.id)
     end
 
     shared_examples_for "#associate_user!" do |persisted = false|
@@ -577,13 +587,27 @@ describe Spree::Order, :type => :model do
 
     context "when created_by is set" do
       let(:order_attributes) { super().merge(created_by: created_by) }
-      let(:created_by) { create(:user) }
+      let(:created_by) { create(:user_with_addreses) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when bill_address is set" do
+      let(:order_attributes) { super().merge(bill_address: bill_address) }
+      let(:bill_address) { FactoryGirl.build(:address) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when ship_address is set" do
+      let(:order_attributes) { super().merge(ship_address: ship_address) }
+      let(:ship_address) { FactoryGirl.build(:address) }
 
       it_should_behave_like "#associate_user!"
     end
 
     context "when the user is not persisted" do
-      let(:user) { FactoryGirl.build(:user) }
+      let(:user) { FactoryGirl.build(:user_with_addreses) }
 
       it "does not persist the user" do
         expect { order.associate_user!(user) }

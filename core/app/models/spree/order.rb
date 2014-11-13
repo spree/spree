@@ -277,11 +277,13 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
-      self.user         = user
-      self.email        = user.email if override_email
-      self.created_by ||= user
+      self.user           = user
+      self.email          = user.email if override_email
+      self.created_by   ||= user
+      self.bill_address ||= user.bill_address
+      self.ship_address ||= user.ship_address
 
-      changes = slice(:user_id, :email, :created_by_id)
+      changes = slice(:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id)
 
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
