@@ -47,6 +47,7 @@ module Spree
     preference :display_currency, :boolean, default: false
     preference :default_country_id, :integer
     preference :dismissed_spree_alerts, :string, default: ''
+    preference :enable_frontend, :boolean, default: true
     preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
     preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
     preference :hide_cents, :boolean, default: false
