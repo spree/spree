@@ -15,8 +15,13 @@ module Spree
         def perform(payload = {})
           order = payload[:order]
           # Find only the line items which have not already been adjusted by this promotion
-          already_adjusted_line_items = adjustments.where(order_id: order.id, adjustable_type: 'Spree::LineItem').pluck(:adjustable_id)
-          order.line_items.where.not(id: already_adjusted_line_items).map do |line_item|
+          adjusted_line_item_ids = order.all_adjustments.source(self).line_item.pluck(:adjustable_id)
+
+          unadjusted_line_items = order.line_items.reject do |line_item|
+            adjusted_line_item_ids.include?(line_item.id)
+          end
+
+          unadjusted_line_items.map do |line_item|
             create_adjustment(line_item, order)
           end.any?
         end
