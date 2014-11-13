@@ -14,15 +14,17 @@ module Spree
 
         def perform(payload = {})
           order = payload[:order]
-          promotion = payload[:promotion]
 
-          result = false
+          # Find only the line items which have not already been adjusted by this promotion
+          adjusted_line_item_ids = order.all_adjustments.source(self).line_item.pluck(:adjustable_id)
 
-          line_items_to_adjust(promotion, order).each do |line_item|
-            current_result = create_adjustment(line_item, order)
-            result ||= current_result
+          unadjusted_line_items = order.line_items.reject do |line_item|
+            adjusted_line_item_ids.include?(line_item.id)
           end
-          return result
+
+          unadjusted_line_items.map do |line_item|
+            create_adjustment(line_item, order) if promotion.line_item_actionable?(order, line_item)
+          end.any?
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
@@ -36,43 +38,24 @@ module Spree
         end
 
         private
-          # Tells us if there if the specified promotion is already associated with the line item
-          # regardless of whether or not its currently eligible. Useful because generally
-          # you would only want a promotion action to apply to line item no more than once.
-          #
-          # Receives an adjustment +source+ (here a PromotionAction object) and tells
-          # if the order has adjustments from that already
-          def promotion_credit_exists?(adjustable)
-            self.adjustments.where(:adjustable_id => adjustable.id).exists?
-          end
 
-          def create_adjustment(adjustable, order)
-            amount = self.compute_amount(adjustable)
-            return if amount == 0
+        def create_adjustment(adjustable, order)
+          amount = self.compute_amount(adjustable)
+          return if amount == 0
 
-            order.create_adjustment!(
-              amount:     amount,
-              source:     self,
-              adjustable: adjustable,
-              label:      "#{Spree.t(:promotion)} (#{promotion.name})",
-            )
-            true
-          end
+          order.create_adjustment!(
+            amount:     amount,
+            source:     self,
+            adjustable: adjustable,
+            label:      "#{Spree.t(:promotion)} (#{promotion.name})",
+          )
+          true
+        end
 
-          def ensure_action_has_calculator
-            return if self.calculator
-            self.calculator = Calculator::PercentOnLineItem.new
-          end
-
-          def line_items_to_adjust(promotion, order)
-            excluded_ids = self.adjustments.
-              where(adjustable_id: order.line_items.pluck(:id), adjustable_type: 'Spree::LineItem').
-              pluck(:adjustable_id)
-
-            order.line_items.where.not(id: excluded_ids).select do |line_item|
-              promotion.line_item_actionable? order, line_item
-            end
-          end
+        def ensure_action_has_calculator
+          return if self.calculator
+          self.calculator = Calculator::PercentOnLineItem.new
+        end
 
       end
     end
