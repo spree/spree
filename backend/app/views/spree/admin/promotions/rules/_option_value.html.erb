@@ -1,0 +1,42 @@
+<div class="panel-body">
+  <div class="promo-rule-option-values">
+    <div class="js-promo-rule-option-values"></div>
+
+    <button class="btn btn-primary btn-success js-add-promo-rule-option-value">
+      <span class="icon icon-add"></span>
+      <%= Spree.t(:add) %>
+    </button>
+  </div>
+</div>
+
+<%= content_tag :div, nil, class: "hidden js-original-promo-rule-option-values",
+  data: { :'original-option-values' => promotion_rule.preferred_eligible_values } %>
+
+<script type="text/x-handlebars-template" id="promo-rule-option-value-option-values-select-name-template">
+  <%= param_prefix %>[preferred_eligible_values][{{productId}}]
+</script>
+
+<script type="text/x-handlebars-template" id="promo-rule-option-value-template">
+  <div class="promo-rule-option-value panel panel-default">
+    <div class="panel-heading">
+      <a class="js-remove-promo-rule-option-value delete pull-right">
+        <span class="icon icon-delete"></span>
+      </a>
+      <div class="col-md-6">
+        <label><%= Spree.t(:product) %></label>
+      </div>
+      <div class="col-md-5">
+        <label><%= Spree.t(:option_values) %></label>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="panel-body row">
+      <div class="col-md-6">
+        <input class="js-promo-rule-option-value-product-select fullwidth" type="hidden" value="{{ productSelect.value }}">
+      </div>
+      <div class="col-md-6">
+        <input class="js-promo-rule-option-value-option-values-select fullwidth" name="<%= param_prefix %>[preferred_eligible_values][{{ productSelect.value }}]" type="hidden" value={{optionValuesSelect.value}}>
+      </div>
+    </div>
+  </div>
+</script>

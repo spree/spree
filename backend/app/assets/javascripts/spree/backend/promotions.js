@@ -1,4 +1,5 @@
 var initProductActions = function () {
+  /* globals Handlebars */
   'use strict';
 
   // Add classes on promotion items for design
@@ -32,6 +33,54 @@ var initProductActions = function () {
       }
     });
   });
+
+  //
+  // Option Value Promo Rule
+  //
+  if ($('#promo-rule-option-value-template').length) {
+    var optionValueSelectNameTemplate = Handlebars.compile($('#promo-rule-option-value-option-values-select-name-template').html());
+    var optionValueTemplate = Handlebars.compile($('#promo-rule-option-value-template').html());
+
+    var addOptionValue = function(product, values) {
+      $('.js-promo-rule-option-values').append(optionValueTemplate({
+        productSelect: {value: product},
+        optionValuesSelect: {value: values}
+      }));
+      var optionValue = $('.js-promo-rule-option-values .promo-rule-option-value').last();
+      optionValue.find('.js-promo-rule-option-value-product-select').productAutocomplete({multiple: false});
+      optionValue.find('.js-promo-rule-option-value-option-values-select').optionValueAutocomplete({
+        productSelect: '.js-promo-rule-option-value-product-select'
+      });
+      if (product === null) {
+        optionValue.find('.js-promo-rule-option-value-option-values-select').prop('disabled', true);
+      }
+    };
+
+    var originalOptionValues = $('.js-original-promo-rule-option-values').data('original-option-values');
+    if (!$('.js-original-promo-rule-option-values').data('loaded')) {
+      if ($.isEmptyObject(originalOptionValues)) {
+        addOptionValue(null, null);
+      } else {
+        $.each(originalOptionValues, addOptionValue);
+      }
+    }
+    $('.js-original-promo-rule-option-values').data('loaded', true);
+
+    $(document).on('click', '.js-add-promo-rule-option-value', function (event) {
+      event.preventDefault();
+      addOptionValue(null, null);
+    });
+
+    $(document).on('click', '.js-remove-promo-rule-option-value', function () {
+      $(this).parents('.promo-rule-option-value').remove();
+    });
+
+    $(document).on('change', '.js-promo-rule-option-value-product-select', function () {
+      var optionValueSelect = $(this).parents('.promo-rule-option-value').find('.js-promo-rule-option-value-option-values-select');
+      optionValueSelect.attr('name', optionValueSelectNameTemplate({productId: $(this).val()}).trim());
+      optionValueSelect.prop('disabled', $(this).val() === '').select2('val', '');
+    });
+  }
 
   //
   // Tiered Calculator

@@ -16,6 +16,7 @@
 Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
 Spree.routes.classifications_api = Spree.pathFor('api/classifications')
 Spree.routes.option_type_search = Spree.pathFor('api/option_types')
+Spree.routes.option_value_search = Spree.pathFor('api/option_values')
 Spree.routes.orders_api = Spree.pathFor('api/orders')
 Spree.routes.product_search = Spree.pathFor('api/products')
 Spree.routes.shipments_api = Spree.pathFor('api/shipments')

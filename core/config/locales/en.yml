@@ -1100,6 +1100,9 @@ en:
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User
+      option_value:
+        description: Order includes specified product(s) with matching option value(s)
+        name: Option Value(s)
       product:
         description: Order includes specified product(s)
         name: Product(s)
