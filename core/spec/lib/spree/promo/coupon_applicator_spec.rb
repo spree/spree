@@ -40,7 +40,7 @@ describe Spree::Promo::CouponApplicator do
       result = subject.apply
       expect(result[:coupon_applied?]).to eq(true)
       expect(result[:success]).to eq("The coupon code was successfully applied to your order.")
-      expect(order.line_items.pluck(:id)).to include(variant.id)
+      expect(order.line_items.pluck(:variant_id)).to include(variant.id)
     end
   end
 end
