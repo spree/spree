@@ -61,6 +61,10 @@ module Spree
         line_item.currency        = currency
         line_item.price           = variant.price_in(currency).amount
 
+        unless line_item.valid?
+          order.line_items.delete(line_item)
+        end
+
         line_item
       end
 

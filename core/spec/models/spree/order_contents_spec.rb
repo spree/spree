@@ -21,6 +21,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
         expect(Spree::PromotionHandler).to_not receive(:new)
         line_item = subject.add(variant)
         expect(line_item.valid?).to be(false)
+        expect(order.line_items.include?(line_item)).to be(false)
       end
     end
 
@@ -59,19 +60,19 @@ describe Spree::OrderContents, type: :model, db: :isolate do
 
       context 'on new line item' do
         it 'attaches currency to line item' do
-          currency = 'EUR'
-          subject.add(variant, 1, currency)
-          expect(order.line_items.first.currency).to be(currency)
+          order.currency = 'EUR'
+          subject.add(variant, 1, order.currency)
+          expect(order.line_items.first.currency).to be(order.currency)
           expect(order.line_items.first.price).to eql(100.to_d)
         end
       end
 
       context 'on existing line item' do
         it 'attaches currency to line item' do
-          currency = 'EUR'
+          order.currency = 'EUR'
           subject.add(variant, 1)
-          subject.add(variant, 1, currency)
-          expect(order.line_items.first.currency).to be(currency)
+          subject.add(variant, 1, order.currency)
+          expect(order.line_items.first.currency).to be(order.currency)
           expect(order.line_items.first.price).to eql(100.to_d)
         end
       end
