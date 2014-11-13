@@ -196,7 +196,8 @@ module Spree
                                                                          :product_id,
                                                                          :property_name])
 
-        expect(json_response["taxons"].first).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
+        expect(json_response["classifications"].first).to have_attributes([:taxon_id, :position, :taxon])
+        expect(json_response["classifications"].first['taxon']).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
       end
 
       context "tracking is disabled" do
