@@ -665,59 +665,112 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "#associate_user!" do
-    let!(:user) { FactoryGirl.create(:user) }
+  describe "#associate_user!" do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:email) { user.email }
+    let(:created_by) { user }
+    let(:override_email) { true }
 
-    it "should associate a user with a persisted order" do
-      order = FactoryGirl.create(:order_with_line_items, created_by: nil)
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
+    let(:order) { FactoryGirl.build(:order, order_attributes) }
 
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
+    let(:order_attributes) do
+      {
+        user:       nil,
+        email:      nil,
+        created_by: nil
+      }
     end
 
-    it "should not overwrite the created_by if it already is set" do
-      creator = create(:user)
-      order = FactoryGirl.create(:order_with_line_items, created_by: creator)
+    def assert_expected_order_state
+      expect(order.user).to eql(user)
+      expect(order.user_id).to eql(user.id)
 
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
+      expect(order.email).to eql(email)
 
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
+      expect(order.created_by).to eql(created_by)
+      expect(order.created_by_id).to eql(created_by.id)
     end
 
-    it "should associate a user with a non-persisted order" do
-      order = Spree::Order.new
+    shared_examples_for "#associate_user!" do |persisted = false|
+      it "associates a user to an order" do
+        order.associate_user!(user, override_email)
+        assert_expected_order_state
+      end
 
-      expect do
+      unless persisted
+        it "does not persist the order" do
+          expect { order.associate_user!(user) }
+            .to_not change(order, :persisted?)
+            .from(false)
+        end
+      end
+    end
+
+    context "when email is set" do
+      let(:order_attributes) { super().merge(email: 'test@example.com') }
+
+      context "when email should be overridden" do
+        it_should_behave_like "#associate_user!"
+      end
+
+      context "when email should not be overridden" do
+        let(:override_email) { false }
+        let(:email) { 'test@example.com' }
+
+        it_should_behave_like "#associate_user!"
+      end
+    end
+
+    context "when created_by is set" do
+      let(:order_attributes) { super().merge(created_by: created_by) }
+      let(:created_by) { create(:user) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when the user is not persisted" do
+      let(:user) { FactoryGirl.build(:user) }
+
+      it "does not persist the user" do
+        expect { order.associate_user!(user) }
+          .to_not change(user, :persisted?)
+          .from(false)
+      end
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when the order is persisted" do
+      let(:order) { FactoryGirl.create(:order, order_attributes) }
+
+      it "associates a user to a persisted order" do
         order.associate_user!(user)
-      end.to change { [order.user, order.email] }.from([nil, nil]).to([user, user.email])
-    end
+        order.reload
+        assert_expected_order_state
+      end
 
-    it "should not persist an invalid address" do
-      address = Spree::Address.new
-      order.user = nil
-      order.email = nil
-      order.ship_address = address
-      expect do
+      it "does not persist other changes to the order" do
+        order.state = 'complete'
         order.associate_user!(user)
-      end.not_to change { address.persisted? }.from(false)
+        order.reload
+        expect(order.state).to eql('cart')
+      end
+
+      it "does not change any other orders" do
+        other = FactoryGirl.create(:order)
+        order.associate_user!(user)
+        expect(other.reload.user).to_not eql(user)
+      end
+
+      it "is not affected by scoping" do
+        order.class.where.not(id: order).scoping do
+          order.associate_user!(user)
+        end
+        order.reload
+        assert_expected_order_state
+      end
+
+      it_should_behave_like "#associate_user!", true
     end
   end
 
