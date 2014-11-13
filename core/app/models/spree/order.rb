@@ -229,16 +229,17 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
-      self.user = user
-      attrs_to_set = { user_id: user.id }
-      attrs_to_set[:email] = user.email if override_email
-      attrs_to_set[:created_by_id] = user.id if self.created_by.blank?
-      assign_attributes(attrs_to_set)
+      self.user           = user
+      self.email          = user.email if override_email
+      self.created_by   ||= user
+      self.bill_address ||= user.bill_address
+      self.ship_address ||= user.ship_address
 
-      if persisted?
-        # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.unscoped.where(id: id).update_all(attrs_to_set)
-      end
+      changes = slice(:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id)
+
+      # immediately persist the changes we just made, but don't use save
+      # since we might have an invalid address associated
+      self.class.unscoped.where(id: self).update_all(changes)
     end
 
     def quantity_of(variant, options = {})
