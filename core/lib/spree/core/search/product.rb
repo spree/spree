@@ -9,10 +9,9 @@ module Spree
         end
 
         def search
-          @products_scope = get_base_scope
+          @products = get_base_scope
           curr_page = params[:page] || 1
 
-          @products = @products_scope.includes([:master => :prices])
           unless Spree::Config.show_products_without_price
             @products = @products.where("spree_prices.amount IS NOT NULL").where("spree_prices.currency" => current_currency)
           end
@@ -56,8 +55,8 @@ module Spree
 
         def get_base_scope
           base_scope = Spree::Product.active
-          base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
-          base_scope = get_products_conditions_for(base_scope, keywords)
+          base_scope = base_scope.in_taxon(@params[:taxon]) if @params[:taxon].present?
+          base_scope = get_products_conditions_for(base_scope, @params[:keywords])
           base_scope = add_search_scopes(base_scope)
           base_scope = add_eagerload_scopes(base_scope)
           base_scope
@@ -72,10 +71,7 @@ module Spree
         end
 
         def prepare(params)
-          @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
-          @properties[:keywords] = params[:keywords]
-          @properties[:search] = params[:search]
-          @properties[:include_images] = params[:include_images]
+          @params[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
 
           per_page = params[:per_page].to_i
           @properties[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
