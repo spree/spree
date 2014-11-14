@@ -31,6 +31,11 @@ module Spree
         end
       end
 
+      def clear_cache
+        Rails.cache.clear
+        head :no_content
+      end
+
       private
       def store_params
         params.require(:store).permit(permitted_params)
