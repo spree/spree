@@ -367,7 +367,7 @@ module Spree
         end
 
         it "cannot create a new product with invalid attributes" do
-          api_post :create, :product => {}
+          api_post :create, product: {}
           expect(response.status).to eq(422)
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
           errors = json_response["errors"]

@@ -33,17 +33,19 @@ module Spree
       dependent: :destroy,
       inverse_of: :variant
 
+    before_validation :set_cost_currency
+
     validate :check_price
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
-    before_validation :set_cost_currency
     after_save :save_default_price
+
     after_create :create_stock_items
     after_create :set_position
-    after_create :set_master_out_of_stock, :unless => :is_master?
+    after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 

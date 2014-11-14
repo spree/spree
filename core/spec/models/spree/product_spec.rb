@@ -464,4 +464,13 @@ describe Spree::Product, :type => :model do
       expect(product.reload.total_on_hand).to eql(5)
     end
   end
+  
+  # Regression spec for https://github.com/spree/spree/issues/5588
+  context '#validate_master when duplicate SKUs entered' do
+    let!(:first_product) { create(:product, sku: 'a-sku') }
+    let(:second_product) { build(:product, sku: 'a-sku') }
+
+    subject { second_product }
+    it { is_expected.to be_invalid }
+  end
 end
