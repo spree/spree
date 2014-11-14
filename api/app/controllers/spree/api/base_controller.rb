@@ -101,8 +101,8 @@ module Spree
 
         error_notifier.call(exception, self) if error_notifier
 
-        render :text => { :exception => exception.message }.to_json,
-          :status => 422 and return
+        render text: { exception: exception.message }.to_json,
+          status: 422 and return
       end
 
       def gateway_error(exception)
