@@ -5,7 +5,7 @@ machine:
   services:
     - postgresql
   ruby:
-    version: 2.1.5
+    version: 2.1
 dependencies:
   override:
     - ./build-ci.rb install
