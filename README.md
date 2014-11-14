@@ -344,7 +344,7 @@ In the spirit of [free software](http://www.fsf.org/licensing/essays/free-sw.htm
 Here are some ways *you* can contribute:
 
 * by using prerelease versions
-* by reporting [bugs](https://github.com/spree/spree/issues)
+* by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
 * by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
 * by writing [specs](https://github.com/spree/spree/labels/NeedSpecs)
