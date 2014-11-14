@@ -7,6 +7,7 @@ node(:options_text) { |v| v.options_text }
 node(:in_stock) { |v| v.in_stock? }
 node(:is_backorderable) { |v| v.is_backorderable? }
 node(:total_on_hand) { |v| v.total_on_hand }
+node(:is_destroyed) { |v| v.destroyed? }
 
 child :option_values => :option_values do
   attributes *option_value_attributes
