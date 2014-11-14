@@ -130,7 +130,7 @@ module Spree
       end
 
       context "order total is greater than payment total" do
-        it "is credit_owed" do
+        it "is balance_due" do
           order.payment_total = 1
           order.total = 2
 
