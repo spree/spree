@@ -60,6 +60,10 @@ module Spree
       self[:weight] = Spree::LocalizedNumber.parse(weight) if weight.present?
     end
 
+    def weight=(weight)
+      self[:weight] = parse_weight(weight) if weight.present?
+    end
+
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size
@@ -198,6 +202,18 @@ module Spree
     end
 
     private
+
+      # strips all non-weight-like characters from the weight, taking into account locale settings
+      def parse_weight(weight)
+        return weight unless weight.is_a?(String)
+
+        separator, delimiter = Spree::Config.currency_decimal_mark, Spree::Config.currency_thousands_separator
+        non_weight_characters = /[^0-9\-#{separator}]/
+        weight.gsub!(non_weight_characters, '') # strip everything else first
+        weight.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
+
+        weight.to_d
+      end
 
       def set_master_out_of_stock
         if product.master && product.master.in_stock?

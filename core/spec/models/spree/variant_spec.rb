@@ -139,6 +139,31 @@ describe Spree::Variant, :type => :model do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.weight = '1,599.99'
     end
+
+    context "weight=" do
+      context "with decimal point" do
+        it "captures the proper amount for a formatted weight" do
+          variant.weight = '1,599.99'
+          variant.weight.should == 1599.99
+        end
+      end
+
+      context "with decimal comma" do
+        it "captures the proper amount for a formatted weight" do
+          I18n.locale = :de
+          variant.weight = '1.599,99'
+          variant.weight.should == 1599.99
+        end
+      end
+
+      context "with a numeric price" do
+        it "uses the price as is" do
+          I18n.locale = :de
+          variant.weight = 1599.99
+          variant.weight.should == 1599.99
+        end
+      end
+    end
   end
 
   context "#currency" do
