@@ -185,6 +185,7 @@ module Spree
           expect(variant['in_stock']).to eq(false)
           expect(variant['total_on_hand']).to eq(0)
           expect(variant['is_backorderable']).to eq(true)
+          expect(variant['is_destroyed']).to eq(false)
         end
       end
 
