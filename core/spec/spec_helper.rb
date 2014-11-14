@@ -26,9 +26,7 @@ require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
 
-require "support/big_decimal"
-require "support/test_gateway"
-require "support/rake"
+Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
 if ENV["CHECK_TRANSLATIONS"]
   require "spree/testing_support/i18n"
@@ -36,8 +34,6 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
-
-require 'support/concerns/default_price_spec'
 
 RSpec.configure do |config|
   config.color = true
