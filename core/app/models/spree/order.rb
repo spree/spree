@@ -430,6 +430,19 @@ module Spree
       line_items.select(&:insufficient_stock?)
     end
 
+    ##
+    # Check to see if any line item variants are soft, deleted.
+    # If so add error and restart checkout.
+    def ensure_line_item_variants_are_not_deleted
+      if line_items.select{ |li| li.variant.destroyed? }.present?
+        errors.add(:base, Spree.t(:deleted_variants_present))
+        restart_checkout_flow
+        false
+      else
+        true
+      end
+    end
+
     def ensure_line_items_are_in_stock
       if insufficient_stock_lines.present?
         errors.add(:base, Spree.t(:insufficient_stock_lines_present))

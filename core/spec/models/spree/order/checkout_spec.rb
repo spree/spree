@@ -540,6 +540,7 @@ describe Spree::Order, :type => :model do
     it "does not attempt to process payments" do
       allow(order).to receive_message_chain(:line_items, :present?) { true }
       allow(order).to receive(:ensure_line_items_are_in_stock) { true }
+      allow(order).to receive(:ensure_line_item_variants_are_not_deleted) { true }
       expect(order).not_to receive(:payment_required?)
       expect(order).not_to receive(:process_payments!)
       order.next!
