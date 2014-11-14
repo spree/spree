@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'canonical-rails', '~> 0.0.4'
   s.add_dependency 'jquery-rails', '~> 3.1.2'
-  s.add_dependency 'stringex', '~> 1.5.1'
 
   s.add_development_dependency 'capybara-accessible'
 end
