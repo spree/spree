@@ -341,7 +341,7 @@ before contributing.
 
 In the spirit of [free software](http://www.fsf.org/licensing/essays/free-sw.html), **everyone** is encouraged to help improve this project.
 
-Here are some ways *you* can contribute:
+Here are some ways **you** can contribute:
 
 * by using prerelease versions / master branch
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
