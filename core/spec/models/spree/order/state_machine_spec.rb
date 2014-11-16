@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Order do
+describe Spree::Order, :type => :model do
   let(:order) { Spree::Order.new }
   before do
     # Ensure state machine has been re-defined correctly
     Spree::Order.define_state_machine!
     # We don't care about this validation here
-    order.stub(:require_email)
+    allow(order).to receive(:require_email)
   end
 
   context "#next!" do
@@ -14,59 +14,61 @@ describe Spree::Order do
       before do
         order.state = "confirm"
         order.run_callbacks(:create)
-        order.stub :payment_required? => true
-        order.stub :process_payments! => true
-        order.stub :has_available_shipment
+        allow(order).to receive_messages :payment_required? => true
+        allow(order).to receive_messages :process_payments! => true
+        allow(order).to receive :has_available_shipment
       end
 
       context "when payment processing succeeds" do
-        before { order.stub :process_payments! => true }
+        before do
+          order.payments << FactoryGirl.create(:payment, state: 'checkout', order: order)
+          allow(order).to receive_messages process_payments: true
+        end
 
         it "should finalize order when transitioning to complete state" do
-          order.should_receive(:finalize!)
+          expect(order).to receive(:finalize!)
           order.next!
         end
 
         context "when credit card processing fails" do
-          before { order.stub :process_payments! => false }
+          before { allow(order).to receive_messages :process_payments! => false }
 
           it "should not complete the order" do
              order.next
-             order.state.should == "confirm"
+             expect(order.state).to eq("confirm")
            end
         end
-
       end
 
       context "when payment processing fails" do
-        before { order.stub :process_payments! => false }
+        before { allow(order).to receive_messages :process_payments! => false }
 
         it "cannot transition to complete" do
          order.next
-         order.state.should == "confirm"
+         expect(order.state).to eq("confirm")
         end
       end
     end
 
     context "when current state is delivery" do
       before do
-        order.stub :payment_required? => true
-        order.stub :apply_free_shipping_promotions
+        allow(order).to receive_messages :payment_required? => true
+        allow(order).to receive :apply_free_shipping_promotions
         order.state = "delivery"
       end
 
       it "adjusts tax rates when transitioning to delivery" do
         # Once for the line items
-        Spree::TaxRate.should_receive(:adjust).once
-        order.stub :set_shipments_cost
+        expect(Spree::TaxRate).to receive(:adjust).once
+        allow(order).to receive :set_shipments_cost
         order.next!
       end
 
       it "adjusts tax rates twice if there are any shipments" do
         # Once for the line items, once for the shipments
         order.shipments.build
-        Spree::TaxRate.should_receive(:adjust).twice
-        order.stub :set_shipments_cost
+        expect(Spree::TaxRate).to receive(:adjust).twice
+        allow(order).to receive :set_shipments_cost
         order.next!
       end
     end
@@ -76,17 +78,17 @@ describe Spree::Order do
 
     %w(pending backorder ready).each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
-        order.stub :completed? => true
+        allow(order).to receive_messages :completed? => true
         order.shipment_state = shipment_state
-        order.can_cancel?.should be true
+        expect(order.can_cancel?).to be true
       end
     end
 
     (Spree::Shipment.state_machine.states.keys - %w(pending backorder ready)).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
-        order.stub :completed? => true
+        allow(order).to receive_messages :completed? => true
         order.shipment_state = shipment_state
-        order.can_cancel?.should be false
+        expect(order.can_cancel?).to be false
       end
     end
 
@@ -98,43 +100,57 @@ describe Spree::Order do
                               stub_model(Spree::InventoryUnit, :variant => variant) ]}
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
-      shipment.stub :inventory_units => inventory_units, :order => order
-      order.stub :shipments => [shipment]
+      allow(shipment).to receive_messages :inventory_units => inventory_units, :order => order
+      allow(order).to receive_messages :shipments => [shipment]
       shipment
     end
 
     before do
-      order.stub :line_items => [stub_model(Spree::LineItem, :variant => variant, :quantity => 2)]
-      order.line_items.stub :find_by_variant_id => order.line_items.first
 
-      order.stub :completed? => true
-      order.stub :allow_cancel? => true
+      2.times do
+        create(:line_item, :order => order, price: 10)
+      end
+
+      allow(order.line_items).to receive_messages :find_by_variant_id => order.line_items.first
+
+      allow(order).to receive_messages :completed? => true
+      allow(order).to receive_messages :allow_cancel? => true
+
+      shipments = [shipment]
+      allow(order).to receive_messages :shipments => shipments
+      allow(shipments).to receive_messages :states => []
+      allow(shipments).to receive_messages :ready => []
+      allow(shipments).to receive_messages :pending => []
+      allow(shipments).to receive_messages :shipped => []
+
+      allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total) { 10 }
     end
 
     it "should send a cancel email" do
+
       # Stub methods that cause side-effects in this test
-      shipment.stub(:cancel!)
-      order.stub :has_available_shipment
-      order.stub :restock_items!
+      allow(shipment).to receive(:cancel!)
+      allow(order).to receive :has_available_shipment
+      allow(order).to receive :restock_items!
       mail_message = double "Mail::Message"
       order_id = nil
-      Spree::OrderMailer.should_receive(:cancel_email) { |*args|
+      expect(Spree::OrderMailer).to receive(:cancel_email) { |*args|
         order_id = args[0]
         mail_message
       }
-      mail_message.should_receive :deliver
+      expect(mail_message).to receive :deliver
       order.cancel!
-      order_id.should == order.id
+      expect(order_id).to eq(order.id)
     end
 
     context "restocking inventory" do
       before do
-        shipment.stub(:ensure_correct_adjustment)
-        shipment.stub(:update_order)
-        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = double)
-        mail_message.stub :deliver
+        allow(shipment).to receive(:ensure_correct_adjustment)
+        allow(shipment).to receive(:update_order)
+        allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
+        allow(mail_message).to receive :deliver
 
-        order.stub :has_available_shipment
+        allow(order).to receive :has_available_shipment
       end
     end
 
@@ -145,15 +161,15 @@ describe Spree::Order do
       before do
         # TODO: This is ugly :(
         # Stubs methods that cause unwanted side effects in this test
-        Spree::OrderMailer.stub(:cancel_email).and_return(mail_message = double)
-        mail_message.stub :deliver
-        order.stub :has_available_shipment
-        order.stub :restock_items!
-        shipment.stub(:cancel!)
-        payment.stub(:cancel!)
-        order.stub_chain(:payments, :valid, :size).and_return(1)
-        order.stub_chain(:payments, :completed).and_return([payment])
-        order.stub_chain(:payments, :last).and_return(payment)
+        allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
+        allow(mail_message).to receive :deliver
+        allow(order).to receive :has_available_shipment
+        allow(order).to receive :restock_items!
+        allow(shipment).to receive(:cancel!)
+        allow(payment).to receive(:cancel!)
+        allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+        allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+        allow(order).to receive_message_chain(:payments, :last).and_return(payment)
       end
 
       context "without shipped items" do
@@ -164,12 +180,14 @@ describe Spree::Order do
 
       context "with shipped items" do
         before do
-          order.stub :shipment_state => 'partial'
+          allow(order).to receive_messages :shipment_state => 'partial'
+          allow(order).to receive_messages :outstanding_balance? => false
+          allow(order).to receive_messages :payment_state => "paid"
         end
 
         it "should not alter the payment state" do
           order.cancel!
-          order.payment_state.should be_nil
+          expect(order.payment_state).to eql "paid"
         end
       end
 
@@ -177,24 +195,25 @@ describe Spree::Order do
         let(:payment) { create(:payment) }
 
         it "should automatically refund all payments" do
-          order.stub_chain(:payments, :completed).and_return([payment])
-          payment.should_receive(:cancel!)
+          allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+          allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+          allow(order).to receive_message_chain(:payments, :last).and_return(payment)
+          expect(payment).to receive(:cancel!)
           order.cancel!
         end
       end
     end
   end
 
-
   # Another regression test for #729
   context "#resume" do
     before do
-      order.stub :email => "user@spreecommerce.com"
-      order.stub :state => "canceled"
-      order.stub :allow_resume? => true
+      allow(order).to receive_messages :email => "user@spreecommerce.com"
+      allow(order).to receive_messages :state => "canceled"
+      allow(order).to receive_messages :allow_resume? => true
 
       # Stubs method that cause unwanted side effects in this test
-      order.stub :has_available_shipment
+      allow(order).to receive :has_available_shipment
     end
   end
 end
