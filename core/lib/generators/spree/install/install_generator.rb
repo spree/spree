@@ -111,6 +111,7 @@ Disallow: /password
 \n
 Spree::Core::Engine.load_seed if defined?(Spree::Core)
 Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
+SpreeStoreCredits::Engine.load_seed if defined?(SpreeStoreCredits::Engine)
       SEEDS
     end
 
@@ -194,6 +195,16 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts " "
         puts "Enjoy!"
       end
+    end
+
+    def add_javascripts
+      append_file 'vendor/assets/javascripts/spree/frontend/all.js', "//= require spree/frontend/spree_store_credits\n"
+      append_file 'vendor/assets/javascripts/spree/backend/all.js', "//= require spree/backend/spree_store_credits\n"
+    end
+
+    def add_stylesheets
+      inject_into_file 'vendor/assets/stylesheets/spree/frontend/all.css', " *= require spree/frontend/spree_store_credits\n", :before => /\*\//, :verbose => true
+      inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require spree/backend/spree_store_credits\n", :before => /\*\//, :verbose => true
     end
   end
 end

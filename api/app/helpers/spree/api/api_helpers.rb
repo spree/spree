@@ -30,6 +30,7 @@ module Spree
         :stock_item_attributes,
         :promotion_attributes,
         :store_attributes
+        :store_credit_history_attributes
       ]
 
       mattr_reader *ATTRIBUTES
@@ -76,7 +77,14 @@ module Spree
         :user_id, :created_at, :updated_at, :completed_at, :payment_total,
         :shipment_state, :payment_state, :email, :special_instructions, :channel,
         :included_tax_total, :additional_tax_total, :display_included_tax_total,
-        :display_additional_tax_total, :tax_total, :currency
+        :display_additional_tax_total, :tax_total, :currency, :covered_by_store_credit,
+        :display_total_applicable_store_credit, :order_total_after_store_credit,
+        :display_order_total_after_store_credit, :total_applicable_store_credit,
+        :display_total_available_store_credit, :display_store_credit_remaining_after_capture
+      ]
+
+      @@store_credit_history_attributes = [
+        :display_amount, :display_user_total_amount, :display_action, :display_event_date
       ]
 
       @@line_item_attributes = [:id, :quantity, :price, :variant_id]

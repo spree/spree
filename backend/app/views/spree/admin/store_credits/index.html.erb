@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= link_to "#{Spree.t(:editing_user)} #{@user.email}", edit_admin_user_url(@user) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :store_credits } %>
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'arrow-left', Spree.t("admin.store_credits.back_to_user_list"), admin_users_path, class: 'button' %></li>
+  <li><%= link_to_with_icon 'plus', Spree.t("admin.store_credits.add"), new_admin_user_store_credit_path(@user), class: 'button' %></li>
+<% end %>
+
+<% if @store_credits.any? %>
+  <table>
+    <thead>
+      <th><%= Spree.t("admin.store_credits.credited_html_header").html_safe %></th>
+      <th><%= Spree.t("admin.store_credits.used_html_header").html_safe %></th>
+      <th><%= Spree.t("admin.store_credits.type_html_header").html_safe %></th>
+      <th><%= Spree.t("admin.store_credits.created_by") %></th>
+      <th><%= Spree.t("admin.store_credits.issued_on") %></th>
+      <th data-hook="admin_store_credits_index_header_actions" class="actions"></th>
+    <thead>
+    <tbody>
+      <% @store_credits.each do |store_credit| %>
+        <tr>
+          <td class='align-center'>
+            <span><%= store_credit.display_amount.to_html %></span>
+          </td>
+          <td class='align-center'>
+            <span><%= store_credit.display_amount_used.to_html %></span>
+          </td>
+          <td class='align-center'>
+            <span><%= store_credit.category_name %></span>
+          </td>
+          <td>
+            <span><%= store_credit.created_by_email %></span>
+          </td>
+          <td class='align-center'>
+            <span><%= l store_credit.created_at.to_date %></span>
+          </td>
+          <td class="actions" data-hook="admin_store_credits_index_row_actions">
+            <% if store_credit.amount_used.zero? %>
+              <%= link_to_edit_url edit_admin_user_store_credit_path(@user, store_credit), { no_text: true, class: 'edit' } if can?(:edit, store_credit) %>
+              <%= link_to_delete store_credit, { no_text: true, class: 'edit', url: admin_user_store_credit_path(@user, store_credit) } if can?(:destroy, store_credit) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alpha twelve columns no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: Spree.t("admin.store_credits.resource_name")) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_user_store_credit_path(@user) %>!
+  </div>
+<% end %>

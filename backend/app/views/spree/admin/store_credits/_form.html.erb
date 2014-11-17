@@ -1,0 +1,24 @@
+<div data-hook="admin_store_credit_form_fields" class="row">
+  <div class="alpha twelve columns">
+    <%= f.field_container :amount do %>
+      <%= f.label :amount, Spree.t(:amount) %> <span class="required">*</span><br />
+      <%= f.number_field :amount, min: 0.00, step: :any %>
+      <%= f.error_message_on :amount %>
+    <% end %>
+  </div>
+  <div class="alpha twelve columns">
+    <%= f.field_container :category do %>
+      <%= f.label :category, Spree.t(:reason) %> <span class="required">*</span><br />
+      <%= f.select :category_id, options_from_collection_for_select(@credit_categories, :id, :name, f.object.category.try(:id)),
+        { include_blank: true }, { class: 'select2 fullwidth', placeholder: Spree.t("admin.store_credits.select_reason") } %>
+      <%= f.error_message_on :category %>
+    <% end %>
+  </div>
+  <div data-hook="admin_store_credit_memo_field" class="alpha twelve columns">
+    <%= f.field_container :memo do %>
+      <%= f.label :memo, Spree.t(:memo) %>
+      <%= f.text_area :memo, class: "fullwidth" %>
+      <%= f.error_message_on :memo %>
+    <% end %>
+  </div>
+</div>
