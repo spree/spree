@@ -26,6 +26,10 @@ module Spree
           eligibility_errors.empty?
         end
 
+        def actionable?(line_item)
+          taxon_product_ids.include? line_item.variant.product_id
+        end
+
         def taxon_ids_string
           taxons.pluck(:id).join(',')
         end
@@ -54,6 +58,10 @@ module Spree
 
         def taxons_in_order_including_parents(order)
           order_taxons_in_taxons_and_children(order).inject([]){ |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
+        end
+
+        def taxon_product_ids
+          Spree::Product.joins(:taxons).where(spree_taxons: {id: taxons.pluck(:id)}).pluck(:id).uniq
         end
       end
     end
