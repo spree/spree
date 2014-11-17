@@ -56,7 +56,7 @@ module Spree
     context "ensure source attributes stick around" do
       # For the reason of this test, please see spree/spree_gateway#132
       it "does not have inverse_of defined" do
-        expect(Spree::Order.reflections[:payments].options[:inverse_of]).to be_nil
+        expect(Spree::Order.reflections['payments'].options[:inverse_of]).to be_nil
       end
 
       it "keeps source attributes after updating" do
@@ -169,11 +169,13 @@ module Spree
         order.payment_total = 9.50
         expect(order.outstanding_balance?).to be true
       end
+
       it "should be true when total less than payment_total" do
         order.total = 8.25
         order.payment_total = 10.44
         expect(order.outstanding_balance?).to be true
       end
+
       it "should be false when total equals payment_total" do
         order.total = 10.10
         order.payment_total = 10.10
