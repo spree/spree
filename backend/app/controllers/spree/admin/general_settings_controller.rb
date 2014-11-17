@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class GeneralSettingsController < Spree::Admin::BaseController
+      include Spree::Backend::Callbacks
+
       before_action :set_store
 
       def edit
@@ -33,6 +35,7 @@ module Spree
 
       def clear_cache
         Rails.cache.clear
+        invoke_callbacks(:clear_cache, :after)
         head :no_content
       end
 
