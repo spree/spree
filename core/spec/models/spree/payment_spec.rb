@@ -62,7 +62,6 @@ describe Spree::Payment, :type => :model do
     it 'should not return successful responses' do
       expect(subject.class.risky.to_a).to match_array([payment_3, payment_4])
     end
-
   end
 
   context '#uncaptured_amount' do
@@ -105,7 +104,6 @@ describe Spree::Payment, :type => :model do
       payment.failure
       expect(payment.state).to eql('failed')
     end
-
   end
 
   context 'invalidate' do
@@ -175,8 +173,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect(payment.log_entries).to receive(:create!).with(:details => anything)
-        payment.authorize!
+        expect {
+          payment.authorize!
+        }.to change { Spree::LogEntry.count }.by 1
       end
 
       context "when gateway does not match the environment" do
@@ -226,8 +225,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect(payment.log_entries).to receive(:create!).with(:details => anything)
-        payment.purchase!
+        expect {
+          payment.purchase!
+        }.to change { Spree::LogEntry.count }.by 1
       end
 
       context "when gateway does not match the environment" do
