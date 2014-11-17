@@ -38,6 +38,10 @@ module Spree
       where(type: self.to_s, environment: Rails.env, active: true).count > 0
     end
 
+    def store_credit?
+      self.class == Spree::PaymentMethod::StoreCredit
+    end
+
     def method_type
       type.demodulize.downcase
     end
