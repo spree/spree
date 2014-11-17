@@ -11,6 +11,7 @@ module Spree
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
+    include Spree::Order::StoreCredits
 
     checkout_flow do
       go_to_state :address
@@ -692,6 +693,18 @@ module Spree
       payments.completed.each { |payment| payment.cancel! }
       send_cancel_email
       self.update!
+
+      # Free up authorized store credits
+      payments.store_credits.pending.each { |payment| payment.void! }
+
+      # payment_state has to be updated because after_cancel on
+      # super does an update_column on the payment_state to set
+      # it to 'credit_owed' but that is not correct if the
+      # payments are captured store credits that get totally refunded
+
+      reload
+      updater.update_payment_state
+      updater.persist_totals
     end
 
     def send_cancel_email

@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  <%= link_to "#{Spree.t(:editing_user)} #{@user.email}", edit_admin_user_url(@user) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :store_credits } %>
+<% content_for :page_actions do %>
+  <li><%= link_to_with_icon 'arrow-left', Spree.t("admin.store_credits.back_to_store_credit_list"), admin_user_store_credits_path(@user), class: 'button' %></li>
+<% end %>
+
+<%= form_for [:admin, @user, @store_credit] do |f| %>
+  <fieldset>
+    <legend align="center"><%= Spree.t("admin.store_credits.edit") %></legend>
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_user_store_credits_path(@user) } %>
+  </fieldset>
+<% end %>

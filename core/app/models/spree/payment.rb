@@ -16,6 +16,8 @@ module Spree
     has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
+    delegate :store_credit?, to: :payment_method
+
     before_validation :validate_source
     before_create :set_unique_identifier
 
@@ -26,6 +28,8 @@ module Spree
 
     # invalidate previously entered payments
     after_create :invalidate_old_payments
+
+    after_create :create_eligible_credit_event
 
     attr_accessor :source_attributes, :request_env
 
@@ -49,6 +53,9 @@ module Spree
 
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
+
+    scope :store_credits, -> { base.where(source_type: Spree::StoreCredit.to_s) }
+    scope :not_store_credits, -> { base.where(base.arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(base.arel_table[:source_type].eq(nil))) }
 
     # transaction_id is much easier to understand
     def transaction_id
@@ -233,6 +240,29 @@ module Spree
 
       def generate_identifier
         Array.new(8){ IDENTIFIER_CHARS.sample }.join
+      end
+
+      def create_eligible_credit_event
+        # When cancelling an order, a payment with the negative amount
+        # of the payment total is created to refund the customer. That
+        # payment has a source of itself (Spree::Payment) no matter the
+        # type of payment getting refunded, hence the additional check
+        # if the source is a store credit.
+        return unless store_credit? && source.is_a?(Spree::StoreCredit)
+
+        # creates the store credit event
+        source.update_attributes!({
+          action: Spree::StoreCredit::ELIGIBLE_ACTION,
+          action_amount: amount,
+          action_authorization_code: response_code,
+        })
+      end
+
+      def invalidate_old_payments
+        return if store_credit? # store credits shouldn't invalidate other payment types
+        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+          payment.invalidate! unless payment.store_credit?
+        end
       end
   end
 end

@@ -1,0 +1,15 @@
+<div class="alpha omega nine columns">
+  <fieldset data-id='store-credit' class="no-border-bottom">
+    <% if @store_credits.blank? %>
+      <div class='no-objects-found'><%= Spree.t('store_credit_payment_method.user_has_no_store_credits') %></div>
+    <% else %>
+      <div>
+        <div class='field'>
+          <%= select_tag "payment[store_credit_id]",
+                options_for_select(@store_credits.map { |sc| ["#{Spree::Money.new(sc.amount_remaining).to_s} (#{sc.category_name})", sc.id] }, nil),
+                { :class => 'select2 fullwidth', include_blank: true, placeholder: Spree.t('store_credit_payment_method.select_one_store_credit') } %>
+        </div>
+      </div>
+    <% end %>
+  </fieldset>
+</div>

@@ -7,3 +7,12 @@
     </div>
   </div>
 </nav>
+
+<% if request.fullpath.match(/^\/admin\/users/) %>
+  <% content_for :sub_menu do %>
+    <ul id="sub_nav" class="inline-menu">
+      <%= tab :users %>
+      <%= tab :gift_cards, :match_path => '/users/gift_cards' %>
+    </ul>
+  <% end %>
+<% end %>
