@@ -4,6 +4,7 @@ module Spree
       def payment_action_icon action
         return "ok" if action == "capture"
         return "remove" if action == "void"
+        return "minus" if action == "credit"
       end
 
       def payment_method_name(payment)
