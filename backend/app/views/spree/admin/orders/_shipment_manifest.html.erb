@@ -21,28 +21,15 @@
       </td>
     <% end %>
     <td class="item-total "><%= line_item_shipment_price(item.line_item, item.quantity) %></td>
-    <% unless shipment.shipped? %>
-      <td class="cart-item-delete actions actions-3" data-hook="cart_item_delete">
-
-        # REIN
-
-        <% if can? :update, item %>
-
-          <%= link_to '', '#', :class => 'save-item fa fa-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
-          <%= link_to '', '#', :class => 'cancel-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
-          <% if shipment.order.shipped_shipments.count == 0 %>
-            <%= link_to '', '#', :class => 'split-item icon_link fa fa-arrows-h no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
-            <%= link_to '', '#', :class => 'delete-item fa fa-trash no-text with-tip', :data => { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete') %>
-          <% end %>
-=======
-          <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-item  btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
-          <%= link_to_with_icon 'ok', Spree.t('actions.save'), "#", :class => 'save-item btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
-          <%= link_to_with_icon 'pencil', Spree.t('edit'), "#", :class => 'edit-item btn btn-default btn-sm', :data => {:action => 'edit'}, :title => Spree.t('edit'), :no_text => true %>
+    <td class="cart-item-delete actions actions-3" data-hook="cart_item_delete">
+      <% if not shipment.shipped? && can?(:update, item) %>
+        <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-item  btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
+        <%= link_to_with_icon 'ok', Spree.t('actions.save'), "#", :class => 'save-item btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
+        <% if shipment.order.shipped_shipments.count == 0 %>
           <%= link_to_with_icon 'resize-full', Spree.t('split'), "#", :class => 'split-item btn btn-default btn-sm', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split'), :no_text => true %>
           <%= link_to_with_icon 'remove', Spree.t('delete'), "#", :class => 'delete-item btn btn-default btn-sm', :data => { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete'), :no_text => true %>
-
         <% end %>
-      </td>
-    <% end %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
