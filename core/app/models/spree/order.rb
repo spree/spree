@@ -22,6 +22,25 @@ module Spree
     alias :display_ship_total :display_shipment_total
     alias_attribute :ship_total, :shipment_total
 
+    MONEY_THRESHOLD  = 100_000_000
+    MONEY_VALIDATION = {
+      presence:     true,
+      numericality: {
+        greater_than: -MONEY_THRESHOLD,
+        less_than:     MONEY_THRESHOLD,
+        allow_blank:   true
+      },
+      format:       { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
+    }.freeze
+
+    POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
+      validation.fetch(:numericality)[:greater_than_or_equal_to] = 0
+    end.freeze
+
+    NEGATIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
+      validation.fetch(:numericality)[:less_than_or_equal_to] = 0
+    end.freeze
+
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
@@ -94,8 +113,28 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
-    validates :email, presence: true, if: :require_email
-    validates :email, email: true, if: :require_email, allow_blank: true
+    validates :number,               presence:     true,
+                                     length:       { maximum: 32, allow_blank: true },
+                                     uniqueness:   { allow_blank: true }
+    validates :email,                presence:     true,
+                                     length:       { maximum: 254, allow_blank: true },
+                                     email:        { allow_blank: true },
+                                     if:           :require_email
+    validates :state,                presence:     true,
+                                     inclusion:    { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
+    validates :payment_state,        inclusion:    { in: %w[balance_due paid credit_owed failed void], allow_blank: true }
+    validates :shipment_state,       inclusion:    { in: %w[ready pending partial shipped backorder canceled], allow_blank: true }
+    validates :item_count,           presence:     true,
+                                     numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+    validates :item_total,           POSITIVE_MONEY_VALIDATION
+    validates :adjustment_total,     MONEY_VALIDATION
+    validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
+    validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
+    validates :payment_total,        MONEY_VALIDATION
+    validates :shipment_total,       MONEY_VALIDATION
+    validates :promo_total,          NEGATIVE_MONEY_VALIDATION
+    validates :total,                MONEY_VALIDATION
+
     validate :has_available_shipment
 
     delegate :update_totals, :persist_totals, :to => :updater
