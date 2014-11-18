@@ -1,4 +1,4 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t('stock_transfer') %> (<%= @stock_transfer.number %>)
@@ -9,40 +9,42 @@
     <%= button_link_to Spree.t(:back_to_stock_transfers_list), admin_stock_transfers_path, :icon => 'arrow-left' %>
   </li>
   <li>
-    <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'forward' } %>
+    <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'plus-sign', :class => 'btn-success' } %>
   </li>
 <% end %>
 
-<fieldset class="no-border-bottom">
-  <legend align="center"><%= Spree.t(:stock_transfer) %></legend>
+<fieldset>
+  <legend><%= Spree.t(:stock_transfer) %></legend>
 
-  <div class="alpha six columns">
-    <div class="field">
-      <label><%= Spree.t(:reference) %></label>
-      <div class="value"><%= @stock_transfer.reference %></div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label><%= Spree.t(:reference) %></label>
+        <div class="value"><%= @stock_transfer.reference %></div>
+      </div>
     </div>
-  </div>
 
-  <div class="omega six columns">
-    <div class="field">
-      <label><%= Spree.t(:created_at) %></label>
-      <div class="value"><%= @stock_transfer.created_at %></div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label><%= Spree.t(:created_at) %></label>
+        <div class="value"><%= @stock_transfer.created_at %></div>
+      </div>
     </div>
   </div>
 
   <% if @stock_transfer.source_movements.present? %>
-    <fieldset class="no-border-bottom">
+    <fieldset>
       <legend id="stock-location-source">
-        <%= Spree.t(:source) %> <i class="fa fa-arrow-right"></i> <%= @stock_transfer.source_location.name %>
+        <%= Spree.t(:source) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= @stock_transfer.source_location.name %>
       </legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.source_movements %>
     </fieldset>
   <% end %>
 
   <% if @stock_transfer.destination_movements.present? %>
-    <fieldset class="no-border-bottom">
+    <fieldset>
       <legend id="stock-location-destination">
-        <%= Spree.t(:destination) %> <i class="fa fa-arrow-right"></i> <%= @stock_transfer.destination_location.name %>
+        <%= Spree.t(:destination) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= @stock_transfer.destination_location.name %>
       </legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.destination_movements %>
     </fieldset>

@@ -1,42 +1,40 @@
 <div data-hook="admin_variant_form_fields" class="label-block left six columns alpha">
   <div data-hook="variants">
     <% @product.option_types.each do |option_type| %>
-      <div class="field" data-hook="presentation">
+      <div class="form-group" data-hook="presentation">
         <%= label :new_variant, option_type.presentation %>
         <%= f.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
-          { :prompt => true }, { :name => 'variant[option_value_ids][]', :class => 'select2 fullwidth' } %>
+          { :prompt => true }, { :name => 'variant[option_value_ids][]', :class => 'select2' } %>
       </div>
     <% end %>
 
-    <div class="field" data-hook="sku">
+    <div class="form-group" data-hook="sku">
       <%= f.label :sku, Spree.t(:sku) %>
-      <%= f.text_field :sku, :class => 'fullwidth' %>
+      <%= f.text_field :sku, :class => 'form-control' %>
     </div>
 
-    <div class="field" data-hook="price">
+    <div class="form-group" data-hook="price">
       <%= f.label :price, Spree.t(:price) %>
-      <%= f.text_field :price, :value => number_to_currency(@variant.price, :unit => ''), :class => 'fullwidth' %>
+      <%= f.text_field :price, :value => number_to_currency(@variant.price, :unit => ''), :class => 'form-control' %>
     </div>
 
-    <div class="field" data-hook="cost_price">
+    <div class="form-group" data-hook="cost_price">
       <%= f.label :cost_price, Spree.t(:cost_price) %>
-      <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => ''), :class => 'fullwidth' %>
+      <%= f.text_field :cost_price, :value => number_to_currency(@variant.cost_price, :unit => ''), :class => 'form-control' %>
     </div>
 
-    <div class="field" data-hook="tax_category">
+    <div class="form-group" data-hook="tax_category">
       <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
     </div>
   </div>
 </div>
 
-<div class="right six columns omega label-block" data-hook="admin_variant_form_additional_fields">
+<div class="right col-md-6 label-block" data-hook="admin_variant_form_additional_fields">
   <% [:weight, :height, :width, :depth].each do |field| %>
-    <div class="field" data-hook="<%= field %>"><%= f.label field, Spree.t(field) %>
+    <div class="form-group" data-hook="<%= field %>"><%= f.label field, Spree.t(field) %>
       <% value = number_with_precision(@variant.send(field), :precision => 2) %>
-      <%= f.text_field field, :value => value, :class => 'fullwidth' %>
+      <%= f.text_field field, :value => value, :class => 'form-control' %>
     </div>
   <% end %>
 </div>
-
-<div class="clear"></div>

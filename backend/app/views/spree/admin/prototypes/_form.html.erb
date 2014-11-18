@@ -33,4 +33,12 @@
       <% end %>
     </div>
   </div>
+
+  <%= f.field_container :option_type_ids, class: ['form-group'] do %>
+    <%= f.label :option_type_ids, Spree.t(:option_types) %>
+    <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2" } %>
+  <% end %>
 </div>
+
+
+# REIN

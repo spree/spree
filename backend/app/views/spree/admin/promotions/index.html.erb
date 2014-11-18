@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_promotion), spree.new_admin_promotion_path, :icon => 'plus' %>
+    <%= button_link_to Spree.t(:new_promotion), spree.new_admin_promotion_path, :class => "btn-success", :icon => 'plus-sign' %>
   </li>
 <% end %>
 
@@ -17,59 +17,37 @@
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
-      <div class="four columns alpha">
-        <div class="field">
-          <%= label_tag :q_name_cont, Spree.t(:name) %>
-          <%= f.text_field :name_cont, tabindex: 1 %>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_name_cont, 'name' %>
+        <%= f.text_field :name_cont, tabindex: 1, class: "form-control" %>
       </div>
 
-      <div class="four columns">
-        <div class="field">
-          <%= label_tag :q_code_cont, Spree.t(:code) %>
-          <%= f.text_field :code_cont, tabindex: 1 %>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_code_cont, 'code' %>
+        <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
       </div>
 
-      <div class="four columns">
-        <div class="field">
-          <%= label_tag :q_path_cont, Spree.t(:path) %>
-          <%= f.text_field :path_cont, tabindex: 1 %>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_path_cont, 'path' %>
+        <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
       </div>
 
-      <div class="four columns omega">
-        <div class="field">
-          <%= label_tag :q_promotion_category_id_eq, 'promotion category' %><br>
-          <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2 fullwidth' }) %>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_promotion_category_id_eq, 'promotion category' %><br>
+        <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
       </div>
 
-      <div class="clearfix"></div>
-
-      <div class="actions filter-actions">
-        <div data-hook="admin_promotions_index_search_buttons">
-          <%= button Spree.t(:filter_results), 'search' %>
-        </div>
+      <div data-hook="admin_promotions_index_search_buttons">
+        <%= button Spree.t(:filter_results), 'search' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-
 <%= paginate @promotions %>
 
 <% if @promotions.any? %>
-  <table class="index">
-    <colgroup>
-      <col style="width: 20%">
-      <col style="width: 10%">
-      <col style="width: 30%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr>
         <th><%= Spree.t(:name) %></th>
@@ -83,14 +61,14 @@
     </thead>
     <tbody>
       <% @promotions.each do |promotion| %>
-        <tr id="<%= spree_dom_id promotion %>" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id promotion %>">
           <td><%= promotion.name %></td>
-          <td class="align-center"><%= promotion.code %></td>
+          <td><%= promotion.code %></td>
           <td><%= promotion.description %></td>
-          <td class="align-center"><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
-          <td class="align-center"><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
-          <td class="align-center"><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-          <td class="actions">
+          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
+          <td><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
+          <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
+          <td class="actions actions-2">
             <%= link_to_edit promotion, :no_text => true %>
             <%= link_to_delete promotion, :no_text => true %>
           </td>
@@ -99,7 +77,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_promotion_path %>!
   </div>

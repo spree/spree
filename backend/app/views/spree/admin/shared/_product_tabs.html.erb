@@ -2,18 +2,17 @@
   <%= Spree.t(:editing_product) %> &ldquo;<%= @product.name %>&rdquo;
 <% end %>
 
-<% content_for :sidebar_title do %>
-  <span class="sku"><%= @product.sku %></span>
-<% end %>
-
 <% content_for :sidebar do %>
-  <nav class="menu">
-    <ul data-hook="admin_product_tabs">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="sku"><%= @product.sku %></span></h3>
+    </div>
+    <ul class="nav nav-pills nav-stacked" data-hook="admin_product_tabs">
       <%= content_tag :li, :class => ('active' if current == 'Product Details') do %>
-        <%= link_to_with_icon 'edit', Spree.t(:product_details), edit_admin_product_url(@product) %>
+        <%= link_to_with_icon 'pencil', Spree.t(:product_details), edit_admin_product_url(@product) %>
       <% end if can?(:admin, Spree::Product) %>
       <%= content_tag :li, :class => ('active' if current == 'Images') do %>
-        <%= link_to_with_icon 'picture-o', Spree.t(:images), admin_product_images_url(@product) %>
+        <%= link_to_with_icon 'picture', Spree.t(:images), admin_product_images_url(@product) %>
       <% end if can?(:admin, Spree::Image) %>
       <%= content_tag :li, :class => ('active' if current == 'Variants') do %>
         <%= link_to_with_icon 'th-large', Spree.t(:variants),  admin_product_variants_url(@product) %>
@@ -25,6 +24,5 @@
         <%= link_to_with_icon 'tasks', Spree.t(:stock_management), stock_admin_product_url(@product) %>
       <% end if can?(:stock, Spree::Product) %>
     </ul>
-  </nav>
-
+  </div>
 <% end %>

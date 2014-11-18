@@ -1,5 +1,3 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= Spree.t(:new_taxonomy) %>
 <% end %>
@@ -13,11 +11,9 @@
 <%= render 'spree/admin/shared/product_sub_menu' %>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
-
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <fieldset class="no-border-top">
-    <br>
-    <div class="filter-actions actions" data-hook="buttons">
+  <fieldset>
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <div class="form-buttons" data-hook="buttons">
       <%= button Spree.t(:create), 'ok' %>
     </div>
   </fieldset>

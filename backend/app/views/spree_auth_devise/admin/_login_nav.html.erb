@@ -1,0 +1,19 @@
+<% #TODO: change this in spree_auth_devise instead of overriding the template %>
+<% if spree_current_user %>
+  <% if spree.respond_to? :root_path %>
+    <li class="user-body">
+      <div class="col-xs-12 text-center" data-hook="store-frontend-link">
+        <%= link_to Spree.t(:back_to_store), spree.root_path, :target => '_blank' %>
+      </div>
+    </li>
+  <% end %>
+
+  <li class="user-footer" id="login-nav">
+    <div class="pull-left" data-hook="user-account-link">
+      <%= link_to Spree.t(:account), spree.edit_user_path(spree_current_user), class: "btn btn-default btn-flat" %>
+    </div>
+    <div class="pull-right" data-hook="user-logout-link">
+      <%= link_to Spree.t(:logout), spree.admin_logout_path, class: "btn btn-default btn-flat" %>
+    </div>
+  </li>
+<% end %>

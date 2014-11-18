@@ -1,32 +1,34 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @promotion } %>
 <div class="row">
   <div id="general_fields" class="alpha thirteen columns">
-    <div class="alpha four columns">
-      <%= f.field_container :name do %>
+    <div class="col-md-3">
+      <%= f.field_container :name, class: ['form-group'] do %>
         <%= f.label :name %>
-        <%= f.text_field :name, :class => 'fullwidth' %>
+        <%= f.text_field :name, :class => 'form-control' %>
       <% end %>
-      
-      <%= f.field_container :code do %>
+
+      <%= f.field_container :code, class: ['form-group'] do %>
         <%= f.label :code %>
-        <%= f.text_field :code, :class => 'fullwidth' %>
+        <%= f.text_field :code, :class => 'form-control' %>
       <% end %>
 
-      <%= f.field_container :path do %>
+      <%= f.field_container :path, class: ['form-group'] do %>
         <%= f.label :path %>
-        <%= f.text_field :path, :class => 'fullwidth' %>
+        <%= f.text_field :path, :class => 'form-control' %>
       <% end %>
 
-      <%= f.field_container :advertise do %>
-        <%= f.check_box :advertise %>
-        <%= f.label :advertise %>
+      <%= f.field_container :advertise, class: ['checkbox'] do %>
+        <%= f.label :advertise do %>
+          <%= f.check_box :advertise %>
+          <%= Spree.t(:advertise) %>
+        <% end %>
       <% end %>
     </div>
 
-    <div class="omega nine columns">
+    <div class="col-md-6">
       <%= f.field_container :description do %>
-        <%= f.label :description %><br />
-        <%= f.text_area :description, :rows => 7, :class => 'fullwidth' %>
+        <%= f.label :description %>
+        <%= f.text_area :description, :rows => 7, :class => 'form-control' %>
       <% end %>
 
       <%= f.field_container :category do %>
@@ -36,23 +38,23 @@
     </div>
   </div>
 
-  <div id="expiry_fields" class="three columns omega">
+  <div id="expiry_fields" class="col-md-3">
     <%= f.field_container :usage_limit do %>
-      <%= f.label :usage_limit %><br />
-      <%= f.number_field :usage_limit, :min => 0, :class => 'fullwidth' %><br>
-      <span class="info">
+      <%= f.label :usage_limit %>
+      <%= f.number_field :usage_limit, :min => 0, :class => 'form-control' %>
+      <p class="help-block">
         <%= Spree.t(:current_promotion_usage, :count => @promotion.credits_count) %>
-      </span>
+      </p>
     <% end %>
 
-    <div id="starts_at_field" class="field">
+    <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <%= f.text_field :starts_at, :value => datepicker_field_value(@promotion.starts_at), :class => 'datepicker datepicker-from fullwidth' %>
+      <%= f.text_field :starts_at, :value => datepicker_field_value(@promotion.starts_at), :class => 'datepicker datepicker-from form-control' %>
     </div>
 
-    <div id="expires_at_field" class="field">
+    <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <%= f.text_field :expires_at, :value => datepicker_field_value(@promotion.expires_at), :class => 'datepicker datepicker-to fullwidth' %>
+      <%= f.text_field :expires_at, :value => datepicker_field_value(@promotion.expires_at), :class => 'datepicker datepicker-to form-control' %>
     </div>
   </div>
 </div>

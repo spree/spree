@@ -1,0 +1,52 @@
+tr.actions, td.actions {
+  text-align: right;
+}
+table.table {
+  th {
+    background: $light-grey;
+    border-bottom-width: 1px !important;
+    a {
+      color: #000;
+      &.sort_link span.glyphicon {
+        color: red;
+        margin-left: 8px;
+        font-size: 0.8em;
+        color: $grey;
+      }
+    }
+  }
+  td {
+    a {
+      color: $grey;
+      text-decoration: underline;
+    }
+    &.move-handle {
+      width: 28px;
+      text-align: center;
+      span.handle {
+        cursor: move;
+      }
+    }
+    &.image {
+      width: 48px;
+      .thumbnail {
+        margin-bottom: 0;
+        width: 48px;
+      }
+    }
+    &.actions {
+      .btn {
+        padding: 3px 5px 2px;
+      }
+      &.actions-1 {
+        width: 24px;
+      }
+      &.actions-2 {
+        width: 63px;
+      }
+      &.actions-3 {
+        width: 91px;
+      }
+    }
+  }
+}

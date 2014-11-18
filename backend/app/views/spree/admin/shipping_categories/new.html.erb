@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_shipping_category) %>
@@ -13,7 +13,7 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @shipping_category } %>
 
 <%= form_for [:admin, @shipping_category] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </fieldset>

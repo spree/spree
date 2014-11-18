@@ -3,18 +3,18 @@
 <% content_for :page_actions do %>
   <% if @order.shipments.any? &:shipped? %>
     <li>
-      <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'plus' %>
+      <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'plus-sign' %>
     </li>
   <% end %>
   <li><%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:return_authorizations) %>
+  <span class="glyphicon glyphicon-arrow-right"></span> <%= Spree.t(:return_authorizations) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) || @order.return_authorizations.any? %>
-  <table class="index">
+  <table class="table table-hover table-condensed table-bordered">
     <thead data-hook="rma_header">
       <tr>
         <th><%= Spree.t(:rma_number) %></th>
@@ -26,7 +26,7 @@
     </thead>
     <tbody>
       <% @return_authorizations.each do |return_authorization| %>
-        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
           <td><%= return_authorization.number %></td>
           <td><%= Spree.t(return_authorization.state.downcase) %></td>
           <td><%= return_authorization.display_pre_tax_total.to_html %></td>
@@ -43,7 +43,7 @@
     </tbody>
   </table>
 <% else %>
-  <div data-hook="rma_cannont_create" class="no-objects-found">
+  <div data-hook="rma_cannont_create" class="alert alert-warning">
     <%= Spree.t(:cannot_create_returns) %>
   </div>
 <% end %>

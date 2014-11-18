@@ -1,9 +1,36 @@
-<header id="header" data-hook>
-  <div class="container">
-    <figure data-hook="logo-wrapper" class="columns five">
-      <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
-    </figure>
-
-    <nav data-hook="admin_login_navigation_bar" class="columns eleven"></nav>
-  </div>
+<header class="header">
+  <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path, class: "logo" %>
+  <!-- Header Navbar: style can be found in header.less -->
+  <nav class="navbar navbar-static-top" role="navigation">
+    <% if can? :admim, Spree::Order %>
+      <!-- Sidebar toggle button-->
+      <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="navbar-right">
+        <ul class="nav navbar-nav">
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="glyphicon glyphicon-user"></i>
+              <span><%= spree_current_user.email %> <i class="caret"></i></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="user-header bg-light-blue">
+                <img src="http://www.gravatar.com/avatar/<%= Digest::MD5.hexdigest(spree_current_user.email.downcase) %>" class="img-circle" />
+                <p>
+                  <%= spree_current_user.email %>
+                  <small>Member since <%= spree_current_user.created_at.strftime("%B %Y") %></small>
+                </p>
+              </li>
+              <%= render :partial => 'spree_auth_devise/admin/login_nav' %>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  </nav>
 </header>

@@ -3,9 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_order), new_admin_order_url, :icon => 'plus', :id => 'admin_new_order' %>
-  </li>
+  <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'plus-sign', :id => 'admin_new_order' %>
 <% end if can? :edit, Spree::Order.new %>
 
 <% content_for :table_filter_title do %>
@@ -81,12 +79,19 @@
         </div>
       </div>
 
-      <div class="clearfix"></div>
+      <div class="field checkbox">
+        <label>
+          <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
+          <%= Spree.t(:show_only_complete_orders) %>
+        </label>
+      </div>
+      <div class="form-group">
+        <%= label_tag nil, Spree.t(:promotion) %>
+        <%= f.select :promotions_id_in, Spree::Promotion.all.collect {|p| [p.name, p.id]}, {:include_blank => true}, :class => 'select2' %>
+      </div>
 
-      <div class="actions filter-actions">
-        <div data-hook="admin_orders_index_search_buttons">
-          <%= button Spree.t(:filter_results), 'search' %>
-        </div>
+      <div data-hook="admin_orders_index_search_buttons">
+        <%= button Spree.t(:filter_results), 'search' %>
       </div>
     <% end %>
   </div>
@@ -95,19 +100,7 @@
 <%= paginate @orders %>
 
 <% if @orders.any? %>
-  <table class="index responsive" id="listing_orders" data-hook>
-    <colgroup>
-       <col style="width: 13%;">
-       <col style="width: 10%;">
-       <col style="width: 10%;">
-       <col style="width: 12%;">
-       <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-         <col style="width: 12%;">
-       <% end %>
-       <col style="width: 25%;">
-       <col style="width: 10%;">
-       <col style="width: 8%;">
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
         <% if @show_only_completed %>
@@ -130,13 +123,13 @@
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-        <td class="align-center"><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
-        <td class="align-center"><%= link_to order.number, edit_admin_order_path(order) %></td>
-        <td class="align-center"><span class="state <%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>"></span></td>
-        <td class="align-center"><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
-        <td class="align-center"><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
+        <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
+        <td><%= link_to order.number, edit_admin_order_path(order) %></td>
+        <td><span class="state <%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>"></span></td>
+        <td><span class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span></td>
+        <td><span class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) if order.payment_state %></span></td>
           <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-            <td class="align-center"><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
+            <td><span class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span></td>
           <% end %>
         <td>
           <% if order.user %>
@@ -145,8 +138,8 @@
             <%= mail_to order.email %>
           <% end %>
         </td>
-        <td class="align-center"><%= order.display_total.to_html %></td>
-        <td class='actions align-center' data-hook="admin_orders_index_row_actions">
+        <td><%= order.display_total.to_html %></td>
+        <td class='actions actions-1' data-hook="admin_orders_index_row_actions">
           <%= link_to_edit_url edit_admin_order_path(order), :title => "admin_edit_#{dom_id(order)}", :no_text => true %>
         </td>
       </tr>
@@ -154,7 +147,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/order')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_order_path %>!
   </div>

@@ -1,4 +1,4 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:tax_rates) %>
@@ -6,22 +6,12 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_tax_rate), new_object_url, :icon => 'plus' %>
+    <%= button_link_to Spree.t(:new_tax_rate), new_object_url, :class => "btn-success", :icon => 'plus-sign' %>
   </li>
 <% end %>
 
 <% if @tax_rates.any? %>
-  <table class="index">
-    <colgroup>
-      <col style="width: 15%">
-      <col style="width: 15%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 15%">
-      <col style="width: 15%">
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered">
     <thead>
       <tr data-hook="rate_header">
         <th><%= Spree.t(:zone) %></th>
@@ -31,20 +21,20 @@
         <th><%= Spree.t(:included_in_price) %></th>
         <th><%= Spree.t(:show_rate_in_label) %></th>
         <th><%= Spree.t(:calculator) %></th>
-        <th class="actions"></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <% @tax_rates.each do |tax_rate|%>
-      <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row" class="<%= cycle('odd', 'even')%>">
-        <td class="align-center"><%=tax_rate.zone.try(:name) || Spree.t(:not_available) %></td>
-        <td class="align-center"><%=tax_rate.name %></td>
-        <td class="align-center"><%=tax_rate.tax_category.try(:name) || Spree.t(:not_available) %></td>
-        <td class="align-center"><%=tax_rate.amount %></td>
-        <td class="align-center"><%=tax_rate.included_in_price? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td class="align-center"><%=tax_rate.show_rate_in_label? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td class="align-center"><%=tax_rate.calculator.to_s %></td>
-        <td class="actions">
+      <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row">
+        <td><%=tax_rate.zone.try(:name) || Spree.t(:not_available) %></td>
+        <td><%=tax_rate.name %></td>
+        <td><%=tax_rate.tax_category.try(:name) || Spree.t(:not_available) %></td>
+        <td><%=tax_rate.amount %></td>
+        <td><%=tax_rate.included_in_price? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        <td><%=tax_rate.show_rate_in_label? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        <td><%=tax_rate.calculator.to_s %></td>
+        <td class="actions actions-2">
           <%= link_to_edit tax_rate, :no_text => true %>
           <%= link_to_delete tax_rate, :no_text => true %>
         </td>
@@ -53,7 +43,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/tax_rate')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_tax_rate_path %>!
   </div>

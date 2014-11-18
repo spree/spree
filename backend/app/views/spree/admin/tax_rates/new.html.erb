@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_tax_rate) %>
@@ -13,11 +13,11 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_rate } %>
 
 <%= form_for [:admin, @tax_rate] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     
     <%= render :partial => 'form', :locals => { :f => f } %>
 
-    <div class="clear"></div>
+    
 
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 

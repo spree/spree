@@ -1,45 +1,143 @@
-@import 'spree/backend/globals/functions';
-@import 'spree/backend/globals/variables_override';
-@import 'spree/backend/globals/variables';
-@import 'spree/backend/globals/mixins';
+@import 'components/_settings';
+@import 'components/_spinner';
+@import 'components/_tables';
+@import 'components/_bootstrap_overrides';
+@import 'components/_admin_lte_overrides';
 
-@import 'spree/backend/shared/typography';
-@import 'spree/backend/shared/tables';
-@import 'spree/backend/shared/icons';
-@import 'spree/backend/shared/forms';
-@import 'spree/backend/shared/layout';
-
-@import 'spree/backend/components/states';
-@import 'spree/backend/components/actions';
-@import 'spree/backend/components/date-picker';
-@import 'spree/backend/components/messages';
-@import 'spree/backend/components/pagination';
-@import 'spree/backend/components/progress';
-@import 'spree/backend/components/table-filter';
-@import 'spree/backend/components/navigation';
-@import 'spree/backend/components/sidebar';
-@import 'spree/backend/components/product_autocomplete';
-
-@import 'font-awesome';
-@import 'spree/backend/plugins/powertip';
-@import 'spree/backend/plugins/select2';
-@import 'spree/backend/plugins/token-input';
-@import 'spree/backend/plugins/jstree';
-
-@import 'spree/backend/sections/adjustments_table';
-@import 'spree/backend/sections/alerts';
-@import 'spree/backend/sections/orders';
-@import 'spree/backend/sections/overview';
-@import 'spree/backend/sections/products';
-@import 'spree/backend/sections/promotions';
-@import 'spree/backend/sections/edit_checkouts';
-@import 'spree/backend/sections/bulk_transfer';
-@import 'spree/backend/sections/return_authorizations';
-@import 'spree/backend/sections/tax_zones';
-@import 'spree/backend/sections/log_entries';
-@import 'spree/backend/sections/taxons';
-@import 'spree/backend/sections/users';
-
-@import 'spree/backend/hacks/mozilla';
-@import 'spree/backend/hacks/opera';
-@import 'spree/backend/hacks/ie';
+.margint {
+  margin-top: 15px;
+}
+.marginr {
+  margin-right: 10px;
+}
+.marginb {
+  margin-bottom: 15px;
+}
+.marginl {
+  margin-left: 10px;
+}
+.no-marginb {
+  margin-bottom: 0;
+}
+.no-borderb {
+  border-bottom: 0;
+}
+.is-hidden {
+  display: none;
+}
+#progress {
+  display: none;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 999;
+  .alert {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+.alert-progress {
+  .spinner {
+    float: right;
+  }
+}
+// Content header / page title
+.right-side > .content-header {
+  h1 {
+    margin: 6px 0;
+    span.glyphicon {
+      font-size: 0.7em;
+      margin: 0 0.2em;
+      color: $medium-grey;
+    }
+  }
+  .page-actions {
+    form, li, button, a {
+      display: inline-block;
+    }
+  }
+  .page-actions form button,
+  .page-actions > a {
+    margin-left: 5px;
+  }
+}
+// used on stock transfers show page
+legend .glyphicon {
+  font-size: 16px;
+}
+.select2-container {
+  display: block;
+  width: 100%;
+  .select2-choice {
+    line-height: 30px;
+    height: 34px;
+    abbr {
+      top: 9px;
+    }
+  }
+}
+.pagination-wrap {
+  text-align: right;
+  .pagination-info {
+    float: left;
+    color: $medium-grey;
+    padding-top: 5px;
+    font-size: 0.95em;
+  }
+  .pagination {
+    margin: 0 0 10px 0;
+    a {
+      color: $grey;
+    }
+    li.active a {
+      background: $light-grey;
+      border-color: #ddd;
+      &:hover {
+        color: $grey;
+      }
+    }
+  }
+}
+.icon_link {
+  color: #444;
+}
+// user edit page (api key buttons)
+div.form-buttons {
+  form {
+    display: inline;
+  }
+}
+div.form-buttons span.or {
+  padding: 0 5px;
+}
+fieldset legend {
+  margin-bottom: 15px;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  li {
+    padding: 0;
+    margin: 0;
+  }
+  &.ul-with-markup {
+    margin: 0 0 0 16px;
+    list-style: circle;
+  }
+}
+.panel {
+  .nav.nav-pills li a {
+    border-radius: 0;
+  }
+  .nav.nav-stacked li {
+    margin-top: 0;
+  }
+}
+// better alignment of the icons in the sidebar
+#sidebar ul.nav li .icon_link.with-tip span.glyphicon {
+  float: left;
+  margin: 2px 7px 0 0;
+}

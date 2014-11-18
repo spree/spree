@@ -1,14 +1,14 @@
 <div data-hook="admin_state_form_fields" class="row">
-  <div class="alpha six columns">
-    <%= f.field_container :name do %>
+  <div class="col-md-6">
+    <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, :class => 'fullwidth' %>
+      <%= f.text_field :name, :class => 'form-control' %>
     <% end %>
   </div>
-  <div class="omega six columns">
-    <%= f.field_container :abbr do %>
+  <div class="col-md-6">
+    <%= f.field_container :abbr, class: ['form-group'] do %>
       <%= f.label :abbr, Spree.t(:abbreviation) %>
-      <%= f.text_field :abbr, :class => 'fullwidth' %>
+      <%= f.text_field :abbr, :class => 'form-control' %>
     <% end %>
   </div>
 </div>

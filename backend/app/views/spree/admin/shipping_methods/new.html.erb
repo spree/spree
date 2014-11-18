@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_shipping_method) %>
@@ -16,10 +16,10 @@
 
 <div data-hook="admin_shipping_method_new_form">
   <%= form_for [:admin, @shipping_method] do |f| %>
-    <fieldset class="no-border-top">
+    <fieldset>
       <%= render :partial => 'form', :locals => { :f => f } %>
 
-      <div class="clear"></div>
+      
 
       <div data-hook="admin_shipping_method_new_form_buttons">
         <%= render :partial => 'spree/admin/shared/new_resource_links' %>

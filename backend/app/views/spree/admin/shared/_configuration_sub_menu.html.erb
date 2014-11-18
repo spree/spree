@@ -1,0 +1,16 @@
+<ul class="treeview-menu" data-hook="admin_configurations_sidebar_menu">
+  <li><%= link_to Spree.t(:general_settings), edit_admin_general_settings_path %></li>
+  <li><%= link_to Spree.t(:tax_categories), admin_tax_categories_path %></li>
+  <li><%= link_to Spree.t(:tax_rates), admin_tax_rates_path %></li>
+  <li><%= link_to Spree.t(:zones), admin_zones_path %></li>
+  <li><%= link_to Spree.t(:countries), admin_countries_path %></li>
+  <% if Spree::Config[:default_country_id] %>
+    <li><%= link_to Spree.t(:states), admin_country_states_path(Spree::Config[:default_country_id]) %></li>
+  <% end %>
+  <li><%= link_to Spree.t(:payment_methods), admin_payment_methods_path %></li>
+  <li><%= link_to Spree.t(:shipping_methods), admin_shipping_methods_path %></li>
+  <li><%= link_to Spree.t(:shipping_categories), admin_shipping_categories_path %></li>
+  <li><%= link_to Spree.t(:stock_transfers), admin_stock_transfers_path %></li>
+  <li><%= link_to Spree.t(:stock_locations), spree.admin_stock_locations_path %></li>
+  <li><%= link_to Spree.t(:analytics_trackers), admin_trackers_path %></li>
+</ul>

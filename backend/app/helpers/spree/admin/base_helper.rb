@@ -1,6 +1,12 @@
 module Spree
   module Admin
     module BaseHelper
+      def main_div_class
+        return "col-md-9" if content_for?(:sidebar) or content_for?(:table_filter)
+        return "col-md-6" if content_for?(:sidebar) and content_for?(:table_filter)
+        "col-md-12"
+      end
+
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
         css_classes << 'field'
@@ -105,22 +111,22 @@ module Spree
         field_options = case options[:type]
         when :integer
           { :size => 10,
-            :class => 'input_integer' }
+            :class => 'input_integer form-control' }
         when :boolean
           {}
         when :string
           { :size => 10,
-            :class => 'input_string fullwidth' }
+            :class => 'input_string form-control' }
         when :password
           { :size => 10,
-            :class => 'password_string fullwidth' }
+            :class => 'password_string form-control' }
         when :text
           { :rows => 15,
             :cols => 85,
-            :class => 'fullwidth' }
+            :class => 'form-control' }
         else
           { :size => 10,
-            :class => 'input_string fullwidth' }
+            :class => 'input_string form-control' }
         end
 
         field_options.merge!({
@@ -138,12 +144,6 @@ module Spree
             preference_field_for(form, "preferred_#{key}", :type => object.preference_type(key))
 
         }.join("<br />").html_safe
-      end
-
-      def link_to_add_fields(name, target, options = {})
-        name = '' if options[:no_text]
-        css_classes = options[:class] ? options[:class] + " spree_add_fields" : "spree_add_fields"
-        link_to_with_icon('plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
       end
 
       # renders hidden field and link to remove record using nested_attributes

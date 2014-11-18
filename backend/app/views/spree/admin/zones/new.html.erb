@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_zone) %>
@@ -15,7 +15,7 @@
 <%= form_for [:admin, @zone] do |zone_form| %>
   <%= render :partial => 'form', :locals => { :zone_form => zone_form } %>
 
-  <div class="clear"></div>
+  
   
   <%= render :partial => 'spree/admin/shared/new_resource_links' %>
 <% end %>

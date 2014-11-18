@@ -1,4 +1,6 @@
-<div class="field alpha omega eight columns">
-  <label><%= Spree.t('user_rule.choose_users') %></label><br>
-  <input type='hidden' name='<%= param_prefix %>[user_ids_string]' class='user_picker fullwidth' value='<%= promotion_rule.user_ids.join(",") %>'>
+<div class="panel-body">
+  <div class="form-group no-marginb">
+    <%= label_tag Spree.t('user_rule.choose_users') %>
+    <input type='hidden' name='<%= param_prefix %>[user_ids_string]' class='user_picker' value='<%= promotion_rule.user_ids.join(",") %>'>
+  </div>
 </div>

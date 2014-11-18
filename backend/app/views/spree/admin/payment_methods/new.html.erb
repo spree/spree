@@ -1,21 +1,17 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= Spree.t(:new_payment_method) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'arrow-left' %>
-  </li>  
+  <%= button_link_to Spree.t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'arrow-left' %>
 <% end %>
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
 
 <%= form_for @payment_method, :url => collection_url do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
-    <div data-hook="buttons" class="filter-actions actions">
+    <div data-hook="buttons" class="actions">
       <%= button Spree.t(:create), 'ok' %>
     </div>
   </fieldset>

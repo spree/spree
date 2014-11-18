@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Variants'} %>
 
@@ -6,15 +6,7 @@
 <div id="new_variant" data-hook></div>
 
 <% if @variants.any? %>
-  <table class="index sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
-    <colgroup>
-      <col style="width: 5%" />
-      <col style="width: 25%" />
-      <col style="width: 20%" />
-      <col style="width: 20%" />
-      <col style="width: 15%" />
-      <col style="width: 15%" />
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <thead data-hook="variants_header">
       <tr>
         <th colspan="2"><%= Spree.t(:options) %></th>
@@ -25,27 +17,28 @@
     </thead>
     <tbody>
     <% @variants.each do |variant| %>
-      <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row" class="<%= cycle('odd', 'even')%>">
-        <td class="no-border">
-          <span class="handle"></span>
+      <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
+        <td class="move-handle">
+          <span class="glyphicon glyphicon-move handle"></span>
         </td>
         <td><%= variant.options_text %></td>
-        <td class="align-center"><%= variant.display_price.to_html %></td>
-        <td class="align-center"><%= variant.sku %></td>
-        <td class="actions">
+        <td><%= variant.display_price.to_html %></td>
+        <td><%= variant.sku %></td>
+        <td class="actions actions-2">
           <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
-          &nbsp;
           <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
         </td>
       </tr>
       <% end %>
       <% unless @product.has_variants? %>
-        <tr><td colspan="5"><%= Spree.t(:none) %></td></tr>
+        <tr>
+          <td colspan="5"><%= Spree.t(:none) %></td>
+        </tr>
       <% end %>
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="no-objects-found alert alert-info">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
   </div>
@@ -60,17 +53,9 @@
   </p>
 <% else %>
   <% content_for :page_actions do %>
-    <ul class="inline-menu" data-hook="toolbar">
-      <li id="new_var_link" data-hook>
-        <%= link_to_with_icon('plus',
-                              Spree.t(:new_variant),
-                              new_admin_product_variant_url(@product),
-                              :remote => :true,
-                              :'data-update' => 'new_variant',
-                              :class => 'button'
-                             ) %>
-      </li>
-      <li><%= link_to_with_icon('filter', @deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), :class => 'button') %></li>
-    </ul>
+    <div data-hook="toolbar">
+      <li id="new_var_link" data-hook><%= button_link_to Spree.t(:new_variant), new_admin_product_variant_url(@product), { :remote => :true, :icon => 'plus-sign', :'data-update' => 'new_variant', :class => 'btn-success' } %></li>
+      <li><%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), { :class => 'btn-default', :icon => 'filter' } %></li>
+    </div>
   <% end %>
 <% end %>

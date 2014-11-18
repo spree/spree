@@ -5,7 +5,7 @@
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>
 <%= render :partial => 'spree/admin/users/user_page_actions' %>
 
-<fieldset data-hook="admin_user_addresses" id="admin_user_edit_addresses" class="alpha twelve columns">
+<fieldset data-hook="admin_user_addresses" id="admin_user_edit_addresses">
   <legend><%= Spree.t('addresses', :scope => 'admin.user') %></legend>
 
   <div data-hook="admin_user_edit_form_header">
@@ -14,6 +14,7 @@
 
   <div data-hook="admin_user_address_edit_form">
     <%= form_for [:admin, @user], as: :user, url: addresses_admin_user_url(@user), method: :put do |f| %>
+
       <%= render :partial => 'addresses_form', :locals => { :f => f } %>
 
       <div data-hook="admin_user_edit_form_button">
