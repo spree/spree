@@ -193,7 +193,7 @@ describe Spree::OrderContents, :type => :model do
   end
 
   context "completed order" do
-    let(:order) { Spree::Order.create! state: 'complete', completed_at: Time.now }
+    let(:order) { create(:order, state: 'complete', completed_at: Time.now) }
 
     before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
 

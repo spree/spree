@@ -296,14 +296,14 @@ describe Spree::CheckoutController, :type => :controller do
 
       context "when the order is invalid" do
         before do
-          allow(order).to receive_messages :update_attributes => true, :next => nil
-          order.errors.add :base, 'Base error'
-          order.errors.add :adjustments, 'error'
+          allow(order).to receive_messages(update_from_params: true, next: nil)
+          order.errors.add(:base, 'Base error')
+          order.errors.add(:adjustments, 'error')
         end
 
         it "due to the order having errors" do
-          spree_put :update, :order => {}
-          expect(flash[:error]).to eq("Base error\nAdjustments error")
+          spree_put :update, order: {}
+          expect(flash[:error]).to eql("Base error\nAdjustments error")
           expect(response).to redirect_to(spree.checkout_state_path('address'))
         end
       end
