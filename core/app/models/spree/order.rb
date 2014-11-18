@@ -512,7 +512,6 @@ module Spree
       Spree::Promotion.order_activatable?(self)
     end
 
-
     def shipped?
       %w(partial shipped).include?(shipment_state)
     end
@@ -675,12 +674,12 @@ module Spree
         end
       end
 
-    def after_cancel
-      shipments.each { |shipment| shipment.cancel! }
-      payments.completed.each { |payment| payment.cancel! }
-      send_cancel_email
-      self.update!
-    end
+      def after_cancel
+        shipments.each { |shipment| shipment.cancel! }
+        payments.completed.each { |payment| payment.cancel! }
+        send_cancel_email
+        self.update!
+      end
 
       def send_cancel_email
         OrderMailer.cancel_email(self.id).deliver

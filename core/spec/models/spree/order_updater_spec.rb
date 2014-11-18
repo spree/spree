@@ -99,7 +99,6 @@ module Spree
         expect(order.shipment_state).to be_nil
       end
 
-
       ["shipped", "ready", "pending"].each do |state|
         it "is #{state}" do
           allow(order).to receive_message_chain(:shipments, :states).and_return([state])
@@ -160,7 +159,6 @@ module Spree
       end
 
       context "order is canceled" do
-
         before do
           order.state = 'canceled'
         end
@@ -176,7 +174,6 @@ module Spree
         end
 
         context "and is paid" do
-
           it "is credit_owed" do
             order.payment_total = 30
             order.total = 30
@@ -186,7 +183,6 @@ module Spree
               updater.update_payment_state
             }.to change { order.payment_state }.to 'credit_owed'
           end
-
         end
 
         context "and payment is refunded" do
@@ -199,7 +195,6 @@ module Spree
           end
         end
       end
-
     end
 
     it "state change" do
