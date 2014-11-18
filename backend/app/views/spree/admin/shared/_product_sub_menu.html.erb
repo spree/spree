@@ -1,5 +1,5 @@
 <ul class="treeview-menu" id="sub_nav" data-hook="admin_product_sub_tabs">
-  <%= tab :products, :match_path => '/products' %>
+  <%= tab *Spree::BackendConfiguration::PRODUCT_TABS %>
   <%= tab :option_types, :match_path => '/option_types' %>
   <%= tab :properties %>
   <%= tab :prototypes %>
