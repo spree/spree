@@ -28,7 +28,6 @@ module Spree
         # The current incomplete order from the guest_token for use in cart and during checkout
         def current_order(options = {})
           options[:create_order_if_necessary] ||= false
-          options[:lock] ||= false
 
           return @current_order if @current_order
 
@@ -82,6 +81,7 @@ module Spree
         end
 
         def find_order_by_token_or_user(options={})
+          options[:lock] ||= false
 
           # Find any incomplete orders for the guest_token
           order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)
