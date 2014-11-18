@@ -287,9 +287,12 @@ module Spree
     end
 
     describe "#persist_totals" do
+      let!(:order) { super() }
       let(:updated_at) { Time.now }
+      let(:validation_order) { mock_model(Spree::Order, valid?: true) }
+      let(:totals) { attributes.merge(updated_at: updated_at) }
 
-      let(:totals) do
+      let(:attributes) do
         {
           payment_state:        nil,
           shipment_state:       nil,
@@ -301,13 +304,14 @@ module Spree
           payment_total:        0,
           shipment_total:       0,
           promo_total:          0,
-          total:                0,
-          updated_at:           updated_at
+          total:                0
         }
       end
 
       before do
         allow(Time).to receive(:now).and_return(updated_at)
+        allow(Spree::Order).to receive(:new).with(attributes).
+          and_return(validation_order)
       end
 
       context 'when the columns are updated' do
@@ -334,6 +338,17 @@ module Spree
         end
 
         its(:persist_totals) { should be(false) }
+      end
+
+      context 'when the order is not valid' do
+        before do
+          allow(validation_order).to receive(:valid?).and_return(false)
+        end
+
+        it 'raises ActiveRecord::RecordInvalid' do
+          expect { subject.persist_totals }
+            .to raise_error(ActiveRecord::RecordInvalid)
+        end
       end
     end
   end

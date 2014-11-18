@@ -108,6 +108,8 @@ module Spree
         :promo_total,
         :total
       )
+      totals = order.class.new(attributes)
+      raise ActiveRecord::RecordInvalid, totals unless totals.valid?
       order.update_columns(attributes.update(updated_at: Time.now))
     end
 
