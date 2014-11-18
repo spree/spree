@@ -283,5 +283,56 @@ module Spree
         subject.update
       end
     end
+
+    describe "#persist_totals" do
+      let(:updated_at) { Time.now }
+
+      let(:totals) do
+        {
+          payment_state:        nil,
+          shipment_state:       nil,
+          item_count:           0,
+          item_total:           0,
+          adjustment_total:     0,
+          included_tax_total:   0,
+          additional_tax_total: 0,
+          payment_total:        0,
+          shipment_total:       0,
+          promo_total:          0,
+          total:                0,
+          updated_at:           updated_at
+        }
+      end
+
+      before do
+        allow(Time).to receive(:now).and_return(updated_at)
+      end
+
+      context 'when the columns are updated' do
+        before do
+          allow(order).to receive(:update_columns).and_return(true)
+        end
+
+        it 'persists the expected totals' do
+          subject.persist_totals
+          expect(order).to have_received(:update_columns).with(totals)
+        end
+
+        its(:persist_totals) { should be(true) }
+      end
+
+      context 'when the columns are not updated' do
+        before do
+          allow(order).to receive(:update_columns).and_return(false)
+        end
+
+        it 'persists the expected totals' do
+          subject.persist_totals
+          expect(order).to have_received(:update_columns).with(totals)
+        end
+
+        its(:persist_totals) { should be(false) }
+      end
+    end
   end
 end
