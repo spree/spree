@@ -28,7 +28,8 @@ module Spree
         :stock_location_attributes,
         :stock_movement_attributes,
         :stock_item_attributes,
-        :promotion_attributes
+        :promotion_attributes,
+        :store_attributes
       ]
 
       mattr_reader *ATTRIBUTES
@@ -150,7 +151,13 @@ module Spree
       ]
 
       @@promotion_attributes = [
-         :id, :name, :description, :expires_at, :starts_at, :type, :usage_limit, :match_policy, :code, :advertise, :path
+        :id, :name, :description, :expires_at, :starts_at, :type, :usage_limit,
+        :match_policy, :code, :advertise, :path
+      ]
+
+      @@store_attributes = [
+        :id, :name, :url, :meta_description, :meta_keywords, :seo_title,
+        :mail_from_address, :default_currency, :code, :default
       ]
 
       def variant_attributes
