@@ -1,6 +1,6 @@
 module Spree
   class Reimbursement < Spree::Base
-    class IncompleteReimbursement < StandardError; end
+    class IncompleteReimbursementError < StandardError; end
 
     belongs_to :order, inverse_of: :reimbursements
     belongs_to :customer_return, inverse_of: :reimbursements, touch: true
@@ -110,7 +110,7 @@ module Spree
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
-        raise IncompleteReimbursement, Spree.t("validation.unpaid_amount_not_zero", amount: unpaid_amount)
+        raise IncompleteReimbursementError, Spree.t("validation.unpaid_amount_not_zero", amount: unpaid_amount)
       end
     end
 
