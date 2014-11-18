@@ -167,10 +167,5 @@ module Spree
       order.state_changed('payment') if last_state != order.payment_state
       order.payment_state
     end
-
-    private
-      def round_money(n)
-        (n * 100).round / 100.0
-      end
   end
 end
