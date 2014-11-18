@@ -1,5 +1,5 @@
 <ul class="treeview-menu" data-hook="admin_configurations_sidebar_menu">
-  <li><%= link_to Spree.t(:general_settings), edit_admin_general_settings_path %></li>
+  <%= tab *Spree::BackendConfiguration::CONFIGURATION_TABS, url: spree.edit_admin_general_settings_path %>
   <li><%= link_to Spree.t(:tax_categories), admin_tax_categories_path %></li>
   <li><%= link_to Spree.t(:tax_rates), admin_tax_rates_path %></li>
   <li><%= link_to Spree.t(:zones), admin_zones_path %></li>
