@@ -2,7 +2,7 @@
   <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path, class: "logo" %>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top" role="navigation">
-    <% if can? :admim, Spree::Order %>
+    <% if can? :admin, Spree::Order %>
       <!-- Sidebar toggle button-->
       <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
         <span class="sr-only">Toggle navigation</span>
