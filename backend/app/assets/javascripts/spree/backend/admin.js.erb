@@ -28,12 +28,13 @@ jQuery(function($) {
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
-    var sort_link_text = $(this).text();
+    // Remove the &nbsp; in the text
+    var sort_link_text = $(this).text().replace('\xA0', '');
     if(sort_link_text.indexOf("▼") >= 0){
-      $(this).text(sort_link_text.replace(" ▼",""));
+      $(this).text(sort_link_text.replace("▼",""));
       $(this).append('<span class="glyphicon glyphicon-chevron-down"></span>');
     } else if(sort_link_text.indexOf("▲") >= 0){
-      $(this).text(sort_link_text.replace(" ▲",""));
+      $(this).text(sort_link_text.replace("▲",""));
       $(this).append('<span class="glyphicon glyphicon-chevron-up"></span>');
     }
   });
