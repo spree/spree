@@ -248,8 +248,9 @@ describe Spree::Order, :type => :model do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
-      allow(order).to receive_messages(:line_items => line_items = [1, 2])
-      allow(order).to receive_messages(:adjustments => adjustments = [])
+      allow(order).to receive_messages(line_items: [1, 2])
+      allow(order).to receive_messages(adjustments: [])
+      allow(order).to receive_message_chain(:line_items, sum: 0)
     end
 
     it "clears out line items, adjustments and update totals" do
