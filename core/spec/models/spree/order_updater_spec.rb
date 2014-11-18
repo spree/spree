@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe OrderUpdater, type: :model do
     let(:order) { Spree::Order.create }
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    subject { Spree::OrderUpdater.new(order) }
 
     context "order totals" do
       before do
@@ -19,13 +19,13 @@ module Spree
       end
 
       it "update item total" do
-        updater.update_item_total
+        subject.update_item_total
         expect(order.item_total).to eq(20)
       end
 
       it "update shipment total" do
         create(:shipment, order: order, cost: 10)
-        updater.update_shipment_total
+        subject.update_shipment_total
         expect(order.shipment_total).to eq(10)
       end
 
@@ -41,7 +41,7 @@ module Spree
         end
 
         before do
-          updater.update
+          subject.update
 
           order.create_adjustment!(
             source:     promotion_action,
@@ -53,7 +53,7 @@ module Spree
           # factory girls creation method does not register the line item in the already
           # cached collection Order#lineitems.
           order.reload
-          updater.update
+          subject.update
         end
 
         it "updates promotion total" do
@@ -69,7 +69,7 @@ module Spree
           additional_tax_total: 0.05,
           included_tax_total: 0.05,
         })
-        updater.update_adjustment_total
+        subject.update_adjustment_total
         expect(order.adjustment_total).to eq(10.05)
         expect(order.additional_tax_total).to eq(0.05)
         expect(order.included_tax_total).to eq(0.05)
@@ -86,7 +86,7 @@ module Spree
 
       it "is backordered" do
         allow(order).to receive_messages backordered?: true
-        updater.update_shipment_state
+        subject.update_shipment_state
 
         expect(order.shipment_state).to eq('backorder')
       end
@@ -95,33 +95,33 @@ module Spree
         allow(order).to receive_message_chain(:shipments, :states).and_return([])
         allow(order).to receive_message_chain(:shipments, :count).and_return(0)
 
-        updater.update_shipment_state
+        subject.update_shipment_state
         expect(order.shipment_state).to be_nil
       end
 
       ["shipped", "ready", "pending"].each do |state|
         it "is #{state}" do
           allow(order).to receive_message_chain(:shipments, :states).and_return([state])
-          updater.update_shipment_state
+          subject.update_shipment_state
           expect(order.shipment_state).to eq(state.to_s)
         end
       end
 
       it "is partial" do
         allow(order).to receive_message_chain(:shipments, :states).and_return(["pending", "ready"])
-        updater.update_shipment_state
+        subject.update_shipment_state
         expect(order.shipment_state).to eq('partial')
       end
     end
 
     context "updating payment state" do
       let(:order) { Order.new }
-      let(:updater) { order.updater }
+      let(:subject) { order.updater }
 
       it "is failed if no valid payments" do
         allow(order).to receive_message_chain(:payments, :valid, :size).and_return(0)
 
-        updater.update_payment_state
+        subject.update_payment_state
         expect(order.payment_state).to eq('failed')
       end
 
@@ -131,7 +131,7 @@ module Spree
           order.total = 1
 
           expect {
-            updater.update_payment_state
+            subject.update_payment_state
           }.to change { order.payment_state }.to 'credit_owed'
         end
       end
@@ -142,7 +142,7 @@ module Spree
           order.total = 2
 
           expect {
-            updater.update_payment_state
+            subject.update_payment_state
           }.to change { order.payment_state }.to 'balance_due'
         end
       end
@@ -153,7 +153,7 @@ module Spree
           order.total = 30
 
           expect {
-            updater.update_payment_state
+            subject.update_payment_state
           }.to change { order.payment_state }.to 'paid'
         end
       end
@@ -168,7 +168,7 @@ module Spree
             order.payment_total = 0
             order.total = 30
             expect {
-              updater.update_payment_state
+              subject.update_payment_state
             }.to change { order.payment_state }.to 'void'
           end
         end
@@ -180,7 +180,7 @@ module Spree
             allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
             allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
             expect {
-              updater.update_payment_state
+              subject.update_payment_state
             }.to change { order.payment_state }.to 'credit_owed'
           end
         end
@@ -190,7 +190,7 @@ module Spree
             order.payment_total = 0
             order.total = 30
             expect {
-              updater.update_payment_state
+              subject.update_payment_state
             }.to change { order.payment_state }.to 'void'
           end
         end
@@ -215,13 +215,13 @@ module Spree
       before { allow(order).to receive_messages completed?: true }
 
       it "updates payment state" do
-        expect(updater).to receive(:update_payment_state)
-        updater.update
+        expect(subject).to receive(:update_payment_state)
+        subject.update
       end
 
       it "updates shipment state" do
-        expect(updater).to receive(:update_shipment_state)
-        updater.update
+        expect(subject).to receive(:update_shipment_state)
+        subject.update
       end
 
       it "updates each shipment" do
@@ -234,7 +234,7 @@ module Spree
         allow(shipments).to receive_messages shipped: []
 
         expect(shipment).to receive(:update!).with(order)
-        updater.update_shipments
+        subject.update_shipments
       end
 
       it "refreshes shipment rates" do
@@ -243,7 +243,7 @@ module Spree
         allow(order).to receive_messages shipments: shipments
 
         expect(shipment).to receive(:refresh_rates)
-        updater.update_shipments
+        subject.update_shipments
       end
 
       it "updates the shipment amount" do
@@ -252,7 +252,7 @@ module Spree
         allow(order).to receive_messages shipments: shipments
 
         expect(shipment).to receive(:update_amounts)
-        updater.update_shipments
+        subject.update_shipments
       end
     end
 
@@ -260,13 +260,13 @@ module Spree
       before { allow(order).to receive_messages completed?: false }
 
       it "doesnt update payment state" do
-        expect(updater).not_to receive(:update_payment_state)
-        updater.update
+        expect(subject).not_to receive(:update_payment_state)
+        subject.update
       end
 
       it "doesnt update shipment state" do
-        expect(updater).not_to receive(:update_shipment_state)
-        updater.update
+        expect(subject).not_to receive(:update_shipment_state)
+        subject.update
       end
 
       it "doesnt update each shipment" do
@@ -278,9 +278,9 @@ module Spree
         allow(shipments).to receive_messages pending: []
         allow(shipments).to receive_messages shipped: []
 
-        allow(updater).to receive(:update_totals) # Otherwise this gets called and causes a scene
-        expect(updater).not_to receive(:update_shipments).with(order)
-        updater.update
+        allow(subject).to receive(:update_totals) # Otherwise this gets called and causes a scene
+        expect(subject).not_to receive(:update_shipments).with(order)
+        subject.update
       end
     end
   end
