@@ -3,14 +3,30 @@
 <% end %>
 
 <% if can? :admin, Spree::Product %>
-  <%= tab *Spree::BackendConfiguration::PRODUCT_TABS, icon: 'th-large' %>
+
+  <li class="treeview">
+    <a href="#">
+      <span class="glyphicon glyphicon-th-large"></span>
+      <span><%= Spree.t(:products) %></span>
+      <span class="glyphicon glyphicon-chevron-left pull-right"></span>
+    </a>
+    <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+  </li>
+
 <% end %>
 
 <% if can? :admin, Spree::Admin::ReportsController %>
   <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
 <% end %>
 
-<%= tab *Spree::BackendConfiguration::CONFIGURATION_TABS, label: 'configuration', icon: 'wrench', url: spree.edit_admin_general_settings_path %>
+<li class="treeview">
+  <a href="#">
+    <span class="glyphicon glyphicon-wrench"></span>
+    <span><%= Spree.t(:configurations) %></span>
+    <span class="glyphicon glyphicon-chevron-left pull-right"></span>
+  </a>
+  <%= render :partial => 'spree/admin/shared/configuration_sub_menu' %>
+</li>
 
 <% if can? :admin, Spree::Promotion %>
   <%= tab *Spree::BackendConfiguration::PROMOTION_TABS, url: spree.admin_promotions_path, icon: 'bullhorn' %>
