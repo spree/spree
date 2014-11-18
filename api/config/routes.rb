@@ -112,6 +112,8 @@ Spree::Core::Engine.add_routes do
       resources :stock_items
     end
 
+    resources :stores
+
     get '/config/money', to: 'config#money'
     get '/config', to: 'config#show'
 
