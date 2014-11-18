@@ -36,7 +36,7 @@ describe Spree::ReimbursementTaxCalculator, :type => :model do
     end
   end
 
-  context 'with included tax' do
+  pending 'with included tax' do
     let!(:tax_rate) { create(:tax_rate, name: "VAT Tax", amount: 0.1, included_in_price: true, zone: tax_zone) }
     let(:tax_zone) { create(:zone, default_tax: true) }
 
