@@ -9,7 +9,7 @@
     </div>
     <ul class="nav nav-pills nav-stacked" data-hook="admin_product_tabs">
       <%= content_tag :li, :class => ('active' if current == 'Product Details') do %>
-        <%= link_to_with_icon 'pencil', Spree.t(:product_details), edit_admin_product_url(@product) %>
+        <%= link_to_with_icon 'edit', Spree.t(:product_details), edit_admin_product_url(@product) %>
       <% end if can?(:admin, Spree::Product) %>
       <%= content_tag :li, :class => ('active' if current == 'Images') do %>
         <%= link_to_with_icon 'picture', Spree.t(:images), admin_product_images_url(@product) %>

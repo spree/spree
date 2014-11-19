@@ -58,7 +58,7 @@
 
           <td class="actions">
             <% if( (can? :update, shipment) and !shipment.shipped?) %>
-              <%= link_to_with_icon 'pencil', Spree.t('edit'), "javascript:;", :class => 'edit-method with-tip btn btn-sm btn-default', :data => {:action => 'edit'}, :no_text => true %>
+              <%= link_to_with_icon 'edit', Spree.t('edit'), "javascript:;", :class => 'edit-method with-tip btn btn-sm btn-default', :data => {:action => 'edit'}, :no_text => true %>
             <% end %>
           </td>
         </tr>
@@ -95,7 +95,7 @@
         </td>
         <td class="actions">
           <% if can? :update, shipment %>
-            <%= link_to_with_icon 'pencil', Spree.t('edit'), "#", :class => 'edit-tracking btn btn-default btn-sm', :data => {:action => 'edit'}, :title => Spree.t('edit'), :no_text => true %>
+            <%= link_to_with_icon 'edit', Spree.t('edit'), "#", :class => 'edit-tracking btn btn-default btn-sm', :data => {:action => 'edit'}, :title => Spree.t('edit'), :no_text => true %>
           <% end %>
         </td>
       </tr>

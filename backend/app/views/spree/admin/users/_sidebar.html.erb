@@ -14,7 +14,7 @@
           <%= link_to_with_icon 'shopping-cart', Spree.t(:"admin.user.orders"), orders_admin_user_path(@user) %>
         </li>
         <li<%== ' class="active"' if current == :items %>>
-          <%= link_to_with_icon 'pencil', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
+          <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
         </li>
       </ul>
     </div>
