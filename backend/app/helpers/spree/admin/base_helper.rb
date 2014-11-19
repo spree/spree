@@ -152,7 +152,7 @@ module Spree
         options[:class] = '' unless options[:class]
         options[:class] += 'no-text with-tip' if options[:no_text]
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('trash', name, url, :class => "spree_remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('delete', name, url, :class => "spree_remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
