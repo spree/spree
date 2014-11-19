@@ -3,7 +3,7 @@
 <% end %>
 
 <% if @reimbursement_types.any? %>
-  <table class="index" id='listing_reimbursement_types' data-hook>
+  <table class="table table-hover table-condensed table-bordered" id='listing_reimbursement_types' data-hook>
     <thead>
       <tr data-hook="reimbursement_types_header">
         <th><%= Spree.t(:name) %></th>
@@ -24,7 +24,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/reimbursement_type')) %>,
     <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
