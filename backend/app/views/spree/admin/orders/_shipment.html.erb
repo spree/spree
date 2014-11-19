@@ -38,7 +38,7 @@
           <td class="actions">
             <% if can? :update, shipment %>
               <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-method btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :no_text => true %>
-              <%= link_to_with_icon 'ok', Spree.t('actions.save'), "#", :class => 'save-method btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => Spree.t('actions.save'), :no_text => true %>
+              <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", :class => 'save-method btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => Spree.t('actions.save'), :no_text => true %>
             <% end %>
           </td>
         </tr>
@@ -72,7 +72,7 @@
         <td class="actions">
           <% if can? :update, shipment %>
             <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-tracking btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :no_text => true %>
-            <%= link_to_with_icon 'ok', Spree.t('actions.save'), "#", :class => 'save-tracking btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => Spree.t('actions.save'), :no_text => true %>
+            <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", :class => 'save-tracking btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => Spree.t('actions.save'), :no_text => true %>
           <% end %>
         </td>
       </tr>
