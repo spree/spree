@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe "Payment Methods", :type => :feature do
+# REIN: find out why js: true is required to let the test pass
+
+describe "Payment Methods", :type => :feature, :js => true do
   stub_authorization!
 
   before(:each) do
