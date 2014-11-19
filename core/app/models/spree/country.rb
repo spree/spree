@@ -3,6 +3,13 @@ module Spree
     has_many :states, -> { order('name ASC') }, dependent: :destroy
     has_many :addresses, dependent: :nullify
 
+    has_many :zone_members,
+      -> { where(zoneable_type: 'Spree::Country') },
+      class_name: 'Spree::ZoneMember',
+      foreign_key: :zoneable_id
+
+    has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
+
     validates :name, :iso_name, presence: true
 
     def self.states_required_by_country_id
