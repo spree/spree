@@ -1,0 +1,25 @@
+// The less opiniated icons
+.icon {
+  @extend .glyphicon
+}
+.icon-edit {
+  @extend .glyphicon-pencil
+}
+.icon-capture {
+  @extend .glyphicon-ok
+}
+.icon-void {
+  @extend .glyphicon-remove
+}
+.icon-shopping-cart {
+  @extend .glyphicon-shopping-cart
+}
+.icon-file {
+  @extend .glyphicon-file
+}
+.icon-bullhorn {
+  @extend .glyphicon-bullhorn
+}
+.icon-user {
+  @extend .glyphicon-user
+}

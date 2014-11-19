@@ -7,6 +7,7 @@
 @import 'components/_spinner';
 @import 'components/_tables';
 @import 'components/_labels';
+@import 'components/_icons';
 @import 'components/_select2';
 @import 'components/_bootstrap_overrides';
 @import 'components/_admin_lte_overrides';
@@ -147,14 +148,4 @@ ul {
 #sidebar ul.nav li .icon_link.with-tip span.glyphicon {
   float: left;
   margin: 2px 7px 0 0;
-}
-
-// The less opiniated icons
-
-.icon {
-  @extend .glyphicon
-}
-
-.icon-edit {
-  @extend .glyphicon-pencil
 }
