@@ -93,7 +93,7 @@ This guide will assume that you have an S3 account already, along with a bucket
 under that account for your files to go into, and that you have generated the
 access key and secret for your S3 account.
 
-To configure Spree to upload images to S3, please refer to the following [documentation](http://guides.spreecommerce.com/developer/s3_storage.html)
+To configure Spree to upload images to S3, please refer to the following [documentation](http://guides.spreecommerce.com/developer/s3_storage.html) or follow an [equivalent solution](https://devcenter.heroku.com/articles/paperclip-s3) from Heroku's website.
 
 
 ## Pushing to Heroku
