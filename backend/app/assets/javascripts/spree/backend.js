@@ -17,7 +17,6 @@
 //= require responsive-tables
 //= require spree
 //= require spree/backend/spree-select2
-//= require bootstrap.min
 //= require_tree .
 
 
