@@ -11,7 +11,7 @@
 <% end %>
 
 <% if @shipping_methods.any? %>
-  <table class="table table-hover table-condensed table-bordered" id='listing_shipping_methods'>
+  <table class="table table-hover table-condensed table-bordered index" id='listing_shipping_methods'>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
         <th><%= Spree.t(:name) %></th>

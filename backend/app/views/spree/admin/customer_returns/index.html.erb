@@ -14,7 +14,7 @@
 <% if @order.shipments.any?(&:shipped?) %>
 
   <% if @customer_returns.any? %>
-    <table class="table table-hover table-condensed table-bordered">
+    <table class="table table-hover table-condensed table-bordered index">
       <thead data-hook="customer_return_header">
         <tr>
           <th><%= Spree.t(:return_number) %></th>
