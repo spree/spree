@@ -1,18 +1,16 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:"admin.user.order_history") %> <%= link_to "#{@user.email}", edit_admin_user_url(@user) %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= Spree.t(:"admin.user.order_history") %>
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :orders } %>
 <%= render :partial => 'spree/admin/users/user_page_actions' %>
 
 <fieldset data-hook="admin_user_order_history">
-  <legend><%= Spree.t(:"admin.user.order_history") %></legend>
-
   <%= paginate @orders %>
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
-    <table class="table table-hover table-condensed table-bordered" id="listing_orders" data-hook>
+    <table class="table table-hover table-condensed table-bordered index" id="listing_orders" data-hook>
       <thead>
         <tr data-hook="admin_orders_index_headers">
           <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
