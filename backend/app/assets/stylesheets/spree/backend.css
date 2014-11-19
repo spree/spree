@@ -12,7 +12,5 @@
  *= require jquery-ui/autocomplete
  *= require jquery.powertip
  *= require select2
- *= require bootstrap.min
- *= require AdminLTE
  *= require spree/backend/spree_admin
 */
