@@ -8,3 +8,8 @@ ul.sidebar-menu li.treeview span.pull-right {
 .alert {
   margin-left: 0;
 }
+
+// We don't use gravatar image there, so overwrite the height
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+  height: auto;
+}
