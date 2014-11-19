@@ -7,7 +7,7 @@
   <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'btn btn-default' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @stock_location } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @stock_location } %>
 
 <%= form_for [:admin, @stock_location] do |f| %>
   <fieldset>

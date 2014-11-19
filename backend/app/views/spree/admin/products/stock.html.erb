@@ -3,7 +3,7 @@
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
 
 <div id="add_stock_form" class="well">
   <%= render 'add_stock_form' %>

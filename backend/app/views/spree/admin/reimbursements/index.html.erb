@@ -8,7 +8,7 @@
   <li><%= button_link_to Spree.t(:back_to_customer_return_list), spree.admin_order_customer_returns_url(@order), :icon => 'arrow-left' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @customer_return } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
 
 <table class="index">
   <thead data-hook="customer_return_header">

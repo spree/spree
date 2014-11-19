@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @payment_methods.any? %>
-  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment } %>
+  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment } %>
 
   <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
     <fieldset>

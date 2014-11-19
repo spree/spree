@@ -8,7 +8,7 @@
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Product Details' } %>
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
 
 <%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
   <fieldset>

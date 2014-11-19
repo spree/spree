@@ -10,7 +10,8 @@
 
 <% if @rma_return_items.any? || @new_return_items.any? %>
 
-  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @customer_return } %>
+  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
+
   <%= form_for [:admin, @order, @customer_return] do |f| %>
     <fieldset class="no-border-top">
       <div data-hook="admin_customer_return_form_fields">

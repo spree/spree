@@ -10,7 +10,7 @@
   </li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @state } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @state } %>
 
 <%= form_for [:admin, @country, @state] do |f| %>
   <fieldset>

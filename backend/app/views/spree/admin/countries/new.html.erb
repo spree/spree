@@ -6,7 +6,7 @@
   <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_countries_list), admin_countries_path, :class => 'btn btn-default' %>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @countries } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @countries } %>
 
 <%= form_for [:admin, @country] do |f| %>
   <fieldset>
