@@ -14,7 +14,7 @@
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) || @order.return_authorizations.any? %>
-  <table class="table table-hover table-condensed table-bordered">
+  <table class="table table-hover table-condensed table-bordered index">
     <thead data-hook="rma_header">
       <tr>
         <th><%= Spree.t(:rma_number) %></th>
