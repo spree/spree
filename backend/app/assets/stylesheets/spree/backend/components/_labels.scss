@@ -1,0 +1,41 @@
+.label-completed,
+.label-complete,
+.label-paid,
+.label-shipped,
+.label-ready,
+.label-active,
+.label-success,
+.label-sold
+{
+  background-color: #5cb85c;
+  a {
+    color: white !important;
+  }
+}
+
+.label-failed,
+.label-considered_risky,
+.label-error
+{
+  background-color: #d9534f;
+}
+
+.label-pending,
+.label-awaiting_return,
+.label-returned,
+.label-credit_owed,
+.label-balance_due,
+.label-backorder,
+.label-checkout,
+.label-cart,
+.label-address,
+.label-delivery,
+.label-payment,
+.label-confirm,
+.label-canceled,
+.label-void,
+.label-inactive,
+.label-notice
+{
+  background-color: #f0ad4e;
+}
