@@ -29,30 +29,31 @@
       </div>
       <div data-hook="active" class="form-group">
         <strong><%= Spree.t(:active) %></strong>
-        <ul>
-          <li>
+        <div class="radio">
+          <%= label_tag :payment_method_active_true do %>
             <%= radio_button :payment_method, :active, true %>
-            <%= label_tag :payment_method_active_true, Spree.t(:say_yes) %>
-          </li>
-          <li>
+            <%= Spree.t(:say_yes) %>
+          <% end %>
+        </div>
+
+        <div class="radio">
+          <%= label_tag :payment_method_active_false do %>
             <%= radio_button :payment_method, :active, false %>
-            <%= label_tag :payment_method_active_false, Spree.t(:say_no) %>
-          </li>
-        </ul>
+            <%= Spree.t(:say_no) %>
+          <% end %>
+        </div>
       </div>
     </div>
 
-    <div class="omega eight columns">
-      <div data-hook="name" class="field">
+    <div class="col-md-8">
+      <div data-hook="name" class="form-group">
         <%= label_tag :payment_method_name, Spree.t(:name) %>
-        <%= text_field :payment_method, :name, :class => 'fullwidth' %>
+        <%= text_field :payment_method, :name, :class => 'form-control' %>
       </div>
-      <div data-hook="description" class="field">
+      <div data-hook="description" class="form-group">
         <%= label_tag :payment_method_description, Spree.t(:description) %>
-        <%= text_area :payment_method, :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
+        <%= text_area :payment_method, :description, { :cols => 60, :rows => 6, :class => 'form-control' } %>
       </div>
     </div>
   </div>
 </div>
-
-# REIN
