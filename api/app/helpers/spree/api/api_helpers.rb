@@ -15,8 +15,6 @@ module Spree
         :shipment_attributes,
         :taxonomy_attributes,
         :taxon_attributes,
-        :inventory_unit_attributes,
-        :return_authorization_attributes,
         :address_attributes,
         :country_attributes,
         :state_attributes,

@@ -21,3 +21,11 @@ end
 child :product_properties => :product_properties do
   attributes *product_property_attributes
 end
+
+child :classifications => :classifications do
+  attributes :taxon_id, :position
+
+  child(:taxon) do
+    extends "spree/api/taxons/show"
+  end
+end

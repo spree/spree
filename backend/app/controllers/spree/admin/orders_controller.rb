@@ -20,11 +20,11 @@ module Spree
 
         params[:q].delete(:inventory_units_shipment_id_null) if params[:q][:inventory_units_shipment_id_null] == "0"
 
-        if !params[:q][:created_at_gt].blank?
+        if params[:q][:created_at_gt].present?
           params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
         end
 
-        if !params[:q][:created_at_lt].blank?
+        if params[:q][:created_at_lt].present?
           params[:q][:created_at_lt] = Time.zone.parse(params[:q][:created_at_lt]).end_of_day rescue ""
         end
 
@@ -109,16 +109,16 @@ module Spree
       end
 
       def open_adjustments
-        adjustments = @order.adjustments.where(:state => 'closed')
-        adjustments.update_all(:state => 'open')
+        adjustments = @order.all_adjustments.where(state: 'closed')
+        adjustments.update_all(state: 'open')
         flash[:success] = Spree.t(:all_adjustments_opened)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }
       end
 
       def close_adjustments
-        adjustments = @order.adjustments.where(:state => 'open')
-        adjustments.update_all(:state => 'closed')
+        adjustments = @order.all_adjustments.where(state: 'open')
+        adjustments.update_all(state: 'closed')
         flash[:success] = Spree.t(:all_adjustments_closed)
 
         respond_with(@order) { |format| format.html { redirect_to :back } }

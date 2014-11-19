@@ -27,6 +27,12 @@ module Spree
         @order.reload.update!
       end
 
+      # Override method used to create a new instance to correctly
+      # associate adjustment with order
+      def build_resource
+        parent.adjustments.build(order: parent)
+      end
+
     end
   end
 end

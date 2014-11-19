@@ -11,13 +11,13 @@ module Spree
         let(:shipping_category_2) { create(:shipping_category, name: 'B') }
 
         def inventory_unit1
-          build(:inventory_unit, variant: variant1).tap do |inventory_unit|
+          InventoryUnit.new(variant: variant1).tap do |inventory_unit|
             inventory_unit.variant.product.shipping_category = shipping_category_1
           end
         end
 
         def inventory_unit2
-          build(:inventory_unit, variant: variant2).tap do |inventory_unit|
+          InventoryUnit.new(variant: variant2).tap do |inventory_unit|
             inventory_unit.variant.product.shipping_category = shipping_category_2
           end
         end
@@ -41,7 +41,6 @@ module Spree
           expect(packages[2].quantity).to eq 6
           expect(packages[3].quantity).to eq 9
         end
-
       end
     end
   end

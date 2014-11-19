@@ -40,9 +40,10 @@ module Spree
         # Ensure a negative amount which does not exceed the sum of the order's
         # item_total and ship_total
         def compute_amount(adjustable)
-          return 0 unless promotion.line_item_actionable? adjustable.order, adjustable
+          order = adjustable.is_a?(Order) ? adjustable : adjustable.order
+          return 0 unless promotion.line_item_actionable?(order, adjustable)
           promotion_amount = self.calculator.compute(adjustable).to_f.abs
-          
+
           [adjustable.amount, promotion_amount].min * -1
         end
 
@@ -63,7 +64,10 @@ module Spree
           end
 
           def line_items_to_adjust(promotion, order)
-            excluded_ids = self.adjustments.pluck(:adjustable_id)
+            excluded_ids = self.adjustments.
+              where(adjustable_id: order.line_items.pluck(:id), adjustable_type: 'Spree::LineItem').
+              pluck(:adjustable_id)
+
             order.line_items.where.not(id: excluded_ids).select do |line_item|
               promotion.line_item_actionable? order, line_item
             end

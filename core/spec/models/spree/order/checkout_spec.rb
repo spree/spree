@@ -175,7 +175,7 @@ describe Spree::Order, :type => :model do
         order.line_items << line_item
         tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
         allow(Spree::TaxRate).to receive_messages :match => [tax_rate]
-        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate)
+        FactoryGirl.create(:tax_adjustment, :adjustable => line_item, :source => tax_rate, order: order)
         order.email = "user@example.com"
         order.next!
         expect(order.adjustment_total).to eq(0.5)
@@ -538,7 +538,9 @@ describe Spree::Order, :type => :model do
     end
 
     it "does not attempt to process payments" do
-      allow(order).to receive_message_chain(:line_items, :present?).and_return(true)
+      allow(order).to receive_message_chain(:line_items, :present?) { true }
+      allow(order).to receive(:ensure_line_items_are_in_stock) { true }
+      allow(order).to receive(:ensure_line_item_variants_are_not_deleted) { true }
       expect(order).not_to receive(:payment_required?)
       expect(order).not_to receive(:process_payments!)
       order.next!

@@ -129,7 +129,7 @@ describe Spree::Reimbursement, :type => :model do
       let!(:non_return_refund) { create(:refund, amount: 1, payment: payment) }
 
       it 'raises IncompleteReimbursement error' do
-        expect { subject }.to raise_error(Spree::Reimbursement::IncompleteReimbursement)
+        expect { subject }.to raise_error(Spree::Reimbursement::IncompleteReimbursementError)
       end
     end
 
@@ -140,6 +140,11 @@ describe Spree::Reimbursement, :type => :model do
         expect { subject }.to change { order.reload.shipments.count }.by 1
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
       end
+    end
+
+    it "triggers the reimbursement mailer to be sent" do
+      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver: true) }
+      subject
     end
 
   end

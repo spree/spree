@@ -219,13 +219,13 @@ The GitHub guide on [pull requests](https://help.github.com/articles/using-pull-
 
 ### Contributing to the Documentation
 
-Improvements to the documentation are encouraged. The primary source of documentation are the guides (_HINT: You are reading one now._) The documentation is in its own GitHub project called [spree-guides](https://github.com/spree/spree-guides/tree/master). You may make edits to the guide in your fork and then pull request for them to be updated to this site.
+Improvements to the documentation are encouraged. The primary source of documentation are the guides (_HINT: You are reading one now._). You may make edits to the guide in your fork and then pull request for them to be updated to this site.
 
 To build the documentation normally simply clone and install.
 
 ```bash
-$ git clone git://github.com/spree/spree-guides.git
-$ cd spree-guides
+$ git clone git://github.com/spree/spree.git
+$ cd spree/guides
 $ bundle install
 $ bundle exec guides build
 ```
@@ -297,7 +297,3 @@ Certain blocks of text can be wrapped in sets of three characters, which will pl
 | !!! | Warnings. |
 | $$$ | TODO's |
 | --- | A title bar; especially useful for headings for code samples. |
-
-***
-We are always looking for people to help us maintain the guides.  If you are interested in making several contributions (or in helping us to manage the volunteer contributions) then please send an email to [spree-user](http://groups.google.com/group/spree-user) (be sure to include your GitHub username) and say that you would like to contribute.  We'll add you to the project so you can commit directly to the guides project without having to create pull requests.
-***

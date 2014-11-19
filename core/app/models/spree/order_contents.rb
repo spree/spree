@@ -8,24 +8,12 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       line_item = add_to_line_item(variant, quantity, options)
-      reload_totals
-      shipment = options[:shipment]
-      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-      PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
-      reload_totals
-      line_item
+      after_add_or_remove(line_item, options)
     end
 
     def remove(variant, quantity = 1, options = {})
       line_item = remove_from_line_item(variant, quantity, options)
-      reload_totals
-      shipment = options[:shipment]
-      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-      PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
-      reload_totals
-      line_item
+      after_add_or_remove(line_item, options)
     end
 
     def update_cart(params)
@@ -45,14 +33,26 @@ module Spree
     end
 
     private
+      def after_add_or_remove(line_item, options = {})
+        reload_totals
+        shipment = options[:shipment]
+        shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+        PromotionHandler::Cart.new(order, line_item).activate
+        ItemAdjustments.new(line_item).update
+        reload_totals
+        line_item
+      end
 
       def filter_order_items(params)
         filtered_params = params.symbolize_keys
         return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
 
+        line_item_ids = order.line_items.pluck(:id)
+
         params[:line_items_attributes].each_pair do |id, value|
-          line_item_id = value[:id]
-          filtered_params[:line_items_attributes].delete(id) unless Spree::LineItem.find_by_id(line_item_id.to_i)
+          unless line_item_ids.include?(value[:id].to_i) || value[:variant_id].present?
+            filtered_params[:line_items_attributes].delete(id)
+          end
         end
         filtered_params
       end

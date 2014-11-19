@@ -159,8 +159,6 @@ Browse Admin Interface
 
 http://localhost:nnnn/admin
 
-
-
 Working with the edge source (latest and greatest features)
 -----------------------------------------------------------
 
@@ -337,6 +335,25 @@ Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.co
 Contributing
 ------------
 
-Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html)
+Spree is an open source project and we encourage contributions. Please review the
+[contributing guidelines](http://guides.spreecommerce.com/developer/contributing.html)
 before contributing.
+
+In the spirit of [free software](http://www.fsf.org/licensing/essays/free-sw.html), **everyone** is encouraged to help improve this project.
+
+Here are some ways **you** can contribute:
+
+* by using prerelease versions / master branch
+* by reporting [bugs](https://github.com/spree/spree/issues/new)
+* by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
+* by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
+* by writing [specs](https://github.com/spree/spree/labels/NeedSpecs)
+* by writing [needed code](https://github.com/spree/spree/labels/NeedCode) or [finishing code](https://github.com/spree/spree/labels/stalled)
+* by [refactoring code](https://github.com/spree/spree/labels/performance)
+* by resolving [issues](https://github.com/spree/spree/issues)
+* by reviewing [pull requests](https://github.com/spree/spree/pulls)
+
+License
+-------
+
+Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).

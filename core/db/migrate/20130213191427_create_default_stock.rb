@@ -1,5 +1,9 @@
 class CreateDefaultStock < ActiveRecord::Migration
   def up
+    unless column_exists? :spree_stock_locations, :default
+      add_column :spree_stock_locations, :default, :boolean, null: false, default: false
+    end
+
     Spree::StockLocation.skip_callback(:create, :after, :create_stock_items)
     Spree::StockLocation.skip_callback(:save, :after, :ensure_one_default)
     Spree::StockItem.skip_callback(:save, :after, :process_backorders)
@@ -28,4 +32,3 @@ class CreateDefaultStock < ActiveRecord::Migration
     Spree::StockItem.delete_all
   end
 end
-

@@ -528,6 +528,9 @@ en:
     choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
+    clear_cache: Clear Cache
+    clear_cache_ok: Cache was flushed
+    clear_cache_warning: Clearing cache will temporarily reduce the performance of your store.
     click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
@@ -614,6 +617,7 @@ en:
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
+    deleted_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
     description: Description

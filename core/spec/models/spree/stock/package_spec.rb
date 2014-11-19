@@ -139,6 +139,25 @@ module Spree
           end
         end
       end
+
+      describe "#order" do
+        let(:unit) { build_inventory_unit }
+        context "there is an inventory unit" do
+
+          before { subject.add unit }
+
+          it "returns an order" do
+            expect(subject.order).to be_a_kind_of Spree::Order
+            expect(subject.order).to eq unit.order
+          end
+        end
+
+        context "there is no inventory unit" do
+          it "returns nil" do
+            expect(subject.order).to eq nil
+          end
+        end
+      end
     end
   end
 end

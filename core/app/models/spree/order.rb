@@ -12,6 +12,13 @@ module Spree
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
 
+    extend Spree::DisplayMoney
+    money_methods :outstanding_balance, :item_total, :adjustment_total,
+      :included_tax_total, :additional_tax_total, :tax_total,
+      :shipment_total, :total
+
+    alias :display_ship_total :display_shipment_total
+
     checkout_flow do
       go_to_state :address
       go_to_state :delivery
@@ -84,7 +91,7 @@ module Spree
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
-    validates :number, uniqueness: true
+    validates :number, presence: true, uniqueness: { allow_blank: true }
     validate :has_available_shipment
 
     make_permalink field: :number
@@ -152,39 +159,6 @@ module Spree
 
     def currency
       self[:currency] || Spree::Config[:currency]
-    end
-
-    def display_outstanding_balance
-      Spree::Money.new(outstanding_balance, { currency: currency })
-    end
-
-    def display_item_total
-      Spree::Money.new(item_total, { currency: currency })
-    end
-
-    def display_adjustment_total
-      Spree::Money.new(adjustment_total, { currency: currency })
-    end
-
-    def display_included_tax_total
-      Spree::Money.new(included_tax_total, { currency: currency })
-    end
-
-    def display_additional_tax_total
-      Spree::Money.new(additional_tax_total, { currency: currency })
-    end
-
-    def display_tax_total
-      Spree::Money.new(tax_total, { currency: currency })
-    end
-
-    def display_shipment_total
-      Spree::Money.new(shipment_total, { currency: currency })
-    end
-    alias :display_ship_total :display_shipment_total
-
-    def display_total
-      Spree::Money.new(total, { currency: currency })
     end
 
     def shipping_discount
@@ -430,9 +404,26 @@ module Spree
       line_items.select(&:insufficient_stock?)
     end
 
+    ##
+    # Check to see if any line item variants are soft, deleted.
+    # If so add error and restart checkout.
+    def ensure_line_item_variants_are_not_deleted
+      if line_items.select{ |li| li.variant.destroyed? }.present?
+        errors.add(:base, Spree.t(:deleted_variants_present))
+        restart_checkout_flow
+        false
+      else
+        true
+      end
+    end
+
     def ensure_line_items_are_in_stock
       if insufficient_stock_lines.present?
-        errors.add(:base, Spree.t(:insufficient_stock_lines_present)) and return false
+        errors.add(:base, Spree.t(:insufficient_stock_lines_present))
+        restart_checkout_flow
+        false
+      else
+        true
       end
     end
 
@@ -446,7 +437,7 @@ module Spree
         current_line_item = self.line_items.detect { |my_li|
                       my_li.variant == other_order_line_item.variant &&
                       self.line_item_comparison_hooks.all? { |hook|
-                        self.send(hook, my_li, other_order_line_item)
+                        self.send(hook, my_li, other_order_line_item.serializable_hash)
                       }
                     }
         if current_line_item

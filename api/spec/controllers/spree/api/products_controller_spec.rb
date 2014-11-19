@@ -172,7 +172,10 @@ module Spree
         product.variants.create!
         product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
+        product.taxons << create(:taxon)
+
         api_get :show, :id => product.to_param
+
         expect(json_response).to have_attributes(show_attributes)
         expect(json_response['variants'].first).to have_attributes([:name,
                                                               :is_master,
@@ -192,6 +195,9 @@ module Spree
         expect(json_response["product_properties"].first).to have_attributes([:value,
                                                                          :product_id,
                                                                          :property_name])
+
+        expect(json_response["classifications"].first).to have_attributes([:taxon_id, :position, :taxon])
+        expect(json_response["classifications"].first['taxon']).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
       end
 
       context "tracking is disabled" do
@@ -367,7 +373,7 @@ module Spree
         end
 
         it "cannot create a new product with invalid attributes" do
-          api_post :create, :product => {}
+          api_post :create, product: {}
           expect(response.status).to eq(422)
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
           errors = json_response["errors"]

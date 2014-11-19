@@ -26,6 +26,8 @@ module Spree
     belongs_to :source, polymorphic: true
     belongs_to :order, class_name: "Spree::Order"
 
+    validates :adjustable, presence: true
+    validates :order, presence: true
     validates :label, presence: true
     validates :amount, numericality: true
 
@@ -45,7 +47,10 @@ module Spree
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
-    scope :non_tax, -> { where.not(source_type: 'Spree::TaxRate') }
+    scope :non_tax, -> do
+      source_type = arel_table[:source_type]
+      where(source_type.not_eq('Spree::TaxRate').or source_type.eq(nil))
+    end
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
     scope :optional, -> { where(mandatory: false) }
@@ -58,16 +63,15 @@ module Spree
     scope :included, -> { where(included: true)  }
     scope :additional, -> { where(included: false) }
 
+    extend DisplayMoney
+    money_methods :amount
+
     def closed?
       state == "closed"
     end
 
     def currency
       adjustable ? adjustable.currency : Spree::Config[:currency]
-    end
-
-    def display_amount
-      Spree::Money.new(amount, { currency: currency })
     end
 
     def promotion?
@@ -103,7 +107,7 @@ module Spree
 
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
-      Spree::ItemAdjustments.new(adjustable).update if adjustable
+      ItemAdjustments.new(adjustable).update
     end
 
   end

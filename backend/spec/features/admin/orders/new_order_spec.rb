@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 describe "New Order", :type => :feature do
-  let!(:stock_location) { create(:stock_location_with_items) }
-  let!(:product) { create(:product) }
+  let!(:product) { create(:product_in_stock) }
   let!(:state) { create(:state) }
-  let!(:user) { create(:user) }
+  let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
   let!(:payment_method) { create(:check_payment_method) }
   let!(:shipping_method) { create(:shipping_method) }
-  let!(:stock_item) { product.master.stock_items.first.adjust_count_on_hand(10) }
 
   stub_authorization!
 
@@ -23,13 +21,13 @@ describe "New Order", :type => :feature do
     expect(current_path).to eql(spree.edit_admin_order_customer_path(Spree::Order.last))
   end
 
-  it "completes new order succesfully withous using the cart", js: true do
-    select2_search product.name, :from => Spree.t(:name_or_sku)
+  it "completes new order succesfully without using the cart", js: true do
+    select2_search product.name, from: Spree.t(:name_or_sku)
     click_icon :plus
     click_on "Customer Details"
 
     within "#select-customer" do
-      targetted_select2_search user.email, :from => "#s2id_customer_search"
+      targetted_select2_search user.email, from: "#s2id_customer_search"
     end
 
     check "order_use_billing"
@@ -51,10 +49,10 @@ describe "New Order", :type => :feature do
 
   context "adding new item to the order", js: true do
     it "inventory items show up just fine and are also registered as shipments" do
-      select2_search product.name, :from => Spree.t(:name_or_sku)
+      select2_search product.name, from: Spree.t(:name_or_sku)
 
       within("table.stock-levels") do
-        fill_in "variant_quantity", :with => 2
+        fill_in "variant_quantity", with: 2
         click_icon :plus
       end
 
@@ -65,7 +63,7 @@ describe "New Order", :type => :feature do
       click_on "Customer Details"
 
       within "#select-customer" do
-        targetted_select2_search user.email, :from => "#s2id_customer_search"
+        targetted_select2_search user.email, from: "#s2id_customer_search"
       end
 
       check "order_use_billing"
@@ -83,11 +81,11 @@ describe "New Order", :type => :feature do
   # Regression test for #3958
   context "without a delivery step", js: true do
     before do
-      allow(Spree::Order).to receive_messages :checkout_step_names => [:address, :payment, :confirm, :complete]
+      allow(Spree::Order).to receive_messages checkout_step_names: [:address, :payment, :confirm, :complete]
     end
 
     it "can still see line items" do
-      select2_search product.name, :from => Spree.t(:name_or_sku)
+      select2_search product.name, from: Spree.t(:name_or_sku)
       click_icon :plus
       within(".line-items") do
         within(".line-item-name") do
@@ -109,7 +107,7 @@ describe "New Order", :type => :feature do
       click_on "Customer Details"
 
       within "#select-customer" do
-        targetted_select2_search user.email, :from => "#s2id_customer_search"
+        targetted_select2_search user.email, from: "#s2id_customer_search"
       end
 
       check "order_use_billing"
@@ -117,7 +115,7 @@ describe "New Order", :type => :feature do
       click_on "Update"
 
       click_on "Shipments"
-      select2_search product.name, :from => Spree.t(:name_or_sku)
+      select2_search product.name, from: Spree.t(:name_or_sku)
       click_icon :plus
       wait_for_ajax
 
@@ -130,14 +128,35 @@ describe "New Order", :type => :feature do
     end
   end
 
+  # Regression test for #5327
+  context "customer with default credit card", js: true do
+    before do
+      create(:credit_card, default: true, user: user)
+    end
+    it "transitions to delivery not to complete" do
+      click_link "Orders"
+      click_link "New Order"
+      select2_search product.name, from: Spree.t(:name_or_sku)
+      within("table.stock-levels") do
+        fill_in "variant_quantity", with: 1
+        click_icon :plus
+      end
+      wait_for_ajax
+      click_link "Customer Details"
+      targetted_select2 user.email, from: "#s2id_customer_search"
+      click_button "Update"
+      expect(Spree::Order.last.state).to eq 'delivery'
+    end
+  end
+
   def fill_in_address(kind = "bill")
-    fill_in "First Name",              :with => "John 99"
-    fill_in "Last Name",               :with => "Doe"
-    fill_in "Street Address",          :with => "100 first lane"
-    fill_in "Street Address (cont'd)", :with => "#101"
-    fill_in "City",                    :with => "Bethesda"
-    fill_in "Zip",                     :with => "20170"
-    targetted_select2_search state.name, :from => "#s2id_order_#{kind}_address_attributes_state_id"
-    fill_in "Phone",                   :with => "123-456-7890"
+    fill_in "First Name",                with: "John 99"
+    fill_in "Last Name",                 with: "Doe"
+    fill_in "Street Address",            with: "100 first lane"
+    fill_in "Street Address (cont'd)",   with: "#101"
+    fill_in "City",                      with: "Bethesda"
+    fill_in "Zip",                       with: "20170"
+    targetted_select2_search state.name, from: "#s2id_order_#{kind}_address_attributes_state_id"
+    fill_in "Phone",                     with: "123-456-7890"
   end
 end

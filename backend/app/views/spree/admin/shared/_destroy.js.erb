@@ -1,6 +1,0 @@
-<% success = flash.discard(:success)
-if success %>
-  show_flash('success', "<%= success %>")
-<% end %>
-
-<%= render :partial => '/spree/admin/shared/update_order_state' if @order %>

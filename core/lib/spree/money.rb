@@ -6,7 +6,7 @@ module Spree
   class Money
     attr_reader :money
 
-    delegate :cents, :to => :money
+    delegate :cents, to: :money
 
     def initialize(amount, options={})
       @money = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
@@ -26,7 +26,7 @@ module Spree
       @money.format(@options)
     end
 
-    def to_html(options = { :html => true })
+    def to_html(options = { html: true })
       output = @money.format(@options.merge(options))
       if options[:html]
         # 1) prevent blank, breaking spaces
