@@ -120,6 +120,16 @@ end
 
  # REIN: Check if these overrides can be removed
 
+ module CapybaraExt
+  def click_action_link(type)
+    find(".action-#{type}").click
+  end
+
+  def click_icon(type)
+    click_action_link(type)
+  end
+end
+
  module Spree
    module TestingSupport
      module Flash
