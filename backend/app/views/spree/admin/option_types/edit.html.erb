@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <span id="new_add_option_value" data-hook>
-    <%= button_link_to Spree.t(:add_option_value), "javascript:;", { :icon => 'plus-sign', :'data-target' => "tbody#option_values", :class => 'btn-success spree_add_fields' } %>
+    <%= button_link_to Spree.t(:add_option_value), "javascript:;", { :icon => 'add', :'data-target' => "tbody#option_values", :class => 'btn-success spree_add_fields' } %>
   </span>
   <%= button_link_to Spree.t(:back_to_option_types_list), spree.admin_option_types_path, :icon => 'arrow-left' %>
 <% end %>

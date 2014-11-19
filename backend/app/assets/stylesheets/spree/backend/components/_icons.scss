@@ -1,5 +1,6 @@
 // The less opiniated icons
 .icon {                 @extend .glyphicon }
+.icon-add {             @extend .glyphicon-plus-sign }
 .icon-edit {            @extend .glyphicon-pencil }
 .icon-capture {         @extend .glyphicon-ok }
 .icon-void {            @extend .glyphicon-remove }
@@ -12,3 +13,6 @@
 .icon-return {          @extend .glyphicon-share }
 .icon-remove {          @extend .glyphicon-remove }
 .icon-send {            @extend .glyphicon-send }
+.icon-arrow-left {      @extend .glyphicon-arrow-left }
+.icon-clone {           @extend .glyphicon-share }
+.icon-update {          @extend .glyphicon-refresh }

@@ -6,7 +6,7 @@
 
 <% content_for :page_actions do %>
   <li id="new_state_link">
-    <%= button_link_to Spree.t(:new_state), new_admin_country_state_url(@country), { :remote => true, :class => "btn-success", :icon => 'plus-sign', :id => 'new_state_link' } %>
+    <%= button_link_to Spree.t(:new_state), new_admin_country_state_url(@country), { :remote => true, :class => "btn-success", :icon => 'add', :id => 'new_state_link' } %>
   </li>
 <% end %>
 

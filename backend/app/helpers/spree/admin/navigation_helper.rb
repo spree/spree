@@ -62,7 +62,7 @@ module Spree
       def link_to_clone(resource, options={})
         options[:data] = {:action => 'clone'}
         options[:class] = "btn btn-default btn-sm"
-        link_to_with_icon('share', Spree.t(:clone), clone_object_url(resource), options)
+        link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
