@@ -67,6 +67,9 @@ module Spree
       end
     end
 
+    extend DisplayMoney
+    money_methods :pre_tax_amount, :total
+
     def reception_completed?
       COMPLETED_RECEPTION_STATUSES.include?(reception_status)
     end
@@ -114,16 +117,8 @@ module Spree
       exchange_requested? && !exchange_processed?
     end
 
-    def display_pre_tax_amount
-      Spree::Money.new(pre_tax_amount, { currency: currency })
-    end
-
     def total
       pre_tax_amount + additional_tax_total
-    end
-
-    def display_total
-      Spree::Money.new(total, { currency: currency })
     end
 
     def eligible_exchange_variants
