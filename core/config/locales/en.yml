@@ -623,6 +623,7 @@ en:
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     display_currency: Display currency
+    doesnt_track_inventory: It doesnt track inventory
     edit: Edit
     editing_option_type: Editing Option Type
     editing_payment_method: Editing Payment Method
