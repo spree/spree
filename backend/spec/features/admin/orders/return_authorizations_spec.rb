@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "return authorizations" do
+describe "return authorizations", :type => :feature do
   stub_authorization!
 
   let!(:order) { create(:shipped_order) }
@@ -20,7 +20,7 @@ describe "return authorizations" do
     click_link order.number
     click_link "Return Authorizations"
     click_link "Edit"
-    lambda { click_button "receive" }.should_not raise_error
+    expect { click_button "receive" }.not_to raise_error
   end
 
 end

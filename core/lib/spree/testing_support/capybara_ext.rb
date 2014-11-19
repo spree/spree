@@ -8,7 +8,7 @@ module CapybaraExt
   end
 
   def eventually_fill_in(field, options={})
-    page.should have_css('#' + field)
+    expect(page).to have_css('#' + field)
     fill_in field, options
   end
 
@@ -145,7 +145,7 @@ end
 
 RSpec::Matchers.define :have_title do |expected|
   match do |actual|
-    has_css?("title", :text => expected, visible: false)
+    has_css?("title", text: expected, visible: false)
   end
 
   failure_message do |actual|

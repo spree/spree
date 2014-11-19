@@ -28,9 +28,13 @@ module Spree
           name
         end.compact! || []
 
-        unless (engine_migrations.sort - engine_in_app.sort).empty?
-          puts "[#{engine_name.capitalize} WARNING] Missing migrations." \
-               " Run `bundle exec rake railties:install:migrations` to get them.\n\n"
+        missing_migrations = engine_migrations.sort - engine_in_app.sort
+        unless missing_migrations.empty?
+          puts "[#{engine_name.capitalize} WARNING] Missing migrations."
+          missing_migrations.each do |migration|
+            puts "[#{engine_name.capitalize} WARNING] #{migration} from #{engine_name} is missing."
+          end
+          puts "[#{engine_name.capitalize} WARNING] Run `bundle exec rake railties:install:migrations` to get them.\n\n"
           true
         end
       end

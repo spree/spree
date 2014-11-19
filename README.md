@@ -26,6 +26,8 @@ and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
+[![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
+[![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
 Installation
 ------------
@@ -146,8 +148,6 @@ Browse Admin Interface
 ----------------------
 
 http://localhost:nnnn/admin
-
-
 
 Working with the edge source (latest and greatest features)
 -----------------------------------------------------------
@@ -316,5 +316,5 @@ Contributing
 ------------
 
 Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://spreecommerce.com/documentation/contributing_to_spree.html)
+[contributors guidelines](http://guides.spreecommerce.com/developer/contributing.html)
 before contributing.

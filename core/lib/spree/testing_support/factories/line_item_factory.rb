@@ -3,7 +3,7 @@ FactoryGirl.define do
     quantity 1
     price { BigDecimal.new('10.00') }
     order
-    ignore do
+    transient do
       association :product
     end
     variant{ product.master }

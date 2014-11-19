@@ -8,7 +8,7 @@ class WidgetsController < Spree::Admin::ResourceController
   end
 end
 
-describe WidgetsController do
+describe WidgetsController, :type => :controller do
   stub_authorization!
 
   with_model 'Widget' do

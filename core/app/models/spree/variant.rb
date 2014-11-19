@@ -9,7 +9,7 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
-    has_many :inventory_units
+    has_many :inventory_units, inverse_of: :variant
     has_many :line_items, inverse_of: :variant
     has_many :orders, through: :line_items
 
@@ -23,7 +23,8 @@ module Spree
     has_one :default_price,
       -> { where currency: Spree::Config[:currency] },
       class_name: 'Spree::Price',
-      dependent: :destroy
+      dependent: :destroy,
+      inverse_of: :variant
 
     delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency
 
@@ -32,16 +33,19 @@ module Spree
       dependent: :destroy,
       inverse_of: :variant
 
+    before_validation :set_cost_currency
+
     validate :check_price
+
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0 }
+    validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
-    before_validation :set_cost_currency
     after_save :save_default_price
+
     after_create :create_stock_items
     after_create :set_position
-    after_create :set_master_out_of_stock, :unless => :is_master?
+    after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
@@ -58,12 +62,20 @@ module Spree
     end
 
     def cost_price=(price)
-      self[:cost_price] = parse_price(price) if price.present?
+      self[:cost_price] = Spree::LocalizedNumber.parse(price) if price.present?
+    end
+
+    def weight=(weight)
+      self[:weight] = Spree::LocalizedNumber.parse(weight) if weight.present?
     end
 
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size
+    end
+
+    def is_backorderable?
+      Spree::Stock::Quantifier.new(self).backorderable?
     end
 
     def options_text
@@ -177,17 +189,6 @@ module Spree
     end
 
     private
-      # strips all non-price-like characters from the price, taking into account locale settings
-      def parse_price(price)
-        return price unless price.is_a?(String)
-
-        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
-        non_price_characters = /[^0-9\-#{separator}]/
-        price.gsub!(non_price_characters, '') # strip everything else first
-        price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
-
-        price.to_d
-      end
 
       def set_master_out_of_stock
         if product.master && product.master.in_stock?

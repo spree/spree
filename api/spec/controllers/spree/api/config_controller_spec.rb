@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ConfigController do
+  describe Api::ConfigController, :type => :controller do
     render_views
 
     before do
@@ -10,18 +10,18 @@ module Spree
 
     it "returns Spree::Money settings" do
       api_get :money
-      response.should be_success
-      json_response["symbol"].should == "$"
-      json_response["symbol_position"].should == "before"
-      json_response["no_cents"].should == false
-      json_response["decimal_mark"].should == "."
-      json_response["thousands_separator"].should == ","
+      expect(response).to be_success
+      expect(json_response["symbol"]).to eq("$")
+      expect(json_response["symbol_position"]).to eq("before")
+      expect(json_response["no_cents"]).to eq(false)
+      expect(json_response["decimal_mark"]).to eq(".")
+      expect(json_response["thousands_separator"]).to eq(",")
     end
 
     it "returns some configuration settings" do
       api_get :show
-      response.should be_success
-      json_response["default_country_id"].should == Spree::Config[:default_country_id]
+      expect(response).to be_success
+      expect(json_response["default_country_id"]).to eq(Spree::Config[:default_country_id])
     end
   end
 end

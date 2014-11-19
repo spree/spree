@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Package do
+    describe Package, :type => :model do
       let(:variant) { build(:variant, weight: 25.0) }
       let(:line_item) { build(:line_item, variant: variant) }
       let(:stock_location) { build(:stock_location) }
@@ -12,34 +12,34 @@ module Spree
 
       it 'calculates the weight of all the contents' do
         subject.add line_item, 4
-        subject.weight.should == 100.0
+        expect(subject.weight).to eq(100.0)
       end
 
       it 'filters by on_hand and backordered' do
         subject.add line_item, 4, :on_hand
         subject.add line_item, 3, :backordered
-        subject.on_hand.count.should eq 1
-        subject.backordered.count.should eq 1
+        expect(subject.on_hand.count).to eq 1
+        expect(subject.backordered.count).to eq 1
       end
 
       it 'calculates the quantity by state' do
         subject.add line_item, 4, :on_hand
         subject.add line_item, 3, :backordered
 
-        subject.quantity.should eq 7
-        subject.quantity(:on_hand).should eq 4
-        subject.quantity(:backordered).should eq 3
+        expect(subject.quantity).to eq 7
+        expect(subject.quantity(:on_hand)).to eq 4
+        expect(subject.quantity(:backordered)).to eq 3
       end
 
       it 'returns nil for content item not found' do
         item = subject.find_item(variant, :on_hand)
-        item.should be_nil
+        expect(item).to be_nil
       end
 
       it 'finds content item for a variant' do
         subject.add line_item, 4, :on_hand
         item = subject.find_item(variant, :on_hand)
-        item.quantity.should eq 4
+        expect(item.quantity).to eq 4
       end
 
       # Contains regression test for #2804
@@ -59,14 +59,14 @@ module Spree
                     Package::ContentItem.new(line_item, variant3, 1)]
 
         package = Package.new(stock_location, order, contents)
-        package.shipping_methods.should == [method1]
+        expect(package.shipping_methods).to eq([method1])
       end
 
       it 'builds an empty list of shipping methods when no categories' do
         variant  = mock_model(Variant, shipping_category: nil)
         contents = [Package::ContentItem.new(line_item, variant, 1)]
         package  = Package.new(stock_location, order, contents)
-        package.shipping_methods.should be_empty
+        expect(package.shipping_methods).to be_empty
       end
 
       it "can convert to a shipment" do

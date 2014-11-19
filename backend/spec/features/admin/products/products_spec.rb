@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "Products" do
+describe "Products", :type => :feature do
   context "as admin user" do
     stub_authorization!
 
@@ -27,26 +27,26 @@ describe "Products" do
         it "should list existing products with correct sorting by name" do
           click_link "Products"
           # Name ASC
-          within_row(1) { page.should have_content('apache baseball cap') }
-          within_row(2) { page.should have_content("zomg shirt") }
+          within_row(1) { expect(page).to have_content('apache baseball cap') }
+          within_row(2) { expect(page).to have_content("zomg shirt") }
 
           # Name DESC
           click_link "admin_products_listing_name_title"
-          within_row(1) { page.should have_content("zomg shirt")  }
-          within_row(2) { page.should have_content('apache baseball cap') }
+          within_row(1) { expect(page).to have_content("zomg shirt")  }
+          within_row(2) { expect(page).to have_content('apache baseball cap') }
         end
 
         it "should list existing products with correct sorting by price" do
           click_link "Products"
 
           # Name ASC (default)
-          within_row(1) { page.should have_content('apache baseball cap') }
-          within_row(2) { page.should have_content("zomg shirt") }
+          within_row(1) { expect(page).to have_content('apache baseball cap') }
+          within_row(2) { expect(page).to have_content("zomg shirt") }
 
           # Price DESC
           click_link "admin_products_listing_price_title"
-          within_row(1) { page.should have_content("zomg shirt") }
-          within_row(2) { page.should have_content('apache baseball cap') }
+          within_row(1) { expect(page).to have_content("zomg shirt") }
+          within_row(2) { expect(page).to have_content('apache baseball cap') }
         end
       end
 
@@ -64,7 +64,7 @@ describe "Products" do
           context "uses руб as the currency symbol" do
             it "on the products listing page" do
               click_link "Products"
-              within_row(1) { page.should have_content("руб19.99") }
+              within_row(1) { expect(page).to have_content("руб19.99") }
             end
           end
         end
@@ -77,16 +77,16 @@ describe "Products" do
         create(:product, :name => 'zomg shirt')
 
         click_link "Products"
-        page.should have_content("zomg shirt")
-        page.should_not have_content("apache baseball cap")
+        expect(page).to have_content("zomg shirt")
+        expect(page).not_to have_content("apache baseball cap")
         check "Show Deleted"
         click_icon :search
-        page.should have_content("zomg shirt")
-        page.should have_content("apache baseball cap")
+        expect(page).to have_content("zomg shirt")
+        expect(page).to have_content("apache baseball cap")
         uncheck "Show Deleted"
         click_icon :search
-        page.should have_content("zomg shirt")
-        page.should_not have_content("apache baseball cap")
+        expect(page).to have_content("zomg shirt")
+        expect(page).not_to have_content("apache baseball cap")
       end
 
       it "should be able to search products by their properties" do
@@ -97,15 +97,15 @@ describe "Products" do
         click_link "Products"
         fill_in "q_name_cont", :with => "ap"
         click_icon :search
-        page.should have_content("apache baseball cap")
-        page.should have_content("apache baseball cap2")
-        page.should_not have_content("zomg shirt")
+        expect(page).to have_content("apache baseball cap")
+        expect(page).to have_content("apache baseball cap2")
+        expect(page).not_to have_content("zomg shirt")
 
         fill_in "q_variants_including_master_sku_cont", :with => "A1"
         click_icon :search
-        page.should have_content("apache baseball cap")
-        page.should_not have_content("apache baseball cap2")
-        page.should_not have_content("zomg shirt")
+        expect(page).to have_content("apache baseball cap")
+        expect(page).not_to have_content("apache baseball cap2")
+        expect(page).not_to have_content("zomg shirt")
       end
     end
 
@@ -144,7 +144,7 @@ describe "Products" do
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
-          page.should have_content("SKU")
+          expect(page).to have_content("SKU")
         end
       end
 
@@ -157,8 +157,8 @@ describe "Products" do
         check "Large"
         select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
-        page.should have_content("successfully created!")
-        Spree::Product.last.variants.length.should == 1
+        expect(page).to have_content("successfully created!")
+        expect(Spree::Product.last.variants.length).to eq(1)
       end
 
       it "should not display variants when prototype does not contain option types", :js => true do
@@ -166,17 +166,20 @@ describe "Products" do
 
         fill_in "product_name", :with => "Baseball Cap"
 
-        page.should_not have_content("Variants")
+        expect(page).not_to have_content("Variants")
       end
 
       it "should keep option values selected if validation fails", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_sku", :with => "B100"
+        fill_in "product_price", :with => "100"
         select "Size", :from => "Prototype"
         check "Large"
         click_button "Create"
-        page.should have_content("Name can't be blank")
-        field_labeled("Size").should be_checked
-        field_labeled("Large").should be_checked
-        field_labeled("Small").should_not be_checked
+        expect(page).to have_content("Shipping category can't be blank")
+        expect(field_labeled("Size")).to be_checked
+        expect(field_labeled("Large")).to be_checked
+        expect(field_labeled("Small")).not_to be_checked
       end
     end
 
@@ -186,7 +189,7 @@ describe "Products" do
         click_link "Products"
         click_link "admin_new_product"
         within('#new_product') do
-          page.should have_content("SKU")
+          expect(page).to have_content("SKU")
         end
       end
 
@@ -197,14 +200,17 @@ describe "Products" do
         fill_in "product_available_on", :with => "2012/01/24"
         select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
-        page.should have_content("successfully created!")
+        expect(page).to have_content("successfully created!")
         click_button "Update"
-        page.should have_content("successfully updated!")
+        expect(page).to have_content("successfully updated!")
       end
 
       it "should show validation errors", :js => true do
+        fill_in "product_name", :with => "Baseball Cap"
+        fill_in "product_sku", :with => "B100"
+        fill_in "product_price", :with => "100"
         click_button "Create"
-        page.should have_content("Name can't be blank")
+        expect(page).to have_content("Shipping category can't be blank")
       end
 
       context "using a locale with a different decimal format " do
@@ -237,7 +243,7 @@ describe "Products" do
         it "should show localized price value on validation errors", :js => true do
           fill_in "product_price", :with => "19,99"
           click_button "Create"
-          find('input#product_price').value.should == '19,99'
+          expect(find('input#product_price').value).to eq('19,99')
         end
       end
 
@@ -247,9 +253,9 @@ describe "Products" do
         fill_in "product_price", :with => "100"
         select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
-        page.should have_content("successfully created!")
+        expect(page).to have_content("successfully created!")
         click_button "Update"
-        page.should have_content("successfully updated!")
+        expect(page).to have_content("successfully updated!")
       end
     end
     
@@ -263,7 +269,7 @@ describe "Products" do
           click_icon :copy
         end
 
-        page.should have_content("Product has been cloned")
+        expect(page).to have_content("Product has been cloned")
       end
 
       context "cloning a deleted product" do
@@ -274,13 +280,13 @@ describe "Products" do
           check "Show Deleted"
           click_button "Search"
 
-          page.should have_content("apache baseball cap")
+          expect(page).to have_content("apache baseball cap")
 
           within_row(1) do
             click_icon :copy
           end
 
-          page.should have_content("Product has been cloned")
+          expect(page).to have_content("Product has been cloned")
         end
       end
     end
@@ -302,14 +308,14 @@ describe "Products" do
         visit spree.admin_product_path(product)
         fill_in "product_available_on", :with => "2012/12/25"
         click_button "Update"
-        page.should have_content("successfully updated!")
-        Spree::Product.last.available_on.should == 'Tue, 25 Dec 2012 00:00:00 UTC +00:00'
+        expect(page).to have_content("successfully updated!")
+        expect(Spree::Product.last.available_on).to eq('Tue, 25 Dec 2012 00:00:00 UTC +00:00')
       end
 
       it 'should add option_types when selecting a prototype' do
         visit spree.admin_product_path(product)
         click_link 'Product Properties'
-        page.should have_content("SELECT FROM PROTOTYPE")
+        expect(page).to have_content("SELECT FROM PROTOTYPE")
         click_link "Select From Prototype"
 
         within(:css, "#prototypes tr#row_1") do
@@ -319,7 +325,7 @@ describe "Products" do
 
         page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
-          first('input[type=text]').value.should eq('baseball_cap_color')
+          expect(first('input[type=text]').value).to eq('baseball_cap_color')
         end
       end
     end
@@ -337,7 +343,7 @@ describe "Products" do
         check "Show Deleted"
         click_icon :search
         click_link product.name
-        find("#product_price").value.to_f.should == product.price.to_f
+        expect(find("#product_price").value.to_f).to eq(product.price.to_f)
       end
     end
   end
@@ -345,7 +351,7 @@ describe "Products" do
   context 'with only product permissions' do
   
     before do 
-      Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
+      allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
     custom_authorization! do |user|
@@ -355,29 +361,29 @@ describe "Products" do
 
     it "should only display accessible links on index" do
       visit spree.admin_products_path
-      page.should have_link('Products')
-      page.should_not have_link('Option Types')
-      page.should_not have_link('Properties')
-      page.should_not have_link('Prototypes')
+      expect(page).to have_link('Products')
+      expect(page).not_to have_link('Option Types')
+      expect(page).not_to have_link('Properties')
+      expect(page).not_to have_link('Prototypes')
 
-      page.should_not have_link('New Product')
-      page.should_not have_css('a.clone')
-      page.should have_css('a.edit')
-      page.should_not have_css('a.delete-resource')
+      expect(page).not_to have_link('New Product')
+      expect(page).not_to have_css('a.clone')
+      expect(page).to have_css('a.edit')
+      expect(page).not_to have_css('a.delete-resource')
     end
   
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 
       # product tabs should be hidden
-      page.should have_link('Product Details')
-      page.should_not have_link('Images')
-      page.should_not have_link('Variants')
-      page.should_not have_link('Product Properties')
-      page.should_not have_link('Stock Management')
+      expect(page).to have_link('Product Details')
+      expect(page).not_to have_link('Images')
+      expect(page).not_to have_link('Variants')
+      expect(page).not_to have_link('Product Properties')
+      expect(page).not_to have_link('Stock Management')
 
       # no create permission
-      page.should_not have_link('New Product')
+      expect(page).not_to have_link('New Product')
     end
   end
 end

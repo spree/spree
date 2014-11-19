@@ -474,7 +474,7 @@ en:
     choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
-    click_and_drag_on_the_products_to_sort_them: 'Click &amp; drag on the products to sort them.'
+    click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
@@ -719,6 +719,7 @@ en:
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
+    manage_variants: Manage Variants
     master_price: Master Price
     match_choices:
       all: All
@@ -812,6 +813,7 @@ en:
     or_over_price: ! '%{price} or over'
     order: Order
     order_adjustments: Order adjustments
+    order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
     order_details: Order Details
@@ -1073,6 +1075,7 @@ en:
     show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
     sku: SKU
+    skus: SKU's
     slug: Slug
     source: Source
     special_instructions: Special Instructions

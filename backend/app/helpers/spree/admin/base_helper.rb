@@ -159,6 +159,12 @@ module Spree
         dom_id(record, 'spree')
       end
 
+      def rails_environments
+        @@rails_environments ||= Dir.glob("#{Rails.root}/config/environments/*.rb")
+                                    .map { |f| File.basename(f, ".rb") }
+                                    .sort
+      end
+
       private
         def attribute_name_for(field_name)
           field_name.gsub(' ', '_').downcase

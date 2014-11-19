@@ -22,7 +22,10 @@
         </tr>
       </thead>
       <tbody>
-        <%= render "spree/admin/log_entries/#{@payment.payment_method.name.gsub(' ', '').underscore}", entry: entry %>
+        <tr>
+          <td>Message</td>
+          <td><%= entry.parsed_details.message %></td>
+        </tr>
       </tbody>
   <% end %>
 </table>

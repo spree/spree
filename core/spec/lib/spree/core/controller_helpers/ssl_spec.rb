@@ -33,29 +33,29 @@ describe Spree::Core::ControllerHelpers::SSL, type: :controller do
       controller(FakesController) do
         ssl_allowed :index
       end
-      specify{ controller.ssl_allowed_actions.should == [:index] }
-      specify{ get(:index).should be_success }
+      specify{ expect(controller.ssl_allowed_actions).to eq([:index]) }
+      specify{ expect(get(:index)).to be_success }
     end
 
     context 'allowed all actions' do
       controller(FakesController) do
         ssl_allowed
       end
-      specify{ controller.ssl_allowed_actions.should == [] }
-      specify{ get(:index).should be_success }
+      specify{ expect(controller.ssl_allowed_actions).to eq([]) }
+      specify{ expect(get(:index)).to be_success }
     end
 
     context 'ssl not allowed' do
       controller(FakesController) { }
-      specify{ get(:index).should be_redirect }
+      specify{ expect(get(:index)).to be_redirect }
     end
 
     context 'using a post returns a HTTP status 426' do
       controller(FakesController) { }
       specify do
         post(:create)
-        response.body.should == "Please switch to using HTTP (rather than HTTPS) and retry this request."
-        response.status.should == 426
+        expect(response.body).to eq("Please switch to using HTTP (rather than HTTPS) and retry this request.")
+        expect(response.status).to eq(426)
       end
     end
   end
@@ -65,21 +65,21 @@ describe Spree::Core::ControllerHelpers::SSL, type: :controller do
       controller(FakesController) do
         ssl_required :index
       end
-      specify{ controller.ssl_allowed_actions.should == [:index] }
-      specify{ get(:index).should be_redirect }
+      specify{ expect(controller.ssl_allowed_actions).to eq([:index]) }
+      specify{ expect(get(:index)).to be_redirect }
     end
 
     context 'required all actions' do
       controller(FakesController) do
         ssl_required
       end
-      specify{ controller.ssl_allowed_actions.should == [] }
-      specify{ get(:index).should be_redirect }
+      specify{ expect(controller.ssl_allowed_actions).to eq([]) }
+      specify{ expect(get(:index)).to be_redirect }
     end
 
     context 'not required' do
       controller(FakesController) { }
-      specify{ get(:index).should be_success }
+      specify{ expect(get(:index)).to be_success }
     end
   end
 end

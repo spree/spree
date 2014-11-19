@@ -1,4 +1,4 @@
-describe Spree::Order do
+describe Spree::Order, :type => :model do
   let(:order) { stub_model(Spree::Order) }
 
   context "ensure shipments will be updated" do
@@ -22,7 +22,7 @@ describe Spree::Order do
 
     context "except when order is completed, that's OrderInventory job" do
       it "doesn't touch anything" do
-        order.stub completed?: true
+        allow(order).to receive_messages completed?: true
         order.update_column(:shipment_total, 5)
         order.shipments.create!
 

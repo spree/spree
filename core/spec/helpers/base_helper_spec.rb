@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::BaseHelper do
+describe Spree::BaseHelper, :type => :helper do
   include Spree::BaseHelper
 
   let(:current_store){ create :store }
@@ -18,7 +18,7 @@ describe Spree::BaseHelper do
       end
 
       it "return complete list of countries" do
-        available_countries.count.should == Spree::Country.count
+        expect(available_countries.count).to eq(Spree::Country.count)
       end
     end
 
@@ -31,7 +31,7 @@ describe Spree::BaseHelper do
         end
 
         it "return only the countries defined by the checkout zone" do
-          available_countries.should == [country]
+          expect(available_countries).to eq([country])
         end
       end
 
@@ -44,7 +44,7 @@ describe Spree::BaseHelper do
         end
 
         it "return complete list of countries" do
-          available_countries.count.should == Spree::Country.count
+          expect(available_countries.count).to eq(Spree::Country.count)
         end
       end
     end
@@ -76,26 +76,26 @@ describe Spree::BaseHelper do
     it "should output all flash content" do
       flash_messages
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should == "foo"
-      html.css(".bar").text.should == "bar"
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to eq("foo")
+      expect(html.css(".bar").text).to eq("bar")
     end
 
     it "should output flash content except one key" do
       flash_messages(:ignore_types => :bar)
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should == "foo"
-      html.css(".bar").text.should be_empty
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to eq("foo")
+      expect(html.css(".bar").text).to be_empty
     end
 
     it "should output flash content except some keys" do
       flash_messages(:ignore_types => [:foo, :bar])
       html = Nokogiri::HTML(helper.output_buffer)
-      html.css(".notice").text.should == "ok"
-      html.css(".foo").text.should be_empty
-      html.css(".bar").text.should be_empty
-      helper.output_buffer.should == "<div class=\"flash notice\">ok</div>"
+      expect(html.css(".notice").text).to eq("ok")
+      expect(html.css(".foo").text).to be_empty
+      expect(html.css(".bar").text).to be_empty
+      expect(helper.output_buffer).to eq("<div class=\"flash notice\">ok</div>")
     end
   end
 
@@ -103,18 +103,18 @@ describe Spree::BaseHelper do
     it "returns tracking link if available" do
       a = link_to_tracking_html(:tracking => '123', :tracking_url => 'http://g.c/?t=123').css('a')
 
-      a.text.should == '123'
-      a.attr('href').value.should == 'http://g.c/?t=123'
+      expect(a.text).to eq('123')
+      expect(a.attr('href').value).to eq('http://g.c/?t=123')
     end
 
     it "returns tracking without link if link unavailable" do
       html = link_to_tracking_html(:tracking => '123', :tracking_url => nil)
-      html.css('span').text.should == '123'
+      expect(html.css('span').text).to eq('123')
     end
 
     it "returns nothing when no tracking" do
       html = link_to_tracking_html(:tracking => nil)
-      html.css('span').text.should == ''
+      expect(html.css('span').text).to eq('')
     end
 
     def link_to_tracking_html(options = {})

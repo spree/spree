@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree::Api
-  describe OrdersController do
+  describe OrdersController, :type => :controller do
     render_views
 
     before do
@@ -19,13 +19,13 @@ module Spree::Api
       end
 
       it "can apply a coupon code to the order" do
-        order.total.should == 110.00
+        expect(order.total).to eq(110.00)
         api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
-        response.status.should == 200
-        order.reload.total.should == 109.00
-        json_response["success"].should == "The coupon code was successfully applied to your order."
-        json_response["error"].should be_blank
-        json_response["successful"].should be true
+        expect(response.status).to eq(200)
+        expect(order.reload.total).to eq(109.00)
+        expect(json_response["success"]).to eq("The coupon code was successfully applied to your order.")
+        expect(json_response["error"]).to be_blank
+        expect(json_response["successful"]).to be true
       end
 
       context "with an expired promotion" do
@@ -37,10 +37,10 @@ module Spree::Api
 
         it "fails to apply" do
           api_put :apply_coupon_code, :id => order.to_param, :coupon_code => "10off", :order_token => order.guest_token
-          response.status.should == 422
-          json_response["success"].should be_blank
-          json_response["error"].should == "The coupon code is expired"
-          json_response["successful"].should be false
+          expect(response.status).to eq(422)
+          expect(json_response["success"]).to be_blank
+          expect(json_response["error"]).to eq("The coupon code is expired")
+          expect(json_response["successful"]).to be false
         end
       end
     end

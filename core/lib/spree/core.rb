@@ -57,12 +57,14 @@ require 'spree/migrations'
 require 'spree/core/engine'
 
 require 'spree/i18n'
+require 'spree/localized_number'
 require 'spree/money'
-
 require 'spree/permitted_attributes'
 require 'spree/core/user_address'
 require 'spree/core/user_payment_source'
+
 require 'spree/core/delegate_belongs_to'
+require 'spree/core/importer'
 require 'spree/core/permalinks'
 require 'spree/core/calculated_adjustments'
 require 'spree/core/adjustment_source'
@@ -72,8 +74,6 @@ require 'spree/core/controller_helpers/search'
 require 'spree/core/controller_helpers/ssl'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
-
-require 'spree/core/importer'
 
 # Hack waiting on https://github.com/pluginaweek/state_machine/pull/275
 module StateMachine
