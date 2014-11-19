@@ -22,6 +22,8 @@ module Spree
           if @simple_current_order
             @simple_current_order.last_ip_address = ip_address
             return @simple_current_order
+          else
+            @simple_current_order = Spree::Order.new
           end
         end
 
