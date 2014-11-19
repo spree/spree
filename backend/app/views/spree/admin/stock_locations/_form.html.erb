@@ -2,39 +2,39 @@
   <div class="alpha nine columns" data-hook="stock_location_names">
     <div data-hook="stock_location_name">
       <%= f.field_container :name do %>
-        <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-        <%= f.text_field :name, class: 'fullwidth', required: true %>
+      <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
+      <%= f.text_field :name, class: 'fullwidth', required: true %>
       <% end %>
     </div>
     <div data-hook="stock_location_admin_name">
       <%= f.field_container :admin_name do %>
-        <%= f.label :admin_name, Spree.t(:internal_name) %>
-        <%= f.text_field :admin_name, class: 'fullwidth', label: false %>
+      <%= f.label :admin_name, Spree.t(:internal_name) %>
+      <%= f.text_field :admin_name, class: 'fullwidth', label: false %>
       <% end %>
     </div>
-  <% end %>
+  </div>
 
   <div class="omega three columns" data-hook="stock_location_status">
     <%= f.field_container :active do %>
-      <label for="active"><%= Spree.t(:status) %></label>
-      <ul>
-        <li class="fullwidth" data-hook="stock_location_active">
-          <%= f.check_box :active %>
-          <%= f.label :active, Spree.t(:active) %>
-        </li>
-        <li class="fullwidth" data-hook="stock_location_default">
-          <%= f.check_box :default %>
-          <%= f.label :default, Spree.t(:default) %>
-        </li>
-        <li class="fullwidth" data-hook="stock_location_backorderable_default">
-          <%= f.check_box :backorderable_default %>
-          <%= f.label :backorderable_default, Spree.t(:backorderable_default) %>
-        </li>
-        <li class="fullwidth" data-hook="stock_location_propagate_all_variants">
-          <%= f.check_box :propagate_all_variants %>
-          <%= f.label :propagate_all_variants, Spree.t(:propagate_all_variants) %>
-        </li>
-      </ul>
+    <label for="active"><%= Spree.t(:status) %></label>
+    <ul>
+      <li class="fullwidth" data-hook="stock_location_active">
+        <%= f.check_box :active %>
+        <%= f.label :active, Spree.t(:active) %>
+      </li>
+      <li class="fullwidth" data-hook="stock_location_default">
+        <%= f.check_box :default %>
+        <%= f.label :default, Spree.t(:default) %>
+      </li>
+      <li class="fullwidth" data-hook="stock_location_backorderable_default">
+        <%= f.check_box :backorderable_default %>
+        <%= f.label :backorderable_default, Spree.t(:backorderable_default) %>
+      </li>
+      <li class="fullwidth" data-hook="stock_location_propagate_all_variants">
+        <%= f.check_box :propagate_all_variants %>
+        <%= f.label :propagate_all_variants, Spree.t(:propagate_all_variants) %>
+      </li>
+    </ul>
     <% end %>
   </div>
 
@@ -70,20 +70,20 @@
 
   <div class="omega six columns field" data-hook="stock_location_state">
     <% if f.object.country %>
-      <%= f.label :state_id, Spree.t(:state) %>
-      <span id="state" class="region">
-        <%= f.text_field :state_name, style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };", disabled: !f.object.country.states.empty?, class: 'fullwidth state_name' %>
-        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2 fullwidth', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty?} %>
-      </span>
+    <%= f.label :state_id, Spree.t(:state) %>
+    <span id="state" class="region">
+      <%= f.text_field :state_name, style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };", disabled: !f.object.country.states.empty?, class: 'fullwidth state_name' %>
+      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2 fullwidth', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty?} %>
+    </span>
     <% end %>
   </div>
 </div>
 
 <% content_for :head do %>
-  <%= javascript_include_tag 'spree/backend/address_states.js' %>
-  <%= javascript_tag do -%>
-    $(document).ready(function(){
-      $('span#country .select2').on('change', function() { update_state(''); });
-    });
-  <% end -%>
+<%= javascript_include_tag 'spree/backend/address_states.js' %>
+<%= javascript_tag do -%>
+$(document).ready(function(){
+  $('span#country .select2').on('change', function() { update_state(''); });
+});
+<% end -%>
 <% end %>
