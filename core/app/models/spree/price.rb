@@ -10,6 +10,10 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :price
 
+    def money
+      Spree::Money.new(amount || 0, { currency: currency })
+    end
+
     def price
       amount
     end
