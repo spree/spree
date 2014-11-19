@@ -4,7 +4,7 @@ module CapybaraExt
   end
 
   def click_icon(type)
-    find(".glyphicon-#{type}").click
+    find(".icon-#{type}").click
   end
 
   def eventually_fill_in(field, options={})

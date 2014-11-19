@@ -75,13 +75,13 @@ module Spree
         url = options[:url] || edit_object_url(resource)
         options[:data] = {:action => 'edit'}
         options[:class] = "btn btn-default btn-sm"
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
+        link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})
         options[:data] = {:action => 'edit'}
         options[:class] = "btn btn-default btn-sm"
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
+        link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
@@ -99,7 +99,7 @@ module Spree
         text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "glyphicon glyphicon-#{icon_name}")
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         link_to(text.html_safe, url, options)
@@ -111,7 +111,7 @@ module Spree
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
         if icon_name
-          icon = content_tag(:span, '', class: "glyphicon glyphicon-#{icon_name}")
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         button_tag(text.html_safe, options.merge(:type => button_type, :class => "btn btn-primary #{options[:class]}"))
@@ -135,7 +135,7 @@ module Spree
           html_options[:class]  = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
 
           if html_options[:icon]
-            icon = content_tag(:span, '', class: "glyphicon glyphicon-#{html_options[:icon]}")
+            icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
             text.insert(0, icon + ' ')
           end
 

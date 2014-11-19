@@ -148,3 +148,13 @@ ul {
   float: left;
   margin: 2px 7px 0 0;
 }
+
+// The less opiniated icons
+
+.icon {
+  @extend .glyphicon
+}
+
+.icon-edit {
+  @extend .glyphicon-pencil
+}
