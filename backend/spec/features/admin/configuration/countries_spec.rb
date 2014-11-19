@@ -13,7 +13,7 @@ module Spree
       click_button "Create"
 
       accept_alert do
-        click_icon :trash
+        click_icon :remove
       end
       wait_for_ajax
 
