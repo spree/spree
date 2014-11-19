@@ -1,5 +1,5 @@
 module Spree
-  class ReturnItem::DefaultEligibilityValidator < Spree::ReturnItem::EligibilityValidator::BaseValidator
+  class ReturnItem::EligibilityValidator::Default < Spree::ReturnItem::EligibilityValidator::BaseValidator
     class_attribute :permitted_eligibility_validators
     self.permitted_eligibility_validators = [
                                               ReturnItem::EligibilityValidator::TimeSincePurchase,
