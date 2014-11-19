@@ -1,25 +1,23 @@
 <script type='text/template' id='variant_autocomplete_template'>
   <div class='variant-autocomplete-item media'>
     <figure class='variant-image media-left'>
-      {{#if variant.image }}
-        <img src='{{variant.image}}' />
-      {{ else }}
-        <img src='<%= image_path("noimage/mini.png") %>' />
-      {{/if}}
+      <span class="thumbnail no-marginb">
+        {{#if variant.image }}
+          <img src='{{variant.image}}' />
+        {{ else }}
+          <img src='<%= image_path("noimage/mini.png") %>' />
+        {{/if}}
+      </span>
     </figure>
 
     <div class='variant-details media-body'>
-
-      <p>
-        <h5 class="variant-name media-heading">{{variant.name}}</h5><br/>
-        {{#if variant.option_values}}
-          {{#each variant.option_values}}
-            <strong>{{this.option_type_presentation}}:</strong> {{this.presentation}}<br/>
-          {{/each}}
-        {{/if}}
-        <strong><%= Spree.t(:sku) %>:</strong> {{variant.sku}}
-      </p>
-
+      <h5 class="variant-name media-heading">{{variant.name}}</h5>
+      {{#if variant.option_values}}
+        {{#each variant.option_values}}
+          <strong>{{this.option_type_presentation}}:</strong> {{this.presentation}}<br/>
+        {{/each}}
+      {{/if}}
+      <strong><%= Spree.t(:sku) %>:</strong> {{variant.sku}}
     </div>
   </div>
 </script>
