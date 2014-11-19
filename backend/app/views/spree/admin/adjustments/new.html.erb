@@ -8,7 +8,7 @@
   <%= button_link_to Spree.t(:back_to_adjustments_list), spree.admin_order_adjustments_url(@order), :icon => 'arrow-left' %>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @adjustment } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @adjustment } %>
 
 <%= form_for @adjustment, :url => admin_order_adjustments_path do |f| %>
   <fieldset>

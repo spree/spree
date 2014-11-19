@@ -7,7 +7,7 @@
   <li><%= link_to_with_icon 'arrow-left', back_button_text, collection_url, :class => 'button' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @object } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @object } %>
 
 <%= form_for [:admin, @object] do |f| %>
   <fieldset class="no-border-top">

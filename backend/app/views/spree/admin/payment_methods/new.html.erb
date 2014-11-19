@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:back_to_payment_methods_list), admin_payment_methods_path, :icon => 'arrow-left' %>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @payment_method } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment_method } %>
 
 <%= form_for @payment_method, :url => collection_url do |f| %>
   <fieldset>

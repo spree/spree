@@ -8,7 +8,7 @@
   <li><%= button_link_to Spree.t(:back_to_customer_return), url_for([:edit, :admin, @order, @reimbursement.customer_return]), :icon => 'arrow-left' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @reimbursement } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
 
 <fieldset class='no-border-bottom'>
   <legend align='center'><%= Spree.t(:items_reimbursed) %></legend>

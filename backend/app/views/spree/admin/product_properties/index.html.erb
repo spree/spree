@@ -1,5 +1,5 @@
 <%= render 'spree/admin/shared/product_tabs', :current => 'Product Properties' %>
-<%= render 'spree/shared/error_messages', :target => @product %>
+<%= render 'spree/admin/shared/error_messages', :target => @product %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:add_product_properties), "javascript:;", { :icon => 'plus-sign', :'data-target' => "tbody#product_properties", :class => 'btn-success spree_add_fields' } %>

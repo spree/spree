@@ -8,7 +8,7 @@
   <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_tax_categories_list), admin_tax_categories_path, :class => 'btn btn-default' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tax_category } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @tax_category } %>
 
 <%= form_for [:admin, @tax_category] do |f| %>
   <fieldset>

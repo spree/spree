@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Images' } %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @image } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @image } %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:back_to_images_list), admin_product_images_url(@product), :icon => 'arrow-left' %>

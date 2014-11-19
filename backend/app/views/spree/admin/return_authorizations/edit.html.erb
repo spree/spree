@@ -16,7 +16,7 @@
 <% end %>
 
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @return_authorization } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @return_authorization } %>
 <%= form_for [:admin, @order, @return_authorization] do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>

@@ -8,7 +8,7 @@
   <li><%= button_link_to Spree.t(:back_to_return_authorizations_list), spree.admin_order_return_authorizations_url, :icon => 'arrow-left' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @return_authorization } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @return_authorization } %>
 <%= form_for [:admin, @order, @return_authorization] do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
