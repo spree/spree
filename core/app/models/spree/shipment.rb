@@ -146,6 +146,7 @@ module Spree
     end
 
     def finalize!
+      puts "DEPRECATION WARNING: Shipment#finalize! will be deprecated, please call FinalizeShipment.new(shipment).execute! instead."
       FinalizeShipment.new(self).execute!
     end
 

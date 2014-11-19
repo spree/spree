@@ -381,6 +381,7 @@ module Spree
     end
 
     def finalize!
+      puts "DEPRECATION WARNING: Order#finalize! will be deprecated, please call FinalizeOrder.new(order).execute! instead."
       FinalizeOrder.new(self).execute!
     end
 
