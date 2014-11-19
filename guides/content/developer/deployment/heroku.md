@@ -89,42 +89,9 @@ Because Heroku's filesystem is readonly, you will need to configure Spree to
 upload the assets to an off-site server, such as S3. If you don't have an S3
 account already, you can [set one up here](http://aws.amazon.com/s3/)
 
-This guide will assume that you have an S3 account already, along with a bucket
-under that account for your files to go into, and that you have generated the
-access key and secret for your S3 account.
-
-To configure Spree to upload images to S3, put these lines into
-`config/initializers/spree.rb`:
-
-```ruby
-Spree.config do |config|
-  config.use_s3 = true
-  config.s3_bucket = '<bucket>'
-  config.s3_access_key = "<key>"
-  config.s3_secret = "<secret>"
-end
-```
-
-If you're using the Western Europe S3 server, you will need to set two
-additional options inside this block:
-
-```ruby
-Spree.config do |config|
-  ...
-  config.attachment_url = ":s3_eu_url"
-  config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end
-```
-
-And additionally you will need to tell paperclip how to construct the URLs for
-your images by placing this code outside the +config+ block inside
-`config/initializers/spree.rb`:
-
-```ruby
-Paperclip.interpolates(:s3_eu_url) do |attachment, style|
-"#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/},"")}"
-end
-```
+At one point S3 support was included in Spree configuration, but it has been removed.
+Now you configure S3 management by configuring Paperclip directly.
+Heroku has a document that explains [how to configure Paperclip](https://devcenter.heroku.com/articles/paperclip-s3)
 
 ## Pushing to Heroku
 
