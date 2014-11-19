@@ -7,14 +7,8 @@ module Spree
     validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
     validate :validate_amount_maximum
 
-    def display_amount
-      money
-    end
-    alias :display_price :display_amount
-
-    def money
-      Spree::Money.new(amount || 0, { currency: currency })
-    end
+    extend DisplayMoney
+    money_methods :amount, :price
 
     def price
       amount

@@ -1,11 +1,10 @@
 module Spree
   module UserReporting
+    extend DisplayMoney
+    money_methods :lifetime_value, :average_order_value
+
     def lifetime_value
       spree_orders.complete.pluck(:total).sum
-    end
-
-    def display_lifetime_value
-      Spree::Money.new(lifetime_value)
     end
 
     def order_count
@@ -18,10 +17,6 @@ module Spree
       else
         BigDecimal("0.00")
       end
-    end
-
-    def display_average_order_value
-      Spree::Money.new(average_order_value)
     end
   end
 end

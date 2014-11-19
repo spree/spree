@@ -34,12 +34,11 @@ module Spree
 
     end
 
+    extend DisplayMoney
+    money_methods :pre_tax_total
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
-    end
-
-    def display_pre_tax_total
-      Spree::Money.new(pre_tax_total, { currency: currency })
     end
 
     def currency
