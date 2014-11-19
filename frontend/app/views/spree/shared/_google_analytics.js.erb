@@ -11,21 +11,21 @@ ga('send', 'pageview');
   <%# more info: https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce %>
   ga('require', 'ecommerce', 'ecommerce.js');
   ga('ecommerce:addTransaction', {
-    'id': '<%= j @order.number %>',                                    // Transaction ID. Required.
-    'affiliation': '<%= current_store.name %>',                 // Affiliation or store name.
-    'revenue': '<%= @order.total %>',                                // Grand Total.
-    'shipping': '<%= @order.ship_total %>',                                  // Shipping.
-    'tax': '<%= @order.tax_total %>',                                        // Tax.
-    'currency': '<%= current_currency %>'                        // local currency code.
+    'id': '<%= j @order.number %>',                                      // Transaction ID. Required.
+    'affiliation': '<%= current_store.name %>',                          // Affiliation or store name.
+    'revenue': '<%= @order.total %>',                                    // Grand Total.
+    'shipping': '<%= @order.ship_total %>',                              // Shipping.
+    'tax': '<%= @order.tax_total %>',                                    // Tax.
+    'currency': '<%= current_currency %>'                                // local currency code.
   });
   <% @order.line_items.each do |line_item| %>
     ga('ecommerce:addItem', {
-      'id': '<%= j @order.number %>',                        // Transaction ID. Required.
-      'name': '<%= j line_item.variant.product.name %>',    // Product name. Required.
+      'id': '<%= j @order.number %>',                                    // Transaction ID. Required.
+      'name': '<%= j line_item.variant.product.name %>',                 // Product name. Required.
       'sku': '<%= j (line_item.variant.sku || line_item.variant_id) %>', // SKU/code.
-      'category': '',                                     // Category or variation.
-      'price': '<%= line_item.price %>',                 // Unit price.
-      'quantity': '<%= line_item.quantity %>'           // Quantity.
+      'category': '',                                                    // Category or variation.
+      'price': '<%= line_item.price %>',                                 // Unit price.
+      'quantity': '<%= line_item.quantity %>'                            // Quantity.
     });
   <% end %>
   ga('ecommerce:send');
