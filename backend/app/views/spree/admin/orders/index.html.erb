@@ -106,7 +106,11 @@
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
         <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td><%= link_to order.number, edit_admin_order_path(order) %></td>
-        <td><span class="state <%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>"></span></td>
+        <td>
+          <span class="label label-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
+            <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
+          </span>
+        </td>
         <td>
           <span class="label label-<%= order.state.downcase %>">
             <%= Spree.t("order_state.#{order.state.downcase}") %>

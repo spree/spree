@@ -1,3 +1,4 @@
+// Green
 .label-completed,
 .label-complete,
 .label-paid,
@@ -12,14 +13,14 @@
     color: white !important;
   }
 }
-
+// Red
 .label-failed,
 .label-considered_risky,
 .label-error
 {
   background-color: #d9534f;
 }
-
+// Orange
 .label-pending,
 .label-awaiting_return,
 .label-returned,
@@ -38,4 +39,8 @@
 .label-notice
 {
   background-color: #f0ad4e;
+}
+// Grey
+.label-considered_safe {
+  background-color: #777;
 }

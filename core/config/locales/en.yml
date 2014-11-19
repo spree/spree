@@ -1162,6 +1162,7 @@ en:
     rma_value: RMA Value
     roles: Roles
     rules: Rules
+    safe: Safe
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
