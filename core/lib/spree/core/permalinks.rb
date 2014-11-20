@@ -1,5 +1,3 @@
-require 'stringex'
-
 module Spree
   module Core
     module Permalinks
