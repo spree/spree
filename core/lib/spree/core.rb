@@ -12,6 +12,7 @@ require 'ransack'
 require 'state_machine'
 require 'friendly_id'
 require 'font-awesome-rails'
+require 'stringex'
 
 module Spree
 
