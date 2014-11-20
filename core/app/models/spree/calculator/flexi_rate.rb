@@ -2,10 +2,10 @@ require_dependency 'spree/calculator'
 
 module Spree
   class Calculator::FlexiRate < Calculator
-    preference :first_item,      :decimal, default: 0.0
-    preference :additional_item, :decimal, default: 0.0
-    preference :max_items,       :integer, default: 0
-    preference :currency,        :string,  default: ->{ Spree::Config[:currency] }
+    preference :first_item_discount,      :decimal, default: 0.0
+    preference :additional_item_discount, :decimal, default: 0.0
+    preference :max_items,                :integer, default: 0
+    preference :currency,                 :string,  default: ->{ Spree::Config[:currency] }
 
     def self.description
       Spree.t(:flexible_rate)
@@ -21,9 +21,9 @@ module Spree
       items_count = object.quantity
       items_count.times do |i|
         if i == 0
-          sum += self.preferred_first_item.to_f
+          sum += self.preferred_first_item_discount.to_f
         elsif ((max > 0) && (i <= (max - 1))) || (max == 0)
-          sum += self.preferred_additional_item.to_f
+          sum += self.preferred_additional_item_discount.to_f
         end
       end
 
