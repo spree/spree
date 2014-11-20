@@ -34,7 +34,7 @@ module Spree
     end
 
     def stock_item_or_create(variant)
-      stock_item(variant) || stock_items.create(variant: variant)
+      stock_item(variant) || stock_items.create(variant_id: variant)
     end
 
     def count_on_hand(variant)

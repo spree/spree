@@ -93,11 +93,12 @@ module Spree
     end
 
     it 'creates a stock_item if not found for a variant' do
+      subject
       variant = create(:variant)
       variant.stock_items.destroy_all
       variant.save
 
-      stock_item = subject.stock_item_or_create(variant)
+      stock_item = subject.stock_item_or_create(variant.id)
       expect(stock_item.variant).to eq variant
     end
 
