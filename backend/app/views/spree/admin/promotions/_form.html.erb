@@ -1,41 +1,40 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @promotion } %>
-<div class="row">
-  <div id="general_fields" class="alpha thirteen columns">
-    <div class="col-md-3">
-      <%= f.field_container :name, class: ['form-group'] do %>
-        <%= f.label :name %>
-        <%= f.text_field :name, :class => 'form-control' %>
-      <% end %>
 
-      <%= f.field_container :code, class: ['form-group'] do %>
-        <%= f.label :code %>
-        <%= f.text_field :code, :class => 'form-control' %>
-      <% end %>
+<div class="row" id="general_fields" >
+  <div class="col-md-3">
+    <%= f.field_container :name, class: ['form-group'] do %>
+      <%= f.label :name %>
+      <%= f.text_field :name, :class => 'form-control' %>
+    <% end %>
 
-      <%= f.field_container :path, class: ['form-group'] do %>
-        <%= f.label :path %>
-        <%= f.text_field :path, :class => 'form-control' %>
-      <% end %>
+    <%= f.field_container :code, class: ['form-group'] do %>
+      <%= f.label :code %>
+      <%= f.text_field :code, :class => 'form-control' %>
+    <% end %>
 
-      <%= f.field_container :advertise, class: ['checkbox'] do %>
-        <%= f.label :advertise do %>
-          <%= f.check_box :advertise %>
-          <%= Spree.t(:advertise) %>
-        <% end %>
-      <% end %>
-    </div>
+    <%= f.field_container :path, class: ['form-group'] do %>
+      <%= f.label :path %>
+      <%= f.text_field :path, :class => 'form-control' %>
+    <% end %>
 
-    <div class="col-md-6">
-      <%= f.field_container :description do %>
-        <%= f.label :description %>
-        <%= f.text_area :description, :rows => 7, :class => 'form-control' %>
+    <%= f.field_container :advertise, class: ['checkbox'] do %>
+      <%= f.label :advertise do %>
+        <%= f.check_box :advertise %>
+        <%= Spree.t(:advertise) %>
       <% end %>
+    <% end %>
+  </div>
 
-      <%= f.field_container :category do %>
-        <%= f.label :promotion_category %><br />
-        <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2 fullwidth' }) %>
-      <% end %>
-    </div>
+  <div class="col-md-6">
+    <%= f.field_container :description, class: ['form-group'] do %>
+      <%= f.label :description %>
+      <%= f.text_area :description, :rows => 7, :class => 'form-control' %>
+    <% end %>
+
+    <%= f.field_container :category, class: ['form-group'] do %>
+      <%= f.label :promotion_category %>
+      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+    <% end %>
   </div>
 
   <div id="expiry_fields" class="col-md-3">

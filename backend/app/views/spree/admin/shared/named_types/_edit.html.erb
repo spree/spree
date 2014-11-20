@@ -1,16 +1,15 @@
 <% content_for :page_title do %>
-  <%= page_title %> <i class="fa fa-arrow-right"></i>
-  <%= @object.name %>
+  <%= page_title %> <span class="glyphicon glyphicon-arrow-right"></span> <%= @object.name %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'arrow-left', back_button_text, collection_url, :class => 'button' %></li>
+  <%= link_to_with_icon 'arrow-left', back_button_text, collection_url, :class => 'btn btn-default' %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @object } %>
 
 <%= form_for [:admin, @object] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'spree/admin/shared/named_types/form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
   </fieldset>

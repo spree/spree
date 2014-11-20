@@ -1,0 +1,32 @@
+<% content_for :page_title do %>
+  <%= Spree::PromotionCategory.model_name.human(count: :many) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_promotion_category), spree.new_admin_promotion_category_path, :icon => 'add', :class => 'btn-success' %>
+<% end %>
+
+<% if @promotion_categories.any? %>
+  <table class="table table-hover table-condensed table-bordered index">
+    <thead>
+      <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
+      <th></th>
+    </thead>
+    <tbody>
+      <% @promotion_categories.each do |promotion_category| %>
+        <tr>
+          <td><%= promotion_category.name %></td>
+          <td class="actions actions-2">
+            <%= link_to_edit promotion_category, :no_text => true %>
+            <%= link_to_delete promotion_category, :no_text => true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion_category')) %>,
+    <%= link_to Spree.t(:add_one), spree.new_admin_promotion_category_path %>!
+  </div>
+<% end %>

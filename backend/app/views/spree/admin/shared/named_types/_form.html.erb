@@ -1,0 +1,12 @@
+<div data-hook="admin_named_type_form_fields">
+  <%= f.field_container :name, class: ['form-group'] do %>
+    <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
+    <%= f.text_field :name, :class => 'form-control' %>
+  <% end %>
+  <div class="checkbox">
+    <%= label_tag :active do %>
+      <%= f.check_box :active %>
+      <%= Spree.t(:active) %>
+    <% end %>
+  </div>
+</div>

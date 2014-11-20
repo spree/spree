@@ -1,6 +1,6 @@
 // The less opiniated icons
 .icon {                 @extend .glyphicon }
-.icon-add {             @extend .glyphicon-plus-sign }
+.icon-add {             @extend .glyphicon-plus }
 .icon-edit {            @extend .glyphicon-pencil }
 .icon-capture {         @extend .glyphicon-ok }
 .icon-void {            @extend .glyphicon-remove }
@@ -14,9 +14,13 @@
 .icon-remove {          @extend .glyphicon-remove }
 .icon-send {            @extend .glyphicon-send }
 .icon-arrow-left {      @extend .glyphicon-arrow-left }
+.icon-arrow-right {     @extend .glyphicon-arrow-right }
 .icon-clone {           @extend .glyphicon-share }
 .icon-update {          @extend .glyphicon-refresh }
 .icon-cancel {          @extend .glyphicon-remove }
 .icon-split {           @extend .glyphicon-resize-full }
 .icon-save {            @extend .glyphicon-ok }
 .icon-delete {          @extend .glyphicon-remove }
+.icon-refund {          @extend .glyphicon-minus }
+.icon-thumbs-up {       @extend .glyphicon-thumbs-up }
+.icon-thumbs-down {     @extend .glyphicon-thumbs-down }

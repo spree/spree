@@ -20,7 +20,10 @@
       </div>
     </fieldset>
   <% end %>
+
 <% else %>
-  <%= Spree.t(:cannot_create_payment_without_payment_methods) %>
-  <%= link_to Spree.t(:please_define_payment_methods), admin_payment_methods_url %>
+  <div class="alert alert-info">
+    <%= Spree.t(:cannot_create_payment_without_payment_methods) %>
+    <%= link_to Spree.t(:please_define_payment_methods), admin_payment_methods_url %>
+  </div>
 <% end %>

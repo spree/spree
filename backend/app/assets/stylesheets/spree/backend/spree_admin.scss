@@ -27,6 +27,9 @@
 .no-marginb {
   margin-bottom: 0;
 }
+.no-margint {
+  margin-top: 0;
+}
 .no-borderb {
   border-bottom: 0;
 }
@@ -114,6 +117,17 @@ legend .glyphicon {
 // user edit page (api key buttons)
 div.form-buttons {
   form {
+    display: inline;
+    // when a button_to is used within the form-buttons it renders a div
+    div {
+      display: inline;
+    }
+  }
+}
+// Apply display-inline class to button_to tags outside form-buttons div
+.display-inline {
+  display: inline;
+  div {
     display: inline;
   }
 }

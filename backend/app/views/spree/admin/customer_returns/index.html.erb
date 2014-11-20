@@ -2,7 +2,7 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any?(&:shipped?) %>
-    <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'plus' %>
+    <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add', class: 'btn-success' %>
   <% end %>
   <%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %>
 <% end %>
@@ -26,7 +26,7 @@
       </thead>
       <tbody>
         <% @customer_returns.each do |customer_return| %>
-          <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row" class="<%= cycle('odd', 'even')%>">
+          <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row">
             <td><%= link_to customer_return.number, edit_admin_order_customer_return_path(@order, customer_return) %></td>
             <td><%= customer_return.display_pre_tax_total.to_html %></td>
             <td><%= pretty_time(customer_return.created_at) %></td>

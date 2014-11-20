@@ -29,7 +29,14 @@
 </li>
 
 <% if can? :admin, Spree::Promotion %>
-  <%= tab *Spree::BackendConfiguration::PROMOTION_TABS, url: spree.admin_promotions_path, icon: 'bullhorn' %>
+  <li class="treeview">
+    <a href="#">
+      <span class="glyphicon glyphicon-bullhorn"></span>
+      <span><%= Spree.t(:promotions) %></span>
+      <span class="glyphicon glyphicon-chevron-left pull-right"></span>
+    </a>
+    <%= render :partial => 'spree/admin/shared/promotion_sub_menu' %>
+  </li>
 <% end %>
 
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>

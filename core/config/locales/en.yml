@@ -891,6 +891,8 @@ en:
     no_results: No results
     no_rules_added: No rules added
     no_resource_found: ! 'No %{resource} found'
+    no_returns_found: No returns found
+    no_reimbursements_found: No reimbursements found
     no_shipping_methods_found: No shipping methods found
     no_shipping_method_selected: No shipping method selected.
     no_trackers_found: No Trackers Found
@@ -1034,7 +1036,7 @@ en:
     product_properties: Product Properties
     product_rule:
       choose_products: Choose products
-      label: Order must contain %{select} of these products
+      label: Order must contain x amount of these products
       match_all: all
       match_any: at least one
       match_none: none
@@ -1192,7 +1194,7 @@ en:
     server: Server
     server_error: The server returned an error
     settings: Settings
-    ship: ship
+    ship: Ship
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
@@ -1289,7 +1291,7 @@ en:
     taxon_placeholder: Add a Taxon
     taxon_rule:
       choose_taxons: Choose taxons
-      label: Order must contain %{select} of these taxons
+      label: Order must contain x amount of these taxons
       match_all: all
       match_any: at least one
     taxonomies: Taxonomies

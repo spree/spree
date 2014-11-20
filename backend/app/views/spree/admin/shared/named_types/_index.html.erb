@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to new_button_text, new_object_url, { icon: 'plus', id: 'admin_new_named_type', :class => "btn-success" } %>
+  <%= button_link_to new_button_text, new_object_url, { icon: 'add', id: 'admin_new_named_type', :class => "btn-success" } %>
 <% end %>
 
 <% if @collection.any? %>
@@ -17,7 +17,7 @@
     </thead>
     <tbody>
       <% @collection.each do |named_type| %>
-        <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row">
           <td class="align-center">
             <%= named_type.name %>
           </td>

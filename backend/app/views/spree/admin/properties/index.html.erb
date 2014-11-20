@@ -3,12 +3,10 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <li id="new_property_link">
+  <span id="new_property_link">
     <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :remote => true, :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
-  </li>
+  </span>
 <% end %>
-
-
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
@@ -35,27 +33,27 @@
 <div id="new_property"></div>
 
 <% if @properties.any? %>
-<table class="table table-hover table-condensed table-bordered index" id='listing_properties' data-hook>
-  <thead>
-    <tr data-hook="listing_properties_header">
-      <th><%= Spree.t(:name) %></th>
-      <th><%= Spree.t(:presentation) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @properties.each do |property| %>
-      <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
-        <td style="padding-left:1em"><%= property.name %></td>
-        <td style="padding-left:1em"><%= property.presentation %></td>
-        <td class="actions actions-2">
-          <%= link_to_edit(property, :no_text => true) %>
-          <%= link_to_delete(property, :no_text => true) %>
-        </td>
+  <table class="table table-hover table-condensed table-bordered index" id='listing_properties' data-hook>
+    <thead>
+      <tr data-hook="listing_properties_header">
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:presentation) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @properties.each do |property| %>
+        <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
+          <td style="padding-left:1em"><%= property.name %></td>
+          <td style="padding-left:1em"><%= property.presentation %></td>
+          <td class="actions actions-2">
+            <%= link_to_edit(property, :no_text => true) %>
+            <%= link_to_delete(property, :no_text => true) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/property')) %>,

@@ -5,7 +5,7 @@
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name,
                      options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
-                     :class => 'type-select select2 fullwidth' %>
+                     :class => 'type-select select2' %>
     </div>
     <% unless promotion_action.new_record? %>
       <div class="form-group col-md-6 no-marginb settings">

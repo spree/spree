@@ -1,18 +1,18 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:reimbursement) %> #<%= @reimbursement.number %>
+  <span class="glyphicon glyphicon-arrow-right"></span> <%= Spree.t(:reimbursement) %> #<%= @reimbursement.number %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to Spree.t(:back_to_customer_return), url_for([:edit, :admin, @order, @reimbursement.customer_return]), :icon => 'arrow-left' %></li>
+  <%= button_link_to Spree.t(:back_to_customer_return), url_for([:edit, :admin, @order, @reimbursement.customer_return]), :icon => 'arrow-left' %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
 
 <fieldset class='no-border-bottom'>
-  <legend align='center'><%= Spree.t(:items_reimbursed) %></legend>
-  <table class="index reimbursement-reimbursement-items-table">
+  <legend><%= Spree.t(:items_reimbursed) %></legend>
+  <table class="table table-hover table-condensed table-bordered index reimbursement-reimbursement-items-table">
     <thead>
       <tr>
         <th><%= Spree.t(:product) %></th>
@@ -25,37 +25,35 @@
     </thead>
     <tbody>
       <% @reimbursement.return_items.each do |return_item| %>
-
         <tr>
           <td>
             <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
             <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
           </td>
-          <td class="align-center">
+          <td>
             <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
           </td>
-          <td class='align-center'>
+          <td>
             <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
           </td>
           <td>
             <%= return_item.exchange_variant.try(:options_text) %>
           </td>
-          <td class="align-center">
+          <td>
             <%= return_item.display_pre_tax_amount %>
           </td>
-          <td class="align-center">
+          <td>
             <%= return_item.display_total %>
           </td>
         </tr>
-
       <% end %>
     </tbody>
   </table>
 </fieldset>
 
-<fieldset class="no-border-bottom">
-  <legend align='center'><%= Spree.t(:refunds) %></legend>
-  <table class="index">
+<fieldset>
+  <legend><%= Spree.t(:refunds) %></legend>
+  <table class="table table-hover table-condensed table-bordered index">
     <thead data-hook="customer_return_header">
       <tr>
         <th><%= Spree.t(:description) %></th>
@@ -64,7 +62,7 @@
     </thead>
     <tbody>
       <% @reimbursement.refunds.each do |refund| %>
-        <tr id="<%= spree_dom_id(refund) %>" data-hook="reimbursement_refund_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id(refund) %>" data-hook="reimbursement_refund_row">
           <td><%= refund.description %></td>
           <td><%= refund.display_amount %></td>
         </tr>
@@ -73,9 +71,9 @@
   </table>
 </fieldset>
 
-<fieldset class="no-border-bottom">
-  <legend align='center'><%= Spree.t(:credits) %></legend>
-  <table class="index">
+<fieldset>
+  <legend><%= Spree.t(:credits) %></legend>
+  <table class="table table-hover table-condensed table-bordered index">
     <thead data-hook="customer_return_header">
       <tr>
         <th><%= Spree.t(:description) %></th>
@@ -84,7 +82,7 @@
     </thead>
     <tbody>
       <% @reimbursement.credits.each do |credit| %>
-        <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
           <td><%= credit.description %></td>
           <td><%= credit.display_amount %></td>
         </tr>

@@ -1,5 +1,3 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:general_settings) %>
 <% end %>
@@ -10,7 +8,6 @@
     <fieldset class="general no-border-top">
 
       <%= fields_for :store do |f| %>
-
         <div class="form-group" data-hook="admin_general_setting_input_name">
           <%= f.label :name %>
           <%= f.text_field :name, class: 'form-control' %>
@@ -109,7 +106,6 @@
     </fieldset>
 
   </div>
-
 
 <% end %>
 

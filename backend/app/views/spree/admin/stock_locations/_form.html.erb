@@ -1,89 +1,95 @@
-<div data-hook="admin_stock_locations_form_fields" class="row">
-  <div class="alpha nine columns" data-hook="stock_location_names">
-    <div data-hook="stock_location_name">
-      <%= f.field_container :name do %>
-      <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
-      <%= f.text_field :name, class: 'fullwidth', required: true %>
-      <% end %>
+<div data-hook="admin_stock_locations_form_fields">
+  <div class="row">
+    <div class="col-md-9" data-hook="stock_location_names">
+      <div data-hook="stock_location_name">
+        <%= f.field_container :name, class: ['form-group']  do %>
+        <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
+        <%= f.text_field :name, class: 'form-control', required: true %>
+        <% end %>
+      </div>
+      <div data-hook="stock_location_admin_name">
+        <%= f.field_container :admin_name, class: ['form-group']  do %>
+        <%= f.label :admin_name, Spree.t(:internal_name) %>
+        <%= f.text_field :admin_name, class: 'form-control', label: false %>
+        <% end %>
+      </div>
     </div>
-    <div data-hook="stock_location_admin_name">
-      <%= f.field_container :admin_name do %>
-      <%= f.label :admin_name, Spree.t(:internal_name) %>
-      <%= f.text_field :admin_name, class: 'fullwidth', label: false %>
-      <% end %>
+
+    <div class="col-md-3" data-hook="stock_location_status">
+      <strong><%= Spree.t(:status) %></strong>
+      <div class="checkbox" data-hook="stock_location_active">
+        <%= label_tag :active do %>
+          <%= f.check_box :active %>
+          <%= Spree.t(:active) %>
+        <% end %>
+      </div>
+      <div class="checkbox" data-hook="stock_location_default">
+        <%= label_tag :default do %>
+          <%= f.check_box :default %>
+          <%= Spree.t(:default) %>
+        <% end %>
+      </div>
+      <div class="checkbox" data-hook="stock_location_backorderable_default">
+        <%= label_tag :backorderable_default do %>
+          <%= f.check_box :backorderable_default %>
+          <%= Spree.t(:backorderable_default) %>
+        <% end %>
+      </div>
+      <div class="checkbox" data-hook="stock_location_propagate_all_variants">
+        <%= label_tag :propagate_all_variants do %>
+          <%= f.check_box :propagate_all_variants %>
+          <%= Spree.t(:propagate_all_variants) %>
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <div class="omega three columns" data-hook="stock_location_status">
-    <%= f.field_container :active do %>
-    <label for="active"><%= Spree.t(:status) %></label>
-    <ul>
-      <li class="fullwidth" data-hook="stock_location_active">
-        <%= f.check_box :active %>
-        <%= f.label :active, Spree.t(:active) %>
-      </li>
-      <li class="fullwidth" data-hook="stock_location_default">
-        <%= f.check_box :default %>
-        <%= f.label :default, Spree.t(:default) %>
-      </li>
-      <li class="fullwidth" data-hook="stock_location_backorderable_default">
-        <%= f.check_box :backorderable_default %>
-        <%= f.label :backorderable_default, Spree.t(:backorderable_default) %>
-      </li>
-      <li class="fullwidth" data-hook="stock_location_propagate_all_variants">
-        <%= f.check_box :propagate_all_variants %>
-        <%= f.label :propagate_all_variants, Spree.t(:propagate_all_variants) %>
-      </li>
-    </ul>
-    <% end %>
-  </div>
-
-  <div class="alpha six columns field" data-hook="stock_location_address1">
+  <div class="form-group" data-hook="stock_location_address1">
     <%= f.label :address1, Spree.t(:street_address) %>
-    <%= f.text_field :address1, class: 'fullwidth' %>
+    <%= f.text_field :address1, class: 'form-control' %>
   </div>
 
-  <div class="omega six columns field" data-hook="stock_location_city">
+  <div class="form-group" data-hook="stock_location_city">
     <%= f.label :city, Spree.t(:city) %>
-    <%= f.text_field :city, class: 'fullwidth' %>
+    <%= f.text_field :city, class: 'form-control' %>
   </div>
 
-  <div class="alpha six columns field" data-hook="stock_location_address2">
+  <div class="form-group" data-hook="stock_location_address2">
     <%= f.label :address2, Spree.t(:street_address_2) %>
-    <%= f.text_field :address2, class: 'fullwidth' %>
+    <%= f.text_field :address2, class: 'form-control' %>
   </div>
 
-  <div class="three columns field" data-hook="stock_location_zipcode">
+  <div class="form-group" data-hook="stock_location_zipcode">
     <%= f.label :zipcode, Spree.t(:zip) %>
-    <%= f.text_field :zipcode, class: 'fullwidth' %>
+    <%= f.text_field :zipcode, class: 'form-control' %>
   </div>
 
-  <div class="omega three columns field" data-hook="stock_location_phone">
+  <div class="form-group" data-hook="stock_location_phone">
     <%= f.label :phone, Spree.t(:phone) %>
-    <%= f.phone_field :phone, class: 'fullwidth' %>
+    <%= f.phone_field :phone, class: 'form-control' %>
   </div>
 
-  <div class="alpha six columns field" data-hook="stock_location_country">
+  <div class="form-group" data-hook="stock_location_country">
     <%= f.label :country_id, Spree.t(:country) %>
-    <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2 fullwidth' } %></span>
+    <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %></span>
   </div>
 
-  <div class="omega six columns field" data-hook="stock_location_state">
+  <div class="form-group" data-hook="stock_location_state">
     <% if f.object.country %>
-    <%= f.label :state_id, Spree.t(:state) %>
-    <span id="state" class="region">
-      <%= f.text_field :state_name, style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };", disabled: !f.object.country.states.empty?, class: 'fullwidth state_name' %>
-      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2 fullwidth', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty?} %>
-    </span>
+      <%= f.label :state_id, Spree.t(:state) %>
+      <span id="state" class="region">
+        <%= f.text_field :state_name, style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };", disabled: !f.object.country.states.empty?, class: 'state_name' %>
+        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty?} %>
+      </span>
     <% end %>
   </div>
 </div>
 
 <% content_for :head do %>
-<%= javascript_include_tag 'spree/backend/address_states.js' %>
-<%= javascript_tag do -%>
-$(document).ready(function(){
-  $('span#country .select2').on('change', function() { update_state(''); });
-});
-<% end -%>
+  <%= javascript_include_tag 'spree/backend/address_states.js' %>
+  <%= javascript_tag do -%>
+    $(document).ready(function(){
+      $('span#country .select2').on('change', function() { update_state(''); });
+    });
+  <% end -%>
 <% end %>

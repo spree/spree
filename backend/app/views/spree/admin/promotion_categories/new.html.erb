@@ -1,8 +1,8 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_promotion) %>
+  <%= Spree.t(:new_promotion_category) %>
 <% end %>
 
-<%= form_for :promotion, :url => collection_url do |f| %>
+<%= form_for :promotion_category, :url => collection_url do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
