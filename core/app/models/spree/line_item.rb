@@ -1,6 +1,6 @@
 module Spree
   class LineItem < Spree::Base
-    before_validation :adjust_quantity
+    before_validation :invalid_quantity_check
     belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items, touch: true
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
@@ -74,7 +74,7 @@ module Spree
     alias display_total money
     alias display_amount money
 
-    def adjust_quantity
+    def invalid_quantity_check
       self.quantity = 0 if quantity.nil? || quantity < 0
     end
 

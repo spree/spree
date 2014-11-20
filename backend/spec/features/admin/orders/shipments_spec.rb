@@ -36,31 +36,4 @@ describe "Shipments", :type => :feature do
       expect(order.reload.shipment_state).to eq("shipped")
     end
   end
-
-  context "moving variants between shipments", js: true do
-    let!(:la) { create(:stock_location, name: "LA") }
-    before(:each) do
-      visit spree.admin_path
-      click_link "Orders"
-      within_row(1) do
-        click_link "R100"
-      end
-    end
-
-    it "can move a variant to a new and to an existing shipment" do
-      expect(order.shipments.count).to eq(1)
-
-      within_row(1) { click_icon 'arrows-h' }
-      targetted_select2 'LA', from: '#s2id_item_stock_location'
-      click_icon :ok
-      wait_for_ajax
-      expect(page.find("#shipment_#{order.shipments.first.id}")).to be_present
-
-      within_row(2) { click_icon 'arrows-h' }
-      targetted_select2 "LA(#{order.reload.shipments.last.number})", from: '#s2id_item_stock_location'
-      click_icon :ok
-      wait_for_ajax
-      expect(page.find("#shipment_#{order.reload.shipments.last.id}")).to be_present
-    end
-  end
 end

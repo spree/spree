@@ -26,9 +26,11 @@
         <% if can? :update, item %>
           <%= link_to '', '#', :class => 'save-item fa fa-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
           <%= link_to '', '#', :class => 'cancel-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
-          <%= link_to '', '#', :class => 'edit-item fa fa-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
-          <%= link_to '', '#', :class => 'split-item icon_link fa fa-arrows-h no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
-          <%= link_to '', '#', :class => 'delete-item fa fa-trash no-text with-tip', :data => { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete') %>
+          <% if shipment.order.shipped_shipments.count == 0 %>
+            <%= link_to '', '#', :class => 'edit-item fa fa-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
+            <%= link_to '', '#', :class => 'split-item icon_link fa fa-arrows-h no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
+            <%= link_to '', '#', :class => 'delete-item fa fa-trash no-text with-tip', :data => { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete') %>
+          <% end %>
         <% end %>
       </td>
     <% end %>

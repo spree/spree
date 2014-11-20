@@ -1,0 +1,40 @@
+<div data-hook="admin_order_form_fields">
+  <% if @line_item.try(:errors).present? %>
+      <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
+  <% end %>
+
+  <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+          :adjustments => @order.line_item_adjustments,
+          :order => order,
+          :title => Spree.t(:line_item_adjustments)
+  } %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+          :adjustments => @order.shipment_adjustments,
+          :order => order,
+          :title => Spree.t(:shipment_adjustments)
+  } %>
+  <%= render :partial => "spree/admin/orders/adjustments", :locals => {
+          :adjustments => @order.adjustments,
+          :order => order,
+          :title => Spree.t(:order_adjustments)
+  } %>
+
+  <% if order.line_items.exists? %>
+      <fieldset class="no-border-bottom" id="order-total" data-hook="order_details_total">
+        <legend><%= Spree.t(:order_total) %></legend>
+        <span class="order-total"><%= order.display_total %></span>
+      </fieldset>
+  <% end %>
+
+  <%= javascript_tag do -%>
+      var order_number = '<%= @order.number %>';
+      var shipments = [];
+
+      <% @order.shipments.each do |shipment| %>
+          shipments.push(<%== shipment.to_json(:root => false, :include => [:inventory_units, :stock_location]) %>);
+      <% end %>
+
+      <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
+  <% end -%>
+</div>
