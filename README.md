@@ -34,9 +34,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.0.10
+gem install rails -v 4.0.12
 gem install spree
-rails _4.0.10_ new my_store
+rails _4.0.12_ new my_store
 spree install my_store
 ```
 
