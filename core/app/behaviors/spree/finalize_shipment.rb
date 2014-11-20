@@ -13,6 +13,5 @@ module Spree
       InventoryUnit.finalize_units!(shipment.inventory_units)
       shipment.unstock_manifest
     end
-
   end
 end

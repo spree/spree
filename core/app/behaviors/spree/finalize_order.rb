@@ -7,13 +7,13 @@ module Spree
     end
 
     ##
-    # Finalize an in-progress order's adjustments, and shipments 
+    # Finalize an in-progress order's adjustments, and shipments
     # after the payment has been processed and checkout is complete.
     def execute!
       lock_adjustments
       updater.update_payment_state
 
-      order.shipments.each do |s| 
+      order.shipments.each do |s|
         s.update!(order)
         FinalizeShipment.new(s).execute!
       end
@@ -24,7 +24,7 @@ module Spree
 
       order.touch :completed_at
 
-      order.deliver_order_confirmation_email unless order.confirmation_delivered?
+      order.deliver_order_confirmation_email if !order.confirmation_delivered?
 
       order.consider_risk
     end
@@ -32,12 +32,11 @@ module Spree
     private
 
     def lock_adjustments
-      order.all_adjustments.each{|a| a.close}
+      order.all_adjustments.each { |a| a.close }
     end
 
     def updater
       OrderUpdater.new(order)
     end
-
   end
 end

@@ -146,7 +146,10 @@ module Spree
     end
 
     def finalize!
-      puts "DEPRECATION WARNING: Shipment#finalize! will be deprecated, please call FinalizeShipment.new(shipment).execute! instead."
+      puts <<-EOS.strip_heredoc
+        DEPRECATION WARNING: Shipment#finalize! will be deprecated, 
+        please call FinalizeShipment.new(shipment).execute! instead.
+      EOS
       FinalizeShipment.new(self).execute!
     end
 
