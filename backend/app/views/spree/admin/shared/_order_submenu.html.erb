@@ -17,7 +17,7 @@
 
     <% if can? :update, @order %>
         <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_order_details'>
-          <%= link_to_with_icon 'send', Spree.t(:shipments), edit_admin_order_url(@order) %>
+          <%= link_to_with_icon 'shipment', Spree.t(:shipments), edit_admin_order_url(@order) %>
         </li>
     <% end %>
 
