@@ -43,7 +43,15 @@ module Spree
 
         before do
           updater.update
-          create(:adjustment, source: promotion_action, adjustable: order, order: order)
+
+          order.adjustments.create! do |a|
+            a.source = promotion_action
+            a.adjustable = order
+            a.order = order
+            a.label = 'a'
+            a.amount = -3
+          end
+
           create(:line_item, :order => order, price: 10) # in addition to the two already created
           updater.update
         end

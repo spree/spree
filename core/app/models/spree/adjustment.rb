@@ -103,7 +103,7 @@ module Spree
           updated_at: Time.now,
         )
         if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
+          self.update_column(:eligible, source.promotion.eligible?(target || adjustable))
         end
       end
       amount
@@ -113,8 +113,8 @@ module Spree
 
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
+      # NOTE leads to bad performance loops and reloads
       Adjustable::AdjustmentsUpdater.update(adjustable)
     end
-
   end
 end

@@ -17,7 +17,6 @@ describe "Order Details", type: :feature, js: true do
   context 'as Admin' do
     stub_authorization!
 
-
     context "cart edit page" do
       before do
         product.master.stock_items.first.update_column(:count_on_hand, 100)
@@ -155,7 +154,6 @@ describe "Order Details", type: :feature, js: true do
       end
     end
 
-
     context 'Shipment edit page' do
       let!(:stock_location2) { create(:stock_location_with_items, name: 'Clarksville') }
 
@@ -183,7 +181,7 @@ describe "Order Details", type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.reload.last.backordered?).to eq(false)
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
@@ -199,7 +197,7 @@ describe "Order Details", type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.reload.last.backordered?).to eq(false)
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
@@ -215,7 +213,7 @@ describe "Order Details", type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.reload.last.backordered?).to eq(false)
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(5)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
@@ -310,7 +308,7 @@ describe "Order Details", type: :feature, js: true do
               wait_for_ajax
 
               expect(order.shipments.count).to eq(1)
-              expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+              expect(order.shipments.reload.first.inventory_units_for(product.master).count).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
             end
           end
@@ -319,6 +317,7 @@ describe "Order Details", type: :feature, js: true do
         context 'multiple items in cart' do
           it 'should have no problem splitting if multiple items are in the from shipment' do
             order.contents.add(create(:variant), 2)
+
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.manifest.count).to eq(2)
 
@@ -329,13 +328,12 @@ describe "Order Details", type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.reload.shipments.last.backordered?).to eq(false)
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
         end
       end
-
 
       context 'splitting to shipment' do
         before do

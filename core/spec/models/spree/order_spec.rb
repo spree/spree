@@ -248,7 +248,8 @@ describe Spree::Order, :type => :model do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
-      allow(order).to receive_messages(:line_items => line_items = [1, 2])
+      line_items = [Spree::LineItem.new, Spree::LineItem.new]
+      allow(order).to receive_messages(line_items: line_items)
       allow(order).to receive_messages(:adjustments => adjustments = [])
     end
 

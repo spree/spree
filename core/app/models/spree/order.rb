@@ -147,6 +147,10 @@ module Spree
                        order_id: self.id)
     end
 
+    def non_order_adjustments
+      Adjustment.where("order_id = ? AND adjustable_type != 'Spree::Order'", id)
+    end
+
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
@@ -444,8 +448,7 @@ module Spree
           current_line_item.quantity += other_order_line_item.quantity
           current_line_item.save!
         else
-          other_order_line_item.order_id = self.id
-          other_order_line_item.save!
+          line_items.push other_order_line_item
         end
       end
 

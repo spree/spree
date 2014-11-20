@@ -86,16 +86,21 @@ module Spree
     # This method is best described by the documentation on #potentially_applicable?
     def self.adjust(order_tax_zone, items)
       rates = self.match(order_tax_zone)
+
       tax_categories = rates.map(&:tax_category)
       relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
+
       Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
+
       relevant_items.each do |item|
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
+
         relevant_rates.each do |rate|
           rate.adjust(order_tax_zone, item)
         end
       end
+
       non_relevant_items.each do |item|
         if item.adjustments.tax.present?
           item.adjustments.tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
@@ -164,13 +169,13 @@ module Spree
         label = Spree.t(:refund) + ' ' + create_label
       end
 
-      self.adjustments.create!({
-        :adjustable => item,
-        :amount => amount,
-        :order_id => item.order_id,
-        :label => label || create_label,
-        :included => included
-      })
+      item.adjustments.create!(
+        source: self,
+        amount: amount,
+        order_id: item.order_id,
+        label: label || create_label,
+        included: included
+      )
     end
 
     # This method is used by Adjustment#update to recalculate the cost.

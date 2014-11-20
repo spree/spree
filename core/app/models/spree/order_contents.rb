@@ -34,12 +34,22 @@ module Spree
 
     private
       def after_add_or_remove(line_item, options = {})
-        reload_totals
+        order_updater.update_item_count
+        order_updater.update_item_total
+
+        # NOTE How we never care about shipments when putting stuff in a cart? Cart object?
         shipment = options[:shipment]
         shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+
         PromotionHandler::Cart.new(order, line_item).activate
-        Adjustable::AdjustmentsUpdater.update(line_item)
-        reload_totals
+
+        order_updater.update_item_total
+        order_updater.recalculate_adjustments
+        order_updater.update_adjustment_total
+
+        order_updater.update_on_completed
+
+        order_updater.persist_totals
         line_item
       end
 
@@ -61,6 +71,7 @@ module Spree
         @updater ||= OrderUpdater.new(order)
       end
 
+      # NOTE DEPRECATE it
       def reload_totals
         order_updater.update_item_count
         order_updater.update
@@ -91,7 +102,7 @@ module Spree
         line_item.target_shipment= options[:shipment]
 
         if line_item.quantity == 0
-          line_item.destroy
+          order.line_items.destroy(line_item)
         else
           line_item.save!
         end

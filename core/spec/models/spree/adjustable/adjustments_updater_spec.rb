@@ -70,14 +70,12 @@ module Spree
         end
 
         context "tax excluded from price" do
-          before do
+          it "tax applies to line item" do
             create(:adjustment, source: tax_rate,
                                 adjustable: line_item,
                                 order: order,
                                 included: false)
-          end
 
-          it "tax applies to line item" do
             subject.update
             line_item.reload
             # Taxable amount is: $20 (base) - $10 (promotion) = $10
@@ -89,6 +87,14 @@ module Spree
           end
 
           it "tax linked to order" do
+            order.adjustments.create!(
+              amount: 100.0,
+              label: 'order adj',
+              source: tax_rate,
+              adjustable: line_item,
+              order: order,
+              included: false
+            )
             order_subject.update
             order.reload
             expect(order.included_tax_total).to eq(0)

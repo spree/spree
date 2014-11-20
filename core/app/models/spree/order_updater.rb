@@ -7,20 +7,9 @@ module Spree
       @order = order
     end
 
-    # This is a multi-purpose method for processing logic related to changes in the Order.
-    # It is meant to be called from various observers so that the Order is aware of changes
-    # that affect totals and other values stored in the Order.
-    #
-    # This method should never do anything to the Order that results in a save call on the
-    # object with callbacks (otherwise you will end up in an infinite recursion as the
-    # associations try to save and then in turn try to call +update!+ again.)
     def update
       update_totals
-      if order.completed?
-        update_payment_state
-        update_shipments
-        update_shipment_state
-      end
+      update_on_completed
       run_hooks
       persist_totals
     end
@@ -30,25 +19,28 @@ module Spree
     end
 
     def recalculate_adjustments
-      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each do |adjustable|
-        Adjustable::AdjustmentsUpdater.update(adjustable)
+      others = order.non_order_adjustments.pluck(:adjustable_id, :adjustable_type).uniq
+
+      others.each do |adjustable_id, adjustable_type|
+        if adjustable_type == "Spree::LineItem"
+          memory_item = line_items.find { |i| i.id == adjustable_id }
+          Adjustable::AdjustmentsUpdater.update(memory_item)
+        elsif adjustable_type == "Spree::Shipment"
+          memory_item = shipments.find { |i| i.id == adjustable_id }
+          Adjustable::AdjustmentsUpdater.update(memory_item)
+        end
       end
+
+      Adjustable::AdjustmentsUpdater.update(order) unless adjustments.empty?
     end
 
-    # Updates the following Order total values:
-    #
-    # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
-    # +item_total+         The total value of all LineItems
-    # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
-    # +promo_total+        The total value of all promotion adjustments
-    # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +adjustment_total+.
     def update_totals
       update_payment_total
       update_item_total
       update_shipment_total
+      recalculate_adjustments
       update_adjustment_total
     end
-
 
     # give each of the shipments a chance to update themselves
     def update_shipments
@@ -73,27 +65,46 @@ module Spree
       order.total = order.item_total + order.shipment_total + order.adjustment_total
     end
 
+    # At this point we probably have all active record line_items and
+    # shipments and adjustments instantiated so getting totals from them
+    # could be faster than hitting database for every SUM
     def update_adjustment_total
-      recalculate_adjustments
-      order.adjustment_total = line_items.sum(:adjustment_total) +
-                               shipments.sum(:adjustment_total)  +
-                               adjustments.eligible.sum(:amount)
-      order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
-      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
+      total_a = adjustments.map { |a| a.amount if a.eligible? }.compact.sum
+      total_l = line_items.map { |l| l.adjustment_total }.compact.sum
+      total_s = shipments.map { |s| s.adjustment_total }.compact.sum
 
-      order.promo_total = line_items.sum(:promo_total) +
-                          shipments.sum(:promo_total) +
-                          adjustments.promotion.eligible.sum(:amount)
+      order.adjustment_total = total_l + total_s + total_a
+
+      total_l = line_items.map { |l| l.included_tax_total }.compact.sum
+      total_s = shipments.map { |s| s.included_tax_total }.compact.sum
+
+      order.included_tax_total = total_l + total_s
+
+      total_l = line_items.map { |l| l.additional_tax_total }.compact.sum
+      total_s = shipments.map { |s| s.additional_tax_total }.compact.sum
+
+      order.additional_tax_total = total_l + total_s
+
+      total_l = line_items.map { |l| l.promo_total }.compact.sum
+      total_s = shipments.map { |s| s.promo_total }.compact.sum
+      total_a = adjustments.map do |a|
+        a.amount if a.eligible? && a.promotion?
+      end.compact.sum
+
+      order.promo_total = total_l + total_s + total_a
 
       update_order_total
     end
 
     def update_item_count
-      order.item_count = quantity
+      order.item_count = line_items.map(&:quantity).compact.sum
     end
 
     def update_item_total
-      order.item_total = line_items.sum('price * quantity')
+      order.item_total = line_items.map do |item|
+        item.price * item.quantity
+      end.sum
+
       update_order_total
     end
 
@@ -112,6 +123,14 @@ module Spree
         total: order.total,
         updated_at: Time.now,
       )
+    end
+
+    def update_on_completed
+      if order.completed?
+        update_payment_state
+        update_shipments
+        update_shipment_state
+      end
     end
 
     # Updates the +shipment_state+ attribute according to the following logic:
