@@ -36,6 +36,8 @@ group :test do
 end
 
 group :test, :development do
+  gem 'rubocop', require: false
+
   platforms :ruby_19 do
     gem 'pry-debugger'
   end
