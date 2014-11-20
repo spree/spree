@@ -1,5 +1,3 @@
-
-
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Images'} %>
 
 <% content_for :page_actions do %>
@@ -29,7 +27,7 @@
       <% (@product.variant_images).each do |image| %>
         <tr id="<%= spree_dom_id image %>" data-hook="images_row">
           <td class="move-handle">
-            <span class="glyphicon glyphicon-move handle"></span>
+            <span class="icon icon-move handle"></span>
           </td>
           <td class="image">
             <%= link_to image_tag(image.attachment.url(:mini), :class => 'thumbnail'), image.attachment.url(:product) %>

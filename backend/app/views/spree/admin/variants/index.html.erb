@@ -19,7 +19,7 @@
     <% @variants.each do |variant| %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
         <td class="move-handle">
-          <span class="glyphicon glyphicon-move handle"></span>
+          <span class="icon icon-move handle"></span>
         </td>
         <td><%= variant.options_text %></td>
         <td><%= variant.display_price.to_html %></td>

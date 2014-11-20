@@ -48,7 +48,7 @@
       <div class="form-buttons" data-hook="buttons">
         <%= button Spree.t(:create), 'save' %>
         <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t('actions.cancel'), admin_order_customer_returns_url(@order), :icon => 'remove' %>
+        <%= button_link_to Spree.t('actions.cancel'), admin_order_customer_returns_url(@order), :icon => 'delete' %>
       </div>
     </fieldset>
   <% end %>

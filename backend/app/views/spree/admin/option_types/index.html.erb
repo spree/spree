@@ -23,7 +23,7 @@
   <tbody>
     <% @option_types.each do |option_type| %>
       <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
-        <td class="move-handle"><span class="glyphicon glyphicon-move handle"></span></td>
+        <td class="move-handle"><span class="icon icon-move handle"></span></td>
         <td><%= option_type.name %></td>
         <td class="presentation"><%= option_type.presentation %></td>
         <td class="actions actions-2">

@@ -1,7 +1,7 @@
 <% content_for :page_actions do %>
   <% if @return_authorization.can_cancel? %>
     <li>
-      <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, e: 'cancel'), method: :put, data: { confirm: Spree.t(:are_you_sure) }, icon: 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, e: 'cancel'), method: :put, data: { confirm: Spree.t(:are_you_sure) }, :icon => "delete" %>
     </li>
   <% end %>
   <li>
@@ -24,7 +24,7 @@
     <div class="form-buttons" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'repeat' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'delete' %>
     </div>
   </fieldset>
 <% end %>

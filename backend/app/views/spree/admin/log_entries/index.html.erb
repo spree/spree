@@ -18,7 +18,7 @@
         <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">
           <td colspan="2">
             <h4>
-              <span class="glyphicon glyphicon-<%= entry.parsed_details.success? ? 'ok' : 'remove' %>"></span>
+              <span class="icon icon-<%= entry.parsed_details.success? ? 'ok' : 'delete' %>"></span>
               <%= pretty_time(entry.created_at) %>
             </h4>
           </td>

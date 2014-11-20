@@ -9,7 +9,7 @@
   <tbody>
     <% @taxonomies.each do |taxonomy| %>
       <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
-        <td class="move-handle"><span class="glyphicon glyphicon-move handle"></span></td>
+        <td class="move-handle"><span class="icon icon-move handle"></span></td>
         <td><%= taxonomy.name %></td>
         <td class="actions actions-2">
           <%= link_to_edit taxonomy.id, :no_text => true %>
