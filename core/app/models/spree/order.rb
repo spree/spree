@@ -382,7 +382,7 @@ module Spree
 
     def finalize!
       puts <<-EOS.strip_heredoc
-        DEPRECATION WARNING: Order#finalize! will be deprecated, 
+        DEPRECATION WARNING: Order#finalize! will be deprecated,
         please call FinalizeOrder.new(order).execute! instead.
       EOS
       FinalizeOrder.new(self).execute!
