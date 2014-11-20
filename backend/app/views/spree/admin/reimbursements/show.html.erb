@@ -71,22 +71,24 @@
   </table>
 </fieldset>
 
-<fieldset>
-  <legend><%= Spree.t(:credits) %></legend>
-  <table class="table table-hover table-condensed table-bordered index">
-    <thead data-hook="customer_return_header">
-      <tr>
-        <th><%= Spree.t(:description) %></th>
-        <th><%= Spree.t(:amount) %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @reimbursement.credits.each do |credit| %>
-        <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
-          <td><%= credit.description %></td>
-          <td><%= credit.display_amount %></td>
+<% if @reimbursement.credits.any? %>
+  <fieldset>
+    <legend><%= Spree.t(:credits) %></legend>
+    <table class="table table-hover table-condensed table-bordered index">
+      <thead data-hook="customer_return_header">
+        <tr>
+          <th><%= Spree.t(:description) %></th>
+          <th><%= Spree.t(:amount) %></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-</fieldset>
+      </thead>
+      <tbody>
+        <% @reimbursement.credits.each do |credit| %>
+          <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
+            <td><%= credit.description %></td>
+            <td><%= credit.display_amount %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+<% end %>
