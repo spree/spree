@@ -1,0 +1,47 @@
+<script>
+  Spree.translations = <%==
+  { :date_picker    => Spree.t(:js_format,
+                              :scope => 'date_picker',
+                              :default => 'yy/mm/dd'),
+    :abbr_day_names           => I18n.t(:abbr_day_names, :scope => :date),
+    :add                      => Spree.t(:add),
+    :are_you_sure_delete      => Spree.t(:are_you_sure_delete),
+    :bill_address             => Spree.t(:bill_address),
+    :choose_a_customer        => Spree.t(:choose_a_customer),
+    :confirm_delete           => Spree.t(:confirm_delete),
+    :cut                      => Spree.t(:cut),
+    :destroy                  => Spree.t(:destroy, :scope => :actions),
+    :edit                     => Spree.t(:edit,    :scope => :actions),
+    :save                     => Spree.t(:save,    :scope => :actions),
+    :cancel                   => Spree.t(:cancel,  :scope => :actions),
+    :first_day                => Spree.t(:first_day,
+                                         :scope => 'date_picker',
+                                         :default => 0).to_i,
+    :find_a_taxon             => Spree.t(:find_a_taxon),
+    :item_stock_placeholder   => Spree.t(:choose_location),
+    :loading                  => Spree.t(:loading),
+    :month_names              => I18n.t(:month_names, :scope => :date).reject(&:blank?),
+    :more                     => Spree.t(:more),
+    :name                     => Spree.t(:name),
+    :next                     => Spree.t(:next),
+    :no_results               => Spree.t(:no_results),
+    :option_type_placeholder  => Spree.t(:option_type_placeholder),
+    :paste                    => Spree.t(:paste),
+    :previous                 => Spree.t(:previous),
+    :remove                   => Spree.t(:remove),
+    :rename                   => Spree.t(:rename),
+    :searching                => Spree.t(:searching),
+    :sku                      => Spree.t(:sku),
+    :type_to_search           => Spree.t(:type_to_search),
+    :taxon_placeholder        => Spree.t(:taxon_placeholder),
+    :variant_placeholder      => Spree.t(:variant_placeholder),
+    :value                    => Spree.t(:value),
+    :currency_separator       => I18n.t('number.currency.format.separator'),
+
+  }.to_json
+%>
+</script>
+
+<% if I18n.locale != :en %>
+  <%= javascript_include_tag "select2_locale_#{I18n.locale}" %>
+<% end %>

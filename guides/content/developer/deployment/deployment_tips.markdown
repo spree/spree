@@ -235,14 +235,7 @@ SMTP information. This includes the following (spree config options goes
   A detailed description of Rails caching is beyond the scope of this
   guide.
 
-<<<<<<< HEAD
 ***
 The Spree core team is actively considering some form of basic
 caching support to make it easier to leverage the Rails caching options.
 ***
-=======
-  ***
-  The Spree core team is actively considering some form of basic
-  caching support to make it easier to leverage the Rails caching options.
-  ***
->>>>>>> 332e070... Squashed commits

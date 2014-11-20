@@ -1,9 +1,9 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', locals: { current: 'Payments' }%>
 
 <% content_for :page_title do %>
-  <span class="glyphicon glyphicon-arrow-right"></span>
+  <span class="icon icon-arrow-right"></span>
   <%= I18n.t(:one, scope: "activerecord.models.spree/payment") %>
-  <span class="glyphicon glyphicon-arrow-right"></span>
+  <span class="icon icon-arrow-right"></span>
   <%= Spree.t(:log_entries) %>
 <% end %>
 

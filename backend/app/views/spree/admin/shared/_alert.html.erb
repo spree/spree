@@ -1,0 +1,5 @@
+<div class="alert <%= alert['severity'].downcase %>">
+  <%= alert['message'] %> <%= link_to alert['url_name'], alert['url'] if alert['url'] %>
+  <%= link_to 'X', spree.dismiss_alert_admin_general_settings_path(:alert_id => alert['id']),
+              :remote => true, :method => :post, :class => 'dismiss' %>
+</div>

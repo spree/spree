@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= Spree.t(:"admin.user.order_history") %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> <span class="icon icon-arrow-right"></span> <%= Spree.t(:"admin.user.order_history") %>
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :orders } %>

@@ -35,7 +35,7 @@
   <% if @stock_transfer.source_movements.present? %>
     <fieldset>
       <legend id="stock-location-source">
-        <%= Spree.t(:source) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= @stock_transfer.source_location.name %>
+        <%= Spree.t(:source) %> <span class="icon icon-arrow-right"></span> <%= @stock_transfer.source_location.name %>
       </legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.source_movements %>
     </fieldset>
@@ -44,7 +44,7 @@
   <% if @stock_transfer.destination_movements.present? %>
     <fieldset>
       <legend id="stock-location-destination">
-        <%= Spree.t(:destination) %> <span class="glyphicon glyphicon-arrow-right"></span> <%= @stock_transfer.destination_location.name %>
+        <%= Spree.t(:destination) %> <span class="icon icon-arrow-right"></span> <%= @stock_transfer.destination_location.name %>
       </legend>
       <%= render :partial => 'stock_movements', :object => @stock_transfer.destination_movements %>
     </fieldset>

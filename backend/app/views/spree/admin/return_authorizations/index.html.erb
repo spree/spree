@@ -8,7 +8,7 @@
 <% end %>
 
 <% content_for :page_title do %>
-  <span class="glyphicon glyphicon-arrow-right"></span> <%= Spree.t(:return_authorizations) %>
+  <span class="icon icon-arrow-right"></span> <%= Spree.t(:return_authorizations) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>
