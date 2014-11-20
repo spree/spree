@@ -1,4 +1,4 @@
-<table class="show return-items-table">
+<table class="show return-items-table table table-hover table-condensed table-bordered index">
   <thead>
     <tr>
       <th><%= Spree.t(:product) %></th>
@@ -8,7 +8,7 @@
       <th><%= Spree.t(:exchange_for) %></th>
       <th><%= Spree.t(:acceptance_errors) %></th>
       <% if show_decision %>
-        <th class="actions"></th>
+        <th></th>
       <% end %>
     </tr>
   </thead>
@@ -22,24 +22,24 @@
         <td>
           <%= return_item.inventory_unit.variant.sku %>
         </td>
-        <td class="align-center">
+        <td>
           <%= return_item.display_pre_tax_amount %>
         </td>
-        <td class="align-center">
+        <td>
           <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
         </td>
-        <td class="align-center">
+        <td>
           <%= return_item.exchange_variant.try(:options_text) %>
         </td>
-        <td class="align-center">
+        <td>
           <%= return_item.acceptance_status_errors %>
         </td>
         <% if show_decision %>
-          <td class='actions'>
-            <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-up icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
+          <td class='actions actions-2'>
+            <%= button_to [:admin, return_item], { class: 'icon icon-thumbs-up icon_link no-text with-tip display-inline', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
               Spree.t(:accept)
             <% end %>
-            <%= button_to [:admin, return_item], { class: 'fa fa-thumbs-down icon_link no-text with-tip', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
+            <%= button_to [:admin, return_item], { class: 'icon icon-thumbs-down icon_link no-text with-tip display-inline', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
               Spree.t(:reject)
             <% end %>
           </td>

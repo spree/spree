@@ -1,22 +1,22 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Details' } %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:customer_details) %>
+  <span class="icon icon-arrow-right"></span> <%= Spree.t(:customer_details) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
-<div id="select-customer" data-hook>
-  <fieldset class="no-border-bottom">
-    <legend align="center"><%= Spree.t(:customer_search) %></legend>
-    <%= hidden_field_tag :customer_search,  nil, :class => 'fullwidth title' %>
+<div id="select-customer" class="marginb" data-hook>
+  <fieldset>
+    <legend><%= Spree.t(:customer_search) %></legend>
+    <%= hidden_field_tag :customer_search,  nil, :class => 'error-message' %>
     <%= render :partial => "spree/admin/orders/customer_details/autocomplete", :formats => :js %>
   </fieldset>
 </div>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @order } %>
 
 <%= form_for @order, :url => admin_order_customer_url(@order) do |f| %>
   <%= render 'form', :f => f %>

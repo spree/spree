@@ -1,7 +1,7 @@
 <script type='text/template' id='variant_split_template'>
   <tr class='stock-item-split' data-variant-id='{{variant.id}}'>
     <td colspan='2'>
-      <%=Spree.t("move_variant_to", default: "Move {{variant.name}} to")%>
+      <%= Spree.t("move_variant_to", default: "Move {{variant.name}} to") %>
     </td>
     <td colspan='2'>
     <select name="item_stock_location" id='item_stock_location' style='width:100%;'>
@@ -19,11 +19,15 @@
       </select>
     </td>
     <td>
-      <input class="quantity" id="item_quantity" type="number" min="1" value="1" max="{{max_quantity}}">
+      <input class="quantity form-control" id="item_quantity" type="number" min="1" value="1" max="{{max_quantity}}">
     </td>
     <td class='actions'>
-      <a href='#' class='save-split icon_link fa fa-ok no-text with-tip' title='Save'></a>
-      <a href='#' class='cancel-split icon_link fa fa-cancel no-text with-tip' title='Cancel'></a>
+      <a href='#' class='save-split with-tip btn btn-sm btn-default' title='Save'>
+        <span class="icon icon-save"></span>
+      </a>
+      <a href='#' class='cancel-split with-tip btn btn-sm btn-default' title='Cancel'>
+        <span class="icon icon-delete"></span>
+      </a>
     </td>
   </tr>
 </script>

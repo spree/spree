@@ -1,18 +1,16 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_stock_location) %> <i class="fa fa-arrow-right"></i>
+  <%= Spree.t(:editing_stock_location) %> <span class="icon icon-arrow-right"></span>
   <%= @stock_location.name %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %></li>
+  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'btn btn-default' %></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @stock_location } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @stock_location } %>
 
 <%= form_for [:admin, @stock_location] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
   </fieldset>

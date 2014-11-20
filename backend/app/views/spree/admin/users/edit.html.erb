@@ -1,15 +1,15 @@
 <% content_for :page_title do %>
-  <%= link_to "#{Spree.t(:editing_user)} #{@user.email}", edit_admin_user_url(@user) %>
+  <%= Spree.t(:editing_user) %> <%= @user.email %>
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :account } %>
 <%= render :partial => 'spree/admin/users/user_page_actions' %>
 
-<fieldset data-hook="admin_user_edit_general_settings" class="alpha twelve columns">
+<fieldset data-hook="admin_user_edit_general_settings">
   <legend><%= Spree.t(:general_settings) %></legend>
 
   <div data-hook="admin_user_edit_form_header">
-    <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @user } %>
+    <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @user } %>
   </div>
 
   <div data-hook="admin_user_edit_form">
@@ -23,16 +23,16 @@
   </div>
 </fieldset>
 
-<fieldset data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="alpha twelve columns">
+<fieldset data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="margint">
   <legend><%= Spree.t('access', :scope => 'api') %></legend>
 
   <% if @user.spree_api_key.present? %>
-    <div class="field">
+    <div class="form-group">
       <div id="current-api-key"><%= Spree.t('key', :scope => 'api') %>: <%= @user.spree_api_key %></div>
     </div>
-    <div class="filter-actions actions">
+    <div class="form-buttons">
       <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
-        <%= button Spree.t('clear_key', :scope => 'api'), 'trash' %>
+        <%= button Spree.t('clear_key', :scope => 'api'), 'delete', 'submit', class: "btn-danger" %>
       <% end %>
 
       <span class="or"><%= Spree.t(:or)%></span>
@@ -44,9 +44,9 @@
 
   <% else %>
 
-    <div class="no-objects-found"><%= Spree.t('no_key', :scope => 'api') %></div>
+    <div class="alert alert-warning"><%= Spree.t('no_key', :scope => 'api') %></div>
 
-    <div class="filter-actions actions">
+    <div class="form-buttons">
       <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
         <%= button Spree.t('generate_key', :scope => 'api'), 'key' %>
       <% end %>

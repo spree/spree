@@ -26,12 +26,12 @@ describe "Stock Locations", :type => :feature do
 
     expect(find('#listing_stock_locations')).to have_content("NY Warehouse")
     accept_alert do
-      click_icon :trash
+      click_icon :delete
     end
     # Wait for API request to complete.
     wait_for_ajax
-    visit current_path 
-    expect(page).to have_content("NO STOCK LOCATIONS FOUND")
+    visit current_path
+    expect(page).to have_content("No Stock Locations found")
   end
 
   it "can update an existing stock location" do
@@ -41,6 +41,7 @@ describe "Stock Locations", :type => :feature do
     expect(page).to have_content("NY Warehouse")
 
     click_icon :edit
+
     fill_in "Name", with: "London"
     click_button "Update"
 

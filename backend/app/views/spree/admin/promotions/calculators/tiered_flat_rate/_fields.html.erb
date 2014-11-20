@@ -1,37 +1,42 @@
-<%= label_tag "#{prefix}[calculator_attributes][preferred_base_amount]",
-  Spree.t(:base_amount) %>
-<%= preference_field_tag(
-  "#{prefix}[calculator_attributes][preferred_base_amount]",
-  calculator.preferred_base_amount,
-  type: calculator.preference_type(:base_amount)) %>
+<div class="form-group">
+  <%= label_tag "#{prefix}[calculator_attributes][preferred_base_amount]",
+    Spree.t(:base_amount) %>
+  <%= preference_field_tag(
+    "#{prefix}[calculator_attributes][preferred_base_amount]",
+    calculator.preferred_base_amount,
+    type: calculator.preference_type(:base_amount)) %>
+</div>
 
-<%= label_tag nil, Spree.t(:tiers) %>
-<%= content_tag :div, nil, class: "hidden js-original-tiers",
-  data: { :'original-tiers' => Hash[calculator.preferred_tiers.sort] } %>
+<div class="form-group no-marginb">
+  <%= label_tag nil, Spree.t(:tiers) %>
+  <%= content_tag :div, nil, class: "is-hidden js-original-tiers",
+    data: { :'original-tiers' => Hash[calculator.preferred_tiers.sort] } %>
+</div>
+
 <div class="js-tiers"></div>
-<button class="fa fa-plus button js-add-tier"><%= Spree.t(:add) %></button>
+<button class="btn btn-success js-add-tier"><%= Spree.t(:add) %></button>
 
 <script type="text/x-handlebars-template" id="tier-input-name">
   <%= prefix %>[calculator_attributes][preferred_tiers][{{base}}]
 </script>
 
 <script type="text/x-handlebars-template" id="tier-fields-template">
-  <div class="fullwidth tier">
-    <a class="fa fa-trash remove js-remove-tier"></a>
-    <div class="two columns alpha omega">
-      <div class="input-group">
-        <span class="input-group-addon">$</span>
-        <input class="js-base-input form-control" type="text" value={{baseField.value}}>
+  <div class="tier panel panel-default">
+    <div class="panel-body">
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <input class="js-base-input form-control" type="text" value={{baseField.value}}>
+        </div>
       </div>
-    </div>
-    <div class="two columns alpha omega right">
-      <div class="input-group">
-        <span class="input-group-addon">$</span>
-        <input class="js-value-input form-control"
-          name="{{valueField.name}}" type="text" value={{valueField.value}}>
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <input class="js-value-input form-control"
+            name="{{valueField.name}}" type="text" value={{valueField.value}}>
+        </div>
       </div>
+      <a class="js-remove-tier btn btn-default btn-sm"><span class="icon icon-delete"></span></a>
     </div>
-    <div class="clear"></div>
   </div>
 </script>
-

@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:editing_property) %>
@@ -8,10 +8,10 @@
   <li><%= button_link_to Spree.t(:back_to_properties_list), admin_properties_url, :icon => 'arrow-left'%></li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @property } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @property } %>
 
 <%= form_for [:admin, @property] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
   </fieldset>

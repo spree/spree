@@ -1,12 +1,12 @@
 <%= image_tag 'credit_cards/credit_card.gif', :id => 'credit-card-image' %>
 <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
-<p class="field">
+<p class="form-group">
   <%= label_tag "name_on_card_#{payment_method.id}", Spree.t(:name_on_card) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}", { id: "name_on_card_#{payment_method.id}"} %>
 </p>
 
-<p class="field" data-hook="card_number">
+<p class="form-group" data-hook="card_number">
   <%= label_tag "card_number", Spree.t(:card_number) %><span class="required">*</span><br />
   <% options_hash = Rails.env.production? ? {:autocomplete => 'off'} : {} %>
   <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(:id => 'card_number', :class => 'required cardNumber', :size => 19, :maxlength => 19, :autocomplete => "off") %>
@@ -18,12 +18,12 @@
   </span>
 </p>
 
-<p class="field" data-hook="card_expiration">
+<p class="form-group" data-hook="card_expiration">
   <%= label_tag "card_expiry", Spree.t(:expiration) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[expiry]", '', :id => 'card_expiry', :class => "required cardExpiry", :placeholder => "MM / YY" %>
 </p>
 
-<p class="field" data-hook="card_code">
+<p class="form-group" data-hook="card_code">
   <%= label_tag "card_code", Spree.t(:card_code) %><span class="required">*</span><br />
   <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(:id => 'card_code', :class => 'required cardCode', :size => 5) %>
   <%= link_to "(#{Spree.t(:what_is_this)})", spree.content_path('cvv'), :target => '_blank', "data-hook" => "cvv_link", :id => "cvv_link" %>

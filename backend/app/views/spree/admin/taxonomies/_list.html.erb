@@ -1,9 +1,4 @@
-<table class="index sortable" id='listing_taxonomies' data-hook data-sortable-link="<%= update_positions_admin_taxonomies_url %>">
-  <colgroup>
-    <col style="width: 10%">
-    <col style="width: 75%">
-    <col style="width: 15%">
-  </colgroup>
+<table class="table table-hover table-condensed table-bordered sortable" id='listing_taxonomies' data-hook data-sortable-link="<%= update_positions_admin_taxonomies_url %>">
   <thead>
     <tr data-hook="taxonomies_header">
       <th class="no-border"></th>
@@ -13,10 +8,10 @@
   </thead>
   <tbody>
     <% @taxonomies.each do |taxonomy| %>
-      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row" class="<%= cycle('odd', 'even')%>">
-        <td class="no-border"><span class="handle"></span></td>
-        <td class="align-center"><%= taxonomy.name %></td>
-        <td class="actions">
+      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
+        <td class="move-handle"><span class="icon icon-move handle"></span></td>
+        <td><%= taxonomy.name %></td>
+        <td class="actions actions-2">
           <%= link_to_edit taxonomy.id, :no_text => true %>
           <%= link_to_delete taxonomy, :no_text => true %>
         </td>

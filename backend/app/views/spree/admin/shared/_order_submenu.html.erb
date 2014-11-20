@@ -1,8 +1,11 @@
-<nav class="menu">
-  <ul data-hook="admin_order_tabs">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= Spree.t(:order_information) %></h3>
+  </div>
+  <ul class="nav nav-pills nav-stacked" data-hook="admin_order_tabs">
     <% if ((can? :update, @order) && (@order.shipments.count == 0 || @order.shipped_shipments.count == 0)) %>
       <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_order_details'>
-        <%= link_to_with_icon 'shopping-cart', Spree.t(:cart), cart_admin_order_url(@order) %>
+        <%= link_to_with_icon 'edit', Spree.t(:cart), cart_admin_order_url(@order) %>
       </li>
     <% end %>
 
@@ -14,13 +17,13 @@
 
     <% if can? :update, @order %>
         <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_order_details'>
-          <%= link_to_with_icon 'edit', Spree.t(:shipments), edit_admin_order_url(@order) %>
+          <%= link_to_with_icon 'shipment', Spree.t(:shipments), edit_admin_order_url(@order) %>
         </li>
     <% end %>
 
     <% if can? :index, Spree::Adjustment %>
       <li<%== ' class="active"' if current == 'Adjustments' %> data-hook='admin_order_tabs_adjustments'>
-        <%= link_to_with_icon 'cogs', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
+        <%= link_to_with_icon 'wrench', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
       </li>
     <% end %>
 
@@ -33,7 +36,7 @@
     <% if can? :index, Spree::ReturnAuthorization %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Return Authorizations' %> data-hook='admin_order_tabs_return_authorizations'>
-          <%= link_to_with_icon 'share', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
+          <%= link_to_with_icon 'return', Spree.t(:return_authorizations), admin_order_return_authorizations_url(@order) %>
         </li>
       <% end %>
     <% end %>
@@ -41,9 +44,9 @@
     <% if can? :index, Spree::CustomerReturn %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Customer Returns' %>>
-          <%= link_to_with_icon 'download', Spree.t(:customer_returns), admin_order_customer_returns_url(@order) %>
+          <%= link_to_with_icon 'return', Spree.t(:customer_returns), admin_order_customer_returns_url(@order) %>
         </li>
       <% end %>
     <% end %>
   </ul>
-</nav>
+</div>

@@ -24,7 +24,6 @@ module Spree
 
         if options[:icon]
           link = link_to_with_icon(options[:icon], titleized_label, destination_url)
-          css_classes << 'tab-with-icon'
         else
           link = link_to(titleized_label, destination_url)
         end
@@ -62,40 +61,48 @@ module Spree
 
       def link_to_clone(resource, options={})
         options[:data] = {:action => 'clone'}
-        link_to_with_icon('copy', Spree.t(:clone), clone_object_url(resource), options)
+        options[:class] = "btn btn-default btn-sm"
+        link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
         options[:data] = {:action => 'new'}
+        options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('plus', Spree.t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
         url = options[:url] || edit_object_url(resource)
         options[:data] = {:action => 'edit'}
+        options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})
         options[:data] = {:action => 'edit'}
+        options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
-        options[:class] = "delete-resource"
+        options[:class] = "btn btn-default btn-sm delete-resource"
         options[:data] = { :confirm => Spree.t(:are_you_sure), :action => 'remove' }
-        link_to_with_icon 'trash', name, url, options
+        link_to_with_icon 'delete', name, url, options
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] = (options[:class].to_s + " fa fa-#{icon_name} icon_link with-tip").strip
+        options[:class] = (options[:class].to_s + " icon-link with-tip action-#{icon_name}").strip
         options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
         text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
         options.delete(:no_text)
-        link_to(text, url, options)
+        if icon_name
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+          text.insert(0, icon + ' ')
+        end
+        link_to(text.html_safe, url, options)
       end
 
       def icon(icon_name)
@@ -103,7 +110,11 @@ module Spree
       end
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
-        button_tag(text, options.merge(:type => button_type, :class => "fa fa-#{icon_name} button"))
+        if icon_name
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+          text.insert(0, icon + ' ')
+        end
+        button_tag(text.html_safe, options.merge(:type => button_type, :class => "btn btn-primary #{options[:class]}"))
       end
 
       def button_link_to(text, url, html_options = {})
@@ -121,19 +132,15 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class] = 'button'
+          html_options[:class]  = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
 
           if html_options[:icon]
-            html_options[:class] += " fa fa-#{html_options[:icon]}"
+            icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
+            text.insert(0, icon + ' ')
           end
-          link_to(text_for_button_link(text, html_options), url, html_options)
-        end
-      end
 
-      def text_for_button_link(text, html_options)
-        s = ''
-        s << text
-        raw(s)
+          link_to(text.html_safe, url, html_options)
+        end
       end
 
       def configurations_menu_item(link_text, url, description = '')

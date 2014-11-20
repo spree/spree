@@ -1,4 +1,4 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:zones) %>
@@ -6,20 +6,14 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_zone), new_object_url, :icon => 'plus', :id => 'admin_new_zone_link' %>
+    <%= button_link_to Spree.t(:new_zone), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_zone_link' %>
   </li>
 <% end %>
 
 <%= paginate @zones %>
 
 <% if @zones.any? %>
-  <table class="index" id='listing_zones' data-hook>
-    <colgroup>
-      <col style="width: 30%" />
-      <col style="width: 40%" />
-      <col style="width: 15%" />
-      <col style="width: 15%" />
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered index" id='listing_zones' data-hook>
     <thead>
       <tr data-hook="zones_header">
         <th><%= sort_link @search,:name, Spree.t(:name), :title => 'zones_order_by_name_title' %></th>
@@ -32,11 +26,11 @@
     </thead>
     <tbody>
       <% @zones.each do |zone| %>
-        <tr id="<%= spree_dom_id zone %>" data-hook="zones_row" class="<%= cycle('odd', 'even')%>">
-          <td class="align-center"><%= zone.name %></td>
+        <tr id="<%= spree_dom_id zone %>" data-hook="zones_row">
+          <td><%= zone.name %></td>
           <td><%= zone.description %></td>
-          <td class="align-center"><%= zone.default_tax? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-          <td class="actions">
+          <td><%= zone.default_tax? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td class="actions actions-2">
             <%=link_to_edit zone, :no_text => true %>
             <%=link_to_delete zone, :no_text => true %>
           </td>
@@ -45,7 +39,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/zone')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_zone_path %>!
   </div>

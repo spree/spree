@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_reports_list), spree.admin_reports_url, :class => 'button' %></li>
+  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_reports_list), spree.admin_reports_url, :class => 'btn btn-default' %></li>
 <% end %>
 
 
@@ -15,7 +15,7 @@
   <%= render :partial => 'spree/admin/shared/report_order_criteria', :locals => {} %>
 <% end %>
 
-<table class="admin-report" data-hook="sales_total">
+<table class="table table-hover table-condensed table-bordered admin-report" data-hook="sales_total">
   <thead>
     <tr>
       <th><%= Spree.t(:currency) %></th>
@@ -26,7 +26,7 @@
   </thead>
   <tbody>
     <% @totals.each do |key, row| %>
-      <tr class="align-center">
+      <tr>
         <td><%= key %></td>
         <td><%= row[:item_total].format %></td>
         <td><%= row[:adjustment_total].format %></td>

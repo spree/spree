@@ -1,5 +1,3 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
-
 <%= render :partial => 'js_head' %>
 
 <% content_for :page_title do %>
@@ -15,10 +13,10 @@
 <div id="ajax_error" class="errorExplanation" style="display:none;"></div>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
-    <div>
-      <%= label_tag nil, Spree.t(:tree) %><br />
+    <div class="form-group">
+      <%= label_tag nil, Spree.t(:tree) %>
       <script>
         Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>";
         Spree.routes.admin_taxonomy_taxons_path = "<%= spree.admin_taxonomy_taxons_path(@taxonomy) %>";
@@ -26,18 +24,15 @@
       </script>
       <div id="taxonomy_tree" class="tree"></div>
     </div>
-    <div id="progress" style="display:none;">
-      <%= image_tag 'select2-spinner.gif', :title => 'Spinner', :style => "vertical-align:bottom;" %> <%= Spree.t(:updating) %>..
+
+    <div class="alert alert-info">
+      <%= Spree.t(:taxonomy_tree_instruction) %>
     </div>
 
-    <div class="info"><%= Spree.t(:taxonomy_tree_instruction) %></div>
-
-    <br>
-
-    <div class="filter-actions actions">
+    <div class="form-buttons">
       <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'delete' %>
     </div>
   </fieldset>
 <% end %>

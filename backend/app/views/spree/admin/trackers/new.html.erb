@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_tracker) %>
@@ -10,10 +10,10 @@
   </li>
 <% end %>
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @tracker } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @tracker } %>
 
 <%= form_for [:admin, @tracker] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/new_resource_links' %>
   </fieldset>

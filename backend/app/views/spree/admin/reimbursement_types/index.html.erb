@@ -1,11 +1,9 @@
-<%= render partial: 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= Spree.t(:reimbursement_types) %>
 <% end %>
 
 <% if @reimbursement_types.any? %>
-  <table class="index" id='listing_reimbursement_types' data-hook>
+  <table class="table table-hover table-condensed table-bordered index" id='listing_reimbursement_types' data-hook>
     <thead>
       <tr data-hook="reimbursement_types_header">
         <th><%= Spree.t(:name) %></th>
@@ -14,7 +12,7 @@
     </thead>
     <tbody>
       <% @reimbursement_types.each do |reimbursement_type| %>
-        <tr id="<%= spree_dom_id reimbursement_type %>" data-hook="reimbursement_type_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id reimbursement_type %>" data-hook="reimbursement_type_row">
           <td class="align-center">
             <%= reimbursement_type.name.humanize %>
           </td>
@@ -26,7 +24,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/reimbursement_type')) %>,
     <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>

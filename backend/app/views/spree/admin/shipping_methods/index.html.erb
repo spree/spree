@@ -1,4 +1,4 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:shipping_methods) %>
@@ -6,19 +6,12 @@
 
 <% content_for :page_actions do %>
   <li>
-    <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :icon => 'plus', :id => 'admin_new_shipping_method_link' %>
+    <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :class => "btn-success", :icon => 'add', :id => 'admin_new_shipping_method_link' %>
   </li>
 <% end %>
 
 <% if @shipping_methods.any? %>
-  <table class="index" id='listing_shipping_methods'>
-    <colgroup>
-      <col style="width: 20%">
-      <col style="width: 15%">
-      <col style="width: 40%">
-      <col style="width: 10%">
-      <col style="width: 15%">
-    </colgroup>
+  <table class="table table-hover table-condensed table-bordered index" id='listing_shipping_methods'>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
         <th><%= Spree.t(:name) %></th>
@@ -30,12 +23,12 @@
     </thead>
     <tbody>
       <% @shipping_methods.includes(:zones, :calculator).each do |shipping_method|%>
-        <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows" class="<%= cycle('odd', 'even')%>">
-          <td class="align-center"><%= shipping_method.admin_name + ' / ' if shipping_method.admin_name.present? %><%= shipping_method.name %></td>
-          <td class="align-center"><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
-          <td class="align-center"><%= shipping_method.calculator.description %></td>
-          <td class="align-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
-          <td data-hook="admin_shipping_methods_index_row_actions" class="actions">
+        <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
+          <td><%= shipping_method.admin_name + ' / ' if shipping_method.admin_name.present? %><%= shipping_method.name %></td>
+          <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
+          <td><%= shipping_method.calculator.description %></td>
+          <td><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
+          <td data-hook="admin_shipping_methods_index_row_actions" class="actions actions-2">
             <%= link_to_edit shipping_method, :no_text => true %>
             <%= link_to_delete shipping_method, :no_text => true %>
           </td>
@@ -44,9 +37,8 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/shipping_method')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_shipping_method_path %>!
   </div>
 <% end %>
-
