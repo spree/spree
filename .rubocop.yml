@@ -118,7 +118,7 @@ LineEndConcatenation:
   Enabled: false
 
 LineLength:
-  Max: 80
+  Max: 100
 
 MethodLength:
   Enabled: false
@@ -188,7 +188,7 @@ SpecialGlobalVars:
   Enabled: false
 
 StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
 
 VariableInterpolation:
   Enabled: false
