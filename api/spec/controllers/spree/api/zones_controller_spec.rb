@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ZonesController do
+  describe Api::ZonesController, :type => :controller do
     render_views
 
     let!(:attributes) { [:id, :name, :zone_members] }
@@ -13,29 +13,29 @@ module Spree
 
     it "gets list of zones" do
       api_get :index
-      json_response['zones'].first.should have_attributes(attributes)
+      expect(json_response['zones'].first).to have_attributes(attributes)
     end
 
     it 'can control the page size through a parameter' do
       create(:zone)
       api_get :index, :per_page => 1
-      json_response['count'].should == 1
-      json_response['current_page'].should == 1
-      json_response['pages'].should == 2
+      expect(json_response['count']).to eq(1)
+      expect(json_response['current_page']).to eq(1)
+      expect(json_response['pages']).to eq(2)
     end
 
     it 'can query the results through a paramter' do
       expected_result = create(:zone, :name => 'South America')
       api_get :index, :q => { :name_cont => 'south' }
-      json_response['count'].should == 1
-      json_response['zones'].first['name'].should eq expected_result.name
+      expect(json_response['count']).to eq(1)
+      expect(json_response['zones'].first['name']).to eq expected_result.name
     end
 
     it "gets a zone" do
       api_get :show, :id => @zone.id
-      json_response.should have_attributes(attributes)
-      json_response['name'].should eq @zone.name
-      json_response['zone_members'].size.should eq @zone.zone_members.count
+      expect(json_response).to have_attributes(attributes)
+      expect(json_response['name']).to eq @zone.name
+      expect(json_response['zone_members'].size).to eq @zone.zone_members.count
     end
 
     context "specifying a rabl template to use" do
@@ -50,13 +50,13 @@ module Spree
       it "uses the specified template" do
         request.headers['X-Spree-Template'] = 'show'
         api_get :custom_show, :id => @zone.id
-        response.should render_template('spree/api/zones/show')
+        expect(response).to render_template('spree/api/zones/show')
       end
 
       it "falls back to the default template if the specified template does not exist" do
         request.headers['X-Spree-Template'] = 'invoice'
         api_get :show, :id => @zone.id
-        response.should render_template('spree/api/zones/show')
+        expect(response).to render_template('spree/api/zones/show')
       end
     end
 
@@ -77,9 +77,9 @@ module Spree
         }
 
         api_post :create, params
-        response.status.should == 201
-        json_response.should have_attributes(attributes)
-        json_response["zone_members"].should_not be_empty
+        expect(response.status).to eq(201)
+        expect(json_response).to have_attributes(attributes)
+        expect(json_response["zone_members"]).not_to be_empty
       end
 
       it "updates a zone" do
@@ -96,15 +96,15 @@ module Spree
         }
 
         api_put :update, params
-        response.status.should == 200
-        json_response['name'].should eq 'North Pole'
-        json_response['zone_members'].should_not be_blank
+        expect(response.status).to eq(200)
+        expect(json_response['name']).to eq 'North Pole'
+        expect(json_response['zone_members']).not_to be_blank
       end
 
       it "can delete a zone" do
         api_delete :destroy, :id => @zone.id
-        response.status.should == 204
-        lambda { @zone.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        expect(response.status).to eq(204)
+        expect { @zone.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

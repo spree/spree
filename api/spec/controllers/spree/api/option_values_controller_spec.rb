@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::OptionValuesController do
+  describe Api::OptionValuesController, :type => :controller do
     render_views
 
     let(:attributes) { [:id, :name, :presentation, :option_type_name, :option_type_name] }
@@ -13,8 +13,8 @@ module Spree
     end
 
     def check_option_values(option_values)
-      option_values.count.should == 1
-      option_values.first.should have_attributes([:id, :name, :presentation,
+      expect(option_values.count).to eq(1)
+      expect(option_values.first).to have_attributes([:id, :name, :presentation,
                                                   :option_type_name, :option_type_id])
     end
 
@@ -26,8 +26,8 @@ module Spree
 
       it "can retreive a list of all option values" do
         api_get :index
-        json_response.count.should == 2
-        json_response.first.should have_attributes(attributes)
+        expect(json_response.count).to eq(2)
+        expect(json_response.first).to have_attributes(attributes)
       end
     end
 
@@ -36,27 +36,27 @@ module Spree
 
       it "can list all option values" do
         api_get :index
-        json_response.count.should == 1
-        json_response.first.should have_attributes(attributes)
+        expect(json_response.count).to eq(1)
+        expect(json_response.first).to have_attributes(attributes)
       end
 
       it "can search for an option type" do
         create(:option_value, :name => "buzz")
         api_get :index, :q => { :name_cont => option_value.name }
-        json_response.count.should == 1
-        json_response.first.should have_attributes(attributes)
+        expect(json_response.count).to eq(1)
+        expect(json_response.first).to have_attributes(attributes)
       end
 
       it "can retreive a list of option types" do
         option_value_1 = create(:option_value, :option_type => option_type)
         option_value_2 = create(:option_value, :option_type => option_type)
         api_get :index, :ids => [option_value.id, option_value_1.id]
-        json_response.count.should == 2
+        expect(json_response.count).to eq(2)
       end
 
       it "can list a single option value" do
         api_get :show, :id => option_value.id
-        json_response.should have_attributes(attributes)
+        expect(json_response).to have_attributes(attributes)
       end
 
       it "cannot create a new option value" do
@@ -74,13 +74,13 @@ module Spree
                             :name => "Option Value"
                           }
         assert_not_found!
-        option_type.reload.name.should == original_name
+        expect(option_type.reload.name).to eq(original_name)
       end
 
       it "cannot delete an option value" do
         api_delete :destroy, :id => option_type.id
         assert_not_found!
-        lambda { option_type.reload }.should_not raise_error
+        expect { option_type.reload }.not_to raise_error
       end
 
       context "as an admin" do
@@ -91,13 +91,13 @@ module Spree
                             :name => "Option Value",
                             :presentation => "Option Value"
                           }
-          json_response.should have_attributes(attributes)
-          response.status.should == 201
+          expect(json_response).to have_attributes(attributes)
+          expect(response.status).to eq(201)
         end
 
         it "cannot create an option type with invalid attributes" do
           api_post :create, :option_value => {}
-          response.status.should == 422
+          expect(response.status).to eq(422)
         end
 
         it "can update an option value" do
@@ -105,14 +105,14 @@ module Spree
           api_put :update, :id => option_value.id, :option_value => {
                                 :name => "Option Value",
                               }
-          response.status.should == 200
+          expect(response.status).to eq(200)
 
           option_value.reload
-          option_value.name.should == "Option Value"
+          expect(option_value.name).to eq("Option Value")
         end
 
         it "permits the correct attributes" do
-          controller.should_receive(:permitted_option_value_attributes)
+          expect(controller).to receive(:permitted_option_value_attributes)
           api_put :update, :id => option_value.id, :option_value => {
                             :name => ""
                            }
@@ -122,12 +122,12 @@ module Spree
           api_put :update, :id => option_value.id, :option_value => {
                             :name => ""
                            }
-          response.status.should == 422
+          expect(response.status).to eq(422)
         end
 
         it "can delete an option value" do
           api_delete :destroy, :id => option_value.id
-          response.status.should == 204
+          expect(response.status).to eq(204)
         end
       end
     end

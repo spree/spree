@@ -41,7 +41,7 @@ module Spree
       it 'can import an order number' do
         params = { number: '123-456-789' }
         order = Importer::Order.import(user, params)
-        order.number.should eq '123-456-789'
+        expect(order.number).to eq '123-456-789'
       end
 
       it 'optionally add completed at' do
@@ -50,8 +50,8 @@ module Spree
                    line_items_attributes: line_items }
 
         order = Importer::Order.import(user,params)
-        order.should be_completed
-        order.state.should eq 'complete'
+        expect(order).to be_completed
+        expect(order.state).to eq 'complete'
       end
 
       it "assigns order[email] over user email to order" do
@@ -64,7 +64,7 @@ module Spree
         let(:other_user) { stub_model(LegacyUser, :email => 'dana@scully.com') }
 
         context "as an admin" do
-          before { user.stub :has_spree_role? => true }
+          before { allow(user).to receive_messages :has_spree_role? => true }
 
           context "a user's id is not provided" do
             # this is a regression spec for an issue we ran into at Bonobos
@@ -77,7 +77,7 @@ module Spree
         end
 
         context "as a user" do
-          before { user.stub :has_spree_role? => false }
+          before { allow(user).to receive_messages :has_spree_role? => false }
           it "does not assign the order to the other user" do
             params = { user_id: other_user.id }
             order = Importer::Order.import(user, params)
@@ -89,12 +89,12 @@ module Spree
       it 'can build an order from API with just line items' do
         params = { :line_items_attributes => line_items }
 
-        Importer::Order.should_receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
+        expect(Importer::Order).to receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
         order = Importer::Order.import(user,params)
-        order.user.should == nil
+        expect(order.user).to eq(nil)
         line_item = order.line_items.first
-        line_item.quantity.should == 5
-        line_item.variant_id.should == variant_id
+        expect(line_item.quantity).to eq(5)
+        expect(line_item.variant_id).to eq(variant_id)
       end
 
       it 'handles line_item building exceptions' do
@@ -113,8 +113,8 @@ module Spree
         order = Importer::Order.import(user,params)
 
         line_item = order.line_items.first
-        line_item.variant_id.should == variant_id
-        line_item.quantity.should == 5
+        expect(line_item.variant_id).to eq(variant_id)
+        expect(line_item.quantity).to eq(5)
       end
 
       it 'handles exceptions when sku is not found' do
@@ -130,7 +130,7 @@ module Spree
                    :line_items_attributes => line_items }
 
         order = Importer::Order.import(user,params)
-        order.ship_address.address1.should eq '123 Testable Way'
+        expect(order.ship_address.address1).to eq '123 Testable Way'
       end
 
       it 'can build an order from API with country attributes' do
@@ -140,7 +140,7 @@ module Spree
                    :line_items_attributes => line_items }
 
         order = Importer::Order.import(user,params)
-        order.ship_address.country.iso.should eq 'US'
+        expect(order.ship_address.country.iso).to eq 'US'
       end
 
       it 'handles country lookup exceptions' do
@@ -161,7 +161,7 @@ module Spree
                    :line_items_attributes => line_items }
 
         order = Importer::Order.import(user,params)
-        order.ship_address.state.name.should eq 'Alabama'
+        expect(order.ship_address.state.name).to eq 'Alabama'
       end
 
       context "state passed is not associated with country" do
@@ -215,7 +215,7 @@ module Spree
         [:name, :iso, :iso_name, :iso3].each do |field|
           address = { :country => { field => country.send(field) }}
           Importer::Order.ensure_country_id_from_params(address)
-          address[:country_id].should eq country.id
+          expect(address[:country_id]).to eq country.id
         end
       end
 
@@ -230,7 +230,7 @@ module Spree
         [:name, :abbr].each do |field|
           address = { country_id: country.id, :state => { field => state.send(field) }}
           Importer::Order.ensure_state_id_from_params(address)
-          address[:state_id].should eq state.id
+          expect(address[:state_id]).to eq state.id
         end
       end
 
@@ -247,7 +247,7 @@ module Spree
         end
 
         it 'ensures variant exists and is not deleted' do
-          Importer::Order.should_receive(:ensure_variant_id_from_params)
+          expect(Importer::Order).to receive(:ensure_variant_id_from_params)
           order = Importer::Order.import(user,params)
         end
 
@@ -331,9 +331,9 @@ module Spree
             { label: 'Promotion Discount', amount: -3.00 }] }
 
         order = Importer::Order.import(user,params)
-        order.adjustments.all?(&:closed?).should be true
-        order.adjustments.first.label.should eq 'Shipping Discount'
-        order.adjustments.first.amount.should eq -4.99
+        expect(order.adjustments.all?(&:closed?)).to be true
+        expect(order.adjustments.first.label).to eq 'Shipping Discount'
+        expect(order.adjustments.first.amount).to eq -4.99
       end
 
       it "calculates final order total correctly" do
@@ -370,7 +370,7 @@ module Spree
                                               payment_method: payment_method.name,
                                               state: 'completed' }] }
         order = Importer::Order.import(user,params)
-        order.payments.first.amount.should eq 4.99
+        expect(order.payments.first.amount).to eq 4.99
       end
 
       it 'builds a payment using status as fallback' do
@@ -378,7 +378,7 @@ module Spree
                                               payment_method: payment_method.name,
                                               status: 'completed' }] }
         order = Importer::Order.import(user,params)
-        order.payments.first.amount.should eq 4.99
+        expect(order.payments.first.amount).to eq 4.99
       end
 
       it 'handles payment building exceptions' do

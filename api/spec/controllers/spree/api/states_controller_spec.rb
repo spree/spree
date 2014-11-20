@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::StatesController do
+  describe Api::StatesController, :type => :controller do
     render_views
 
     let!(:state) { create(:state, :name => "Victoria") }
@@ -13,37 +13,37 @@ module Spree
 
     it "gets all states" do
       api_get :index
-      json_response["states"].first.should have_attributes(attributes)
-      json_response['states'].first['name'].should eq(state.name)
+      expect(json_response["states"].first).to have_attributes(attributes)
+      expect(json_response['states'].first['name']).to eq(state.name)
     end
 
     it "gets all the states for a particular country" do
       api_get :index, :country_id => state.country.id
-      json_response["states"].first.should have_attributes(attributes)
-      json_response['states'].first['name'].should eq(state.name)
+      expect(json_response["states"].first).to have_attributes(attributes)
+      expect(json_response['states'].first['name']).to eq(state.name)
     end
 
     context "pagination" do
       before do
-        State.should_receive(:accessible_by).and_return(@scope = double)
-        @scope.stub_chain(:ransack, :result, :includes, :order).and_return(@scope)
+        expect(State).to receive(:accessible_by).and_return(@scope = double)
+        allow(@scope).to receive_message_chain(:ransack, :result, :includes, :order).and_return(@scope)
       end
 
       it "does not paginate states results when asked not to do so" do
-        @scope.should_not_receive(:page)
-        @scope.should_not_receive(:per)
+        expect(@scope).not_to receive(:page)
+        expect(@scope).not_to receive(:per)
         api_get :index
       end
 
       it "paginates when page parameter is passed through" do
-        @scope.should_receive(:page).with(1).and_return(@scope)
-        @scope.should_receive(:per).with(nil)
+        expect(@scope).to receive(:page).with(1).and_return(@scope)
+        expect(@scope).to receive(:per).with(nil)
         api_get :index, :page => 1
       end
 
       it "paginates when per_page parameter is passed through" do
-        @scope.should_receive(:page).with(nil).and_return(@scope)
-        @scope.should_receive(:per).with(25)
+        expect(@scope).to receive(:page).with(nil).and_return(@scope)
+        expect(@scope).to receive(:per).with(25)
         api_get :index, :per_page => 25
       end
     end
@@ -58,25 +58,25 @@ module Spree
         state.save
 
         api_get :index, :country_id => country.id
-        json_response["states"].first.should have_attributes(attributes)
-        json_response["states"].count.should == 1
+        expect(json_response["states"].first).to have_attributes(attributes)
+        expect(json_response["states"].count).to eq(1)
         json_response["states_required"] = true
       end
 
       it "can view all states" do
         api_get :index
-        json_response["states"].first.should have_attributes(attributes)
+        expect(json_response["states"].first).to have_attributes(attributes)
       end
 
       it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'Vic' }
-        json_response['states'].first['name'].should eq("Victoria")
+        expect(json_response['states'].first['name']).to eq("Victoria")
       end
     end
 
     it "can view a state" do
       api_get :show, :id => state.id
-      json_response.should have_attributes(attributes)
+      expect(json_response).to have_attributes(attributes)
     end
   end
 end

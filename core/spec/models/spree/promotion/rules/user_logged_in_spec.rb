@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::UserLoggedIn do
+describe Spree::Promotion::Rules::UserLoggedIn, :type => :model do
   let(:rule) { Spree::Promotion::Rules::UserLoggedIn.new }
 
   context "#eligible?(order)" do
@@ -8,14 +8,14 @@ describe Spree::Promotion::Rules::UserLoggedIn do
 
     it "should be eligible if order has an associated user" do
       user = double('User')
-      order.stub(:user => user)
+      allow(order).to receive_messages(:user => user)
 
-      rule.should be_eligible(order)
+      expect(rule).to be_eligible(order)
     end
 
     it "should not be eligible if user is not logged in" do
-      order.stub(:user => nil) # better to be explicit here
-      rule.should_not be_eligible(order)
+      allow(order).to receive_messages(:user => nil) # better to be explicit here
+      expect(rule).not_to be_eligible(order)
     end
   end
 end

@@ -16,14 +16,14 @@ module Spree
     end
 
     def provider_class
-      raise 'You must implement provider_class method for this gateway.'
+      raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
     end
 
     # The class that will process payments for this payment type, used for @payment.source
     # e.g. CreditCard in the case of a the Gateway payment type
     # nil means the payment method doesn't require a source e.g. check
     def payment_source_class
-      raise 'You must implement payment_source_class method for this gateway.'
+      raise ::NotImplementedError, 'You must implement payment_source_class method for this gateway.'
     end
 
     def self.available(display_on = 'both')
@@ -66,6 +66,10 @@ module Spree
 
     def supports?(source)
       true
+    end
+
+    def cancel(response)
+      raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
   end
 end

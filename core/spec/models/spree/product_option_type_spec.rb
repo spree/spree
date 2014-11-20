@@ -1,5 +1,5 @@
 require 'spec_helper'
 
-describe Spree::ProductOptionType do
+describe Spree::ProductOptionType, :type => :model do
 
 end

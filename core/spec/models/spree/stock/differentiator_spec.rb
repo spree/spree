@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Differentiator do
+    describe Differentiator, :type => :model do
       let(:variant1) { mock_model(Variant) }
       let(:variant2) { mock_model(Variant) }
 
@@ -27,11 +27,11 @@ module Spree
 
       subject { Differentiator.new(order, packages) }
 
-      it { should be_missing }
+      it { is_expected.to be_missing }
 
       it 'calculates the missing items' do
-        subject.missing[variant1].should eq 1
-        subject.missing[variant2].should eq 1
+        expect(subject.missing[variant1]).to eq 1
+        expect(subject.missing[variant2]).to eq 1
       end
     end
   end

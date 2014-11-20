@@ -1,0 +1,15 @@
+---
+machine:
+  environment:
+    DB: postgres
+  services:
+    - postgresql
+  ruby:
+    version: 2.1.5
+dependencies:
+  override:
+    - ./build-ci.rb install
+test:
+  override:
+    - './build-ci.rb test':
+       parallel: true

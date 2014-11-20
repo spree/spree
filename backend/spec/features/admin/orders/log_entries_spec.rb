@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Log entries" do
+describe "Log entries", :type => :feature do
   stub_authorization!
 
   let!(:payment) { create(:payment) }
@@ -24,7 +24,7 @@ describe "Log entries" do
       find("#payment_#{payment.id} a").click
       click_link "Logs"
       within("#listing_log_entries") do
-        page.should have_content("Transaction successful")
+        expect(page).to have_content("Transaction successful")
       end
     end
   end
@@ -48,7 +48,7 @@ describe "Log entries" do
       find("#payment_#{payment.id} a").click
       click_link "Logs"
       within("#listing_log_entries") do
-        page.should have_content("Transaction failed")
+        expect(page).to have_content("Transaction failed")
       end
     end
   end

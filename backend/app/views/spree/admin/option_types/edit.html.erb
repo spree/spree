@@ -32,15 +32,8 @@
         </tr>
       </thead>
       <tbody id="option_values">
-        <% if @option_type.option_values.empty? %>
-          <tr id="none" data-hook="option_none" class="<%= cycle('odd', 'even')%>">
-            <td colspan="2"><%= Spree.t(:none) %></td>
-            <td class="actions"></td>
-          </tr>
-        <% else %>
-          <%= f.fields_for :option_values do |option_value_form| %>
-            <%= render :partial => 'option_value_fields', :locals => { :f => option_value_form } %>
-          <% end %>
+        <%= f.fields_for :option_values, @option_values do |option_value_form| %>
+          <%= render :partial => 'option_value_fields', :locals => { :f => option_value_form } %>
         <% end %>
       </tbody>
     </table>

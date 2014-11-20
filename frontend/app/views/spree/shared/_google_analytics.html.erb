@@ -5,7 +5,7 @@
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', '<%= tracker.analytics_id %>','<%= current_store.url.sub(/(^www.)?/,'') %>');
+    ga('create', '<%= tracker.analytics_id %>', 'auto');
     ga('require', 'displayfeatures');
     ga('send', 'pageview');
 
@@ -24,7 +24,7 @@
         ga('ecommerce:addItem', {
           'id': '<%= j @order.number %>',                        // Transaction ID. Required.
           'name': '<%= j line_item.variant.product.name %>',    // Product name. Required.
-          'sku': '<%= j line_item.variant.sku %>',             // SKU/code.
+          'sku': '<%= j (line_item.variant.sku || line_item.variant_id) %>', // SKU/code.
           'category': '',                                     // Category or variation.
           'price': '<%= line_item.price %>',                 // Unit price.
           'quantity': '<%= line_item.quantity %>'           // Quantity.

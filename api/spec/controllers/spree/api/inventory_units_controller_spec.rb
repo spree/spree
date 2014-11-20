@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::InventoryUnitsController do
+  describe Api::InventoryUnitsController, :type => :controller do
     render_views
 
     before do
@@ -14,13 +14,13 @@ module Spree
 
       it "gets an inventory unit" do
         api_get :show, :id => @inventory_unit.id
-        json_response['state'].should eq @inventory_unit.state
+        expect(json_response['state']).to eq @inventory_unit.state
       end
 
       it "updates an inventory unit (only shipment is accessable by default)" do
         api_put :update, :id => @inventory_unit.id,
                          :inventory_unit => { :shipment => nil }
-        json_response['shipment_id'].should be_nil
+        expect(json_response['shipment_id']).to be_nil
       end
 
       context 'fires state event' do
@@ -29,19 +29,19 @@ module Spree
                            :fire => 'ship',
                            :inventory_unit => { :shipment => nil }
 
-          json_response['state'].should eq 'shipped'
+          expect(json_response['state']).to eq 'shipped'
         end
 
         it 'and returns exception if cannot fire' do
           api_put :update, :id => @inventory_unit.id,
                            :fire => 'return'
-          json_response['exception'].should match /cannot transition to return/
+          expect(json_response['exception']).to match /cannot transition to return/
         end
 
         it 'and returns exception bad state' do
           api_put :update, :id => @inventory_unit.id,
                            :fire => 'bad'
-          json_response['exception'].should match /cannot transition to bad/
+          expect(json_response['exception']).to match /cannot transition to bad/
         end
       end
     end

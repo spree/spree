@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preferences::Configuration do
+describe Spree::Preferences::Configuration, :type => :model do
 
   before :all do
     class AppConfig < Spree::Preferences::Configuration
@@ -11,17 +11,17 @@ describe Spree::Preferences::Configuration do
 
   it "has named methods to access preferences" do
     @config.color = 'orange'
-    @config.color.should eq 'orange'
+    expect(@config.color).to eq 'orange'
   end
 
   it "uses [ ] to access preferences" do
     @config[:color] = 'red'
-    @config[:color].should eq 'red'
+    expect(@config[:color]).to eq 'red'
   end
 
   it "uses set/get to access preferences" do
     @config.set :color, 'green'
-    @config.get(:color).should eq 'green'
+    expect(@config.get(:color)).to eq 'green'
   end
 
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preferences::ScopedStore do
+describe Spree::Preferences::ScopedStore, :type => :model do
   let(:scoped_store){ described_class.new(prefix, suffix) }
   subject{ scoped_store }
   let(:prefix){ nil }
@@ -8,13 +8,13 @@ describe Spree::Preferences::ScopedStore do
 
   describe '#store' do
     subject{ scoped_store.store }
-    it{ should be Spree::Preferences::Store.instance }
+    it{ is_expected.to be Spree::Preferences::Store.instance }
   end
 
   context 'stubbed store' do
     let(:store){ double(:store) }
     before do
-      scoped_store.stub(:store).and_return(store)
+      allow(scoped_store).to receive(:store).and_return(store)
     end
 
     context "with a prefix" do

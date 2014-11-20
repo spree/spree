@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Calculator::PriceSack do
+describe Spree::Calculator::PriceSack, :type => :model do
   let(:calculator) do
     calculator = Spree::Calculator::PriceSack.new
     calculator.preferred_minimal_amount = 5
@@ -24,7 +24,7 @@ describe Spree::Calculator::PriceSack do
 
   # Regression test for #2055
   it "computes the correct amount" do
-    calculator.compute(2).should == calculator.preferred_normal_amount
-    calculator.compute(6).should == calculator.preferred_discount_amount
+    expect(calculator.compute(2)).to eq(calculator.preferred_normal_amount)
+    expect(calculator.compute(6)).to eq(calculator.preferred_discount_amount)
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::VariantsController do
+  describe Api::VariantsController, :type => :controller do
     render_views
 
     let!(:product) { create(:product) }
@@ -22,32 +22,32 @@ module Spree
     it "can see a paginated list of variants" do
       api_get :index
       first_variant = json_response["variants"].first
-      first_variant.should have_attributes(show_attributes)
-      first_variant["stock_items"].should be_present
-      json_response["count"].should == 1
-      json_response["current_page"].should == 1
-      json_response["pages"].should == 1
+      expect(first_variant).to have_attributes(show_attributes)
+      expect(first_variant["stock_items"]).to be_present
+      expect(json_response["count"]).to eq(1)
+      expect(json_response["current_page"]).to eq(1)
+      expect(json_response["pages"]).to eq(1)
     end
 
     it 'can control the page size through a parameter' do
       create(:variant)
       api_get :index, :per_page => 1
-      json_response['count'].should == 1
-      json_response['current_page'].should == 1
-      json_response['pages'].should == 3
+      expect(json_response['count']).to eq(1)
+      expect(json_response['current_page']).to eq(1)
+      expect(json_response['pages']).to eq(3)
     end
 
     it 'can query the results through a paramter' do
       expected_result = create(:variant, :sku => 'FOOBAR')
       api_get :index, :q => { :sku_cont => 'FOO' }
-      json_response['count'].should == 1
-      json_response['variants'].first['sku'].should eq expected_result.sku
+      expect(json_response['count']).to eq(1)
+      expect(json_response['variants'].first['sku']).to eq expected_result.sku
     end
 
     it "variants returned contain option values data" do
       api_get :index
       option_values = json_response["variants"].last["option_values"]
-      option_values.first.should have_attributes([:name,
+      expect(option_values.first).to have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
                                                  :option_type_id])
@@ -58,8 +58,8 @@ module Spree
 
       api_get :index
 
-      json_response["variants"].last.should have_attributes([:images])
-      json_response['variants'].first['images'].first.should have_attributes([:attachment_file_name,
+      expect(json_response["variants"].last).to have_attributes([:images])
+      expect(json_response['variants'].first['images'].first).to have_attributes([:attachment_file_name,
                                                                                :attachment_width,
                                                                                :attachment_height,
                                                                                :attachment_content_type,
@@ -78,12 +78,12 @@ module Spree
 
       it "is not returned in the results" do
         api_get :index
-        json_response["variants"].count.should == 0
+        expect(json_response["variants"].count).to eq(0)
       end
 
       it "is not returned even when show_deleted is passed" do
         api_get :index, :show_deleted => true
-        json_response["variants"].count.should == 0
+        expect(json_response["variants"].count).to eq(0)
       end
     end
 
@@ -91,19 +91,19 @@ module Spree
       it "can select the next page of variants" do
         second_variant = create(:variant)
         api_get :index, :page => 2, :per_page => 1
-        json_response["variants"].first.should have_attributes(show_attributes)
-        json_response["total_count"].should == 3
-        json_response["current_page"].should == 2
-        json_response["pages"].should == 3
+        expect(json_response["variants"].first).to have_attributes(show_attributes)
+        expect(json_response["total_count"]).to eq(3)
+        expect(json_response["current_page"]).to eq(2)
+        expect(json_response["pages"]).to eq(3)
       end
     end
 
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
-      json_response.should have_attributes(show_attributes)
-      json_response["stock_items"].should be_present
+      expect(json_response).to have_attributes(show_attributes)
+      expect(json_response["stock_items"]).to be_present
       option_values = json_response["option_values"]
-      option_values.first.should have_attributes([:name,
+      expect(option_values.first).to have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
                                                  :option_type_id])
@@ -114,9 +114,9 @@ module Spree
 
       api_get :show, :id => variant.to_param
 
-      json_response.should have_attributes(show_attributes + [:images])
+      expect(json_response).to have_attributes(show_attributes + [:images])
       option_values = json_response["option_values"]
-      option_values.first.should have_attributes([:name,
+      expect(option_values.first).to have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
                                                  :option_type_id])
@@ -124,8 +124,8 @@ module Spree
 
     it "can learn how to create a new variant" do
       api_get :new
-      json_response["attributes"].should == new_attributes.map(&:to_s)
-      json_response["required_attributes"].should be_empty
+      expect(json_response["attributes"]).to eq(new_attributes.map(&:to_s))
+      expect(json_response["required_attributes"]).to be_empty
     end
 
     it "cannot create a new variant if not an admin" do
@@ -141,7 +141,7 @@ module Spree
     it "cannot delete a variant" do
       api_delete :destroy, :id => variant.to_param
       assert_not_found!
-      lambda { variant.reload }.should_not raise_error
+      expect { variant.reload }.not_to raise_error
     end
 
     context "as an admin" do
@@ -156,28 +156,28 @@ module Spree
 
         it "are visible by admin" do
           api_get :index, :show_deleted => 1
-          json_response["variants"].count.should == 1
+          expect(json_response["variants"].count).to eq(1)
         end
       end
 
       it "can create a new variant" do
         api_post :create, :variant => { :sku => "12345" }
-        json_response.should have_attributes(new_attributes)
-        response.status.should == 201
-        json_response["sku"].should == "12345"
+        expect(json_response).to have_attributes(new_attributes)
+        expect(response.status).to eq(201)
+        expect(json_response["sku"]).to eq("12345")
 
-        variant.product.variants.count.should == 1
+        expect(variant.product.variants.count).to eq(1)
       end
 
       it "can update a variant" do
         api_put :update, :id => variant.to_param, :variant => { :sku => "12345" }
-        response.status.should == 200
+        expect(response.status).to eq(200)
       end
 
       it "can delete a variant" do
         api_delete :destroy, :id => variant.to_param
-        response.status.should == 204
-        lambda { Spree::Variant.find(variant.id) }.should raise_error(ActiveRecord::RecordNotFound)
+        expect(response.status).to eq(204)
+        expect { Spree::Variant.find(variant.id) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

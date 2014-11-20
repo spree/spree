@@ -97,8 +97,8 @@ module Spree
         Rails.logger.error exception.message
         Rails.logger.error exception.backtrace.join("\n")
 
-        render :text => { :exception => exception.message }.to_json,
-          :status => 422 and return
+        render text: { exception: exception.message }.to_json,
+          status: 422 and return
       end
 
       def gateway_error(exception)

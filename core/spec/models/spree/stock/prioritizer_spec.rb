@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Prioritizer do
+    describe Prioritizer, :type => :model do
       let(:order) { create(:order_with_line_items, line_items_count: 2) }
       let(:stock_location) { build(:stock_location) }
 
@@ -24,7 +24,7 @@ module Spree
         packages = [package1]
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
-        packages.size.should eq 1
+        expect(packages.size).to eq 1
       end
 
       it 'removes duplicate packages' do
@@ -40,7 +40,7 @@ module Spree
         packages = [package1, package2]
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
-        packages.size.should eq 1
+        expect(packages.size).to eq 1
       end
 
       it 'split over 2 packages' do
@@ -54,11 +54,11 @@ module Spree
         packages = [package1, package2]
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
-        packages.size.should eq 2
+        expect(packages.size).to eq 2
       end
 
       it '1st has some, 2nd has remaining' do
-        order.line_items[0].stub(:quantity => 5)
+        allow(order.line_items[0]).to receive_messages(:quantity => 5)
         package1 = pack do |package|
           package.add line_item1, 2, :on_hand
         end
@@ -69,13 +69,13 @@ module Spree
         packages = [package1, package2]
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
-        packages.count.should eq 2
-        packages[0].quantity.should eq 2
-        packages[1].quantity.should eq 3
+        expect(packages.count).to eq 2
+        expect(packages[0].quantity).to eq 2
+        expect(packages[1].quantity).to eq 3
       end
 
       it '1st has backorder, 2nd has some' do
-        order.line_items[0].stub(:quantity => 5)
+        allow(order.line_items[0]).to receive_messages(:quantity => 5)
         package1 = pack do |package|
           package.add line_item1, 5, :backordered
         end
@@ -87,12 +87,12 @@ module Spree
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
 
-        packages[0].quantity(:backordered).should eq 3
-        packages[1].quantity(:on_hand).should eq 2
+        expect(packages[0].quantity(:backordered)).to eq 3
+        expect(packages[1].quantity(:on_hand)).to eq 2
       end
 
       it '1st has backorder, 2nd has all' do
-        order.line_items[0].stub(:quantity => 5)
+        allow(order.line_items[0]).to receive_messages(:quantity => 5)
         package1 = pack do |package|
           package.add line_item1, 3, :backordered
           package.add line_item2, 1, :on_hand
@@ -104,8 +104,8 @@ module Spree
         packages = [package1, package2]
         prioritizer = Prioritizer.new(order, packages)
         packages = prioritizer.prioritized_packages
-        packages[0].quantity(:backordered).should eq 0
-        packages[1].quantity(:on_hand).should eq 5
+        expect(packages[0].quantity(:backordered)).to eq 0
+        expect(packages[1].quantity(:on_hand)).to eq 5
       end
     end
   end
