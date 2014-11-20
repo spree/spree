@@ -384,7 +384,7 @@ en:
     add_stock_management: Add Stock Management
     add_to_cart: Add To Cart
     add_variant: Add Variant
-    additional_item: Additional Item Cost
+    additional_item: Additional Item
     address1: Address
     address2: Address (contd.)
     adjustable: Adjustable
@@ -710,7 +710,7 @@ en:
     finalize: Finalize
     find_a_taxon: Find a Taxon
     finalized: Finalized
-    first_item: First Item Cost
+    first_item: First Item
     first_name: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
