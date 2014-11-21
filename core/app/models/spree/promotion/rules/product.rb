@@ -28,7 +28,6 @@ module Spree
           else
             order.products.none? {|p| eligible_products.include?(p) }
           end
-          eligibility_errors.empty?
         end
 
         def actionable?(line_item)
