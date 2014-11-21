@@ -97,16 +97,16 @@ module SpreeCmd
         if @install_default_gateways && @spree_gem_options[:branch]
           gem :spree_gateway, github: 'spree/spree_gateway', branch: @spree_gem_options[:branch]
         elsif @install_default_gateways
-          gem :spree_gateway, github: 'spree/spree_gateway'
+          gem :spree_gateway, github: 'spree/spree_gateway', branch: '2-4-stable'
         end
 
         if @install_default_auth && @spree_gem_options[:branch]
           gem :spree_auth_devise, github: 'spree/spree_auth_devise', branch: @spree_gem_options[:branch]
         elsif @install_default_auth
-          gem :spree_auth_devise, github: 'spree/spree_auth_devise'
+          gem :spree_auth_devise, github: 'spree/spree_auth_devise', branch: '2-4-stable'
         end
 
-        run 'bundle install', :capture => true
+        run 'bundle install', capture: true
       end
     end
 
