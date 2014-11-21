@@ -3,13 +3,8 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <span id="new_prototype_link">
-    <%= button_link_to Spree.t(:new_prototype), new_admin_prototype_url, {:remote => true, :class => "btn-success", :icon => 'add', 'data-update' => 'new_prototype', :id => 'new_prototype_link'} %>
-  </span>
+  <%= button_link_to Spree.t(:new_prototype), new_admin_prototype_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_prototype', :id => 'new_prototype_link'} %>
 <% end %>
-
-<%# Placeholder for new prototype form %>
-<div id="new_prototype"></div>
 
 <% if @prototypes.any? %>
   <table class="table table-hover index" id='listing_prototypes' data-hook>

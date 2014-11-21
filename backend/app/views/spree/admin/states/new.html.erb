@@ -1,5 +1,3 @@
-
-
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @state } %>
 
 <% content_for :page_title do %>
@@ -7,11 +5,8 @@
 <% end %>
 
 <%= form_for [:admin, @country, @state] do |f| %>
-  <div class="well">
-    <fieldset>
-      <legend><%= Spree.t(:new_state) %></legend>
-      <%= render :partial => 'form', :locals => { :f => f } %>
-      <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-    </fieldset>
-  </div>
+  <fieldset>
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
 <% end %>
