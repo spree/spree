@@ -101,6 +101,8 @@ module Spree
     end
 
     def options=(options={})
+      return unless options.present?
+
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
       currency = opts.delete(:currency) || order.try(:currency)
