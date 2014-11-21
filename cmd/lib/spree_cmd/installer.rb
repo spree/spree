@@ -106,7 +106,7 @@ module SpreeCmd
           gem :spree_auth_devise, github: 'spree/spree_auth_devise', branch: '2-4-stable'
         end
 
-        run 'bundle install', capture: true
+        run 'bundle install', :capture => true
       end
     end
 
