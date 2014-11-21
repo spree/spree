@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <span id="new_product_link">
-    <%= button_link_to Spree.t(:new_product), new_object_url, { :remote => true, :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
+    <%= button_link_to Spree.t(:new_product), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
   </span>
 <% end if can?(:create, Spree::Product) %>
 
@@ -42,8 +42,6 @@
 
   </div>
 <% end %>
-
-<div id="new_product_wrapper" data-hook></div>
 
 <%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @collection } %>
 
