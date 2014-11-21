@@ -49,9 +49,8 @@
       <%= link_to Spree.t(:add_one), spree.new_admin_order_customer_return_path(@order) %>!
     </div>
   <% end %>
-
 <% else %>
-  <div data-hook="customer_return_cannot_create" class="no-objects-found">
+  <div data-hook="customer_return_cannot_create" class="alert alert-info no-objects-found">
     <%= Spree.t(:cannot_create_customer_returns) %>
   </div>
 <% end %>
