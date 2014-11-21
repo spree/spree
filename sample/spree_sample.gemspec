@@ -8,7 +8,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Sample data (including images) for use with Spree.'
   s.description = 'Required dependency for Spree'
 
-  s.required_ruby_version = '>= 2.0.0'
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
