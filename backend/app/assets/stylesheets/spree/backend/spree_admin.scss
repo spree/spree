@@ -199,7 +199,6 @@ ul {
   }
 }
 
-
 .index-pagination-row {
   margin-bottom: 9px;
   .row, ul {
@@ -249,13 +248,19 @@ ul {
   .nav.nav-pills.nav-stacked > li > a {
     border-left: none;
     border-right: 3px solid transparent;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
   }
   .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
     border-right-color: #3c8dbc;
+    border-top-color: #ddd;
+    border-bottom-color: #ddd;
     background-color: #fff;
     margin-left: -1px;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+  }
+  .nav-stacked > li {
+    height: 42px !important;
+    margin: 0;
   }
   li.collapse-sidebar {
     margin-top: 30px;
@@ -273,7 +278,7 @@ ul {
       display: none;
     }
     a {
-      height: 40px;
+      height: 42px !important;
     }
     .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
       margin-right: 0;
