@@ -28,6 +28,7 @@ interested in. For example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
+[![Circle CI](https://circleci.com/gh/spree/spree.png?style=badge)](https://circleci.com/gh/spree/spree)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
@@ -261,11 +262,9 @@ bundle exec rake spree_auth:admin:create
 Running Tests
 -------------
 
-[![Team City](http://www.jetbrains.com/img/logos/logo_teamcity_small.gif)](http://www.jetbrains.com/teamcity)
+We use [CircleCI](https://circleci.com/) to run the tests for Spree.
 
-We use [TeamCity](http://www.jetbrains.com/teamcity/) to run the tests for Spree.
-
-You can see the build statuses at [http://ci.spree.fm](http://ci.spree.fm/guestLogin.html?guest=1).
+You can see the build statuses at [https://circleci.com/gh/spree/spree](https://circleci.com/gh/spree/spree).
 
 ---
 
