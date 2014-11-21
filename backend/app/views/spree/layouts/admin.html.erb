@@ -37,22 +37,22 @@
 
         <section class="content <%= "with-sidebar" if content_for?(:sidebar) %>">
 
-          <% if flash[:error] %>
-            <div class="alert alert-danger alert-auto-dissapear"><%= flash[:error] %></div>
-          <% end %>
-          <% if notice %>
-            <div class="alert alert-info alert-auto-dissapear"><%= notice %></div>
-          <% end %>
-          <% if flash[:success] %>
-            <div class="alert alert-success alert-auto-dissapear"><%= flash[:success] %></div>
-          <% end %>
-
-          <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
-
           <div class="row">
             <div class="<%= main_div_class %> main-content">
-              <div class="<%= 'with-sidebar' if content_for?(:sidebar) %>" id="content" data-hook>
 
+              <% if flash[:error] %>
+                <div class="alert alert-danger alert-auto-dissapear"><%= flash[:error] %></div>
+              <% end %>
+              <% if notice %>
+                <div class="alert alert-info alert-auto-dissapear"><%= notice %></div>
+              <% end %>
+              <% if flash[:success] %>
+                <div class="alert alert-success alert-auto-dissapear"><%= flash[:success] %></div>
+              <% end %>
+
+              <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
+
+              <div class="<%= 'with-sidebar' if content_for?(:sidebar) %>" id="content" data-hook>
                 <% if content_for?(:table_filter) %>
                   <%= render :partial => 'spree/admin/shared/table_filter' %>
                 <% end %>
