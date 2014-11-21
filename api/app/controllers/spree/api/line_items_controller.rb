@@ -3,7 +3,7 @@ module Spree
     class LineItemsController < Spree::Api::BaseController
       def create
         variant = Spree::Variant.find(params[:line_item][:variant_id])
-        @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1)
+        @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1, params[:line_item][:options] || {})
 
         if @line_item.errors.empty?
           respond_with(@line_item, status: 201, default_template: :show)
@@ -49,7 +49,7 @@ module Spree
         end
 
         def line_item_params
-          params.require(:line_item).permit(:quantity, :variant_id)
+          params.require(:line_item).permit(:quantity, :variant_id, :options)
         end
     end
   end
