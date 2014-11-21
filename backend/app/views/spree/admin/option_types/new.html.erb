@@ -1,13 +1,12 @@
-
+<% content_for :page_title do %>
+  <%= Spree.t(:new_option_type) %>
+<% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @option_type } %>
 
 <%= form_for [:admin, @option_type] do |f| %>
-  <div class="well">
-    <fieldset>
-      <legend><%= Spree.t(:new_option_type) %></legend>
-      <%= render :partial => 'form', :locals => { :f => f } %>
-      <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-    </fieldset>
-  </div>
+  <fieldset>
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
 <% end %>
