@@ -6,11 +6,10 @@
       <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), :class => "btn-success", :icon => 'add' %>
     </span>
   <% end %>
-  <%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %>
 <% end %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:payments) %>
+  / <%= Spree.t(:payments) %>
 <% end %>
 
 <% if @order.outstanding_balance? %>

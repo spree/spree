@@ -1,13 +1,5 @@
-
-
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_state) %> <span class="icon icon-arrow-right"></span> <%= @state.name %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:back_to_states_list), spree.admin_country_states_url(@country), :icon => 'arrow-left' %>
-  </li>
+  <%= Spree.t(:editing_state) %> / <%= @state.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @state } %>

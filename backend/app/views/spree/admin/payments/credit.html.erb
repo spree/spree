@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Creditcards' } %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:refund) %>
+  / <%= Spree.t(:refund) %>
 <% end %>
 
 <%= form_tag do %>
@@ -11,7 +11,7 @@
       <%= label_tag :amount, Spree.t(:amount) %>
       <%= text_field_tag :amount, @payment.amount %>
     </p>
-    <p class="form-buttons">
+    <p class="form-actions">
       <%= button Spree.t(:make_refund) %>
     </p>
   </fieldset>

@@ -35,7 +35,7 @@
 
         <%= render :partial => 'spree/admin/shared/content_header' %>
 
-        <section class="content">
+        <section class="content <%= "with-sidebar" if content_for?(:sidebar) %>">
 
           <% if flash[:error] %>
             <div class="alert alert-danger alert-auto-dissapear"><%= flash[:error] %></div>
@@ -50,7 +50,7 @@
           <%= render :partial => 'spree/admin/shared/alert', :collection => session[:alerts] %>
 
           <div class="row">
-            <div class="<%= main_div_class %> main">
+            <div class="<%= main_div_class %> main-content">
               <div class="<%= 'with-sidebar' if content_for?(:sidebar) %>" id="content" data-hook>
 
                 <% if content_for?(:table_filter) %>
@@ -61,7 +61,7 @@
               </div>
             </div>
             <% if content_for?(:sidebar) %>
-              <div class="col-md-3">
+              <div class="main-sidebar">
                 <%= render :partial => 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>

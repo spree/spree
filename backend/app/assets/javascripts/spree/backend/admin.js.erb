@@ -45,6 +45,13 @@ jQuery(function($) {
     showHideBatchActions();
   });
 
+  $(".js-collapse-sidebar").click(function(){
+    $(".main-sidebar").toggleClass("collapsed");
+    $("section.content").toggleClass("sidebar-collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-right");
+    $("span.icon", $(this)).toggleClass("icon-chevron-left");
+  });
+
   function showHideBatchActions(){
     var checkedCount = 0;
     $(".js-index-checkbox").each(function(){

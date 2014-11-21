@@ -2,10 +2,6 @@
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @image } %>
 
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_images_list), admin_product_images_url(@product), :icon => 'arrow-left' %>
-<% end %>
-
 <%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
   <fieldset data-hook="edit_image" class="row">
     <legend><%= @image.attachment_file_name%></legend>
@@ -17,7 +13,7 @@
       <%= render :partial => 'form', :locals => { :f => f } %>
     </div>
 
-    <div class="form-buttons" data-hook="buttons">
+    <div class="form-actions" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
       <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :icon => 'delete' %>

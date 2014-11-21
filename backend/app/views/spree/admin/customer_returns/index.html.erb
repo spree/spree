@@ -4,11 +4,10 @@
   <% if @order.shipments.any?(&:shipped?) %>
     <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add', class: 'btn-success' %>
   <% end %>
-  <%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %>
 <% end %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:customer_returns) %>
+  / <%= Spree.t(:customer_returns) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) %>

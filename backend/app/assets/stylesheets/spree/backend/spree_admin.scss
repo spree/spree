@@ -57,8 +57,13 @@
 // Content header / page title
 .right-side > .content-header {
   box-shadow: none !important;
+  padding-left: 15px;
+  height: 63px;
+  position: relative;
+  //border-bottom: 1px solid #ddd;
   &.with-page-tabs {
     padding-bottom: 0;
+    height: 92px;
   }
   h1 {
     margin: 6px 0;
@@ -79,8 +84,10 @@
   }
   .nav-tabs {
     margin-top: 10px;
-    margin-bottom: -1px;
     border-bottom: none;
+    position: absolute;
+    bottom: 0;
+    z-index: 999;
     li a {
       padding-top: 7px;
       padding-bottom: 7px;
@@ -106,23 +113,23 @@ legend .glyphicon {
   color: #444;
 }
 // user edit page (api key buttons)
-div.form-buttons {
+div.form-actions {
   form {
     display: inline;
-    // when a button_to is used within the form-buttons it renders a div
+    // when a button_to is used within the form-actions it renders a div
     div {
       display: inline;
     }
   }
 }
-// Apply display-inline class to button_to tags outside form-buttons div
+// Apply display-inline class to button_to tags outside form-actions div
 .display-inline {
   display: inline;
   div {
     display: inline;
   }
 }
-div.form-buttons span.or {
+div.form-actions span.or {
   padding: 0 5px;
 }
 fieldset legend {
@@ -223,6 +230,53 @@ ul {
           color: $grey !important;
         }
       }
+    }
+  }
+}
+
+.main-content {
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+}
+.main-sidebar {
+  position: absolute;
+  top: 113px;
+  right: 0;
+  min-height: 100%;
+  background-color: #fbfbfb;
+  border-left: 1px solid #ddd;
+  width: 170px;
+  .nav.nav-pills.nav-stacked > li > a {
+    border-left: none;
+    border-right: 3px solid transparent;
+  }
+  .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
+    border-right-color: #3c8dbc;
+    background-color: #fff;
+    margin-left: -1px;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+  li.collapse-sidebar {
+    margin-top: 30px;
+    font-size: 0.9em;
+    span.icon {
+      font-size: 0.8em;
+    }
+    a, span.icon {
+      color: lighten($grey, 16%) !important;
+    }
+  }
+  &.collapsed {
+    width: 45px;
+    span.text {
+      display: none;
+    }
+    a {
+      height: 40px;
+    }
+    .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
+      margin-right: 0;
     }
   }
 }

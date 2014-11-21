@@ -2,14 +2,10 @@
   <%= Spree.t(:new_taxonomy) %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'arrow-left' %>
-<% end %>
-
 <%= form_for [:admin, @taxonomy] do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
-    <div class="form-buttons" data-hook="buttons">
+    <div class="form-actions" data-hook="buttons">
       <%= button Spree.t(:create), 'save' %>
     </div>
   </fieldset>

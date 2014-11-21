@@ -4,10 +4,6 @@
   <%= Spree.t(:taxonomy_edit) %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_taxonomies_list), spree.admin_taxonomies_path, :icon => 'arrow-left' %>
-<% end %>
-
 <div id="ajax_error" class="errorExplanation" style="display:none;"></div>
 
 <%= form_for [:admin, @taxonomy] do |f| %>
@@ -27,7 +23,7 @@
       <%= Spree.t(:taxonomy_tree_instruction) %>
     </div>
 
-    <div class="form-buttons">
+    <div class="form-actions">
       <%= button Spree.t('actions.update'), 'refresh' %>
       <span class="or"><%= Spree.t(:or) %></span>
       <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'delete' %>

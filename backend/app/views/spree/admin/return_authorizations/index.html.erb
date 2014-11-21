@@ -4,11 +4,10 @@
   <% if @order.shipments.any? &:shipped? %>
     <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'add' %>
   <% end %>
-  <%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %>
 <% end %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:return_authorizations) %>
+  / <%= Spree.t(:return_authorizations) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>

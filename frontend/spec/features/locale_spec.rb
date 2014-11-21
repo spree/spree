@@ -51,7 +51,7 @@ describe 'setting locale', :type => :feature do
       error_messages.each do |locale, message|
         with_locale(locale) do
           visit '/checkout/address'
-          find('.form-buttons input[type=submit]').click
+          find('.form-actions input[type=submit]').click
           check_error_text message
         end
       end

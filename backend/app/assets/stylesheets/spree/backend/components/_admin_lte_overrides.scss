@@ -5,6 +5,16 @@ html, body {
 
 .content {
   background-color: white;
+  padding-top: 0;
+  &.with-sidebar {
+    padding-right: 170px;
+    .col-md-12 {
+      padding-right: 30px;
+    }
+  }
+  &.sidebar-collapsed {
+    padding-right: 45px;
+  }
 }
 
 ul.sidebar-menu li.treeview span.pull-right {

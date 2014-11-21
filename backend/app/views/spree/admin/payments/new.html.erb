@@ -1,11 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:new_payment) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_payments_list), spree.admin_order_payments_url(@order), :icon => 'arrow-left' %>
+  / <%= Spree.t(:new_payment) %>
 <% end %>
 
 <% if @payment_methods.any? %>
@@ -15,7 +11,7 @@
     <fieldset>
       <%= render :partial => 'form', :locals => { :f => f } %>
 
-      <div class="form-buttons" data-hook="buttons">
+      <div class="form-actions" data-hook="buttons">
         <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right' : 'save' %>
       </div>
     </fieldset>

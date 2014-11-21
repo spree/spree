@@ -5,9 +5,6 @@
   <% if can?(:resend, @order) %>
     <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'email' %>
   <% end %>
-  <% if can?(:admin, Spree::Order) %>
-    <%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %>
-  <% end %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Cart' } %>

@@ -2,12 +2,6 @@
   <%= Spree.t(:new_stock_transfer) %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:back_to_stock_transfers_list), admin_stock_transfers_path, :icon => 'arrow-left' %>
-  </li>
-<% end %>
-
 <script type='text/template' id='transfer_variant_template'>
   {{#each variants}}
     <tr>
@@ -101,7 +95,7 @@
       </table>
     </div>
 
-    <div class="form-buttons" data-hook="buttons">
+    <div class="form-actions" data-hook="buttons">
       <%= button Spree.t(:transfer_stock), 'plus transfer_transfer' %>
     </div>
   </fieldset>

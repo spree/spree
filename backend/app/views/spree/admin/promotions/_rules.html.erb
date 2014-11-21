@@ -8,7 +8,7 @@
         <%= label_tag :promotion_rule_type, Spree.t(:add_rule_of_type) %>
         <%= select_tag('promotion_rule[type]', options_for_promotion_rule_types(@promotion), :class => 'select2') %>
       </div>
-      <div class="form-buttons">
+      <div class="form-actions">
         <%= button Spree.t(:add), 'plus', 'submit', class: "btn-success" %>
       </div>
     </fieldset>

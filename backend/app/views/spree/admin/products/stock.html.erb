@@ -1,7 +1,3 @@
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_products_list), session[:return_to] || admin_products_url, :icon => 'arrow-left' %>
-<% end %>
-
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
 

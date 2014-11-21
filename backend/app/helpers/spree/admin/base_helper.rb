@@ -2,7 +2,7 @@ module Spree
   module Admin
     module BaseHelper
       def main_div_class
-        return "col-md-9" if content_for?(:sidebar)
+        return "col-md-12 with-sidebar" if content_for?(:sidebar)
         "col-md-12"
       end
 

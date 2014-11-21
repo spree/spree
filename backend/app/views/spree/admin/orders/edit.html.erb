@@ -5,12 +5,13 @@
   <% if can?(:resend, @order) %>
     <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), method: :post, icon: 'envelope' %>
   <% end %>
-  <% if can?(:admin, Spree::Order) %>
-    <%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, icon: 'arrow-left' %>
-  <% end %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
+
+<% content_for :page_title do %>
+  / <%= Spree.t(:shipments) %>
+<% end %>
 
 <div data-hook="admin_order_edit_header">
   <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>

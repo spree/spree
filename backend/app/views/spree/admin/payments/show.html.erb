@@ -1,11 +1,11 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span>
+  /
   <%= I18n.t(:one, scope: "activerecord.models.spree/payment") %>
-  <span class="icon icon-arrow-right"></span>
+  /
   <%= payment_method_name(@payment) %>
-  <span class="icon icon-arrow-right"></span>
+  /
   <span class="state <%= @payment.state %>">
     <%= Spree.t(@payment.state, :scope => :payment_states, :default => @payment.state.capitalize) %>
   </span>
@@ -13,7 +13,6 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), :icon => 'file' %>
-  <%= button_link_to Spree.t(:back_to_payments_list), spree.admin_order_payments_url(@order), :icon => 'arrow-left' %>
 <% end %>
 
 <%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}",

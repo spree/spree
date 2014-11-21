@@ -1,13 +1,5 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:new_shipping_category) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:back_to_shipping_categories_list), spree.admin_shipping_categories_path, :icon => 'arrow-left' %>
-  </li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @shipping_category } %>

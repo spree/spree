@@ -1,11 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
 
 <% content_for :page_title do %>
-  <span class="icon icon-arrow-right"></span> <%= Spree.t(:editing_reimbursement) %> #<%= @reimbursement.number %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_customer_return), url_for([:edit, :admin, @order, @reimbursement.customer_return]), :icon => 'arrow-left' %>
+  / <%= Spree.t(:editing_reimbursement) %> #<%= @reimbursement.number %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
@@ -61,7 +57,7 @@
     </table>
   </fieldset>
 
-  <div class="form-buttons filter-actions actions" data-hook="buttons">
+  <div class="form-actions filter-actions actions" data-hook="buttons">
     <%= button Spree.t('actions.update'), 'update' %>
   </div>
 <% end %>
@@ -93,7 +89,7 @@
     </span>
   <% end %>
 
-  <div class="form-buttons" data-hook="reimburse-buttons">
+  <div class="form-actions" data-hook="reimburse-buttons">
     <% if !@reimbursement.reimbursed? %>
       <%= button_to [:perform, :admin, @order, @reimbursement], { class: 'btn btn-primary', method: 'post' } do %>
         <span class="icon icon-save"></span>
