@@ -10,17 +10,6 @@
   </thead>
   <tbody>
     <%= render :partial => "adjustment", :collection => @adjustments %>
-    <tr data-hook="adjustment_buttons">
-      <td class="align-center" colspan='4'>
-        <div>
-          <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get %>
-        </div>
-        <div>
-          <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get %>
-        </div>
-      </td>
-      <td class='actions'>&nbsp;</td>
-    </tr>
   </tbody>
 </table>
 
