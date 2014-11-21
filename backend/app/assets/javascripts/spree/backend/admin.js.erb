@@ -26,6 +26,40 @@ jQuery(function($) {
     fadeOutTime: 50,
   });
 
+  $('.js-show-index-filters').click(function(){
+    $(".filter-well").slideToggle();
+    $(this).parents(".filter-wrap").toggleClass("collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-down");
+  });
+
+  $('.js-index-checkbox-main').click(function(){
+    if($(this).prop('checked')){
+      $(".js-index-checkbox").attr("checked", "checked");
+    } else {
+      $(".js-index-checkbox").attr("checked", false);
+    }
+    showHideBatchActions();
+  });
+
+  $('.row-checkbox input').change(function(){
+    showHideBatchActions();
+  });
+
+  function showHideBatchActions(){
+    var checkedCount = 0;
+    $(".js-index-checkbox").each(function(){
+      if($(this).prop('checked')){
+        checkedCount++;
+      }
+    });
+
+    if(checkedCount > 0){
+      $(".batch-actions").show();
+    } else {
+      $(".batch-actions").hide();
+    }
+  }
+
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
     // Remove the &nbsp; in the text

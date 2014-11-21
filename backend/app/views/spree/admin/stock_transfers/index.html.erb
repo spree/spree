@@ -52,7 +52,7 @@
 </div>
 
 <% if @stock_transfers.any? %>
-  <table class="table table-hover table-condensed table-bordered index" id='listing_stock_transfers' data-hook>
+  <table class="table table-hover index" id='listing_stock_transfers' data-hook>
     <thead>
       <tr data-hook='stock_transfers_header'>
         <th><%= Spree.t(:created_at) %></th>

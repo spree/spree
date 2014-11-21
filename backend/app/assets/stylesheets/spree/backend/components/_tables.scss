@@ -14,11 +14,27 @@ table.table {
         color: $grey;
       }
     }
+    &.actions {
+      .btn {
+        padding: 3px 5px 2px;
+      }
+      .dropdown-menu {
+        right: 0;
+        left: auto;
+        .checkbox {
+          margin: 4px 14px;
+        }
+      }
+    }
   }
   td {
+    background: white;
     a {
       color: $grey;
       text-decoration: underline;
+    }
+    &.row-checkbox {
+      width: 20px;
     }
     &.move-handle {
       width: 28px;
@@ -42,10 +58,10 @@ table.table {
         width: 24px;
       }
       &.actions-2 {
-        width: 63px;
+        width: 67px;
       }
       &.actions-3 {
-        width: 91px;
+        width: 94px;
       }
     }
   }

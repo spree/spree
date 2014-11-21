@@ -8,7 +8,7 @@
   <%= button_link_to Spree.t(:new_country), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_country' } %>
 <% end %>
 
-<table class="table table-hover table-condensed table-bordered index" id='listing_countries' data-hook>
+<table class="table table-hover index" id='listing_countries' data-hook>
   <thead>
     <tr data-hook="tax_header">
       <th><%= Spree.t(:country_name) %></th>

@@ -798,12 +798,12 @@ en:
     lifetime_stats: Lifetime Stats
     line_item_adjustments: "Line item adjustments"
     list: List
-    listing_countries: Listing Countries
-    listing_orders: Listing Orders
-    listing_products: Listing Products
-    listing_reports: Listing Reports
-    listing_tax_categories: Listing Tax Categories
-    listing_users: Listing Users
+    listing_countries: Countries
+    listing_orders: Orders
+    listing_products: Products
+    listing_reports: Reports
+    listing_tax_categories: Tax Categories
+    listing_users: Users
     loading: Loading
     locale_changed: Locale Changed
     location: Location
@@ -1104,6 +1104,7 @@ en:
     quantity: Quantity
     quantity_returned: Quantity Returned
     quantity_shipped: Quantity Shipped
+    quick_search: Quick search..
     rate: Rate
     reason: Reason
     receive: receive

@@ -19,15 +19,6 @@
   <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
 <% end %>
 
-<li class="treeview">
-  <a href="#">
-    <span class="icon icon-wrench"></span>
-    <span><%= Spree.t(:configurations) %></span>
-    <span class="icon icon-chevron-left pull-right"></span>
-  </a>
-  <%= render :partial => 'spree/admin/shared/configuration_sub_menu' %>
-</li>
-
 <% if can? :admin, Spree::Promotion %>
   <li class="treeview">
     <a href="#">
@@ -42,3 +33,12 @@
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>
   <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
 <% end %>
+
+<li class="treeview">
+  <a href="#">
+    <span class="icon icon-wrench"></span>
+    <span><%= Spree.t(:configurations) %></span>
+    <span class="icon icon-chevron-left pull-right"></span>
+  </a>
+  <%= render :partial => 'spree/admin/shared/configuration_sub_menu' %>
+</li>

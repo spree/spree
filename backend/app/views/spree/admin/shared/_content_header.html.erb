@@ -1,5 +1,5 @@
 <% if content_for?(:page_title) || content_for?(:page_actions) %>
-  <section class="content-header">
+  <section class="content-header <%= "with-page-tabs" if content_for?(:page_tabs) %>">
     <% if content_for?(:page_actions) %>
       <div class="page-actions pull-right" data-hook="toolbar">
         <%= yield :page_actions %>
@@ -12,6 +12,12 @@
           <small><%= yield :page_title_small %></small>
         <% end %>
       </h1>
+    <% end %>
+
+    <% if content_for?(:page_tabs) %>
+      <ul class="nav nav-tabs">
+        <%= yield :page_tabs %>
+      </ul>
     <% end %>
   </section>
 <% end %>

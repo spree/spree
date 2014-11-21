@@ -2,8 +2,7 @@ module Spree
   module Admin
     module BaseHelper
       def main_div_class
-        return "col-md-9" if content_for?(:sidebar) or content_for?(:table_filter)
-        return "col-md-6" if content_for?(:sidebar) and content_for?(:table_filter)
+        return "col-md-9" if content_for?(:sidebar)
         "col-md-12"
       end
 

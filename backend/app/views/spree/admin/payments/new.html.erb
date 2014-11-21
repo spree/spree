@@ -16,7 +16,7 @@
       <%= render :partial => 'form', :locals => { :f => f } %>
 
       <div class="form-buttons" data-hook="buttons">
-        <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right' : 'ok' %>
+        <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right' : 'save' %>
       </div>
     </fieldset>
   <% end %>

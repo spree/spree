@@ -56,6 +56,10 @@
 }
 // Content header / page title
 .right-side > .content-header {
+  box-shadow: none !important;
+  &.with-page-tabs {
+    padding-bottom: 0;
+  }
   h1 {
     margin: 6px 0;
     span.glyphicon {
@@ -73,6 +77,15 @@
   .page-actions a {
     margin-left: 5px;
   }
+  .nav-tabs {
+    margin-top: 10px;
+    margin-bottom: -1px;
+    border-bottom: none;
+    li a {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+  }
 }
 // used on stock transfers show page
 legend .glyphicon {
@@ -86,28 +99,6 @@ legend .glyphicon {
     height: 34px;
     abbr {
       top: 9px;
-    }
-  }
-}
-.pagination-wrap {
-  text-align: right;
-  .pagination-info {
-    float: left;
-    color: $medium-grey;
-    padding-top: 5px;
-    font-size: 0.95em;
-  }
-  .pagination {
-    margin: 0 0 10px 0;
-    a {
-      color: $grey;
-    }
-    li.active a {
-      background: $light-grey;
-      border-color: #ddd;
-      &:hover {
-        color: $grey;
-      }
     }
   }
 }
@@ -162,4 +153,76 @@ ul {
 #sidebar ul.nav li .icon-link span.icon {
   float: left;
   margin: 2px 7px 0 0;
+}
+
+.filter-wrap {
+  margin-bottom: 17px;
+  .index-filter-button {
+    .btn {
+      color: #3c8dbc;
+      box-shadow: none;
+      border-color: #ccc;
+      .icon {
+        font-size: 0.7em;
+        margin: -1px 0 0 4px;
+      }
+    }
+  }
+  .filter-well {
+    display: none;
+    background: #fafafa;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: none;
+    border-top: 0;
+    .row {
+      margin-bottom: 0;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    .form-actions {
+      margin-top: 15px;
+    }
+  }
+  &.collapsed {
+    .index-filter-button .btn {
+      border-bottom-left-radius: 0;
+    }
+  }
+}
+
+
+.index-pagination-row {
+  margin-bottom: 9px;
+  .row, ul {
+    margin-bottom: 0;
+  }
+  .pagination-wrap {
+    text-align: right;
+    form {
+      display: inline;
+    }
+    select {
+      width: 80px;
+      height: 30px;
+      display: inline;
+      float: right;
+      margin-left: 10px;
+    }
+    ul.pagination {
+      margin: 0;
+      a {
+        color: $grey;
+      }
+      li.active a {
+        background: $light-grey;
+        border-color: #ddd;
+        color: $grey;
+        &:hover {
+          color: $grey !important;
+        }
+      }
+    }
+  }
 }

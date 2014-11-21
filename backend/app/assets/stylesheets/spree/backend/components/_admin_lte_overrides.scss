@@ -1,4 +1,12 @@
 // Admin LTE overrides
+html, body {
+  background-color: white;
+}
+
+.content {
+  background-color: white;
+}
+
 ul.sidebar-menu li.treeview span.pull-right {
   font-size: 0.7em;
   margin-top: 4px;
@@ -12,4 +20,20 @@ ul.sidebar-menu li.treeview span.pull-right {
 // We don't use gravatar image there, so overwrite the height
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
   height: auto;
+}
+
+//TODO: clean this up and move the variable
+
+$grey: #4B4B4B;
+
+.skin-blue {
+  .navbar {
+    background-color: $grey;
+  }
+  .logo {
+    background-color: darken($gray, 10%);
+    &:hover {
+      background-color: darken($gray, 15%);
+    }
+  }
 }

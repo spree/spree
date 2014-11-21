@@ -12,7 +12,7 @@
   <%= button_link_to Spree.t(:back_to_payment), spree.admin_order_payment_url(@order, @payment), :icon => 'arrow-left' %>
 <% end %>
 
-<table class="table table-hover table-condensed table-bordered index" id='listing_log_entries'>
+<table class="table table-hover index" id='listing_log_entries'>
   <% @log_entries.each do |entry| %>
       <thead>
         <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">

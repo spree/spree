@@ -1,0 +1,29 @@
+<div class="row index-pagination-row">
+  <div class="col-md-6">
+    <div class="batch-actions js-batch-actions is-hidden">
+      <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default btn-sm">Batch action 1</button>
+        <button type="button" class="btn btn-default btn-sm">Batch action 2</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="pagination-wrap">
+      <%= paginate collection %>
+      <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form" }) do %>
+        <%= select_tag(:per_page, options_for_select([5, 15, 30, 45, 60], params['per_page'] || 15), { :id => "js-per-page-select", :class => "form-control" }) %>
+      <% end %>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <%= javascript_tag do -%>
+    $(document).ready(function() {
+      $("#js-per-page-select").change(function() {
+        $("#js-per-page-form").submit();
+      });
+    });
+  <% end -%>
+<% end %>

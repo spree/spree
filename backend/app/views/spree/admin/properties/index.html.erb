@@ -8,10 +8,6 @@
   </span>
 <% end %>
 
-<% content_for :table_filter_title do %>
-  <%= Spree.t(:search) %>
-<% end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_property_sidebar">
     <%= search_form_for [:admin, @search] do |f| %>
@@ -19,10 +15,15 @@
       <%- locals = {:f => f} %>
       <div data-hook="admin_property_index_search" class="form-group">
         <%= f.label :name_cont, Spree.t(:name) %>
-        <%= f.text_field :name_cont, :size => 15, :class => "form-control" %>
+        <%= f.text_field :name_cont, :class => "form-control" %>
       </div>
 
-      <div class="form-buttons" data-hook="admin_pproperties_index_search_buttons">
+      <div class="form-group">
+        <%= f.label :presentation_cont, Spree.t(:presentation) %>
+        <%= f.text_field :presentation_cont, :class => "form-control" %>
+      </div>
+
+      <div class="form-actions" data-hook="admin_pproperties_index_search_buttons">
         <%= button Spree.t(:search), 'search' %>
       </div>
 
@@ -33,7 +34,7 @@
 <div id="new_property"></div>
 
 <% if @properties.any? %>
-  <table class="table table-hover table-condensed table-bordered index" id='listing_properties' data-hook>
+  <table class="table table-hover index" id='listing_properties' data-hook>
     <thead>
       <tr data-hook="listing_properties_header">
         <th><%= Spree.t(:name) %></th>

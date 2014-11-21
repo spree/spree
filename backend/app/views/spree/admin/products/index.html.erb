@@ -8,8 +8,10 @@
   </span>
 <% end if can?(:create, Spree::Product) %>
 
-<% content_for :table_filter_title do %>
-  <%= Spree.t(:search) %>
+<% content_for :page_tabs do %>
+  <li role="presentation" class="active"><a href="#">All</a></li>
+  <li role="presentation"><a href="#">No SEO</a></li>
+  <li role="presentation"><a href="#">No Images</a></li>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -33,7 +35,7 @@
           </label>
         </div>
       </div>
-      <div data-hook="admin_products_index_search_buttons">
+      <div data-hook="admin_products_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search' %>
       </div>
     <% end %>
@@ -43,12 +45,15 @@
 
 <div id="new_product_wrapper" data-hook></div>
 
-<%= paginate @collection %>
+<%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @collection } %>
 
 <% if @collection.any? %>
-  <table class="table table-hover table-condensed table-bordered index" id="listing_products">
+  <table class="table table-hover index" id="listing_products">
     <thead>
       <tr data-hook="admin_products_index_headers">
+        <th>
+          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox-main' %>
+        </th>
         <th><%= Spree.t(:sku) %></th>
         <th colspan="2"><%= sort_link @search,:name, Spree.t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
         <th><%= sort_link @search,:master_default_price_amount, Spree.t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
@@ -58,6 +63,9 @@
     <tbody>
       <% @collection.each do |product| %>
           <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
+            <td class="row-checkbox">
+              <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox' %>
+            </td>
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="image"><%= mini_image product, class: "thumbnail" %></td>
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
@@ -78,4 +86,4 @@
   </div>
 <% end %>
 
-<%= paginate @collection %>
+<%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @collection } %>

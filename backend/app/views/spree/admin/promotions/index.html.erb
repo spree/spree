@@ -6,34 +6,30 @@
   <%= button_link_to Spree.t(:new_promotion), spree.new_admin_promotion_path, :class => "btn-success", :icon => 'add' %>
 <% end %>
 
-<% content_for :table_filter_title do %>
-  <%= Spree.t(:search) %>
-<% end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="form-group">
-        <%= label_tag :q_name_cont, 'name' %>
+        <%= label_tag :q_name_cont, Spree.t(:name) %>
         <%= f.text_field :name_cont, tabindex: 1, class: "form-control" %>
       </div>
 
       <div class="form-group">
-        <%= label_tag :q_code_cont, 'code' %>
+        <%= label_tag :q_code_cont, Spree.t(:code) %>
         <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
       </div>
 
       <div class="form-group">
-        <%= label_tag :q_path_cont, 'path' %>
+        <%= label_tag :q_path_cont, Spree.t(:path) %>
         <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
       </div>
 
       <div class="form-group">
-        <%= label_tag :q_promotion_category_id_eq, 'promotion category' %><br>
+        <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
         <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
       </div>
 
-      <div data-hook="admin_promotions_index_search_buttons">
+      <div data-hook="admin_promotions_index_search_buttons" class="form-actions">
         <%= button Spree.t(:filter_results), 'search' %>
       </div>
     <% end %>
@@ -43,7 +39,7 @@
 <%= paginate @promotions %>
 
 <% if @promotions.any? %>
-  <table class="table table-hover table-condensed table-bordered index">
+  <table class="table table-hover index">
     <thead>
       <tr>
         <th><%= Spree.t(:name) %></th>

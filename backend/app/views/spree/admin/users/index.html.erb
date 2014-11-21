@@ -19,14 +19,32 @@
         <%= f.label Spree.t(:email) %>
         <%= f.text_field :email_cont, class: "form-control" %>
       </div>
-      <div data-hook="admin_users_index_search_buttons">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label Spree.t(:first_name) %>
+            <%= f.text_field :bill_address_firstname_cont, :class => 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label Spree.t(:last_name) %>
+            <%= f.text_field :bill_address_lastname_cont, :class => 'form-control' %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label Spree.t(:company) %>
+        <%= f.text_field :bill_address_company_cont, :class => 'form-control' %>
+      </div>
+      <div data-hook="admin_users_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<table class="table table-hover table-condensed table-bordered index" id="listing_users" data-hook>
+<table class="table table-hover index" id="listing_users" data-hook>
   <thead>
     <tr data-hook="admin_users_index_headers">
       <th><%= sort_link @search,:email, Spree.t(:user), {}, {:title => 'users_email_title'} %></th>

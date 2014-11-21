@@ -1,6 +1,7 @@
 // The less opiniated icons
 .icon {                 @extend .glyphicon }
 .icon-add {             @extend .glyphicon-plus }
+.icon-cog {             @extend .glyphicon-cog }
 .icon-edit {            @extend .glyphicon-pencil }
 .icon-capture {         @extend .glyphicon-ok }
 .icon-void {            @extend .glyphicon-remove }

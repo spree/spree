@@ -1,8 +1,18 @@
 <% if content_for?(:table_filter) %>
-  <div id="table-filter" data-hook class="well">
-    <fieldset>
-      <legend><%= yield :table_filter_title %></legend>
-      <%= yield :table_filter %>
-    </fieldset>
+  <div class="filter-wrap">
+    <div class="input-group index-filter-button">
+      <span class="input-group-btn">
+        <button class="btn btn-default js-show-index-filters" type="button">
+          Filter
+          <span class="icon icon-chevron-left"></span>
+        </button>
+      </span>
+      <input type="text" placeholder="<%= Spree.t(:quick_search) %>" class="form-control">
+    </div>
+    <% unless defined?(simple) %>
+      <div id="table-filter" data-hook class="well filter-well">
+        <%= yield :table_filter %>
+      </div>
+    <% end %>
   </div>
 <% end %>

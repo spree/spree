@@ -13,7 +13,7 @@
 <%= paginate @zones %>
 
 <% if @zones.any? %>
-  <table class="table table-hover table-condensed table-bordered index" id='listing_zones' data-hook>
+  <table class="table table-hover index" id='listing_zones' data-hook>
     <thead>
       <tr data-hook="zones_header">
         <th><%= sort_link @search,:name, Spree.t(:name), :title => 'zones_order_by_name_title' %></th>
