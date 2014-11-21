@@ -1,13 +1,14 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @property } %>
 
+<% content_for :page_title do %>
+  <%= Spree.t(:new_property) %>
+<% end %>
+
 <%= form_for [:admin, @property] do |f| %>
-<div class="well">
   <fieldset data-hook="new_property">
-    <legend><%= Spree.t(:new_property) %></legend>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <div class="form-actions">
       <%= render :partial => 'spree/admin/shared/new_resource_links' %>
     </div>
   </fieldset>
-</div>
 <% end %>

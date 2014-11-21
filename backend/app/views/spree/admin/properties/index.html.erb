@@ -3,9 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <span id="new_property_link">
-    <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :remote => true, :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
-  </span>
+  <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -30,8 +28,6 @@
     <% end %>
   </div>
 <% end %>
-
-<div id="new_property"></div>
 
 <% if @properties.any? %>
   <table class="table table-hover index" id='listing_properties' data-hook>
