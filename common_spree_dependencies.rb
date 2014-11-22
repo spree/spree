@@ -6,8 +6,9 @@ source 'https://rubygems.org'
 platforms :ruby do
   gem 'mysql2'
   gem 'pg'
-  gem 'sqlite3'
 end
+
+gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 
 platforms :jruby do
   gem 'jruby-openssl'
