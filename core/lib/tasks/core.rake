@@ -42,7 +42,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       # Dump the schema
       Rake::Task["db:schema:dump"].invoke
     else
-      say "Task cancelled."
+      say "Task canceled."
       exit
     end
   end
@@ -58,7 +58,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         Rake::Task["db:create"].invoke
         Rake::Task["db:remigrate"].invoke
       else
-        say "Task cancelled, exiting."
+        say "Task canceled, exiting."
         exit
       end
     else

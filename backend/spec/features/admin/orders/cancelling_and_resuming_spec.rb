@@ -22,7 +22,7 @@ describe "Cancelling + Resuming", :type => :feature do
     end
   end
 
-  context "with a cancelled order" do
+  context "with a canceled order" do
     before do
       order.update_column(:state, 'canceled')
     end

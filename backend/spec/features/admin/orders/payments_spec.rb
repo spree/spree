@@ -128,7 +128,7 @@ describe 'Payments', :type => :feature do
           end
         end
 
-        it 'allows the amount change to be cancelled by clicking on the cancel button' do
+        it 'allows the amount change to be canceled by clicking on the cancel button' do
           within_row(1) do
             click_icon(:edit)
 
