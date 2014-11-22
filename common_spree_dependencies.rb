@@ -45,3 +45,5 @@ group :test, :development do
     gem 'pry-byebug'
   end
 end
+
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
