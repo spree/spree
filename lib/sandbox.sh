@@ -10,7 +10,7 @@ fi
 
 cd ./sandbox
 echo "gem 'spree', :path => '..'" >> Gemfile
-echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => 'master'" >> Gemfile
+echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '2-4-stable'" >> Gemfile
 
 cat <<RUBY >> Gemfile
 group :test, :development do
