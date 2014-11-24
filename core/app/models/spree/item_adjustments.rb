@@ -37,6 +37,7 @@ module Spree
       #
       # Additional tax adjustments are the opposite, affecting the final total.
       promo_total = 0
+      item.adjustment_total = 0
       run_callbacks :promo_adjustments do
         promotion_total = adjustments.promotion.reload.map do |adjustment|
           adjustment.update!(@item)

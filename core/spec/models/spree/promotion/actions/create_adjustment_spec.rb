@@ -44,6 +44,25 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
       action.perform(payload)
       expect(promotion.credits_count).to eq(1)
     end
+
+    context "with two CreateAdjustment actions" do 
+      let(:second_action) { Spree::Promotion::Actions::CreateAdjustment.new }
+
+      before do 
+        second_action.calculator = action.calculator.dup
+        promotion.actions << second_action
+      end
+
+      context "whose combined discount is larger than item + ship total" do 
+        let(:order) { create(:order_with_line_items, shipment_cost: 5) }
+
+        it "should create two discounts that together equal the item + ship total" do
+          expect(action.perform(payload)).to be(true)
+          expect(second_action.perform(payload)).to be(true)
+          expect(order.adjustments.map(&:amount).reduce(&:+)).to eq(-1 * (order.item_total + order.ship_total))
+        end
+      end
+    end
   end
 
   context "#destroy" do
