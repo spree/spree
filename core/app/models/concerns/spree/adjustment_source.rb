@@ -3,6 +3,8 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      before_destroy :deals_with_adjustments_for_deleted_source
+      
       def deals_with_adjustments_for_deleted_source
         adjustment_scope = self.adjustments.includes(:order).references(:spree_orders)
 

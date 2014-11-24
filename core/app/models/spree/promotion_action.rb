@@ -15,5 +15,27 @@ module Spree
     def perform(options = {})
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
+
+  protected
+    attr_accessor :order, :amount
+    delegate :item_total, :ship_total, :adjustment_total, to: :order
+    delegate :compute, to: :calculator
+
+    def amount_must_not_exceed_available_amount
+      @amount = [available_amount, amount].min
+    end
+
+    def available_amount
+      item_total + ship_total - adjustment_total
+    end
+
+    def update_available_amount
+      order.adjustment_total += amount
+    end
+
+    def label
+      "#{Spree.t(:promotion)} (#{promotion.name})"
+    end
+
   end
 end
