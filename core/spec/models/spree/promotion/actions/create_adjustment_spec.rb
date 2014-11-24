@@ -46,20 +46,28 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
     end
 
     context "with two CreateAdjustment actions" do 
-      let(:second_action) { Spree::Promotion::Actions::CreateAdjustment.new }
+      let(:second_action) { Spree::Promotion::Actions::CreateAdjustment.new(calculator: second_calculator) }
+      let(:second_calculator) { action.calculator.dup }
 
       before do 
-        second_action.calculator = action.calculator.dup
         promotion.actions << second_action
+        promotion.actions.each { |a| a.perform(payload) }
       end
 
       context "whose combined discount is larger than item + ship total" do 
         let(:order) { create(:order_with_line_items, shipment_cost: 5) }
 
         it "should create two discounts that together equal the item + ship total" do
-          expect(action.perform(payload)).to be(true)
-          expect(second_action.perform(payload)).to be(true)
           expect(order.adjustments.map(&:amount).reduce(&:+)).to eq(-1 * (order.item_total + order.ship_total))
+        end
+      end
+
+      context 'with the second action using the FlatPercentItemTotal calculator' do
+        let(:order) { create(:order_with_line_items, line_items_price: 25) }
+        let(:second_calculator) { Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
+
+        it 'should calculate the second discount as a percentage of the total after the first discount is applied' do 
+          expect(order.adjustments[1].amount).to eq(-1.5)
         end
       end
     end

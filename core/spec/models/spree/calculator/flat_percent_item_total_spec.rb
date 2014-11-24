@@ -4,7 +4,10 @@ describe Spree::Calculator::FlatPercentItemTotal, :type => :model do
   let(:calculator) { Spree::Calculator::FlatPercentItemTotal.new }
   let(:line_item) { mock_model Spree::LineItem }
 
-  before { allow(calculator).to receive_messages preferred_flat_percent: 10 }
+  before do 
+    allow(calculator).to receive_messages preferred_flat_percent: 10
+    allow(line_item).to receive_messages adjustment_total: 0
+  end
 
   context "compute" do
     it "should round result correctly" do
