@@ -1,32 +1,28 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
-  let(:order) { create(:order_with_line_items, :line_items_count => 1) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
+  let(:order) { create(:order_with_line_items) }
+  let(:promotion) { create(:promotion, :with_order_adjustment) }
+  let(:action) { promotion.actions.first }
   let(:payload) { { order: order } }
 
-  # From promotion spec:
   context "#perform" do
-    before do
-      action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
-      promotion.promotion_actions = [action]
-      allow(action).to receive_messages(:promotion => promotion)
+
+    it "should create a discount" do
+      action.perform(payload)
+      expect(order.adjustments.count).to eq(1)
     end
 
     it "should create a discount with correct negative amount" do
-      order.shipments.create!(:cost => 10)
-
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
-      expect(order.adjustments.count).to eq(1)
       expect(order.adjustments.first.amount.to_i).to eq(-10)
     end
 
-    it "should create a discount accessible through both order_id and adjustable_id" do
+    it "should create a discount with correct associations" do
       action.perform(payload)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.all_adjustments.count).to eq(1)
+      expect(order.adjustments.first.order_id).to eq(order.id)
+      expect(order.adjustments.first.adjustable_id).to eq(order.id)
+      expect(order.adjustments.first.source_id).to eq(action.id)
     end
 
     context "with two CreateAdjustment actions" do 
