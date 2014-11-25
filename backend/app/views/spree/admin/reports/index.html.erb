@@ -2,7 +2,7 @@
   <%= Spree.t(:listing_reports) %>
 <% end %>
 
-<table class="index">
+<table class="table index">
   <thead>
     <tr data-hook="reports_header">
       <th><%= Spree.t(:name) %></th>
@@ -12,7 +12,7 @@
   <tbody>
     <% @reports.each do |key, value| %>
     <tr data-hook="reports_row">
-      <td class="align-center"><%= link_to value[:name], send("#{key}_admin_reports_url".to_sym) %></td>
+      <td><%= link_to value[:name], send("#{key}_admin_reports_url".to_sym) %></td>
       <td style="padding-left:1em"><%= value[:description] %></td>
     </tr>
     <% end %>

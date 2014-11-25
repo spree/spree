@@ -1,4 +1,4 @@
-<table class="index" id='payments' data-order-id='<%= @order.number %>'>
+<table class="table table-condensed table-bordered index" id='refunds' data-order-id='<%= @order.number %>'>
   <thead>
     <tr data-hook="refunds_header">
       <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
@@ -8,7 +8,7 @@
       <th><%= Spree.t(:transaction_id) %></th>
       <th><%= Spree.t(:reason) %></th>
       <% if show_actions %>
-        <th class="actions"></th>
+        <th></th>
       <% end %>
     </tr>
   </thead>
@@ -16,14 +16,14 @@
     <% refunds.each do |refund| %>
       <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
         <td><%= pretty_time(refund.created_at) %></td>
-        <td class="align-center"><%= refund.payment.identifier %></td>
-        <td class="align-center amount"><%= refund.display_amount %></td>
-        <td class="align-center"><%= payment_method_name(refund.payment) %></td>
-        <td class="align-center"><%= refund.transaction_id %></td>
-        <td class="align-center"><%= truncate(refund.reason.name, length: 100) %></td>
+        <td><%= refund.payment.identifier %></td>
+        <td class="amount"><%= refund.display_amount %></td>
+        <td><%= payment_method_name(refund.payment) %></td>
+        <td><%= refund.transaction_id %></td>
+        <td><%= truncate(refund.reason.name, length: 100) %></td>
         <% if show_actions %>
-          <td class="actions">
-            <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true %>
+          <td class="actions actions-1">
+            <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, :class => "btn btn-default btn-sm" %>
           </td>
         <% end %>
       </tr>

@@ -1,12 +1,12 @@
 <fieldset id="order_details" data-hook>
-  <div class="clear"></div>
+  
   <legend align="center"><%= Spree.t(:confirm) %></legend>
   <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
 </fieldset>
 
 <br />
 
-<div class="form-buttons" data-hook="buttons">
+<div class="form-actions" data-hook="buttons">
   <%= submit_tag Spree.t(:place_order), :class => 'continue button primary' %>
   <script>Spree.disableSaveOnClick();</script>
 </div>

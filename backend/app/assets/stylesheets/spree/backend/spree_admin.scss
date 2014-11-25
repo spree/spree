@@ -1,45 +1,287 @@
-@import 'spree/backend/globals/functions';
-@import 'spree/backend/globals/variables_override';
-@import 'spree/backend/globals/variables';
-@import 'spree/backend/globals/mixins';
+@import 'bootstrap-sprockets';
+@import 'bootstrap';
 
-@import 'spree/backend/shared/typography';
-@import 'spree/backend/shared/tables';
-@import 'spree/backend/shared/icons';
-@import 'spree/backend/shared/forms';
-@import 'spree/backend/shared/layout';
+@import 'AdminLTE';
 
-@import 'spree/backend/components/states';
-@import 'spree/backend/components/actions';
-@import 'spree/backend/components/date-picker';
-@import 'spree/backend/components/messages';
-@import 'spree/backend/components/pagination';
-@import 'spree/backend/components/progress';
-@import 'spree/backend/components/table-filter';
-@import 'spree/backend/components/navigation';
-@import 'spree/backend/components/sidebar';
-@import 'spree/backend/components/product_autocomplete';
+@import 'components/_settings';
+@import 'components/_spinner';
+@import 'components/_tables';
+@import 'components/_labels';
+@import 'components/_icons';
+@import 'components/_select2';
+@import 'components/_bootstrap_overrides';
+@import 'components/_admin_lte_overrides';
 
-@import 'font-awesome';
-@import 'spree/backend/plugins/powertip';
-@import 'spree/backend/plugins/select2';
-@import 'spree/backend/plugins/token-input';
-@import 'spree/backend/plugins/jstree';
+.margint {
+  margin-top: 15px;
+}
+.marginr {
+  margin-right: 10px;
+}
+.marginb {
+  margin-bottom: 15px;
+}
+.marginl {
+  margin-left: 10px;
+}
+.no-marginb {
+  margin-bottom: 0;
+}
+.no-margint {
+  margin-top: 0;
+}
+.no-borderb {
+  border-bottom: 0;
+}
+.is-hidden {
+  display: none;
+}
+#progress {
+  display: none;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 999;
+  .alert {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+.alert-progress {
+  .spinner {
+    float: right;
+  }
+}
+// Content header / page title
+.right-side > .content-header {
+  box-shadow: none !important;
+  padding-left: 15px;
+  height: 63px;
+  position: relative;
+  //border-bottom: 1px solid #ddd;
+  &.with-page-tabs {
+    padding-bottom: 0;
+    height: 92px;
+  }
+  h1 {
+    margin: 6px 0;
+    span.glyphicon {
+      font-size: 0.7em;
+      margin: 0 0.2em;
+      color: $medium-grey;
+    }
+  }
+  .page-actions {
+    form, li, button, a {
+      display: inline-block;
+    }
+  }
+  .page-actions form button,
+  .page-actions a {
+    margin-left: 5px;
+  }
+  .nav-tabs {
+    margin-top: 10px;
+    border-bottom: none;
+    position: absolute;
+    bottom: 0;
+    z-index: 999;
+    li a {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+  }
+}
+// used on stock transfers show page
+legend .glyphicon {
+  font-size: 16px;
+}
+.select2-container {
+  display: block;
+  width: 100%;
+  .select2-choice {
+    line-height: 30px;
+    height: 34px;
+    abbr {
+      top: 9px;
+    }
+  }
+}
+.icon-link {
+  color: #444;
+}
+// user edit page (api key buttons)
+div.form-actions {
+  form {
+    display: inline;
+    // when a button_to is used within the form-actions it renders a div
+    div {
+      display: inline;
+    }
+  }
+}
+// Apply display-inline class to button_to tags outside form-actions div
+.display-inline {
+  display: inline;
+  div {
+    display: inline;
+  }
+}
+div.form-actions span.or {
+  padding: 0 5px;
+}
+fieldset legend {
+  margin-bottom: 15px;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  li {
+    padding: 0;
+    margin: 0;
+  }
+  &.ul-with-markup {
+    margin: 0 0 0 16px;
+    list-style: circle;
+  }
+}
+.panel {
+  .nav.nav-pills li a {
+    border-radius: 0;
+  }
+  .nav.nav-stacked li {
+    margin-top: 0;
+  }
+}
+// better alignment of the icons in the sidebar
+#sidebar ul.nav li .icon-link span.icon {
+  float: left;
+  margin: 2px 7px 0 0;
+}
 
-@import 'spree/backend/sections/adjustments_table';
-@import 'spree/backend/sections/alerts';
-@import 'spree/backend/sections/orders';
-@import 'spree/backend/sections/overview';
-@import 'spree/backend/sections/products';
-@import 'spree/backend/sections/promotions';
-@import 'spree/backend/sections/edit_checkouts';
-@import 'spree/backend/sections/bulk_transfer';
-@import 'spree/backend/sections/return_authorizations';
-@import 'spree/backend/sections/tax_zones';
-@import 'spree/backend/sections/log_entries';
-@import 'spree/backend/sections/taxons';
-@import 'spree/backend/sections/users';
+.filter-wrap {
+  margin-bottom: 17px;
+  .index-filter-button {
+    .btn {
+      color: #3c8dbc;
+      box-shadow: none;
+      border-color: #ccc;
+      .icon {
+        font-size: 0.7em;
+        margin: -1px 0 0 4px;
+      }
+    }
+  }
+  .filter-well {
+    display: none;
+    background: #fafafa;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: none;
+    border-top: 0;
+    .row {
+      margin-bottom: 0;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    .form-actions {
+      margin-top: 15px;
+    }
+  }
+  &.collapsed {
+    .index-filter-button .btn {
+      border-bottom-left-radius: 0;
+    }
+  }
+}
 
-@import 'spree/backend/hacks/mozilla';
-@import 'spree/backend/hacks/opera';
-@import 'spree/backend/hacks/ie';
+.index-pagination-row {
+  margin-bottom: 9px;
+  .row, ul {
+    margin-bottom: 0;
+  }
+  .pagination-wrap {
+    text-align: right;
+    form {
+      display: inline;
+    }
+    select {
+      width: 80px;
+      height: 30px;
+      display: inline;
+      float: right;
+      margin-left: 10px;
+    }
+    ul.pagination {
+      margin: 0;
+      a {
+        color: $grey;
+      }
+      li.active a {
+        background: $light-grey;
+        border-color: #ddd;
+        color: $grey;
+        &:hover {
+          color: $grey !important;
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+}
+.main-sidebar {
+  position: absolute;
+  top: 113px;
+  right: 0;
+  min-height: 100%;
+  background-color: #fbfbfb;
+  border-left: 1px solid #ddd;
+  width: 170px;
+  .nav.nav-pills.nav-stacked > li > a {
+    border-left: none;
+    border-right: 3px solid transparent;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
+    border-right-color: #3c8dbc;
+    border-top-color: #ddd;
+    border-bottom-color: #ddd;
+    background-color: #fff;
+    margin-left: -1px;
+  }
+  .nav-stacked > li {
+    height: 42px !important;
+    margin: 0;
+  }
+  li.collapse-sidebar {
+    margin-top: 30px;
+    font-size: 0.9em;
+    span.icon {
+      font-size: 0.8em;
+    }
+    a, span.icon {
+      color: lighten($grey, 16%) !important;
+    }
+  }
+  &.collapsed {
+    width: 45px;
+    span.text {
+      display: none;
+    }
+    a {
+      height: 42px !important;
+    }
+    .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
+      margin-right: 0;
+    }
+  }
+}

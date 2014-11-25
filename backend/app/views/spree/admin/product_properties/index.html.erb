@@ -1,28 +1,23 @@
-<%= render 'spree/admin/shared/product_sub_menu' %>
 <%= render 'spree/admin/shared/product_tabs', :current => 'Product Properties' %>
-<%= render 'spree/shared/error_messages', :target => @product %>
+<%= render 'spree/admin/shared/error_messages', :target => @product %>
 
 <% content_for :page_actions do %>
-  <ul class="tollbar inline-menu">
-    <li>
-      <%= link_to_add_fields Spree.t(:add_product_properties), 'tbody#product_properties', :class => 'plus button' %>
-    </li>
-    <li>
-      <span id="new_ptype_link">
-        <%= link_to Spree.t(:select_from_prototype), available_admin_prototypes_url, :remote => true, 'data-update' => 'prototypes', :class => 'button fa fa-copy' %>
-      </span>
-    </li>
-  </ul>
+  <%= button_link_to Spree.t(:add_product_properties), "javascript:;", { :icon => 'add', :'data-target' => "tbody#product_properties", :class => 'btn-success spree_add_fields' } %>
+  <span id="new_ptype_link"><%= button_link_to Spree.t(:select_from_prototype), available_admin_prototypes_url, { :icon => 'th-list', :remote => true, 'data-update' => 'prototypes', :class => 'btn-default' } %></span>
 <% end %>
 
 <%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <div class="add_product_properties" data-hook="add_product_properties"></div>
 
     <div id="prototypes" data-hook></div>
-    <%= image_tag 'select2-spinner.gif', :plugin => 'spree', :style => 'display:none;', :id => 'busy_indicator' %>
 
-    <table class="index sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
+    <div class="alert alert-info alert-progress" id="busy_indicator" style="display: none;">
+      <div class="spinner">Loading..</div>
+      <div class="progress-message"><%= Spree.t(:loading) %>...</div>
+    </div>
+
+    <table class="table sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
       <thead>
         <tr data-hook="product_properties_header">
           <th colspan="2"><%= Spree.t(:property) %></th>

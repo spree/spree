@@ -2,22 +2,24 @@
   <%= Spree.t(:editing_promotion) %>
 <% end %>
 
-<%= render 'spree/admin/shared/promotion_sub_menu' %>
-
 <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
     <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
   </fieldset>
 <% end %>
 
-<div id="promotion-filters" class="row">
-  <div id="rules_container" class="alpha eight columns">
-    <%= render :partial => 'rules' %>
+<div id="promotion-filters" class="row margint">
+  <div id="rules_container" class="col-md-6">
+    <div class="well">
+      <%= render :partial => 'rules' %>
+    </div>
   </div>
 
-  <div id="actions_container" class="omega eight columns">
-    <%= render :partial => 'actions' %>
+  <div id="actions_container" class="col-md-6">
+    <div class="well">
+      <%= render :partial => 'actions' %>
+    </div>
   </div>
 </div>
 

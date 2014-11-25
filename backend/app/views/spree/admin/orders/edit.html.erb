@@ -1,19 +1,20 @@
 <% content_for :page_actions do %>
   <% if can?(:fire, @order) %>
-    <li><%= event_links %></li>
+    <%= event_links %>
   <% end %>
   <% if can?(:resend, @order) %>
-    <li><%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), method: :post, icon: 'email' %></li>
-  <% end %>
-  <% if can?(:admin, Spree::Order) %>
-    <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, icon: 'arrow-left' %></li>
+    <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), method: :post, icon: 'envelope' %>
   <% end %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
 
+<% content_for :page_title do %>
+  / <%= Spree.t(:shipments) %>
+<% end %>
+
 <div data-hook="admin_order_edit_header">
-  <%= render partial: 'spree/shared/error_messages', locals: { target: @order } %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
 </div>
 
 <% if @order.payments.exists? && @order.considered_risky? %>
@@ -23,7 +24,7 @@
 <%= render partial: 'add_product' if @order.shipment_state != 'shipped' && can?(:update, @order) %>
 
 <% if @order.line_items.empty? %>
-  <div class="no-objects-found">
+  <div class="alert alert-warning">
     <%= Spree.t(:your_order_is_empty_add_product)%>
   </div>
 <% end %>

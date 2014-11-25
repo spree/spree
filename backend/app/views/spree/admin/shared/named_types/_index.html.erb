@@ -1,41 +1,30 @@
-<%= render partial: 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= page_title %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <ul class="actions inline-menu">
-    <li>
-      <%= button_link_to new_button_text, new_object_url, { icon: 'plus', id: 'admin_new_named_type' } %>
-    </li>
-  </ul>
+  <%= button_link_to new_button_text, new_object_url, { icon: 'add', id: 'admin_new_named_type', :class => "btn-success" } %>
 <% end %>
 
 <% if @collection.any? %>
-  <table class="index" id='listing_named_types' data-hook>
-    <colgroup>
-      <col style="width: 65%" />
-      <col style="width: 20%" />
-      <col style="width: 15%" />
-    </colgroup>
+  <table class="table table-condensed table-bordered index" id='listing_named_types' data-hook>
     <thead>
       <tr data-hook="named_types_header">
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:state) %></th>
-        <th class="actions"></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <% @collection.each do |named_type| %>
-        <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row">
           <td class="align-center">
             <%= named_type.name %>
           </td>
           <td class="align-center">
             <%= Spree.t(named_type.active? ? :active : :inactive) %>
           </td>
-          <td class="actions">
+          <td class="actions actions-1">
             <% if named_type.mutable? %>
               <%= link_to_edit named_type, no_text: true %>
             <% end %>
@@ -45,7 +34,7 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: resource_name) %>,
     <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>

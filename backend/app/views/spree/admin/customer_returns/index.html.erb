@@ -2,44 +2,41 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any?(&:shipped?) %>
-    <li>
-      <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'plus' %>
-    </li>
+    <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add', class: 'btn-success' %>
   <% end %>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:customer_returns) %>
+  / <%= Spree.t(:customer_returns) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) %>
 
   <% if @customer_returns.any? %>
-    <table class="index">
+    <table class="table index">
       <thead data-hook="customer_return_header">
         <tr>
           <th><%= Spree.t(:return_number) %></th>
           <th><%= Spree.t(:pre_tax_total) %></th>
           <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
           <th><%= Spree.t(:reimbursement_status) %></th>
-          <th class="actions"></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
         <% @customer_returns.each do |customer_return| %>
-          <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row" class="<%= cycle('odd', 'even')%>">
+          <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row">
             <td><%= link_to customer_return.number, edit_admin_order_customer_return_path(@order, customer_return) %></td>
             <td><%= customer_return.display_pre_tax_total.to_html %></td>
             <td><%= pretty_time(customer_return.created_at) %></td>
             <td>
               <% if customer_return.fully_reimbursed? %>
-                <span class="state success"><%= Spree.t(:reimbursed) %></span>
+                <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
               <% else %>
-                <span class="state notice"><%= Spree.t(:incomplete) %></span>
+                <span class="label label-info"><%= Spree.t(:incomplete) %></span>
               <% end %>
             </td>
-            <td class='actions align-center' data-hook="admin_orders_customer_returns_index_row_actions">
+            <td class='actions actions-1' data-hook="admin_orders_customer_returns_index_row_actions">
               <%= link_to_edit_url edit_admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true %>
             </td>
           </tr>
@@ -47,14 +44,13 @@
       </tbody>
     </table>
   <% else %>
-    <div class="alpha twelve columns no-objects-found">
+    <div class="alert alert-info no-objects-found">
       <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/customer_return')) %>,
       <%= link_to Spree.t(:add_one), spree.new_admin_order_customer_return_path(@order) %>!
     </div>
   <% end %>
-
 <% else %>
-  <div data-hook="customer_return_cannot_create" class="no-objects-found">
+  <div data-hook="customer_return_cannot_create" class="alert alert-info no-objects-found">
     <%= Spree.t(:cannot_create_customer_returns) %>
   </div>
 <% end %>

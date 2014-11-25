@@ -18,20 +18,83 @@ jQuery(function($) {
   // Vertical align of checkbox fields
   $('.field.checkbox label').vAlign()
 
-  <% # Re-adjusting admin menu during test causes tests to fail,
-     # like states_spec and shipping_methods_spec. Let's not do this. %>
-  <% unless Rails.env.test? %>
-    $('.main-menu-wrapper ul').AdaptiveMenu({
-      text: "<a href='#'><i class='fa fa-chevron-down'></i> " + Spree.translations.more + "</a>",
-      klass: "dropdown"
-    });
-  <% end %>
-
   // Add some tips
   $('.with-tip').powerTip({
     smartPlacement: true,
     fadeInTime: 50,
     fadeOutTime: 50,
+  });
+
+  $('.js-show-index-filters').click(function(){
+    $(".filter-well").slideToggle();
+    $(this).parents(".filter-wrap").toggleClass("collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-down");
+  });
+
+  $('.js-index-checkbox-main').click(function(){
+    if($(this).prop('checked')){
+      $(".js-index-checkbox").attr("checked", "checked");
+    } else {
+      $(".js-index-checkbox").attr("checked", false);
+    }
+    showHideBatchActions();
+  });
+
+  $('.row-checkbox input').change(function(){
+    showHideBatchActions();
+  });
+
+  $(".js-collapse-sidebar").click(function(){
+    $(".main-sidebar").toggleClass("collapsed");
+    $("section.content").toggleClass("sidebar-collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-right");
+    $("span.icon", $(this)).toggleClass("icon-chevron-left");
+  });
+
+  function showHideBatchActions(){
+    var checkedCount = 0;
+    $(".js-index-checkbox").each(function(){
+      if($(this).prop('checked')){
+        checkedCount++;
+      }
+    });
+
+    if(checkedCount > 0){
+      $(".batch-actions").show();
+    } else {
+      $(".batch-actions").hide();
+    }
+  }
+
+  // Replace ▼ and ▲ in sort_link with nicer icons
+  $(".sort_link").each(function(){
+    // Remove the &nbsp; in the text
+    var sort_link_text = $(this).text().replace('\xA0', '');
+
+    if(sort_link_text.indexOf("▼") >= 0){
+      $(this).text(sort_link_text.replace("▼",""));
+      $(this).append('<span class="icon icon-chevron-down"></span>');
+    } else if(sort_link_text.indexOf("▲") >= 0){
+      $(this).text(sort_link_text.replace("▲",""));
+      $(this).append('<span class="icon icon-chevron-up"></span>');
+    }
+  });
+
+  // Enable sidebar toggle
+  $("[data-toggle='offcanvas']").click(function(e) {
+    e.preventDefault();
+
+    // If window is small enough, enable sidebar push menu
+    if ($(window).width() <= 992) {
+      $('.row-offcanvas').toggleClass('active');
+      $('.left-side').removeClass("collapse-left");
+      $(".right-side").removeClass("strech");
+      $('.row-offcanvas').toggleClass("relative");
+    } else {
+      // Else, enable content streching
+      $('.left-side').toggleClass("collapse-left");
+      $(".right-side").toggleClass("strech");
+    }
   });
 
   $('body')
@@ -44,35 +107,7 @@ jQuery(function($) {
     })
 
   // Make flash messages dissapear
-  setTimeout('$(".flash").fadeOut()', 5000);
-
-  // Highlight hovered table column
-  $('table tbody tr td.actions').find('a, button').hover(function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.addClass(klass)
-    tr.prev().addClass('before-' + klass);
-  }, function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.removeClass(klass)
-    tr.prev().removeClass('before-' + klass);
-  });
-
-  // Trunkate text in page_title that didn't fit
-  var truncate_elements = $('.truncate');
-
-  truncate_elements.each(function(){
-    $(this).trunk8();
-  });
-  $(window).resize(function (event) {
-    truncate_elements.each(function(){
-      $(this).trunk8();
-    })
-  });
-
-  // Make height of dt/dd elements the same
-  $("dl").equalize('outerHeight');
+  setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
 
 });
 
@@ -82,10 +117,10 @@ $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 show_flash = function(type, message) {
   var flash_div = $('.flash.' + type);
   if (flash_div.length == 0) {
-    flash_div = $('<div class="flash ' + type + '" />');
-    $('#wrapper').prepend(flash_div);
+    flash_div = $('<div class="alert alert-' + type + '" />');
+    $('#main-container').prepend(flash_div);
   }
-  flash_div.html(message).show().delay(5000).fadeOut(500);
+  flash_div.html(message).show().delay(5000).slideUp();
 }
 
 
@@ -137,6 +172,7 @@ $(document).ready(function(){
              }
     });
   });
+
   var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");

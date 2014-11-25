@@ -1,0 +1,65 @@
+// Admin LTE overrides
+html, body {
+  background-color: white;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.content {
+  background-color: white;
+  padding-top: 0;
+  &.with-sidebar {
+    padding-right: 170px;
+    .col-md-12 {
+      padding-right: 30px;
+    }
+  }
+  &.sidebar-collapsed {
+    padding-right: 45px;
+  }
+}
+
+ul.sidebar-menu li.treeview span.pull-right {
+  font-size: 0.7em;
+  margin-top: 4px;
+  color: $grey;
+}
+
+.alert {
+  margin-left: 0;
+}
+
+// We don't use gravatar image there, so overwrite the height
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+  height: auto;
+  background: lighten($grey, 5%) !important;
+}
+
+//TODO: clean this up and move the variable
+
+$grey: #4B4B4B;
+
+.skin-blue {
+  .navbar {
+    background-color: $grey;
+  }
+  .logo {
+    background-color: darken($gray, 10%);
+    &:hover {
+      background-color: darken($gray, 15%);
+    }
+  }
+}

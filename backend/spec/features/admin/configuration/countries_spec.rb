@@ -13,8 +13,9 @@ module Spree
       click_button "Create"
 
       accept_alert do
-        click_icon :trash
+        click_icon :delete
       end
+
       wait_for_ajax
 
       expect { Country.find(country.id) }.to raise_error

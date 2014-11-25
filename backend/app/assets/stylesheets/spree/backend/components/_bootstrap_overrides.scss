@@ -1,0 +1,13 @@
+// Bootstrap overrides
+.well {
+  background: #fff;
+}
+// Override the bootstrap font-face with the right asset-url
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: asset-url('glyphicons-halflings-regular.eot');
+  src: asset-url('glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+       asset-url('glyphicons-halflings-regular.woff') format('woff'),
+       asset-url('glyphicons-halflings-regular.ttf') format('truetype'),
+       asset-url('glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}

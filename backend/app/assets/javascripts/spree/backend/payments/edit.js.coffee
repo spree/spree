@@ -50,7 +50,7 @@ jQuery ($) ->
     $new_button: (action) ->
       $('<a />')
         .attr
-          class: "fa fa-#{action} icon_link no-text with-tip"
+          class: "payment-action-#{action} icon_link no-text with-tip"
           title: Spree.translations[action]
         .data
           action: action
@@ -67,7 +67,7 @@ jQuery ($) ->
           fadeOutTime:    50
 
     $buttons: ->
-      @$actions().find(".fa-#{@action}, .fa-cancel")
+      @$actions().find(".payment-action-#{@action}, .payment-action-cancel")
 
     $actions: ->
       @$el.find('.actions')

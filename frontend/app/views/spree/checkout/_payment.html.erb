@@ -12,7 +12,7 @@
       </div>
 
       <div id="existing_cards">
-        <p class="field" data-hook="existing_cards">
+        <p class="form-group" data-hook="existing_cards">
           <table class="existing-credit-card-list">
             <tbody>
               <% @payment_sources.each do |card| %>
@@ -62,7 +62,7 @@
 
 <br class="space" />
 
-<div class="form-buttons" data-hook="buttons">
+<div class="form-actions" data-hook="buttons">
   <%= submit_tag Spree.t(:save_and_continue), :class => 'continue button primary' %>
   <script>Spree.disableSaveOnClick();</script>
 </div>

@@ -1,0 +1,21 @@
+<% if can? :admin, Spree::Order %>
+  <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
+<% end %>
+
+<% if can? :admin, Spree::Product %>
+  <%= main_menu_tree Spree.t(:products), icon: "products", sub_menu: "product" %>
+<% end %>
+
+<% if can? :admin, Spree::Admin::ReportsController %>
+  <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
+<% end %>
+
+<% if can? :admin, Spree::Promotion %>
+  <%= main_menu_tree Spree.t(:promotions), icon: "promotion", sub_menu: "promotion" %>
+<% end %>
+
+<% if Spree.user_class && can?(:admin, Spree.user_class) %>
+  <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
+<% end %>
+
+<%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration" %>

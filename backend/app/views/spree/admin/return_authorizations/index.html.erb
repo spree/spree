@@ -2,48 +2,48 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any? &:shipped? %>
-    <li>
-      <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :icon => 'plus' %>
-    </li>
+    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'add' %>
   <% end %>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), spree.admin_orders_path, :icon => 'arrow-left' %></li>
 <% end %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:return_authorizations) %>
+  / <%= Spree.t(:return_authorizations) %>
 <% end %>
 
-<% if @order.shipments.any?(&:shipped?) || @order.return_authorizations.any? %>
-  <table class="index">
+<% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>
+  <table class="table index">
     <thead data-hook="rma_header">
       <tr>
         <th><%= Spree.t(:rma_number) %></th>
         <th><%= Spree.t(:status) %></th>
         <th><%= Spree.t(:pre_tax_total) %></th>
         <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-        <th class="actions"></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <% @return_authorizations.each do |return_authorization| %>
-        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row" class="<%= cycle('odd', 'even')%>">
+        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
           <td><%= return_authorization.number %></td>
           <td><%= Spree.t(return_authorization.state.downcase) %></td>
           <td><%= return_authorization.display_pre_tax_total.to_html %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>
-          <td class="actions">
+          <td class="actions actions-2">
             <%= link_to_edit return_authorization, :no_text => true, :class => 'edit' %>
             <% unless return_authorization.customer_returned_items? %>
               <%= link_to_delete return_authorization, :no_text => true %>
             <% end %>
           </td>
-
         </tr>
       <% end %>
     </tbody>
   </table>
+<% elsif @order.shipments.any?(&:shipped?) %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_returns_found) %>
+  </div>
 <% else %>
-  <div data-hook="rma_cannont_create" class="no-objects-found">
+  <div data-hook="rma_cannont_create" class="alert alert-info no-objects-found">
     <%= Spree.t(:cannot_create_returns) %>
   </div>
 <% end %>

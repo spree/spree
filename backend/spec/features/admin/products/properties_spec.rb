@@ -44,7 +44,7 @@ describe "Properties", :type => :feature do
     it "should allow an admin to create a new product property", :js => true do
       click_link "Properties"
       click_link "new_property_link"
-      within('#new_property') { expect(page).to have_content("NEW PROPERTY") }
+      within('#new_property') { expect(page).to have_content("New Property") }
 
       fill_in "property_name", :with => "color of band"
       fill_in "property_presentation", :with => "color"

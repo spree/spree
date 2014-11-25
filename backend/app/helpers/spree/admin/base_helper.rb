@@ -1,6 +1,11 @@
 module Spree
   module Admin
     module BaseHelper
+      def main_div_class
+        return "col-md-12 with-sidebar" if content_for?(:sidebar)
+        "col-md-12"
+      end
+
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
         css_classes << 'field'
@@ -62,7 +67,7 @@ module Spree
       def remove_nested(fields)
         out = ''
         out << fields.hidden_field(:_destroy) unless fields.object.new_record?
-        out << (link_to icon('remove'), "#", :class => 'remove')
+        out << (link_to icon('delete'), "#", :class => 'remove')
         out.html_safe
       end
 
@@ -105,22 +110,22 @@ module Spree
         field_options = case options[:type]
         when :integer
           { :size => 10,
-            :class => 'input_integer' }
+            :class => 'input_integer form-control' }
         when :boolean
           {}
         when :string
           { :size => 10,
-            :class => 'input_string fullwidth' }
+            :class => 'input_string form-control' }
         when :password
           { :size => 10,
-            :class => 'password_string fullwidth' }
+            :class => 'password_string form-control' }
         when :text
           { :rows => 15,
             :cols => 85,
-            :class => 'fullwidth' }
+            :class => 'form-control' }
         else
           { :size => 10,
-            :class => 'input_string fullwidth' }
+            :class => 'input_string form-control' }
         end
 
         field_options.merge!({
@@ -140,19 +145,10 @@ module Spree
         }.join("<br />").html_safe
       end
 
-      def link_to_add_fields(name, target, options = {})
-        name = '' if options[:no_text]
-        css_classes = options[:class] ? options[:class] + " spree_add_fields" : "spree_add_fields"
-        link_to_with_icon('plus', name, 'javascript:', :data => { :target => target }, :class => css_classes)
-      end
-
       # renders hidden field and link to remove record using nested_attributes
-      def link_to_remove_fields(name, f, options = {})
-        name = '' if options[:no_text]
-        options[:class] = '' unless options[:class]
-        options[:class] += 'no-text with-tip' if options[:no_text]
+      def link_to_icon_remove_fields(f)
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('trash', name, url, :class => "spree_remove_fields #{options[:class]}", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('delete', '', url, :class => "spree_remove_fields btn btn-sm btn-default", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

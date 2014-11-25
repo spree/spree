@@ -1,4 +1,4 @@
-<table class="index">
+<table class="table table-condensed table-bordered">
   <thead>
     <tr data-hook="taxons_header">
       <th><%= Spree.t(:name) %></th>
@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     <% taxons.each do |taxon| %>
-      <tr id="<%= spree_dom_id(taxon) %>" data-hook="taxons_row" class="<%= cycle('odd', 'even')%>">
+      <tr id="<%= spree_dom_id(taxon) %>" data-hook="taxons_row">
         <td><%= taxon.name %></td>
         <td><%= taxon_path taxon %></td>
         <td class="actions">

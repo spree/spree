@@ -1,0 +1,29 @@
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @level } %>
+
+<%= form_tag do %>
+  <h1><%= Spree.t(:inventory_adjustment) %></h1>
+
+  <table class="basic-table">
+    <thead data-hook="inventory_header">
+      <tr>
+        <th><%= Spree.t(:sku) %></th>
+        <th><%= Spree.t(:product) %></th>
+        <th><%= Spree.t(:options) %></th>
+        <th><%= Spree.t(:adjustment) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-hook="inventory_row">
+        <td><%= @variant.sku %></td>
+        <td><%= @variant.product.name %></td>
+        <td><%= variant_options @variant %></td>
+        <td>
+          <%= text_field :level, :adjustment, :class => 'quantity form-control' %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <%= submit_tag Spree.t('actions.update') %>
+  <%= Spree.t(:or) %>
+  <%= link_to Spree.t('actions.cancel'), :controller => 'overview', :action => :index %>
+<% end %>
