@@ -12,12 +12,7 @@ module Spree
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'R'
-      super(options)
-    end
+    include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
