@@ -1,11 +1,12 @@
 module Spree
   class StockTransfer < Spree::Base
+    include Spree::Core::Permalinks.new(prefix: 'T')
+
     has_many :stock_movements, :as => :originator
 
     belongs_to :source_location, :class_name => 'StockLocation'
     belongs_to :destination_location, :class_name => 'StockLocation'
 
-    make_permalink field: :number, prefix: 'T'
 
     def to_param
       number

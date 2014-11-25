@@ -30,8 +30,6 @@ describe Spree::ReturnAuthorization, :type => :model do
       context "number is not assigned" do
         let(:return_authorization) { Spree::ReturnAuthorization.new(number: nil) }
 
-        before { allow(return_authorization).to receive_messages valid?: true }
-
         it "should assign number with random RMA number" do
           return_authorization.save
           expect(return_authorization.number).to match(/RMA\d{9}/)

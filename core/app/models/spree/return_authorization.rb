@@ -1,10 +1,11 @@
 module Spree
   class ReturnAuthorization < Spree::Base
+    include Spree::Core::Permalinks.new(prefix: 'RMA', length: 9)
+
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :inventory_units, dependent: :nullify, inverse_of: :return_authorization
     belongs_to :stock_location
-    before_create :generate_number
     before_save :force_positive_amount
 
     validates :order, presence: true
@@ -71,13 +72,6 @@ module Spree
 
       def must_have_shipped_units
         errors.add(:order, Spree.t(:has_no_shipped_units)) if order.nil? || !order.shipped_shipments.any?
-      end
-
-      def generate_number
-        self.number ||= loop do
-          random = "RMA#{Array.new(9){rand(9)}.join}"
-          break random unless self.class.exists?(number: random)
-        end
       end
 
       def process_return

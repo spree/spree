@@ -513,13 +513,6 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "#generate_order_number" do
-    it "should generate a random string" do
-      expect(order.generate_order_number.is_a?(String)).to be true
-      expect(order.generate_order_number.to_s.length > 0).to be true
-    end
-  end
-
   describe "#associate_user!" do
     let(:user) { FactoryGirl.create(:user_with_addreses) }
     let(:email) { user.email }

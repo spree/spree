@@ -5,6 +5,7 @@ module Spree
   class Order < Spree::Base
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
+    include Spree::Core::Permalinks.new(prefix: 'R')
 
     MONEY_THRESHOLD  = 999_999
     MONEY_VALIDATION = {
@@ -80,7 +81,6 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :set_currency
-    before_validation :generate_order_number, on: :create
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
@@ -111,8 +111,6 @@ module Spree
     validates :total,                MONEY_VALIDATION
 
     validate :has_available_shipment
-
-    make_permalink field: :number
 
     delegate :update_totals, :persist_totals, :to => :updater
 
@@ -326,20 +324,6 @@ module Spree
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
       self.class.unscoped.where(id: self).update_all(changes)
-    end
-
-    def generate_order_number(digits = 9)
-      self.number ||= loop do
-         # Make a random number.
-         random = "R#{Array.new(digits){rand(10)}.join}"
-         # Use the random  number if no other order exists with it.
-         if self.class.exists?(number: random)
-           # If over half of all possible options are taken add another digit.
-           digits += 1 if self.class.count > (10 ** digits / 2)
-         else
-           break random
-         end
-       end
     end
 
     def shipped_shipments

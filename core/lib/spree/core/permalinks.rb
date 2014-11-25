@@ -1,69 +1,52 @@
 module Spree
   module Core
-    module Permalinks
-      extend ActiveSupport::Concern
+    class Permalinks < Module
 
-      included do
-        class_attribute :permalink_options
+      RAND = Random.new
+      BASE = 10
+
+      DEFAULT_LENGTH = 9
+
+      def initialize(options)
+        @prefix = options.fetch(:prefix)
+        @length = options.fetch(:length, DEFAULT_LENGTH)
       end
 
-      module ClassMethods
-        def make_permalink(options={})
-          options[:field] ||= :permalink
-          self.permalink_options = options
-
-          before_validation(:on => :create) { save_permalink }
+      def included(host)
+        host.class_eval do
+          define_singleton_method :find_by_param do |*args|
+            find_by_number(*args)
+          end
+          define_singleton_method :find_by_param! do |*args|
+            find_by_number!(*args)
+          end
         end
 
-        def find_by_param(value, *args)
-          self.send("find_by_#{permalink_field}", value, *args)
-        end
+        generator = method(:generate_permalink)
 
-        def find_by_param!(value, *args)
-          self.send("find_by_#{permalink_field}!", value, *args)
-        end
-
-        def permalink_field
-          permalink_options[:field]
-        end
-
-        def permalink_prefix
-          permalink_options[:prefix] || ""
-        end
-
-        def permalink_length
-          permalink_options[:length] || 9
-        end
-
-        def permalink_order
-          order = permalink_options[:order]
-          "#{order} ASC," if order
+        host.before_validation do |instance|
+          instance.number ||= generator.call(host)
         end
       end
 
-      def generate_permalink
-        "#{self.class.permalink_prefix}#{Array.new(self.class.permalink_length){rand(9)}.join}"
-      end
+    private
 
-      def save_permalink(permalink_value=self.to_param)
-        self.with_lock do
-          permalink_value ||= generate_permalink
+      def generate_permalink(host)
+        length = @length
 
-          field = self.class.permalink_field
-            # Do other links exist with this permalink?
-            other = self.class.where("#{self.class.table_name}.#{field} LIKE ?", "#{permalink_value}%")
-            if other.any?
-              # Find the existing permalink with the highest number, and increment that number.
-              # (If none of the existing permalinks have a number, this will evaluate to 1.)
-              number = other.map { |o| o.send(field)[/-(\d+)$/, 1].to_i }.max + 1
-              permalink_value += "-#{number.to_s}"
-            end
-          write_attribute(field, permalink_value)
+        loop do
+          candidate = new_candidate(length)
+          return candidate unless host.exists?(number: candidate)
+
+          # If over half of all possible options are taken add another digit.
+          length += 1 if host.count > Rational(BASE ** length, 2)
         end
       end
-    end
-  end
-end
 
-ActiveRecord::Base.send :include, Spree::Core::Permalinks
-ActiveRecord::Relation.send :include, Spree::Core::Permalinks
+      def new_candidate(length)
+        '%s%0.*i' % [@prefix, length, RAND.rand(BASE ** length)]
+      end
+
+    end # Permalink
+  end # Core
+end # Spree

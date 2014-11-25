@@ -2,6 +2,8 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    include Spree::Core::Permalinks.new(prefix: 'H', length: 11)
+
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
@@ -22,7 +24,6 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
-    make_permalink field: :number, length: 11, prefix: 'H'
 
     scope :shipped, -> { with_state('shipped') }
     scope :ready,   -> { with_state('ready') }
