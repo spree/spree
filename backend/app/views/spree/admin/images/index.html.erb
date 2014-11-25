@@ -4,8 +4,6 @@
   <%= button_link_to Spree.t(:new_image), new_admin_product_image_url(@product), { :class => "btn-success", :icon => 'add', :id => 'new_image_link' } %>
 <% end %>
 
-<div id="images" data-hook></div>
-
 <% unless @product.images.any? || @product.variant_images.any? %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_images_found) %>.
