@@ -19,11 +19,6 @@
     <%= content_tag :li, :class => ('active' if current == 'Stock Management') do %>
       <%= link_to_with_icon 'stock', Spree.t(:stock), stock_admin_product_url(@product) %>
     <% end if can?(:stock, Spree::Product) %>
-    <li class="collapse-sidebar">
-      <a class="js-collapse-sidebar" href="javascript:;">
-        <span class="icon icon-chevron-right"></span>
-        <span class="text">Collapse sidebar</span>
-      </a>
-    </li>
+    <%= collapse_sidebar_link %>
   </ul>
 <% end %>

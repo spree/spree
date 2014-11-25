@@ -43,6 +43,15 @@ module Spree
         content_tag('li', link, :class => css_classes.join(' '))
       end
 
+      def collapse_sidebar_link
+        content_tag :li, :class => "collapse-sidebar" do
+          link_to "javascript:;", :class => "js-collapse-sidebar" do
+            content_tag(:span, nil, :class => "icon icon-chevron-right") +
+            content_tag(:span, "Collapse sidebar", :class => "text")
+          end
+        end
+      end
+
       # finds class for a given symbol / string
       #
       # Example :

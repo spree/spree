@@ -12,12 +12,7 @@
     <li<%== ' class="active"' if current == :items %>>
       <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
     </li>
-    <li class="collapse-sidebar">
-      <a class="js-collapse-sidebar" href="javascript:;">
-        <span class="icon icon-chevron-right"></span>
-        <span class="text">Collapse sidebar</span>
-      </a>
-    </li>
+    <%= collapse_sidebar_link %>
   </ul>
 
   <%# TODO: this has to go somewhere else %>
