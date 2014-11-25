@@ -13,7 +13,7 @@
 <% if @order.shipments.any?(&:shipped?) %>
 
   <% if @customer_returns.any? %>
-    <table class="table table-hover index">
+    <table class="table index">
       <thead data-hook="customer_return_header">
         <tr>
           <th><%= Spree.t(:return_number) %></th>

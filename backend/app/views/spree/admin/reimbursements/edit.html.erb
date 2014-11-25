@@ -9,7 +9,7 @@
 <%= form_for [:admin, @order, @reimbursement] do |f| %>
   <fieldset class='no-border-bottom'>
     <legend><%= Spree.t(:items_to_be_reimbursed) %></legend>
-    <table class="table table-hover table-condensed table-bordered index reimbursement-return-items-table">
+    <table class="table table-condensed table-bordered index reimbursement-return-items-table">
       <thead>
         <tr>
           <th><%= Spree.t(:product) %></th>
@@ -64,7 +64,7 @@
 
 <fieldset class="margint">
   <legend><%= Spree.t(:calculated_reimbursements) %></legend>
-  <table class="table table-hover table-condensed table-bordered index">
+  <table class="table table-condensed table-bordered index">
     <thead data-hook="customer_return_header">
       <tr>
         <th><%= Spree.t(:reimbursement_type) %></th>

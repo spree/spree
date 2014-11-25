@@ -104,7 +104,7 @@
 <%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders } %>
 
 <% if @orders.any? %>
-  <table class="table table-hover index" id="listing_orders" data-hook>
+  <table class="table index" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
         <th>

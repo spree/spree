@@ -1,6 +1,6 @@
 <fieldset id="risk_analysis">
   <legend><%= "#{Spree.t(:risk_analysis)}: #{Spree.t(:not) unless @order.is_risky?} #{Spree.t(:risky)}" %></legend>
-  <table class="table table-hover table-condensed table-bordered">
+  <table class="table table-condensed table-bordered">
     <thead>
       <th><%= Spree.t('risk')%></th>
       <th><%= Spree.t('status')%></th>

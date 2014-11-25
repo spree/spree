@@ -5,7 +5,7 @@
   <%= render 'add_stock_form' %>
 </div>
 
-<table class="table table-hover table-condensed table-bordered" id="listing_product_stock">
+<table class="table table-condensed table-bordered" id="listing_product_stock">
   <thead>
     <tr data-hook="admin_product_stock_management_index_headers">
       <th><%= Spree.t(:variant) %></th>
@@ -35,7 +35,7 @@
             <% end %>
           </td>
           <td colspan="3" class="stock_location_info">
-            <table class="table table-hover table-condensed table-bordered no-marginb">
+            <table class="table table-condensed table-bordered no-marginb">
               <thead>
                 <th><%= Spree.t(:stock_location) %></th>
                 <th><%= Spree.t(:count_on_hand) %></th>
