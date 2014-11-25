@@ -52,7 +52,7 @@ module Spree
         end
       end
 
-      # the main tree menu's
+      # Main menu tree menu
       def main_menu_tree text, icon: nil, sub_menu: nil
         content_tag :li, :class => "treeview" do
           main_menu_item(text, url: "javascript:;", icon: icon) +
