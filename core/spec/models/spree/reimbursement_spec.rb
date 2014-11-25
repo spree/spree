@@ -2,33 +2,6 @@ require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
 
-  describe ".before_create" do
-    describe "#generate_number" do
-      context "number is assigned" do
-        let(:number)        { '123' }
-        let(:reimbursement) { Spree::Reimbursement.new(number: number) }
-
-        it "should return the assigned number" do
-          reimbursement.save
-          expect(reimbursement.number).to eq number
-        end
-      end
-
-      context "number is not assigned" do
-        let(:reimbursement) { Spree::Reimbursement.new(number: nil) }
-
-        before do
-          allow(reimbursement).to receive_messages(valid?: true)
-        end
-
-        it "should assign number with random RI number" do
-          reimbursement.save
-          expect(reimbursement.number).to be =~ /RI\d{9}/
-        end
-      end
-    end
-  end
-
   describe "#display_total" do
     let(:total)         { 100.50 }
     let(:currency)      { "USD" }

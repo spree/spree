@@ -46,32 +46,6 @@ describe Spree::CustomerReturn, :type => :model do
     end
   end
 
-  describe ".before_create" do
-    describe "#generate_number" do
-      context "number is assigned" do
-        let(:customer_return) { Spree::CustomerReturn.new(number: '123') }
-
-        it "should return the assigned number" do
-          customer_return.save
-          expect(customer_return.number).to eq('123')
-        end
-      end
-
-      context "number is not assigned" do
-        let(:customer_return) { Spree::CustomerReturn.new(number: nil) }
-
-        before do
-          allow(customer_return).to receive_messages(valid?: true, process_return!: true)
-        end
-
-        it "should assign number with random CR number" do
-          customer_return.save
-          expect(customer_return.number).to match(/CR\d{9}/)
-        end
-      end
-    end
-  end
-
   describe "#pre_tax_total" do
     let(:pre_tax_amount)  { 15.0 }
     let(:customer_return) { create(:customer_return, line_items_count: 2) }

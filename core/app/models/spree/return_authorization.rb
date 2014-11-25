@@ -1,5 +1,7 @@
 module Spree
   class ReturnAuthorization < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
+
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
@@ -8,7 +10,6 @@ module Spree
 
     belongs_to :stock_location
     belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
-    before_create :generate_number
 
     after_save :generate_expedited_exchange_reimbursements
 
@@ -65,12 +66,6 @@ module Spree
         end
       end
 
-      def generate_number
-        self.number ||= loop do
-          random = "RA#{Array.new(9){rand(9)}.join}"
-          break random unless self.class.exists?(number: random)
-        end
-      end
 
       def cancel_return_items
         return_items.each { |item| item.cancel! if item.can_cancel? }
