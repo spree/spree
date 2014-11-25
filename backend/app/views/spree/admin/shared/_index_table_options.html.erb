@@ -11,7 +11,7 @@
     <div class="pagination-wrap">
       <%= paginate collection %>
       <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form" }) do %>
-        <%= select_tag(:per_page, options_for_select([5, 15, 30, 45, 60], params['per_page'] || 15), { :id => "js-per-page-select", :class => "form-control" }) %>
+        <%= per_page_dropdown %>
       <% end %>
       <div class="clearfix"></div>
     </div>

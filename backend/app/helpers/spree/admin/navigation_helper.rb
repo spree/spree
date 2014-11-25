@@ -43,6 +43,8 @@ module Spree
         content_tag('li', link, :class => css_classes.join(' '))
       end
 
+      # sidebar are used on order edit, product edit, user overview etc.
+      # this link is shown so a user can collapse the sidebar
       def collapse_sidebar_link
         content_tag :li, :class => "collapse-sidebar" do
           link_to "javascript:;", :class => "js-collapse-sidebar" do
@@ -50,6 +52,23 @@ module Spree
             content_tag(:span, "Collapse sidebar", :class => "text")
           end
         end
+      end
+
+      # the per_page_dropdown is used on index pages like orders, products, promotions etc.
+      # this method generates the select_tag
+      def per_page_dropdown
+        # there is a config setting for admin_products_per_page, only for the orders page
+        if @products && per_page_default = Spree::Config.admin_products_per_page
+          per_page_options = []
+          5.times do |amount|
+            per_page_options << (amount + 1) * Spree::Config.admin_products_per_page
+          end
+        else
+          per_page_default = 15
+          per_page_options = %w{5 15 30 45 60}
+        end
+
+        select_tag(:per_page, options_for_select(per_page_options, params['per_page'] || per_page_default), { :id => "js-per-page-select", :class => "form-control" })
       end
 
       # finds class for a given symbol / string
