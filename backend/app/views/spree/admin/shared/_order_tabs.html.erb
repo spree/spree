@@ -1,5 +1,6 @@
 <% content_for :page_title do %>
-  <%= link_to "#{Spree.t(:order)} ##{@order.number}", spree.edit_admin_order_path(@order) %>
+  <%= link_to Spree.t(:orders), admin_orders_path %> /
+  <%= link_to @order.number, spree.edit_admin_order_path(@order) %>
 <% end %>
 
 <% content_for :sidebar do %>
