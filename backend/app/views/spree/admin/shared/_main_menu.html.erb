@@ -3,16 +3,7 @@
 <% end %>
 
 <% if can? :admin, Spree::Product %>
-
-  <li class="treeview">
-    <a href="#">
-      <span class="icon icon-products"></span>
-      <span><%= Spree.t(:products) %></span>
-      <span class="icon icon-chevron-left pull-right"></span>
-    </a>
-    <%= render :partial => 'spree/admin/shared/product_sub_menu' %>
-  </li>
-
+  <%= main_menu_tree Spree.t(:products), icon: "products", sub_menu: "product" %>
 <% end %>
 
 <% if can? :admin, Spree::Admin::ReportsController %>
@@ -20,25 +11,11 @@
 <% end %>
 
 <% if can? :admin, Spree::Promotion %>
-  <li class="treeview">
-    <a href="#">
-      <span class="icon icon-bullhorn"></span>
-      <span><%= Spree.t(:promotions) %></span>
-      <span class="icon icon-chevron-left pull-right"></span>
-    </a>
-    <%= render :partial => 'spree/admin/shared/promotion_sub_menu' %>
-  </li>
+  <%= main_menu_tree Spree.t(:promotions), icon: "promotion", sub_menu: "promotion" %>
 <% end %>
 
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>
   <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
 <% end %>
 
-<li class="treeview">
-  <a href="#">
-    <span class="icon icon-wrench"></span>
-    <span><%= Spree.t(:configurations) %></span>
-    <span class="icon icon-chevron-left pull-right"></span>
-  </a>
-  <%= render :partial => 'spree/admin/shared/configuration_sub_menu' %>
-</li>
+<%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration" %>

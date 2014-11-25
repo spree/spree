@@ -43,6 +43,23 @@ module Spree
         content_tag('li', link, :class => css_classes.join(' '))
       end
 
+      # Single main menu item
+      def main_menu_item text, url: nil, icon: nil
+        link_to url do
+          content_tag(:span, nil, :class => "icon icon-#{icon}") +
+          content_tag(:span, " #{text}") +
+          content_tag(:span, nil, :class => "icon icon-chevron-left pull-right")
+        end
+      end
+
+      # the main tree menu's
+      def main_menu_tree text, icon: nil, sub_menu: nil
+        content_tag :li, :class => "treeview" do
+          main_menu_item(text, url: "javascript:;", icon: icon) +
+          render(:partial => "spree/admin/shared/sub_menu/#{sub_menu}")
+        end
+      end
+
       # sidebar are used on order edit, product edit, user overview etc.
       # this link is shown so a user can collapse the sidebar
       def collapse_sidebar_link
