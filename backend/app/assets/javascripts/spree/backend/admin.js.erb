@@ -6,7 +6,6 @@
 //= require spree/backend/user_picker
 //= require spree/backend/product_picker
 //= require spree/backend/taxons
-//= require spree/backend/jquery.tree-menu
 
 /**
 This is a collection of javascript functions and whatnot
@@ -71,6 +70,7 @@ jQuery(function($) {
   $(".sort_link").each(function(){
     // Remove the &nbsp; in the text
     var sort_link_text = $(this).text().replace('\xA0', '');
+
     if(sort_link_text.indexOf("▼") >= 0){
       $(this).text(sort_link_text.replace("▼",""));
       $(this).append('<span class="icon icon-chevron-down"></span>');
@@ -108,34 +108,6 @@ jQuery(function($) {
 
   // Make flash messages dissapear
   setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
-
-  // Highlight hovered table column
-  $('table tbody tr td.actions').find('a, button').hover(function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.addClass(klass)
-    tr.prev().addClass('before-' + klass);
-  }, function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.removeClass(klass)
-    tr.prev().removeClass('before-' + klass);
-  });
-
-  // Trunkate text in page_title that didn't fit
-  var truncate_elements = $('.truncate');
-
-  truncate_elements.each(function(){
-    $(this).trunk8();
-  });
-  $(window).resize(function (event) {
-    truncate_elements.each(function(){
-      $(this).trunk8();
-    })
-  });
-
-  // Make height of dt/dd elements the same
-  $("dl").equalize('outerHeight');
 
 });
 
@@ -200,6 +172,7 @@ $(document).ready(function(){
              }
     });
   });
+
   var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");
