@@ -1,5 +1,7 @@
 module Spree
   class Reimbursement < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
+
     class IncompleteReimbursementError < StandardError; end
 
     belongs_to :order, inverse_of: :reimbursements
@@ -14,8 +16,6 @@ module Spree
     validate :validate_return_items_belong_to_same_order
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
-
-    before_create :generate_number
 
     scope :reimbursed, -> { where(reimbursement_status: 'reimbursed') }
 
@@ -129,13 +129,6 @@ module Spree
     end
 
     private
-
-    def generate_number
-      self.number ||= loop do
-        random = "RI#{Array.new(9){rand(9)}.join}"
-        break random unless self.class.exists?(number: random)
-      end
-    end
 
     def validate_return_items_belong_to_same_order
       if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }

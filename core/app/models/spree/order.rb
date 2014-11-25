@@ -3,14 +3,10 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
-
-    ORDER_NUMBER_LENGTH  = 9
-    ORDER_NUMBER_LETTERS = false
-    ORDER_NUMBER_PREFIX  = 'R'
-
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
+    include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     checkout_flow do
       go_to_state :address
@@ -81,7 +77,6 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :set_currency
-    before_validation :generate_order_number, on: :create
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
@@ -288,27 +283,6 @@ module Spree
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
       self.class.unscoped.where(id: self).update_all(changes)
-    end
-
-    def generate_order_number(options = {})
-      options[:length]  ||= ORDER_NUMBER_LENGTH
-      options[:letters] ||= ORDER_NUMBER_LETTERS
-      options[:prefix]  ||= ORDER_NUMBER_PREFIX
-
-      possible = (0..9).to_a
-      possible += ('A'..'Z').to_a if options[:letters]
-
-      self.number ||= loop do
-        # Make a random number.
-        random = "#{options[:prefix]}#{(0...options[:length]).map { possible.shuffle.first }.join}"
-        # Use the random  number if no other order exists with it.
-        if self.class.exists?(number: random)
-          # If over half of all possible options are taken add another digit.
-          options[:length] += 1 if self.class.count > (10 ** options[:length] / 2)
-        else
-          break random
-        end
-      end
     end
 
     def shipped_shipments

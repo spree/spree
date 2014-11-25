@@ -1,5 +1,6 @@
 module Spree
   class Payment < Spree::Base
+    # include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::Payment::Processing
 
     IDENTIFIER_CHARS    = (('A'..'Z').to_a + ('0'..'9').to_a - %w(0 1 I O)).freeze

@@ -2,6 +2,8 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
+
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'

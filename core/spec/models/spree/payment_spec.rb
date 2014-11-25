@@ -701,46 +701,6 @@ describe Spree::Payment, :type => :model do
     end
   end
 
-  describe "#set_unique_identifier" do
-    # Regression test for #1998
-    it "sets a unique identifier on create" do
-      payment.run_callbacks(:create)
-      expect(payment.identifier).not_to be_blank
-      expect(payment.identifier.size).to eq(8)
-      expect(payment.identifier).to be_a(String)
-    end
-
-    # Regression test for #3733
-    it "does not regenerate the identifier on re-save" do
-      payment.save
-      old_identifier = payment.identifier
-      payment.save
-      expect(payment.identifier).to eq(old_identifier)
-    end
-
-    context "other payment exists" do
-      let(:other_payment) {
-        payment = Spree::Payment.new
-        payment.source = card
-        payment.order = order
-        payment.payment_method = gateway
-        payment
-      }
-
-      before { other_payment.save! }
-
-      it "doesn't set duplicate identifier" do
-        expect(payment).to receive(:generate_identifier).and_return(other_payment.identifier)
-        expect(payment).to receive(:generate_identifier).and_call_original
-
-        payment.run_callbacks(:create)
-
-        expect(payment.identifier).not_to be_blank
-        expect(payment.identifier).not_to eq(other_payment.identifier)
-      end
-    end
-  end
-
   describe "#amount=" do
     before do
       subject.amount = amount

@@ -84,30 +84,6 @@ describe Spree::ReturnAuthorization, :type => :model do
     end
   end
 
-  describe ".before_create" do
-    describe "#generate_number" do
-      context "number is assigned" do
-        let(:return_authorization) { Spree::ReturnAuthorization.new(number: '123') }
-
-        it "should return the assigned number" do
-          return_authorization.save
-          expect(return_authorization.number).to eq('123')
-        end
-      end
-
-      context "number is not assigned" do
-        let(:return_authorization) { Spree::ReturnAuthorization.new(number: nil) }
-
-        before { allow(return_authorization).to receive_messages valid?: true }
-
-        it "should assign number with random RA number" do
-          return_authorization.save
-          expect(return_authorization.number).to match(/RA\d{9}/)
-        end
-      end
-    end
-  end
-
   context "#currency" do
     before { allow(order).to receive(:currency) { "ABC" } }
     it "returns the order currency" do
