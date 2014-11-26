@@ -1,4 +1,3 @@
-//= require bootstrap-sprockets
 //= require jquery
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
@@ -7,7 +6,7 @@
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
-//= require jquery.tree-menu
+//= require bootstrap-sprockets
 //= require modernizr
 //= require spree
 //= require spree/backend/spree-select2
