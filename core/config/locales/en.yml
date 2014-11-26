@@ -1330,6 +1330,7 @@ en:
     tracking_url: Tracking URL
     tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
     transaction_id: Transaction ID
+    transaction_processing: Transaction Processing
     transfer_from_location: Transfer From
     transfer_stock: Transfer Stock
     transfer_to_location: Transfer To
