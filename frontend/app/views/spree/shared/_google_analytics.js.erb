@@ -10,6 +10,10 @@ ga('require', 'linkid', 'linkid.js');
 
 ga('set', '&cu', '<%= Spree::Config[:currency] %>');
 
+<% if spree_current_user %>
+  ga('set', '&uid', <%= spree_current_user.id %>);
+<% end %>
+
 ga('send', 'pageview');
 
 <% if @order && order_just_completed?(@order) %>
