@@ -6,6 +6,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 ga('create', '<%= Spree::Tracker.current.analytics_id %>', 'auto');
 
 ga('require', 'displayfeatures');
+ga('require', 'linkid', 'linkid.js');
 
 ga('set', '&cu', '<%= Spree::Config[:currency] %>');
 
