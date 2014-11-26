@@ -1,5 +1,5 @@
 <% content_for :google_analytics do %>
-  <%= render :partial => 'spree/shared/google_checkout.js', :locals => { :order => @order, step_number => checkout_states.index(@order.state) + 1 } %>
+  <%= render :partial => 'spree/shared/google_checkout.js', :locals => { :order => @order, :step_number => checkout_states.index(@order.state) + 1 } %>
 <% end %>
 <div id="checkout" data-hook>
   <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
