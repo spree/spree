@@ -14,9 +14,9 @@ module CapybaraExt
 
   def within_row(num, &block)
     if RSpec.current_example.metadata[:js]
-      within("table.index tbody tr:nth-child(#{num})", &block)
+      within("table.table tbody tr:nth-child(#{num})", &block)
     else
-      within(:xpath, all("table.index tbody tr")[num-1].path, &block)
+      within(:xpath, all("table.table tbody tr")[num-1].path, &block)
     end
   end
 

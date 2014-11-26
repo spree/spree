@@ -423,6 +423,7 @@ en:
         orders: Orders
         user_information: User Information
     administration: Administration
+    advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
@@ -625,6 +626,7 @@ en:
     deleted_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
+    details: Details
     description: Description
     destination: Destination
     destroy: Destroy
@@ -888,6 +890,7 @@ en:
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
+    no_adjustments_found: No adjustments found
     no_images_found: No images found
     no_orders_found: No orders found
     no_payment_methods_found: No payment methods found
@@ -1169,6 +1172,7 @@ en:
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
+    returns: Returns
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis
@@ -1264,6 +1268,7 @@ en:
     states: States
     states_required: States Required
     status: Status
+    stock: Stock
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
