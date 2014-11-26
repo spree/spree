@@ -20,7 +20,7 @@ module Spree
       default_url: '/assets/default_taxon.png'
 
     validates_attachment :icon,
-      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
+      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
 
     include Spree::Core::ProductFilters  # for detailed defs of filters
 
