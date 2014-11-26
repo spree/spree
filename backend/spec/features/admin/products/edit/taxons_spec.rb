@@ -24,7 +24,7 @@ describe "Product Taxons", :type => :feature do
 
       visit spree.admin_path
       click_link "Products"
-      within("table.index") do
+      within("table.table") do
         click_icon :edit
       end
 

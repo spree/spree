@@ -54,7 +54,7 @@ module Spree
 
       # Main menu tree menu
       def main_menu_tree text, icon: nil, sub_menu: nil
-        content_tag :li, :class => "treeview" do
+        content_tag :li, class: "treeview" do
           main_menu_item(text, url: "javascript:;", icon: icon) +
           render(:partial => "spree/admin/shared/sub_menu/#{sub_menu}")
         end

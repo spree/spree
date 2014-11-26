@@ -47,7 +47,7 @@ describe "Product Images", :type => :feature do
     visit spree.admin_product_images_path(variant.product)
 
     expect(page).not_to have_content("No Images Found.")
-    within("table.index") do
+    within("table.table") do
       expect(page).to have_content(variant.options_text)
 
       #ensure no duplicate images are displayed
@@ -71,7 +71,7 @@ describe "Product Images", :type => :feature do
     visit spree.admin_product_images_path(product)
 
     expect(page).not_to have_content("No Images Found.")
-    within("table.index") do
+    within("table.table") do
       #ensure no duplicate images are displayed
       expect(page).to have_css("tbody tr", :count => 1)
 

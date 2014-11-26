@@ -10,7 +10,7 @@
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
-    <table class="table table-condensed table-bordered stock-contents index" id="listing_items" data-hook="stock-contents">
+    <table class="table table-condensed table-bordered stock-contents" id="listing_items" data-hook="stock-contents">
       <thead>
         <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
         <th colspan=2><%= Spree.t(:description) %></th>

@@ -11,7 +11,7 @@
   <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), :icon => 'file' %>
 <% end %>
 
-<table class="table index" id='listing_log_entries'>
+<table class="table" id='listing_log_entries'>
   <% @log_entries.each do |entry| %>
       <thead>
         <tr class="log_entry <%= entry.parsed_details.success? ? 'success' : 'fail' %>">

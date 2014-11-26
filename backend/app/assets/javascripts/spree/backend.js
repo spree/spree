@@ -1,12 +1,13 @@
+//= require bootstrap-sprockets
 //= require jquery
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery.powertip
+//= require jquery.treeview/jquery.treeview
 //= require jquery_ujs
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
-//= require bootstrap-sprockets
 //= require modernizr
 //= require spree
 //= require spree/backend/spree-select2

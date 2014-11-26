@@ -121,6 +121,7 @@ describe 'Users', :type => :feature do
 
     it 'can edit user roles' do
       Spree::Role.create name: "admin"
+      click_link 'Users'
       click_link user_a.email
 
       check 'user_spree_role_admin'

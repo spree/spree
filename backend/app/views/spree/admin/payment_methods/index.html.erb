@@ -7,7 +7,7 @@
 <% end %>
 
 <% if @payment_methods.any? %>
-  <table class="table index" id='listing_payment_methods'>
+  <table class="table" id='listing_payment_methods'>
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
         <th><%= Spree.t(:name) %></th>
