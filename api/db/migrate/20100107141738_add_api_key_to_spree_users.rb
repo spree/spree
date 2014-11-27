@@ -1,4 +1,4 @@
-class AddApiKeyToSpreeUsers < ActiveRecord::Migration
+class AddAPIKeyToSpreeUsers < ActiveRecord::Migration
   def change
     unless defined?(User)
       add_column :spree_users, :api_key, :string, :limit => 40

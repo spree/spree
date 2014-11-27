@@ -1,4 +1,4 @@
-class ResizeApiKeyField < ActiveRecord::Migration
+class ResizeAPIKeyField < ActiveRecord::Migration
   def change
     unless defined?(User)
       change_column :spree_users, :api_key, :string, :limit => 48
