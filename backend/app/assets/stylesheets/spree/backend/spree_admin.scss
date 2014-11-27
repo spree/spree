@@ -60,7 +60,6 @@
   padding-left: 15px;
   height: 63px;
   position: relative;
-  //border-bottom: 1px solid #ddd;
   &.with-page-tabs {
     padding-bottom: 0;
     height: 92px;
@@ -74,6 +73,13 @@
     }
   }
   .page-actions {
+    z-index: 999;
+    position: absolute;
+    right: 15px;
+    background-color: #fbfbfb;
+    top: 0;
+    padding-top: 15px;
+    height: 63px;
     form, li, button, a {
       display: inline-block;
     }
@@ -233,18 +239,31 @@ ul {
   }
 }
 
+.content {
+  background-color: white;
+  padding-top: 0;
+  &.with-sidebar {
+    padding-right: 185px;
+  }
+  &.sidebar-collapsed {
+    padding-right: 60px;
+  }
+}
 .main-content {
   padding-top: 15px;
   border-top: 1px solid #ddd;
 }
 .main-right-sidebar {
   position: absolute;
-  top: 113px;
+  top: 50px;
   right: 0;
   min-height: 100%;
   background-color: #fbfbfb;
-  border-left: 1px solid #ddd;
   width: 170px;
+  border-left: 1px solid #ddd;
+  #sidebar {
+    margin-top: 63px;
+  }
   .nav.nav-pills.nav-stacked > li > a {
     border-left: none;
     border-right: 3px solid transparent;
