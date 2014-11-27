@@ -35,18 +35,14 @@ ul.sidebar-menu li.treeview span.pull-right {
   background: lighten($grey, 5%) !important;
 }
 
-//TODO: clean this up and move the variable
-
-$grey: #4B4B4B;
-
 .skin-blue {
   .navbar {
-    background-color: $grey;
+    background-color: darken($grey, 13%);
   }
   .logo {
-    background-color: darken($gray, 10%);
+    background-color: darken($grey, 20%);
     &:hover {
-      background-color: darken($gray, 15%);
+      background-color: darken($grey, 25%);
     }
   }
 }

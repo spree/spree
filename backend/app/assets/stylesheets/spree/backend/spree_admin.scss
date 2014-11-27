@@ -1,8 +1,6 @@
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
-
 @import 'AdminLTE';
-
 @import 'components/_settings';
 @import 'components/_spinner';
 @import 'components/_tables';
@@ -36,6 +34,8 @@
 .is-hidden {
   display: none;
 }
+
+// The progress loader which is positioned at the bottom of the page
 #progress {
   display: none;
   width: 100%;
@@ -47,18 +47,33 @@
     box-shadow: none;
     margin: 0;
     border-radius: 0;
+    .spinner {
+      float: right;
+    }
   }
 }
-.alert-progress {
-  .spinner {
-    float: right;
+
+.content {
+  background-color: white;
+  padding-top: 0;
+  &.with-sidebar {
+    padding-right: 185px;
+  }
+  &.sidebar-collapsed {
+    padding-right: 60px;
+  }
+  .main-content {
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
   }
 }
+
 // Content header / page title
+$content-header-height: 63px;
 .right-side > .content-header {
   box-shadow: none !important;
   padding-left: 15px;
-  height: 63px;
+  height: $content-header-height;
   position: relative;
   &.with-page-tabs {
     padding-bottom: 0;
@@ -79,7 +94,7 @@
     background-color: #fbfbfb;
     top: 0;
     padding-top: 15px;
-    height: 63px;
+    height: $content-header-height;
     form, li, button, a {
       display: inline-block;
     }
@@ -100,10 +115,8 @@
     }
   }
 }
-// used on stock transfers show page
-legend .glyphicon {
-  font-size: 16px;
-}
+
+// Default select 2 container styling
 .select2-container {
   display: block;
   width: 100%;
@@ -115,11 +128,16 @@ legend .glyphicon {
     }
   }
 }
+
 .icon-link {
   color: #444;
 }
-// user edit page (api key buttons)
+
 div.form-actions {
+  span.or {
+    padding: 0 5px;
+  }
+  // user edit page (api key buttons)
   form {
     display: inline;
     // when a button_to is used within the form-actions it renders a div
@@ -128,6 +146,7 @@ div.form-actions {
     }
   }
 }
+
 // Apply display-inline class to button_to tags outside form-actions div
 .display-inline {
   display: inline;
@@ -135,12 +154,11 @@ div.form-actions {
     display: inline;
   }
 }
-div.form-actions span.or {
-  padding: 0 5px;
-}
+
 fieldset legend {
   margin-bottom: 15px;
 }
+
 ul {
   margin: 0;
   padding: 0;
@@ -153,19 +171,6 @@ ul {
     margin: 0 0 0 16px;
     list-style: circle;
   }
-}
-.panel {
-  .nav.nav-pills li a {
-    border-radius: 0;
-  }
-  .nav.nav-stacked li {
-    margin-top: 0;
-  }
-}
-// better alignment of the icons in the sidebar
-#sidebar ul.nav li .icon-link span.icon {
-  float: left;
-  margin: 2px 7px 0 0;
 }
 
 .filter-wrap {
@@ -239,21 +244,7 @@ ul {
   }
 }
 
-.content {
-  background-color: white;
-  padding-top: 0;
-  &.with-sidebar {
-    padding-right: 185px;
-  }
-  &.sidebar-collapsed {
-    padding-right: 60px;
-  }
-}
-.main-content {
-  padding-top: 15px;
-  border-top: 1px solid #ddd;
-}
-.main-right-sidebar {
+#sidebar.main-right-sidebar {
   position: absolute;
   top: 50px;
   right: 0;
@@ -261,34 +252,38 @@ ul {
   background-color: #fbfbfb;
   width: 170px;
   border-left: 1px solid #ddd;
-  #sidebar {
+  ul.nav {
     margin-top: 63px;
-  }
-  .nav.nav-pills.nav-stacked > li > a {
-    border-left: none;
-    border-right: 3px solid transparent;
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-  }
-  .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
-    border-right-color: #3c8dbc;
-    border-top-color: #ddd;
-    border-bottom-color: #ddd;
-    background-color: #fff;
-    margin-left: -1px;
-  }
-  .nav-stacked > li {
-    height: 42px !important;
-    margin: 0;
-  }
-  li.collapse-sidebar {
-    margin-top: 30px;
-    font-size: 0.9em;
-    span.icon {
-      font-size: 0.8em;
+    li .icon-link span.icon {
+      float: left;
+      margin: 2px 6px 0 0;
     }
-    a, span.icon {
-      color: lighten($grey, 16%) !important;
+    &.nav-stacked > li {
+      height: 42px !important;
+      margin: 0;
+    }
+    &.nav-pills.nav-stacked > li > a {
+      border-left: none;
+      border-right: 3px solid transparent;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+    &.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
+      border-right-color: #3c8dbc;
+      border-top-color: #ddd;
+      border-bottom-color: #ddd;
+      background-color: #fff;
+      margin-left: -1px;
+    }
+    li.collapse-sidebar {
+      margin-top: 30px;
+      font-size: 0.9em;
+      span.icon {
+        font-size: 0.8em;
+      }
+      a, span.icon {
+        color: lighten($grey, 16%) !important;
+      }
     }
   }
   &.collapsed {

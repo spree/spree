@@ -38,7 +38,7 @@
         <section class="content <%= "with-sidebar" if content_for?(:sidebar) %>">
 
           <div class="row">
-            <div class="<%= main_div_class %>">
+            <div class="<%= main_div_class %> main-content">
 
               <% if flash[:error] %>
                 <div class="alert alert-danger alert-auto-dissapear"><%= flash[:error] %></div>
@@ -61,9 +61,7 @@
               </div>
             </div>
             <% if content_for?(:sidebar) %>
-              <div class="main-right-sidebar">
-                <%= render :partial => 'spree/admin/shared/sidebar' %>
-              </div>
+              <%= render :partial => 'spree/admin/shared/sidebar' %>
             <% end %>
           </div>
 
