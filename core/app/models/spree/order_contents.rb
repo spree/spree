@@ -11,7 +11,6 @@ module Spree
       reload_totals
       shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
       PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
       reload_totals
       line_item
     end
@@ -21,7 +20,6 @@ module Spree
       reload_totals
       shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
       PromotionHandler::Cart.new(order, line_item).activate
-      ItemAdjustments.new(line_item).update
       reload_totals
       line_item
     end
