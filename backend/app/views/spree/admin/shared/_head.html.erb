@@ -18,7 +18,6 @@
 <%= render "spree/admin/shared/translations" %>
 
 <%= javascript_tag do -%>
-  jQuery.alerts.dialogClass = 'spree';
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
 <% end -%>
 
