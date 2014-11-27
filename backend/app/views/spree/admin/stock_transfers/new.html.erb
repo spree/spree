@@ -22,32 +22,26 @@
   <fieldset>
     <legend><%= Spree.t(:transfer_stock) %></legend>
 
-    <div class="row" data-hook="admin_stock_movements_form_fields">
-      <div class="col-md-6">
-        <div class="form-group" id="stock_movement_reference_field">
-          <%= label_tag 'reference', raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})") %>
-          <%= text_field_tag :reference, '', class: 'form-control' %>
-        </div>
+    <div data-hook="admin_stock_movements_form_fields">
+      <div class="form-group" id="stock_movement_reference_field">
+        <%= label_tag 'reference', raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})") %>
+        <%= text_field_tag :reference, '', class: 'form-control' %>
       </div>
-      <div class="col-md-6">
-        <div class="field checkbox" id="receive_stock_field">
+      <div class="form-group" id="receive_stock_field">
+        <div class="checkbox">
           <label for="receive_stock">
             <%= check_box_tag :transfer_receive_stock %>
             <%= Spree.t('receive_stock') %>
           </label>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="form-group" id="transfer_source_location_id_field">
-          <%= label_tag :transfer_source_location_id, Spree.t(:source) %>
-          <%= select_tag :transfer_source_location_id, {}, class: 'select2' %>
-        </div>
+      <div class="form-group" id="transfer_source_location_id_field">
+        <%= label_tag :transfer_source_location_id, Spree.t(:source) %>
+        <%= select_tag :transfer_source_location_id, {}, class: 'select2' %>
       </div>
-      <div class="col-md-6">
-        <div class="form-group" id="transfer_destination_location_id_field">
-          <%= label_tag :transfer_destination_location_id, Spree.t(:destination) %>
-          <%= select_tag :transfer_destination_location_id, {}, class: 'select2' %>
-        </div>
+      <div class="form-group" id="transfer_destination_location_id_field">
+        <%= label_tag :transfer_destination_location_id, Spree.t(:destination) %>
+        <%= select_tag :transfer_destination_location_id, {}, class: 'select2' %>
       </div>
     </div>
 
@@ -62,20 +56,18 @@
           </div>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-4">
           <div class="form-group" id="stock_movement_quantity_field">
             <%= label_tag :transfer_variant_quantity, Spree.t(:quantity) %>
-            <%= number_field_tag :transfer_variant_quantity, 1, class: 'form-control', min: 0 %>
-          </div>
-        </div>
-
-        <div class="col-md-2">
-          <div class="form-group" style="padding: 25px 0 0 0 !important">
-            <%= button Spree.t(:add), 'plus', 'submit', class: "transfer_add_variant" %>
+            <div class="input-group">
+              <%= number_field_tag :transfer_variant_quantity, 1, class: 'form-control', min: 0 %>
+              <span class="input-group-btn">
+                <%= button Spree.t(:add), 'plus', 'submit', class: "transfer_add_variant" %>
+              </span>
+            </div>
           </div>
         </div>
       </div>
-
     </fieldset>
 
     <div class="alert alert-info no-objects-found">
