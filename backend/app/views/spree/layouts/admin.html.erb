@@ -31,14 +31,14 @@
         <% end %>
       </aside>
 
-      <aside class="right-side" id="main-container">
+      <aside class="right-side">
 
         <%= render :partial => 'spree/admin/shared/content_header' %>
 
         <section class="content <%= "with-sidebar" if content_for?(:sidebar) %>">
 
           <div class="row">
-            <div class="<%= main_div_class %> main-content">
+            <div class="<%= main_div_class %>">
 
               <% if flash[:error] %>
                 <div class="alert alert-danger alert-auto-dissapear"><%= flash[:error] %></div>
