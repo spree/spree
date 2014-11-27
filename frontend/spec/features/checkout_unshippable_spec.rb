@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "checkout with unshippable items", type: :feature, inaccessible: true do
   let!(:stock_location) { create(:stock_location) }
-  let(:order) { OrderWalkthrough.up_to(:address) }
+  let(:order) { OrderWalkthrough.up_to(:delivery) }
 
   before do
     OrderWalkthrough.add_line_item!(order)

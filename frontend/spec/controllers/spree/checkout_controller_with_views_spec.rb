@@ -22,7 +22,7 @@ describe Spree::CheckoutController, type: :controller do
       before do
         # Using a let block won't acknowledge the currency setting
         # Therefore we just do it like this...
-        order = OrderWalkthrough.up_to(:address)
+        order = OrderWalkthrough.up_to(:delivery)
         allow(controller).to receive_messages current_order: order
       end
 

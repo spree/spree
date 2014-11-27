@@ -93,7 +93,7 @@ describe "Checkout", type: :feature, inaccessible: true do
   # Regression test for #2694 and #4117
   context "doesn't allow bad credit card numbers" do
     before(:each) do
-      order = OrderWalkthrough.up_to(:delivery)
+      order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages :confirmation_required? => true
       allow(order).to receive_messages(:available_payment_methods => [ create(:credit_card_payment_method, :environment => 'test') ])
 
@@ -106,8 +106,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
 
     it "redirects to payment page", inaccessible: true do
-      visit spree.checkout_state_path(:delivery)
-      click_button "Save and Continue"
+      visit spree.checkout_state_path(:payment)
       choose "Credit Card"
       fill_in "Card Number", :with => '123'
       fill_in "card_expiry", :with => '04 / 20'
@@ -145,7 +144,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     let!(:user) { create(:user) }
 
     let!(:order) do
-      order = OrderWalkthrough.up_to(:delivery)
+      order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages :confirmation_required? => true
 
       order.reload
@@ -194,7 +193,7 @@ describe "Checkout", type: :feature, inaccessible: true do
 
     before do
       Capybara.ignore_hidden_elements = false
-      order = OrderWalkthrough.up_to(:delivery)
+      order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages(:available_payment_methods => [check_payment,credit_cart_payment])
       order.user = create(:user)
       order.update!
@@ -227,7 +226,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
 
     before do
-      order = OrderWalkthrough.up_to(:delivery)
+      order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages(:available_payment_methods => [bogus])
 
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
@@ -466,15 +465,14 @@ describe "Checkout", type: :feature, inaccessible: true do
 
   context "when order is completed" do
     let!(:user) { create(:user) }
-    let!(:order) { OrderWalkthrough.up_to(:delivery) }
+    let!(:order) { OrderWalkthrough.up_to(:payment) }
 
     before(:each) do
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(:current_order => order)
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(:try_spree_current_user => user)
       allow_any_instance_of(Spree::OrdersController).to receive_messages(:try_spree_current_user => user)
 
-      visit spree.checkout_state_path(:delivery)
-      click_button "Save and Continue"
+      visit spree.checkout_state_path(:payment)
       click_button "Save and Continue"
     end
 
