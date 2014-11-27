@@ -14,30 +14,4 @@
     </li>
     <%= collapse_sidebar_link %>
   </ul>
-
-  <%# TODO: this has to go somewhere else %>
-
-  <div class="panel panel-default" data-hook="admin_user_lifetime_stats">
-    <div class="panel-heading">
-      <h3 class="panel-title"><%= Spree.t(:lifetime_stats) %></h3>
-    </div>
-    <table class="table table-condensed table-bordered" id="user-lifetime-stats" data-hook>
-      <tr>
-        <td><%= Spree.t(:total_sales) %>:</td>
-        <td><%= @user.display_lifetime_value.to_html %></td>
-      </tr>
-      <tr>
-        <td><%= Spree.t(:num_orders) %>:</td>
-        <td><%= @user.order_count.to_i %></td>
-      </tr>
-      <tr>
-        <td><%= Spree.t(:average_order_value) %>:</td>
-        <td><%= @user.display_average_order_value.to_html %></td>
-      </tr>
-      <tr>
-        <td><%= Spree.t(:member_since) %>:</td>
-        <td><%= l @user.created_at.to_date %></td>
-      </tr>
-    </table>
-  </div>
 <% end %>
