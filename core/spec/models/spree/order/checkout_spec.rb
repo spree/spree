@@ -575,7 +575,9 @@ describe Spree::Order, :type => :model do
       end
 
       order.payments.create!(payment_method: Spree::PaymentMethod.first, amount: order.total, source: creditcard)
-      order.next!
+
+      order.next!  # transition from payment to confirm
+      order.next!  # transition from confim to complete
     end
   end
 
