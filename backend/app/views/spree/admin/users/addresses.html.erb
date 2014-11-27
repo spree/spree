@@ -15,7 +15,7 @@
 
       <%= render :partial => 'addresses_form', :locals => { :f => f } %>
 
-      <div data-hook="admin_user_edit_form_button">
+      <div class="form-actions" data-hook="admin_user_edit_form_button">
         <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
       </div>
     <% end %>
