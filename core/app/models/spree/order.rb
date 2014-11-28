@@ -13,9 +13,9 @@ module Spree
     include Spree::Order::Payments
 
     extend Spree::DisplayMoney
-    money_methods :outstanding_balance, :item_total, :adjustment_total,
-      :included_tax_total, :additional_tax_total, :tax_total,
-      :shipment_total, :promo_total, :total
+    money_methods :outstanding_balance, :item_total,           :adjustment_total,
+                  :included_tax_total,  :additional_tax_total, :tax_total,
+                  :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
 
