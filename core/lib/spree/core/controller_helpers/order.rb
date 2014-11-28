@@ -22,13 +22,14 @@ module Spree
           if @simple_current_order
             @simple_current_order.last_ip_address = ip_address
             return @simple_current_order
+          else
+            @simple_current_order = Spree::Order.new
           end
         end
 
         # The current incomplete order from the guest_token for use in cart and during checkout
         def current_order(options = {})
           options[:create_order_if_necessary] ||= false
-          options[:lock] ||= false
 
           return @current_order if @current_order
 
@@ -82,6 +83,7 @@ module Spree
         end
 
         def find_order_by_token_or_user(options={})
+          options[:lock] ||= false
 
           # Find any incomplete orders for the guest_token
           order = Spree::Order.incomplete.includes(:adjustments).lock(options[:lock]).find_by(current_order_params)

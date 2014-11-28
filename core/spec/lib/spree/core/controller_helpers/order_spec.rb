@@ -12,8 +12,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
-    it 'returns nil' do
-      expect(controller.simple_current_order).to be_nil
+    it "returns an empty order" do
+      expect(controller.simple_current_order.item_count).to eq 0
     end
     it 'returns Spree::Order instance' do
       allow(controller).to receive_messages(cookies: double(signed: { guest_token: order.guest_token }))

@@ -30,6 +30,17 @@ module Spree
           end
         end
 
+        def actionable?(line_item)
+          case preferred_match_policy
+          when 'any', 'all'
+            product_ids.include? line_item.variant.product_id
+          when 'none'
+            product_ids.exclude? line_item.variant.product_id
+          else
+            raise "unexpected match policy: #{preferred_match_policy.inspect}"
+          end
+        end
+
         def product_ids_string
           product_ids.join(',')
         end
