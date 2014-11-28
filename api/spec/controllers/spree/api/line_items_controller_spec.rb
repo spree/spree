@@ -63,9 +63,9 @@ module Spree
         expect_any_instance_of(LineItem).to receive(:some_option=).with(4)
         api_post :create,
                  line_item: {
-                     variant_id: product.master.to_param,
-                     quantity: 1,
-                     options: { some_option: 4 }
+                   variant_id: product.master.to_param,
+                   quantity: 1,
+                   options: { some_option: 4 }
                  }
         expect(response.status).to eq(201)
       end
