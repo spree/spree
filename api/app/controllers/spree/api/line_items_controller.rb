@@ -58,7 +58,7 @@ module Spree
         end
 
         def line_item_params
-          params.require(:line_item).permit(:quantity, :variant_id, :options => line_item_options)
+          params.require(:line_item).permit(:quantity, :variant_id, options: line_item_options)
         end
     end
   end

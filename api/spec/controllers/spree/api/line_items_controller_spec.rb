@@ -61,7 +61,7 @@ module Spree
 
       it "can add a new line item to an existing order with options" do
         expect_any_instance_of(LineItem).to receive(:some_option=).with(4)
-        api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1, :options => { :some_option => 4 } }
+        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1, options: { some_option: 4 } }
         expect(response.status).to eq(201)
       end
 
@@ -95,7 +95,7 @@ module Spree
       it "can update a line item's options on the order" do
         expect_any_instance_of(LineItem).to receive(:some_option=).with(12)
         line_item = order.line_items.first
-        api_put :update, :id => line_item.id, :line_item => { :quantity => 1, :options => { :some_option => 12 } }
+        api_put :update, id: line_item.id, line_item: { quantity: 1, options: { some_option: 12 } }
         expect(response.status).to eq(200)
       end
 
