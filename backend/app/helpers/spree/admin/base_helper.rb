@@ -6,6 +6,16 @@ module Spree
         "col-md-12"
       end
 
+      def flash_alert flash
+        if flash.present?
+          message = flash[:error] || flash[:notice] || flash[:success]
+          flash_class = "danger" if flash[:error]
+          flash_class = "info" if flash[:notice]
+          flash_class = "success" if flash[:success]
+          content_tag(:div, message, :class => "alert alert-#{flash_class} alert-auto-dissapear")
+        end
+      end
+
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
         css_classes << 'field'
