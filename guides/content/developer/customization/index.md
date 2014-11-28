@@ -78,6 +78,11 @@ Allows changing the static assets provided by Spree, this includes
 stylesheets, JavaScript files and images. For details see the [Asset
 Customization](asset_customization.html) guide.
 
+#### Use S3 for storage
+
+Setup Spree to store your images on S3. For details see the
+ [Use S3 for storage](s3_storage.html) guide
+
 #### Logic Customizations
 
 Enables the changing and/or extension of the logic of Spree to meet your

@@ -181,6 +181,69 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe '#ensure_line_item_variants_are_not_deleted' do
+    subject { order.ensure_line_item_variants_are_not_deleted }
+
+    let(:order) { create :order_with_line_items }
+
+    context 'when variant is destroyed' do
+      before do
+        allow(order).to receive(:restart_checkout_flow)
+        order.line_items.first.variant.destroy
+      end
+
+      it 'should restart checkout flow' do
+        expect(order).to receive(:restart_checkout_flow).once
+        subject
+      end
+
+      it 'should have error message' do
+        subject
+        expect(order.errors[:base]).to include(Spree.t(:deleted_variants_present))
+      end
+
+      it 'should be false' do
+        expect(subject).to be_falsey
+      end
+    end
+
+    context 'when no variants are destroyed' do
+      it 'should not restart checkout' do
+        expect(order).to receive(:restart_checkout_flow).never
+        subject
+      end
+
+      it 'should be true' do
+        expect(subject).to be_truthy
+      end
+    end
+  end
+
+  describe '#ensure_line_items_are_in_stock' do
+    subject { order.ensure_line_items_are_in_stock }
+
+    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+
+    before do
+      allow(order).to receive(:restart_checkout_flow)
+      allow(order).to receive_messages(:line_items => [line_item])
+    end
+
+    it 'should restart checkout flow' do
+      expect(order).to receive(:restart_checkout_flow).once
+      subject
+    end
+
+    it 'should have error message' do
+      subject
+      expect(order.errors[:base]).to include(Spree.t(:insufficient_stock_lines_present))
+    end
+
+    it 'should be false' do
+      expect(subject).to be_falsey
+    end
+  end
+
   context "empty!" do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
@@ -295,14 +358,12 @@ describe Spree::Order, :type => :model do
 
       context "2 equal line items" do
         before do
-          allow(order_1).to receive(:foos_match).and_return(true)
-
-          order_1.contents.add(variant, 1, {foos: {}})
-          order_2.contents.add(variant, 1, {foos: {}})
+          @line_item_1 = order_1.contents.add(variant, 1, {foos: {}})
+          @line_item_2 = order_2.contents.add(variant, 1, {foos: {}})
         end
 
         specify do
-          #order_1.should_receive(:foos_match)
+          expect(order_1).to receive(:foos_match).with(@line_item_1, kind_of(Hash)).and_return(true)
           order_1.merge!(order_2)
           expect(order_1.line_items.count).to eq(1)
 

@@ -8,7 +8,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Frontend e-commerce functionality for the Spree project.'
   s.description = 'Required dependency for Spree'
 
-  s.required_ruby_version = '>= 1.9.3'
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
@@ -23,7 +22,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'canonical-rails', '~> 0.0.4'
   s.add_dependency 'jquery-rails', '~> 3.1.2'
-  s.add_dependency 'stringex', '~> 1.5.1'
 
   s.add_development_dependency 'capybara-accessible'
 end

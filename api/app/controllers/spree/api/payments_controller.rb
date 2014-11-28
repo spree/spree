@@ -12,7 +12,7 @@ module Spree
 
       def new
         @payment_methods = Spree::PaymentMethod.available
-        respond_with(@payment_method)
+        respond_with(@payment_methods)
       end
 
       def create

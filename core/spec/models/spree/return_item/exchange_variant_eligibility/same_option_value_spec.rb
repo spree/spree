@@ -19,7 +19,10 @@ module Spree
 
         let(:product) { create(:product, option_types: [color_option_type, waist_option_type, inseam_option_type]) }
 
-        let(:variant) { create(:variant, product: product, option_values: [blue_option_value, three_two_waist_option_value, three_zero_inseam_option_value]) }
+        let!(:variant) { create(:variant, product: product, option_values: [blue_option_value, three_two_waist_option_value, three_zero_inseam_option_value]) }
+        let!(:same_option_values_variant) { create(:variant, product: product, option_values: [blue_option_value, three_two_waist_option_value, three_one_inseam_option_value]) }
+        let!(:different_color_option_value_variant) { create(:variant, product: product, option_values: [red_option_value, three_two_waist_option_value, three_one_inseam_option_value]) }
+        let!(:different_waist_option_value_variant) { create(:variant, product: product, option_values: [blue_option_value, three_four_waist_option_value, three_one_inseam_option_value]) }
 
         before do
           @original_option_type_restrictions = SameOptionValue.option_type_restrictions
@@ -28,14 +31,12 @@ module Spree
 
         after { SameOptionValue.option_type_restrictions = @original_option_type_restrictions }
 
-        subject { SameOptionValue.eligible_variants(variant) }
+        subject { SameOptionValue.eligible_variants(variant.reload) }
 
         it "returns all other variants for the same product with the same option value for the specified option type" do
-          same_option_values_variant = create(:variant, product: product, option_values: [blue_option_value, three_two_waist_option_value, three_one_inseam_option_value])
-          different_color_option_value_variant = create(:variant, product: product, option_values: [red_option_value, three_two_waist_option_value, three_one_inseam_option_value])
-          different_waist_option_value_variant = create(:variant, product: product, option_values: [blue_option_value, three_four_waist_option_value, three_one_inseam_option_value])
+          Spree::StockItem.update_all(count_on_hand: 10)
 
-          expect(subject).to eq [same_option_values_variant]
+          expect(subject.sort).to eq [variant, same_option_values_variant].sort
         end
 
         it "does not return variants for another product" do
@@ -52,11 +53,9 @@ module Spree
           after { SameOptionValue.option_type_restrictions = @original_option_type_restrictions }
 
           it "returns all variants for the product" do
-            same_option_values_variant = create(:variant, product: product, option_values: [blue_option_value, three_two_waist_option_value, three_one_inseam_option_value])
-            different_color_option_value_variant = create(:variant, product: product, option_values: [red_option_value, three_two_waist_option_value, three_one_inseam_option_value])
-            different_waist_option_value_variant = create(:variant, product: product, option_values: [blue_option_value, three_four_waist_option_value, three_one_inseam_option_value])
+            Spree::StockItem.update_all(count_on_hand: 10)
 
-            expect(subject.sort).to eq [same_option_values_variant, different_waist_option_value_variant, different_color_option_value_variant].sort
+            expect(subject.sort).to eq [variant, same_option_values_variant, different_waist_option_value_variant, different_color_option_value_variant].sort
           end
         end
       end

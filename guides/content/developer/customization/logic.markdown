@@ -16,6 +16,40 @@ All of Spree's business logic (models, controllers, helpers, etc) can
 easily be extended / overridden to meet your exact requirements using
 standard Ruby idioms.
 
+**Using Ruby 2.0+ fight the war on class_eval.**
+
+<% ruby do %>
+    module ProductExtensions
+      extend ActiveSupport::Concern
+
+      included do
+        singleton_class.prepend ClassMethods
+        prepend InstanceMethods
+      end
+
+      module ClassMethods
+        def some_class_method
+           ...
+        end
+      end
+
+      module InstanceMethods
+        def instance_method_override
+           # do before work
+           original_result = super # do original work
+           # do after work
+           return original_result
+         end
+         def new_instance_method
+           # do something new
+         end
+      end
+    end
+    Spree::Product.include ProductExtensions
+<% end %>
+
+**Using Ruby 1.9.3.**
+
 Standard practice for including such changes in your application or
 extension is to create a file within the relevant **app/models/spree** or
 **app/controllers/spree** directory with the original class name with
@@ -101,38 +135,6 @@ app/controllers/spree/products_controller_decorator.rb
     Spree::ProductsController.class_eval do
       prepend ProductsControllerExtensions
     end
-<% end %>
-
-**Using Ruby 2.1+ you can fight the war on class_eval.**
-
-<% ruby do %>
-    module ProductExtensions
-      extend ActiveSupport::Concern
-
-      included do
-        singleton_class.prepend ClassMethods
-        prepend InstanceMethods
-      end
-
-      module ClassMethods
-        def some_class_method
-           ...
-        end
-      end
-
-      module InstanceMethods
-        def instance_method_override
-           # do before work
-           original_result = super # do original work
-           # do after work
-           return original_result
-         end
-         def new_instance_method
-           # do something new
-         end
-      end
-    end
-    Spree::Product.include ProductExtensions
 <% end %>
 
 #### Accessing Product Data

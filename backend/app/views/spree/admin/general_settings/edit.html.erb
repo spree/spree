@@ -60,6 +60,15 @@
                 </div>
             <% end %>
           </fieldset>
+          <fieldset class="security no-border-bottom">
+            <legend align="center"><%= Spree.t(:clear_cache)%></legend>
+            <div>
+              <%= Spree.t(:clear_cache_warning) %>
+            </div>
+            <div class="field" data-hook="general_settings_clear_cache">
+              <%= button Spree.t(:clear_cache), '', 'button', id: "clear_cache" %>
+            </div>
+          </fieldset>
         </div>
         <div class="omega six columns">
           <fieldset class="currency no-border-bottom">

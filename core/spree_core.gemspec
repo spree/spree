@@ -8,7 +8,9 @@ Gem::Specification.new do |s|
   s.summary     = 'The bare bones necessary for Spree.'
   s.description = 'The bare bones necessary for Spree.'
 
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version     = '>= 2.1.0'
+  s.required_rubygems_version = '>= 1.8.23'
+
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'http://spreecommerce.com'
@@ -19,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activemerchant', '~> 1.44.1'
   s.add_dependency 'acts_as_list', '= 0.3.0'
-  s.add_dependency 'awesome_nested_set', '~> 3.0.0.rc.3'
+  s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.9.2'
   s.add_dependency 'deface', '~> 1.0.0'

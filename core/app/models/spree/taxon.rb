@@ -25,7 +25,7 @@ module Spree
       default_url: '/assets/default_taxon.png'
 
     validates_attachment :icon,
-      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
+      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
