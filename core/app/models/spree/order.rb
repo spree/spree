@@ -184,9 +184,9 @@ module Spree
     alias :display_ship_total :display_shipment_total
 
     def display_promo_total
-      Spree::Money.new(promo_total, { currency: currency })
+      Spree::Money.new(promo_total, currency: currency)
     end
-    
+
     def display_total
       Spree::Money.new(total, { currency: currency })
     end
