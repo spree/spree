@@ -16,4 +16,5 @@ describe "Template rendering", :type => :feature do
     visit spree.root_path
     expect(find('link[rel=canonical]')[:href]).to eql('http://spreestore.example.com/')
   end
+
 end

@@ -24,7 +24,7 @@ describe "Cart", type: :feature, inaccessible: true do
   # Regression test for #2006
   it "does not error out with a 404 when GET'ing to /orders/populate" do
     visit '/orders/populate'
-    within(".error") do
+    within(".alert-error") do
       expect(page).to have_content(Spree.t(:populate_get_error))
     end
   end
@@ -37,12 +37,13 @@ describe "Cart", type: :feature, inaccessible: true do
     within("#line_items") do
       click_link "delete_line_item_1"
     end
-    expect(page).not_to have_content("Line items quantity must be an integer")
-    expect(page).not_to have_content("RoR Mug")
+
+    expect(page).to_not have_content("Line items quantity must be an integer")
+    expect(page).to_not have_content("RoR Mug")
     expect(page).to have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      expect(page).to have_content("EMPTY")
+      expect(page).to have_content("Empty")
     end
   end
 
@@ -57,7 +58,7 @@ describe "Cart", type: :feature, inaccessible: true do
     expect(page).to have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      expect(page).to have_content("EMPTY")
+      expect(page).to have_content("Empty")
     end
   end
 

@@ -105,6 +105,8 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         visit spree.product_path(product)
         click_button "Add To Cart"
         click_button "Checkout"
+        fill_in "order_email", :with => "test@example.com"
+        click_button 'Continue'
         within("tr[data-hook=item_total]") do
           expect(page).to have_content("руб19.99")
         end
@@ -116,7 +118,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     fill_in "keywords", :with => "shirt"
     click_button "Search"
 
-    expect(page.all('ul.product-listing li').size).to eq(1)
+    expect(page.all('#products .product-list-item').size).to eq(1)
   end
 
   context "a product with variants" do
@@ -184,11 +186,11 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   it "should be able to hide products without price" do
-    expect(page.all('ul.product-listing li').size).to eq(9)
+    expect(page.all('#products .product-list-item').size).to eq(9)
     Spree::Config.show_products_without_price = false
     Spree::Config.currency = "CAN"
     visit spree.root_path
-    expect(page.all('ul.product-listing li').size).to eq(0)
+    expect(page.all('#products .product-list-item').size).to eq(0)
   end
 
 
@@ -204,8 +206,8 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    expect(page.all('ul.product-listing li').size).to eq(3)
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    expect(page.all('#products .product-list-item').size).to eq(3)
+    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete("")
     expect(tmp.sort!).to eq(["Ruby on Rails Mug", "Ruby on Rails Stein", "Ruby on Rails Tote"])
   end
@@ -216,12 +218,12 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     check "Price_Range_$15.00_-_$18.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    expect(page.all('ul.product-listing li').size).to eq(2)
-    products = page.all('ul.product-listing li a[itemprop=name]')
+    expect(page.all('#products .product-list-item').size).to eq(2)
+    products = page.all('#products .product-list-item a[itemprop=name]')
     expect(products.count).to eq(2)
 
-    find('nav.pagination .next a').click
-    products = page.all('ul.product-listing li a[itemprop=name]')
+    find('.pagination .next a').click
+    products = page.all('#products .product-list-item a[itemprop=name]')
     expect(products.count).to eq(1)
   end
 
@@ -231,8 +233,8 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     check "Price_Range_$20.00_or_over"
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
-    expect(page.all('ul.product-listing li').size).to eq(4)
-    tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+    expect(page.all('#products .product-list-item').size).to eq(4)
+    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete("")
     expect(tmp.sort!).to eq(["Ruby on Rails Bag",
                          "Ruby on Rails Baseball Jersey",

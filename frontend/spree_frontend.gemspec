@@ -23,5 +23,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'canonical-rails', '~> 0.0.4'
   s.add_dependency 'jquery-rails', '~> 3.1.2'
 
+  s.add_runtime_dependency 'bootstrap-sass',           '~> 3.2.0'
+  s.add_runtime_dependency 'bootstrap-kaminari-views', '~> 0.0.3'
+
   s.add_development_dependency 'capybara-accessible'
 end
