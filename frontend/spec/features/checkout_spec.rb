@@ -58,7 +58,7 @@ describe "Checkout", type: :feature, inaccessible: true do
         click_button "Save and Continue"
         expect(page).to_not have_content("undefined method `promotion'")
         click_button "Save and Continue"
-        expect(page).to have_content("Shipping total $10.00")
+        expect(page).to have_content("Shipping total: $10.00")
       end
     end
 

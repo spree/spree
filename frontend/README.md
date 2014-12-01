@@ -1,9 +1,6 @@
-# Spree Bootstrap (Frontend)
+# Spree Bootstrap Frontend
 
-[![Build Status](https://api.travis-ci.org/200Creative/spree_bootstrap_frontend.png?branch=master)](https://travis-ci.org/200Creative/spree_bootstrap_frontend)
-[![Code Climate](https://codeclimate.com/github/200Creative/spree_bootstrap_frontend.png)](https://codeclimate.com/github/200Creative/spree_bootstrap_frontend)
-
-### Switches out [Spree](https://github.com/spree/spree)’s entire frontend for a bootstrap 3 powered frontend.
+### Bootstrap 3 powered frontend.
 
 This has several large advantages:
 
@@ -38,7 +35,7 @@ Installation
 Add the following to your gemfile. The currently supported and updated branches are `master` (edge), `2-2-stable`, and `2-3-stable`.
 
 ```ruby
-gem 'spree_bootstrap_frontend', github: '200Creative/spree_bootstrap_frontend', branch: 'master'
+gem 'spree_frontend', github: 'spree/spree_frontend', branch: 'master'
 ```
 
 And run
@@ -50,7 +47,7 @@ bundle install
 Then copy the default stylesheets into your project
 
 ```bash
-rails generate spree_bootstrap_frontend:install
+rails generate spree_frontend:install
 ```
 
 You'll want to select to overwrite `all.css`. Done.
@@ -58,7 +55,7 @@ You'll want to select to overwrite `all.css`. Done.
 Customizing
 -------
 
-Running the above `spree_bootstrap_frontend:install` command copies the stylesheet to `app/assets/stylesheets/spree/frontend/spree_bootstrap_frontend.css.scss`. Use this as your base stylesheet and edit as required.
+Running the above `spree_frontend:install` command copies the stylesheet to `app/assets/stylesheets/spree/frontend/spree_frontend.css.scss`. Use this as your base stylesheet and edit as required.
 
 To style your spree store just override the bootstrap 3 variables. The full list of bootstrap variables can be found [here](https://github.com/twbs/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_variables.scss). You can override these by simply redefining the variable before the `@import` directive.
 For example:
@@ -78,18 +75,6 @@ It’s quite powerful, here are some examples created in ~10 minutes with a few 
 [![layout](http://i.imgur.com/kppJiFS.png)](http://i.imgur.com/m3zKV0s.png)
 [![layout](http://i.imgur.com/x92TXYh.png)](http://i.imgur.com/eNyNFSg.png)
 
-Contributing
--------
-
-**Please fork and make a pull request.**
-
-Spree edge templates were last synced at spree/spree@2c057cf9cb0146d07a4005ade75c73d297e77920. Feel free to patch in any newer changes and update this SHA.
-
-**Tests.** To get this to a stage that it can be maintained moving forwards getting all tests passing is the highest priority.
-
-- Raise bugs in github’s [issues tracker](https://github.com/200Creative/spree_bootstrap_frontend/issues).
-- Further discussion can be had in the [spree google group](https://groups.google.com/forum/#!forum/spree-user).
-
 Running tests
 -------
 
@@ -100,15 +85,3 @@ bundle
 bundle exec rake test_app
 bundle exec rspec spec
 ```
-
-When testing your applications integration with this extension you may use it's factories.
-Simply add this require statement to your spec_helper:
-
-```ruby
-require 'spree_bootstrap_frontend/factories'
-```
-
-Licence
--------
-
-Copyright Alex James ([200creative.com](http://200creative.com)) and released under the BSD Licence.

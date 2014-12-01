@@ -12,21 +12,6 @@ module Spree
       return false
     end
 
-    def link_to_cart(text = nil)
-      text = text ? h(text) : Spree.t('cart')
-      css_class = nil
-
-      if simple_current_order.nil? or simple_current_order.item_count.zero?
-        text = "#{text}: (#{Spree.t('empty')})"
-        css_class = 'empty'
-      else
-        text = "#{text}: (#{simple_current_order.item_count})  <span class='amount'>#{simple_current_order.display_total.to_html}</span>"
-        css_class = 'full'
-      end
-
-      link_to text.html_safe, spree.cart_path, :class => "cart-info #{css_class}"
-    end
-
     # human readable list of variant options
     def variant_options(v, options={})
       v.options_text
@@ -65,56 +50,6 @@ module Spree
 
     def logo(image_path=Spree::Config[:logo])
       link_to image_tag(image_path), spree.root_path
-    end
-
-    def flash_messages(opts = {})
-      ignore_types = ["order_completed"].concat(Array(opts[:ignore_types]).map(&:to_s) || [])
-
-      flash.each do |msg_type, text|
-        unless ignore_types.include?(msg_type)
-          concat(content_tag :div, text, class: "flash #{msg_type}")
-        end
-      end
-      nil
-    end
-
-    def breadcrumbs(taxon, separator="&nbsp;&raquo;&nbsp;", breadcrumb_class="inline")
-      return "" if current_page?("/") || taxon.nil?
-
-      crumbs = [[Spree.t(:home), spree.root_path]]
-
-      if taxon
-        crumbs << [Spree.t(:products), products_path]
-        crumbs += taxon.ancestors.collect { |a| [a.name, spree.nested_taxons_path(a.permalink)] } unless taxon.ancestors.empty?
-        crumbs << [taxon.name, spree.nested_taxons_path(taxon.permalink)]
-      else
-        crumbs << [Spree.t(:products), products_path]
-      end
-
-      separator = raw(separator)
-
-      crumbs.map! do |crumb|
-        content_tag(:li, itemscope:"itemscope", itemtype:"http://data-vocabulary.org/Breadcrumb") do
-          link_to(crumb.last, itemprop: "url") do
-            content_tag(:span, crumb.first, itemprop: "title")
-          end + (crumb == crumbs.last ? '' : separator)
-        end
-      end
-
-      content_tag(:nav, content_tag(:ul, raw(crumbs.map(&:mb_chars).join), class: breadcrumb_class), id: 'breadcrumbs', class: 'sixteen columns')
-    end
-
-    def taxons_tree(root_taxon, current_taxon, max_level = 1)
-      return '' if max_level < 1 || root_taxon.children.empty?
-      content_tag :ul, class: 'taxons-list' do
-        root_taxon.children.map do |taxon|
-          css_class = (current_taxon && current_taxon.self_and_ancestors.include?(taxon)) ? 'current' : nil
-          content_tag :li, class: css_class do
-           link_to(taxon.name, seo_url(taxon)) +
-           taxons_tree(taxon, current_taxon, max_level - 1)
-          end
-        end.join("\n").html_safe
-      end
     end
 
     def available_countries

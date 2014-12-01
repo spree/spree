@@ -31,10 +31,10 @@ describe "viewing products", type: :feature, inaccessible: true do
       visit '/t/category/super-clothing/t-shirts'
     end
     it "should render breadcrumbs" do
-      page.find("#breadcrumbs").should have_link("T-Shirts")
+      expect(page.find("#breadcrumbs")).to have_link("T-Shirts")
     end
     it "should mark last breadcrumb as active" do
-      page.find('#breadcrumbs li.active').should have_link("T-Shirts")
+      expect(page.find('#breadcrumbs .active')).to have_link("T-Shirts")
     end
   end
 

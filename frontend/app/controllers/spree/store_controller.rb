@@ -5,11 +5,11 @@ module Spree
     skip_before_action :set_current_order, only: :cart_link
 
     def unauthorized
-      render 'spree/shared/unauthorized', :layout => Spree::Config[:layout], :status => 401
+      render 'spree/shared/unauthorized', layout: Spree::Config[:layout], status: 401
     end
 
     def cart_link
-      render :partial => 'spree/shared/link_to_cart'
+      render partial: 'spree/shared/link_to_cart'
       fresh_when(simple_current_order)
     end
 
@@ -37,4 +37,3 @@ module Spree
       end
   end
 end
-
