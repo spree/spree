@@ -844,6 +844,8 @@ en:
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
+    must_implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
+    must_implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
     my_account: My Account
     my_orders: My Orders
     name: Name
