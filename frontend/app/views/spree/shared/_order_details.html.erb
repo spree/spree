@@ -12,10 +12,8 @@
         <h6><%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
         <%= render :partial => 'spree/shared/address', :locals => { :address => order.ship_address } %>
       </div>
-    <% end %>
 
-    <% if @order.has_step?("delivery") %>
-      <div class="columns alpha four">
+      <div class="columns alpha four" data-hook="order-shipment">
         <h6><%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
         <div class="delivery">
           <% order.shipments.each do |shipment| %>
