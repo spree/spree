@@ -45,5 +45,9 @@
         </li>
       <% end %>
     <% end %>
+
+    <li<%== ' class="active"' if current == 'State Changes' %> data-hook='admin_order_tabs_state_changes'>
+      <%= link_to_with_icon 'exchange', Spree.t(:state_changes), state_changes_admin_order_url(@order) %>
+    </li>
   </ul>
 </nav>
