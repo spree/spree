@@ -80,6 +80,8 @@ Spree::Core::Engine.add_routes do
         put :resume
       end
 
+      resources :state_changes, only: [:index]
+
       resource :customer, controller: "orders/customer_details"
       resources :customer_returns, only: [:index, :new, :edit, :create, :update] do
         member do
