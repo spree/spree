@@ -18,19 +18,6 @@ h6,
 .h6 {
   font-family: Arial, Helvetica, sans-serif;
 }
-.content {
-  background-color: white;
-  padding-top: 0;
-  &.with-sidebar {
-    padding-right: 170px;
-    .col-md-12 {
-      padding-right: 30px;
-    }
-  }
-  &.sidebar-collapsed {
-    padding-right: 45px;
-  }
-}
 
 ul.sidebar-menu li.treeview span.pull-right {
   font-size: 0.7em;
@@ -48,18 +35,14 @@ ul.sidebar-menu li.treeview span.pull-right {
   background: lighten($grey, 5%) !important;
 }
 
-//TODO: clean this up and move the variable
-
-$grey: #4B4B4B;
-
 .skin-blue {
   .navbar {
-    background-color: $grey;
+    background-color: darken($grey, 13%);
   }
   .logo {
-    background-color: darken($gray, 10%);
+    background-color: darken($grey, 20%);
     &:hover {
-      background-color: darken($gray, 15%);
+      background-color: darken($grey, 25%);
     }
   }
 }

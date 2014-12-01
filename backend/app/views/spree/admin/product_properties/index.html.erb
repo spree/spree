@@ -3,19 +3,12 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:add_product_properties), "javascript:;", { :icon => 'add', :'data-target' => "tbody#product_properties", :class => 'btn-success spree_add_fields' } %>
-  <span id="new_ptype_link"><%= button_link_to Spree.t(:select_from_prototype), available_admin_prototypes_url, { :icon => 'th-list', :remote => true, 'data-update' => 'prototypes', :class => 'btn-default' } %></span>
+  <span class="js-new-ptype-link"><%= button_link_to Spree.t(:select_from_prototype), available_admin_prototypes_url, { :icon => 'properties', :remote => true, 'data-update' => 'prototypes', :class => 'btn-default' } %></span>
 <% end %>
 
 <%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
   <fieldset>
-    <div class="add_product_properties" data-hook="add_product_properties"></div>
-
     <div id="prototypes" data-hook></div>
-
-    <div class="alert alert-info alert-progress" id="busy_indicator" style="display: none;">
-      <div class="spinner">Loading..</div>
-      <div class="progress-message"><%= Spree.t(:loading) %>...</div>
-    </div>
 
     <table class="table sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
       <thead>

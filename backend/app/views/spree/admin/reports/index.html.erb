@@ -13,7 +13,7 @@
     <% @reports.each do |key, value| %>
     <tr data-hook="reports_row">
       <td><%= link_to value[:name], send("#{key}_admin_reports_url".to_sym) %></td>
-      <td style="padding-left:1em"><%= value[:description] %></td>
+      <td><%= value[:description] %></td>
     </tr>
     <% end %>
   </tbody>

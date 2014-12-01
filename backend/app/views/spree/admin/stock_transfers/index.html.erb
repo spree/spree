@@ -5,9 +5,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
-  </li>
+  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
 <% end %>
 
 <div data-hook="admin_orders_index_search" class="well">
@@ -65,12 +63,12 @@
     <tbody>
       <% @stock_transfers.each do |stock_transfer| %>
         <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row">
-          <td><%= stock_transfer.created_at %></td>
+          <td><%= link_to stock_transfer.created_at, admin_stock_transfer_path(stock_transfer) %></td>
           <td><%= stock_transfer.reference %></td>
           <td><%= stock_transfer.source_location.try(:name) %></td>
           <td><%= stock_transfer.destination_location.try(:name) %></td>
           <td class="actions actions-1">
-            <%= link_to_with_icon 'eye-open', Spree.t(:show), admin_stock_transfer_path(stock_transfer), :class => 'btn btn-default btn-sm', :no_text => true, :data => {:action => 'view'} %>
+            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), :class => 'btn btn-default btn-sm', :no_text => true, :data => {:action => 'view'} %>
           </td>
         </tr>
       <% end %>

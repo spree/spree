@@ -41,8 +41,8 @@
     <tbody>
       <% @properties.each do |property| %>
         <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
-          <td style="padding-left:1em"><%= property.name %></td>
-          <td style="padding-left:1em"><%= property.presentation %></td>
+          <td><%= property.name %></td>
+          <td><%= property.presentation %></td>
           <td class="actions actions-2">
             <%= link_to_edit(property, :no_text => true) %>
             <%= link_to_delete(property, :no_text => true) %>

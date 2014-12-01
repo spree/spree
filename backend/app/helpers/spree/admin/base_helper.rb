@@ -6,6 +6,16 @@ module Spree
         "col-md-12"
       end
 
+      def flash_alert flash
+        if flash.present?
+          message = flash[:error] || flash[:notice] || flash[:success]
+          flash_class = "danger" if flash[:error]
+          flash_class = "info" if flash[:notice]
+          flash_class = "success" if flash[:success]
+          content_tag(:div, message, :class => "alert alert-#{flash_class} alert-auto-dissapear")
+        end
+      end
+
       def field_container(model, method, options = {}, &block)
         css_classes = options[:class].to_a
         css_classes << 'field'
@@ -33,42 +43,6 @@ module Spree
         else
           nil
         end
-      end
-
-      # This method demonstrates the use of the :child_index option to render a
-      # form partial for, for instance, client side addition of new nested
-      # records.
-      #
-      # This specific example creates a link which uses javascript to add a new
-      # form partial to the DOM.
-      #
-      #   <%= form_for @project do |project_form| %>
-      #     <div id="tasks">
-      #       <%= project_form.fields_for :tasks do |task_form| %>
-      #         <%= render :partial => 'task', :locals => { :f => task_form } %>
-      #       <% end %>
-      #     </div>
-      #   <% end %>
-      def generate_html(form_builder, method, options = {})
-        options[:object] ||= form_builder.object.class.reflect_on_association(method).klass.new
-        options[:partial] ||= method.to_s.singularize
-        options[:form_builder_local] ||= :f
-
-        form_builder.fields_for(method, options[:object], :child_index => 'NEW_RECORD') do |f|
-          render(:partial => options[:partial], :locals => { options[:form_builder_local] => f })
-        end
-
-      end
-
-      def generate_template(form_builder, method, options = {})
-        escape_javascript generate_html(form_builder, method, options)
-      end
-
-      def remove_nested(fields)
-        out = ''
-        out << fields.hidden_field(:_destroy) unless fields.object.new_record?
-        out << (link_to icon('delete'), "#", :class => 'remove')
-        out.html_safe
       end
 
       def preference_field_tag(name, value, options)

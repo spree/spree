@@ -2,8 +2,6 @@
 //= require jquery
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
-//= require jquery.powertip
-//= require jquery.treeview/jquery.treeview
 //= require jquery_ujs
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable

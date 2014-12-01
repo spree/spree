@@ -16,11 +16,7 @@ Hopefully, this will evolve into a propper class.
 jQuery(function($) {
 
   // Add some tips
-  $('.with-tip').powerTip({
-    smartPlacement: true,
-    fadeInTime: 50,
-    fadeOutTime: 50,
-  });
+  $('.with-tip').tooltip();
 
   $('.js-show-index-filters').click(function(){
     $(".filter-well").slideToggle();
@@ -42,7 +38,7 @@ jQuery(function($) {
   });
 
   $(".js-collapse-sidebar").click(function(){
-    $(".main-sidebar").toggleClass("collapsed");
+    $(".main-right-sidebar").toggleClass("collapsed");
     $("section.content").toggleClass("sidebar-collapsed");
     $("span.icon", $(this)).toggleClass("icon-chevron-right");
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
@@ -94,15 +90,6 @@ jQuery(function($) {
     }
   });
 
-  $('body')
-    .on('powerTipPreRender', '.with-tip', function() {
-      $('#powerTip').addClass($(this).data('action'));
-      $('#powerTip').addClass($(this).data('tip-color'));
-    })
-    .on('powerTipClose', '.with-tip', function() {
-      $('#powerTip').removeClass($(this).data('action'));
-    })
-
   // Make flash messages dissapear
   setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
 
@@ -115,7 +102,7 @@ show_flash = function(type, message) {
   var flash_div = $('.flash.' + type);
   if (flash_div.length == 0) {
     flash_div = $('<div class="alert alert-' + type + '" />');
-    $('#main-container').prepend(flash_div);
+    $('.main-content').prepend(flash_div);
   }
   flash_div.html(message).show().delay(5000).slideUp();
 }
