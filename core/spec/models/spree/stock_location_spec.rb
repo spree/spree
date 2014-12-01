@@ -92,13 +92,22 @@ module Spree
       expect(stock_item).to be_nil
     end
 
-    it 'creates a stock_item if not found for a variant' do
-      variant = create(:variant)
-      variant.stock_items.destroy_all
-      variant.save
+    describe '#stock_item_or_create' do
+      before do
+        variant = create(:variant)
+        variant.stock_items.destroy_all
+        variant.save
+      end
 
-      stock_item = subject.stock_item_or_create(variant)
-      expect(stock_item.variant).to eq variant
+      it 'creates a stock_item if not found for a variant' do
+        stock_item = subject.stock_item_or_create(variant)
+        expect(stock_item.variant).to eq variant
+      end
+
+      it 'creates a stock_item if not found for a variant_id' do
+        stock_item = subject.stock_item_or_create(variant.id)
+        expect(stock_item.variant).to eq variant
+      end
     end
 
     it 'finds a count_on_hand for a variant' do
@@ -215,7 +224,7 @@ module Spree
         end
       end
     end
-    
+
     context '#state_text' do
       context 'state is blank' do
         subject { StockLocation.create(name: "testing", state: nil, state_name: 'virginia') }
