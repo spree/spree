@@ -898,6 +898,7 @@ en:
     no_resource_found: ! 'No %{resource} found'
     no_shipping_methods_found: No shipping methods found
     no_shipping_method_selected: No shipping method selected.
+    no_state_changes: No state changes yet.
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
@@ -1255,6 +1256,14 @@ en:
     start: Start
     state: State
     state_based: State Based
+    state_changes: State changes
+    state_change:
+      type: Type
+      state_from: State from
+      state_to: State to
+      user: User
+      timestamp: Timestamp
+      updated: Updated
     states: States
     states_required: States Required
     status: Status
