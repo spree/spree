@@ -30,7 +30,7 @@
       <%= line_item.display_amount.to_html unless line_item.quantity.nil? %>
     </td>
     <td class="cart-item-delete" data-hook="cart_item_delete">
-      <%= link_to image_tag('icons/delete.png'), '#', :class => 'delete', :id => "delete_#{dom_id(line_item)}" %>
+      <%= link_to content_tag(:span, '', class: 'glyphicon glyphicon-minus-sign'), '#', :class => 'delete', :id => "delete_#{dom_id(line_item)}" %>
     </td>
   </tr>
 <% end -%>
