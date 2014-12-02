@@ -30,7 +30,7 @@ module Spree
         :stock_item_attributes,
         :promotion_attributes,
         :store_attributes
-      ]
+      ].freeze
 
       mattr_reader *ATTRIBUTES
 
@@ -50,26 +50,26 @@ module Spree
         :id, :name, :description, :price, :display_price, :available_on,
         :slug, :meta_description, :meta_keywords, :shipping_category_id,
         :taxon_ids, :total_on_hand
-      ]
+      ].freeze
 
       @@product_property_attributes = [
         :id, :product_id, :property_id, :value, :property_name
-      ]
+      ].freeze
 
       @@variant_attributes = [
         :id, :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
         :slug, :description, :track_inventory
-      ]
+      ].freeze
 
       @@image_attributes = [
         :id, :position, :attachment_content_type, :attachment_file_name, :type,
         :attachment_updated_at, :attachment_width, :attachment_height, :alt
-      ]
+      ].freeze
 
       @@option_value_attributes = [
         :id, :name, :presentation, :option_type_name, :option_type_id,
         :option_type_presentation
-      ]
+      ].freeze
 
       @@order_attributes = [
         :id, :number, :item_total, :total, :ship_total, :state, :adjustment_total,
@@ -77,88 +77,88 @@ module Spree
         :shipment_state, :payment_state, :email, :special_instructions, :channel,
         :included_tax_total, :additional_tax_total, :display_included_tax_total,
         :display_additional_tax_total, :tax_total, :currency
-      ]
+      ].freeze
 
-      @@line_item_attributes = [:id, :quantity, :price, :variant_id]
+      @@line_item_attributes = [:id, :quantity, :price, :variant_id].freeze
 
-      @@option_type_attributes = [:id, :name, :presentation, :position]
+      @@option_type_attributes = [:id, :name, :presentation, :position].freeze
 
       @@payment_attributes = [
         :id, :source_type, :source_id, :amount, :display_amount,
         :payment_method_id, :state, :avs_response, :created_at,
         :updated_at
-      ]
+      ].freeze
 
-      @@payment_method_attributes = [:id, :name, :description]
+      @@payment_method_attributes = [:id, :name, :description].freeze
 
-      @@shipment_attributes = [:id, :tracking, :number, :cost, :shipped_at, :state]
+      @@shipment_attributes = [:id, :tracking, :number, :cost, :shipped_at, :state].freeze
 
-      @@taxonomy_attributes = [:id, :name]
+      @@taxonomy_attributes = [:id, :name].freeze
 
       @@taxon_attributes = [
         :id, :name, :pretty_name, :permalink, :parent_id,
         :taxonomy_id
-      ]
+      ].freeze
 
       @@inventory_unit_attributes = [
         :id, :lock_version, :state, :variant_id, :shipment_id,
         :return_authorization_id
-      ]
+      ].freeze
 
       @@return_authorization_attributes = [
         :id, :number, :state, :order_id, :memo, :created_at, :updated_at
-      ]
+      ].freeze
 
       @@address_attributes = [
         :id, :firstname, :lastname, :full_name, :address1, :address2, :city,
         :zipcode, :phone, :company, :alternative_phone, :country_id, :state_id,
         :state_name, :state_text
-      ]
+      ].freeze
 
-      @@country_attributes = [:id, :iso_name, :iso, :iso3, :name, :numcode]
+      @@country_attributes = [:id, :iso_name, :iso, :iso3, :name, :numcode].freeze
 
-      @@state_attributes = [:id, :name, :abbr, :country_id]
+      @@state_attributes = [:id, :name, :abbr, :country_id].freeze
 
       @@adjustment_attributes = [
         :id, :source_type, :source_id, :adjustable_type, :adjustable_id,
         :originator_type, :originator_id, :amount, :label, :mandatory,
         :locked, :eligible,  :created_at, :updated_at
-      ]
+      ].freeze
 
       @@creditcard_attributes = [
         :id, :month, :year, :cc_type, :last_digits, :name,
         :gateway_customer_profile_id, :gateway_payment_profile_id
-      ]
+      ].freeze
 
       @@payment_source_attributes = [
         :id, :month, :year, :cc_type, :last_digits, :name
-      ]
+      ].freeze
 
-      @@user_attributes = [:id, :email, :created_at, :updated_at]
+      @@user_attributes = [:id, :email, :created_at, :updated_at].freeze
 
-      @@property_attributes = [:id, :name, :presentation]
+      @@property_attributes = [:id, :name, :presentation].freeze
 
       @@stock_location_attributes = [
         :id, :name, :address1, :address2, :city, :state_id, :state_name,
         :country_id, :zipcode, :phone, :active
-      ]
+      ].freeze
 
-      @@stock_movement_attributes = [:id, :quantity, :stock_item_id]
+      @@stock_movement_attributes = [:id, :quantity, :stock_item_id].freeze
 
       @@stock_item_attributes = [
         :id, :count_on_hand, :backorderable, :lock_version, :stock_location_id,
         :variant_id
-      ]
+      ].freeze
 
       @@promotion_attributes = [
         :id, :name, :description, :expires_at, :starts_at, :type, :usage_limit,
         :match_policy, :code, :advertise, :path
-      ]
+      ].freeze
 
       @@store_attributes = [
         :id, :name, :url, :meta_description, :meta_keywords, :seo_title,
         :mail_from_address, :default_currency, :code, :default
-      ]
+      ].freeze
 
       def variant_attributes
         if @current_user_roles && @current_user_roles.include?("admin")

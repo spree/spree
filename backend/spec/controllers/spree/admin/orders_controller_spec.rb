@@ -170,9 +170,16 @@ describe Spree::Admin::OrdersController, :type => :controller do
     end
   end
 
-  context '#authorize_admin' do
+  describe '#authorize_admin' do
     let(:user) { create(:user) }
     let(:order) { create(:completed_order_with_totals, :number => 'R987654321') }
+
+    def with_ability(ability)
+      Spree::Ability.register_ability(ability)
+      yield
+    ensure
+      Spree::Ability.remove_ability(ability)
+    end
 
     before do
       allow(Spree::Order).to receive_messages :find_by_number! => order
@@ -186,23 +193,22 @@ describe Spree::Admin::OrdersController, :type => :controller do
     end
 
     it 'should grant access to users with an bar role' do
-      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-      Spree::Ability.register_ability(BarAbility)
-      spree_post :index
-      expect(response).to render_template :index
-      Spree::Ability.remove_ability(BarAbility)
+      with_ability(BarAbility) do
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
+        spree_post :index
+        expect(response).to render_template :index
+      end
     end
 
     it 'should deny access to users with an bar role' do
-      allow(order).to receive(:update_attributes).and_return true
-      allow(order).to receive(:user).and_return Spree.user_class.new
-      allow(order).to receive(:token).and_return nil
-      user.spree_roles.clear
-      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-      Spree::Ability.register_ability(BarAbility)
-      spree_put :update, { :id => 'R123' }
-      expect(response).to redirect_to('/unauthorized')
-      Spree::Ability.remove_ability(BarAbility)
+      with_ability(BarAbility) do
+        allow(order).to receive(:update_attributes).and_return true
+        allow(order).to receive(:user).and_return Spree.user_class.new
+        allow(order).to receive(:token).and_return nil
+        user.spree_roles = [Spree::Role.find_or_create_by(name: 'bar')]
+        spree_put :update, { :id => 'R123' }
+        expect(response).to redirect_to('/unauthorized')
+      end
     end
 
     it 'should deny access to users without an admin role' do
@@ -216,14 +222,15 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
       3.times { create(:completed_order_with_totals) }
       expect(Spree::Order.complete.count).to eq 4
-      Spree::Ability.register_ability(OrderSpecificAbility)
 
-      allow(user).to receive_messages :has_spree_role? => false
-      spree_get :index
-      expect(response).to render_template :index
-      expect(assigns['orders'].size).to eq 1
-      expect(assigns['orders'].first.number).to eq number
-      expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq  [number]
+      with_ability(OrderSpecificAbility) do
+        allow(user).to receive_messages :has_spree_role? => false
+        spree_get :index
+        expect(response).to render_template :index
+        expect(assigns['orders'].size).to eq 1
+        expect(assigns['orders'].first.number).to eq number
+        expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq  [number]
+      end
     end
   end
 
