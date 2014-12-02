@@ -66,7 +66,6 @@ describe Spree::BaseHelper, type: :helper do
     it "should raise NoMethodError when style is not exists" do
       expect { another_strange_image(product) }.to raise_error(NoMethodError)
     end
-
   end
 
   context "link_to_tracking" do
@@ -128,7 +127,6 @@ describe Spree::BaseHelper, type: :helper do
     it "should raise NoMethodError when statement with name equal to style name called" do
       expect { foobar(product) }.to raise_error(NoMethodError)
     end
-
   end
 
   context "pretty_time" do

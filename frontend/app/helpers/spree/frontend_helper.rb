@@ -1,5 +1,10 @@
 module Spree
   module FrontendHelper
+    def body_class
+      @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
+      @body_class
+    end
+    
     def breadcrumbs(taxon, separator="&nbsp;")
       return "" if current_page?("/") || taxon.nil?
       separator = raw(separator)

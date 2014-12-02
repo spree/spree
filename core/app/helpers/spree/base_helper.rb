@@ -1,6 +1,21 @@
 module Spree
   module BaseHelper
 
+    def available_countries
+      checkout_zone = Zone.find_by(name: Spree::Config[:checkout_zone])
+
+      if checkout_zone && checkout_zone.kind == 'country'
+        countries = checkout_zone.country_list
+      else
+        countries = Country.all
+      end
+
+      countries.collect do |country|
+        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
+        country
+      end.sort_by { |c| c.name.parameterize }
+    end
+
     # Defined because Rails' current_page? helper is not working when Spree is mounted at root.
     def current_spree_page?(url)
       path = request.fullpath.gsub(/^\/\//, '/')
@@ -12,9 +27,30 @@ module Spree
       return false
     end
 
-    # human readable list of variant options
-    def variant_options(v, options={})
-      v.options_text
+    def display_price(product_or_variant)
+      product_or_variant.price_in(current_currency).display_price.to_html
+    end
+
+    def gem_available?(name)
+      Gem::Specification.find_by_name(name)
+    rescue Gem::LoadError
+      false
+    rescue
+      Gem.available?(name)
+    end
+
+    def link_to_tracking(shipment, options = {})
+      return unless shipment.tracking && shipment.shipping_method
+
+      if shipment.tracking_url
+        link_to(shipment.tracking, shipment.tracking_url, options)
+      else
+        content_tag(:span, shipment.tracking)
+      end
+    end
+
+    def logo(image_path=Spree::Config[:logo])
+      link_to image_tag(image_path), spree.root_path
     end
 
     def meta_data
@@ -43,51 +79,6 @@ module Spree
       end.join("\n")
     end
 
-    def body_class
-      @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
-      @body_class
-    end
-
-    def logo(image_path=Spree::Config[:logo])
-      link_to image_tag(image_path), spree.root_path
-    end
-
-    def available_countries
-      checkout_zone = Zone.find_by(name: Spree::Config[:checkout_zone])
-
-      if checkout_zone && checkout_zone.kind == 'country'
-        countries = checkout_zone.country_list
-      else
-        countries = Country.all
-      end
-
-      countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
-        country
-      end.sort_by { |c| c.name.parameterize }
-    end
-
-    def seo_url(taxon)
-      return spree.nested_taxons_path(taxon.permalink)
-    end
-
-    def gem_available?(name)
-       Gem::Specification.find_by_name(name)
-    rescue Gem::LoadError
-       false
-    rescue
-       Gem.available?(name)
-    end
-
-    def display_price(product_or_variant)
-      product_or_variant.price_in(current_currency).display_price.to_html
-    end
-
-    def pretty_time(time)
-      [I18n.l(time.to_date, format: :long),
-        time.strftime("%l:%M %p")].join(" ")
-    end
-
     def method_missing(method_name, *args, &block)
       if image_style = image_style_from_method_name(method_name)
         define_image_method(image_style)
@@ -97,25 +88,20 @@ module Spree
       end
     end
 
-    def link_to_tracking(shipment, options = {})
-      return unless shipment.tracking && shipment.shipping_method
+    def pretty_time(time)
+      [I18n.l(time.to_date, format: :long), time.strftime("%l:%M %p")].join(" ")
+    end
 
-      if shipment.tracking_url
-        link_to(shipment.tracking, shipment.tracking_url, options)
-      else
-        content_tag(:span, shipment.tracking)
-      end
+    def seo_url(taxon)
+      return spree.nested_taxons_path(taxon.permalink)
+    end
+
+    # human readable list of variant options
+    def variant_options(v, options={})
+      v.options_text
     end
 
     private
-
-    # Returns style of image or nil
-    def image_style_from_method_name(method_name)
-      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
-        possible_styles = Spree::Image.attachment_definitions[:attachment][:styles]
-        style if style.in? possible_styles.with_indifferent_access
-      end
-    end
 
     def create_product_image_tag(image, product, options, style)
       options.reverse_merge! alt: image.alt.blank? ? product.name : image.alt
@@ -138,6 +124,14 @@ module Spree
         else
           create_product_image_tag(product.images.first, product, options, style)
         end
+      end
+    end
+
+    # Returns style of image or nil
+    def image_style_from_method_name(method_name)
+      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
+        possible_styles = Spree::Image.attachment_definitions[:attachment][:styles]
+        style if style.in? possible_styles.with_indifferent_access
       end
     end
   end
