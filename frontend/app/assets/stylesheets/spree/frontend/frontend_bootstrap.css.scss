@@ -1,6 +1,7 @@
 //Add your custom bootstrap variables here, see https://github.com/twbs/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_variables.scss for full list of variables.
 
-$icon-font-path: "../../bootstrap/";
+// $icon-font-path: "../../bootstrap/";
+@import "bootstrap-sprockets";
 @import "bootstrap";
 
 // -- Spree Custom Header and Footer ---------------------
