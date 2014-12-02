@@ -32,7 +32,3 @@
     });
   };
 }(jQuery));
-
-$(document).ready(function(){
-  $(".sidebar .treeview").tree();
-});

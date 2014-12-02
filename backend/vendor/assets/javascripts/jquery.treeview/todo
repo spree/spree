@@ -1,8 +1,0 @@
-1.5
----
-
-* add classes and rules for root items
-* lazy-loading: render the complete tree, but only apply hitzones and hiding of children to the first level on load
-* async treeview
-  * support animations
-  * support persist options

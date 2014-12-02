@@ -31,3 +31,7 @@ Spree.routes.payments_api = function(order_id) {
 Spree.routes.stock_items_api = function(stock_location_id) {
   return Spree.pathFor('api/stock_locations/' + stock_location_id + '/stock_items')
 }
+
+$(document).ready(function(){
+  $(".sidebar .treeview").tree();
+});
