@@ -1,6 +1,6 @@
 /*
-* This is a manifest file that includes stylesheets for spree_frontend 
- *= require normalize
- *= require skeleton
- *= require spree/frontend/screen
+* This is a manifest file that includes stylesheets for spree_frontend
+ *= require spree/frontend/bootstrap
+ *= require_self
+ *= require_tree .
 */
