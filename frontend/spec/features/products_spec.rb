@@ -92,12 +92,12 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         end
       end
 
-      it "when adding a product to the cart", :js => true do
+      it "when adding a product to the cart", js: true do
         visit spree.product_path(product)
         click_button "Add To Cart"
         click_link "Home"
         within(".cart-info") do
-          expect(page).to have_content("РУБ19.99")
+          expect(page).to have_content("руб19.99")
         end
       end
 
