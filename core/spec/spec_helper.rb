@@ -57,6 +57,12 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
 
+  # Clean out the database state before the tests run
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
   config.around do |example|
     Timeout.timeout(10, &example)
   end
