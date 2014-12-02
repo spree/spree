@@ -4,16 +4,15 @@
 
     <div class="col-md-3" data-hook="order-bill-address">
       <h4><%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %></h4>
-      <%= render :partial => 'spree/shared/address', locals: { address: order.bill_address } %>
+      <%= render partial: 'spree/shared/address', locals: { address: order.bill_address } %>
     </div>
 
     <% if order.has_step?("delivery") %>
       <div class="col-md-3" data-hook="order-ship-address">
         <h4><%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %></h4>
-        <%= render :partial => 'spree/shared/address', locals: { address: order.ship_address } %>
+        <%= render partial: 'spree/shared/address', locals: { address: order.ship_address } %>
       </div>
 
-    <% if order.has_step?("delivery") %>
       <div class=" col-md-3" data-hook="order-shipment">
         <h4><%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless order.completed? %></h4>
         <div class="delivery">
@@ -128,7 +127,7 @@
 
   <tfoot id="order-charges" data-hook="order_details_adjustments">
     <% order.adjustments.eligible.each do |adjustment| %>
-    <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
+      <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4" align="right"><strong><%= adjustment.label %></strong></td>
         <td class="total"><span><%= adjustment.display_amount.to_html %></span></td>
