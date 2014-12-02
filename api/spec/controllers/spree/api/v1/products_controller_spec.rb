@@ -433,7 +433,7 @@ module Spree
 
         it "puts the updated product in the given taxons" do
           api_put :update, id: product.to_param, product: { taxon_ids: [taxon_1.id, taxon_2.id] }
-          expect(json_response["taxon_ids"]).to eq([taxon_1.id, taxon_2.id])
+          expect(json_response["taxon_ids"].to_set).to eql([taxon_1.id, taxon_2.id].to_set)
         end
       end
 

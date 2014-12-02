@@ -11,6 +11,7 @@ describe Spree::Order, :type => :model do
   let(:order) { stub_model(Spree::Order, :user => user) }
 
   before do
+    create(:store)
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
