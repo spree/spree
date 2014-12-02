@@ -3,11 +3,11 @@ require 'spec_helper'
 describe "Cart", type: :feature, inaccessible: true do
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
-    expect(page).to have_selector("li#link-to-cart a", :visible => true)
+    expect(page).to have_selector("li#link-to-cart a", visible: true)
   end
 
-  it "prevents double clicking the remove button on cart", :js => true do
-    @product = create(:product, :name => "RoR Mug")
+  it "prevents double clicking the remove button on cart", js: true do
+    @product = create(:product, name: "RoR Mug")
 
     visit spree.root_path
     click_link "RoR Mug"
@@ -17,7 +17,7 @@ describe "Cart", type: :feature, inaccessible: true do
     page.execute_script("$('#update-cart').submit(function(){return false;})")
 
     expect(page).not_to have_selector('button#update-button[disabled]')
-    page.find(:css, '.delete img').click
+    page.find(:css, '.delete span').click
     expect(page).to have_selector('button#update-button[disabled]')
   end
 
@@ -30,7 +30,7 @@ describe "Cart", type: :feature, inaccessible: true do
   end
 
   it 'allows you to remove an item from the cart', :js => true do
-    create(:product, :name => "RoR Mug")
+    create(:product, name: "RoR Mug")
     visit spree.root_path
     click_link "RoR Mug"
     click_button "add-to-cart-button"
@@ -43,12 +43,12 @@ describe "Cart", type: :feature, inaccessible: true do
     expect(page).to have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      expect(page).to have_content("EMPTY")
+      expect(page).to have_content("Empty")
     end
   end
 
   it 'allows you to empty the cart', js: true do
-    create(:product, :name => "RoR Mug")
+    create(:product, name: "RoR Mug")
     visit spree.root_path
     click_link "RoR Mug"
     click_button "add-to-cart-button"
@@ -58,7 +58,7 @@ describe "Cart", type: :feature, inaccessible: true do
     expect(page).to have_content("Your cart is empty")
 
     within "#link-to-cart" do
-      expect(page).to have_content("EMPTY")
+      expect(page).to have_content("Empty")
     end
   end
 
