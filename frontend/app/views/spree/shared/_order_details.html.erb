@@ -3,18 +3,18 @@
   <% if order.has_step?("address") %>
 
     <div class="columns alpha four" data-hook="order-bill-address">
-      <h6><%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+      <h6><%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %></h6>
       <%= render :partial => 'spree/shared/address', :locals => { :address => order.bill_address } %>
     </div>
 
     <% if order.has_step?("delivery") %>
       <div class="columns alpha four" data-hook="order-ship-address">
-        <h6><%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless @order.completed? %></h6>
+        <h6><%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %></h6>
         <%= render :partial => 'spree/shared/address', :locals => { :address => order.ship_address } %>
       </div>
 
       <div class="columns alpha four" data-hook="order-shipment">
-        <h6><%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless @order.completed? %></h6>
+        <h6><%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless order.completed? %></h6>
         <div class="delivery">
           <% order.shipments.each do |shipment| %>
             <div>
@@ -23,13 +23,13 @@
             </div>
           <% end %>
         </div>
-        <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => @order}) if @order.shipped? %>
+        <%= render(:partial => 'spree/shared/shipment_tracking', :locals => {:order => order}) if order.shipped? %>
       </div>
     <% end %>
   <% end %>
 
   <div class="columns omega four">
-    <h6><%= Spree.t(:payment_information) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:payment) unless @order.completed? %></h6>
+    <h6><%= Spree.t(:payment_information) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:payment) unless order.completed? %></h6>
     <div class="payment-info">
       <% order.payments.valid.each do |payment| %>
         <%= render payment%><br/>
@@ -58,7 +58,7 @@
   </thead>
 
   <tbody data-hook>
-    <% @order.line_items.each do |item| %>
+    <% order.line_items.each do |item| %>
       <tr data-hook="order_details_line_item_row">
         <td data-hook="order_item_image">
           <% if item.variant.images.length == 0 %>
@@ -81,18 +81,18 @@
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
       <td colspan="4"><b><%= Spree.t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
+      <td class="total"><span id="order_total"><%= order.display_total.to_html %></span></td>
     </tr>
   </tfoot>
 
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= Spree.t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= @order.display_item_total.to_html %></span></td>
+      <td class="total"><span><%= order.display_item_total.to_html %></span></td>
     </tr>
   </tfoot>
 
-  <% if @order.line_item_adjustments.exists? %>
+  <% if order.line_item_adjustments.exists? %>
     <% if order.all_adjustments.promotion.eligible.exists? %>
       <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
         <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
@@ -126,7 +126,7 @@
   <% end %>
 
   <tfoot id="order-charges" data-hook="order_details_adjustments">
-    <% @order.adjustments.eligible.each do |adjustment| %>
+    <% order.adjustments.eligible.each do |adjustment| %>
     <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
       <tr class="total">
         <td colspan="4"><strong><%= adjustment.label %></strong></td>
