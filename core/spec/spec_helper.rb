@@ -63,6 +63,11 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :transaction
   end
 
+  # Wrap all db isolated tests in a transaction
+  config.around(db: :isolate) do |example|
+    DatabaseCleaner.cleaning(&example)
+  end
+
   config.around do |example|
     Timeout.timeout(10, &example)
   end
