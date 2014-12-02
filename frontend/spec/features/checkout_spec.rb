@@ -108,7 +108,7 @@ describe "Checkout", type: :feature, inaccessible: true do
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(:try_spree_current_user => user)
     end
 
-    it "redirects to payment page", js: true do
+    it "redirects to payment page", inaccessible: true, js: true do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"

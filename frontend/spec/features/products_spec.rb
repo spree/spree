@@ -22,7 +22,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
   describe 'meta tags and title' do
     let(:jersey) { Spree::Product.find_by_name('Ruby on Rails Baseball Jersey') }
-    let(:metas) { { :meta_description => 'Brand new Ruby on Rails Jersey', :meta_title => 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', :meta_keywords => 'ror, jersey, ruby' } }
+    let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
 
     it 'should return the correct title when displaying a single product' do
       click_link jersey.name
@@ -105,7 +105,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         visit spree.product_path(product)
         click_button "Add To Cart"
         click_button "Checkout"
-        fill_in "order_email", :with => "test@example.com"
+        fill_in "order_email", with: "test@example.com"
         click_button 'Continue'
         within("tr[data-hook=item_total]") do
           expect(page).to have_content("руб19.99")
@@ -115,7 +115,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   it "should be able to search for a product" do
-    fill_in "keywords", :with => "shirt"
+    fill_in "keywords", with: "shirt"
     click_button "Search"
 
     expect(page.all('#products .product-list-item').size).to eq(1)

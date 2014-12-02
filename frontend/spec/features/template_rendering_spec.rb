@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Template rendering", :type => :feature do
+describe "Template rendering", type: :feature do
 
   after do
     Capybara.ignore_hidden_elements = true
@@ -16,5 +16,4 @@ describe "Template rendering", :type => :feature do
     visit spree.root_path
     expect(find('link[rel=canonical]')[:href]).to eql('http://spreestore.example.com/')
   end
-
 end
