@@ -601,7 +601,7 @@ describe Spree::Promotion, :type => :model do
       expect(line_item.adjustments.count).to eq(1)
       expect(order.adjustment_total).to eq -5
 
-      other_line_item = order.contents.add(variant, 1, currency: order.currency)
+      other_line_item = order.contents.add(variant, 1)
 
       expect(other_line_item).not_to eq line_item
       expect(other_line_item.adjustments.count).to eq(1)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderContents, type: :model do
+describe Spree::OrderContents, type: :model, db: :isolate do
   let(:order) { Spree::Order.create }
   let(:variant) { create(:variant) }
 
@@ -16,11 +16,30 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'given a shipment' do
-      it 'ensure shipment calls update_amounts instead of order calling ensure_updated_shipments' do
+      it 'ensures shipment calls update_amounts instead of order calling ensure_updated_shipments' do
         shipment = create(:shipment)
         expect(subject.order).to_not receive(:ensure_updated_shipments)
         expect(shipment).to receive(:update_amounts)
         subject.add(variant, 1, shipment: shipment)
+      end
+
+      context 'on new line item' do
+        it 'populates target shipments' do
+          shipment = create(:shipment)
+          subject.add(variant, 1, shipment: shipment)
+          expect(order.line_items.first.target_shipment).to eql(shipment)
+        end
+      end
+
+      context 'on existing line item' do
+        it 'populates target shipments' do
+          shipment = create(:shipment)
+          subject.add(variant, 1)
+          expect(order.line_items.first.target_shipment).to be(nil)
+          subject.add(variant, 1, shipment: shipment)
+          expect(order.line_items.first.target_shipment).to eql(shipment)
+          expect(order.line_items.first.price).to eql(variant.price)
+        end
       end
     end
 
@@ -35,6 +54,7 @@ describe Spree::OrderContents, type: :model do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(1)
       expect(order.line_items.size).to eq(1)
+      expect(order.line_items.first.price).to eql(variant.price)
     end
 
     it 'should update line item if one exists' do
@@ -42,6 +62,7 @@ describe Spree::OrderContents, type: :model do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(2)
       expect(order.line_items.size).to eq(1)
+      expect(order.line_items.first.price).to eql(variant.price)
     end
 
     it 'should update order totals' do

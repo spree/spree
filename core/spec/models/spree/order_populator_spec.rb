@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::OrderPopulator, :type => :model do
   let(:order) { double('Order', line_items: []) }
 
-  subject { Spree::OrderPopulator.new(order, "USD") }
+  subject { Spree::OrderPopulator.new(order) }
 
   context "with stubbed out find_variant" do
     let(:variant) { double('Variant', name: "T-Shirt", options_text: "Size: M") }
@@ -15,7 +15,7 @@ describe Spree::OrderPopulator, :type => :model do
 
     context "can populate an order" do
       it "can take a list of variants with quantites and add them to the order" do
-        expect(order.contents).to receive(:add).with(variant, 5, currency: subject.currency).and_return(double.as_null_object)
+        expect(order.contents).to receive(:add).with(variant, 5, {}).and_return(double.as_null_object)
         subject.populate(2, 5)
       end
     end

@@ -1,11 +1,10 @@
 module Spree
   class OrderPopulator
-    attr_accessor :order, :currency
+    attr_accessor :order
     attr_reader :errors
 
-    def initialize(order, currency)
+    def initialize(order)
       @order = order
-      @currency = currency
       @errors = ActiveModel::Errors.new(self)
     end
 
@@ -23,7 +22,7 @@ module Spree
 
     private
 
-    def attempt_cart_add(variant_id, quantity, options = {})
+    def attempt_cart_add(variant_id, quantity, options)
       quantity = quantity.to_i
       # 2,147,483,647 is crazy.
       # See issue #2695.
@@ -36,7 +35,7 @@ module Spree
         Spree::Variant.find(variant_id)
 
       begin
-        @order.contents.add(variant, quantity, options.merge(currency: currency))
+        @order.contents.add(variant, quantity, options)
       rescue ActiveRecord::RecordInvalid => e
         errors.add(:base, e.record.errors.messages.values.join(" "))
       end

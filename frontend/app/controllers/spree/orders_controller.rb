@@ -41,7 +41,7 @@ module Spree
 
     # Adds a new item to the order (creating a new order if none already exists)
     def populate
-      populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true), current_currency)
+      populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true))
       if populator.populate(params[:variant_id], params[:quantity], params[:options])
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }

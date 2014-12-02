@@ -1,6 +1,6 @@
 module Spree
   class OrderContents
-    attr_accessor :order, :currency
+    attr_accessor :order
 
     def initialize(order)
       @order = order
@@ -65,20 +65,25 @@ module Spree
         order_updater.update
       end
 
-      def add_to_line_item(variant, quantity, options = {})
-        line_item = grab_line_item_by_variant(variant, false, options)
+      def add_to_line_item(variant, quantity, options)
+        fail 'redundant :currency option' if options.key?(:currency)
+        shipment = options[:shipment]
+        line_item = grab_line_item_by_variant(variant)
 
-        if line_item
-          line_item.quantity += quantity.to_i
-          line_item.currency = currency unless currency.nil?
-        else
-          opts = { currency: order.currency }.merge ActionController::Parameters.new(options).
-                                              permit(PermittedAttributes.line_item_attributes)
-          line_item = order.line_items.new(quantity: quantity,
-                                            variant: variant,
-                                            options: opts)
-        end
-        line_item.target_shipment = options[:shipment] if options.has_key? :shipment
+
+        line_item ||= order.line_items.new(
+          quantity: 0,
+          variant: variant
+        )
+
+        line_item.options = ActionController::Parameters.new(options).permit(PermittedAttributes.line_item_attributes)
+
+        line_item.quantity += quantity
+
+        line_item.target_shipment = shipment
+        line_item.currency        = order.currency
+        line_item.price           = variant.price_in(order.currency).amount
+
         line_item.save!
         line_item
       end

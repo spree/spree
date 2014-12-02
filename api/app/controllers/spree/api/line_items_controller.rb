@@ -6,10 +6,10 @@ module Spree
       self.line_item_options = []
 
       def create
-        variant = Spree::Variant.find(params[:line_item][:variant_id])
+        variant = Spree::Variant.find(params.fetch(:line_item)[:variant_id])
         @line_item = order.contents.add(
             variant,
-            params[:line_item][:quantity] || 1,
+            params.fetch(:line_item).fetch(:quantity, 1).to_i,
             line_item_params[:options] || {}
         )
 
