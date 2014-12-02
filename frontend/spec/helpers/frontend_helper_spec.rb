@@ -4,31 +4,31 @@ module Spree
   describe FrontendHelper, type: :helper do
     # Regression test for #2034
     context "flash_message" do
-      let(:flash) { {"notice" => "ok", "foo" => "foo", "bar" => "bar"} }
+      let(:flash) { { "notice" => "ok", "foo" => "foo", "bar" => "bar" } }
 
       it "should output all flash content" do
         flash_messages
         html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css(".notice").text).to eq("ok")
-        expect(html.css(".foo").text).to eq("foo")
-        expect(html.css(".bar").text).to eq("bar")
+        expect(html.css(".alert-notice").text).to eq("ok")
+        expect(html.css(".alert-foo").text).to eq("foo")
+        expect(html.css(".alert-bar").text).to eq("bar")
       end
 
       it "should output flash content except one key" do
         flash_messages(ignore_types: :bar)
         html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css(".notice").text).to eq("ok")
-        expect(html.css(".foo").text).to eq("foo")
-        expect(html.css(".bar").text).to be_empty
+        expect(html.css(".alert-notice").text).to eq("ok")
+        expect(html.css(".alert-foo").text).to eq("foo")
+        expect(html.css(".alert-bar").text).to be_empty
       end
 
       it "should output flash content except some keys" do
         flash_messages(ignore_types: [:foo, :bar])
         html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css(".notice").text).to eq("ok")
-        expect(html.css(".foo").text).to be_empty
-        expect(html.css(".bar").text).to be_empty
-        expect(helper.output_buffer).to eq("<div class=\"flash notice\">ok</div>")
+        expect(html.css(".alert-notice").text).to eq("ok")
+        expect(html.css(".alert-foo").text).to be_empty
+        expect(html.css(".alert-bar").text).to be_empty
+        expect(helper.output_buffer).to eq("<div class=\"alert alert-notice\">ok</div>")
       end
     end
 
