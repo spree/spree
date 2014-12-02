@@ -1,11 +1,10 @@
 require 'rails/all'
-require 'jquery-rails'
+
+require 'bootstrap-kaminari-views'
 require 'canonical-rails'
 require 'deface'
-require 'bootstrap-kaminari-views'
-
+require 'jquery-rails'
 require 'spree/core'
-
-require 'spree/responder'
 require 'spree/frontend/middleware/seo_assist'
 require 'spree/frontend/engine'
+require 'spree/responder'

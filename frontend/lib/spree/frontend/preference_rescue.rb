@@ -1,3 +1,4 @@
+# TODO: I think this can be removed now?
 module Spree
   class OldPrefs < ActiveRecord::Base
     self.table_name = "spree_preferences"
