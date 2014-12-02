@@ -78,6 +78,7 @@ Spree::Core::Engine.add_routes do
         put :approve
         put :cancel
         put :resume
+        get :state_changes
       end
 
       resources :state_changes, only: [:index]
