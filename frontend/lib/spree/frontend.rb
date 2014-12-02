@@ -1,6 +1,5 @@
 require 'rails/all'
 
-require 'bootstrap-kaminari-views'
 require 'canonical-rails'
 require 'deface'
 require 'jquery-rails'
