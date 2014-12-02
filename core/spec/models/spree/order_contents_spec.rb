@@ -16,11 +16,55 @@ describe Spree::OrderContents, type: :model, db: :isolate do
     end
 
     context 'given a shipment' do
-      it 'ensure shipment calls update_amounts instead of order calling ensure_updated_shipments' do
+      it 'ensures shipment calls update_amounts instead of order calling ensure_updated_shipments' do
         shipment = create(:shipment)
         expect(subject.order).to_not receive(:ensure_updated_shipments)
         expect(shipment).to receive(:update_amounts)
         subject.add(variant, 1, nil, shipment)
+      end
+
+      context 'on new line item' do
+        it 'populates target shipments' do
+          shipment = create(:shipment)
+          subject.add(variant, 1, nil, shipment)
+          expect(order.line_items.first.target_shipment).to eql(shipment)
+        end
+      end
+
+      context 'on existing line item' do
+        it 'populates target shipments' do
+          shipment = create(:shipment)
+          subject.add(variant, 1)
+          expect(order.line_items.first.target_shipment).to be(nil)
+          subject.add(variant, 1, nil, shipment)
+          expect(order.line_items.first.target_shipment).to eql(shipment)
+          expect(order.line_items.first.price).to eql(variant.price)
+        end
+      end
+    end
+
+    context 'given a currency' do
+      before do
+        variant.prices.create!(currency: 'EUR', amount: 100)
+      end
+
+      context 'on new line item' do
+        it 'attaches currency to line item' do
+          currency = 'EUR'
+          subject.add(variant, 1, currency)
+          expect(order.line_items.first.currency).to be(currency)
+          expect(order.line_items.first.price).to eql(100)
+        end
+      end
+
+      context 'on existing line item' do
+        it 'attaches currency to line item' do
+          currency = 'EUR'
+          subject.add(variant, 1)
+          subject.add(variant, 1, currency)
+          expect(order.line_items.first.currency).to be(currency)
+          expect(order.line_items.first.price).to eql(100)
+        end
       end
     end
 
@@ -35,6 +79,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(1)
       expect(order.line_items.size).to eq(1)
+      expect(order.line_items.first.price).to eql(variant.price)
     end
 
     it 'should update line item if one exists' do
@@ -42,6 +87,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(2)
       expect(order.line_items.size).to eq(1)
+      expect(order.line_items.first.price).to eql(variant.price)
     end
 
     it 'should update order totals' do

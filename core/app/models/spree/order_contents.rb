@@ -9,8 +9,8 @@ module Spree
     def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
       reload_totals
-      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-      PromotionHandler::Cart.new(order, line_item).activate
+      shipment ? shipment.update_amounts : order.ensure_updated_shipments
+      PromotionHandler::Cart.new(order).activate
       reload_totals
       line_item
     end
@@ -18,7 +18,7 @@ module Spree
     def remove(variant, quantity = 1, shipment = nil)
       line_item = remove_from_line_item(variant, quantity, shipment)
       reload_totals
-      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+      shipment ? shipment.update_amounts : order.ensure_updated_shipments
       PromotionHandler::Cart.new(order, line_item).activate
       reload_totals
       line_item
@@ -50,23 +50,15 @@ module Spree
         order_updater.update
       end
 
-      def add_to_line_item(variant, quantity, currency=nil, shipment=nil)
+      def add_to_line_item(variant, quantity, currency, shipment)
         line_item = grab_line_item_by_variant(variant)
+        line_item ||= order.line_items.new(quantity: 0, variant: variant)
 
-        if line_item
-          line_item.target_shipment = shipment
-          line_item.quantity += quantity.to_i
-          line_item.currency = currency unless currency.nil?
-        else
-          line_item = order.line_items.new(quantity: quantity, variant: variant)
-          line_item.target_shipment = shipment
-          if currency
-            line_item.currency = currency
-            line_item.price    = variant.price_in(currency).amount
-          else
-            line_item.price    = variant.price
-          end
-        end
+        line_item.quantity += quantity
+
+        line_item.target_shipment = shipment
+        line_item.currency        = currency
+        line_item.price           = variant.price_in(currency).amount
 
         line_item.save
         line_item
