@@ -285,6 +285,13 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  context "#display_promo_total" do
+    it "returns the value as a spree money" do
+      order.promo_total = 10.55
+      expect(order.display_promo_total).to eq(Spree::Money.new(10.55))
+    end
+  end
+
   context "#display_total" do
     it "returns the value as a spree money" do
       order.total = 10.55
