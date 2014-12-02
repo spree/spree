@@ -78,8 +78,9 @@ Spree::Core::Engine.add_routes do
         put :approve
         put :cancel
         put :resume
-        get :state_changes
       end
+
+      resources :state_changes, only: [:index]
 
       resource :customer, controller: "orders/customer_details"
       resources :customer_returns, only: [:index, :new, :edit, :create, :update] do

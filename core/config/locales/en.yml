@@ -108,6 +108,14 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
+      spree/state_change:
+        state_changes: State changes
+        type: Type
+        state_from: State from
+        state_to: State to
+        user: User
+        timestamp: Timestamp
+        updated: Updated
       spree/store:
         url: Site URL
         meta_description: Meta Description
@@ -1029,6 +1037,7 @@ en:
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     previous: Previous
+    previous_state_missing: "n/a"
     price: Price
     price_range: Price Range
     price_sack: Price Sack
@@ -1256,14 +1265,6 @@ en:
     start: Start
     state: State
     state_based: State Based
-    state_changes: State changes
-    state_change:
-      type: Type
-      state_from: State from
-      state_to: State to
-      user: User
-      timestamp: Timestamp
-      updated: Updated
     states: States
     states_required: States Required
     status: Status
