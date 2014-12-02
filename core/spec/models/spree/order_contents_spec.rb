@@ -15,6 +15,15 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       end
     end
 
+    context 'variant is invalid' do
+      it 'does not process line item' do
+        variant.stock_items.update_all(backorderable: false)
+        expect(Spree::PromotionHandler).to_not receive(:new)
+        line_item = subject.add(variant)
+        expect(line_item.valid?).to be(false)
+      end
+    end
+
     context 'given a shipment' do
       it 'ensures shipment calls update_amounts instead of order calling ensure_updated_shipments' do
         shipment = create(:shipment)
@@ -27,7 +36,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
         it 'populates target shipments' do
           shipment = create(:shipment)
           subject.add(variant, 1, nil, shipment)
-          expect(order.line_items.first.target_shipment).to eql(shipment)
+          expect(order.line_items.first.target_shipment).to be(shipment)
         end
       end
 
@@ -37,7 +46,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
           subject.add(variant, 1)
           expect(order.line_items.first.target_shipment).to be(nil)
           subject.add(variant, 1, nil, shipment)
-          expect(order.line_items.first.target_shipment).to eql(shipment)
+          expect(order.line_items.first.target_shipment).to be(shipment)
           expect(order.line_items.first.price).to eql(variant.price)
         end
       end
@@ -53,7 +62,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
           currency = 'EUR'
           subject.add(variant, 1, currency)
           expect(order.line_items.first.currency).to be(currency)
-          expect(order.line_items.first.price).to eql(100)
+          expect(order.line_items.first.price).to eql(100.to_d)
         end
       end
 
@@ -63,7 +72,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
           subject.add(variant, 1)
           subject.add(variant, 1, currency)
           expect(order.line_items.first.currency).to be(currency)
-          expect(order.line_items.first.price).to eql(100)
+          expect(order.line_items.first.price).to eql(100.to_d)
         end
       end
     end

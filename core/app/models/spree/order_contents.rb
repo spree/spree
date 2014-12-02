@@ -8,6 +8,7 @@ module Spree
 
     def add(variant, quantity = 1, currency = nil, shipment = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
+      return line_item unless line_item.save
       reload_totals
       shipment ? shipment.update_amounts : order.ensure_updated_shipments
       PromotionHandler::Cart.new(order).activate
@@ -60,7 +61,6 @@ module Spree
         line_item.currency        = currency
         line_item.price           = variant.price_in(currency).amount
 
-        line_item.save
         line_item
       end
 
