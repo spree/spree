@@ -1265,14 +1265,6 @@ en:
     start: Start
     state: State
     state_based: State Based
-    state_changes: State changes
-    state_change:
-      type: Type
-      state_from: State from
-      state_to: State to
-      user: User
-      timestamp: Timestamp
-      updated: Updated
     states: States
     states_required: States Required
     status: Status
