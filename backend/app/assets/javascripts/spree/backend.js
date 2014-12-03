@@ -8,6 +8,7 @@
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
 //= require modernizr
+//= require underscore-min.js
 //= require spree
 //= require spree/backend/spree-select2
 //= require_tree .
