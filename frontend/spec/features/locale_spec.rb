@@ -1,20 +1,20 @@
 require 'spec_helper'
 
-describe 'setting locale', :type => :feature do
+describe 'setting locale', type: :feature do
   def with_locale(locale)
     I18n.locale = locale
     Spree::Frontend::Config[:locale] = locale
     yield
-    I18n.locale = I18n.default_locale
+    I18n.locale = 'en'
     Spree::Frontend::Config[:locale] = 'en'
   end
 
   context 'shopping cart link and page' do
     before do
       I18n.backend.store_translations(:fr,
-       :spree => {
-         :cart => 'Panier',
-         :shopping_cart => 'Panier'
+       spree: {
+         cart: 'Panier',
+         shopping_cart: 'Panier'
       })
     end
 
@@ -40,7 +40,7 @@ describe 'setting locale', :type => :feature do
 
     def check_error_text(text)
       %w(firstname lastname address1 city).each do |attr|
-        expect(find(".field#b#{attr} label.error").text).to eq(text)
+        expect(find("#b#{attr} label.error").text).to eq(text)
       end
     end
 
@@ -51,7 +51,7 @@ describe 'setting locale', :type => :feature do
       error_messages.each do |locale, message|
         with_locale(locale) do
           visit '/checkout/address'
-          find('.form-actions input[type=submit]').click
+          find('.form-buttons input[type=submit]').click
           check_error_text message
         end
       end
