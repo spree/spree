@@ -1,13 +1,11 @@
 require 'spec_helper'
 
-describe "Stock Locations", :type => :feature do
+describe "Stock Locations", type: :feature, js: true do
   stub_authorization!
 
   before(:each) do
     country = create(:country)
-    visit spree.admin_path
-    click_link "Configuration"
-    click_link "Stock Locations"
+    visit spree.admin_stock_locations_path
   end
 
   it "can create a new stock location" do
@@ -20,7 +18,7 @@ describe "Stock Locations", :type => :feature do
     expect(page).to have_content("London")
   end
 
-  it "can delete an existing stock location", js: true do
+  it "can delete an existing stock location" do
     location = create(:stock_location)
     visit current_path
 
@@ -41,7 +39,6 @@ describe "Stock Locations", :type => :feature do
     expect(page).to have_content("NY Warehouse")
 
     click_icon :edit
-
     fill_in "Name", with: "London"
     click_button "Update"
 

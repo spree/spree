@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe "Taxonomies", :type => :feature do
+describe "Taxonomies", type: :feature, js: true do
   stub_authorization!
 
   before(:each) do
     visit spree.admin_path
-    click_link "Configuration"
+    click_link "Products"
   end
 
   context "show" do

@@ -57,7 +57,7 @@ feature "Tiered Calculator Promotions" do
 
     scenario "deleting a tier", js: true do
       within(".tier:nth-child(2)") do
-        find(".remove").click
+        click_icon :delete
       end
 
       within('#actions_container') { click_button "Update" }
