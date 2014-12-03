@@ -42,9 +42,9 @@ describe "Order Details", type: :feature, js: true do
       end
 
       it "can add an item to a shipment" do
-        select2_search "spree t-shirt", :from => Spree.t(:name_or_sku)
+        select2_search "spree t-shirt", from: Spree.t(:name_or_sku)
         within("table.stock-levels") do
-          fill_in "variant_quantity", :with => 2
+          fill_in "variant_quantity", with: 2
           click_icon :plus
         end
 
@@ -86,7 +86,7 @@ describe "Order Details", type: :feature, js: true do
         within(".show-tracking") do
           click_icon :edit
         end
-        fill_in "tracking", :with => "FOOBAR"
+        fill_in "tracking", with: "FOOBAR"
         click_icon :save
 
         expect(page).not_to have_css("input[name=tracking]")
@@ -99,7 +99,7 @@ describe "Order Details", type: :feature, js: true do
         within("table.table tr.show-method") do
           click_icon :edit
         end
-        select2 "Default", :from => "Shipping Method"
+        select2 "Default", from: "Shipping Method"
         click_icon :save
 
         expect(page).not_to have_css('#selected_shipping_rate_id')
@@ -114,7 +114,7 @@ describe "Order Details", type: :feature, js: true do
       end
 
       context "with special_instructions present" do
-        let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
+        let(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15", number: "R100", special_instructions: "Very special instructions here") }
         it "will show the special_instructions" do
           visit spree.edit_admin_order_path(order)
           expect(page).to have_content("Very special instructions here")
@@ -129,9 +129,9 @@ describe "Order Details", type: :feature, js: true do
         end
 
         it "adds variant to order just fine" do
-          select2_search tote.name, :from => Spree.t(:name_or_sku)
+          select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
-            fill_in "variant_quantity", :with => 1
+            fill_in "variant_quantity", with: 1
             click_icon :plus
           end
 
@@ -148,7 +148,7 @@ describe "Order Details", type: :feature, js: true do
         end
 
         it "displays out of stock instead of add button" do
-          select2_search product.name, :from => Spree.t(:name_or_sku)
+          select2_search product.name, from: Spree.t(:name_or_sku)
 
           within("table.stock-levels") do
             expect(page).to have_content(Spree.t(:out_of_stock))

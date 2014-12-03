@@ -25,7 +25,7 @@ describe "Customer Details", type: :feature, js: true do
         click_icon :plus
       end
       wait_for_ajax
-      click_link "Customer Details"
+      click_link "Customer"
       targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
       # 5317 - Address prefills using user's default.
       expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
@@ -57,7 +57,7 @@ describe "Customer Details", type: :feature, js: true do
       before { create(:country, iso: "BRA", name: "Brazil") }
 
       it "changes state field to text input" do
-        click_link "Customer Details"
+        click_link "Customer"
 
         within("#billing") do
           targetted_select2 "Brazil", from: "#s2id_order_bill_address_attributes_country_id"
@@ -73,12 +73,12 @@ describe "Customer Details", type: :feature, js: true do
       order.ship_address = create(:address)
       order.save!
 
-      click_link "Customer Details"
+      click_link "Customer"
       within("#shipping") { fill_in_address "ship" }
       within("#billing") { fill_in_address "bill" }
 
       click_button "Update"
-      click_link "Customer Details"
+      click_link "Customer"
 
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
@@ -88,7 +88,7 @@ describe "Customer Details", type: :feature, js: true do
     end
 
     it "should show validation errors" do
-      click_link "Customer Details"
+      click_link "Customer"
       click_button "Update"
       expect(page).to have_content("Shipping address first name can't be blank")
     end
@@ -96,7 +96,7 @@ describe "Customer Details", type: :feature, js: true do
     it "updates order email for an existing order with a user" do
       order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
       previous_user = order.user
-      click_link "Customer Details"
+      click_link "Customer"
       fill_in "order_email", with: "newemail@example.com"
       expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
       expect(order.user_id).to eq previous_user.id
@@ -114,7 +114,7 @@ describe "Customer Details", type: :feature, js: true do
       end
 
       it "sets default country when displaying form" do
-        click_link "Customer Details"
+        click_link "Customer"
         expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
       end
     end
@@ -126,7 +126,7 @@ describe "Customer Details", type: :feature, js: true do
       end
 
       specify do
-        click_link "Customer Details"
+        click_link "Customer"
         # Need to fill in valid information so it passes validations
         fill_in "order_ship_address_attributes_firstname",  with: "John 99"
         fill_in "order_ship_address_attributes_lastname",   with: "Doe"
