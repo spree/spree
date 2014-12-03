@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product Taxons", :type => :feature do
+describe "Product Taxons", type: :feature, js: true do
   stub_authorization!
 
   after do

@@ -10,8 +10,8 @@ describe "Taxonomies", type: :feature, js: true do
 
   context "show" do
     it "should display existing taxonomies" do
-      create(:taxonomy, :name => 'Brand')
-      create(:taxonomy, :name => 'Categories')
+      create(:taxonomy, name: 'Brand')
+      create(:taxonomy, name: 'Categories')
       click_link "Taxonomies"
       within_row(1) { expect(page).to have_content("Brand") }
       within_row(2) { expect(page).to have_content("Categories") }
@@ -26,13 +26,13 @@ describe "Taxonomies", type: :feature, js: true do
 
     it "should allow an admin to create a new taxonomy" do
       expect(page).to have_content("New Taxonomy")
-      fill_in "taxonomy_name", :with => "sports"
+      fill_in "taxonomy_name", with: "sports"
       click_button "Create"
       expect(page).to have_content("successfully created!")
     end
 
     it "should display validation errors" do
-      fill_in "taxonomy_name", :with => ""
+      fill_in "taxonomy_name", with: ""
       click_button "Create"
       expect(page).to have_content("can't be blank")
     end
@@ -43,7 +43,7 @@ describe "Taxonomies", type: :feature, js: true do
       create(:taxonomy)
       click_link "Taxonomies"
       within_row(1) { click_icon :edit }
-      fill_in "taxonomy_name", :with => "sports 99"
+      fill_in "taxonomy_name", with: "sports 99"
       click_button "Update"
       expect(page).to have_content("successfully updated!")
       expect(page).to have_content("sports 99")

@@ -1,13 +1,9 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "Products", :type => :feature do
+describe "Products", type: :feature, js: true do
   context "as admin user" do
     stub_authorization!
-
-    before(:each) do
-      visit spree.admin_path
-    end
 
     def build_option_type_with_values(name, values)
       ot = FactoryGirl.create(:option_type, :name => name)
@@ -25,7 +21,7 @@ describe "Products", :type => :feature do
         end
 
         it "should list existing products with correct sorting by name" do
-          click_link "Products"
+          visit spree.admin_products_path
           # Name ASC
           within_row(1) { expect(page).to have_content('apache baseball cap') }
           within_row(2) { expect(page).to have_content("zomg shirt") }
@@ -37,8 +33,7 @@ describe "Products", :type => :feature do
         end
 
         it "should list existing products with correct sorting by price" do
-          click_link "Products"
-
+          visit spree.admin_products_path
           # Name ASC (default)
           within_row(1) { expect(page).to have_content('apache baseball cap') }
           within_row(2) { expect(page).to have_content("zomg shirt") }
@@ -63,7 +58,7 @@ describe "Products", :type => :feature do
           # Regression test for #2737
           context "uses руб as the currency symbol" do
             it "on the products listing page" do
-              click_link "Products"
+              visit spree.admin_products_path
               within_row(1) { expect(page).to have_content("руб19.99") }
             end
           end
@@ -76,7 +71,7 @@ describe "Products", :type => :feature do
         create(:product, :name => 'apache baseball cap', :deleted_at => "2011-01-06 18:21:13")
         create(:product, :name => 'zomg shirt')
 
-        click_link "Products"
+        visit spree.admin_products_path
         expect(page).to have_content("zomg shirt")
         expect(page).not_to have_content("apache baseball cap")
         check "Show Deleted"
@@ -94,8 +89,8 @@ describe "Products", :type => :feature do
         create(:product, :name => 'apache baseball cap2', :sku => "B100")
         create(:product, :name => 'zomg shirt')
 
-        click_link "Products"
-        fill_in "q_name_cont", :with => "ap"
+        visit spree.admin_products_path
+        fill_in "q_name_cont", with: "ap"
         click_icon :search
         expect(page).to have_content("apache baseball cap")
         expect(page).to have_content("apache baseball cap2")
@@ -139,9 +134,9 @@ describe "Products", :type => :feature do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, :name => "Random")
+        @property_prototype = create(:prototype, name: "Random")
         @shipping_category = create(:shipping_category)
-        click_link "Products"
+        visit spree.admin_products_path
         click_link "admin_new_product"
         within('#new_product') do
           expect(page).to have_content("SKU")
@@ -186,7 +181,7 @@ describe "Products", :type => :feature do
     context "creating a new product" do
       before(:each) do
         @shipping_category = create(:shipping_category)
-        click_link "Products"
+        visit spree.admin_products_path
         click_link "admin_new_product"
         within('#new_product') do
           expect(page).to have_content("SKU")
@@ -264,7 +259,7 @@ describe "Products", :type => :feature do
       it "should allow an admin to clone a product" do
         create(:product)
 
-        click_link "Products"
+        visit spree.admin_products_path
         within_row(1) do
           click_icon :copy
         end
@@ -274,9 +269,9 @@ describe "Products", :type => :feature do
 
       context "cloning a deleted product" do
         it "should allow an admin to clone a deleted product" do
-          create(:product, :name => "apache baseball cap")
+          create(:product, name: "apache baseball cap")
 
-          click_link "Products"
+          visit spree.admin_products_path
           check "Show Deleted"
           click_button "Search"
 

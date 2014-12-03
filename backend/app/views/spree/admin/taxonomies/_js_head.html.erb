@@ -1,0 +1,13 @@
+<% content_for :head do %>
+  <%= javascript_tag "var taxonomy_id = #{@taxonomy.id};
+    var loading = '#{escape_javascript Spree.t(:loading)}';
+    var new_taxon = '#{escape_javascript Spree.t(:new_taxon)}';
+    var server_error = '#{escape_javascript Spree.t(:server_error)}';
+    var taxonomy_tree_error = '#{escape_javascript Spree.t(:taxonomy_tree_error)}';
+
+    $(document).ready(function(){
+      setup_taxonomy_tree(taxonomy_id);
+    });
+    "
+  %>
+<% end %>

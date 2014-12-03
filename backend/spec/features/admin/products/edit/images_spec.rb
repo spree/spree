@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product Images", :type => :feature do
+describe "Product Images", type: :feature, js: true do
   stub_authorization!
 
   let(:file_path) { Rails.root + "../../spec/support/ror_ringer.jpeg" }
@@ -18,8 +18,7 @@ describe "Product Images", :type => :feature do
 
       create(:product)
 
-      visit spree.admin_path
-      click_link "Products"
+      visit spree.admin_products_path
       click_icon(:edit)
       click_link "Images"
       click_link "new_image_link"
@@ -43,7 +42,7 @@ describe "Product Images", :type => :feature do
   # Regression test for #2228
   it "should see variant images" do
     variant = create(:variant)
-    variant.images.create!(:attachment => File.open(file_path))
+    variant.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(variant.product)
 
     expect(page).not_to have_content("No Images Found.")
@@ -51,7 +50,7 @@ describe "Product Images", :type => :feature do
       expect(page).to have_content(variant.options_text)
 
       #ensure no duplicate images are displayed
-      expect(page).to have_css("tbody tr", :count => 1)
+      expect(page).to have_css("tbody tr", count: 1)
 
       #ensure variant header is displayed
       within("thead") do
@@ -67,13 +66,13 @@ describe "Product Images", :type => :feature do
 
   it "should not see variant column when product has no variants" do
     product = create(:product)
-    product.images.create!(:attachment => File.open(file_path))
+    product.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(product)
 
     expect(page).not_to have_content("No Images Found.")
     within("table.table") do
       #ensure no duplicate images are displayed
-      expect(page).to have_css("tbody tr", :count => 1)
+      expect(page).to have_css("tbody tr", count: 1)
 
       #ensure variant header is not displayed
       within("thead") do
@@ -81,7 +80,7 @@ describe "Product Images", :type => :feature do
       end
 
       #ensure correct cell count
-      expect(page).to have_css("thead th", :count => 3)
+      expect(page).to have_css("thead th", count: 3)
     end
   end
 end
