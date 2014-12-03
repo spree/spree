@@ -315,7 +315,7 @@ describe "Products", type: :feature, js: true do
 
       it 'should add option_types when selecting a prototype' do
         visit spree.admin_product_path(product)
-        click_link 'Product Properties'
+        click_link 'Properties'
         expect(page).to have_content("SELECT FROM PROTOTYPE")
         click_link "Select From Prototype"
 
@@ -340,6 +340,7 @@ describe "Products", type: :feature, js: true do
           click_icon :delete
           wait_for_ajax
         end
+        click_on 'Filter'
         # This will show our deleted product
         check "Show Deleted"
         click_icon :search
