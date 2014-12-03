@@ -7,7 +7,7 @@ module Spree
       #   * :route to override automatically determining the default route
       #   * :match_path as an alternative way to control when the tab is active, /products would match /admin/products, /admin/products/5/variants etc.
       def tab(*args)
-        options = {:label => args.first.to_s}
+        options = { label: args.first.to_s }
 
         # Return if resource is found and user is not allowed to :admin
         return '' if klass = klass_for(options[:label]) and cannot?(:admin, klass)
@@ -18,7 +18,7 @@ module Spree
         options[:route] ||=  "admin_#{args.first}"
 
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
-        titleized_label = Spree.t(options[:label], :default => options[:label], :scope => [:admin, :tab]).titleize
+        titleized_label = Spree.t(options[:label], default: options[:label], :scope => [:admin, :tab]).titleize
 
         css_classes = []
 
@@ -40,15 +40,15 @@ module Spree
         if options[:css_class]
           css_classes << options[:css_class]
         end
-        content_tag('li', link, :class => css_classes.join(' '))
+        content_tag('li', link, class: css_classes.join(' '))
       end
 
       # Single main menu item
       def main_menu_item text, url: nil, icon: nil
         link_to url do
-          content_tag(:span, nil, :class => "icon icon-#{icon}") +
+          content_tag(:span, nil, class: "icon icon-#{icon}") +
           content_tag(:span, " #{text}") +
-          content_tag(:span, nil, :class => "icon icon-chevron-left pull-right")
+          content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
         end
       end
 
@@ -56,17 +56,17 @@ module Spree
       def main_menu_tree text, icon: nil, sub_menu: nil
         content_tag :li, class: "treeview" do
           main_menu_item(text, url: "javascript:;", icon: icon) +
-          render(:partial => "spree/admin/shared/sub_menu/#{sub_menu}")
+          render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
       end
 
       # sidebar are used on order edit, product edit, user overview etc.
       # this link is shown so a user can collapse the sidebar
       def collapse_sidebar_link
-        content_tag :li, :class => "collapse-sidebar" do
-          link_to "javascript:;", :class => "js-collapse-sidebar" do
-            content_tag(:span, nil, :class => "icon icon-chevron-right") +
-            content_tag(:span, "Collapse sidebar", :class => "text")
+        content_tag :li, class: "collapse-sidebar" do
+          link_to "javascript:;", class: "js-collapse-sidebar" do
+            content_tag(:span, nil, class: "icon icon-chevron-right") +
+            content_tag(:span, "Collapse sidebar", class: "text")
           end
         end
       end
@@ -85,7 +85,9 @@ module Spree
           per_page_options = %w{5 15 30 45 60}
         end
 
-        select_tag(:per_page, options_for_select(per_page_options, params['per_page'] || per_page_default), { :id => "js-per-page-select", :class => "form-control" })
+        select_tag(:per_page,
+          options_for_select(per_page_options, params['per_page'] || per_page_default),
+          { id: "js-per-page-select", class: "form-control" })
       end
 
       # finds class for a given symbol / string
@@ -105,26 +107,26 @@ module Spree
       end
 
       def link_to_clone(resource, options={})
-        options[:data] = {:action => 'clone'}
+        options[:data] = { action: 'clone' }
         options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
-        options[:data] = {:action => 'new'}
+        options[:data] = { action: 'new' }
         options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('plus', Spree.t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
         url = options[:url] || edit_object_url(resource)
-        options[:data] = {:action => 'edit'}
+        options[:data] = { action: 'edit' }
         options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})
-        options[:data] = {:action => 'edit'}
+        options[:data] = { action: 'edit' }
         options[:class] = "btn btn-default btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
@@ -133,7 +135,7 @@ module Spree
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
         options[:class] = "btn btn-default btn-sm delete-resource"
-        options[:data] = { :confirm => Spree.t(:are_you_sure), :action => 'remove' }
+        options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
         link_to_with_icon 'delete', name, url, options
       end
 
@@ -151,7 +153,7 @@ module Spree
       end
 
       def icon(icon_name)
-        icon_name ? content_tag(:i, '', :class => icon_name) : ''
+        icon_name ? content_tag(:i, '', class: icon_name) : ''
       end
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
@@ -159,14 +161,14 @@ module Spree
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
-        button_tag(text.html_safe, options.merge(:type => button_type, :class => "btn btn-primary #{options[:class]}"))
+        button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}"))
       end
 
       def button_link_to(text, url, html_options = {})
         if (html_options[:method] &&
             html_options[:method].to_s.downcase != 'get' &&
             !html_options[:remote])
-          form_tag(url, :method => html_options.delete(:method)) do
+          form_tag(url, method: html_options.delete(:method)) do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else
@@ -200,7 +202,7 @@ module Spree
         is_active = url.ends_with?(controller.controller_name) ||
                     url.ends_with?("#{controller.controller_name}/edit") ||
                     url.ends_with?("#{controller.controller_name.singularize}/edit")
-        options.merge!(:class => is_active ? 'active' : nil)
+        options.merge!(class: is_active ? 'active' : nil)
         content_tag(:li, options) do
           link_to(link_text, url)
         end
