@@ -1,0 +1,3 @@
+$('#<%= dom_id @promotion_rule %>').fadeOut().remove();
+
+$('#promotion_rule_type').html('<%= escape_javascript options_for_promotion_rule_types(@promotion) %>');

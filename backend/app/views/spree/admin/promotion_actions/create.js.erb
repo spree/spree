@@ -1,0 +1,12 @@
+$('#actions').append('<%= escape_javascript( render(partial: 'spree/admin/promotions/promotion_action', object: @promotion_action) ) %>');
+$('#actions .no-objects-found').hide();
+$(document).ready(function(){
+  $(".variant_autocomplete").variantAutocomplete();
+  //enable select2 functions for recently added box
+  $('.type-select.select2').last().select2();
+});
+initProductActions();
+
+
+$('#<%= dom_id @promotion_action %>').hide();
+$('#<%= dom_id @promotion_action %>').fadeIn();
