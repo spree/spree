@@ -33,7 +33,7 @@ module Spree
 
     # Returns an instance of StockItem for the variant id.
     #
-    # @param [String] The id of a variant.
+    # @param variant_id [String] The id of a variant.
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
     def stock_item(variant_id)
@@ -45,11 +45,16 @@ module Spree
     # multiple ways. Other methods in this model attempt to pass a variant,
     # but controller actions can pass just the variant id as a parameter.
     #
-    # @param [Variant|String] Variant instance or string id of a variant.
+    # @param variant_or_id [Variant|String] Variant instance or string id of a variant.
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
     def stock_item_or_create(variant_or_id)
-      vid = variant_or_id.is_a?(Variant) ? variant_or_id.id : variant_or_id
+      vid = if variant_or_id.is_a?(Variant)
+        variant_or_id.id
+      else
+        ActiveSupport::Deprecation.warn "Passing a Variant ID is deprecated, and will be removed in Spree 3. Please pass a variant instance instead.", caller
+        variant_or_id
+      end
       stock_item(vid) || stock_items.create(variant_id: vid)
     end
 
