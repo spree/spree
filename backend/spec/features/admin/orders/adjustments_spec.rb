@@ -28,8 +28,8 @@ describe "Adjustments", :type => :feature do
     order.persist_totals
 
     visit spree.admin_orders_path
-    within_row(1) { click_icon :edit }
-    click_link "Adjustments"
+    within_row(1) { click_on order.number }
+    click_on "Adjustments"
   end
 
   after :each do

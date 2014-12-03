@@ -2,6 +2,9 @@ tr.actions, td.actions {
   text-align: right;
 }
 table.table {
+  tr.ineligible {
+    text-decoration: line-through;
+  }
   th {
     background: $light-grey;
     border-bottom-width: 1px !important;
