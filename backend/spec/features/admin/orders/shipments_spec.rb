@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe "Shipments", :type => :feature do
+describe "Shipments", type: :feature do
   stub_authorization!
 
-  let!(:order) { create(:order_ready_to_ship, :number => "R100", :state => "complete", :line_items_count => 5) }
+  let!(:order) { create(:order_ready_to_ship, number: "R100", state: "complete", line_items_count: 5) }
 
   # Regression test for #4025
   context "a shipment without a shipping method" do
@@ -29,10 +29,10 @@ describe "Shipments", :type => :feature do
     end
 
     it "can ship a completed order" do
-      click_link "ship"
+      click_on "Ship"
       wait_for_ajax
 
-      expect(page).to have_content("SHIPPED PACKAGE")
+      expect(page).to have_content("shipped package")
       expect(order.reload.shipment_state).to eq("shipped")
     end
   end
@@ -50,15 +50,15 @@ describe "Shipments", :type => :feature do
     it "can move a variant to a new and to an existing shipment" do
       expect(order.shipments.count).to eq(1)
 
-      within_row(1) { click_icon 'arrows-h' }
+      within_row(1) { click_icon :split }
       targetted_select2 'LA', from: '#s2id_item_stock_location'
-      click_icon :ok
+      click_icon :save
       wait_for_ajax
       expect(page.find("#shipment_#{order.shipments.first.id}")).to be_present
 
-      within_row(2) { click_icon 'arrows-h' }
+      within_row(2) { click_icon :split }
       targetted_select2 "LA(#{order.reload.shipments.last.number})", from: '#s2id_item_stock_location'
-      click_icon :ok
+      click_icon :save
       wait_for_ajax
       expect(page.find("#shipment_#{order.reload.shipments.last.id}")).to be_present
     end

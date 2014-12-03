@@ -18,9 +18,7 @@ describe "Customer Details", type: :feature, js: true do
   context "brand new order" do
     # Regression test for #3335 & #5317
     it "associates a user when not using guest checkout" do
-      visit spree.admin_path
-      click_link "Orders"
-      click_link "New Order"
+      visit spree.new_admin_order_path
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
@@ -51,8 +49,7 @@ describe "Customer Details", type: :feature, js: true do
         config.company = true
       end
 
-      visit spree.admin_path
-      click_link "Orders"
+      visit spree.admin_orders_path
       within('table#listing_orders') { click_icon(:edit) }
     end
 

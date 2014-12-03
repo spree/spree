@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Payments', :type => :feature do
+describe 'Payments', type: :feature do
   stub_authorization!
 
   context "with a pre-existing payment" do
@@ -18,11 +18,7 @@ describe 'Payments', :type => :feature do
     let(:state) { 'checkout' }
 
     before do
-      visit spree.admin_path
-      click_link 'Orders'
-      within_row(1) do
-        click_link order.number
-      end
+      visit spree.edit_admin_order_path(order)
       click_link 'Payments'
     end
 
@@ -70,7 +66,7 @@ describe 'Payments', :type => :feature do
       within_row(1) do
         expect(column_text(3)).to eq('$150.00')
         expect(column_text(4)).to eq('Credit Card')
-        expect(column_text(6)).to eq('CHECKOUT')
+        expect(column_text(6)).to eq('checkout')
       end
 
       click_icon :void
@@ -80,7 +76,7 @@ describe 'Payments', :type => :feature do
       within_row(1) do
         expect(column_text(3)).to eq('$150.00')
         expect(column_text(4)).to eq('Credit Card')
-        expect(column_text(6)).to eq('VOID')
+        expect(column_text(6)).to eq('void')
       end
 
       click_on 'New Payment'
@@ -154,7 +150,7 @@ describe 'Payments', :type => :feature do
       end
     end
 
-    context 'payment is completed', js: true do
+    context 'payment is completed' do
       let(:state) { 'completed' }
 
       it 'does not allow the amount to be edited' do
@@ -167,8 +163,8 @@ describe 'Payments', :type => :feature do
   end
 
   context "with no prior payments" do
-    let(:order) { create(:order_with_line_items, :line_items_count => 1) }
-    let!(:payment_method) { create(:credit_card_payment_method)}
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+    let!(:payment_method) { create(:credit_card_payment_method) }
 
     # Regression tests for #4129
     context "with a credit card payment method" do
@@ -176,11 +172,11 @@ describe 'Payments', :type => :feature do
         visit spree.admin_order_payments_path(order)
       end
 
-      it "is able to create a new credit card payment with valid information", :js => true do
-        fill_in "Card Number", :with => "4111 1111 1111 1111"
-        fill_in "Name", :with => "Test User"
-        fill_in "Expiration", :with => "09 / #{Time.now.year + 1}"
-        fill_in "Card Code", :with => "007"
+      it "is able to create a new credit card payment with valid information" do
+        fill_in "Card Number", with: "4111 1111 1111 1111"
+        fill_in "Name", with: "Test User"
+        fill_in "Expiration", with: "09 / #{Time.now.year + 1}"
+        fill_in "Card Code", with: "007"
         # Regression test for #4277
         sleep(1)
         expect(find('.ccType', :visible => false).value).to eq('visa')

@@ -27,8 +27,7 @@ describe "Adjustments", :type => :feature do
     order.update_totals
     order.persist_totals
 
-    visit spree.admin_path
-    click_link "Orders"
+    visit spree.admin_orders_path
     within_row(1) { click_icon :edit }
     click_link "Adjustments"
   end

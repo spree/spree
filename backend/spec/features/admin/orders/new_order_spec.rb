@@ -10,9 +10,7 @@ describe "New Order", :type => :feature do
   stub_authorization!
 
   before do
-    visit spree.admin_path
-    click_on "Orders"
-    click_on "New Order"
+    visit spree.new_admin_order_path
   end
 
   it "does check if you have a billing address before letting you add shipments" do

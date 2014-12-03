@@ -9,14 +9,10 @@ describe "Orders Listing", :type => :feature do
     allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
     @order1 = create(:order_with_line_items, created_at: 1.day.from_now, completed_at: 1.day.from_now, considered_risky: true, number: "R100")
     @order2 = create(:order, created_at: 1.day.ago, completed_at: 1.day.ago, number: "R200")
-    visit spree.admin_path
+    visit spree.admin_orders_path
   end
 
   context "listing orders" do
-    before(:each) do
-      click_link "Orders"
-    end
-
     it "should list existing orders" do
       within_row(1) do
         expect(column_text(2)).to eq "R100"
@@ -50,10 +46,6 @@ describe "Orders Listing", :type => :feature do
   end
 
   context "searching orders" do
-    before(:each) do
-      click_link "Orders"
-    end
-
     it "should be able to search orders" do
       fill_in "q_number_cont", :with => "R200"
       click_icon :search
@@ -91,7 +83,7 @@ describe "Orders Listing", :type => :feature do
       within_row(1) do
         expect(page).to have_content(@order1.number)
       end
-      
+
       expect(page).not_to have_content(@order2.number)
     end
 
