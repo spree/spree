@@ -1,5 +1,5 @@
 <header class="header">
-  <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path, class: "logo" %>
+  <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo'), spree.admin_path, class: "logo" %>
   <nav class="navbar navbar-static-top" role="navigation">
     <% if can? :admin, Spree::Order %>
     <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">

@@ -18,4 +18,6 @@
   <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
 <% end %>
 
-<%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration" %>
+<% if can? :admin, current_store %>
+  <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration" %>
+<% end %>

@@ -10,12 +10,12 @@ describe "Homepage", :type => :feature do
         visit spree.admin_path
       end
 
-      it "should have the header text 'Listing Orders'" do
-        within('h1') { expect(page).to have_content("Listing Orders") }
+      it "should have the header text 'Orders'" do
+        within('h1') { expect(page).to have_content("Orders") }
       end
 
       it "should have a link to overview" do
-        within(:xpath, ".//figure[@data-hook='logo-wrapper']") { page.find(:xpath, "a[@href='/admin']") }
+        within("header") { page.find(:xpath, "a[@href='/admin']") }
       end
 
       it "should have a link to orders" do
@@ -41,29 +41,29 @@ describe "Homepage", :type => :feature do
       end
 
       it "should have a link to products" do
-        within('#sub-menu') { page.find_link("Products")['/admin/products'] }
+        within('.sidebar-menu') { page.find_link("Products")['/admin/products'] }
       end
 
       it "should have a link to option types" do
-        within('#sub-menu') { page.find_link("Option Types")['/admin/option_types'] }
+        within('.sidebar-menu') { page.find_link("Option Types")['/admin/option_types'] }
       end
 
       it "should have a link to properties" do
-        within('#sub-menu') { page.find_link("Properties")['/admin/properties'] }
+        within('.sidebar-menu') { page.find_link("Properties")['/admin/properties'] }
       end
 
       it "should have a link to prototypes" do
-        within('#sub-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
+        within('.sidebar-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
       end
     end
   end
 
   context 'as fakedispatch user' do
 
-    before do 
+    before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
-    
+
     custom_authorization! do |user|
       can [:admin, :edit, :index, :read], Spree::Order
     end
@@ -74,7 +74,7 @@ describe "Homepage", :type => :feature do
       expect(page).not_to have_link('Products')
       expect(page).not_to have_link('Promotions')
       expect(page).not_to have_link('Reports')
-      expect(page).not_to have_link('Configuration')
+      expect(page).not_to have_link('Configurations')
     end
   end
 
