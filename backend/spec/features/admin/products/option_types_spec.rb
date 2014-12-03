@@ -92,7 +92,7 @@ describe "Option Types", type: :feature, js: true do
 
     # Remove default option type
     within("tbody#option_values") do
-      find('.fa-trash').click
+      click_icon :delete
     end
     # Check that there was no HTTP request
     expect(all("div#progress[style]").count).to eq(0)
@@ -101,7 +101,7 @@ describe "Option Types", type: :feature, js: true do
 
     # Remove added option type
     within("tbody#option_values") do
-      find('.fa-trash').click
+      click_icon :delete
     end
     # Check that there was no HTTP request
     expect(all("div#progress[style]").count).to eq(0)

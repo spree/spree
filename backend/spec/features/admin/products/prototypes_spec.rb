@@ -42,13 +42,13 @@ describe "Prototypes", type: :feature, js: true do
   end
 
   context "creating a prototype" do
-    it "should allow an admin to create a new product prototype", :js => true do
+    it "should allow an admin to create a new product prototype" do
       visit spree.admin_path
       click_link "Products"
       click_link "Prototypes"
 
       click_link "new_prototype_link"
-      within('#new_prototype') do
+      within('.content-header') do
         expect(page).to have_content("New Prototype")
       end
       fill_in "prototype_name", with: "male shirts"
@@ -88,7 +88,7 @@ describe "Prototypes", type: :feature, js: true do
       click_button 'Update'
 
       click_icon :edit
-      
+
       expect(find_field("prototype_property_ids").value).to be_empty
     end
   end

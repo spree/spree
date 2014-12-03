@@ -31,6 +31,7 @@ describe "Properties", type: :feature, js: true do
 
     context "searching properties" do
       it 'should list properties matching search query' do
+        click_on "Filter"
         fill_in "q_name_cont", with: "size"
         click_icon :search
 
@@ -81,7 +82,7 @@ describe "Properties", type: :feature, js: true do
       create(:product)
       visit spree.admin_products_path
       click_icon :edit
-      click_link "Product Properties"
+      click_link "Properties"
     end
 
     # Regression test for #2279
@@ -122,7 +123,7 @@ describe "Properties", type: :feature, js: true do
       fill_in "product_product_properties_attributes_0_property_name", with: "A Property"
       fill_in "product_product_properties_attributes_0_value", with: "A Value"
       click_button "Update"
-      click_link "Product Properties"
+      click_link "Properties"
     end
 
     def delete_product_property
