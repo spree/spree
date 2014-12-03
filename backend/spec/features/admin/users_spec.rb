@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Users', :type => :feature do
+describe 'Users', type: :feature do
   stub_authorization!
   let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addreses, email: 'a@example.com') }
