@@ -22,7 +22,7 @@ module Spree
         if error_message_on(model, method).present?
           css_classes << 'withError'
         end
-        content_tag(:div, capture(&block), class: css_classes.join(' '), :id => "#{model}_#{method}_field")
+        content_tag(:div, capture(&block), class: css_classes.join(' '), id: "#{model}_#{method}_field")
       end
 
       def error_message_on(object, method, options = {})
@@ -101,9 +101,9 @@ module Spree
           }
         when :text
           {
-            rows: => 15,
-            cols: => 85,
-            class: => 'form-control'
+            rows: 15,
+            cols: 85,
+            class: 'form-control'
           }
         else
           {
