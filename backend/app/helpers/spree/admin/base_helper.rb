@@ -12,7 +12,7 @@ module Spree
           flash_class = "danger" if flash[:error]
           flash_class = "info" if flash[:notice]
           flash_class = "success" if flash[:success]
-          content_tag(:div, message, :class => "alert alert-#{flash_class} alert-auto-dissapear")
+          content_tag(:div, message, class: "alert alert-#{flash_class} alert-auto-dissapear")
         end
       end
 
@@ -22,7 +22,7 @@ module Spree
         if error_message_on(model, method).present?
           css_classes << 'withError'
         end
-        content_tag(:div, capture(&block), :class => css_classes.join(' '), :id => "#{model}_#{method}_field")
+        content_tag(:div, capture(&block), class: css_classes.join(' '), :id => "#{model}_#{method}_field")
       end
 
       def error_message_on(object, method, options = {})
@@ -31,7 +31,7 @@ module Spree
 
         if obj && obj.errors[method].present?
           errors = obj.errors[method].map { |err| h(err) }.join('<br />').html_safe
-          content_tag(:span, errors, :class => 'formError')
+          content_tag(:span, errors, class: 'formError')
         else
           ''
         end
@@ -39,7 +39,7 @@ module Spree
 
       def datepicker_field_value(date)
         unless date.blank?
-          l(date, :format => Spree.t('date_picker.format', default: '%Y/%m/%d'))
+          l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
         else
           nil
         end
@@ -83,29 +83,39 @@ module Spree
       def preference_field_options(options)
         field_options = case options[:type]
         when :integer
-          { :size => 10,
-            :class => 'input_integer form-control' }
+          {
+            size: 10,
+            class: 'input_integer form-control'
+          }
         when :boolean
           {}
         when :string
-          { :size => 10,
-            :class => 'input_string form-control' }
+          {
+            size: 10,
+            class: 'input_string form-control'
+          }
         when :password
-          { :size => 10,
-            :class => 'password_string form-control' }
+          {
+            size: 10,
+            class: 'password_string form-control'
+          }
         when :text
-          { :rows => 15,
-            :cols => 85,
-            :class => 'form-control' }
+          {
+            rows: => 15,
+            cols: => 85,
+            class: => 'form-control'
+          }
         else
-          { :size => 10,
-            :class => 'input_string form-control' }
+          {
+            size: 10,
+            class: 'input_string form-control'
+          }
         end
 
         field_options.merge!({
-          :readonly => options[:readonly],
-          :disabled => options[:disabled],
-          :size     => options[:size]
+          readonly: options[:readonly],
+          disabled: options[:disabled],
+          size:     options[:size]
         })
       end
 
@@ -114,7 +124,7 @@ module Spree
         object.preferences.keys.map{ |key|
 
           form.label("preferred_#{key}", Spree.t(key) + ": ") +
-            preference_field_for(form, "preferred_#{key}", :type => object.preference_type(key))
+            preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
 
         }.join("<br />").html_safe
       end
@@ -122,7 +132,7 @@ module Spree
       # renders hidden field and link to remove record using nested_attributes
       def link_to_icon_remove_fields(f)
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('delete', '', url, :class => "spree_remove_fields btn btn-sm btn-default", :data => {:action => 'remove'}, :title => Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('delete', '', url, class: "spree_remove_fields btn btn-sm btn-default", data: {action: 'remove'}, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
