@@ -1,8 +1,6 @@
 <% content_for :page_actions do %>
   <% if can?(:create, Spree::Product) %>
-    <span id="new_product_link">
-      <%= button_link_to Spree.t(:new_product), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
-    </span>
+    <%= button_link_to Spree.t(:new_product), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
   <% end %>
 <% end %>
 
