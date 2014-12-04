@@ -16,13 +16,13 @@ describe "Orders Listing", type: :feature, js: true do
     it "should list existing orders" do
       within_row(1) do
         expect(column_text(2)).to eq "R100"
-        expect(find("td:nth-child(3)")).to have_css '.considered_risky'
+        expect(find("td:nth-child(3)")).to have_css '.label-considered_risky'
         expect(column_text(4)).to eq "cart"
       end
 
       within_row(2) do
         expect(column_text(2)).to eq "R200"
-        expect(find("td:nth-child(3)")).to have_css '.considered_safe'
+        expect(find("td:nth-child(3)")).to have_css '.label-considered_safe'
       end
     end
 
@@ -119,6 +119,8 @@ describe "Orders Listing", type: :feature, js: true do
     it "should be able to search orders using only completed at input" do
       click_on 'Filter'
       fill_in "q_created_at_gt", with: Date.current
+      # Just so the datepicker gets out of poltergeists way.
+      page.execute_script("$('#q_created_at_gt').trigger('change');")
       click_on 'Filter Results'
       within_row(1) { expect(page).to have_content("R100") }
 
