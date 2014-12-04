@@ -1,7 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 
-describe "Products", type: :feature, js: true do
+describe "Products", type: :feature do
   context "as admin user" do
     stub_authorization!
 
@@ -66,7 +66,7 @@ describe "Products", type: :feature, js: true do
       end
     end
 
-    context "searching products" do
+    context "searching products", js: true do
       it "should be able to search deleted products" do
         create(:product, name: 'apache baseball cap', deleted_at: "2011-01-06 18:21:13")
         create(:product, name: 'zomg shirt')
@@ -265,7 +265,7 @@ describe "Products", type: :feature, js: true do
     end
 
 
-    context "cloning a product" do
+    context "cloning a product", js: true do
       it "should allow an admin to clone a product" do
         create(:product)
 
@@ -318,7 +318,7 @@ describe "Products", type: :feature, js: true do
         expect(Spree::Product.last.available_on).to eq('Tue, 25 Dec 2012 00:00:00 UTC +00:00')
       end
 
-      it 'should add option_types when selecting a prototype' do
+      it 'should add option_types when selecting a prototype', js: true do
         visit spree.admin_product_path(product)
         click_link 'Properties'
         expect(page).to have_content("Select From Prototype")
@@ -374,9 +374,9 @@ describe "Products", type: :feature, js: true do
       expect(page).not_to have_link('Properties')
       expect(page).not_to have_link('Prototypes')
       expect(page).not_to have_link('New Product')
-      expect(page).not_to have_css('a.icon-clone')
-      expect(page).to have_css('a.icon-edit')
-      expect(page).not_to have_css('a.delete-resource')
+      expect(page).not_to have_css('.icon-clone')
+      expect(page).to have_css('.icon-edit')
+      expect(page).not_to have_css('.delete-resource')
     end
 
     it "should only display accessible links on edit" do
