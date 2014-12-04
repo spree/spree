@@ -48,9 +48,9 @@ jQuery ($) ->
       @$buttons().remove()
 
     $new_button: (action) ->
-      $('<a />')
+      $("<a><span class='icon icon-#{action}'></span></a>")
         .attr
-          class: "payment-action-#{action} icon_link no-text with-tip"
+          class: "payment-action-#{action} btn btn-default btn-sm icon-link no-text with-tip"
           title: Spree.translations[action]
         .data
           action: action

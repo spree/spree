@@ -16,9 +16,11 @@ describe "Customer Details", type: :feature, js: true do
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
 
   context "brand new order" do
+    before do
+      visit spree.new_admin_order_path
+    end
     # Regression test for #3335 & #5317
     it "associates a user when not using guest checkout" do
-      visit spree.new_admin_order_path
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1

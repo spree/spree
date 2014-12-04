@@ -121,7 +121,7 @@ describe "New Order", :type => :feature do
       click_on "Continue"
 
       within(".additional-info .state") do
-        expect(page).to have_content("COMPLETE")
+        expect(page).to have_content("complete")
       end
     end
   end
