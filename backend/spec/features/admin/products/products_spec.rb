@@ -77,13 +77,15 @@ describe "Products", type: :feature, js: true do
 
         click_on 'Filter'
         check "Show Deleted"
-        click_icon :search
+        click_on 'Search'
+
         expect(page).to have_content("zomg shirt")
         expect(page).to have_content("apache baseball cap")
 
         click_on 'Filter'
         uncheck "Show Deleted"
-        click_icon :search
+        click_on 'Search'
+
         expect(page).to have_content("zomg shirt")
         expect(page).not_to have_content("apache baseball cap")
       end
@@ -96,14 +98,16 @@ describe "Products", type: :feature, js: true do
         visit spree.admin_products_path
         click_on 'Filter'
         fill_in "q_name_cont", with: "ap"
-        click_icon :search
+        click_on 'Search'
+
         expect(page).to have_content("apache baseball cap")
         expect(page).to have_content("apache baseball cap2")
         expect(page).not_to have_content("zomg shirt")
 
         click_on 'Filter'
         fill_in "q_variants_including_master_sku_cont", with: "A1"
-        click_icon :search
+        click_on 'Search'
+
         expect(page).to have_content("apache baseball cap")
         expect(page).not_to have_content("apache baseball cap2")
         expect(page).not_to have_content("zomg shirt")
@@ -278,13 +282,14 @@ describe "Products", type: :feature, js: true do
           create(:product, name: "apache baseball cap")
 
           visit spree.admin_products_path
+          click_on 'Filter'
           check "Show Deleted"
-          click_button "Search"
+          click_on 'Search'
 
           expect(page).to have_content("apache baseball cap")
 
           within_row(1) do
-            click_icon :copy
+            click_icon :clone
           end
 
           expect(page).to have_content("Product has been cloned")
@@ -343,7 +348,7 @@ describe "Products", type: :feature, js: true do
         click_on 'Filter'
         # This will show our deleted product
         check "Show Deleted"
-        click_icon :search
+        click_on 'Search'
         click_link product.name
         expect(find("#product_price").value.to_f).to eq(product.price.to_f)
       end
@@ -363,13 +368,14 @@ describe "Products", type: :feature, js: true do
 
     it "should only display accessible links on index" do
       visit spree.admin_products_path
+page!
       expect(page).to have_link('Products')
       expect(page).not_to have_link('Option Types')
       expect(page).not_to have_link('Properties')
       expect(page).not_to have_link('Prototypes')
 
       expect(page).not_to have_link('New Product')
-      expect(page).not_to have_css('a.clone')
+      expect(page).not_to have_css('a.icon-clone')
       expect(page).to have_css('a.edit')
       expect(page).not_to have_css('a.delete-resource')
     end
