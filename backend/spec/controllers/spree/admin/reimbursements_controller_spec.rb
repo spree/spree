@@ -51,5 +51,24 @@ describe Spree::Admin::ReimbursementsController, :type => :controller do
       expect(payment.refunds.last.amount).to be > 0
       expect(payment.refunds.last.amount).to eq return_items.to_a.sum(&:total)
     end
+
+    context "a Spree::Core::GatewayError is raised" do
+      before(:each) do
+        def controller.perform
+          raise Spree::Core::GatewayError.new('An error has occurred')
+        end
+      end
+
+      it "sets an error message with the correct text" do
+        subject
+        expect(flash[:error]).to eq 'An error has occurred'
+      end
+
+      it 'redirects to the edit page' do
+        subject
+        redirect_path = spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement))
+        expect(response).to redirect_to(redirect_path)
+      end
+    end
   end
 end
