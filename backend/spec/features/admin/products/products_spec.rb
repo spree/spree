@@ -316,7 +316,7 @@ describe "Products", type: :feature, js: true do
       it 'should add option_types when selecting a prototype' do
         visit spree.admin_product_path(product)
         click_link 'Properties'
-        expect(page).to have_content("SELECT FROM PROTOTYPE")
+        expect(page).to have_content("Select From Prototype")
         click_link "Select From Prototype"
 
         within(:css, "#prototypes tr#row_1") do

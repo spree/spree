@@ -22,7 +22,7 @@ describe "Customer Details", type: :feature, js: true do
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
-        click_icon :plus
+        click_icon :add
       end
       wait_for_ajax
       click_link "Customer"

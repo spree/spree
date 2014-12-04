@@ -45,7 +45,7 @@ describe "Order Details", type: :feature, js: true do
         select2_search "spree t-shirt", from: Spree.t(:name_or_sku)
         within("table.stock-levels") do
           fill_in "variant_quantity", with: 2
-          click_icon :plus
+          click_icon :add
         end
 
         within("#order_total") do
@@ -132,7 +132,7 @@ describe "Order Details", type: :feature, js: true do
           select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
             fill_in "variant_quantity", with: 1
-            click_icon :plus
+            click_icon :add
           end
 
           within(".line-items") do

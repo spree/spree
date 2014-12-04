@@ -21,8 +21,8 @@ describe "New Order", :type => :feature do
 
   it "completes new order succesfully without using the cart", js: true do
     select2_search product.name, from: Spree.t(:name_or_sku)
-    click_icon :plus
-    click_on "Customer Details"
+    click_icon :add
+    click_on "Customer"
 
     within "#select-customer" do
       targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -51,14 +51,14 @@ describe "New Order", :type => :feature do
 
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 2
-        click_icon :plus
+        click_icon :add
       end
 
       within(".line-items") do
         expect(page).to have_content(product.name)
       end
 
-      click_on "Customer Details"
+      click_on "Customer"
 
       within "#select-customer" do
         targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -84,7 +84,7 @@ describe "New Order", :type => :feature do
 
     it "can still see line items" do
       select2_search product.name, from: Spree.t(:name_or_sku)
-      click_icon :plus
+      click_icon :add
       within(".line-items") do
         within(".line-item-name") do
           expect(page).to have_content(product.name)
@@ -102,7 +102,7 @@ describe "New Order", :type => :feature do
   # Regression test for #3336
   context "start by customer address" do
     it "completes order fine", js: true do
-      click_on "Customer Details"
+      click_on "Customer"
 
       within "#select-customer" do
         targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -114,7 +114,7 @@ describe "New Order", :type => :feature do
 
       click_on "Shipments"
       select2_search product.name, from: Spree.t(:name_or_sku)
-      click_icon :plus
+      click_icon :add
       wait_for_ajax
 
       click_on "Payments"
@@ -137,10 +137,10 @@ describe "New Order", :type => :feature do
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
-        click_icon :plus
+        click_icon :add
       end
       wait_for_ajax
-      click_link "Customer Details"
+      click_link "Customer"
       targetted_select2 user.email, from: "#s2id_customer_search"
       click_button "Update"
       expect(Spree::Order.last.state).to eq 'delivery'
