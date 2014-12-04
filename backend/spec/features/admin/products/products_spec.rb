@@ -368,15 +368,14 @@ describe "Products", type: :feature, js: true do
 
     it "should only display accessible links on index" do
       visit spree.admin_products_path
-page!
+
       expect(page).to have_link('Products')
       expect(page).not_to have_link('Option Types')
       expect(page).not_to have_link('Properties')
       expect(page).not_to have_link('Prototypes')
-
       expect(page).not_to have_link('New Product')
       expect(page).not_to have_css('a.icon-clone')
-      expect(page).to have_css('a.edit')
+      expect(page).to have_css('a.icon-edit')
       expect(page).not_to have_css('a.delete-resource')
     end
 
