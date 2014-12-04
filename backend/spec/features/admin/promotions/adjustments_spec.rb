@@ -210,7 +210,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       within('#new_promotion_action_form') { click_button "Add" }
       select2 "Flat Rate", from: "Calculator"
       within('#actions_container') { click_button "Update" }
-      within('.calculator-fields') { fill_in "Amount", with: "40.00" }
+      within('.create_adjustment .calculator-fields') { fill_in "Amount", with: "40.00" }
       within('#actions_container') { click_button "Update" }
 
       promotion = Spree::Promotion.find_by_name("Promotion")
