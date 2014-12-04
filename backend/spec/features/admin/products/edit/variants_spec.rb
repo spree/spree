@@ -3,15 +3,14 @@ require 'spec_helper'
 describe "Product Variants", type: :feature, js: true do
   stub_authorization!
 
+  let!(:product) { create(:product) }
+
   before(:each) do
-    visit spree.admin_path
+    visit spree.admin_products_path
   end
 
   context "editing variant option types" do
-    let!(:product) { create(:product) }
-
     it "should allow an admin to create option types for a variant" do
-      visit spree.admin_products_path
       within_row(1) { click_icon :edit }
 
       within('#sidebar') { click_link "Variants" }
@@ -32,11 +31,8 @@ describe "Product Variants", type: :feature, js: true do
       click_button "Update"
       expect(page).to have_content("successfully updated!")
 
-      visit spree.admin_path
-      click_link "Products"
-      within('table.table tbody tr:nth-child(1)') do
-        click_icon :edit
-      end
+      visit spree.admin_products_path
+      within_row(1) { click_icon :edit }
 
       select2_search "shirt", from: "Option Types"
       click_button "Update"
@@ -50,7 +46,7 @@ describe "Product Variants", type: :feature, js: true do
       click_button "Create"
       expect(page).to have_content("successfully created!")
 
-      within(".index") do
+      within(".table") do
         expect(page).to have_content("19.99")
         expect(page).to have_content("black")
         expect(page).to have_content("A100")
