@@ -3,16 +3,8 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <span id="new_product_link">
-    <%= button_link_to Spree.t(:new_product), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
-  </span>
+  <%= button_link_to Spree.t(:new_product), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_product' } %>
 <% end if can?(:create, Spree::Product) %>
-
-<% content_for :page_tabs do %>
-  <li role="presentation" class="active"><a href="#">All</a></li>
-  <li role="presentation"><a href="#">No SEO</a></li>
-  <li role="presentation"><a href="#">No Images</a></li>
-<% end %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_products_sidebar">
@@ -22,7 +14,7 @@
       <div data-hook="admin_products_index_search">
         <div class="form-group">
           <%= f.label :name_cont, Spree.t(:name) %>
-          <%= f.text_field :name_cont, :size => 15, class: "form-control" %>
+          <%= f.text_field :name_cont, :size => 15, class: "form-control js-quick-search-target" %>
         </div>
         <div class="form-group">
           <%= f.label :variants_including_master_sku_cont, Spree.t(:sku) %>
@@ -49,9 +41,6 @@
   <table class="table" id="listing_products">
     <thead>
       <tr data-hook="admin_products_index_headers">
-        <th>
-          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox-main' %>
-        </th>
         <th><%= Spree.t(:sku) %></th>
         <th colspan="2"><%= sort_link @search,:name, Spree.t(:name), { :default_order => "desc" }, {:title => 'admin_products_listing_name_title'} %></th>
         <th><%= sort_link @search,:master_default_price_amount, Spree.t(:master_price), {}, {:title => 'admin_products_listing_price_title'} %></th>
@@ -61,9 +50,6 @@
     <tbody>
       <% @collection.each do |product| %>
           <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
-            <td class="row-checkbox">
-              <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox' %>
-            </td>
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="image"><%= mini_image product, class: "thumbnail" %></td>
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>

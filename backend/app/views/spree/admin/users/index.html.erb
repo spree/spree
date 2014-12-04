@@ -15,7 +15,7 @@
     <%= search_form_for [:admin, @search], url: admin_users_url do |f| %>
       <div class="form-group">
         <%= f.label Spree.t(:email) %>
-        <%= f.text_field :email_cont, class: "form-control" %>
+        <%= f.text_field :email_cont, class: "form-control js-quick-search-target" %>
       </div>
       <div class="row">
         <div class="col-md-6">

@@ -6,12 +6,6 @@
   <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_order' %>
 <% end if can? :edit, Spree::Order.new %>
 
-<% content_for :page_tabs do %>
-  <li role="presentation" class="active"><a href="#">All</a></li>
-  <li role="presentation"><a href="#">Unpaid</a></li>
-  <li role="presentation"><a href="#">Unfulfilled</a></li>
-<% end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
@@ -32,7 +26,7 @@
         <div class="col-md-3">
           <div class="form-group">
             <%= label_tag :q_number_cont, Spree.t(:order_number, :number => '') %>
-            <%= f.text_field :number_cont, class: 'form-control' %>
+            <%= f.text_field :number_cont, class: 'form-control js-quick-search-target' %>
           </div>
         </div>
         <div class="col-md-3">
@@ -107,9 +101,6 @@
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
-        <th>
-          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox-main' %>
-        </th>
         <% if @show_only_completed %>
           <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% else %>
@@ -124,108 +115,12 @@
          <% end %>
         <th><%= sort_link @search, :email,            I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :total,            I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
-        <th data-hook="admin_orders_index_header_actions" class="actions">
-          <!-- Single button -->
-          <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <span class="icon icon-cog"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Completed At
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox"> ID
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Number
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Risky
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> State
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Payment State
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Shipment State
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Customer E-Mail
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox"> Item Total
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox"> Tax Total
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox"> Shipping Total
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" checked> Total
-                  </label>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </th>
+        <th data-hook="admin_orders_index_header_actions" class="actions"></th>
       </tr>
     </thead>
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-        <td class="row-checkbox">
-          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox' %>
-        </td>
         <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
