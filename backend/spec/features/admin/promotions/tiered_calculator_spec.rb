@@ -26,7 +26,6 @@ feature "Tiered Calculator Promotions" do
     fill_in "Base Percent", with: 5
 
     within(".tier") do
-      page!
       find("input:last-child").set(100)
       puts find('input').inspect
       find("input:first-child").set(10)
