@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Details' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Customer Details' } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:customer_details) %>
@@ -7,13 +7,15 @@
 <div id="select-customer" class="marginb" data-hook>
   <fieldset>
     <legend><%= Spree.t(:customer_search) %></legend>
-    <%= hidden_field_tag :customer_search,  nil, :class => 'error-message' %>
-    <%= render :partial => "spree/admin/orders/customer_details/autocomplete", :formats => :js %>
+    <%= hidden_field_tag :customer_search,  nil, class: 'error-message' %>
+    <%= render partial: "spree/admin/orders/customer_details/autocomplete", formats: :js %>
   </fieldset>
 </div>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @order } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
 
 <%= form_for @order, :url => admin_order_customer_url(@order) do |f| %>
   <%= render 'form', :f => f %>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/order_summary' %>

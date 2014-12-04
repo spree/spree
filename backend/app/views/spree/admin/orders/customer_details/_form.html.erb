@@ -26,7 +26,7 @@
           </div>
           <div class="radio">
             <%= label_tag :guest_checkout_false do %>
-              <%= radio_button_tag :guest_checkout, false, !guest, :disabled => @order.cart? %>
+              <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
               <%= Spree.t(:say_no) %>
             <% end %>
           </div>
@@ -41,7 +41,7 @@
       <fieldset>
         <legend><%= Spree.t(:billing_address) %></legend>
         <%= f.fields_for :bill_address do |ba_form| %>
-          <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => ba_form, :type => "billing" } %>
+          <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
         <% end %>
       </fieldset>
     </div>
@@ -57,7 +57,7 @@
             </span>
           </div>
 
-          <%= render :partial => 'spree/admin/shared/address_form', :locals => { :f => sa_form, :type => 'shipping' } %>
+          <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
         <% end %>
       </fieldset>
     </div>
