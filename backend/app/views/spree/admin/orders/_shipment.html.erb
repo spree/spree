@@ -1,5 +1,5 @@
 <div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form">
-  <%= render :partial => "spree/admin/variants/split", :formats => :js %>
+  <%= render partial: "spree/admin/variants/split", formats: :js %>
   <fieldset>
     <legend class="stock-location no-borderb" data-hook="stock-location">
       <span class="shipment-number"><%= shipment.number %></span>

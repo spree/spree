@@ -8,6 +8,7 @@
   <% else %>
     <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
   <% end %>
+
   <%= render :partial => "spree/admin/orders/adjustments", :locals => {
         :adjustments => @order.line_item_adjustments,
         :order => order,

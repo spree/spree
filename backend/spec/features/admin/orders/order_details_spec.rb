@@ -3,12 +3,11 @@ require 'spec_helper'
 
 describe "Order Details", type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
-  let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
-  let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
-  let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+  let!(:product) { create(:product, name: 'spree t-shirt', price: 20.00) }
+  let!(:tote) { create(:product, name: "Tote", price: 15.00) }
+  let(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15", number: "R100") }
   let(:state) { create(:state) }
-  #let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
-  let!(:shipping_method) { create(:shipping_method, :name => "Default") }
+  let!(:shipping_method) { create(:shipping_method, name: "Default") }
 
   before do
     order.shipments.create(stock_location_id: stock_location.id)
@@ -32,7 +31,7 @@ describe "Order Details", type: :feature, js: true do
 
         within_row(1) do
           click_icon :edit
-          fill_in "quantity", :with => "1"
+          fill_in "quantity", with: "1"
         end
         click_icon :save
 
@@ -131,7 +130,7 @@ describe "Order Details", type: :feature, js: true do
         it "adds variant to order just fine" do
           select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
-            fill_in "variant_quantity", with: 1
+            fill_in "#quantity", with: 1
             click_icon :add
           end
 
@@ -455,6 +454,7 @@ describe "Order Details", type: :feature, js: true do
     custom_authorization! do |user|
       can [:admin, :index, :read, :edit], Spree::Order
     end
+
     it "should not display forbidden links" do
       visit spree.edit_admin_order_path(order)
 
