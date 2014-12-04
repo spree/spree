@@ -11,7 +11,7 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="form-group">
         <%= label_tag :q_name_cont, Spree.t(:name) %>
-        <%= f.text_field :name_cont, tabindex: 1, class: "form-control" %>
+        <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
       </div>
 
       <div class="form-group">

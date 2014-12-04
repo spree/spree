@@ -29,7 +29,17 @@ jQuery(function($) {
     $("section.content").toggleClass("sidebar-collapsed");
     $("span.icon", $(this)).toggleClass("icon-chevron-right");
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
-  });  
+  });
+
+  // Temp quick search
+  // When there was a search term, copy it
+  $(".js-quick-search").val($(".js-quick-search-target").val());
+  // Catch the quick search form submit and submit the real form
+  $("#quick-search").submit(function(){
+    $(".js-quick-search-target").val($(".js-quick-search").val());
+    $("#table-filter form").submit();
+    return false;
+  });
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){

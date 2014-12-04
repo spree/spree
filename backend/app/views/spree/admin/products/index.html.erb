@@ -14,7 +14,7 @@
       <div data-hook="admin_products_index_search">
         <div class="form-group">
           <%= f.label :name_cont, Spree.t(:name) %>
-          <%= f.text_field :name_cont, :size => 15, class: "form-control" %>
+          <%= f.text_field :name_cont, :size => 15, class: "form-control js-quick-search-target" %>
         </div>
         <div class="form-group">
           <%= f.label :variants_including_master_sku_cont, Spree.t(:sku) %>

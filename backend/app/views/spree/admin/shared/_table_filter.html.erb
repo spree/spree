@@ -7,7 +7,9 @@
           <span class="icon icon-chevron-left"></span>
         </button>
       </span>
-      <input type="text" placeholder="<%= Spree.t(:quick_search) %>" class="form-control">
+      <%= form_tag nil, id: "quick-search" do %>
+        <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
+      <% end %>
     </div>
     <% unless defined?(simple) %>
       <div id="table-filter" data-hook class="well filter-well">
