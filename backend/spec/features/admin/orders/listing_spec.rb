@@ -64,6 +64,7 @@ describe "Orders Listing", type: :feature, js: true do
       check "q_considered_risky_eq"
       click_on 'Filter Results'
 
+      click_on 'Filter'
       # Insure checkbox still checked
       expect(find("#q_considered_risky_eq")).to be_checked
       # Insure we have the risky order, R100
@@ -110,6 +111,7 @@ describe "Orders Listing", type: :feature, js: true do
           click_link "2"
         end
         expect(page).to have_content("incomplete@example.com")
+        click_on 'Filter'
         expect(find("#q_completed_at_not_null")).not_to be_checked
       end
     end
