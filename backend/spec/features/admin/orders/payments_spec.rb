@@ -55,11 +55,11 @@ describe 'Payments', type: :feature, js: true do
 
       visit spree.admin_order_payment_path(order, payment)
       expect(page).to have_content 'Capture events'
-      # within '#capture_events' do
+      within '#capture_events' do
         within_row(1) do
           expect(page).to have_content(capture_amount / 100)
         end
-      # end
+      end
     end
 
     it 'lists and create payments for an order', js: true do
@@ -146,7 +146,7 @@ describe 'Payments', type: :feature, js: true do
           expect(find('td.amount input').value).to eq('invalid')
           expect(payment.reload.amount).to eq(150.00)
         end
-        expect(page).to have_selector('.flash.error', text: 'Invalid resource. Please fix errors and try again.')
+        expect(page).to have_selector('.alert-error', text: 'Invalid resource. Please fix errors and try again.')
       end
     end
 
