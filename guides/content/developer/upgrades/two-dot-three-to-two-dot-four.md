@@ -14,10 +14,10 @@ version of Spree will have a 2-4-stable branch.
 
 ## Upgrade Rails
 
-For this Spree release, you will need to upgrade your Rails version to at least 4.1.6.
+For this Spree release, you will need to upgrade your Rails version to at least 4.1.8.
 
 ```ruby
-gem 'rails', '~> 4.1.6'
+gem 'rails', '~> 4.1.8'
 ```
 
 ## Upgrade Spree
