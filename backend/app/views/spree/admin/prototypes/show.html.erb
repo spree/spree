@@ -1,0 +1,39 @@
+<% if @prototype.option_types.present? %>
+  <h2><%= Spree.t(:variants) %></h2>
+
+  <ul class="product-prototype-options">
+    <% @prototype.option_types.each do |ot| %>
+      <li class="option-type-field">
+        <b>
+          <%= check_box_tag "option_types[]", ot.id, (params[:option_types] || []).include?(ot.id.to_s), :id => "option_type_#{ot.id}", :class => "option-type" %>
+          <%= label_tag "option_type_#{ot.id}", ot.presentation %>
+        </b>
+        <ul class="option-type-values">
+          <% ot.option_values.each do |ov| %>
+          <li>
+            <%= check_box_tag "product[option_values_hash[#{ot.id}]][]", ov.id, params[:product] && (params[:product][:option_values_hash] || {}).values.flatten.include?(ov.id.to_s), id: "option_value_#{ov.id}", class: "option-value" %>
+            <%= label_tag "option_value_#{ov.id}", ov.presentation %>
+          </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+
+  <script type="text/javascript">
+  //<![CDATA[
+  (function($){
+    $("input.option-type").change(function() {
+      $(this).parents("li").find("input.option-value").prop("checked", this.checked);
+    });
+    $("input.option-value").change(function() {
+      var any_checked = false;
+      $(this).parents(".option-type-values").find("input.option-value").each(function(i, el) {
+        any_checked = any_checked || el.checked;
+      });
+      $(this).parents(".option-type-field").find("input.option-type").prop("checked", any_checked);
+    });
+  })(jQuery);
+  //]]>
+  </script>
+<% end %>
