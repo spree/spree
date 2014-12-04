@@ -49,7 +49,7 @@ describe "Orders Listing", type: :feature, js: true do
     it "should be able to search orders" do
       click_on 'Filter'
       fill_in "q_number_cont", with: "R200"
-      click_on 'Search'
+      click_on 'Filter Results'
       within_row(1) do
         expect(page).to have_content("R200")
       end
@@ -62,7 +62,7 @@ describe "Orders Listing", type: :feature, js: true do
       click_on 'Filter'
       # Check risky and filter
       check "q_considered_risky_eq"
-      click_on "Search"
+      click_on 'Filter Results'
 
       # Insure checkbox still checked
       expect(find("#q_considered_risky_eq")).to be_checked
@@ -81,7 +81,7 @@ describe "Orders Listing", type: :feature, js: true do
 
       # Select and filter
       find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
-      click_on "Search"
+      click_on 'Filter Results'
 
       within_row(1) do
         expect(page).to have_content(@order1.number)
@@ -105,7 +105,7 @@ describe "Orders Listing", type: :feature, js: true do
         10.times { Spree::Order.create email: "incomplete@example.com" }
         click_on 'Filter'
         uncheck "q_completed_at_not_null"
-        click_button "Search"
+        click_on 'Filter Results'
         within(".pagination") do
           click_link "2"
         end
@@ -117,7 +117,7 @@ describe "Orders Listing", type: :feature, js: true do
     it "should be able to search orders using only completed at input" do
       click_on 'Filter'
       fill_in "q_created_at_gt", with: Date.current
-      click_on 'Search'
+      click_on 'Filter Results'
       within_row(1) { expect(page).to have_content("R100") }
 
       # Ensure that the other order doesn't show up
@@ -134,11 +134,10 @@ describe "Orders Listing", type: :feature, js: true do
       it "only shows the orders with the selected promotion" do
         click_on 'Filter'
         select2 promotion.name, from: "Promotion"
-        click_on 'Search'
+        click_on 'Filter Results'
         within_row(1) { expect(page).to have_content("R100") }
         within("table#listing_orders") { expect(page).not_to have_content("R200") }
       end
     end
-
   end
 end

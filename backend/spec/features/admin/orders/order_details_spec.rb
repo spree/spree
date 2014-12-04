@@ -535,7 +535,7 @@ describe "Order Details", type: :feature, js: true do
       click_on 'Ship'
       wait_for_ajax
       within '.shipment-state' do
-        expect(page).to have_content('Shipped')
+        expect(page).to have_content('shipped')
       end
     end
   end
