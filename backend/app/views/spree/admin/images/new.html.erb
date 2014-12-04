@@ -1,17 +1,17 @@
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_image) %>
 <% end %>
 
-<%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>
   <fieldset data-hook="new_image">
-    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render partial: 'form', locals: { f: f } %>
 
     <div class="form-actions" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'save' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), :icon => 'delete', :id => 'cancel_link' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), icon: 'delete', id: 'cancel_link' %>
     </div>
   </fieldset>
 <% end %>

@@ -12,7 +12,7 @@ describe "Product Images", type: :feature, js: true do
     Spree::Image.attachment_definitions[:attachment][:styles].symbolize_keys!
   end
 
-  context "uploading, editing, and deleting an image", :js => true do
+  context "uploading, editing, and deleting an image" do
     it "should allow an admin to upload and edit an image for a product" do
       Spree::Image.attachment_definitions[:attachment].delete :storage
 
@@ -27,13 +27,13 @@ describe "Product Images", type: :feature, js: true do
       expect(page).to have_content("successfully created!")
 
       click_icon(:edit)
-      fill_in "image_alt", :with => "ruby on rails t-shirt"
+      fill_in "image_alt", with: "ruby on rails t-shirt"
       click_button "Update"
       expect(page).to have_content("successfully updated!")
       expect(page).to have_content("ruby on rails t-shirt")
 
       accept_alert do
-        click_icon :trash
+        click_icon :delete
       end
       expect(page).not_to have_content("ruby on rails t-shirt")
     end
