@@ -83,7 +83,7 @@ describe "Customer Details", type: :feature, js: true do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        expect(find(".state").text).to eq("COMPLETE")
+        expect(find(".state").text).to eq("complete")
       end
     end
 
