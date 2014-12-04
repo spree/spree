@@ -16,22 +16,19 @@ describe "Product Taxons", type: :feature, js: true do
       find("#product_taxon_ids").value.split(',').map(&:to_i).uniq
     end
 
-    it "should allow an admin to manage taxons", :js => true do
+    it "should allow an admin to manage taxons" do
       taxon_1 = create(:taxon)
-      taxon_2 = create(:taxon, :name => 'Clothing')
+      taxon_2 = create(:taxon, name: 'Clothing')
       product = create(:product)
       product.taxons << taxon_1
 
-      visit spree.admin_path
-      click_link "Products"
-      within("table.table") do
-        click_icon :edit
-      end
+      visit spree.admin_products_path
+      within_row(1) { click_icon :edit }
 
       expect(find(".select2-search-choice").text).to eq(taxon_1.name)
       expect(selected_taxons).to match_array([taxon_1.id])
 
-      select2_search "Clothing", :from => "Taxons"
+      select2_search "Clothing", from: "Taxons"
       click_button "Update"
       expect(selected_taxons).to match_array([taxon_1.id, taxon_2.id])
 

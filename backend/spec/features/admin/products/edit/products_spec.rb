@@ -14,7 +14,7 @@ describe 'Product Details', type: :feature, js: true do
 
       click_link 'Details'
 
-      expect(find('.page-title').text.strip).to eq('Editing Product “Bún thịt nướng”')
+      expect(find('.content-header h1').text.strip).to eq('Products / Bún thịt nướng')
       expect(find('input#product_name').value).to eq('Bún thịt nướng')
       expect(find('input#product_slug').value).to eq('bun-th-t-n-ng')
       expect(find('textarea#product_description').text.strip).to eq('lorem ipsum')
