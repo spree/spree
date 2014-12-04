@@ -6,12 +6,6 @@
   <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_order' %>
 <% end if can? :edit, Spree::Order.new %>
 
-<% content_for :page_tabs do %>
-  <li role="presentation" class="active"><a href="#">All</a></li>
-  <li role="presentation"><a href="#">Unpaid</a></li>
-  <li role="presentation"><a href="#">Unfulfilled</a></li>
-<% end %>
-
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
@@ -107,9 +101,6 @@
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
-        <th>
-          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox-main' %>
-        </th>
         <% if @show_only_completed %>
           <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
         <% else %>
@@ -223,9 +214,6 @@
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-        <td class="row-checkbox">
-          <%= check_box_tag "temp_index_checkbox_main",'1', false, :class => 'js-index-checkbox' %>
-        </td>
         <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
         <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>

@@ -24,40 +24,12 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-down");
   });
 
-  $('.js-index-checkbox-main').click(function(){
-    if($(this).prop('checked')){
-      $(".js-index-checkbox").attr("checked", "checked");
-    } else {
-      $(".js-index-checkbox").attr("checked", false);
-    }
-    showHideBatchActions();
-  });
-
-  $('.row-checkbox input').change(function(){
-    showHideBatchActions();
-  });
-
   $(".js-collapse-sidebar").click(function(){
     $(".main-right-sidebar").toggleClass("collapsed");
     $("section.content").toggleClass("sidebar-collapsed");
     $("span.icon", $(this)).toggleClass("icon-chevron-right");
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
-  });
-
-  function showHideBatchActions(){
-    var checkedCount = 0;
-    $(".js-index-checkbox").each(function(){
-      if($(this).prop('checked')){
-        checkedCount++;
-      }
-    });
-
-    if(checkedCount > 0){
-      $(".batch-actions").show();
-    } else {
-      $(".batch-actions").hide();
-    }
-  }
+  });  
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
