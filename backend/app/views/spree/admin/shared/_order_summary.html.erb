@@ -13,7 +13,7 @@
         <td id='item_total'><%= @order.display_item_total.to_html %></td>
       </tr>
 
-      <% if checkout_steps.include?("delivery") && @order.ship_total > 0 %>
+      <% if @order.checkout_steps.include?("delivery") && @order.ship_total > 0 %>
         <tr>
           <td data-hook='admin_order_tab_ship_total_title'><%= Spree.t(:ship_total) %>:</td>
           <td id='ship_total'><%= @order.display_ship_total.to_html %></td>

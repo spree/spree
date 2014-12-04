@@ -462,11 +462,11 @@ describe "Order Details", type: :feature, js: true do
       expect(page).not_to have_button('Resend')
 
       # Order Tabs
-      expect(page).not_to have_link('Order Details')
-      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Details')
+      expect(page).not_to have_link('Customer')
       expect(page).not_to have_link('Adjustments')
       expect(page).not_to have_link('Payments')
-      expect(page).not_to have_link('Return Authorizations')
+      expect(page).not_to have_link('Returns')
 
       # Order item actions
       expect(page).not_to have_css('.delete-item')
@@ -496,11 +496,11 @@ describe "Order Details", type: :feature, js: true do
       # Order Form
       expect(page).not_to have_css('.edit-item')
       # Order Tabs
-      expect(page).not_to have_link('Order Details')
-      expect(page).not_to have_link('Customer Details')
+      expect(page).not_to have_link('Details')
+      expect(page).not_to have_link('Customer')
       expect(page).not_to have_link('Adjustments')
       expect(page).not_to have_link('Payments')
-      expect(page).not_to have_link('Return Authorizations')
+      expect(page).not_to have_link('Returns')
     end
 
     it "can add tracking information" do
@@ -508,7 +508,7 @@ describe "Order Details", type: :feature, js: true do
       within("table.table tr:nth-child(5)") do
         click_icon :edit
       end
-      fill_in "tracking", :with => "FOOBAR"
+      fill_in "tracking", with: "FOOBAR"
       click_icon :save
 
       expect(page).not_to have_css("input[name=tracking]")
@@ -521,7 +521,7 @@ describe "Order Details", type: :feature, js: true do
       within("table.table tr.show-method") do
         click_icon :edit
       end
-      select2 "Default", :from => "Shipping Method"
+      select2 "Default", from: "Shipping Method"
       click_icon :save
 
       expect(page).not_to have_css('#selected_shipping_rate_id')
@@ -532,10 +532,10 @@ describe "Order Details", type: :feature, js: true do
       order = create(:order_ready_to_ship)
       order.refresh_shipment_rates
       visit spree.edit_admin_order_path(order)
-      click_icon 'arrow-right'
+      click_on 'Ship'
       wait_for_ajax
       within '.shipment-state' do
-        expect(page).to have_content('SHIPPED')
+        expect(page).to have_content('Shipped')
       end
     end
   end

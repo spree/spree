@@ -7,7 +7,7 @@
   <% end %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Shipments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Shipments' } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:shipments) %>
@@ -38,3 +38,5 @@
 <% content_for :head do %>
   <%= javascript_tag 'var expand_variants = true;' %>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/order_summary' %>

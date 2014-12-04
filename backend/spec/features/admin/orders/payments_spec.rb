@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Payments', type: :feature do
+describe 'Payments', type: :feature, js: true do
   stub_authorization!
 
   context "with a pre-existing payment" do
@@ -70,7 +70,7 @@ describe 'Payments', type: :feature do
       end
 
       click_icon :void
-      expect(find('#payment_status').text).to eq('BALANCE DUE')
+      expect(find('#payment_status').text).to eq('balance due')
       expect(page).to have_content('Payment Updated')
 
       within_row(1) do
@@ -85,7 +85,7 @@ describe 'Payments', type: :feature do
       expect(page).to have_content('successfully created!')
 
       click_icon(:capture)
-      expect(find('#payment_status').text).to eq('PAID')
+      expect(find('#payment_status').text).to eq('paid')
 
       expect(page).not_to have_selector('#new_payment_section')
     end
@@ -179,7 +179,7 @@ describe 'Payments', type: :feature do
         fill_in "Card Code", with: "007"
         # Regression test for #4277
         sleep(1)
-        expect(find('.ccType', :visible => false).value).to eq('visa')
+        expect(find('.ccType', visible: false).value).to eq('visa')
         click_button "Continue"
         expect(page).to have_content("Payment has been successfully created!")
       end

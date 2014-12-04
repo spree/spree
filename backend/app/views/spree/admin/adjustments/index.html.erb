@@ -1,11 +1,11 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Adjustments' } %>
 
 <% content_for :page_title do %>
    / <%= Spree.t(:adjustments) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), :class => "btn-success", :icon => 'add' %>
+  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add' %>
 <% end %>
 
 <% if @adjustments.present? %>
@@ -28,3 +28,5 @@
 <%= javascript_tag do -%>
   var order_number = '<%= @order.number %>';
 <% end -%>
+
+<%= render partial: 'spree/admin/shared/order_summary' %>

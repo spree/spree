@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Orders Listing", :type => :feature do
+describe "Orders Listing", type: :feature, js: true do
   stub_authorization!
 
   let!(:promotion) { create(:promotion_with_item_adjustment) }
@@ -47,8 +47,9 @@ describe "Orders Listing", :type => :feature do
 
   context "searching orders" do
     it "should be able to search orders" do
-      fill_in "q_number_cont", :with => "R200"
-      click_icon :search
+      click_on 'Filter'
+      fill_in "q_number_cont", with: "R200"
+      click_on 'Search'
       within_row(1) do
         expect(page).to have_content("R200")
       end
@@ -58,9 +59,10 @@ describe "Orders Listing", :type => :feature do
     end
 
     it "should be able to filter risky orders" do
+      click_on 'Filter'
       # Check risky and filter
       check "q_considered_risky_eq"
-      click_button "Filter Results"
+      click_on "Search"
 
       # Insure checkbox still checked
       expect(find("#q_considered_risky_eq")).to be_checked
@@ -73,12 +75,13 @@ describe "Orders Listing", :type => :feature do
     end
 
     it "should be able to filter on variant_id" do
+      click_on 'Filter'
       # Insure we have the SKU in the options
       expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
 
       # Select and filter
       find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
-      click_button "Filter Results"
+      click_on "Search"
 
       within_row(1) do
         expect(page).to have_content(@order1.number)
@@ -99,9 +102,10 @@ describe "Orders Listing", :type => :feature do
 
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
-        10.times { Spree::Order.create :email => "incomplete@example.com" }
+        10.times { Spree::Order.create email: "incomplete@example.com" }
+        click_on 'Filter'
         uncheck "q_completed_at_not_null"
-        click_button "Filter Results"
+        click_button "Search"
         within(".pagination") do
           click_link "2"
         end
@@ -111,15 +115,16 @@ describe "Orders Listing", :type => :feature do
     end
 
     it "should be able to search orders using only completed at input" do
-      fill_in "q_created_at_gt", :with => Date.current
-      click_icon :search
+      click_on 'Filter'
+      fill_in "q_created_at_gt", with: Date.current
+      click_on 'Search'
       within_row(1) { expect(page).to have_content("R100") }
 
       # Ensure that the other order doesn't show up
       within("table#listing_orders") { expect(page).not_to have_content("R200") }
     end
 
-    context "filter on promotions", :js => true do
+    context "filter on promotions" do
       before(:each) do
         @order1.promotions << promotion
         @order1.save
@@ -127,8 +132,9 @@ describe "Orders Listing", :type => :feature do
       end
 
       it "only shows the orders with the selected promotion" do
-        select2 promotion.name, :from => "Promotion"
-        click_icon :search
+        click_on 'Filter'
+        select2 promotion.name, from: "Promotion"
+        click_on 'Search'
         within_row(1) { expect(page).to have_content("R100") }
         within("table#listing_orders") { expect(page).not_to have_content("R200") }
       end

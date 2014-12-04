@@ -1292,6 +1292,7 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
+    summary: Summary
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
