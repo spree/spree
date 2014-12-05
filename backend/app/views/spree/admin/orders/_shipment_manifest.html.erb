@@ -22,7 +22,7 @@
     <% end %>
     <td class="item-total "><%= line_item_shipment_price(item.line_item, item.quantity) %></td>
     <td class="cart-item-delete actions actions-3" data-hook="cart_item_delete">
-      <% if not shipment.shipped? && can?(:update, item.line_item) %>
+      <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
         <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-default btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
         <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", :class => 'save-item btn btn-default btn-sm', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
         <% if shipment.order.shipped_shipments.count == 0 %>
