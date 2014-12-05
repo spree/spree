@@ -1,0 +1,51 @@
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'State Changes' } %>
+
+<% content_for :page_title do %>
+  <i class="fa fa-arrow-right"></i> <%= Spree::StateChange.human_attribute_name(:state_changes) %>
+<% end %>
+
+<% if @state_changes.none? %>
+  <p><%= Spree.t(:no_state_changes) %></p>
+<% else %>
+
+  <table class="index responsive" id="listing_order_state_changes" data-hook>
+    <colgroup>
+       <col style="width: 20%;">
+       <col style="width: 10%;">
+       <col style="width: 10%;">
+       <col style="width: 30%;">
+       <col style="width: 30%;">
+    </colgroup>
+
+    <thead>
+      <tr data-hook="admin_orders_state_changes_headers">
+        <th><%= Spree::StateChange.human_attribute_name(:type) %></th>
+        <th><%= Spree::StateChange.human_attribute_name(:state_from) %></th>
+        <th><%= Spree::StateChange.human_attribute_name(:state_to) %></th>
+        <th><%= Spree::StateChange.human_attribute_name(:user) %></th>
+        <th><%= Spree::StateChange.human_attribute_name(:timestamp) %></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @state_changes.each do |state_change| %>
+        <tr>
+          <td class="align-center"><%= Spree.t(state_change.name) %></td>
+          <td class="align-center"><%= state_change.previous_state ? Spree.t(state_change.previous_state) : Spree.t(:previous_state_missing) %></td>
+          <td class="align-center"><%= Spree.t(state_change.next_state) %></td>
+          <td class="align-center">
+            <%= link_to state_change.user.login, admin_user_path(state_change.user) if state_change.user %>
+          </td>
+          <td class="align-center">
+            <%= l(state_change.created_at).to_time %>
+            <% if state_change.created_at != state_change.updated_at %>
+              <small><%= Spree::StateChange.human_attribute_name(:updated)%>: <%= l(state_change.updated_at).to_time %></small>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+
+  </table>
+
+<% end %>

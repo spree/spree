@@ -45,5 +45,9 @@
         </li>
       <% end %>
     <% end %>
+
+    <li<%== ' class="active"' if current == 'State Changes' %> data-hook='admin_order_tabs_state_changes'>
+      <%= link_to_with_icon 'exchange', Spree::StateChange.human_attribute_name(:state_changes), admin_order_state_changes_url(@order) %>
+    </li>
   </ul>
 </nav>
