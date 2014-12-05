@@ -11,14 +11,25 @@
       <tbody>
         <tr>
           <td>{{variant.name}}</td>
-          {{#if variant.total_on_hand}}
-            <td>
-              {{#if variant.track_inventory}}
-                {{variant.total_on_hand}}
-              {{else}}
-                <%= Spree.t(:doesnt_track_inventory) %>
-              {{/if}}
-            </td>
+          {{#if variant.track_inventory}}
+            {{#if variant.total_on_hand}}
+              <td>{{variant.total_on_hand}}</td>
+              <td>
+                <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+              </td>
+              <td class="actions actions-1">
+                <button class="btn btn-sm btn-default add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
+                  <span class="icon icon-add"></span>
+                  </button>
+              </td>
+            {{else}}
+              <td><%= Spree.t(:out_of_stock) %></td>
+              <td>0</td>
+              <td></td>
+              <td></td>
+            {{/if}}
+          {{else}}
+            <td><%= Spree.t(:doesnt_track_inventory) %></td>
             <td>
               <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
             </td>
@@ -27,11 +38,6 @@
                 <span class="icon icon-add"></span>
               </button>
             </td>
-          {{else}}
-            <td><%= Spree.t(:out_of_stock) %></td>
-            <td>0</td>
-            <td></td>
-            <td></td>
           {{/if}}
         </tr>
       </tbody>
