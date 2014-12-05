@@ -132,8 +132,6 @@ describe "New Order", :type => :feature do
       create(:credit_card, default: true, user: user)
     end
     it "transitions to delivery not to complete" do
-      click_link "Orders"
-      click_link "New Order"
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
