@@ -126,7 +126,7 @@ module Spree
           [{ :variants => [:images], :master => [:images, :default_price]}]
         end
 
-        def clone_object_url resource
+        def clone_object_url(resource)
           clone_admin_product_url resource
         end
 
