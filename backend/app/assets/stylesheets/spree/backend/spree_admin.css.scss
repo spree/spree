@@ -95,6 +95,8 @@ $content-header-height: 63px;
     top: 0;
     padding-top: 15px;
     height: $content-header-height;
+    min-width: 160px;
+    text-align: right;
     form, li, button, a {
       display: inline-block;
     }
@@ -184,6 +186,9 @@ ul {
         font-size: 0.7em;
         margin: -1px 0 0 4px;
       }
+    }
+    .form-control {
+      z-index: 1; // override bootstrap default, ui-datepicker will be on top
     }
   }
   .filter-well {
