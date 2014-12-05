@@ -10,7 +10,7 @@ module Spree
 
       def show
         session[:return_to] ||= request.referer
-        redirect_to( :action => :edit )
+        redirect_to action: :edit
       end
 
       def index
@@ -31,7 +31,7 @@ module Spree
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
             format.html { redirect_to location_after_save }
-            format.js   { render :layout => false }
+            format.js   { render layout: false }
           end
         else
           # Stops people submitting blank slugs, causing errors when they try to
