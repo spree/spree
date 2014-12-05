@@ -34,7 +34,8 @@ module Spree
             format.js   { render :layout => false }
           end
         else
-          # Stops people submitting blank slugs, causing errors when they try to update the product again
+          # Stops people submitting blank slugs, causing errors when they try to
+          # update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
           respond_with(@object)
@@ -117,7 +118,8 @@ module Spree
       end
 
       def update_before
-        # note: we only reset the product properties if we're receiving a post from the form on that tab
+        # note: we only reset the product properties if we're receiving a post
+        #       from the form on that tab
         return unless params[:clear_product_properties]
         params[:product] ||= {}
       end
