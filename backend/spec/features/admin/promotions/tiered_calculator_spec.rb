@@ -27,7 +27,6 @@ feature "Tiered Calculator Promotions" do
 
     within(".tier") do
       find("input:last-child").set(100)
-      puts find('input').inspect
       find("input:first-child").set(10)
     end
 
