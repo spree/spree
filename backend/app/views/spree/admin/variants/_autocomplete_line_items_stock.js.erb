@@ -16,32 +16,44 @@
       <tbody>
         <tr>
           <td>{{variant.name}}</td>
-          {{#unless variant.track_inventory}}
-            <td>
-            It doesnt track inventory
-            </td>
-            <td>
-              <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
-            </td>
-            <td class="actions">
-              <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{this.variant_id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
-            </td>
-          {{else}}
-            {{#if variant.total_on_hand}}
-              <td>
-                {{variant.total_on_hand}}
-              </td>
-              <td>
+          <% if Spree::Config[:track_inventory_levels] %>
+            {{#unless variant.track_inventory}}
+                <td>
+                It doesnt track inventory
+                </td>
+                <td>
                 <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
-              </td>
-              <td class="actions">
-                <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
-              </td>
+                </td>
+                <td class="actions">
+                    <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{this.variant_id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
+                </td>
             {{else}}
-              <td><%= Spree.t(:out_of_stock) %></td>
-              <td>0</td>
-            {{/if}}
-          {{/unless}}
+                {{#if variant.total_on_hand}}
+                    <td>
+                    {{variant.total_on_hand}}
+                    </td>
+                    <td>
+                    <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+                    </td>
+                    <td class="actions">
+                        <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
+                    </td>
+                {{else}}
+                    <td><%= Spree.t(:out_of_stock) %></td>
+                    <td>0</td>
+                {{/if}}
+            {{/unless}}
+          <% else %>
+                <td>
+                track inventory config is false
+                </td>
+                <td>
+                <input class="quantity" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+                </td>
+                <td class="actions">
+                    <button class="add_variant no-text fa fa-plus icon_link with-tip" data-variant-id="{{this.variant_id}}" title="<%= Spree.t(:add) %>" data-action="add"></button>
+                </td>
+          <% end %>
         </tr>
       </tbody>
     </table>
