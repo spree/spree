@@ -27,7 +27,7 @@ feature "Tiered Calculator Promotions" do
 
     within(".tier") do
       find("input:last-child").set(100)
-      find("input:first-child").set(10)
+      find("input:nth-of-type(0)").set(10)
     end
 
     within('#actions_container') { click_button "Update" }

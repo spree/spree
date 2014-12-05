@@ -326,13 +326,13 @@ describe "Products", type: :feature do
         visit spree.admin_product_path(product)
         click_link 'Properties'
         click_link "Select From Prototype"
+        wait_for_ajax
 
-        within(:css, "#prototypes tr#row_1") do
+        within("#prototypes tr#row_1") do
           click_link 'Select'
           wait_for_ajax
         end
 
-        page.all('tr.product_property').size > 1
         within(:css, "tr.product_property:first-child") do
           expect(first('input[type=text]').value).to eq('baseball_cap_color')
         end
