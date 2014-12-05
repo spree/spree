@@ -5,11 +5,11 @@
   <%= render 'add_stock_form' %>
 </div>
 
-<table class="table table-condensed table-bordered" id="listing_product_stock">
+<table class="table" id="listing_product_stock">
   <thead>
     <tr data-hook="admin_product_stock_management_index_headers">
-      <th><%= Spree.t(:variant) %></th>
-      <th colspan="4"><%= Spree.t(:stock_location_info) %></th>
+      <th colspan="2"><%= Spree.t(:variant) %></th>
+      <th colspan="3"><%= Spree.t(:stock_location_info) %></th>
     </tr>
   </thead>
   <tbody>
@@ -19,11 +19,13 @@
           <td>
             <%= variant.sku_and_options_text %>
             <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
-              <%= label_tag :track_inventory do %>
-                <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
-                                  class: 'track_inventory_checkbox' %>
-                <%= Spree.t(:track_inventory) %>
-              <% end %>
+              <div class="checkbox">
+                <%= label_tag :track_inventory do %>
+                  <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
+                                    class: 'track_inventory_checkbox' %>
+                  <%= Spree.t(:track_inventory) %>
+                <% end %>
+              </div>
               <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
                   class: 'variant_track_inventory',
                   id: "variant_track_inventory_#{variant.id}" %>

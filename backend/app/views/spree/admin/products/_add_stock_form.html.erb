@@ -4,25 +4,31 @@
 
     <div data-hook="admin_stock_movements_form_fields" class="row">
       <div class="col-md-2">
-        <%= f.field_container :quantity do %>
-          <%= f.label :quantity, Spree.t(:quantity) %>
-          <%= f.number_field :quantity, class: 'form-control', value: 1 %>
-        <% end %>
+        <div class="form-group">
+          <%= f.field_container :quantity do %>
+            <%= f.label :quantity, Spree.t(:quantity) %>
+            <%= f.number_field :quantity, class: 'form-control', value: 1 %>
+          <% end %>
+        </div>
       </div>
       <div class="col-md-5">
-        <%= f.field_container :stock_location do %>
-          <%= label_tag :stock_location_id, Spree.t(:stock_location) %>
-          <%= select_tag 'stock_location_id', options_from_collection_for_select(@stock_locations, :id, :name),
-            class: 'select2' %>
-        <% end %>
+        <div class="form-group">
+          <%= f.field_container :stock_location do %>
+            <%= label_tag :stock_location_id, Spree.t(:stock_location) %>
+            <%= select_tag 'stock_location_id', options_from_collection_for_select(@stock_locations, :id, :name),
+              class: 'select2' %>
+          <% end %>
+        </div>
       </div>
 
       <div class="col-md-5">
-        <%= f.field_container :variant_id do %>
-          <%= label_tag 'variant_id', Spree.t(:variant) %>
-          <%= select_tag 'variant_id', options_from_collection_for_select(@variants, :id, :sku_and_options_text),
-            class: 'select2' %>
-        <% end %>
+        <div class="form-group">
+          <%= f.field_container :variant_id do %>
+            <%= label_tag 'variant_id', Spree.t(:variant) %>
+            <%= select_tag 'variant_id', options_from_collection_for_select(@variants, :id, :sku_and_options_text),
+              class: 'select2' %>
+          <% end %>
+        </div>
       </div>
     </div>
 
