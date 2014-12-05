@@ -469,7 +469,8 @@ module Spree
         if current_line_item
           current_line_item.quantity += other_order_line_item.quantity
           current_line_item.save!
-        else
+        elsif other_order_line_item.valid?
+          # only merge in valid line_items
           other_order_line_item.order_id = self.id
           other_order_line_item.save!
         end

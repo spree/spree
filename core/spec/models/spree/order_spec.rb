@@ -345,6 +345,27 @@ describe Spree::Order, :type => :model do
 
     end
 
+    context "merging together two orders with invalid line_items" do
+      let!(:variant_2) { create(:variant) }
+
+      before do
+        order_1.contents.add(variant, 1)
+        order_2.contents.add(variant_2, 1)
+      end
+
+      specify do
+        variant_2.destroy
+        expect(order_1.line_items.first.valid?).to eq(true)
+        order_1.merge!(order_2)
+        expect(order_1.line_items.count).to eq(1)
+
+        line_item = order_1.line_items.first
+        expect(line_item.quantity).to eq(1)
+        expect(line_item.variant_id).to eq(variant.id)
+      end
+
+    end
+
     context "merging using extension-specific line_item_comparison_hooks" do
       before do
         Spree::Order.register_line_item_comparison_hook(:foos_match)
