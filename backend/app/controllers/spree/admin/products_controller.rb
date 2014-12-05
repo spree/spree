@@ -100,7 +100,9 @@ module Spree
 
         params[:q][:s] ||= "name asc"
         @collection = super
-        @collection = @collection.with_deleted if params[:q].delete(:deleted_at_null) == '0'
+        if params[:q].delete(:deleted_at_null) == '0'
+          @collection = @collection.with_deleted
+        end
         # @search needs to be defined as this is passed to search_form_for
         @search = @collection.ransack(params[:q])
         @collection = @search.result.
