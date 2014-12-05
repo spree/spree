@@ -1,42 +1,35 @@
 <% if order.line_items.exists? %>
-  <table class="line-items index" data-hook="line-items">
-    <colgroup>
-      <col style="width: 10%;" />
-      <col style="width: 20%;" />
-      <col style="width: 20%;" />
-      <col style="width: 15%;" />
-    </colgroup>
-
+  <table class="table table-condensed table-bordered line-items" data-hook="line-items">
     <thead>
       <th colspan="2"><%= Spree.t(:name) %></th>
       <th><%= Spree.t(:price) %></th>
       <th><%= Spree.t(:quantity) %></th>
       <th><%= Spree.t(:total_price) %></th>
-      <th class="orders-actions actions" data-hook="admin_order_form_line_items_header_actions">&nbsp;</th>
+      <th class="orders-actions" data-hook="admin_order_form_line_items_header_actions"></th>
     </thead>
-
     <tbody>
       <% order.line_items.each do |item| %>
-        
         <tr class="line-item" id="line-item-<%= item.id %>">
-          <td class="line-item-image"><%= mini_image(item.variant) %></td>
+          <td class="line-item-image image">
+            <%= mini_image(item.variant, class: "thumbnail") %>
+          </td>
           <td class="line-item-name">
             <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
           </td>
-          <td class="line-item-price align-center"><%= item.single_money.to_html %></td>
-          <td class="line-item-qty-show align-center">
+          <td class="line-item-price "><%= item.single_money.to_html %></td>
+          <td class="line-item-qty-show ">
             <%= item.quantity %>
           </td>
-          <td class="line-item-qty-edit hidden">
-            <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity", :size => 5 %>
+          <td class="line-item-qty-edit is-hidden">
+            <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity form-control", :size => 5 %>
           </td>
-          <td class="line-item-total align-center"><%= line_item_shipment_price(item, item.quantity) %></td>
-          <td class="cart-line-item-delete actions" data-hook="cart_line_item_delete">
+          <td class="line-item-total "><%= line_item_shipment_price(item, item.quantity) %></td>
+          <td class="cart-line-item-delete actions actions-4" data-hook="cart_line_item_delete">
             <% if can? :update, item %>
-              <%= link_to '', '#', :class => 'save-line-item fa fa-ok no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
-              <%= link_to '', '#', :class => 'cancel-line-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
-              <%= link_to '', '#', :class => 'edit-line-item fa fa-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
-              <%= link_to '', '#', :class => 'delete-line-item fa fa-trash no-text with-tip', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete') %>
+              <%= link_to_with_icon 'save', Spree.t('save'), "#", :class => 'save-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
+              <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-line-item btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
+              <%= link_to_with_icon 'edit', Spree.t('edit'), "#", :class => 'edit-line-item btn btn-default btn-sm', :data => {:action => 'edit'}, :title => Spree.t('edit'), :no_text => true %>
+              <%= link_to_with_icon 'delete', Spree.t('delete'), "#", :class => 'delete-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete'), :no_text => true %>
             <% end %>
           </td>
         </tr>

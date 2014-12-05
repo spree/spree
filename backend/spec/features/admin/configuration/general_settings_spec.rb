@@ -6,9 +6,7 @@ describe "General Settings", type: :feature, js: true do
   before(:each) do
     store = create(:store, name: 'Test Store', url: 'test.example.org',
                            mail_from_address: 'test@example.org')
-    visit spree.admin_path
-    click_link "Configuration"
-    click_link "General Settings"
+    visit spree.edit_admin_general_settings_path
   end
 
   context "visiting general settings (admin)" do

@@ -1,15 +1,17 @@
-<%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
-  <fieldset data-hook="new_image">
-    <legend align="center"><%= Spree.t(:new_image) %></legend>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
-      <%= render :partial => 'form', :locals => { :f => f } %>
-    
-      <div class="form-buttons filter-actions actions" data-hook="buttons">
-        <%= button Spree.t('actions.update'), 'refresh' %>
-        <span class="or"><%= Spree.t(:or) %></span>
-        <%= link_to_with_icon 'remove', Spree.t('actions.cancel'), admin_product_images_url(@product), :id => 'cancel_link', :class => 'button' %>
-      </div>
-  </fieldset>
+<% content_for :page_title do %>
+  <%= Spree.t(:new_image) %>
 <% end %>
 
-<%= javascript_include_tag 'spree/backend/images/new.js' %>
+<%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>
+  <fieldset data-hook="new_image">
+    <%= render partial: 'form', locals: { f: f } %>
+
+    <div class="form-actions" data-hook="buttons">
+      <%= button Spree.t('actions.update'), 'save' %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), icon: 'delete', id: 'cancel_link' %>
+    </div>
+  </fieldset>
+<% end %>

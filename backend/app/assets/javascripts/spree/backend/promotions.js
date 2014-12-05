@@ -16,7 +16,7 @@ var initProductActions = function () {
     var $fields_container = $(this);
     var $type_select = $fields_container.find('.type-select');
     var $settings = $fields_container.find('.settings');
-    var $warning = $fields_container.find('.warning');
+    var $warning = $fields_container.find('.js-warning');
     var originalType = $type_select.val();
 
     $warning.hide();

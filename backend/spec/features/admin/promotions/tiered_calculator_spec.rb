@@ -17,8 +17,8 @@ feature "Tiered Calculator Promotions" do
     within('#actions_container') { click_button "Update" }
 
     within("#actions_container .settings") do
-      expect(page).to have_content("BASE PERCENT")
-      expect(page).to have_content("TIERS")
+      expect(page).to have_content("Base Percent")
+      expect(page).to have_content("Tiers")
 
       click_button "Add"
     end
@@ -26,10 +26,11 @@ feature "Tiered Calculator Promotions" do
     fill_in "Base Percent", with: 5
 
     within(".tier") do
-      find("input:last-child").set(100)
-      find("input:first-child").set(10)
+      find(".js-base-input").set(100)
+      page.execute_script("$('.js-base-input').change();")
+      find(".js-value-input").set(10)
+      page.execute_script("$('.js-value-input').change();")
     end
-
     within('#actions_container') { click_button "Update" }
 
     first_action = promotion.actions.first
@@ -57,7 +58,7 @@ feature "Tiered Calculator Promotions" do
 
     scenario "deleting a tier", js: true do
       within(".tier:nth-child(2)") do
-        find(".remove").click
+        click_icon :delete
       end
 
       within('#actions_container') { click_button "Update" }

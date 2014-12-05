@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Order Risk Analysis', :type => :feature do
+describe 'Order Risk Analysis', type: :feature do
   stub_authorization!
 
   let!(:order) do
@@ -29,16 +29,16 @@ describe 'Order Risk Analysis', :type => :feature do
     end
 
     it "can be approved" do
-      click_button('approve')
+      click_button('Approve')
       expect(page).to have_content 'Approver'
       expect(page).to have_content 'Approved at'
       expect(page).to have_content 'Status: complete'
     end
   end
-  
+
   context "the order is not considered risky" do
     before do
-      visit_order      
+      visit_order
     end
 
     it "does not display 'Risk Analysis' box" do

@@ -116,3 +116,17 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
 end
+
+module Spree
+  module TestingSupport
+    module Flash
+      def assert_flash_success(flash)
+        flash = convert_flash(flash)
+
+        within(".alert-success") do
+          expect(page).to have_content(flash)
+        end
+      end
+    end
+  end
+end

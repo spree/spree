@@ -1,30 +1,28 @@
 require 'spec_helper'
 
-describe "Product Variants", :type => :feature do
+describe "Product Variants", type: :feature, js: true do
   stub_authorization!
 
+  let!(:product) { create(:product) }
+
   before(:each) do
-    visit spree.admin_path
+    visit spree.admin_products_path
   end
 
-  context "editing variant option types", :js => true do
-    let!(:product) { create(:product) }
-
+  context "editing variant option types" do
     it "should allow an admin to create option types for a variant" do
-      click_link "Products"
-
       within_row(1) { click_icon :edit }
 
       within('#sidebar') { click_link "Variants" }
-      expect(page).to have_content("TO ADD VARIANTS, YOU MUST FIRST DEFINE")
+      expect(page).to have_content("To add variants, you must first define")
     end
 
     it "allows admin to create a variant if there are option types" do
       click_link "Products"
       click_link "Option Types"
       click_link "new_option_type_link"
-      fill_in "option_type_name", :with => "shirt colors"
-      fill_in "option_type_presentation", :with => "colors"
+      fill_in "option_type_name", with: "shirt colors"
+      fill_in "option_type_presentation", with: "colors"
       click_button "Create"
       expect(page).to have_content("successfully created!")
 
@@ -33,25 +31,22 @@ describe "Product Variants", :type => :feature do
       click_button "Update"
       expect(page).to have_content("successfully updated!")
 
-      visit spree.admin_path
-      click_link "Products"
-      within('table.index tbody tr:nth-child(1)') do
-        click_icon :edit
-      end
+      visit spree.admin_products_path
+      within_row(1) { click_icon :edit }
 
-      select2_search "shirt", :from => "Option Types"
+      select2_search "shirt", from: "Option Types"
       click_button "Update"
       expect(page).to have_content("successfully updated!")
 
       within('#sidebar') { click_link "Variants" }
       click_link "New Variant"
 
-      targetted_select2 "black", :from => "#s2id_variant_option_value_ids"
-      fill_in "variant_sku", :with => "A100"
+      targetted_select2 "black", from: "#s2id_variant_option_value_ids"
+      fill_in "variant_sku", with: "A100"
       click_button "Create"
       expect(page).to have_content("successfully created!")
 
-      within(".index") do
+      within(".table") do
         expect(page).to have_content("19.99")
         expect(page).to have_content("black")
         expect(page).to have_content("A100")

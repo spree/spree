@@ -1,4 +1,4 @@
-<table class="index return-items-table">
+<table class="table table-condensed table-bordered">
   <thead>
     <tr>
       <th>
@@ -13,7 +13,6 @@
   <tbody>
     <%= f.fields_for :return_items, return_items do |item_fields| %>
       <% return_item = item_fields.object %>
-
       <tr>
         <td class="align-center" class="inventory-unit-checkbox">
           <div style="display:none">
@@ -21,7 +20,6 @@
             <%= item_fields.hidden_field :return_authorization_id %>
             <%= item_fields.hidden_field :pre_tax_amount %>
           </div>
-
           <%= item_fields.check_box :returned, {checked: false, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '1', '0' %>
         </td>
         <td>

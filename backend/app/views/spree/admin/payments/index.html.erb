@@ -1,36 +1,38 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => "Payments" } %>
 
-<% content_for :page_actions do %>  
+<% content_for :page_actions do %>
   <% if @order.outstanding_balance? %>
-    <li id="new_payment_section">
-      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), :icon => 'plus' %>
-    </li>
-  <% end %>  
-  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %></li>
+    <span id="new_payment_section">
+      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), :class => "btn-success", :icon => 'add' %>
+    </span>
+  <% end %>
 <% end %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:payments) %>
+  / <%= Spree.t(:payments) %>
 <% end %>
 
 <% if @order.outstanding_balance? %>
-  <h5 class="outstanding-balance"><%= @order.outstanding_balance < 0 ? Spree.t(:credit_owed) : Spree.t(:balance_due) %>: <strong><%= @order.display_outstanding_balance %></strong></h5>
+  <div class="alert alert-info outstanding-balance">
+    <%= @order.outstanding_balance < 0 ? Spree.t(:credit_owed) : Spree.t(:balance_due) %>: <strong><%= @order.display_outstanding_balance %></strong>
+  </div>
 <% end %>
 
 <% if @payments.any? %>
 
   <fieldset data-hook="payment_list" class="no-border-bottom">
-    <legend align="center"><%= Spree.t(:payments) %></legend>
-    <%= render :partial => 'list', :locals => { :payments => @payments } %>
+    <%= render partial: 'list', locals: { payments: @payments } %>
   </fieldset>
 
   <% if @refunds.any? %>
     <fieldset data-hook="payment_list" class="no-border-bottom">
-      <legend align="center"><%= Spree.t(:refunds) %></legend>
-      <%= render :partial => 'spree/admin/shared/refunds', :locals => { :refunds => @refunds, show_actions: true } %>
+      <legend><%= Spree.t(:refunds) %></legend>
+      <%= render partial: 'spree/admin/shared/refunds', locals: { refunds: @refunds, show_actions: true } %>
     </fieldset>
   <% end %>
 
 <% else %>
-  <div class="alpha twelve columns no-objects-found"><%= Spree.t(:order_has_no_payments) %></div>
+  <div class="alert alert-info no-objects-found"><%= Spree.t(:order_has_no_payments) %></div>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/order_summary' %>
