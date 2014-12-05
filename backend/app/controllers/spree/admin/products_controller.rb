@@ -66,7 +66,7 @@ module Spree
       end
 
       def stock
-        @variants = @product.variants
+        @variants = @product.variants.includes(*variant_stock_includes)
         @variants = [@product.master] if @variants.empty?
         @stock_locations = StockLocation.accessible_by(current_ability, :read)
         if @stock_locations.empty?
@@ -130,6 +130,11 @@ module Spree
           clone_admin_product_url resource
         end
 
+      private
+
+      def variant_stock_includes
+        [:images, stock_items: :stock_location, option_values: :option_type]
+      end
     end
   end
 end
