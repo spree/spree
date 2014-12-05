@@ -91,7 +91,7 @@ module Spree
           end
         end
 
-        Adjustment.create(adjustable: order, amount: compute_amount, label: Spree.t(:rma_credit), source: self)
+        Adjustment.create(adjustable: order, amount: compute_amount, label: Spree.t(:rma_credit), order: order, source: self)
         order.update!
 
         order.return if inventory_units.all?(&:returned?)
