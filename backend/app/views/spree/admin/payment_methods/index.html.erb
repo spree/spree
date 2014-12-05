@@ -1,25 +1,13 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= Spree.t(:payment_methods) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_payment_method), new_object_url, :icon => 'plus', :id => 'admin_new_payment_methods_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_payment_method), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_payment_methods_link' %>
 <% end %>
 
 <% if @payment_methods.any? %>
-  <table class="index" id='listing_payment_methods'>
-    <colgroup>
-      <col style="width: 15%">
-      <col style="width: 35%">
-      <col style="width: 15%">
-      <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 15%">
-    </colgroup>
+  <table class="table" id='listing_payment_methods'>
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
         <th><%= Spree.t(:name) %></th>
@@ -32,13 +20,13 @@
     </thead>
     <tbody>
       <% @payment_methods.each do |method|%>
-        <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows" class="<%= cycle('odd', 'even')%>">
-          <td class="align-center"><%= method.name %></td>
-          <td class="align-center"><%= method.type %></td>
-          <td class="align-center"><%= method.environment.to_s.titleize %></td>
-          <td class="align-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
-          <td class="align-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-          <td data-hook="admin_payment_methods_index_row_actions" class="actions">
+        <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
+          <td><%= method.name %></td>
+          <td><%= method.type %></td>
+          <td><%= method.environment.to_s.titleize %></td>
+          <td><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
+          <td><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2">
             <%= link_to_edit method, :no_text => true %>
             <%= link_to_delete method, :no_text => true  %>
           </td>
@@ -47,9 +35,8 @@
     </tbody>
   </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/payment_method')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_payment_method_path %>!
   </div>
 <% end %>
-

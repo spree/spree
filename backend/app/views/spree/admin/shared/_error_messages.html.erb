@@ -1,0 +1,12 @@
+<% if target && target.errors.any? %>
+  <div id="errorExplanation" class="errorExplanation alert alert-danger" data-hook>
+    <p>
+      <strong><%= Spree.t(:errors_prohibited_this_record_from_being_saved, :count => target.errors.count) %>:</strong><br/>
+    </p>
+    <ul class="ul-with-markup">
+     <% target.errors.full_messages.each do |msg| %>
+       <li><%= msg %></li>
+     <% end %>
+    </ul>
+  </div>
+<% end %>

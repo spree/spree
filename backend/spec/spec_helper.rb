@@ -55,16 +55,6 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  # A workaround to deal with random failure caused by phantomjs. Turn it on
-  # by setting ENV['RSPEC_RETRY_COUNT']. Limit it to features tests where
-  # phantomjs is used.
-  config.before(:all, :type => :feature) do
-    if ENV['RSPEC_RETRY_COUNT']
-      config.verbose_retry       = true # show retry status in spec process
-      config.default_retry_count = ENV['RSPEC_RETRY_COUNT'].to_i
-    end
-  end
-
   config.before :suite do
     Capybara.match = :prefer_exact
     DatabaseCleaner.clean_with :truncation
@@ -115,4 +105,18 @@ RSpec.configure do |config|
   config.extend WithModel
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+end
+
+module Spree
+  module TestingSupport
+    module Flash
+      def assert_flash_success(flash)
+        flash = convert_flash(flash)
+
+        within(".alert-success") do
+          expect(page).to have_content(flash)
+        end
+      end
+    end
+  end
 end

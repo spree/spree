@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Shipping Methods", :type => :feature do
+describe "Shipping Methods", type: :feature do
   stub_authorization!
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, :zones => [zone]) }
@@ -15,9 +15,7 @@ describe "Shipping Methods", :type => :feature do
     allow_any_instance_of(Spree::Order).to receive_messages(:require_email => false)
     create(:check_payment_method, :environment => 'test')
 
-    visit spree.admin_path
-    click_link "Configuration"
-    click_link "Shipping Methods"
+    visit spree.admin_shipping_methods_path
   end
 
   context "show" do

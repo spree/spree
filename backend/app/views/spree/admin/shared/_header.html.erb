@@ -1,9 +1,14 @@
-<header id="header" data-hook>
-  <div class="container">
-    <figure data-hook="logo-wrapper" class="columns five">
-      <%= link_to image_tag(Spree::Config[:admin_interface_logo], :id => 'logo'), spree.admin_path %>
-    </figure>
-
-    <nav data-hook="admin_login_navigation_bar" class="columns eleven"></nav>
-  </div>
+<header class="header">
+  <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo'), spree.admin_path, class: "logo" %>
+  <nav class="navbar navbar-static-top" role="navigation">
+    <% if can? :admin, Spree::Order %>
+    <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </a>
+    <div class="navbar-right" data-hook="admin_login_navigation_bar"></div>
+    <% end %>
+  </nav>
 </header>

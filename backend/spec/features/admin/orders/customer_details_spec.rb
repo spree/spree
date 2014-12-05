@@ -16,18 +16,18 @@ describe "Customer Details", type: :feature, js: true do
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
 
   context "brand new order" do
+    before do
+      visit spree.new_admin_order_path
+    end
     # Regression test for #3335 & #5317
     it "associates a user when not using guest checkout" do
-      visit spree.admin_path
-      click_link "Orders"
-      click_link "New Order"
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
-        click_icon :plus
+        click_icon :add
       end
       wait_for_ajax
-      click_link "Customer Details"
+      click_link "Customer"
       targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
       # 5317 - Address prefills using user's default.
       expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
@@ -51,8 +51,7 @@ describe "Customer Details", type: :feature, js: true do
         config.company = true
       end
 
-      visit spree.admin_path
-      click_link "Orders"
+      visit spree.admin_orders_path
       within('table#listing_orders') { click_icon(:edit) }
     end
 
@@ -60,7 +59,7 @@ describe "Customer Details", type: :feature, js: true do
       before { create(:country, iso: "BRA", name: "Brazil") }
 
       it "changes state field to text input" do
-        click_link "Customer Details"
+        click_link "Customer"
 
         within("#billing") do
           targetted_select2 "Brazil", from: "#s2id_order_bill_address_attributes_country_id"
@@ -76,22 +75,22 @@ describe "Customer Details", type: :feature, js: true do
       order.ship_address = create(:address)
       order.save!
 
-      click_link "Customer Details"
+      click_link "Customer"
       within("#shipping") { fill_in_address "ship" }
       within("#billing") { fill_in_address "bill" }
 
       click_button "Update"
-      click_link "Customer Details"
+      click_link "Customer"
 
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within("#order_tab_summary") do
-        expect(find(".state").text).to eq("COMPLETE")
+        expect(find(".state").text).to eq("complete")
       end
     end
 
     it "should show validation errors" do
-      click_link "Customer Details"
+      click_link "Customer"
       click_button "Update"
       expect(page).to have_content("Shipping address first name can't be blank")
     end
@@ -99,7 +98,7 @@ describe "Customer Details", type: :feature, js: true do
     it "updates order email for an existing order with a user" do
       order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
       previous_user = order.user
-      click_link "Customer Details"
+      click_link "Customer"
       fill_in "order_email", with: "newemail@example.com"
       expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
       expect(order.user_id).to eq previous_user.id
@@ -117,7 +116,7 @@ describe "Customer Details", type: :feature, js: true do
       end
 
       it "sets default country when displaying form" do
-        click_link "Customer Details"
+        click_link "Customer"
         expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
       end
     end
@@ -129,7 +128,7 @@ describe "Customer Details", type: :feature, js: true do
       end
 
       specify do
-        click_link "Customer Details"
+        click_link "Customer"
         # Need to fill in valid information so it passes validations
         fill_in "order_ship_address_attributes_firstname",  with: "John 99"
         fill_in "order_ship_address_attributes_lastname",   with: "Doe"

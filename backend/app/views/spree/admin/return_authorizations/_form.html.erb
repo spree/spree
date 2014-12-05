@@ -1,7 +1,7 @@
 <% allow_return_item_changes = !@return_authorization.customer_returned_items? %>
 
 <div data-hook="admin_return_authorization_form_fields">
-  <table class="index return-items-table">
+  <table class="table table-condensed table-bordered index return-items-table">
     <thead>
       <tr data-hook="rma_header">
         <th>
@@ -23,7 +23,7 @@
         <% inventory_unit = return_item.inventory_unit %>
         <% editable = inventory_unit.shipped? && allow_return_item_changes && return_item.reimbursement.nil? %>
         <tr>
-          <td class="align-center" class="inventory-unit-checkbox">
+          <td class="inventory-unit-checkbox">
             <% if editable %>
               <%= item_fields.hidden_field :inventory_unit_id %>
               <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
@@ -33,29 +33,29 @@
             <div class="variant-name"><%= inventory_unit.variant.name %></div>
             <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
           </td>
-          <td class="align-center"><%= inventory_unit.state.humanize %></td>
-          <td class="align-center">
+          <td><%= inventory_unit.state.humanize %></td>
+          <td>
             <%= return_item.display_pre_tax_amount %>
           </td>
-          <td class="align-center">
+          <td>
             <% if editable %>
-              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input' } %>
+              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
             <% else %>
               <%= return_item.display_pre_tax_amount %>
             <% end %>
           </td>
           <td>
             <% if editable %>
-              <%= item_fields.select :preferred_reimbursement_type_id, @reimbursement_types.collect{|r|[r.name.humanize, r.id]}, {include_blank: true}, {class: 'select2 fullwidth'} %>
-            <% else %>
-              <%= return_item.preferred_reimbursement_type.try(:name) %>
+              <%= item_fields.select :preferred_reimbursement_type_id, @reimbursement_types.collect{|r|[r.name.humanize, r.id]}, {include_blank: true}, {class: 'select2'} %>
             <% end %>
           </td>
-          <td class="align-center">
+          <td>
             <% if editable %>
-              <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 fullwidth return-item-exchange-selection" } %>
-            <% elsif return_item.exchange_processed? %>
-              <%= return_item.exchange_variant.options_text %>
+              <% if return_item.exchange_processed? %>
+                <%= return_item.exchange_variant.options_text %>
+              <% else %>
+                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
+              <% end %>
             <% end %>
           </td>
         </tr>
@@ -63,25 +63,25 @@
     </tbody>
   </table>
 
-  <%= f.field_container :amount do %>
+  <%= f.field_container :amount, class: ['form-group'] do %>
     <%= Spree.t(:total_pre_tax_refund) %>: <span id="total_pre_tax_refund">0.00</span>
   <% end %>
 
-  <%= f.field_container :stock_location do %>
+  <%= f.field_container :stock_location, class: ['form-group'] do %>
     <%= f.label :stock_location, Spree.t(:stock_location) %>
-    <%= f.select :stock_location_id, Spree::StockLocation.order_default.active.to_a.collect{|l|[l.name, l.id]}, {include_blank: true}, {class: 'select2 fullwidth', "data-placeholder" => Spree.t(:select_a_stock_location)} %>
+    <%= f.select :stock_location_id, Spree::StockLocation.order_default.active.to_a.collect{|l|[l.name, l.id]}, {include_blank: true}, {class: 'select2', "data-placeholder" => Spree.t(:select_a_stock_location)} %>
     <%= f.error_message_on :stock_location_id %>
   <% end %>
 
-  <%= f.field_container :reason do %>
+  <%= f.field_container :reason, class: ['form-group'] do %>
     <%= f.label :reason, Spree.t(:reason) %>
-    <%= f.select :return_authorization_reason_id, @reasons.collect{|r|[r.name, r.id]}, {include_blank: true}, {class: 'select2 fullwidth', "data-placeholder" => Spree.t(:select_a_return_authorization_reason)} %>
+    <%= f.select :return_authorization_reason_id, @reasons.collect{|r|[r.name, r.id]}, {include_blank: true}, {class: 'select2', "data-placeholder" => Spree.t(:select_a_return_authorization_reason)} %>
     <%= f.error_message_on :reason %>
   <% end %>
 
-  <%= f.field_container :memo do %>
+  <%= f.field_container :memo, class: ['form-group'] do %>
     <%= f.label :memo, Spree.t(:memo) %>
-    <%= f.text_area :memo, {:style => 'height:100px;', :class => 'fullwidth'} %>
+    <%= f.text_area :memo, :class => 'form-control' %>
     <%= f.error_message_on :memo %>
   <% end %>
 </div>

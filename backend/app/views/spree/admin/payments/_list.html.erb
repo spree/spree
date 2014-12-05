@@ -1,4 +1,4 @@
-<table class="index" id='payments' data-order-id='<%= @order.number %>'>
+<table class="table table-condensed table-bordered" id='payments' data-order-id='<%= @order.number %>'>
   <thead>
     <tr data-hook="payments_header">
       <th><%= Spree.t(:identifier) %></th>
@@ -12,19 +12,23 @@
   </thead>
   <tbody>
     <% payments.each do |payment| %>
-      <tr id="<%= dom_id(payment) %>" data-hook="payments_row" class="<%= cycle('odd', 'even', name: 'payment_table_cycle')%>">
+      <tr id="<%= dom_id(payment) %>" data-hook="payments_row">
         <td><%= link_to payment.identifier, spree.admin_order_payment_path(@order, payment) %></td>
         <td><%= pretty_time(payment.created_at) %></td>
-        <td class="align-center amount"><%= payment.display_amount.to_html %></td>
-        <td class="align-center"><%= payment_method_name(payment) %></td>
-        <td class="align-center"><%= payment.transaction_id %></td>
-        <td class="align-center"> <span class="state <%= payment.state %>"><%= Spree.t(payment.state, :scope => :payment_states, :default => payment.state.capitalize) %></span></td>
-        <td class="actions">
+        <td class="amount"><%= payment.display_amount.to_html %></td>
+        <td><%= payment_method_name(payment) %></td>
+        <td><%= payment.transaction_id %></td>
+        <td>
+          <span class="label label-<%= payment.state %>">
+            <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
+          </span>
+        </td>
+        <td class="actions actions-2">
           <% payment.actions.each do |action| %>
             <% if action == 'credit' %>
-              <%= link_to_with_icon 'reply', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true %>
+              <%= link_to_with_icon 'refund', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true, class: "btn btn-default btn-sm" %>
             <% else %>
-              <%= link_to_with_icon action, Spree.t(action), fire_admin_order_payment_path(@order, payment, :e => action), :method => :put, :no_text => true, :data => {:action => action} %>
+              <%= link_to_with_icon action, Spree.t(action), fire_admin_order_payment_path(@order, payment, e: action), method: :put, no_text: true, data: { action: action }, class: "btn btn-default btn-sm" %>
             <% end %>
           <% end %>
         </td>

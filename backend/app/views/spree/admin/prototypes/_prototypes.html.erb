@@ -1,8 +1,4 @@
-<table class="index">
-  <colgroup>
-    <col style="width: 80%" />
-    <col style="width: 20%" />
-  </colgroup>
+<table class="table table-condensed table-bordered">
   <thead>
     <tr data-hook="available_header">
       <th><%= Spree.t(:name) %></th>
@@ -11,10 +7,10 @@
   </thead>
   <tbody>
     <% @prototypes.each do |prototype| %>
-      <tr id="row_<%= prototype.id %>" data-hook="available_row" class="<%= cycle('odd', 'even')%>">
+      <tr id="row_<%= prototype.id %>" data-hook="available_row">
         <td><%= prototype.name %></td>
-        <td class="actions">
-          <%= link_to Spree.t(:select), select_admin_prototype_url(prototype), :class => 'ajax button select_properties_from_prototype fa fa-ok' %>
+        <td class="actions actions-1">
+          <%= link_to_with_icon 'save', Spree.t(:select), select_admin_prototype_url(prototype), :class => ' btn btn-default btn-sm ajax select_properties_from_prototype', :no_text => true %>
         </td>
       </tr>
     <% end %>

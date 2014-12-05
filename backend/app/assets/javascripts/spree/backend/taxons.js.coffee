@@ -41,11 +41,10 @@ $(document).ready ->
         el.empty();
         if data.products.length == 0
           $('#sorting_explanation').hide()
-          $('#taxon_products').html("<h4>" + Spree.translations.no_results + "</h4>")
+          $('#taxon_products').html("<div class='alert alert-info'>" + Spree.translations.no_results + "</div>")
         else
           for product in data.products
             if product.master.images[0] != undefined && product.master.images[0].small_url != undefined
               product.image = product.master.images[0].small_url
             el.append(productTemplate({ product: product }))
           $('#sorting_explanation').show()
-

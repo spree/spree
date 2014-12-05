@@ -1,11 +1,7 @@
 require 'spec_helper'
 
-describe "Stock Management", :type => :feature do
+describe "Stock Management", type: :feature, js: true do
   stub_authorization!
-
-  before(:each) do
-    visit spree.admin_path
-  end
 
   context "given a product with a variant and a stock location" do
     let!(:stock_location) { create(:stock_location, name: 'Default') }
@@ -14,10 +10,7 @@ describe "Stock Management", :type => :feature do
 
     before do
       stock_location.stock_item(variant).update_column(:count_on_hand, 10)
-
-      click_link "Products"
-      within_row(1) { click_icon :edit }
-      click_link "Stock Management"
+      visit spree.stock_admin_product_path(product)
     end
 
     context "toggle backorderable for a variant's stock item" do
@@ -41,7 +34,7 @@ describe "Stock Management", :type => :feature do
     # assert that the redirect is *not* happening.
     it "can toggle backorderable for the second variant stock item", js: true do
       new_location = create(:stock_location, name: "Another Location")
-      click_link "Stock Management"
+      visit current_url
 
       new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
       new_location_backorderable.set(false)
@@ -78,7 +71,7 @@ describe "Stock Management", :type => :feature do
       before do
         variant = product.variants.create!(sku: 'SPREEC')
         variant.stock_items.first.update_column(:count_on_hand, 30)
-        click_link "Stock Management"
+        visit current_url
       end
 
       it "can create a new stock movement for the specified variant", js: true do
@@ -102,11 +95,8 @@ describe "Stock Management", :type => :feature do
         @product = create(:product, name: 'apache baseball cap', price: 10)
         v = @product.variants.create!(sku: 'FOOBAR')
         Spree::StockLocation.delete_all
-        click_link "Products"
-        within_row(1) do
-          click_icon :edit
-        end
-        click_link "Stock Management"
+
+        visit spree.stock_admin_product_path(@product)
       end
 
       it "redirects to stock locations page" do

@@ -14,10 +14,10 @@
         <% if @order.state == 'address' || !@order.email? %>
           <div class="panel panel-default">
             <div class="panel-body">
-              <p class="field" style='clear: both'>
-                <%= form.label :email %><br />
-                <%= form.text_field :email %>
-              </p>
+              <div class="form-group">
+                <%= form.label :email %>
+                <%= form.text_field :email, :class => 'form-control' %>
+              </div>
             </div>
           </div>
         <% end %>
