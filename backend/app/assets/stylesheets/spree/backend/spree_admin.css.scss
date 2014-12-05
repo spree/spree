@@ -73,11 +73,9 @@ $content-header-height: 63px;
 .right-side > .content-header {
   box-shadow: none !important;
   padding-left: 15px;
-  height: $content-header-height;
-  position: relative;
+  z-index: 1; // to be on top of the .main-right-sidebar
   &.with-page-tabs {
     padding-bottom: 0;
-    height: 92px;
   }
   h1 {
     margin: 6px 0;
@@ -88,15 +86,6 @@ $content-header-height: 63px;
     }
   }
   .page-actions {
-    z-index: 999;
-    position: absolute;
-    right: 15px;
-    background-color: #fbfbfb;
-    top: 0;
-    padding-top: 15px;
-    height: $content-header-height;
-    min-width: 160px;
-    text-align: right;
     form, li, button, a {
       display: inline-block;
     }
@@ -108,9 +97,6 @@ $content-header-height: 63px;
   .nav-tabs {
     margin-top: 10px;
     border-bottom: none;
-    position: absolute;
-    bottom: 0;
-    z-index: 999;
     li a {
       padding-top: 7px;
       padding-bottom: 7px;
