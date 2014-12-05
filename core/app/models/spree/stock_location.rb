@@ -108,7 +108,7 @@ module Spree
     private
       def create_stock_items
         Variant.includes(:product).find_each do |variant|
-          self.propagate_variant(variant)
+          propagate_variant(variant)
         end
       end
 
