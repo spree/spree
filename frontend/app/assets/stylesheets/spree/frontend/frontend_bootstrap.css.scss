@@ -1,39 +1,47 @@
 //Add your custom bootstrap variables here, see https://github.com/twbs/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_variables.scss for full list of variables.
 
 @import "bootstrap-sprockets";
+@import "variables";
 @import "bootstrap";
 
 // -- Spree Custom Header and Footer ---------------------
 #spree-header {
-  background: #1c5c92 asset-url('spree_header.jpg') center center;
+  background: $brand-primary asset-url('spree_header.jpg') center center;
   background-size: cover;
   margin-bottom: $line-height-computed;
+
   #header {
-    background: rgba(9, 22, 33, 0.4);
+    background: rgba($gray-darker, 0.4);
     padding: $line-height-computed 0;
   }
+
   #logo {
     margin-bottom: 10px;
+
     img {
       width: 306px;
     }
   }
+
   .nav a {
-    color: #fff;
-    &:hover {
-      background:rgba(9, 22, 33, 0.4);
+    color: white;
+
+    &:hover, &:focus {
+      background: rgba($gray-darker, 0.4);
     }
   }
+
   .navbar {
     border: 0;
     margin-bottom: 0;
   }
 }
+
 #spree-footer {
   background: $gray-dark;
   padding-top: $padding-base-horizontal;
   margin-top: $line-height-computed;
-  color: #fff;
+  color: white;
 }
 
 // -- Spree Layout Custom Rules -------------------------
@@ -45,9 +53,46 @@
 .product-body {
   height: 170px;
 }
+
 .progress-steps {
   margin-top: $line-height-computed;
 }
+
 h1 {
   margin-bottom: 30px;
+}
+
+// Center cart line items
+table {
+  &.table > tbody > tr {
+    &.line-item td, &.stock-item td {
+      vertical-align: middle;
+    }
+  }
+
+  &#line-items {
+    > tbody, > tfoot {
+      > tr > td {
+        vertical-align: middle;
+
+        &.order-qty {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// Footer links
+#footer-left a {
+  color: lighten($brand-primary, 20);
+
+  &:hover {
+    color: lighten($brand-primary, 10);
+  }
+}
+
+// Updated credit-card image 
+#credit-card-image {
+  margin-top: -10px;
 }
