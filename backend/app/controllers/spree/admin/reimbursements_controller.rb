@@ -40,7 +40,6 @@ module Spree
         flash[:error] = error.message
         redirect_to edit_admin_order_reimbursement_path(parent, @reimbursement)
       end
-
     end
   end
 end

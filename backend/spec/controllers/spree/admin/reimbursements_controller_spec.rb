@@ -66,7 +66,8 @@ describe Spree::Admin::ReimbursementsController, :type => :controller do
 
       it 'redirects to the edit page' do
         subject
-        expect(response).to redirect_to(spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement)))
+        redirect_path = spree.edit_admin_order_reimbursement_path(order, assigns(:reimbursement))
+        expect(response).to redirect_to(redirect_path)
       end
     end
   end
