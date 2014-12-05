@@ -211,6 +211,7 @@ module Spree
               let!(:action_5) { Promotion::Actions::CreateAdjustment.create(promotion: promotion_5, calculator: calculator_5) }
               let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
               let!(:promotion_5) { Promotion.create name: "promo", :code => "5off"  }
+              let(:order) { create(:order_with_line_items) }
 
               it 'notifies of better deal' do
                 subject.apply
@@ -251,6 +252,7 @@ module Spree
               coupon = Coupon.new(@order)
               coupon.apply
               expect(coupon.success).to be_present
+
               # 3 * ((9 - [9,10].min) + 0)
               expect(@order.reload.total).to eq(0)
               expect(@order.additional_tax_total).to eq(0)

@@ -7,12 +7,12 @@ module Spree
       let(:order) { line_item.order }
 
       let(:promotion) { Promotion.create(name: "At line items") }
-      let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
       subject { Cart.new(order, line_item) }
 
       context "activates in LineItem level" do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let(:calculator) { Calculator::PercentOnLineItem.new(preferred_percent: 10) }
         let(:adjustable) { line_item }
 
         shared_context "creates the adjustment" do
@@ -49,6 +49,7 @@ module Spree
 
       context "activates in Order level" do
         let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
         let(:adjustable) { order }
 
         shared_context "creates the adjustment" do

@@ -1,136 +1,95 @@
 require 'spec_helper'
 
-module Spree
-  class Promotion
-    module Actions
-      describe CreateItemAdjustments, :type => :model do
-        let(:order) { create(:order) }
-        let(:promotion) { create(:promotion) }
-        let(:action) { CreateItemAdjustments.new }
-        let!(:line_item) { create(:line_item, :order => order) }
-        let(:payload) { { order: order, promotion: promotion } }
+describe Spree::Promotion::Actions::CreateItemAdjustments, :type => :model do
+  subject(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create }
+  let(:promotion) { double(name: 'Promo', line_item_actionable?: true) }
 
-        before do
-          allow(action).to receive(:promotion).and_return(promotion)
-          promotion.promotion_actions = [action]
-        end
+  before { allow(action).to receive(:promotion).and_return(promotion) }
 
-        context "#perform" do
-          # Regression test for #3966
-          context "when calculator computes 0" do
-            before do
-              allow(action).to receive_messages :compute_amount => 0
-            end
+  it 'should have PercentOnLineItem calculator by default' do 
+    expect(action.calculator).to be_an_instance_of(Spree::Calculator::PercentOnLineItem)
+  end
 
-            it "does not create an adjustment when calculator returns 0" do
-              action.perform(payload)
-              expect(action.adjustments).to be_empty
-            end
-          end
+  it_behaves_like 'an adjustment source'
 
-          context "when calculator returns a non-zero value" do
-            before do
-              promotion.promotion_actions = [action]
-              allow(action).to receive_messages :compute_amount => 10
-            end
+  describe "#perform" do
+    let(:order) { create(:order) }
 
-            it "creates adjustment with item as adjustable" do
-              action.perform(payload)
-              expect(action.adjustments.count).to eq(1)
-              expect(line_item.reload.adjustments).to eq(action.adjustments)
-            end
+    before do 
+      allow(Spree::ItemAdjustments).to receive(:update)
+      allow(action).to receive(:promotion).and_return(double(name: 'Promo'))
+      2.times { create(:line_item, order: order) }
+    end
 
-            it "creates adjustment with self as source" do
-              action.perform(payload)
-              expect(line_item.reload.adjustments.first.source).to eq action
-            end
+    context 'when all line_items are actionable' do 
+      it 'creates adjustments on all of them and return true' do 
+        expect(action.perform(order: order, promotion: promotion)).to be(true)
+        expect(order.line_item_adjustments.count).to eq(2)
+      end
+    end
 
-            it "does not perform twice on the same item" do
-              2.times { action.perform(payload) }
-              expect(action.adjustments.count).to eq(1)
-            end
+    context 'when one line_item is actionable' do    
+      before { allow(promotion).to receive(:line_item_actionable?).and_return(true, false) }
 
-            context "with products rules" do
-              let!(:second_line_item) { create(:line_item, :order => order) }
-              let(:rule) { double Spree::Promotion::Rules::Product }
+      it 'creates a single adjustment and return true' do 
+        expect(action.perform(order: order, promotion: promotion)).to be(true)
+        expect(order.line_item_adjustments.count).to eq(1)
+      end
 
-              before do
-                allow(promotion).to receive(:eligible_rules) { [rule] }
-                allow(rule).to receive(:actionable?).and_return(true, false)
-              end
+    end
+    context 'when no line_items are actionable' do 
+      before { allow(promotion).to receive(:line_item_actionable?).and_return(false) }
 
-              it "does not create adjustments for line_items not in product rule" do
-                action.perform(payload)
-                expect(action.adjustments.count).to eql 1
-                expect(line_item.reload.adjustments).to match_array action.adjustments
-                expect(second_line_item.reload.adjustments).to be_empty
-              end
-            end
-          end
-        end
+      it 'creates no adjustments and return false' do 
+        expect(action.perform(order: order, promotion: promotion)).to be(false)
+        expect(order.line_item_adjustments.count).to eq(0)
+      end
+    end
 
-        context "#compute_amount" do
-          before { promotion.promotion_actions = [action] }
+    context 'when action has already been applied to first line_item' do
+      before do 
+        allow(promotion).to receive(:line_item_actionable?).and_return(true, false, true)
+        action.perform(order: order, promotion: promotion)
+      end
 
-          context "when the adjustable is actionable" do
-            it "calls compute on the calculator" do
-              expect(action.calculator).to receive(:compute).with(line_item)
-              action.compute_amount(line_item)
-            end
-
-            context "calculator returns amount greater than item total" do
-              before do
-                expect(action.calculator).to receive(:compute).with(line_item).and_return(300)
-                allow(line_item).to receive_messages(amount: 100)
-              end
-
-              it "does not exceed it" do
-                expect(action.compute_amount(line_item)).to eql(-100)
-              end
-            end
-          end
-
-          context "when the adjustable is not actionable" do
-            before { allow(promotion).to receive(:line_item_actionable?) { false } }
-
-            it 'returns 0' do
-              expect(action.compute_amount(line_item)).to eql(0)
-            end
-          end
-        end
-
-        context "#destroy" do
-          let!(:action) { CreateItemAdjustments.create! }
-          let(:other_action) { CreateItemAdjustments.create! }
-          before { promotion.promotion_actions = [other_action] }
-
-          it "destroys adjustments for incompleted orders" do
-            order = Order.create
-            action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.to change { Adjustment.count }.by(-1)
-          end
-
-          it "nullifies adjustments for completed orders" do
-            order = Order.create(completed_at: Time.now)
-            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.to change { adjustment.reload.source_id }.from(action.id).to nil
-          end
-
-          it "doesnt mess with unrelated adjustments" do
-            other_action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.not_to change { other_action.adjustments.count }
-          end
-        end
+      it 'does not query if actionable or attempt to create adjustment for that line_item' do 
+        expect(promotion).to receive(:line_item_actionable?).once
+        expect(order.line_items[0].adjustments).to_not receive(:new)
+        action.perform(order: order, promotion: promotion)
       end
     end
   end
+
+  describe '#compute_amount' do 
+    let(:line_item) { create(:line_item) }
+
+    context 'when line_item is not actionable' do
+      before { allow(promotion).to receive(:line_item_actionable?).and_return(false) } 
+      it { expect(action.compute_amount(line_item)).to eq(0) }
+    end
+
+    context 'when line_item is actionable' do 
+
+      before do 
+        allow(line_item).to receive(:promotion_accumulator).and_return(accumulator)
+        allow(action.calculator).to receive(:compute).and_return(10)
+      end
+
+      context 'with accumulated total more than calculated amount' do 
+        let(:accumulator) { double(total_with_promotion: 15) }
+        it { expect(action.compute_amount(line_item)).to eq(-10) }
+
+      end
+
+      context 'with accumulated total less than calculated amount' do
+        let(:accumulator) { double(total_with_promotion: 7) }
+        it { expect(action.compute_amount(line_item)).to eq(-7) }
+      end
+
+    end
+  end
+
 end
+  
+
+  

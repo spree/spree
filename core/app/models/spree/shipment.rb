@@ -290,7 +290,7 @@ module Spree
       if selected_shipping_rate
         self.update_columns(
           cost: selected_shipping_rate.cost,
-          adjustment_total: adjustments.additional.map(&:update!).compact.sum,
+          adjustment_total: adjustments.additional.map{ |a| a.update!(self) }.compact.sum,
           updated_at: Time.now,
         )
       end
@@ -400,7 +400,7 @@ module Spree
       end
 
       def recalculate_adjustments
-        Spree::ItemAdjustments.new(self).update
+        Spree::ItemAdjustments.update(self)
       end
 
       def send_shipped_email

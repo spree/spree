@@ -1,34 +1,53 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::FreeShipping, :type => :model do
-  let(:order) { create(:completed_order_with_totals) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::FreeShipping.create }
-  let(:payload) { { order: order } }
+  subject(:action) { Spree::Promotion::Actions::FreeShipping.new }
+  let(:shipment) { create(:shipment) }
 
-  # From promotion spec:
-  context "#perform" do
-    before do
-      order.shipments << create(:shipment)
-      promotion.promotion_actions << action
+  it_behaves_like 'an adjustment source'
+
+  describe '#perform' do
+    before do 
+      allow(Spree::ItemAdjustments).to receive(:update)
+      allow(action).to receive(:promotion).and_return(double(name: 'Promo'))
     end
 
-    it "should create a discount with correct negative amount" do
-      expect(order.shipments.count).to eq(2)
-      expect(order.shipments.first.cost).to eq(100)
-      expect(order.shipments.last.cost).to eq(100)
-      expect(action.perform(payload)).to be true
-      expect(promotion.credits_count).to eq(2)
-      expect(order.shipment_adjustments.count).to eq(2)
-      expect(order.shipment_adjustments.first.amount.to_i).to eq(-100)
-      expect(order.shipment_adjustments.last.amount.to_i).to eq(-100)
+    context 'when order has shipments' do  
+      let(:order) do 
+        order = create(:order_with_line_items)
+        order.shipments << shipment
+        order.update!
+        order.reload
+      end
+
+      it 'should create an adjustment for each shipment and return true' do
+        expect(action.perform(order: order)).to be(true)
+        expect(order.shipment_adjustments.count).to eq(2)
+      end
     end
 
-    it "should not create a discount when order already has one from this promotion" do
-      expect(action.perform(payload)).to be true
-      expect(action.perform(payload)).to be false
-      expect(promotion.credits_count).to eq(2)
-      expect(order.shipment_adjustments.count).to eq(2)
+    context 'when order has no shipments' do 
+      let(:order) { create(:order) }
+
+      it 'should create no adjustments and return false' do 
+        expect(action.perform(order: order)).to be(false)
+        expect(order.shipment_adjustments.count).to eq(0)
+      end
     end
   end
+
+  describe '#compute_amount' do
+    before { allow(shipment).to receive(:promotion_accumulator).and_return(accumulator) }
+
+    context 'with accumulated total more than calculated amount' do 
+      let(:accumulator) { double(total_with_promotion: 115) }
+      it { expect(action.compute_amount(shipment)).to eq(-100) }
+    end
+
+    context 'with accumulated total less than calculated amount' do
+      let(:accumulator) { double(total_with_promotion: 95) }
+      it { expect(action.compute_amount(shipment)).to eq(-95) }
+    end
+  end
+  
 end

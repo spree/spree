@@ -5,21 +5,14 @@ module Spree
         include Spree::CalculatedAdjustments
         include Spree::AdjustmentSource
 
-        has_many :adjustments, as: :source
         before_validation -> { self.calculator ||= Calculator::FlatPercentItemTotal.new }
 
-        def perform(options = {})
-          order = options[:order]
-          adjustment = order.adjustments.new(order: order, source: self, label: label)
-          adjustment.save
+        def perform(opts={})
+          create_adjustment(opts[:order], opts[:order])
         end
 
         def compute_amount(order)
-          @order = order
-          @amount = compute(order)
-          amount_must_not_exceed_available_amount
-          update_available_amount
-          amount * -1
+          [accumulated_total(order), compute(order)].min * -1
         end
 
       end

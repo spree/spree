@@ -17,20 +17,14 @@ module Spree
     end
 
   protected
-    attr_accessor :order, :amount
-    delegate :item_total, :ship_total, :adjustment_total, to: :order
-    delegate :compute, to: :calculator
 
-    def amount_must_not_exceed_available_amount
-      @amount = [available_amount, amount].min
+    def create_adjustment(order, adjustable)
+      adjustment = adjustable.adjustments.new(order: order, source: self, label: label)
+      adjustment.save
     end
 
-    def available_amount
-      item_total + ship_total - adjustment_total
-    end
-
-    def update_available_amount
-      order.adjustment_total += amount
+    def accumulated_total(adjustable)
+      adjustable.promotion_accumulator.total_with_promotion(promotion_id)
     end
 
     def label
