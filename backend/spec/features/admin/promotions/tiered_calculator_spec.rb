@@ -26,10 +26,11 @@ feature "Tiered Calculator Promotions" do
     fill_in "Base Percent", with: 5
 
     within(".tier") do
-      find("input:last-child").set(100)
-      find("input:nth-of-type(0)").set(10)
+      find(".base-field input").set(100)
+      page.execute_script("$('.base-field input').change();")
+      find(".value-field input").set(10)
+      page.execute_script("$('.value-field input').change();")
     end
-
     within('#actions_container') { click_button "Update" }
 
     first_action = promotion.actions.first
