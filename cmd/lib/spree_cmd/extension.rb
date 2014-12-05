@@ -50,7 +50,7 @@ module SpreeCmd
       end
 
       def spree_version
-        '2.4.2.beta'
+        '2.4.2'
       end
 
       def use_prefix(prefix)
