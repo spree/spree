@@ -94,7 +94,6 @@ module Spree
       end
 
       def collection
-      def collection
         return @collection if @collection.present?
         params[:q] ||= {}
         params[:q][:deleted_at_null] ||= "1"
