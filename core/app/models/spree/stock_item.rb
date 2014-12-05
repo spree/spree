@@ -34,7 +34,7 @@ module Spree
 
     def set_count_on_hand(value)
       self.count_on_hand = value
-      process_backorders(count_on_hand - count_on_hand_was)
+      process_backorders(count_on_hand) if count_on_hand > 0
 
       self.save!
     end

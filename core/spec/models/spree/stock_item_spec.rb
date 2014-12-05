@@ -121,6 +121,22 @@ describe Spree::StockItem, :type => :model do
       expect(copy.count_on_hand).to eq(current_on_hand)
     end
 
+    context 'when increasing within negative to zero count_on_hand' do
+      it 'does not invoke process_backorders' do
+        allow(subject).to receive(:count_on_hand_was) { -1 }
+        expect(subject).to receive(:process_backorders).never
+        subject.set_count_on_hand(0)
+      end
+    end
+
+    context 'when increasing from -5 to 5  count_on_hand' do
+      it 'invokes process_backorders with the 5' do
+        allow(subject).to receive(:count_on_hand_was) { -5 }
+        expect(subject).to receive(:process_backorders).once.with(5)
+        subject.set_count_on_hand(5)
+      end
+    end
+
     context "item out of stock (by two items)" do
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
@@ -136,7 +152,7 @@ describe Spree::StockItem, :type => :model do
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)
-          expect(inventory_unit_2).to receive(:fill_backorder)
+          expect(inventory_unit_2).to_not receive(:fill_backorder)
 
           subject.set_count_on_hand(1)
           expect(subject.count_on_hand).to eq(1)
