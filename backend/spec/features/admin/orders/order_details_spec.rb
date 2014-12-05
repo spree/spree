@@ -24,7 +24,6 @@ describe "Order Details", type: :feature, js: true do
         visit spree.cart_admin_order_path(order)
       end
 
-
       it "should allow me to edit order details" do
         expect(page).to have_content("spree t-shirt")
         expect(page).to have_content("$40.00")
@@ -130,7 +129,7 @@ describe "Order Details", type: :feature, js: true do
         it "adds variant to order just fine" do
           select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
-            fill_in "#quantity", with: 1
+            fill_in "variant_quantity", with: 1
             click_icon :add
           end
 
