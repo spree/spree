@@ -114,7 +114,7 @@ describe "Products", type: :feature do
       end
     end
 
-    context "creating a new product from a prototype" do
+    context "creating a new product from a prototype", js: true do
       def build_option_type_with_values(name, values)
         ot = FactoryGirl.create(:option_type, name: name)
         values.each do |val|
@@ -158,7 +158,10 @@ describe "Products", type: :feature do
         fill_in "product_sku", with: "B100"
         fill_in "product_price", with: "100"
         fill_in "product_available_on", with: "2012/01/24"
+        # Just so the datepicker gets out of poltergeists way.
+        page.execute_script("$('#ui-datepicker-div').hide();")
         select "Size", from: "Prototype"
+        wait_for_ajax
         check "Large"
         select @shipping_category.name, from: "product_shipping_category_id"
         click_button "Create"
@@ -179,6 +182,7 @@ describe "Products", type: :feature do
         fill_in "product_sku", with: "B100"
         fill_in "product_price", with: "100"
         select "Size", from: "Prototype"
+        wait_for_ajax
         check "Large"
         click_button "Create"
         expect(page).to have_content("Shipping category can't be blank")
