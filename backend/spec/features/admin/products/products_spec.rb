@@ -326,9 +326,8 @@ describe "Products", type: :feature do
         visit spree.admin_product_path(product)
         click_link 'Properties'
         click_link "Select From Prototype"
-        sleep 1
 
-        within("#prototypes tr#row_1") do
+        within("#prototypes tr#row_#{prototype.id}") do
           click_link 'Select'
           wait_for_ajax
         end
