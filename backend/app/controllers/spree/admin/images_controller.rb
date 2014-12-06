@@ -29,6 +29,9 @@ module Spree
           @image.viewable_id = params[:image][:viewable_id]
         end
 
+        def variant_includes
+          [variants_including_master: { option_values: :option_type, images: :viewable }]
+        end
     end
   end
 end
