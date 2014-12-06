@@ -18,7 +18,7 @@ module Spree
 
       def load_data
         @product = Product.friendly.includes(*variant_includes).find(params[:product_id])
-        @variants = @product.variants.collect do |variant|
+        @variants = @product.variants.map do |variant|
           [variant.sku_and_options_text, variant.id]
         end
         @variants.insert(0, [Spree.t(:all), @product.master.id])
