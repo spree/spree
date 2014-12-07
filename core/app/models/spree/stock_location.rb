@@ -107,7 +107,15 @@ module Spree
 
     private
       def create_stock_items
-        Variant.find_each { |variant| self.propagate_variant(variant) }
+        CreateStockItemsJob.enqueue id
+      rescue NoMethodError
+        begin
+          CreateStockItemsJob.perform_later id
+        rescue NoMethodError
+          raise 'You are currently using an unsupported version of ActiveJob. ' \
+                'We are currently trying to call either `enqueue` or `perform_later`, ' \
+                'but we are unable to queue the job.'
+        end
       end
 
       def ensure_one_default
