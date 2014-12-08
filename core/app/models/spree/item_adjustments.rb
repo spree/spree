@@ -38,7 +38,7 @@ module Spree
       # Additional tax adjustments are the opposite, affecting the final total.
       promo_total = 0
       run_callbacks :promo_adjustments do
-        promotion_total = adjustments.promotion.reload.map do |adjustment|
+        promotion_total = adjustments.competing_discounts.reload.map do |adjustment|
           adjustment.update!(@item)
         end.compact.sum
 
@@ -70,13 +70,13 @@ module Spree
     # have the same amount, then it will pick the latest one.
     def choose_best_promotion_adjustment
       if best_promotion_adjustment
-        other_promotions = self.adjustments.promotion.where.not(id: best_promotion_adjustment.id)
+        other_promotions = self.adjustments.competing_discounts.where.not(id: best_promotion_adjustment.id)
         other_promotions.update_all(:eligible => false)
       end
     end
 
     def best_promotion_adjustment
-      @best_promotion_adjustment ||= adjustments.promotion.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+      @best_promotion_adjustment ||= adjustments.competing_discounts.eligible.reorder("amount ASC, created_at DESC, id DESC").first
     end
   end
 end
