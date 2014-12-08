@@ -1,82 +1,41 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
-  let(:order) { create(:order_with_line_items, :line_items_count => 1) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
-  let(:payload) { { order: order } }
+  subject(:action) { Spree::Promotion::Actions::CreateAdjustment.create }
+  let(:order) { create(:order_with_line_items) }
 
-  # From promotion spec:
-  context "#perform" do
-    before do
-      action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
-      promotion.promotion_actions = [action]
-      allow(action).to receive_messages(:promotion => promotion)
+  it_behaves_like 'an adjustment source'
+      
+  it 'should have FlatPercentItemTotal calculator by default' do 
+    expect(action.calculator).to be_an_instance_of(Spree::Calculator::FlatPercentItemTotal)
+  end
+    
+  describe "#perform" do
+    before do 
+      allow(Spree::ItemAdjustments).to receive(:update)
+      allow(action).to receive(:promotion).and_return(double(name: 'Promo'))
     end
-
-    # Regression test for #3966
-    it "does not apply an adjustment if the amount is 0" do
-      action.calculator.preferred_amount = 0
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(0)
-      expect(order.adjustments.count).to eq(0)
-    end
-
-    it "should create a discount with correct negative amount" do
-      order.shipments.create!(:cost => 10)
-
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+    
+    it 'should create an adjustment and return true' do
+      expect(action.perform(order: order)).to be(true)
       expect(order.adjustments.count).to eq(1)
-      expect(order.adjustments.first.amount.to_i).to eq(-10)
+    end
+  end
+    
+  describe '#compute_amount' do
+    before do 
+      allow(order).to receive(:promotion_accumulator).and_return(accumulator)
+      allow(action.calculator).to receive(:compute).and_return(10)
     end
 
-    it "should create a discount accessible through both order_id and adjustable_id" do
-      action.perform(payload)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.all_adjustments.count).to eq(1)
+    context 'with accumulated total more than calculated amount' do 
+      let(:accumulator) { double(total_with_promotion: 15) }
+      it { expect(action.compute_amount(order)).to eq(-10) }
     end
-
-    it "should not create a discount when order already has one from this promotion" do
-      order.shipments.create!(:cost => 10)
-
-      action.perform(payload)
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+    context 'with accumulated total less than calculated amount' do
+      let(:accumulator) { double(total_with_promotion: 7) }
+      it { expect(action.compute_amount(order)).to eq(-7) }      
     end
   end
 
-  context "#destroy" do
-    before(:each) do
-      action.calculator = Spree::Calculator::FlatRate.new(:preferred_amount => 10)
-      promotion.promotion_actions = [action]
-    end
-
-    context "when order is not complete" do
-      it "should not keep the adjustment" do
-        action.perform(payload)
-        action.destroy
-        expect(order.adjustments.count).to eq(0)
-      end
-    end
-
-    context "when order is complete" do
-      let(:order) do
-        create(:completed_order_with_totals, :line_items_count => 1)
-      end
-
-      before(:each) do
-        action.perform(payload)
-        action.destroy
-      end
-
-      it "should keep the adjustment" do
-        expect(order.adjustments.count).to eq(1)
-      end
-
-      it "should nullify the adjustment source" do
-        expect(order.adjustments.reload.first.source).to be_nil
-      end
-    end
-  end
 end

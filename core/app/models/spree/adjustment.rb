@@ -30,6 +30,7 @@ module Spree
     validates :order, presence: true
     validates :label, presence: true
     validates :amount, numericality: true
+    validates :source_id, uniqueness: { scope: [:source_type, :adjustable_id, :adjustable_type] }, allow_nil: true
 
     state_machine :state, initial: :open do
       event :close do
@@ -43,6 +44,7 @@ module Spree
 
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
+    before_validation -> { self.amount ||= 0.0 }
 
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
@@ -78,36 +80,29 @@ module Spree
       source.class < Spree::PromotionAction
     end
 
-    # Recalculate amount given a target e.g. Order, Shipment, LineItem
-    #
     # Passing a target here would always be recommended as it would avoid
     # hitting the database again and would ensure you're compute values over
     # the specific object amount passed here.
-    #
-    # Noop if the adjustment is locked.
-    #
-    # If the adjustment has no source, do not attempt to re-calculate the amount.
-    # Chances are likely that this was a manually created adjustment in the admin backend.
-    def update!(target = nil)
-      return amount if closed?
-      if source.present?
-        amount = source.compute_amount(target || adjustable)
-        self.update_columns(
-          amount: amount,
-          updated_at: Time.now,
-        )
-        if promotion?
-          self.update_column(:eligible, source.promotion.eligible?(adjustable))
-        end
+    def update!(target = adjustable)
+      unless closed? || source.blank?   
+        amount = source.compute_amount(target)
+        attributes = {amount: amount, updated_at: Time.now}
+        attributes[:eligible] = source.promotion.eligible?(target) if promotion?
+        update_columns(attributes)
       end
-      amount
+
+      if target.respond_to?(:promotion_accumulator) && promotion?
+        accumulator_args = {source: source, promotion: source.promotion}  
+        target.promotion_accumulator.add_adjustment(self, accumulator_args)
+      end
+
+      self.amount
     end
 
-    private
+  private
 
     def update_adjustable_adjustment_total
-      # Cause adjustable's total to be recalculated
-      ItemAdjustments.new(adjustable).update
+      ItemAdjustments.update(adjustable)
     end
 
   end

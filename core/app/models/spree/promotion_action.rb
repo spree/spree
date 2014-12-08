@@ -15,5 +15,21 @@ module Spree
     def perform(options = {})
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
+
+  protected
+
+    def create_adjustment(order, adjustable)
+      adjustment = adjustable.adjustments.new(order: order, source: self, label: label)
+      adjustment.save
+    end
+
+    def accumulated_total(adjustable)
+      adjustable.promotion_accumulator.total_with_promotion(promotion_id)
+    end
+
+    def label
+      "#{Spree.t(:promotion)} (#{promotion.name})"
+    end
+
   end
 end

@@ -43,5 +43,13 @@ module Spree
     def available?(object)
       true
     end
+
+  protected
+    delegate :promotion_id, to: :calculable
+
+    def accumulated_item_total(adjustable)
+      adjustable.promotion_accumulator.item_total_with_promotion(promotion_id)
+    end
+
   end
 end

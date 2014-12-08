@@ -130,6 +130,22 @@ describe Spree::Adjustment, :type => :model do
         adjustment.update!
       end
     end
+
+    context 'promotion adjustment with adjustable that has an promotion accumulator' do 
+      let(:adjustable) { double(promotion_accumulator: accumulator) }
+      let(:accumulator) { double() }
+
+      before do 
+        adjustment.state = 'closed'
+        allow(adjustment).to receive(:promotion?).and_return(true)
+        allow(adjustment).to receive(:source).and_return(double(promotion: true))
+      end
+
+      it 'adds adjustment to accumulator' do 
+        expect(accumulator).to receive(:add_adjustment)
+        adjustment.update!(adjustable)
+      end
+    end
   end
 
 end
