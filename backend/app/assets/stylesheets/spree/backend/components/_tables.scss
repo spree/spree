@@ -11,7 +11,7 @@ table.table {
     a {
       color: #000;
       &.sort_link span.glyphicon {
-        color: red;
+        color: $brand-danger;
         margin-left: 8px;
         font-size: 0.8em;
         color: $grey;
@@ -32,6 +32,7 @@ table.table {
   }
   td {
     background: white;
+
     a {
       color: $grey;
       text-decoration: underline;
@@ -65,6 +66,15 @@ table.table {
       }
       &.actions-3 {
         width: 96px;
+      }
+    }
+  }
+
+  // Vertically center content in all tables
+  tbody {
+    tr {
+      td {
+        vertical-align: middle;
       }
     }
   }
