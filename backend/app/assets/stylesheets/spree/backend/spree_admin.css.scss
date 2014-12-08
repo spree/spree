@@ -1,3 +1,4 @@
+@import 'components/variables';
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
 @import 'AdminLTE';
@@ -168,6 +169,8 @@ ul {
       color: #3c8dbc;
       box-shadow: none;
       border-color: #ccc;
+      border-width: 1px;
+      
       .icon {
         font-size: 0.7em;
         margin: -1px 0 0 4px;

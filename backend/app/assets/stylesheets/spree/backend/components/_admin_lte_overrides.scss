@@ -29,6 +29,32 @@ ul.sidebar-menu li.treeview span.pull-right {
   margin-left: 0;
 }
 
+.btn {
+  border-width: 0;
+  border-bottom-width: 2px;
+  transition: background-color 0.3s, border-color 0.3s;
+
+  &.btn-success {
+    background-color: $brand-success;
+    border-bottom-color: darken($brand-success, 5);
+
+    &:hover, &:focus {
+      background-color: darken($brand-success, 5);
+      border-bottom-color: darken($brand-success, 10);
+    }
+  }
+
+  &.btn-primary {
+    background-color: $brand-primary;
+    border-bottom-color: darken($brand-primary, 5);
+
+    &:hover, &:focus {
+      background-color: darken($brand-primary, 5);
+      border-bottom-color: darken($brand-primary, 10);
+    }
+  }
+}
+
 // We don't use gravatar image there, so overwrite the height
 .navbar-nav > .user-menu > .dropdown-menu > li.user-header {
   height: auto;
