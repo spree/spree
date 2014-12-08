@@ -2,6 +2,8 @@ module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
 
+      before_action :load_taxonomy, only: [:create, :edit, :update]
+      before_action :load_taxon, only: [:edit, :update]
       respond_to :html, :json, :js
 
       def index
@@ -17,7 +19,6 @@ module Spree
       end
 
       def create
-        @taxonomy = Taxonomy.find(params[:taxonomy_id])
         @taxon = @taxonomy.taxons.build(params[:taxon])
         if @taxon.save
           respond_with(@taxon) do |format|
@@ -32,40 +33,21 @@ module Spree
       end
 
       def edit
-        @taxonomy = Taxonomy.find(params[:taxonomy_id])
-        @taxon = @taxonomy.taxons.find(params[:id])
         @permalink_part = @taxon.permalink.split("/").last
       end
 
       def update
-        @taxonomy = Taxonomy.find(params[:taxonomy_id])
-        @taxon = @taxonomy.taxons.find(params[:id])
         parent_id = params[:taxon][:parent_id]
-        new_position = params[:taxon][:position]
-
-        if parent_id
-          @taxon.parent = Taxon.find(parent_id.to_i)
-        end
-
-        if new_position
-          @taxon.child_index = new_position.to_i
-        end
+        set_position
+        set_parent(parent_id)
 
         @taxon.save!
 
         # regenerate permalink
-        if parent_id
-          @taxon.reload
-          @taxon.set_permalink
-          @taxon.save!
-          @update_children = true
-        end
+        regenerate_permalink if parent_id
 
-        if params.key? "permalink_part"
-          parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
-          parent_permalink += "/" unless parent_permalink.blank?
-          params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
-        end
+        set_permalink_params
+
         #check if we need to rename child taxons if parent name or permalink changes
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
@@ -74,13 +56,7 @@ module Spree
         end
 
         #rename child taxons
-        if @update_children
-          @taxon.descendants.each do |taxon|
-            taxon.reload
-            taxon.set_permalink
-            taxon.save!
-          end
-        end
+        rename_child_taxons if @update_children
 
         respond_with(@taxon) do |format|
           format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
@@ -97,6 +73,50 @@ module Spree
       private
         def taxon_params
           params.require(:taxon).permit(permitted_params)
+        end
+
+        def load_taxon
+          @taxon = @taxonomy.taxons.find(params[:id])
+        end
+
+        def load_taxonomy
+          @taxonomy = Taxonomy.find(params[:taxonomy_id])
+        end
+
+        def set_position
+          new_position = params[:taxon][:position]
+          if new_position
+            @taxon.child_index = new_position.to_i
+          end
+        end
+
+        def set_parent(parent_id)
+          if parent_id
+            @taxon.parent = Taxon.find(parent_id.to_i)
+          end
+        end
+
+        def set_permalink_params
+          if params.key? "permalink_part"
+            parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
+            parent_permalink += "/" unless parent_permalink.blank?
+            params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
+          end
+        end
+
+        def rename_child_taxons
+          @taxon.descendants.each do |taxon|
+            taxon.reload
+            taxon.set_permalink
+            taxon.save!
+          end
+        end
+
+        def regenerate_permalink
+          @taxon.reload
+          @taxon.set_permalink
+          @taxon.save!
+          @update_children = true
         end
 
         def permitted_params
