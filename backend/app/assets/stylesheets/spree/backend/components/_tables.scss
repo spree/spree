@@ -11,7 +11,7 @@ table.table {
     a {
       color: #000;
       &.sort_link span.glyphicon {
-        color: red;
+        color: $brand-danger;
         margin-left: 8px;
         font-size: 0.8em;
         color: $grey;

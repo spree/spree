@@ -53,6 +53,12 @@ ul.sidebar-menu li.treeview span.pull-right {
       border-bottom-color: darken($brand-primary, 10);
     }
   }
+
+  &.btn-default {
+    border-top-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+  }
 }
 
 // We don't use gravatar image there, so overwrite the height
