@@ -8,18 +8,20 @@
 .label-success,
 .label-sold
 {
-  background-color: #5cb85c;
+  background-color: $brand-success;
+  
   a {
     color: white !important;
   }
 }
+
 // Red
 .label-failed,
 .label-considered_risky,
-.label-error
-{
-  background-color: #d9534f;
+.label-error {
+  background-color: $brand-danger;
 }
+
 // Orange
 .label-pending,
 .label-awaiting_return,
@@ -36,13 +38,14 @@
 .label-canceled,
 .label-void,
 .label-inactive,
-.label-notice
-{
-  background-color: #f0ad4e;
+.label-notice {
+  background-color: $brand-warning;
+
   a {
     color: white !important;
   }
 }
+
 // Grey
 .label-considered_safe {
   background-color: #777;
