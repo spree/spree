@@ -235,39 +235,5 @@ module Spree
       end
     end
 
-    # For #4483
-    context "callbacks" do
-      class SuperItemAdjustments < Spree::ItemAdjustments
-        attr_accessor :before_promo_adjustments_called,
-                      :after_promo_adjustments_called,
-                      :before_tax_adjustments_called,
-                      :after_tax_adjustments_called
-
-        set_callback :promo_adjustments, :before do |object|
-          @before_promo_adjustments_called = true
-        end
-
-        set_callback :promo_adjustments, :after do |object|
-          @after_promo_adjustments_called = true
-        end
-
-        set_callback :tax_adjustments, :before do |object|
-          @before_tax_adjustments_called = true
-        end
-
-        set_callback :tax_adjustments, :after do |object|
-          @after_tax_adjustments_called = true
-        end
-      end
-      let(:subject) { SuperItemAdjustments.new(line_item) }
-
-      it "calls all the callbacks" do
-        subject.update
-        expect(subject.before_promo_adjustments_called).to be true
-        expect(subject.after_promo_adjustments_called).to be true
-        expect(subject.before_tax_adjustments_called).to be true
-        expect(subject.after_tax_adjustments_called).to be true
-      end
-    end
   end
 end

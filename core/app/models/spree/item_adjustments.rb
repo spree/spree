@@ -1,7 +1,5 @@
 module Spree
   class ItemAdjustments
-    include ActiveSupport::Callbacks
-    define_callbacks :promo_adjustments, :tax_adjustments
 
     def self.update(adjustable)
       new(adjustable).update
@@ -14,8 +12,8 @@ module Spree
 
     def update
       return unless persisted?
-      run_callbacks :promo_adjustments, &-> { update_promo_adjustments }
-      run_callbacks :tax_adjustments, &-> { update_tax_adjustments }
+      update_promo_adjustments
+      update_tax_adjustments
       persist_totals
     end
 
