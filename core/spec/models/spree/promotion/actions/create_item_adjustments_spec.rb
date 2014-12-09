@@ -15,6 +15,8 @@ module Spree
           promotion.promotion_actions = [action]
         end
 
+        it_behaves_like 'an adjustment source'
+
         context "#perform" do
           # Regression test for #3966
           context "when calculator computes 0" do
@@ -99,37 +101,6 @@ module Spree
           end
         end
 
-        context "#destroy" do
-          let!(:action) { CreateItemAdjustments.create! }
-          let(:other_action) { CreateItemAdjustments.create! }
-          before { promotion.promotion_actions = [other_action] }
-
-          it "destroys adjustments for incompleted orders" do
-            order = Order.create
-            action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.to change { Adjustment.count }.by(-1)
-          end
-
-          it "nullifies adjustments for completed orders" do
-            order = Order.create(completed_at: Time.now)
-            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.to change { adjustment.reload.source_id }.from(action.id).to nil
-          end
-
-          it "doesnt mess with unrelated adjustments" do
-            other_action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
-
-            expect {
-              action.destroy
-            }.not_to change { other_action.adjustments.count }
-          end
-        end
       end
     end
   end
