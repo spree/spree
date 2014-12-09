@@ -16,12 +16,19 @@ describe Spree::OrderContents, type: :model, db: :isolate do
     end
 
     context 'variant is invalid' do
-      it 'does not process line item' do
+      before do
         variant.stock_items.update_all(backorderable: false)
+      end
+
+      it 'does not process the line item' do
         expect(Spree::PromotionHandler::Cart).to_not receive(:new)
+        subject.add(variant)
+      end
+
+      it 'destroys the line item' do
         line_item = subject.add(variant)
-        expect(line_item.valid?).to be(false)
-        expect(order.line_items.include?(line_item)).to be(false)
+        expect(line_item.persisted?).to be(false)
+        expect(order.line_items).to_not include(line_item)
       end
     end
 
