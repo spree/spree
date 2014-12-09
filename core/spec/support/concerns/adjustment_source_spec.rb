@@ -19,6 +19,5 @@ shared_examples_for "an adjustment source" do
       it { expect(order.adjustments.count).to eq(1) }
       it { expect(order.adjustments.reload.first.source).to be_nil }
     end
-
   end
 end
