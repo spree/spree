@@ -8,15 +8,11 @@ module Spree
       Spree.t(:flat_percent)
     end
 
-    def compute(object)
-      computed_amount  = (object.amount * preferred_flat_percent / 100).round(2)
-
-      # We don't want to cause the promotion adjustments to push the order into a negative total.
-      if computed_amount > object.amount
-        object.amount
-      else
-        computed_amount
-      end
+    def compute(order)
+      item_total = accumulated_item_total(order) || order.amount
+      return item_total if preferred_flat_percent >= 100
+      (item_total * preferred_flat_percent / 100).round(2)
     end
+    
   end
 end

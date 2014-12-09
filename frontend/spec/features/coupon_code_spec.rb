@@ -134,7 +134,7 @@ describe "Coupon code promotions", type: :feature, js: true do
 
       context "calculates the correct amount of money saved with flat percent promotions" do
         before do
-          calculator = Spree::Calculator::FlatPercentItemTotal.new
+          calculator = Spree::Calculator::PercentOnLineItem.new
           calculator.preferred_flat_percent = 20
           promotion.actions.first.calculator = calculator
           promotion.save

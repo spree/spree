@@ -16,7 +16,12 @@ module Spree
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
 
-    protected
+  protected
+  
+    def accumulated_total(adjustable)
+      return unless adjustable.respond_to?(:promotion_accumulator)
+      adjustable.promotion_accumulator.total_with_promotion(promotion_id)
+    end
 
     def create_adjustment(order, adjustable)
       amount = compute_amount(adjustable)
