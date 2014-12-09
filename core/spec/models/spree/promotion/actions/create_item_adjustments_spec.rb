@@ -74,6 +74,7 @@ module Spree
 
           context "when the adjustable is actionable" do
             it "calls compute on the calculator" do
+              allow(action.calculator).to receive(:compute).and_return(10)
               expect(action.calculator).to receive(:compute).with(line_item)
               action.compute_amount(line_item)
             end
@@ -101,7 +102,7 @@ module Spree
 
         context "#destroy" do
           let!(:action) { CreateItemAdjustments.create! }
-          let(:other_action) { CreateItemAdjustments.create! }
+          let(:other_action) { CreateAdjustment.create! }
           before { promotion.promotion_actions = [other_action] }
 
           it "destroys adjustments for incompleted orders" do
