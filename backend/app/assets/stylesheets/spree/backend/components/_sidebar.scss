@@ -1,0 +1,45 @@
+.sidebar {
+  position: fixed;
+  top: $navbar-height + 2px;
+  bottom: 0;
+  left: 0;
+  padding: 0;
+  z-index: 1000;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  background-color: lighten($gray-lighter, 5);
+  border-right: 1px solid $gray-lighter;
+
+  ul.nav-sidebar {
+    > li {
+      border-bottom: 1px solid $gray-lighter;
+
+      > a {
+        .glyphicon.pull-right {
+          font-size: 10px;
+          line-height: 2;
+          color: $gray-light;
+        }
+      }
+    }
+  }
+
+  ul.nav.nav-pills {
+    padding-left: 18px;
+    background-color: white;
+    border-top: 1px solid $gray-lighter;
+
+    li {
+      a {
+        padding: 5px 15px;
+      }
+
+      &.selected {
+        a {
+          color: $brand-success
+        }
+      }
+    }
+  }
+}

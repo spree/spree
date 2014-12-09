@@ -1,11 +1,6 @@
 module Spree
   module Admin
     module BaseHelper
-      def main_div_class
-        return "col-md-12 with-sidebar" if content_for?(:sidebar)
-        "col-md-12"
-      end
-
       def flash_alert flash
         if flash.present?
           message = flash[:error] || flash[:notice] || flash[:success]

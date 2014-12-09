@@ -20,16 +20,16 @@
           <td class="line-item-qty-show ">
             <%= item.quantity %>
           </td>
-          <td class="line-item-qty-edit is-hidden">
+          <td class="line-item-qty-edit hidden">
             <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity form-control", :size => 5 %>
           </td>
           <td class="line-item-total "><%= line_item_shipment_price(item, item.quantity) %></td>
           <td class="cart-line-item-delete actions actions-4" data-hook="cart_line_item_delete">
             <% if can? :update, item %>
-              <%= link_to_with_icon 'save', Spree.t('save'), "#", :class => 'save-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
-              <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", :class => 'cancel-line-item btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
+              <%= link_to_with_icon 'ok-sign', Spree.t('save'), "#", :class => 'save-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none', :no_text => true %>
+              <%= link_to_with_icon 'remove-sign', Spree.t('actions.cancel'), "#", :class => 'cancel-line-item btn btn-default btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
               <%= link_to_with_icon 'edit', Spree.t('edit'), "#", :class => 'edit-line-item btn btn-default btn-sm', :data => {:action => 'edit'}, :title => Spree.t('edit'), :no_text => true %>
-              <%= link_to_with_icon 'delete', Spree.t('delete'), "#", :class => 'delete-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete'), :no_text => true %>
+              <%= link_to_with_icon 'trash', Spree.t('delete'), "#", :class => 'delete-line-item btn btn-default btn-sm', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete'), :no_text => true %>
             <% end %>
           </td>
         </tr>

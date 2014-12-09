@@ -3,13 +3,15 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_order' %>
+  <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'plus-sign', :id => 'admin_new_order' %>
 <% end if can? :edit, Spree::Order.new %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
+    
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="row">
+        
         <div class="date-range-filter col-md-6">
           <div class="form-group">
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
@@ -23,20 +25,25 @@
             </div>
           </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
             <%= label_tag :q_number_cont, Spree.t(:order_number, :number => '') %>
             <%= f.text_field :number_cont, class: 'form-control js-quick-search-target' %>
           </div>
         </div>
+
         <div class="col-md-3">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
             <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2' %>
           </div>
         </div>
+
       </div>
+
       <div class="row">
+        
         <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_bill_address_firstname_start, Spree.t(:first_name_begins_with) %>
@@ -57,42 +64,57 @@
             <%= f.text_field :email_cont, class: 'form-control' %>
           </div>
         </div>
+
       </div>
+
       <div class="row">
+
         <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_line_items_variant_id_in, Spree.t(:sku) %>
             <%= f.select :line_items_variant_id_in, Spree::Variant.pluck(:sku, :id), {:include_blank => true}, :class => 'select2' %>
           </div>
         </div>
+
         <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
             <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {:include_blank => true}, :class => 'select2' %>
           </div>
         </div>
+
         <div class="col-md-4">
+
           <div class="form-group">
+            
             <div class="checkbox">
               <%= label_tag 'q_completed_at_not_null' do %>
                 <%= f.check_box :completed_at_not_null, {:checked => @show_only_completed}, '1', '0' %>
                 <%= Spree.t(:show_only_complete_orders) %>
               <% end %>
             </div>
+            
             <div class="checkbox">
               <%= label_tag 'q_considered_risky_eq' do %>
                 <%= f.check_box :considered_risky_eq, {:checked => (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
                 <%= Spree.t(:show_only_considered_risky) %>
               <% end %>
             </div>
+
           </div>
+
         </div>
+
       </div>
+
       <div data-hook="admin_orders_index_search_buttons" class="form-actions">
         <%= button Spree.t(:filter_results), 'search' %>
       </div>
+
     <% end %>
+
   </div>
+
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders } %>

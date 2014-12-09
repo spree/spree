@@ -1,20 +1,22 @@
 <% if content_for?(:table_filter) %>
-  <div class="filter-wrap">
-    <div class="input-group index-filter-button">
-      <span class="input-group-btn">
-        <button class="btn btn-default js-show-index-filters" type="button">
-          Filter
-          <span class="icon icon-chevron-left"></span>
-        </button>
-      </span>
-      <%= form_tag nil, id: "quick-search" do %>
-        <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
+  <div class="filter-wrap row">
+    <div class="col-sm-12">
+      <div class="input-group index-filter-button">
+        <span class="input-group-btn">
+          <button class="btn btn-default js-show-index-filters" type="button">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <%= Spree.t(:filter) %>
+          </button>
+        </span>
+        <%= form_tag nil, id: "quick-search" do %>
+          <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
+        <% end %>
+      </div>
+      <% unless defined?(simple) %>
+        <div id="table-filter" data-hook class="well filter-well" style="display: none">
+          <%= yield :table_filter %>
+        </div>
       <% end %>
     </div>
-    <% unless defined?(simple) %>
-      <div id="table-filter" data-hook class="well filter-well">
-        <%= yield :table_filter %>
-      </div>
-    <% end %>
   </div>
 <% end %>
