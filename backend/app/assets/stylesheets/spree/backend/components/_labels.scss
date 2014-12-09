@@ -42,6 +42,7 @@
   @extend .label-default;
 }
 
+// Fix links color in labels
 .label a { 
   color: white;
   text-decoration: underline;
