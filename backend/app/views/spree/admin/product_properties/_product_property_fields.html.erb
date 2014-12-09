@@ -1,17 +1,19 @@
 <tr class="product_property fields" id="spree_<%= dom_id(f.object) %>" data-hook="product_property">
   <td class="no-border">
-    <span class="handle"></span>
-    <%= f.hidden_field :id %>
+    <% if f.object.persisted? %>
+      <span class="handle"></span>
+      <%= f.hidden_field :id %>
+    <% end %>
   </td>
   <td class='property_name'>
-    <%= f.text_field :property_name, :class => 'autocomplete' %>
+    <%= f.text_field :property_name, class: 'autocomplete' %>
   </td>
   <td class='value'>
     <%= f.text_field :value %>
   </td>
   <td class="actions">
     <% if f.object.persisted? %>
-      <%= link_to_delete f.object, :no_text => true %>
+      <%= link_to_delete f.object, no_text: true %>
     <% end %>
   </td>
 </tr>
