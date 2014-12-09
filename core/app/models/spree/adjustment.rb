@@ -107,7 +107,7 @@ module Spree
 
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
-      ItemAdjustments.new(adjustable).update
+      ItemAdjustments.update(adjustable)
     end
 
   end

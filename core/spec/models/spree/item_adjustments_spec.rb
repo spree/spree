@@ -53,7 +53,7 @@ module Spree
         end
 
         it "tax has no bearing on final price" do
-          subject.update_adjustments
+          subject.update
           line_item.reload
           expect(line_item.included_tax_total).to eq(0.5)
           expect(line_item.additional_tax_total).to eq(0)
@@ -62,7 +62,7 @@ module Spree
         end
 
         it "tax linked to order" do
-          order_subject.update_adjustments
+          order_subject.update
           order.reload
           expect(order.included_tax_total).to eq(0.5)
           expect(order.additional_tax_total).to eq(00)
@@ -80,7 +80,7 @@ module Spree
         end
 
         it "tax applies to line item" do
-          subject.update_adjustments
+          subject.update
           line_item.reload
           # Taxable amount is: $20 (base) - $10 (promotion) = $10
           # Tax rate is 5% (of $10).
@@ -91,7 +91,7 @@ module Spree
         end
 
         it "tax linked to order" do
-          order_subject.update_adjustments
+          order_subject.update
           order.reload
           expect(order.included_tax_total).to eq(0)
           expect(order.additional_tax_total).to eq(0.5)
@@ -126,7 +126,7 @@ module Spree
                             :label => "Some other credit")
         line_item.adjustments.each {|a| a.update_column(:eligible, true)}
 
-        subject.choose_best_promotion_adjustment
+        subject.update
 
         expect(line_item.adjustments.promotion.eligible.count).to eq(1)
         expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion C')
@@ -140,7 +140,7 @@ module Spree
         end
         line_item.adjustments.each {|a| a.update_column(:eligible, true)}
 
-        subject.choose_best_promotion_adjustment
+        subject.update
 
         expect(line_item.adjustments.promotion.eligible.count).to eq(1)
         expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion B')
@@ -218,7 +218,7 @@ module Spree
 
         # regression for #3274
         it "still makes the previous best eligible adjustment valid" do
-          subject.choose_best_promotion_adjustment
+          subject.update
           expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion A')
         end
       end
@@ -228,7 +228,7 @@ module Spree
         create_adjustment("Promotion B", -200)
         create_adjustment("Promotion C", -200)
 
-        subject.choose_best_promotion_adjustment
+        subject.update
 
         expect(line_item.adjustments.promotion.eligible.count).to eq(1)
         expect(line_item.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
@@ -262,7 +262,7 @@ module Spree
       let(:subject) { SuperItemAdjustments.new(line_item) }
 
       it "calls all the callbacks" do
-        subject.update_adjustments
+        subject.update
         expect(subject.before_promo_adjustments_called).to be true
         expect(subject.after_promo_adjustments_called).to be true
         expect(subject.before_tax_adjustments_called).to be true
