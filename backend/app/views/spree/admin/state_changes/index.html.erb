@@ -30,7 +30,7 @@
     <tbody>
       <% @state_changes.each do |state_change| %>
         <tr>
-          <td class="align-center"><%= Spree.t(state_change.name) %></td>
+          <td class="align-center"><%= Spree.t("state_machine_states.#{state_change.name}") %></td>
           <td class="align-center"><%= state_change.previous_state ? Spree.t(state_change.previous_state) : Spree.t(:previous_state_missing) %></td>
           <td class="align-center"><%= Spree.t(state_change.next_state) %></td>
           <td class="align-center">

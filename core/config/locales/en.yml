@@ -1266,6 +1266,37 @@ en:
     state: State
     state_based: State Based
     states: States
+    state_machine_states:
+      accepted: Accepted
+      address: Address
+      authorized: Authorized
+      awaiting: Awaiting
+      awaiting_return: Awaiting return
+      backordered: Back ordered
+      cart: Cart
+      canceled: Canceled
+      checkout: Checkout
+      confirm: Confirm
+      complete: Complete
+      completed: Completed
+      closed: Closed
+      delivery: Delivery
+      errored: Errored
+      failed: Failed
+      given_to_customer: Given to customer
+      invalid: Invalid
+      manual_intervention_required: Manual intervention required
+      open: Open
+      on_hand: On hand
+      payment: Payment
+      pending: Pending
+      processing: Processing
+      ready: Ready
+      reimbursed: Reimbursed
+      resumed: Resumed
+      returned: Returned
+      shipped: Shipped
+      void: Void
     states_required: States Required
     status: Status
     stock_location: Stock Location
