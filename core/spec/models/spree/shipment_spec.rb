@@ -21,6 +21,8 @@ describe Spree::Shipment, :type => :model do
   let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
+  before { allow(Spree::Adjustable::AdjustmentsUpdater).to receive(:update) }
+
   # Regression test for #4063
   context "number generation" do
     before do

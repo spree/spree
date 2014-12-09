@@ -5,6 +5,8 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
   let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::FreeShipping.create }
   let(:payload) { { order: order } }
+  
+  before { allow(Spree::Adjustable::AdjustmentsUpdater).to receive(:update) }
 
   it_behaves_like 'an adjustment source'
 
@@ -33,4 +35,23 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
       expect(order.shipment_adjustments.count).to eq(2)
     end
   end
+
+  describe '#compute_amount' do
+    let(:shipment) { create(:shipment) }
+
+    context 'with accumulator' do
+      before { allow(shipment).to receive(:promotion_accumulator).and_return(accumulator) }
+
+      context 'with accumulated total more than calculated amount' do
+        let(:accumulator) { double(total_with_promotion: 115) }
+        it { expect(action.compute_amount(shipment)).to eq(-100) }
+      end
+
+      context 'with accumulated total less than calculated amount' do
+        let(:accumulator) { double(total_with_promotion: 95) }
+        it { expect(action.compute_amount(shipment)).to eq(-95) }
+      end
+    end
+  end
+
 end
