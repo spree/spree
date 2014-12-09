@@ -1,0 +1,13 @@
+table.table {
+  tbody {
+    tr {
+      td {
+        vertical-align: middle;
+
+        &.actions {
+          text-align: right;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+// Green
+.label-completed,
+.label-complete,
+.label-paid,
+.label-shipped,
+.label-ready,
+.label-active,
+.label-success,
+.label-sold {
+  @extend .label-success;
+}
+
+// Red
+.label-failed,
+.label-considered_risky,
+.label-error {
+  @extend .label-danger;
+}
+
+// Orange
+.label-pending,
+.label-awaiting_return,
+.label-returned,
+.label-credit_owed,
+.label-balance_due,
+.label-backorder,
+.label-checkout,
+.label-cart,
+.label-address,
+.label-delivery,
+.label-payment,
+.label-confirm,
+.label-canceled,
+.label-void,
+.label-inactive,
+.label-notice {
+  @extend .label-warning;
+}
+
+// Grey
+.label-considered_safe {
+  @extend .label-default;
+}
+
+.label a { 
+  color: white;
+  text-decoration: underline;
+}

@@ -87,7 +87,7 @@ module Spree
 
         select_tag(:per_page,
           options_for_select(per_page_options, params['per_page'] || per_page_default),
-          { id: "js-per-page-select", class: "form-control" })
+          { id: "js-per-page-select", class: "form-control pull-right" })
       end
 
       # finds class for a given symbol / string
