@@ -38,7 +38,7 @@ module Spree
         shipment = options[:shipment]
         shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
         PromotionHandler::Cart.new(order, line_item).activate
-        ItemAdjustments.update(line_item)
+        Adjustable::AdjustmentsUpdater.update(line_item)
         reload_totals
         line_item
       end
