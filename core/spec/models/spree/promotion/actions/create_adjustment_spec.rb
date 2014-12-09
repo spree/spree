@@ -37,13 +37,6 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
       expect(order.all_adjustments.count).to eq(1)
     end
 
-    it "should not create a discount when order already has one from this promotion" do
-      order.shipments.create!(:cost => 10)
-
-      action.perform(payload)
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
-    end
   end
 
   context "#destroy" do
