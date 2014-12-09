@@ -71,57 +71,58 @@ module Spree
       end
 
       private
-        def taxon_params
-          params.require(:taxon).permit(permitted_params)
-        end
 
-        def load_taxon
-          @taxon = @taxonomy.taxons.find(params[:id])
-        end
+      def taxon_params
+        params.require(:taxon).permit(permitted_params)
+      end
 
-        def load_taxonomy
-          @taxonomy = Taxonomy.find(params[:taxonomy_id])
-        end
+      def load_taxon
+        @taxon = @taxonomy.taxons.find(params[:id])
+      end
 
-        def set_position
-          new_position = params[:taxon][:position]
-          if new_position
-            @taxon.child_index = new_position.to_i
-          end
-        end
+      def load_taxonomy
+        @taxonomy = Taxonomy.find(params[:taxonomy_id])
+      end
 
-        def set_parent(parent_id)
-          if parent_id
-            @taxon.parent = Taxon.find(parent_id.to_i)
-          end
+      def set_position
+        new_position = params[:taxon][:position]
+        if new_position
+          @taxon.child_index = new_position.to_i
         end
+      end
 
-        def set_permalink_params
-          if params.key? "permalink_part"
-            parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
-            parent_permalink += "/" unless parent_permalink.blank?
-            params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
-          end
+      def set_parent(parent_id)
+        if parent_id
+          @taxon.parent = Taxon.find(parent_id.to_i)
         end
+      end
 
-        def rename_child_taxons
-          @taxon.descendants.each do |taxon|
-            taxon.reload
-            taxon.set_permalink
-            taxon.save!
-          end
+      def set_permalink_params
+        if params.key? "permalink_part"
+          parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
+          parent_permalink += "/" unless parent_permalink.blank?
+          params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
         end
+      end
 
-        def regenerate_permalink
-          @taxon.reload
-          @taxon.set_permalink
-          @taxon.save!
-          @update_children = true
+      def rename_child_taxons
+        @taxon.descendants.each do |taxon|
+          taxon.reload
+          taxon.set_permalink
+          taxon.save!
         end
+      end
 
-        def permitted_params
-          Spree::PermittedAttributes.taxon_attributes
-        end
+      def regenerate_permalink
+        @taxon.reload
+        @taxon.set_permalink
+        @taxon.save!
+        @update_children = true
+      end
+
+      def permitted_params
+        Spree::PermittedAttributes.taxon_attributes
+      end
     end
   end
 end
