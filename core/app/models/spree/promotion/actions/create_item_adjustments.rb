@@ -26,10 +26,7 @@ module Spree
         end
 
         def create_adjustment(adjustable, order)
-          amount = self.compute_amount(adjustable)
-          return if amount == 0
           self.adjustments.create!(
-            amount: amount,
             adjustable: adjustable,
             order: order,
             label: "#{Spree.t(:promotion)} (#{promotion.name})",

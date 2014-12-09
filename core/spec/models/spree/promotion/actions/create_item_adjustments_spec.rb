@@ -16,17 +16,6 @@ module Spree
         end
 
         context "#perform" do
-          # Regression test for #3966
-          context "when calculator computes 0" do
-            before do
-              allow(action).to receive_messages :compute_amount => 0
-            end
-
-            it "does not create an adjustment when calculator returns 0" do
-              action.perform(payload)
-              expect(action.adjustments).to be_empty
-            end
-          end
 
           context "when calculator returns a non-zero value" do
             before do

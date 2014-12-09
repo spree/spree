@@ -43,6 +43,7 @@ module Spree
 
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
+    before_validation -> { self.amount ||= 0.0 }
 
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
