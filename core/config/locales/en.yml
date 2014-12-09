@@ -633,6 +633,7 @@ en:
     display: Display
     display_currency: Display currency
     edit: Edit
+    editing_country: Editing Country
     editing_option_type: Editing Option Type
     editing_payment_method: Editing Payment Method
     editing_product: Editing Product
