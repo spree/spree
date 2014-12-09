@@ -8,30 +8,27 @@ module Spree
 
       private
 
-      def location_after_destroy
-        admin_product_images_url(@product)
-      end
-
-      def location_after_save
-        admin_product_images_url(@product)
-      end
-
-      def load_data
-        @product = Product.friendly.includes(*variant_includes).find(params[:product_id])
-        @variants = @product.variants.map do |variant|
-          [variant.sku_and_options_text, variant.id]
+        def location_after_destroy
+          admin_product_images_url(@product)
         end
-        @variants.insert(0, [Spree.t(:all), @product.master.id])
-      end
 
-      def set_viewable
-        @image.viewable_type = 'Spree::Variant'
-        @image.viewable_id = params[:image][:viewable_id]
-      end
+        def location_after_save
+          admin_product_images_url(@product)
+        end
 
-      def variant_includes
-        [variants_including_master: { option_values: :option_type, images: :viewable }]
-      end
+        def load_data
+          @product = Product.friendly.find(params[:product_id])
+          @variants = @product.variants.collect do |variant|
+            [variant.sku_and_options_text, variant.id]
+          end
+          @variants.insert(0, [Spree.t(:all), @product.master.id])
+        end
+
+        def set_viewable
+          @image.viewable_type = 'Spree::Variant'
+          @image.viewable_id = params[:image][:viewable_id]
+        end
+
     end
   end
 end
