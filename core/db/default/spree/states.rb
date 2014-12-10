@@ -13,13 +13,16 @@ state_values = -> do
     end
   end
 
-  state_inserts.join("), (")
+  state_inserts = "(" + state_inserts.join("), (") + ")"
+  state_inserts.gsub("), (", "), i (").split(", i ") # the i is to make the splitting accurate
 end
 
 columns = ["name", "abbr", "country_id"]
 columns = connection.adapter_name =~ /MySQL/i ? columns.join(", ") : "\"#{columns.join('", "')}\""
 
-connection.execute <<-SQL
-  INSERT INTO spree_states (#{columns})
-  VALUES (#{state_values.call});
-SQL
+state_values.call.each_slice(500) do |state_values_batch|
+  connection.execute <<-SQL
+    INSERT INTO spree_states (#{columns})
+    VALUES #{state_values_batch.join(", ")};
+  SQL
+end
