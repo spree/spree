@@ -18,8 +18,11 @@ country_values = -> do
   country_inserts.join("), (")
 end
 
+columns = ["name", "iso3", "iso", "iso_name", "numcode", "states_required"]
+columns = connection.adapter_name =~ /MySQL/i ? columns.join(", ") : "\"#{columns.join('", "')}\""
+
 connection.execute <<-SQL
-  INSERT INTO spree_countries ("name", "iso3", "iso", "iso_name", "numcode", "states_required")
+  INSERT INTO spree_countries (#{columns})
   VALUES (#{country_values.call});
 SQL
 
