@@ -6,18 +6,21 @@ state_values = -> do
     carmen_country = Carmen::Country.named(country.name)
     if carmen_country.subregions?
       carmen_country.subregions.each do |subregion|
-        state_inserts << [subregion.name, subregion.code, country.id.to_s]
+        name       = connection.quote subregion.name
+        abbr       = connection.quote subregion.code
+        country_id = connection.quote country.id
+
+        state_inserts << [name, abbr, country_id].join(", ")
       end
     end
   end
-  state_inserts.map do |state_insert|
-    state_insert.map do |state_value|
-      state_value.gsub("'", "''")
-    end.join("', '")
-  end.join("'), ('")
+  state_inserts.join("), (")
 end
 
+columns = ["name", "abbr", "country_id"]
+columns = connection.adapter_name =~ /MySQL/i ? columns.join(", ") : "\"#{columns.join('", "')}\""
+
 connection.execute <<-SQL
-  INSERT INTO spree_states ("name", "abbr", "country_id")
-  VALUES ('#{state_values.call}');
+  INSERT INTO spree_states (#{columns})
+  VALUES (#{state_values.call});
 SQL
