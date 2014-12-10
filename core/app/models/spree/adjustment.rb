@@ -43,6 +43,7 @@ module Spree
 
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
+    before_validation -> { self.amount ||= 0.0 }
 
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
@@ -92,6 +93,7 @@ module Spree
       return amount if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
+        destroy and return 0 if amount == 0 && promotion?
         self.update_columns(
           amount: amount,
           updated_at: Time.now,

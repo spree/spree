@@ -19,6 +19,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
     # Regression test for #3966
     it "does not apply an adjustment if the amount is 0" do
       action.calculator.preferred_amount = 0
+      action.calculator.save
       action.perform(payload)
       expect(promotion.credits_count).to eq(0)
       expect(order.adjustments.count).to eq(0)

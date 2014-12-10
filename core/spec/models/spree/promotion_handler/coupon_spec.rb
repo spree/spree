@@ -161,7 +161,7 @@ module Spree
         context "with a whole-order adjustment action" do
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
           context "right coupon given" do
-            let(:order) { create(:order) }
+            let(:order) { create(:order_with_line_items) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
