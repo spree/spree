@@ -66,7 +66,7 @@ module Spree
             accumulator.add_adjustment(order_adjustment)
           end
 
-          it 'adds adjustments, sources and the promotion to respective arrays only once' do 
+          it 'adds adjustments, sources and the promotion to respective arrays only once' do
             expect(accumulator.adjustments.count).to eq(3)
             expect(accumulator.sources.count).to eq(2)
             expect(accumulator.promotions.count).to eq(1)

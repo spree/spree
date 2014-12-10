@@ -13,6 +13,5 @@ module Spree
       return item_total if preferred_flat_percent >= 100
       (item_total * preferred_flat_percent / 100).round(2)
     end
-
   end
 end

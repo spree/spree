@@ -67,7 +67,7 @@ module Spree
         adjustments.select { |a| a.adjustable_type != 'Spree::Shipment' }
       end
 
-      def where(array, opts={})
+      def where(array, opts = {})
         array.select { |a| opts.all? { |k, v| a.respond_to?(k) && a.send(k) == v } }
       end
     end

@@ -33,7 +33,7 @@ module Spree
 
       before { allow(AdjustmentsUpdater).to receive(:update) }
 
-      describe '#select!' do 
+      describe '#select!' do
 
         context 'with no adjustments' do
           before { PromotionAccumulator.add_to(adjustable) }

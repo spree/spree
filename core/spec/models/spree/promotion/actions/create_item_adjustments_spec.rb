@@ -100,7 +100,7 @@ module Spree
                 allow(action.calculator).to receive(:compute).and_return(10)
               end
 
-              context 'with accumulated total more than calculated amount' do 
+              context 'with accumulated total more than calculated amount' do
                 let(:accumulator) { double(total_with_promotion: 15) }
                 it { expect(action.compute_amount(line_item)).to eq(-10) }
               end

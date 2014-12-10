@@ -271,12 +271,13 @@ module Spree
       end
 
       it 'calculates the second discount as a percentage of the item total ' +
-         'after the first discount is applied' do 
+         'after the first discount is applied' do
         expect(order.adjustments[1].amount).to eq(-7.5)
       end
 
       it "calculates discounts that together equal the item + ship total" do
-        expect(order.all_adjustments.map(&:amount).inject(&:+)).to eq(-1 * (order.item_total + order.ship_total))
+        total = order.item_total + order.ship_total
+        expect(order.all_adjustments.map(&:amount).inject(&:+)).to eq(-1 * total)
       end
 
     end

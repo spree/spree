@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   class Calculator
     describe FlatPercentItemTotal do
-      subject(:calculator) do 
+      subject(:calculator) do
         FlatPercentItemTotal.new(preferred_flat_percent: 10, calculable: calculable)
       end
       let(:order) { mock_model Order }
