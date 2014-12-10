@@ -10,17 +10,13 @@ module Spree
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
         before_destroy :deals_with_adjustments_for_deleted_source
 
-        def perform(options={})
+        def perform(options = {})
           order, promotion = options[:order], options[:promotion]
           already_adjusted = adjustments.where(order: order).pluck(:adjustable_id)
 
           order.line_items.where.not(id: already_adjusted).map do |line_item|
             next unless promotion.line_item_actionable?(order, line_item)
-
-            amount = compute_amount(line_item)
-            next if amount == 0
-
-            create_adjustment(order, line_item, amount)
+            create_adjustment(order, line_item)
           end.any?
         end
 

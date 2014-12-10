@@ -2,12 +2,11 @@ module Spree
   class Promotion
     module Actions
       class FreeShipping < Spree::PromotionAction
-
         def perform(payload={})
           order = payload[:order]
           order.shipments.map do |shipment|
             next if promotion_credit_exists?(shipment)
-            create_adjustment(order, shipment, compute_amount(shipment))
+            create_adjustment(order, shipment)
           end.any?
         end
 
