@@ -9,19 +9,26 @@ module Spree
         let(:action) { CreateItemAdjustments.new }
         let!(:line_item) { create(:line_item, :order => order) }
         let(:payload) { { order: order, promotion: promotion } }
+        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
         before do
           allow(action).to receive(:promotion).and_return(promotion)
           promotion.promotion_actions = [action]
+          action.calculator = calculator
         end
 
         context "#perform" do
+          # Regression test for #3966
+          context "when calculator computes 0" do
+            let(:calculator) { Calculator::FlatRate.new(preferred_amount: 0) }
+
+            it "does not create an adjustment when calculator returns 0" do
+              action.perform(payload)
+              expect(action.reload.adjustments).to be_empty
+            end
+          end
 
           context "when calculator returns a non-zero value" do
-            before do
-              promotion.promotion_actions = [action]
-              allow(action).to receive_messages :compute_amount => 10
-            end
 
             it "creates adjustment with item as adjustable" do
               action.perform(payload)

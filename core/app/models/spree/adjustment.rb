@@ -93,6 +93,7 @@ module Spree
       return amount if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)
+        destroy and return 0 if amount == 0 && promotion?
         self.update_columns(
           amount: amount,
           updated_at: Time.now,

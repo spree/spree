@@ -220,7 +220,7 @@ describe Spree::Promotion, :type => :model do
     end
 
     let!(:action) do
-      calculator = Spree::Calculator::FlatRate.new
+      calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
       action_params = { :promotion => promotion, :calculator => calculator }
       action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
       promotion.actions << action
@@ -228,7 +228,7 @@ describe Spree::Promotion, :type => :model do
     end
 
     let!(:adjustment) do
-      order = create(:order)
+      order = create(:order_with_line_items)
       Spree::Adjustment.create!(
         order:      order,
         adjustable: order,
