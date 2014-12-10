@@ -6,7 +6,7 @@ country_inserts = []
 country_values = -> do
   Carmen::Country.all.each do |country|
     country_inserts << [country.name, country.alpha_3_code, country.alpha_2_code,
-                        country.name.upcase, country.numeric_code, "#{country.subregions?}"]
+                        country.name.upcase, country.numeric_code, country.subregions?.to_s]
   end
   country_inserts.map do |country_insert|
     country_insert.map do |country_value|
