@@ -30,6 +30,24 @@ describe Spree::Adjustment, :type => :model do
       expect(adjustment.adjustable).to receive(:touch)
       adjustment.save
     end
+
+    context 'same source and adjustable twice in a row' do
+      let(:source) { Spree::Promotion::Actions::CreateAdjustment.create }
+
+      def create_adjustment
+        order.adjustments.new(label: "Adjustment", amount: 5, order: order, source: source)
+      end
+
+      before do 
+        allow(Spree::ItemAdjustments).to receive(:new).and_return(double(update: true))
+        order.save
+      end
+
+      it 'only saves the first one' do
+        expect(create_adjustment.save).to be(true)
+        expect(create_adjustment.save).to be(false)
+      end
+    end
   end
 
   describe 'non_tax scope' do
