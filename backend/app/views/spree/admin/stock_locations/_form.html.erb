@@ -78,8 +78,8 @@
     <% if f.object.country %>
       <%= f.label :state_id, Spree.t(:state) %>
       <span id="state" class="region">
-        <%= f.text_field :state_name, style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };", disabled: !f.object.country.states.empty?, class: 'state_name' %>
-        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty?} %>
+        <%= f.text_field :state_name, style: "#{f.object.country.states.empty? ? '' : 'display: none;'}", disabled: !f.object.country.states.empty?, class: 'state_name form-control' %>
+        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2', style: "#{f.object.country.states.empty? ? 'display: none;' : '' };", disabled: f.object.country.states.empty?} %>
       </span>
     <% end %>
   </div>
