@@ -33,10 +33,8 @@ module Spree
 
         let!(:promotion_action) do
           calculator = Calculator::FlatRate.new(preferred_amount: 10)
-          Promotion::Actions::CreateItemAdjustments.create(
-            calculator: calculator, 
-            promotion: promotion
-          )
+          Promotion::Actions::CreateItemAdjustments.create(calculator: calculator,
+                                                           promotion: promotion)
         end
 
         before do
@@ -51,7 +49,7 @@ module Spree
             create(:adjustment, source: tax_rate,
                                 adjustable: line_item,
                                 order: order,
-                                included: true )
+                                included: true)
           end
 
           it "tax has no bearing on final price" do
@@ -114,7 +112,7 @@ module Spree
                               mandatory:  false)
         end
 
-        it "should make all but the most valuable promotion adjustment ineligible, " + 
+        it "should make all but the most valuable promotion adjustment ineligible, " +
            "leaving non promotion adjustments alone" do
           create_adjustment("Promotion A", -100)
           create_adjustment("Promotion B", -200)
@@ -148,31 +146,39 @@ module Spree
         end
 
         context "when previously ineligible promotions become available" do
-          let(:order_promo1) { create(:promotion, 
-                                      :with_order_adjustment, 
-                                      :with_item_total_rule, 
-                                      weighted_order_adjustment_amount: 5, 
-                                      item_total_threshold_amount: 10) }
+          let(:order_promo1) do 
+            create(:promotion,
+                   :with_order_adjustment,
+                   :with_item_total_rule,
+                   weighted_order_adjustment_amount: 5,
+                   item_total_threshold_amount: 10)
+          end
 
-          let(:order_promo2) { create(:promotion, 
-                                      :with_order_adjustment, 
-                                      :with_item_total_rule, 
-                                      weighted_order_adjustment_amount: 10, 
-                                      item_total_threshold_amount: 20) }
+          let(:order_promo2) do
+           create(:promotion,
+                  :with_order_adjustment,
+                  :with_item_total_rule,
+                  weighted_order_adjustment_amount: 10,
+                  item_total_threshold_amount: 20)
+         end
 
           let(:order_promos) { [order_promo1, order_promo2] }
 
-          let(:line_item_promo1) { create(:promotion, 
-                                          :with_line_item_adjustment, 
-                                          :with_item_total_rule, 
-                                          adjustment_rate: 2.5, 
-                                          item_total_threshold_amount: 10) }
+          let(:line_item_promo1) do
+           create(:promotion,
+                  :with_line_item_adjustment,
+                  :with_item_total_rule,
+                  adjustment_rate: 2.5,
+                  item_total_threshold_amount: 10)
+         end
 
-          let(:line_item_promo2) { create(:promotion, 
-                                          :with_line_item_adjustment, 
-                                          :with_item_total_rule, 
-                                          adjustment_rate: 5, 
-                                          item_total_threshold_amount: 20) }
+          let(:line_item_promo2) do
+           create(:promotion,
+                  :with_line_item_adjustment,
+                  :with_item_total_rule,
+                  adjustment_rate: 5,
+                  item_total_threshold_amount: 20)
+         end
 
           let(:line_item_promos) { [line_item_promo1, line_item_promo2] }
           let(:order) { create(:order_with_line_items, line_items_count: 1) }
@@ -224,7 +230,7 @@ module Spree
               msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
               expect(order.all_adjustments.eligible.count).to eq(1), msg
 
-              # line_item_promo1 is the only one that has thus far met the order total threshold, 
+              # line_item_promo1 is the only one that has thus far met the order total threshold,
               # it is the only promo which should be applied.
               msg = "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
               expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), msg
