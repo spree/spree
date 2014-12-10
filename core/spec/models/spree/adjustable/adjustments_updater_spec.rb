@@ -146,7 +146,7 @@ module Spree
         end
 
         context "when previously ineligible promotions become available" do
-          let(:order_promo1) do 
+          let(:order_promo1) do
             create(:promotion,
                    :with_order_adjustment,
                    :with_item_total_rule,
@@ -160,7 +160,7 @@ module Spree
                   :with_item_total_rule,
                   weighted_order_adjustment_amount: 10,
                   item_total_threshold_amount: 20)
-         end
+          end
 
           let(:order_promos) { [order_promo1, order_promo2] }
 
@@ -170,7 +170,7 @@ module Spree
                   :with_item_total_rule,
                   adjustment_rate: 2.5,
                   item_total_threshold_amount: 10)
-         end
+          end
 
           let(:line_item_promo2) do
            create(:promotion,
@@ -178,7 +178,7 @@ module Spree
                   :with_item_total_rule,
                   adjustment_rate: 5,
                   item_total_threshold_amount: 20)
-         end
+          end
 
           let(:line_item_promos) { [line_item_promo1, line_item_promo2] }
           let(:order) { create(:order_with_line_items, line_items_count: 1) }
