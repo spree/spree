@@ -2,18 +2,17 @@ connection = ActiveRecord::Base.connection
 state_inserts = []
 
 state_values = -> do
-  Spree::Country.all.each do |country|
+  Spree::Country.where(states_required: true).each do |country|
     carmen_country = Carmen::Country.named(country.name)
-    if carmen_country.subregions?
-      carmen_country.subregions.each do |subregion|
-        name       = connection.quote subregion.name
-        abbr       = connection.quote subregion.code
-        country_id = connection.quote country.id
+    carmen_country.subregions.each do |subregion|
+      name       = connection.quote subregion.name
+      abbr       = connection.quote subregion.code
+      country_id = connection.quote country.id
 
-        state_inserts << [name, abbr, country_id].join(", ")
-      end
+      state_inserts << [name, abbr, country_id].join(", ")
     end
   end
+
   state_inserts.join("), (")
 end
 
