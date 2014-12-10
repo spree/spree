@@ -38,7 +38,7 @@ describe Spree::Adjustment, :type => :model do
         order.adjustments.new(label: "Adjustment", amount: 5, order: order, source: source)
       end
 
-      before do 
+      before do
         allow(Spree::ItemAdjustments).to receive(:new).and_return(double(update: true))
         order.save
       end
