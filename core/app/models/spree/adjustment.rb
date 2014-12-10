@@ -30,6 +30,9 @@ module Spree
     validates :order, presence: true
     validates :label, presence: true
     validates :amount, numericality: true
+    validates :source_id,
+              uniqueness: { scope: [:source_type, :adjustable_id, :adjustable_type] },
+              allow_nil: true
 
     state_machine :state, initial: :open do
       event :close do

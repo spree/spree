@@ -25,13 +25,13 @@ module Spree
         def create_adjustment(adjustable, order)
           amount = self.compute_amount(adjustable)
           return if amount == 0
-          self.adjustments.create!(
+          adjustment = adjustments.new(
             amount: amount,
             adjustable: adjustable,
             order: order,
             label: "#{Spree.t(:promotion)} (#{promotion.name})",
           )
-          true
+          adjustment.save
         end
 
         # Ensure a negative amount which does not exceed the sum of the order's
@@ -45,15 +45,6 @@ module Spree
         end
 
         private
-          # Tells us if there if the specified promotion is already associated with the line item
-          # regardless of whether or not its currently eligible. Useful because generally
-          # you would only want a promotion action to apply to line item no more than once.
-          #
-          # Receives an adjustment +source+ (here a PromotionAction object) and tells
-          # if the order has adjustments from that already
-          def promotion_credit_exists?(adjustable)
-            self.adjustments.where(:adjustable_id => adjustable.id).exists?
-          end
 
           def ensure_action_has_calculator
             return if self.calculator

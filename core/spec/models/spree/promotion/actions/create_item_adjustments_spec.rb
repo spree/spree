@@ -47,11 +47,6 @@ module Spree
               expect(line_item.reload.adjustments.first.source).to eq action
             end
 
-            it "does not perform twice on the same item" do
-              2.times { action.perform(payload) }
-              expect(action.adjustments.count).to eq(1)
-            end
-
             context "with products rules" do
               let!(:second_line_item) { create(:line_item, :order => order) }
               let(:rule) { double Spree::Promotion::Rules::Product }
