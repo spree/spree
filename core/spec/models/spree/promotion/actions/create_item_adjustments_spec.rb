@@ -107,7 +107,10 @@ module Spree
 
           it "destroys adjustments for incompleted orders" do
             order = Order.create
-            action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: line_item)
+            action.adjustments.create!(label: "Check",
+                                       amount: 0,
+                                       order: order,
+                                       adjustable: line_item)
 
             expect {
               action.destroy
@@ -116,7 +119,10 @@ module Spree
 
           it "nullifies adjustments for completed orders" do
             order = Order.create(completed_at: Time.now)
-            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: line_item)
+            adjustment = action.adjustments.create!(label: "Check",
+                                                    amount: 0,
+                                                    order: order,
+                                                    adjustable: line_item)
 
             expect {
               action.destroy
@@ -124,7 +130,10 @@ module Spree
           end
 
           it "doesnt mess with unrelated adjustments" do
-            other_action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: line_item)
+            other_action.adjustments.create!(label: "Check",
+                                             amount: 0,
+                                             order: order,
+                                             adjustable: line_item)
 
             expect {
               action.destroy
