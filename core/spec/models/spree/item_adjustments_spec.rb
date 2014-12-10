@@ -107,13 +107,13 @@ module Spree
       end
 
       def create_adjustment(label, amount)
-        create(:adjustment, :order      => order,
-                            :adjustable => line_item,
-                            :source     => create_source,
-                            :amount     => amount,
-                            :state      => "closed",
-                            :label      => label,
-                            :mandatory  => false)
+        create(:adjustment, order:      order,
+                            adjustable: line_item,
+                            source:     create_source,
+                            amount:     amount,
+                            state:      "closed",
+                            label:      label,
+                            mandatory:  false)
       end
 
       it "should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone" do
