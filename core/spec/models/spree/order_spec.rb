@@ -587,8 +587,7 @@ describe Spree::Order, :type => :model do
       expect(Spree::PromotionHandler::FreeShipping).to receive(:new).and_return(handler = double)
       expect(handler).to receive(:activate)
 
-      expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:new).with(shipment).and_return(adjuster = double)
-      expect(adjuster).to receive(:update)
+      expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:update).with(shipment)
 
       expect(order.updater).to receive(:update_shipment_total)
       expect(order.updater).to receive(:persist_totals)

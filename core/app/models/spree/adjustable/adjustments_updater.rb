@@ -1,7 +1,6 @@
 module Spree
   module Adjustable
     class AdjustmentsUpdater
-
       def self.update(adjustable)
         new(adjustable).update
       end
@@ -18,7 +17,8 @@ module Spree
         persist_totals
       end
 
-    private
+      private
+
       attr_reader :adjustable
       delegate :adjustments, :persisted?, to: :adjustable
 
@@ -54,13 +54,15 @@ module Spree
       # have the same amount, then it will pick the latest one.
       def choose_best_promotion_adjustment
         if best_promotion_adjustment
-          other_promotions = self.adjustments.promotion.where.not(id: best_promotion_adjustment.id)
-          other_promotions.update_all(:eligible => false)
+          other_promotions = adjustments.promotion.where.not(id: best_promotion_adjustment.id)
+          other_promotions.update_all(eligible: false)
         end
       end
 
       def best_promotion_adjustment
-        @best_promotion_adjustment ||= adjustments.promotion.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+        @best_promotion_adjustment ||= begin
+          adjustments.promotion.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+        end
       end
     end
   end

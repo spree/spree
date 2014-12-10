@@ -11,8 +11,8 @@ module Spree
 
       context '#update' do
         it "updates a linked adjustment" do
-          tax_rate = create(:tax_rate, :amount => 0.05)
-          adjustment = create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
+          tax_rate = create(:tax_rate, amount: 0.05)
+          create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
           line_item.price = 10
           line_item.tax_category = tax_rate.tax_category
 
@@ -24,16 +24,19 @@ module Spree
 
       context "taxes and promotions" do
         let!(:tax_rate) do
-          create(:tax_rate, :amount => 0.05)
+          create(:tax_rate, amount: 0.05)
         end
 
         let!(:promotion) do
-          Spree::Promotion.create(:name => "$10 off")
+          Spree::Promotion.create(name: "$10 off")
         end
 
         let!(:promotion_action) do
-          calculator = Calculator::FlatRate.new(:preferred_amount => 10)
-          Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion: promotion
+          calculator = Calculator::FlatRate.new(preferred_amount: 10)
+          Promotion::Actions::CreateItemAdjustments.create(
+            calculator: calculator, 
+            promotion: promotion
+          )
         end
 
         before do
@@ -45,12 +48,10 @@ module Spree
 
         context "tax included in price" do
           before do
-            create(:adjustment,
-              :source => tax_rate,
-              :adjustable => line_item,
-              :order => order,
-              :included => true
-            )
+            create(:adjustment, source: tax_rate,
+                                adjustable: line_item,
+                                order: order,
+                                included: true )
           end
 
           it "tax has no bearing on final price" do
@@ -72,12 +73,10 @@ module Spree
 
         context "tax excluded from price" do
           before do
-            create(:adjustment,
-              :source => tax_rate,
-              :adjustable => line_item,
-              :order => order,
-              :included => false
-            )
+            create(:adjustment, source: tax_rate,
+                                adjustable: line_item,
+                                order: order,
+                                included: false)
           end
 
           it "tax applies to line item" do
@@ -101,31 +100,32 @@ module Spree
       end
 
       context "best promotion is always applied" do
-        let(:calculator) { Calculator::FlatRate.new(:preferred_amount => 10) }
+        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
         let(:source) { Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
 
         def create_adjustment(label, amount)
-          create(:adjustment, :order      => order,
-                              :adjustable => line_item,
-                              :source     => source,
-                              :amount     => amount,
-                              :state      => "closed",
-                              :label      => label,
-                              :mandatory  => false)
+          create(:adjustment, order:      order,
+                              adjustable: line_item,
+                              source:     source,
+                              amount:     amount,
+                              state:      "closed",
+                              label:      label,
+                              mandatory:  false)
         end
 
-        it "should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone" do
+        it "should make all but the most valuable promotion adjustment ineligible, " + 
+           "leaving non promotion adjustments alone" do
           create_adjustment("Promotion A", -100)
           create_adjustment("Promotion B", -200)
           create_adjustment("Promotion C", -300)
-          create(:adjustment, :order => order,
-                              :adjustable => line_item,
-                              :source => nil,
-                              :amount => -500,
-                              :state => "closed",
-                              :label => "Some other credit")
-          line_item.adjustments.each {|a| a.update_column(:eligible, true)}
+          create(:adjustment, order:  order,
+                              adjustable:  line_item,
+                              source:  nil,
+                              amount:  -500,
+                              state:  "closed",
+                              label:  "Some other credit")
+          line_item.adjustments.each { |a| a.update_column(:eligible, true) }
 
           subject.update
 
@@ -139,7 +139,7 @@ module Spree
             create_adjustment("Promotion A", -200)
             create_adjustment("Promotion B", -200)
           end
-          line_item.adjustments.each {|a| a.update_column(:eligible, true)}
+          line_item.adjustments.each { |a| a.update_column(:eligible, true) }
 
           subject.update
 
@@ -148,19 +148,37 @@ module Spree
         end
 
         context "when previously ineligible promotions become available" do
-          let(:order_promo1) { create(:promotion, :with_order_adjustment, :with_item_total_rule, weighted_order_adjustment_amount: 5, item_total_threshold_amount: 10) }
-          let(:order_promo2) { create(:promotion, :with_order_adjustment, :with_item_total_rule, weighted_order_adjustment_amount: 10, item_total_threshold_amount: 20) }
-          let(:order_promos) { [ order_promo1, order_promo2 ] }
-          let(:line_item_promo1) { create(:promotion, :with_line_item_adjustment, :with_item_total_rule, adjustment_rate: 2.5, item_total_threshold_amount: 10) }
-          let(:line_item_promo2) { create(:promotion, :with_line_item_adjustment, :with_item_total_rule, adjustment_rate: 5, item_total_threshold_amount: 20) }
-          let(:line_item_promos) { [ line_item_promo1, line_item_promo2 ] }
+          let(:order_promo1) { create(:promotion, 
+                                      :with_order_adjustment, 
+                                      :with_item_total_rule, 
+                                      weighted_order_adjustment_amount: 5, 
+                                      item_total_threshold_amount: 10) }
+
+          let(:order_promo2) { create(:promotion, 
+                                      :with_order_adjustment, 
+                                      :with_item_total_rule, 
+                                      weighted_order_adjustment_amount: 10, 
+                                      item_total_threshold_amount: 20) }
+
+          let(:order_promos) { [order_promo1, order_promo2] }
+
+          let(:line_item_promo1) { create(:promotion, 
+                                          :with_line_item_adjustment, 
+                                          :with_item_total_rule, 
+                                          adjustment_rate: 2.5, 
+                                          item_total_threshold_amount: 10) }
+
+          let(:line_item_promo2) { create(:promotion, 
+                                          :with_line_item_adjustment, 
+                                          :with_item_total_rule, 
+                                          adjustment_rate: 5, 
+                                          item_total_threshold_amount: 20) }
+
+          let(:line_item_promos) { [line_item_promo1, line_item_promo2] }
           let(:order) { create(:order_with_line_items, line_items_count: 1) }
 
           # Apply promotions in different sequences. Results should be the same.
-          promo_sequences = [
-            [ 0, 1 ],
-            [ 1, 0 ]
-          ]
+          promo_sequences = [[0, 1], [1, 0]]
 
           promo_sequences.each do |promo_sequence|
             it "should pick the best order-level promo according to current eligibility" do
@@ -169,17 +187,27 @@ module Spree
               order_promos[promo_sequence[1]].activate order: order
 
               order.reload
-              expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), "Expected promo1 to be used (using sequence #{promo_sequence})"
+              msg = "Expected two adjustments (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to eq(2), msg
+
+              msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.count).to eq(1), msg
+
+              msg = "Expected promo1 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), msg
 
               order.contents.add create(:variant, price: 10), 1
               order.save
 
               order.reload
-              expect(order.all_adjustments.count).to eq(2), "Expected two adjustments (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2), "Expected promo2 to be used (using sequence #{promo_sequence})"
+              msg = "Expected two adjustments (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to eq(2), msg
+
+              msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.count).to eq(1), msg
+
+              msg = "Expected promo2 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2), msg
             end
           end
 
@@ -190,19 +218,30 @@ module Spree
               line_item_promos[promo_sequence[1]].activate order: order
 
               order.reload
-              expect(order.all_adjustments.count).to eq(1), "Expected one adjustment (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.count).to eq(1), "Expected one elegible adjustment (using sequence #{promo_sequence})"
-              # line_item_promo1 is the only one that has thus far met the order total threshold, it is the only promo which should be applied.
-              expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
+              msg = "Expected one adjustment (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to eq(1), msg
+
+              msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.count).to eq(1), msg
+
+              # line_item_promo1 is the only one that has thus far met the order total threshold, 
+              # it is the only promo which should be applied.
+              msg = "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), msg
 
               order.contents.add create(:variant, price: 10), 1
               order.save
 
               order.reload
-              expect(order.all_adjustments.count).to eq(4), "Expected four adjustments (using sequence #{promo_sequence})"
-              expect(order.all_adjustments.eligible.count).to eq(2), "Expected two elegible adjustments (using sequence #{promo_sequence})"
+              msg = "Expected four adjustments (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.count).to eq(4), msg
+
+              msg = "Expected two elegible adjustments (using sequence #{promo_sequence})"
+              expect(order.all_adjustments.eligible.count).to eq(2), msg
+
               order.all_adjustments.eligible.each do |adjustment|
-                expect(adjustment.source.promotion).to eq(line_item_promo2), "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
+                msg = "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
+                expect(adjustment.source.promotion).to eq(line_item_promo2), msg
               end
             end
           end
