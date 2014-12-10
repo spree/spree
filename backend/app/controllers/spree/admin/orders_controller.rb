@@ -6,6 +6,16 @@ module Spree
 
       respond_to :html
 
+      # Keys where distinct query is not needed.
+      NO_DISTINCT_KEYS = %w[
+        completed_at_not_null
+        created_at_gt
+        created_at_lt
+        completed_at_gt
+        completed_at_lt
+        s
+      ].freeze
+
       def index
         params[:q] ||= {}
         params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
@@ -35,10 +45,13 @@ module Spree
 
         @search = Order.accessible_by(current_ability, :index).ransack(params[:q])
 
+        # Only use distinct when query can return duplicates
+        distinct = (params[:q].keys - NO_DISTINCT_KEYS).any?
+
         # lazyoading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
         # see https://github.com/spree/spree/pull/3919
-        @orders = @search.result(distinct: true).
+        @orders = @search.result(distinct: distinct).
           page(params[:page]).
           per(params[:per_page] || Spree::Config[:orders_per_page])
 
