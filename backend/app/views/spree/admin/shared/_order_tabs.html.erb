@@ -6,7 +6,7 @@
 <% content_for :sidebar do %>
   <ul class="nav nav-pills nav-stacked" data-hook="admin_order_tabs">
     <% if ((can? :update, @order) && (@order.shipments.count == 0 || @order.shipped_shipments.count == 0)) %>
-      <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_order_details'>
+      <li<%== ' class="active"' if current == 'Cart' %> data-hook='admin_order_tabs_cart_details'>
         <%= link_to_with_icon 'edit', Spree.t(:cart), cart_admin_order_url(@order) %>
       </li>
     <% end %>
@@ -18,7 +18,7 @@
     <% end %>
 
     <% if can? :update, @order %>
-      <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_order_details'>
+      <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_shipment_details'>
         <%= link_to_with_icon 'shipment', Spree.t(:shipments), edit_admin_order_url(@order) %>
       </li>
     <% end %>
