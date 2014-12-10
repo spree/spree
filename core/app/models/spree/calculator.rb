@@ -52,6 +52,5 @@ module Spree
       return unless adjustable.respond_to?(:promotion_accumulator)
       adjustable.promotion_accumulator.item_total_with_promotion(promotion_id)
     end
-
   end
 end
