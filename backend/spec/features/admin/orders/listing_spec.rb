@@ -135,7 +135,7 @@ describe "Orders Listing", type: :feature, js: true do
       before(:each) do
         @order1.promotions << promotion
         @order1.save
-        click_link "Orders"
+        visit spree.admin_orders_path
       end
 
       it "only shows the orders with the selected promotion" do
