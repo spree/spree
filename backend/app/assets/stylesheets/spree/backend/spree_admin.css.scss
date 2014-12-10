@@ -52,6 +52,13 @@
   }
 }
 
+header.header.logged-out {
+  margin-top: 3em;
+  .logo {
+    background: none;
+  }
+}
+
 .content {
   background-color: white;
   padding-top: 0;
