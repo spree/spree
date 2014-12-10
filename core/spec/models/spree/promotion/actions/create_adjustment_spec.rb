@@ -50,18 +50,18 @@ describe Spree::Promotion::Actions::CreateAdjustment, :type => :model do
 
   describe '#compute_amount' do
     context 'with accumulator' do
-      before do 
+      before do
         allow(order).to receive(:promotion_accumulator).and_return(accumulator)
         allow(action.calculator).to receive(:compute).and_return(10)
       end
 
-      context 'with accumulated total more than calculated amount' do 
+      context 'with accumulated total more than calculated amount' do
         let(:accumulator) { double(total_with_promotion: 15) }
         it { expect(action.compute_amount(order)).to eq(-10) }
       end
       context 'with accumulated total less than calculated amount' do
         let(:accumulator) { double(total_with_promotion: 7) }
-        it { expect(action.compute_amount(order)).to eq(-7) }      
+        it { expect(action.compute_amount(order)).to eq(-7) }
       end
     end
   end

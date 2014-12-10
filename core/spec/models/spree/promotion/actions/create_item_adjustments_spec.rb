@@ -94,8 +94,8 @@ module Spree
               end
             end
 
-            context 'with accumulator' do 
-              before do 
+            context 'with accumulator' do
+              before do
                 allow(line_item).to receive(:promotion_accumulator).and_return(accumulator)
                 allow(action.calculator).to receive(:compute).and_return(10)
               end

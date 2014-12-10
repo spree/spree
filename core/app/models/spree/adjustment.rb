@@ -82,15 +82,15 @@ module Spree
     # hitting the database again and would ensure you're compute values over
     # the specific object amount passed here.
     def update!(target = adjustable)
-      unless closed? || source.blank?   
+      unless closed? || source.blank?
         amount = source.compute_amount(target)
-        attributes = {amount: amount, updated_at: Time.now}
+        attributes = { amount: amount, updated_at: Time.now }
         attributes[:eligible] = source.promotion.eligible?(target) if promotion?
         update_columns(attributes)
       end
 
       if target.respond_to?(:promotion_accumulator) && promotion?
-        accumulator_args = {source: source, promotion: source.promotion}  
+        accumulator_args = { source: source, promotion: source.promotion }
         target.promotion_accumulator.add_adjustment(self, accumulator_args)
       end
 

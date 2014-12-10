@@ -12,7 +12,7 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
 
   # From promotion spec:
   context "#perform" do
-    before do      
+    before do
       order.shipments << create(:shipment)
       promotion.promotion_actions << action
     end
@@ -39,7 +39,7 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
   describe '#compute_amount' do
     let(:shipment) { create(:shipment) }
 
-    context 'with accumulator' do       
+    context 'with accumulator' do   
       before { allow(shipment).to receive(:promotion_accumulator).and_return(accumulator) }
 
       context 'with accumulated total more than calculated amount' do 

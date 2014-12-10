@@ -44,7 +44,8 @@ module Spree
       true
     end
 
-  protected
+    protected
+    
     delegate :promotion_id, to: :calculable
 
     def accumulated_item_total(adjustable)
