@@ -1,19 +1,18 @@
-<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form">
+<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="panel panel-default">
   <%= render partial: "spree/admin/variants/split", formats: :js %>
-  <fieldset>
-    <legend class="stock-location no-borderb" data-hook="stock-location">
-      <span class="shipment-number"><%= shipment.number %></span>
-      -
-      <span class="shipment-state"><%= Spree.t("shipment_states.#{shipment.state}") %></span>
-      <%= Spree.t(:package_from) %>
-      <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
-      <% if shipment.ready? and can? :update, shipment %>
-        <%= link_to Spree.t(:ship), 'javascript:;', :class => 'ship pull-right btn btn-success', :data => {'shipment-number' => shipment.number} %>
-      <% end %>
-    </legend>
-  </fieldset>
-
-  <table class="table stock-contents" data-hook="stock-contents">
+  <div class="panel-heading stock-location no-borderb" data-hook="stock-location">
+    <span class="shipment-number"><%= shipment.number %></span>
+    -
+    <span class="shipment-state"><%= Spree.t("shipment_states.#{shipment.state}") %></span>
+    <%= Spree.t(:package_from) %>
+    <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
+    <% if shipment.ready? and can? :update, shipment %>
+      <%= link_to Spree.t(:ship), 'javascript:;', :class => 'ship pull-right btn btn-success', :data => {'shipment-number' => shipment.number} %>
+    <% end %>
+  </div>
+  
+  
+  <table class="table table-bordered stock-contents" data-hook="stock-contents">
     <thead>
       <th colspan="2"><%= Spree.t(:item_description) %></th>
       <th width="15%"><%= Spree.t(:price) %></th>
@@ -101,4 +100,5 @@
       </tr>
     </tbody>
   </table>
+  
 </div>

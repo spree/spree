@@ -5,11 +5,13 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add' %>
+  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'plus-sign' %>
 <% end %>
 
 <% if @adjustments.present? %>
-  <%= render :partial => 'adjustments_table' %>
+  <div class="panel panel-default">    
+    <%= render :partial => 'adjustments_table' %>
+  </div>
 <% else %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_adjustments_found) %>

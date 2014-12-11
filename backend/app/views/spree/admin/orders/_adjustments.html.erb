@@ -1,7 +1,10 @@
 <% if adjustments.eligible.exists? %>
-  <fieldset>
-    <legend><%= title %></legend>
-    <table class="table">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= title %>
+    </div>
+    
+    <table class="table table-bordered">
       <thead>
         <th><%= Spree.t('name')%></th>
         <th><%= Spree.t('amount')%></th>
@@ -15,5 +18,5 @@
         <% end %>
       </tbody>
     </table>
-  </fieldset>
+  </div>
 <% end %>
