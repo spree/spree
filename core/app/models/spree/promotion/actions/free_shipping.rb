@@ -2,6 +2,8 @@ module Spree
   class Promotion
     module Actions
       class FreeShipping < Spree::PromotionAction
+        include Spree::AdjustmentSource
+
         def perform(payload={})
           order = payload[:order]
           order.shipments.map do |shipment|
