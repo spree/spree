@@ -75,6 +75,8 @@ module Spree
       end
 
       context 'with adjustments from multiple promotions' do
+        let(:not_present_promo_id) { promo2.id + 1 }
+
         before do
           line_item_adjustment
           line_item2_adjustment
@@ -82,36 +84,92 @@ module Spree
           shipment_adjustment
         end
 
-        it do
-          not_present_promo_id = promo2.id + 1
-          promos_adjustments = [line_item2_adjustment, order_adjustment]
-          promo2s_adjustments = [shipment_adjustment]
+        describe '#promotions_adjustments' do
+          context 'for promotions which have added adjustments' do
+            it 'returns their adjustments' do
+              promos_adjustments = [line_item2_adjustment, order_adjustment]
+              promo2s_adjustments = [shipment_adjustment]
 
-          expect(accumulator.promotions_adjustments(promo.id)).to eq(promos_adjustments)
-          expect(accumulator.promotions_adjustments(promo2.id)).to eq(promo2s_adjustments)
-          expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
+              expect(accumulator.promotions_adjustments(promo.id)).to eq(promos_adjustments)
+              expect(accumulator.promotions_adjustments(promo2.id)).to eq(promo2s_adjustments)
+            end
+          end
+          context 'for promotions that have not been added, or may not exist' do
+            it 'returns an empty array' do
+              expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
+            end
+          end
+        end
 
-          expect(accumulator.promo_total(promo.id)).to eq(-2 - 3)
-          expect(accumulator.promo_total(promo2.id)).to eq(-4)
-          expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
+        describe '#promo_total' do
+          context 'for promotions which have added adjustments' do
+            it 'returns the sum of their adjustments' do
+              expect(accumulator.promo_total(promo.id)).to eq(-2 - 3)
+              expect(accumulator.promo_total(promo2.id)).to eq(-4)
+            end
+          end
+          context 'for promotions that have not been added, or may not exist' do
+            it 'returns 0' do
+              expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
+            end
+          end
+        end
 
-          expect(accumulator.total_with_promotion(promo.id)).to eq(20 + 100 - 2 - 3)
-          expect(accumulator.total_with_promotion(promo2.id)).to eq(20 + 100 - 4)
-          expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
+        describe '#total_with_promotion' do
+          context 'for promotions which have added adjustments' do
+            it 'returns accumulated total with adjustments from the promotion applied' do
+              expect(accumulator.total_with_promotion(promo.id)).to eq(20 + 100 - 2 - 3)
+              expect(accumulator.total_with_promotion(promo2.id)).to eq(20 + 100 - 4)
+            end
+          end
+          context 'for promotions that have not been added, or may not exist' do
+            it 'returns item + ship total' do
+              expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
+            end
+          end
+        end
 
-          expect(accumulator.item_total_with_promotion(promo.id)).to eq(20 - 2 - 3)
-          expect(accumulator.item_total_with_promotion(promo2.id)).to eq(20)
-          expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
+        describe '#item_total_with_promotion' do
+          context 'for promotions which have added adjustments' do
+            it 'returns accumulated item total, ' +
+               'with non-shipment adjustments from the promotion applied' do
+              expect(accumulator.item_total_with_promotion(promo.id)).to eq(20 - 2 - 3)
+              expect(accumulator.item_total_with_promotion(promo2.id)).to eq(20)
+            end
+          end
+          context 'for promotions that have not been added, or may not exist' do
+            it 'returns item total' do
+              expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
+            end
+          end
         end
       end
 
       context 'with no adjustments' do
-        it do
-          not_present_promo_id = 1
-          expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
-          expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
-          expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
-          expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
+        let(:not_present_promo_id) { 1 }
+
+        describe '#promotions_adjustments' do
+          it 'returns an empty array' do
+            expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
+          end
+        end
+
+        describe '#promo_total' do
+          it 'returns 0' do
+            expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
+          end
+        end
+
+        describe '#total_with_promotion' do
+          it 'returns item + ship total' do
+            expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
+          end
+        end
+
+        describe '#item_total_with_promotion' do
+          it 'returns item total' do
+            expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
+          end
         end
       end
 
