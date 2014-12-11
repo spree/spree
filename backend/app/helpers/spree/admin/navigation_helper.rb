@@ -63,7 +63,7 @@ module Spree
       # sidebar are used on order edit, product edit, user overview etc.
       # this link is shown so a user can collapse the sidebar
       def collapse_sidebar_link
-        content_tag :li, class: "collapse-sidebar" do
+        content_tag :div, class: "collapse-sidebar" do
           link_to "javascript:;", class: "js-collapse-sidebar" do
             content_tag(:span, nil, class: "icon icon-chevron-right") +
             content_tag(:span, "Collapse sidebar", class: "text")

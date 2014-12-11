@@ -274,16 +274,6 @@ ul {
       background-color: #fff;
       margin-left: -1px;
     }
-    li.collapse-sidebar {
-      margin-top: 30px;
-      font-size: 0.9em;
-      span.icon {
-        font-size: 0.8em;
-      }
-      a, span.icon {
-        color: lighten($grey, 16%) !important;
-      }
-    }
   }
   &.collapsed {
     width: 45px;
@@ -295,6 +285,19 @@ ul {
     }
     .nav.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
       margin-right: 0;
+    }
+  }
+  div.collapse-sidebar {
+    margin-top: 30px;
+    font-size: 0.9em;
+    padding: 10px 15px;
+    span.icon {
+      float: left;
+      margin: 2px 6px 0 0;
+      font-size: 0.8em;
+    }
+    a, span.icon {
+      color: lighten($grey, 16%) !important;
     }
   }
 }
