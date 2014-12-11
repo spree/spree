@@ -102,8 +102,6 @@ module Spree
           end
         end
 
-<<<<<<< HEAD
-=======
         context "#destroy" do
           let!(:action) { CreateItemAdjustments.create! }
           let(:other_action) { CreateItemAdjustments.create! }
@@ -144,7 +142,6 @@ module Spree
             }.not_to change { other_action.adjustments.count }
           end
         end
->>>>>>> Promotion actions refactored
       end
     end
   end
