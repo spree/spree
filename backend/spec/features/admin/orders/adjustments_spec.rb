@@ -68,7 +68,7 @@ describe "Adjustments", type: :feature do
 
     context "with validation errors" do
       it "should not create a new adjustment" do
-        fill_in "adjustment_amount", with: ""
+        fill_in "adjustment_amount", with: "Not a number"
         fill_in "adjustment_label", with: ""
         click_button "Continue"
         expect(page).to have_content("Label can't be blank")
@@ -100,7 +100,7 @@ describe "Adjustments", type: :feature do
 
     context "with validation errors" do
       it "should not update the adjustment" do
-        fill_in "adjustment_amount", with: ""
+        fill_in "adjustment_amount", with: "not a number"
         fill_in "adjustment_label", with: ""
         click_button "Continue"
         expect(page).to have_content("Label can't be blank")
