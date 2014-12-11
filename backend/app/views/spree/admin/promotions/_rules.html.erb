@@ -17,7 +17,7 @@
   
     <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
       <fieldset class="no-border-top">
-        <div id="promotion-pilicy-select" class="align-center row">
+        <div id="promotion-policy-select" class="align-center row">
           <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
             <div class="alpha four columns">
               <label><%= f.radio_button :match_policy, policy %> <%= Spree.t "promotion_form.match_policies.#{policy}" %></label>  
