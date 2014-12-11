@@ -2,27 +2,12 @@ module Spree
   class Promotion
     module Actions
       class FreeShipping < Spree::PromotionAction
-        include Spree::AdjustmentSource
-
         def perform(payload={})
           order = payload[:order]
-          results = order.shipments.map do |shipment|
-            return false if promotion_credit_exists?(shipment)
-            shipment.adjustments.create!(
-              order: shipment.order, 
-              amount: compute_amount(shipment),
-              source: self,
-              label: label,
-            )
-            true
-          end
-          # Did we actually end up applying any adjustments?
-          # If so, then this action should be classed as 'successful'
-          results.any? { |r| r == true }
-        end
-
-        def label
-          "#{Spree.t(:promotion)} (#{promotion.name})"
+          order.shipments.map do |shipment|
+            next if promotion_credit_exists?(shipment)
+            create_adjustment(order, shipment)
+          end.any?
         end
 
         def compute_amount(shipment)

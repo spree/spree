@@ -48,22 +48,35 @@ module Spree
     end
 
     private
-      def ensure_valid_state
-        unless skip_state_validation?
-          if (params[:state] && !@order.has_checkout_step?(params[:state])) ||
-             (!params[:state] && !@order.has_checkout_step?(@order.state))
-            @order.state = 'cart'
-            redirect_to checkout_state_path(@order.checkout_steps.first)
-          end
-        end
 
-        # Fix for #4117
-        # If confirmation of payment fails, redirect back to payment screen
-        if params[:state] == "confirm" && @order.payment_required? && @order.payments.valid.empty?
-          flash.keep
-          redirect_to checkout_state_path("payment")
-        end
+    def unknown_state?
+      (params[:state] && !@order.has_checkout_step?(params[:state])) ||
+        (!params[:state] && !@order.has_checkout_step?(@order.state))
+    end
+
+    def insufficient_payment?
+      params[:state] == "confirm" &&
+        @order.payment_required? &&
+        @order.payments.valid.sum(:amount) != @order.amount
+    end
+
+    def correct_state
+      if unknown_state?
+        @order.checkout_steps.first
+      elsif insufficient_payment?
+        'payment'
+      else
+        @order.state
       end
+    end
+
+    def ensure_valid_state
+      if @order.state != correct_state && !skip_state_validation?
+        flash.keep
+        @order.state = correct_state
+        redirect_to checkout_state_path(@order.state)
+      end
+    end
 
       # Should be overriden if you have areas of your checkout that don't match
       # up to a step within checkout_steps, such as a registration step

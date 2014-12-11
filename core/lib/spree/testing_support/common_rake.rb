@@ -18,7 +18,7 @@ namespace :common do
     puts "Setting up dummy database..."
     cmd = "bundle exec rake db:drop db:create db:migrate"
 
-    if RUBY_PLATFORM =~ /mswin/ #windows
+    if RUBY_PLATFORM =~ /mswin|mingw/ # windows
       cmd += " >nul"
     else
       cmd += " >/dev/null"
@@ -39,7 +39,7 @@ namespace :common do
     puts "Seeding ..."
     cmd = "bundle exec rake db:seed RAILS_ENV=test"
 
-    if RUBY_PLATFORM =~ /mswin/ #windows
+    if RUBY_PLATFORM =~ /mswin|mingw/ # windows
       cmd += " >nul"
     else
       cmd += " >/dev/null"

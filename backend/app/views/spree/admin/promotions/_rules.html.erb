@@ -16,7 +16,7 @@
 
   <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
     <fieldset>
-      <div id="promotion-pilicy-select">
+      <div id="promotion-policy-select">
         <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
           <div class="radio">
             <%= f.label "match_policy_#{policy}" do %>
