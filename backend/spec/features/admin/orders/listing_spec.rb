@@ -120,7 +120,7 @@ describe "Orders Listing", type: :feature, js: true do
       click_on 'Filter'
       fill_in "q_created_at_gt", with: Date.current
       # Just so the datepicker gets out of poltergeists way.
-      page.execute_script("$('#q_created_at_gt').trigger('change');")
+      page.execute_script("$('#q_created_at_gt').datepicker('widget').hide();")
       click_on 'Filter Results'
       within_row(1) { expect(page).to have_content("R100") }
 
