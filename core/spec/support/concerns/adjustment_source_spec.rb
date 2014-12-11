@@ -2,7 +2,7 @@ shared_examples_for "an adjustment source" do
   subject(:source) { described_class.create }
 
   before do
-    allow(Spree::Adjustment).to receive(:new).and_return(double(update: true))
+    allow(Spree::Adjustable::AdjustmentsUpdater).to receive(:update)
     order.adjustments.create(order: order, amount: 10, label: 'Adjustment', source: source)
   end
 
