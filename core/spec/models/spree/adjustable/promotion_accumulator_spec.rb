@@ -108,10 +108,10 @@ module Spree
       context 'with no adjustments' do
         it do
           not_present_promo_id = 1
-          expect(accumulator.promotions_adjustments(non_existant_id)).to eq([])
-          expect(accumulator.promo_total(non_existant_id)).to eq(0)
-          expect(accumulator.total_with_promotion(non_existant_id)).to eq(20 + 100)
-          expect(accumulator.item_total_with_promotion(non_existant_id)).to eq(20)
+          expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
+          expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
+          expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
+          expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
         end
       end
 
