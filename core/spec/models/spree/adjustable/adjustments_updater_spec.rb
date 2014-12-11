@@ -103,13 +103,11 @@ module Spree
         let(:action3) { create(:promotion, :with_order_adjustment).actions.first }
 
         def create_adjustment(adjustable, amount, source)
-          adjustable.adjustments.create({
-            order: order,
-            amount: amount,
-            label: amount.to_s,
-            source: source,
-            state: 'closed'
-          })
+          adjustable.adjustments.create(order: order,
+                                        amount: amount,
+                                        label: amount.to_s,
+                                        source: source,
+                                        state: 'closed')
         end
 
         context 'with adjustments from multiple promotions' do
@@ -120,7 +118,8 @@ module Spree
             create_adjustment(order, -500, nil)
           end
 
-          it 'should make all but the most valuable promotion adjustment ineligible, leaving non promotion adjustments alone' do
+          it 'should make all but the most valuable promotion adjustment ineligible, ' +
+             'leaving non promotion adjustments alone' do
             order.reload
             expect(order.adjustments.count).to eq(4)
             expect(order.adjustments.promotion.count).to eq(3)
@@ -262,17 +261,18 @@ module Spree
         end
       end
 
-      context 'with multiple adjustments from same promotion whose combined discount is larger than item + ship total' do 
+      context 'with multiple adjustments from same promotion, ' +
+              'whose combined discount is larger than item + ship total' do
         let(:order) { create(:order_with_line_items, line_items_price: 25) }
         let(:promotion) { create(:promotion) }
         let(:source1) { create_source }
-        let(:source2) { create_source(percent_calculator) }
-        let(:source3) { Spree::Promotion::Actions::FreeShipping.new }
+        let(:source2) { create_source(percent_calc) }
+        let(:source3) { Promotion::Actions::FreeShipping.new }
         let(:source4) { create_source }
-        let(:percent_calculator) { Spree::Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 50) }
+        let(:percent_calc) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 50) }
 
-        def create_source(calculator=nil)
-          Spree::Promotion::Actions::CreateAdjustment.new(calculator: calculator || create(:calculator))
+        def create_source(calculator = nil)
+          Promotion::Actions::CreateAdjustment.new(calculator: calculator || create(:calculator))
         end
 
         before do
@@ -280,12 +280,14 @@ module Spree
           promotion.actions.each { |s| s.perform(order: order) }
         end
 
-        it 'calculates the second discount as a percentage of the item total after the first discount is applied' do 
+        it 'calculates the second discount as a percentage of the item total ' +
+           'after the first discount is applied' do
           expect(order.adjustments[1].amount).to eq(-7.5)
         end
 
         it "calculates discounts that together equal the item + ship total" do
-          expect(order.all_adjustments.map(&:amount).reduce(&:+)).to eq(-1 * (order.item_total + order.ship_total))
+          total = (order.item_total + order.ship_total)
+          expect(order.all_adjustments.map(&:amount).inject(&:+)).to eq(-1 * total)
         end
       end
     end
