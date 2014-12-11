@@ -18,6 +18,15 @@ module Spree
         expect(subject.weight).to eq(100.0)
       end
 
+      context "currency" do
+        let(:unit) { build_inventory_unit }
+        before { subject.add unit }
+
+        it "returns the currency based on the currency from the order" do
+          expect(subject.currency).to eql "USD"
+        end
+      end
+
       it 'filters by on_hand and backordered' do
         4.times { subject.add build_inventory_unit }
         3.times { subject.add build_inventory_unit, :backordered }
