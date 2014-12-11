@@ -529,8 +529,8 @@ module Spree
       )
     end
 
-    def refresh_shipment_rates
-      shipments.map &:refresh_rates
+    def refresh_shipment_rates(frontend_only = true)
+      shipments.map { |s| s.refresh_rates(frontend_only) }
     end
 
     def shipping_eq_billing_address?

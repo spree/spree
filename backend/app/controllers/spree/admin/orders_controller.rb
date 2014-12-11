@@ -54,7 +54,7 @@ module Spree
 
       def edit
         unless @order.completed?
-          @order.refresh_shipment_rates
+          @order.refresh_shipment_rates(false)
         end
       end
 
