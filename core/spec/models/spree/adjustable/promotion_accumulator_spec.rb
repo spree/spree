@@ -83,28 +83,35 @@ module Spree
         end
 
         it do
+          not_present_promo_id = promo2.id + 1
           promos_adjustments = [line_item2_adjustment, order_adjustment]
-          expect(accumulator.promotions_adjustments(1)).to eq(promos_adjustments)
-          expect(accumulator.promotions_adjustments(2)).to eq([shipment_adjustment])
-          expect(accumulator.promotions_adjustments(3)).to eq([])
-          expect(accumulator.promo_total(1)).to eq(-2 - 3)
-          expect(accumulator.promo_total(2)).to eq(-4)
-          expect(accumulator.promo_total(3)).to eq(0)
-          expect(accumulator.total_with_promotion(1)).to eq(20 + 100 - 2 - 3)
-          expect(accumulator.total_with_promotion(2)).to eq(20 + 100 - 4)
-          expect(accumulator.total_with_promotion(3)).to eq(20 + 100)
-          expect(accumulator.item_total_with_promotion(1)).to eq(20 - 2 - 3)
-          expect(accumulator.item_total_with_promotion(2)).to eq(20)
-          expect(accumulator.item_total_with_promotion(3)).to eq(20)
+          promo2s_adjustments = [shipment_adjustment]
+
+          expect(accumulator.promotions_adjustments(promo.id)).to eq(promos_adjustments)
+          expect(accumulator.promotions_adjustments(promo2.id)).to eq(promo2s_adjustments)
+          expect(accumulator.promotions_adjustments(not_present_promo_id)).to eq([])
+
+          expect(accumulator.promo_total(promo.id)).to eq(-2 - 3)
+          expect(accumulator.promo_total(promo2.id)).to eq(-4)
+          expect(accumulator.promo_total(not_present_promo_id)).to eq(0)
+
+          expect(accumulator.total_with_promotion(promo.id)).to eq(20 + 100 - 2 - 3)
+          expect(accumulator.total_with_promotion(promo2.id)).to eq(20 + 100 - 4)
+          expect(accumulator.total_with_promotion(not_present_promo_id)).to eq(20 + 100)
+
+          expect(accumulator.item_total_with_promotion(promo.id)).to eq(20 - 2 - 3)
+          expect(accumulator.item_total_with_promotion(promo2.id)).to eq(20)
+          expect(accumulator.item_total_with_promotion(not_present_promo_id)).to eq(20)
         end
       end
 
       context 'with no adjustments' do
         it do
-          expect(accumulator.promotions_adjustments(1)).to eq([])
-          expect(accumulator.promo_total(1)).to eq(0)
-          expect(accumulator.total_with_promotion(1)).to eq(20 + 100)
-          expect(accumulator.item_total_with_promotion(1)).to eq(20)
+          not_present_promo_id = 1
+          expect(accumulator.promotions_adjustments(non_existant_id)).to eq([])
+          expect(accumulator.promo_total(non_existant_id)).to eq(0)
+          expect(accumulator.total_with_promotion(non_existant_id)).to eq(20 + 100)
+          expect(accumulator.item_total_with_promotion(non_existant_id)).to eq(20)
         end
       end
 
