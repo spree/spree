@@ -5,7 +5,7 @@ describe Spree::Promotion::Actions::FreeShipping, :type => :model do
   let(:promotion) { create(:promotion) }
   let(:action) { Spree::Promotion::Actions::FreeShipping.create }
   let(:payload) { { order: order } }
-  
+
   before { allow(Spree::Adjustable::AdjustmentsUpdater).to receive(:update) }
 
   #it_behaves_like 'an adjustment source'
