@@ -104,15 +104,15 @@ module Spree
 
         def create_adjustment(adjustable, amount, source)
           adjustable.adjustments.create({
-            order: order, 
-            amount: amount, 
-            label: amount.to_s, 
-            source: source, 
+            order: order,
+            amount: amount,
+            label: amount.to_s,
+            source: source,
             state: 'closed'
           })
         end
 
-        context 'with adjustments from multiple promotions' do 
+        context 'with adjustments from multiple promotions' do
           before do
             create_adjustment(order, -100, action1)
             create_adjustment(order, -200, action2)
@@ -236,7 +236,7 @@ module Spree
             end
           end
         end
-      
+
         context "multiple adjustments and the best one is not eligible" do
           let!(:promo_a) { create_adjustment(order, -100, action1) }
           let!(:promo_c) { create_adjustment(order, -300, action3) }
@@ -275,11 +275,9 @@ module Spree
           Spree::Promotion::Actions::CreateAdjustment.new(calculator: calculator || create(:calculator))
         end
 
-        before do 
+        before do
           promotion.promotion_actions = [source1, source2, source3, source4]
-          promotion.actions.each do |s| 
-            s.perform(order: order)
-          end       
+          promotion.actions.each { |s| s.perform(order: order) }
         end
 
         it 'calculates the second discount as a percentage of the item total after the first discount is applied' do 
