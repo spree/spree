@@ -1,3 +1,7 @@
+.icon, .glyphicon {
+  vertical-align: text-top;
+}
+
 .icon { @extend .glyphicon; }
 .icon-edit { @extend .glyphicon-edit; }
 
