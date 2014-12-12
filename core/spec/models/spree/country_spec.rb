@@ -12,4 +12,19 @@ describe Spree::Country, type: :model do
   it "returns that the states are required for an invalid country" do
     expect(Spree::Country.states_required_by_country_id['i do not exit']).to be true
   end
+
+  describe '.default' do
+    let(:america) { create :country }
+    let(:canada)  { create :country, name: 'Canada' }
+
+    it 'will return the country from the config' do
+      Spree::Config[:default_country_id] = canada.id
+      expect(described_class.default.id).to eql canada.id
+    end
+
+    it 'will return the US if config is not set' do
+      america.touch
+      expect(described_class.default.id).to eql america.id
+    end
+  end
 end
