@@ -16,8 +16,9 @@ state_values = -> do
   state_inserts.map { |x| "(#{x})" }
 end
 
-columns = ["name", "abbr", "country_id"]
-columns = connection.adapter_name =~ /MySQL/i ? columns.join(", ") : "\"#{columns.join('", "')}\""
+columns = ["name", "abbr", "country_id"].map do |column|
+  connection.quote_column_name column
+end.join(', ')
 
 state_values.call.each_slice(500) do |state_values_batch|
   connection.execute <<-SQL
