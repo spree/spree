@@ -23,7 +23,7 @@
           <td><%= state_change.previous_state ? Spree.t(state_change.previous_state) : Spree.t(:previous_state_missing) %></td>
           <td><%= Spree.t(state_change.next_state) %></td>
           <td>
-            <%= link_to state_change.user.login, admin_user_path(state_change.user) if state_change.user %>
+            <%= link_to state_change.user.login, spree.admin_user_path(state_change.user) if state_change.user %>
           </td>
           <td>
             <%= l(state_change.created_at).to_time %>
@@ -35,7 +35,7 @@
       <% end %>
     </tbody>
   </table>
-<% end %>
+<% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_state_changes) %>
   </div>
