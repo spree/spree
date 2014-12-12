@@ -108,6 +108,14 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
+      spree/state_change:
+        state_changes: State changes
+        type: Type
+        state_from: State from
+        state_to: State to
+        user: User
+        timestamp: Timestamp
+        updated: Updated
       spree/store:
         url: Site URL
         meta_description: Meta Description
@@ -636,6 +644,7 @@ en:
     display_currency: Display currency
     doesnt_track_inventory: It doesnt track inventory
     edit: Edit
+    editing_country: Editing Country
     editing_option_type: Editing Option Type
     editing_payment_method: Editing Payment Method
     editing_product: Editing Product
@@ -905,6 +914,7 @@ en:
     no_reimbursements_found: No reimbursements found
     no_shipping_methods_found: No shipping methods found
     no_shipping_method_selected: No shipping method selected.
+    no_state_changes: No state changes yet.
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
@@ -964,7 +974,7 @@ en:
     order_number: Order %{number}
     order_populator:
       out_of_stock: ! '%{item} is out of stock.'
-      selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
+      selected_quantity_not_available: ! 'selected of %{item} is not available.'
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
@@ -1035,6 +1045,7 @@ en:
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     previous: Previous
+    previous_state_missing: "n/a"
     price: Price
     price_range: Price Range
     price_sack: Price Sack
@@ -1266,6 +1277,37 @@ en:
     state: State
     state_based: State Based
     states: States
+    state_machine_states:
+      accepted: Accepted
+      address: Address
+      authorized: Authorized
+      awaiting: Awaiting
+      awaiting_return: Awaiting return
+      backordered: Back ordered
+      cart: Cart
+      canceled: Canceled
+      checkout: Checkout
+      confirm: Confirm
+      complete: Complete
+      completed: Completed
+      closed: Closed
+      delivery: Delivery
+      errored: Errored
+      failed: Failed
+      given_to_customer: Given to customer
+      invalid: Invalid
+      manual_intervention_required: Manual intervention required
+      open: Open
+      on_hand: On hand
+      payment: Payment
+      pending: Pending
+      processing: Processing
+      ready: Ready
+      reimbursed: Reimbursed
+      resumed: Resumed
+      returned: Returned
+      shipped: Shipped
+      void: Void
     states_required: States Required
     status: Status
     stock: Stock

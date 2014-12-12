@@ -1,14 +1,13 @@
+@import 'components/variables';
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
 @import 'AdminLTE';
-@import 'components/_settings';
-@import 'components/_spinner';
-@import 'components/_tables';
-@import 'components/_labels';
-@import 'components/_icons';
-@import 'components/_select2';
-@import 'components/_bootstrap_overrides';
-@import 'components/_admin_lte_overrides';
+@import 'components/spinner';
+@import 'components/tables';
+@import 'components/labels';
+@import 'components/icons';
+@import 'components/select2';
+@import 'components/admin_lte_overrides';
 
 .margint {
   margin-top: 15px;
@@ -53,6 +52,13 @@
   }
 }
 
+header.header.logged-out {
+  margin-top: 3em;
+  .logo {
+    background: none;
+  }
+}
+
 .content {
   background-color: white;
   padding-top: 0;
@@ -64,7 +70,7 @@
   }
   .main-content {
     padding-top: 15px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid $color-border;
   }
 }
 
@@ -118,7 +124,7 @@ $content-header-height: 63px;
 }
 
 .icon-link {
-  color: #444;
+  color: $gray;
 }
 
 div.form-actions {
@@ -165,9 +171,11 @@ ul {
   margin-bottom: 17px;
   .index-filter-button {
     .btn {
-      color: #3c8dbc;
+      color: $brand-primary;
       box-shadow: none;
-      border-color: #ccc;
+      border-color: $color-border;
+      border-width: 1px;
+
       .icon {
         font-size: 0.7em;
         margin: -1px 0 0 4px;
@@ -179,7 +187,7 @@ ul {
   }
   .filter-well {
     display: none;
-    background: #fafafa;
+    background: lighten($gray-lighter, 5);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     box-shadow: none;
@@ -225,7 +233,7 @@ ul {
       }
       li.active a {
         background: $light-grey;
-        border-color: #ddd;
+        border-color: $color-border;
         color: $grey;
         &:hover {
           color: $grey !important;
@@ -240,9 +248,9 @@ ul {
   top: 50px;
   right: 0;
   min-height: 100%;
-  background-color: #fbfbfb;
+  background-color: lighten($gray-lighter, 5);
   width: 170px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid $color-border;
   ul.nav {
     margin-top: 63px;
     li .icon-link span.icon {
@@ -260,9 +268,9 @@ ul {
       border-bottom: 1px solid transparent;
     }
     &.nav-pills.nav-stacked > li.active > a, .nav.nav-pills.nav-stacked > li.active > a:hover {
-      border-right-color: #3c8dbc;
-      border-top-color: #ddd;
-      border-bottom-color: #ddd;
+      border-right-color: $brand-primary;
+      border-top-color: $color-border;
+      border-bottom-color: $color-border;
       background-color: #fff;
       margin-left: -1px;
     }

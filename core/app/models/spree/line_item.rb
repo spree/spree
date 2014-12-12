@@ -138,7 +138,7 @@ module Spree
       end
 
       def recalculate_adjustments
-        Spree::ItemAdjustments.new(self).update
+        Adjustable::AdjustmentsUpdater.update(self)
       end
 
       def update_tax_charge
