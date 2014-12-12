@@ -36,7 +36,7 @@ module Spree
 
       def variant_index_includes
         [
-          variant_images: [ viewable: { option_values: :option_type } ]
+          variant_images: [viewable: { option_values: :option_type }]
         ]
       end
 
