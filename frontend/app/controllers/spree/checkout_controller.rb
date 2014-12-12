@@ -57,7 +57,7 @@ module Spree
     def insufficient_payment?
       params[:state] == "confirm" &&
         @order.payment_required? &&
-        @order.payments.valid.sum(:amount) != @order.amount
+        @order.payments.valid.sum(:amount) != @order.total
     end
 
     def correct_state
