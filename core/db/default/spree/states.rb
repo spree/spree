@@ -13,8 +13,7 @@ state_values = -> do
     end
   end
 
-  state_inserts = "(" + state_inserts.join("), (") + ")"
-  state_inserts.gsub("), (", "), i (").split(", i ") # the i is to make the splitting accurate
+  state_inserts.map { |x| "(#{x})" }
 end
 
 columns = ["name", "abbr", "country_id"]
