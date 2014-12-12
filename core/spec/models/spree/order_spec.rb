@@ -285,6 +285,13 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  context "#display_promo_total" do
+    it "returns the value as a spree money" do
+      order.promo_total = 10.55
+      expect(order.display_promo_total).to eq(Spree::Money.new(10.55))
+    end
+  end
+
   context "#display_total" do
     it "returns the value as a spree money" do
       order.total = 10.55
@@ -580,8 +587,7 @@ describe Spree::Order, :type => :model do
       expect(Spree::PromotionHandler::FreeShipping).to receive(:new).and_return(handler = double)
       expect(handler).to receive(:activate)
 
-      expect(Spree::ItemAdjustments).to receive(:new).with(shipment).and_return(adjuster = double)
-      expect(adjuster).to receive(:update)
+      expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:update).with(shipment)
 
       expect(order.updater).to receive(:update_shipment_total)
       expect(order.updater).to receive(:persist_totals)

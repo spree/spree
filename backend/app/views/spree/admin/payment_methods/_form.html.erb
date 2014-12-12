@@ -1,11 +1,11 @@
 <div data-hook="admin_payment_method_form_fields">
 
-  <div data-hook="payment_method">
+  <div data-hook="payment_method" class="row">
 
-    <div class="alpha four columns">
-      <div id="preference-settings" data-hook class="field">
+    <div class="col-md-4">
+      <div id="preference-settings" data-hook class="form-group">
         <%= f.label :type, Spree.t(:provider) %>
-        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2 fullwidth'}) %>
+        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2'}) %>
 
         <% unless @object.new_record? %>
           <%= preference_fields(@object, f) %>
@@ -15,45 +15,45 @@
           <% end %>
         <% end %>
       </div>
-      <div data-hook="environment" class="field">
+      <div data-hook="environment" class="form-group">
         <%= label_tag :payment_method_environment, Spree.t(:environment) %>
-        <%= collection_select(:payment_method, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2 fullwidth'}) %>
+        <%= collection_select(:payment_method, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2'}) %>
       </div>
-      <div data-hook="display" class="field">
+      <div data-hook="display" class="form-group">
         <%= label_tag :payment_method_display_on, Spree.t(:display) %>
-        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2 fullwidth'}) %>
+        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2'}) %>
       </div>
-      <div data-hook="auto_capture" class="field">
+      <div data-hook="auto_capture" class="form-group">
         <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %>
-        <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes), true], [Spree.t(:say_no), false]], {}, {:class => 'select2 fullwidth'}) %>
+        <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes), true], [Spree.t(:say_no), false]], {}, {:class => 'select2'}) %>
       </div>
-      <div data-hook="active" class="field">
-        <%= label_tag nil, Spree.t(:active) %>
-        <ul>
-          <li>
+      <div data-hook="active" class="form-group">
+        <strong><%= Spree.t(:active) %></strong>
+        <div class="radio">
+          <%= label_tag :payment_method_active_true do %>
             <%= radio_button :payment_method, :active, true %>
-            <%= label_tag :payment_method_active_true, Spree.t(:say_yes) %>
-          </li>
-          <li>
+            <%= Spree.t(:say_yes) %>
+          <% end %>
+        </div>
+
+        <div class="radio">
+          <%= label_tag :payment_method_active_false do %>
             <%= radio_button :payment_method, :active, false %>
-            <%= label_tag :payment_method_active_false, Spree.t(:say_no) %>
-          </li>
-        </ul>
+            <%= Spree.t(:say_no) %>
+          <% end %>
+        </div>
       </div>
     </div>
 
-    <div class="omega eight columns">
-      <div data-hook="name" class="field">
+    <div class="col-md-8">
+      <div data-hook="name" class="form-group">
         <%= label_tag :payment_method_name, Spree.t(:name) %>
-        <%= text_field :payment_method, :name, :class => 'fullwidth' %>
+        <%= text_field :payment_method, :name, :class => 'form-control' %>
       </div>
-      <div data-hook="description" class="field">
+      <div data-hook="description" class="form-group">
         <%= label_tag :payment_method_description, Spree.t(:description) %>
-        <%= text_area :payment_method, :description, {:cols => 60, :rows => 6, :class => 'fullwidth'} %>
+        <%= text_area :payment_method, :description, { :cols => 60, :rows => 6, :class => 'form-control' } %>
       </div>
     </div>
-
   </div>
 </div>
-
-<div class="clear"></div>

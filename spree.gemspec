@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.files        = Dir['README.md', 'lib/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
-  s.required_ruby_version     = '>= 1.9.3'
-  s.required_rubygems_version = '>= 1.8.23'
 
   s.author       = 'Sean Schofield'
   s.email        = 'sean@spreecommerce.com'

@@ -1,31 +1,27 @@
-<%= render partial: 'spree/admin/shared/order_tabs', locals: {current: 'Payments'} %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: "Payments" } %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= link_to "#{Spree.t(:payment)} #{@refund.payment.id}", admin_order_payment_path(@refund.payment.order, @refund.payment) %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:editing_refund) %> <%= @refund.id %>
+  / <%= link_to "#{Spree.t(:payment)} #{@refund.payment.id}", admin_order_payment_path(@refund.payment.order, @refund.payment) %>
+  / <%= Spree.t(:editing_refund) %> <%= @refund.id %>
 <% end %>
 
 <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund] do |f| %>
-  <fieldset class="no-border-top">
-    <div data-hook="admin_refund_form_fields" class="row">
-      <div class="alpha three columns">
-        <div class="field">
-          <%= Spree.t(:amount) %><br/>
-          <%= @refund.amount %>
-        </div>
+  <fieldset>
+    <div data-hook="admin_refund_form_fields">
+      <div class="form-group">
+        <%= f.label :amount, Spree.t(:amount) %><br/>
+        <%= @refund.amount %>
       </div>
-      <div class="alpha three columns">
-        <div class="field">
-          <%= f.label :refund_reason_id, Spree.t(:reason) %><br/>
-          <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {}, {class: 'select2 fullwidth'}) %>
-        </div>
+      <div class="form-group">
+        <%= f.label :refund_reason_id, Spree.t(:reason) %><br/>
+        <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {}, {class: 'select2'}) %>
       </div>
     </div>
 
-    <div class="form-buttons filter-actions actions" data-hook="buttons">
-      <%= button Spree.t('actions.save'), 'ok' %>
+    <div class="form-actions" data-hook="buttons">
+      <%= button Spree.t('actions.save'), 'save' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_order_payments_url(@refund.payment.order), icon: 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_order_payments_url(@refund.payment.order), :icon => "delete" %>
     </div>
   </fieldset>
 <% end %>

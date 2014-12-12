@@ -10,7 +10,7 @@ describe "Cancelling + Resuming", :type => :feature do
     allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(user)
   end
 
-  let(:order) do 
+  let(:order) do
     order = create(:order)
     order.update_columns({
       :state => 'complete',
@@ -21,7 +21,7 @@ describe "Cancelling + Resuming", :type => :feature do
 
   it "can cancel an order" do
     visit spree.edit_admin_order_path(order.number)
-    click_button 'cancel'
+    click_button 'Cancel'
     within(".additional-info") do
       within(".state") do
         expect(page).to have_content("canceled")
@@ -36,7 +36,7 @@ describe "Cancelling + Resuming", :type => :feature do
 
     it "can resume an order" do
       visit spree.edit_admin_order_path(order.number)
-      click_button 'resume'
+      click_button 'Resume'
       within(".additional-info") do
         within(".state") do
           expect(page).to have_content("resumed")

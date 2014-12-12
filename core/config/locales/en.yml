@@ -108,6 +108,14 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
+      spree/state_change:
+        state_changes: State changes
+        type: Type
+        state_from: State from
+        state_to: State to
+        user: User
+        timestamp: Timestamp
+        updated: Updated
       spree/store:
         url: Site URL
         meta_description: Meta Description
@@ -298,6 +306,11 @@ en:
               cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
             inventory_unit:
               other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Cannot destroy the default Store.
+
 
   devise:
     confirmations:
@@ -384,7 +397,7 @@ en:
     add_stock_management: Add Stock Management
     add_to_cart: Add To Cart
     add_variant: Add Variant
-    additional_item: Additional Item Cost
+    additional_item: Additional Item
     address1: Address
     address2: Address (contd.)
     adjustable: Adjustable
@@ -418,6 +431,7 @@ en:
         orders: Orders
         user_information: User Information
     administration: Administration
+    advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
@@ -620,6 +634,7 @@ en:
     deleted_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
+    details: Details
     description: Description
     destination: Destination
     destroy: Destroy
@@ -627,7 +642,9 @@ en:
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     display_currency: Display currency
+    doesnt_track_inventory: It doesnt track inventory
     edit: Edit
+    editing_country: Editing Country
     editing_option_type: Editing Option Type
     editing_payment_method: Editing Payment Method
     editing_product: Editing Product
@@ -648,6 +665,7 @@ en:
     editing_tax_category: Editing Tax Category
     editing_tax_rate: Editing Tax Rate
     editing_tracker: Editing Tracker
+    editing_addresses: Editing Addresses
     editing_user: Editing User
     editing_zone: Editing Zone
     eligibility_errors:
@@ -710,7 +728,7 @@ en:
     finalize: Finalize
     find_a_taxon: Find a Taxon
     finalized: Finalized
-    first_item: First Item Cost
+    first_item: First Item
     first_name: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
@@ -749,6 +767,8 @@ en:
     identifier: Identifier
     image: Image
     images: Images
+    implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
+    implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
     inactive: Inactive
     incl: incl.
     included_in_price: Included in Price
@@ -796,12 +816,12 @@ en:
     lifetime_stats: Lifetime Stats
     line_item_adjustments: "Line item adjustments"
     list: List
-    listing_countries: Listing Countries
-    listing_orders: Listing Orders
-    listing_products: Listing Products
-    listing_reports: Listing Reports
-    listing_tax_categories: Listing Tax Categories
-    listing_users: Listing Users
+    listing_countries: Countries
+    listing_orders: Orders
+    listing_products: Products
+    listing_reports: Reports
+    listing_tax_categories: Tax Categories
+    listing_users: Users
     loading: Loading
     locale_changed: Locale Changed
     location: Location
@@ -879,6 +899,7 @@ en:
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
+    no_adjustments_found: No adjustments found
     no_images_found: No images found
     no_orders_found: No orders found
     no_payment_methods_found: No payment methods found
@@ -889,8 +910,11 @@ en:
     no_results: No results
     no_rules_added: No rules added
     no_resource_found: ! 'No %{resource} found'
+    no_returns_found: No returns found
+    no_reimbursements_found: No reimbursements found
     no_shipping_methods_found: No shipping methods found
     no_shipping_method_selected: No shipping method selected.
+    no_state_changes: No state changes yet.
     no_trackers_found: No Trackers Found
     no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
@@ -950,7 +974,7 @@ en:
     order_number: Order %{number}
     order_populator:
       out_of_stock: ! '%{item} is out of stock.'
-      selected_quantity_not_available: ! 'Selected quantity of %{item} is not available.'
+      selected_quantity_not_available: ! 'selected of %{item} is not available.'
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
@@ -1021,6 +1045,7 @@ en:
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     previous: Previous
+    previous_state_missing: "n/a"
     price: Price
     price_range: Price Range
     price_sack: Price Sack
@@ -1032,7 +1057,7 @@ en:
     product_properties: Product Properties
     product_rule:
       choose_products: Choose products
-      label: Order must contain %{select} of these products
+      label: Order must contain x amount of these products
       match_all: all
       match_any: at least one
       match_none: none
@@ -1100,6 +1125,7 @@ en:
     quantity: Quantity
     quantity_returned: Quantity Returned
     quantity_shipped: Quantity Shipped
+    quick_search: Quick search..
     rate: Rate
     reason: Reason
     receive: receive
@@ -1157,6 +1183,7 @@ en:
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
+    returns: Returns
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis
@@ -1166,6 +1193,7 @@ en:
     rma_value: RMA Value
     roles: Roles
     rules: Rules
+    safe: Safe
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
@@ -1189,7 +1217,7 @@ en:
     server: Server
     server_error: The server returned an error
     settings: Settings
-    ship: ship
+    ship: Ship
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
@@ -1249,8 +1277,40 @@ en:
     state: State
     state_based: State Based
     states: States
+    state_machine_states:
+      accepted: Accepted
+      address: Address
+      authorized: Authorized
+      awaiting: Awaiting
+      awaiting_return: Awaiting return
+      backordered: Back ordered
+      cart: Cart
+      canceled: Canceled
+      checkout: Checkout
+      confirm: Confirm
+      complete: Complete
+      completed: Completed
+      closed: Closed
+      delivery: Delivery
+      errored: Errored
+      failed: Failed
+      given_to_customer: Given to customer
+      invalid: Invalid
+      manual_intervention_required: Manual intervention required
+      open: Open
+      on_hand: On hand
+      payment: Payment
+      pending: Pending
+      processing: Processing
+      ready: Ready
+      reimbursed: Reimbursed
+      resumed: Resumed
+      returned: Returned
+      shipped: Shipped
+      void: Void
     states_required: States Required
     status: Status
+    stock: Stock
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
@@ -1274,6 +1334,7 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
+    summary: Summary
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
@@ -1286,7 +1347,7 @@ en:
     taxon_placeholder: Add a Taxon
     taxon_rule:
       choose_taxons: Choose taxons
-      label: Order must contain %{select} of these taxons
+      label: Order must contain x amount of these taxons
       match_all: all
       match_any: at least one
     taxonomies: Taxonomies

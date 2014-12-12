@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Zones", :type => :feature do
+describe "Zones", type: :feature, js: true do
   stub_authorization!
 
   before(:each) do

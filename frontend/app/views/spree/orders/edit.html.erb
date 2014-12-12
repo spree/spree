@@ -5,8 +5,8 @@
   <% if @order.line_items.empty? %>
 
     <div data-hook="empty_cart">
-      <p><%= Spree.t(:your_cart_is_empty) %></p>
-      <p><%= link_to Spree.t(:continue_shopping), products_path, :class => 'button continue' %></p>
+      <div class="alert alert-info"><%= Spree.t(:your_cart_is_empty) %></div>
+      <p><%= link_to Spree.t(:continue_shopping), products_path, :class => 'btn btn-default' %></p>
     </div>
 
   <% else %>
@@ -15,33 +15,32 @@
       <%= form_for @order, :url => update_cart_path, :html => {:id => 'update-cart'} do |order_form| %>
         <div data-hook="inside_cart_form">
 
-          <div data-hook="cart_items">
+          <div data-hook="cart_items" class="table-responsive">
             <%= render :partial => 'form', :locals => { :order_form => order_form } %>
           </div>
 
-          <div class="links columns sixteen alpha omega" data-hook="cart_buttons">
-            <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code) %>
-            <%= button_tag :class => 'primary', :id => 'update-button' do %>
+          <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
+            <div class="form-group">
+            <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %></div>
+            <%= button_tag :class => 'btn btn-primary', :id => 'update-button' do %>
               <%= Spree.t(:update) %>
             <% end %>
-            <%= button_tag :class => 'button checkout primary', :id => 'checkout-link', :name => 'checkout' do %>
+            <%= button_tag :class => 'btn btn-lg btn-success', :id => 'checkout-link', :name => 'checkout' do %>
               <%= Spree.t(:checkout) %>
             <% end %>
           </div>
-
         </div>
       <% end %>
     </div>
 
-    <div id="empty-cart" data-hook>
+    <div id="empty-cart" class="col-md-6 pull-left" data-hook>
       <%= form_tag empty_cart_path, :method => :put do %>
         <p id="clear_cart_link" data-hook>
-        <%= submit_tag Spree.t(:empty_cart), :class => 'button gray' %>
-        <%= Spree.t(:or) %>
-        <%= link_to Spree.t(:continue_shopping), products_path, :class => 'continue button gray' %>
+          <%= submit_tag Spree.t(:empty_cart), :class => 'btn btn-default' %>
+          <%= Spree.t(:or) %>
+          <%= link_to Spree.t(:continue_shopping), products_path, :class => 'continue' %>
         </p>
       <% end %>
     </div>
-
   <% end %>
 </div>

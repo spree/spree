@@ -15,12 +15,11 @@ module Spree
 
     accepts_nested_attributes_for :return_items
 
+    extend DisplayMoney
+    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
-    end
-
-    def display_pre_tax_total
-      Spree::Money.new(pre_tax_total, { currency: Spree::Config[:currency] })
     end
 
     # Temporarily tie a customer_return to one order

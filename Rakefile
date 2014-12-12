@@ -20,7 +20,7 @@ task :test do
   Rake::Task['test_app'].invoke
   %w(api backend core frontend sample).each do |gem_name|
     Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
-      system("RSPEC_RETRY_COUNT=2 rspec") or exit!(1)
+      system("rspec") or exit!(1)
     end
   end
 end

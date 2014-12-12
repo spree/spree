@@ -1,60 +1,56 @@
-<fieldset data-id='credit-card' class="no-border-bottom">
-  <div class="field" data-hook="previous_cards">
-    <% if previous_cards.any? %>
-      <% previous_cards.each do |card| %>
-        <label><%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_number %><br /></label>
+<fieldset data-id="credit-card">
+  <div class="form-group" data-hook="previous_cards">
+    <ul>
+      <% if previous_cards.any? %>
+        <% previous_cards.each do |card| %>
+          <li>
+            <label>
+              <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_number %>
+            </label>
+          </li>
+        <% end %>
+        <li>
+          <label>
+            <%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %>
+          </label>
+        </li>
       <% end %>
-      <label><%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %></label>
-    <% end %>
+    </ul>
   </div>
 
-  <div id="card_form<%= payment_method.id %>" data-hook>
+  <div id="card_form<%= payment_method.id %>" class="margint" data-hook>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
-    <div class="clear"></div>
-
-    <div class="alpha four columns">
-      <div data-hook="card_number">
-        <div class="field">
-          <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {class: 'ccType'} %>
-          <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required fullwidth cardNumber', :id => "card_number#{payment_method.id}", :maxlength => 19 %>
-          <span id="card_type" style="display:none;">
-            ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
-              <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
-            )
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="alpha four columns">
-      <div data-hook="card_name">
-        <div class="field">
-          <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= text_field_tag "#{param_prefix}[name]", '', id: "card_name#{payment_method.id}", class: 'required fullwidth', maxlength: 19 %>
-        </div>
-      </div>
-    </div>
-    <div class="three columns">
-      <div data-hook="card_expiration" class="field">
-        <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
-        <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry", placeholder: "MM / YY" %>
-      </div>
-    </div>
-    <div class="omega two columns">
-      <div data-hook="card_code" class="field">
-        <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
-        <%= text_field_tag "#{param_prefix}[verification_value]", '', id: "card_code#{payment_method.id}", class: 'required fullwidth cardCode', size: 5 %>
-        <a href="/content/cvv" class="info cvvLink" target="_blank">
-          (<%= Spree.t(:what_is_this) %>)
-        </a>
-      </div>
+    <div data-hook="card_number" class="form-group">
+      <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {class: 'ccType'} %>
+      <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + content_tag(:span, ' *', :class => 'required')) %>
+      <%= text_field_tag "#{param_prefix}[number]", '', :class => 'required form-control cardNumber', :id => "card_number#{payment_method.id}", :maxlength => 19 %>
+      <span id="card_type" style="display:none;">
+        ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
+          <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
+        )
+      </span>
     </div>
 
-    <div class="nine columns">
-      <%= image_tag 'credit_cards/credit_card.gif', :class => 'credit-card-image' %>
+    <div data-hook="card_name" class="form-group">
+      <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
+      <%= text_field_tag "#{param_prefix}[name]", '', id: "card_name#{payment_method.id}", class: 'required form-control', maxlength: 19 %>
     </div>
 
-    <div class="clear"></div>
+    <div data-hook="card_expiration" class="form-group">
+      <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + content_tag(:span, ' *', :class => 'required')) %><br>
+      <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM / YY" %>
+    </div>
+
+    <div data-hook="card_code" class="form-group">
+      <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + content_tag(:span, ' *', :class => "required")) %>
+      <%= text_field_tag "#{param_prefix}[verification_value]", '', id: "card_code#{payment_method.id}", class: 'required form-control cardCode', size: 5 %>
+      <a href="/content/cvv" class="info cvvLink" target="_blank">
+        (<%= Spree.t(:what_is_this) %>)
+      </a>
+    </div>
+
+    <%= image_tag 'credit_cards/credit_card.gif', :class => 'credit-card-image' %>
+
   </div>
 </fieldset>

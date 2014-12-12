@@ -26,6 +26,18 @@ describe "viewing products", type: :feature, inaccessible: true do
     expect(page).not_to have_selector("div[data-hook='taxon_children']")
   end
 
+  describe 'breadcrumbs' do
+    before do
+      visit '/t/category/super-clothing/t-shirts'
+    end
+    it "should render breadcrumbs" do
+      expect(page.find("#breadcrumbs")).to have_link("T-Shirts")
+    end
+    it "should mark last breadcrumb as active" do
+      expect(page.find('#breadcrumbs .active')).to have_link("T-Shirts")
+    end
+  end
+
   describe 'meta tags and title' do
     it 'displays metas' do
       t_shirts.update_attributes metas
@@ -70,8 +82,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit brand Ruby on Rails" do
       within(:css, '#taxonomies') { click_link "Ruby on Rails" }
 
-      expect(page.all('ul.product-listing li').size).to eq(7)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(7)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       array = ["Ruby on Rails Bag",
        "Ruby on Rails Baseball Jersey",
@@ -86,8 +98,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit brand Ruby" do
       within(:css, '#taxonomies') { click_link "Ruby" }
 
-      expect(page.all('ul.product-listing li').size).to eq(1)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(1)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Ruby Baseball Jersey"])
     end
@@ -95,8 +107,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit brand Apache" do
       within(:css, '#taxonomies') { click_link "Apache" }
 
-      expect(page.all('ul.product-listing li').size).to eq(1)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(1)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Apache Baseball Jersey"])
     end
@@ -104,8 +116,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit category Clothing" do
       click_link "Clothing"
 
-      expect(page.all('ul.product-listing li').size).to eq(5)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(5)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Apache Baseball Jersey",
      "Ruby Baseball Jersey",
@@ -117,8 +129,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit category Mugs" do
       click_link "Mugs"
 
-      expect(page.all('ul.product-listing li').size).to eq(2)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(2)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Ruby on Rails Mug", "Ruby on Rails Stein"])
     end
@@ -126,8 +138,8 @@ describe "viewing products", type: :feature, inaccessible: true do
     it "should be able to visit category Bags" do
       click_link "Bags"
 
-      expect(page.all('ul.product-listing li').size).to eq(2)
-      tmp = page.all('ul.product-listing li a').map(&:text).flatten.compact
+      expect(page.all('#products .product-list-item').size).to eq(2)
+      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Ruby on Rails Bag", "Ruby on Rails Tote"])
     end

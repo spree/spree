@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/configuration_menu' %>
+
 
 <% content_for :page_title do %>
   <%= Spree.t(:stock_movements_for_stock_location, stock_location_name: @stock_location.name) %>
@@ -9,12 +9,12 @@
     <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'plus', id: 'admin_new_stock_movement_link' %>
   </li>
   <li>
-    <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'button' %>
+    <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'btn btn-default' %>
   </li>
 <% end %>
 
 <% if @stock_movements.any? %>
-<table class="index" id='listing_stock_movements'>
+<table class="table" id='listing_stock_movements'>
   <colgroup>
     <col style="width: 35%">
     <col style="width: 20%">
@@ -29,18 +29,18 @@
   </thead>
   <tbody>
     <% @stock_movements.each do |stock_movement|%>
-      <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows" class="<%= cycle('odd', 'even')%>">
-        <td class="align-center">
+      <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows">
+        <td>
           <%= display_variant(stock_movement) %>
         </td>
-        <td class="align-center"><%= stock_movement.quantity %></td>
-        <td class="align-center"><%= pretty_originator(stock_movement) %></td>
+        <td><%= stock_movement.quantity %></td>
+        <td><%= pretty_originator(stock_movement) %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_movement')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_stock_location_stock_movement_path(@stock_location) %>!
   </div>
