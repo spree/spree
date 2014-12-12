@@ -18,6 +18,11 @@ module Spree
       states_required
     end
 
+    def self.default
+      country_id = Spree::Config[:default_country_id]
+      country_id.present? ? find(country_id) : find_by!(iso: 'US')
+    end
+
     def <=>(other)
       name <=> other.name
     end

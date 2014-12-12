@@ -15,7 +15,7 @@ module Spree
           promotion.promotion_actions = [action]
         end
 
-        #it_behaves_like 'an adjustment source'
+        it_behaves_like 'an adjustment source'
 
         context "#perform" do
           # Regression test for #3966
