@@ -1,14 +1,12 @@
 require 'spec_helper'
 
-describe "General Settings", :type => :feature do
+describe "General Settings", type: :feature, js: true do
   stub_authorization!
 
   before(:each) do
     store = create(:store, name: 'Test Store', url: 'test.example.org',
                            mail_from_address: 'test@example.org')
-    visit spree.admin_path
-    click_link "Configuration"
-    click_link "General Settings"
+    visit spree.edit_admin_general_settings_path
   end
 
   context "visiting general settings (admin)" do
@@ -29,6 +27,17 @@ describe "General Settings", :type => :feature do
       assert_successful_update_message(:general_settings)
       expect(find("#store_name").value).to eq("Spree Demo Site99")
       expect(find("#store_mail_from_address").value).to eq("spree@example.org")
+    end
+  end
+
+  context "clearing the cache" do
+    it "should clear the cache" do
+      expect(page).to_not have_content(Spree.t(:clear_cache_ok))
+      expect(page).to have_content(Spree.t(:clear_cache_warning))
+
+      click_button "Clear Cache"
+
+      expect(page).to have_content(Spree.t(:clear_cache_ok))
     end
   end
 end

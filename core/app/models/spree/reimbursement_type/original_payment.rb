@@ -3,7 +3,7 @@ class Spree::ReimbursementType::OriginalPayment < Spree::ReimbursementType
 
   class << self
     def reimburse(reimbursement, return_items, simulate)
-      unpaid_amount = return_items.sum(&:total).round(2)
+      unpaid_amount = return_items.sum(&:total).round(2, :down)
       payments = reimbursement.order.payments.completed
 
       refund_list, unpaid_amount = create_refunds(reimbursement, payments, unpaid_amount, simulate)

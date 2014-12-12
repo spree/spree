@@ -1,0 +1,21 @@
+<div data-hook="admin_user_lifetime_stats">
+  <legend><%= Spree.t(:lifetime_stats) %></legend>
+  <table class="table table-condensed table-bordered" id="user-lifetime-stats" data-hook>
+    <tr>
+      <td width="30%"><%= Spree.t(:total_sales) %>:</td>
+      <td><%= @user.display_lifetime_value.to_html %></td>
+    </tr>
+    <tr>
+      <td><%= Spree.t(:num_orders) %>:</td>
+      <td><%= @user.order_count.to_i %></td>
+    </tr>
+    <tr>
+      <td><%= Spree.t(:average_order_value) %>:</td>
+      <td><%= @user.display_average_order_value.to_html %></td>
+    </tr>
+    <tr>
+      <td><%= Spree.t(:member_since) %>:</td>
+      <td><%= l @user.created_at.to_date %></td>
+    </tr>
+  </table>
+</div>

@@ -74,6 +74,10 @@ module Spree
       end
     end
 
+    extend DisplayMoney
+    money_methods :cost, :discounted_cost, :final_price, :item_cost
+    alias display_amount display_cost
+
     def add_shipping_method(shipping_method, selected = false)
       shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)
     end
@@ -111,23 +115,6 @@ module Spree
       cost + promo_total
     end
     alias discounted_amount discounted_cost
-
-    def display_cost
-      Spree::Money.new(cost, { currency: currency })
-    end
-    alias display_amount display_cost
-
-    def display_discounted_cost
-      Spree::Money.new(discounted_cost, { currency: currency })
-    end
-
-    def display_final_price
-      Spree::Money.new(final_price, { currency: currency })
-    end
-
-    def display_item_cost
-      Spree::Money.new(item_cost, { currency: currency })
-    end
 
     def editable_by?(user)
       !shipped?
@@ -413,7 +400,7 @@ module Spree
       end
 
       def recalculate_adjustments
-        Spree::ItemAdjustments.new(self).update
+        Adjustable::AdjustmentsUpdater.update(self)
       end
 
       def send_shipped_email

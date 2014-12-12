@@ -5,6 +5,8 @@ module Spree
 
       before_action :load_simulated_refunds, only: :edit
 
+      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error, only: :perform
+
       def perform
         @reimbursement.perform!
         redirect_to location_after_save
@@ -34,11 +36,10 @@ module Spree
         @reimbursement_objects = @reimbursement.simulate
       end
 
-      # TODO: Remove this when https://github.com/spree/spree/pull/5158 gets merged in
-      def permitted_resource_params
-        params[object_name].present? ? super : ActionController::Parameters.new
+      def spree_core_gateway_error(error)
+        flash[:error] = error.message
+        redirect_to edit_admin_order_reimbursement_path(parent, @reimbursement)
       end
-
     end
   end
 end

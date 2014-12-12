@@ -1,4 +1,4 @@
-$('#rules').append('<%= escape_javascript( render(:partial => 'spree/admin/promotions/promotion_rule', :object => @promotion_rule) ) %>');
+$('#rules').append('<%= escape_javascript( render(partial: 'spree/admin/promotions/promotion_rule', object: @promotion_rule) ) %>');
 $('#rules .no-objects-found').hide();
 
 $('.product_picker').productAutocomplete();

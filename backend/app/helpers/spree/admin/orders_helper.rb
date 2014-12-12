@@ -6,13 +6,13 @@ module Spree
         links = []
         @order_events.sort.each do |event|
           if @order.send("can_#{event}?")
-            links << button_link_to(Spree.t(event), [event, :admin, @order],
+            links << button_link_to(Spree.t(event).capitalize, [event, :admin, @order],
                                     :method => :put,
                                     :icon => "#{event}",
                                     :data => { :confirm => Spree.t(:order_sure_want_to, :event => Spree.t(event)) })
           end
         end
-        links.join('&nbsp;').html_safe
+        links.join(' ').html_safe
       end
 
       def line_item_shipment_price(line_item, quantity)

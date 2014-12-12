@@ -29,10 +29,19 @@ module Spree
 
     scope :by_zone, ->(zone) { where(zone_id: zone) }
 
+    def self.potential_rates_for_zone(zone)
+      select("spree_tax_rates.*, spree_zones.default_tax").
+        joins(:zone).
+        merge(Spree::Zone.potential_matching_zones(zone)).
+        order("spree_zones.default_tax DESC")
+    end
+
     # Gets the array of TaxRates appropriate for the specified order
     def self.match(order_tax_zone)
       return [] unless order_tax_zone
-      rates = includes(zone: { zone_members: :zoneable }).load.select do |rate|
+
+      potential_rates = potential_rates_for_zone(order_tax_zone)
+      rates = potential_rates.includes(zone: { zone_members: :zoneable }).load.select do |rate|
         # Why "potentially"?
         # Go see the documentation for that method.
         rate.potentially_applicable?(order_tax_zone)

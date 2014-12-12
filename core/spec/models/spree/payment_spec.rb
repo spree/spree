@@ -13,16 +13,7 @@ describe Spree::Payment, :type => :model do
   let(:avs_code) { 'D' }
   let(:cvv_code) { 'M' }
 
-  let(:card) do
-    Spree::CreditCard.create!(
-      number: "4111111111111111",
-      month: "12",
-      year: "2014",
-      verification_value: "123",
-      name: "Name",
-      imported: false
-    )
-  end
+  let(:card) { create :credit_card }
 
   let(:payment) do
     payment = Spree::Payment.new
@@ -517,27 +508,22 @@ describe Spree::Payment, :type => :model do
       end
 
       context "with multiple payment attempts" do
+        let(:attributes) { attributes_for(:credit_card) }
         it "should not try to create profiles on old failed payment attempts" do
           allow_any_instance_of(Spree::Payment).to receive(:payment_method) { gateway }
 
-          order.payments.create!(source_attributes: {number: "4111111111111115",
-                                                    month: "12",
-                                                    year: "2014",
-                                                    verification_value: "123",
-                                                    name: "Name"
-          },
-          :payment_method => gateway,
-          :amount => 100)
+          order.payments.create!(
+            source_attributes: attributes,
+            payment_method: gateway,
+            amount: 100
+          )
           expect(gateway).to receive(:create_profile).exactly :once
           expect(order.payments.count).to eq(1)
-          order.payments.create!(source_attributes: {number: "4111111111111111",
-                                                    month: "12",
-                                                    year: "2014",
-                                                    verification_value: "123",
-                                                    name: "Name"
-          },
-          :payment_method => gateway,
-          :amount => 100)
+          order.payments.create!(
+            source_attributes: attributes,
+            payment_method: gateway,
+            amount: 100
+          )
         end
 
       end

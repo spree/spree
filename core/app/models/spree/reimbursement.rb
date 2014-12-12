@@ -1,6 +1,6 @@
 module Spree
   class Reimbursement < Spree::Base
-    class IncompleteReimbursement < StandardError; end
+    class IncompleteReimbursementError < StandardError; end
 
     belongs_to :order, inverse_of: :reimbursements
     belongs_to :customer_return, inverse_of: :reimbursements, touch: true
@@ -16,6 +16,8 @@ module Spree
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
     before_create :generate_number
+
+    scope :reimbursed, -> { where(reimbursement_status: 'reimbursed') }
 
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
@@ -103,14 +105,14 @@ module Spree
 
       reimbursement_performer.perform(self)
 
-      if unpaid_amount.zero?
+      if unpaid_amount_within_tolerance?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
         send_reimbursement_email
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
-        raise IncompleteReimbursement, Spree.t("validation.unpaid_amount_not_zero", amount: unpaid_amount)
+        raise IncompleteReimbursementError, Spree.t("validation.unpaid_amount_not_zero", amount: unpaid_amount)
       end
     end
 
@@ -143,6 +145,24 @@ module Spree
 
     def send_reimbursement_email
       Spree::ReimbursementMailer.reimbursement_email(self.id).deliver
+    end
+
+    # If there are multiple different reimbursement types for a single
+    # reimbursement we open ourselves to a one-cent rounding error for every
+    # type over the first one. This is due to how we round #unpaid_amount and
+    # how each reimbursement type will round as well. Since at this point the
+    # payments and credits have already been processed, we should allow the
+    # reimbursement to show as 'reimbursed' and not 'errored'.
+    def unpaid_amount_within_tolerance?
+      reimbursement_count = reimbursement_models.count do |model|
+        model.total_amount_reimbursed_for(self) > 0
+      end
+      leniency = if reimbursement_count > 0
+                   (reimbursement_count - 1) * 0.01.to_d
+                 else
+                   0
+                 end
+      unpaid_amount.abs.between?(0, leniency)
     end
   end
 end

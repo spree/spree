@@ -110,7 +110,7 @@ For example, spree/products/show.html.erb looks as follows:
 
 ```erb
 <div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
-  <%% body_id = 'product-details %>
+  <%% body_id = 'product-details' %>
   <div class="columns six alpha" data-hook="product_left_part">
     <div class="row" data-hook="product_left_part_wrap">
       <div id="product-images" data-hook="product_images">

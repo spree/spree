@@ -18,14 +18,6 @@ module Spree
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
-    let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                              :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
-                              :country_id => Country.first.id, :state_id => State.first.id} }
-
-    let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                               :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
-                               :country_id => Country.first.id, :state_id => State.first.id} }
-
     let(:current_api_user) do
       user = Spree.user_class.new(:email => "spree@example.com")
       user.generate_spree_api_key!
@@ -167,24 +159,42 @@ module Spree
       expect(json_response["adjustments"]).to be_empty
     end
 
-    context 'when shipment adjustments are present' do
+    describe 'GET #show' do
+      let(:order) { create :order_with_line_items }
       let(:adjustment) { FactoryGirl.create(:adjustment, order: order) }
+
+      subject { api_get :show, id: order.to_param }
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
-        shipment = FactoryGirl.create(:shipment, order: order)
-        shipment.adjustments << adjustment
       end
 
-      subject { api_get :show, :id => order.to_param }
+      context 'when inventory information is present' do
+        it 'contains stock information on variant' do
+          subject
+          variant = json_response['line_items'][0]['variant']
+          expect(variant).to_not be_nil
+          expect(variant['in_stock']).to eq(false)
+          expect(variant['total_on_hand']).to eq(0)
+          expect(variant['is_backorderable']).to eq(true)
+          expect(variant['is_destroyed']).to eq(false)
+        end
+      end
 
-      it 'contains adjustments in JSON' do
-        subject
-        # Test to insure shipment has adjustments
-        shipment = json_response['shipments'][0]
-        expect(shipment).to_not be_nil
-        expect(shipment['adjustments'][0]).not_to be_empty
-        expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+      context 'when shipment adjustments are present' do
+        before do
+          order.shipments.first.adjustments << adjustment
+        end
+
+        it 'contains adjustments on shipment' do
+          subject
+
+          # Test to insure shipment has adjustments
+          shipment = json_response['shipments'][0]
+          expect(shipment).to_not be_nil
+          expect(shipment['adjustments'][0]).not_to be_empty
+          expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
+        end
       end
     end
 
@@ -336,17 +346,17 @@ module Spree
       let!(:line_item) { order.contents.add(variant, 1) }
       let!(:payment_method) { create(:check_payment_method) }
 
-      let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+      let(:address_params) { { :country_id => country.id } }
       let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
-                                :country_id => Country.first.id, :state_id => State.first.id} }
+                                :city => "Sao Paulo", :zipcode => "01310-300", :phone => "12345678",
+                                :country_id => country.id} }
       let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                 :city => "Sao Paulo", :zipcode => "35762", :phone => "12345678",
-                                 :country_id => Country.first.id, :state_id => State.first.id} }
+                                 :city => "Sao Paulo", :zipcode => "01310-300", :phone => "12345678",
+                                 :country_id => country.id} }
+      let(:country) { create(:country, {name: "Brazil", iso_name: "BRAZIL", iso: "BR", iso3: "BRA", numcode: 76 })}
 
       before do
-        allow(Spree::LineItem).to receive(:find_by_id).and_return(Spree::LineItem.new)
-        allow_any_instance_of(Order).to receive_messages :user => current_api_user
+        allow_any_instance_of(Order).to receive_messages user: current_api_user
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil

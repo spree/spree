@@ -26,9 +26,7 @@ require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
 
-require "support/big_decimal"
-require "support/test_gateway"
-require "support/rake"
+Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
 if ENV["CHECK_TRANSLATIONS"]
   require "spree/testing_support/i18n"

@@ -2,6 +2,8 @@ module Spree
   class Variant < Spree::Base
     acts_as_paranoid
 
+    include Spree::DefaultPrice
+
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -20,16 +22,12 @@ module Spree
     has_and_belongs_to_many :option_values, join_table: :spree_option_values_variants
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
 
-    has_one :default_price,
-      -> { where currency: Spree::Config[:currency] },
-      class_name: 'Spree::Price', inverse_of: :variant
-      
-    delegate_belongs_to :default_price, :display_price, :display_amount, :price, :price=, :currency
-
     has_many :prices,
       class_name: 'Spree::Price',
       dependent: :destroy,
       inverse_of: :variant
+
+    before_validation :set_cost_currency
 
     validate :check_price
 
@@ -37,13 +35,13 @@ module Spree
     validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
-    before_validation :set_cost_currency
-    after_save :save_default_price
     after_create :create_stock_items
     after_create :set_position
-    after_create :set_master_out_of_stock, :unless => :is_master?
+    after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
+
+    scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
@@ -58,12 +56,20 @@ module Spree
     end
 
     def cost_price=(price)
-      self[:cost_price] = parse_price(price) if price.present?
+      self[:cost_price] = Spree::LocalizedNumber.parse(price) if price.present?
+    end
+
+    def weight=(weight)
+      self[:weight] = Spree::LocalizedNumber.parse(weight) if weight.present?
     end
 
     # returns number of units currently on backorder for this variant.
     def on_backorder
       inventory_units.with_state('backordered').size
+    end
+
+    def is_backorderable?
+      Spree::Stock::Quantifier.new(self).backorderable?
     end
 
     def options_text
@@ -90,10 +96,6 @@ module Spree
     # This is a stopgap for that little problem.
     def product
       Spree::Product.unscoped { super }
-    end
-
-    def default_price
-      Spree::Price.unscoped { super }
     end
 
     def options=(options = {})
@@ -136,10 +138,6 @@ module Spree
       self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
     end
 
-    def has_default_price?
-      !self.default_price.nil?
-    end
-
     def price_in(currency)
       prices.select{ |price| price.currency == currency }.first || Spree::Price.new(variant_id: self.id, currency: currency)
     end
@@ -167,7 +165,7 @@ module Spree
       options.keys.map { |key|
         m = "#{options[key]}_price_modifier_amount".to_sym
         if self.respond_to? m
-          self.send(m, options[key]) 
+          self.send(m, options[key])
         else
           0
         end
@@ -203,17 +201,6 @@ module Spree
     end
 
     private
-      # strips all non-price-like characters from the price, taking into account locale settings
-      def parse_price(price)
-        return price unless price.is_a?(String)
-
-        separator, delimiter = I18n.t([:'number.currency.format.separator', :'number.currency.format.delimiter'])
-        non_price_characters = /[^0-9\-#{separator}]/
-        price.gsub!(non_price_characters, '') # strip everything else first
-        price.gsub!(separator, '.') unless separator == '.' # then replace the locale-specific decimal separator with the standard separator if necessary
-
-        price.to_d
-      end
 
       def set_master_out_of_stock
         if product.master && product.master.in_stock?
@@ -232,14 +219,6 @@ module Spree
         if currency.nil?
           self.currency = Spree::Config[:currency]
         end
-      end
-
-      def default_price_changed?
-        default_price && (default_price.changed? || default_price.new_record?)
-      end
-
-      def save_default_price
-        default_price.save if default_price_changed?
       end
 
       def set_cost_currency

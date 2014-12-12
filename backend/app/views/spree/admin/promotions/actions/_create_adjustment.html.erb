@@ -1,28 +1,30 @@
-<div class="calculator-fields row">
-
-  <div class="field alpha four columns">
-    <% field_name = "#{param_prefix}[calculator_type]" %>
-    <%= label_tag field_name, Spree.t(:calculator) %>
-    <%= select_tag field_name,
-                   options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
-                   :class => 'type-select select2 fullwidth' %>
-    <% if promotion_action.calculator.respond_to?(:preferences) %>
-      <span class="warning info"><%= Spree.t(:calculator_settings_warning) %></span>
+<div class="panel-body calculator-fields">
+  <div class="row no-marginb">
+    <div class="form-group col-md-6 no-marginb">
+      <% field_name = "#{param_prefix}[calculator_type]" %>
+      <%= label_tag field_name, Spree.t(:calculator) %>
+      <%= select_tag field_name,
+                     options_from_collection_for_select(@calculators, :to_s, :description, promotion_action.calculator.type),
+                     :class => 'type-select select2' %>
+    </div>
+    <% unless promotion_action.new_record? %>
+      <div class="form-group col-md-6 no-marginb settings">
+        <% type_name = promotion_action.calculator.type.demodulize.underscore %>
+        <% if lookup_context.exists?("fields",
+            ["spree/admin/promotions/calculators/#{type_name}"], true) %>
+          <%= render "spree/admin/promotions/calculators/#{type_name}/fields",
+            calculator: promotion_action.calculator, prefix: param_prefix %>
+        <% else %>
+          <%= render "spree/admin/promotions/calculators/default_fields",
+            calculator: promotion_action.calculator, prefix: param_prefix %>
+        <% end %>
+        <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
+      </div>
     <% end %>
   </div>
-
-  <% unless promotion_action.new_record? %>
-    <div class="settings field omega four columns">
-      <% type_name = promotion_action.calculator.type.demodulize.underscore %>
-      <% if lookup_context.exists?("fields",
-          ["spree/admin/promotions/calculators/#{type_name}"], true) %>
-        <%= render "spree/admin/promotions/calculators/#{type_name}/fields",
-          calculator: promotion_action.calculator, prefix: param_prefix %>
-      <% else %>
-        <%= render "spree/admin/promotions/calculators/default_fields",
-          calculator: promotion_action.calculator, prefix: param_prefix %>
-      <% end %>
-      <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
+  <% if promotion_action.calculator.respond_to?(:preferences) %>
+    <div class="alert alert-info js-warning margint no-marginb">
+      <%= Spree.t(:calculator_settings_warning) %>
     </div>
   <% end %>
 </div>

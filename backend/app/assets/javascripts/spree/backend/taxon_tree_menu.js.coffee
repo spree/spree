@@ -8,15 +8,15 @@ root.taxon_tree_menu = (obj, context) ->
   edit_url.setPath(edit_url.path() + '/' + obj.attr("id") + "/edit");
 
   create:
-    label: "<i class='fa fa-plus'></i> " + Spree.translations.add,
+    label: Spree.translations.add,
     action: (obj) -> context.create(obj)
   rename:
-    label: "<i class='fa fa-pencil'></i> " + Spree.translations.rename,
+    label: Spree.translations.rename,
     action: (obj) -> context.rename(obj)
   remove:
-    label: "<i class='fa fa-trash'></i> " + Spree.translations.remove,
+    label: Spree.translations.remove,
     action: (obj) -> context.remove(obj)
   edit:
     separator_before: true,
-    label: "<i class='fa fa-edit'></i> " + Spree.translations.edit,
+    label: Spree.translations.edit,
     action: (obj) -> window.location = edit_url.toString()

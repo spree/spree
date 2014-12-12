@@ -28,6 +28,7 @@ interested in. For example, you could use just the barebones spree\_core gem
 and perhaps combine it with your own custom backend admin instead of using
 spree_api.
 
+[![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
@@ -43,9 +44,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.6
+gem install rails -v 4.1.8
 gem install spree
-rails _4.1.6_ new my_store
+rails _4.1.8_ new my_store
 spree install my_store
 ```
 
@@ -261,11 +262,9 @@ bundle exec rake spree_auth:admin:create
 Running Tests
 -------------
 
-[![Team City](http://www.jetbrains.com/img/logos/logo_teamcity_small.gif)](http://www.jetbrains.com/teamcity)
+We use [CircleCI](https://circleci.com/) to run the tests for Spree.
 
-We use [TeamCity](http://www.jetbrains.com/teamcity/) to run the tests for Spree.
-
-You can see the build statuses at [http://ci.spree.fm](http://ci.spree.fm/guestLogin.html?guest=1).
+You can see the build statuses at [https://circleci.com/gh/spree/spree](https://circleci.com/gh/spree/spree).
 
 ---
 
@@ -335,6 +334,25 @@ Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.co
 Contributing
 ------------
 
-Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://guides.spreecommerce.com/developer/contributing.html)
+Spree is an open source project and we encourage contributions. Please review the
+[contributing guidelines](http://guides.spreecommerce.com/developer/contributing.html)
 before contributing.
+
+In the spirit of [free software](http://www.fsf.org/licensing/essays/free-sw.html), **everyone** is encouraged to help improve this project.
+
+Here are some ways **you** can contribute:
+
+* by using prerelease versions / master branch
+* by reporting [bugs](https://github.com/spree/spree/issues/new)
+* by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
+* by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
+* by writing [specs](https://github.com/spree/spree/labels/NeedSpecs)
+* by writing [needed code](https://github.com/spree/spree/labels/NeedCode) or [finishing code](https://github.com/spree/spree/labels/stalled)
+* by [refactoring code](https://github.com/spree/spree/labels/performance)
+* by resolving [issues](https://github.com/spree/spree/issues)
+* by reviewing [pull requests](https://github.com/spree/spree/pulls)
+
+License
+-------
+
+Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).

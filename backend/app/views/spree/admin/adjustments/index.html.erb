@@ -1,22 +1,32 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Adjustments' } %>
 
 <% content_for :page_title do %>
-   <i class="fa fa-arrow-right"></i> <%= Spree.t(:adjustments) %>
+   / <%= Spree.t(:adjustments) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), :icon => 'plus' %></li>
-  <li><%= button_link_to Spree.t(:back_to_orders_list), admin_orders_path, :icon => 'arrow-left' %></li>
+  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add' %>
 <% end %>
 
-<%= render :partial => 'adjustments_table' %>
+<% if @adjustments.present? %>
+  <%= render :partial => 'adjustments_table' %>
+<% else %>
+  <div class="alert alert-warning">
+    <%= Spree.t(:no_adjustments_found) %>
+  </div>
+<% end %>
 
 <% if @order.can_add_coupon? %>
-  <div data-hook="adjustments_new_coupon_code">
-    <%= text_field_tag "coupon_code", "", :placeholder => Spree.t(:coupon_code) %>
+  <div class="well" data-hook="adjustments_new_coupon_code">
+    <div class="form-group">
+      <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
+    </div>
     <%= button Spree.t(:add_coupon_code), 'plus', 'submit', :id => "add_coupon_code" %>
   </div>
 <% end %>
+
 <%= javascript_tag do -%>
   var order_number = '<%= @order.number %>';
 <% end -%>
+
+<%= render partial: 'spree/admin/shared/order_summary' %>

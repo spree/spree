@@ -14,7 +14,6 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
 
     context 'with any match policy' do
       before do
-        order.line_items << create(:line_item, product: create(:product, taxons: [create(:taxon)]))
         rule.preferred_match_policy = 'any'
       end
 
@@ -22,6 +21,22 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
         order.products.first.taxons << taxon
         rule.taxons << taxon
         expect(rule).to be_eligible(order)
+      end
+
+      context 'when order contains items from different taxons' do
+        before do
+          order.products.first.taxons << taxon
+          rule.taxons << taxon
+        end
+
+        it 'should act on a product within the eligible taxon' do
+          expect(rule).to be_actionable(order.line_items.last)
+        end
+
+        it 'should not act on a product in another taxon' do
+          order.line_items << create(:line_item, product: create(:product, taxons: [taxon2]))
+          expect(rule).not_to be_actionable(order.line_items.last)
+        end
       end
 
       context "when order does not have any prefered taxon" do
@@ -45,7 +60,7 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
       end
     end
 
-    context 'with any match policy' do
+    context 'with all match policy' do
       before do
         rule.preferred_match_policy = 'all'
       end

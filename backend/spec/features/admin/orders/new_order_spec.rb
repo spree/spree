@@ -10,9 +10,7 @@ describe "New Order", :type => :feature do
   stub_authorization!
 
   before do
-    visit spree.admin_path
-    click_on "Orders"
-    click_on "New Order"
+    visit spree.new_admin_order_path
   end
 
   it "does check if you have a billing address before letting you add shipments" do
@@ -23,8 +21,8 @@ describe "New Order", :type => :feature do
 
   it "completes new order succesfully without using the cart", js: true do
     select2_search product.name, from: Spree.t(:name_or_sku)
-    click_icon :plus
-    click_on "Customer Details"
+    click_icon :add
+    click_on "Customer"
 
     within "#select-customer" do
       targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -41,7 +39,7 @@ describe "New Order", :type => :feature do
     click_icon "capture"
 
     click_on "Shipments"
-    click_on "ship"
+    click_on "Ship"
     wait_for_ajax
 
     expect(page).to have_content("shipped")
@@ -53,14 +51,14 @@ describe "New Order", :type => :feature do
 
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 2
-        click_icon :plus
+        click_icon :add
       end
 
       within(".line-items") do
         expect(page).to have_content(product.name)
       end
 
-      click_on "Customer Details"
+      click_on "Customer"
 
       within "#select-customer" do
         targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -86,7 +84,7 @@ describe "New Order", :type => :feature do
 
     it "can still see line items" do
       select2_search product.name, from: Spree.t(:name_or_sku)
-      click_icon :plus
+      click_icon :add
       within(".line-items") do
         within(".line-item-name") do
           expect(page).to have_content(product.name)
@@ -104,7 +102,7 @@ describe "New Order", :type => :feature do
   # Regression test for #3336
   context "start by customer address" do
     it "completes order fine", js: true do
-      click_on "Customer Details"
+      click_on "Customer"
 
       within "#select-customer" do
         targetted_select2_search user.email, from: "#s2id_customer_search"
@@ -116,14 +114,14 @@ describe "New Order", :type => :feature do
 
       click_on "Shipments"
       select2_search product.name, from: Spree.t(:name_or_sku)
-      click_icon :plus
+      click_icon :add
       wait_for_ajax
 
       click_on "Payments"
       click_on "Continue"
 
       within(".additional-info .state") do
-        expect(page).to have_content("COMPLETE")
+        expect(page).to have_content("complete")
       end
     end
   end
@@ -134,15 +132,13 @@ describe "New Order", :type => :feature do
       create(:credit_card, default: true, user: user)
     end
     it "transitions to delivery not to complete" do
-      click_link "Orders"
-      click_link "New Order"
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
-        click_icon :plus
+        click_icon :add
       end
       wait_for_ajax
-      click_link "Customer Details"
+      click_link "Customer"
       targetted_select2 user.email, from: "#s2id_customer_search"
       click_button "Update"
       expect(Spree::Order.last.state).to eq 'delivery'

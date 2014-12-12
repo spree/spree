@@ -1,23 +1,18 @@
-<%= render 'spree/admin/shared/configuration_menu' %>
-
 <% content_for :page_title do %>
   <%= Spree.t(:taxonomies) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_taxonomy), spree.new_admin_taxonomy_url, :icon => 'plus', :id => 'admin_new_taxonomy_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_taxonomy), spree.new_admin_taxonomy_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_taxonomy_link' %>
 <% end %>
 
-<%= render 'spree/admin/shared/product_sub_menu' %>
 
 <% if @taxonomies.any? %>
-<div id="list-taxonomies" data-hook>
-  <%= render 'list' %>
-</div>
+  <div id="list-taxonomies" data-hook>
+    <%= render 'list' %>
+  </div>
 <% else %>
-  <div class="alpha twelve columns no-objects-found">
+  <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/taxonomy')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_taxonomy_path %>!
   </div>

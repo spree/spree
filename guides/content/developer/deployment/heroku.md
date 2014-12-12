@@ -93,38 +93,8 @@ This guide will assume that you have an S3 account already, along with a bucket
 under that account for your files to go into, and that you have generated the
 access key and secret for your S3 account.
 
-To configure Spree to upload images to S3, put these lines into
-`config/initializers/spree.rb`:
+To configure Spree to upload images to S3, please refer to the following [documentation](http://guides.spreecommerce.com/developer/s3_storage.html) or follow an [equivalent solution](https://devcenter.heroku.com/articles/paperclip-s3) from Heroku's website.
 
-```ruby
-Spree.config do |config|
-  config.use_s3 = true
-  config.s3_bucket = '<bucket>'
-  config.s3_access_key = "<key>"
-  config.s3_secret = "<secret>"
-end
-```
-
-If you're using the Western Europe S3 server, you will need to set two
-additional options inside this block:
-
-```ruby
-Spree.config do |config|
-  ...
-  config.attachment_url = ":s3_eu_url"
-  config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end
-```
-
-And additionally you will need to tell paperclip how to construct the URLs for
-your images by placing this code outside the +config+ block inside
-`config/initializers/spree.rb`:
-
-```ruby
-Paperclip.interpolates(:s3_eu_url) do |attachment, style|
-"#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/},"")}"
-end
-```
 
 ## Pushing to Heroku
 
