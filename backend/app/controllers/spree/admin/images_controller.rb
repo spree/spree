@@ -2,6 +2,7 @@ module Spree
   module Admin
     class ImagesController < ResourceController
       before_action :load_data
+      before_action :load_variants, except: :index
 
       create.before :set_viewable
       update.before :set_viewable
@@ -18,6 +19,9 @@ module Spree
 
       def load_data
         @product = Product.friendly.includes(*variant_includes).find(params[:product_id])
+      end
+
+      def load_variants
         @variants = @product.variants.map do |variant|
           [variant.sku_and_options_text, variant.id]
         end
