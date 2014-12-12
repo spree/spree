@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class ImagesController < ResourceController
-      before_action :load_data
-      before_action :load_variants, except: :index
+      before_action :load_edit_data, except: :index
+      before_action :load_index_data, only: :index
 
       create.before :set_viewable
       update.before :set_viewable
@@ -17,11 +17,12 @@ module Spree
         admin_product_images_url(@product)
       end
 
-      def load_data
-        @product = Product.friendly.includes(*variant_includes).find(params[:product_id])
+      def load_index_data
+        @product = Product.friendly.includes(*variant_index_includes).find(params[:product_id])
       end
 
-      def load_variants
+      def load_edit_data
+        @product = Product.friendly.includes(*variant_edit_includes).find(params[:product_id])
         @variants = @product.variants.map do |variant|
           [variant.sku_and_options_text, variant.id]
         end
@@ -33,8 +34,16 @@ module Spree
         @image.viewable_id = params[:image][:viewable_id]
       end
 
-      def variant_includes
-        [variants_including_master: { option_values: :option_type, images: :viewable }]
+      def variant_index_includes
+        [
+          variant_images: [ viewable: { option_values: :option_type } ]
+        ]
+      end
+
+      def variant_edit_includes
+        [
+          variants_including_master: { option_values: :option_type, images: :viewable }
+        ]
       end
     end
   end
