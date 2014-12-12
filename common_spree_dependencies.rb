@@ -27,6 +27,7 @@ group :test do
   gem 'rspec-rails', '~> 2.14.0'
   gem 'selenium-webdriver', '~> 2.35'
   gem 'simplecov'
+  gem 'timecop'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.4.1'
 end
