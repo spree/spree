@@ -628,6 +628,10 @@ module Spree
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
+    def order
+      self
+    end
+
     private
 
     def link_by_email
