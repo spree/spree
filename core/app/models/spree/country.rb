@@ -20,9 +20,9 @@ module Spree
 
     def self.default
       if Spree::Config[:default_country_id].present?
-        Spree::Country.find(Spree::Config[:default_country_id])
+        self.find(Spree::Config[:default_country_id])
       else
-        Spree::Country.find_by!(iso: 'US')
+        self.find_by!(iso: 'US')
       end
     end
 
