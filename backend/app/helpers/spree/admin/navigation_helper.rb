@@ -44,19 +44,19 @@ module Spree
       end
 
       # Single main menu item
-      def main_menu_item text, url: nil, icon: nil
+      def main_menu_item(text, url, icon)
         link_to url do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
-          content_tag(:span, " #{text}") +
-          content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
+            content_tag(:span, " #{text}") +
+            content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
         end
       end
 
       # Main menu tree menu
-      def main_menu_tree text, icon: nil, sub_menu: nil
+      def main_menu_tree(text, icon, sub_menu)
         content_tag :li, class: "treeview" do
-          main_menu_item(text, url: "javascript:;", icon: icon) +
-          render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
+          main_menu_item(text, "javascript:;", icon) +
+            render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
       end
 

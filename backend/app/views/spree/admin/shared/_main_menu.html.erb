@@ -3,7 +3,7 @@
 <% end %>
 
 <% if can? :admin, Spree::Product %>
-  <%= main_menu_tree Spree.t(:products), icon: "products", sub_menu: "product" %>
+  <%= main_menu_tree Spree.t(:products), "products", "product" %>
 <% end %>
 
 <% if can? :admin, Spree::Admin::ReportsController %>
@@ -11,7 +11,7 @@
 <% end %>
 
 <% if can? :admin, Spree::Promotion %>
-  <%= main_menu_tree Spree.t(:promotions), icon: "promotion", sub_menu: "promotion" %>
+  <%= main_menu_tree Spree.t(:promotions), "promotion", "promotion" %>
 <% end %>
 
 <% if Spree.user_class && can?(:admin, Spree.user_class) %>
@@ -19,5 +19,5 @@
 <% end %>
 
 <% if can? :admin, current_store %>
-  <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration" %>
+  <%= main_menu_tree Spree.t(:configurations), "wrench", "configuration" %>
 <% end %>
