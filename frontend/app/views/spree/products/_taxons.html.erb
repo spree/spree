@@ -1,11 +1,11 @@
 <% if !@product.taxons.blank? %>
-  <div id="taxon-crumbs" data-hook class="alpha columns five omega">
-    <h6 class="product-section-title"><%= Spree.t(:look_for_similar_items) %></h6>
+  <div id="taxon-crumbs" data-hook class=" five ">
+    <h3 class="product-section-title"><%= Spree.t(:look_for_similar_items) %></h3>
 
     <div data-hook="product_taxons">
-      <ul id="similar_items_by_taxon" data-hook>
+      <ul class="list-group" id="similar_items_by_taxon" data-hook>
       <% @product.taxons.each do |taxon| %>
-        <li><%= link_to taxon.name, seo_url(taxon) %></li>
+        <li class="list-group-item"><%= link_to taxon.name, seo_url(taxon) %></li>
       <% end %>
       </ul>
     </div>

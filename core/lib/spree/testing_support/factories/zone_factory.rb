@@ -13,5 +13,13 @@ FactoryGirl.define do
   factory :zone, class: Spree::Zone do
     name { generate(:random_string) }
     description { generate(:random_string) }
+
+    factory :zone_with_country do
+      zone_members do |proxy|
+        zone = proxy.instance_eval { @instance }
+        country = create(:country)
+        [Spree::ZoneMember.create(zoneable: country, zone: zone)]
+      end
+    end
   end
 end

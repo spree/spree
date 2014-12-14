@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Template rendering", :type => :feature do
+describe "Template rendering", type: :feature do
 
   after do
     Capybara.ignore_hidden_elements = true

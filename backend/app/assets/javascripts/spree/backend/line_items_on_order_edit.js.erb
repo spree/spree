@@ -13,15 +13,6 @@ $(document).ready(function () {
         $('#stock_details').show();
 
         $('button.add_variant').click(addVariant);
-
-        // Add some tips
-        $('.with-tip').powerTip({
-            smartPlacement: true,
-            fadeInTime: 50,
-            fadeOutTime: 50,
-            intentPollInterval: 300
-        });
-
     });
 });
 

@@ -10,7 +10,7 @@ module Spree
 
       def show
         session[:return_to] ||= request.referer
-        redirect_to( :action => :edit )
+        redirect_to action: :edit
       end
 
       def index
@@ -31,10 +31,11 @@ module Spree
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
             format.html { redirect_to location_after_save }
-            format.js   { render :layout => false }
+            format.js   { render layout: false }
           end
         else
-          # Stops people submitting blank slugs, causing errors when they try to update the product again
+          # Stops people submitting blank slugs, causing errors when they try to
+          # update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
           respond_with(@object)
@@ -66,7 +67,7 @@ module Spree
       end
 
       def stock
-        @variants = @product.variants
+        @variants = @product.variants.includes(*variant_stock_includes)
         @variants = [@product.master] if @variants.empty?
         @stock_locations = StockLocation.accessible_by(current_ability, :read)
         if @stock_locations.empty?
@@ -77,59 +78,67 @@ module Spree
 
       protected
 
-        def find_resource
-          Product.with_deleted.friendly.find(params[:id])
+      def find_resource
+        Product.with_deleted.friendly.find(params[:id])
+      end
+
+      def location_after_save
+        spree.edit_admin_product_url(@product)
+      end
+
+      def load_data
+        @taxons = Taxon.order(:name)
+        @option_types = OptionType.order(:name)
+        @tax_categories = TaxCategory.order(:name)
+        @shipping_categories = ShippingCategory.order(:name)
+      end
+
+      def collection
+        return @collection if @collection.present?
+        params[:q] ||= {}
+        params[:q][:deleted_at_null] ||= "1"
+
+        params[:q][:s] ||= "name asc"
+        @collection = super
+        if params[:q].delete(:deleted_at_null) == '0'
+          @collection = @collection.with_deleted
         end
+        # @search needs to be defined as this is passed to search_form_for
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.
+              distinct_by_product_ids(params[:q][:s]).
+              includes(product_includes).
+              page(params[:page]).
+              per(params[:per_page] || Spree::Config[:admin_products_per_page])
 
-        def location_after_save
-          spree.edit_admin_product_url(@product)
-        end
+        @collection
+      end
 
-        def load_data
-          @taxons = Taxon.order(:name)
-          @option_types = OptionType.order(:name)
-          @tax_categories = TaxCategory.order(:name)
-          @shipping_categories = ShippingCategory.order(:name)
-        end
+      def create_before
+        return if params[:product][:prototype_id].blank?
+        @prototype = Spree::Prototype.find(params[:product][:prototype_id])
+      end
 
-        def collection
-          return @collection if @collection.present?
-          params[:q] ||= {}
-          params[:q][:deleted_at_null] ||= "1"
+      def update_before
+        # note: we only reset the product properties if we're receiving a post
+        #       from the form on that tab
+        return unless params[:clear_product_properties]
+        params[:product] ||= {}
+      end
 
-          params[:q][:s] ||= "name asc"
-          @collection = super
-          @collection = @collection.with_deleted if params[:q].delete(:deleted_at_null) == '0'
-          # @search needs to be defined as this is passed to search_form_for
-          @search = @collection.ransack(params[:q])
-          @collection = @search.result.
-                distinct_by_product_ids(params[:q][:s]).
-                includes(product_includes).
-                page(params[:page]).
-                per(Spree::Config[:admin_products_per_page])
+      def product_includes
+        [{ variants: [:images], master: [:images, :default_price] }]
+      end
 
-          @collection
-        end
+      def clone_object_url(resource)
+        clone_admin_product_url resource
+      end
 
-        def create_before
-          return if params[:product][:prototype_id].blank?
-          @prototype = Spree::Prototype.find(params[:product][:prototype_id])
-        end
+      private
 
-        def update_before
-          # note: we only reset the product properties if we're receiving a post from the form on that tab
-          return unless params[:clear_product_properties]
-          params[:product] ||= {}
-        end
-
-        def product_includes
-          [{ :variants => [:images], :master => [:images, :default_price]}]
-        end
-
-        def clone_object_url resource
-          clone_admin_product_url resource
-        end
-
+      def variant_stock_includes
+        [:images, stock_items: :stock_location, option_values: :option_type]
+      end
     end
   end
 end

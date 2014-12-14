@@ -33,7 +33,7 @@ module Spree
           @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
 
           if @deleted.blank?
-            @collection ||= super
+            @collection ||= super.includes(:default_price, option_values: :option_type)
           else
             @collection ||= Variant.only_deleted.where(:product_id => parent.id)
           end

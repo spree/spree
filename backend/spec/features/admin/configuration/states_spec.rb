@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "States", :type => :feature do
+describe "States", type: :feature do
   stub_authorization!
 
   let!(:country) { create(:country) }
@@ -34,19 +34,19 @@ describe "States", :type => :feature do
   end
 
   context "creating and editing states" do
-    it "should allow an admin to edit existing states", :js => true do
+    it "should allow an admin to edit existing states", js: true do
       go_to_states_page
       set_select2_field("country", country.id)
 
       click_link "new_state_link"
-      fill_in "state_name", :with => "Calgary"
-      fill_in "Abbreviation", :with => "CL"
+      fill_in "state_name", with: "Calgary"
+      fill_in "Abbreviation", with: "CL"
       click_button "Create"
       expect(page).to have_content("successfully created!")
       expect(page).to have_content("Calgary")
     end
 
-    it "should allow an admin to create states for non default countries", :js => true do
+    it "should allow an admin to create states for non default countries", js: true do
       go_to_states_page
       set_select2_field "#country", @hungary.id
       # Just so the change event actually gets triggered in this spec
@@ -54,22 +54,22 @@ describe "States", :type => :feature do
       page.execute_script("$('#country').trigger('change');")
 
       click_link "new_state_link"
-      fill_in "state_name", :with => "Pest megye"
-      fill_in "Abbreviation", :with => "PE"
+      fill_in "state_name", with: "Pest megye"
+      fill_in "Abbreviation", with: "PE"
       click_button "Create"
       expect(page).to have_content("successfully created!")
       expect(page).to have_content("Pest megye")
       expect(find("#s2id_country span").text).to eq("Hungary")
     end
 
-    it "should show validation errors", :js => true do
+    it "should show validation errors", js: true do
       go_to_states_page
       set_select2_field("country", country.id)
 
       click_link "new_state_link"
 
-      fill_in "state_name", :with => ""
-      fill_in "Abbreviation", :with => ""
+      fill_in "state_name", with: ""
+      fill_in "Abbreviation", with: ""
       click_button "Create"
       expect(page).to have_content("Name can't be blank")
     end

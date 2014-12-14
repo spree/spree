@@ -13,9 +13,9 @@ module Spree
     include Spree::Order::Payments
 
     extend Spree::DisplayMoney
-    money_methods :outstanding_balance, :item_total, :adjustment_total,
-      :included_tax_total, :additional_tax_total, :tax_total,
-      :shipment_total, :total
+    money_methods :outstanding_balance, :item_total,           :adjustment_total,
+                  :included_tax_total,  :additional_tax_total, :tax_total,
+                  :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
 
@@ -511,7 +511,7 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      shipments.each { |shipment| ItemAdjustments.new(shipment).update }
+      shipments.each { |shipment| Adjustable::AdjustmentsUpdater.update(shipment) }
       updater.update_shipment_total
       persist_totals
     end

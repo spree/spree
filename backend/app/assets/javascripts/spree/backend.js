@@ -1,26 +1,17 @@
+//= require bootstrap-sprockets
 //= require jquery
+//= require jquery.cookie
+//= require jquery.jstree/jquery.jstree
+//= require jquery.tree-menu
 //= require jquery_ujs
-//= require jquery-migrate-1.0.0
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
 //= require modernizr
-//= require jquery.cookie
-//= require jquery.delayedobserver
-//= require jquery.jstree/jquery.jstree
-//= require jquery.alerts/jquery.alerts
-//= require jquery.powertip
-//= require jquery.vAlign
-//= require css_browser_selector_dev
-//= require spin
-//= require trunk8
-//= require jquery.adaptivemenu
-//= require equalize
-//= require responsive-tables
+//= require underscore-min.js
 //= require spree
 //= require spree/backend/spree-select2
 //= require_tree .
-
 
 Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
 Spree.routes.classifications_api = Spree.pathFor('api/classifications')
@@ -42,3 +33,7 @@ Spree.routes.payments_api = function(order_id) {
 Spree.routes.stock_items_api = function(stock_location_id) {
   return Spree.pathFor('api/stock_locations/' + stock_location_id + '/stock_items')
 }
+
+$(document).ready(function(){
+  $(".sidebar .treeview").tree();
+});

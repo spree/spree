@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Adjustments", :type => :feature do
+describe "Adjustments", type: :feature do
   stub_authorization!
 
   let!(:order) { create(:completed_order_with_totals, line_items_count: 5) }
@@ -27,10 +27,9 @@ describe "Adjustments", :type => :feature do
     order.update_totals
     order.persist_totals
 
-    visit spree.admin_path
-    click_link "Orders"
-    within_row(1) { click_icon :edit }
-    click_link "Adjustments"
+    visit spree.admin_orders_path
+    within_row(1) { click_on order.number }
+    click_on "Adjustments"
   end
 
   after :each do
@@ -59,8 +58,8 @@ describe "Adjustments", :type => :feature do
 
     context "successfully" do
       it "should create a new adjustment" do
-        fill_in "adjustment_amount", :with => "10"
-        fill_in "adjustment_label", :with => "rebate"
+        fill_in "adjustment_amount", with: "10"
+        fill_in "adjustment_label", with: "rebate"
         click_button "Continue"
         expect(page).to have_content("successfully created!")
         expect(page).to have_content("Total: $180.00")
@@ -69,8 +68,8 @@ describe "Adjustments", :type => :feature do
 
     context "with validation errors" do
       it "should not create a new adjustment" do
-        fill_in "adjustment_amount", :with => ""
-        fill_in "adjustment_label", :with => ""
+        fill_in "adjustment_amount", with: ""
+        fill_in "adjustment_label", with: ""
         click_button "Continue"
         expect(page).to have_content("Label can't be blank")
         expect(page).to have_content("Amount is not a number")
@@ -78,7 +77,7 @@ describe "Adjustments", :type => :feature do
     end
   end
 
-  context "admin editing an adjustment" do
+  context "admin editing an adjustment", js: true do
 
     before(:each) do
       within_row(2) { click_icon :edit }
@@ -86,8 +85,8 @@ describe "Adjustments", :type => :feature do
 
     context "successfully" do
       it "should update the adjustment" do
-        fill_in "adjustment_amount", :with => "99"
-        fill_in "adjustment_label", :with => "rebate 99"
+        fill_in "adjustment_amount", with: "99"
+        fill_in "adjustment_label", with: "rebate 99"
         click_button "Continue"
         expect(page).to have_content("successfully updated!")
         expect(page).to have_content("rebate 99")
@@ -101,8 +100,8 @@ describe "Adjustments", :type => :feature do
 
     context "with validation errors" do
       it "should not update the adjustment" do
-        fill_in "adjustment_amount", :with => ""
-        fill_in "adjustment_label", :with => ""
+        fill_in "adjustment_amount", with: ""
+        fill_in "adjustment_label", with: ""
         click_button "Continue"
         expect(page).to have_content("Label can't be blank")
         expect(page).to have_content("Amount is not a number")
@@ -113,18 +112,18 @@ describe "Adjustments", :type => :feature do
   context "deleting an adjustment" do
     it "should not be possible if adjustment is closed" do
       within_row(1) do
-        expect(page).not_to have_css('.fa-trash')
+        expect(page).not_to have_css('.fa-delete')
       end
     end
 
-    it "should update the total", :js => true do
+    it "should update the total", js: true do
       accept_alert do
         within_row(2) do
-          click_icon(:trash)
+          click_icon(:delete)
         end
       end
 
-      expect(page).to have_content(/TOTAL: ?\$170\.00/)
+      expect(page).to have_content(/Total: ?\$170\.00/)
     end
   end
 end

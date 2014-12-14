@@ -20,7 +20,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', version
   s.add_dependency 'spree_core', version
 
-  s.add_dependency 'jquery-rails', '~> 3.1.2'
+  s.add_dependency 'bootstrap-sass',  '~> 3.3.1'
+  s.add_dependency 'jquery-rails',    '~> 3.1.2'
   s.add_dependency 'jquery-ui-rails', '~> 5.0.0'
-  s.add_dependency 'select2-rails', '~> 3.5.0'
+  s.add_dependency 'select2-rails',   '~> 3.5.0'
+  s.add_dependency 'sprockets-rails', '~> 2.2.1'
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe "Countries", :type => :feature do
+  describe "Countries", type: :feature do
     stub_authorization!
 
     it "deletes a state", js: true do
@@ -13,8 +13,9 @@ module Spree
       click_button "Create"
 
       accept_alert do
-        click_icon :trash
+        click_icon :delete
       end
+
       wait_for_ajax
 
       expect { Country.find(country.id) }.to raise_error

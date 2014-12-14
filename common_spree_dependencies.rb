@@ -6,8 +6,9 @@ source 'https://rubygems.org'
 platforms :ruby do
   gem 'mysql2'
   gem 'pg'
-  gem 'sqlite3'
 end
+
+gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -31,7 +32,6 @@ group :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.1.0'
-  gem 'rspec-retry'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
@@ -49,3 +49,5 @@ group :test, :development do
     gem 'pry-byebug'
   end
 end
+
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
