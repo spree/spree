@@ -253,9 +253,16 @@ ul {
   border-left: 1px solid $color-border;
   ul.nav {
     margin-top: 63px;
-    li .icon-link span.icon {
-      float: left;
-      margin: 2px 6px 0 0;
+    li {
+      a {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .icon-link span.icon {
+        float: left;
+        margin: 2px 6px 0 0;
+      }
     }
     &.nav-stacked > li {
       height: 42px !important;
