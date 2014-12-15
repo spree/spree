@@ -16,6 +16,7 @@ module Spree
       before_action :load_user
       before_action :authorize_for_order, if: Proc.new { order_token.present? }
       before_action :authenticate_user
+      before_action :thread_localize_user
       before_action :load_user_roles
 
       after_filter  :set_jsonp_format
@@ -80,6 +81,12 @@ module Spree
             # An anonymous user
             @current_api_user = Spree.user_class.new
           end
+        end
+      end
+
+      def thread_localize_user
+        if @current_api_user
+          Thread.current[:current_api_user] = @current_api_user
         end
       end
 

@@ -12,8 +12,9 @@ describe Spree::Api::BaseController, :type => :controller do
   end
 
   context "signed in as a user using an authentication extension" do
+    let(:user) { double(email: "spree@example.com") }
+
     before do
-      user = double(:email => "spree@example.com")
       allow(user).to receive_message_chain :spree_roles, pluck: []
       allow(controller).to receive_messages :try_spree_current_user => user
     end
@@ -22,6 +23,11 @@ describe Spree::Api::BaseController, :type => :controller do
       api_get :index
       expect(json_response).to eq({ "products" => [] })
       expect(response.status).to eq(200)
+    end
+
+    it 'thread localizes the current_api_user' do
+      api_get :index
+      expect(Thread.current[:current_api_user]).to eq(user)
     end
   end
 
