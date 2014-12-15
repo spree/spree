@@ -51,8 +51,8 @@ module Spree
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
-      before_transition to: :received, do: :process_inventory_unit!
       after_transition to: :received, do: :attempt_accept
+      after_transition to: :received, do: :process_inventory_unit!
 
       event :receive do
         transition to: :received, from: :awaiting
