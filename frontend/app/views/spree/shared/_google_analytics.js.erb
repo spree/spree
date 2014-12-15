@@ -8,7 +8,7 @@ ga('create', '<%= Spree::Tracker.current.analytics_id %>', 'auto');
 ga('require', 'displayfeatures');
 ga('require', 'linkid', 'linkid.js');
 
-ga('set', '&cu', '<%= Spree::Config[:currency] %>');
+ga('set', '&cu', '<%= current_currency %>');
 
 <% if spree_current_user %>
   ga('set', '&uid', <%= spree_current_user.id %>);
