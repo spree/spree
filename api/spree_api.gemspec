@@ -6,7 +6,8 @@ Gem::Specification.new do |gem|
   gem.email         = ["ryan@spreecommerce.com"]
   gem.description   = %q{Spree's API}
   gem.summary       = %q{Spree's API}
-  gem.homepage      = ""
+  gem.homepage      = 'https://spreecommerce.com'
+  gem.license       = %q{BSD-3}
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
