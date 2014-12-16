@@ -18,6 +18,7 @@ FactoryGirl.define do
 
       transient do
         line_items_count 5
+        frontend_only true
       end
 
       after(:create) do |order, evaluator|
@@ -33,8 +34,8 @@ FactoryGirl.define do
       factory :completed_order_with_totals do
         state 'complete'
 
-        after(:create) do |order|
-          order.refresh_shipment_rates
+        after(:create) do |order, evaluator|
+          order.refresh_shipment_rates(evaluator.frontend_only)
           order.update_column(:completed_at, Time.now)
         end
 

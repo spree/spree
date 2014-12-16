@@ -99,6 +99,20 @@ describe "Order Details", type: :feature, js: true do
         expect(page).to have_content("Default")
       end
 
+      it "can assign a back-end only shipping method" do
+        create(:shipping_method, name: 'Backdoor', display_on: 'back_end')
+        order = create(:completed_order_with_totals, frontend_only: false)
+        visit spree.edit_admin_order_path(order)
+        within("table.index tr.show-method") do
+          click_icon :edit
+        end
+        select2 "Backdoor", :from => "Shipping Method"
+        click_icon :ok
+
+        expect(page).not_to have_css('#selected_shipping_rate_id')
+        expect(page).to have_content("Backdoor")
+      end
+
       it "will show the variant sku" do
         order = create(:completed_order_with_totals)
         visit spree.edit_admin_order_path(order)
@@ -200,7 +214,7 @@ describe "Order Details", type: :feature, js: true do
           end
         end
       end
-      
+
       context "with special_instructions present" do
         let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
         it "will show the special_instructions" do
@@ -233,7 +247,7 @@ describe "Order Details", type: :feature, js: true do
   end
 
   context 'with only read permissions' do
-    before do 
+    before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
