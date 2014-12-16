@@ -20,6 +20,7 @@ module Spree
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
+    validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order
     validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
@@ -178,6 +179,13 @@ module Spree
 
       if customer_return.order_id != inventory_unit.order_id
         errors.add(:base, Spree.t(:return_items_cannot_be_associated_with_multiple_orders))
+      end
+    end
+
+    def eligible_exchange_variant
+      return unless exchange_variant && exchange_variant_id_changed?
+      unless eligible_exchange_variants.include?(exchange_variant)
+        errors.add(:base, Spree.t(:invalid_exchange_variant))
       end
     end
 

@@ -785,6 +785,7 @@ en:
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
     invalid_credit_card: Invalid credit card.
+    invalid_exchange_variant: Invalid exchange variant.
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
