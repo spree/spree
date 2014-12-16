@@ -23,7 +23,7 @@ module Spree
       delegate :adjustments, :persisted?, to: :adjustable
 
       def update_promo_adjustments
-        promo_adjustments = adjustments.competing_promos.reload.map { |a| a.update!(adjustable) }
+        promo_adjustments = adjustments.competing_promos.map { |a| a.update!(adjustable) }
         promos_total = promo_adjustments.compact.sum
         choose_best_promo_adjustment unless promos_total == 0
         @promo_total = best_promo_adjustment.try(:amount).to_f
@@ -31,8 +31,11 @@ module Spree
 
       def update_tax_adjustments
         tax = (adjustable.try(:all_adjustments) || adjustable.adjustments).tax
-        @included_tax_total = tax.included.reload.map(&:update!).compact.sum
-        @additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
+
+        includeds, additionals = tax.partition { |t| t.included? }
+
+        @included_tax_total = includeds.map { |a| a.update! adjustable }.compact.sum
+        @additional_tax_total = additionals.map { |a| a.update! adjustable }.compact.sum
       end
 
       def persist_totals

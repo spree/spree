@@ -22,6 +22,7 @@ module Spree
       amount = compute_amount(adjustable)
       return if amount == 0
       adjustment = adjustable.adjustments.new(order: order,
+                                              adjustable: adjustable,
                                               source: self,
                                               label: label,
                                               amount: amount)

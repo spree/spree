@@ -238,6 +238,7 @@ module Spree
             @order = Spree::Order.create!
             allow(@order).to receive_messages :coupon_code => "10off"
           end
+
           context "and the product price is less than promo discount" do
             before(:each) do
               3.times do |i|
@@ -245,17 +246,21 @@ module Spree
                 @order.contents.add(taxable.master, 1)
               end
             end
+
             it "successfully applies the promo" do
               # 3 * (9 + 0.9)
               expect(@order.total).to eq(29.7)
+
               coupon = Coupon.new(@order)
               coupon.apply
               expect(coupon.success).to be_present
+
               # 3 * ((9 - [9,10].min) + 0)
               expect(@order.reload.total).to eq(0)
               expect(@order.additional_tax_total).to eq(0)
             end
           end
+
           context "and the product price is greater than promo discount" do
             before(:each) do
               3.times do |i|
@@ -274,6 +279,7 @@ module Spree
               expect(@order.additional_tax_total).to eq(3.6)
             end
           end
+
           context "and multiple quantity per line item" do
             before(:each) do
               twnty_off = Promotion.create name: "promo", :code => "20off"
@@ -288,6 +294,7 @@ module Spree
                 @order.contents.add(taxable.master, 2)
               end
             end
+
             it "successfully applies the promo" do
               # 3 * ((2 * 10) + 2.0)
               expect(@order.total.to_f).to eq(66)
@@ -316,7 +323,6 @@ module Spree
             expect(order.line_items.pluck(:variant_id)).to include(variant.id)
           end
         end
-
       end
     end
   end

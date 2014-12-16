@@ -419,6 +419,6 @@ describe Spree::CheckoutController, :type => :controller do
 
     expect {
       spree_post :update, { :state => "payment" }
-    }.to change { order.line_items }
+    }.to change { order.line_items.to_a }
   end
 end

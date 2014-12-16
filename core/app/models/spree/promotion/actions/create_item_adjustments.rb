@@ -12,17 +12,15 @@ module Spree
 
         def perform(options = {})
           order, promotion = options[:order], options[:promotion]
-          already_adjusted = adjustments.where(order: order).pluck(:adjustable_id)
 
-          order.line_items.where.not(id: already_adjusted).map do |line_item|
-            next unless promotion.line_item_actionable?(order, line_item)
+          line_items_to_adjust(promotion, order).map do |line_item|
             create_adjustment(order, line_item)
           end.any?
         end
 
-        def compute_amount(line_item)
-          return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
-          [line_item.amount, compute(line_item)].min * -1
+        def compute_amount(adjustable)
+          return 0 unless promotion.line_item_actionable?(adjustable.order, adjustable)
+          [adjustable.amount, compute(adjustable)].min * -1
         end
 
         private
@@ -36,6 +34,16 @@ module Spree
             self.adjustments.where(:adjustable_id => adjustable.id).exists?
           end
 
+          def line_items_to_adjust(promotion, order)
+            excluded_ids = self.adjustments.
+              where(adjustable_id: order.line_items.map(&:id), adjustable_type: 'Spree::LineItem').
+              pluck(:adjustable_id)
+
+            order.line_items.select do |line_item|
+              !excluded_ids.include?(line_item.id) &&
+                promotion.line_item_actionable?(order, line_item)
+            end
+          end
       end
     end
   end
