@@ -87,6 +87,10 @@ module Spree
     end
 
     def after_resume
+      unstock_manifest
+    end
+
+    def unstock_manifest
       manifest.each { |item| manifest_unstock(item) }
     end
 
@@ -129,8 +133,11 @@ module Spree
     end
 
     def finalize!
-      InventoryUnit.finalize_units!(inventory_units)
-      manifest.each { |item| manifest_unstock(item) }
+      puts <<-EOS.strip_heredoc
+        DEPRECATION WARNING: Shipment#finalize! will be deprecated,
+        please call FinalizeShipment.new(shipment).execute! instead.
+      EOS
+      FinalizeShipment.new(self).execute!
     end
 
     def include?(variant)
