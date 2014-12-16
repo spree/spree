@@ -1,4 +1,20 @@
 table.table {
+  thead {
+    th {
+      text-transform: uppercase;
+      font-size: $font-size-base - 3px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      vertical-align: middle;
+      letter-spacing: 1px;
+
+      a {
+        .glyphicon {
+          padding-left: 5px;
+        }
+      }
+    }
+  }
   tbody {
     tr {
       td {

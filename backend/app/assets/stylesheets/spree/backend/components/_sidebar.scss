@@ -26,13 +26,16 @@
   }
 
   ul.nav.nav-pills {
-    padding-left: 18px;
     background-color: white;
     border-top: 1px solid $gray-lighter;
 
     li {
       a {
-        padding: 5px 15px;
+        padding: 5px 15px 5px 33px;
+
+        &:hover {
+          border-radius: 0;
+        }
       }
 
       &.selected {

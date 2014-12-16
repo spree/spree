@@ -1,7 +1,19 @@
 /*------------------------------------------
   Components
   -----------------------------------------*/
-$border-radius-base: 3px;
+  $border-radius-base: 3px;
+  $padding-base-vertical: 10px;
+  $padding-base-horizontal: 16px;
+
+/*------------------------------------------
+  Fonts
+  -----------------------------------------*/
+  $headings-font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  $headings-font-weight: 300;
+
+/*------------------------------------------
+  Buttons
+  -----------------------------------------*/
 
 /*------------------------------------------
   Navbar
