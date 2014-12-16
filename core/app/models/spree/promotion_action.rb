@@ -18,7 +18,7 @@ module Spree
 
     protected
 
-    def label(amount)
+    def label(_amount)
       "#{Spree.t(:promotion)} (#{promotion.name})"
     end
   end
