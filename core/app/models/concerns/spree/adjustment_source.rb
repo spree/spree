@@ -25,14 +25,14 @@ module Spree
     end
 
     def create_unique_adjustments(order_id, adjustables)
-      adjustables.where.not(id: already_adjusted(order_id)).map do |adjustable|
+      adjustables.where.not(id: already_adjusted_ids(order_id)).map do |adjustable|
         create_adjustment(order_id, adjustable) if !block_given? || yield(adjustable)
       end.any?
     end
 
     private
 
-    def already_adjusted(order_id)
+    def already_adjusted_ids(order_id)
       adjustments.where(order_id: order_id).pluck(:adjustable_id)
     end
 
