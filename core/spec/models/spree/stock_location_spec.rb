@@ -201,7 +201,7 @@ module Spree
         subject { create(:stock_location) }
         let(:variant) { create(:base_variant) }
 
-        it 'zero on_hand and backordered', focus: true do
+        it 'zero on_hand and backordered' do
           subject
           variant.stock_items.destroy_all
           on_hand, backordered = subject.fill_status(variant, 1)
