@@ -100,16 +100,16 @@ describe "Order Details", type: :feature, js: true do
       end
 
       it "can assign a back-end only shipping method" do
-        create(:shipping_method, name: 'Backdoor', display_on: 'back_end')
-        order = create(:completed_order_with_totals,
+        create(:shipping_method, name: "Backdoor", display_on: "back_end")
+        order = create(
+          :completed_order_with_totals,
           shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
         )
         visit spree.edit_admin_order_path(order)
         within("table.index tr.show-method") do
           click_icon :edit
         end
-        save_and_open_page
-        select2 "Backdoor", :from => "Shipping Method"
+        select2 "Backdoor", from: "Shipping Method"
         click_icon :ok
 
         expect(page).not_to have_css('#selected_shipping_rate_id')

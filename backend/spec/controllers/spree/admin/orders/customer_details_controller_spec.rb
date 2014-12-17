@@ -1,17 +1,17 @@
-require 'spec_helper'
-require 'cancan'
-require 'spree/testing_support/bar_ability'
+require "spec_helper"
+require "cancan"
+require "spree/testing_support/bar_ability"
 
 describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
-  context 'with authorization' do
+  context "with authorization" do
     stub_authorization!
 
     let(:order) do
       mock_model(
         Spree::Order,
         total:           100,
-        number:          'R123456789',
+        number:          "R123456789",
         billing_address: mock_model(Spree::Address)
       )
     end
@@ -20,8 +20,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       allow(Spree::Order).to receive_messages(find_by_number!: order)
     end
 
-    context '#update' do
-      it 'does refresh the shipment rates with all shipping methods' do
+    context "#update" do
+      it "does refresh the shipment rates with all shipping methods" do
         allow(order).to receive_messages(update_attributes: true)
         allow(order).to receive_messages(next: false)
         expect(order).to receive(:refresh_shipment_rates)
@@ -29,8 +29,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
         attributes = {
           order_id: order.number,
           order: {
-            email: '',
-            use_billing: '',
+            email: "",
+            use_billing: "",
             bill_address_attributes: {},
             ship_address_attributes: {}
           }

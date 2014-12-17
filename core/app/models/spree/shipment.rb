@@ -122,7 +122,8 @@ module Spree
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package, shipping_method_filter)
+      self.shipping_rates = Stock::Estimator.new(order)
+        .shipping_rates(to_package, shipping_method_filter)
 
       if shipping_method
         selected_rate = shipping_rates.detect { |rate|
