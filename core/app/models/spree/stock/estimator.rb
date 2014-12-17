@@ -51,9 +51,7 @@ module Spree
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
           begin
-            (ui_filter == ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END ||
-            (method.frontend? && ui_filter == ShippingMethod::DISPLAY_ON_FRONT_END) ||
-            (!method.frontend? && ui_filter == ShippingMethod::DISPLAY_ON_BACK_END)) &&
+            ship_method.available_to_ui(ui_filter) &&
             ship_method.include?(order.ship_address) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||
