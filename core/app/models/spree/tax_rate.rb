@@ -80,7 +80,7 @@ module Spree
 
     # This method is best described by the documentation on #potentially_applicable?
     def self.adjust(order, items)
-      rates = self.match(order.tax_zone)
+      rates = match(order.tax_zone)
       tax_categories = rates.map(&:tax_category)
       relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
       Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
