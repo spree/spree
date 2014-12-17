@@ -9,31 +9,31 @@ module Spree
 
     protected
 
-    def create_adjustment(order_id, adjustable, included = nil)
+    def create_adjustment(order, adjustable, included = nil)
       amount = compute_amount(adjustable)
       return if amount == 0
-      adjustments.new(order_id: order_id,
+      adjustments.new(order: order,
                       adjustable: adjustable,
                       label: label(amount),
                       amount: amount,
                       included: included).save
     end
 
-    def create_unique_adjustment(order_id, adjustable)
+    def create_unique_adjustment(order, adjustable)
       return if already_adjusted?(adjustable)
-      create_adjustment(order_id, adjustable)
+      create_adjustment(order, adjustable)
     end
 
-    def create_unique_adjustments(order_id, adjustables)
-      adjustables.where.not(id: already_adjusted_ids(order_id)).map do |adjustable|
-        create_adjustment(order_id, adjustable) if !block_given? || yield(adjustable)
+    def create_unique_adjustments(order, adjustables)
+      adjustables.where.not(id: already_adjusted_ids(order)).map do |adjustable|
+        create_adjustment(order, adjustable) if !block_given? || yield(adjustable)
       end.any?
     end
 
     private
 
-    def already_adjusted_ids(order_id)
-      adjustments.where(order_id: order_id).pluck(:adjustable_id)
+    def already_adjusted_ids(order)
+      adjustments.where(order: order).pluck(:adjustable_id)
     end
 
     def already_adjusted?(adjustable)

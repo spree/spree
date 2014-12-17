@@ -9,7 +9,7 @@ module Spree
 
         def perform(options = {})
           order = options[:order]
-          create_unique_adjustment(order.id, order)
+          create_unique_adjustment(order, order)
         end
 
         def compute_amount(order)
