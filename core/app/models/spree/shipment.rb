@@ -115,14 +115,14 @@ module Spree
       selected_shipping_rate.try(:tax_rate).try(:tax_category)
     end
 
-    def refresh_rates(frontend_only = true)
+    def refresh_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
       return shipping_rates if shipped?
       return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package, frontend_only)
+      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package, shipping_method_filter)
 
       if shipping_method
         selected_rate = shipping_rates.detect { |rate|

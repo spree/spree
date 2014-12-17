@@ -8,9 +8,11 @@ module Spree
         @currency = order.currency
       end
 
-      def shipping_rates(package, frontend_only = true)
+      def shipping_rates(package, shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
         rates = calculate_shipping_rates(package)
-        rates.select! { |rate| rate.shipping_method.frontend? } if frontend_only
+        if shipping_method_filter == ShippingMethod::DISPLAY_ON_FRONT_END
+          rates.select! { |rate| rate.shipping_method.frontend? }
+        end
         choose_default_shipping_rate(rates)
         sort_shipping_rates(rates)
       end

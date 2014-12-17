@@ -4,6 +4,10 @@ module Spree
     include Spree::Core::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
+    # Used for #refresh_rates
+    DISPLAY_ON_FRONT_END = 1
+    DISPLAY_ON_FRONT_AND_BACK_END = 2
+
     default_scope -> { where(deleted_at: nil) }
 
     has_many :shipping_method_categories, :dependent => :destroy
