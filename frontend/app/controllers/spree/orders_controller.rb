@@ -53,10 +53,7 @@ module Spree
     end
 
     def empty
-      if @order = current_order
-        @order.empty!
-      end
-
+      clear_current_order
       redirect_to spree.cart_path
     end
 

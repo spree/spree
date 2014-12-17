@@ -100,6 +100,14 @@ module Spree
           order
         end
 
+        def clear_current_order
+          @current_order.destroy! if @current_order
+          @current_order = Spree::Order.new(current_order_params)
+          @current_order.user ||= try_spree_current_user
+          # See issue #3346 for reasons why this line is here
+          @current_order.created_by ||= try_spree_current_user
+          @current_order.save!
+        end
       end
     end
   end
