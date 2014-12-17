@@ -9,10 +9,7 @@ module Spree
       end
 
       def shipping_rates(package, shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
-        rates = calculate_shipping_rates(package)
-        if shipping_method_filter == ShippingMethod::DISPLAY_ON_FRONT_END
-          rates.select! { |rate| rate.shipping_method.frontend? }
-        end
+        rates = calculate_shipping_rates(package, shipping_method_filter)
         choose_default_shipping_rate(rates)
         sort_shipping_rates(rates)
       end
@@ -28,8 +25,8 @@ module Spree
         shipping_rates.sort_by!(&:cost)
       end
 
-      def calculate_shipping_rates(package)
-        shipping_methods(package).map do |shipping_method|
+      def calculate_shipping_rates(package, ui_filter)
+        shipping_methods(package, ui_filter).map do |shipping_method|
           cost = shipping_method.calculator.compute(package)
           tax_category = shipping_method.tax_category
           if tax_category
@@ -50,10 +47,13 @@ module Spree
         end.compact
       end
 
-      def shipping_methods(package)
+      def shipping_methods(package, ui_filter)
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
           begin
+            (ui_filter == ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END ||
+            (method.frontend? && ui_filter == ShippingMethod::DISPLAY_ON_FRONT_END) ||
+            (!method.frontend? && ui_filter == ShippingMethod::DISPLAY_ON_BACK_END)) &&
             ship_method.include?(order.ship_address) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||
