@@ -51,10 +51,10 @@ module Spree
       Spree::TaxCategory.unscoped { super }
     end
 
-    def available_to_ui(ui_filter)
-      ui_filter == DISPLAY_ON_FRONT_AND_BACK_END ||
-      (method.frontend? && ui_filter == DISPLAY_ON_FRONT_END) ||
-      (!method.frontend? && ui_filter == DISPLAY_ON_BACK_END)
+    def available_to_display(display_filter)
+      display_filter == DISPLAY_ON_FRONT_AND_BACK_END ||
+      (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
+      (!frontend? && display_filter == DISPLAY_ON_BACK_END)
     end
 
     private

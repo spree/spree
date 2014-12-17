@@ -47,11 +47,11 @@ module Spree
         end.compact
       end
 
-      def shipping_methods(package, ui_filter)
+      def shipping_methods(package, display_filter)
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
           begin
-            ship_method.available_to_ui(ui_filter) &&
+            ship_method.available_to_display(display_filter) &&
             ship_method.include?(order.ship_address) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||
