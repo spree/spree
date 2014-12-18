@@ -991,7 +991,7 @@ div[data-hook="inside_cart_form"] {
 
 .adjustment:nth-child(even) {
   background: #eaeaea;
-  
+
 }
 
 /*--------------------------------------*/
@@ -1207,20 +1207,8 @@ table.order-summary {
   }
 }
 
-@media only screen and (min-width: 768px) and (max-width: 959px) {
-  .container .offset-by-nine.coupon-code-field {
-    padding-left: 380px;
-  }
-}
-
-#update-cart .coupon-code-field {
-  /* yes, this is ugly... */
-  margin-top: -42px !important;
-}
-
 @media only screen and (max-width: 767px) {
-  #empty-cart,
-  #update-cart .coupon-code-field {
+  #empty-cart {
     /* yes, this is ugly... */
     margin-top: 0 !important;
   }
