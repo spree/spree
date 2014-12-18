@@ -203,7 +203,7 @@ Given the following Erb file:
 
 ```erb
 <%% if products.empty? %>
- <%%= Spree.t(:no_resource_found, resource: Spree::Product.model_name.human(count: 2)) %>
+ <%%= Spree.t(:no_products_found) %>
 <%% elsif params.key?(:keywords) %>
   <h3><%%= Spree.t(:products) %></h3>
 <%% end %>
@@ -214,7 +214,7 @@ Would be seen by Deface as:
 ```html
 <html>
   <erb[silent]> if products.empty? </erb>
-  <erb[loud]> Spree.t(:no_resource_found, resource: Spree::Product.model_name.human(count: 2)) </erb>
+  <erb[loud]> Spree.t(:no_products_found) </erb>
   <erb[silent]> elsif params.key?(:keywords) </erb>
 
   <h3><erb[loud]> Spree.t(:products) </erb></h3>

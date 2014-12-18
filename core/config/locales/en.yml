@@ -823,6 +823,7 @@ en:
     no_actions_added: No actions added
     no_payment_found: No payment found
     no_pending_payments: No pending payments
+    no_products_found: No products found
     no_results: No results
     no_rules_added: No rules added
     no_resource_found: 'No %{resource} found'
