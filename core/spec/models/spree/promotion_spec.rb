@@ -482,21 +482,37 @@ describe Spree::Promotion, :type => :model do
   describe '#used_by?' do
     subject { promotion.used_by? user, [excluded_order] }
 
-    let(:promotion) { Spree::Promotion.create! name: 'Test Used By' }
+    let(:promotion) { create :promotion, :with_order_adjustment }
     let(:user) { create :user }
-    let(:order) { create :completed_order_with_totals }
-    let(:excluded_order) { create :completed_order_with_totals }
+    let(:order) { create :order_with_line_items, user: user }
+    let(:excluded_order) { create :order_with_line_items, user: user }
 
-    before { promotion.orders << order }
+    before do
+      order.user_id = user.id
+      order.save!
+    end
 
     context 'when the user has used this promo' do
       before do
-        order.user_id = user.id
+        promotion.activate(order: order)
+        order.update!
+        order.completed_at = Time.now
         order.save!
       end
 
       context 'when the order is complete' do
         it { is_expected.to be true }
+
+        context 'when the promotion was not eligible' do
+          let(:adjustment) { order.adjustments.first }
+
+          before do
+            adjustment.eligible = false
+            adjustment.save!
+          end
+
+          it { is_expected.to be false }
+        end
 
         context 'when the only matching order is the excluded order' do
           let(:excluded_order) { order }
@@ -505,7 +521,7 @@ describe Spree::Promotion, :type => :model do
       end
 
       context 'when the order is not complete' do
-        let(:order) { create :order }
+        let(:order) { create :order, user: user }
         it { is_expected.to be false }
       end
     end
