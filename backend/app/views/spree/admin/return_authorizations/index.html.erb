@@ -2,7 +2,7 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any? &:shipped? %>
-    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'add' %>
+    <%= button_link_to Spree.t(:new_resource, resource: Spree::ReturnAuthorization.model_name.human), new_admin_order_return_authorization_url(@order), class: 'btn-success', icon: 'add' %>
   <% end %>
 <% end %>
 
@@ -40,7 +40,7 @@
   </table>
 <% elsif @order.shipments.any?(&:shipped?) %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_returns_found) %>
+    <%= Spree.t(:no_resource_found, resource: Spree::ReturnAuthorization.model_name.human(count: 2)) %>
   </div>
 <% else %>
   <div data-hook="rma_cannont_create" class="alert alert-info no-objects-found">

@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_country) %>
+  <%= Spree.t(:new_resource, resource: Spree::Country.model_name.human) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_countries_list), admin_countries_path, :class => 'btn btn-default' %>
+  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::Country.model_name.human), admin_countries_path, class: 'btn btn-default' %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @countries } %>

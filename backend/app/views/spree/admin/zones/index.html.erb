@@ -1,13 +1,9 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:zones) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_zone), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_zone_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_resource, resource: Spree::Zone.model_name.human), new_object_url, class: 'btn-success', icon: 'add', id: 'admin_new_zone_link' %>
 <% end %>
 
 <%= paginate @zones %>
@@ -40,7 +36,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/zone')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Zone.model_name.human(count: 2)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_zone_path %>!
   </div>
 <% end %>

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_stock_transfer) %>
+  <%= Spree.t(:new_resource, resource: Spree::StockTransfer.model_name.human) %>
 <% end %>
 
 <script type='text/template' id='transfer_variant_template'>
@@ -71,7 +71,7 @@
     </fieldset>
 
     <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>.
+      <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: 2)) %>.
     </div>
 
     <div id="transfer-variants-table" style="display:none">

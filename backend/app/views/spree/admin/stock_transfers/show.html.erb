@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= Spree.t('stock_transfer') %> (<%= @stock_transfer.number %>)
+  <%= Spree::StockTransfer.model_name.human(count: 2) %> (<%= @stock_transfer.number %>)
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
+  <%= button_link_to Spree.t(:new_resource, resource: Spree::StockTransfer.model_name.human), new_admin_stock_transfer_path, icon: 'add', class: 'btn-success' %>
 <% end %>
 
 <fieldset>

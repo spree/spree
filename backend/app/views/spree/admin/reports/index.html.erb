@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:listing_reports) %>
+  <%= Spree.t(:listing_resource, resource: Spree::Report.model_name.human(count: 2)) %>
 <% end %>
 
 <table class="table">

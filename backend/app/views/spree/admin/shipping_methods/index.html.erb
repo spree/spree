@@ -1,13 +1,9 @@
-
-
 <% content_for :page_title do %>
-  <%= Spree.t(:shipping_methods) %>
+  <%= Spree::ShippingMethod.model_name.human(count: 2) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :class => "btn-success", :icon => 'add', :id => 'admin_new_shipping_method_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_resource, resource: Spree::ShippingMethod.model_name.human), new_object_url, class: 'btn-success', icon: 'add', id: 'admin_new_shipping_method_link' %>
 <% end %>
 
 <% if @shipping_methods.any? %>
@@ -38,7 +34,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/shipping_method')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::ShippingMethod.model_name.human(count: 2)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_shipping_method_path %>!
   </div>
 <% end %>

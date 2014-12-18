@@ -1,13 +1,9 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:analytics_trackers) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_tracker), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_tracker_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_resource, resource: Spree::Tracker.model_name.human), new_object_url, class: 'btn-success', icon: 'add', id: 'admin_new_tracker_link' %>
 <% end %>
 
 <% if @trackers.any? %>
@@ -42,7 +38,7 @@
   </table>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/tracker')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Tracker.model_name.human(count: 2)) %>,
     <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
 <% end %>

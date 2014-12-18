@@ -12,7 +12,7 @@
 <div data-hook="products_search_results_heading">
   <% if products.empty? %>
     <div data-hook="products_search_results_heading_no_results_found">
-      <%= Spree.t(:no_products_found) %>
+      <%= Spree.t(:no_resource_found, resource: Spree::Product.model_name.human(count: 2)) %>
     </div>
   <% elsif params.key?(:keywords) %>
     <div data-hook="products_search_results_heading_results_found">

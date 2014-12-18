@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:new_return_authorization) %>
+  / <%= Spree.t(:new_resource, resource: Spree::ReturnAuthorization.model_name.human) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @return_authorization } %>

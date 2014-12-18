@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_taxonomy) %>
+  <%= Spree.t(:new_resource, resource: Spree::Taxonomy.model_name.human) %>
 <% end %>
 
 <%= form_for [:admin, @taxonomy] do |f| %>

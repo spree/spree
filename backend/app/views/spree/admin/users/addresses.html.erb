@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"editing_addresses") %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: Spree::Address.model_name.human(count: 2)) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>

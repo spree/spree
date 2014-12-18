@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_option_type) %>
+  <%= Spree.t(:new_resource, resource: Spree::OptionType.model_name.human) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @option_type } %>

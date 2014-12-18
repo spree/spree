@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_shipping_method) %>
+  <%= Spree.t(:new_resource, resource: Spree::ShippingMethod.model_name.human) %>
 <% end %>
 
 <div data-hook="admin_shipping_method_new_form_header">
