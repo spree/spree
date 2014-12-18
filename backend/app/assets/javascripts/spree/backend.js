@@ -2,7 +2,6 @@
 //= require jquery
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
-//= require jquery.tree-menu
 //= require jquery_ujs
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
@@ -34,7 +33,3 @@ Spree.routes.payments_api = function(order_id) {
 Spree.routes.stock_items_api = function(stock_location_id) {
   return Spree.pathFor('api/stock_locations/' + stock_location_id + '/stock_items')
 }
-
-$(document).ready(function(){
-  $(".sidebar .treeview").tree();
-});

@@ -22,14 +22,14 @@ jQuery(function($) {
   $('.js-show-index-filters').click(function(){
     $(".filter-well").slideToggle();
     $(this).parents(".filter-wrap").toggleClass("collapsed");
-    $("span.icon", $(this)).toggleClass("icon-chevron-down");
+    $("span.glyphicon", $(this)).toggleClass("glyphicon-chevron-down");
   });
 
   $(".js-collapse-sidebar").click(function(){
     $(".main-right-sidebar").toggleClass("collapsed");
     $("section.content").toggleClass("sidebar-collapsed");
-    $("span.icon", $(this)).toggleClass("icon-chevron-right");
-    $("span.icon", $(this)).toggleClass("icon-chevron-left");
+    $("span.glyphicon", $(this)).toggleClass("glyphicon-chevron-right");
+    $("span.glyphicon", $(this)).toggleClass("glyphicon-chevron-left");
   });
 
   // TODO: remove this js temp behaviour and fix this decent
@@ -43,6 +43,14 @@ jQuery(function($) {
     return false;
   });
 
+  // Main menu active item submenu show
+  var active_item = $('#sidebar').find('.selected');
+  active_item.parent().addClass('in');
+  active_item.parent().prev()
+    .find('.glyphicon-chevron-left')
+    .removeClass('glyphicon-chevron-left')
+    .addClass('glyphicon-chevron-down');
+
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
     // Remove the &nbsp; in the text
@@ -50,10 +58,10 @@ jQuery(function($) {
 
     if(sort_link_text.indexOf("▼") >= 0){
       $(this).text(sort_link_text.replace("▼",""));
-      $(this).append('<span class="icon icon-chevron-down"></span>');
+      $(this).append('<span class="glyphicon glyphicon-chevron-down"></span>');
     } else if(sort_link_text.indexOf("▲") >= 0){
       $(this).text(sort_link_text.replace("▲",""));
-      $(this).append('<span class="icon icon-chevron-up"></span>');
+      $(this).append('<span class="glyphicon glyphicon-chevron-up"></span>');
     }
   });
 

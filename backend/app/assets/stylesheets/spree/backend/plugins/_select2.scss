@@ -1,0 +1,18 @@
+.select2-container {
+  display: block;
+
+  .select2-choice {
+    height: $input-height-base;
+    line-height: 2.2;
+
+    &, .select2-arrow {
+      border-radius: $border-radius-base;
+    }
+  }
+}
+
+.select2-drop {
+  &, &.select2-drop-above {
+    border-radius: $border-radius-base;
+  }
+}

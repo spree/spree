@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
+  <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :class => "btn-success", :icon => 'plus-sign', 'data-update' => 'new_property', :id => 'new_property_link' } %>
 <% end %>
 
 <% content_for :table_filter do %>

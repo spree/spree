@@ -2,11 +2,16 @@
   <div class="panel-heading">
     <h3 class="panel-title"><%= Spree.t(:summary) %></h3>
   </div>
+
   <table class="table table-condensed table-bordered" id="order_tab_summary" data-hook>
     <tbody class="additional-info">
       <tr>
         <td id="order_status" width="35%" data-hook><%= Spree.t(:status) %>:</td>
-        <td><span class="state <%= @order.state %>"><%= Spree.t(@order.state, :scope => :order_state) %></span></td>
+        <td>
+          <span class="label label-<%= @order.state %>">
+            <%= Spree.t(@order.state, :scope => :order_state) %>
+          </span>
+        </td>
       </tr>
       <tr>
         <td data-hook='admin_order_tab_subtotal_title'><%= Spree.t(:subtotal) %>:</td>
