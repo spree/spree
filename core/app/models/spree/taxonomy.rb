@@ -7,9 +7,10 @@ module Spree
 
     after_save :set_name
 
-    default_scope -> { order("#{self.table_name}.position") }
+    default_scope { order("#{self.table_name}.position") }
 
     private
+
       def set_name
         if root
           root.update_columns(
@@ -20,6 +21,5 @@ module Spree
           self.root = Taxon.create!(taxonomy_id: id, name: name)
         end
       end
-
   end
 end
