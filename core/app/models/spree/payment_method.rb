@@ -2,7 +2,7 @@ module Spree
   class PaymentMethod < Spree::Base
     acts_as_paranoid
     DISPLAY = [:both, :front_end, :back_end]
-    default_scope -> { where(deleted_at: nil) }
+    default_scope { where(deleted_at: nil) }
 
     scope :production, -> { where(environment: 'production') }
 
