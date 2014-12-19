@@ -2,13 +2,15 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
-
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
+    
     include Spree::NumberGenerator
 
     def generate_number(options = {})
       options[:prefix] ||= 'H'
       options[:length] ||= 11
-      super(options) 
+      super(options)
     end
 
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments

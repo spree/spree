@@ -1,14 +1,16 @@
 module Spree
   class Payment < Spree::Base
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
+    
     include Spree::Payment::Processing
-
     include Spree::NumberGenerator
 
     def generate_number(options = {})
       options[:prefix] ||= 'P'
       options[:letters] ||= true
       options[:length] ||= 7
-      super(options) 
+      super(options)
     end
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
@@ -226,6 +228,6 @@ module Spree
           order.persist_totals
         end
       end
-      
+
   end
 end
