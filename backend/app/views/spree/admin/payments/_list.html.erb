@@ -1,7 +1,7 @@
 <table class="table table-condensed table-bordered" id='payments' data-order-id='<%= @order.number %>'>
   <thead>
     <tr data-hook="payments_header">
-      <th><%= Spree.t(:number) %></th>
+      <th><%= Spree::Payment.human_attribute_name(:number) %></th>
       <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
       <th><%= Spree.t(:amount) %></th>
       <th><%= Spree.t(:payment_method) %></th>
