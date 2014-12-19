@@ -9,13 +9,34 @@
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: lighten($gray-lighter, 5);
-  border-right: 1px solid $gray-lighter;
+  border-right: 1px solid darken($gray-lighter, 5);
+
+  a {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-font-feature-settings: "kern" 1;
+    -moz-font-feature-settings: "kern" 1;
+  }
 
   ul.nav-sidebar {
     > li {
       border-bottom: 1px solid $gray-lighter;
 
       > a {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 15px;
+        color: $gray;
+
+        .glyphicon {
+          font-size: 20px;
+          vertical-align: bottom;
+          padding-right: 5px;
+        }
+
         .glyphicon.pull-right {
           font-size: 10px;
           line-height: 2;
@@ -32,6 +53,7 @@
     li {
       a {
         padding: 5px 15px 5px 33px;
+        font-size: 12px;
 
         &:hover {
           border-radius: 0;

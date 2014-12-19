@@ -1,3 +1,28 @@
 .form-control {
   box-shadow: none;
 }
+
+label {
+  text-transform: uppercase;
+  font-size: $font-size-base - 3;
+  letter-spacing: 1px;
+  color: $gray;
+  font-weight: 500;
+
+  input[type="radio"], input[type="checkbox"] {
+    margin-top: 2px;
+  }
+}
+
+span.or {
+  @extend label;
+
+  padding: 0 10px;
+}
+
+input.form-control {
+  &:active, &:focus {
+    border-color: lighten($brand-success, 20);
+    box-shadow: none;
+  }
+}

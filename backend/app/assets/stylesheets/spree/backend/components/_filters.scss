@@ -1,0 +1,25 @@
+#table-filter {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: 20px;
+}
+
+.index-filter-button {
+  .glyphicon {
+    color: $gray-light;
+  }
+
+  button {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: $font-size-base - 3;
+    padding: ($padding-base-vertical + 3) $padding-base-horizontal ($padding-base-vertical + 2);
+    border-right: none;
+
+    &:focus {
+      background-color: $gray-lighter;
+      border-color: $input-border;
+    }
+  }
+}
