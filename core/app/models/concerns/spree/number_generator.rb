@@ -11,13 +11,13 @@ module Spree
       make_permalink field: :number
       before_validation :generate_number, on: :create
     end
-    
+
     def self.by_number(number)
       where(number: number)
     end
-    
+
     def to_param
-      number.to_s.to_url.upcase
+      number.to_s
     end
 
     def generate_number(options = {})
@@ -40,7 +40,7 @@ module Spree
         end
       end
     end
-    
-    
+
+
   end
-end  
+end
