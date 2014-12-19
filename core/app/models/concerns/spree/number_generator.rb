@@ -8,7 +8,6 @@ module Spree
 
     included do
       before_validation :generate_number, on: :create # generate number before make_permalink
-      make_permalink field: :number
       validates :number, uniqueness: true
     end
 

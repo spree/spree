@@ -200,7 +200,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       user.spree_roles.clear
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
-      spree_put :update, { id: order.number }
+      spree_put :update, id: order.number
       expect(response).to redirect_to('/unauthorized')
       Spree::Ability.remove_ability(BarAbility)
     end

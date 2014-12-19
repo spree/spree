@@ -50,7 +50,7 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
-  
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.

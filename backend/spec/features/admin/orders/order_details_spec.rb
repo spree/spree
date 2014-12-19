@@ -263,7 +263,7 @@ describe "Order Details", type: :feature, js: true do
           context 'A shipment has shipped' do
 
             it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
-              order = create(:order, :state => 'payment', :number => "R100")
+              order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
 
               visit spree.cart_admin_order_path(order)

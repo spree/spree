@@ -8,7 +8,7 @@ module Spree
         redirect_to admin_root_redirect_path
       end
 
-      private
+      protected
 
       def admin_root_redirect_path
         spree.admin_orders_path
