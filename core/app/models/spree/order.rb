@@ -3,7 +3,9 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
-
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
+    
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
@@ -11,8 +13,8 @@ module Spree
 
     def generate_number(options = {})
       options[:prefix] ||= 'R'
-      super(options) 
-    end  
+      super(options)
+    end
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,

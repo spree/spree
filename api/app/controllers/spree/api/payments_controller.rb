@@ -58,12 +58,12 @@ module Spree
       private
 
         def find_order
-          @order = Spree::Order.find_by(number: order_id)
+          @order = Spree::Order.friendly.find(order_id)
           authorize! :read, @order, order_token
         end
 
         def find_payment
-          @payment = @order.payments.find(params[:id])
+          @payment = @order.payments.friendly.find(params[:id])
         end
 
         def perform_payment_action(action, *args)

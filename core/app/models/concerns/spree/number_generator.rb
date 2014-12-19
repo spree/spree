@@ -7,17 +7,13 @@ module Spree
     NUMBER_PREFIX  = 'N'
 
     included do
-      validates :number, uniqueness: true
+      before_validation :generate_number, on: :create # generate number before make_permalink
       make_permalink field: :number
-      before_validation :generate_number, on: :create
+      validates :number, uniqueness: true
     end
 
     def self.by_number(number)
       where(number: number)
-    end
-
-    def to_param
-      number.to_s
     end
 
     def generate_number(options = {})
@@ -41,6 +37,8 @@ module Spree
       end
     end
 
-
+    def to_param
+      number.to_s.to_url.upcase
+    end
   end
 end
