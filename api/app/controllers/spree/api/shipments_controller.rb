@@ -32,7 +32,7 @@ module Spree
       end
 
       def update
-        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find!(params[:id])
+        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find(params[:id])
         @shipment.update_attributes_and_order(shipment_params)
 
         respond_with(@shipment.reload, default_template: :show)

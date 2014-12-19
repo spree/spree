@@ -14,7 +14,6 @@ describe Spree::Shipment, :type => :model do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending')
     allow(shipment).to receive_messages order: order
     allow(shipment).to receive_messages shipping_method: shipping_method
-    shipment.generate_number
     shipment.save
     shipment
   end

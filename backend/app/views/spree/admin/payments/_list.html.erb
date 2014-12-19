@@ -1,7 +1,7 @@
 <table class="table table-bordered" id='payments' data-order-id='<%= @order.number %>'>
   <thead>
     <tr data-hook="payments_header">
-      <th><%= Spree.t(:identifier) %></th>
+      <th><%= Spree.t(:number) %></th>
       <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
       <th><%= Spree.t(:amount) %></th>
       <th><%= Spree.t(:payment_method) %></th>
@@ -13,7 +13,7 @@
   <tbody>
     <% payments.each do |payment| %>
       <tr id="<%= dom_id(payment) %>" data-hook="payments_row">
-        <td><%= link_to payment.identifier, spree.admin_order_payment_path(@order, payment) %></td>
+        <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
         <td><%= pretty_time(payment.created_at) %></td>
         <td class="amount"><%= payment.display_amount.to_html %></td>
         <td><%= payment_method_name(payment) %></td>
