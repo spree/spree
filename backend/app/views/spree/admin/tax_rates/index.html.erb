@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::TaxRate.model_name.human(count: 2) %>
+  <%= Spree::TaxRate.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -40,7 +40,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::TaxRate.model_name.human(count: 2)) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::TaxRate.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_tax_rate_path %>!
   </div>
 <% end %>

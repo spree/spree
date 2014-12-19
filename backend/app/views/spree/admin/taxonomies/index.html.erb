@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::Taxonomy.model_name.human(count: 2) %>
+  <%= Spree::Taxonomy.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -12,7 +12,7 @@
   </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::Taxonomy.model_name.human(count: 2)) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Taxonomy.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_taxonomy_path %>!
   </div>
 <% end %>

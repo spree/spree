@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::StockTransfer.model_name.human(count: 2) %>
+  <%= Spree::StockTransfer.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -74,7 +74,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::StockTransfer.model_name.human(count: 2)) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::StockTransfer.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_stock_transfer_path %>!
   </div>
 <% end %>

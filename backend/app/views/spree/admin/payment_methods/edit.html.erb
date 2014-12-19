@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::PayMethod.model_name.human) %> / <%= @payment_method.name %>
+  <%= Spree.t(:editing_resource, resource: Spree::PaymentMethod.model_name.human) %> / <%= @payment_method.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment_method } %>

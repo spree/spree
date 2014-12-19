@@ -50,12 +50,12 @@
 <% end %>
 
 <fieldset data-hook="reimbursements">
-  <legend><%= Spree::Reimbursement.model_name.human(count: 2) %></legend>
+  <legend><%= Spree::Reimbursement.model_name.human(count: :many) %></legend>
   <% if @customer_return.reimbursements.any? %>
     <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
   <% else %>
     <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: Spree::Reimbursement.model_name.human(count: 2)) %>
+      <%= Spree.t(:no_resource_found, resource: Spree::Reimbursement.model_name.human(count: :many)) %>
     </div>
   <% end %>
 </fieldset>

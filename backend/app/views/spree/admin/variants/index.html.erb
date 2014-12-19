@@ -37,7 +37,7 @@
   </table>
 <% else %>
   <div class="no-objects-found alert alert-info">
-    <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: 2)) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
   </div>
 <% end %>

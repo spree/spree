@@ -231,6 +231,9 @@ en:
       spree/state:
         one: State
         other: States
+      spree/state_change:
+        one: State Change
+        other: State Change
       spree/stock_movement:
         one: Stock Movement
         other: Stock Movements
@@ -1071,6 +1074,7 @@ en:
     remember_me: Remember me
     remove: Remove
     rename: Rename
+    report: Report
     reports: Reports
     resend: Resend
     reset_password: Reset my password
@@ -1216,6 +1220,7 @@ en:
       invalid: Invalid
       manual_intervention_required: Manual intervention required
       open: Open
+      order: Order
       on_hand: On hand
       payment: Payment
       pending: Pending

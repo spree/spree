@@ -71,7 +71,7 @@
     </fieldset>
 
     <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: 2)) %>.
+      <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: :many)) %>.
     </div>
 
     <div id="transfer-variants-table" style="display:none">
