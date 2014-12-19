@@ -5,7 +5,7 @@ module Spree
   class Order < Spree::Base
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-    
+
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
@@ -158,10 +158,6 @@ module Spree
 
     def shipping_discount
       shipment_adjustments.eligible.sum(:amount) * - 1
-    end
-
-    def to_param
-      number.to_s.to_url.upcase
     end
 
     def completed?
