@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <% content_for :page_title do %>
-  <%= Spree.t(:new_image) %>
+  <%= Spree.t(:new_resource, resource: Spree::Image.model_name.human) %>
 <% end %>
 
 <%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>

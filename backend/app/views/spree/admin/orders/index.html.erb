@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:listing_orders) %>
+  <%= Spree::Order.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_order' %>
+  <%= button_link_to Spree.t(:new_resource, resource: Spree::Order.model_name.human), new_admin_order_url, class: 'btn-success', icon: 'add', id: 'admin_new_order' %>
 <% end if can? :edit, Spree::Order.new %>
 
 <% content_for :table_filter do %>
@@ -162,7 +162,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/order')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Order.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_order_path %>!
   </div>
 <% end %>

@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @prototype } %>
 
 <% content_for :page_title do %>
-  <%= Spree.t(:new_prototype) %>
+  <%= Spree.t(:new_resource, resource: Spree::Prototype.model_name.human) %>
 <% end %>
 
 <%= form_for [:admin, @prototype] do |f| %>

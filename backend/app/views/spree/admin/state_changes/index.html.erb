@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'State Changes' } %>
 
 <% content_for :page_title do %>
-  <%= Spree::StateChange.human_attribute_name(:state_changes) %>
+  <%= Spree::StateChange.model_name.human(count: :many) %>
 <% end %>
 
 <% if @state_changes.any? %>

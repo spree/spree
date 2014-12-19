@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:new_promotion) %>
+  <%= Spree.t(:new_resource, resource: Spree::Promotion.model_name.human) %>
 <% end %>
 
 <%= form_for :promotion, :url => collection_url do |f| %>

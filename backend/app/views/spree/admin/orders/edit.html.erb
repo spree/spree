@@ -10,7 +10,7 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Shipments' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:shipments) %>
+  / <%= Spree::Shipment.model_name.human(count: :many) %>
 <% end %>
 
 <div data-hook="admin_order_edit_header">

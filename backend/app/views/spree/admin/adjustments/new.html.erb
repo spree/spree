@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Adjustments' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:new_adjustment) %>
+  / <%= Spree.t(:new_resource, resource: Spree::Adjustment.model_name.human) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @adjustment } %>

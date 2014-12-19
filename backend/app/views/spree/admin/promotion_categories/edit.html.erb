@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_promotion_category) %>
+  <%= Spree.t(:editing_resource, resource: Spree::PromotionCategory.model_name.human) %>
 <% end %>
 
 <%= form_for @promotion_category, :url => object_url, :method => :put do |f| %>
