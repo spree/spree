@@ -11,7 +11,7 @@
     <div class="form-actions" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'save' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), icon: 'delete', id: 'cancel_link' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_product_images_url(@product), icon: 'remove-circle', id: 'cancel_link' %>
     </div>
   </fieldset>
 <% end %>

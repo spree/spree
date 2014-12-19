@@ -26,3 +26,15 @@ input.form-control {
     box-shadow: none;
   }
 }
+
+.form-group {
+  &.withError {
+    label, .formError, .required {
+      color: $brand-danger
+    }
+
+    input {
+      border-color: $brand-danger;
+    }
+  }
+}
