@@ -1,7 +1,10 @@
-<%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
-  <fieldset>
-    <legend><%= Spree.t(:add_stock_management) %></legend>
-
+<div class="panel-heading">
+  <h1 class="panel-title">
+    <%= Spree.t(:add_stock_management) %>
+  </h1>
+</div>
+<div class="panel-body">
+  <%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
     <div data-hook="admin_stock_movements_form_fields" class="row">
       <div class="col-md-2">
         <div class="form-group">
@@ -32,10 +35,10 @@
       </div>
     </div>
 
-    <div class="form-actions" data-hook="buttons">
+    <div class="form-actions text-center" data-hook="buttons">
       <%= button Spree.t(:add_stock), 'plus' %>
       <span class="or"><%= Spree.t(:or) %></span>
       <%= button_link_to Spree.t('actions.cancel'), collection_url, :icon => 'remove-circle' %>
     </div>
-  </fieldset>
-<% end %>
+  <% end %>
+</div>

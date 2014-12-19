@@ -3,7 +3,7 @@
     <%= event_links %>
   <% end %>
   <% if can?(:resend, @order) %>
-    <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'email' %>
+    <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'envelope' %>
   <% end %>
 <% end %>
 

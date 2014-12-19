@@ -12,7 +12,7 @@
     <% end %>
 
     <% if can?(:update, @order) && @order.checkout_steps.include?("address") %>
-      <li<%== ' class="active"' if current == 'Customer' %> data-hook='admin_order_tabs_customer_details'>
+      <li<%== ' class="active"' if current == 'Customer Details' %> data-hook='admin_order_tabs_customer_details'>
         <%= link_to_with_icon 'user', Spree.t(:customer), admin_order_customer_url(@order) %>
       </li>
     <% end %>
@@ -57,6 +57,4 @@
       </li>
     <% end %>
   </ul>
-
-  <%= collapse_sidebar_link %>
 <% end %>

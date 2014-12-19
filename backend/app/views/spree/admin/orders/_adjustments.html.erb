@@ -12,8 +12,17 @@
       <tbody id="order-charges" data-hook="order_details_adjustments">
         <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
-            <td><strong><%= label %>:</strong></td>
-            <td class="total "><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: adjustments.first.order.try(:currency)) %></span></td>
+            <td>
+              <strong><%= label %>:</strong>
+            </td>
+            <td class="total">
+              <span>
+                <%= Spree::Money.new(
+                  adjustments.sum(&:amount), 
+                  currency: adjustments.first.order.try(:currency)
+                ) %>
+              </span>
+            </td>
           </tr>
         <% end %>
       </tbody>

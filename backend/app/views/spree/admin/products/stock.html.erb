@@ -1,73 +1,75 @@
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
 
-<div id="add_stock_form" class="well">
+<div id="add_stock_form" class="panel panel-default">
   <%= render 'add_stock_form' %>
 </div>
 
-<table class="table" id="listing_product_stock">
-  <thead>
-    <tr data-hook="admin_product_stock_management_index_headers">
-      <th colspan="2"><%= Spree.t(:variant) %></th>
-      <th colspan="3"><%= Spree.t(:stock_location_info) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @variants.each do |variant| %>
-      <% if variant.stock_items.present? %>
-        <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows">
-          <td>
-            <%= variant.sku_and_options_text %>
-            <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
-              <div class="checkbox">
-                <%= label_tag :track_inventory do %>
-                  <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
-                                    class: 'track_inventory_checkbox' %>
-                  <%= Spree.t(:track_inventory) %>
-                <% end %>
-              </div>
-              <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
-                  class: 'variant_track_inventory',
-                  id: "variant_track_inventory_#{variant.id}" %>
-            <% end %>
-          </td>
-          <td class="image">
-            <% if variant.images.present? %>
-              <%= image_tag variant.images.first.attachment.url(:mini), class: "thumbnail no-marginb" %>
-            <% end %>
-          </td>
-          <td colspan="3" class="stock_location_info">
-            <table class="table table-condensed table-bordered no-marginb">
-              <thead>
-                <th><%= Spree.t(:stock_location) %></th>
-                <th><%= Spree.t(:count_on_hand) %></th>
-                <th><%= Spree.t(:backorderable) %></th>
-                <th class="actions"></th>
-              </thead>
-              <tbody>
-                <% variant.stock_items.each do |item| %>
-                  <% next unless @stock_locations.include?(item.stock_location) %>
-                  <tr id="stock-item-<%= item.id %>">
-                    <td><%= item.stock_location.name %></td>
-                    <td><%= item.count_on_hand %></td>
-                    <td>
-                      <%= form_tag admin_stock_item_path(item), method: :put, class: 'toggle_stock_item_backorderable' do %>
-                        <%= check_box_tag 'stock_item[backorderable]', true,
-                              item.backorderable?,
-                              class: 'stock_item_backorderable',
-                              id: "stock_item_backorderable_#{item.stock_location.id}" %>
-                      <% end %>
-                    </td>
-                    <td class="actions actions-1">
-                      <%= link_to_with_icon 'delete', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-default btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true  %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </td>
-        <% end %>
+<div class="panel panel-default">
+  <table class="table" id="listing_product_stock">
+    <thead>
+      <tr data-hook="admin_product_stock_management_index_headers">
+        <th colspan="2"><%= Spree.t(:variant) %></th>
+        <th colspan="3"><%= Spree.t(:stock_location_info) %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @variants.each do |variant| %>
+        <% if variant.stock_items.present? %>
+          <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows">
+            <td class="image">
+              <% if variant.images.present? %>
+                <%= image_tag variant.images.first.attachment.url(:mini), class: "thumbnail no-marginb" %>
+              <% end %>
+            </td>
+            <td>
+              <%= variant.sku_and_options_text %>
+              <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
+                <div class="checkbox">
+                  <%= label_tag :track_inventory do %>
+                    <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
+                                      class: 'track_inventory_checkbox' %>
+                    <%= Spree.t(:track_inventory) %>
+                  <% end %>
+                </div>
+                <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
+                    class: 'variant_track_inventory',
+                    id: "variant_track_inventory_#{variant.id}" %>
+              <% end %>
+            </td>
+            <td colspan="3" class="stock_location_info">
+              <table class="table table-condensed table-bordered no-marginb">
+                <thead>
+                  <th><%= Spree.t(:stock_location) %></th>
+                  <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
+                  <th class="text-center"><%= Spree.t(:backorderable) %></th>
+                  <th class="actions text-center"></th>
+                </thead>
+                <tbody>
+                  <% variant.stock_items.each do |item| %>
+                    <% next unless @stock_locations.include?(item.stock_location) %>
+                    <tr id="stock-item-<%= item.id %>">
+                      <td><%= item.stock_location.name %></td>
+                      <td class="text-center"><%= item.count_on_hand %></td>
+                      <td class="text-center">
+                        <%= form_tag admin_stock_item_path(item), method: :put, class: 'toggle_stock_item_backorderable' do %>
+                          <%= check_box_tag 'stock_item[backorderable]', true,
+                                item.backorderable?,
+                                class: 'stock_item_backorderable',
+                                id: "stock_item_backorderable_#{item.stock_location.id}" %>
+                        <% end %>
+                      </td>
+                      <td class="actions actions-1 text-center">
+                        <%= link_to_with_icon 'trash', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true  %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

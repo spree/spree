@@ -80,6 +80,7 @@
     td {
       width: 31px;
       height: 29px;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
       .ui-state-default, 
       .ui-widget-content .ui-state-default, 
@@ -89,16 +90,18 @@
         border: none;
         text-align: center;
         font-weight: 300;
-        transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      }
 
-        &:hover {
-          background-color: $gray-lighter;
-        }
+      &:hover {
+        background-color: $gray-lighter;
+      }
 
-        &:active {
-          background-color: $brand-success;
-          color: white;
-        }
+      &:active {
+        background-color: $brand-success;
+
+        a {
+          color: white;  
+        }        
       }
     }
   }

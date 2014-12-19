@@ -18,7 +18,7 @@
       <% @prototypes.each do |prototype| %>
         <tr id="<%= spree_dom_id prototype %>" data-hook="prototypes_row">
           <td><%= prototype.name %></td>
-          <td class="actions actions-2">
+          <td class="actions actions-2 text-right">
             <%= link_to_edit(prototype, :no_text => true, :class => 'admin_edit_prototype') %>
             <%= link_to_delete(prototype, :no_text => true) %>
           </td>

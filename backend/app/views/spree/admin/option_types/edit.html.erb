@@ -11,11 +11,15 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @option_type } %>
 
 <%= form_for [:admin, @option_type] do |f| %>
-  <fieldset>
-    <legend><%= Spree.t(:option_values) %></legend>
-
-    <%= render :partial => 'form', :locals => { :f => f } %>
-
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= Spree.t(:option_values) %>
+      </h1>
+    </div>
+    <div class="panel-body">
+      <%= render :partial => 'form', :locals => { :f => f } %>
+    </div>
     <table class="table table-condensed table-bordered sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
       <thead data-hook="option_header">
         <tr>
@@ -28,7 +32,7 @@
         <% if @option_type.option_values.empty? %>
           <tr id="none" data-hook="option_none">
             <td colspan="2"><%= Spree.t(:none) %></td>
-            <td class="actions"></td>
+            <td class="actions text-center"></td>
           </tr>
         <% else %>
           <%= f.fields_for :option_values do |option_value_form| %>
@@ -37,7 +41,8 @@
         <% end %>
       </tbody>
     </table>
-
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-  </fieldset>
+    <div class="panel-footer text-center">
+      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    </div>
+  </div>
 <% end %>

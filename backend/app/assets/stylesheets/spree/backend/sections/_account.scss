@@ -3,4 +3,14 @@
     color: white !important;
     font-weight: 400;
   }
+
+  .dropdown-menu {
+    padding: 20px;
+    min-width: 240px;
+    text-align: center;
+
+    a {
+      color: $dropdown-link-color !important;
+    }
+  }
 }

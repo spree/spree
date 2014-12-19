@@ -21,6 +21,4 @@
       <%= link_to_with_icon 'home', Spree.t(:stock), stock_admin_product_url(@product) %>
     <% end if can?(:stock, Spree::Product) %>
   </ul>
-
-  <%= collapse_sidebar_link %>
 <% end %>

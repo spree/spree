@@ -16,7 +16,7 @@
       <% @promotion_categories.each do |promotion_category| %>
         <tr>
           <td><%= promotion_category.name %></td>
-          <td class="actions actions-2">
+          <td class="actions actions-2 text-right">
             <%= link_to_edit promotion_category, :no_text => true %>
             <%= link_to_delete promotion_category, :no_text => true %>
           </td>
