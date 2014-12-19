@@ -36,9 +36,5 @@ module Spree
         end
       end
     end
-
-    def to_param
-      number.to_s.to_url.upcase
-    end
   end
 end
