@@ -6,6 +6,8 @@ module Spree
 
       helper_method :refund_reasons
 
+      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error, only: :create
+
       private
 
       def location_after_save
@@ -25,6 +27,11 @@ module Spree
         super.tap do |refund|
           refund.amount = refund.payment.credit_allowed
         end
+      end
+
+      def spree_core_gateway_error(error)
+        flash[:error] = error.message
+        render :new
       end
     end
   end

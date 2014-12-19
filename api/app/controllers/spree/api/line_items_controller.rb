@@ -1,9 +1,17 @@
 module Spree
   module Api
     class LineItemsController < Spree::Api::BaseController
+      class_attribute :line_item_options
+
+      self.line_item_options = []
+
       def create
         variant = Spree::Variant.find(params[:line_item][:variant_id])
-        @line_item = order.contents.add(variant, params[:line_item][:quantity] || 1)
+        @line_item = order.contents.add(
+            variant,
+            params[:line_item][:quantity] || 1,
+            line_item_params[:options] || {}
+        )
 
         if @line_item.errors.empty?
           respond_with(@line_item, status: 201, default_template: :show)
@@ -44,12 +52,17 @@ module Spree
         def line_items_attributes
           {line_items_attributes: {
               id: params[:id],
-              quantity: params[:line_item][:quantity]
+              quantity: params[:line_item][:quantity],
+              options: line_item_params[:options] || {}
           }}
         end
 
         def line_item_params
-          params.require(:line_item).permit(:quantity, :variant_id)
+          params.require(:line_item).permit(
+              :quantity,
+              :variant_id,
+              options: line_item_options
+          )
         end
     end
   end

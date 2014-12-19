@@ -5,7 +5,7 @@ module Spree
         if params[:ids]
           @option_values = scope.where(:id => params[:ids])
         else
-          @option_values = scope.ransack(params[:q]).result
+          @option_values = scope.ransack(params[:q]).result.distinct
         end
         respond_with(@option_values)
       end

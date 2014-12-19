@@ -1,32 +1,24 @@
+//= require bootstrap-sprockets
 //= require jquery
+//= require jquery.cookie
+//= require jquery.jstree/jquery.jstree
+//= require jquery.tree-menu
 //= require jquery_ujs
-//= require jquery-migrate-1.0.0
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
 //= require modernizr
-//= require jquery.cookie
-//= require jquery.delayedobserver
-//= require jquery.jstree/jquery.jstree
-//= require jquery.alerts/jquery.alerts
-//= require jquery.powertip
-//= require jquery.vAlign
-//= require css_browser_selector_dev
-//= require spin
-//= require trunk8
-//= require jquery.adaptivemenu
-//= require equalize
-//= require responsive-tables
+//= require underscore-min.js
 //= require spree
 //= require spree/backend/spree-select2
 //= require_tree .
 
-
 Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
 Spree.routes.classifications_api = Spree.pathFor('api/classifications')
 Spree.routes.option_type_search = Spree.pathFor('api/option_types')
+Spree.routes.option_value_search = Spree.pathFor('api/option_values')
 Spree.routes.orders_api = Spree.pathFor('api/orders')
-Spree.routes.product_search = Spree.pathFor('api/products')
+Spree.routes.product_search = Spree.pathFor('admin/search/products')
 Spree.routes.shipments_api = Spree.pathFor('api/shipments')
 Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
 Spree.routes.stock_locations_api = Spree.pathFor('api/stock_locations')
@@ -42,3 +34,7 @@ Spree.routes.payments_api = function(order_id) {
 Spree.routes.stock_items_api = function(stock_location_id) {
   return Spree.pathFor('api/stock_locations/' + stock_location_id + '/stock_items')
 }
+
+$(document).ready(function(){
+  $(".sidebar .treeview").tree();
+});

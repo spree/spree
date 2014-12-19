@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.44.1'
-  s.add_dependency 'acts_as_list', '= 0.3.0'
+  s.add_dependency 'acts_as_list', '~> 0.5.0'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.9.2'

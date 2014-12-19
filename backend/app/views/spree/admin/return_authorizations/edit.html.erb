@@ -1,7 +1,7 @@
 <% content_for :page_actions do %>
   <% if @return_authorization.can_cancel? %>
     <li>
-      <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, e: 'cancel'), method: :put, data: { confirm: Spree.t(:are_you_sure) }, icon: 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, e: 'cancel'), method: :put, data: { confirm: Spree.t(:are_you_sure) }, :icon => "delete" %>
     </li>
   <% end %>
   <li>
@@ -12,19 +12,19 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
 
 <% content_for :page_title do %>
-  <i class="fa fa-arrow-right"></i> <%= Spree.t(:return_authorization) %> <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
+  / <%= Spree.t(:return_authorization) %> <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
 <% end %>
 
 
-<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @return_authorization } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @return_authorization } %>
 <%= form_for [:admin, @order, @return_authorization] do |f| %>
-  <fieldset class="no-border-top">
+  <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
 
-    <div class="form-buttons filter-actions actions" data-hook="buttons">
+    <div class="form-actions" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'repeat' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'remove' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_order_return_authorizations_url(@order), :icon => 'delete' %>
     </div>
   </fieldset>
 <% end %>

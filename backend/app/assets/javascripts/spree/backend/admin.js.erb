@@ -5,6 +5,7 @@
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/user_picker
 //= require spree/backend/product_picker
+//= require spree/backend/option_value_picker
 //= require spree/backend/taxons
 
 /**
@@ -15,64 +16,66 @@ Hopefully, this will evolve into a propper class.
 
 jQuery(function($) {
 
-  // Vertical align of checkbox fields
-  $('.field.checkbox label').vAlign()
-
-  <% # Re-adjusting admin menu during test causes tests to fail,
-     # like states_spec and shipping_methods_spec. Let's not do this. %>
-  <% unless Rails.env.test? %>
-    $('.main-menu-wrapper ul').AdaptiveMenu({
-      text: "<a href='#'><i class='fa fa-chevron-down'></i> " + Spree.translations.more + "</a>",
-      klass: "dropdown"
-    });
-  <% end %>
-
   // Add some tips
-  $('.with-tip').powerTip({
-    smartPlacement: true,
-    fadeInTime: 50,
-    fadeOutTime: 50,
+  $('.with-tip').tooltip();
+
+  $('.js-show-index-filters').click(function(){
+    $(".filter-well").slideToggle();
+    $(this).parents(".filter-wrap").toggleClass("collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-down");
   });
 
-  $('body')
-    .on('powerTipPreRender', '.with-tip', function() {
-      $('#powerTip').addClass($(this).data('action'));
-      $('#powerTip').addClass($(this).data('tip-color'));
-    })
-    .on('powerTipClose', '.with-tip', function() {
-      $('#powerTip').removeClass($(this).data('action'));
-    })
+  $(".js-collapse-sidebar").click(function(){
+    $(".main-right-sidebar").toggleClass("collapsed");
+    $("section.content").toggleClass("sidebar-collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-right");
+    $("span.icon", $(this)).toggleClass("icon-chevron-left");
+  });
+
+  // TODO: remove this js temp behaviour and fix this decent
+  // Temp quick search
+  // When there was a search term, copy it
+  $(".js-quick-search").val($(".js-quick-search-target").val());
+  // Catch the quick search form submit and submit the real form
+  $("#quick-search").submit(function(){
+    $(".js-quick-search-target").val($(".js-quick-search").val());
+    $("#table-filter form").submit();
+    return false;
+  });
+
+  // Replace ▼ and ▲ in sort_link with nicer icons
+  $(".sort_link").each(function(){
+    // Remove the &nbsp; in the text
+    var sort_link_text = $(this).text().replace('\xA0', '');
+
+    if(sort_link_text.indexOf("▼") >= 0){
+      $(this).text(sort_link_text.replace("▼",""));
+      $(this).append('<span class="icon icon-chevron-down"></span>');
+    } else if(sort_link_text.indexOf("▲") >= 0){
+      $(this).text(sort_link_text.replace("▲",""));
+      $(this).append('<span class="icon icon-chevron-up"></span>');
+    }
+  });
+
+  // Enable sidebar toggle
+  $("[data-toggle='offcanvas']").click(function(e) {
+    e.preventDefault();
+
+    // If window is small enough, enable sidebar push menu
+    if ($(window).width() <= 992) {
+      $('.row-offcanvas').toggleClass('active');
+      $('.left-side').removeClass("collapse-left");
+      $(".right-side").removeClass("strech");
+      $('.row-offcanvas').toggleClass("relative");
+    } else {
+      // Else, enable content streching
+      $('.left-side').toggleClass("collapse-left");
+      $(".right-side").toggleClass("strech");
+    }
+  });
 
   // Make flash messages dissapear
-  setTimeout('$(".flash").fadeOut()', 5000);
-
-  // Highlight hovered table column
-  $('table tbody tr td.actions').find('a, button').hover(function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.addClass(klass)
-    tr.prev().addClass('before-' + klass);
-  }, function(){
-    var tr = $(this).closest('tr');
-    var klass = 'highlight action-' + $(this).data('action')
-    tr.removeClass(klass)
-    tr.prev().removeClass('before-' + klass);
-  });
-
-  // Trunkate text in page_title that didn't fit
-  var truncate_elements = $('.truncate');
-
-  truncate_elements.each(function(){
-    $(this).trunk8();
-  });
-  $(window).resize(function (event) {
-    truncate_elements.each(function(){
-      $(this).trunk8();
-    })
-  });
-
-  // Make height of dt/dd elements the same
-  $("dl").equalize('outerHeight');
+  setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
 
 });
 
@@ -82,10 +85,10 @@ $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 show_flash = function(type, message) {
   var flash_div = $('.flash.' + type);
   if (flash_div.length == 0) {
-    flash_div = $('<div class="flash ' + type + '" />');
-    $('#wrapper').prepend(flash_div);
+    flash_div = $('<div class="alert alert-' + type + '" />');
+    $('.main-content').prepend(flash_div);
   }
-  flash_div.html(message).show().delay(5000).fadeOut(500);
+  flash_div.html(message).show().delay(5000).slideUp();
 }
 
 
@@ -137,6 +140,7 @@ $(document).ready(function(){
              }
     });
   });
+
   var uniqueId = 1;
   $('.spree_add_fields').click(function() {
     var target = $(this).data("target");

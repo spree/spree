@@ -101,6 +101,8 @@ module Spree
     end
 
     def options=(options={})
+      return unless options.present?
+
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
       currency = opts.delete(:currency) || order.try(:currency)
@@ -136,11 +138,11 @@ module Spree
       end
 
       def recalculate_adjustments
-        Spree::ItemAdjustments.new(self).update
+        Adjustable::AdjustmentsUpdater.update(self)
       end
 
       def update_tax_charge
-        Spree::TaxRate.adjust(order.tax_zone, [self])
+        Spree::TaxRate.adjust(order, [self])
       end
 
       def ensure_proper_currency

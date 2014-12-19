@@ -3,7 +3,7 @@
   <div id="promotions">
     <h3><%= Spree.t(:promotions) %></h3>
     <% promotions.each do |promotion| %>
-    <div>
+    <div class="well well-sm">
       <h4><%= promotion.name %></h4>
       <p><%= promotion.description %></p>
       <% if promotion.products.any? %>

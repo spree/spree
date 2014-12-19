@@ -2,18 +2,20 @@ require 'spec_helper'
 
 describe Spree::Zone, :type => :model do
   context "#match" do
-    let(:country_zone) { create(:zone, name: 'CountryZone') }
+    let(:country_zone) { create(:zone, kind: 'country') }
+
     let(:country) do
-      country = create(:country)
-      # Create at least one state for this country
-      state = create(:state, country: country)
-      country
+      create(:country)
+    end
+
+    let(:state) do
+      create(:state, country: country)
     end
 
     before { country_zone.members.create(zoneable: country) }
 
     context "when there is only one qualifying zone" do
-      let(:address) { create(:address, country: country, state: country.states.first) }
+      let(:address) { create(:address, country: country, state: state) }
 
       it "should return the qualifying zone" do
         expect(Spree::Zone.match(address)).to eq(country_zone)
@@ -21,7 +23,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when there are two qualified zones with same member type" do
-      let(:address) { create(:address, country: country, state: country.states.first) }
+      let(:address) { create(:address, country: country, state: state) }
       let(:second_zone) { create(:zone, name: 'SecondZone') }
 
       before { second_zone.members.create(zoneable: country) }
@@ -44,10 +46,10 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when there are two qualified zones with different member types" do
-      let(:state_zone) { create(:zone, name: 'StateZone') }
-      let(:address) { create(:address, country: country, state: country.states.first) }
+      let(:state_zone) { create(:zone, kind: 'state') }
+      let(:address) { create(:address, country: country, state: state) }
 
-      before { state_zone.members.create(zoneable: country.states.first) }
+      before { state_zone.members.create!(zoneable: state) }
 
       it "should return the zone with the more specific member type" do
         expect(Spree::Zone.match(address)).to eq(state_zone)
@@ -66,7 +68,7 @@ describe Spree::Zone, :type => :model do
     let(:country) { state.country }
 
     context "when zone consists of countries" do
-      let(:country_zone) { create(:zone, name: 'CountryZone') }
+      let(:country_zone) { create(:zone, kind: 'country') }
 
       before { country_zone.members.create(zoneable: country) }
 
@@ -76,7 +78,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when zone consists of states" do
-      let(:state_zone) { create(:zone, name: 'StateZone') }
+      let(:state_zone) { create(:zone, kind: 'state') }
 
       before { state_zone.members.create(zoneable: state) }
 
@@ -92,7 +94,7 @@ describe Spree::Zone, :type => :model do
     let(:address) { create(:address, state: state) }
 
     context "when zone is country type" do
-      let(:country_zone) { create(:zone, name: 'CountryZone') }
+      let(:country_zone) { create(:zone, kind: 'country') }
       before { country_zone.members.create(zoneable: country) }
 
       it "should be true" do
@@ -101,7 +103,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when zone is state type" do
-      let(:state_zone) { create(:zone, name: 'StateZone') }
+      let(:state_zone) { create(:zone, kind: 'state') }
       before { state_zone.members.create(zoneable: state) }
 
       it "should be true" do
@@ -232,7 +234,6 @@ describe Spree::Zone, :type => :model do
       end
 
       context "when some states contained in one of the countries we check against" do
-
         before do
           state1 = create(:state, country: country1)
           @target.members.create(zoneable: state1)
@@ -245,7 +246,6 @@ describe Spree::Zone, :type => :model do
       end
 
       context "when none of the states contained in any of the countries we check against" do
-
         before do
           @target.members.create(zoneable: create(:state, country: country2))
           @target.members.create(zoneable: create(:state, country: country2))
@@ -256,7 +256,6 @@ describe Spree::Zone, :type => :model do
         end
       end
     end
-
   end
 
   context "#save" do
@@ -282,23 +281,117 @@ describe Spree::Zone, :type => :model do
   end
 
   context "#kind" do
+    it "returns whatever value you set" do
+      zone = Spree::Zone.new kind: 'city'
+      expect(zone.kind).to eq 'city'
+    end
+
     context "when the zone consists of country zone members" do
       before do
         @zone = create(:zone, name: 'country', zone_members: [])
         @zone.members.create(zoneable: create(:country))
       end
+
       it "should return the kind of zone member" do
         expect(@zone.kind).to eq("country")
       end
     end
+  end
 
-    context "when the zone consists of state zone members" do
-      before do
-        @zone = create(:zone, name: 'state', zone_members: [])
-        @zone.members.create(zoneable: create(:state))
+  context "#potential_matching_zones" do
+    let!(:country)  { create(:country) }
+    let!(:country2) { create(:country, name: 'OtherCountry') }
+    let!(:country3) { create(:country, name: 'TaxCountry') }
+    let!(:default_tax_zone) do
+      create(:zone, default_tax: true).tap { |z| z.members.create(zoneable: country3) }
+    end
+
+    context "finding potential matches for a country zone" do
+      let!(:zone) do
+        create(:zone).tap do |z|
+          z.members.create(zoneable: country)
+          z.members.create(zoneable: country2)
+          z.save!
+        end
       end
-      it "should return the kind of zone member" do
-        expect(@zone.kind).to eq("state")
+      let!(:zone2) do
+        create(:zone).tap { |z| z.members.create(zoneable: country) && z.save! }
+      end
+
+      before { @result = Spree::Zone.potential_matching_zones(zone) }
+
+      it "will find all zones with countries covered by the passed in zone" do
+        expect(@result).to include(zone, zone2)
+      end
+
+      it "only returns each zone once" do
+        expect(@result.select { |z| z == zone }.size).to be 1
+      end
+
+      it "will include the default_tax zone" do
+        expect(@result).to include(default_tax_zone)
+      end
+    end
+
+    context "finding potential matches for a state zone" do
+      let!(:state)  { create(:state, country: country) }
+      let!(:state2) { create(:state, country: country2, name: 'OtherState') }
+      let!(:state3) { create(:state, country: country2, name: 'State') }
+      let!(:zone) do
+        create(:zone).tap do |z|
+          z.members.create(zoneable: state)
+          z.members.create(zoneable: state2)
+          z.save!
+        end
+      end
+      let!(:zone2) do
+        create(:zone).tap { |z| z.members.create(zoneable: state) && z.save! }
+      end
+      let!(:zone3) do
+        create(:zone).tap { |z| z.members.create(zoneable: state2) && z.save! }
+      end
+
+      before { @result = Spree::Zone.potential_matching_zones(zone) }
+
+      it "will find all zones which share states covered by passed in zone" do
+        expect(@result).to include(zone, zone2)
+      end
+
+      it "will find zones that share countries with any states of the passed in zone" do
+        expect(@result).to include(zone3)
+      end
+
+      it "only returns each zone once" do
+        expect(@result.select { |z| z == zone }.size).to be 1
+      end
+
+      it "will include the default tax zone" do
+        expect(@result).to include(default_tax_zone)
+      end
+    end
+  end
+
+  context "state and country associations" do
+    let!(:country)  { create(:country) }
+
+    context "has countries associated" do
+      let!(:zone) do
+        create(:zone, countries: [country])
+      end
+
+      it "can access associated countries" do
+        expect(zone.countries).to include(country)
+      end
+    end
+
+    context "has states associated" do
+      let!(:state)  { create(:state, country: country) }
+      let!(:zone) do
+        create(:zone, states: [state])
+      end
+
+      it "can access associated states" do
+        expect(zone.states).to include(state)
       end
     end
   end
