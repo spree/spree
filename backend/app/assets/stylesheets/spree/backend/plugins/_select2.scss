@@ -82,3 +82,46 @@
     color: white;
   }
 }
+
+.select2-container-multi {
+  .select2-choices {
+    line-height: 1.8;
+    border-color: $input-border;
+    background-image: none;
+    background-color: $input-bg;
+
+    .select2-search-choice {
+      @extend .label;
+      @extend .label-info;
+
+      box-shadow: none;
+      border: none;
+      background-image: none;
+      margin: 5px;
+      padding: 7px;
+
+      .select2-search-choice-close {
+        @extend .glyphicon;
+        @extend .glyphicon-remove;
+
+        background-image: none !important;
+        font-size: 100%;
+        color: white !important;
+        position: absolute;
+        left: 7px;
+        top: 7px;
+      }
+
+      div {
+        padding-left: 15px;
+      }
+    }
+  }
+
+  &.select2-container-active {
+    .select2-choices {
+      box-shadow: none;
+      border-color: lighten($brand-success, 20);
+    }
+  }
+}
