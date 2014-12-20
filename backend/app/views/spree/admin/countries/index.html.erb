@@ -1,7 +1,5 @@
-
-
 <% content_for :page_title do %>
-  <%= Spree.t(:listing_countries) %>
+  <%= Spree::Country.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>

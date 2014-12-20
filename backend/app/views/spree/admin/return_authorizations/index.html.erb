@@ -40,7 +40,7 @@
   </table>
 <% elsif @order.shipments.any?(&:shipped?) %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_returns_found) %>
+    <%= Spree.t(:no_resource_found, resource: Spree::ReturnAuthorization.model_name.human(count: :many)) %>
   </div>
 <% else %>
   <div data-hook="rma_cannont_create" class="alert alert-info no-objects-found">

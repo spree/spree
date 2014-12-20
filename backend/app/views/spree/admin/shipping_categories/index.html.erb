@@ -1,7 +1,5 @@
-
-
 <% content_for :page_title do %>
-  <%= Spree.t(:shipping_categories) %>
+  <%= Spree::ShippingCategory.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -32,7 +30,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/shipping_category')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::ShippingCategory.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_shipping_category_path %>!
   </div>
 <% end %>
