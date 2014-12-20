@@ -14,6 +14,7 @@ FactoryGirl.define do
       stock_location { build(:stock_location) }
       contents       { [] }
       variants_contents { {} }
+      line_item_contents { {} }
     end
 
     initialize_with { new(stock_location, contents) }
@@ -21,6 +22,12 @@ FactoryGirl.define do
     after(:build) do |package, evaluator|
       evaluator.variants_contents.each do |variant, count|
         package.add_multiple build_list(:inventory_unit, count, variant: variant)
+      end
+    end
+
+    after(:build) do |package, evaluator|
+      evaluator.line_item_contents.each do |line_item, count|
+        package.add_multiple build_list(:inventory_unit, count, line_item: line_item)
       end
     end
 
