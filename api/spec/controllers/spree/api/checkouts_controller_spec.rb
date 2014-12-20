@@ -55,10 +55,26 @@ module Spree
         order
       end
 
-
       before(:each) do
         Order.any_instance.stub(:confirmation_required? => true)
         Order.any_instance.stub(:payment_required? => true)
+      end
+
+      it 'should not allow users to change the price of line items' do
+        line_item = order.line_items.first
+        price_was = line_item.price
+        api_put(
+          :update,
+          id: order.to_param,
+          order_token: order.token,
+          order: {
+            line_items: {0 => {id: line_item.id, price: '0.1', quantity: '3'}}
+          }
+        )
+        response.status.should == 200
+        line_item.reload
+        expect(line_item.price).to eq price_was
+        expect(line_item.price).to_not eq 0.1
       end
 
       it "should transition a recently created order from cart to address" do

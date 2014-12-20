@@ -53,11 +53,28 @@ module Spree
       end
 
       private
-
         def object_params
-          # For payment step, filter order parameters to produce the expected nested attributes for a single payment and its source, discarding attributes for payment methods other than the one selected
-          # respond_to check is necessary due to issue described in #2910
-          object_params = nested_params
+          modify_payment_attributes params[:order] || {}
+
+          protected_params = if params[:order]
+                               params.require(:order).permit(permitted_checkout_attributes)
+                             else
+                               {}
+                             end
+
+          map_nested_attributes_keys Order, protected_params
+        end
+
+        def user_id
+          params[:order][:user_id] if params[:order]
+        end
+
+        # For payment step, filter order parameters to produce the expected
+        # nested attributes for a single payment and its source, discarding
+        # attributes for payment methods other than the one selected
+        #
+        # respond_to check is necessary due to issue described in #2910
+        def modify_payment_attributes(object_params)
           if @order.has_checkout_step?('payment') && @order.payment?
             if object_params[:payments_attributes].is_a?(Hash)
               object_params[:payments_attributes] = [object_params[:payments_attributes]]
@@ -69,11 +86,6 @@ module Spree
               object_params[:payments_attributes].first[:amount] = @order.total.to_s
             end
           end
-          object_params
-        end
-
-        def user_id
-          params[:order][:user_id] if params[:order]
         end
 
         def nested_params
