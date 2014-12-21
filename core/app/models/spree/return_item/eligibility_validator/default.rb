@@ -4,6 +4,8 @@ module Spree
     self.permitted_eligibility_validators = [
                                               ReturnItem::EligibilityValidator::TimeSincePurchase,
                                               ReturnItem::EligibilityValidator::RMARequired,
+                                              ReturnItem::EligibilityValidator::InventoryShipped,
+                                              ReturnItem::EligibilityValidator::NoReimbursements,
                                             ]
 
     def eligible_for_return?

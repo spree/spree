@@ -39,16 +39,52 @@ describe Spree::Adjustment, :type => :model do
       Spree::Adjustment.non_tax.to_a
     end
 
-    let!(:tax_adjustment) { create(:adjustment, order: order, source: create(:tax_rate))                   }
+    let!(:tax_adjustment) { create(:adjustment, order: order, source: create(:tax_rate)) }
     let!(:non_tax_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
-    let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil)                                 }
+    let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
 
     it 'select non-tax adjustments' do
       expect(subject).to_not include tax_adjustment
-      expect(subject).to     include non_tax_adjustment_with_source
-      expect(subject).to     include non_tax_adjustment_without_source
+      expect(subject).to include non_tax_adjustment_with_source
+      expect(subject).to include non_tax_adjustment_without_source
     end
   end
+
+  describe 'competing_promos scope' do
+    subject do
+      Spree::Adjustment.competing_promos.to_a
+    end
+
+
+    let!(:promotion_adjustment) { create(:adjustment, order: order, source_type: 'Spree::PromotionAction', source_id: nil) }
+    let!(:custom_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Custom', source_id: nil) }
+    let!(:non_promotion_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
+    let!(:non_promotion_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
+
+
+    context 'no custom source_types have been added to competing_promos' do
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction'] }
+
+      it 'selects promotion adjustments by default' do
+        expect(subject).to include promotion_adjustment
+        expect(subject).to_not include custom_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_without_source
+      end
+    end
+
+    context 'a custom source_type has been added to competing_promos' do
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+
+      it 'selects adjustments with registered source_types' do
+        expect(subject).to include promotion_adjustment
+        expect(subject).to include custom_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_without_source
+      end
+    end
+  end
+
 
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, order: order, state: 'open') }

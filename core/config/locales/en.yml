@@ -785,6 +785,7 @@ en:
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
     invalid_credit_card: Invalid credit card.
+    invalid_exchange_variant: Invalid exchange variant.
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
@@ -1100,6 +1101,9 @@ en:
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User
+      option_value:
+        description: Order includes specified product(s) with matching option value(s)
+        name: Option Value(s)
       product:
         description: Order includes specified product(s)
         name: Product(s)
@@ -1166,6 +1170,8 @@ en:
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
+    return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
+    return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
     return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Return Items

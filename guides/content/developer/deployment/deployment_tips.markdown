@@ -119,121 +119,38 @@ recommended to fix the setting in an initializer . In
 config.allow_ssl_in_staging = false
 ```
 
-### Configuring Email Options
+## Performance Tips
 
-Mail delivery in Spree is disabled by default. You can enable it in two ways.
+### Running in Production Mode
 
-First, if you need to keep your default Rails app action mailer configs you need to tell Spree to not override them by setting the `override_actionmailer_config` option to `false`. You should also tell Spree which email should go on the header *from* using the `mails_from` option. A typical spree initializer which disables all Spree default mail settings and interceptor looks like this:
+If you are noticing that Spree seems to be running slowly you should
+make sure that you are running in "production mode." You can start your
+server in production mode as follows:
 
-```ruby
-Spree.config do |config|
-config.override_actionmailer_config = false
-config.mails_from = "no-reply@yourdomain.com"
-end
+```bash
+$ bundle exec rails server -e production
 ```
 
-Secondly, in case you want to use Spree admin UI or config options via
-initializer to properly enable email delivery, you need to provide valid
-SMTP information. This includes the following (spree config options goes
-  along):
+Please consult your web server documentation for more details on
+enabling production mode for your particular web server.
 
-  * SMTP Domain (mail_domain, defaults to *localhost*)
-  * SMTP Mail Host (mail_host, defaults to *localhost*)
-  * SMTP Port (mail_port, defaults to *25*)
-  * Secure Connection Type (secure_connection_type, defaults to *None*)
-  * SMTP Authentication Type (mail_auth_type, defaults to *None*)
-  * SMTP Username (smtp_username, defaults to *nil*)
-  * SMTP Password (smtp_password, defaults to *nil*)
+### Passenger Timeout
 
-  Those can be updated either by an usual spree initializer block or through
-  admin UI. You could set them as per environment as well. e.g.
+If you are running on [Passenger](http://www.modrails.com) then you may be noticing that the first request to your Spree application is very slow if the application has been idle for some time (or you have just restarted.) Consider changing the [PassengerPoolIdleTime](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerPoolIdleTime) as described in the Passenger documentation.
 
-  ```ruby
-  Spree.config do |config|
-  if Rails.env.production?
-  config.mail_port = 1025
-  # other configs ..
-  else
-  config.mail_port = 25
-  # other configs ..
-  end
-  end
-  ```
+### Caching
 
-  Regardless of whether you decide to configure ActionMailer via the admin
-  UI or an initializer, you may decide that while you need to have mail
-  capabilities for other parts of your app, you don't want to send Spree's
-  default email notifications (e.g. order confirmation). This may be the
-  case if you use a transactional email service like Mandrill for such
-  notifications but you require regular ActionMailer capabilities for
-  other parts of your app. If this is the case you can change the default
-  ``true`` value for the ``send_core_emails`` config to ``false``.
+Most stores spend a lot of time serving up the same pages over and over
+again. In many cases, the content being served is exactly identical or
+nearly identical for every user. In such cases, a caching solution may
+be appropriate and can improve server performance by bypassing time
+consuming operations such as database access. Rails provides several
+excellent [caching
+options](http://guides.rubyonrails.org/caching_with_rails.html) that you
+should consider investigating.
 
-  The default `override_actionmailer_config` value also gives you the chance
-  to set *bcc* headers for all spree outgoing emails and to intercept them and
-  reroute to someone else. This could come in handy on staging servers since
-  it prevents the store from accidentally sending emails to a real world
-  customer when testing operations such as canceling an order or marking it
-  shipped. At last you need to set `enable_mail_delivery = true`
-  as it defaults to `false`. e.g.
-
-  ```ruby
-  Spree.config do |config|
-  config.enable_mail_delivery = true
-  config.mail_bcc = "staff@yourstore.com"
-
-  if Rails.env.staging?
-  config.intercept_email = "testing@yourstore.com"
-  end
-  end
-  ```
-
-  Both smtp and inteceptor configs listed above can be found on the mail section
-  in the configuration tab. Note that the *Mail Method Setting* link will not
-  be displayed if `override_actionmailer_config` is `false`.
-
-  ![Changing Mail Server Setting](../images/developer/mail_server_settings.png "Changing Mail Server Setting")
-
-  !!!
-  It's generally considered a bad idea to send email on the same
-  "thread" as a web request. Many web applications manage to get by doing
-  this but high volume stores should consider using standard Rails
-  techniques such as [Delayed Job](https://github.com/tobi/delayed_job)
-  for handling email delivery as a separate process.
-  !!!
-
-  ## Performance Tips
-
-  ### Running in Production Mode
-
-  If you are noticing that Spree seems to be running slowly you should
-  make sure that you are running in "production mode." You can start your
-  server in production mode as follows:
-
-  ```bash
-  $ bundle exec rails server -e production
-  ```
-
-  Please consult your web server documentation for more details on
-  enabling production mode for your particular web server.
-
-  ### Passenger Timeout
-
-  If you are running on [Passenger](http://www.modrails.com) then you may be noticing that the first request to your Spree application is very slow if the application has been idle for some time (or you have just restarted.) Consider changing the [PassengerPoolIdleTime](http://www.modrails.com/documentation/Users%20guide%20Apache.html#PassengerPoolIdleTime) as described in the Passenger documentation.
-
-  ### Caching
-
-  Most stores spend a lot of time serving up the same pages over and over
-  again. In many cases, the content being served is exactly identical or
-  nearly identical for every user. In such cases, a caching solution may
-  be appropriate and can improve server performance by bypassing time
-  consuming operations such as database access. Rails provides several
-  excellent [caching
-  options](http://guides.rubyonrails.org/caching_with_rails.html) that you
-  should consider investigating.
-
-  A detailed description of Rails caching is beyond the scope of this
-  guide.
+A detailed description of Rails caching is beyond the scope of this
+guide.
 
 ***
 The Spree core team is actively considering some form of basic
