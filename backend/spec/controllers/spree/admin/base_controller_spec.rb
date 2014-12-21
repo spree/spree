@@ -26,7 +26,7 @@ describe Spree::Admin::BaseController, :type => :controller do
   describe "check alerts" do
     stub_authorization!
 
-    it "checks alerts with before_filter" do
+    it "checks alerts with before_action" do
       expect(controller).to receive :check_alerts
       process :index
     end

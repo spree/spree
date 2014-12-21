@@ -1,8 +1,8 @@
 module Spree
   module Api
     class PromotionsController < Spree::Api::BaseController
-      before_filter :requires_admin
-      before_filter :load_promotion
+      before_action :requires_admin
+      before_action :load_promotion
 
       def show
         if @promotion

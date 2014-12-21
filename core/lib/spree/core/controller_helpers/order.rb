@@ -5,7 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_filter :set_current_order
+          before_action :set_current_order
 
           helper_method :current_currency
           helper_method :current_order
