@@ -5,6 +5,7 @@ class CreateSpreeStockLocations < ActiveRecord::Migration
       t.belongs_to :address
 
       t.timestamps
+      t.boolean :default, null: false, default: false
     end
     add_index :spree_stock_locations, :address_id
   end
