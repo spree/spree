@@ -19,6 +19,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 5.0.0.beta1'
 
 gem 'rails', '~> 4.2.0'
+gem 'rails-deprecated_sanitizer'
 gem 'responders', '~> 2.0'
 gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.2'
 gem 'state_machine', github: 'huoxito/state_machine', branch: 'spree-rails4.2-upgrade'
