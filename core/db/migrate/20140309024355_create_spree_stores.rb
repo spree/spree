@@ -18,7 +18,7 @@ class CreateSpreeStores < ActiveRecord::Migration
         t.string :code
         t.boolean :default, default: false, null: false
 
-        t.timestamps
+        t.timestamps null: false
       end
     end
   end
