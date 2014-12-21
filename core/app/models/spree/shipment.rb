@@ -404,7 +404,7 @@ module Spree
       end
 
       def send_shipped_email
-        ShipmentMailer.shipped_email(self.id).deliver
+        ShipmentMailer.shipped_email(id).deliver_later
       end
 
       def set_cost_zero_when_nil

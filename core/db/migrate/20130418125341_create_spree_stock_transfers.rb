@@ -5,7 +5,7 @@ class CreateSpreeStockTransfers < ActiveRecord::Migration
       t.string :reference_number
       t.integer :source_location_id
       t.integer :destination_location_id
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :spree_stock_transfers, :source_location_id
