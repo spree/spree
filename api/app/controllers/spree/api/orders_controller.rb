@@ -111,7 +111,7 @@ module Spree
 
         def permitted_order_attributes
           if current_api_user.has_spree_role? "admin"
-            super << admin_order_attributes
+            super + admin_order_attributes
           else
             super
           end
@@ -119,7 +119,7 @@ module Spree
 
         def permitted_shipment_attributes
           if current_api_user.has_spree_role? "admin"
-            super << admin_shipment_attributes
+            super + admin_shipment_attributes
           else
             super
           end
