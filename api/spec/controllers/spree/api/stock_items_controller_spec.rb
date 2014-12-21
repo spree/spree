@@ -40,13 +40,13 @@ module Spree
 
       it "cannot update a stock item" do
         api_put :update, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                id: stock_item.to_param
         expect(response.status).to eq(404)
       end
 
       it "cannot destroy a stock item" do
         api_delete :destroy, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                   id: stock_item.to_param
         expect(response.status).to eq(404)
       end
     end
