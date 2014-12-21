@@ -8,7 +8,7 @@ Spree::Core::Engine.add_routes do
   # non-restful checkout stuff
   patch '/checkout/update/:state', to: 'checkout#update', as: :update_checkout
   get '/checkout/:state', to: 'checkout#edit', as: :checkout_state
-  get '/checkout', to: 'checkout#edit' , as: :checkout
+  get '/checkout', to: 'checkout#edit', as: :checkout
 
   populate_redirect = redirect do |params, request|
     request.flash[:error] = Spree.t(:populate_get_error)

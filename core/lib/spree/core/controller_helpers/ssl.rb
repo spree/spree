@@ -5,7 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_action :force_non_ssl_redirect, if: Proc.new { Spree::Config[:redirect_https_to_http] }
+          before_action :force_non_ssl_redirect, if: proc { Spree::Config[:redirect_https_to_http] }
           class_attribute :ssl_allowed_actions
 
           def self.ssl_allowed(*actions)
@@ -15,10 +15,10 @@ module Spree
 
           def self.ssl_required(*actions)
             ssl_allowed *actions
-            if actions.empty? or Rails.application.config.force_ssl
-              force_ssl :if => :ssl_supported?
+            if actions.empty? || Rails.application.config.force_ssl
+              force_ssl if: :ssl_supported?
             else
-              force_ssl :if => :ssl_supported?, :only => actions
+              force_ssl if: :ssl_supported?, only: actions
             end
           end
 
@@ -41,15 +41,15 @@ module Spree
               if request.ssl? && !ssl_allowed?
                 if request.get?
                   redirect_options = {
-                    :protocol => 'http://',
-                    :host     => host || request.host,
-                    :path     => request.fullpath,
+                    protocol: 'http://',
+                    host:     host || request.host,
+                    path:     request.fullpath
                   }
                   flash.keep if respond_to?(:flash)
                   insecure_url = ActionDispatch::Http::URL.url_for(redirect_options)
-                  redirect_to insecure_url, :status => :moved_permanently
+                  redirect_to insecure_url, status: :moved_permanently
                 else
-                  render :text => Spree.t(:change_protocol, :scope => :ssl), :status => :upgrade_required
+                  render text: Spree.t(:change_protocol, scope: :ssl), status: :upgrade_required
                 end
               end
             end
