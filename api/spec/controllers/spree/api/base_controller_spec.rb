@@ -13,7 +13,7 @@ describe Spree::Api::BaseController, :type => :controller do
 
   before do
     @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-      r.draw { get 'index', to: 'spree/api/base#index' }
+      r.draw { get '/index', to: 'spree/api/base#index' }
     end
   end
 
@@ -125,7 +125,7 @@ describe Spree::Api::BaseController, :type => :controller do
       allow(user).to receive_message_chain :spree_roles, pluck: []
       allow(controller).to receive_messages try_spree_current_user: user
       @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-        r.draw { get 'foo' => 'fakes#foo' }
+        r.draw { get '/foo' => 'fakes#foo' }
       end
     end
 

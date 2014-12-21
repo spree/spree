@@ -79,7 +79,7 @@ module Spree
 
         def set_custom_route
           @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-            r.draw { get 'custom_show' => 'spree/api/products#custom_show' }
+            r.draw { get '/custom_show' => 'spree/api/products#custom_show' }
           end
         end
 
