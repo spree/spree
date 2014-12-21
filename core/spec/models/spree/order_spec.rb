@@ -248,8 +248,8 @@ describe Spree::Order, type: :model do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
-      allow(order).to receive_messages(line_items: line_items = [1, 2])
-      allow(order).to receive_messages(adjustments: adjustments = [])
+      allow(order).to receive_messages(line_items: [1, 2])
+      allow(order).to receive_messages(adjustments: [])
     end
 
     it "clears out line items, adjustments and update totals" do
@@ -365,8 +365,8 @@ describe Spree::Order, type: :model do
 
       context "2 equal line items" do
         before do
-          @line_item_1 = order_1.contents.add(variant, 1, { foos: {} })
-          @line_item_2 = order_2.contents.add(variant, 1, { foos: {} })
+          @line_item_1 = order_1.contents.add(variant, 1, foos: {})
+          @line_item_2 = order_2.contents.add(variant, 1, foos: {})
         end
 
         specify do
@@ -384,8 +384,8 @@ describe Spree::Order, type: :model do
         before do
           allow(order_1).to receive(:foos_match).and_return(false)
 
-          order_1.contents.add(variant, 1, { foos: {} })
-          order_2.contents.add(variant, 1, { foos: { bar: :zoo } })
+          order_1.contents.add(variant, 1, foos: {})
+          order_2.contents.add(variant, 1, foos: { bar: :zoo })
         end
 
         specify do
@@ -633,7 +633,7 @@ describe Spree::Order, type: :model do
 
       it "matches line item when options match" do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(order.line_item_options_match(@line_items.first, { foos: { bar: :zoo } })).to be true
+        expect(order.line_item_options_match(@line_items.first, foos: { bar: :zoo })).to be true
       end
 
       it "does not match line item without options" do
@@ -800,7 +800,7 @@ describe Spree::Order, type: :model do
   context "#backordered?" do
     it 'is backordered if one of the shipments is backordered' do
       allow(order).to receive_messages(shipments: [mock_model(Spree::Shipment, backordered?: false),
-                                mock_model(Spree::Shipment, backordered?: true)])
+                                                   mock_model(Spree::Shipment, backordered?: true)])
       expect(order).to be_backordered
     end
   end
