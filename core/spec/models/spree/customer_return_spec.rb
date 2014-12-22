@@ -129,7 +129,7 @@ describe Spree::CustomerReturn, :type => :model do
   end
 
   context ".after_save" do
-    let(:inventory_unit)  { create(:inventory_unit, state: 'shipped') }
+    let(:inventory_unit)  { create(:inventory_unit, state: 'shipped', order: create(:shipped_order)) }
     let(:return_item)     { create(:return_item, inventory_unit: inventory_unit) }
 
     context "to the initial stock location" do

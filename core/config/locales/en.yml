@@ -1172,6 +1172,7 @@ en:
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
+    return_item_order_not_completed: Return item's order must be completed
     return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Return Items
