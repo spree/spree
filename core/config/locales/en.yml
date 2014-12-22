@@ -724,6 +724,7 @@ en:
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filter: Filter
     filter_results: Filter Results
     finalize: Finalize
     find_a_taxon: Find a Taxon
