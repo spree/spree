@@ -46,9 +46,9 @@ module Spree
       # Single main menu item
       def main_menu_item text, url: nil, icon: nil
         link_to url, :'data-toggle' => "collapse", :'data-parent' => '#sidebar' do
-          content_tag(:span, nil, class: "glyphicon glyphicon-#{icon}") +
+          content_tag(:span, nil, class: "icon icon-#{icon}") +
           content_tag(:span, " #{text}") +
-          content_tag(:span, nil, class: "glyphicon glyphicon-chevron-left pull-right")
+          content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
         end
       end
 
@@ -65,7 +65,7 @@ module Spree
       def collapse_sidebar_link
         content_tag :div, class: "collapse-sidebar" do
           link_to "javascript:;", class: "js-collapse-sidebar" do
-            content_tag(:span, nil, class: "glyphicon glyphicon-chevron-right") +
+            content_tag(:span, nil, class: "icon icon-chevron-right") +
             content_tag(:span, "Collapse sidebar", class: "text")
           end
         end
@@ -146,7 +146,7 @@ module Spree
         text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "glyphicon glyphicon-#{icon_name}")
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         link_to(text.html_safe, url, options)
@@ -158,7 +158,7 @@ module Spree
 
       def button(text, icon_name = nil, button_type = 'submit', options={})
         if icon_name
-          icon = content_tag(:span, '', class: "glyphicon glyphicon-#{icon_name}")
+          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}"))
@@ -182,7 +182,7 @@ module Spree
           html_options[:class]  = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
 
           if html_options[:icon]
-            icon = content_tag(:span, '', class: "glyphicon glyphicon-#{html_options[:icon]}")
+            icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
             text.insert(0, icon + ' ')
           end
 
