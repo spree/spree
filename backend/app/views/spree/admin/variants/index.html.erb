@@ -22,7 +22,7 @@
         <td><%= variant.options_text %></td>
         <td><%= variant.display_price.to_html %></td>
         <td><%= variant.sku %></td>
-        <td class="actions actions-2">
+        <td class="actions actions-2 text-right">
           <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
           <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
         </td>
