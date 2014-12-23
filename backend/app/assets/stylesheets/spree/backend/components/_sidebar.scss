@@ -32,15 +32,19 @@
         color: $gray;
 
         .glyphicon {
-          font-size: 20px;
+          font-size: 18px;
           vertical-align: bottom;
           padding-right: 5px;
         }
 
         .glyphicon.pull-right {
-          font-size: 10px;
+          font-size: 8px;
           line-height: 2;
           color: $gray-light;
+          position: absolute;
+          right: 5px;
+          top: 50%;
+          margin-top: -8px;
         }
       }
     }
@@ -52,7 +56,7 @@
 
     li {
       a {
-        padding: 5px 15px 5px 33px;
+        padding: 5px 15px;
         font-size: 12px;
 
         &:hover {
