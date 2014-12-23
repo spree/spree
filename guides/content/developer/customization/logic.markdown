@@ -16,40 +16,6 @@ All of Spree's business logic (models, controllers, helpers, etc) can
 easily be extended / overridden to meet your exact requirements using
 standard Ruby idioms.
 
-**Using Ruby 2.0+ fight the war on class_eval.**
-
-<% ruby do %>
-    module ProductExtensions
-      extend ActiveSupport::Concern
-
-      included do
-        singleton_class.prepend ClassMethods
-        prepend InstanceMethods
-      end
-
-      module ClassMethods
-        def some_class_method
-           ...
-        end
-      end
-
-      module InstanceMethods
-        def instance_method_override
-           # do before work
-           original_result = super # do original work
-           # do after work
-           return original_result
-         end
-         def new_instance_method
-           # do something new
-         end
-      end
-    end
-    Spree::Product.include ProductExtensions
-<% end %>
-
-**Using Ruby 1.9.3.**
-
 Standard practice for including such changes in your application or
 extension is to create a file within the relevant **app/models/spree** or
 **app/controllers/spree** directory with the original class name with
@@ -78,64 +44,8 @@ app/controllers/spree/products_controller_decorator.rb
 <% end %>
 
 ***
-The following code is a preferred way when redefining existing methods,
-because it allows you to invoke original behaviour by calling original
-method with "super".
+The exact same format can be used to redefine an existing method.
 ***
-
-**Redefining a method to the Product model:**
-app/models/spree/product_decorator.rb
-
-<% ruby do %>
-    module ProductExtensions
-      def self.prepended(base)
-        base.extend(ClassMethods)
-      end
-      def instance_method_override
-        # do before work
-        original_result = super # do original work
-        # do after work
-        return original_result
-      end
-      def new_instance_method
-        # do something new
-      end
-      module ClassMethods
-        def some_class_method
-          ...
-        end
-      end
-    end
-
-    Spree::Product.class_eval do
-      prepend ProductExtensions
-    end
-<% end %>
-
-**Adding behaviour to the ProductsController update action:**
-app/controllers/spree/products_controller_decorator.rb
-
-<% ruby do %>
-    module ProductsControllerExtensions
-      def update
-        do_before_work
-        super
-        do_after_work
-      end
-
-      protected
-      def do_before_work
-        ...
-      end
-      def do_after_work
-        ...
-      end
-    end
-
-    Spree::ProductsController.class_eval do
-      prepend ProductsControllerExtensions
-    end
-<% end %>
 
 #### Accessing Product Data
 

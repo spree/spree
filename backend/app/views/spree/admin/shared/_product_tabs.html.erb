@@ -20,6 +20,7 @@
     <%= content_tag :li, :class => ('active' if current == 'Stock Management') do %>
       <%= link_to_with_icon 'stock', Spree.t(:stock), stock_admin_product_url(@product) %>
     <% end if can?(:stock, Spree::Product) %>
-    <%= collapse_sidebar_link %>
   </ul>
+
+  <%= collapse_sidebar_link %>
 <% end %>
