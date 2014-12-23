@@ -65,8 +65,8 @@ describe "Products" do
           # Regression test for #2737
           context "uses руб as the currency symbol" do
             it "on the products listing page" do
-              click_link "Products"
-              within_row(1) { page.should have_content("руб19.99") }
+              visit spree.admin_products_path
+              within_row(1) { expect(page).to have_content("₽19.99") }
             end
           end
         end
@@ -260,7 +260,7 @@ describe "Products" do
         page.should have_content("successfully updated!")
       end
     end
-    
+
 
     context "cloning a product", :js => true do
       it "should allow an admin to clone a product" do
@@ -351,8 +351,8 @@ describe "Products" do
   end
 
   context 'with only product permissions' do
-  
-    before do 
+
+    before do
       Spree::Admin::BaseController.any_instance.stub(:spree_current_user).and_return(nil)
     end
 
@@ -373,7 +373,7 @@ describe "Products" do
       page.should have_css('a.edit')
       page.should_not have_css('a.delete-resource')
     end
-  
+
     it "should only display accessible links on edit" do
       visit spree.admin_product_path(product)
 
