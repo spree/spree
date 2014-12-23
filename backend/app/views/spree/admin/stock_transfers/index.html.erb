@@ -1,11 +1,9 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:stock_transfers) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'plus-sign', :class => 'btn-success' } %>
+  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
 <% end %>
 
 <div data-hook="admin_orders_index_search" class="well">

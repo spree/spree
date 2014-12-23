@@ -2,7 +2,7 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any? &:shipped? %>
-    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'plus-sign' %>
+    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), :class => "btn-success", :icon => 'add' %>
   <% end %>
 <% end %>
 

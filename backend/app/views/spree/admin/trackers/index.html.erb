@@ -1,13 +1,9 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:analytics_trackers) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_tracker), new_object_url, :class => "btn-success", :icon => 'plus-sign', :id => 'admin_new_tracker_link' %>
-  </li>
+  <%= button_link_to Spree.t(:new_tracker), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_tracker_link' %>
 <% end %>
 
 <% if @trackers.any? %>
@@ -22,7 +18,7 @@
       <tr data-hook="admin_trackers_index_headers">
         <th><%= Spree.t(:google_analytics_id) %></th>
         <th><%= Spree.t(:environment) %></th>
-        <th><%= Spree.t(:active) %></th>
+        <th class="text-center"><%= Spree.t(:active) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -31,8 +27,8 @@
         <tr id="<%= spree_dom_id tracker %>" data-hook="admin_trackers_index_rows">
           <td><%= tracker.analytics_id %></td>
           <td><%= tracker.environment.to_s.titleize %></td>
-          <td><%= tracker.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-          <td class="actions">
+          <td class="text-center"><%= tracker.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td class="actions text-right">
             <%= link_to_edit tracker, :no_text => true %>
             <%= link_to_delete tracker, :no_text => true %>
           </td>
