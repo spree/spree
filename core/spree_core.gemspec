@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'i18n', '0.6.9' # Lockdown to 0.6.9 since 0.6.10 breaks build https://github.com/svenfuchs/i18n/issues/259
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.15.0'
-  s.add_dependency 'monetize'
+  s.add_dependency 'monetize', '~> 1.1'
   s.add_dependency 'paperclip', '~> 3.4.1'
   s.add_dependency 'paranoia', '~> 2.0'
   s.add_dependency 'rails', '~> 4.0.12'
