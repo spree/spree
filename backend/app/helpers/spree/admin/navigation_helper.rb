@@ -109,7 +109,7 @@ module Spree
       def link_to_clone(resource, options={})
         options[:data] = { action: 'clone' }
         options[:class] = "btn btn-primary btn-sm"
-        link_to_with_icon('export', Spree.t(:clone), clone_object_url(resource), options)
+        link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
@@ -136,7 +136,7 @@ module Spree
         name = options[:name] || Spree.t(:delete)
         options[:class] = "btn btn-danger btn-sm delete-resource"
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
-        link_to_with_icon 'trash', name, url, options
+        link_to_with_icon 'delete', name, url, options
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})

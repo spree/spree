@@ -54,7 +54,7 @@
             <td class="image"><%= mini_image product, class: "thumbnail" %></td>
             <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
             <td><%= product.display_price.to_html rescue '' %></td>
-            <td class="actions actions-3" data-hook="admin_products_index_row_actions">
+            <td class="actions actions-3 text-right" data-hook="admin_products_index_row_actions">
               <%= link_to_edit product, :no_text => true, :class => 'edit' if can?(:edit, product) && !product.deleted? %>
               <%= link_to_clone product, :no_text => true, :class => 'clone' if can?(:clone, product) %>
               <%= link_to_delete product, :no_text => true if can?(:delete, product) && !product.deleted? %>
