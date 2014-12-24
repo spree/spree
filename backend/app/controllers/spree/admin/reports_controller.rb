@@ -50,7 +50,11 @@ module Spree
         currencies = item_total.keys
 
         currencies.each do |currency|
-          @totals[currency] = { item_total: Spree::Money.new(item_total[currency], currency: currency).money, adjustment_total: Spree::Money.new(adjustment_total[currency], currency: currency).money, sales_total: Spree::Money.new(sales_total[currency], currency: currency).money }
+          @totals[currency] = {
+            item_total: Spree::Money.new(item_total[currency], currency: currency).money,
+            adjustment_total: Spree::Money.new(adjustment_total[currency], currency: currency).money,
+            sales_total: Spree::Money.new(sales_total[currency], currency: currency).money
+          }
         end
       end
 
