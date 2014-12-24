@@ -8,7 +8,7 @@
       <tr>
         <td id="order_status" width="35%" data-hook><%= Spree.t(:status) %>:</td>
         <td>
-          <span class="label label-<%= @order.state %>">
+          <span class="state label label-<%= @order.state %>">
             <%= Spree.t(@order.state, :scope => :order_state) %>
           </span>
         </td>

@@ -15,7 +15,7 @@ describe "Homepage", :type => :feature do
       end
 
       it "should have a link to overview" do
-        within("header") { page.find(:xpath, "a[@href='/admin']") }
+        within("header") { page.find(:xpath, "//a[@href='/admin']") }
       end
         
       it "should have a link to orders" do

@@ -54,7 +54,7 @@ describe "Product Images", type: :feature, js: true do
 
       #ensure variant header is displayed
       within("thead") do
-        expect(page).to have_content("Variant")
+        expect(page.body).to have_content("Variant")
       end
 
       #ensure variant header is displayed
