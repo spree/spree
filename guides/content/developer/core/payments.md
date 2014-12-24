@@ -222,9 +222,9 @@ Test server with test mode Off - Probably how you want your dev, QA, and staging
 
 Live server with test mode On - You're going to do this the _very first time_ you ever set up you new Spree store. When Test Mode is ON and your store is live (the  first day you "go live"), you're going to put in a real credit card into the gateway and you will simulate a tranasction on your website. Your credit card will not actually be charged for this transaction, although Authorize.net will return a successful response to your Spree store to simulate what it would be like for a real customer. This will be the final step of verifying that your Authorize.net gateway is working before switching Test Mode to "Off" (thus making yout store ready for business)
 
-Live server with test mode Off - This is how your live, production operates when the store is in business.
+Live server with test mode Off - This is how your live, production website operates when the store is in business.
 
-Separated Auth & Capture Warning: If you have a separated authoize event from capture event (in Authorize.net terms this is called an "auth" event and "prior auth capture" event), the Sandbox won't return a transaction ID correctly if Test mode is set to ON. Instead, it will simply return a "0". This will mean that any subequent "prior auth capture" event will fail because the capture relies on the correct previously-generated transaction ID. So essentially, if you have a store with a separated auth and capture do not turn Test mode to "ON" in your environments that use the Authorize.net Sandbox.
+Separated Auth & Capture Warning: If you have a separated authoize event from capture event (in Authorize.net terms this is called an "auth" event and "prior auth capture" event), the Sandbox won't return a transaction ID correctly if Test mode is set to ON. Instead, it will simply return a "0". This will mean that any subsequent "prior auth capture" event will fail because the capture relies on the previously-generated transaction ID. So essentially, if you have a store with a separated auth and capture do not turn Test mode to "On".
 
 (If you have test mode "Off" the Sandbox environment Authorize.net will generate transaction IDs that begin with the number 2)
 
