@@ -445,9 +445,6 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
-    allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
-    allow_ssl_in_production: Allow SSL to be used in production mode
-    allow_ssl_in_staging: Allow SSL to be used in staging mode
     already_signed_up_for_analytics: You have already signed up for Spree Analytics
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
