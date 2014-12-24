@@ -37,7 +37,16 @@ module Spree
             base_scope = get_products_conditions_for(base_scope, keywords)
             base_scope = add_search_scopes(base_scope)
             base_scope = add_eagerload_scopes(base_scope)
+            base_scope = add_additional_eagerload_scopes(base_scope)
             base_scope
+          end
+
+          def add_additional_eagerload_scopes scope
+            if Spree::Config[:additional_eagerload_scopes].blank?
+              scope
+            else
+              scope.includes(Spree::Config[:additional_eagerload_scopes])
+            end
           end
 
           def add_eagerload_scopes scope
