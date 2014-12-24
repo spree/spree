@@ -42,13 +42,15 @@ module Spree
 
         @search = Order.complete.ransack(params[:q])
         @orders = @search.result
-
         @totals = {}
-        @orders.each do |order|
-          @totals[order.currency] = { :item_total => ::Money.new(0, order.currency), :adjustment_total => ::Money.new(0, order.currency), :sales_total => ::Money.new(0, order.currency) } unless @totals[order.currency]
-          @totals[order.currency][:item_total] += order.display_item_total.money
-          @totals[order.currency][:adjustment_total] += order.display_adjustment_total.money
-          @totals[order.currency][:sales_total] += order.display_total.money
+
+        item_total = @orders.group(:currency).sum(:item_total)
+        adjustment_total = @orders.group(:currency).sum(:adjustment_total)
+        sales_total = @orders.group(:currency).sum(:total)
+        currencies = item_total.keys
+
+        currencies.each do |currency|
+          @totals[currency] = { item_total: Spree::Money.new(item_total[currency], currency: currency).money, adjustment_total: Spree::Money.new(adjustment_total[currency], currency: currency).money, sales_total: Spree::Money.new(sales_total[currency], currency: currency).money }
         end
       end
 
