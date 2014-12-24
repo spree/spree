@@ -33,48 +33,4 @@ describe Spree::ProductsController, :type => :controller do
     expect { spree_get :show, :id => product.to_param }.not_to raise_error
   end
 
-  # Regression tests for #2308 & Spree::Core::ControllerHelpers::SSL
-  context "force_ssl enabled" do
-    context "receive a SSL request" do
-      before do
-        request.env['HTTPS'] = 'on'
-      end
-
-      it "should not redirect to http" do
-        expect(controller).not_to receive(:redirect_to)
-        spree_get :index
-        expect(request.protocol).to eql('https://')
-      end
-    end
-  end
-
-  context "redirect_https_to_http enabled" do
-    before do
-      reset_spree_preferences do |config|
-        config.allow_ssl_in_development_and_test = true
-        config.redirect_https_to_http = true
-      end
-    end
-
-    context "receives a non SSL request" do
-      it "should not redirect" do
-        expect(controller).not_to receive(:redirect_to)
-        spree_get :index
-        expect(request.protocol).to eql('http://')
-      end
-    end
-
-    context "receives a SSL request" do
-      before do
-        request.env['HTTPS'] = 'on'
-        request.path = "/products?foo=bar"
-      end
-
-      it "should redirect to http" do
-        spree_get :index
-        expect(response).to redirect_to("http://#{request.host}/products?foo=bar")
-        expect(response.status).to eq(301)
-      end
-    end
-  end
 end
