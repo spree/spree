@@ -1,0 +1,70 @@
+.taxon-products-view {
+  ul.taxon {
+    list-style: none;
+    margin-left: -2%;
+    padding: 0;
+    > * {
+      margin-left: 2%;
+    }
+    li.product {
+      position: relative;
+      float: left;
+      width: 18%;
+      margin-bottom: 2%;
+      padding: 8px 8px 5px 8px;
+      border-radius: 4px;
+      background: #f4f4f4;
+      .well {
+        padding-bottom: 12px;
+      }
+      .sort-handle {
+        position: absolute;
+        top: 14px;
+        left: 16px;
+        color: $gray;
+        cursor: move;
+      }
+      .btn-group {
+        display: none;
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        .btn {
+          padding: 2px 7px;
+        }
+        .dropdown-menu {
+          left: auto;
+          right: 0;
+        }
+        a.delete-product {
+          color: red;
+        }
+      }
+      .image {
+        .thumbnail {
+          margin-bottom: 8px;
+          display: inline-block;
+          width: 100%;
+        }
+      }
+      .product-info {
+        margin-bottom: 0.3em;
+        font-size: 0.9em;
+        div.name {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: bold;
+        }
+        div.price {
+          color: $gray;
+        }
+      }
+      &:hover {
+        .btn-group {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}

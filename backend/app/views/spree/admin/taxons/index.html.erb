@@ -2,14 +2,12 @@
   <%= Spree.t(:taxons) %>
 <% end %>
 
-<div data-hook="admin_orders_index_search" class="form-group">
-  <input type='text' id='taxon_id' />
+<div class="taxon-products-view">
+  <div class="form-group">
+    <%= text_field_tag :taxon_id %>
+  </div>
+
+  <ul id="taxon_products" class="taxon"></ul>
+
+  <%= render :partial => "spree/admin/products/autocomplete", :formats => :js %>
 </div>
-
-<div class="alert alert-info" id='sorting_explanation' style='display:none'>
-  <%= Spree.t(:click_and_drag_on_the_products_to_sort_them) %>
-</div>
-
-<ul id='taxon_products'></ul>
-
-<%= render :partial => "spree/admin/products/autocomplete", :formats => :js %>

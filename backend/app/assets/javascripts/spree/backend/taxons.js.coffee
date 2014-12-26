@@ -1,10 +1,13 @@
 $(document).ready ->
   window.productTemplate = Handlebars.compile($('#product_template').text());
-  $('#taxon_products').sortable();
+  $('#taxon_products').sortable({
+      handle: ".js-sort-handle"
+    });
   $('#taxon_products').on "sortstop", (event, ui) ->
     $.ajax
       url: Spree.routes.classifications_api,
       method: 'PUT',
+      dataType:'json',
       data:
         product_id: ui.item.data('product-id'),
         taxon_id: $('#taxon_id').val(),
@@ -40,11 +43,25 @@ $(document).ready ->
       success: (data) ->
         el.empty();
         if data.products.length == 0
-          $('#sorting_explanation').hide()
           $('#taxon_products').html("<div class='alert alert-info'>" + Spree.translations.no_results + "</div>")
         else
           for product in data.products
             if product.master.images[0] != undefined && product.master.images[0].small_url != undefined
               product.image = product.master.images[0].small_url
             el.append(productTemplate({ product: product }))
-          $('#sorting_explanation').show()
+
+  $('#taxon_products').on "click", ".js-delete-product", (e) ->
+    current_taxon_id = $("#taxon_id").val();
+    product = $(this).parents(".product")
+    product_id = product.data("product-id");
+    product_taxons = String(product.data("taxons")).split(',').map(Number);
+    product_index = product_taxons.indexOf(parseFloat(current_taxon_id));
+    product_taxons.splice(product_index, 1);
+    $.ajax
+      url: Spree.routes.product_search + "/" + product_id + "?product[taxon_ids]=" + product_taxons, #TODO: check with Rhys
+      type: "PUT",
+      success: (data) ->
+        product.fadeOut 400, (e) ->
+          product.remove()
+
+  $(".variant_autocomplete").variantAutocomplete();
