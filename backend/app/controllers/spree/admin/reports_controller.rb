@@ -38,8 +38,6 @@ module Spree
           params[:q][:completed_at_lt] = Time.zone.parse(params[:q][:completed_at_lt]).end_of_day rescue ""
         end
 
-        params[:q][:s] ||= "completed_at desc"
-
         @search = Order.complete.ransack(params[:q])
         @orders = @search.result
         @totals = {}
