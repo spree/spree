@@ -19,7 +19,33 @@ table.table {
     tr {
       td {
         vertical-align: middle;
+        .filterable {
+          font-size: 0.8em;
+          margin-left: 0.2em;
+          color: white; // hidden, but space is reserved for the icon
+          cursor: pointer;
+        }
       }
+      &:hover td .filterable {
+        color: #666;
+      }
+    }
+  }
+}
+
+.table-active-filters {
+  display: none;
+  margin: -0.5em 0 0.9em 0;
+  .label {
+    margin-right: 0.5em;
+    font-size: 85%;
+    &:hover {
+      opacity: 0.8;
+    }
+    span.icon {
+      margin: 0.3em 0 0 0.6em;
+      font-size: 80%;
+      cursor: pointer;
     }
   }
 }
