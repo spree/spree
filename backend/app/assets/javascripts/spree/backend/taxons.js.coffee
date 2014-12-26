@@ -58,7 +58,7 @@ $(document).ready ->
     product_index = product_taxons.indexOf(parseFloat(current_taxon_id));
     product_taxons.splice(product_index, 1);
     $.ajax
-      url: Spree.routes.products_api + "/" + product_id + "?product[taxon_ids]=" + product_taxons, #TODO: check with Rhys
+      url: Spree.routes.products_api + "/" + product_id + "?product[taxon_ids]=" + product_taxons,
       type: "PUT",
       success: (data) ->
         product.fadeOut 400, (e) ->
