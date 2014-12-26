@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
-  s.homepage    = 'http://spreecommerce.com'
+  s.homepage    = 'https://spreecommerce.com'
+  s.license     = %q{BSD-3}
   s.rubyforge_project = 'spree_backend'
 
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']

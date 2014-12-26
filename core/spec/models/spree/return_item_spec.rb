@@ -464,7 +464,11 @@ describe Spree::ReturnItem, :type => :model do
     let(:return_item) { build(:return_item) }
 
     context "the return item is intended to be exchanged" do
-      before { return_item.exchange_variant = build(:variant) }
+      before do
+        return_item.inventory_unit.variant.update_column(:track_inventory, false)
+        return_item.exchange_variant = return_item.inventory_unit.variant
+      end
+
       it do
         return_item.pre_tax_amount = 5.0
         return_item.save!
@@ -575,6 +579,80 @@ describe Spree::ReturnItem, :type => :model do
       it 'is invalid' do
         expect(subject).to_not be_valid
         expect(subject.errors.to_a).to eq ["Inventory unit #{subject.inventory_unit_id} has already been taken by return item #{old_return_item.id}"]
+      end
+    end
+  end
+
+  describe "valid exchange variant" do
+    subject { return_item }
+
+    before  { subject.save }
+
+    context "return item doesn't have an exchange variant" do
+      let(:return_item) { create(:return_item) }
+
+      it "is valid" do
+        expect(subject).to be_valid
+      end
+    end
+
+    context "return item has an exchange variant" do
+      let(:return_item)      { create(:exchange_return_item) }
+      let(:exchange_variant) { create(:on_demand_variant, product: return_item.inventory_unit.variant.product) }
+
+      context "the exchange variant is eligible" do
+        before { return_item.exchange_variant = exchange_variant }
+
+        it "is valid" do
+          expect(subject).to be_valid
+        end
+      end
+
+      context "the exchange variant is not eligible" do
+        context "new return item" do
+          let(:return_item)      { build(:return_item) }
+          let(:exchange_variant) { create(:variant, product: return_item.inventory_unit.variant.product) }
+
+          before { return_item.exchange_variant = exchange_variant }
+
+          it "is invalid" do
+            expect(subject).to_not be_valid
+          end
+
+          it "adds an error message about the invalid exchange variant" do
+            subject.valid?
+            expect(subject.errors.to_a).to eq ["Invalid exchange variant."]
+          end
+        end
+
+        context "the exchange variant has been updated" do
+          before do
+            other_variant = create(:variant)
+            return_item.exchange_variant_id = other_variant.id
+            subject.valid?
+          end
+
+          it "is invalid" do
+            expect(subject).to_not be_valid
+          end
+
+          it "adds an error message about the invalid exchange variant" do
+            expect(subject.errors.to_a).to eq ["Invalid exchange variant."]
+          end
+        end
+
+        context "the exchange variant has not been updated" do
+          before do
+            other_variant = create(:variant)
+            return_item.update_column(:exchange_variant_id, other_variant.id)
+            return_item.reload
+            subject.valid?
+          end
+
+          it "is valid" do
+            expect(subject).to be_valid
+          end
+        end
       end
     end
   end

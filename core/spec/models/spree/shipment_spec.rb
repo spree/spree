@@ -205,8 +205,12 @@ describe Spree::Shipment, :type => :model do
            build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
         end
 
-        it 'should use symbols for states when adding contents to package' do
+        before do
           allow(shipment).to receive(:inventory_units) { inventory_units }
+          allow(inventory_units).to receive_message_chain(:includes, :joins).and_return inventory_units
+        end
+
+        it 'should use symbols for states when adding contents to package' do
           package = shipment.to_package
           expect(package.on_hand.count).to eq 1
           expect(package.backordered.count).to eq 1
