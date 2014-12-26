@@ -23,3 +23,20 @@ table.table {
     }
   }
 }
+
+.table-active-filters {
+  display: none;
+  margin: -0.5em 0 0.9em 0;
+  .label {
+    margin-right: 0.5em;
+    font-size: 85%;
+    &:hover {
+      opacity: 0.8;
+    }
+    span.icon {
+      margin-left: 0.4em;
+      font-size: 75%;
+      cursor: pointer;
+    }
+  }
+}
