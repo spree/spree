@@ -477,6 +477,21 @@ describe Spree::Payment, :type => :model do
       end
     end
 
+    context 'when the payment was completed but now void' do
+      let(:payment) do
+        Spree::Payment.create(
+          amount: 100,
+          order: order,
+          state: 'completed'
+        )
+      end
+
+      it 'updates order payment total' do
+        payment.void
+        expect(order.payment_total).to eq 0
+      end
+    end
+
     context "completed orders" do
       before { allow(order).to receive_messages completed?: true }
 

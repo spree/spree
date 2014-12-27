@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_option_type) %> <span class="green">"<%= @option_type.name %>"</span>
+  <%= Spree.t(:editing_resource, resource: Spree::OptionType.model_name.human) %> <span class="green">"<%= @option_type.name %>"</span>
 <% end %>
 
 <% content_for :page_actions do %>

@@ -7,7 +7,7 @@
 <% end %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:customer_returns) %>
+  / <%= Spree::CustomerReturn.model_name.human(count: :many) %>
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) %>
@@ -45,7 +45,7 @@
     </table>
   <% else %>
     <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/customer_return')) %>,
+      <%= Spree.t(:no_resource_found, resource: Spree::CustomerReturn.model_name.human(count: :many)) %>,
       <%= link_to Spree.t(:add_one), spree.new_admin_order_customer_return_path(@order) %>!
     </div>
   <% end %>

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:payment_methods) %>
+  <%= Spree::PaymentMethod.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -36,7 +36,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/payment_method')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::PaymentMethod.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_payment_method_path %>!
   </div>
 <% end %>

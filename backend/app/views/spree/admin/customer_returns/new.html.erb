@@ -53,7 +53,7 @@
 
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:all_items_have_been_returned) %>,
-    <%= link_to Spree.t(:back_to_customer_return_list), spree.admin_order_customer_returns_path(@order) %>.
+    <%= link_to Spree.t(:back_to_resource_list, resource: Spree::CustomerReturn.model_name.human), spree.admin_order_customer_returns_path(@order) %>.
   </div>
 
 <% end %>

@@ -231,6 +231,9 @@ en:
       spree/state:
         one: State
         other: States
+      spree/state_change:
+        one: State Change
+        other: State Changes
       spree/stock_movement:
         one: Stock Movement
         other: Stock Movements
@@ -469,37 +472,11 @@ en:
     back: Back
     back_end: Backend
     backordered: Backordered
-    back_to_adjustments_list: Back To Adjustments List
-    back_to_customer_return: Back To Customer Return
-    back_to_customer_return_list: Back To Customer Return List
-    back_to_images_list: Back To Images List
-    back_to_option_types_list: Back To Option Types List
-    back_to_orders_list: Back To Orders List
+    back_to_resource_list: 'Back To %{resource} List'
     back_to_payment: Back To Payment
-    back_to_payment_methods_list: Back To Payment Methods List
-    back_to_payments_list: Back To Payments List
-    back_to_products_list: Back To Products List
-    back_to_promotions_list: Back To Promotions List
-    back_to_promotion_categories_list: Back To Promotions Categories List
-    back_to_properties_list: Back To Properties List
-    back_to_prototypes_list: Back To Prototypes List
-    back_to_reports_list: Back To Reports List
-    back_to_refund_reason_list: Back To Refund Reason List
-    back_to_reimbursement_type_list: Back To Reimbursement Type List
     back_to_rma_reason_list: Back To RMA Reason List
-    back_to_shipping_categories: Back To Shipping Categories
-    back_to_shipping_categories_list: Back To Shipping Categories List
-    back_to_shipping_methods_list: Back To Shipping Methods List
-    back_to_states_list: Back To States List
-    back_to_stock_locations_list: Back to Stock Locations List
-    back_to_stock_movements_list: Back to Stock Movements List
-    back_to_stock_transfers_list: Back to Stock Transfers List
     back_to_store: Go Back To Store
-    back_to_tax_categories_list: Back To Tax Categories List
-    back_to_taxonomies_list: Back To Taxonomies List
-    back_to_trackers_list: Back To Trackers List
     back_to_users_list: Back To Users List
-    back_to_zones_list: Back To Zones List
     backorderable: Backorderable
     backorderable_default: Backorderable default
     backorders_allowed: backorders allowed
@@ -644,30 +621,9 @@ en:
     display_currency: Display currency
     doesnt_track_inventory: It doesnt track inventory
     edit: Edit
-    editing_country: Editing Country
-    editing_option_type: Editing Option Type
-    editing_payment_method: Editing Payment Method
-    editing_product: Editing Product
-    editing_promotion: Editing Promotion
-    editing_promotion_category: Editing Promotion Category
-    editing_property: Editing Property
-    editing_prototype: Editing Prototype
-    edit_refund_reason: Edit Refund Reason
-    editing_refund_reason: Editing Refund Reason
-    editing_reimbursement: Editing Reimbursement
-    editing_reimbursement_type: Editing Reimbursement Type
+    editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
-    editing_shipping_category: Editing Shipping Category
-    editing_shipping_method: Editing Shipping Method
-    editing_state: Editing State
-    editing_stock_location: Editing Stock Location
-    editing_stock_movement: Editing Stock Movement
-    editing_tax_category: Editing Tax Category
-    editing_tax_rate: Editing Tax Rate
-    editing_tracker: Editing Tracker
-    editing_addresses: Editing Addresses
     editing_user: Editing User
-    editing_zone: Editing Zone
     eligibility_errors:
       messages:
         has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
@@ -817,12 +773,6 @@ en:
     lifetime_stats: Lifetime Stats
     line_item_adjustments: "Line item adjustments"
     list: List
-    listing_countries: Countries
-    listing_orders: Orders
-    listing_products: Products
-    listing_reports: Reports
-    listing_tax_categories: Tax Categories
-    listing_users: Users
     loading: Loading
     locale_changed: Locale Changed
     location: Location
@@ -900,24 +850,15 @@ en:
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
-    no_adjustments_found: No adjustments found
-    no_images_found: No images found
-    no_orders_found: No orders found
-    no_payment_methods_found: No payment methods found
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_products_found: No products found
-    no_promotions_found: No promotions found
     no_results: No results
     no_rules_added: No rules added
-    no_resource_found: ! 'No %{resource} found'
+    no_resource_found: 'No %{resource} found'
     no_returns_found: No returns found
-    no_reimbursements_found: No reimbursements found
-    no_shipping_methods_found: No shipping methods found
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
-    no_trackers_found: No Trackers Found
-    no_stock_locations_found: No stock locations found
     no_tracking_present: No tracking details provided.
     none: None
     none_selected: None Selected
@@ -1159,6 +1100,7 @@ en:
     remember_me: Remember me
     remove: Remove
     rename: Rename
+    report: Report
     reports: Reports
     resend: Resend
     reset_password: Reset my password
@@ -1172,6 +1114,7 @@ en:
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
+    return_item_order_not_completed: Return item's order must be completed
     return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Return Items
@@ -1304,6 +1247,7 @@ en:
       invalid: Invalid
       manual_intervention_required: Manual intervention required
       open: Open
+      order: Order
       on_hand: On hand
       payment: Payment
       pending: Pending
