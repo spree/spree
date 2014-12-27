@@ -8,7 +8,7 @@ module Spree
         @properties = Spree::Property.accessible_by(current_ability, :read)
 
         if params[:ids]
-          @properties = @properties.where(:id => params[:ids].split(","))
+          @properties = @properties.where(id: params[:ids].split(",").flatten)
         else
           @properties = @properties.ransack(params[:q]).result
         end
