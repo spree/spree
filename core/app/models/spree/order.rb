@@ -376,6 +376,12 @@ module Spree
       consider_risk
     end
 
+    def fulfill!
+      shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
+      updater.update_shipment_state
+      save!
+    end
+
     def deliver_order_confirmation_email
       OrderMailer.confirm_email(self.id).deliver
       update_column(:confirmation_delivered, true)
