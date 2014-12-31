@@ -181,7 +181,7 @@ module Spree
     end
 
     def in_stock?
-      Rails.cache.fetch(in_stock_cache_key) do
+      Rails.cache.fetch(in_stock_cache_key, expires_in: 24.hours) do
         total_on_hand > 0
       end
     end
