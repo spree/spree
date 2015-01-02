@@ -13,7 +13,7 @@ describe Spree::Payment do
     Spree::CreditCard.create!(
       number: "4111111111111111",
       month: "12",
-      year: "2014",
+      year: Time.now.year + 1,
       verification_value: "123",
       name: "Name"
     )
@@ -611,7 +611,7 @@ describe Spree::Payment do
 
           order.payments.create!(source_attributes: {number: "4111111111111115",
                                                     month: "12",
-                                                    year: "2014",
+                                                    year: Time.now.year + 1,
                                                     verification_value: "123",
                                                     name: "Name"
           },
@@ -621,7 +621,7 @@ describe Spree::Payment do
           order.payments.count.should == 1
           order.payments.create!(source_attributes: {number: "4111111111111111",
                                                     month: "12",
-                                                    year: "2014",
+                                                    year: Time.now.year + 1,
                                                     verification_value: "123",
                                                     name: "Name"
           },
