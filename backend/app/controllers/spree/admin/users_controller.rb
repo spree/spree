@@ -130,27 +130,27 @@ module Spree
       # handling raise from Spree::Admin::ResourceController#destroy
       def user_destroy_with_orders_error
         invoke_callbacks(:destroy, :fails)
-        render :status => :forbidden, :text => Spree.t(:error_user_destroy_with_orders)
+        render status: :forbidden, text: Spree.t(:error_user_destroy_with_orders)
       end
 
       # Allow different formats of json data to suit different ajax calls
       def json_data
-        json_format = params[:json_format] or 'default'
+        json_format = params[:json_format] || 'default'
         case json_format
         when 'basic'
           collection.map { |u| { 'id' => u.id, 'name' => u.email } }.to_json
         else
           address_fields = [:firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :state_id, :country_id]
-          includes = { :only => address_fields , :include => { :state => { :only => :name }, :country => { :only => :name } } }
+          includes = { only: address_fields, include: { state: { only: :name }, country: { only: :name } } }
 
-          collection.to_json(:only => [:id, :email], :include =>
-                             { :bill_address => includes, :ship_address => includes })
+          collection.to_json(only: [:id, :email], include:
+                             { bill_address: includes, ship_address: includes })
         end
       end
 
       def sign_in_if_change_own_password
         if try_spree_current_user == @user && @user.password.present?
-          sign_in(@user, :event => :authentication, :bypass => true)
+          sign_in(@user, event: :authentication, bypass: true)
         end
       end
 
