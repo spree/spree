@@ -13,7 +13,7 @@ describe Spree::Payment, :type => :model do
     Spree::CreditCard.create!(
       number: "4111111111111111",
       month: "12",
-      year: "2014",
+      year: Time.now.year + 1,
       verification_value: "123",
       name: "Name",
       imported: false
@@ -646,7 +646,7 @@ describe Spree::Payment, :type => :model do
 
           order.payments.create!(source_attributes: {number: "4111111111111115",
                                                     month: "12",
-                                                    year: "2014",
+                                                    year: Time.now.year + 1,
                                                     verification_value: "123",
                                                     name: "Name"
           },
@@ -656,7 +656,7 @@ describe Spree::Payment, :type => :model do
           expect(order.payments.count).to eq(1)
           order.payments.create!(source_attributes: {number: "4111111111111111",
                                                     month: "12",
-                                                    year: "2014",
+                                                    year: Time.now.year + 1,
                                                     verification_value: "123",
                                                     name: "Name"
           },

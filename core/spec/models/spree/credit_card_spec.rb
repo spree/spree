@@ -4,7 +4,7 @@ describe Spree::CreditCard, :type => :model do
   let(:valid_credit_card_attributes) do
     { :number => '4111111111111111',
       :verification_value => '123',
-      :expiry => "12 / 14",
+      :expiry => "12 / #{Time.now.year + 1}",
       :name => "Spree Commerce" }
   end
 
