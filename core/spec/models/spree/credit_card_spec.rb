@@ -2,9 +2,11 @@ require 'spec_helper'
 
 describe Spree::CreditCard do
   let(:valid_credit_card_attributes) do
-    { :number => '4111111111111111',
+    {
+      :number => '4111111111111111',
       :verification_value => '123',
       :expiry => "12 / #{Time.now.year + 1}"
+    }
   end
 
   def self.payment_states
