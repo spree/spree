@@ -144,7 +144,7 @@ module Spree
     end
 
     def send_reimbursement_email
-      Spree::ReimbursementMailer.reimbursement_email(self.id).deliver
+      Spree::ReimbursementMailer.reimbursement_email(id).deliver_later
     end
 
     # If there are multiple different reimbursement types for a single

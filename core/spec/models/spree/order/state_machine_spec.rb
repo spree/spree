@@ -75,7 +75,6 @@ describe Spree::Order, :type => :model do
   end
 
   context "#can_cancel?" do
-
     %w(pending backorder ready).each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
         allow(order).to receive_messages :completed? => true
@@ -84,14 +83,14 @@ describe Spree::Order, :type => :model do
       end
     end
 
-    (Spree::Shipment.state_machine.states.keys - %w(pending backorder ready)).each do |shipment_state|
+    states = [:pending, :backorder, :ready]
+    (Spree::Shipment.state_machine.states.keys - states).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
         allow(order).to receive_messages :completed? => true
         order.shipment_state = shipment_state
         expect(order.can_cancel?).to be false
       end
     end
-
   end
 
   context "#cancel" do

@@ -3,26 +3,17 @@ require 'spree/responder'
 module ActionController
   class Base
     def respond_with(*resources, &block)
-      raise "In order to use respond_with, first you need to declare the formats your " <<
-            "controller responds to in the class level" if self.class.mimes_for_respond_to.empty?
-
-      if collector = retrieve_collector_from_mimes(&block)
-        options = resources.size == 1 ? {} : resources.extract_options!
-
-        if defined_response = collector.response and !Spree::BaseController.spree_responders.keys.include?(self.class.to_s.to_sym)
-          if action = options.delete(:action)
-            render :action => action
-          else
-            defined_response.call
-          end
+      if Spree::BaseController.spree_responders.keys.include?(self.class.to_s.to_sym)
+        # Checkout AS Array#extract_options! and original respond_with
+        # implementation for a better picture of this hack
+        if resources.last.is_a? Hash
+          resources.last.merge! action_name: action_name.to_sym
         else
-          # The action name is needed for processing
-          options.merge!(:action_name => action_name.to_sym)
-          # If responder is not specified then pass in Spree::Responder
-          responder = options.delete(:responder) || self.responder
-          responder.call(self, resources, options)
+          resources.push action_name: action_name.to_sym
         end
       end
+
+      super
     end
   end
 end
@@ -36,7 +27,6 @@ module Spree
         included do
           cattr_accessor :spree_responders
           self.spree_responders = {}
-
           self.responder = Spree::Responder
         end
 

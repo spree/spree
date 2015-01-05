@@ -51,11 +51,11 @@ The exact same format can be used to redefine an existing method.
 
 If you extend the Products controller with a new method, you may very
 well want to access product data in that method. You can do so by using
-the :load_data before_filter.
+the :load_data before_action.
 
 <% ruby do %>
     Spree::ProductsController.class_eval do
-      before_filter :load_data, :only => :some_action
+      before_action :load_data, only: :some_action
 
       def some_action
         ...

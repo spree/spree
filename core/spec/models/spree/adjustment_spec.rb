@@ -24,10 +24,12 @@ describe Spree::Adjustment, :type => :model do
   end
 
   context '#save' do
-    let(:adjustment) { Spree::Adjustment.create(label: "Adjustment", amount: 5, order: order, adjustable: create(:line_item)) }
+    let(:order) { Spree::Order.create! }
+    let!(:adjustment) { Spree::Adjustment.create(label: "Adjustment", amount: 5, order: order, adjustable: order) }
 
     it 'touches the adjustable' do
       expect(adjustment.adjustable).to receive(:touch)
+      adjustment.amount = 3
       adjustment.save
     end
   end

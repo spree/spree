@@ -5,7 +5,6 @@ module Spree
 
     scope :of_type, ->(t) { where(type: t) }
 
-    validate :promotion, presence: true
     validate :unique_per_promotion, on: :create
 
     def self.for(promotable)

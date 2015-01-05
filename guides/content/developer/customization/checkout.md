@@ -25,7 +25,7 @@ The following sections will provide a walk-though of a checkout from a user's pe
 
 Prior to beginning the checkout process, the customer will be prompted to create a new account or to login to their existing account. By default, there is also a "guest checkout" option which allows users to specify only their email address if they do not wish to create an account.
 
-Technically, the registration step is not an actual state in the `Spree::Order` state machine. The `spree_auth_devise` gem (an extension that comes with Spree by default) adds the `check_registration` before filter to the all actions of `Spree::CheckoutController` (except for obvious reasons the `registration` and `update_registration` actions), which redirects to a registration page unless one of the following is true:
+Technically, the registration step is not an actual state in the `Spree::Order` state machine. The `spree_auth_devise` gem (an extension that comes with Spree by default) adds the `check_registration` before action to the all actions of `Spree::CheckoutController` (except for obvious reasons the `registration` and `update_registration` actions), which redirects to a registration page unless one of the following is true:
 
 * `Spree::Auth::Config[:registration_step]` preference is not `true`
 * user is already logged in
@@ -159,7 +159,7 @@ order to be tampered with (ex. changing the quantity) after checkout.
 ### Filters
 
 The `spree_core` and the default authentication gem (`spree_auth_devise`) gems
-define several `before_filters` for the `Spree::CheckoutController`:
+define several `before_action`s for the `Spree::CheckoutController`:
 
 * `load_order`: Assigns the `@order` instance variable and sets the `@order.state` to the `params[:state]` value. This filter also runs the "before" callbacks for the current state.
 * `check_authorization`: Verifies that the `current_user` has access to `current_order`.
