@@ -230,7 +230,7 @@ describe Spree::Variant, :type => :model do
   # Regression test for #2432
   describe 'options_text' do
     let!(:variant) { create(:variant, option_values: []) }
-    let!(:master) { create(:master_variant)}
+    let!(:master) { create(:master_variant) }
 
     before do
       # Order bar than foo
