@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:reimbursement_types) %>
+  <%= Spree::ReimburementType.model_name.human(count: :many) %>
 <% end %>
 
 <% if @reimbursement_types.any? %>
@@ -25,7 +25,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/reimbursement_type')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::ReimburementType.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
 <% end %>

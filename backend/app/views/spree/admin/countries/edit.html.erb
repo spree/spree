@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_country) %>
+  <%= Spree.t(:editing_resource, resource: Spree::Country.model_name.human) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @country } %>

@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:reimbursement) %> #<%= @reimbursement.number %>
+  / <%= Spree::Reimbursement.model_name.human %> #<%= @reimbursement.number %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>

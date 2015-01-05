@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_tax_rate) %>
+  <%= Spree.t(:editing_resource, resource: Spree::TaxRate.model_name.human) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @tax_rate } %>

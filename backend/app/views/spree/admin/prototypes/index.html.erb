@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:prototypes) %>
+  <%= Spree::Prototype.model_name.human(count: :many) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -28,7 +28,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/prototype')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Prototype.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_prototype_path %>!
   </div>
 <% end %>
