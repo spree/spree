@@ -191,7 +191,9 @@ $(document).ready(function(){
     el.prev("input[type=hidden]").val("1");
     el.closest(".fields").hide();
     if (el.prop("href").substr(-1) == '#') {
-      el.parents("tr").fadeOut('hide');
+      el.parents("tr").fadeOut('hide', function() {
+        $(this).remove();
+      });
     }else if (el.prop("href")) {
       $.ajax({
         type: 'POST',
