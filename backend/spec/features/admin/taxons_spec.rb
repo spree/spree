@@ -43,8 +43,7 @@ feature "Taxonomies and taxons" do
   end
 
   def select_clothing_from_select2
-    page.execute_script %Q{$('#s2id_taxon_id').select2('open')}
-    select_select2_result("Clothing")
+    targetted_select2_search "Clothing", from: "#s2id_taxon_id"
     wait_for_ajax
   end
 end
