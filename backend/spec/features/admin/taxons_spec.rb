@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe "Taxonomies and taxons", :type => :feature, js: true do
+feature "Taxonomies and taxons" do
   stub_authorization!
 
-  it "admin should be able to edit taxon" do
+  scenario "admin should be able to edit taxon" do
 
     visit spree.new_admin_taxonomy_path
 
@@ -22,7 +22,7 @@ describe "Taxonomies and taxons", :type => :feature, js: true do
     expect(page).to have_content("Taxon \"Shirt\" has been successfully updated!")
   end
 
-  it "admin should be able to remove a product from a taxon", type: :feature, js: true do
+  scenario "admin should be able to remove a product from a taxon", js: true do
     taxon_1 = create(:taxon, name: 'Clothing')
     product = create(:product)
     product.taxons << taxon_1
