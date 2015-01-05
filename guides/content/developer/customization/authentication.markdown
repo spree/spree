@@ -23,9 +23,9 @@ opt-in. If you have an application that has used the *spree_auth*
 component in the past and you wish to continue doing so, you will need
 to add this extra line to your *Gemfile*:
 
-<% ruby do %>
-    gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
-<% end %>
+```ruby
+gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
+```
 
 By having this authentication component outside of Spree, applications
 that wish to use their own authentication may do so, and applications
@@ -53,15 +53,15 @@ To begin using your custom *User* class, you must first edit Spree's
 initializer located at *config/initializers/spree.rb* by changing this
 line:
 
-<% ruby do %>
-    Spree.user_class = "Spree::User"
-<% end %>
+```ruby
+Spree.user_class = "Spree::User"
+```
 
 To this:
 
-<% ruby do %>
-    Spree.user_class = "User"
-<% end %>
+```ruby
+Spree.user_class = "User"
+```
 
 Next, you need to run the custom user generator for Spree which will
 create two files. The first is a migration that will add the necessary
@@ -92,38 +92,38 @@ There are some authentication helpers of Spree's that you will need to
 possibly override. The file at *lib/spree/authentication_helpers.rb*
 contains the following code to help you do that:
 
-<% ruby do %>
-    module Spree
-      module AuthenticationHelpers
-         def self.included(receiver)
-           receiver.send :helper_method, :spree_login_path
-           receiver.send :helper_method, :spree_signup_path
-           receiver.send :helper_method, :spree_logout_path
-           receiver.send :helper_method, :spree_current_user
-         end
+```ruby
+module Spree
+  module AuthenticationHelpers
+     def self.included(receiver)
+       receiver.send :helper_method, :spree_login_path
+       receiver.send :helper_method, :spree_signup_path
+       receiver.send :helper_method, :spree_logout_path
+       receiver.send :helper_method, :spree_current_user
+     end
 
-         def spree_current_user
-           current_person
-         end
+     def spree_current_user
+       current_person
+     end
 
-         def spree_login_path
-           main_app.login_path
-         end
+     def spree_login_path
+       main_app.login_path
+     end
 
-         def spree_signup_path
-           main_app.signup_path
-         end
+     def spree_signup_path
+       main_app.signup_path
+     end
 
-         def spree_logout_path
-           main_app.logout_path
-         end
-       end
-    end
+     def spree_logout_path
+       main_app.logout_path
+     end
+   end
+end
 
-    Spree::BaseController.send      :include, Spree::AuthenticationHelpers
-    Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
-    ApplicationController.send      :include, Spree::AuthenticationHelpers
-<% end %>
+Spree::BaseController.send      :include, Spree::AuthenticationHelpers
+Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
+ApplicationController.send      :include, Spree::AuthenticationHelpers
+```
 
 Each of the methods defined in this module return values that are the
 most common in Rails applications today, but you may need to customize
@@ -151,13 +151,13 @@ You will need to define the *login_path*, *signup_path* and
 *logout_path* routes yourself, by using code like this inside your
 application's *config/routes.rb* if you're using Devise:
 
-<% ruby do %>
-    devise_scope :person do
-      get '/login', :to => "devise/sessions#new"
-      get '/signup', :to => "devise/registrations#new"
-      delete '/logout', :to => "devise/sessions#destroy"
-    end
-<% end %>
+```ruby
+devise_scope :person do
+  get '/login', :to => "devise/sessions#new"
+  get '/signup', :to => "devise/registrations#new"
+  delete '/logout', :to => "devise/sessions#destroy"
+end
+```
 
 Of course, this code will be different if you're not using Devise.
 Simply do not use the *devise_scope* method and change the controllers
@@ -199,17 +199,17 @@ Spree to check if the user is authorized to perform specific actions,
 such as accessing the admin section. Admin users of your system should
 be assigned the Spree admin role, like this:
 
-<% ruby do %>
-    user = User.find_by(email: "master@example.com")
-    user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
-<% end %>
+```ruby
+user = User.find_by(email: "master@example.com")
+user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
+```
 
 To test that this has worked, use the *has_spree_role?* method, like
 this:
 
-<% ruby do %>
-    user.has_spree_role?("admin")
-<% end %>
+```ruby
+user.has_spree_role?("admin")
+```
 
 If this returns *true*, then the user has admin permissions within
 Spree.
@@ -226,14 +226,14 @@ To make the login link appear on Spree pages, you will need to use a
 Deface override. Create a new file at
 *app/overrides/auth_login_bar.rb* and put this content inside it:
 
-<% ruby do %>
-    Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
-     :name => "auth_shared_login_bar",
-     :insert_before => "li#search-bar",
-     :partial => "spree/shared/login_bar",
-     :disabled => false,
-     :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
-<% end %>
+```ruby
+Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
+  :name => "auth_shared_login_bar",
+  :insert_before => "li#search-bar",
+  :partial => "spree/shared/login_bar",
+  :disabled => false,
+  :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
+```
 
 This override references a partial called "spree/shared/login_bar".
 This will live in a new partial called
@@ -271,9 +271,9 @@ this event after a user has successfully signed up in your application
 by setting a session variable after successful signup in whatever
 controller deals with user signup:
 
-<% ruby do %>
-    session[:spree_user_signup] = true
-<% end %>
+```ruby
+session[:spree_user_signup] = true
+```
 
 This line will cause the Spree event notifiers to be notified of this
 event and to apply any promotions to an order that are triggered once a

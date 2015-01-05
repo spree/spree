@@ -69,14 +69,14 @@ show the detailed error page
 instead of `404.html`, so you don't have to hunt through the server
 logs.
 
-<% ruby do %>
-    Spree::BaseController.class_eval do
-      def local_request?
-        ENV["RAILS_ENV"] !="production" || current_user.present? &&
-          current_user.has_role?(:admin)
-      end
-    end
-<% end %>
+```ruby
+Spree::BaseController.class_eval do
+  def local_request?
+    ENV["RAILS_ENV"] !="production" || current_user.present? &&
+      current_user.has_role?(:admin)
+  end
+end
+```
 
 ### Managing large projects
 

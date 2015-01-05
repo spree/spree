@@ -80,14 +80,14 @@ These manifests are included by default by the
 relevant all.css or all.js in the host Spree application. For example,
 `vendor/assets/javascripts/spree/backend/all.js` includes:
 
-<% ruby do %>
-    //= require jquery
-    //= require jquery_ujs
+```ruby
+//= require jquery
+//= require jquery_ujs
 
-    //= require spree/backend
+//= require spree/backend
 
-    //= require_tree .
-<% end %>
+//= require_tree .
+```
 
 External JavaScript libraries, stylesheets and images have also be
 relocated into vendor/assets (again Rails 3.1 standard approach), and

@@ -48,12 +48,12 @@ this:
 
 If you wanted to insert some code just before the +#registration+ div on the page you would define an override as follows:
 
-<% ruby do %>
-    Deface::Override.new(:virtual_path  => "spree/checkout/registration",
-                         :insert_before => "div#registration",
-                         :text          => "<p>Registration is the future!</p>",
-                         :name          => "registration_future")
-<% end %>
+```ruby
+Deface::Override.new(:virtual_path  => "spree/checkout/registration",
+                     :insert_before => "div#registration",
+                     :text          => "<p>Registration is the future!</p>",
+                     :name          => "registration_future")
+```
 
 This override **inserts** <code><p>Registration is the future!</p></code> **before** the div with the id of "registration".
 
@@ -61,13 +61,13 @@ This override **inserts** <code><p>Registration is the future!</p></code> **befo
 
 Deface applies an __action__ to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
 
-<% ruby do %>
-  :remove => "p.junk"
+```ruby
+:remove => "p.junk"
 
-  :insert_after => "div#wow p.header"
+:insert_after => "div#wow p.header"
 
-  :insert_bottom => "ul#giant-list"
-<% end %>
+:insert_bottom => "ul#giant-list"
+```
 
 Deface currently supports the following actions:
 
@@ -227,7 +227,7 @@ So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
 
 ```ruby
- :replace => "erb[loud]:contains('t(:products)')"
+:replace => "erb[loud]:contains('t(:products)')"
 
 :insert_before => "erb[silent]:contains('elsif')"
 ```

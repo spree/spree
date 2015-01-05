@@ -40,9 +40,11 @@ An adjustment's `label` attribute can be used as a good indicator of where the a
 
 There are some helper methods to return the different types of adjustments:
 
-    scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
-    scope :included, -> { where(included: true)  }
-    scope :additional, -> { where(included: false) }
+```ruby
+scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
+scope :included, -> { where(included: true)  }
+scope :additional, -> { where(included: false) }
+```
 
 * `open`: All open adjustments.
 * `eligible`: All eligible adjustments for the order. Useful for determining which adjustments are applying to the adjustable.
