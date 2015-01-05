@@ -32,8 +32,7 @@ feature "Taxonomies and taxons" do
 
     find('.product').hover
     find('.product .dropdown-toggle').click
-    # TODO: This should be a click_link "Delete from taxon"
-    page.execute_script("$('.js-delete-product').click()")
+    click_link "Delete From Taxon"
     wait_for_ajax
 
     visit current_path
