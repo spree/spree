@@ -10,17 +10,17 @@ Search Engine Optimization features and future optimization development
 possibilities.
 
 
-### Existing Search Engine Optimization Features
+## Existing Search Engine Optimization Features
 
 Chapter 1 contains a description of the work that has been completed to
 address common search engine optimization issues.
 
-#### Relevant, Meaningful URLs
+### Relevant, Meaningful URLs
 
 The helper method `seo_url(taxon)` yields SEO friendly URLs such as [demo.spreecommerce.com/products/xm-direct2-interface-adapter](http://demo.spreecommerce.com/products/xm-direct2-interface-adapter) and [demo.spreecommerce.com/t/categories/headphones](http://demo.spreecommerce.com/t/categories/headphones).
 Each controller is configured to serve the content using these keyword-relevant, meaningful URLs.
 
-#### On Page Keyword Targeting
+### On Page Keyword Targeting
 
 Several enhancements have been made to improve on-page keyword
 targeting. The admin interface provides the ability to manage meta
@@ -29,14 +29,14 @@ tags are used throughout the site for product and taxonomy names. The
 ease of extension development and layout changes allows you to target
 keywords throughout the site.
 
-#### Clean Content
+### Clean Content
 
 Spree uses Skeleton, a responsive CSS framework that allows clean HTML
 that also responds well to any screen size. Having clean HTML with
 minimal inline JavaScript and CSS is considered to be a factor in search
 engine optimization.
 
-#### On Site Performance Optimization
+### On Site Performance Optimization
 
 Spree has been configured to serve one CSS and one JavaScript file on
 every page (excluding extension inclusions). Minimizing HTTP requests is
@@ -44,14 +44,14 @@ considered an important factor in search engine optimization as the
 server performance is an important influence in the search engine crawl
 behavior for a site.
 
-#### Google Analytics integration
+### Google Analytics integration
 
 Google Analytics has been integrated into the Spree core and can be
 managed from the "Analytics Trackers" section of the admin. Google
 Analytics is not included on your store if this preference is not set.
 The Google Analytics setup includes e-commerce conversion tracking.
 
-### Planned Search Engine Optimization Features
+## Planned Search Engine Optimization Features
 
 Although several common search engine optimization issues have been
 addressed, we are always looking for the new best practices in SEO.
@@ -59,7 +59,7 @@ Contributions to address issues will be very welcome. Visit the
 [contributing to spree section](contributing.html) to learn
 more about contributing.
 
-#### Product and Taxonomy Page Title Enhancements
+### Product and Taxonomy Page Title Enhancements
 
 Page titles are an important part of search engine optimization and
 should be meaningful and relevant to the page content. There are a few
@@ -68,13 +68,13 @@ Name" will appear in the beginning of each of your titles. When
 possible, we assign an appropriate title after that (product name, taxon
 name, etc), but when we can't do that, we use the "Default Seo Title".
 
-#### Alt Attribute on Product Images
+### Alt Attribute on Product Images
 
 The alt attribute on product images currently pulls data from product
 titles or the image filename. Enhancing the image alt tag can improve
 image search performance.
 
-#### Known Duplicate Content Issues
+### Known Duplicate Content Issues
 
 In the Spree demo, it is a known issue that
 [demo.spreecommerce.com](http://demo.spreecommerce.com/) contains
@@ -86,7 +86,7 @@ duplicate content pages may not only not be excluded from the main
 search engine index, but pages may also rank poorly in comparison to
 other sites where all external links go to one non-duplicated page.
 
-#### Integration of Content Management System or Content
+### Integration of Content Management System or Content
 
 There has been quite a bit of interest in development of [CMS
 integration into
@@ -96,7 +96,7 @@ not only can improve on page keyword targeting, but it also can improve
 the popularity of a site which can in turn improve search engine
 optimization.
 
-#### Tool Integration
+### Tool Integration
 
 In addition to integration of Google Analytics, several other tools can
 be implemented for SEO purposes such as Bing Webmaster Tools, Google
@@ -104,7 +104,7 @@ Webmaster Tools and Quantcast. Social media optimization tools such as
 Pinterest, Reddit, Digg, Delicious, Facebook, Google+ and Twitter may
 also be integrated to improve social networking site performance.
 
-### Spree SEO Extensions
+## Spree SEO Extensions
 
 The following list shows extensions that can improve search engine
 performance. Refer to the GitHub README for developer notes.
@@ -113,7 +113,7 @@ performance. Refer to the GitHub README for developer notes.
 -   [Spree Sitemap Generation](https://github.com/romul/spree_dynamic_sitemaps)
 -   [Product Reviews](https://github.com/spree/spree_reviews)
 
-### External Search Engine Optimization Efforts
+## External Search Engine Optimization Efforts
 
 Spree cannot control factors such as external links, quality of external
 links, server performance and capabilities. These areas should not be
