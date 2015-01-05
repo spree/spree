@@ -186,7 +186,7 @@ config.spree.calculators.promotion_actions_create_adjustments << CustomCalculato
 
 For example if your calculator is placed in `app/models/spree/calculator/shipping/my_own_calculator.rb` you should call:
 
-```
+```ruby
 config = Rails.application.config
 config.spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
 ```
