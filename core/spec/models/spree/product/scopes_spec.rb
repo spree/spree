@@ -145,4 +145,26 @@ describe "Product scopes", :type => :model do
       end
     end
   end
+
+  context "available scope" do
+    let!(:eur_price) { create(:price, currency: 'EUR', variant_id: product.master.id) }
+
+    it "returns products with default currency" do
+      expect(Spree::Product.available.count).to eq 1
+    end
+
+    context "with a specific time" do
+      it "returns products available before passed time" do
+        expect(Spree::Product.available(Time.now).count).to eq 1
+        expect(Spree::Product.available(Time.at(0)).count).to eq 0
+      end
+    end
+
+    context "with a specific currency" do
+      it "returns products with specific currency" do
+        expect(Spree::Product.available(nil, "EUR").count).to eq 1
+        expect(Spree::Product.available(nil, "BTC").count).to eq 0
+      end
+    end
+  end
 end
