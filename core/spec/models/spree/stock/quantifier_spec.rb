@@ -10,15 +10,13 @@ end
 
 module Spree
   module Stock
-    describe Quantifier, :type => :model do
-
+    describe Quantifier, type: :model do
       let!(:stock_location) { create :stock_location_with_items  }
       let!(:stock_item) { stock_location.stock_items.order(:id).first }
 
       subject { described_class.new(stock_item.variant) }
 
       specify { expect(subject.stock_items).to eq([stock_item]) }
-
 
       context 'with a single stock location/item' do
         it 'total_on_hand should match stock_item' do
@@ -59,7 +57,6 @@ module Spree
             expect(subject.can_supply?(11)).to be false
           end
         end
-
       end
 
       context 'with multiple stock locations/items' do
@@ -92,9 +89,7 @@ module Spree
             expect(subject.can_supply?(16)).to be false
           end
         end
-
       end
-
     end
   end
 end
