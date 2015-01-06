@@ -32,6 +32,17 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
   });
 
+  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
+    {
+      if($(this).find('.icon-chevron-left').length == 1){
+        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');  
+      }
+      else {
+        $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
+      }
+    }
+  )
+
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it
