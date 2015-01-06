@@ -73,7 +73,6 @@ module Spree
     end
 
     def options_text
-      return master_options_text if self.is_master?
 
       values = self.option_values.sort do |a, b|
         a.option_type.position <=> b.option_type.position
@@ -87,8 +86,8 @@ module Spree
     end
 
     # Default to master name
-    def master_options_text
-      name
+    def exchange_name
+      is_master? ? name : options_text
     end
 
     # use deleted? rather than checking the attribute directly. this
