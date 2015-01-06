@@ -249,7 +249,11 @@ describe Spree::Variant, :type => :model do
     let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
+      variant.option_values << create(:option_value, {
+                                                     name: 'Foo',
+                                                     presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
+                                                   })
     end
 
     context 'master variant' do
