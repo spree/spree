@@ -10,7 +10,7 @@ your exact business requirements including:
 -   Changing the output from an existing Spree controller action
 -   Customizing the image handling functionality.
 
-### Extending Classes
+## Extending Classes
 
 All of Spree's business logic (models, controllers, helpers, etc) can
 easily be extended / overridden to meet your exact requirements using
@@ -47,7 +47,7 @@ app/controllers/spree/products_controller_decorator.rb
 The exact same format can be used to redefine an existing method.
 ***
 
-#### Accessing Product Data
+### Accessing Product Data
 
 If you extend the Products controller with a new method, you may very
 well want to access product data in that method. You can do so by using
@@ -68,14 +68,14 @@ the :load_data before_filter.
 permalink.
 ***
 
-### Overriding Controller Action Responses
+## Overriding Controller Action Responses
 
 With the release of 0.60.0 Spree now supports a new way of overriding or
 changing the output of an existing controller's action without needing
 to completely override the method (while also easily avoiding double
 render exceptions).
 
-#### respond_override method
+### respond_override method
 
 The **respond_override** method is used to customize the response from
 any action, and is built on top of Rails 3's **respond_with** method
@@ -101,7 +101,7 @@ using the following syntax:
     the desired custom response (i.e. render or redirect_to). A lambda
     must be passed to ensure the code is evaluated at the correct time.
 
-#### Example Usage
+### Example Usage
 
 If you wanted to render a custom partial for the index action of
 ProductsController, you could include the following in your
@@ -124,7 +124,7 @@ Admin::ProductsController, you would use:
     end
 <% end %>
 
-#### Caveats
+### Caveats
 
 -   If an action does not use **respond_with** to define its response
     the **respond_override** will not work.
@@ -134,7 +134,7 @@ Admin::ProductsController, you would use:
     state / logic within the lambda passed to prevent overriding all
     possible responses with the same override.
 
-### Product Images
+## Product Images
 
 Spree uses Thoughtbot's
 [paperclip](https://github.com/thoughtbot/paperclip) gem to manage
@@ -157,7 +157,7 @@ app model directory, and override the attachment sizes:
 You may also add additional image sizes for use in your templates
 (:micro for shopping cart view, for example).
 
-#### Image resizing option syntax
+### Image resizing option syntax
 
 Default behavior is to resize the image and maintain aspect ratio (i.e.
 the :product version of a 480x400 image will be 240x200). Some commonly

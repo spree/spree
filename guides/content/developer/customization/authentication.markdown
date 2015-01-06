@@ -3,7 +3,7 @@ title: "Custom Authentication"
 section: customization
 ---
 
-### Overview
+## Overview
 
 This guide covers using a custom authentication setup with Spree, such
 as one provided by your own application. This is ideal in situations
@@ -13,7 +13,7 @@ reading this guide, you will be familiar with:
 
 -   Setting up Spree to work with your custom authentication
 
-### Background
+## Background
 
 Traditionally, applications that use Spree have needed to use the
 *Spree::User* model that came with the *spree_auth* component of Spree.
@@ -32,7 +32,7 @@ that wish to use their own authentication may do so, and applications
 that have previously used *spree_auth*'s functionality may continue
 doing so by using this gem.
 
-#### The User Model
+### The User Model
 
 This guide assumes that you have a pre-existing model inside your
 application that represents the users of your application already. This
@@ -47,7 +47,7 @@ of this guide the model we will be referring to **will** be called
 *User*. If your model is called something else, do some mental
 substitution wherever you see *User*.
 
-##### Initial Setup
+#### Initial Setup
 
 To begin using your custom *User* class, you must first edit Spree's
 initializer located at *config/initializers/spree.rb* by changing this
@@ -86,7 +86,7 @@ $ bundle exec rake db:migrate
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
 
-##### Authentication Helpers
+#### Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
 possibly override. The file at *lib/spree/authentication_helpers.rb*
@@ -174,7 +174,7 @@ while the server is running will require a restart, as wth any other
 modification to other files in *lib*.
 ***
 
-### The User Model
+## The User Model
 
 Once you have specified *Spree.user_class* correctly, there will be
 some new methods added to your *User* class. The first of these methods
@@ -220,7 +220,7 @@ methods, used for the API key that is used with Spree. The next two
 methods are *generate_spree_api_key!* and *clear_spree_api_key*
 which will generate and clear the Spree API key respectively.
 
-### Login link
+## Login link
 
 To make the login link appear on Spree pages, you will need to use a
 Deface override. Create a new file at
@@ -262,7 +262,7 @@ allow users to logout, one to allow them to login, and one to allow them
 to signup. These links will be visible on all customer-facing pages of
 Spree.
 
-### Signup promotion
+## Signup promotion
 
 In Spree, there is a promotion that acts on the user signup which will
 not work correctly automatically when you're not using the standard

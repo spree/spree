@@ -3,14 +3,14 @@ title: "View Customization"
 section: customization
 ---
 
-### Overview
+## Overview
 View customization allows you to extend or replace any view within a
 Spree store. This guide explains the options available, including:
 
 -   Using Deface for view customization
 -   Replacing entire view templates
 
-### Using Deface
+## Using Deface
 
 Deface is a standalone Rails library that enables you to customize Erb
 templates without needing to directly edit the underlying view file.
@@ -57,7 +57,7 @@ If you wanted to insert some code just before the +#registration+ div on the pag
 
 This override **inserts** <code><p>Registration is the future!</p></code> **before** the div with the id of "registration".
 
-#### Available actions
+### Available actions
 
 Deface applies an __action__ to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
 
@@ -88,7 +88,7 @@ Deface currently supports the following actions:
 Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.
 ***
 
-#### Supplying content
+### Supplying content
 
 Deface supports three options for supplying content to be used by an override:
 
@@ -100,7 +100,7 @@ Deface supports three options for supplying content to be used by an override:
 As Deface operates on the Erb source the content supplied to an override can include Erb, it is not limited to just HTML. You also have access to all variables accessible in the original Erb context.
 ***
 
-#### Targeting elements
+### Targeting elements
 
 While Deface allows you to use a large subset of CSS3 style selectors (as provided by Nokogiri), the majority of Spree's views have been updated to include a custom HTML attribute (<tt>data-hook</tt>), which is designed to provide consistent targets for your overrides to use.
 
@@ -184,7 +184,7 @@ override to ensure maximum protection against changes:
  :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"
  ```
 
-#### Targeting ruby blocks
+### Targeting ruby blocks
 
 Deface evaluates all the selectors passed against the original erb view
 contents (and importantly not against the finished / generated HTML). In
@@ -232,7 +232,7 @@ selectors, for example:
 :insert_before => "erb[silent]:contains('elsif')"
 ```
 
-#### View upgrade protection
+### View upgrade protection
 
 To ensure upgrading between versions of Spree is as painless as
 possible, Deface supports an `:original` option that can contain a
@@ -255,7 +255,7 @@ source values before comparing, to reduce false warnings caused by basic
 whitespace differences.
 ***
 
-#### Organizing Overrides
+### Organizing Overrides
 
 The suggested method for organizing your overrides is to create a
 separate file for each override inside the **app/overrides** directory,
@@ -266,7 +266,7 @@ Using this method will ensure your overrides are compatible with
 future theming developments (editor).
 ***
 
-#### More information on Deface
+### More information on Deface
 
 For more information and sample overrides please refer to its
 [README](https://github.com/railsdog/deface) file on GitHub.
@@ -274,7 +274,7 @@ For more information and sample overrides please refer to its
 You can also see how Deface internals work, and test selectors using the
 [Deface Test Harness](http://deface.heroku.com) application.
 
-### Template Replacements
+## Template Replacements
 
 Sometimes the customization required to a view are so substantial that
 using a Deface override seems impractical. Spree also supports the
@@ -296,7 +296,7 @@ to get the location of the Spree code you're actually running and then
 copying the relevant file from there.
 ***
 
-#### Drawbacks of template replacements
+### Drawbacks of template replacements
 
 Whenever you copy an entire view into your extension or application you
 are adding a significant maintenance overhead to your application when
