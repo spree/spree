@@ -443,4 +443,9 @@ describe Spree::Product, :type => :model do
     subject { second_product }
     it { is_expected.to be_invalid }
   end
+
+  it "initializes a master variant when building a product" do
+    product = Spree::Product.new
+    expect(product.master.is_master).to be true
+  end
 end
