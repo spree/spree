@@ -1,0 +1,37 @@
+/*------------------------------------------
+  Colors
+  -----------------------------------------*/
+  $brand-primary: #478DC1;
+  $brand-success: #7DB942;
+  $brand-info:    #48B0F7;
+  $brand-warning: #F8D053;
+  $brand-danger:  #F55753;
+
+  $input-border:  darken(#EDEDED, 5);
+
+/*------------------------------------------
+  Components
+  -----------------------------------------*/
+  $border-radius-base: 2px;
+  $padding-base-vertical: 8px;
+  $padding-base-horizontal: 16px;
+
+/*------------------------------------------
+  Fonts
+  -----------------------------------------*/
+  $headings-font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  $headings-font-weight: 300;
+
+/*------------------------------------------
+  Buttons
+  -----------------------------------------*/
+
+/*------------------------------------------
+  Navbar
+  -----------------------------------------*/
+  $navbar-inverse-bg: darken($brand-primary, 35);
+
+/*------------------------------------------
+  Wells
+  -----------------------------------------*/
+  $well-bg: #fbfbfb;

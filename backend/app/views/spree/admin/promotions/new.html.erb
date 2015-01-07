@@ -3,8 +3,8 @@
 <% end %>
 
 <%= form_for :promotion, :url => collection_url do |f| %>
-  <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
+  <%= render :partial => 'form', :locals => { :f => f } %>
+  <div class="text-center">
+    <%= render :partial => 'spree/admin/shared/new_resource_links' %>  
+  </div>
 <% end %>

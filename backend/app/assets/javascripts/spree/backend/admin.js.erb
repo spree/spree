@@ -32,6 +32,17 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
   });
 
+  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
+    {
+      if($(this).find('.icon-chevron-left').length == 1){
+        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');  
+      }
+      else {
+        $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
+      }
+    }
+  )
+
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it
@@ -42,6 +53,14 @@ jQuery(function($) {
     $("#table-filter form").submit();
     return false;
   });
+
+  // Main menu active item submenu show
+  var active_item = $('#sidebar').find('.selected');
+  active_item.parent().addClass('in');
+  active_item.parent().prev()
+    .find('.icon-chevron-left')
+    .removeClass('icon-chevron-left')
+    .addClass('icon-chevron-down');
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
@@ -86,7 +105,7 @@ show_flash = function(type, message) {
   var flash_div = $('.flash.' + type);
   if (flash_div.length == 0) {
     flash_div = $('<div class="alert alert-' + type + '" />');
-    $('.main-content').prepend(flash_div);
+    $('#content').prepend(flash_div);
   }
   flash_div.html(message).show().delay(5000).slideUp();
 }

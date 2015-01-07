@@ -5,7 +5,7 @@
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>
 <%= render :partial => 'spree/admin/users/user_page_actions' %>
 
-<fieldset data-hook="admin_user_addresses" id="admin_user_edit_addresses">
+<div data-hook="admin_user_addresses" id="admin_user_edit_addresses">
   <div data-hook="admin_user_edit_form_header">
     <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @user } %>
   </div>
@@ -15,11 +15,11 @@
 
       <%= render :partial => 'addresses_form', :locals => { :f => f } %>
 
-      <div class="form-actions" data-hook="admin_user_edit_form_button">
+      <div class="form-actions text-center well" data-hook="admin_user_edit_form_button">
         <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
       </div>
     <% end %>
   </div>
-</fieldset>
+</div>
 
 <%= render 'spree/admin/users/lifetime_stats' %>

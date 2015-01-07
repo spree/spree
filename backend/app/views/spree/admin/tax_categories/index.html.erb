@@ -27,7 +27,7 @@
         <td><%= tax_category.tax_code %></td>
         <td><%= tax_category.description %></td>
         <td><%= tax_category.is_default? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td class="actions actions-2">
+        <td class="actions actions-2 text-right">
           <%= link_to_edit tax_category, :no_text => true %>
           <%= link_to_delete tax_category, :no_text => true %>
       </tr>

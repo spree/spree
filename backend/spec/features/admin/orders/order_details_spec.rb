@@ -17,7 +17,6 @@ describe "Order Details", type: :feature, js: true do
   context 'as Admin' do
     stub_authorization!
 
-
     context "cart edit page" do
       before do
         product.master.stock_items.first.update_column(:count_on_hand, 100)
