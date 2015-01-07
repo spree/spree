@@ -17,7 +17,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
     end
 
     before do
-      allow(Spree::Order).to receive_messages(find_by_number!: order)
+      allow(Spree::Order).to receive_message_chain(:friendly, :find).and_return(order)
     end
 
     context "#update" do
