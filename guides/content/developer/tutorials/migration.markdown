@@ -3,6 +3,8 @@ title: Migrating to Spree
 section: advanced
 ---
 
+## Overview
+
 This section explains how to convert existing sites or data sets for
 use with Spree. It is a mix of tips and information about the relevant
 APIs, and so is definitely intended for developers. After reading it you
