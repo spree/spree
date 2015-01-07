@@ -115,7 +115,7 @@ describe "Order Details", type: :feature, js: true do
           click_icon :edit
         end
         select2 "Backdoor", from: "Shipping Method"
-        click_icon :ok
+        click_icon :save
 
         expect(page).not_to have_css('#selected_shipping_rate_id')
         expect(page).to have_content("Backdoor")
