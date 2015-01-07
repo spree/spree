@@ -111,7 +111,7 @@ describe "Order Details", type: :feature, js: true do
           shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
         )
         visit spree.edit_admin_order_path(order)
-        within("table.index tr.show-method") do
+        within("table tr.show-method") do
           click_icon :edit
         end
         select2 "Backdoor", from: "Shipping Method"
