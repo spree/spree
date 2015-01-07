@@ -55,7 +55,7 @@ module Spree
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
-    scope :included, -> { where(included: true)  }
+    scope :is_included, -> { where(included: true)  }
     scope :additional, -> { where(included: false) }
 
     def closed?
