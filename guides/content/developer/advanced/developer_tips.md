@@ -3,6 +3,8 @@ title: "Developer Tips and Tricks"
 section: advanced
 ---
 
+## Overview
+
 This guide presents accumulated wisdom from person-years of Spree use.
 
 ## Upgrade Considerations
