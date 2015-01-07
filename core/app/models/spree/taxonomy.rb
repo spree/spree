@@ -7,7 +7,7 @@ module Spree
 
     after_save :set_name
 
-    default_scope { order("#{self.table_name}.position") }
+    default_scope { order("#{self.table_name}.position, #{self.table_name}.created_at") }
 
     private
 
