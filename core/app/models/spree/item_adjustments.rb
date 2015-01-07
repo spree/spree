@@ -52,7 +52,7 @@ module Spree
       additional_tax_total = 0
       run_callbacks :tax_adjustments do
         tax = (item.respond_to?(:all_adjustments) ? item.all_adjustments : item.adjustments).tax
-        included_tax_total = tax.included.reload.map(&:update!).compact.sum
+        included_tax_total = tax.is_included.reload.map(&:update!).compact.sum
         additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
       end
 
