@@ -3,6 +3,8 @@ title: Upgrading Spree from 1.2.x to 1.3.x
 section: upgrades
 ---
 
+## Overview
+
 This guide covers upgrading a 1.2.x Spree store, to a 1.3.x store. This
 guide has been written from the perspective of a blank Spree 1.2.x store with
 no extensions.

@@ -3,6 +3,8 @@ title: Logic Customization
 section: customization
 ---
 
+## Overview
+
 This guide explains how to customize the internal Spree code to meet
 your exact business requirements including:
 
