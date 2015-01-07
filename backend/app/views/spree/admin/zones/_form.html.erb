@@ -1,41 +1,45 @@
 <div class="row">
   <div class="col-md-6" data-hook="admin_zone_form_fields">
-    <fieldset>
-      <legend><%= Spree.t(:general_settings)%></legend>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h1 class="panel-title"><%= Spree.t(:general_settings)%></h1>
+      </div>
 
-      <%= zone_form.field_container :name, class: ['form-group'] do %>
-        <%= zone_form.label :name, Spree.t(:name) %>
-        <%= zone_form.text_field :name, :class => 'form-control' %>
-      <% end %>
-
-      <%= zone_form.field_container :description, class: ['form-group'] do %>
-        <%= zone_form.label :description, Spree.t(:description) %>
-        <%= zone_form.text_field :description, :class => 'form-control' %>
-      <% end %>
-
-      <div data-hook="default" class="checkbox">
-        <%= label_tag "zone[#{:default_tax}" do %>
-          <%= zone_form.check_box :default_tax %>
-          <%= Spree.t(:default_tax_zone) %>
+      <div class="panel-body">
+        <%= zone_form.field_container :name, class: ['form-group'] do %>
+          <%= zone_form.label :name, Spree.t(:name) %>
+          <%= zone_form.text_field :name, :class => 'form-control' %>
         <% end %>
-      </div>
 
-      <div data-hook="type" class="form-group">
-        <strong><%= Spree.t(:type) %></strong>
-        <div class="radio">
-          <%= label_tag :country_based do %>
-            <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
-            <%= Spree.t(:country_based) %>
+        <%= zone_form.field_container :description, class: ['form-group'] do %>
+          <%= zone_form.label :description, Spree.t(:description) %>
+          <%= zone_form.text_field :description, :class => 'form-control' %>
+        <% end %>
+
+        <div data-hook="default" class="checkbox">
+          <%= label_tag "zone[#{:default_tax}" do %>
+            <%= zone_form.check_box :default_tax %>
+            <%= Spree.t(:default_tax_zone) %>
           <% end %>
         </div>
-        <div class="radio">
-          <%= label_tag :state_based do %>
-            <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
-            <%= Spree.t(:state_based) %>
-          <% end %>
+
+        <div data-hook="type" class="form-group">
+          <strong><%= Spree.t(:type) %></strong>
+          <div class="radio">
+            <%= label_tag :country_based do %>
+              <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
+              <%= Spree.t(:country_based) %>
+            <% end %>
+          </div>
+          <div class="radio">
+            <%= label_tag :state_based do %>
+              <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
+              <%= Spree.t(:state_based) %>
+            <% end %>
+          </div>
         </div>
       </div>
-    </fieldset>
+    </div>
   </div>
   <div class="col-md-6">
     <%= render :partial => 'state_members', :locals => { :zone_form => zone_form }%>

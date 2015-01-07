@@ -3,6 +3,8 @@ title: Getting Help
 section: source-code
 ---
 
+## Overview
+
 There may be times when using Spree that the documentation doesn't answer all
 the questions you may have. There are several other places on the internet where
 you can go to ask Spree questions, and they are covered in this guide.

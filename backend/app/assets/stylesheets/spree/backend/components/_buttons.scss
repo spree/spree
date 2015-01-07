@@ -1,0 +1,37 @@
+.btn, .nav-pills > li > a {
+  letter-spacing: 1px;
+  vertical-align: middle;
+  transition: color 0.1s linear 0s,background-color 0.1s linear 0s,opacity 0.2s linear 0s !important;
+
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+}
+.btn {
+  text-align: center;
+
+  &:focus {
+    outline: 0 !important;
+  }
+  
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  &.disabled,
+  &[disabled] {
+      box-shadow: none;
+  }
+
+  .glyphicon {
+    padding-right: 3px;
+  }
+}
+
+.btn-sm .glyphicon { padding: 0 }
+
+.btn.action-void { @extend .btn-danger; }
+.btn.action-capture { @extend .btn-success; }
+.btn.payment-action-edit { @extend .btn-primary; }

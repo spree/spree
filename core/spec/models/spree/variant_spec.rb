@@ -230,6 +230,7 @@ describe Spree::Variant, :type => :model do
   # Regression test for #2432
   describe 'options_text' do
     let!(:variant) { create(:variant, option_values: []) }
+    let!(:master) { create(:master_variant) }
 
     before do
       # Order bar than foo
@@ -240,6 +241,33 @@ describe Spree::Variant, :type => :model do
     it 'should order by bar than foo' do
       expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
     end
+
+  end
+
+  describe 'exchange_name' do
+    let!(:variant) { create(:variant, option_values: []) }
+    let!(:master) { create(:master_variant) }
+
+    before do
+      variant.option_values << create(:option_value, {
+                                                     name: 'Foo',
+                                                     presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
+                                                   })
+    end
+
+    context 'master variant' do
+      it 'should return name' do
+        expect(master.exchange_name).to eql master.name
+      end
+    end
+
+    context 'variant' do
+      it 'should return options text' do
+        expect(variant.exchange_name).to eql 'Foo Type: Foo'
+      end
+    end
+
   end
 
   # Regression test for #2744

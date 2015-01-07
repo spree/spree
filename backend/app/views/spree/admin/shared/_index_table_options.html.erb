@@ -1,16 +1,10 @@
 <div class="row index-pagination-row">
-  <div class="col-md-6">
-    <div class="batch-actions js-batch-actions is-hidden">
-      <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-default btn-sm">Batch action 1</button>
-        <button type="button" class="btn btn-default btn-sm">Batch action 2</button>
-      </div>
-    </div>
+  <div class="col-sm-6">
+    <%= paginate collection %>
   </div>
-  <div class="col-md-6">
+  <div class="col-sm-6">
     <div class="pagination-wrap">
-      <%= paginate collection %>
-      <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form" }) do %>
+      <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form", :class => 'form-inline' }) do %>
         <%= per_page_dropdown %>
       <% end %>
       <div class="clearfix"></div>

@@ -9,7 +9,9 @@
 <% end %>
 
 <% if @adjustments.present? %>
-  <%= render :partial => 'adjustments_table' %>
+  <div class="panel panel-default">    
+    <%= render :partial => 'adjustments_table' %>
+  </div>
 <% else %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: Spree::Adjustment.model_name.human(count: :many)) %>

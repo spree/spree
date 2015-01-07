@@ -3,6 +3,8 @@ title: "Seo Considerations"
 section: advanced
 ---
 
+## Overview
+
 Search Engine Optimization is an important area to address when
 implementing and developing an ecommerce solution to ensure competitive
 search engine performance. The following guide outlines current Spree

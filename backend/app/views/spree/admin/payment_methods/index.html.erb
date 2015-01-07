@@ -13,8 +13,8 @@
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:provider) %></th>
         <th><%= Spree.t(:environment) %></th>
-        <th><%= Spree.t(:display) %></th>
-        <th><%= Spree.t(:active) %></th>
+        <th class="text-center"><%= Spree.t(:display) %></th>
+        <th class="text-center"><%= Spree.t(:active) %></th>
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -24,9 +24,9 @@
           <td><%= method.name %></td>
           <td><%= method.type %></td>
           <td><%= method.environment.to_s.titleize %></td>
-          <td><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
-          <td><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-          <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2">
+          <td class="text-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
+          <td class="text-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">
             <%= link_to_edit method, :no_text => true %>
             <%= link_to_delete method, :no_text => true  %>
           </td>

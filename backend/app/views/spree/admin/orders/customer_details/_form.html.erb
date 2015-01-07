@@ -1,68 +1,82 @@
-<fieldset data-hook="admin_customer_detail_form_fields">
+<div data-hook="admin_customer_detail_form_fields">
 
-  <fieldset class="index no-border-bottom" data-hook="customer_guest">
-    <legend><%= Spree.t(:account) %></legend>
+  <div class="panel panel-default" data-hook="customer_guest">
 
-    <div data-hook="customer_fields">
-      <div class="form-group">
-        <%= f.label :email, Spree.t(:email) %>
-        <%= f.email_field :email, :class => 'form-control' %>
-      </div>
-      <div class="form-group">
-        <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
-        <% if @order.completed? %>
-          <div>
-            <span class="badge">
-              <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-            </span>
-          </div>
-        <% else %>
-          <% guest = @order.user.nil? %>
-          <div class="radio no-margint">
-            <%= label_tag :guest_checkout_true do %>
-              <%= radio_button_tag :guest_checkout, true, guest %>
-              <%= Spree.t(:say_yes) %>
-            <% end %>
-          </div>
-          <div class="radio">
-            <%= label_tag :guest_checkout_false do %>
-              <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
-              <%= Spree.t(:say_no) %>
-            <% end %>
-          </div>
-          <%= hidden_field_tag :user_id, @order.user_id %>
-        <% end %>
-      </div>
+    <div class="panel-heading">
+      <h1 class="panel-title"><%= Spree.t(:account) %></h1>
     </div>
-  </fieldset>
+
+    <div class="panel-body">
+      <div data-hook="customer_fields">
+        <div class="form-group">
+          <%= f.label :email, Spree.t(:email) %>
+          <%= f.email_field :email, :class => 'form-control' %>
+        </div>
+        <div class="form-group">
+          <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
+          <% if @order.completed? %>
+            <div>
+              <span class="badge">
+                <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+              </span>
+            </div>
+          <% else %>
+            <% guest = @order.user.nil? %>
+            <div class="radio no-margint">
+              <%= label_tag :guest_checkout_true do %>
+                <%= radio_button_tag :guest_checkout, true, guest %>
+                <%= Spree.t(:say_yes) %>
+              <% end %>
+            </div>
+            <div class="radio">
+              <%= label_tag :guest_checkout_false do %>
+                <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
+                <%= Spree.t(:say_no) %>
+              <% end %>
+            </div>
+            <%= hidden_field_tag :user_id, @order.user_id %>
+          <% end %>
+        </div>
+      </div>  
+    </div>
+    
+  </div>
 
   <div class="row">
     <div data-hook="bill_address_wrapper" class="col-md-6">
-      <fieldset>
-        <legend><%= Spree.t(:billing_address) %></legend>
-        <%= f.fields_for :bill_address do |ba_form| %>
-          <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
-        <% end %>
-      </fieldset>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h1 class="panel-title"><%= Spree.t(:billing_address) %></h1>
+        </div>
+
+        <div class="panel-body">
+          <%= f.fields_for :bill_address do |ba_form| %>
+            <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+          <% end %>  
+        </div>
+      </div>
     </div>
 
     <div class="col-md-6" data-hook="ship_address_wrapper">
-      <fieldset>
-        <legend><%= Spree.t(:shipping_address) %></legend>
-        <%= f.fields_for :ship_address do |sa_form| %>
-          <div class="form-group" style="position: absolute; margin-top: -7px; right: 15px;">
-            <span data-hook="use_billing">
-              <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
-              <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
-            </span>
-          </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h1 class="panel-title"><%= Spree.t(:shipping_address) %></h1>
+        </div>
+        <div class="panel-body">
+          <%= f.fields_for :ship_address do |sa_form| %>
+            <div class="form-group">
+              <span data-hook="use_billing">
+                <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+                <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+              </span>
+            </div>
 
-          <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
-        <% end %>
-      </fieldset>
+            <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
-
 
   <div class="form-actions" data-hook="buttons">
     <%= button Spree.t('actions.update'), 'save' %>
@@ -71,4 +85,4 @@
   <% content_for :head do %>
     <%= javascript_include_tag 'spree/backend/address_states.js' %>
   <% end %>
-</fieldset>
+</div>
