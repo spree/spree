@@ -2,6 +2,17 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
+    
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'H'
+      options[:length] ||= 11
+      super(options)
+    end
+
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
@@ -20,8 +31,6 @@ module Spree
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
-
-    make_permalink field: :number, length: 11, prefix: 'H'
 
     scope :pending, -> { with_state('pending') }
     scope :ready,   -> { with_state('ready') }
@@ -277,10 +286,6 @@ module Spree
         package.add_multiple state_inventory_units, state.to_sym
       end
       package
-    end
-
-    def to_param
-      number
     end
 
     def tracking_url

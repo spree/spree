@@ -32,7 +32,7 @@ module Spree
       end
 
       def update
-        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find(params[:id])
         @shipment.update_attributes_and_order(shipment_params)
 
         respond_with(@shipment.reload, default_template: :show)
@@ -79,7 +79,7 @@ module Spree
       end
 
       def transfer_to_shipment
-        @target_shipment  = Spree::Shipment.find_by!(number: params[:target_shipment_number])
+        @target_shipment  = Spree::Shipment.friendly.find(params[:target_shipment_number])
         @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
         render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
       end
@@ -87,7 +87,7 @@ module Spree
       private
 
       def load_transfer_params
-        @original_shipment         = Spree::Shipment.where(number: params[:original_shipment_number]).first
+        @original_shipment         = Spree::Shipment.friendly.find(params[:original_shipment_number])
         @variant                   = Spree::Variant.find(params[:variant_id])
         @quantity                  = params[:quantity].to_i
         authorize! :read, @original_shipment
@@ -95,7 +95,7 @@ module Spree
       end
 
       def find_and_update_shipment
-        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
+        @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find(params[:id])
         @shipment.update_attributes(shipment_params)
         @shipment.reload
       end

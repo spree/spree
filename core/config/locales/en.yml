@@ -72,6 +72,7 @@ en:
         zipcode: Shipping address zipcode
       spree/payment:
         amount: Amount
+        number: Number
       spree/payment_method:
         name: Name
       spree/product:
@@ -105,6 +106,8 @@ en:
         amount: Amount
       spree/role:
         name: Name
+      spree/shipment:
+        number: Number
       spree/state:
         abbr: Abbreviation
         name: Name
@@ -720,7 +723,6 @@ en:
       this_file_language: English (US)
       translations: Translations
     icon: Icon
-    identifier: Identifier
     image: Image
     images: Images
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
@@ -951,7 +953,6 @@ en:
     pay: pay
     payment: Payment
     payment_could_not_be_created: Payment could not be created.
-    payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
     payment_methods: Payment Methods

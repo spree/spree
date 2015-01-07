@@ -22,7 +22,7 @@ module Spree
       end
 
       def order_id
-        "#{order.number}-#{@payment.identifier}"
+        "#{order.number}-#{@payment.number}"
       end
 
       def shipping

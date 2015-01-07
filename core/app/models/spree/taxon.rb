@@ -1,5 +1,12 @@
+# TODO let friendly id take care of sanitizing the url
+require 'stringex'
+
 module Spree
   class Taxon < Spree::Base
+    extend FriendlyId
+    friendly_id :permalink, slug_column: :permalink, use: :slugged
+    before_create :set_permalink
+
     acts_as_nested_set dependent: :destroy
 
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
@@ -7,8 +14,6 @@ module Spree
     has_many :products, through: :classifications
 
     has_and_belongs_to_many :prototypes, join_table: :spree_taxons_prototypes
-
-    before_create :set_permalink
 
     validates :name, presence: true
     validates :meta_keywords, length: { maximum: 255 }
@@ -48,18 +53,13 @@ module Spree
       end
     end
 
-    # Creates permalink based on Stringex's .to_url method
+    # Creates permalink base for friendly_id
     def set_permalink
       if parent.present?
         self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
       else
         self.permalink = name.to_url if permalink.blank?
       end
-    end
-
-    # For #2759
-    def to_param
-      permalink
     end
 
     def active_products
