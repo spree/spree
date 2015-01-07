@@ -1,4 +1,5 @@
 require 'spree/api/responders'
+require 'active_model/better_errors'
 
 module Spree
   module Api

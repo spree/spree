@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.version       = version
 
   gem.add_dependency 'spree_core', version
+  gem.add_dependency 'active_model-better_errors', '~> 1.6.2'
   gem.add_dependency 'rabl', '~> 0.9.4.pre1'
   gem.add_dependency 'versioncake', '~> 2.3.1'
 end
