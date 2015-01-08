@@ -1,51 +1,45 @@
-<div data-hook="admin_tax_rate_form_fields">
-  <div class="panel panel-default" data-hook="tax_rates">
-    <div class="panel-heading">
-      <h1 class="panel-title">
-        <%= Spree.t(:general_settings) %>
-      </h1>
-    </div>
+<div data-hook="admin_tax_rate_form_fields" class="row">
+  <fieldset data-hook="tax_rates">
+    <legend><%= Spree.t(:general_settings) %></legend>
 
-    <div class="panel-body">
-      <div class="col-md-6">
-        <div data-hook="name" class="form-group">
-          <%= f.label :name, Spree.t(:name) %>
-          <%= f.text_field :name, :class => 'form-control' %>
-        </div>
-        <div data-hook="rate" class="form-group">
-          <%= f.label :amount, Spree.t(:rate) %>
-          <%= f.text_field :amount, :class => 'form-control' %>
-          <p class="help-block">
-            <%= Spree.t(:tax_rate_amount_explanation) %>
-          </p>
-        </div>
-        <div data-hook="included" class="form-group">
-          <%= f.label :included_in_price do %>
-            <%= f.check_box :included_in_price %>
-            <%= Spree.t(:included_in_price) %>
-          <% end %>
-        </div>
+    <div class="col-md-6">
+      <div data-hook="name" class="form-group">
+        <%= f.label :name, Spree.t(:name) %>
+        <%= f.text_field :name, :class => 'form-control' %>
       </div>
-
-      <div class="col-md-6">
-        <div data-hook="zone" class="form-group">
-          <%= f.label :zone, Spree.t(:zone) %>
-          <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2'}) %>
-        </div>
-        <div data-hook="category" class="form-group">
-          <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {:class => 'select2'}) %>
-        </div>
-        <div data-hook="show_rate" class="form-group">
-          <%= f.label :show_rate_in_label do %>
-            <%= f.check_box :show_rate_in_label %>
-            <%= Spree.t(:show_rate_in_label) %>
-          <% end %>
-        </div>
+      <div data-hook="rate" class="form-group">
+        <%= f.label :amount, Spree.t(:rate) %>
+        <%= f.text_field :amount, :class => 'form-control' %>
+        <p class="help-block">
+          <%= Spree.t(:tax_rate_amount_explanation) %>
+        </p>
+      </div>
+      <div data-hook="included" class="form-group">
+        <%= f.label :included_in_price do %>
+          <%= f.check_box :included_in_price %>
+          <%= Spree.t(:included_in_price) %>
+        <% end %>
       </div>
     </div>
 
-  </div>
+    <div class="col-md-6">
+      <div data-hook="zone" class="form-group">
+        <%= f.label :zone, Spree.t(:zone) %>
+        <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2'}) %>
+      </div>
+      <div data-hook="category" class="form-group">
+        <%= f.label :tax_category_id, Spree.t(:tax_category) %>
+        <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {:class => 'select2'}) %>
+      </div>
+      <div data-hook="show_rate" class="form-group">
+        <%= f.label :show_rate_in_label do %>
+          <%= f.check_box :show_rate_in_label %>
+          <%= Spree.t(:show_rate_in_label) %>
+        <% end %>
+      </div>
+    </div>
+
+  </fieldset>
 </div>
 
 <%= render 'spree/admin/shared/calculator_fields', :f => f %>

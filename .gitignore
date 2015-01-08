@@ -53,4 +53,3 @@ test_app
 **/coverage
 */.sass-cache
 .localeapp
-.ruby-gemset

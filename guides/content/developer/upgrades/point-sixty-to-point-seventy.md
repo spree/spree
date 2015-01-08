@@ -3,8 +3,6 @@ title: Upgrading Spree from 0.60.x to 0.70.x
 section: upgrades
 ---
 
-## Overview
-
 This guide covers upgrading a 0.60.x Spree store, to a 0.70.x store. This
 guide has been written from the perspective of a blank Spree 0.60.x store with
 no extensions.

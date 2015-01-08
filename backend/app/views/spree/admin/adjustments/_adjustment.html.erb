@@ -7,7 +7,7 @@
   <td><%= display_adjustable(adjustment.adjustable) %></td>
   <td><%= adjustment.label %></td>
   <td><%= adjustment.display_amount.to_html %></td>
-  <td><span class="label label-<%= adjustment.state %>"><%= adjustment.state %></td>
+  <td><%= adjustment.state %></td>
   <td class="actions actions-2">
     <% if adjustment.open? %>
       <%= link_to_edit adjustment, no_text: true %>

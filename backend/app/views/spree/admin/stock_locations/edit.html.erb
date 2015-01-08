@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::StockLocation.model_name.human) %> /
+  <%= Spree.t(:editing_stock_location) %> /
   <%= @stock_location.name %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::StockLocation.model_name.human), admin_stock_locations_path, class: 'btn btn-default' %>
+  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'btn btn-default' %></li>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @stock_location } %>

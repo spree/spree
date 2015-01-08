@@ -4,14 +4,12 @@
   / <%= Spree.t(:customer_details) %>
 <% end %>
 
-<div id="select-customer" class="panel panel-default" data-hook>
-  <div class="panel-heading">
-    <%= Spree.t(:customer_search) %>
-  </div>
-  <div class="panel-body">
+<div id="select-customer" class="marginb" data-hook>
+  <fieldset>
+    <legend><%= Spree.t(:customer_search) %></legend>
     <%= hidden_field_tag :customer_search,  nil, class: 'error-message' %>
     <%= render partial: "spree/admin/orders/customer_details/autocomplete", formats: :js %>
-  </div>
+  </fieldset>
 </div>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
@@ -19,7 +17,5 @@
 <%= form_for @order, :url => admin_order_customer_url(@order) do |f| %>
   <%= render 'form', :f => f %>
 <% end %>
-
-<br>
 
 <%= render partial: 'spree/admin/shared/order_summary' %>

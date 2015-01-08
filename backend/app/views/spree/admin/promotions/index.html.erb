@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::Promotion.model_name.human(count: :many) %>
+  <%= Spree.t(:promotions) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -9,30 +9,24 @@
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            <%= label_tag :q_name_cont, Spree.t(:name) %>
-            <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
-          </div>
+      <div class="form-group">
+        <%= label_tag :q_name_cont, Spree.t(:name) %>
+        <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
+      </div>
 
-          <div class="form-group">
-            <%= label_tag :q_code_cont, Spree.t(:code) %>
-            <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
-          </div>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_code_cont, Spree.t(:code) %>
+        <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
+      </div>
 
-        <div class="col-md-6">
-          <div class="form-group">
-            <%= label_tag :q_path_cont, Spree.t(:path) %>
-            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
-          </div>
+      <div class="form-group">
+        <%= label_tag :q_path_cont, Spree.t(:path) %>
+        <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
+      </div>
 
-          <div class="form-group">
-            <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
-            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
-          </div>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
+        <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
       </div>
 
       <div data-hook="admin_promotions_index_search_buttons" class="form-actions">
@@ -76,7 +70,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::Promotion.model_name.human(count: :many)) %>,
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_promotion_path %>!
   </div>
 <% end %>

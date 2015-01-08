@@ -616,6 +616,37 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe "payment processing" do
+    self.use_transactional_fixtures = false
+    before do
+      Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
+      # Turn off transactional fixtures so that we can test that
+      # processing state is persisted.
+      DatabaseCleaner.strategy = :truncation
+    end
+
+    after do
+      DatabaseCleaner.clean
+      # Turn on transactional fixtures again.
+      self.use_transactional_fixtures = true
+    end
+
+    let(:order) { OrderWalkthrough.up_to(:payment) }
+    let(:creditcard) { create(:credit_card) }
+    let!(:payment_method) { create(:credit_card_payment_method, environment: 'test') }
+
+    it "does not process payment within transaction" do
+      # Make sure we are not already in a transaction
+      expect(ActiveRecord::Base.connection.open_transactions).to eq 0
+
+      expect_any_instance_of(Spree::Payment).to receive(:authorize!) do
+        expect(ActiveRecord::Base.connection.open_transactions).to eq 0
+      end
+
+      order.next!
+    end
+  end
+
   describe 'update_from_params' do
     let(:permitted_params) { {} }
     let(:params) { {} }

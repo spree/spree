@@ -10,7 +10,7 @@ FactoryGirl.define do
 
     country  { |stock_location| Spree::Country.first || stock_location.association(:country) }
     state do |stock_location|
-      stock_location.country.states.first || stock_location.association(:state, country: stock_location.country)
+      stock_location.country.states.first || stock_location.association(:state, :country => stock_location.country)
     end
 
     factory :stock_location_with_items do
@@ -20,8 +20,8 @@ FactoryGirl.define do
         product_1 = create(:product)
         product_2 = create(:product)
 
-        stock_location.stock_items.where(variant_id: product_1.master.id).first.adjust_count_on_hand(10)
-        stock_location.stock_items.where(variant_id: product_2.master.id).first.adjust_count_on_hand(20)
+        stock_location.stock_items.where(:variant_id => product_1.master.id).first.adjust_count_on_hand(10)
+        stock_location.stock_items.where(:variant_id => product_2.master.id).first.adjust_count_on_hand(20)
       end
     end
   end

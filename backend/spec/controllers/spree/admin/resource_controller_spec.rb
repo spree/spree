@@ -24,7 +24,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     table do |t|
       t.string :name
       t.integer :position
-      t.timestamps null: false
+      t.timestamps
     end
 
     model do

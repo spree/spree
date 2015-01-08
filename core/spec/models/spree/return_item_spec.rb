@@ -153,8 +153,7 @@ describe Spree::ReturnItem, :type => :model do
   end
 
   describe "#receive" do
-    let(:inventory_unit) { create(:inventory_unit, order: create(:shipped_order)) }
-    let(:return_item)    { create(:return_item, reception_status: status, inventory_unit: inventory_unit) }
+    let(:return_item) { create(:return_item, reception_status: status) }
 
     subject { return_item.receive! }
 

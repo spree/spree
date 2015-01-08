@@ -5,7 +5,7 @@ describe Spree::ReturnItem::EligibilityValidator::InventoryShipped do
   let(:validator)   { Spree::ReturnItem::EligibilityValidator::InventoryShipped.new(return_item) }
 
   describe "#eligible_for_return?" do
-    before { allow(return_item.inventory_unit).to receive(:shipped?).and_return(true) }
+    before { return_item.inventory_unit.stub(:shipped?).and_return(true) }
 
     subject { validator.eligible_for_return? }
 
@@ -16,7 +16,7 @@ describe Spree::ReturnItem::EligibilityValidator::InventoryShipped do
     end
 
     context "the associated inventory unit is not shipped" do
-      before { allow(return_item.inventory_unit).to receive(:shipped?).and_return(false) }
+      before { return_item.inventory_unit.stub(:shipped?).and_return(false) }
 
       it "returns false" do
         expect(subject).to eq false
@@ -34,23 +34,23 @@ describe Spree::ReturnItem::EligibilityValidator::InventoryShipped do
 
     context "not eligible for return" do
       before do
-        allow(return_item.inventory_unit).to receive(:shipped?).and_return(false)
+        return_item.inventory_unit.stub(:shipped?).and_return(false)
         validator.eligible_for_return?
       end
 
       it 'returns true if errors were added' do
-        expect(subject).to eq true
+        subject.should eq true
       end
     end
 
     context "eligible for return" do
       before do
-        allow(return_item.inventory_unit).to receive(:shipped?).and_return(true)
+        return_item.inventory_unit.stub(:shipped?).and_return(true)
         validator.eligible_for_return?
       end
 
       it 'returns false if no errors were added' do
-        expect(subject).to eq false
+        subject.should eq false
       end
     end
 

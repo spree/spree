@@ -15,9 +15,9 @@ describe "Homepage", :type => :feature do
       end
 
       it "should have a link to overview" do
-        within("header") { page.find(:xpath, "//a[@href='/admin']") }
+        within("header") { page.find(:xpath, "a[@href='/admin']") }
       end
-        
+
       it "should have a link to orders" do
         page.find_link("Orders")['/admin/orders']
       end
@@ -41,19 +41,19 @@ describe "Homepage", :type => :feature do
       end
 
       it "should have a link to products" do
-        within('.sidebar') { page.find_link("Products")['/admin/products'] }
+        within('.sidebar-menu') { page.find_link("Products")['/admin/products'] }
       end
 
       it "should have a link to option types" do
-        within('.sidebar') { page.find_link("Option Types")['/admin/option_types'] }
+        within('.sidebar-menu') { page.find_link("Option Types")['/admin/option_types'] }
       end
 
       it "should have a link to properties" do
-        within('.sidebar') { page.find_link("Properties")['/admin/properties'] }
+        within('.sidebar-menu') { page.find_link("Properties")['/admin/properties'] }
       end
 
       it "should have a link to prototypes" do
-        within('.sidebar') { page.find_link("Prototypes")['/admin/prototypes'] }
+        within('.sidebar-menu') { page.find_link("Prototypes")['/admin/prototypes'] }
       end
     end
   end

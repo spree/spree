@@ -208,15 +208,14 @@ module Spree
       self.ready? || self.pending?
     end
 
-    def refresh_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
+    def refresh_rates
       return shipping_rates if shipped?
       return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).
-      shipping_rates(to_package, shipping_method_filter)
+      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
 
       if shipping_method
         selected_rate = shipping_rates.detect { |rate|
@@ -405,7 +404,7 @@ module Spree
       end
 
       def send_shipped_email
-        ShipmentMailer.shipped_email(id).deliver_later
+        ShipmentMailer.shipped_email(self.id).deliver
       end
 
       def set_cost_zero_when_nil

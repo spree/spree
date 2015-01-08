@@ -1,10 +1,12 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::Tracker.model_name.human) %>
+  <%= Spree.t(:editing_tracker) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @tracker } %>
 
 <%= form_for [:admin, @tracker] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>  
+  <fieldset>
+    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
 <% end %>

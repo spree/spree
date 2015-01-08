@@ -6,6 +6,5 @@
  *= require jquery-ui/datepicker
  *= require jquery-ui/autocomplete
  *= require select2
- *= require animate
  *= require spree/backend/spree_admin
 */

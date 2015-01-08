@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.44.1'
-  s.add_dependency 'acts_as_list', '~> 0.6.0'
+  s.add_dependency 'acts_as_list', '~> 0.5.0'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.9.2'
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'
   s.add_dependency 'kaminari', '~> 0.15', '>= 0.15.1'
-  s.add_dependency 'monetize', '~> 1.1'
+  s.add_dependency 'monetize'
   s.add_dependency 'paperclip', '~> 4.2.0'
   s.add_dependency 'paranoia', '~> 2.0'
   s.add_dependency 'premailer-rails'

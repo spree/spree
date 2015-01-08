@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::ShippingMethod.model_name.human) %>
+  <%= Spree.t(:editing_shipping_method) %>
 <% end %>
 
 <div data-hook="admin_shipping_method_edit_form_header">
@@ -8,9 +8,11 @@
 
 <div data-hook="admin_shipping_method_edit_form">
   <%= form_for [:admin, @shipping_method] do |f| %>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <div data-hook="admin_shipping_method_edit_form_buttons">
-      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-    </div>
+    <fieldset>
+      <%= render :partial => 'form', :locals => { :f => f } %>
+      <div data-hook="admin_shipping_method_edit_form_buttons">
+        <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+      </div>
+    </fieldset>
   <% end %>
 </div>

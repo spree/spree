@@ -11,7 +11,7 @@ The customization of the flow of the checkout can be done by using Spree's `chec
 
 ## Default Checkout Steps
 
-The Spree checkout process consists of the following steps. With the exception of the Registration step, each of these steps corresponds to a state of the `Spree::Order` object:
+The Spree checkout process consists of the following steps. With the exception of the Registration step, each of these steps corresponds to a state of the `Spree::Order` object):
 
 * Registration (Optional - only if using spree_auth_devise extension, can be toggled through the `Spree::Auth::Config[:registration_step]` configuration setting)
 * Address Information

@@ -3,8 +3,6 @@ title: Navigating the Source
 section: source-code
 ---
 
-## Overview
-
 This guide covers obtaining and running the source code. This is
 primarily for developers who are interested in contributing code to the
 Spree project or fixing the source code themselves. It is not necessary

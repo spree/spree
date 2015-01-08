@@ -7,7 +7,7 @@ class CreateSpreeReimbursements < ActiveRecord::Migration
       t.integer :order_id
       t.decimal :total, precision: 10, scale: 2
 
-      t.timestamps null: false
+      t.timestamps
     end
 
     add_index :spree_reimbursements, :customer_return_id

@@ -26,7 +26,7 @@ module Spree
       event :fill_backorder do
         transition to: :on_hand, from: :backordered
       end
-      after_transition on: :fill_backorder, do: :fulfill_order
+      after_transition on: :fill_backorder, do: :update_order
 
       event :ship do
         transition to: :shipped, if: :allow_ship?
@@ -86,9 +86,9 @@ module Spree
         self.on_hand?
       end
 
-      def fulfill_order
+      def update_order
         self.reload
-        order.fulfill!
+        order.update!
       end
 
       def percentage_of_line_item
