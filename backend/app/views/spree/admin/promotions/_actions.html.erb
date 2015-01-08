@@ -1,20 +1,17 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
-    <%= Spree.t(:promotion_actions) %>
-  </h1>
-</div>
-<div id="action_fields" class="panel-body">
+<fieldset id="action_fields">
+
   <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), :remote => true, :id => 'new_promotion_action_form' do %>
     <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
-
-    <div class="form-group">
-      <%= label_tag :action_type, Spree.t(:add_action_of_type)%>
-      <%= select_tag 'action_type', options, :class => 'select2' %>
-    </div>
-    <div class="form-actions">
-      <%= button Spree.t(:add), 'plus', 'submit', class: "btn-success" %>
-    </div>
-
+    <fieldset>
+      <legend><%= Spree.t(:promotion_actions) %></legend>
+      <div class="form-group">
+        <%= label_tag :action_type, Spree.t(:add_action_of_type)%>
+        <%= select_tag 'action_type', options, :class => 'select2' %>
+      </div>
+      <div class="form-actions">
+        <%= button Spree.t(:add), 'plus', 'submit', class: "btn-success" %>
+      </div>
+    </fieldset>
   <% end %>
 
   <%= form_for @promotion, :url => spree.admin_promotion_path(@promotion), :method => :put do |f| %>
@@ -32,4 +29,4 @@
     </div>
   <% end %>
 
-</div>
+</fieldset>

@@ -9,7 +9,7 @@
 
 <div class="form-group no-marginb">
   <%= label_tag nil, Spree.t(:tiers) %>
-  <%= content_tag :div, nil, class: "hidden js-original-tiers",
+  <%= content_tag :div, nil, class: "is-hidden js-original-tiers",
     data: { :'original-tiers' => Hash[calculator.preferred_tiers.sort] } %>
 </div>
 

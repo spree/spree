@@ -1,11 +1,6 @@
-<div data-hook="admin_user_lifetime_stats" class="panel panel-default">
-  <div class="panel-heading">
-    <h1 class="panel-title">
-      <%= Spree.t(:lifetime_stats) %>
-    </h1>
-  </div>
-  
-  <table class="table" id="user-lifetime-stats" data-hook>
+<div data-hook="admin_user_lifetime_stats">
+  <legend><%= Spree.t(:lifetime_stats) %></legend>
+  <table class="table table-condensed table-bordered" id="user-lifetime-stats" data-hook>
     <tr>
       <td width="30%"><%= Spree.t(:total_sales) %>:</td>
       <td><%= @user.display_lifetime_value.to_html %></td>

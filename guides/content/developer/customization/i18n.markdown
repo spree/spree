@@ -3,8 +3,6 @@ title: "Internationalization"
 section: customization
 ---
 
-## Overview
-
 This guide covers how Spree uses Rails' internationalization features, and how
 you can leverage and extend these features in your Spree contributions and
 extensions.

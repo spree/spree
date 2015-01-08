@@ -3,8 +3,6 @@ title: Upgrading Spree from 2.1.x to 2.2.x
 section: upgrades
 ---
 
-## Overview
-
 This guide covers upgrading a 2.1.x Spree store, to a 2.2.x store. This
 guide has been written from the perspective of a blank Spree 2.1.x store with
 no extensions.

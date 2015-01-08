@@ -118,7 +118,7 @@ module Spree
           before do
             allow(backend_method).to receive_message_chain(:calculator, :compute).and_return(0.00)
             allow(generic_method).to receive_message_chain(:calculator, :compute).and_return(5.00)
-            allow(package).to receive(:shipping_methods).and_return([backend_method, generic_method])
+            allow(subject).to receive(:shipping_methods).and_return([backend_method, generic_method])
           end
 
           it "does not return backend rates at all" do

@@ -478,7 +478,7 @@ describe Spree::Shipment, :type => :model do
             shipment_id = args[0]
             mail_message
           }
-          expect(mail_message).to receive :deliver_later
+          expect(mail_message).to receive :deliver
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
 
           shipment.ship!

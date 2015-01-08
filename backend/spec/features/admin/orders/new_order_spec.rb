@@ -22,7 +22,6 @@ describe "New Order", :type => :feature do
   it "completes new order succesfully without using the cart", js: true do
     select2_search product.name, from: Spree.t(:name_or_sku)
     click_icon :add
-    wait_for_ajax
     click_on "Customer"
 
     within "#select-customer" do

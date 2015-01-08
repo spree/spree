@@ -5,7 +5,7 @@ class CreateSpreeReimbursementTypes < ActiveRecord::Migration
       t.boolean :active, default: true
       t.boolean :mutable, default: true
 
-      t.timestamps null: false
+      t.timestamps
     end
 
     reversible do |direction|

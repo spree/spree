@@ -3,7 +3,7 @@ class CreateSpreeCustomerReturns < ActiveRecord::Migration
     create_table :spree_customer_returns do |t|
       t.string :number
       t.integer :stock_location_id
-      t.timestamps null: false
+      t.timestamps
     end
   end
 end

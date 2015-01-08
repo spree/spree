@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Adjustments' } %>
 
 <% content_for :page_title do %>
-   / <%= Spree::Adjustment.model_name.human(count: :many) %>
+   / <%= Spree.t(:adjustments) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -9,12 +9,10 @@
 <% end %>
 
 <% if @adjustments.present? %>
-  <div class="panel panel-default">    
-    <%= render :partial => 'adjustments_table' %>
-  </div>
+  <%= render :partial => 'adjustments_table' %>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Adjustment.model_name.human(count: :many)) %>
+    <%= Spree.t(:no_adjustments_found) %>
   </div>
 <% end %>
 

@@ -3,7 +3,7 @@ title: "Asset Customization"
 section: customization
 ---
 
-## Overview
+### Overview
 
 This guide covers how Spree manages its JavaScript, stylesheet and image
 assets and how you can extend and customize them including:
@@ -13,7 +13,7 @@ assets and how you can extend and customize them including:
 -   Managing extension specific assets
 -   Overriding Spree's core assets
 
-## Spree's Asset Pipeline
+### Spree's Asset Pipeline
 
 With the release of 3.1 Rails now supports powerful asset management
 features and Spree fully leverages these features to further extend and
@@ -53,7 +53,7 @@ Spree also generates four top level manifests (all.css & all.js, see
 above) that require all the core extension's and site specific
 stylesheets / JavaScript files.
 
-### How core extensions (engines) manage assets
+#### How core extensions (engines) manage assets
 
 All core engines have been updated to provide four asset manifests that
 are responsible for bundling up all the JavaScript files and stylesheets
@@ -80,27 +80,27 @@ These manifests are included by default by the
 relevant all.css or all.js in the host Spree application. For example,
 `vendor/assets/javascripts/spree/backend/all.js` includes:
 
-```ruby
-//= require jquery
-//= require jquery_ujs
+<% ruby do %>
+    //= require jquery
+    //= require jquery_ujs
 
-//= require spree/backend
+    //= require spree/backend
 
-//= require_tree .
-```
+    //= require_tree .
+<% end %>
 
 External JavaScript libraries, stylesheets and images have also be
 relocated into vendor/assets (again Rails 3.1 standard approach), and
 all core extensions no longer have public directories.
 
-## Managing your application's assets
+### Managing your application's assets
 
 Assets that customize your Spree store should go inside the appropriate
 directories inside `vendor/assets/images/spree`, `vendor/assets/javascripts/spree`,
 or `vendor/assets/stylesheets/spree`. This is done so that these assets do
 not interfere with other parts of your application.
 
-## Managing your extension's assets
+### Managing your extension's assets
 
 We're suggesting that all third party extensions should adopt the same
 approach as Spree and provide the same four (or less depending on
@@ -115,7 +115,7 @@ a Rails generator to do so.
 For an example of an extension using a generator to install assets and
 migrations take a look at the [install_generator for spree_fancy](https://github.com/spree/spree_fancy/blob/master/lib/generators/spree_fancy/install/install_generator.rb).
 
-## Overriding Spree's core assets
+### Overriding Spree's core assets
 
 Overriding or replacing any of Spree's internal assets is even easier
 than before. It's recommended to attempt to replace as little as
@@ -127,7 +127,7 @@ themes with one noticeable difference: Extension & theme asset files
 will not be automatically included (see above for instructions on how to
 include asset files from your extensions / themes).
 
-### Overriding individual CSS styles
+#### Overriding individual CSS styles
 
 Say for example you want to replace the following CSS snippet:
 
@@ -155,7 +155,7 @@ The `frontend/all.css` manifest will automatically include `foo.css` and it
 will actually include both definitions with the one from `foo.css` being
 included last, hence it will be the rule applied.
 
-### Overriding entire CSS files
+#### Overriding entire CSS files
 
 To replace an entire stylesheet as provided by Spree you simply need to
 create a file with the same name and save it to the corresponding path
@@ -170,7 +170,7 @@ This same method can also be used to override stylesheets provided by
 third-party extensions.
 ***
 
-### Overriding individual JavaScript functions
+#### Overriding individual JavaScript functions
 
 A similar approach can be used for JavaScript functions. For example, if
 you wanted to override the `show_variant_images` method:
@@ -216,7 +216,7 @@ var show_variant_images = function(variant_id) {
 The resulting `frontend/all.js` would include both methods, with the latter
 being the one executed on request.
 
-### Overriding entire JavaScript files
+#### Overriding entire JavaScript files
 
 To replace an entire JavaScript file as provided by Spree you simply
 need to create a file with the same name and save it to the
@@ -231,7 +231,7 @@ This same method can be used to override JavaScript files provided
 by third-party extensions.
 ***
 
-### Overriding images
+#### Overriding images
 
 Finally, images can be replaced by substituting the required file into
 the same path within your application or extension as the file you would

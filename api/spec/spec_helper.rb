@@ -38,17 +38,18 @@ require 'spree/api/testing_support/setup'
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true
-  config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
-  config.raise_errors_for_deprecations!
-  config.use_transactional_fixtures = true
-  
+
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, :type => :controller
   config.extend Spree::Api::TestingSupport::Setup, :type => :controller
   config.include Spree::TestingSupport::Preferences, :type => :controller
 
+  config.fail_fast = ENV['FAIL_FAST'] || false
+
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end
+
+  config.use_transactional_fixtures = true
 end

@@ -477,21 +477,6 @@ describe Spree::Payment, :type => :model do
       end
     end
 
-    context 'when the payment was completed but now void' do
-      let(:payment) do
-        Spree::Payment.create(
-          amount: 100,
-          order: order,
-          state: 'completed'
-        )
-      end
-
-      it 'updates order payment total' do
-        payment.void
-        expect(order.payment_total).to eq 0
-      end
-    end
-
     context "completed orders" do
       before { allow(order).to receive_messages completed?: true }
 
@@ -568,6 +553,22 @@ describe Spree::Payment, :type => :model do
           :payment_method => gateway
         )
       end
+    end
+  end
+
+  describe '#invalidate_old_payments' do
+      before {
+        Spree::Payment.skip_callback(:rollback, :after, :persist_invalid)
+      }
+      after {
+        Spree::Payment.set_callback(:rollback, :after, :persist_invalid)
+      }
+
+    it 'should not invalidate other payments if not valid' do
+      payment.save
+      invalid_payment = Spree::Payment.new(:amount => 100, :order => order, :state => 'invalid', :payment_method => gateway)
+      invalid_payment.save
+      expect(payment.reload.state).to eq('checkout')
     end
   end
 

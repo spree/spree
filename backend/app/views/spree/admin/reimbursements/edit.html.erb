@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:editing_resource, resource: Spree::Reimbursement.model_name.human) %> #<%= @reimbursement.number %>
+  / <%= Spree.t(:editing_reimbursement) %> #<%= @reimbursement.number %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
@@ -46,9 +46,9 @@
             </td>
             <td>
               <% if return_item.exchange_processed? %>
-                <%= return_item.exchange_variant.exchange_name %>
+                <%= return_item.exchange_variant.options_text %>
               <% else %>
-                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
+                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :options_text, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
               <% end %>
             </td>
           </tr>
@@ -96,7 +96,7 @@
         <%= Spree.t(:reimburse) %>
       <% end %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'remove-sign' %>
+      <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'cancel' %>
     <% end %>
   </div>
 </fieldset>

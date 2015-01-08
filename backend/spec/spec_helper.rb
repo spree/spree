@@ -47,10 +47,8 @@ Capybara.javascript_driver = :poltergeist
 
 RSpec.configure do |config|
   config.color = true
-  config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
-  config.raise_errors_for_deprecations!
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
@@ -105,6 +103,8 @@ RSpec.configure do |config|
   config.include Paperclip::Shoulda::Matchers
 
   config.extend WithModel
+
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end
 
 module Spree

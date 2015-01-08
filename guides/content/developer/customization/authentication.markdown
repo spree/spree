@@ -3,7 +3,7 @@ title: "Custom Authentication"
 section: customization
 ---
 
-## Overview
+### Overview
 
 This guide covers using a custom authentication setup with Spree, such
 as one provided by your own application. This is ideal in situations
@@ -13,7 +13,7 @@ reading this guide, you will be familiar with:
 
 -   Setting up Spree to work with your custom authentication
 
-## Background
+### Background
 
 Traditionally, applications that use Spree have needed to use the
 *Spree::User* model that came with the *spree_auth* component of Spree.
@@ -23,16 +23,16 @@ opt-in. If you have an application that has used the *spree_auth*
 component in the past and you wish to continue doing so, you will need
 to add this extra line to your *Gemfile*:
 
-```ruby
-gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
-```
+<% ruby do %>
+    gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
+<% end %>
 
 By having this authentication component outside of Spree, applications
 that wish to use their own authentication may do so, and applications
 that have previously used *spree_auth*'s functionality may continue
 doing so by using this gem.
 
-### The User Model
+#### The User Model
 
 This guide assumes that you have a pre-existing model inside your
 application that represents the users of your application already. This
@@ -47,21 +47,21 @@ of this guide the model we will be referring to **will** be called
 *User*. If your model is called something else, do some mental
 substitution wherever you see *User*.
 
-#### Initial Setup
+##### Initial Setup
 
 To begin using your custom *User* class, you must first edit Spree's
 initializer located at *config/initializers/spree.rb* by changing this
 line:
 
-```ruby
-Spree.user_class = "Spree::User"
-```
+<% ruby do %>
+    Spree.user_class = "Spree::User"
+<% end %>
 
 To this:
 
-```ruby
-Spree.user_class = "User"
-```
+<% ruby do %>
+    Spree.user_class = "User"
+<% end %>
 
 Next, you need to run the custom user generator for Spree which will
 create two files. The first is a migration that will add the necessary
@@ -86,44 +86,44 @@ $ bundle exec rake db:migrate
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
 
-#### Authentication Helpers
+##### Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
 possibly override. The file at *lib/spree/authentication_helpers.rb*
 contains the following code to help you do that:
 
-```ruby
-module Spree
-  module AuthenticationHelpers
-     def self.included(receiver)
-       receiver.send :helper_method, :spree_login_path
-       receiver.send :helper_method, :spree_signup_path
-       receiver.send :helper_method, :spree_logout_path
-       receiver.send :helper_method, :spree_current_user
-     end
+<% ruby do %>
+    module Spree
+      module AuthenticationHelpers
+         def self.included(receiver)
+           receiver.send :helper_method, :spree_login_path
+           receiver.send :helper_method, :spree_signup_path
+           receiver.send :helper_method, :spree_logout_path
+           receiver.send :helper_method, :spree_current_user
+         end
 
-     def spree_current_user
-       current_person
-     end
+         def spree_current_user
+           current_person
+         end
 
-     def spree_login_path
-       main_app.login_path
-     end
+         def spree_login_path
+           main_app.login_path
+         end
 
-     def spree_signup_path
-       main_app.signup_path
-     end
+         def spree_signup_path
+           main_app.signup_path
+         end
 
-     def spree_logout_path
-       main_app.logout_path
-     end
-   end
-end
+         def spree_logout_path
+           main_app.logout_path
+         end
+       end
+    end
 
-Spree::BaseController.send      :include, Spree::AuthenticationHelpers
-Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
-ApplicationController.send      :include, Spree::AuthenticationHelpers
-```
+    Spree::BaseController.send      :include, Spree::AuthenticationHelpers
+    Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
+    ApplicationController.send      :include, Spree::AuthenticationHelpers
+<% end %>
 
 Each of the methods defined in this module return values that are the
 most common in Rails applications today, but you may need to customize
@@ -151,13 +151,13 @@ You will need to define the *login_path*, *signup_path* and
 *logout_path* routes yourself, by using code like this inside your
 application's *config/routes.rb* if you're using Devise:
 
-```ruby
-devise_scope :person do
-  get '/login', :to => "devise/sessions#new"
-  get '/signup', :to => "devise/registrations#new"
-  delete '/logout', :to => "devise/sessions#destroy"
-end
-```
+<% ruby do %>
+    devise_scope :person do
+      get '/login', :to => "devise/sessions#new"
+      get '/signup', :to => "devise/registrations#new"
+      delete '/logout', :to => "devise/sessions#destroy"
+    end
+<% end %>
 
 Of course, this code will be different if you're not using Devise.
 Simply do not use the *devise_scope* method and change the controllers
@@ -174,7 +174,7 @@ while the server is running will require a restart, as wth any other
 modification to other files in *lib*.
 ***
 
-## The User Model
+### The User Model
 
 Once you have specified *Spree.user_class* correctly, there will be
 some new methods added to your *User* class. The first of these methods
@@ -199,17 +199,17 @@ Spree to check if the user is authorized to perform specific actions,
 such as accessing the admin section. Admin users of your system should
 be assigned the Spree admin role, like this:
 
-```ruby
-user = User.find_by(email: "master@example.com")
-user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
-```
+<% ruby do %>
+    user = User.find_by(email: "master@example.com")
+    user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
+<% end %>
 
 To test that this has worked, use the *has_spree_role?* method, like
 this:
 
-```ruby
-user.has_spree_role?("admin")
-```
+<% ruby do %>
+    user.has_spree_role?("admin")
+<% end %>
 
 If this returns *true*, then the user has admin permissions within
 Spree.
@@ -220,20 +220,20 @@ methods, used for the API key that is used with Spree. The next two
 methods are *generate_spree_api_key!* and *clear_spree_api_key*
 which will generate and clear the Spree API key respectively.
 
-## Login link
+### Login link
 
 To make the login link appear on Spree pages, you will need to use a
 Deface override. Create a new file at
 *app/overrides/auth_login_bar.rb* and put this content inside it:
 
-```ruby
-Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
-  :name => "auth_shared_login_bar",
-  :insert_before => "li#search-bar",
-  :partial => "spree/shared/login_bar",
-  :disabled => false,
-  :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
-```
+<% ruby do %>
+    Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
+     :name => "auth_shared_login_bar",
+     :insert_before => "li#search-bar",
+     :partial => "spree/shared/login_bar",
+     :disabled => false,
+     :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
+<% end %>
 
 This override references a partial called "spree/shared/login_bar".
 This will live in a new partial called
@@ -262,7 +262,7 @@ allow users to logout, one to allow them to login, and one to allow them
 to signup. These links will be visible on all customer-facing pages of
 Spree.
 
-## Signup promotion
+### Signup promotion
 
 In Spree, there is a promotion that acts on the user signup which will
 not work correctly automatically when you're not using the standard
@@ -271,9 +271,9 @@ this event after a user has successfully signed up in your application
 by setting a session variable after successful signup in whatever
 controller deals with user signup:
 
-```ruby
-session[:spree_user_signup] = true
-```
+<% ruby do %>
+    session[:spree_user_signup] = true
+<% end %>
 
 This line will cause the Spree event notifiers to be notified of this
 event and to apply any promotions to an order that are triggered once a

@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::Property.model_name.human) %>
+  <%= Spree.t(:editing_property) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @property } %>

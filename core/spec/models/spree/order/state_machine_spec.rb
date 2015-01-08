@@ -125,6 +125,7 @@ describe Spree::Order, :type => :model do
     end
 
     it "should send a cancel email" do
+
       # Stub methods that cause side-effects in this test
       allow(shipment).to receive(:cancel!)
       allow(order).to receive :has_available_shipment
@@ -135,7 +136,7 @@ describe Spree::Order, :type => :model do
         order_id = args[0]
         mail_message
       }
-      expect(mail_message).to receive :deliver_later
+      expect(mail_message).to receive :deliver
       order.cancel!
       expect(order_id).to eq(order.id)
     end
@@ -159,7 +160,7 @@ describe Spree::Order, :type => :model do
         # TODO: This is ugly :(
         # Stubs methods that cause unwanted side effects in this test
         allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
-        allow(mail_message).to receive :deliver_later
+        allow(mail_message).to receive :deliver
         allow(order).to receive :has_available_shipment
         allow(order).to receive :restock_items!
         allow(shipment).to receive(:cancel!)

@@ -1,8 +1,3 @@
-// TODO: Switch everything to use glyphicons
-.icon, .glyphicon {
-  vertical-align: text-top;
-}
-
 // Maps Glyphicons to Spree .icon prefix.
 // You can apply same pattern to extend with more icons.
 //
@@ -237,8 +232,7 @@ $alias_icons: (plus add)
               (tag properties)
               (inbox stock)
               (usd money)
-              (globe translate)
-              (ok approve);
+              (globe translate);
 
 .icon {
   @extend .glyphicon;

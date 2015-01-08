@@ -8,10 +8,8 @@ require 'spree_sample'
 
 RSpec.configure do |config|
   config.color = true
-  config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
-  config.raise_errors_for_deprecations!
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
@@ -19,4 +17,5 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include FactoryGirl::Syntax::Methods
+  config.fail_fast = ENV['FAIL_FAST'] || false
 end

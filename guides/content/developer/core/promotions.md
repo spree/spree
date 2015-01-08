@@ -158,7 +158,7 @@ This file can be as simple as an empty file if your rule requires no parameters,
 
 And finally, your new rule must have a name and description defined for the locale you will be using it in. For English, edit `config/locales/en.yml` and add the following to support our new example rule:
 
-```yml
+```
 en:
   spree:
     promotion_rule_types:

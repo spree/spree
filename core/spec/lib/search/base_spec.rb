@@ -4,6 +4,9 @@ describe Spree::Core::Search::Base do
 
   before do
     include Spree::Core::ProductFilters
+    Spree::Product.delete_all # FIXME product leaks
+    Spree::Taxon.destroy_all
+
     @taxon = create(:taxon, name: "Ruby on Rails")
 
     @product1 = create(:product, name: "RoR Mug", price: 9.00)

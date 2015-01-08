@@ -3,12 +3,12 @@ title: "Use S3 for storage"
 section: customization
 ---
 
-## Overview
+### Overview
 
 Currently the Spree backend does not give you the option anymore to configure s3 for image storage.
 This guide covers how you can use S3 for storing assets in Spree.
 
-### How to use S3
+#### How to use S3
 
 Start with adding AWS-SDK to your gemfile with:  `gem 'aws-sdk'`, then install the gem by running `bundle install`.
 

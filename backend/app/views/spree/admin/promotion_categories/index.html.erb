@@ -16,7 +16,7 @@
       <% @promotion_categories.each do |promotion_category| %>
         <tr>
           <td><%= promotion_category.name %></td>
-          <td class="actions actions-2 text-right">
+          <td class="actions actions-2">
             <%= link_to_edit promotion_category, :no_text => true %>
             <%= link_to_delete promotion_category, :no_text => true %>
           </td>
@@ -26,7 +26,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::PromotionCategory.model_name.human(count: :many)) %>,
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/promotion_category')) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_promotion_category_path %>!
   </div>
 <% end %>

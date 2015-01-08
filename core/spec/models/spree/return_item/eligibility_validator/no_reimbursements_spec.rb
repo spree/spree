@@ -42,7 +42,7 @@ describe Spree::ReturnItem::EligibilityValidator::NoReimbursements do
       end
 
       it 'returns true if errors were added' do
-        expect(subject).to eq true
+        subject.should eq true
       end
     end
 
@@ -54,7 +54,7 @@ describe Spree::ReturnItem::EligibilityValidator::NoReimbursements do
       end
 
       it 'returns false if no errors were added' do
-        expect(subject).to eq false
+        subject.should eq false
       end
     end
   end

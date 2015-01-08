@@ -3,8 +3,6 @@ title: Migrating to Spree
 section: advanced
 ---
 
-## Overview
-
 This section explains how to convert existing sites or data sets for
 use with Spree. It is a mix of tips and information about the relevant
 APIs, and so is definitely intended for developers. After reading it you
@@ -20,7 +18,7 @@ working to update it. In the meantime if you see things in here that are
 confusing it's possible that they no longer apply, etc.
 !!!
 
-## Overview
+### Overview
 
 This guide is a mix of tips and information about the relevant APIs,
 intended to help simplify the process of getting a new site set up -
@@ -34,12 +32,12 @@ import legacy order details, so there's a short discussion on this.
 Finally, there are some tips about how to ease the theme development
 process.
 
-## Data Import Format
+### Data Import Format
 
 This part discusses some options for getting data into the system,
 including some discussion of using relevant formats.
 
-### Direct SQL import
+#### Direct SQL import
 
 Can we just format our data as SQL tables and import it directly? In
 principle yes, but it takes effort to get the format right,
@@ -53,7 +51,7 @@ moving between hosting platforms. Another is when cloning some project:
 collaborators can just import a database dump prepared by someone else,
 and save the time of the code import.
 
-### Rails Fixtures
+#### Rails Fixtures
 
 Spree uses fixtures to load up the sample data. It's a convenient
 format for small collections of data, but can be tricky when working with
@@ -63,7 +61,7 @@ need to be careful with validation.
 Note that Rails can dump slices of the database in fixture format. This
 is sometimes useful.
 
-### SQL or XML legacy data
+#### SQL or XML legacy data
 
 This is the case where you are working with legacy data in formats like
 SQL or XML, and the question is more how to get the useful data out.
@@ -81,7 +79,7 @@ help
 to use views or complex queries to flatten multi-table data into a
 single table - which can then be treated like a spreadsheet.
 
-### Spreadsheet format
+#### Spreadsheet format
 
 Most of the information about products can be flattened into
 spreadsheet
@@ -91,7 +89,7 @@ in this format.
 
 For example, your spreadsheet could have the following columns:
 
-### Fixed Details
+#### Fixed Details
 
 -    product name
 -    master price
@@ -103,10 +101,10 @@ For example, your spreadsheet could have the following columns:
 -    list of images
 -    description
 
-### Several Properties
+#### Several Properties
 -   one column for each property type used in your catalogue
 
-### Variant Specifications
+#### Variant Specifications
 -   option types for the product\
 -   one variant per column, each listing the option values and the price/sku
 
@@ -131,7 +129,7 @@ Another possibility for coding variants is to have each variant on a
 separate row, and to leave the fixed fields empty when a row is a variant of the
 last-introduced product. This is easier to read.
 
-### Seed code
+#### Seed code
 
 This is more a technique for getting the data loaded at the right time.
 Technically, the product catalogue is *seed data*, standard data which
@@ -151,7 +149,7 @@ If the order of loading is important, choose names for the files
 so that alphabetical order gives the correct load order…
 ***
 
-### Important system-wide settings
+#### Important system-wide settings
 
 A related but important topic is the Spree core settings that your app
 will need to function correctly, eg to disable backordering or to
@@ -161,13 +159,13 @@ interface, but we recommend using initializers for these. See the
 guide](preferences.html#persisting-modifications-to-preferences) for
 more info.
 
-## Catalog creation
+### Catalog creation
 
 This section covers everything relating to import of a product set,
 including the product details, variants, properties and options,
 images, and taxons.
 
-### Preliminaries
+#### Preliminaries
 
 Let's assume that you are working from a CSV-compatible format, and so
 are reading one product per row, and each row contains values for the fixed
@@ -178,7 +176,7 @@ upload scripts will call *save* at appropriate times or use
 *update_attribute+
 etc.
 
-### Products
+#### Products
 
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
@@ -200,7 +198,7 @@ displays.
 p.available_on = Time.now
 ```
 
-#### The Master variant
+##### The Master variant
 
 Every product has a master variant, and this is created automatically
 when the product is created. It is accessible via *p.master*, but note that many
@@ -212,14 +210,14 @@ The dimensions and weight fields should be self-explanatory.
 The *sku* field holds the product's stock code, and you will want to set
 this if the product does not have option variants.
 
-#### Stock levels
+##### Stock levels
 
 If you don't have option variants, then you may also need to register
 some stock for the master variant. The exact steps depend on how you
 have configured Spree's [inventory system](inventory.html), but most sites
 will just need to assign to *p.on_hand*, eg *p.on_hand = 100*.
 
-#### Shipping category
+##### Shipping category
 
 A product's [shipping category](shipments.html#shipping-categories) field
 provides product-specific information for the shipping
@@ -235,7 +233,7 @@ when required.
 p.shipping_category = Spree::ShippingCategory.where(:name => 'Type A').first_or_create
 ```
 
-#### Tax category
+##### Tax category
 
 This is a similar idea to the shipping category, and guides the
 calculation of product taxes, eg to distinguish clothing items from electrical
@@ -251,7 +249,7 @@ You can also fill in this information automatically at a *later* date,
 e.g. use the taxon information to decide which tax categories something
 belongs in.
 
-### Taxons
+#### Taxons
 
 Adding a product to a particular taxon is easy: just add the taxon to
 the list of taxons for a product.
@@ -314,7 +312,7 @@ taxonomy for brands and product ranges, like 'Guitars' with child
 'Acoustic'. You could use various property or option values to drive the
 creation of such taxonomies.
 
-### Product Properties
+#### Product Properties
 
 The first step is to create the property 'types'. These should be
 known in advance so you can define these at the start of the script. You
@@ -332,7 +330,7 @@ column, this means:
 Spree::ProductProperty.create :property => size_prop, :product => p, :value => size_info
 ```
 
-#### Product prototypes
+##### Product prototypes
 
 The admin interface uses a system of 'prototypes' to speed up data
 entry, which seeds a product with a given set of option types and (empty)
@@ -341,7 +339,7 @@ programmatically, since the code will need to do the hard work of
 creating variants and setting properties anyway. However, we mention it
 here for completeness.
 
-### Variants
+#### Variants
 
 Variants allow different versions of a product to be offered, e.g.
 allowing variations in size and color for clothing. If a product comes in only
@@ -360,7 +358,7 @@ code is tolerant of missing values. Certain extensions may be more
 strict, e.g. ones for providing advanced variant selection.
 ***
 
-#### Creating variants
+##### Creating variants
 
 New variants require only a product to be associated with, but it is
 useful to set an identifying *sku* code too. The price field is optional: if it is not
@@ -384,7 +382,7 @@ will just need to assign to *v.on_hand*, eg *v.on_hand = 100*.
 You now need to set some option types and values, so customers can
 choose between the variants.
 
-#### Option types
+##### Option types
 
 The option types to use will vary from product to product, so you will
 need to give this information for each product - or assume a default
@@ -400,7 +398,7 @@ p.option_types = option_names_col.map do |name|
 end
 ```
 
-#### Option values
+##### Option values
 
 Option values represent the choices possible for some option type.
 Again, you could declare them in advance, or use *where.first_or_create*. You'll
@@ -429,7 +427,7 @@ setup. It also avoids filling up a type with lots of similar options -
 and so reduces the number of options when using faceted search etc. You can
 also attach resources like color swatches to the more specific values.
 
-#### Ordering of option values
+##### Ordering of option values
 You might want option values to appear in a certain order, such as by
 increasing size or by alphabetical order. The *Spree::OptionValue* model uses
 *acts_as_list* for setting the order, and option types will use the *position* field when retrieving
@@ -454,7 +452,7 @@ color_type.option_values.sort_by(&:name).each_with_index do |val,pos|
 end
 ```
 
-#### Further reading
+##### Further reading
 
 [Steph Skardal](https://github.com/stephskardal) has produced a useful
 blog post on [product
@@ -462,7 +460,7 @@ optioning](http://blog.endpoint.com/2010/01/rails-ecommerce-spree-hooks-comments
 This discusses how the variant option representation works and how she
 used it to build an extension for enhanced product option selection.
 
-### Product and Variant images
+#### Product and Variant images
 
 Spree uses [paperclip](https://github.com/thoughtbot/paperclip) to
 manage image attachments and their various size formats. (See the [Customization Guide](logic#product-images) for info on altering the image formats.)

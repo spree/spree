@@ -28,7 +28,7 @@ class SpreePromoOneTwo < ActiveRecord::Migration
       t.references :user
       t.references :product_group
       t.string     :type
-      t.timestamps null: false
+      t.timestamps
     end
 
     add_index :spree_promotion_rules, [:product_group_id], :name => 'index_promotion_rules_on_product_group_id'

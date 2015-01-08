@@ -5,7 +5,7 @@ class CreateStockMovements < ActiveRecord::Migration
       t.integer :quantity
       t.string :action
 
-      t.timestamps null: false
+      t.timestamps
     end
     add_index :spree_stock_movements, :stock_item_id
   end
