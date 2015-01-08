@@ -20,8 +20,8 @@ feature 'Promotion with option value rule' do
     within("#rules .promotion-block") do
       click_button "Add"
 
-      expect(page).to have_content("Product")
-      expect(page).to have_content("Option Values")
+      expect(page.body).to have_content("Product")
+      expect(page.body).to have_content("Option Values")
     end
 
     within('.promo-rule-option-value') do

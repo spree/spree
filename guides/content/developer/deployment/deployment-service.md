@@ -3,6 +3,8 @@ title: Deployment Service
 section: deployment
 ---
 
+## Overview
+
 The Spree Deployment Service is a free tool that allows you to configure
 and deploy the Spree Software Stack on any dedicated cloud, virtual
 private or physical server.

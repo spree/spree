@@ -4,7 +4,7 @@ module Spree
 
       def index
         if params[:ids]
-          @products = product_scope.where(:id => params[:ids].split(","))
+          @products = product_scope.where(id: params[:ids].split(",").flatten)
         else
           @products = product_scope.ransack(params[:q]).result
         end

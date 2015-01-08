@@ -33,7 +33,7 @@
           <%= return_item.display_pre_tax_amount %>
         </td>
         <td class="align-center">
-          <%= return_item.exchange_variant.try(:options_text) %>
+          <%= return_item.exchange_variant.try(:exchange_name) %>
         </td>
       </tr>
     <% end %>

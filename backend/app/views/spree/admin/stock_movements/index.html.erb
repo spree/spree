@@ -1,16 +1,10 @@
-
-
 <% content_for :page_title do %>
   <%= Spree.t(:stock_movements_for_stock_location, stock_location_name: @stock_location.name) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li>
-    <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location),  icon: 'plus', id: 'admin_new_stock_movement_link' %>
-  </li>
-  <li>
-    <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_locations_list), admin_stock_locations_path, :class => 'btn btn-default' %>
-  </li>
+  <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location), icon: 'plus', id: 'admin_new_stock_movement_link' %>
+  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::StockLocation.model_name.human), admin_stock_locations_path, class: 'btn btn-default' %>
 <% end %>
 
 <% if @stock_movements.any? %>
@@ -41,7 +35,7 @@
 </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/stock_movement')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::StockMovement.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_stock_location_stock_movement_path(@stock_location) %>!
   </div>
 <% end %>

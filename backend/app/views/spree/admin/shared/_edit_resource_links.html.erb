@@ -1,5 +1,5 @@
 <div class="form-actions" data-hook="buttons">
-  <%= button Spree.t('actions.update'), 'update' %>
+  <%= button Spree.t('actions.update'), 'refresh', 'submit', {class: 'btn-success'} %>
   <span class="or"><%= Spree.t(:or) %></span>
-  <%= button_link_to Spree.t('actions.cancel'), collection_url, :icon => 'cancel' %>
+  <%= button_link_to Spree.t('actions.cancel'), collection_url, :icon => 'delete' %>
 </div>

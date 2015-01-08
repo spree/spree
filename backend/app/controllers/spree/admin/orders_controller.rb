@@ -56,7 +56,7 @@ module Spree
         can_not_transition_without_customer_info
 
         unless @order.completed?
-          @order.refresh_shipment_rates
+          @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
         end
       end
 
@@ -102,7 +102,7 @@ module Spree
       end
 
       def resend
-        OrderMailer.confirm_email(@order.id, true).deliver
+        OrderMailer.confirm_email(@order.id, true).deliver_later
         flash[:success] = Spree.t(:order_email_resent)
 
         redirect_to :back

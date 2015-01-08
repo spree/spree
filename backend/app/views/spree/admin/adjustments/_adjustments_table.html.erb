@@ -1,4 +1,8 @@
-<table class="table adjustments" data-hook="adjustments">
+<div class="panel-heading">
+  <h3 class="panel-title">Order Adjustments</h3>
+</div>
+
+<table class="table table-bordered adjustments" data-hook="adjustments">
   <thead data-hook="adjustmment_head">
     <tr>
       <th><%= Spree.t(:adjustable) %></th>
@@ -13,7 +17,7 @@
   </tbody>
 </table>
 
-<div class="well">
-  <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-sm btn-success pull-left marginr" %>
-  <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-sm btn-danger" %>
+<div class="panel-footer">
+  <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success" %>
+  <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger" %>
 </div>

@@ -376,8 +376,14 @@ module Spree
       consider_risk
     end
 
+    def fulfill!
+      shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
+      updater.update_shipment_state
+      save!
+    end
+
     def deliver_order_confirmation_email
-      OrderMailer.confirm_email(self.id).deliver
+      OrderMailer.confirm_email(id).deliver_later
       update_column(:confirmation_delivered, true)
     end
 
@@ -535,8 +541,8 @@ module Spree
       self.next! if self.line_items.size > 0
     end
 
-    def refresh_shipment_rates
-      shipments.map &:refresh_rates
+    def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
+      shipments.map { |s| s.refresh_rates(shipping_method_filter) }
     end
 
     def shipping_eq_billing_address?
@@ -667,7 +673,7 @@ module Spree
     end
 
     def send_cancel_email
-      OrderMailer.cancel_email(self.id).deliver
+      OrderMailer.cancel_email(id).deliver_later
     end
 
     def after_resume

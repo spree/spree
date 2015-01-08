@@ -3,7 +3,7 @@ title: Taxation
 section: core
 ---
 
-# Overview
+## Overview
 
 Spree represents taxes for an order by using `tax_categories` and `tax_rates`.
 

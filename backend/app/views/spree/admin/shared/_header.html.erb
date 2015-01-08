@@ -1,16 +1,23 @@
 <% admin = try_spree_current_user.try(:has_spree_role?, "admin") %>
 
 <header class="header <%= admin ? "logged-in" : "logged-out" %>">
-  <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo'), spree.admin_path, class: "logo" %>
-  <% if admin %>
-    <nav class="navbar navbar-static-top" role="navigation">
-      <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <div class="navbar-right" data-hook="admin_login_navigation_bar"></div>
-    </nav>
-  <% end %>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo', height: '100%'), spree.admin_path, class: "logo navbar-brand" %>
+      </div>
+
+      <% if admin %>
+        <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <div class="navbar-right" data-hook="admin_login_navigation_bar"></div>
+      <% end %>
+    </div>
+  </nav>
+
 </header>

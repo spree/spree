@@ -4,7 +4,7 @@ class CreateSpreePaymentCaptureEvents < ActiveRecord::Migration
       t.decimal :amount, precision: 10, scale: 2, default: 0.0
       t.integer :payment_id
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :spree_payment_capture_events, :payment_id

@@ -30,7 +30,6 @@ module Spree
     attr_accessor :source_attributes, :request_env
 
     after_initialize :build_source
-    after_rollback :persist_invalid
 
     validates :amount, numericality: true
 
@@ -53,12 +52,6 @@ module Spree
     # transaction_id is much easier to understand
     def transaction_id
       response_code
-    end
-
-    def persist_invalid
-      return unless ['failed', 'invalid'].include?(state)
-      state_will_change!
-      save
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -205,7 +198,7 @@ module Spree
       end
 
       def update_order
-        if self.completed?
+        if completed? || void?
           order.updater.update_payment_total
         end
 
