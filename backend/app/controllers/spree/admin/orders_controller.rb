@@ -131,7 +131,7 @@ module Spree
         end
 
         def load_order
-          @order = Order.includes(:adjustments).find_by_number!(params[:id])
+          @order = Order.includes(:adjustments).friendly.find(params[:id])
           authorize! action, @order
         end
 

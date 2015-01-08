@@ -11,8 +11,8 @@ module Spree
       private
 
       def find_order_and_payment
-        @order = Spree::Order.where(:number => params[:order_id]).first!
-        @payment = @order.payments.find(params[:payment_id])
+        @order = Spree::Order.friendly.find(params[:order_id])
+        @payment = @order.payments.friendly.find(params[:payment_id])
       end
     end
   end

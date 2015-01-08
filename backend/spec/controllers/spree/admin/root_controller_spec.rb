@@ -25,7 +25,7 @@ describe Spree::Admin::RootController do
     end
 
     it "redirects to wherever admin_root_redirects_path tells it to" do
-      allow(controller).to receive(:admin_root_redirect_path).and_return('/grooot')
+      expect(controller).to receive(:admin_root_redirect_path).and_return('/grooot')
 
       get :index, use_route: 'admin'
 

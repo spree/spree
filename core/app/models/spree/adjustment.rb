@@ -44,7 +44,6 @@ module Spree
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
 
-
     class_attribute :competing_promos_source_types
 
     self.competing_promos_source_types = ['Spree::PromotionAction']
@@ -65,7 +64,7 @@ module Spree
     scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
-    scope :included, -> { where(included: true)  }
+    scope :is_included, -> { where(included: true)  }
     scope :additional, -> { where(included: false) }
     scope :competing_promos, -> { where(source_type: competing_promos_source_types)}
 
