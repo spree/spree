@@ -22,6 +22,10 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       ruby_files[File.basename(fixture_file, '.*')] = fixture_file
     end
     ruby_files.sort.each do |fixture , ruby_file|
+      # If file is exists within application it takes precendence.
+      if File.exists?(File.join(Rails.root, "db/default/spree", "#{fixture}.rb"))
+        ruby_file = File.expand_path(File.join(Rails.root, "db/default/spree", "#{fixture}.rb"))
+      end
       # an invoke will only execute the task once
       Rake::Task["db:load_file"].execute( Rake::TaskArguments.new([:file], [ruby_file]) )
     end
