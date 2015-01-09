@@ -48,17 +48,19 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
-  describe 'competing_promos scope' do
+  describe 'competing_promos scope' do    
+    before do
+      allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
+    end
+
     subject do
       Spree::Adjustment.competing_promos.to_a
     end
-
 
     let!(:promotion_adjustment) { create(:adjustment, order: order, source_type: 'Spree::PromotionAction', source_id: nil) }
     let!(:custom_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Custom', source_id: nil) }
     let!(:non_promotion_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
     let!(:non_promotion_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
-
 
     context 'no custom source_types have been added to competing_promos' do
       before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction'] }
