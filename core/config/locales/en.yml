@@ -899,6 +899,7 @@ en:
     order_details: Order Details
     order_email_resent: Order Email Resent
     order_information: Order Information
+    order_line_items: Order Line Items
     order_mailer:
       cancel_email:
         dear_customer: Dear Customer,
