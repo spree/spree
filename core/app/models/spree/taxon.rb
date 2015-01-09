@@ -15,6 +15,7 @@ module Spree
     validates :meta_description, length: { maximum: 255 }
     validates :meta_title, length: { maximum: 255 }
 
+    after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
     has_attached_file :icon,
