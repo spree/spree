@@ -33,7 +33,7 @@ module Spree
       adjustment.save
     end
 
-    def label
+    def label(amount)
       "#{Spree.t(:promotion)} (#{promotion.name})"
     end
   end
