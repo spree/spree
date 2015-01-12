@@ -13,17 +13,32 @@ Orders have the following attributes:
 * `item_total`: The sum of all the line items for this order.
 * `adjustment_total`: The sum of all adjustments on this order.
 * `total`: The result of the sum of the `item_total` and the `adjustment_total`.
+* `payment_total`: The total value of all finalized payments.
+* `shipment_total`: The total value of all shipments' costs.
+* `additional_tax_total`: The sum of all shipments' and line items' `additional_tax`.
+* `included_tax_total`: The sum of all shipments' and line items' `included_tax`.
+* `promo_total`: The sum of all shipments', line items' and promotions' `promo_total`.
 * `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](#the-order-state-machine) section of this guide.
 * `email`: The email address for the user who placed this order. Stored in case this order is for a guest user.
 * `user_id`: The ID for the corresponding user record for this order. Stored only if the order is placed by a signed-in user.
 * `completed_at`: The timestamp of when the order was completed.
 * `bill_address_id`: The ID for the related `Address` object with billing address information.
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
+* `shipping_method_id`: The ID for the related `ShippingMethod` object.
+* `created_by_id`: The ID of object that created this order.
 * `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](shipments).
 * `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](payments).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
 * `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.
 * `last_ip_address`: The last IP address used to update this order in the frontend.
+* `channel`: The channel specified when importing orders from other stores. e.g. amazon.
+* `item_count`: The total value of line items' quantity.
+* `approver_id`: The ID of user that approved this order.
+* `confirmation_delivered`: Boolean value indicating that confirmation email was delivered.
+* `guest_token`: The guest token stored corresponding to token stored in cookies.
+* `canceler_id`: The ID of user that canceled this order.
+* `store_id`: The ID of `Store` in which this order was created.
+
 
 Some methods you may find useful:
 
