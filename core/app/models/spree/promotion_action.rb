@@ -18,21 +18,6 @@ module Spree
 
     protected
 
-    def accumulated_total(adjustable)
-      return unless adjustable.respond_to?(:promotion_accumulator)
-      adjustable.promotion_accumulator.total_with_promotion(promotion_id)
-    end
-
-    def create_adjustment(order, adjustable)
-      amount = compute_amount(adjustable)
-      return if amount == 0
-      adjustment = adjustable.adjustments.new(order: order,
-                                              source: self,
-                                              label: label,
-                                              amount: amount)
-      adjustment.save
-    end
-
     def label(amount)
       "#{Spree.t(:promotion)} (#{promotion.name})"
     end

@@ -4,14 +4,13 @@ module Spree
   class Promotion
     module Actions
       describe CreateItemAdjustments, :type => :model do
-        let(:order) { create(:order_with_line_items) }
+        let(:order) { create(:order) }
         let(:promotion) { create(:promotion) }
         let(:action) { CreateItemAdjustments.new }
-        let(:line_item) { order.line_items.first }
+        let!(:line_item) { create(:line_item, :order => order) }
         let(:payload) { { order: order, promotion: promotion } }
 
         before do
-          allow(Adjustable::AdjustmentsUpdater).to receive(:update)
           allow(action).to receive(:promotion).and_return(promotion)
           promotion.promotion_actions = [action]
         end
@@ -76,7 +75,6 @@ module Spree
           before { promotion.promotion_actions = [action] }
 
           context "when the adjustable is actionable" do
-
             it "calls compute on the calculator" do
               allow(action.calculator).to receive(:compute).and_return(10)
               expect(action.calculator).to receive(:compute).with(line_item)
@@ -93,24 +91,6 @@ module Spree
                 expect(action.compute_amount(line_item)).to eql(-100)
               end
             end
-
-            context 'with accumulator' do
-              before do
-                allow(line_item).to receive(:promotion_accumulator).and_return(accumulator)
-                allow(action.calculator).to receive(:compute).and_return(10)
-              end
-
-              context 'with accumulated total more than calculated amount' do
-                let(:accumulator) { double(total_with_promotion: 15) }
-                it { expect(action.compute_amount(line_item)).to eq(-10) }
-              end
-
-              context 'with accumulated total less than calculated amount' do
-                let(:accumulator) { double(total_with_promotion: 7) }
-                it { expect(action.compute_amount(line_item)).to eq(-7) }
-              end
-            end
-
           end
 
           context "when the adjustable is not actionable" do

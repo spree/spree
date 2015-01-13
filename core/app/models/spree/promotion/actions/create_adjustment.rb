@@ -13,8 +13,7 @@ module Spree
         end
 
         def compute_amount(order)
-          total = accumulated_total(order) || (order.item_total + order.ship_total)
-          [total, compute(order)].min * -1
+          [(order.item_total + order.ship_total), compute(order)].min * -1
         end
       end
     end

@@ -98,34 +98,51 @@ module Spree
       end
 
       context "best promotion is always applied" do
-        let(:action1) { create(:promotion, :with_order_adjustment).actions.first }
-        let(:action2) { create(:promotion, :with_order_adjustment).actions.first }
-        let(:action3) { create(:promotion, :with_order_adjustment).actions.first }
+        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
-        def create_adjustment(adjustable, amount, source)
-          adjustable.adjustments.create(order: order,
-                                        amount: amount,
-                                        label: amount.to_s,
-                                        source: source,
-                                        state: 'closed')
+        let(:source) { Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
+
+        def create_adjustment(label, amount)
+          create(:adjustment, order:      order,
+                              adjustable: line_item,
+                              source:     source,
+                              amount:     amount,
+                              state:      "closed",
+                              label:      label,
+                              mandatory:  false)
         end
 
-        context 'with adjustments from multiple promotions' do
-          before do
-            create_adjustment(order, -100, action1)
-            create_adjustment(order, -200, action2)
-            create_adjustment(order, -300, action3)
-            create_adjustment(order, -500, nil)
-          end
+        it "should make all but the most valuable promotion adjustment ineligible, " +
+           "leaving non promotion adjustments alone" do
+          create_adjustment("Promotion A", -100)
+          create_adjustment("Promotion B", -200)
+          create_adjustment("Promotion C", -300)
+          create(:adjustment, order:  order,
+                              adjustable:  line_item,
+                              source:  nil,
+                              amount:  -500,
+                              state:  "closed",
+                              label:  "Some other credit")
+          line_item.adjustments.each { |a| a.update_column(:eligible, true) }
 
-          it 'should make all but the most valuable promotion adjustment ineligible, ' +
-             'leaving non promotion adjustments alone' do
-            order.reload
-            expect(order.adjustments.count).to eq(4)
-            expect(order.adjustments.promotion.count).to eq(3)
-            expect(order.adjustments.promotion.eligible.count).to eq(1)
-            expect(order.promo_total).to eq(-300)
+          subject.update
+
+          expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+          expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion C')
+        end
+
+        it "should choose the most recent promotion adjustment when amounts are equal" do
+          # Using Timecop is a regression test
+          Timecop.freeze do
+            create_adjustment("Promotion A", -200)
+            create_adjustment("Promotion B", -200)
           end
+          line_item.adjustments.each { |a| a.update_column(:eligible, true) }
+
+          subject.update
+
+          expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+          expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion B')
         end
 
         context "when previously ineligible promotions become available" do
@@ -237,8 +254,8 @@ module Spree
         end
 
         context "multiple adjustments and the best one is not eligible" do
-          let!(:promo_a) { create_adjustment(order, -100, action1) }
-          let!(:promo_c) { create_adjustment(order, -300, action3) }
+          let!(:promo_a) { create_adjustment("Promotion A", -100) }
+          let!(:promo_c) { create_adjustment("Promotion C", -300) }
 
           before do
             promo_a.update_column(:eligible, true)
@@ -247,49 +264,23 @@ module Spree
 
           # regression for #3274
           it "still makes the previous best eligible adjustment valid" do
-            expect(order.adjustments.promotion.eligible.first).to eq(promo_a)
+            subject.update
+            expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion A')
           end
         end
 
         it "should only leave one adjustment even if 2 have the same amount" do
-          create_adjustment(order, -100, action1)
-          create_adjustment(order, -200, action2)
-          create_adjustment(order, -200, action3)
+          create_adjustment("Promotion A", -100)
+          create_adjustment("Promotion B", -200)
+          create_adjustment("Promotion C", -200)
 
-          expect(order.adjustments.promotion.eligible.count).to eq(1)
-          expect(order.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
+          subject.update
+
+          expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+          expect(line_item.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
         end
       end
 
-      context 'with multiple adjustments from same promotion, ' +
-              'whose combined discount is larger than item + ship total' do
-        let(:order) { create(:order_with_line_items, line_items_price: 25) }
-        let(:promotion) { create(:promotion) }
-        let(:source1) { create_source }
-        let(:source2) { create_source(percent_calc) }
-        let(:source3) { Promotion::Actions::FreeShipping.new }
-        let(:source4) { create_source }
-        let(:percent_calc) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 50) }
-
-        def create_source(calculator = nil)
-          Promotion::Actions::CreateAdjustment.new(calculator: calculator || create(:calculator))
-        end
-
-        before do
-          promotion.promotion_actions = [source1, source2, source3, source4]
-          promotion.actions.each { |s| s.perform(order: order) }
-        end
-
-        it 'calculates the second discount as a percentage of the item total ' +
-           'after the first discount is applied' do
-          expect(order.adjustments[1].amount).to eq(-7.5)
-        end
-
-        it "calculates discounts that together equal the item + ship total" do
-          total = (order.item_total + order.ship_total)
-          expect(order.all_adjustments.map(&:amount).inject(&:+)).to eq(-1 * total)
-        end
-      end
     end
   end
 end
