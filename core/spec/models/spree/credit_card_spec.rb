@@ -14,10 +14,6 @@ describe Spree::CreditCard, type: :model do
     Spree::Payment.state_machine.states.keys
   end
 
-  def stub_rails_env(environment)
-    allow(Rails).to receive_messages(env: ActiveSupport::StringInquirer.new(environment))
-  end
-
   let(:credit_card) { Spree::CreditCard.new }
 
   before(:each) do
@@ -35,7 +31,6 @@ describe Spree::CreditCard, type: :model do
       capture: @success_response,
       void: @success_response,
       credit: @success_response,
-      environment: 'test'
     )
 
     allow(@payment).to receive_messages payment_method: @payment_gateway

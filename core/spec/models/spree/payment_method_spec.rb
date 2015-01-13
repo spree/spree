@@ -8,7 +8,6 @@ describe Spree::PaymentMethod, :type => :model do
           :name => 'Display Both',
           :display_on => display_on,
           :active => true,
-          :environment => 'test',
           :description => 'foofah'
         )
       end
