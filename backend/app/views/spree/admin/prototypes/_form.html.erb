@@ -8,26 +8,26 @@
   <div id='properties' data-hook>
     <%= f.field_container :property_ids, class: ['form-group'] do %>
       <%= f.label :property_ids, Spree.t(:properties) %><br>
-      <%= f.select :property_ids, Spree::Property.all.map { |p| ["#{p.presentation} (#{p.name})", p.id] }, {}, { multiple: true, class: "select2" } %>
+      <%= f.select :property_ids, Spree::Property.all.map { |p| ["#{p.presentation} (#{p.name})", p.id] }, {}, { multiple: true, class: "select2 form-control" } %>
     <% end %>
   </div>
 
   <div id="option_types" data-hook>
     <%= f.field_container :option_type_ids, class: ['form-group'] do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %><br>
-      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| ["#{ot.presentation} (#{ot.name})", ot.id] }, {}, { multiple: true, class: "select2" } %>
+      <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| ["#{ot.presentation} (#{ot.name})", ot.id] }, {}, { multiple: true, class: "select2 form-control" } %>
     <% end %>
   </div>
 
   <div id='taxons' data-hook>
     <%= f.field_container :taxon_ids, class: ['form-group'] do %>
       <%= f.label :taxon_ids, Spree.t(:taxons) %><br>
-      <%= f.select :taxon_ids, Spree::Taxon.all.map { |t| [t.name, t.id] }, {}, { multiple: true, class: "select2" } %>
+      <%= f.select :taxon_ids, Spree::Taxon.all.map { |t| [t.name, t.id] }, {}, { multiple: true, class: "select2 form-control" } %>
     <% end %>
   </div>
 
   <%= f.field_container :option_type_ids, class: ['form-group'] do %>
     <%= f.label :option_type_ids, Spree.t(:option_types) %>
-    <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2" } %>
+    <%= f.select :option_type_ids, Spree::OptionType.all.map { |ot| [ot.presentation, ot.id] }, {}, { :multiple => true, :class => "select2 form-control" } %>
   <% end %>
 </div>
