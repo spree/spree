@@ -23,14 +23,14 @@
     <td class="item-total align-center"><%= line_item_shipment_price(item.line_item, item.quantity) %></td>
     <% unless shipment.shipped? %>
       <td class="cart-item-delete actions" data-hook="cart_item_delete">
-        <% if can? :update, item %>
+        <% if can?(:update, item.line_item) %>
           <%= link_to '', '#', :class => 'save-item fa fa-ok no-text with-tip', :data => {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
           <%= link_to '', '#', :class => 'cancel-item fa fa-cancel no-text with-tip', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none' %>
           <%= link_to '', '#', :class => 'edit-item fa fa-edit no-text with-tip', :data => {:action => 'edit'}, :title => Spree.t('edit') %>
           <%= link_to '', '#', :class => 'split-item icon_link fa fa-arrows-h no-text with-tip', :data => {:action => 'split', 'variant-id' => item.variant.id}, :title => Spree.t('split') %>
           <%= link_to '', '#', :class => 'delete-item fa fa-trash no-text with-tip', :data => { 'shipment-number' => shipment.number, 'variant-id' => item.variant.id, :action => 'remove'}, :title => Spree.t('delete') %>
         <% end %>
-      </td>
-    <% end %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
