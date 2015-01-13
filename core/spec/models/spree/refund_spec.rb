@@ -10,8 +10,7 @@ describe Spree::Refund, :type => :model do
 
     let(:payment) { create(:payment, amount: payment_amount, payment_method: payment_method) }
     let(:payment_amount) { amount*2 }
-    let(:payment_method) { create(:credit_card_payment_method, environment: payment_method_environment) }
-    let(:payment_method_environment) { 'test' }
+    let(:payment_method) { create(:credit_card_payment_method) }
 
     let(:refund_reason) { create(:refund_reason) }
 
@@ -145,17 +144,6 @@ describe Spree::Refund, :type => :model do
 
       it 'raises Spree::Core::GatewayError' do
         expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t(:unable_to_connect_to_gateway))
-      end
-    end
-
-    context 'with the incorrect payment method environment' do
-      let(:payment_method_environment) { 'development' }
-
-      it 'raises a Spree::Core::GatewayError' do
-        expect { subject }.to raise_error { |error|
-          expect(error).to be_a(ActiveRecord::RecordInvalid)
-          expect(error.record.errors.full_messages).to eq [Spree.t(:gateway_config_unavailable) + " - test"]
-        }
       end
     end
 

@@ -21,7 +21,7 @@ child :payments => :payments do
   attributes *payment_attributes
 
   child :payment_method => :payment_method do
-    attributes :id, :name, :environment
+    attributes :id, :name
   end
 
   child :source => :source do
