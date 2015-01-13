@@ -36,17 +36,6 @@ module Spree
         price * quantity
       end
 
-      def hash
-        # XOR operation to get a unique combo hash
-        inventory_unit.hash ^ state.hash
-      end
-
-      def eql?(other)
-        other.class == self.class &&
-          other.inventory_unit == inventory_unit &&
-          (!other.state || other.state == state)
-      end
-
       def quantity
         # Since inventory units don't have a quantity,
         # make this always 1 for now, leaving ourselves

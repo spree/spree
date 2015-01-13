@@ -4,14 +4,14 @@ module Spree
       attr_reader :stock_location, :contents
       attr_accessor :shipping_rates
 
-      def initialize(stock_location, contents = nil)
+      def initialize(stock_location, contents=[])
         @stock_location = stock_location
-        @contents = contents || Set.new
+        @contents = contents
         @shipping_rates = Array.new
       end
 
       def add(inventory_unit, state = :on_hand)
-        contents << ContentItem.new(inventory_unit, state)
+        contents << ContentItem.new(inventory_unit, state) unless find_item(inventory_unit)
       end
 
       def add_multiple(inventory_units, state = :on_hand)
