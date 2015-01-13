@@ -166,7 +166,8 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect(payment.log_entries).to receive(:create!).with(:details => anything)
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
         payment.authorize!
       end
 
@@ -217,7 +218,8 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect(payment.log_entries).to receive(:create!).with(:details => anything)
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
         payment.purchase!
       end
 
