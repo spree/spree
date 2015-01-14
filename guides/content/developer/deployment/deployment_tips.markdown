@@ -78,7 +78,7 @@ To force SSL for all requests in your application, it is recommended you use the
 `config/environments/production.rb` of your Rails app as follows:
 
 ```ruby
-rails.force_ssl = true
+config.force_ssl = true
 ```
 
 ## Performance Tips
