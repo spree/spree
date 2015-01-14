@@ -321,11 +321,11 @@ Here are some ways **you** can contribute:
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
 * by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
-* by writing [specs](https://github.com/spree/spree/labels/NeedSpecs)
-* by writing [needed code](https://github.com/spree/spree/labels/NeedCode) or [finishing code](https://github.com/spree/spree/labels/stalled)
-* by [refactoring code](https://github.com/spree/spree/labels/performance)
-* by resolving [issues](https://github.com/spree/spree/issues)
+* by writing [specs](https://github.com/spree/spree/labels/need_specs)
+* by writing [needed code](https://github.com/spree/spree/labels/feature_request) or [finishing code](https://github.com/spree/spree/labels/address_feedback)
+* by [refactoring code](https://github.com/spree/spree/labels/address_feedback)
 * by reviewing [pull requests](https://github.com/spree/spree/pulls)
+* by verifying [issues](https://github.com/spree/spree/labels/unverified)
 
 License
 -------
