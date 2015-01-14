@@ -26,9 +26,9 @@
             <%= link_to state_change.user.login, spree.admin_user_path(state_change.user) if state_change.user %>
           </td>
           <td>
-            <%= l(state_change.created_at.to_time) %>
+            <%= l(state_change.created_at) %>
             <% if state_change.created_at != state_change.updated_at %>
-              <small><%= Spree::StateChange.human_attribute_name(:updated)%>: <%= l(state_change.updated_at).to_time %></small>
+              <small><%= Spree::StateChange.human_attribute_name(:updated)%>: <%= l(state_change.updated_at) %></small>
             <% end %>
           </td>
         </tr>
