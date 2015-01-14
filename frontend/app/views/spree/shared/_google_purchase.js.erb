@@ -2,7 +2,7 @@
 ga('require', 'ec');
 ga('set', '&cu', '<%= current_currency %>');
 
-<%= render :partial => 'spree/shared/google_add_items.js', :locals => { :order => order } %>
+<%= render partial: 'spree/shared/google_add_items.js', order: order %>
 
 ga('ec:setAction', 'purchase', { // Transaction details are provided in an actionFieldObject.
   'id': '<%= j order.number %>', // Transaction ID. Required.
