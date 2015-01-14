@@ -96,19 +96,6 @@ gem 'spree', github: 'spree/spree'
 state. It is unwise to use this branch in a production system you care deeply
 about.**
 
-If you wish to have authentication included also, you will need to add the
-`spree_auth_devise` gem as well. Either this:
-
-```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-4-stable'
-```
-
-Or this:
-
-```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise'
-```
-
 Once you've done that, then you can install these gems using this command:
 
 ```shell
