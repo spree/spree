@@ -108,19 +108,6 @@ Use the install generator to set up Spree:
 rails g spree:install --sample=false --seed=false
 ```
 
-At this point, if you are using spree_auth_devise you will need to change this
-line in `config/initializers/spree.rb`:
-
-```ruby
-Spree.user_class = "Spree::LegacyUser"
-```
-
-To this:
-
-```ruby
-Spree.user_class = "Spree::User"
-```
-
 You can avoid running migrations or generating seed and sample data by passing
 in these flags:
 
