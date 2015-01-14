@@ -29,7 +29,7 @@ module Spree
         :stock_movement_attributes,
         :stock_item_attributes,
         :promotion_attributes,
-        :store_attributes
+        :store_attributes,
         :store_credit_history_attributes
       ]
 
