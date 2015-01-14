@@ -1,8 +1,8 @@
 <% content_for :google_analytics do %>
-  <%= render partial: 'spree/shared/google_checkout.js', order: @order, step_number: (@order.checkout_steps.index(@order.state) + 1) %>
+  <%= render partial: 'spree/shared/google_checkout.js', locals: { order: @order, step_number: (@order.checkout_steps.index(@order.state) + 1) } %>
 <% end %>
 <div id="checkout" data-hook>
-  <%= render partial: 'spree/shared/error_messages', target: @order %>
+  <%= render partial: 'spree/shared/error_messages', locals: { target: @order } %>
 
   <div class="row" data-hook="checkout_header">
     <div class="col-sm-3">
@@ -30,7 +30,7 @@
     </div>
     <% if @order.state != 'confirm' %>
       <div id="checkout-summary" data-hook="checkout_summary_box" class="col-md-3">
-        <%= render partial: 'summary', order: @order %>
+        <%= render partial: 'summary', locals: { order: @order } %>
       </div>
     <% end %>
   </div>

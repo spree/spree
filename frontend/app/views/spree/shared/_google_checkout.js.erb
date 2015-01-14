@@ -2,7 +2,7 @@
 ga('require', 'ec');
 ga('set', '&cu', '<%= current_currency %>');
 
-<%= render :partial => 'spree/shared/google_add_items.js', :locals => { :order => order } %>
+<%= render partial: 'spree/shared/google_add_items.js', locals: { order: order } %>
 
 // Add the step number and additional info about the checkout to the action.
 ga('ec:setAction','checkout', {
