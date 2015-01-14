@@ -1,6 +1,8 @@
 en:
   activerecord:
     attributes:
+      spree/store_credit:
+        amount_used: "Amount used"
       spree/address:
         address1: Address
         address2: Address (contd.)
@@ -364,6 +366,12 @@ en:
       not_saved:
         one: ! '1 error prohibited this %{resource} from being saved:'
         other: ! '%{count} errors prohibited this %{resource} from being saved:'
+  date:
+    formats:
+      date_slash: '%m/%d/%Y'
+  time:
+    formats:
+      date_slash: '%m/%d/%Y'
   spree:
     abbreviation: Abbreviation
     accept: Accept
@@ -414,6 +422,28 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
+      store_credits:
+        add: "Add store credit"
+        new: "New store credit"
+        edit: "Editing store credit"
+        back_to_user_list: "Back to user list"
+        back_to_store_credit_list: "Back to store credit list"
+        credited_html_header: "Amount<br/>Credited"
+        used_html_header: "Amount<br/>Used"
+        type_html_header: "Credit<br/>Type"
+        created_by: "Created By"
+        issued_on: "Issued On"
+        select_reason: "Select a reason for this store credit"
+        unable_to_create: "Unable to create store credit"
+        unable_to_update: "Unable to update store credit"
+        unable_to_delete: "Unable to delete store credit"
+        resource_name: "store credits"
+        no_store_credit_selected: "No store credit was selected"
+        errors:
+          cannot_change_used_store_credit: "Store credit that has been claimed cannot be changed"
+          amount_used_cannot_be_greater: "cannot be greater than the credited amount"
+          amount_authorized_exceeds_total_credit: " exceeds the available credit"
+          amount_used_not_zero: "is greater than zero. Can not delete store credit"
       tab:
         configuration: Configuration
         option_types: Option Types
@@ -435,6 +465,7 @@ en:
         order_history: Order History
         order_num: "Order #"
         orders: Orders
+        store_credit: "Store Credit"
         user_information: User Information
     administration: Administration
     advertise: Advertise
@@ -1274,6 +1305,24 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_credit_payment_method:
+      unable_to_void: "Unable to void code: %{auth_code}"
+      unable_to_credit: "Unable to credit code: %{auth_code}"
+      successful_action: "Successful store credit %{action}"
+      unable_to_find: "Could not find store credit"
+      insufficient_funds: "Store credit amount remaining is not sufficient"
+      currency_mismatch: "Store credit currency does not match order currency"
+      insufficient_authorized_amount: "Unable to capture more than authorized amount"
+      unable_to_find_for_action: "Could not find store credit for auth code: %{auth_code} for action: %{action}"
+      user_has_no_store_credits: "User does not have any available store credit"
+      select_one_store_credit: "Select store credit to go towards remaining balance"
+    store_credit:
+      credit: "Credit"
+      authorized: "Authorized"
+      captured: "Used"
+      allocated: "Added"
+      errors:
+        unable_to_fund: "Unable to pay for order using store credits"
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal

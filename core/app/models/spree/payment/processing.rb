@@ -70,7 +70,12 @@ module Spree
       end
 
       def cancel!
-        payment_method.cancel(response_code)
+        if store_credit?
+          canceled = payment_method.cancel(response_code)
+          self.void if canceled
+        else
+          payment_method.cancel(response_code)
+        end
       end
 
       def gateway_options

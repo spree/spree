@@ -12,5 +12,11 @@
     <li<%== ' class="active"' if current == :items %>>
       <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
     </li>
+    <li<%== ' class="active"' if current == :store_credits %>>
+      <%= link_to_with_icon 'money', Spree.t(:"admin.user.store_credit"), admin_user_store_credits_path(@user) %>
+    </li>
+    <li<%== ' class="active"' if current == :gift_cards %>>
+      <%= link_to_with_icon 'gift', Spree.t(:"admin.gift_cards.redeem_gift_card"), lookup_admin_user_gift_cards_path(@user) %>
+    </li>
   </ul>
 <% end %>
