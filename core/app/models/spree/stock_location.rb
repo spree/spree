@@ -12,7 +12,7 @@ module Spree
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    after_create :create_stock_items, :if => "self.propagate_all_variants?"
+    after_commit :create_stock_items, on: :create, if: "self.propagate_all_variants?"
     after_save :ensure_one_default
 
     def state_text
@@ -106,10 +106,9 @@ module Spree
     end
 
     private
+
       def create_stock_items
-        Variant.includes(:product).find_each do |variant|
-          propagate_variant(variant)
-        end
+        CreateStockItemsJob.perform_later id
       end
 
       def ensure_one_default
