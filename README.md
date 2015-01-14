@@ -5,6 +5,8 @@ SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
 SUMMARY
 -------
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spree/spree?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Spree is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by a dedicated
 [core team](https://github.com/spree/spree/wiki/Core-Team). You can find out more by
