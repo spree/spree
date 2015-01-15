@@ -71,7 +71,6 @@ require 'spree/core/controller_helpers/common'
 require 'spree/core/controller_helpers/order'
 require 'spree/core/controller_helpers/respond_with'
 require 'spree/core/controller_helpers/search'
-require 'spree/core/controller_helpers/ssl'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 

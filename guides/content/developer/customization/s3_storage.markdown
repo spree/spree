@@ -36,8 +36,8 @@ attachment_config = {
       large:    "600x600>"
   },
 
-  path:           "/spree/:class/:id/:style/:basename.:extension",
-  default_url:    "/spree/:class/:id/:style/:basename.:extension",
+  path:           "/:class/:id/:style/:basename.:extension",
+  default_url:    "/:class/:id/:style/:basename.:extension",
   default_style:  "product"
 }
 

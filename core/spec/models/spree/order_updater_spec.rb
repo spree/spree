@@ -185,8 +185,6 @@ module Spree
           it "is void" do
             order.payment_total = 0
             order.total = 30
-            allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
-            allow(order).to receive_message_chain(:payments, :completed, :size).and_return(2)
             expect {
               updater.update_payment_state
             }.to change { order.payment_state }.to 'void'

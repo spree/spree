@@ -71,59 +71,19 @@ Options ~~MultiViews
 
 Each web server will have its own method for doing this so please consult the appropriate documentation for more details.
 
-## Enabling SSL
+## Forcing SSL
 
-Spree supports SSL and contains a special filter to require SSL for certain sensitive pages It also has the ability to redirect SSL requests that do not require SSL back to standard unencrypted HTTP. The code for this is built right into Spree and is based on the
-[ssl_requirement](https://github.com/rails/ssl_requirement/tree/master) by David Heinemeier Hansson.
-
-The default behavior for Spree depends on the Rails environment as
-follows:
-
-|*.Environment | *.SSL Enabled|
-|---|---:|
-|Development|False|
-|Test|False|
-|Staging|True|
-|Production|True|
-
-***
-The "staging" environment is not one of the default environments
-created by Rails. However, many developers use a staging environment,
-which generally should mimic the production environment as much as
-possible. You may, however, make minor changes such as disabling email
-or sending email to a test account instead of the designated recipient.
-***
-
-### SSL Preferences
-
-SSL behavior in Spree is determined by several different preferences.
-
-|*.Preference | *.Default Value|
-|---|---:|
-|allow_ssl_in_production|true|
-|allow_ssl_in_staging|true|
-|allow_ssl_in_development_and_test|false|
-
-For more information on preferences in general you may wish to read the
-[Preference Guide](preferences.html).
-
-### Changing the Default Settings
-
-If you do not wish to use SSL in production or staging, or if you wish to enable SSL in development mode, you will have to change the `:allow_ssl_in_production` configuration setting. This can be done via the admin interface as shown below:
-
-![Changing SSL Setting](../images/developer/change_ssl_setting.png "Changing SSL Setting")
-
-If you need to change any of the above default settings, it is also
-recommended to fix the setting in an initializer . In
-`/config/initializers/spree.rb`, add a line such as:
+To force SSL for all requests in your application, it is recommended you use the
+[config.force_ssl](http://guides.rubyonrails.org/configuring.html) setting in the
+`config/environments/production.rb` of your Rails app as follows:
 
 ```ruby
-config.allow_ssl_in_staging = false
+config.force_ssl = true
 ```
 
 ## Performance Tips
 
-## Running in Production Mode
+### Running in Production Mode
 
 If you are noticing that Spree seems to be running slowly you should
 make sure that you are running in "production mode." You can start your

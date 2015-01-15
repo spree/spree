@@ -20,6 +20,7 @@ module Spree
     validates :meta_description, length: { maximum: 255 }
     validates :meta_title, length: { maximum: 255 }
 
+    after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
     has_attached_file :icon,
@@ -89,7 +90,7 @@ module Spree
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
       self.class.where(id: ancestors.pluck(:id)).update_all(updated_at: Time.now)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
-      taxonomy.touch
+      taxonomy.try!(:touch)
     end
   end
 end

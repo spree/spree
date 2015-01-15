@@ -73,7 +73,7 @@ module Spree
       private
 
       def taxon_params
-        params.require(:taxon).permit(permitted_params)
+        params.require(:taxon).permit(permitted_taxon_attributes)
       end
 
       def load_taxon
@@ -118,10 +118,6 @@ module Spree
         @taxon.set_permalink
         @taxon.save!
         @update_children = true
-      end
-
-      def permitted_params
-        Spree::PermittedAttributes.taxon_attributes
       end
     end
   end

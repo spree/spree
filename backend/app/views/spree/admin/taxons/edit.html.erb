@@ -4,13 +4,13 @@
 
 <%# Because otherwise the form would attempt to use to_param of @taxon %>
 <% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
-<%= form_for [:admin, @taxonomy, @taxon], :method => :put, :url => form_url, :html => { :multipart => true } do |f| %>
-  <%= render 'form', :f => f %>
+<%= form_for [:admin, @taxonomy, @taxon], method: :put, url: form_url, html: { multipart: true } do |f| %>
+  <%= render 'form', f: f %>
 
   <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'save' %>
+    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), icon: "remove" %>
     <%= Spree.t(:or) %>
-    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), :icon => "remove" %>
+    <%= button Spree.t('actions.update'), 'save' %>
   </div>
 <% end %>
 

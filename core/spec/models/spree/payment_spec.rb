@@ -164,9 +164,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect {
-          payment.authorize!
-        }.to change { Spree::LogEntry.count }.by 1
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
+        payment.authorize!
       end
 
       context "when gateway does not match the environment" do
@@ -216,9 +216,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect {
-          payment.purchase!
-        }.to change { Spree::LogEntry.count }.by 1
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
+        payment.purchase!
       end
 
       context "when gateway does not match the environment" do
