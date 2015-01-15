@@ -3,23 +3,23 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-platforms :ruby do
-  gem 'mysql2'
-  gem 'pg'
-end
-
+gem 'coffee-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 5.0.0'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+
+# TODO Remove these once there are releases.
+gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.2'
 
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'
 end
 
-gem 'coffee-rails', '~> 4.0.0'
-gem 'sass-rails', '~> 5.0.0.beta1'
-
-gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.2'
-gem 'state_machine', github: 'huoxito/state_machine', branch: 'spree-rails4.2-upgrade'
+platforms :ruby do
+  gem 'mysql2'
+  gem 'pg'
+end
 
 group :test do
   gem 'capybara', '~> 2.4'
@@ -35,18 +35,10 @@ group :test do
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.5.0'
   gem 'timecop'
-  gem 'with_model', github: 'Casecommons/with_model'
+  gem 'with_model'
 end
 
 group :test, :development do
   gem 'rubocop', require: false
-
-  platforms :ruby_19 do
-    gem 'pry-debugger'
-  end
-  platforms :ruby_20, :ruby_21 do
-    gem 'pry-byebug'
-  end
+  gem 'pry-byebug'
 end
-
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
