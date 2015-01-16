@@ -6,6 +6,8 @@ module Spree
       included do
 
         def add_store_credit_payments
+          existing_credit_card_payment.destroy if covered_by_store_credit?
+          
           payments.store_credits.where(state: 'checkout').map(&:invalidate!)
 
           remaining_total = outstanding_balance
