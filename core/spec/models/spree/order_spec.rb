@@ -248,6 +248,58 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe "#using_store_credit?" do
+    let(:order) { create(:order) }
+    subject { order.using_store_credit? } 
+
+    context "order is in the confirm state" do
+      before { order.update_attributes(state: 'confirm') }
+
+      context "when there is a store credit payment" do
+        let!(:store_credit_payment) { create(:store_credit_payment, order: order) } 
+        it { should be true }
+      end
+
+      context "when there is not store credit payment" do
+        it { should be false }
+      end
+    end
+
+    context "order is completed" do
+      before { order.update_attributes(state: 'complete') }
+
+      context "when there is a store credit payment" do
+        let!(:store_credit_payment) { create(:store_credit_payment, order: order) } 
+        it { should be true }
+      end
+
+      context "when there is not store credit payment" do
+        it { should be false }
+      end
+    end
+
+    context "order is in any state other than confirm or complete" do
+      context "the associated user has store credits" do
+        let(:store_credit) { create(:store_credit) }
+        let(:order)        { create(:order_with_line_items, user: store_credit.user) }
+
+        it { should be true }
+      end
+
+      context "the associated user does not have store credits" do
+        let(:order) { create(:order_with_line_items) }
+
+        it { should be false }
+      end
+
+      context "the order does not have an associated user" do
+        let(:order) { create(:store_credits_order_without_user) }
+
+        it { should be false }
+      end
+    end
+  end
+
   describe "#order_total_after_store_credit" do
     let(:order_total) { 100.0 }
 

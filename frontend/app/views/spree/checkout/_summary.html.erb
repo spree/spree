@@ -57,9 +57,10 @@
       </tbody>
     <% end %>
 
+    <%= render(:partial => 'spree/checkout/store_credits_sidebar') %>
+
     <tr data-hook="order_total">
-      <td><strong><%= Spree.t(:order_total) %>:</strong></td>
-      <td><strong><span id='summary-order-total'><%= order.display_total.to_html %></span></strong></td>
+      <%= render(:partial => 'spree/checkout/balance_due_sidebar') %>
     </tr>
   </tbody>
 </table>

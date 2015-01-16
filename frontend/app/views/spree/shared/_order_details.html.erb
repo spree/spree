@@ -82,8 +82,7 @@
   </tbody>
   <tfoot id="order-total" data-hook="order_details_total">
     <tr class="total">
-      <td colspan="4"><b><%= Spree.t(:order_total) %>:</b></td>
-      <td class="total"><span id="order_total"><%= @order.display_total.to_html %></span></td>
+      <%= render(:partial => 'spree/shared/order_details_total_charge') %>
     </tr>
   </tfoot>
 
@@ -136,5 +135,7 @@
       </tr>
     <% end %>
   </tfoot>
+
+  <%= render(:partial => 'spree/shared/order_details_store_credit', :locals => {:order => @order}) %>
 
 </table>

@@ -1,0 +1,11 @@
+.bottom-accent-separator {
+  border-bottom: 2px solid black;
+}
+
+.top-accent-separator {
+  border-top: 2px solid black;
+}
+
+.top-accent-separator.light {
+  border-top: 1px solid #d9d9db;
+}

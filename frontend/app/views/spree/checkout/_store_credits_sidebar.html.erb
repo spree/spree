@@ -1,0 +1,10 @@
+<% if order.using_store_credit? %>
+  <tr class="top-accent-separator">
+    <td>Order Total:</td>
+    <td><span id='summary-sub-total'><%= order.display_total.to_html %></span></td>
+  </tr>
+  <tr class="bottom-accent-separator">
+    <td>Store Credit</td>
+    <td><strong><span id='summary-store-credit'><%= order.display_total_applicable_store_credit.to_html %></span></strong></td>
+  </tr>
+<% end %>
