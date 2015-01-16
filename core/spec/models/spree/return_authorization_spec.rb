@@ -191,9 +191,9 @@ describe Spree::ReturnAuthorization, :type => :model do
   end
 
   describe 'cancel_return_items' do
-    let(:return_authorization) { create(:return_authorization) }
-    let(:order) { return_authorization.order }
-    let!(:return_item) { return_authorization.return_items.create!(inventory_unit: order.inventory_units.first) }
+    let(:return_authorization) { create(:return_authorization, return_items: return_items) }
+    let(:return_items) { [return_item] }
+    let(:return_item) { create(:return_item) }
 
     subject {
       return_authorization.cancel!
@@ -202,6 +202,49 @@ describe Spree::ReturnAuthorization, :type => :model do
     it 'cancels the associated return items' do
       subject
       expect(return_item.reception_status).to eq 'cancelled'
+    end
+
+    context 'some return items cannot be cancelled' do
+      let(:return_items) { [return_item, return_item_2] }
+      let(:return_item_2) { create(:return_item, reception_status: 'received') }
+
+      it 'cancels those that can be cancelled' do
+        subject
+        expect(return_item.reception_status).to eq 'cancelled'
+        expect(return_item_2.reception_status).to eq 'received'
+      end
+    end
+  end
+
+  describe '#can_cancel?' do
+    subject { create(:return_authorization, return_items: return_items).can_cancel? }
+    let(:return_items) { [return_item_1, return_item_2] }
+    let(:return_item_1) { create(:return_item) }
+    let(:return_item_2) { create(:return_item) }
+
+    context 'all items can be cancelled' do
+      it 'returns true' do
+        expect(subject).to eq true
+      end
+    end
+
+    context 'at least one return item can be cancelled' do
+      let(:return_item_2) { create(:return_item, reception_status: 'received') }
+
+      it { should eq true }
+    end
+
+    context 'no items can be cancelled' do
+      let(:return_item_1) { create(:return_item, reception_status: 'received') }
+      let(:return_item_2) { create(:return_item, reception_status: 'received') }
+
+      it { should eq false }
+    end
+
+    context 'when return_authorization has no return_items' do
+      let(:return_items) { [] }
+
+      it { should eq true }
     end
   end
 end

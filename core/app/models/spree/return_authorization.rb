@@ -29,7 +29,7 @@ module Spree
       before_transition to: :canceled, do: :cancel_return_items
 
       event :cancel do
-        transition to: :canceled, from: :authorized
+        transition to: :canceled, from: :authorized, if: lambda { |return_authorization| return_authorization.can_cancel_return_items? }
       end
 
     end
@@ -54,6 +54,10 @@ module Spree
       customer_returns.exists?
     end
 
+    def can_cancel_return_items?
+      return_items.any?(&:can_cancel?) || return_items.blank?
+    end
+
     private
 
       def must_have_shipped_units
@@ -70,7 +74,7 @@ module Spree
       end
 
       def cancel_return_items
-        return_items.each(&:cancel!)
+        return_items.each { |item| item.cancel! if item.can_cancel? }
       end
 
       def generate_expedited_exchange_reimbursements
