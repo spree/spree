@@ -20,4 +20,10 @@ FactoryGirl.define do
     association(:payment_method, factory: :check_payment_method)
     order
   end
+
+  factory :store_credit_payment, class: Spree::Payment, parent: :payment do
+    association(:payment_method, factory: :store_credit_payment_method)
+    association(:source, factory: :store_credit)
+  end
+  
 end
