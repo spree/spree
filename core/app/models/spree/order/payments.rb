@@ -43,7 +43,7 @@ module Spree
         # HACK: massive hack for paypal, as we accept processing payments, this 'processing'
         #       payments in paypal should be in a different state (see spree-adyen for paypal)
         def amount_authorized
-          payments.select { |p| p.pending? || p.completed? || (p.processing? && p.paypal?) }
+          payments.select { |p| p.pending? || p.completed? || (p.paypal? && p.processing? && p.response_code) }
                   .sum { |p| p[:amount] }
         end
 
