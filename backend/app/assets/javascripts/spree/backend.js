@@ -8,6 +8,7 @@
 //= require jquery-ui/autocomplete
 //= require modernizr
 //= require underscore-min.js
+//= require jquery.jconfirm-1.0.min.js
 //= require velocity
 //= require spree
 //= require spree/backend/spree-select2

@@ -1,0 +1,28 @@
+.jconfirm_wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#102000000, endColorstr=#102000000);
+}
+
+.jconfirm_inner {
+  background: #fff;
+  padding: 20px;
+  padding-top: 10px;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.jconfirm_message:empty {
+  height: 20px;
+}
+
+.jconfirm_buttons {
+  text-align: center;
+  margin: 10px 0 14px;
+}
