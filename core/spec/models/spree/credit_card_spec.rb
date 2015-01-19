@@ -90,63 +90,6 @@ describe Spree::CreditCard, type: :model do
       expect(credit_card.error_on(:name).size).to eq(1)
     end
 
-    # Regression spec for #4971
-    it "should not bomb out when given an invalid expiry" do
-      credit_card.month = 13
-      credit_card.year = Time.now.year + 1
-      expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:base]).to eq(["Card expiration is invalid"])
-    end
-
-    it "should validate expiration is not in the past" do
-      credit_card.month = 1.month.ago.month
-      credit_card.year = 1.month.ago.year
-      expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:base]).to eq(["Card has expired"])
-    end
-
-    it "should not be expired expiring on the current month" do
-      credit_card.attributes = valid_credit_card_attributes
-      credit_card.month = Time.zone.now.month
-      credit_card.year = Time.zone.now.year
-      expect(credit_card).to be_valid
-    end
-
-    it "should handle TZ correctly" do
-      # The card is valid according to the system clock's local time
-      # (Time.now).
-      # However it has expired in rails's configured time zone (Time.current),
-      # which is the value we should be respecting.
-      time = Time.new(2014, 04, 30, 23, 0, 0, "-07:00")
-      Timecop.freeze(time) do
-        credit_card.month = 1.month.ago.month
-        credit_card.year = 1.month.ago.year
-        expect(credit_card).not_to be_valid
-        expect(credit_card.errors[:base]).to eq(["Card has expired"])
-      end
-    end
-
-    it "does not run expiration in the past validation if month is not set" do
-      credit_card.month = nil
-      credit_card.year = Time.now.year
-      expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:base]).to be_blank
-    end
-
-    it "does not run expiration in the past validation if year is not set" do
-      credit_card.month = Time.now.month
-      credit_card.year = nil
-      expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:base]).to be_blank
-    end
-
-    it "does not run expiration in the past validation if year and month are empty" do
-      credit_card.year = ""
-      credit_card.month = ""
-      expect(credit_card).not_to be_valid
-      expect(credit_card.errors[:card]).to be_blank
-    end
-
     it "should only validate on create" do
       credit_card.attributes = valid_credit_card_attributes
       credit_card.save
