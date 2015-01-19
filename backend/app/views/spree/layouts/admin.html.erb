@@ -24,7 +24,7 @@
     <%#-------------------------------------------------%>
     <%# Main content                                    %>
     <%#-------------------------------------------------%>
-    <div id="wrapper" class="container-fluid">
+    <div id="wrapper" class="container-fluid <%= wrapper_classes %>">
       <div class="row">
 
         <%#-------------------------------------------------%>
@@ -37,7 +37,7 @@
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="<%= main_part_classes %> main" id="main-part">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
