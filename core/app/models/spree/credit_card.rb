@@ -18,8 +18,6 @@ module Spree
     validates :name, presence: true, if: :require_card_numbers?, on: :create
     validates :verification_value, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
 
-    validate :expiry_not_in_the_past
-
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
     scope :default, -> { where(default: true) }
 
@@ -134,19 +132,6 @@ module Spree
     end
 
     private
-
-    def expiry_not_in_the_past
-      if year.present? && month.present?
-        if month.to_i < 1 || month.to_i > 12
-          errors.add(:base, :expiry_invalid)
-        else
-          current = Time.current
-          if year.to_i < current.year or (year.to_i == current.year and month.to_i < current.month)
-            errors.add(:base, :card_expired)
-          end
-        end
-      end
-    end
 
     def require_card_numbers?
       !self.encrypted_data.present? && !self.has_payment_profile?
