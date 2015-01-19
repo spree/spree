@@ -39,13 +39,20 @@ module Spree
           payments.select { |payment| payment.checkout? }
         end
 
+        # returns the amount authorized for this order, can be already complete or just pending
+        # HACK: massive hack for paypal, as we accept processing payments, this 'processing'
+        #       payments in paypal should be in a different state (see spree-adyen for paypal)
+        def amount_authorized
+          payments.select { |p| p.pending? || p.completed? || (p.processing? && p.paypal?) }
+                  .sum { |p| p[:amount] }
+        end
+
         private
 
         def process_payments_with(method)
+
           # Don't run if there is nothing to pay.
           return if payment_total >= total
-          # Prevent orders from transitioning to complete without a successfully processed payment.
-          raise Core::GatewayError.new(Spree.t(:no_payment_found)) if unprocessed_payments.empty?
 
           unprocessed_payments.each do |payment|
             break if payment_total >= total
@@ -56,6 +63,9 @@ module Spree
               self.payment_total += payment.amount
             end
           end
+
+          amount_authorized >= total
+
         rescue Core::GatewayError => e
           result = !!Spree::Config[:allow_checkout_on_gateway_error]
           errors.add(:base, e.message) and return result
