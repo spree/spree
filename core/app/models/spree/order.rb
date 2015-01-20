@@ -22,6 +22,7 @@ module Spree
                   :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
+    alias_attribute :ship_total, :shipment_total
 
     checkout_flow do
       go_to_state :address
@@ -53,8 +54,7 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    alias_attribute :ship_total, :shipment_total
-
+    belongs_to :store, class_name: 'Spree::Store'
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
