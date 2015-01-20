@@ -11,10 +11,10 @@ module Spree
 
     DEFAULT_CREATED_BY_EMAIL = "spree@example.com"
 
-    belongs_to :user, class_name: "::#{Spree.user_class.to_s}", foreign_key: 'user_id'
+    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id'
     belongs_to :category, class_name: "Spree::StoreCreditCategory"
-    belongs_to :created_by, class_name: "::#{Spree.user_class.to_s}", foreign_key: 'created_by_id'
-    belongs_to :credit_type, class_name: 'Spree::StoreCreditType', :foreign_key => 'type_id'
+    belongs_to :created_by, class_name: Spree.user_class.to_s, foreign_key: 'created_by_id'
+    belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
     has_many :store_credit_events
 
     validates_presence_of :user_id, :category_id, :type_id, :created_by_id, :currency
@@ -63,7 +63,6 @@ module Spree
           action_amount: amount,
           action_originator: options[:action_originator],
           action_authorization_code: authorization_code,
-
           amount_authorized: self.amount_authorized + amount,
         })
         authorization_code
@@ -95,7 +94,6 @@ module Spree
               action_amount: amount,
               action_originator: options[:action_originator],
               action_authorization_code: authorization_code,
-
               amount_used: self.amount_used + amount,
               amount_authorized: self.amount_authorized - amount,
               })
@@ -114,7 +112,6 @@ module Spree
               action_amount: auth_event.amount,
               action_authorization_code: authorization_code,
               action_originator: options[:action_originator],
-
               amount_authorized: amount_authorized - auth_event.amount,
               })
               true
