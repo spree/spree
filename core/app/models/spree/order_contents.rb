@@ -79,6 +79,7 @@ module Spree
           line_item = order.line_items.new(quantity: quantity,
                                             variant: variant,
                                             options: opts)
+          create_line_item_stock_locations(line_item, options[:stock_location_quantities])
         end
         line_item.target_shipment = options[:shipment] if options.has_key? :shipment
         line_item.save!
@@ -107,6 +108,13 @@ module Spree
         end
 
         line_item
+      end
+
+      def create_line_item_stock_locations(line_item, stock_location_quantities)
+        return unless stock_location_quantities.present?
+        stock_location_quantities.each do |stock_location_id, quantity|
+          line_item.line_item_stock_locations.build(stock_location_id: stock_location_id, quantity: quantity) unless quantity.to_i.zero?
+        end
       end
   end
 end

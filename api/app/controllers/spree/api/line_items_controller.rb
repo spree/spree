@@ -61,6 +61,7 @@ module Spree
           params.require(:line_item).permit(
               :quantity,
               :variant_id,
+              :stock_location_quantities,
               options: line_item_options
           )
         end

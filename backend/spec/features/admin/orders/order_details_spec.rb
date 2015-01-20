@@ -41,9 +41,11 @@ describe "Order Details", type: :feature, js: true do
       it "can add an item to a shipment" do
         select2_search "spree t-shirt", from: Spree.t(:name_or_sku)
         within("table.stock-levels") do
-          fill_in "variant_quantity", with: 2
-          click_icon :add
+          fill_in "quantity_0", with: 2
         end
+
+        click_icon :plus
+        wait_for_ajax
 
         within("#order_total") do
           expect(page).to have_content("$80.00")
@@ -146,8 +148,10 @@ describe "Order Details", type: :feature, js: true do
           select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
             fill_in "variant_quantity", with: 1
-            click_icon :add
           end
+
+          click_icon :plus
+          wait_for_ajax
 
           within(".line-items") do
             expect(page).to have_content(tote.name)
@@ -165,7 +169,7 @@ describe "Order Details", type: :feature, js: true do
           select2_search product.name, from: Spree.t(:name_or_sku)
 
           within("table.stock-levels") do
-            expect(page).to have_content(Spree.t(:out_of_stock))
+            expect(page).to have_content(0)
           end
         end
       end

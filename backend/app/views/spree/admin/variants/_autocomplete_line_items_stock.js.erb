@@ -1,46 +1,52 @@
 <script type='text/template' id='variant_line_items_autocomplete_stock_template'>
-  
+
   <label><%= Spree.t(:select_stock) %></label>
 
-  <table class="stock-levels table table-bordered" data-hook="stock-levels">
-    <thead>
-      <th><%= Spree.t(:name) %></th>
-      <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
-      <th class="text-center"><%= Spree.t(:quantity) %></th>
-      <th></th>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{variant.name}}</td>
-        {{#if variant.track_inventory}}
-          {{#if variant.total_on_hand}}
-            <td class="text-center">{{variant.total_on_hand}}</td>
+  {{#if variant.track_inventory}}
+    <table class="stock-levels table table-bordered" data-hook="stock-levels">
+      <thead>
+        <th><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:location) %></th>
+        <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th></th>
+      </thead>
+      <tbody>
+        {{#each variant.stock_items}}
+          <tr>
+            <td>{{#unless @index}}{{../../variant.name}}{{/unless}}</td>
+            <td class="text-center">{{stock_location_name}}</td>
+            <td class="text-center">{{count_on_hand}}</td>
             <td class="text-center">
-              <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+              <input class="quantity form-control variant_quantity" id="variant_quantity" id="quantity_{{@index}}" data-variant-id="{{../variant.id}}" data-stock-location-id="{{stock_location_id}}" type="number" min="1" value="1">
             </td>
-            <td class="actions actions-1 text-center">
-              <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                <span class="icon icon-add"></span>
-                </button>
-            </td>
-          {{else}}
-            <td class="text-center"><%= Spree.t(:out_of_stock) %></td>
-            <td class="text-center">0</td>
-            <td></td>
-            <td></td>
-          {{/if}}
-        {{else}}
-          <td class="text-center"><%= Spree.t(:doesnt_track_inventory) %></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <table class="stock-levels table table-bordered untracked-inventory" data-hook="stock-levels">
+      <thead>
+        <th><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th></th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{variant.name}}</td>
+          <td class="text-center">No inventory necessary</td>
           <td class="text-center">
             <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
           </td>
-          <td class="actions actions-1 text-center">
-            <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
-              <span class="icon icon-add"></span>
-            </button>
-          </td>
-        {{/if}}
-      </tr>
-    </tbody>
-  </table>
+        </tr>
+      </tbody>
+    </table>
+  {{/if}}
+
+  <fieldset class="no-border-bottom">
+    <legend align="center" class="stock-location">
+      <button class="add_variant no-text fa fa-plus icon_link"  title="<%= Spree.t(:add) %>" data-action="add"><%= Spree.t(:add) %></button>
+    </legend>
+  </fieldset>
 </script>
