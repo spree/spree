@@ -589,6 +589,16 @@ module Spree
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
+    # determines whether the inventory is fully discounted
+    #
+    # Returns
+    # - true if inventory amount is the exact negative of inventory related adjustments
+    # - false otherwise
+    def fully_discounted?
+      adjustment_total + line_items.map(&:final_amount).sum == 0.0
+    end
+    alias_method :fully_discounted, :fully_discounted?
+
     private
 
     def link_by_email
