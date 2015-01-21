@@ -25,7 +25,6 @@ module Spree
     preference :admin_products_per_page, :integer, default: 10
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
-    preference :allow_return_item_amount_editing, :boolean, default: false # Determines whether an admin is allowed to change a return item's pre-calculated amount
     preference :alternative_billing_phone, :boolean, default: false # Request extra phone for bill addr
     preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
     preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
