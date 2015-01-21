@@ -463,8 +463,7 @@ For more information on payments, view the [payments documentation](payments).
       "updated_at": "2014-07-06T19:55:08.308Z",
       "payment_method": {
         "id": 1,
-        "name": "Credit Card",
-        "environment": "development"
+        "name": "Credit Card"
       },
       "source": {
         "id": 2,

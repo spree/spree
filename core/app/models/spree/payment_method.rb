@@ -4,8 +4,6 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
     default_scope { where(deleted_at: nil) }
 
-    scope :production, -> { where(environment: 'production') }
-
     validates :name, presence: true
 
     has_many :payments, class_name: "Spree::Payment", inverse_of: :payment_method
@@ -29,13 +27,12 @@ module Spree
     def self.available(display_on = 'both')
       all.select do |p|
         p.active &&
-        (p.display_on == display_on.to_s || p.display_on.blank?) &&
-        (p.environment == Rails.env || p.environment.blank?)
+        (p.display_on == display_on.to_s || p.display_on.blank?)
       end
     end
 
     def self.active?
-      where(type: self.to_s, environment: Rails.env, active: true).count > 0
+      where(type: self.to_s, active: true).count > 0
     end
 
     def method_type

@@ -22,6 +22,7 @@ module Spree
                   :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
+    alias_attribute :ship_total, :shipment_total
 
     checkout_flow do
       go_to_state :address
@@ -53,8 +54,7 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    alias_attribute :ship_total, :shipment_total
-
+    belongs_to :store, class_name: 'Spree::Store'
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
@@ -569,19 +569,6 @@ module Spree
 
     def approve!
       update_column(:considered_risky, false)
-    end
-
-    # moved from api order_decorator. This is a better place for it.
-    def update_line_items(line_item_params)
-      return if line_item_params.blank?
-      line_item_params.each_value do |attributes|
-        if attributes[:id].present?
-          self.line_items.find(attributes[:id]).update_attributes!(attributes)
-        else
-          self.line_items.create!(attributes)
-        end
-      end
-      self.ensure_updated_shipments
     end
 
     def reload(options=nil)

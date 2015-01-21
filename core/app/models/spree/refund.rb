@@ -11,7 +11,6 @@ module Spree
     validates :transaction_id, presence: true, on: :update # can't require this on create because the before_create needs to run first
     validates :amount, presence: true, numericality: {greater_than: 0}
 
-    validate :check_payment_environment, on: :create, if: :payment
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
 
     after_create :perform!
@@ -67,15 +66,6 @@ module Spree
     rescue ActiveMerchant::ConnectionError => e
       logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
       raise Core::GatewayError.new(Spree.t(:unable_to_connect_to_gateway))
-    end
-
-    # Saftey check to make sure we're not accidentally performing operations on a live gateway.
-    # Ex. When testing in staging environment with a copy of production data.
-    def check_payment_environment
-      if payment.payment_method.environment != Rails.env
-        message = Spree.t(:gateway_config_unavailable) + " - #{Rails.env}"
-        errors.add(:base, message)
-      end
     end
 
     def create_log_entry

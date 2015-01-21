@@ -72,3 +72,50 @@
     }
   }
 }
+
+#wrapper.sidebar-minimized #main-sidebar {
+  width: 60px;
+  overflow: visible;
+
+  li {
+    &:hover, &.menu-active {
+      background-color: $gray-lighter;
+    }
+  }
+
+  .icon-link, [data-toggle="collapse"] {
+    text-align: center;
+
+    .icon {
+      padding: 0;
+    }
+    
+    .text, .icon-chevron-left, .icon-chevron-down {
+      display: none;
+    }
+  }
+
+  ul.collapse.in {
+    display: none;
+  }
+
+  .submenu-active {
+    display: block !important;
+    height: auto !important;
+    position: fixed;
+    top: $navbar-height + 2px;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    z-index: 1000;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    left: 60px;
+    min-width: 180px;
+    visibility: visible;
+    background-color: lighten($gray-lighter, 5);
+    border-top: none;
+    border-right: 1px solid darken($gray-lighter, 5);
+  }
+}

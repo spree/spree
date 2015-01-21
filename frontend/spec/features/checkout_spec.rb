@@ -97,24 +97,24 @@ describe "Checkout", type: :feature, inaccessible: true do
   context "doesn't allow bad credit card numbers" do
     before(:each) do
       order = OrderWalkthrough.up_to(:delivery)
-      allow(order).to receive_messages :confirmation_required? => true
-      allow(order).to receive_messages(:available_payment_methods => [ create(:credit_card_payment_method, :environment => 'test') ])
+      allow(order).to receive_messages confirmation_required?: true
+      allow(order).to receive_messages(:available_payment_methods => [ create(:credit_card_payment_method) ])
 
       user = create(:user)
       order.user = user
       order.update!
 
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:current_order => order)
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:try_spree_current_user => user)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
     end
 
     it "redirects to payment page", inaccessible: true, js: true do
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"
       choose "Credit Card"
-      fill_in "Card Number", :with => '123'
-      fill_in "card_expiry", :with => '04 / 20'
-      fill_in "Card Code", :with => '123'
+      fill_in "Card Number", with: '123'
+      fill_in "card_expiry", with: '04 / 20'
+      fill_in "Card Code", with: '123'
       click_button "Save and Continue"
       click_button "Place Order"
       expect(page).to have_content("Bogus Gateway: Forced failure")
@@ -128,11 +128,11 @@ describe "Checkout", type: :feature, inaccessible: true do
       Spree::Config[:always_include_confirm_step] = true
     end
 
-    it "displays confirmation step", :js => true do
+    it "displays confirmation step", js: true do
       add_mug_to_cart
       click_button "Checkout"
 
-      fill_in "order_email", :with => "test@example.com"
+      fill_in "order_email", with: "test@example.com"
       click_on 'Continue'
       fill_in_address
 
@@ -150,7 +150,7 @@ describe "Checkout", type: :feature, inaccessible: true do
 
     let!(:order) do
       order = OrderWalkthrough.up_to(:delivery)
-      allow(order).to receive_messages :confirmation_required? => true
+      allow(order).to receive_messages confirmation_required?: true
 
       order.reload
       order.user = user
@@ -159,12 +159,12 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
 
     before(:each) do
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:current_order => order)
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:try_spree_current_user => user)
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:skip_state_validation? => true)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(skip_state_validation?: true)
     end
 
-    it "prevents double clicking the payment button on checkout", :js => true do
+    it "prevents double clicking the payment button on checkout", js: true do
       visit spree.checkout_state_path(:payment)
 
       # prevent form submit to verify button is disabled
@@ -188,9 +188,9 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
   end
 
-  context "when several payment methods are available" do
-    let(:credit_cart_payment) {create(:credit_card_payment_method, :environment => 'test') }
-    let(:check_payment) {create(:check_payment_method, :environment => 'test') }
+  context "when several payment methods are available", js: true do
+    let(:credit_cart_payment) {create(:credit_card_payment_method) }
+    let(:check_payment) {create(:check_payment_method) }
 
     after do
       Capybara.ignore_hidden_elements = true
@@ -199,7 +199,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     before do
       Capybara.ignore_hidden_elements = false
       order = OrderWalkthrough.up_to(:delivery)
-      allow(order).to receive_messages(:available_payment_methods => [check_payment,credit_cart_payment])
+      allow(order).to receive_messages(available_payment_methods: [check_payment,credit_cart_payment])
       order.user = create(:user)
       order.update!
 
@@ -209,13 +209,13 @@ describe "Checkout", type: :feature, inaccessible: true do
       visit spree.checkout_state_path(:payment)
     end
 
-    it "the first payment method should be selected", :js => true do
+    it "the first payment method should be selected" do
       payment_method_css = "#order_payments_attributes__payment_method_id_"
       expect(find("#{payment_method_css}#{check_payment.id}")).to be_checked
       expect(find("#{payment_method_css}#{credit_cart_payment.id}")).not_to be_checked
     end
 
-    it "the fields for the other payment methods should be hidden", :js => true do
+    it "the fields for the other payment methods should be hidden" do
       payment_method_css = "#payment_method_"
       expect(find("#{payment_method_css}#{check_payment.id}")).to be_visible
       expect(find("#{payment_method_css}#{credit_cart_payment.id}")).not_to be_visible
@@ -232,7 +232,7 @@ describe "Checkout", type: :feature, inaccessible: true do
 
     before do
       order = OrderWalkthrough.up_to(:delivery)
-      allow(order).to receive_messages(:available_payment_methods => [bogus])
+      allow(order).to receive_messages(available_payment_methods: [bogus])
 
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
@@ -255,10 +255,10 @@ describe "Checkout", type: :feature, inaccessible: true do
     it "allows user to enter a new source" do
       choose "use_existing_card_no"
 
-      fill_in "Name on card", :with => 'Spree Commerce'
-      fill_in "Card Number", :with => '4111111111111111'
-      fill_in "card_expiry", :with => '04 / 20'
-      fill_in "Card Code", :with => '123'
+      fill_in "Name on card", with: 'Spree Commerce'
+      fill_in "Card Number", with: '4111111111111111'
+      fill_in "card_expiry", with: '04 / 20'
+      fill_in "Card Code", with: '123'
 
       expect {
         click_on "Save and Continue"
@@ -271,12 +271,12 @@ describe "Checkout", type: :feature, inaccessible: true do
 
   # regression for #2921
   context "goes back from payment to add another item", js: true do
-    let!(:bag) { create(:product, :name => "RoR Bag") }
+    let!(:bag) { create(:product, name: "RoR Bag") }
 
     it "transit nicely through checkout steps again" do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "test@example.com"
+      fill_in "order_email", with: "test@example.com"
       click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
@@ -300,7 +300,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     before do
       add_mug_to_cart
       click_on "Checkout"
-      fill_in "order_email", :with => "test@example.com"
+      fill_in "order_email", with: "test@example.com"
       click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
@@ -333,7 +333,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
 
     context "and adds new product to cart and try to reach payment page" do
-      let!(:bag) { create(:product, :name => "RoR Bag") }
+      let!(:bag) { create(:product, name: "RoR Bag") }
 
       before do
         visit spree.root_path
@@ -367,7 +367,7 @@ describe "Checkout", type: :feature, inaccessible: true do
       add_mug_to_cart
       click_on "Checkout"
 
-      fill_in "order_email", :with => "test@example.com"
+      fill_in "order_email", with: "test@example.com"
       click_on 'Continue'
       fill_in_address
       click_on "Save and Continue"
@@ -427,10 +427,10 @@ describe "Checkout", type: :feature, inaccessible: true do
       expect(current_path).to eq spree.checkout_state_path('payment')
 
       choose "Credit Card"
-      fill_in "Name on card", :with => 'Spree Commerce'
-      fill_in "Card Number", :with => '4111111111111111'
-      fill_in "card_expiry", :with => '04 / 20'
-      fill_in "Card Code", :with => '123'
+      fill_in "Name on card", with: 'Spree Commerce'
+      fill_in "Card Number", with: '4111111111111111'
+      fill_in "card_expiry", with: '04 / 20'
+      fill_in "Card Code", with: '123'
       click_button "Save and Continue"
 
       expect(current_path).to eq spree.checkout_state_path('confirm')
@@ -476,9 +476,9 @@ describe "Checkout", type: :feature, inaccessible: true do
     let!(:order) { OrderWalkthrough.up_to(:delivery) }
 
     before(:each) do
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:current_order => order)
-      allow_any_instance_of(Spree::CheckoutController).to receive_messages(:try_spree_current_user => user)
-      allow_any_instance_of(Spree::OrdersController).to receive_messages(:try_spree_current_user => user)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
+      allow_any_instance_of(Spree::OrdersController).to receive_messages(try_spree_current_user: user)
 
       visit spree.checkout_state_path(:delivery)
       click_button "Save and Continue"

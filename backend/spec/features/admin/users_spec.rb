@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'Users', type: :feature do
   stub_authorization!
   let!(:country) { create(:country) }
-  let!(:user_a) { create(:user_with_addreses, email: 'a@example.com') }
-  let!(:user_b) { create(:user_with_addreses, email: 'b@example.com') }
+  let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
+  let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
   let(:order) { create(:completed_order_with_totals, user: user_a, number: "R123") }
 

@@ -25,8 +25,6 @@ module Spree
     preference :admin_products_per_page, :integer, default: 10
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
-    preference :allow_return_item_amount_editing, :boolean, default: false # Determines whether an admin is allowed to change a return item's pre-calculated amount
-    preference :alternative_billing_phone, :boolean, default: false # Request extra phone for bill addr
     preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
     preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
     preference :always_put_site_name_in_title, :boolean, default: true
@@ -56,7 +54,6 @@ module Spree
     preference :products_per_page, :integer, default: 12
     preference :promotions_per_page, :integer, default: 15
     preference :customer_returns_per_page, :integer, default: 15
-    preference :redirect_https_to_http, :boolean, :default => false
     preference :require_master_price, :boolean, default: true
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
@@ -64,13 +61,13 @@ module Spree
     preference :show_only_complete_orders_by_default, :boolean, default: true
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
-    preference :show_raw_product_description, :boolean, :default => false
+    preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
     # Default mail headers settings
-    preference :send_core_emails, :boolean, :default => true
-    preference :mails_from, :string, :default => 'spree@example.com'
+    preference :send_core_emails, :boolean, default: true
+    preference :mails_from, :string, default: 'spree@example.com'
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
@@ -79,23 +76,6 @@ module Spree
 
     def searcher_class=(sclass)
       @searcher_class = sclass
-    end
-
-    # all the following can be deprecated when store prefs are no longer supported
-    DEPRECATED_STORE_PREFERENCES = {
-      site_name: :name,
-      site_url: :url,
-      default_meta_description: :meta_description,
-      default_meta_keywords: :meta_keywords,
-      default_seo_title: :seo_title,
-    }
-
-    DEPRECATED_STORE_PREFERENCES.each do |old_preference_name, store_method|
-      # support all the old preference methods with a warning
-      define_method "preferred_#{old_preference_name}" do
-        ActiveSupport::Deprecation.warn("#{old_preference_name} is no longer supported on Spree::Config, please access it through #{store_method} on Spree::Store")
-        Store.default.send(store_method)
-      end
     end
   end
 end

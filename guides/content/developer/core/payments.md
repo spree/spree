@@ -44,7 +44,6 @@ A `PaymentMethod` can have the following attributes:
 * `name`: The visible name for this payment method
 * `description`: The description for this payment method
 * `active`: Whether or not this payment method is active. Set it `false` to hide it in frontend.
-* `environment`: The Rails environment (`Rails.env`) where this payment method is active
 * `display_on`: Determines where the payment method can be visible. Values can be `front` for frontend, `back` for backend or `both` for both.
 
 ### Payment Method Visibility
@@ -55,8 +54,7 @@ The appearance of the payment methods on the frontend and backend depend on seve
 def self.available(display_on = 'both')
   all.select do |p|
     p.active &&
-    (p.display_on == display_on.to_s || p.display_on.blank?) &&
-    (p.environment == Rails.env || p.environment.blank?)
+    (p.display_on == display_on.to_s || p.display_on.blank?)
   end
 end
 ```
