@@ -41,7 +41,7 @@ describe "General Settings", type: :feature, js: true do
     end
 
     context "with Spree mounted to a custom path" do
-      before(:each) do |example|
+      before(:each) do
         custom_mounting = lambda { mount Spree::Core::Engine, at: '/custom' }
 
         ::Rails.application.routes.tap do |set|
