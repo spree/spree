@@ -15,10 +15,6 @@
           <% end %>
         <% end %>
       </div>
-      <div data-hook="environment" class="form-group">
-        <%= label_tag :payment_method_environment, Spree.t(:environment) %>
-        <%= collection_select(:payment_method, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'gtwy-env', :class => 'select2'}) %>
-      </div>
       <div data-hook="display" class="form-group">
         <%= label_tag :payment_method_display_on, Spree.t(:display) %>
         <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2'}) %>
