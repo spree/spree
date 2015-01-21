@@ -126,6 +126,8 @@ en:
         seo_title: Seo Title
         name: Site Name
         mail_from_address: Mail From Address
+      spree/store_credit:
+        amount_used: "Amount used"
       spree/tax_category:
         description: Description
         name: Name
