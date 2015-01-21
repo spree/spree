@@ -31,7 +31,6 @@ module Spree
         return true if completed?
         started_processing!
         protect_from_connection_error do
-          check_environment
           # Standard ActiveMerchant capture usage
           response = payment_method.capture(
             amount,
@@ -48,7 +47,6 @@ module Spree
       def void_transaction!
         return true if void?
         protect_from_connection_error do
-          check_environment
 
           if payment_method.payment_profiles_supported?
             # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
@@ -115,8 +113,6 @@ module Spree
 
       def gateway_action(source, action, success_state)
         protect_from_connection_error do
-          check_environment
-
           response = payment_method.send(action, money.money.cents,
                                          source,
                                          gateway_options)
@@ -167,14 +163,6 @@ module Spree
         logger.error(Spree.t(:gateway_error))
         logger.error("  #{error.to_yaml}")
         raise Core::GatewayError.new(text)
-      end
-
-      # Saftey check to make sure we're not accidentally performing operations on a live gateway.
-      # Ex. When testing in staging environment with a copy of production data.
-      def check_environment
-        return if payment_method.environment == Rails.env
-        message = Spree.t(:gateway_config_unavailable) + " - #{Rails.env}"
-        raise Core::GatewayError.new(message)
       end
 
       def token_based?
