@@ -21,9 +21,9 @@
 //= require spree/backend/spree-select2
 //= require_tree .
 
-
 Spree.routes.checkouts_api = Spree.pathFor('api/checkouts')
 Spree.routes.classifications_api = Spree.pathFor('api/classifications')
+Spree.routes.clear_cache = Spree.pathFor('admin/general_settings/clear_cache')
 Spree.routes.option_type_search = Spree.pathFor('api/option_types')
 Spree.routes.orders_api = Spree.pathFor('api/orders')
 Spree.routes.product_search = Spree.pathFor('api/products')
