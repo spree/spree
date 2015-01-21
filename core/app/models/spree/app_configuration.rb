@@ -72,6 +72,10 @@ module Spree
     preference :send_core_emails, :boolean, :default => true
     preference :mails_from, :string, :default => 'spree@example.com'
 
+    # Store credits configurations
+    preference :non_expiring_credit_types, :array, default: []
+    preference :credit_to_new_allocation, :boolean, default: false
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base
