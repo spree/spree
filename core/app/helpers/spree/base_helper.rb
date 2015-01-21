@@ -31,14 +31,6 @@ module Spree
       product_or_variant.price_in(current_currency).display_price.to_html
     end
 
-    def gem_available?(name)
-      Gem::Specification.find_by_name(name)
-    rescue Gem::LoadError
-      false
-    rescue
-      Gem.available?(name)
-    end
-
     def link_to_tracking(shipment, options = {})
       return unless shipment.tracking && shipment.shipping_method
 
