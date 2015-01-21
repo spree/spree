@@ -16,43 +16,35 @@ describe "StoreCredit" do
 
       it 'can not delete the store credit' do
         subject
-        store_credit.reload.should eq store_credit
-        store_credit.errors[:amount_used].should include(Spree.t('admin.store_credits.errors.amount_used_not_zero'))
+        expect(store_credit.reload).to eq store_credit
+        expect(store_credit.errors[:amount_used]).to include("is greater than zero. Can not delete store credit")
       end
     end
 
     context "category is a non-expiring type" do
       let!(:secondary_credit_type) { create(:secondary_credit_type) }
       let(:store_credit) { build(:store_credit, credit_type: nil)}
-
-      before do
-        store_credit.category.stub(:non_expiring?).and_return(true)
-      end
+      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(true) }
 
       it "sets the credit type to non-expiring" do
         subject
-        store_credit.credit_type.name.should eq secondary_credit_type.name
+        expect(store_credit.credit_type.name).to eq secondary_credit_type.name
       end
     end
 
     context "category is an expiring type" do
-      before do
-        store_credit.category.stub(:non_expiring?).and_return(false)
-      end
+      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(false) }
 
       it "sets the credit type to non-expiring" do
         subject
-        store_credit.credit_type.name.should eq "Expiring"
+        expect(store_credit.credit_type.name).to eq "Expiring"
       end
     end
 
     context "the type is set" do
       let!(:secondary_credit_type) { create(:secondary_credit_type)}
       let(:store_credit) { build(:store_credit, credit_type: secondary_credit_type)}
-
-      before do
-        store_credit.category.stub(:non_expiring?).and_return(false)
-      end
+      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(false) }
 
       it "doesn't overwrite the type" do
         expect{ subject }.to_not change{ store_credit.credit_type }
@@ -66,7 +58,7 @@ describe "StoreCredit" do
         let(:invalid_store_credit) { build(:store_credit, amount: 100, amount_used: 150) }
 
         it "should not be valid" do
-          invalid_store_credit.should_not be_valid
+          expect(invalid_store_credit).to_not be_valid
         end
 
         it "should set the correct error message" do
@@ -74,7 +66,7 @@ describe "StoreCredit" do
           attribute_name = I18n.t('activerecord.attributes.spree/store_credit.amount_used')
           validation_message = Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater')
           expected_error_message = "#{attribute_name} #{validation_message}"
-          invalid_store_credit.errors.full_messages.should include(expected_error_message)
+          expect(invalid_store_credit.errors.full_messages).to include(expected_error_message)
         end
       end
 
@@ -82,7 +74,7 @@ describe "StoreCredit" do
         let(:store_credit) { build(:store_credit, amount: 100) }
 
         it "should be valid" do
-          store_credit.should be_valid
+          expect(store_credit).to be_valid
         end
 
       end
@@ -92,12 +84,12 @@ describe "StoreCredit" do
       subject { build(:store_credit, amount_used: 101.0, amount: 100.0) }
 
       it "is not valid" do
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it "adds an error message about the invalid amount used" do
         subject.valid?
-        subject.errors[:amount_used].should include(Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
+        expect(subject.errors[:amount_used]).to include(Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
       end
     end
 
@@ -105,25 +97,25 @@ describe "StoreCredit" do
       subject { build(:store_credit, amount_authorized: 101.0, amount: 100.0) }
 
       it "is not valid" do
-        subject.should_not be_valid
+        expect(subject).to_not be_valid
       end
 
       it "adds an error message about the invalid authorized amount" do
         subject.valid?
-        subject.errors[:amount_authorized].should include(Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+        expect(subject.errors[:amount_authorized]).to include(Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
       end
     end
   end
 
   describe "#display_amount" do
     it "returns a Spree::Money instance" do
-      store_credit.display_amount.should be_instance_of(Spree::Money)
+      expect(store_credit.display_amount).to be_instance_of(Spree::Money)
     end
   end
 
   describe "#display_amount_used" do
     it "returns a Spree::Money instance" do
-      store_credit.display_amount_used.should be_instance_of(Spree::Money)
+      expect(store_credit.display_amount_used).to be_instance_of(Spree::Money)
     end
   end
 
@@ -131,7 +123,7 @@ describe "StoreCredit" do
     context "the amount_used is not defined" do
       context "the authorized amount is not defined" do
         it "returns the credited amount" do
-          store_credit.amount_remaining.should eq store_credit.amount
+          expect(store_credit.amount_remaining).to eq store_credit.amount
         end
       end
       context "the authorized amount is defined" do
@@ -140,7 +132,7 @@ describe "StoreCredit" do
         before { store_credit.update_attributes(amount_authorized: authorized_amount) }
 
         it "subtracts the authorized amount from the credited amount" do
-          store_credit.amount_remaining.should eq (store_credit.amount - authorized_amount)
+          expect(store_credit.amount_remaining).to eq (store_credit.amount - authorized_amount)
         end
       end
     end
@@ -152,7 +144,7 @@ describe "StoreCredit" do
 
       context "the authorized amount is not defined" do
         it "subtracts the amount used from the credited amount" do
-          store_credit.amount_remaining.should eq (store_credit.amount - amount_used)
+          expect(store_credit.amount_remaining).to eq (store_credit.amount - amount_used)
         end
       end
 
@@ -162,7 +154,7 @@ describe "StoreCredit" do
         before { store_credit.update_attributes(amount_authorized: authorized_amount) }
 
         it "subtracts the amount used and the authorized amount from the credited amount" do
-          store_credit.amount_remaining.should eq (store_credit.amount - amount_used - authorized_amount)
+          expect(store_credit.amount_remaining).to eq (store_credit.amount - amount_used - authorized_amount)
         end
       end
     end
@@ -184,7 +176,7 @@ describe "StoreCredit" do
 
         it "adds the new amount to authorized amount" do
           store_credit.authorize(added_authorization_amount, store_credit.currency)
-          store_credit.reload.amount_authorized.should eq (authorization_amount + added_authorization_amount)
+          expect(store_credit.reload.amount_authorized).to eq (authorization_amount + added_authorization_amount)
         end
 
         context "originator is present" do
@@ -229,7 +221,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.insufficient_funds'))
+        expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.insufficient_funds'))
       end
     end
 
@@ -242,7 +234,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+        expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.currency_mismatch'))
       end
     end
 
@@ -260,7 +252,10 @@ describe "StoreCredit" do
 
       subject { store_credit.validate_authorization(store_credit_attrs[:amount], store_credit.currency) }
 
-      it { should be_truthy }
+      it "returns true" do
+        expect(subject).to be_truthy
+      end
+
     end
   end
 
@@ -270,7 +265,7 @@ describe "StoreCredit" do
 
     before do
       store_credit.update_attributes(amount_authorized: authorized_amount, amount_used: 0.0)
-      store_credit.stub(authorize: true)
+      allow(store_credit).to receive_messages(authorize: true)
     end
 
     context "insufficient funds" do
@@ -282,7 +277,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.insufficient_authorized_amount'))
+        expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.insufficient_authorized_amount'))
       end
 
       it "does not update the store credit model" do
@@ -299,7 +294,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+        expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.currency_mismatch'))
       end
 
       it "does not update the store credit model" do
@@ -319,12 +314,12 @@ describe "StoreCredit" do
 
       it "updates the authorized amount to the difference between the captured amount and the authorized amount" do
         subject
-        store_credit.reload.amount_authorized.should eq remaining_authorized_amount
+        expect(store_credit.reload.amount_authorized).to eq remaining_authorized_amount
       end
 
       it "updates the used amount to the current used amount plus the captured amount" do
         subject
-        store_credit.reload.amount_used.should eq authorized_amount - remaining_authorized_amount
+        expect(store_credit.reload.amount_used).to eq authorized_amount - remaining_authorized_amount
       end
 
       context "originator is present" do
@@ -357,7 +352,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.unable_to_void', auth_code: auth_code))
+        expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.unable_to_void', auth_code: auth_code))
       end
     end
 
@@ -433,7 +428,7 @@ describe "StoreCredit" do
 
             it "adds an error message about the currency mismatch" do
               subject
-              store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+              expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.currency_mismatch'))
             end
           end
 
@@ -449,7 +444,7 @@ describe "StoreCredit" do
 
             it "adds an error message about the currency mismatch" do
               subject
-              store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.unable_to_credit', auth_code: auth_code))
+              expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.unable_to_credit', auth_code: auth_code))
             end
           end
 
@@ -465,7 +460,7 @@ describe "StoreCredit" do
 
             it "adds an error message about the currency mismatch" do
               subject
-              store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.unable_to_credit', auth_code: auth_code))
+              expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.unable_to_credit', auth_code: auth_code))
             end
           end
 
@@ -476,7 +471,8 @@ describe "StoreCredit" do
             let(:auth_code)       { event_auth_code }
 
             context "credit_to_new_allocation is set" do
-              before { Spree::StoreCredits::Configuration.stub(:credit_to_new_allocation).and_return(true) }
+
+              before { Spree::Config[:credit_to_new_allocation] = true }
 
               it "returns true" do
                 expect(subject).to be true
@@ -497,21 +493,21 @@ describe "StoreCredit" do
                 end
 
                 it "does not set the amount used on hte originating store credit" do
-                  store_credit.reload.amount_used.should eq amount_used
+                  expect(store_credit.reload.amount_used).to eq amount_used
                 end
 
                 it "sets the correct amount on the new store credit" do
-                  @new_store_credit.amount.should eq credit_amount
+                  expect(@new_store_credit.amount).to eq credit_amount
                 end
 
                 [:user_id, :category_id, :created_by_id, :currency, :type_id].each do |attr|
                   it "sets attribute #{attr} inherited from the originating store credit" do
-                    @new_store_credit.send(attr).should eq store_credit.send(attr)
+                    expect(@new_store_credit.send(attr)).to eq store_credit.send(attr)
                   end
                 end
 
                 it "sets a memo" do
-                  @new_store_credit.memo.should eq "This is a credit from store credit ID #{store_credit.id}"
+                  expect(@new_store_credit.memo).to eq "This is a credit from store credit ID #{store_credit.id}"
                 end
               end
 
@@ -534,7 +530,7 @@ describe "StoreCredit" do
 
               it "credits the passed amount to the store credit amount used" do
                 subject
-                store_credit.reload.amount_used.should eq (amount_used - credit_amount)
+                expect(store_credit.reload.amount_used).to eq (amount_used - credit_amount)
               end
 
               it "creates a new store credit event" do
@@ -549,7 +545,7 @@ describe "StoreCredit" do
             subject { Spree::StoreCredit.new }
 
             it "returns zero" do
-              subject.amount_used.should be_zero
+              expect(subject.amount_used).to be_zero
             end
           end
 
@@ -559,7 +555,7 @@ describe "StoreCredit" do
             subject { create(:store_credit, amount_used: amount_used) }
 
             it "returns the attribute value" do
-              subject.amount_used.should eq amount_used
+              expect(subject.amount_used).to eq amount_used
             end
           end
         end
@@ -569,7 +565,7 @@ describe "StoreCredit" do
             subject { Spree::StoreCredit.new }
 
             it "returns zero" do
-              subject.amount_authorized.should be_zero
+              expect(subject.amount_authorized).to be_zero
             end
           end
 
@@ -579,7 +575,7 @@ describe "StoreCredit" do
             subject { create(:store_credit, amount_authorized: amount_authorized) }
 
             it "returns the attribute value" do
-              subject.amount_authorized.should eq amount_authorized
+              expect(subject.amount_authorized).to eq amount_authorized
             end
           end
         end
@@ -696,10 +692,10 @@ describe "StoreCredit" do
             let(:payment_state) { "completed" }
 
             context "credit is owed on the order" do
-              before { payment.order.stub(payment_state: 'credit_owed') }
+              before {allow(payment.order).to receive_messages(payment_state: 'credit_owed')}
 
               context "payment doesn't have allowed credit" do
-                before { payment.stub(credit_allowed: 0.0) }
+                before { allow(payment).to receive_messages(credit_allowed: 0.0) }
 
                 it "returns false" do
                   expect(subject).to be false
@@ -707,7 +703,7 @@ describe "StoreCredit" do
               end
 
               context "payment has allowed credit" do
-                before { payment.stub(credit_allowed: 5.0) }
+                before { allow(payment).to receive_messages(credit_allowed: 5.0) }
 
                 it "returns true" do
                   expect(subject).to be true
@@ -728,11 +724,11 @@ describe "StoreCredit" do
                 end
 
                 it "makes the store credit event an allocation event" do
-                  subject.store_credit_events.first.action.should eq Spree::StoreCredit::ALLOCATION_ACTION
+                  expect(subject.store_credit_events.first.action).to eq Spree::StoreCredit::ALLOCATION_ACTION
                 end
 
                 it "saves the user's total store credit in the event" do
-                  subject.store_credit_events.first.user_total_amount.should eq store_credit_amount
+                  expect(subject.store_credit_events.first.user_total_amount).to eq store_credit_amount
                 end
               end
 
@@ -746,7 +742,7 @@ describe "StoreCredit" do
                 subject { create(:store_credit, user: user, amount: additional_store_credit_amount) }
 
                 it "saves the user's total store credit in the event" do
-                  subject.store_credit_events.first.user_total_amount.should eq (store_credit_amount + additional_store_credit_amount)
+                  expect(subject.store_credit_events.first.user_total_amount).to eq (store_credit_amount + additional_store_credit_amount)
                 end
               end
 
