@@ -174,7 +174,7 @@ module Spree
           def create_credit_record(amount, action_attributes={})
             # Setting credit_to_new_allocation to true will create a new allocation anytime #credit is called
             # If it is not set, it will update the store credit's amount in place
-            credit = if Spree::StoreCredits::Configuration.credit_to_new_allocation
+            credit = if Spree::Config.credit_to_new_allocation
               Spree::StoreCredit.new(create_credit_record_params(amount))
             else
               self.amount_used = amount_used - amount
