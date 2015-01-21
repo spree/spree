@@ -650,7 +650,6 @@ en:
     errors:
       messages:
         could_not_create_taxon: Could not create taxon
-        no_payment_methods_available: No payment methods are configured for this environment
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
@@ -696,7 +695,6 @@ en:
     free_shipping_amount: "-"
     front_end: Front End
     gateway: Gateway
-    gateway_config_unavailable: Gateway unavailable for environment
     gateway_error: Gateway Error
     general: General
     general_settings: General Settings
