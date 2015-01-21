@@ -1,8 +1,8 @@
 $(@).ready( ->
-  $('[data-hook=general_settings_clear_cache] #clear_cache').click ->
+  $('[data-hook=general_settings_clear_cache] #clear_cache').click (event) ->
     $.ajax
       type: 'POST'
-      url: '/admin/general_settings/clear_cache'
+      url: (($ event.target).attr 'data-url')
       success: ->
         show_flash 'success', "Cache was flushed."
       error: (msg) ->

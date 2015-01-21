@@ -39,5 +39,31 @@ describe "General Settings", type: :feature, js: true do
 
       expect(page).to have_content(Spree.t(:clear_cache_ok))
     end
+
+    context "with Spree mounted to a custom path" do
+      before(:each) do |example|
+        custom_mounting = lambda { mount Spree::Core::Engine, at: '/custom' }
+
+        ::Rails.application.routes.tap do |set|
+          set.clear!
+          set.eval_block(custom_mounting)
+        end
+
+        visit spree.edit_admin_general_settings_path
+      end
+
+      after(:each) do
+        ::Rails.application.reload_routes!
+      end
+
+      it "should still clear the cache" do
+        expect(page).to_not have_content(Spree.t(:clear_cache_ok))
+        expect(page).to have_content(Spree.t(:clear_cache_warning))
+
+        click_button "Clear Cache"
+
+        expect(page).to have_content(Spree.t(:clear_cache_ok))
+      end
+    end
   end
 end
