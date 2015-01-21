@@ -14,7 +14,7 @@ FactoryGirl.define do
       spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
     end
 
-    factory :user_with_addreses do
+    factory :user_with_addresses, aliases: [:user_with_addreses] do
       ship_address
       bill_address
     end
