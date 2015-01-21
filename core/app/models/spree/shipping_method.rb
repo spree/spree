@@ -58,22 +58,10 @@ module Spree
     end
 
     private
-      def compute_amount(calculable)
-        self.calculator.compute(calculable)
-      end
-
       def at_least_one_shipping_category
         if self.shipping_categories.empty?
           self.errors[:base] << "You need to select at least one shipping category"
         end
-      end
-
-      def self.on_backend_query
-        "#{table_name}.display_on != 'front_end' OR #{table_name}.display_on IS NULL"
-      end
-
-      def self.on_frontend_query
-        "#{table_name}.display_on != 'back_end' OR #{table_name}.display_on IS NULL"
       end
   end
 end
