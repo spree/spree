@@ -1,8 +1,8 @@
 $(@).ready( ->
-  $('[data-hook=general_settings_clear_cache] #clear_cache').click (event) ->
+  $('[data-hook=general_settings_clear_cache] #clear_cache').click ->
     $.ajax
       type: 'POST'
-      url: (($ event.target).attr 'data-url')
+      url: Spree.routes.clear_cache
       success: ->
         show_flash 'success', "Cache was flushed."
       error: (msg) ->
