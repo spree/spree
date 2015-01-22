@@ -70,12 +70,16 @@ module Spree
               end
 
               if states[:payment]
+                event :payment_failed do
+                  transition to: :payment, from: :confirm
+                end
+
                 before_transition to: :complete do |order|
                   if order.payment_required? && order.payments.valid.empty?
                     order.errors.add(:base, Spree.t(:no_payment_found))
                     false
                   elsif order.payment_required?
-                    order.process_payments!
+                    order.process_payments!.tap { |success| order.handle_failed_payments unless success }
                   end
                 end
                 after_transition to: :complete, do: :persist_user_credit_card
@@ -289,6 +293,12 @@ module Spree
               cc = self.user.default_credit_card
               self.payments.create!(payment_method_id: cc.payment_method_id, source: cc)
             end
+          end
+
+          def handle_failed_payments
+            errors = self.errors[:base]
+            self.payment_failed!
+            errors.each { |error| self.errors.add(:base, error) }
           end
 
           private
