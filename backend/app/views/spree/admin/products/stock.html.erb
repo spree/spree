@@ -6,7 +6,7 @@
 </div>
 
 <div class="panel panel-default">
-  <table class="table" id="listing_product_stock">
+  <table class="table table-bordered" id="listing_product_stock">
     <thead>
       <tr data-hook="admin_product_stock_management_index_headers">
         <th colspan="2"><%= Spree.t(:variant) %></th>
@@ -17,9 +17,9 @@
       <% @variants.each do |variant| %>
         <% if variant.stock_items.present? %>
           <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows">
-            <td class="image">
+            <td class="image text-center">
               <% if variant.images.present? %>
-                <%= image_tag variant.images.first.attachment.url(:mini), class: "thumbnail no-marginb" %>
+                <%= image_tag variant.images.first.attachment.url(:mini) %>
               <% end %>
             </td>
             <td>
@@ -37,8 +37,9 @@
                     id: "variant_track_inventory_#{variant.id}" %>
               <% end %>
             </td>
+
             <td colspan="3" class="stock_location_info">
-              <table class="table table-condensed table-bordered no-marginb">
+              <table class="table table-bordered no-marginb">
                 <thead>
                   <th><%= Spree.t(:stock_location) %></th>
                   <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
