@@ -74,28 +74,28 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "#can_cancel?" do
-    %w(pending backorder ready).each do |shipment_state|
+  context "#allow_cancel?" do
+    [:pending, :backorder, :ready].each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
-        allow(order).to receive_messages :completed? => true
+        allow(order).to receive_messages completed?: true
         order.shipment_state = shipment_state
-        expect(order.can_cancel?).to be true
+        expect(order.allow_cancel?).to be true
       end
     end
 
-    (Spree::Shipment.state_machine.states.keys - [:pending, :backorder, :ready]).each do |shipment_state|
+    [:canceled, :shipped].each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
-        allow(order).to receive_messages :completed? => true
+        allow(order).to receive_messages completed?: true
         order.shipment_state = shipment_state
-        expect(order.can_cancel?).to be false
+        expect(order.allow_cancel?).to be false
       end
     end
   end
 
   context "#cancel" do
     let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
-                              stub_model(Spree::InventoryUnit, :variant => variant) ]}
+    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, variant: variant),
+                              stub_model(Spree::InventoryUnit, variant: variant) ]}
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
       allow(shipment).to receive_messages :inventory_units => inventory_units, :order => order

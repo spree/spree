@@ -25,48 +25,30 @@ module Spree
     class_attribute :pre_expedited_exchange_hooks
     self.pre_expedited_exchange_hooks = []
 
-    state_machine initial: :authorized do
-      before_transition to: :canceled, do: :cancel_return_items
-
-      event :cancel do
-        transition to: :canceled, from: :authorized
-      end
-
-    end
-
     extend DisplayMoney
     money_methods :pre_tax_total
 
-    def pre_tax_total
-      return_items.sum(:pre_tax_amount)
-    end
-
     def currency
       order.nil? ? Spree::Config[:currency] : order.currency
-    end
-
-    def refundable_amount
-      order.pre_tax_item_amount + order.promo_total
     end
 
     def customer_returned_items?
       customer_returns.exists?
     end
 
+    def pre_tax_total
+      return_items.sum(:pre_tax_amount)
+    end
+
+    def refundable_amount
+      order.pre_tax_item_amount + order.promo_total
+    end
+
+    def state_machine
+      @state_machine ||= StateMachines::ReturnAuthorization.new(self)
+    end
+
     private
-
-      def must_have_shipped_units
-        if order.nil? || order.inventory_units.shipped.none?
-          errors.add(:order, Spree.t(:has_no_shipped_units))
-        end
-      end
-
-      def generate_number
-        self.number ||= loop do
-          random = "RA#{Array.new(9){rand(9)}.join}"
-          break random unless self.class.exists?(number: random)
-        end
-      end
 
       def cancel_return_items
         return_items.each(&:cancel!)
@@ -91,7 +73,19 @@ module Spree
           errors.add(:base, reimbursement.errors.full_messages)
           raise ActiveRecord::RecordInvalid.new(self)
         end
+      end
 
+      def generate_number
+        self.number ||= loop do
+          random = "RA#{Array.new(9){rand(9)}.join}"
+          break random unless self.class.exists?(number: random)
+        end
+      end
+
+      def must_have_shipped_units
+        if order.nil? || order.inventory_units.shipped.none?
+          errors.add(:order, Spree.t(:has_no_shipped_units))
+        end
       end
   end
 end

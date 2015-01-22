@@ -21,22 +21,6 @@ module Spree
         .backordered.order("spree_orders.completed_at ASC")
     end
 
-    # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: :on_hand do
-      event :fill_backorder do
-        transition to: :on_hand, from: :backordered
-      end
-      after_transition on: :fill_backorder, do: :fulfill_order
-
-      event :ship do
-        transition to: :shipped, if: :allow_ship?
-      end
-
-      event :return do
-        transition to: :returned, from: :shipped
-      end
-    end
-
     # This was refactored from a simpler query because the previous implementation
     # led to issues once users tried to modify the objects returned. That's due
     # to ActiveRecord `joins(shipment: :stock_location)` only returning readonly
@@ -58,32 +42,49 @@ module Spree
       end
     end
 
-    def find_stock_item
-      Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
-        variant_id: variant_id).first
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
+    def additional_tax_total
+      line_item.additional_tax_total * percentage_of_line_item
     end
 
     def current_or_new_return_item
       Spree::ReturnItem.from_inventory_unit(self)
     end
 
-    def additional_tax_total
-      line_item.additional_tax_total * percentage_of_line_item
+    def find_stock_item
+      Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
+      variant_id: variant_id).first
     end
 
     def included_tax_total
       line_item.included_tax_total * percentage_of_line_item
     end
 
+    def returned?
+      current_state == 'returned'
+    end
+
+    def state_machine
+      @state_machine ||= StateMachines::InventoryUnit.new(self)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
+
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
 
+      def self.initial_state
+        :on_hand
+      end
+
       def allow_ship?
-        self.on_hand?
+        on_hand?
+      end
+
+      def current_return_item
+        return_items.not_cancelled.first
       end
 
       def fulfill_order
@@ -95,8 +96,5 @@ module Spree
         1 / BigDecimal.new(line_item.quantity)
       end
 
-      def current_return_item
-        return_items.not_cancelled.first
-      end
   end
 end

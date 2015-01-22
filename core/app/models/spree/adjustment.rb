@@ -31,16 +31,6 @@ module Spree
     validates :label, presence: true
     validates :amount, numericality: true
 
-    state_machine :state, initial: :open do
-      event :close do
-        transition from: :open, to: :closed
-      end
-
-      event :open do
-        transition from: :closed, to: :open
-      end
-    end
-
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
 
@@ -71,18 +61,35 @@ module Spree
     extend DisplayMoney
     money_methods :amount
 
+    def close!
+      trigger! :close
+    end
+
     def closed?
-      state == "closed"
+      current_state == 'closed'
     end
 
     def currency
       adjustable ? adjustable.currency : Spree::Config[:currency]
     end
 
+    def open!
+      trigger! :open
+    end
+
+    def open?
+      current_state == 'open'
+    end
+
     def promotion?
       source.class < Spree::PromotionAction
     end
 
+    def state_machine
+      @state_machine ||= StateMachines::Adjustment.new(self)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
+    
     # Recalculate amount given a target e.g. Order, Shipment, LineItem
     #
     # Passing a target here would always be recommended as it would avoid

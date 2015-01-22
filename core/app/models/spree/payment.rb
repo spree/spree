@@ -2,7 +2,7 @@ module Spree
   class Payment < Spree::Base
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-    
+
     include Spree::Payment::Processing
     include Spree::NumberGenerator
 
@@ -63,44 +63,6 @@ module Spree
       response_code
     end
 
-    # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: :checkout do
-      # With card payments, happens before purchase or authorization happens
-      #
-      # Setting it after creating a profile and authorizing a full amount will
-      # prevent the payment from being authorized again once Order transitions
-      # to complete
-      event :started_processing do
-        transition from: [:checkout, :pending, :completed, :processing], to: :processing
-      end
-      # When processing during checkout fails
-      event :failure do
-        transition from: [:pending, :processing], to: :failed
-      end
-      # With card payments this represents authorizing the payment
-      event :pend do
-        transition from: [:checkout, :processing], to: :pending
-      end
-      # With card payments this represents completing a purchase or capture transaction
-      event :complete do
-        transition from: [:processing, :pending, :checkout], to: :completed
-      end
-      event :void do
-        transition from: [:pending, :processing, :completed, :checkout], to: :void
-      end
-      # when the card brand isnt supported
-      event :invalidate do
-        transition from: [:checkout], to: :invalid
-      end
-
-      after_transition do |payment, transition|
-        payment.state_changes.create!(
-          previous_state: transition.from,
-          next_state:     transition.to,
-          name:           'payment',
-        )
-      end
-    end
 
     def currency
       order.currency
@@ -131,6 +93,10 @@ module Spree
 
     def can_credit?
       credit_allowed > 0
+    end
+
+    def completed?
+      current_state == 'completed'
     end
 
     # see https://github.com/spree/spree/issues/981
@@ -165,25 +131,24 @@ module Spree
       return true
     end
 
+    def processing?
+      current_state == 'processing'
+    end
+
+    def state_machine
+      @state_machine ||= StateMachines::Payment.new(self)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
+
     def uncaptured_amount
       amount - capture_events.sum(:amount)
     end
 
+    def void?
+      current_state == 'void'
+    end
+
     private
-
-      def validate_source
-        if source && !source.valid?
-          source.errors.each do |field, error|
-            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-            self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
-          end
-        end
-        return !errors.present?
-      end
-
-      def profiles_supported?
-        payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
-      end
 
       def create_payment_profile
         # Don't attempt to create on bad payments.
@@ -206,6 +171,10 @@ module Spree
         end
       end
 
+      def profiles_supported?
+        payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
+      end
+
       def update_order
         if completed? || void?
           order.updater.update_payment_total
@@ -222,5 +191,14 @@ module Spree
         end
       end
 
+      def validate_source
+        if source && !source.valid?
+          source.errors.each do |field, error|
+            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+            self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
+          end
+        end
+        return !errors.present?
+      end
   end
 end
