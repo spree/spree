@@ -8,9 +8,6 @@ gem 'sass-rails', '~> 5.0.0'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
-# TODO Remove these once there are releases.
-gem 'paranoia', github: 'huoxito/paranoia', branch: 'rails-4.2'
-
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'
