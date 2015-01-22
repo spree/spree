@@ -10,12 +10,14 @@
   <table class="table">
     <thead>
       <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
+      <th><%= Spree::PromotionCategory.human_attribute_name :code %></th>
       <th></th>
     </thead>
     <tbody>
       <% @promotion_categories.each do |promotion_category| %>
         <tr>
           <td><%= promotion_category.name %></td>
+          <td><%= promotion_category.code %></td>
           <td class="actions actions-2 text-right">
             <%= link_to_edit promotion_category, :no_text => true %>
             <%= link_to_delete promotion_category, :no_text => true %>
