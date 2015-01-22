@@ -178,56 +178,35 @@ describe Spree::InventoryUnit, :type => :model do
     let(:quantity) { 2 }
     let(:line_item_included_tax_total)  { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
+      build :line_item, quantity: quantity, included_tax_total: line_item_included_tax_total
     end
 
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
+    subject { build(:inventory_unit, line_item: line_item) }
 
-    it 'is the correct amount' do
-      expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
-    end
+    its(:included_tax_total) { should eq(line_item_included_tax_total / quantity) }
   end
 
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
     let(:line_item_additional_tax_total)  { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        additional_tax_total: line_item_additional_tax_total,
-      })
+      build :line_item, quantity: quantity, additional_tax_total: line_item_additional_tax_total
     end
 
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
+    subject { build(:inventory_unit, line_item: line_item) }
 
-    it 'is the correct amount' do
-      expect(subject.additional_tax_total).to eq line_item_additional_tax_total / quantity
-    end
+    its(:additional_tax_total) { should eq(line_item_additional_tax_total / quantity) }
   end
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
     let(:line_item_included_tax_total)  { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
+      build :line_item, quantity: quantity, included_tax_total: line_item_included_tax_total
     end
 
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
+    subject { build(:inventory_unit, line_item: line_item) }
 
-    it 'is the correct amount' do
-      expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
-    end
+    its(:included_tax_total) { should eq(line_item_included_tax_total / quantity) }
   end
 end
