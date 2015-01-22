@@ -42,6 +42,7 @@ module Spree
     scope :exchange_requested, -> { where.not(exchange_variant: nil) }
     scope :exchange_processed, -> { where.not(exchange_inventory_unit: nil) }
     scope :exchange_required, -> { exchange_requested.where(exchange_inventory_unit: nil) }
+    scope :resellable, -> { where resellable: true }
 
     serialize :acceptance_status_errors
 
@@ -228,7 +229,7 @@ module Spree
     end
 
     def should_restock?
-      variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
+      resellable? && variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
     end
   end
 end
