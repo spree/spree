@@ -36,6 +36,11 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, :type => :model do
       end
 
       it { is_expected.to eq (line_item.pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
+
+      context 'refund amount * line item quantity with tax applied' do
+        subject { (calculator.compute(return_item) * line_item_quantity) * (1 + tax_amount) }
+        it { is_expected.to eq order.total }
+      end
     end
 
     context "shipping adjustments" do
