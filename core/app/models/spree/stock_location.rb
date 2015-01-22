@@ -12,8 +12,8 @@ module Spree
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    after_commit :create_stock_items, on: :create, if: "self.propagate_all_variants?"
     after_save :ensure_one_default
+    after_commit :create_stock_items, on: :create, if: "self.propagate_all_variants?"
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
