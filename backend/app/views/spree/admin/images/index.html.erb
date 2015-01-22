@@ -5,6 +5,7 @@
 <% end %>
 
 <% has_variants = @product.has_variants? %>
+
 <% unless @product.variant_images.any? %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: Spree::Image.model_name.human(count: :many)) %>.
@@ -13,11 +14,17 @@
   <table class="table sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
     <thead>
       <tr data-hook="images_header">
-        <th colspan="2"><%= Spree.t(:thumbnail) %></th>
+        <th colspan="2">
+          <%= Spree.t(:thumbnail) %>
+        </th>
         <% if has_variants %>
-          <th><%= Spree::Variant.model_name.human %></th>
+          <th>
+            <%= Spree::Variant.model_name.human %>
+          </th>
         <% end %>
-        <th><%= Spree.t(:alt_text) %></th>
+        <th>
+          <%= Spree.t(:alt_text) %>
+        </th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -29,7 +36,7 @@
             <span class="icon icon-move handle"></span>
           </td>
           <td class="image">
-            <%= link_to image_tag(image.attachment.url(:mini), class: 'thumbnail'), image.attachment.url(:product) %>
+            <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
           </td>
           <% if has_variants %>
             <td><%= options_text_for(image) %></td>

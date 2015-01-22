@@ -4,25 +4,25 @@
 
     <div class="col-md-8" data-hook="admin_product_form_left">
       <div data-hook="admin_product_form_name">
-        <%= f.field_container :name, :class => ['form-group'] do %>
-          <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', :class => 'required')) %>
-          <%= f.text_field :name, :class => 'form-control title' %>
+        <%= f.field_container :name, class: ['form-group'] do %>
+          <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
+          <%= f.text_field :name, class: 'form-control title' %>
           <%= f.error_message_on :name %>
         <% end %>
       </div>
 
       <div data-hook="admin_product_form_slug">
-        <%= f.field_container :slug, :class => ['form-group'] do %>
-          <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *', :class => "required")) %>
-          <%= f.text_field :slug, :class => 'form-control title' %>
+        <%= f.field_container :slug, class: ['form-group'] do %>
+          <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *', class: "required")) %>
+          <%= f.text_field :slug, class: 'form-control title' %>
           <%= f.error_message_on :slug %>
         <% end %>
       </div>
 
       <div data-hook="admin_product_form_description">
-        <%= f.field_container :description, :class => ['form-group'] do %>
+        <%= f.field_container :description, class: ['form-group'] do %>
           <%= f.label :description, Spree.t(:description) %>
-          <%= f.text_area :description, { :rows => "#{unless @product.has_variants? then '20' else '13' end}", :class => 'form-control' } %>
+          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '20' else '13' end}", class: 'form-control' } %>
           <%= f.error_message_on :description %>
         <% end %>
       </div>
@@ -30,33 +30,33 @@
 
     <div class="col-md-4" data-hook="admin_product_form_right">
       <div data-hook="admin_product_form_price">
-      <%= f.field_container :price, :class => ['form-group'] do %>
-        <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', :class => "required")) %>
-        <%= f.text_field :price, :value => number_to_currency(@product.price, :unit => ''), :class => 'form-control' %>
+      <%= f.field_container :price, class: ['form-group'] do %>
+        <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: "required")) %>
+        <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control' %>
         <%= f.error_message_on :price %>
       <% end %>
       </div>
 
       <div data-hook="admin_product_form_cost_price" class="alpha two columns">
-        <%= f.field_container :cost_price, :class => ['form-group'] do %>
+        <%= f.field_container :cost_price, class: ['form-group'] do %>
           <%= f.label :cost_price, Spree.t(:cost_price) %>
-          <%= f.text_field :cost_price, :value => number_to_currency(@product.cost_price, :unit => ''), :class => 'form-control' %>
+          <%= f.text_field :cost_price, value: number_to_currency(@product.cost_price, unit: ''), class: 'form-control' %>
           <%= f.error_message_on :cost_price %>
         <% end %>
       </div>
       <div data-hook="admin_product_form_cost_currency" class="omega two columns">
-        <%= f.field_container :cost_currency, :class => ['form-group'] do %>
+        <%= f.field_container :cost_currency, class: ['form-group'] do %>
           <%= f.label :cost_currency, Spree.t(:cost_currency) %>
-          <%= f.text_field :cost_currency, :class => 'form-control' %>
+          <%= f.text_field :cost_currency, class: 'form-control' %>
           <%= f.error_message_on :cost_currency %>
         <% end %>
       </div>
 
       <div data-hook="admin_product_form_available_on">
-        <%= f.field_container :available_on, :class => ['form-group'] do %>
+        <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
-          <%= f.text_field :available_on, :value => datepicker_field_value(@product.available_on), :class => 'datepicker form-control' %>
+          <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'datepicker form-control' %>
         <% end %>
       </div>
 
@@ -71,7 +71,9 @@
               <% end %>
             </ul>
             <% if @product.variants.count > 5 %>
-              <em><%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.count - 5) %></em>
+              <em>
+                <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.count - 5) %>
+              </em>
             <% end %>
           </div>
           <div class="info-actions">
@@ -82,44 +84,55 @@
         </div>
       <% else %>
         <div data-hook="admin_product_form_sku">
-          <%= f.field_container :sku, :class => ['form-group'] do %>
+          <%= f.field_container :sku, class: ['form-group'] do %>
             <%= f.label :sku, Spree.t(:sku) %>
-            <%= f.text_field :sku, :size => 16, :class => 'form-control' %>
+            <%= f.text_field :sku, size: 16, class: 'form-control' %>
           <% end %>
         </div>
 
-        <div id="shipping_specs">
-          <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">
-            <%= f.label :weight, Spree.t(:weight) %>
-            <%= f.text_field :weight, :size => 4, :class => 'form-control' %>
+        <div id="shipping_specs" class="row">
+          <div class="col-md-6">
+            <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">
+              <%= f.label :weight, Spree.t(:weight) %>
+              <%= f.text_field :weight, size: 4, class: 'form-control' %>
+            </div>
           </div>
-          <div id="shipping_specs_height_field" data-hook="admin_product_form_height" class="form-group">
-            <%= f.label :height, Spree.t(:height) %>
-            <%= f.text_field :height, :size => 4, :class => 'form-control' %>
+
+          <div class="col-md-6">
+            <div id="shipping_specs_height_field" data-hook="admin_product_form_height" class="form-group">
+              <%= f.label :height, Spree.t(:height) %>
+              <%= f.text_field :height, size: 4, class: 'form-control' %>
+            </div>
           </div>
-          <div id="shipping_specs_width_field" data-hook="admin_product_form_width" class="form-group">
-            <%= f.label :width, Spree.t(:width) %>
-            <%= f.text_field :width, :size => 4, :class => 'form-control' %>
+
+          <div class="col-md-6">
+            <div id="shipping_specs_width_field" data-hook="admin_product_form_width" class="form-group">
+              <%= f.label :width, Spree.t(:width) %>
+              <%= f.text_field :width, size: 4, class: 'form-control' %>
+            </div>  
           </div>
-          <div id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="form-group">
-            <%= f.label :depth, Spree.t(:depth) %>
-            <%= f.text_field :depth, :size => 4, :class => 'form-control' %>
+          
+          <div class="col-md-6">
+            <div id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="form-group">
+              <%= f.label :depth, Spree.t(:depth) %>
+              <%= f.text_field :depth, size: 4, class: 'form-control' %>
+            </div>
           </div>
         </div>
       <% end %>
 
       <div data-hook="admin_product_form_shipping_categories">
-        <%= f.field_container :shipping_categories, :class => ['form-group'] do %>
+        <%= f.field_container :shipping_categories, class: ['form-group'] do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :shipping_category %>
         <% end %>
       </div>
 
       <div data-hook="admin_product_form_tax_category">
-        <%= f.field_container :tax_category, :class => ['form-group'] do %>
+        <%= f.field_container :tax_category, class: ['form-group'] do %>
           <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :tax_category %>
         <% end %>
       </div>
@@ -128,16 +141,16 @@
   </div>
 
   <div data-hook="admin_product_form_taxons">
-    <%= f.field_container :taxons, :class => ['form-group'] do %>
+    <%= f.field_container :taxons, class: ['form-group'] do %>
       <%= f.label :taxon_ids, Spree.t(:taxons) %>
-      <%= f.hidden_field :taxon_ids, :value => @product.taxon_ids.join(',') %>
+      <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(',') %>
     <% end %>
   </div>
 
   <div data-hook="admin_product_form_option_types">
-    <%= f.field_container :option_types, :class => ['form-group'] do %>
+    <%= f.field_container :option_types, class: ['form-group'] do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
-      <%= f.hidden_field :option_type_ids, :value => @product.option_type_ids.join(',') %>
+      <%= f.hidden_field :option_type_ids, value: @product.option_type_ids.join(',') %>
     <% end %>
   </div>
 
@@ -145,16 +158,16 @@
 <div data-hook="admin_product_form_meta">
 
   <div data-hook="admin_product_form_meta_keywords">
-    <%= f.field_container :meta_keywords, :class => ['form-group'] do %>
+    <%= f.field_container :meta_keywords, class: ['form-group'] do %>
       <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
-      <%= f.text_field :meta_keywords, :class => 'form-control' %>
+      <%= f.text_field :meta_keywords, class: 'form-control' %>
     <% end %>
   </div>
 
   <div data-hook="admin_product_form_meta_description">
-    <%= f.field_container :meta_description, :class => ['form-group'] do %>
+    <%= f.field_container :meta_description, class: ['form-group'] do %>
       <%= f.label :meta_description, Spree.t(:meta_description) %>
-      <%= f.text_field :meta_description, :class => 'form-control' %>
+      <%= f.text_field :meta_description, class: 'form-control' %>
     <% end %>
   </div>
 
