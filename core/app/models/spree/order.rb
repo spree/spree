@@ -147,6 +147,10 @@ module Spree
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
+    def cancel!
+
+    end
+
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
       line_items.to_a.sum(&:pre_tax_amount)
@@ -184,7 +188,7 @@ module Spree
         # Little hacky fix for #4117
         # If this wasn't here, order would transition to address state on confirm failure
         # because there would be no valid payments any more.
-        state == 'confirm'
+        current_state == 'confirm'
     end
 
     def backordered?
@@ -291,7 +295,7 @@ module Spree
     end
 
     def outstanding_balance
-      if state == 'canceled'
+      if current_state == 'canceled'
         -1 * payment_total
       else
         total - payment_total
@@ -557,6 +561,18 @@ module Spree
       !approved?
     end
 
+    def cancel!
+      trigger! :cancel
+    end
+
+    def canceled?
+      current_state == 'canceled'
+    end
+
+    def complete?
+      current_state == 'complete'
+    end
+
     def consider_risk
       if is_risky? && !approved?
         considered_risky!
@@ -576,12 +592,25 @@ module Spree
       super
     end
 
+    def state_machine
+      @state_machine ||= StateMachines::Order.new(self)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
+
     def tax_total
       included_tax_total + additional_tax_total
     end
 
     def quantity
       line_items.sum(:quantity)
+    end
+
+    def resume!
+      trigger! :resume
+    end
+
+    def resumed?
+      current_state == 'resumed'
     end
 
     def has_non_reimbursement_related_refunds?

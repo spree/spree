@@ -56,18 +56,6 @@ module Spree
     class_attribute :reimbursement_failure_hooks
     self.reimbursement_failure_hooks = []
 
-    state_machine :reimbursement_status, initial: :pending do
-
-      event :errored do
-        transition to: :errored, from: :pending
-      end
-
-      event :reimbursed do
-        transition to: :reimbursed, from: [:pending, :errored]
-      end
-
-    end
-
     class << self
       def build_from_customer_return(customer_return)
         order = customer_return.order
@@ -124,6 +112,11 @@ module Spree
       reimbursement_performer.simulate(self)
     end
 
+    def state_machine
+      @state_machine ||= StateMachines::Reimbursement.new(self)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
+    
     def return_items_requiring_exchange
       return_items.select(&:exchange_required?)
     end

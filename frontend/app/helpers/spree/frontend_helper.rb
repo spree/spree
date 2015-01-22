@@ -4,7 +4,7 @@ module Spree
       @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
       @body_class
     end
-    
+
     def breadcrumbs(taxon, separator="&nbsp;")
       return "" if current_page?("/") || taxon.nil?
       separator = raw(separator)
@@ -35,7 +35,7 @@ module Spree
         end
 
         css_classes << 'next' if state_index == current_index + 1
-        css_classes << 'active' if state == @order.state
+        css_classes << 'active' if state == @order.current_state
         css_classes << 'first' if state_index == 0
         css_classes << 'last' if state_index == states.length - 1
         # No more joined classes. IE6 is not a target browser.

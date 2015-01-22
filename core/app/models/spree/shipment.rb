@@ -4,14 +4,8 @@ module Spree
   class Shipment < Spree::Base
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-    
-    include Spree::NumberGenerator
 
-    def generate_number(options = {})
-      options[:prefix] ||= 'H'
-      options[:length] ||= 11
-      super(options)
-    end
+    include Statesman::Adapters::ActiveRecordQueries
 
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
@@ -21,6 +15,7 @@ module Spree
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
     has_many :shipping_rates, -> { order('cost ASC') }, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
+    has_many :shipment_transitions, dependent: :delete_all, inverse_of: :shipment
     has_many :state_changes, as: :stateful
 
     after_save :update_adjustments
@@ -39,49 +34,6 @@ module Spree
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc', id: :desc) }
-
-    # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine initial: :pending, use_transactions: false do
-      event :ready do
-        transition from: :pending, to: :ready, if: lambda { |shipment|
-          # Fix for #2040
-          shipment.determine_state(shipment.order) == 'ready'
-        }
-      end
-
-      event :pend do
-        transition from: :ready, to: :pending
-      end
-
-      event :ship do
-        transition from: [:ready, :canceled], to: :shipped
-      end
-      after_transition to: :shipped, do: :after_ship
-
-      event :cancel do
-        transition to: :canceled, from: [:pending, :ready]
-      end
-      after_transition to: :canceled, do: :after_cancel
-
-      event :resume do
-        transition from: :canceled, to: :ready, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
-        }
-        transition from: :canceled, to: :pending, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
-        }
-        transition from: :canceled, to: :pending
-      end
-      after_transition from: :canceled, to: [:pending, :ready, :shipped], do: :after_resume
-
-      after_transition do |shipment, transition|
-        shipment.state_changes.create!(
-          previous_state: transition.from,
-          next_state:     transition.to,
-          name:           'shipment',
-        )
-      end
-    end
 
     extend DisplayMoney
     money_methods :cost, :discounted_cost, :final_price, :item_cost
@@ -103,6 +55,14 @@ module Spree
       inventory_units.any? { |inventory_unit| inventory_unit.backordered? }
     end
 
+    def cancel!
+      trigger! :cancel
+    end
+
+    def canceled?
+      current_state == 'canceled'
+    end
+
     def currency
       order ? order.currency : Spree::Config[:currency]
     end
@@ -116,7 +76,7 @@ module Spree
       return 'canceled' if order.canceled?
       return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
-      return 'shipped' if state == 'shipped'
+      return 'shipped' if current_state == 'shipped'
       order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
@@ -140,6 +100,13 @@ module Spree
     def finalize!
       InventoryUnit.finalize_units!(inventory_units)
       manifest.each { |item| manifest_unstock(item) }
+    end
+
+    include Spree::NumberGenerator
+    def generate_number(options = {})
+      options[:prefix] ||= 'H'
+      options[:length] ||= 11
+      super(options)
     end
 
     def include?(variant)
@@ -213,6 +180,10 @@ module Spree
       return !!Spree::Config[:allow_checkout_on_gateway_error]
     end
 
+    def ready!
+      trigger! :ready
+    end
+
     def ready_or_pending?
       self.ready? || self.pending?
     end
@@ -235,6 +206,10 @@ module Spree
       end
 
       shipping_rates
+    end
+
+    def resume!
+      trigger! :resume
     end
 
     def selected_shipping_rate
@@ -260,14 +235,27 @@ module Spree
       )
     end
 
+    def ship!
+      trigger! :ship
+    end
+
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.now
     end
 
+    def shipped?
+      current_state == 'shipped'
+    end
+
     def shipping_method
       selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
+
+    def state_machine
+      @state_machine ||= StateMachines::Shipment.new(self, transition_class: ShipmentTransition)
+    end
+    delegate :current_state, :transition_to, :transition_to!, :trigger!, to: :state_machine
 
     def tax_category
       selected_shipping_rate.try(:tax_rate).try(:tax_category)
@@ -382,6 +370,13 @@ module Spree
     end
 
     private
+      def self.initial_state
+        :pending
+      end
+
+      def self.transition_class
+        ShipmentTransition
+      end
 
       def after_ship
         ShipmentHandler.factory(self).perform

@@ -52,54 +52,11 @@ module Spree
     before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
     before_save :set_exchange_pre_tax_amount
 
-    state_machine :reception_status, initial: :awaiting do
-      after_transition to: :received, do: :attempt_accept
-      after_transition to: :received, do: :process_inventory_unit!
-
-      event :receive do
-        transition to: :received, from: :awaiting
-      end
-
-      event :cancel do
-        transition to: :cancelled, from: :awaiting
-      end
-
-      event :give do
-        transition to: :given_to_customer, from: :awaiting
-      end
-    end
-
     extend DisplayMoney
     money_methods :pre_tax_amount, :total
 
     def reception_completed?
       COMPLETED_RECEPTION_STATUSES.include?(reception_status)
-    end
-
-    state_machine :acceptance_status, initial: :pending do
-      event :attempt_accept do
-        transition to: :accepted, from: :accepted
-        transition to: :accepted, from: :pending, if: ->(return_item) { return_item.eligible_for_return? }
-        transition to: :manual_intervention_required, from: :pending, if: ->(return_item) { return_item.requires_manual_intervention? }
-        transition to: :rejected, from: :pending
-      end
-
-      # bypasses eligibility checks
-      event :accept do
-        transition to: :accepted, from: [:accepted, :pending, :manual_intervention_required]
-      end
-
-      # bypasses eligibility checks
-      event :reject do
-        transition to: :rejected, from: [:accepted, :pending, :manual_intervention_required]
-      end
-
-      # bypasses eligibility checks
-      event :require_manual_intervention do
-        transition to: :manual_intervention_required, from: [:accepted, :pending, :manual_intervention_required]
-      end
-
-      after_transition any => any, :do => :persist_acceptance_status_errors
     end
 
     def self.from_inventory_unit(inventory_unit)
@@ -142,6 +99,14 @@ module Spree
 
     def set_default_pre_tax_amount
       self.pre_tax_amount = refund_amount_calculator.new.compute(self)
+    end
+
+    def state_machine_acceptance
+      @state_machine ||= StateMachines::AcceptanceStatus.new(self)
+    end
+
+    def state_machine_reception
+      @state_machine ||= StateMachines::ReceptionStatus.new(self)
     end
 
     private

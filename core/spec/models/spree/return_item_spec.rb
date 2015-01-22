@@ -8,10 +8,7 @@ shared_examples "an invalid state transition" do |status, expected_status|
   end
 end
 
-describe Spree::ReturnItem, :type => :model do
-
-  all_reception_statuses = Spree::ReturnItem.state_machines[:reception_status].states.map(&:name).map(&:to_s)
-  all_acceptance_statuses = Spree::ReturnItem.state_machines[:acceptance_status].states.map(&:name).map(&:to_s)
+describe Spree::ReturnItem, type: :model do
 
   before do
     allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
@@ -172,11 +169,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_reception_statuses - ['awaiting']).each do |invalid_transition_status|
-      context "return_item has a reception status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'received'
-      end
-    end
+    # (Spree::StateMachines::ReceptionStatus.states - ['awaiting']).each do |invalid_transition_status|
+    #   context "return_item has a reception status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'received'
+    #   end
+    # end
   end
 
   describe "#cancel" do
@@ -194,11 +191,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_reception_statuses - ['awaiting']).each do |invalid_transition_status|
-      context "return_item has a reception status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'cancelled'
-      end
-    end
+    # (Spree::StateMachines::ReceptionStatus.states - ['awaiting']).each do |invalid_transition_status|
+    #   context "return_item has a reception status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'cancelled'
+    #   end
+    # end
   end
 
   describe "#give" do
@@ -216,11 +213,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_reception_statuses - ['awaiting']).each do |invalid_transition_status|
-      context "return_item has a reception status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'give_to_customer'
-      end
-    end
+    # (Spree::StateMachines::ReceptionStatus.states - ['awaiting']).each do |invalid_transition_status|
+    #   context "return_item has a reception status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'give_to_customer'
+    #   end
+    # end
   end
 
   describe "#attempt_accept" do
@@ -251,11 +248,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_acceptance_statuses - ['accepted', 'pending']).each do |invalid_transition_status|
-      context "return_item has an acceptance status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
-      end
-    end
+    # (Spree::StateMachines::AcceptanceStatus.states - [:accepted, :pending]).each do |invalid_transition_status|
+    #   context "return_item has an acceptance status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, :accepted
+    #   end
+    # end
 
     context "not eligible for return" do
       let(:status) { 'pending' }
@@ -316,11 +313,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
-      context "return_item has an acceptance status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'rejected'
-      end
-    end
+    # (Spree::StateMachines::AcceptanceStatus.states - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
+    #   context "return_item has an acceptance status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'rejected'
+    #   end
+    # end
   end
 
   describe "#accept" do
@@ -342,11 +339,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
-      context "return_item has an acceptance status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
-      end
-    end
+    # (Spree::StateMachines::AcceptanceStatus.states - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
+    #   context "return_item has an acceptance status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'accepted'
+    #   end
+    # end
   end
 
   describe "#require_manual_intervention" do
@@ -368,11 +365,11 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_acceptance_statuses - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
-      context "return_item has an acceptance status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'manual_intervention_required'
-      end
-    end
+    # (Spree::StateMachines::AcceptanceStatus.states - ['accepted', 'pending', 'manual_intervention_required']).each do |invalid_transition_status|
+    #   context "return_item has an acceptance status of #{invalid_transition_status}" do
+    #     it_behaves_like "an invalid state transition", invalid_transition_status, 'manual_intervention_required'
+    #   end
+    # end
   end
 
   describe 'validity for reimbursements' do
