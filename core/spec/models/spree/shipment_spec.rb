@@ -456,7 +456,7 @@ describe Spree::Shipment, :type => :model do
       context "from #{state}" do
         before do
           allow(order).to receive(:update!)
-          allow(shipment).to receive_messages(require_inventory: false, update_order: true, current_state: state)
+          allow(shipment).to receive_messages(require_inventory: false, update_order: true, state: state)
         end
 
         it "should update shipped_at timestamp" do
