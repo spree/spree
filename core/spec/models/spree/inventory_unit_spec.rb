@@ -164,16 +164,4 @@ describe Spree::InventoryUnit, :type => :model do
 
     its(:included_tax_total) { should eq(line_item_included_tax_total / quantity) }
   end
-
-  describe '#additional_tax_total' do
-    let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
-    let(:line_item) do
-      build :line_item, quantity: quantity, additional_tax_total: line_item_additional_tax_total
-    end
-
-    subject { build(:inventory_unit, line_item: line_item) }
-
-    its(:additional_tax_total) { should eq(line_item_additional_tax_total / quantity) }
-  end
 end
