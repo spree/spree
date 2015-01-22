@@ -15,14 +15,9 @@ gem 'spree', path: '..'
 gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
 
 group :test, :development do
-  gem 'rack-mini-profiler'
   gem 'bullet'
-  platforms :ruby_19 do
-    gem 'pry-debugger'
-  end
-  platforms :ruby_20, :ruby_21 do
-    gem 'pry-byebug'
-  end
+  gem 'pry-byebug'
+  gem 'rack-mini-profiler'
 end
 RUBY
 

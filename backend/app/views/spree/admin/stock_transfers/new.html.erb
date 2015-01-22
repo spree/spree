@@ -6,9 +6,9 @@
   {{#each variants}}
     <tr>
       <td>{{name}}</td>
-      <td class='align-center'>{{quantity}}</td>
-      <td class='actions actions-1'>
-        <button class='icon_link btn btn-default btn-sm transfer_remove_variant' data-variant-id='{{id}}'>
+      <td class='text-center'>{{quantity}}</td>
+      <td class='actions actions-1 text-center'>
+        <button class='icon_link btn btn-danger btn-sm transfer_remove_variant' data-variant-id='{{id}}'>
           <span class='icon icon-delete' data-variant-id='{{id}}'></span>
         </button>
         <input type='hidden' id='variant[]' name='variant[]' value='{{id}}'>
@@ -19,40 +19,52 @@
 </script>
 
 <%= form_tag admin_stock_transfers_path, :method => :post do %>
-  <fieldset>
-    <legend><%= Spree.t(:transfer_stock) %></legend>
-
-    <div data-hook="admin_stock_movements_form_fields">
-      <div class="form-group" id="stock_movement_reference_field">
-        <%= label_tag 'reference', raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})") %>
-        <%= text_field_tag :reference, '', class: 'form-control' %>
-      </div>
-      <div class="form-group" id="receive_stock_field">
-        <div class="checkbox">
-          <label for="receive_stock">
-            <%= check_box_tag :transfer_receive_stock %>
-            <%= Spree.t('receive_stock') %>
-          </label>
-        </div>
-      </div>
-      <div class="form-group" id="transfer_source_location_id_field">
-        <%= label_tag :transfer_source_location_id, Spree.t(:source) %>
-        <%= select_tag :transfer_source_location_id, {}, class: 'select2' %>
-      </div>
-      <div class="form-group" id="transfer_destination_location_id_field">
-        <%= label_tag :transfer_destination_location_id, Spree.t(:destination) %>
-        <%= select_tag :transfer_destination_location_id, {}, class: 'select2' %>
-      </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= Spree.t(:transfer_stock) %>
+      </h1>
     </div>
 
-    <fieldset id="add-variant-to-transfer">
-      <legend><%= Spree.t(:add_variant) %></legend>
+    <div class="panel-body">
+      <div data-hook="admin_stock_movements_form_fields">
+        <div class="form-group" id="stock_movement_reference_field">
+          <%= label_tag 'reference', raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})") %>
+          <%= text_field_tag :reference, '', class: 'form-control' %>
+        </div>
+        <div class="form-group" id="receive_stock_field">
+          <div class="checkbox">
+            <label for="receive_stock">
+              <%= check_box_tag :transfer_receive_stock %>
+              <%= Spree.t('receive_stock') %>
+            </label>
+          </div>
+        </div>
+        <div class="form-group" id="transfer_source_location_id_field">
+          <%= label_tag :transfer_source_location_id, Spree.t(:source) %>
+          <%= select_tag :transfer_source_location_id, {}, class: 'select2' %>
+        </div>
+        <div class="form-group" id="transfer_destination_location_id_field">
+          <%= label_tag :transfer_destination_location_id, Spree.t(:destination) %>
+          <%= select_tag :transfer_destination_location_id, {}, class: 'select2' %>
+        </div>
+      </div>  
+    </div>
+  </div>
 
+  <div class="panel panel-default" id="add-variant-to-transfer">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= Spree.t(:add_variant) %>
+      </h1>
+    </div>
+
+    <div class="panel-body">
       <div class="row">
         <div class="col-md-8">
           <div class="form-group" id="stock_movement_variant_id_field">
             <%= label_tag 'variant_id', Spree.t(:variant) %>
-            <%= hidden_field_tag 'transfer_variant', {} %>
+            <%= hidden_field_tag 'transfer_variant', {}, {class: 'fullwidth-input'} %>
           </div>
         </div>
 
@@ -68,27 +80,27 @@
           </div>
         </div>
       </div>
-    </fieldset>
-
-    <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>.
     </div>
+  </div>
 
-    <div id="transfer-variants-table" style="display:none">
-      <table class="table table-condensed table-bordered sortable">
-        <thead data-hook="transfer_variants_header">
-          <th><%= Spree.t(:name) %></th>
-          <th><%= Spree.t(:quantity) %></th>
-          <th class="actions"></th>
-        </thead>
-        <tbody id="transfer_variants_tbody">
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>.
+  </div>
 
-        </tbody>
-      </table>
-    </div>
+  <div id="transfer-variants-table" style="display:none">
+    <table class="table table-bordered sortable">
+      <thead data-hook="transfer_variants_header">
+        <th><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th class="actions"></th>
+      </thead>
+      <tbody id="transfer_variants_tbody">
 
-    <div class="form-actions" data-hook="buttons">
-      <%= button Spree.t(:transfer_stock), 'plus transfer_transfer' %>
-    </div>
-  </fieldset>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-actions" data-hook="buttons">
+    <%= button Spree.t(:transfer_stock), 'plus transfer_transfer' %>
+  </div>
 <% end %>

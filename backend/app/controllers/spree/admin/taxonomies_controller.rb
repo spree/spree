@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class TaxonomiesController < ResourceController
-      respond_to :json, :only => [:get_children]
+      respond_to :json, only: [:get_children]
 
       def get_children
         @taxons = Taxon.find(params[:parent_id]).children

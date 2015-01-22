@@ -1,4 +1,4 @@
-<%= render :partial => 'js_head' %>
+<%= render partial: 'js_head' %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:taxonomy_edit) %>
@@ -8,7 +8,7 @@
 
 <%= form_for [:admin, @taxonomy] do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
+    <%= render partial: 'form', locals: { f: f } %>
     <div class="form-group">
       <%= label_tag nil, Spree.t(:tree) %>
       <script>
@@ -24,9 +24,9 @@
     </div>
 
     <div class="form-actions">
-      <%= button Spree.t('actions.update'), 'save' %>
+      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, icon: 'delete' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), admin_taxonomies_path, :icon => 'delete' %>
+      <%= button Spree.t('actions.update'), 'ok', 'submit', { class: 'btn-success' } %>
     </div>
   </fieldset>
 <% end %>

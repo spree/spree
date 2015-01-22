@@ -71,7 +71,7 @@ module Spree
         if params[:payment] and params[:payment_source] and source_params = params.delete(:payment_source)[params[:payment][:payment_method_id]]
           params[:payment][:source_attributes] = source_params
         end
-        
+
         params.require(:payment).permit(permitted_payment_attributes)
       end
 
@@ -86,13 +86,13 @@ module Spree
       end
 
       def load_order
-        @order = Order.find_by_number!(params[:order_id])
+        @order = Order.friendly.find(params[:order_id])
         authorize! action, @order
         @order
       end
 
       def load_payment
-        @payment = Payment.find(params[:id])
+        @payment = Payment.friendly.find(params[:id])
       end
 
       def model_class

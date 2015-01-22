@@ -5,7 +5,7 @@ section: deployment
 
 ## Overview
 
-This article will walk you through configuring and deploying your Spree
+This article will walk you through configuring, and deploying your Spree
 application to Heroku.
 
 This guide assumes that your application is deploy-ready and that you have a
@@ -20,15 +20,21 @@ Git is used to push the code to Heroku.
 
 ## Configuring your application
 
-### Specify Ruby version
+### PostgreSQL Database AddOn
 
-You should speficy the exact ruby version you want to run in your Gemfile:
-
-```ruby
-ruby '2.0.0'
+```shell
+heroku addons:add heroku-postgresql
 ```
 
-Keep in mind that Spree 2.0.0 requires a version of Ruby greater than or equal to Ruby 1.9.3.
+### Specify Ruby version
+
+You should specify the exact ruby version you want to run in your Gemfile:
+
+```ruby
+ruby '2.2.0'
+```
+
+Keep in mind that Spree 3.0.0 requires a version of Ruby greater than or equal to Ruby 2.1.0.
 See [Heroku Ruby support page](https://devcenter.heroku.com/articles/ruby-support#build-behavior)
 for details on build behaviour related to Ruby versions.
 
@@ -112,21 +118,14 @@ running this command:
 $ heroku run rake db:migrate
 ```
 
-You may then wish to set up an admin user as well which can be done by loading
-the rails console:
+You may then wish to set up an admin user as well which can be done if using
+spree_auth_devise with a rake task:
 
 ```bash
-$ heroku run rails console
+$ heroku run rake spree_auth:admin:create
 ```
 
-And then running this code:
-
-```ruby
-user = Spree::User.create!(:email => "you@example.com", :password => "yourpassword")
-user.spree_roles.create!(:name => "admin")
-```
-
-Exit out of the console and then attempt to sign in to your application to
+Enter an email & password, and then attempt to sign in to your application to
 verify these credentials.
 
 ## SSL Support

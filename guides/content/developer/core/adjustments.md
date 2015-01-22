@@ -7,7 +7,7 @@ section: core
 
 An `Adjustment` object tracks an adjustment to the price of an [Order](orders), an order's [Line Item](orders#line-items), or an order's [Shipments](shipments) within a Spree Commerce storefront.
 
-Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one `Spree::Adjustment` model in a storefront which handles this by allowing either positive or negative values. 
+Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one `Spree::Adjustment` model in a storefront which handles this by allowing either positive or negative values.
 
 Adjustments can either be considered included or additional. An "included" adjustment is an adjustment to the price of an item which is included in that price of an item. A good example of this is a GST/VAT tax. An "additional" adjustment is an adjustment to the price of the item on top of the original item price. A good example of that would be how sales tax is handled in countries like the United States.
 
@@ -40,9 +40,11 @@ An adjustment's `label` attribute can be used as a good indicator of where the a
 
 There are some helper methods to return the different types of adjustments:
 
-    scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
-    scope :included, -> { where(included: true)  }
-    scope :additional, -> { where(included: false) }
+```ruby
+scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
+scope :is_included, -> { where(included: true)  }
+scope :additional, -> { where(included: false) }
+```
 
 * `open`: All open adjustments.
 * `eligible`: All eligible adjustments for the order. Useful for determining which adjustments are applying to the adjustable.
@@ -71,7 +73,7 @@ shipment.adjustments.eligible
 
 ## Adjustment Associations
 
-As of Spree 2.2, you are able to retrieve the specific adjustments of an Order, a Line Item or a Shipment. 
+As of Spree 2.2, you are able to retrieve the specific adjustments of an Order, a Line Item or a Shipment.
 
 An order itself, much like line items and shipments, can have its own individual modifications. For instance, an order with over $100 of line items may have 10% off. To retrieve these adjustments on the order, call the `adjustments` association:
 

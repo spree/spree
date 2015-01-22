@@ -72,6 +72,7 @@ en:
         zipcode: Shipping address zipcode
       spree/payment:
         amount: Amount
+        number: Number
       spree/payment_method:
         name: Name
       spree/product:
@@ -105,6 +106,8 @@ en:
         amount: Amount
       spree/role:
         name: Name
+      spree/shipment:
+        number: Number
       spree/state:
         abbr: Abbreviation
         name: Name
@@ -442,9 +445,6 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
-    allow_ssl_in_development_and_test: Allow SSL to be used when in development and test modes
-    allow_ssl_in_production: Allow SSL to be used in production mode
-    allow_ssl_in_staging: Allow SSL to be used in staging mode
     already_signed_up_for_analytics: You have already signed up for Spree Analytics
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
@@ -650,7 +650,6 @@ en:
     errors:
       messages:
         could_not_create_taxon: Could not create taxon
-        no_payment_methods_available: No payment methods are configured for this environment
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
@@ -680,6 +679,7 @@ en:
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filter: Filter
     filter_results: Filter Results
     finalize: Finalize
     find_a_taxon: Find a Taxon
@@ -695,7 +695,6 @@ en:
     free_shipping_amount: "-"
     front_end: Front End
     gateway: Gateway
-    gateway_config_unavailable: Gateway unavailable for environment
     gateway_error: Gateway Error
     general: General
     general_settings: General Settings
@@ -720,7 +719,6 @@ en:
       this_file_language: English (US)
       translations: Translations
     icon: Icon
-    identifier: Identifier
     image: Image
     images: Images
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
@@ -896,6 +894,7 @@ en:
     order_details: Order Details
     order_email_resent: Order Email Resent
     order_information: Order Information
+    order_line_items: Order Line Items
     order_mailer:
       cancel_email:
         dear_customer: Dear Customer,
@@ -951,7 +950,6 @@ en:
     pay: pay
     payment: Payment
     payment_could_not_be_created: Payment could not be created.
-    payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
     payment_methods: Payment Methods
@@ -1351,7 +1349,9 @@ en:
     usage_limit: Usage Limit
     use_app_default: Use App Default
     use_billing_address: Use Billing Address
+    use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
+    use_new_cc_or_payment_method: Use a new card / payment method
     use_s3: Use Amazon S3 For Images
     user: User
     user_rule:

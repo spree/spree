@@ -14,16 +14,18 @@
   <div class="col-md-4">
     <div data-hook="active" class="form-group">
       <%= label_tag nil, Spree.t(:active) %>
-      <ul>
-        <li>
+      <div class="radio">
+        <%= label_tag :tracker_active_true do %>
           <%= radio_button(:tracker, :active, true) %>
-          <%= label_tag :tracker_active_true, Spree.t(:say_yes) %>
-        </li>
-        <li>
+          <%= Spree.t(:say_yes) %>
+        <% end %>
+      </div>
+      <div class="radio">
+        <%= label_tag :tracker_active_false do %>
           <%= radio_button(:tracker, :active, false) %>
-          <%= label_tag :tracker_active_false, Spree.t(:say_no) %>
-        </li>
-      </ul>
+          <%= Spree.t(:say_no) %>
+        <% end %>        
+      </div>
     </div>
   </div>
   

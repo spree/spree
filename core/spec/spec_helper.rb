@@ -37,10 +37,11 @@ require 'spree/testing_support/preferences'
 
 RSpec.configure do |config|
   config.color = true
+  config.fail_fast = ENV['FAIL_FAST'] || false
+  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
-
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
+  config.raise_errors_for_deprecations!
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
@@ -54,6 +55,4 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
-
-  config.fail_fast = ENV['FAIL_FAST'] || false
 end

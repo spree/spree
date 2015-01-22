@@ -56,7 +56,7 @@ module Spree
         can_not_transition_without_customer_info
 
         unless @order.completed?
-          @order.refresh_shipment_rates
+          @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
         end
       end
 
@@ -131,7 +131,7 @@ module Spree
         end
 
         def load_order
-          @order = Order.includes(:adjustments).find_by_number!(params[:id])
+          @order = Order.includes(:adjustments).friendly.find(params[:id])
           authorize! action, @order
         end
 

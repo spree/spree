@@ -20,9 +20,9 @@
 
 <% if @payments.any? %>
 
-  <fieldset data-hook="payment_list" class="no-border-bottom">
+  <div data-hook="payment_list" class="panel panel-default no-border-bottom">
     <%= render partial: 'list', locals: { payments: @payments } %>
-  </fieldset>
+  </div>
 
   <% if @refunds.any? %>
     <fieldset data-hook="payment_list" class="no-border-bottom">

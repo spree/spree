@@ -3,21 +3,24 @@
 <% end %>
 
 <%= form_for @promotion, :url => object_url, :method => :put do |f| %>
-  <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
-  </fieldset>
+  <div class="row">
+    <div class="col-md-12">
+      <%= render :partial => 'form', :locals => { :f => f } %>
+      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>  
+    </div>    
+  </div>
+  
 <% end %>
 
-<div id="promotion-filters" class="row margint">
+<div id="promotion-filters" class="row">
   <div id="rules_container" class="col-md-6">
-    <div class="well">
+    <div class="panel panel-default">
       <%= render :partial => 'rules' %>
     </div>
   </div>
 
   <div id="actions_container" class="col-md-6">
-    <div class="well">
+    <div class="panel panel-default">
       <%= render :partial => 'actions' %>
     </div>
   </div>

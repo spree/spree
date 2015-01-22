@@ -5,7 +5,7 @@ describe Spree::Payment, :type => :model do
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
-    gateway = Spree::Gateway::Bogus.new(:environment => 'test', :active => true)
+    gateway = Spree::Gateway::Bogus.new(:active => true)
     allow(gateway).to receive_messages :source_required => true
     gateway
   end
@@ -164,16 +164,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect {
-          payment.authorize!
-        }.to change { Spree::LogEntry.count }.by 1
-      end
-
-      context "when gateway does not match the environment" do
-        it "should raise an exception" do
-          allow(gateway).to receive_messages :environment => "foo"
-          expect { payment.authorize! }.to raise_error(Spree::Core::GatewayError)
-        end
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
+        payment.authorize!
       end
 
       context "if successful" do
@@ -216,16 +209,9 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should log the response" do
-        expect {
-          payment.purchase!
-        }.to change { Spree::LogEntry.count }.by 1
-      end
-
-      context "when gateway does not match the environment" do
-        it "should raise an exception" do
-          allow(gateway).to receive_messages :environment => "foo"
-          expect { payment.purchase!  }.to raise_error(Spree::Core::GatewayError)
-        end
+        payment.save!
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
+        payment.purchase!
       end
 
       context "if successful" do
@@ -364,13 +350,6 @@ describe Spree::Payment, :type => :model do
       it "should log the response" do
         expect(payment.log_entries).to receive(:create!).with(:details => anything)
         payment.void_transaction!
-      end
-
-      context "when gateway does not match the environment" do
-        it "should raise an exception" do
-          allow(gateway).to receive_messages :environment => "foo"
-          expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
-        end
       end
 
       context "if successful" do
@@ -571,22 +550,6 @@ describe Spree::Payment, :type => :model do
     end
   end
 
-  describe '#invalidate_old_payments' do
-      before {
-        Spree::Payment.skip_callback(:rollback, :after, :persist_invalid)
-      }
-      after {
-        Spree::Payment.set_callback(:rollback, :after, :persist_invalid)
-      }
-
-    it 'should not invalidate other payments if not valid' do
-      payment.save
-      invalid_payment = Spree::Payment.new(:amount => 100, :order => order, :state => 'invalid', :payment_method => gateway)
-      invalid_payment.save
-      expect(payment.reload.state).to eq('checkout')
-    end
-  end
-
   describe "#build_source" do
     let(:params) do
       {
@@ -663,21 +626,24 @@ describe Spree::Payment, :type => :model do
     end
   end
 
-  describe "#set_unique_identifier" do
+  describe "#set_unique_number" do
     # Regression test for #1998
-    it "sets a unique identifier on create" do
-      payment.run_callbacks(:create)
-      expect(payment.identifier).not_to be_blank
-      expect(payment.identifier.size).to eq(8)
-      expect(payment.identifier).to be_a(String)
+    it "sets a unique number on create" do
+      payment.generate_number
+      payment.save
+
+      expect(payment.number).to_not be_blank
+      expect(payment.number.length).to eq 8
+      expect(payment.number).to be_a(String)
     end
 
     # Regression test for #3733
-    it "does not regenerate the identifier on re-save" do
+    it "does not regenerate the number on re-save" do
+      payment.run_callbacks(:create)
       payment.save
-      old_identifier = payment.identifier
+      old_number = payment.number
       payment.save
-      expect(payment.identifier).to eq(old_identifier)
+      expect(payment.number).to eq old_number
     end
 
     context "other payment exists" do
@@ -689,16 +655,15 @@ describe Spree::Payment, :type => :model do
         payment
       }
 
-      before { other_payment.save! }
-
-      it "doesn't set duplicate identifier" do
-        expect(payment).to receive(:generate_identifier).and_return(other_payment.identifier)
-        expect(payment).to receive(:generate_identifier).and_call_original
+      it "doesn't set duplicate number" do
+        other_payment.run_callbacks(:create)
+        other_payment.save!
 
         payment.run_callbacks(:create)
+        payment.save!
 
-        expect(payment.identifier).not_to be_blank
-        expect(payment.identifier).not_to eq(other_payment.identifier)
+        expect(payment.number).to_not be_blank
+        expect(payment.number).to_not eq other_payment.number
       end
     end
   end

@@ -1,7 +1,5 @@
 module Spree
   class OrdersController < Spree::StoreController
-    ssl_required :show
-
     before_action :check_authorization
     rescue_from ActiveRecord::RecordNotFound, :with => :render_404
     helper 'spree/products', 'spree/orders'

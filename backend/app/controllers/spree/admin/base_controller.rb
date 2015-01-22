@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class BaseController < Spree::BaseController
-      ssl_required
-
       helper 'spree/admin/navigation'
       helper 'spree/admin/tables'
       layout '/spree/layouts/admin'

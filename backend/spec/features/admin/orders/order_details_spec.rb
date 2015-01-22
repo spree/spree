@@ -17,7 +17,6 @@ describe "Order Details", type: :feature, js: true do
   context 'as Admin' do
     stub_authorization!
 
-
     context "cart edit page" do
       before do
         product.master.stock_items.first.update_column(:count_on_hand, 100)
@@ -102,6 +101,23 @@ describe "Order Details", type: :feature, js: true do
 
         expect(page).not_to have_css('#selected_shipping_rate_id')
         expect(page).to have_content("Default")
+      end
+
+      it "can assign a back-end only shipping method" do
+        create(:shipping_method, name: "Backdoor", display_on: "back_end")
+        order = create(
+          :completed_order_with_totals,
+          shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
+        )
+        visit spree.edit_admin_order_path(order)
+        within("table tr.show-method") do
+          click_icon :edit
+        end
+        select2 "Backdoor", from: "Shipping Method"
+        click_icon :save
+
+        expect(page).not_to have_css('#selected_shipping_rate_id')
+        expect(page).to have_content("Backdoor")
       end
 
       it "will show the variant sku" do
@@ -263,7 +279,7 @@ describe "Order Details", type: :feature, js: true do
           context 'A shipment has shipped' do
 
             it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
-              order = create(:order, :state => 'payment', :number => "R100")
+              order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
 
               visit spree.cart_admin_order_path(order)
@@ -335,7 +351,6 @@ describe "Order Details", type: :feature, js: true do
           end
         end
       end
-
 
       context 'splitting to shipment' do
         before do

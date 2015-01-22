@@ -255,7 +255,7 @@ module Spree
 
     def ensure_master
       return unless new_record?
-      self.master ||= Variant.new
+      self.master ||= build_master
     end
 
     def normalize_slug

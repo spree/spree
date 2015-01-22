@@ -1,5 +1,8 @@
+<% content_for :google_analytics do %>
+  <%= render partial: 'spree/shared/google_checkout.js', locals: { order: @order, step_number: (@order.checkout_steps.index(@order.state) + 1) } %>
+<% end %>
 <div id="checkout" data-hook>
-  <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @order } %>
+  <%= render partial: 'spree/shared/error_messages', locals: { target: @order } %>
 
   <div class="row" data-hook="checkout_header">
     <div class="col-sm-3">
@@ -10,24 +13,24 @@
 
   <div class="row" data-hook="checkout_content">
     <div class="<%= if @order.state != 'confirm' then 'col-md-9' else 'col-md-12' end %>" data-hook="checkout_form_wrapper">
-      <%= form_for @order, :url => update_checkout_path(@order.state), :html => { :id => "checkout_form_#{@order.state}" } do |form| %>
+      <%= form_for @order, url: update_checkout_path(@order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
         <% if @order.state == 'address' || !@order.email? %>
           <div class="panel panel-default">
             <div class="panel-body">
               <div class="form-group">
                 <%= form.label :email %>
-                <%= form.text_field :email, :class => 'form-control' %>
+                <%= form.text_field :email, class: 'form-control' %>
               </div>
             </div>
           </div>
         <% end %>
         <%= form.hidden_field :state_lock_version %>
-        <%= render @order.state, :form => form %>
+        <%= render @order.state, form: form %>
       <% end %>
     </div>
     <% if @order.state != 'confirm' %>
       <div id="checkout-summary" data-hook="checkout_summary_box" class="col-md-3">
-        <%= render :partial => 'summary', :locals => { :order => @order } %>
+        <%= render partial: 'summary', locals: { order: @order } %>
       </div>
     <% end %>
   </div>

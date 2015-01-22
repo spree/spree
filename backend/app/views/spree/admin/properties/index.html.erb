@@ -11,14 +11,21 @@
     <%= search_form_for [:admin, @search] do |f| %>
 
       <%- locals = {:f => f} %>
-      <div data-hook="admin_property_index_search" class="form-group">
-        <%= f.label :name_cont, Spree.t(:name) %>
-        <%= f.text_field :name_cont, :class => "form-control js-quick-search-target" %>
-      </div>
+      
+      <div class="row">
+        <div class="col col-md-6">
+          <div data-hook="admin_property_index_search" class="form-group">
+            <%= f.label :name_cont, Spree.t(:name) %>
+            <%= f.text_field :name_cont, :class => "form-control js-quick-search-target" %>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <%= f.label :presentation_cont, Spree.t(:presentation) %>
-        <%= f.text_field :presentation_cont, :class => "form-control" %>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :presentation_cont, Spree.t(:presentation) %>
+            <%= f.text_field :presentation_cont, :class => "form-control" %>
+          </div>
+        </div>        
       </div>
 
       <div class="form-actions" data-hook="admin_pproperties_index_search_buttons">
@@ -43,7 +50,7 @@
         <tr id="<%= spree_dom_id property %>" data-hook="listing_properties_row">
           <td><%= property.name %></td>
           <td><%= property.presentation %></td>
-          <td class="actions actions-2">
+          <td class="actions actions-2 text-right">
             <%= link_to_edit(property, :no_text => true) %>
             <%= link_to_delete(property, :no_text => true) %>
           </td>

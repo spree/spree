@@ -20,7 +20,7 @@ module Spree
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
-        css_classes = []
+        css_classes = ['sidebar-menu-item']
 
         if options[:icon]
           link = link_to_with_icon(options[:icon], titleized_label, destination_url)
@@ -45,17 +45,17 @@ module Spree
 
       # Single main menu item
       def main_menu_item text, url: nil, icon: nil
-        link_to url do
+        link_to url, :'data-toggle' => "collapse", :'data-parent' => '#sidebar' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
-          content_tag(:span, " #{text}") +
+          content_tag(:span, " #{text}", class: 'text') +
           content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
         end
       end
 
       # Main menu tree menu
-      def main_menu_tree text, icon: nil, sub_menu: nil
-        content_tag :li, class: "treeview" do
-          main_menu_item(text, url: "javascript:;", icon: icon) +
+      def main_menu_tree text, icon: nil, sub_menu: nil, url: '#'
+        content_tag :li, class: 'sidebar-menu-item' do
+          main_menu_item(text, url: url, icon: icon) +
           render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
       end
@@ -87,7 +87,7 @@ module Spree
 
         select_tag(:per_page,
           options_for_select(per_page_options, params['per_page'] || per_page_default),
-          { id: "js-per-page-select", class: "form-control" })
+          { id: "js-per-page-select", class: "form-control pull-right" })
       end
 
       # finds class for a given symbol / string
@@ -108,33 +108,33 @@ module Spree
 
       def link_to_clone(resource, options={})
         options[:data] = { action: 'clone' }
-        options[:class] = "btn btn-default btn-sm"
+        options[:class] = "btn btn-primary btn-sm"
         link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
       end
 
       def link_to_new(resource)
         options[:data] = { action: 'new' }
-        options[:class] = "btn btn-default btn-sm"
+        options[:class] = "btn btn-success btn-sm"
         link_to_with_icon('plus', Spree.t(:new), edit_object_url(resource))
       end
 
       def link_to_edit(resource, options={})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
-        options[:class] = "btn btn-default btn-sm"
+        options[:class] = "btn btn-primary btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})
         options[:data] = { action: 'edit' }
-        options[:class] = "btn btn-default btn-sm"
+        options[:class] = "btn btn-primary btn-sm"
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
-        options[:class] = "btn btn-default btn-sm delete-resource"
+        options[:class] = "btn btn-danger btn-sm delete-resource"
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
         link_to_with_icon 'delete', name, url, options
       end
@@ -205,6 +205,20 @@ module Spree
         options.merge!(class: is_active ? 'active' : nil)
         content_tag(:li, options) do
           link_to(link_text, url)
+        end
+      end
+
+      def main_part_classes
+        if cookies['sidebar-minimized'] == 'true'
+          return 'col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1'
+        else
+          return 'col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2'
+        end
+      end
+
+      def wrapper_classes
+        if cookies['sidebar-minimized'] == 'true'
+          return 'sidebar-minimized'
         end
       end
     end

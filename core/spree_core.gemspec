@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.44.1'
-  s.add_dependency 'acts_as_list', '~> 0.6.0'
+  s.add_dependency 'acts_as_list', '~> 0.6'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.9.2'
@@ -39,8 +39,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails', '~> 4.2.0'
   s.add_dependency 'ransack', '~> 1.4.1'
   s.add_dependency 'responders'
-  s.add_dependency 'state_machine', '1.2.0'
-  s.add_dependency 'stringex', '~> 1.5.1'
+  s.add_dependency 'spree-state_machine', '2.0.0.beta4'
+  s.add_dependency 'stringex'
   s.add_dependency 'truncate_html', '0.9.2'
   s.add_dependency 'twitter_cldr', '~> 3.0'
 
