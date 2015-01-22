@@ -142,25 +142,16 @@ describe Spree::InventoryUnit, :type => :model do
       let(:return_item) { create(:return_item) }
       let(:inventory_unit) { return_item.inventory_unit }
 
-      it "returns a persisted return item" do
-        expect(subject).to be_persisted
-      end
-
-      it "returns it's associated return_item" do
-        expect(subject).to eq return_item
-      end
+      it { should be_persisted }
+      it { should eq return_item }
     end
 
     context "no associated return item" do
       let(:inventory_unit) { create(:inventory_unit) }
 
-      it "returns a new return item" do
-        expect(subject).to_not be_persisted
-      end
+      it { should_not be_persisted }
 
-      it "associates itself to the new return_item" do
-        expect(subject.inventory_unit).to eq inventory_unit
-      end
+      its(:inventory_unit) { should eq inventory_unit }
     end
   end
 
