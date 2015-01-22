@@ -5,8 +5,9 @@ describe Spree::OrdersController, :type => :controller do
 
   context "Order model mock" do
     let(:order) do
-      Spree::Order.create
+      Spree::Order.create!
     end
+    let(:variant) { create(:variant) }
 
     before do
       allow(controller).to receive_messages(:try_spree_current_user => user)
@@ -20,24 +21,46 @@ describe Spree::OrdersController, :type => :controller do
       end
 
       context "with Variant" do
-        let(:populator) { double('OrderPopulator') }
-        before do
-          expect(Spree::OrderPopulator).to receive(:new).and_return(populator)
-        end
-
         it "should handle population" do
-          expect(populator).to receive(:populate).with("2", "5", nil).and_return(true)
-          spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
+          expect do
+            spree_post :populate, variant_id: variant.id, quantity: 5
+          end.to change { user.orders.count }.by(1)
+          order = user.orders.last
           expect(response).to redirect_to spree.cart_path
+          expect(order.line_items.size).to eq(1)
+          line_item = order.line_items.first
+          expect(line_item.variant_id).to eq(variant.id)
+          expect(line_item.quantity).to eq(5)
         end
 
         it "shows an error when population fails" do
           request.env["HTTP_REFERER"] = spree.root_path
-          expect(populator).to receive(:populate).with("2", "5", nil).and_return(false)
-          allow(populator).to receive_message_chain(:errors, :full_messages).and_return(["Order population failed"])
-          spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
-          expect(flash[:error]).to eq("Order population failed")
+          allow_any_instance_of(Spree::LineItem).to(
+            receive(:valid?).and_return(false)
+          )
+          allow_any_instance_of(Spree::LineItem).to(
+            receive_message_chain(:errors, :full_messages).
+              and_return(["Order population failed"])
+          )
+
+          spree_post :populate, variant_id: variant.id, quantity: 5
+
           expect(response).to redirect_to(spree.root_path)
+          expect(flash[:error]).to eq("Order population failed")
+        end
+
+        it "shows an error when quantity is invalid" do
+          request.env["HTTP_REFERER"] = spree.root_path
+
+          spree_post(
+            :populate,
+            variant_id: variant.id, quantity: -1
+          )
+
+          expect(response).to redirect_to(spree.root_path)
+          expect(flash[:error]).to eq(
+            Spree.t(:please_enter_reasonable_quantity)
+          )
         end
       end
     end
