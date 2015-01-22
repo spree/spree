@@ -98,9 +98,11 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
     let(:tax_included_in_price) { false }
     let(:pre_tax_amount) { line_item_price * line_item_quantity }
 
-    let(:line_item) { create(:line_item, price: line_item_price,
-                                         quantity: line_item_quantity,
-                                         pre_tax_amount: pre_tax_amount) }
+    let(:line_item) do
+      create(:line_item, price: line_item_price,
+                         quantity: line_item_quantity,
+                         pre_tax_amount: pre_tax_amount)
+    end
 
     let(:adjustment_refund_amount) do
       (pre_tax_amount - adjustment_amount.abs) / line_item_quantity
