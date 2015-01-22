@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'orders', type: :feature do
   let(:order) { OrderWalkthrough.up_to(:complete) }
   let(:user) { create(:user) }
+  let(:shipment) { create :shipment }
 
   before do
     order.update_attribute(:user_id, user.id)
@@ -18,7 +19,8 @@ describe 'orders', type: :feature do
   it "should display line item price" do
     # Regression test for #2772
     line_item = order.line_items.first
-    line_item.target_shipment = create(:shipment)
+    shipment.stock_location.send :create_stock_items
+    line_item.target_shipment = shipment
     line_item.price = 19.00
     line_item.save!
 
