@@ -210,40 +210,42 @@ module Spree
               store_credit_events.where(action: ALLOCATION_ACTION).first_or_initialize
             end
 
-            event.update_attributes!({
-              amount: action_amount || amount,
-              authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
-              user_total_amount: user.total_available_store_credit,
-              originator: action_originator,
-              })
-            end
+            event.update_attributes!(
+              {
+                amount: action_amount || amount,
+                authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
+                user_total_amount: user.total_available_store_credit,
+                originator: action_originator,
+              }
+            )
+          end
 
-            def amount_used_less_than_or_equal_to_amount
-              return true if amount_used.nil?
+          def amount_used_less_than_or_equal_to_amount
+            return true if amount_used.nil?
 
-              if amount_used > amount
-                errors.add(:amount_used, Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
-              end
-            end
-
-            def amount_authorized_less_than_or_equal_to_amount
-              if (amount_used + amount_authorized) > amount
-                errors.add(:amount_authorized, Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
-              end
-            end
-
-            def validate_no_amount_used
-              if amount_used > 0
-                errors.add(:amount_used, 'is greater than zero. Can not delete store credit')
-              end
-            end
-
-            def associate_credit_type
-              unless self.type_id
-                credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
-                self.credit_type = Spree::StoreCreditType.find_by_name(credit_type_name)
-              end
+            if amount_used > amount
+              errors.add(:amount_used, Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
             end
           end
+
+          def amount_authorized_less_than_or_equal_to_amount
+            if (amount_used + amount_authorized) > amount
+              errors.add(:amount_authorized, Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+            end
+          end
+
+          def validate_no_amount_used
+            if amount_used > 0
+              errors.add(:amount_used, 'is greater than zero. Can not delete store credit')
+            end
+          end
+
+          def associate_credit_type
+            unless self.type_id
+              credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
+              self.credit_type = Spree::StoreCreditType.find_by_name(credit_type_name)
+            end
+          end
+        end
 
 end
