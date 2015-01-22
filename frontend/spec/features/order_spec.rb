@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'orders', :type => :feature do
+describe 'orders', type: :feature do
   let(:order) { OrderWalkthrough.up_to(:complete) }
   let(:user) { create(:user) }
 
@@ -22,7 +22,7 @@ describe 'orders', :type => :feature do
     line_item.price = 19.00
     line_item.save!
 
-    visit spree.order_path(order)
+    visit spree.order_path order
 
     # Tests view spree/shared/_order_details
     within 'td.price' do
@@ -31,7 +31,7 @@ describe 'orders', :type => :feature do
   end
 
   it "should have credit card info if paid with credit card" do
-    create(:payment, :order => order)
+    create(:payment, order: order)
     visit spree.order_path(order)
     within '.payment-info' do
       expect(page).to have_content "Ending in 1111"
@@ -39,7 +39,7 @@ describe 'orders', :type => :feature do
   end
 
   it "should have payment method name visible if not paid with credit card" do
-    create(:check_payment, :order => order)
+    create(:check_payment, order: order)
     visit spree.order_path(order)
     within '.payment-info' do
       expect(page).to have_content "Check"
