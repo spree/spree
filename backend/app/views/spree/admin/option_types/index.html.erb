@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <span id="new_ot_link">
-    <%= button_link_to Spree.t(:new_option_type), new_admin_option_type_url, { :class => "btn-success", :icon => 'add', :id => 'new_option_type_link' } %>
+    <%= button_link_to Spree.t(:new_option_type), new_admin_option_type_url, { class: "btn-success", icon: 'add', id: 'new_option_type_link' } %>
   </span>
 <% end %>
 
@@ -23,12 +23,14 @@
   <tbody>
     <% @option_types.each do |option_type| %>
       <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
-        <td class="move-handle"><span class="icon icon-move handle"></span></td>
+        <td class="move-handle text-center">
+          <span class="icon icon-move handle"></span>
+        </td>
         <td><%= option_type.name %></td>
         <td class="presentation"><%= option_type.presentation %></td>
-        <td class="actions actions-2">
-          <%= link_to_edit(option_type, :class => 'admin_edit_option_type', :no_text => true) %>
-          <%= link_to_delete(option_type, :no_text => true) %>
+        <td class="actions actions-2 text-right">
+          <%= link_to_edit(option_type, class: 'admin_edit_option_type', no_text: true) %>
+          <%= link_to_delete(option_type, no_text: true) %>
         </td>
       </tr>
     <% end %>
