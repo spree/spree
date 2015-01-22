@@ -913,10 +913,6 @@ en:
         total: ! 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
-    order_populator:
-      out_of_stock: ! '%{item} is out of stock.'
-      selected_quantity_not_available: ! 'selected of %{item} is not available.'
-      please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
     order_state:
@@ -977,6 +973,7 @@ en:
     phone: Phone
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
+    please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
@@ -1160,6 +1157,7 @@ en:
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_stock: Select stock
+    selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     server: Server
