@@ -1,7 +1,10 @@
 module Spree
   class Variant < Spree::Base
     #FIXME WARNING tested only under sqlite and postgresql
-    scope :descend_by_popularity, -> { order("COALESCE((SELECT COUNT(*) FROM  #{LineItem.quoted_table_name} GROUP BY #{LineItem.quoted_table_name}.variant_id HAVING #{LineItem.quoted_table_name}.variant_id = #{Variant.quoted_table_name}.id), 0) DESC") }
+    scope :descend_by_popularity, -> {
+      ActiveSupport::Deprecation.warn "Variant.descend_by_popularity is deprecated and will be removed from Spree 3.", caller
+      order("COALESCE((SELECT COUNT(*) FROM  #{LineItem.quoted_table_name} GROUP BY #{LineItem.quoted_table_name}.variant_id HAVING #{LineItem.quoted_table_name}.variant_id = #{Variant.quoted_table_name}.id), 0) DESC")
+    }
 
     class << self
       # Returns variants that match a given option value
@@ -10,6 +13,7 @@ module Spree
       #
       # product.variants_including_master.has_option(OptionType.find_by(name: 'shoe-size'), OptionValue.find_by(name: '8'))
       def has_option(option_type, *option_values)
+        ActiveSupport::Deprecation.warn "Variant.descend_by_popularity is deprecated and will be removed from Spree 3.", caller
         option_types = OptionType.table_name
 
         option_type_conditions = case option_type
