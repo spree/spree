@@ -10,6 +10,7 @@ module Spree
     end
 
     def populate(variant_id, quantity, options = {})
+      ActiveSupport::Deprecation.warn "OrderPopulator is deprecated and will be removed from Spree 3, use OrderContents with order.contents.add instead.", caller
       # protect against passing a nil hash being passed in
       # due to an empty params[:options]
       attempt_cart_add(variant_id, quantity, options || {})
