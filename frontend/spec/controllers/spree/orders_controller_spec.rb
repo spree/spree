@@ -22,9 +22,9 @@ describe Spree::OrdersController, :type => :controller do
 
       context "with Variant" do
         it "should handle population" do
-          expect {
-            spree_post :populate, { :variant_id => variant.id, :quantity => 5 }
-          }.to change { user.orders.count }.by(1)
+          expect do
+            spree_post :populate, variant_id: variant.id, quantity: 5
+          end.to change { user.orders.count }.by(1)
           order = user.orders.last
           expect(response).to redirect_to spree.cart_path
           expect(order.line_items.size).to eq(1)
@@ -43,7 +43,7 @@ describe Spree::OrdersController, :type => :controller do
               and_return(["Order population failed"])
           )
 
-          spree_post :populate, { :variant_id => variant.id, :quantity => 5 }
+          spree_post :populate, variant_id: variant.id, quantity: 5
 
           expect(response).to redirect_to(spree.root_path)
           expect(flash[:error]).to eq("Order population failed")
@@ -54,7 +54,7 @@ describe Spree::OrdersController, :type => :controller do
 
           spree_post(
             :populate,
-            {:variant_id => variant.id, :quantity => -1}
+            variant_id: variant.id, quantity: -1
           )
 
           expect(response).to redirect_to(spree.root_path)
