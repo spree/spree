@@ -56,6 +56,21 @@ describe Spree::Payment, :type => :model do
 
   end
 
+  context "#captured_amount" do
+    context "calculates based on capture events" do
+      it "with 0 capture events" do
+        expect(payment.captured_amount).to eq(0)
+      end
+
+      it "with some capture events" do
+        payment.save
+        payment.capture_events.create!(amount: 2.0)
+        payment.capture_events.create!(amount: 3.0)
+        expect(payment.captured_amount).to eq(5)
+      end
+    end
+  end
+
   context '#uncaptured_amount' do
     context "calculates based on capture events" do
       it "with 0 capture events" do
@@ -462,9 +477,9 @@ describe Spree::Payment, :type => :model do
   end
 
   describe "#save" do
-    context "completed payments" do
-      it "updates order payment total" do
-        payment = Spree::Payment.create(:amount => 100, :order => order, state: "completed")
+    context "captured payments" do
+      it "update order payment total" do
+        payment = create(:payment_completed, order: order)
         expect(order.payment_total).to eq payment.amount
       end
     end
