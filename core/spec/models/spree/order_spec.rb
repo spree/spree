@@ -602,10 +602,6 @@ describe Spree::Order, :type => :model do
       allow(order).to receive_messages(:line_items => @line_items)
     end
 
-    it "contains?" do
-      expect(order.contains?(@variant1)).to be true
-    end
-
     it "gets the quantity of a given variant" do
       expect(order.quantity_of(@variant1)).to eq(1)
 
