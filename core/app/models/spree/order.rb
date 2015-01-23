@@ -238,10 +238,6 @@ module Spree
       end
     end
 
-    def shipped_shipments
-      shipments.shipped
-    end
-
     def contains?(variant, options = {})
       find_line_item_by_variant(variant, options).present?
     end
