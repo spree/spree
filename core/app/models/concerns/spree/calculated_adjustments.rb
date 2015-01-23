@@ -7,6 +7,7 @@ module Spree
       accepts_nested_attributes_for :calculator
       validates :calculator, presence: true
       delegate :compute, to: :calculator
+      delegate :tax_affected?, to: :calculator
 
       def self.calculators
         spree_calculators.send model_name_without_spree_namespace

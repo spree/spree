@@ -7,6 +7,10 @@ module Spree
       before_destroy :deals_with_adjustments_for_deleted_source
     end
 
+    def tax_affected?
+      false
+    end
+
     protected
 
     def create_adjustment(order, adjustable, included = nil)

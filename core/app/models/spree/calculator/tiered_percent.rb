@@ -27,6 +27,10 @@ module Spree
       (object.amount * (percent || preferred_base_percent) / 100).round(2)
     end
 
+    def tax_affected?
+      true
+    end
+
     private
     def preferred_tiers_content
       if preferred_tiers.is_a? Hash

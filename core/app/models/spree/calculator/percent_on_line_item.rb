@@ -10,6 +10,10 @@ module Spree
       def compute(object)
         (object.amount * preferred_percent) / 100
       end
+
+      def tax_affected?
+        true
+      end
     end
   end
 end
