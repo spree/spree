@@ -211,7 +211,7 @@ module Spree
       end
 
       it "can transition from confirm to complete" do
-        order.update_column(:state, "complete")
+        order.update_columns(completed_at: Time.now, state: 'complete')
         allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: false)
         api_put :update, id: order.to_param, order_token: order.guest_token
         expect(json_response['state']).to eq('complete')
