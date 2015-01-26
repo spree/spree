@@ -56,6 +56,21 @@ describe Spree::Payment, :type => :model do
 
   end
 
+  context "#captured_amount" do
+    context "calculates based on capture events" do
+      it "with 0 capture events" do
+        expect(payment.captured_amount).to eq(0)
+      end
+
+      it "with some capture events" do
+        payment.save
+        payment.capture_events.create!(amount: 2.0)
+        payment.capture_events.create!(amount: 3.0)
+        expect(payment.captured_amount).to eq(5)
+      end
+    end
+  end
+
   context '#uncaptured_amount' do
     context "calculates based on capture events" do
       it "with 0 capture events" do
@@ -287,32 +302,49 @@ describe Spree::Payment, :type => :model do
         end
 
         context "if successful" do
-          before do
-            expect(payment.payment_method).to receive(:capture).with(payment.money.money.cents, payment.response_code, anything).and_return(success_response)
+          context 'for entire amount' do
+            before do
+              expect(payment.payment_method).to receive(:capture).with(payment.display_amount.money.cents, payment.response_code, anything).and_return(success_response)
+            end
+
+            it "should make payment complete" do
+              expect(payment).to receive(:complete!)
+              payment.capture!
+            end
+
+            it "logs capture events" do
+              payment.capture!
+              expect(payment.capture_events.count).to eq(1)
+              expect(payment.capture_events.first.amount).to eq(payment.amount)
+            end
           end
 
-          it "should make payment complete" do
-            expect(payment).to receive(:complete!)
-            payment.capture!
-          end
+          context 'for partial amount' do
+            let(:original_amount) { payment.money.money.cents }
+            let(:capture_amount) { original_amount - 100 }
 
-          it "logs capture events" do
-            payment.capture!
-            expect(payment.capture_events.count).to eq(1)
-            expect(payment.capture_events.first.amount).to eq(payment.amount)
-          end
-        end
+            before do
+              expect(payment.payment_method).to receive(:capture).with(capture_amount, payment.response_code, anything).and_return(success_response)
+            end
 
-        context "capturing a partial amount" do
-          it "logs capture events" do
-            payment.capture!(5000)
-            expect(payment.capture_events.count).to eq(1)
-            expect(payment.capture_events.first.amount).to eq(50)
-          end
+            it "should make payment complete & create pending payment for remaining amount" do
+              expect(payment).to receive(:complete!)
+              payment.capture!(capture_amount)
+              order = payment.order
+              payments = order.payments
 
-          it "stores the uncaptured amount on the payment" do
-            payment.capture!(6000)
-            expect(payment.uncaptured_amount).to eq(40) # 100 - 60 = 40
+              expect(payments.size).to eq 2
+              expect(payments.pending.first.amount).to eq 1
+              # Payment stays processing for spec because of receive(:complete!) stub.
+              expect(payments.processing.first.amount).to eq(capture_amount / 100)
+              expect(payments.processing.first.source).to eq(payments.pending.first.source)
+            end
+
+            it "logs capture events" do
+              payment.capture!(capture_amount)
+              expect(payment.capture_events.count).to eq(1)
+              expect(payment.capture_events.first.amount).to eq(capture_amount / 100)
+            end
           end
         end
 
@@ -464,9 +496,9 @@ describe Spree::Payment, :type => :model do
   end
 
   describe "#save" do
-    context "completed payments" do
-      it "updates order payment total" do
-        payment = Spree::Payment.create(:amount => 100, :order => order, state: "completed")
+    context "captured payments" do
+      it "update order payment total" do
+        payment = create(:payment, order: order, state: 'completed')
         expect(order.payment_total).to eq payment.amount
       end
     end
