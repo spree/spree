@@ -79,7 +79,9 @@ module Spree
                     order.errors.add(:base, Spree.t(:no_payment_found))
                     false
                   elsif order.payment_required?
-                    order.process_payments!.tap { |success| order.handle_failed_payments unless success }
+                    order.process_payments!.tap do |success|
+                      order.handle_failed_payments unless success
+                    end
                   end
                 end
                 after_transition to: :complete, do: :persist_user_credit_card

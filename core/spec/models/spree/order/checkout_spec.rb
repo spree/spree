@@ -476,18 +476,18 @@ describe Spree::Order, :type => :model do
         order.user = FactoryGirl.create(:user)
         order.email = 'spree@example.org'
         payment = FactoryGirl.create(:payment)
-        payment.stub(:process!).and_raise(Spree::Core::GatewayError.new('processing failed'))
+        gateway_error = Spree::Core::GatewayError.new('processing failed')
+        allow(payment).to receive(:process!).and_raise(gateway_error)
         order.payments << payment
 
         # make sure we will actually capture a payment
-        order.stub(payment_required?: true)
-        order.stub(ensure_available_shipping_rates: true)
+        allow(order).to receive_messages(payment_required?: true)
         order.line_items << FactoryGirl.create(:line_item)
         Spree::OrderUpdater.new(order).update
       end
 
       it "transitions to the payment state" do
-        expect { order.complete! }.to raise_error StateMachine::InvalidTransition
+        expect { order.next! }.to raise_error StateMachine::InvalidTransition
         expect(order.reload.state).to eq 'payment'
       end
     end
