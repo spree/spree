@@ -4,7 +4,7 @@ module Spree
   class Shipment < Spree::Base
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-    
+
     include Spree::NumberGenerator
 
     def generate_number(options = {})
@@ -155,7 +155,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:amount).sum
+      line_items.map(&:final_amount).sum
     end
 
     def line_items
