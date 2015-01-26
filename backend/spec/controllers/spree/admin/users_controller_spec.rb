@@ -8,6 +8,7 @@ describe Spree::Admin::UsersController, :type => :controller do
   before do
     allow(controller).to receive_messages :spree_current_user => user
     user.spree_roles.clear
+    stub_const('Spree::User', user.class)
   end
 
   context "#show" do
