@@ -1,7 +1,7 @@
 <div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="panel panel-default">
-  
+
   <%= render partial: "spree/admin/variants/split", formats: :js %>
-  
+
   <div class="panel-heading stock-location no-borderb" data-hook="stock-location">
     <h1 class="panel-title">
       <span class="shipment-number"><%= shipment.number %></span>
@@ -10,11 +10,12 @@
       <%= Spree.t(:package_from) %>
       <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
       <% if shipment.ready? and can? :update, shipment %>
-        <%= link_to Spree.t(:ship), 'javascript:;', :class => 'ship pull-right btn btn-success', :data => {'shipment-number' => shipment.number} %>
+        <%= link_to Spree.t(:ship), 'javascript:;', class: 'ship pull-right btn btn-success', data: { 'shipment-number' => shipment.number } %>
+        <div class='clearfix'></div>
       <% end %>
     </h1>
   </div>
-  
+
   <table class="table table-bordered stock-contents" data-hook="stock-contents">
     <thead>
       <th colspan="2"><%= Spree.t(:item_description) %></th>
@@ -103,5 +104,5 @@
       </tr>
     </tbody>
   </table>
-  
+
 </div>
