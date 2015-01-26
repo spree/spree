@@ -17,13 +17,13 @@ module Spree
       if store_credit.nil?
         ActiveMerchant::Billing::Response.new(false, Spree.t('store_credit_payment_method.unable_to_find'), {}, {})
       else
-        action = -> (store_credit) {
+        action = -> (store_credit) do
           store_credit.authorize(
-          amount_in_cents / 100.0.to_d,
-          gateway_options[:currency],
-          action_originator: gateway_options[:originator]
+            amount_in_cents / 100.0.to_d,
+            gateway_options[:currency],
+            action_originator: gateway_options[:originator]
           )
-        }
+        end
         handle_action_call(store_credit, action, :authorize)
       end
     end
