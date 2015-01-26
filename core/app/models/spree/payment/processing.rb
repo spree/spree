@@ -40,7 +40,12 @@ module Spree
 
           money = ::Money.new(amount, currency)
           capture_events.create!(amount: money.to_f)
-          handle_response(response, :complete, :failure)
+
+          if uncaptured_amount > 0
+            handle_response(response, :pend, :failure)
+          else
+            handle_response(response, :complete, :failure)
+          end
         end
       end
 

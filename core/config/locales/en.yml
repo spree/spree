@@ -500,6 +500,7 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
+    captured_authorized: Captured / Authorized
     card_code: Card Code
     card_number: Card Number
     card_type: Brand

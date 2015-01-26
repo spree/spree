@@ -99,9 +99,12 @@ describe Spree::Shipment, :type => :model do
     end
   end
 
-  it "#item_cost" do
-    shipment = create(:shipment, order: create(:order_with_totals))
-    expect(shipment.item_cost).to eql(10.0)
+  context "#item_cost" do
+    it 'should equal line items final amount with tax' do
+      shipment = create(:shipment, order: create(:order_with_totals))
+      create :tax_adjustment, adjustable: shipment.order.line_items.first, order: shipment.order
+      expect(shipment.item_cost).to eql(11.0)
+    end
   end
 
   it "#discounted_cost" do

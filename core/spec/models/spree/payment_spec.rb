@@ -273,19 +273,38 @@ describe Spree::Payment, :type => :model do
         end
 
         context "if successful" do
-          before do
-            expect(payment.payment_method).to receive(:capture).with(payment.money.money.cents, payment.response_code, anything).and_return(success_response)
+          context 'for entire amount' do
+            before do
+              expect(payment.payment_method).to receive(:capture).with(payment.display_amount.money.cents, payment.response_code, anything).and_return(success_response)
+            end
+
+            it "should make payment complete" do
+              expect(payment).to receive(:complete!)
+              payment.capture!
+            end
+
+            it "logs capture events" do
+              payment.capture!
+              expect(payment.capture_events.count).to eq(1)
+              expect(payment.capture_events.first.amount).to eq(payment.amount)
+            end
           end
 
-          it "should make payment complete" do
-            expect(payment).to receive(:complete!)
-            payment.capture!
-          end
+          context 'for partial amount' do
+            before do
+              expect(payment.payment_method).to receive(:capture).with(payment.money.money.cents - 100, payment.response_code, anything).and_return(success_response)
+            end
 
-          it "logs capture events" do
-            payment.capture!
-            expect(payment.capture_events.count).to eq(1)
-            expect(payment.capture_events.first.amount).to eq(payment.amount)
+            it "should make payment pending" do
+              expect(payment).to receive(:pend!)
+              payment.capture!(payment.money.money.cents - 100)
+            end
+
+            it "logs capture events" do
+              payment.capture!(payment.money.money.cents - 100)
+              expect(payment.capture_events.count).to eq(1)
+              expect(payment.capture_events.first.amount).to eq(payment.amount - 1)
+            end
           end
         end
 
