@@ -70,12 +70,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def update_positions
-    params[:positions].each do |id, index|
-      model_class.find(id).update_attributes(:position => index)
+    ActiveRecord::Base.transaction do
+      params[:positions].each do |id, index|
+        model_class.find(id).set_list_position(index)
+      end
     end
 
     respond_to do |format|
-      format.js  { render :text => 'Ok' }
+      format.js  { render text: 'Ok' }
     end
   end
 
