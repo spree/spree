@@ -184,33 +184,26 @@ module Spree
       pending_payments =  order.pending_payments
                             .sort_by(&:uncaptured_amount).reverse
 
-      # NOTE Do we really need to force orders to have pending payments on dispatch?
-      if pending_payments.empty?
-        raise Spree::Core::GatewayError, Spree.t(:no_pending_payments)
-      else
-        shipment_to_pay = final_price_with_items
-        payments_amount = 0
+      shipment_to_pay = final_price_with_items
+      payments_amount = 0
 
-        payments_pool = pending_payments.each_with_object([]) do |payment, pool|
-          next if payments_amount >= shipment_to_pay
-          payments_amount += payment.uncaptured_amount
-          pool << payment
-        end
-
-        payments_pool.each do |payment|
-          capturable_amount = if payment.amount >= shipment_to_pay
-                                shipment_to_pay
-                              else
-                                payment.amount
-                              end
-          cents = (capturable_amount * 100).to_i
-          payment.capture!(cents)
-          shipment_to_pay -= capturable_amount
-        end
+      payments_pool = pending_payments.each_with_object([]) do |payment, pool|
+        break if payments_amount >= shipment_to_pay
+        payments_amount += payment.uncaptured_amount
+        pool << payment
       end
-    rescue Spree::Core::GatewayError => e
-      errors.add(:base, e.message)
-      return !!Spree::Config[:allow_checkout_on_gateway_error]
+
+      payments_pool.each do |payment|
+        capturable_amount = if payment.amount >= shipment_to_pay
+                              shipment_to_pay
+                            else
+                              payment.amount
+                            end
+
+        cents = (capturable_amount * 100).to_i
+        payment.capture!(cents)
+        shipment_to_pay -= capturable_amount
+      end
     end
 
     def ready_or_pending?

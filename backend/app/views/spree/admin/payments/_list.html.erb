@@ -15,7 +15,7 @@
       <tr id="<%= dom_id(payment) %>" data-hook="payments_row">
         <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
         <td><%= pretty_time(payment.created_at) %></td>
-        <td class="amount text-center"><%= payment.display_amount.to_html %></td>
+        <td class="amount text-center"><%= payment.display_amount %></td>
         <td class="text-center"><%= payment_method_name(payment) %></td>
         <td class="text-center"><%= payment.transaction_id %></td>
         <td class="text-center">

@@ -180,9 +180,9 @@ describe Spree::Order, :type => :model do
 
       context "with shipped items" do
         before do
-          allow(order).to receive_messages :shipment_state => 'partial'
-          allow(order).to receive_messages :outstanding_balance? => false
-          allow(order).to receive_messages :payment_state => "paid"
+          allow(order).to receive_messages shipment_state: 'partial'
+          allow(order).to receive_messages outstanding_balance?: false
+          allow(order).to receive_messages payment_state: "paid"
         end
 
         it "should not alter the payment state" do
@@ -209,9 +209,9 @@ describe Spree::Order, :type => :model do
   # Another regression test for #729
   context "#resume" do
     before do
-      allow(order).to receive_messages :email => "user@spreecommerce.com"
-      allow(order).to receive_messages :state => "canceled"
-      allow(order).to receive_messages :allow_resume? => true
+      allow(order).to receive_messages email: "user@spreecommerce.com"
+      allow(order).to receive_messages state: "canceled"
+      allow(order).to receive_messages allow_resume?: true
 
       # Stubs method that cause unwanted side effects in this test
       allow(order).to receive :has_available_shipment
