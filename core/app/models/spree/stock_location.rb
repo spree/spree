@@ -4,6 +4,9 @@ module Spree
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :stock_movements, through: :stock_items
 
+    has_many :line_item_stock_locations, class_name: "Spree::LineItemStockLocation"
+    has_many :line_items, through: :line_item_stock_locations
+
     belongs_to :state, class_name: 'Spree::State'
     belongs_to :country, class_name: 'Spree::Country'
 

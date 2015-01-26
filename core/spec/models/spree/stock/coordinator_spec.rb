@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Coordinator, :type => :model do
-      let!(:order) { create(:order_with_line_items) }
+    describe Coordinator do
+      let!(:order) { create(:order_with_line_items, line_items_count: 2) }
 
       subject { Coordinator.new(order) }
 
@@ -34,15 +34,35 @@ module Spree
       end
 
       context "build packages" do
-        it "builds a package for every stock location" do
-          subject.packages.count == StockLocation.count
+        context "there are no associated stock locations for the inventory units" do
+          it "builds a package for all active stock locations" do
+            subject.packages.count == StockLocation.count
+          end
+
+          context "missing stock items in active stock location" do
+            let!(:another_location) { create(:stock_location, propagate_all_variants: false) }
+
+            it "builds packages only for valid active stock locations" do
+              expect(subject.build_packages.count).to eq (StockLocation.count - 1)
+            end
+          end
         end
 
-        context "missing stock items in stock location" do
-          let!(:another_location) { create(:stock_location, propagate_all_variants: false) }
+        context "there are associated stock locations for the inventory units" do
+          let(:stock_location) { order.variants.first.stock_locations.first }
+          let!(:stock_location_2) { create(:stock_location) }
 
-          it "builds packages only for valid stock locations" do
-            expect(subject.build_packages.count).to eq(StockLocation.count - 1)
+          before do
+            line_item_1 = order.line_items.first
+            line_item_2 = order.line_items.last
+            line_item_1.line_item_stock_locations.create(stock_location_id: stock_location.id, quantity: line_item_1.quantity)
+            line_item_2.line_item_stock_locations.create(stock_location_id: stock_location_2.id, quantity: line_item_2.quantity)
+          end
+
+          it "builds a package for each associated stock location" do
+            packages = subject.build_packages
+            expect(packages.count).to eq (2)
+            expect(packages.map(&:stock_location)).to eq([stock_location, stock_location_2])
           end
         end
       end

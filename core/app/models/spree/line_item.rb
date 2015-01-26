@@ -10,6 +10,9 @@ module Spree
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
 
+    has_many :line_item_stock_locations, class_name: "Spree::LineItemStockLocation"
+    has_many :stock_locations, through: :line_item_stock_locations
+
     before_validation :copy_price
     before_validation :copy_tax_category
 

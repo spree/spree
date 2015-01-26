@@ -20,19 +20,32 @@ addVariant = function() {
     $('#stock_details').hide();
 
     var variant_id = $('input.variant_autocomplete').val();
-    var quantity = $("input.quantity[data-variant-id='" + variant_id + "']").val();
+    var total_quantity = 0;
+    var stock_location_quantities = {};
 
-    adjustLineItems(order_number, variant_id, quantity);
+    if ($(".stock-levels.untracked-inventory").length > 0) {
+        total_quantity = $("input#variant_quantity").val();
+    }
+    else {
+        var quantities = $("input.quantity[data-variant-id='" + variant_id + "']");
+
+        quantities.each(function() {
+            total_quantity += Number($(this).val());
+            stock_location_quantities[$(this).attr('data-stock-location-id')] = $(this).val();
+        });
+    }
+
+    adjustLineItems(order_number, variant_id, total_quantity, stock_location_quantities);
     return 1
 }
 
-adjustLineItems = function(order_number, variant_id, quantity){
+adjustLineItems = function(order_number, variant_id, quantity, stock_location_quantities){
     var url = Spree.routes.orders_api + "/" + order_number + '/line_items';
 
     $.ajax({
         type: "POST",
         url: Spree.url(url),
-        data: { line_item: {variant_id: variant_id, quantity: quantity }}
+        data: { line_item: {variant_id: variant_id, quantity: quantity,  stock_location_quantities: stock_location_quantities}}
     }).done(function( msg ) {
         window.Spree.advanceOrder();
         window.location.reload();
