@@ -9,9 +9,8 @@ module Spree
         preference :quantity_max, :integer, default: 1000
         preference :operator_max, :string, default: '<'
 
-
         OPERATORS_MIN = ['gt', 'gte']
-        OPERATORS_MAX = ['lt','lte']
+        OPERATORS_MAX = ['lt', 'lte']
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
@@ -46,7 +45,6 @@ module Spree
             eligibility_error_message(:item_quantity_less_than_or_equal, quantity: preferred_quantity_min)
           end
         end
-
       end
     end
   end
