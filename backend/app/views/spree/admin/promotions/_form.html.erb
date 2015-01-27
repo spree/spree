@@ -25,10 +25,33 @@
     <% end %>
   </div>
 
-  <div class="col-md-6">
-    <%= f.field_container :description, class: ['form-group'] do %>
-      <%= f.label :description %>
-      <%= f.text_area :description, :rows => 7, :class => 'form-control' %>
+  <div class="sixteen columns">
+    <%= f.field_container :promotion_codes do %>
+      <table>
+        <tr>
+          <th><%= f.label :value %></th>
+          <th><%= f.label :starts_at %></th>
+          <th><%= f.label :expires_at %></th>
+          <th><%= f.label :usage_limit %></th>
+          <th><%= f.label :delete %></th>
+        </tr>
+        <%= f.fields_for :promotion_codes, @promotion.promotion_codes do |pc| %>
+          <tr>
+            <td><%= pc.text_field :value %></td>
+            <td><%= pc.date_field :starts_at %></td>
+            <td><%= pc.date_field :expires_at %></td>
+            <td><%= pc.number_field :usage_limit %></td>
+            <td><%= pc.check_box :_destroy %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="omega nine columns">
+    <%= f.field_container :description do %>
+      <%= f.label :description %><br />
+      <%= f.text_area :description, :rows => 7, :class => 'fullwidth' %>
     <% end %>
 
     <%= f.field_container :category, class: ['form-group'] do %>

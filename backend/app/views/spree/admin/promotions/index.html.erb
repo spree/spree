@@ -16,16 +16,11 @@
             <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
           </div>
 
-          <div class="form-group">
-            <%= label_tag :q_code_cont, Spree.t(:code) %>
-            <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="form-group">
-            <%= label_tag :q_path_cont, Spree.t(:path) %>
-            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
+          <div class="four columns">
+            <div class="field">
+              <%= label_tag :q_path_cont, Spree.t(:path) %>
+              <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
+            </div>
           </div>
 
           <div class="form-group">

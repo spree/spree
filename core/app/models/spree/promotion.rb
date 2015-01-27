@@ -13,11 +13,16 @@ module Spree
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
+    has_many :promotion_codes, dependent: :destroy
+    alias_method :codes, :promotion_codes
+
     has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
+    accepts_nested_attributes_for :promotion_codes, allow_destroy: true
 
     validates_associated :rules
+    validates_associated :promotion_codes
 
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
@@ -26,31 +31,45 @@ module Spree
 
     before_save :normalize_blank_values
 
-    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
-
     order_join_table = reflect_on_association(:orders).join_table
-
-    scope :applied, -> { joins("INNER JOIN #{order_join_table} ON #{order_join_table}.promotion_id = #{table_name}.id").uniq }
+    scope :applied, -> do
+      joins("INNER JOIN #{order_join_table} ON " \
+        "#{order_join_table}.promotion_id = #{table_name}.id").distinct
+    end
+    scope :coupons, -> do
+      joins(:promotion_codes).where("#{Spree::PromotionCode.table_name}.value IS NOT NULL")
+    end
 
     def self.advertised
       where(advertise: true)
     end
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{self.table_name}.code) = ?", coupon_code.strip.downcase).first
+      joins(:promotion_codes).where(
+        "lower(#{Spree::PromotionCode.table_name}.value) = ?", coupon_code.strip.downcase
+      ).first
     end
 
     def self.active
-      where('starts_at IS NULL OR starts_at < ?', Time.now).
-        where('expires_at IS NULL OR expires_at > ?', Time.now)
+      where("#{Spree::Promotion.table_name}.starts_at IS NULL OR " \
+        "#{Spree::Promotion.table_name}.starts_at < ? AND " \
+        "#{Spree::Promotion.table_name}.expires_at IS NULL OR " \
+        "#{Spree::Promotion.table_name}.expires_at > ?", Time.now, Time.now)
     end
 
     def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
-    def expired?
-      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
+    def expired?(coupon_code = nil)
+      promo_exp = !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
+      code      = codes.where(value: coupon_code) if coupon_code.present?
+
+      if code.present?
+        promo_exp && code.expired?
+      else
+        promo_exp
+      end
     end
 
     def activate(payload)
@@ -78,9 +97,21 @@ module Spree
       return action_taken
     end
 
+    # Failsafe - backwards compatibility
+    def code
+      codes.first.try(:value)
+    end
+
+    # Failsafe - backwards compatibility
+    def code=(value)
+      codes.build(value: value) unless value.blank?
+    end
+
     # called anytime order.update! happens
-    def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
+    def eligible?(promotable, coupon_code = nil)
+      return false if expired?(coupon_code) ||
+                        usage_limit_exceeded?(promotable, coupon_code) ||
+                        blacklisted?(promotable)
       !!eligible_rules(promotable, {})
     end
 
@@ -115,8 +146,15 @@ module Spree
       rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
     end
 
-    def usage_limit_exceeded?(promotable)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+    def usage_limit_exceeded?(promotable, coupon_code = nil)
+      promo_exc = usage_limit.to_i > 0 && adjusted_credits_count(promotable) >= usage_limit
+      code      = codes.where(value: coupon_code) if coupon_code.present?
+
+      if code.present?
+        promo_exc && code.usage_limit_exceeded?
+      else
+        promo_exc
+      end
     end
 
     def adjusted_credits_count(promotable)
@@ -176,9 +214,7 @@ module Spree
     end
 
     def normalize_blank_values
-      [:code, :path].each do |column|
-        self[column] = nil if self[column].blank?
-      end
+      self[:path] = nil if self[:path].blank?
     end
 
     def match_all?
