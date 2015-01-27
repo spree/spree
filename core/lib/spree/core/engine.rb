@@ -72,6 +72,7 @@ module Spree
       config.after_initialize do
         Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::ItemTotal,
+          Spree::Promotion::Rules::ItemQuantity,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
           Spree::Promotion::Rules::FirstOrder,
