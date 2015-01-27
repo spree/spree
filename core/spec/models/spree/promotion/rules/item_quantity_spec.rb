@@ -129,7 +129,7 @@ describe Spree::Promotion::Rules::ItemQuantity, :type => :model do
     context "and quantity is equal to the prefered maximum quantity" do
       before { allow(order).to receive_messages quantity: 10 }
 
-      it "should not be eligible" do
+      it "should be eligible" do
         expect(rule).to be_eligible(order)
       end
     end
@@ -168,7 +168,7 @@ describe Spree::Promotion::Rules::ItemQuantity, :type => :model do
 
         before { allow(order).to receive_messages quantity: 4 }
 
-        it "should not be eligible" do
+        it "should be eligible" do
           expect(rule).to be_eligible(order)
         end
       end
@@ -236,7 +236,7 @@ describe Spree::Promotion::Rules::ItemQuantity, :type => :model do
 
         before { allow(order).to receive_messages quantity: 4 }
 
-        it "should not be eligible" do
+        it "should be eligible" do
           expect(rule).to be_eligible(order)
         end
       end
@@ -259,7 +259,7 @@ describe Spree::Promotion::Rules::ItemQuantity, :type => :model do
     context "and quantity is equal to the prefered maximum quantity" do
       before { allow(order).to receive_messages quantity: 10 }
 
-      it "should not be eligible" do
+      it "should be eligible" do
         expect(rule).to be_eligible(order)
       end
     end
