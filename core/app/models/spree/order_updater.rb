@@ -59,7 +59,7 @@ module Spree
     end
 
     def update_payment_total
-      order.payment_total = payments.joins(:capture_events).sum('spree_payment_capture_events.amount')
+      order.payment_total = payments.completed.sum(:amount)
     end
 
     def update_shipment_total
