@@ -1,0 +1,12 @@
+<div class="panel-body">
+  <div class="row no-marginb">
+    <div class="form-group col-md-6 no-marginb">
+      <%= select_tag "#{param_prefix}[preferred_operator_min]", options_for_select(Spree::Promotion::Rules::ItemQuantity::OPERATORS_MIN.map{|o| [Spree.t("item_quantity_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator_min), { class: 'select2 select_item_quantity marginb' } %>
+      <%= select_tag "#{param_prefix}[preferred_operator_max]", options_for_select(Spree::Promotion::Rules::ItemQuantity::OPERATORS_MAX.map{|o| [Spree.t("item_quantity_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator_max), { class: 'select2 select_item_quantity' } %>
+    </div>
+    <div class="form-group col-md-6 no-marginb">
+      <%= text_field_tag "#{param_prefix}[preferred_quantity_min]", promotion_rule.preferred_quantity_min, class: 'form-control marginb' %>
+      <%= text_field_tag "#{param_prefix}[preferred_quantity_max]", promotion_rule.preferred_quantity_max, class: 'form-control' %>
+    </div>
+  </div>
+</div>
