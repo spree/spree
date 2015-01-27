@@ -184,8 +184,7 @@ module Spree
       pending_payments =  order.pending_payments
                             .sort_by(&:uncaptured_amount).reverse
 
-      # TODO: Do we really need to force orders to have pending payments on dispatch?
-      # No, but need at least a payment with a reuseable source i.e. cc token.
+      # NOTE Do we really need to force orders to have pending payments on dispatch?
       if pending_payments.empty?
         raise Spree::Core::GatewayError, Spree.t(:no_pending_payments)
       else
@@ -209,6 +208,9 @@ module Spree
           shipment_to_pay -= capturable_amount
         end
       end
+    rescue Spree::Core::GatewayError => e
+      errors.add(:base, e.message)
+      return !!Spree::Config[:allow_checkout_on_gateway_error]
     end
 
     def ready_or_pending?

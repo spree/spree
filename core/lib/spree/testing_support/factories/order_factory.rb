@@ -56,7 +56,7 @@ FactoryGirl.define do
           shipment_state 'ready'
 
           after(:create) do |order|
-            create(:payment_completed, amount: order.total, order: order)
+            create(:payment, amount: order.total, order: order, state: 'completed')
             order.shipments.each do |shipment|
               shipment.inventory_units.update_all state: 'on_hand'
               shipment.update_column('state', 'ready')
