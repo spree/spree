@@ -23,10 +23,12 @@ module Spree
       private
 
       def promotions
-        Spree::Promotion.active.where(
-          id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id),
-          path: nil
-        )
+        Spree::Promotion.active.
+          joins(:promotion_codes).where({
+            id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id),
+            promotion_codes: { value: nil }
+            path: nil
+          })
       end
     end
   end

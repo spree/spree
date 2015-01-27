@@ -7,11 +7,6 @@
       <%= f.text_field :name, :class => 'form-control' %>
     <% end %>
 
-    <%= f.field_container :code, class: ['form-group'] do %>
-      <%= f.label :code %>
-      <%= f.text_field :code, :class => 'form-control' %>
-    <% end %>
-
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
       <%= f.text_field :path, :class => 'form-control' %>
@@ -23,6 +18,26 @@
         <%= Spree.t(:advertise) %>
       <% end %>
     <% end %>
+
+    <%= f.label :promotion_codes %><br />
+    <table>
+      <tr>
+        <th><%= f.label :value %></th>
+        <th><%= f.label :starts_at %></th>
+        <th><%= f.label :expires_at %></th>
+        <th><%= f.label :usage_limit %></th>
+        <th><%= f.label :delete %></th>
+      </tr>
+      <%= f.fields_for :promotion_codes, @promotion.promotion_codes do |pc| %>
+        <tr>
+          <td><%= pc.text_field :value %></td>
+          <td><%= pc.date_field :starts_at %></td>
+          <td><%= pc.date_field :expires_at %></td>
+          <td><%= pc.number_field :usage_limit %></td>
+          <td><%= pc.check_box :_destroy %></td>
+        </tr>
+      <% end %>
+    </table>
   </div>
 
   <div class="col-md-6">
