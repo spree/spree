@@ -20,7 +20,7 @@ module Spree
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
-        css_classes = []
+        css_classes = ['sidebar-menu-item']
 
         if options[:icon]
           link = link_to_with_icon(options[:icon], titleized_label, destination_url)
@@ -47,14 +47,14 @@ module Spree
       def main_menu_item text, url: nil, icon: nil
         link_to url, :'data-toggle' => "collapse", :'data-parent' => '#sidebar' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
-          content_tag(:span, " #{text}") +
+          content_tag(:span, " #{text}", class: 'text') +
           content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
         end
       end
 
       # Main menu tree menu
       def main_menu_tree text, icon: nil, sub_menu: nil, url: '#'
-        content_tag :li do
+        content_tag :li, class: 'sidebar-menu-item' do
           main_menu_item(text, url: url, icon: icon) +
           render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
@@ -205,6 +205,20 @@ module Spree
         options.merge!(class: is_active ? 'active' : nil)
         content_tag(:li, options) do
           link_to(link_text, url)
+        end
+      end
+
+      def main_part_classes
+        if cookies['sidebar-minimized'] == 'true'
+          return 'col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1'
+        else
+          return 'col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2'
+        end
+      end
+
+      def wrapper_classes
+        if cookies['sidebar-minimized'] == 'true'
+          return 'sidebar-minimized'
         end
       end
     end
