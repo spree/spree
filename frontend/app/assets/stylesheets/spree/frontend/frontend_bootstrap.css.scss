@@ -46,7 +46,7 @@
 
 // -- Spree Layout Custom Rules -------------------------
 
-//TODO, bug #6
+.alert-notice { @extend .alert-success; }
 .alert-error, .alert-registration_error { @extend .alert-danger; }
 .alert-alert { @extend .alert-info; }
 
@@ -92,7 +92,11 @@ table {
   }
 }
 
-// Updated credit-card image 
+// Updated credit-card image
 #credit-card-image {
   margin-top: -10px;
+}
+
+.existing-credit-card-list td {
+  padding: 5px;
 }
