@@ -2,7 +2,11 @@ module Spree
   class Payment < Spree::Base
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-    
+
+    extend Spree::DisplayMoney
+    money_methods :amount, :captured_amount, :uncaptured_amount
+    alias :money :display_amount
+
     include Spree::Payment::Processing
     include Spree::NumberGenerator
 
@@ -106,11 +110,6 @@ module Spree
       order.currency
     end
 
-    def money
-      Spree::Money.new(amount, { currency: currency })
-    end
-    alias display_amount money
-
     def amount=(amount)
       self[:amount] =
         case amount
@@ -165,8 +164,12 @@ module Spree
       return true
     end
 
+    def captured_amount
+      capture_events.sum(:amount)
+    end
+
     def uncaptured_amount
-      amount - capture_events.sum(:amount)
+      amount - captured_amount
     end
 
     private

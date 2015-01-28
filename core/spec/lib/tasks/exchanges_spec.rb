@@ -39,7 +39,6 @@ describe "exchanges:charge_unreturned_items" do
       it "does not create a new order" do
         expect { subject.invoke }.not_to change { Spree::Order.count }
       end
-
     end
 
     context "more than the config allowed days have passed" do

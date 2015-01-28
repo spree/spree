@@ -3,7 +3,7 @@
     <tr data-hook="payments_header">
       <th><%= Spree::Payment.human_attribute_name(:number) %></th>
       <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-      <th class="text-center"><%= Spree.t(:amount) %></th>
+      <th class="text-center"><%= Spree.t(:captured_authorized) %></th>
       <th class="text-center"><%= Spree.t(:payment_method) %></th>
       <th class="text-center"><%= Spree.t(:transaction_id) %></th>
       <th class="text-center"><%= Spree.t(:payment_state) %></th>
@@ -15,7 +15,7 @@
       <tr id="<%= dom_id(payment) %>" data-hook="payments_row">
         <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
         <td><%= pretty_time(payment.created_at) %></td>
-        <td class="amount text-center"><%= payment.display_amount.to_html %></td>
+        <td class="amount text-center"><%= payment.display_captured_amount %> / <%= payment.display_amount.to_html %></td>
         <td class="text-center"><%= payment_method_name(payment) %></td>
         <td class="text-center"><%= payment.transaction_id %></td>
         <td class="text-center">
