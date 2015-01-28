@@ -80,7 +80,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         visit spree.root_path
         within("#product_#{product.id}") do
           within(".price") do
-            expect(page).to have_content("₽19.99")
+            expect(page).to have_content("19.99 ₽")
           end
         end
       end
@@ -88,7 +88,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
       it "on product page" do
         visit spree.product_path(product)
         within(".price") do
-          expect(page).to have_content("₽19.99")
+          expect(page).to have_content("19.99 ₽")
         end
       end
 
@@ -97,7 +97,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         click_button "Add To Cart"
         click_link "Home"
         within(".cart-info") do
-          expect(page).to have_content("₽19.99")
+          expect(page).to have_content("19.99 ₽")
         end
       end
 
@@ -108,7 +108,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         fill_in "order_email", with: "test@example.com"
         click_button 'Continue'
         within("tr[data-hook=item_total]") do
-          expect(page).to have_content("₽19.99")
+          expect(page).to have_content("19.99 ₽")
         end
       end
     end
@@ -127,7 +127,6 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     let!(:variant) { product.variants.create!(:price => 5.59) }
 
     before do
-      Spree::Config[:display_currency] = true
       # Need to have two images to trigger the error
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
       product.images.create!(:attachment => image)
@@ -155,15 +154,6 @@ describe "Visiting Products", type: :feature, inaccessible: true do
       click_link product.name
       within("#product-price") do
         expect(page).not_to have_content Spree.t(:out_of_stock)
-      end
-    end
-
-    # Regression test for #4342
-    it "does not fail when display_currency is true" do
-      Spree::Config[:display_currency] = true
-      click_link product.name
-      within("#cart-form") do
-        find('input[type=radio]')
       end
     end
   end

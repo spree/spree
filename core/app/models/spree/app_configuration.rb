@@ -35,16 +35,10 @@ module Spree
     preference :checkout_zone, :string, default: nil # replace with the name of a zone if you would like to limit the countries
     preference :company, :boolean, default: false # Request company field for billing and shipping addr
     preference :currency, :string, default: "USD"
-    preference :currency_decimal_mark, :string, default: "."
-    preference :currency_symbol_position, :string, default: "before"
-    preference :currency_sign_before_symbol, :boolean, default: true
-    preference :currency_thousands_separator, :string, default: ","
-    preference :display_currency, :boolean, default: false
     preference :default_country_id, :integer
     preference :dismissed_spree_alerts, :string, default: ''
     preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
     preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
-    preference :hide_cents, :boolean, default: false
     preference :last_check_for_spree_alerts, :string, default: nil
     preference :layout, :string, default: 'spree/layouts/spree_application'
     preference :logo, :string, default: 'logo/spree_50.png'
