@@ -645,7 +645,6 @@ en:
     enable_mail_delivery: Enable Mail Delivery
     end: End
     ending_in: Ending in
-    environment: Environment
     error: error
     errors:
       messages:
