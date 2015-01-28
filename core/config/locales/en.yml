@@ -572,10 +572,7 @@ en:
     credit_cards: Credit Cards
     credit_owed: Credit Owed
     currency: Currency
-    currency_decimal_mark: Currency decimal mark
     currency_settings: Currency Settings
-    currency_symbol_position: Put currency symbol before or after dollar amount?
-    currency_thousands_separator: Currency thousands separator
     current: Current
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
@@ -618,7 +615,6 @@ en:
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
-    display_currency: Display currency
     doesnt_track_inventory: It doesnt track inventory
     edit: Edit
     editing_resource: 'Editing %{resource}'
@@ -704,7 +700,6 @@ en:
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
-    hide_cents: Hide cents
     home: Home
     i18n:
       available_locales: Available Locales
