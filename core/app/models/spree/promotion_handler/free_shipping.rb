@@ -26,7 +26,7 @@ module Spree
           Spree::Promotion.active.
             joins(:promotion_codes).where({
               id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id),
-              promotion_codes: { value: nil }
+              Spree::PromotionCode.table_name => { value: nil },
               path: nil
             })
         end
