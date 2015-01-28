@@ -4,7 +4,7 @@ describe Spree::Tracker, :type => :model do
   describe "current" do
     before(:each) { @tracker = create(:tracker) }
 
-    it "returns the first active tracker for the environment" do
+    it "returns the first active tracker" do
       expect(Spree::Tracker.current).to eq(@tracker)
     end
 
