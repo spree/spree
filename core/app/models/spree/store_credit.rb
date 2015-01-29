@@ -38,8 +38,16 @@ module Spree
       Spree::Money.new(amount)
     end
 
+    def display_amount_remaining
+      Spree::Money.new(amount_remaining)
+    end
+
     def display_amount_used
       Spree::Money.new(amount_used)
+    end
+
+    def display_label
+      "#{Spree.t(:store_credit)} ##{id} (#{display_amount_remaining})"
     end
 
     def amount_remaining

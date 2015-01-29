@@ -570,10 +570,11 @@ describe Spree::Order, :type => :model do
       payment_method = Spree::PaymentMethod.create!({
         :name => "Fake",
         :active => true,
-        :display_on => "both",
+        :display_on => nil,
+        :environment => Rails.env
       })
-      expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
+      expect(order.available_payment_methods.select { |pm| pm.name == 'Fake' }.count).to eq(1)
     end
   end
 

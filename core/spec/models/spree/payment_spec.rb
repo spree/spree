@@ -13,7 +13,16 @@ describe Spree::Payment, :type => :model do
   let(:avs_code) { 'D' }
   let(:cvv_code) { 'M' }
 
-  let(:card) { create :credit_card }
+  let(:card) do
+    Spree::CreditCard.create!(
+      number: "4111111111111111",
+      month: "12",
+      year: (Time.current.year + 1).to_s,
+      verification_value: "123",
+      name: "Name",
+      imported: false
+    )
+  end
 
   let(:payment) do
     payment = Spree::Payment.new
@@ -538,18 +547,24 @@ describe Spree::Payment, :type => :model do
         it "should not try to create profiles on old failed payment attempts" do
           allow_any_instance_of(Spree::Payment).to receive(:payment_method) { gateway }
 
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
+          order.payments.create!(source_attributes: {number: "4111111111111115",
+                                                    month: "12",
+                                                    year: (Time.current.year + 1).to_s,
+                                                    verification_value: "123",
+                                                    name: "Name"
+          },
+          :payment_method => gateway,
+          :amount => 100)
           expect(gateway).to receive(:create_profile).exactly :once
           expect(order.payments.count).to eq(1)
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
+          order.payments.create!(source_attributes: {number: "4111111111111111",
+                                                    month: "12",
+                                                    year: (Time.current.year + 1).to_s,
+                                                    verification_value: "123",
+                                                    name: "Name"
+          },
+          :payment_method => gateway,
+          :amount => 100)
         end
 
       end
