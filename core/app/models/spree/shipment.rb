@@ -159,7 +159,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:amount).sum
+      line_items.map(&:final_amount).sum
     end
 
     def line_items
