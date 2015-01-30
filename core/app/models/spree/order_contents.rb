@@ -81,7 +81,7 @@ module Spree
                                             options: opts)
         end
         line_item.target_shipment = options[:shipment] if options.has_key? :shipment
-        line_item.save!
+        line_item.save
         line_item
       end
 
