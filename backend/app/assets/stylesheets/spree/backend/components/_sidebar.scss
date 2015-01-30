@@ -74,7 +74,7 @@
 }
 
 #wrapper.sidebar-minimized #main-sidebar {
-  width: 60px;
+  width: 50px;
   overflow: visible;
 
   li {
@@ -89,7 +89,7 @@
     .icon {
       padding: 0;
     }
-    
+
     .text, .icon-chevron-left, .icon-chevron-down {
       display: none;
     }
@@ -111,11 +111,12 @@
     display: block;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 60px;
+    left: 50px;
     min-width: 180px;
     visibility: visible;
     background-color: lighten($gray-lighter, 5);
     border-top: none;
     border-right: 1px solid darken($gray-lighter, 5);
+    padding-top: 5px;
   }
 }
