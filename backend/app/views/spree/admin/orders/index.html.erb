@@ -11,10 +11,10 @@
 
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="row">
-        <div class="date-range-filter col-md-6">
+        <div class="date-range-filter col-md-8">
           <div class="form-group">
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
-            <div class="row">
+            <div class="row no-padding-bottom">
               <div class="col-md-6">
                 <div class="input-group">
                   <%= f.text_field :created_at_gt, :class => 'datepicker datepicker-from form-control', :value => params[:q][:created_at_gt], :placeholder => Spree.t(:start) %>
@@ -36,14 +36,18 @@
           </div>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_number_cont, Spree.t(:order_number, :number => '') %>
             <%= f.text_field :number_cont, class: 'form-control js-quick-search-target' %>
           </div>
         </div>
 
-        <div class="col-md-3">
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
             <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {:include_blank => true}, :class => 'select2 js-filterable' %>
@@ -54,13 +58,6 @@
           <div class="form-group">
             <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
             <%= f.text_field :payment_state_eq, class: 'form-control js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="form-group">
-            <%= label_tag :q_shipment_state_eq, Spree.t(:shipment_state) %>
-            <%= f.text_field :shipment_state_eq, class: 'form-control js-filterable' %>
           </div>
         </div>
 
