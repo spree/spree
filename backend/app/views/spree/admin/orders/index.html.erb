@@ -190,8 +190,10 @@
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <td>
-            <span class="label label-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") if order.shipment_state %></span>
-            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
+            <% if order.shipment_state %>
+              <span class="label label-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
+              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
+            <% end %>
           </td>
         <% end %>
         <td>
