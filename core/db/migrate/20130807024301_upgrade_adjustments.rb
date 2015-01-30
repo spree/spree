@@ -14,7 +14,8 @@ class UpgradeAdjustments < ActiveRecord::Migration
 
     # Tax adjustments have their sources altered
     Spree::Adjustment.where(:originator_type => "Spree::TaxRate").find_each do |adjustment|
-      adjustment.source = adjustment.originator
+      adjustment.source_id = adjustment.originator_id
+      adjustment.source_type = "Spree::TaxRate"
       adjustment.save!
     end
 
