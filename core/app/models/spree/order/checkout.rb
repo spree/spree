@@ -34,7 +34,7 @@ module Spree
             klass = self
 
             # To avoid a ton of warnings when the state machine is re-defined
-            StateMachine::Machine.ignore_method_conflicts = true
+            StateMachines::Machine.ignore_method_conflicts = true
             # To avoid multiple occurrences of the same transition being defined
             # On first definition, state_machines will not be defined
             state_machines.clear if respond_to?(:state_machines)

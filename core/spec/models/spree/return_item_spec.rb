@@ -4,7 +4,7 @@ shared_examples "an invalid state transition" do |status, expected_status|
   let(:status) { status }
 
   it "cannot transition to #{expected_status}" do
-    expect { subject }.to raise_error(StateMachine::InvalidTransition)
+    expect { subject }.to raise_error(StateMachines::InvalidTransition)
   end
 end
 
