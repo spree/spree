@@ -161,7 +161,7 @@ module Spree
     private
 
     def default_zone_or_zone_match?(order)
-      Zone.default_tax.try(:contains?, order.tax_zone) || order.tax_zone == self.zone
+      Zone.default_tax.try(:contains?, order.tax_zone) || order.tax_zone == zone
     end
 
     def label(adjustment_amount)
