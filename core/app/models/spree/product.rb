@@ -312,11 +312,11 @@ module Spree
     def run_touch_callbacks
       run_callbacks(:touch)
     end
-    
+
     def taxon_and_ancestors
       taxons.map(&:self_and_ancestors).flatten.uniq
     end
-    
+
     # Get the taxonomy ids of all taxons assigned to this product and their ancestors.
     def taxonomy_ids
       taxon_and_ancestors.map(&:taxonomy_id).flatten.uniq
