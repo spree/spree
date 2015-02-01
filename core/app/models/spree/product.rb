@@ -274,11 +274,24 @@ module Spree
       @nested_changes = false
     end
 
+    def master_updated?
+      master &&
+      master.changed? ||
+      master.new_record? ||
+      (
+        master.default_price &&
+        (
+          master.default_price.changed? ||
+          master.default_price.new_record?
+        )
+      )
+    end
+
     # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
     # when saving so we force a save using a hook
     # Fix for issue #5306
     def save_master
-      if master && (master.changed? || master.new_record? || (master.default_price && (master.default_price.changed? || master.default_price.new_record?)))
+      if master_updated?
         master.save!
         @nested_changes = true
       end
