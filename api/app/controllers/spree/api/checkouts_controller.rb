@@ -13,7 +13,7 @@ module Spree
         authorize! :update, @order, order_token
         @order.next!
         respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
-      rescue StateMachine::InvalidTransition
+      rescue StateMachines::InvalidTransition
         respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
       end
 
