@@ -148,36 +148,25 @@ module Spree
       (self.included_in_price? && self.zone.default_tax)
     end
 
-    # Creates necessary tax adjustments for the order.
     def adjust(order, item)
-      included = included_in_price && default_zone_or_zone_match?(order.tax_zone)
+      included = included_in_price && default_zone_or_zone_match?(order)
       create_adjustment(order, item, included)
     end
 
-    # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
-      if included_in_price
-        if default_zone_or_zone_match?(item.order.tax_zone)
-          calculator.compute(item)
-        else
-          # In this case, it's a refund.
-          calculator.compute(item) * - 1
-        end
-      else
-        calculator.compute(item)
-      end
-    end
-
-    def default_zone_or_zone_match?(order_tax_zone)
-      default_tax = Zone.default_tax
-      (default_tax && default_tax.contains?(order_tax_zone)) || order_tax_zone == self.zone
+      refund = included_in_price && !default_zone_or_zone_match?(item.order)
+      compute(item) * (refund ? -1 : 1)
     end
 
     private
 
-    def label(_amount)
+    def default_zone_or_zone_match?(order)
+      Zone.default_tax.try(:contains?, order.tax_zone) || order.tax_zone == zone
+    end
+
+    def label(adjustment_amount)
       label = ""
-      label << Spree.t(:refund) << ' ' if _amount < 0
+      label << Spree.t(:refund) << ' ' if adjustment_amount < 0
       label << (name.present? ? name : tax_category.name) + " "
       label << (show_rate_in_label? ? "#{amount * 100}%" : "")
       label << " (#{Spree.t(:included_in_price)})" if included_in_price?
