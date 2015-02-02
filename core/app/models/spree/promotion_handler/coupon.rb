@@ -84,7 +84,9 @@ module Spree
       def determine_promotion_application_result
         detector = lambda { |p|
           if p.source.promotion.code
-            p.source.promotion.code.downcase == order.coupon_code.downcase
+            p.source.promotion.codes.any? do |code|
+              code.value.present? && code.value.downcase == order.coupon_code.downcase
+            end
           end
         }
 
