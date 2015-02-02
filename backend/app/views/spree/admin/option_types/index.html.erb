@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <span id="new_ot_link">
-    <%= button_link_to Spree.t(:new_option_type), new_admin_option_type_url, { class: "btn-success", icon: 'add', id: 'new_option_type_link' } %>
+    <%= button_link_to Spree.t(:new_option_type), new_object_url, { class: "btn-success", icon: 'add', id: 'new_option_type_link' } %>
   </span>
 <% end %>
 
@@ -39,6 +39,6 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: Spree::OptionType.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_option_type_path %>!
+    <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
 <% end %>

@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
+  <%= button_link_to Spree.t(:new_stock_transfer), new_object_url, { :icon => 'add', :class => 'btn-success' } %>
 <% end %>
 
 <div data-hook="admin_orders_index_search" class="well">
@@ -75,7 +75,7 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: Spree::StockTransfer.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_stock_transfer_path %>!
+    <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
 <% end %>
 
