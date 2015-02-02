@@ -313,13 +313,19 @@ module Spree
       run_callbacks(:touch)
     end
 
+    def taxon_and_ancestors
+      taxons.map(&:self_and_ancestors).flatten.uniq
+    end
+
+    # Get the taxonomy ids of all taxons assigned to this product and their ancestors.
+    def taxonomy_ids
+      taxon_and_ancestors.map(&:taxonomy_id).flatten.uniq
+    end
+
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
     def touch_taxons
-      taxons_to_touch = taxons.map(&:self_and_ancestors).flatten.uniq
-      Spree::Taxon.where(id: taxons_to_touch.map(&:id)).update_all(updated_at: Time.current)
-
-      taxonomy_ids_to_touch = taxons_to_touch.map(&:taxonomy_id).flatten.uniq
-      Spree::Taxonomy.where(id: taxonomy_ids_to_touch).update_all(updated_at: Time.current)
+      Spree::Taxon.where(id: taxon_and_ancestors.map(&:id)).update_all(updated_at: Time.current)
+      Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
     end
 
   end
