@@ -263,8 +263,8 @@ describe Spree::Variant, :type => :model do
     end
 
     context 'variant' do
-      it 'should return options text' do
-        expect(variant.exchange_name).to eql 'Foo Type: Foo'
+      it 'should return options text with name' do
+        expect(variant.exchange_name).to eql variant.name + ' - Foo Type: Foo'
       end
     end
 
