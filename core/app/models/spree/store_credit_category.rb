@@ -9,7 +9,7 @@ module Spree
     end
 
     def non_expiring_category_types
-      DEFAULT_NON_EXPIRING_TYPES | Spree::StoreCredits::Configuration.non_expiring_credit_types
+      DEFAULT_NON_EXPIRING_TYPES | Spree::Config[:non_expiring_credit_types]
     end
 
     class << self
