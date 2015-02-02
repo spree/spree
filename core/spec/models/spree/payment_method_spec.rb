@@ -1,15 +1,14 @@
 require 'spec_helper'
 
-describe Spree::PaymentMethod, :type => :model do
+describe Spree::PaymentMethod, type: :model do
   describe "#available" do
     before do
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
-          :name => 'Display Both',
-          :display_on => display_on,
-          :active => true,
-          :environment => 'test',
-          :description => 'foofah'
+          name: 'Display Both',
+          display_on: display_on,
+          active: true,
+          description: 'foofah'
         )
       end
     end

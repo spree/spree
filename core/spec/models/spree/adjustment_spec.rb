@@ -111,20 +111,8 @@ describe Spree::Adjustment, :type => :model do
   context "#display_amount" do
     before { adjustment.amount = 10.55 }
 
-    context "with display_currency set to true" do
-      before { Spree::Config[:display_currency] = true }
-
-      it "shows the currency" do
-        expect(adjustment.display_amount.to_s).to eq "$10.55 USD"
-      end
-    end
-
-    context "with display_currency set to false" do
-      before { Spree::Config[:display_currency] = false }
-
-      it "does not include the currency" do
-        expect(adjustment.display_amount.to_s).to eq "$10.55"
-      end
+    it "shows the amount" do
+      expect(adjustment.display_amount.to_s).to eq "$10.55"
     end
 
     context "with currency set to JPY" do

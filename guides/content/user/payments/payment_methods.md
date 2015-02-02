@@ -42,14 +42,6 @@ If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) ext
 
 ![Select Payment Gateway Provider](/images/user/payments/add_payment_provider.jpg)
 
-#### Environment
-
-Choose the environment where you would like to enable the payment method. The choices are:
-
-* **Development** - Used by developers when they are testing a Spree store on their local machine.
-* **Production** - Select if you want the payment gateway to appear on the customer-facing area of your store.
-* **Test** - Used by developers who are testing their Spree store, typically with our [test suite](/developer/testing.html).
-
 #### Display
 
 Select whether you want the payment method to appear on the Frontend or the Backend of your store, or both.

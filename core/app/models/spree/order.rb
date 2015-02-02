@@ -22,6 +22,7 @@ module Spree
                   :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
+    alias_attribute :ship_total, :shipment_total
 
     checkout_flow do
       go_to_state :address
@@ -53,8 +54,7 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    alias_attribute :ship_total, :shipment_total
-
+    belongs_to :store, class_name: 'Spree::Store'
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
@@ -108,14 +108,6 @@ module Spree
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
-
-    def self.by_customer(customer)
-      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
-    end
-
-    def self.by_state(state)
-      where(state: state)
-    end
 
     def self.complete
       where.not(completed_at: nil)
@@ -246,14 +238,6 @@ module Spree
       end
     end
 
-    def shipped_shipments
-      shipments.shipped
-    end
-
-    def contains?(variant, options = {})
-      find_line_item_by_variant(variant, options).present?
-    end
-
     def quantity_of(variant, options = {})
       line_item = find_line_item_by_variant(variant, options)
       line_item ? line_item.quantity : 0
@@ -379,10 +363,10 @@ module Spree
     end
 
     ##
-    # Check to see if any line item variants are soft, deleted.
+    # Check to see if any line item variants are soft deleted.
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_deleted
-      if line_items.select{ |li| li.variant.destroyed? || li.variant.deleted? }.present?
+      if line_items.any?{ |li| !li.variant || li.variant.paranoia_destroyed? }
         errors.add(:base, Spree.t(:deleted_variants_present))
         restart_checkout_flow
         false
@@ -571,19 +555,6 @@ module Spree
       update_column(:considered_risky, false)
     end
 
-    # moved from api order_decorator. This is a better place for it.
-    def update_line_items(line_item_params)
-      return if line_item_params.blank?
-      line_item_params.each_value do |attributes|
-        if attributes[:id].present?
-          self.line_items.find(attributes[:id]).update_attributes!(attributes)
-        else
-          self.line_items.create!(attributes)
-        end
-      end
-      self.ensure_updated_shipments
-    end
-
     def reload(options=nil)
       remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
       super
@@ -601,6 +572,16 @@ module Spree
       refunds.non_reimbursement.exists? ||
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
+
+    # determines whether the inventory is fully discounted
+    #
+    # Returns
+    # - true if inventory amount is the exact negative of inventory related adjustments
+    # - false otherwise
+    def fully_discounted?
+      adjustment_total + line_items.map(&:final_amount).sum == 0.0
+    end
+    alias_method :fully_discounted, :fully_discounted?
 
     private
 

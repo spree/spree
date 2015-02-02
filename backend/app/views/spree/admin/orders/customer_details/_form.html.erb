@@ -3,39 +3,45 @@
   <div class="panel panel-default" data-hook="customer_guest">
 
     <div class="panel-heading">
-      <h1 class="panel-title"><%= Spree.t(:account) %></h1>
+      <h1 class="panel-title">
+        <%= Spree.t(:account) %>
+      </h1>
     </div>
 
     <div class="panel-body">
-      <div data-hook="customer_fields">
-        <div class="form-group">
-          <%= f.label :email, Spree.t(:email) %>
-          <%= f.email_field :email, :class => 'form-control' %>
+      <div data-hook="customer_fields" class="row">
+        <div class="col-md-8">
+          <div class="form-group">
+            <%= f.label :email, Spree.t(:email) %>
+            <%= f.email_field :email, class: 'form-control' %>
+          </div>  
         </div>
-        <div class="form-group">
-          <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
-          <% if @order.completed? %>
-            <div>
-              <span class="badge">
-                <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-              </span>
-            </div>
-          <% else %>
-            <% guest = @order.user.nil? %>
-            <div class="radio no-margint">
-              <%= label_tag :guest_checkout_true do %>
-                <%= radio_button_tag :guest_checkout, true, guest %>
-                <%= Spree.t(:say_yes) %>
-              <% end %>
-            </div>
-            <div class="radio">
-              <%= label_tag :guest_checkout_false do %>
-                <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
-                <%= Spree.t(:say_no) %>
-              <% end %>
-            </div>
-            <%= hidden_field_tag :user_id, @order.user_id %>
-          <% end %>
+        <div class="col-md-4">
+          <div class="form-group">
+            <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
+            <% if @order.completed? %>
+              <div>
+                <span class="badge">
+                  <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+                </span>
+              </div>
+            <% else %>
+              <% guest = @order.user.nil? %>
+              <div class="radio no-margint">
+                <%= label_tag :guest_checkout_true do %>
+                  <%= radio_button_tag :guest_checkout, true, guest %>
+                  <%= Spree.t(:say_yes) %>
+                <% end %>
+              </div>
+              <div class="radio">
+                <%= label_tag :guest_checkout_false do %>
+                  <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
+                  <%= Spree.t(:say_no) %>
+                <% end %>
+              </div>
+              <%= hidden_field_tag :user_id, @order.user_id %>
+            <% end %>
+          </div>
         </div>
       </div>  
     </div>

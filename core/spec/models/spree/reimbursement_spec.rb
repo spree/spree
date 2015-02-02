@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Reimbursement, :type => :model do
+describe Spree::Reimbursement, type: :model do
 
   describe ".before_create" do
     describe "#generate_number" do

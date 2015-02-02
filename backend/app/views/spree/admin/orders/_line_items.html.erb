@@ -1,7 +1,9 @@
 <% if order.line_items.exists? %>
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h1 class="panel-title"><%= Spree.t(:order_line_items) %></h1>
+      <h1 class="panel-title">
+        <%= Spree.t(:order_line_items) %>
+      </h1>
     </div>
     <table class="table table-bordered line-items" data-hook="line-items">
       <thead>

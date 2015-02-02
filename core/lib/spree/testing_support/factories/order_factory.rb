@@ -4,6 +4,7 @@ FactoryGirl.define do
     bill_address
     completed_at nil
     email { user.email }
+    store
 
     transient do
       line_items_price BigDecimal.new(10)

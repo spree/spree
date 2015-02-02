@@ -553,7 +553,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "front_end",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -563,7 +562,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "both",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -573,7 +571,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "both",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
@@ -603,10 +600,6 @@ describe Spree::Order, :type => :model do
       @line_items = [mock_model(Spree::LineItem, :product => "product1", :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
                      mock_model(Spree::LineItem, :product => "product2", :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
       allow(order).to receive_messages(:line_items => @line_items)
-    end
-
-    it "contains?" do
-      expect(order.contains?(@variant1)).to be true
     end
 
     it "gets the quantity of a given variant" do
@@ -925,4 +918,46 @@ describe Spree::Order, :type => :model do
       end
     end
   end
+
+  describe "#fully_discounted?" do
+    let(:line_item) { Spree::LineItem.new(price: 10, quantity: 1) }
+    let(:shipment) { Spree::Shipment.new(cost: 10) }
+    let(:payment) { Spree::Payment.new(amount: 10) }
+
+    before do
+      allow(order).to receive(:line_items) { [line_item] }
+      allow(order).to receive(:shipments) { [shipment] }
+      allow(order).to receive(:payments) { [payment] }
+    end
+
+    context "the order had no inventory-related cost" do
+      before do
+        # discount the cost of the line items
+        allow(order).to receive(:adjustment_total) { -5 }
+        allow(line_item).to receive(:adjustment_total) { -5 }
+
+        # but leave some shipment payment amount
+        allow(shipment).to receive(:adjustment_total) { 0 }
+      end
+
+      it { expect(order.fully_discounted?).to eq true }
+
+    end
+
+    context "the order had inventory-related cost" do
+      before do
+        # partially discount the cost of the line item
+        allow(order).to receive(:adjustment_total) { 0 }
+        allow(line_item).to receive(:adjustment_total) { -5 }
+
+        # and partially discount the cost of the shipment so the total
+        # discount matches the item total for test completeness
+        allow(shipment).to receive(:adjustment_total) { -5 }
+      end
+
+      it { expect(order.fully_discounted?).to eq false }
+
+    end
+  end
+
 end

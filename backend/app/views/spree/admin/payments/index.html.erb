@@ -1,9 +1,9 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => "Payments" } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: "Payments" } %>
 
 <% content_for :page_actions do %>
   <% if @order.outstanding_balance? %>
     <span id="new_payment_section">
-      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), :class => "btn-success", :icon => 'add' %>
+      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), class: "btn-success", icon: 'add' %>
     </span>
   <% end %>
 <% end %>

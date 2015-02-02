@@ -5,8 +5,6 @@ describe Spree::Money do
   before do
     configure_spree_preferences do |config|
       config.currency = "USD"
-      config.currency_symbol_position = :before
-      config.display_currency = false
     end
   end
 
@@ -25,23 +23,15 @@ describe Spree::Money do
       money = Spree::Money.new(10, :with_currency => true, :html => false)
       expect(money.to_s).to eq("$10.00 USD")
     end
-
-    it "config option" do
-      Spree::Config[:display_currency] = true
-      money = Spree::Money.new(10, :html => false)
-      expect(money.to_s).to eq("$10.00 USD")
-    end
   end
 
   context "hide cents" do
     it "hides cents suffix" do
-      Spree::Config[:hide_cents] = true
-      money = Spree::Money.new(10)
+      money = Spree::Money.new(10, no_cents: true)
       expect(money.to_s).to eq("$10")
     end
 
     it "shows cents suffix" do
-      Spree::Config[:hide_cents] = false
       money = Spree::Money.new(10)
       expect(money.to_s).to eq("$10.00")
     end
@@ -75,8 +65,7 @@ describe Spree::Money do
     end
 
     it "config option" do
-      Spree::Config[:currency_symbol_position] = :after
-      money = Spree::Money.new(10, :html => false)
+      money = Spree::Money.new(10, symbol_position: :after, html: false)
       expect(money.to_s).to eq("10.00 $")
     end
   end
@@ -91,20 +80,12 @@ describe Spree::Money do
       money = Spree::Money.new(-10, :sign_before_symbol => false)
       expect(money.to_s).to eq("$-10.00")
     end
-
-    it "config option" do
-      Spree::Config[:currency_sign_before_symbol] = false
-      money = Spree::Money.new(-10)
-      expect(money.to_s).to eq("$-10.00")
-    end
   end
 
   context "JPY" do
     before do
       configure_spree_preferences do |config|
         config.currency = "JPY"
-        config.currency_symbol_position = :before
-        config.display_currency = false
       end
     end
 
@@ -118,40 +99,23 @@ describe Spree::Money do
     before do
       configure_spree_preferences do |config|
         config.currency = "EUR"
-        config.currency_symbol_position = :after
-        config.display_currency = false
       end
     end
 
     # Regression test for #2634
     it "formats as plain by default" do
-      money = Spree::Money.new(10)
+      money = Spree::Money.new(10, symbol_position: :after)
       expect(money.to_s).to eq("10.00 €")
     end
 
-    # Regression test for #2632
-    it "acknowledges decimal mark option" do
-      Spree::Config[:currency_decimal_mark] = ","
-      money = Spree::Money.new(10)
-      expect(money.to_s).to eq("10,00 €")
-    end
-
-    # Regression test for #2632
-    it "acknowledges thousands separator option" do
-      Spree::Config[:currency_thousands_separator] = "."
-      money = Spree::Money.new(1000)
-      expect(money.to_s).to eq("1.000.00 €")
-    end
-
     it "formats as HTML if asked (nicely) to" do
-      money = Spree::Money.new(10)
+      money = Spree::Money.new(10, symbol_position: :after)
       # The HTML'ified version of "10.00 €"
       expect(money.to_html).to eq("10.00&nbsp;&#x20AC;")
     end
 
     it "formats as HTML with currency" do
-      Spree::Config[:display_currency] = true
-      money = Spree::Money.new(10)
+      money = Spree::Money.new(10, symbol_position: :after, with_currency: true)
       # The HTML'ified version of "10.00 €"
       expect(money.to_html).to eq("10.00&nbsp;&#x20AC; <span class=\"currency\">EUR</span>")
     end
