@@ -89,6 +89,10 @@ module Spree
       is_master? ? name : options_text
     end
 
+    def descriptive_name
+      is_master? ? name + ' - Master' : name + ' - ' + options_text
+    end
+
     # use deleted? rather than checking the attribute directly. this
     # allows extensions to override deleted? if they want to provide
     # their own definition.
