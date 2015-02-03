@@ -276,13 +276,13 @@ module Spree
 
     def master_updated?
       master &&
-      master.changed? ||
       master.new_record? ||
+      master.changed? ||
       (
         master.default_price &&
         (
-          master.default_price.changed? ||
-          master.default_price.new_record?
+          master.default_price.new_record? ||
+          master.default_price.changed?
         )
       )
     end
