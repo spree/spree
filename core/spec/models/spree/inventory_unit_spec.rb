@@ -15,13 +15,8 @@ describe Spree::InventoryUnit, :type => :model do
       order.tap(&:save!)
     end
 
-    let(:shipment) do
-      order.shipments.first
-    end
-
-    let(:shipping_method) do
-      shipment.shipping_methods.first
-    end
+    let(:shipment) { order.shipments.first }
+    let(:shipping_method) { shipment.shipping_methods.first }
 
     let!(:unit) do
       unit = shipment.inventory_units.first
@@ -29,9 +24,7 @@ describe Spree::InventoryUnit, :type => :model do
       unit.tap(&:save!)
     end
 
-    before do
-      stock_item.set_count_on_hand(-2)
-    end
+    before { stock_item.set_count_on_hand(-2) }
 
     # Regression for #3066
     it "returns modifiable objects" do
@@ -97,15 +90,11 @@ describe Spree::InventoryUnit, :type => :model do
       it "does not find inventory units belonging to incomplete orders" do
         expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
       end
-
     end
-
   end
 
   context "variants deleted" do
-    let!(:unit) do
-      Spree::InventoryUnit.create(variant: stock_item.variant)
-    end
+    let!(:unit) { Spree::InventoryUnit.create(variant: stock_item.variant) }
 
     it "can still fetch variant" do
       unit.variant.destroy
@@ -122,10 +111,7 @@ describe Spree::InventoryUnit, :type => :model do
   context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
-    let(:inventory_units) { [
-      create(:inventory_unit, variant: variant),
-      create(:inventory_unit, variant: variant)
-    ] }
+    let(:inventory_units) { 2.times.map { create(:inventory_unit, variant: variant) } }
 
     it "should create a stock movement" do
       Spree::InventoryUnit.finalize_units!(inventory_units)
@@ -142,25 +128,16 @@ describe Spree::InventoryUnit, :type => :model do
       let(:return_item) { create(:return_item) }
       let(:inventory_unit) { return_item.inventory_unit }
 
-      it "returns a persisted return item" do
-        expect(subject).to be_persisted
-      end
-
-      it "returns it's associated return_item" do
-        expect(subject).to eq return_item
-      end
+      it { should be_persisted }
+      it { should eq return_item }
     end
 
     context "no associated return item" do
       let(:inventory_unit) { create(:inventory_unit) }
 
-      it "returns a new return item" do
-        expect(subject).to_not be_persisted
-      end
+      it { should_not be_persisted }
 
-      it "associates itself to the new return_item" do
-        expect(subject.inventory_unit).to eq inventory_unit
-      end
+      its(:inventory_unit) { should eq inventory_unit }
     end
   end
 
@@ -168,75 +145,23 @@ describe Spree::InventoryUnit, :type => :model do
     let(:quantity) { 2 }
     let(:line_item_additional_tax_total)  { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        additional_tax_total: line_item_additional_tax_total,
-      })
+      build :line_item, quantity: quantity, additional_tax_total: line_item_additional_tax_total
     end
 
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
+    subject { build(:inventory_unit, line_item: line_item) }
 
-    it 'is the correct amount' do
-      expect(subject.additional_tax_total).to eq line_item_additional_tax_total / quantity
-    end
+    its(:additional_tax_total) { should eq(line_item_additional_tax_total / quantity) }
   end
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
     let(:line_item_included_tax_total)  { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
+      build :line_item, quantity: quantity, included_tax_total: line_item_included_tax_total
     end
 
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
+    subject { build(:inventory_unit, line_item: line_item) }
 
-    it 'is the correct amount' do
-      expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
-    end
-  end
-
-  describe '#additional_tax_total' do
-    let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
-    let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        additional_tax_total: line_item_additional_tax_total,
-      })
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
-
-    it 'is the correct amount' do
-      expect(subject.additional_tax_total).to eq line_item_additional_tax_total / quantity
-    end
-  end
-
-  describe '#included_tax_total' do
-    let(:quantity) { 2 }
-    let(:line_item_included_tax_total)  { 10.00 }
-    let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
-    end
-
-    it 'is the correct amount' do
-      expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
-    end
+    its(:included_tax_total) { should eq(line_item_included_tax_total / quantity) }
   end
 end
