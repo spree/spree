@@ -28,6 +28,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     end
 
     model do
+      acts_as_list
       validates :name, presence: true
     end
   end

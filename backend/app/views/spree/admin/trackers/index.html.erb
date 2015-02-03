@@ -17,7 +17,6 @@
     <thead>
       <tr data-hook="admin_trackers_index_headers">
         <th><%= Spree.t(:google_analytics_id) %></th>
-        <th><%= Spree.t(:environment) %></th>
         <th class="text-center"><%= Spree.t(:active) %></th>
         <th class="actions"></th>
       </tr>
@@ -26,7 +25,6 @@
       <% @trackers.each do |tracker|%>
         <tr id="<%= spree_dom_id tracker %>" data-hook="admin_trackers_index_rows">
           <td><%= tracker.analytics_id %></td>
-          <td><%= tracker.environment.to_s.titleize %></td>
           <td class="text-center"><%= tracker.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td class="actions text-right">
             <%= link_to_edit tracker, :no_text => true %>

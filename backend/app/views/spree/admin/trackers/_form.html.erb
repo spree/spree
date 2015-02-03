@@ -6,12 +6,6 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div data-hook="environment" class="form-group">
-      <%= label_tag nil, Spree.t(:environment) %>
-      <%= collection_select(:tracker, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'tracker-env', :class => 'select2'}) %>
-    </div>
-  </div>
-  <div class="col-md-4">
     <div data-hook="active" class="form-group">
       <%= label_tag nil, Spree.t(:active) %>
       <div class="radio">

@@ -7,21 +7,17 @@
       <div class="row">
         <div class="navbar-header col-sm-3 col-md-2">
           <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo', height: '100%'), spree.admin_path, class: "logo navbar-brand" %>
-          <span class="navbar-toggle" id="sidebar-toggle">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </span>
+          <% if admin %>
+            <span class="navbar-toggle" id="sidebar-toggle">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </span>
+          <% end %>
         </div>
 
         <% if admin %>
           <div class="col-sm-9 col-md-10">
-            <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </a>
             <div class="navbar-right" data-hook="admin_login_navigation_bar"></div>
           </div>
         <% end %>

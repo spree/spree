@@ -54,6 +54,11 @@ describe Spree::ReturnItem, :type => :model do
         expect { subject }.to change { stock_item.reload.count_on_hand }.by(1)
       end
 
+      context "when the variant is not resellable" do
+        before { return_item.update_attributes(resellable: false) }
+        it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
+      end
+
       context 'when variant does not track inventory' do
         before do
           inventory_unit.update_attributes!(state: 'shipped')

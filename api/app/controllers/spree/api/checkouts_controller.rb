@@ -34,8 +34,13 @@ module Spree
           end
 
           return if after_update_attributes
-          state_callback(:after) if @order.next
-          respond_with(@order, default_template: 'spree/api/orders/show')
+
+          if @order.next || @order.completed?  
+            state_callback(:after)
+            respond_with(@order, default_template: 'spree/api/orders/show')
+          else
+            respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+          end
         else
           invalid_resource!(@order)
         end

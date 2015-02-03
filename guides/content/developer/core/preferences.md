@@ -380,14 +380,6 @@ Determines whether or not a field for "Company" displays on the checkout pages f
 
 The three-letter currency code for the currency that prices will be displayed in. Defaults to "USD".
 
-`currency_symbol_position`
-
-The position of the symbol for a currency. Can be either `before` or `after`. Defaults to `before`.
-
-`display_currency`
-
-Determines whether or not a currency is displayed with a price. Defaults to `false`.
-
 `default_country_id`
 
 The default country's id. Defaults to 214, as this is the id for the United States within the seed data.

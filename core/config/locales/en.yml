@@ -561,8 +561,6 @@ en:
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
-    customer_return: Customer Return
-    customer_returns: Customer Returns
     create: Create
     create_a_new_account: Create a new account
     create_new_order: Create new order
@@ -574,15 +572,14 @@ en:
     credit_cards: Credit Cards
     credit_owed: Credit Owed
     currency: Currency
-    currency_decimal_mark: Currency decimal mark
     currency_settings: Currency Settings
-    currency_symbol_position: Put currency symbol before or after dollar amount?
-    currency_thousands_separator: Currency thousands separator
     current: Current
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
+    customer_return: Customer Return
+    customer_returns: Customer Returns
     customer_search: Customer Search
     cut: Cut
     cvv_response: CVV Response
@@ -618,7 +615,6 @@ en:
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
-    display_currency: Display currency
     doesnt_track_inventory: It doesnt track inventory
     edit: Edit
     editing_resource: 'Editing %{resource}'
@@ -645,7 +641,6 @@ en:
     enable_mail_delivery: Enable Mail Delivery
     end: End
     ending_in: Ending in
-    environment: Environment
     error: error
     errors:
       messages:
@@ -704,7 +699,6 @@ en:
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
-    hide_cents: Hide cents
     home: Home
     i18n:
       available_locales: Available Locales
@@ -913,10 +907,6 @@ en:
         total: ! 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
-    order_populator:
-      out_of_stock: ! '%{item} is out of stock.'
-      selected_quantity_not_available: ! 'selected of %{item} is not available.'
-      please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
     order_state:
@@ -977,6 +967,7 @@ en:
     phone: Phone
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
+    please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
@@ -1100,6 +1091,7 @@ en:
     rename: Rename
     report: Report
     reports: Reports
+    resellable: Resellable
     resend: Resend
     reset_password: Reset my password
     response_code: Response Code
@@ -1159,6 +1151,7 @@ en:
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_stock: Select stock
+    selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     server: Server

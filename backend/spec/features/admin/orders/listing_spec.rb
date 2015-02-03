@@ -145,5 +145,19 @@ describe "Orders Listing", type: :feature, js: true do
         within("table#listing_orders") { expect(page).not_to have_content("R200") }
       end
     end
+
+    it "should be able to apply a ransack filter by clicking a quickfilter icon" do
+      label_pending = page.find '.label-pending'
+      parent_td = label_pending.find(:xpath, '..')
+
+      # Click the quick filter Pending for order #R100
+      within(parent_td) do
+        find('.js-add-filter').click
+      end
+
+      expect(page).to have_content("R100")
+      expect(page).not_to have_content("R200")
+    end
+
   end
 end
