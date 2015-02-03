@@ -69,7 +69,7 @@ module Spree
 
     @@shipment_attributes = [
       :order, :special_instructions, :stock_location_id, :id,
-      :tracking, :address, :inventory_units, :selected_shipping_rate_id]
+      :tracking, :address, :address_id, :inventory_units, :selected_shipping_rate_id]
 
     # month / year may be provided by some sources, or others may elect to use one field
     @@source_attributes = [

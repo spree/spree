@@ -95,6 +95,42 @@ $(document).ready(function () {
     });
   });
 
+  var toggleShipmentAddressEdit = function(event) {
+    event.preventDefault();
+
+    var link = $(this);
+    link.parents('tbody').find('tr.edit-shipment-address').toggle();
+    link.parents('tbody').find('tr.show-shipment-address').toggle();
+  }
+
+  // handle tracking edit click
+  $('a.edit-shipment-address').click(toggleShipmentAddressEdit);
+  $('a.cancel-shipment-address').click(toggleShipmentAddressEdit);
+
+  // handle shipment address save
+  $('[data-hook=admin_shipment_form] a.save-shipment-address').on('click', function (event) {
+    event.preventDefault();
+
+    var link = $(this);
+    var shipment_number = link.data('shipment-number');
+    var address_id = link.parents('tbody').find('input#address_id').val();
+    var url = Spree.url(Spree.routes.shipments_api + '/' + shipment_number + '.json');
+
+    $.ajax({
+      type: 'PUT',
+      url: url,
+      data: {
+        shipment: {
+          address_id: address_id
+        }
+      }
+    }).done(function () {
+      window.location.reload();
+    }).error(function (msg) {
+      console.log(msg);
+    });
+  });
+
   var toggleTrackingEdit = function(event) {
     event.preventDefault();
 
