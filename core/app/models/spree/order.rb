@@ -602,8 +602,6 @@ module Spree
         end
       end
 
-      reconcile_with_credit_card(existing_credit_card_payment, remaining_total)
-
       if payments.valid.sum(:amount) != total
         errors.add(:base, Spree.t("store_credit.errors.unable_to_fund")) and return false
       end
@@ -654,20 +652,6 @@ module Spree
       other_payments = payments.valid.not_store_credits
       raise "Found #{other_payments.size} payments and only expected 1" if other_payments.size > 1
       other_payments.first
-    end
-
-    def reconcile_with_credit_card(other_payment, amount)
-      return unless other_payment
-
-      unless other_payment.source.is_a?(Spree::CreditCard)
-        raise "Found unexpected payment method. Credit cards are the only other supported payment type"
-      end
-
-      if amount.zero?
-        other_payment.invalidate!
-      else
-        other_payment.update_attributes!(amount: amount)
-      end
     end
 
     def create_store_credit_payment(payment_method, credit, amount)
