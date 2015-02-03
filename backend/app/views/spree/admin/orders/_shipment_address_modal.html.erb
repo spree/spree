@@ -1,0 +1,23 @@
+<% address_object = (type == :edit) ? shipment.shipment_address : Spree::Address.new %>
+
+<div class="modal fade" id="<%= "#{type}_address_#{shipment.id}" %>" tabindex="-1" role="dialog" aria-labelledby="<%= "#{type}_address_#{shipment.id}_label" %>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <%= form_for address_object, url: admin_create_shipment_address_path(shipment.id), id: "#{type}_address_#{shipment.id}_form" do |form| %>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="<%= "#{type}_address_#{shipment.id}_label" %>">
+            <%= shipment.number %>: <%= type == :edit ? Spree.t(:edit_current_address) : Spree.t(:change_shipment_address) %>
+          </h4>
+        </div>
+        <div class="modal-body">
+          <%= render :partial => 'spree/admin/orders/shipment_address_form', :locals => { :form => form, :address_type => 'shipping', :address => address_object, shipment: shipment, type: type } %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
