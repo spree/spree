@@ -1,5 +1,7 @@
 Spree::Core::Engine.add_routes do
   namespace :admin do
+    post '/addresses/create_shipment_address/:shipment_id/', to: "addresses#create_shipment_address", as: :create_shipment_address
+
     get '/search/users', to: "search#users", as: :search_users
     get '/search/products', to: "search#products", as: :search_products
 

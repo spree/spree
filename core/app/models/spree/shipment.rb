@@ -262,6 +262,10 @@ module Spree
       selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
 
+    def shipment_address
+      self.try(:address) || order.ship_address
+    end
+
     def tax_category
       selected_shipping_rate.try(:tax_rate).try(:tax_category)
     end
