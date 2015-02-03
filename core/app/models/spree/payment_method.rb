@@ -68,5 +68,9 @@ module Spree
     def cancel(response)
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
+
+    def store_credit?
+      self.class == Spree::PaymentMethod::StoreCredit
+    end
   end
 end
