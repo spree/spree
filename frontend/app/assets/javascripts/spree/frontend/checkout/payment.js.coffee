@@ -71,7 +71,7 @@ Spree.ready ($) ->
               return true
             error: (xhr) ->
               handler = JSON.parse(xhr.responseText)
-              coupon_status.addClass("error").html(handler["error"])
+              coupon_status.addClass("alert-error").html(handler["error"])
               $('.continue').attr('disabled', false)
               return false
           })
