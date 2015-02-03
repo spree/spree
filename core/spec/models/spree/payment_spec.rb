@@ -53,7 +53,6 @@ describe Spree::Payment, :type => :model do
     it 'should not return successful responses' do
       expect(subject.class.risky.to_a).to match_array([payment_3, payment_4])
     end
-
   end
 
   context "#captured_amount" do
@@ -111,7 +110,6 @@ describe Spree::Payment, :type => :model do
       payment.failure
       expect(payment.state).to eql('failed')
     end
-
   end
 
   context 'invalidate' do
@@ -581,22 +579,6 @@ describe Spree::Payment, :type => :model do
           :payment_method => gateway
         )
       end
-    end
-  end
-
-  describe '#invalidate_old_payments' do
-      before {
-        Spree::Payment.skip_callback(:rollback, :after, :persist_invalid)
-      }
-      after {
-        Spree::Payment.set_callback(:rollback, :after, :persist_invalid)
-      }
-
-    it 'should not invalidate other payments if not valid' do
-      payment.save
-      invalid_payment = Spree::Payment.new(:amount => 100, :order => order, :state => 'invalid', :payment_method => gateway)
-      invalid_payment.save
-      expect(payment.reload.state).to eq('checkout')
     end
   end
 

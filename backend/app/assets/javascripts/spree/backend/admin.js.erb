@@ -35,7 +35,7 @@ jQuery(function($) {
   $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
     {
       if($(this).find('.icon-chevron-left').length == 1){
-        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');  
+        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');
       }
       else {
         $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
@@ -49,11 +49,11 @@ jQuery(function($) {
   sidebar_toggle.on('click', function(){
     var wrapper = $('#wrapper');
     var main    = $('#main-part');
-    
+
     if(wrapper.hasClass('sidebar-minimized')){
       wrapper.removeClass('sidebar-minimized');
       main
-        .removeClass('col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1')
+        .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
         .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
       $.cookie('sidebar-minimized', 'false', { path: '/admin' });
     }
@@ -61,9 +61,9 @@ jQuery(function($) {
       wrapper.addClass('sidebar-minimized');
       main
         .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
-        .addClass('col-sm-11 col-sm-offset-1 col-md-11 col-md-offset-1');
+        .addClass('col-sm-12 col-md-12 sidebar-collapsed');
       $.cookie('sidebar-minimized', 'true', { path: '/admin' });
-    }    
+    }
   });
 
   $('.sidebar-menu-item').mouseover(function(){
@@ -109,6 +109,33 @@ jQuery(function($) {
     } else if(sort_link_text.indexOf("▲") >= 0){
       $(this).text(sort_link_text.replace("▲",""));
       $(this).append('<span class="icon icon-chevron-up"></span>');
+    }
+  });
+
+  // Clickable ransack filters
+  $(".js-add-filter").click(function() {
+    var ransack_field = $(this).data("ransack-field");
+    var ransack_value = $(this).data("ransack-value");
+
+    $("#" + ransack_field).val(ransack_value);
+    $("#table-filter form").submit();
+  });
+
+  $(document).on("click", ".js-delete-filter", function() {
+    var ransack_field = $(this).parents(".js-filter").data("ransack-field");
+
+    $("#" + ransack_field).val('');
+    $("#table-filter form").submit();
+  });
+
+  $(".js-filterable").each(function(){
+    if($(this).val()){
+      var ransack_field = $(this).attr("id");
+      var ransack_value = $(this).val();
+      var filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + ransack_value + '<span class="icon icon-delete js-delete-filter"></span></span>';
+
+      $(".js-filters").show();
+      $(".js-filters").append(filter);
     }
   });
 

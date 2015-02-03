@@ -8,7 +8,7 @@ module Spree
     after_create :set_root
     after_save :set_root_taxon_name
 
-    default_scope { order("#{self.table_name}.position") }
+    default_scope { order("#{self.table_name}.position, #{self.table_name}.created_at") }
 
     private
       def set_root

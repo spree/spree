@@ -46,12 +46,6 @@ module Spree
         expect(json_response['stock_movements'].first['stock_item']['count_on_hand']).to eq 11
       end
 
-      it 'requires a stock_location_id to be passed as a parameter' do
-        api_get :index
-        expect(json_response['error']).to match(/stock_location_id parameter must be provided/)
-        expect(response.status).to eq(422)
-      end
-
       it 'can control the page size through a parameter' do
         create(:stock_movement, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, per_page: 1

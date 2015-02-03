@@ -53,7 +53,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :variants, only: [:index, :show] do
+    resources :variants do
       resources :images
     end
 
@@ -61,6 +61,8 @@ Spree::Core::Engine.add_routes do
       resources :option_values
     end
     resources :option_values
+
+    resources :option_values, only: :index
 
     get '/orders/mine', to: 'orders#mine', as: 'my_orders'
     get "/orders/current", to: "orders#current", as: "current_order"
@@ -113,6 +115,7 @@ Spree::Core::Engine.add_routes do
       resources :stock_items
     end
 
+    resources :stock_items, only: [:index, :update, :destroy]
     resources :stores
 
     get '/config/money', to: 'config#money'

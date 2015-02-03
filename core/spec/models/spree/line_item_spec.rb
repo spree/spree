@@ -7,7 +7,7 @@ describe Spree::LineItem, :type => :model do
   context '#save' do
     it 'touches the order' do
       expect(line_item.order).to receive(:touch)
-      line_item.save
+      line_item.touch
     end
   end
 

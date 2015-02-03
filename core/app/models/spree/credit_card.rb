@@ -33,6 +33,20 @@ module Spree
       jcb: /^(?:2131|1800|35\d{3})\d{11}$/
     }
 
+    # As of rails 4.2 string columns always return strings, perhaps we should
+    # change these to integer columns on db level
+    def month
+      if type_casted = super
+        type_casted.to_i
+      end
+    end
+
+    def year
+      if type_casted = super
+        type_casted.to_i
+      end
+    end
+
     def expiry=(expiry)
       return unless expiry.present?
 

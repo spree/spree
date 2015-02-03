@@ -18,7 +18,7 @@ describe Spree::ReimbursementMailer, :type => :mailer do
     expect(Spree::Reimbursement).to receive(:find).with(reimbursement.id).and_return(reimbursement)
 
     expect {
-      reimbursement_email = Spree::ReimbursementMailer.reimbursement_email(reimbursement.id)
+      Spree::ReimbursementMailer.reimbursement_email(reimbursement.id).body
     }.not_to raise_error
   end
 

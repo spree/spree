@@ -25,13 +25,13 @@ leaves you with two options.
 
 ### Configure Rails to Serve Public Assets
 
-Rails has a `config.serve_static_assets` setting that allows you to
+Rails has a `config.serve_static_files` setting that allows you to
 override its default behavior in the production environment. If you want
 Rails to serve you public assets you will need to change this setting in
 `config/environments/production.rb` of your Rails app as follows:
 
 ```ruby
-config.serve_static_assets = true
+config.serve_static_files = true
 ```
 
 ***
@@ -50,7 +50,7 @@ approach just make sure that it's configured properly in the
 `config/environments/production.rb` of your Rails app.
 
 ```ruby
-config.serve_static_assets = false
+config.serve_static_files = false
 ```
 ***
 This is the default setting of Rails so it's also fine if this setting is missing or commented out.

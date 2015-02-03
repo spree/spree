@@ -143,10 +143,9 @@ describe Spree::Reimbursement, type: :model do
     end
 
     it "triggers the reimbursement mailer to be sent" do
-      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver: true) }
+      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
       subject
     end
-
   end
 
   describe "#return_items_requiring_exchange" do
