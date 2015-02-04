@@ -3,9 +3,9 @@
     <h3 class="panel-title"><%= "#{Spree.t(:risk_analysis)}: #{Spree.t(:not) unless @order.is_risky?} #{Spree.t(:risky)}" %></h3>
   </div>
 
-  <table class="table table-condensed table-bordered">
+  <table class="table table-bordered">
     <tbody class="additional-info">
-      <tr class="">
+      <tr>
         <td width="40%">
           <strong><%= Spree.t(:failed_payment_attempts) %>:</strong>
         </td>

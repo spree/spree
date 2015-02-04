@@ -1,36 +1,58 @@
 <div class="well risky-order-info">
-  <div class="pull-right next-prev">
-    <%= link_to 'javascript:;', class: "btn btn-default btn-sm js-risky-prev is-hidden" do %>
-      <span class="icon icon-arrow-left"></span>
-      <%= Spree.t(:previous) %>
-    <% end %>
-    <%= link_to 'javascript:;', class: "btn btn-default btn-sm js-risky-next is-hidden" do %>
-      <%= Spree.t(:next) %>
-      <span class="icon icon-arrow-right"></span>
-    <% end %>
-  </div>
+
   <h3 class="order-number">
     <%= @order.number %>
   </h3>
 
-  <% if @order.can_cancel? || @order.can_approve? %>
-    <div class="panel panel-default js-order-options">
-      <div class="panel-body">
-        <%= link_to_with_icon('delete', Spree.t(:cancel_order),
-          'javascript:;',
-          class: "btn btn-danger btn-sm js-risky-cancel") if @order.can_cancel?
-        %>
-        <%= link_to_with_icon('ok', Spree.t(:approve_order),
-          'javascript:;',
-          class: "btn btn-success btn-sm js-risky-approve") if @order.can_approve?
-        %>
-      </div>
+  <div class="row">
+    <div class="col-md-6">
+      <%= link_to_with_icon('delete', Spree.t(:cancel),
+        'javascript:;',
+        class: "btn btn-danger btn-sm js-risky-cancel") if @order.can_cancel?
+      %>
+      <%= link_to_with_icon('ok', Spree.t(:approve),
+        'javascript:;',
+        class: "btn btn-success btn-sm js-risky-approve") if @order.can_approve?
+      %>
     </div>
-  <% end %>
+    <div class="col-md-6 next-prev">
+      <%= link_to 'javascript:;', class: "btn btn-default btn-sm js-risky-next is-hidden pull-right" do %>
+        <%= Spree.t(:next) %>
+        <span class="icon icon-arrow-right"></span>
+      <% end %>
+
+      <%= link_to 'javascript:;', class: "btn btn-default btn-sm js-risky-prev is-hidden pull-right" do %>
+        <span class="icon icon-arrow-left"></span>
+        <%= Spree.t(:previous) %>
+      <% end %>
+    </div>
+  </div>
 
   <% if @order.payments.exists? && @order.considered_risky? %>
     <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.valid.last %>
   <% end %>
 
-  <%= render partial: 'spree/admin/shared/order_summary' %>
+  <%= render :partial => 'spree/admin/orders/risky/line_items', :locals => { :order => @order } %>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><%= Spree.t(:customer_addresses) %></h3>
+    </div>
+
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td width="50%">
+            <strong><%= Spree.t(:shipping_addresses) %></strong><br/>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+          </td>
+          <td width="50%">
+            <strong><%= Spree.t(:billing_addresses) %></strong><br/>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
