@@ -12,20 +12,19 @@ $(document).on('click', '.js-view-risky-order', function() {
 });
 
 function cancelRiskyOrder(){
-  $.ajax({
-    type: 'PUT',
-    url: Spree.routes.orders_api + "/" + getOrderNumber() + '/cancel'
-  }).done(function (data) {
-    processOrderActionSuccess();
-  }).error(function (msg) {
-    console.log(msg);
-  });
+  var url = Spree.routes.orders_api + "/" + getOrderNumber() + '/cancel';
+  riskyAjaxActionHandler(url);
 }
 
 function approveRiskyOrder(){
+  var url = Spree.routes.orders_api + "/" + getOrderNumber() + '/approve';
+  riskyAjaxActionHandler(url);
+}
+
+function riskyAjaxActionHandler(url){
   $.ajax({
     type: 'PUT',
-    url: Spree.routes.orders_api + "/" + getOrderNumber() + '/approve'
+    url: url
   }).done(function (data) {
     processOrderActionSuccess();
   }).error(function (msg) {
