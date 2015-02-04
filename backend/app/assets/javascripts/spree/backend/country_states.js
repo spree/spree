@@ -1,3 +1,7 @@
+// Attach a 'js-country' class to country select wrapper
+// Attach a 'js-state' class to the state select wrapper
+// Now the states will be refreshed as the country changes.
+
 $(document).ready(function () {
   $('.js-country select').on('change', function () {
     var $parent = $(this).parents("form");
