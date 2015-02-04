@@ -14,7 +14,7 @@
           <div class="form-group">
             <%= f.label :email, Spree.t(:email) %>
             <%= f.email_field :email, class: 'form-control' %>
-          </div>  
+          </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
@@ -43,9 +43,9 @@
             <% end %>
           </div>
         </div>
-      </div>  
+      </div>
     </div>
-    
+
   </div>
 
   <div class="row">
@@ -58,7 +58,7 @@
         <div class="panel-body">
           <%= f.fields_for :bill_address do |ba_form| %>
             <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
-          <% end %>  
+          <% end %>
         </div>
       </div>
     </div>
@@ -87,8 +87,4 @@
   <div class="form-actions" data-hook="buttons">
     <%= button Spree.t('actions.update'), 'save' %>
   </div>
-
-  <% content_for :head do %>
-    <%= javascript_include_tag 'spree/backend/address_states.js' %>
-  <% end %>
 </div>
