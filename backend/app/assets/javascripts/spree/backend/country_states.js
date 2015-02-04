@@ -4,7 +4,7 @@
 
 $(document).ready(function () {
   $('.js-country select').on('change', function () {
-    var $parent = $(this).parents("form");
+    var $parent = $(this).parents('form');
     requestStates($parent);
   });
 });
@@ -19,7 +19,7 @@ function requestStates($parent){
       country_id: countryId
     }
   }).done(function (data) {
-    buildStatesSelect(data, $parent)
+    buildStatesSelect(data, $parent);
   }).error(function (msg) {
     console.log(msg);
   });
@@ -34,16 +34,16 @@ function buildStatesSelect(data, $parent){
   var statesRequired = data.states_required;
 
   var statePara = $('.js-state', $parent);
-  var stateSelect = statePara.find('select')
-  var stateInput = statePara.find('input')
-  var stateSpanRequired = statePara.find('[id$="state-required"]')
+  var stateSelect = statePara.find('select');
+  var stateInput = statePara.find('input');
+  var stateSpanRequired = statePara.find('[id$="state-required"]');
 
   if(states.length > 0){
-    selected = parseInt(stateSelect.val());
+    var selected = parseInt(stateSelect.val());
     stateSelect.html('');
     statesWithBlank = [{ name: '', id: ''}].concat(states);
     $.each(statesWithBlank, function(idx, state){
-      opt = ($(document.createElement('option'))).attr('value', state.id).html(state.name);
+      var opt = ($(document.createElement('option'))).attr('value', state.id).html(state.name);
       if(selected == state.id){
         opt.prop('selected', true);
       }
