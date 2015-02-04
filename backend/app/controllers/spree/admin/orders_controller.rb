@@ -6,8 +6,6 @@ module Spree
 
       respond_to :html
 
-      layout :determine_layout
-
       def index
         params[:q] ||= {}
         params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
@@ -62,7 +60,9 @@ module Spree
           per(params[:per_page] || Spree::Config[:orders_per_page])
       end
 
-      def risky_order_info; end
+      def risky_order_info
+        render layout: false
+      end
 
       def new
         @order = Order.create(order_params)
@@ -159,10 +159,6 @@ module Spree
 
         def model_class
           Spree::Order
-        end
-
-        def determine_layout
-          return false if action_name == "risky_order_info"
         end
     end
   end
