@@ -153,7 +153,7 @@ describe Spree::Order, :type => :model do
 
     context "resets payment state" do
 
-      let(:payment) { create(:payment) }
+      let(:payment) { create(:payment, amount: order.total) }
 
       before do
         # TODO: This is ugly :(
@@ -166,6 +166,7 @@ describe Spree::Order, :type => :model do
         allow(payment).to receive(:cancel!)
         allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
         allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+        allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
         allow(order).to receive_message_chain(:payments, :last).and_return(payment)
       end
 
@@ -177,9 +178,9 @@ describe Spree::Order, :type => :model do
 
       context "with shipped items" do
         before do
-          allow(order).to receive_messages :shipment_state => 'partial'
-          allow(order).to receive_messages :outstanding_balance? => false
-          allow(order).to receive_messages :payment_state => "paid"
+          allow(order).to receive_messages shipment_state: 'partial'
+          allow(order).to receive_messages outstanding_balance?: false
+          allow(order).to receive_messages payment_state: "paid"
         end
 
         it "should not alter the payment state" do
@@ -194,6 +195,7 @@ describe Spree::Order, :type => :model do
         it "should automatically refund all payments" do
           allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
           allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+          allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
           allow(order).to receive_message_chain(:payments, :last).and_return(payment)
           expect(payment).to receive(:cancel!)
           order.cancel!
@@ -206,9 +208,9 @@ describe Spree::Order, :type => :model do
   # Another regression test for #729
   context "#resume" do
     before do
-      allow(order).to receive_messages :email => "user@spreecommerce.com"
-      allow(order).to receive_messages :state => "canceled"
-      allow(order).to receive_messages :allow_resume? => true
+      allow(order).to receive_messages email: "user@spreecommerce.com"
+      allow(order).to receive_messages state: "canceled"
+      allow(order).to receive_messages allow_resume?: true
 
       # Stubs method that cause unwanted side effects in this test
       allow(order).to receive :has_available_shipment

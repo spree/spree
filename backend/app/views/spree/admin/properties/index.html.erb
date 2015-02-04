@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_admin_property_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
+  <%= button_link_to Spree.t(:new_property), new_object_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -11,7 +11,7 @@
     <%= search_form_for [:admin, @search] do |f| %>
 
       <%- locals = {:f => f} %>
-      
+
       <div class="row">
         <div class="col col-md-6">
           <div data-hook="admin_property_index_search" class="form-group">
@@ -25,7 +25,7 @@
             <%= f.label :presentation_cont, Spree.t(:presentation) %>
             <%= f.text_field :presentation_cont, :class => "form-control" %>
           </div>
-        </div>        
+        </div>
       </div>
 
       <div class="form-actions" data-hook="admin_pproperties_index_search_buttons">
@@ -61,7 +61,7 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: Spree::Property.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_property_path %>!
+    <%= link_to Spree.t(:add_one), new_object_url %>!
   </div>
 <% end %>
 

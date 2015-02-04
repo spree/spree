@@ -1,22 +1,21 @@
 require 'spec_helper'
 
 module Spree
-  describe OrderUpdater, :type => :model do
+  describe OrderUpdater, type: :model do
     let(:order) { Spree::Order.create }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context "order totals" do
       before do
         2.times do
-          create(:line_item, :order => order, price: 10)
+          create(:line_item, order: order, price: 10)
         end
       end
 
       it "updates payment totals" do
-        allow(order).to receive_message_chain(:payments, :completed, :sum).and_return(10)
-
-        updater.update_totals
-        expect(order.payment_total).to eq(10)
+        create(:payment_with_refund, order: order)
+        Spree::OrderUpdater.new(order).update_payment_total
+        expect(order.payment_total).to eq(40.75)
       end
 
       it "update item total" do
@@ -25,14 +24,14 @@ module Spree
       end
 
       it "update shipment total" do
-        create(:shipment, :order => order, :cost => 10)
+        create(:shipment, order: order, cost: 10)
         updater.update_shipment_total
         expect(order.shipment_total).to eq(10)
       end
 
       context 'with order promotion followed by line item addition' do
-        let(:promotion) { Spree::Promotion.create!(:name => "10% off") }
-        let(:calculator) { Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
+        let(:promotion) { Spree::Promotion.create!(name: "10% off") }
+        let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
           Promotion::Actions::CreateAdjustment.create!({
@@ -44,7 +43,7 @@ module Spree
         before do
           updater.update
           create(:adjustment, source: promotion_action, adjustable: order, order: order)
-          create(:line_item, :order => order, price: 10) # in addition to the two already created
+          create(:line_item, order: order, price: 10) # in addition to the two already created
           updater.update
         end
 
@@ -57,9 +56,9 @@ module Spree
         # A line item will not have both additional and included tax,
         # so please just humour me for now.
         order.line_items.first.update_columns({
-          :adjustment_total => 10.05,
-          :additional_tax_total => 0.05,
-          :included_tax_total => 0.05,
+          adjustment_total: 10.05,
+          additional_tax_total: 0.05,
+          included_tax_total: 0.05,
         })
         updater.update_adjustment_total
         expect(order.adjustment_total).to eq(10.05)
@@ -70,14 +69,14 @@ module Spree
 
     context "updating shipment state" do
       before do
-        allow(order).to receive_messages :backordered? => false
+        allow(order).to receive_messages backordered?: false
         allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
         allow(order).to receive_message_chain(:shipments, :ready, :count).and_return(0)
         allow(order).to receive_message_chain(:shipments, :pending, :count).and_return(0)
       end
 
       it "is backordered" do
-        allow(order).to receive_messages :backordered? => true
+        allow(order).to receive_messages backordered?: true
         updater.update_shipment_state
 
         expect(order.shipment_state).to eq('backorder')
@@ -197,12 +196,12 @@ module Spree
     it "state change" do
       order.shipment_state = 'shipped'
       state_changes = double
-      allow(order).to receive_messages :state_changes => state_changes
+      allow(order).to receive_messages state_changes: state_changes
       expect(state_changes).to receive(:create).with(
-        :previous_state => nil,
-        :next_state => 'shipped',
-        :name => 'shipment',
-        :user_id => nil
+        previous_state: nil,
+        next_state: 'shipped',
+        name: 'shipment',
+        user_id: nil
       )
 
       order.state_changed('shipment')
@@ -222,31 +221,31 @@ module Spree
       end
 
       it "updates each shipment" do
-        shipment = stub_model(Spree::Shipment, :order => order)
+        shipment = stub_model(Spree::Shipment, order: order)
         shipments = [shipment]
-        allow(order).to receive_messages :shipments => shipments
-        allow(shipments).to receive_messages :states => []
-        allow(shipments).to receive_messages :ready => []
-        allow(shipments).to receive_messages :pending => []
-        allow(shipments).to receive_messages :shipped => []
+        allow(order).to receive_messages shipments: shipments
+        allow(shipments).to receive_messages states: []
+        allow(shipments).to receive_messages ready: []
+        allow(shipments).to receive_messages pending: []
+        allow(shipments).to receive_messages shipped: []
 
         expect(shipment).to receive(:update!).with(order)
         updater.update_shipments
       end
 
       it "refreshes shipment rates" do
-        shipment = stub_model(Spree::Shipment, :order => order)
+        shipment = stub_model(Spree::Shipment, order: order)
         shipments = [shipment]
-        allow(order).to receive_messages :shipments => shipments
+        allow(order).to receive_messages shipments: shipments
 
         expect(shipment).to receive(:refresh_rates)
         updater.update_shipments
       end
 
       it "updates the shipment amount" do
-        shipment = stub_model(Spree::Shipment, :order => order)
+        shipment = stub_model(Spree::Shipment, order: order)
         shipments = [shipment]
-        allow(order).to receive_messages :shipments => shipments
+        allow(order).to receive_messages shipments: shipments
 
         expect(shipment).to receive(:update_amounts)
         updater.update_shipments
@@ -269,11 +268,11 @@ module Spree
       it "doesnt update each shipment" do
         shipment = stub_model(Spree::Shipment)
         shipments = [shipment]
-        allow(order).to receive_messages :shipments => shipments
-        allow(shipments).to receive_messages :states => []
-        allow(shipments).to receive_messages :ready => []
-        allow(shipments).to receive_messages :pending => []
-        allow(shipments).to receive_messages :shipped => []
+        allow(order).to receive_messages shipments: shipments
+        allow(shipments).to receive_messages states: []
+        allow(shipments).to receive_messages ready: []
+        allow(shipments).to receive_messages pending: []
+        allow(shipments).to receive_messages shipped: []
 
         allow(updater).to receive(:update_totals) # Otherwise this gets called and causes a scene
         expect(updater).not_to receive(:update_shipments).with(order)

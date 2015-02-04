@@ -7,7 +7,6 @@ module Spree
 
       def edit
         @preferences_security = [:check_for_spree_alerts]
-        @preferences_currency = [:display_currency, :hide_cents]
       end
 
       def update

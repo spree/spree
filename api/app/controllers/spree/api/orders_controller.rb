@@ -59,15 +59,7 @@ module Spree
         find_order(true)
         authorize! :update, @order, order_token
 
-        result = if request.patch?
-          # This will update the order without a checkout reset.
-          @order.update_attributes(order_params)
-        else
-          # This will reset checkout back to address and delete all shipments.
-          @order.contents.update_cart(order_params)
-        end
-
-        if result
+        if @order.contents.update_cart(order_params)
           user_id = params[:order][:user_id]
           if current_api_user.has_spree_role?('admin') && user_id
             @order.associate_user!(Spree.user_class.find(user_id))

@@ -338,6 +338,9 @@ describe Spree::TaxRate, :type => :model do
 
             it "should apply adjustments when a tax zone is present" do
               expect(line_item.adjustments.count).to eq(2)
+              line_item.adjustments.each do |adjustment|
+                expect(adjustment.label).to eq("#{adjustment.source.tax_category.name} #{adjustment.source.amount * 100}%")
+              end
             end
 
             describe 'when the tax zone is removed' do

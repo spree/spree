@@ -15,10 +15,4 @@ describe Spree::Admin::BaseHelper, :type => :helper do
     end
   end
 
-  context "rails environments" do
-    it "returns the existing environments" do
-      expect(rails_environments).to eql ["development","production", "test"]
-    end
-  end
-
 end

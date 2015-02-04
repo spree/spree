@@ -4,7 +4,7 @@ shared_examples "an invalid state transition" do |status, expected_status|
   let(:status) { status }
 
   it "cannot transition to #{expected_status}" do
-    expect { subject }.to raise_error(StateMachine::InvalidTransition)
+    expect { subject }.to raise_error(StateMachines::InvalidTransition)
   end
 end
 
@@ -52,6 +52,11 @@ describe Spree::ReturnItem, :type => :model do
 
       it 'increases the count on hand' do
         expect { subject }.to change { stock_item.reload.count_on_hand }.by(1)
+      end
+
+      context "when the variant is not resellable" do
+        before { return_item.update_attributes(resellable: false) }
+        it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'when variant does not track inventory' do

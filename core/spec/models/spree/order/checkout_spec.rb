@@ -156,7 +156,7 @@ describe Spree::Order, :type => :model do
 
       it "cannot transition to address without any line items" do
         expect(order.line_items).to be_blank
-        expect { order.next! }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
+        expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
       end
     end
 
@@ -235,7 +235,7 @@ describe Spree::Order, :type => :model do
           context "if there are no shipping rates for any shipment" do
             it "raises an InvalidTransitionError" do
               transition = lambda { order.next! }
-              expect(transition).to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+              expect(transition).to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
             end
 
             it "deletes all the shipments" do
@@ -415,7 +415,7 @@ describe Spree::Order, :type => :model do
           it "raises a StateMachine::InvalidTransition" do
             expect {
               order.next!
-            }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
+            }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
 
             expect(order.errors[:base]).to include(Spree.t(:no_payment_found))
           end

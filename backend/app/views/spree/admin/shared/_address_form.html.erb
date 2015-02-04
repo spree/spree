@@ -41,7 +41,7 @@
   <div class="form-group <%= "#{type}-row" %>">
     <%= f.label :country_id, Spree.t(:country) %>
     <span id="<%= s_or_b %>country">
-      <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2 form-control' } %>
+      <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
     </span>
   </div>
 
@@ -51,7 +51,7 @@
       <%= f.text_field :state_name,
             style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };",
             disabled: !f.object.country.states.empty?, class: 'form-control state_name' %>
-      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2 form-control', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
+      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
     </span>
   </div>
 

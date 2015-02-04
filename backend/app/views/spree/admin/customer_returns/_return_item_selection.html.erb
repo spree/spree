@@ -8,6 +8,7 @@
       <th><%= Spree.t(:sku) %></th>
       <th><%= Spree.t(:pre_tax_amount) %></th>
       <th><%= Spree.t(:exchange_for) %></th>
+      <th><%= Spree.t(:resellable) %></th>
     </tr>
   </thead>
   <tbody>
@@ -34,6 +35,9 @@
         </td>
         <td class="align-center">
           <%= return_item.exchange_variant.try(:exchange_name) %>
+        </td>
+        <td class="align-center">
+          <%= item_fields.check_box :resellable, { checked: return_item.resellable } %>
         </td>
       </tr>
     <% end %>

@@ -18,10 +18,6 @@ module ControllerHacks
     api_process(action, params, session, flash, "PUT")
   end
 
-  def api_patch(action, params={}, session=nil, flash=nil)
-    api_process(action, params, session, flash, "PATCH")
-  end
-
   def api_delete(action, params={}, session=nil, flash=nil)
     api_process(action, params, session, flash, "DELETE")
   end

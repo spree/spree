@@ -108,12 +108,6 @@ $$$
 document return authorizations.
 $$$
 
-## OrderPopulator
-
-$$$
-Add documentation about the OrderPopulator class here
-$$$
-
 ## Updating an Order
 
 If you change any aspect of an `Order` object within code and you wish to update the order's totals -- including associated adjustments and shipments -- call the `update!` method on that object, which calls out to the `OrderUpdater` class.
