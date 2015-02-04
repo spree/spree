@@ -9,12 +9,11 @@ module Spree
     let(:variant) { create(:variant) }
     let(:line_item) { create(:line_item) }
 
-    let(:attributes) { [:number, :item_total, :display_total, :total,
-                        :state, :adjustment_total,
-                        :user_id, :created_at, :updated_at,
-                        :completed_at, :payment_total, :shipment_state,
-                        :payment_state, :email, :special_instructions,
-                        :total_quantity, :display_item_total, :currency] }
+    let(:attributes) do
+      [:number, :item_total, :display_total, :total, :state, :adjustment_total, :user_id,
+       :created_at, :updated_at, :completed_at, :payment_total, :shipment_state, :payment_state,
+       :email, :special_instructions, :total_quantity, :display_item_total, :currency]
+    end
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
 
@@ -230,7 +229,7 @@ module Spree
     end
 
     it "can create an order" do
-      api_post :create, :order => { :line_items => { "0" => { :variant_id => variant.to_param, :quantity => 5 } } }
+      api_post :create, order: { line_items: [{ variant_id: variant.to_param, quantity: 5 }] }
       expect(response.status).to eq(201)
 
       order = Order.last
@@ -260,23 +259,15 @@ module Spree
       expect(line_item).to receive(:update_attributes!).with("special" => true)
 
       allow(controller).to receive_messages(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
-      api_post :create, :order => {
-        :line_items => {
-          "0" => {
-            :variant_id => variant.to_param, :quantity => 5, :special => true
-          }
-        }
+      api_post :create, order: {
+        line_items: [{ variant_id: variant.to_param, quantity: 5, special: true }]
       }
       expect(response.status).to eq(201)
     end
 
     it "cannot arbitrarily set the line items price" do
-      api_post :create, :order => {
-        :line_items => {
-          "0" => {
-            :price => 33.0, :variant_id => variant.to_param, :quantity => 5
-          }
-        }
+      api_post :create, order: {
+        line_items: [{ price: 33.0, variant_id: variant.to_param, quantity: 5 }]
       }
 
       expect(response.status).to eq 201
@@ -302,13 +293,7 @@ module Spree
       allow(order).to receive(:associate_user!)
       allow(order).to receive_message_chain(:contents, :add).and_return(line_item = double('LineItem'))
       expect(line_item).not_to receive(:update_attributes)
-      api_post :create, :order => {
-        :line_items => {
-          "0" => {
-            :variant_id => variant.to_param, :quantity => 5
-          }
-        }
-      }
+      api_post :create, order: { line_items: [{ variant_id: variant.to_param, quantity: 5 }] }
     end
 
     it "can create an order without any parameters" do
@@ -683,12 +668,8 @@ module Spree
         end
 
         it "can arbitrarily set the line items price" do
-          api_post :create, :order => {
-            :line_items => {
-              "0" => {
-                :price => 33.0, :variant_id => variant.to_param, :quantity => 5
-              }
-            }
+          api_post :create, order: {
+            line_items: [{ price: 33.0, variant_id: variant.to_param, quantity: 5 }]
           }
           expect(response.status).to eq 201
           expect(Order.last.line_items.first.price.to_f).to eq(33.0)

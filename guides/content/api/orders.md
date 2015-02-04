@@ -118,7 +118,16 @@ POST /api/orders```
 If you wish to create an order with a line item matching to a variant whose ID is \"1\" and quantity is 5, make this request:
 
 ```text
-POST /api/orders?order[line_items][0][variant_id]=1&order[line_items][0][quantity]=5```
+POST /api/orders
+
+{
+  "order": {
+    "line_items": [
+      { "variant_id": 1, "quantity": 5 }
+    ]
+  }
+}
+```
 
 ### Successful response
 
