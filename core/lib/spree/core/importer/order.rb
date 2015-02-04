@@ -101,6 +101,32 @@ module Spree
           return {} unless line_items
           case line_items
           when Hash
+            ActiveSupport::Deprecation.warn(<<-EOS, caller)
+              Passing a hash is now deprecated, it is recommended that you pass it as an array instead.
+
+              New Syntax:
+
+              {
+                "order": {
+                  "line_items": [
+                    { "variant_id": 123, "quantity": 1 },
+                    { "variant_id": 456, "quantity": 1 }
+                  ]
+                }
+              }
+
+              Old Syntax:
+
+              {
+                "order": {
+                  "line_items": {
+                    "1": { "variant_id": 123, "quantity": 1 },
+                    "2": { "variant_id": 123, "quantity": 1 }
+                  }
+                }
+              }
+            EOS
+
             line_items.each_key do |k|
               begin
                 extra_params = line_items[k].except(:variant_id, :quantity, :sku)
