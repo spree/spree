@@ -21,7 +21,7 @@ module Spree
       where(default: true).first || new
     end
 
-    def self.tracker
+    def tracker
       get_preference :tracker
     end
 
