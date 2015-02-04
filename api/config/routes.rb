@@ -19,6 +19,7 @@ Spree::Core::Engine.add_routes do
 
     concern :order_routes do
       member do
+        put :approve
         put :cancel
         put :empty
         put :apply_coupon_code
