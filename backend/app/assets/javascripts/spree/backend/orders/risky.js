@@ -1,26 +1,12 @@
 var activeRiskyOrder = 0;
 var totalRiskyOrders;
 
-$(document).ready(function(){
-  loadRiskyOrder();
-});
+$(document).ready(loadRiskyOrder);
 
-$(document).on('click', '.js-risky-next', function() {
-  nextRiskyOrder();
-});
-
-$(document).on('click', '.js-risky-prev', function() {
-  prevRiskyOrder();
-});
-
-$(document).on('click', '.js-risky-cancel', function() {
-  cancelRiskyOrder();
-});
-
-$(document).on('click', '.js-risky-approve', function() {
-  approveRiskyOrder();
-});
-
+$(document).on('click', '.js-risky-next', nextRiskyOrder);
+$(document).on('click', '.js-risky-prev', prevRiskyOrder);
+$(document).on('click', '.js-risky-cancel', cancelRiskyOrder);
+$(document).on('click', '.js-risky-approve', approveRiskyOrder);
 $(document).on('click', '.js-view-risky-order', function() {
   viewRiskyOrder($(this));
 });
