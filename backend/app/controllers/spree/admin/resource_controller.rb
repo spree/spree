@@ -69,10 +69,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
   end
 
+  def model_class
+    @model_class ||= resource.model_class
+  end
+
   def update_positions
     ActiveRecord::Base.transaction do
       params[:positions].each do |id, index|
-        resource.model_class.find(id).set_list_position(index)
+        model_class.find(id).set_list_position(index)
       end
     end
 
@@ -112,7 +116,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def resource_not_found
-    flash[:error] = flash_message_for(resource.model_class.new, :not_found)
+    flash[:error] = flash_message_for(model_class.new, :not_found)
     redirect_to collection_url
   end
 
@@ -170,7 +174,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if parent_data.present?
       parent.send(controller_name).find(params[:id])
     else
-      resource.model_class.find(params[:id])
+      model_class.find(params[:id])
     end
   end
 
@@ -178,17 +182,17 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if parent_data.present?
       parent.send(controller_name).build
     else
-      resource.model_class.new
+      model_class.new
     end
   end
 
   def collection
     return parent.send(controller_name) if parent_data.present?
-    if resource.model_class.respond_to?(:accessible_by) &&
-        !current_ability.has_block?(params[:action], resource.model_class)
-      resource.model_class.accessible_by(current_ability, action)
+    if model_class.respond_to?(:accessible_by) &&
+        !current_ability.has_block?(params[:action], model_class)
+      model_class.accessible_by(current_ability, action)
     else
-      resource.model_class.where(nil)
+      model_class.where(nil)
     end
   end
 
@@ -204,9 +208,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def new_object_url(options = {})
     if parent_data.present?
-      spree.new_polymorphic_url([:admin, parent, resource.model_class], options)
+      spree.new_polymorphic_url([:admin, parent, model_class], options)
     else
-      spree.new_polymorphic_url([:admin, resource.model_class], options)
+      spree.new_polymorphic_url([:admin, model_class], options)
     end
   end
 
@@ -230,9 +234,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def collection_url(options = {})
     if parent_data.present?
-      spree.polymorphic_url([:admin, parent, resource.model_class], options)
+      spree.polymorphic_url([:admin, parent, model_class], options)
     else
-      spree.polymorphic_url([:admin, resource.model_class], options)
+      spree.polymorphic_url([:admin, model_class], options)
     end
   end
 
