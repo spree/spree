@@ -1,6 +1,6 @@
 class MoveTrackerInformationToStore < ActiveRecord::Migration
   def up
-    analytics_id = Spree::Tracker.current.analytics_id
+    analytics_id = Spree::Tracker.current.try(:analytics_id)
     Spree::Store.set_preference :tracker, analytics_id
   end
 
