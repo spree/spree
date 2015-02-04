@@ -199,7 +199,7 @@ module Spree
 
       context "state passed is not associated with country" do
         let(:params) do
-          params = {
+          {
             ship_address_attributes: ship_address,
             line_items_attributes: line_items
           }
@@ -358,9 +358,7 @@ module Spree
                                                shipping_method: 'XXX',
                                                inventory_units: [{ sku: sku }]
                                              }] }
-        expect {
-          order = Importer::Order.import(user, params)
-        }.to raise_error /XXX/
+        expect { Importer::Order.import(user, params) }.to raise_error /XXX/
       end
 
       it 'adds adjustments' do
