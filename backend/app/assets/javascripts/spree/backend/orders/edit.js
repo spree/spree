@@ -5,9 +5,9 @@ $(document).ready(function () {
 
   // Will refresh the states (based on the country) when you open the
   // shipment address form
-  $(".js-new-shipment-address").click(function(){
-    var data_target = $(this).data("target");
-    var $parent = $(data_target);
+  $('.js-new-shipment-address').click(function(){
+    var dataTarget = $(this).data('target');
+    var $parent = $(dataTarget);
     requestStates($parent);
   });
 });

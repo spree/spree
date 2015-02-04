@@ -41,7 +41,7 @@ function buildStatesSelect(data, $parent){
   if(states.length > 0){
     var selected = parseInt(stateSelect.val());
     stateSelect.html('');
-    statesWithBlank = [{ name: '', id: ''}].concat(states);
+    var statesWithBlank = [{ name: '', id: ''}].concat(states);
     $.each(statesWithBlank, function(idx, state){
       var opt = ($(document.createElement('option'))).attr('value', state.id).html(state.name);
       if(selected == state.id){
