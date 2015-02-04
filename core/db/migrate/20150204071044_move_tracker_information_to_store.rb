@@ -6,11 +6,11 @@ class MoveTrackerInformationToStore < ActiveRecord::Migration
       true
     end
     analytics_id = Spree::Tracker.current.analytics_id
-    Spree::Store.current.set_preference :tracker, analytics_id
+    Spree::Store.current.set_preference :analytics_id, analytics_id
   end
 
   def down
-    Spree::Store.current.set_preference :tracker, nil if Spree::Store.current
+    Spree::Store.current.set_preference :analytics_id, nil if Spree::Store.current
   rescue TypeError
   end
 end

@@ -48,8 +48,8 @@ describe Spree::Store do
     end
   end
 
-  describe "#tracker" do
-    before { store.set_preference :tracker, "UA-123456" }
-    its(:tracker) { should eq "UA-123456" }
+  describe "#analytics_id" do
+    before { store.set_preference :analytics_id, "UA-123456" }
+    its(:analytics_id) { should eq "UA-123456" }
   end
 end
