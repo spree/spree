@@ -1,4 +1,4 @@
-var riskyOrderCount = 0;
+var activeRiskyOrder = 0;
 var totalRiskyOrders;
 
 $(document).ready(function(){
@@ -53,7 +53,7 @@ function processOrderActionSuccess(){
 }
 
 function removeOrderFromTable(){
-  var deletedOrder = $('table#listing_risky_orders tbody tr:eq(' + riskyOrderCount + ')');
+  var deletedOrder = $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')');
 
   deletedOrder.slideUp();
   deletedOrder.remove();
@@ -76,34 +76,41 @@ function loadRiskyOrder(){
 
 function setRiskyOrder(data){
   $('.js-risky-order-info').html(data);
-  $('table#listing_risky_orders tbody tr').removeClass('success');
-  $('table#listing_risky_orders tbody tr:eq(' + riskyOrderCount + ')').addClass('success');
+  // remove the success class from every tr
+  $('table#listing_risky_orders tbody tr').removeClass('info');
+  // assign the class to the current active tr
+  $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')').addClass('info');
 
-  if(riskyOrderCount == 0){
-    $('.js-risky-next').show();
-  } else if (riskyOrderCount == totalRiskyOrders) {
-    $('.js-risky-prev').show();
+  if(activeRiskyOrder == 0){
+    showRiskyNav('next');
+  } else if (activeRiskyOrder == totalRiskyOrders) {
+    showRiskyNav('prev');
   } else {
-    $('.js-risky-next').show();
-    $('.js-risky-prev').show();
+    showRiskyNav('next');
+    showRiskyNav('prev');
   }
 }
 
 function nextRiskyOrder(){
-  riskyOrderCount++;
+  activeRiskyOrder++;
   loadRiskyOrder();
 }
 
 function prevRiskyOrder(){
-  riskyOrderCount--;
+  activeRiskyOrder--;
   loadRiskyOrder();
 }
 
 function viewRiskyOrder(clicked_element){
-  riskyOrderCount = clicked_element.parents('tr').index();
+  activeRiskyOrder = clicked_element.parents('tr').index();
   loadRiskyOrder();
 }
 
+function showRiskyNav(type){
+  // need to use .css here, we want the element to be inline block instead of inline (.show())
+  $('.js-risky-' + type).css('display', 'inline-block');
+}
+
 function getOrderNumber(){
-  return $('table#listing_risky_orders tbody tr:eq(' + riskyOrderCount + ')').data('order-number');
+  return $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')').data('order-number');
 }
