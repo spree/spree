@@ -63,7 +63,7 @@ module Spree
 
     def expired?(coupon_code = nil)
       promo_exp = !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
-      code      = codes.where(value: coupon_code) if coupon_code.present?
+      code      = codes.find_by_value(coupon_code) if coupon_code.present?
 
       if code.present?
         promo_exp && code.expired?
@@ -148,7 +148,7 @@ module Spree
 
     def usage_limit_exceeded?(promotable, coupon_code = nil)
       promo_exc = usage_limit.to_i > 0 && adjusted_credits_count(promotable) >= usage_limit
-      code      = codes.where(value: coupon_code) if coupon_code.present?
+      code      = codes.find_by_value(coupon_code) if coupon_code.present?
 
       if code.present?
         promo_exc && code.usage_limit_exceeded?
