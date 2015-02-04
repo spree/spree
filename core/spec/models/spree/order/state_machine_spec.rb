@@ -153,7 +153,7 @@ describe Spree::Order, :type => :model do
 
     context "resets payment state" do
 
-      let(:payment) { create(:payment) }
+      let(:payment) { create(:payment, amount: order.total) }
 
       before do
         # TODO: This is ugly :(
@@ -166,6 +166,7 @@ describe Spree::Order, :type => :model do
         allow(payment).to receive(:cancel!)
         allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
         allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+        allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
         allow(order).to receive_message_chain(:payments, :last).and_return(payment)
       end
 
@@ -194,6 +195,7 @@ describe Spree::Order, :type => :model do
         it "should automatically refund all payments" do
           allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
           allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
+          allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
           allow(order).to receive_message_chain(:payments, :last).and_return(payment)
           expect(payment).to receive(:cancel!)
           order.cancel!
