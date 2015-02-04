@@ -49,7 +49,7 @@ module Spree
 
       def risky
         @search = Order.accessible_by(current_ability, :index)
-                       .where.not(completed_at: nil)
+                       .complete
                        .where(considered_risky: true)
                        .where.not(state: 'canceled')
                        .order(completed_at: :desc)
