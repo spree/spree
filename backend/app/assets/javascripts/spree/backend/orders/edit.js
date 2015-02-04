@@ -3,6 +3,8 @@ $(document).ready(function () {
 
   $('[data-hook="add_product_name"]').find('.variant_autocomplete').variantAutocomplete();
 
+  // Will refresh the states (based on the country) when you open the
+  // shipment address form
   $(".js-change-shipment-address").click(function(){
     var data_target = $(this).data("target");
     var $parent = $(data_target);
