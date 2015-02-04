@@ -1,8 +1,9 @@
+# DEV NOTE: Remove Spree::Tracker entirely for Spree 3.1.
 module Spree
   class Tracker < Spree::Base
     def self.current
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        \nThe Spree::Tracker model will be removed. To obtain the tracker, you can use either
+\n      The Spree::Tracker model will be removed. To obtain the tracker, you can use either
         `current_store.tracker' or `Spree::Store.current.tracker'.
       EOS
       tracker = where(active: true).first
