@@ -1,0 +1,29 @@
+<div class="well risky-order-info">
+  <div class="pull-right">
+    <%= button_link_to Spree.t(:prev),
+      'javascript:;',
+      class: "btn btn-default btn-sm js-risky-prev is-hidden"
+    %>
+    <%= button_link_to Spree.t(:next),
+      'javascript:;',
+      class: "btn btn-default btn-sm js-risky-next is-hidden"
+    %>
+    <%= button_link_to(Spree.t(:cancel),
+      'javascript:;',
+      class: "btn btn-danger btn-sm js-risky-cancel") if @order.can_cancel?
+    %>
+    <%= button_link_to(Spree.t(:approve),
+      'javascript:;',
+      class: "btn btn-success btn-sm js-risky-approve") if @order.can_approve?
+    %>
+  </div>
+  <h3 class="order-number">
+    <%= @order.number %>
+  </h3>
+
+  <% if @order.payments.exists? && @order.considered_risky? %>
+    <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.valid.last %>
+  <% end %>
+
+  <%= render partial: 'spree/admin/shared/order_summary' %>
+</div>

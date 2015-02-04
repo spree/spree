@@ -1,13 +1,12 @@
-<fieldset id="risk_analysis">
-  <legend><%= "#{Spree.t(:risk_analysis)}: #{Spree.t(:not) unless @order.is_risky?} #{Spree.t(:risky)}" %></legend>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= "#{Spree.t(:risk_analysis)}: #{Spree.t(:not) unless @order.is_risky?} #{Spree.t(:risky)}" %></h3>
+  </div>
+
   <table class="table table-condensed table-bordered">
-    <thead>
-      <th><%= Spree.t('risk')%></th>
-      <th><%= Spree.t('status')%></th>
-    </thead>
-    <tbody id="risk-analysis" data-hook="order_details_adjustments"  class="with-border">
+    <tbody class="additional-info">
       <tr class="">
-        <td>
+        <td width="40%">
           <strong><%= Spree.t(:failed_payment_attempts) %>:</strong>
         </td>
         <td>
@@ -44,4 +43,4 @@
       </tr>
     </tbody>
   </table>
-</fieldset>
+</div>
