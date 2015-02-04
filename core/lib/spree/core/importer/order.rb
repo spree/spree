@@ -102,7 +102,8 @@ module Spree
           case line_items
           when Hash
             ActiveSupport::Deprecation.warn(<<-EOS, caller)
-              Passing a hash is now deprecated, it is recommended that you pass it as an array instead.
+              Passing a hash is now deprecated, it is recommended that you pass
+              it as an array instead.
 
               New Syntax:
 
@@ -131,8 +132,10 @@ module Spree
               begin
                 extra_params = line_items[k].except(:variant_id, :quantity, :sku)
                 line_item = ensure_variant_id_from_params(line_items[k])
-                line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-                # Raise any errors with saving to prevent import succeeding with line items failing silently.
+                variant = Spree::Variant.find(line_item[:variant_id])
+                line_item = order.contents.add(variant, line_item[:quantity])
+                # Raise any errors with saving to prevent import succeeding with line items
+                # failing silently.
                 if extra_params.present?
                   line_item.update_attributes!(extra_params)
                 else
@@ -147,8 +150,10 @@ module Spree
               begin
                 extra_params = line_item.except(:variant_id, :quantity, :sku)
                 line_item = ensure_variant_id_from_params(line_item)
-                line_item = order.contents.add(Spree::Variant.find(line_item[:variant_id]), line_item[:quantity])
-                # Raise any errors with saving to prevent import succeeding with line items failing silently.
+                variant = Spree::Variant.find(line_item[:variant_id])
+                line_item = order.contents.add(variant, line_item[:quantity])
+                # Raise any errors with saving to prevent import succeeding with line items
+                # failing silently.
                 if extra_params.present?
                   line_item.update_attributes!(extra_params)
                 else
