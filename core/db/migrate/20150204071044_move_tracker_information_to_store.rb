@@ -1,6 +1,6 @@
 class MoveTrackerInformationToStore < ActiveRecord::Migration
   def up
-    return if Spree::Tracker.current.nil? || begin
+    return if Spree::Tracker.current(deprecation_warning: false).nil? || begin
       Spree::Store.current.nil?
     rescue TypeError
       true
