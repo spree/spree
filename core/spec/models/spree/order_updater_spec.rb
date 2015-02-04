@@ -13,9 +13,9 @@ module Spree
       end
 
       it "updates payment totals" do
-        allow(order).to receive_message_chain(:payments, :completed, :sum).and_return(10)
-        updater.update_payment_total
-        expect(order.payment_total).to eq(10)
+        create(:payment_with_refund, order: order)
+        Spree::OrderUpdater.new(order).update_payment_total
+        expect(order.payment_total).to eq(40.75)
       end
 
       it "update item total" do

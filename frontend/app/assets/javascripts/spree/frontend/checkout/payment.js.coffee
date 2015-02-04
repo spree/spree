@@ -67,11 +67,11 @@ Spree.ready ($) ->
             url: url,
             success: (data) ->
               coupon_code_field.val('')
-              coupon_status.addClass("success").html("Coupon code applied successfully.")
+              coupon_status.addClass("alert-success").html("Coupon code applied successfully.")
               return true
             error: (xhr) ->
               handler = JSON.parse(xhr.responseText)
-              coupon_status.addClass("error").html(handler["error"])
+              coupon_status.addClass("alert-error").html(handler["error"])
               $('.continue').attr('disabled', false)
               return false
           })

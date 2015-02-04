@@ -6,6 +6,13 @@ FactoryGirl.define do
     order
     state 'checkout'
     response_code '12345'
+
+    factory :payment_with_refund do
+      state 'completed'
+      after :create do |payment|
+        create(:refund, amount: 5, payment: payment)
+      end
+    end
   end
 
   factory :check_payment, class: Spree::Payment do

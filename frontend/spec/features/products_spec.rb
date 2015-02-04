@@ -101,7 +101,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         end
       end
 
-      it "when on the 'address' state of the cart" do
+      it "when on the 'address' state of the cart", js: true do
         visit spree.product_path(product)
         click_button "Add To Cart"
         click_button "Checkout"

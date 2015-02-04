@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Checkout", type: :feature, inaccessible: true do
+describe "Checkout", type: :feature, inaccessible: true, js: true do
 
   include_context 'checkout setup'
 
@@ -16,11 +16,11 @@ describe "Checkout", type: :feature, inaccessible: true do
         click_button "Checkout"
       end
 
-      it "should default checkbox to checked", inaccessible: true do
+      it "should default checkbox to checked" do
         expect(find('input#order_use_billing')).to be_checked
       end
 
-      it "should remain checked when used and visitor steps back to address step", :js => true do
+      it "should remain checked when used and visitor steps back to address step" do
         fill_in_address
         expect(find('input#order_use_billing')).to be_checked
       end
@@ -356,7 +356,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
   end
 
-  context "in coupon promotion, submits coupon along with payment", js: true do
+  context "if coupon promotion, submits coupon along with payment", js: true do
     let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", code: "huhu") }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
