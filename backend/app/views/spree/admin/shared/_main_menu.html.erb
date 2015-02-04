@@ -1,6 +1,6 @@
 <% if can? :admin, Spree::Order %>
   <ul class="nav nav-sidebar">
-    <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
+    <%= main_menu_tree Spree.t(:orders), icon: "shopping-cart", sub_menu: "order", url: "#sidebar-order" %>
   </ul>
 <% end %>
 
