@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Store, :type => :model do
+describe Spree::Store do
+  subject(:store) { create :store }
 
   describe ".by_url" do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
@@ -47,4 +48,8 @@ describe Spree::Store, :type => :model do
     end
   end
 
+  describe ".tracker" do
+    before { store.set_preference :tracker, "UA-123456" }
+    its(:tracker) { should eq "UA-123456"}
+  end
 end
