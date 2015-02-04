@@ -108,9 +108,9 @@
                 admin_order_customer_url(@order),
                 class: "btn btn-default btn-sm"
           %>
-          <%= button_tag Spree.t(:change_shipment_address),
+          <%= button_tag Spree.t(:new_shipment_address),
                 data: { toggle: "modal", target: "#new_address_#{ shipment.id }" },
-                class: "btn btn-primary btn-sm js-change-shipment-address"
+                class: "btn btn-success btn-sm js-new-shipment-address"
           %>
           <%= render partial: "spree/admin/orders/shipment_address_modal",
                 locals: { shipment: shipment, type: :new }
