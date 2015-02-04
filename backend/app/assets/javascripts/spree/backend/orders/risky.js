@@ -3,7 +3,6 @@ var totalRiskyOrders;
 
 $(document).ready(function(){
   loadRiskyOrder();
-  $("#progress").fadeIn();
 });
 
 $(document).on('click', '.js-risky-next', function() {
@@ -21,6 +20,7 @@ $(document).on('click', '.js-risky-cancel', function() {
 $(document).on('click', '.js-risky-approve', function() {
   approveRiskyOrder();
 });
+
 $(document).on('click', '.js-view-risky-order', function() {
   viewRiskyOrder($(this));
 });
@@ -30,7 +30,7 @@ function cancelRiskyOrder(){
     type: 'PUT',
     url: Spree.routes.orders_api + "/" + getOrderNumber() + '/cancel'
   }).done(function (data) {
-    processCancelledOrder();
+    processOrderActionSuccess();
   }).error(function (msg) {
     console.log(msg);
   });
@@ -41,18 +41,13 @@ function approveRiskyOrder(){
     type: 'PUT',
     url: Spree.routes.orders_api + "/" + getOrderNumber() + '/approve'
   }).done(function (data) {
-    processApprovedOrder();
+    processOrderActionSuccess();
   }).error(function (msg) {
     console.log(msg);
   });
 }
 
-function processCancelledOrder(){
-  removeOrderFromTable();
-  loadRiskyOrder();
-}
-
-function processApprovedOrder(){
+function processOrderActionSuccess(){
   removeOrderFromTable();
   loadRiskyOrder();
 }
@@ -81,16 +76,16 @@ function loadRiskyOrder(){
 
 function setRiskyOrder(data){
   $('.js-risky-order-info').html(data);
-  $('table#listing_risky_orders tbody tr').removeClass("success");
-  $('table#listing_risky_orders tbody tr:eq(' + riskyOrderCount + ')').addClass("success");
+  $('table#listing_risky_orders tbody tr').removeClass('success');
+  $('table#listing_risky_orders tbody tr:eq(' + riskyOrderCount + ')').addClass('success');
 
   if(riskyOrderCount == 0){
-    $(".js-risky-next").show();
+    $('.js-risky-next').show();
   } else if (riskyOrderCount == totalRiskyOrders) {
-    $(".js-risky-prev").show();
+    $('.js-risky-prev').show();
   } else {
-    $(".js-risky-next").show();
-    $(".js-risky-prev").show();
+    $('.js-risky-next').show();
+    $('.js-risky-prev').show();
   }
 }
 
@@ -105,7 +100,7 @@ function prevRiskyOrder(){
 }
 
 function viewRiskyOrder(clicked_element){
-  riskyOrderCount = clicked_element.parents("tr").index();
+  riskyOrderCount = clicked_element.parents('tr').index();
   loadRiskyOrder();
 }
 
