@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'Users', type: :feature do
   stub_authorization!
+
   let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
@@ -16,6 +17,10 @@ describe 'Users', type: :feature do
   end
 
   let(:orders) { [order, order_2] }
+
+  before do
+    stub_const('Spree::User', create(:user, email: 'example@example.com').class)
+  end
 
   shared_examples_for 'a user page' do
     it 'has lifetime stats' do
