@@ -39,7 +39,7 @@ module Spree
       end
 
       def eval_block(&block)
-        Spree::Core::Engine.routes.eval_block(block)
+        Spree::Core::Engine.routes.send :eval_block, block
       end
     end
   end

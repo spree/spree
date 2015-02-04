@@ -11,7 +11,7 @@ The customization of the flow of the checkout can be done by using Spree's `chec
 
 ## Default Checkout Steps
 
-The Spree checkout process consists of the following steps. With the exception of the Registration step, each of these steps corresponds to a state of the `Spree::Order` object):
+The Spree checkout process consists of the following steps. With the exception of the Registration step, each of these steps corresponds to a state of the `Spree::Order` object:
 
 * Registration (Optional - only if using spree_auth_devise extension, can be toggled through the `Spree::Auth::Config[:registration_step]` configuration setting)
 * Address Information
@@ -55,7 +55,7 @@ The default "seed" data for Spree only includes the U.S. states. It's easy enoug
 ***
 
 ***
-The state field can be disabled entirely by using the `Spree::Config[:address_requires_state]` preference. You can also allow for an "alternate phone" field by using the `Spree::Config[:alternative_billing_phone]` and `Spree::Config[:alternative_shipping]` fields.
+The state field can be disabled entirely by using the `Spree::Config[:address_requires_state]` preference. You can also allow for an "alternate phone" field by using the `Spree::Config[:alternative_shipping_phone]` and `Spree::Config[:alternative_shipping]` fields.
 ***
 
 The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by configuring the `Spree::Config[:checkout_zone]` preference and setting its value to the name of a [Zone](addresses#zones) containing the countries you wish to use. Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.

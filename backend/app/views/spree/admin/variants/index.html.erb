@@ -1,5 +1,3 @@
-
-
 <%= render :partial => 'spree/admin/shared/product_tabs', :locals => {:current => 'Variants'} %>
 
 <%# Place for new variant form %>
@@ -24,7 +22,7 @@
         <td><%= variant.options_text %></td>
         <td><%= variant.display_price.to_html %></td>
         <td><%= variant.sku %></td>
-        <td class="actions actions-2">
+        <td class="actions actions-2 text-right">
           <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
           <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
         </td>
@@ -39,7 +37,7 @@
   </table>
 <% else %>
   <div class="no-objects-found alert alert-info">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>,
+    <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: :many)) %>,
     <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
   </div>
 <% end %>
@@ -53,9 +51,7 @@
   </p>
 <% else %>
   <% content_for :page_actions do %>
-    <div data-hook="toolbar">
-      <li id="new_var_link" data-hook><%= button_link_to Spree.t(:new_variant), new_admin_product_variant_url(@product), { :remote => :true, :icon => 'add', :'data-update' => 'new_variant', :class => 'btn-success' } %></li>
-      <li><%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), { :class => 'btn-default', :icon => 'filter' } %></li>
-    </div>
+    <%= button_link_to Spree.t(:new_variant), new_admin_product_variant_url(@product), { :remote => :true, :icon => 'add', :'data-update' => 'new_variant', :class => 'btn-success', id: 'new_var_link' } %>
+    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), { :class => 'btn-default', :icon => 'filter' } %>
   <% end %>
 <% end %>

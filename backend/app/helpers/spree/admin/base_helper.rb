@@ -1,18 +1,14 @@
 module Spree
   module Admin
     module BaseHelper
-      def main_div_class
-        return "col-md-12 with-sidebar" if content_for?(:sidebar)
-        "col-md-12"
-      end
-
       def flash_alert flash
         if flash.present?
           message = flash[:error] || flash[:notice] || flash[:success]
           flash_class = "danger" if flash[:error]
           flash_class = "info" if flash[:notice]
           flash_class = "success" if flash[:success]
-          content_tag(:div, message, class: "alert alert-#{flash_class} alert-auto-dissapear")
+          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} alert-auto-dissapear")
+          content_tag(:div, flash_div, class: 'col-md-12')          
         end
       end
 
@@ -132,17 +128,11 @@ module Spree
       # renders hidden field and link to remove record using nested_attributes
       def link_to_icon_remove_fields(f)
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('delete', '', url, class: "spree_remove_fields btn btn-sm btn-default", data: {action: 'remove'}, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('delete', '', url, class: "spree_remove_fields btn btn-sm btn-danger", data: {action: 'remove'}, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
         dom_id(record, 'spree')
-      end
-
-      def rails_environments
-        @@rails_environments ||= Dir.glob("#{Rails.root}/config/environments/*.rb")
-                                    .map { |f| File.basename(f, ".rb") }
-                                    .sort
       end
 
       private

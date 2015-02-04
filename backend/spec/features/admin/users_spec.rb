@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'Users', type: :feature do
   stub_authorization!
   let!(:country) { create(:country) }
-  let!(:user_a) { create(:user_with_addreses, email: 'a@example.com') }
-  let!(:user_b) { create(:user_with_addreses, email: 'b@example.com') }
+  let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
+  let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
   let(:order) { create(:completed_order_with_totals, user: user_a, number: "R123") }
 
@@ -88,8 +88,8 @@ describe 'Users', type: :feature do
     end
 
     it 'displays the correct results for a user search' do
-      fill_in 'q_email_cont', with: user_a.email
-      click_button 'Search'
+      fill_in 'q_email_cont', with: user_a.email, visible: false
+      click_button 'Search', visible: false
       within_table('listing_users') do
         expect(page).to have_text user_a.email
         expect(page).not_to have_text user_b.email

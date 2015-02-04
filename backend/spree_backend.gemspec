@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
-  s.homepage    = 'http://spreecommerce.com'
+  s.homepage    = 'https://spreecommerce.com'
+  s.license     = %q{BSD-3}
   s.rubyforge_project = 'spree_backend'
 
   s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
@@ -23,6 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'bootstrap-sass',  '~> 3.3.1'
   s.add_dependency 'jquery-rails',    '~> 3.1.2'
   s.add_dependency 'jquery-ui-rails', '~> 5.0.0'
-  s.add_dependency 'select2-rails',   '~> 3.5.0'
-  s.add_dependency 'sprockets-rails', '~> 2.2.1'
+  s.add_dependency 'select2-rails',   '3.5.9.1' # 3.5.9.2 breaks several specs
+  s.add_dependency 'sprockets-rails', '~> 2.2'
 end

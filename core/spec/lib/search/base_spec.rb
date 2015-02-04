@@ -4,10 +4,11 @@ describe Spree::Core::Search::Base do
 
   before do
     include Spree::Core::ProductFilters
-    Spree::Product.delete_all # FIXME product leaks
+    @taxon = create(:taxon, name: "Ruby on Rails")
 
-    @product1 = create(:product, :name => "RoR Mug", :price => 9.00)
-    @product2 = create(:product, :name => "RoR Shirt", :price => 11.00)
+    @product1 = create(:product, name: "RoR Mug", price: 9.00)
+    @product1.taxons << @taxon
+    @product2 = create(:product, name: "RoR Shirt", price: 11.00)
   end
 
   it "returns all products by default" do
@@ -17,7 +18,7 @@ describe Spree::Core::Search::Base do
   end
 
   context "when include_images is included in the initalization params" do
-    let(:params) {{ include_images: true, keyword: @product1.name }}
+    let(:params) { { include_images: true, keyword: @product1.name, taxon: @taxon.id } }
     subject { described_class.new(params).retrieve_products }
 
     before do

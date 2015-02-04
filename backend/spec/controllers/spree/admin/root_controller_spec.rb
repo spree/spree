@@ -5,7 +5,7 @@ describe Spree::Admin::RootController do
   context "unauthorized request" do
 
     before :each do
-      Spree::Admin::RootController.any_instance.stub(:spree_current_user).and_return(nil)
+      allow(controller).to receive(:spree_current_user).and_return(nil)
     end
 
     it "redirects to orders path by default" do
@@ -25,7 +25,7 @@ describe Spree::Admin::RootController do
     end
 
     it "redirects to wherever admin_root_redirects_path tells it to" do
-      Spree::Admin::RootController.any_instance.stub(:admin_root_redirect_path).and_return('/grooot')
+      expect(controller).to receive(:admin_root_redirect_path).and_return('/grooot')
 
       get :index, use_route: 'admin'
 

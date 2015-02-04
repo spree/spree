@@ -12,16 +12,11 @@ module Spree
   class TaxRate < Spree::Base
     acts_as_paranoid
 
-    # Need to deal with adjustments before calculator is destroyed.
-    before_destroy :deals_with_adjustments_for_deleted_source
-
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
 
     belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
     belongs_to :tax_category, class_name: "Spree::TaxCategory", inverse_of: :tax_rates
-
-    has_many :adjustments, as: :source
 
     validates :amount, presence: true, numericality: true
     validates :tax_category_id, presence: true
@@ -84,8 +79,8 @@ module Spree
     end
 
     # This method is best described by the documentation on #potentially_applicable?
-    def self.adjust(order_tax_zone, items)
-      rates = self.match(order_tax_zone)
+    def self.adjust(order, items)
+      rates = match(order.tax_zone)
       tax_categories = rates.map(&:tax_category)
       relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
       Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
@@ -93,7 +88,7 @@ module Spree
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
         relevant_rates.each do |rate|
-          rate.adjust(order_tax_zone, item)
+          rate.adjust(order, item)
         end
       end
       non_relevant_items.each do |item|
@@ -153,54 +148,29 @@ module Spree
       (self.included_in_price? && self.zone.default_tax)
     end
 
-    # Creates necessary tax adjustments for the order.
-    def adjust(order_tax_zone, item)
-      amount = compute_amount(item)
-      return if amount == 0
-
-      included = included_in_price && default_zone_or_zone_match?(order_tax_zone)
-
-      if amount < 0
-        label = Spree.t(:refund) + ' ' + create_label
-      end
-
-      self.adjustments.create!({
-        :adjustable => item,
-        :amount => amount,
-        :order_id => item.order_id,
-        :label => label || create_label,
-        :included => included
-      })
+    def adjust(order, item)
+      included = included_in_price && default_zone_or_zone_match?(order)
+      create_adjustment(order, item, included)
     end
 
-    # This method is used by Adjustment#update to recalculate the cost.
     def compute_amount(item)
-      if included_in_price
-        if default_zone_or_zone_match?(item.order.tax_zone)
-          calculator.compute(item)
-        else
-          # In this case, it's a refund.
-          calculator.compute(item) * - 1
-        end
-      else
-        calculator.compute(item)
-      end
-    end
-
-    def default_zone_or_zone_match?(order_tax_zone)
-      default_tax = Zone.default_tax
-      (default_tax && default_tax.contains?(order_tax_zone)) || order_tax_zone == self.zone
+      refund = included_in_price && !default_zone_or_zone_match?(item.order)
+      compute(item) * (refund ? -1 : 1)
     end
 
     private
 
-      def create_label
-        label = ""
-        label << (name.present? ? name : tax_category.name) + " "
-        label << (show_rate_in_label? ? "#{amount * 100}%" : "")
-        label << " (#{Spree.t(:included_in_price)})" if included_in_price?
-        label
-      end
+    def default_zone_or_zone_match?(order)
+      Zone.default_tax.try(:contains?, order.tax_zone) || order.tax_zone == zone
+    end
 
+    def label(adjustment_amount)
+      label = ""
+      label << Spree.t(:refund) << ' ' if adjustment_amount < 0
+      label << (name.present? ? name : tax_category.name) + " "
+      label << (show_rate_in_label? ? "#{amount * 100}%" : "")
+      label << " (#{Spree.t(:included_in_price)})" if included_in_price?
+      label
+    end
   end
 end

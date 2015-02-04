@@ -28,7 +28,6 @@ describe Spree::Shipment, :type => :model do
     end
 
     it "generates a number containing a letter + 11 numbers" do
-      shipment.save
       expect(shipment.number[0]).to eq("H")
       expect(/\d{11}/.match(shipment.number)).not_to be_nil
       expect(shipment.number.length).to eq(12)
@@ -100,9 +99,12 @@ describe Spree::Shipment, :type => :model do
     end
   end
 
-  it "#item_cost" do
-    shipment = create(:shipment, order: create(:order_with_totals))
-    expect(shipment.item_cost).to eql(10.0)
+  context "#item_cost" do
+    it 'should equal line items final amount with tax' do
+      shipment = create(:shipment, order: create(:order_with_totals))
+      create :tax_adjustment, adjustable: shipment.order.line_items.first, order: shipment.order
+      expect(shipment.item_cost).to eql(11.0)
+    end
   end
 
   it "#discounted_cost" do
@@ -205,8 +207,12 @@ describe Spree::Shipment, :type => :model do
            build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
         end
 
-        it 'should use symbols for states when adding contents to package' do
+        before do
           allow(shipment).to receive(:inventory_units) { inventory_units }
+          allow(inventory_units).to receive_message_chain(:includes, :joins).and_return inventory_units
+        end
+
+        it 'should use symbols for states when adding contents to package' do
           package = shipment.to_package
           expect(package.on_hand.count).to eq 1
           expect(package.backordered.count).to eq 1
@@ -474,7 +480,7 @@ describe Spree::Shipment, :type => :model do
             shipment_id = args[0]
             mail_message
           }
-          expect(mail_message).to receive :deliver
+          expect(mail_message).to receive :deliver_later
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
 
           shipment.ship!
@@ -540,7 +546,9 @@ describe Spree::Shipment, :type => :model do
 
           expect(payment.amount).to eq payment.uncaptured_amount
           @shipment.ship!
-          expect(payment.reload.uncaptured_amount).to eq 50
+          expect(payment.captured_amount).to eq @order.total
+          expect(payment.captured_amount).to eq payment.amount
+          expect(payment.order.payments.pending.first.amount).to eq 50
         end
       end
     end

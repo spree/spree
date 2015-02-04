@@ -6,24 +6,20 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div data-hook="environment" class="form-group">
-      <%= label_tag nil, Spree.t(:environment) %>
-      <%= collection_select(:tracker, :environment, rails_environments, :to_s, :titleize, {}, {:id => 'tracker-env', :class => 'select2'}) %>
-    </div>
-  </div>
-  <div class="col-md-4">
     <div data-hook="active" class="form-group">
       <%= label_tag nil, Spree.t(:active) %>
-      <ul>
-        <li>
+      <div class="radio">
+        <%= label_tag :tracker_active_true do %>
           <%= radio_button(:tracker, :active, true) %>
-          <%= label_tag :tracker_active_true, Spree.t(:say_yes) %>
-        </li>
-        <li>
+          <%= Spree.t(:say_yes) %>
+        <% end %>
+      </div>
+      <div class="radio">
+        <%= label_tag :tracker_active_false do %>
           <%= radio_button(:tracker, :active, false) %>
-          <%= label_tag :tracker_active_false, Spree.t(:say_no) %>
-        </li>
-      </ul>
+          <%= Spree.t(:say_no) %>
+        <% end %>        
+      </div>
     </div>
   </div>
   

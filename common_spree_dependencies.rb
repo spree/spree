@@ -3,20 +3,20 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-platforms :ruby do
-  gem 'mysql2'
-  gem 'pg'
-end
-
+gem 'coffee-rails', '~> 4.0.0'
+gem 'sass-rails', '~> 5.0.0'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'
 end
 
-gem 'coffee-rails', '~> 4.0.0'
-gem 'sass-rails', '~> 4.0.2'
+platforms :ruby do
+  gem 'mysql2'
+  gem 'pg'
+end
 
 group :test do
   gem 'capybara', '~> 2.4'
@@ -37,13 +37,5 @@ end
 
 group :test, :development do
   gem 'rubocop', require: false
-
-  platforms :ruby_19 do
-    gem 'pry-debugger'
-  end
-  platforms :ruby_20, :ruby_21 do
-    gem 'pry-byebug'
-  end
+  gem 'pry-byebug'
 end
-
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]

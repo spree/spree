@@ -24,10 +24,11 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     table do |t|
       t.string :name
       t.integer :position
-      t.timestamps
+      t.timestamps null: false
     end
 
     model do
+      acts_as_list
       validates :name, presence: true
     end
   end

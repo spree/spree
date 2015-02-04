@@ -156,7 +156,7 @@ describe Spree::Order, :type => :model do
 
       it "cannot transition to address without any line items" do
         expect(order.line_items).to be_blank
-        expect { order.next! }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
+        expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:there_are_no_items_for_this_order)}/)
       end
     end
 
@@ -235,7 +235,7 @@ describe Spree::Order, :type => :model do
           context "if there are no shipping rates for any shipment" do
             it "raises an InvalidTransitionError" do
               transition = lambda { order.next! }
-              expect(transition).to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+              expect(transition).to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
             end
 
             it "deletes all the shipments" do
@@ -415,7 +415,7 @@ describe Spree::Order, :type => :model do
           it "raises a StateMachine::InvalidTransition" do
             expect {
               order.next!
-            }.to raise_error(StateMachine::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
+            }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
 
             expect(order.errors[:base]).to include(Spree.t(:no_payment_found))
           end
@@ -613,37 +613,6 @@ describe Spree::Order, :type => :model do
     specify do
       order = Spree::Order.new
       expect(order.checkout_steps).to eq(%w(delivery complete))
-    end
-  end
-
-  describe "payment processing" do
-    self.use_transactional_fixtures = false
-    before do
-      Spree::PaymentMethod.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
-      # Turn off transactional fixtures so that we can test that
-      # processing state is persisted.
-      DatabaseCleaner.strategy = :truncation
-    end
-
-    after do
-      DatabaseCleaner.clean
-      # Turn on transactional fixtures again.
-      self.use_transactional_fixtures = true
-    end
-
-    let(:order) { OrderWalkthrough.up_to(:payment) }
-    let(:creditcard) { create(:credit_card) }
-    let!(:payment_method) { create(:credit_card_payment_method, environment: 'test') }
-
-    it "does not process payment within transaction" do
-      # Make sure we are not already in a transaction
-      expect(ActiveRecord::Base.connection.open_transactions).to eq 0
-
-      expect_any_instance_of(Spree::Payment).to receive(:authorize!) do
-        expect(ActiveRecord::Base.connection.open_transactions).to eq 0
-      end
-
-      order.next!
     end
   end
 

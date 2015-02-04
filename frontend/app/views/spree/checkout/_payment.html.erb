@@ -7,10 +7,14 @@
     <% if @payment_sources.present? %>
       <div class="card_options">
         <%= radio_button_tag 'use_existing_card', 'yes', true %>
-        <label for="use_existing_card_yes">Use an existing card on file</label>
+        <label for="use_existing_card_yes">
+          <%= Spree.t(:use_existing_cc) %>
+        </label>
         <br/>
         <%= radio_button_tag 'use_existing_card', 'no' %>
-        <label for="use_existing_card_no">Use a new card / payment method</label>
+        <label for="use_existing_card_no">
+          <%= Spree.t(:use_new_cc_or_payment_method) %>
+        </label>
       </div>
 
       <div id="existing_cards">
@@ -21,8 +25,7 @@
                 <tr id="<%= dom_id(card,'spree')%>" class="<%= cycle('even', 'odd') %>">
                   <td><%= card.name %></td>
                   <td><%= card.display_number %></td>
-                  <td><%= card.month %></td>
-                  <td><%= card.year %></td>
+                  <td><%= card.month %> / <%= card.year %></td>
                   <td>
                     <%= radio_button_tag "order[existing_card]", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
                   </td>

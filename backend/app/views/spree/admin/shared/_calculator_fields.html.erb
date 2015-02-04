@@ -1,7 +1,12 @@
-<fieldset id="calculator_fields" data-hook>
-  <legend><%= Spree.t(:calculator) %></legend>
+<div id="calculator_fields" data-hook class="panel panel-default">
 
-  <div id="preference-settings" data-hook>
+  <div class="panel-heading">
+    <h1 class="panel-title">
+      <%= Spree.t(:calculator) %>
+    </h1>
+  </div>
+
+  <div id="preference-settings" data-hook class="panel-body">
     <div class="form-group">
       <%= f.label(:calculator_type, Spree.t(:calculator), :for => 'calc_type') %>
       <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, {:id => 'calc_type', :class => 'select2'}) %>
@@ -19,4 +24,4 @@
       </div>
     <% end %>
   </div>
-</fieldset>
+</div>

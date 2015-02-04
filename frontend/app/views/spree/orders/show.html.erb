@@ -1,20 +1,25 @@
+<% content_for :google_analytics do %>
+  <% if order_just_completed?(@order) %>
+    <%= render partial: 'spree/shared/google_purchase.js', locals: { order: @order } %>
+  <% end %>
+<% end %>
 <fieldset id="order_summary" data-hook>
-  <legend><%= Spree.t(:order_number, :number => @order.number) %></legend>
+  <legend><%= Spree.t(:order_number, number: @order.number) %></legend>
   <h1><%= accurate_title %></h1>
   <% if order_just_completed?(@order) %>
     <strong><%= Spree.t(:thank_you_for_your_order) %></strong>
   <% end %>
 
   <div id="order" data-hook>
-    <%= render :partial => 'spree/shared/order_details', :locals => { :order => @order } %>
+    <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
 
     <br class="clear" />
 
     <p data-hook="links">
-      <%= link_to Spree.t(:back_to_store), spree.root_path, :class => "button" %>
+      <%= link_to Spree.t(:back_to_store), spree.root_path, class: "button" %>
       <% unless order_just_completed?(@order) %>
         <% if try_spree_current_user && respond_to?(:spree_account_path) %>
-          <%= link_to Spree.t(:my_account), spree_account_path, :class => "button" %>
+          <%= link_to Spree.t(:my_account), spree_account_path, class: "button" %>
         <% end %>
       <% end %>
     </p>

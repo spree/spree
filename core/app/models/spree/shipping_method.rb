@@ -4,7 +4,12 @@ module Spree
     include Spree::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
-    default_scope -> { where(deleted_at: nil) }
+    # Used for #refresh_rates
+    DISPLAY_ON_FRONT_AND_BACK_END = 0
+    DISPLAY_ON_FRONT_END = 1
+    DISPLAY_ON_BACK_END = 2
+
+    default_scope { where(deleted_at: nil) }
 
     has_many :shipping_method_categories, :dependent => :destroy
     has_many :shipping_categories, through: :shipping_method_categories
@@ -46,23 +51,17 @@ module Spree
       Spree::TaxCategory.unscoped { super }
     end
 
-    private
-      def compute_amount(calculable)
-        self.calculator.compute(calculable)
-      end
+    def available_to_display(display_filter)
+      display_filter == DISPLAY_ON_FRONT_AND_BACK_END ||
+      (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
+      (!frontend? && display_filter == DISPLAY_ON_BACK_END)
+    end
 
+    private
       def at_least_one_shipping_category
         if self.shipping_categories.empty?
           self.errors[:base] << "You need to select at least one shipping category"
         end
-      end
-
-      def self.on_backend_query
-        "#{table_name}.display_on != 'front_end' OR #{table_name}.display_on IS NULL"
-      end
-
-      def self.on_frontend_query
-        "#{table_name}.display_on != 'back_end' OR #{table_name}.display_on IS NULL"
       end
   end
 end

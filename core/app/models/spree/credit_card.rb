@@ -18,8 +18,6 @@ module Spree
     validates :name, presence: true, if: :require_card_numbers?, on: :create
     validates :verification_value, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
 
-    validate :expiry_not_in_the_past
-
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
     scope :default, -> { where(default: true) }
 
@@ -34,6 +32,20 @@ module Spree
       discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
       jcb: /^(?:2131|1800|35\d{3})\d{11}$/
     }
+
+    # As of rails 4.2 string columns always return strings, perhaps we should
+    # change these to integer columns on db level
+    def month
+      if type_casted = super
+        type_casted.to_i
+      end
+    end
+
+    def year
+      if type_casted = super
+        type_casted.to_i
+      end
+    end
 
     def expiry=(expiry)
       return unless expiry.present?
@@ -134,19 +146,6 @@ module Spree
     end
 
     private
-
-    def expiry_not_in_the_past
-      if year.present? && month.present?
-        if month.to_i < 1 || month.to_i > 12
-          errors.add(:base, :expiry_invalid)
-        else
-          current = Time.current
-          if year.to_i < current.year or (year.to_i == current.year and month.to_i < current.month)
-            errors.add(:base, :card_expired)
-          end
-        end
-      end
-    end
 
     def require_card_numbers?
       !self.encrypted_data.present? && !self.has_payment_profile?

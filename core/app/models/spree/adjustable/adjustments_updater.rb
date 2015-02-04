@@ -23,15 +23,15 @@ module Spree
       delegate :adjustments, :persisted?, to: :adjustable
 
       def update_promo_adjustments
-        promo_adjustments = adjustments.promotion.reload.map { |a| a.update!(adjustable) }
-        promotion_total = promo_adjustments.compact.sum
-        choose_best_promotion_adjustment unless promotion_total == 0
-        @promo_total = best_promotion_adjustment.try(:amount).to_f
+        promo_adjustments = adjustments.competing_promos.reload.map { |a| a.update!(adjustable) }
+        promos_total = promo_adjustments.compact.sum
+        choose_best_promo_adjustment unless promos_total == 0
+        @promo_total = best_promo_adjustment.try(:amount).to_f
       end
 
       def update_tax_adjustments
         tax = (adjustable.try(:all_adjustments) || adjustable.adjustments).tax
-        @included_tax_total = tax.included.reload.map(&:update!).compact.sum
+        @included_tax_total = tax.is_included.reload.map(&:update!).compact.sum
         @additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
       end
 
@@ -49,19 +49,20 @@ module Spree
         adjustable.is_a?(Shipment)
       end
 
-      # Picks one (and only one) promotion to be eligible for this order
-      # This promotion provides the most discount, and if two promotions
-      # have the same amount, then it will pick the latest one.
-      def choose_best_promotion_adjustment
-        if best_promotion_adjustment
-          other_promotions = adjustments.promotion.where.not(id: best_promotion_adjustment.id)
+      # Picks one (and only one) competing discount to be eligible for
+      # this order. This adjustment provides the most discount, and if
+      # two adjustments have the same amount, then it will pick the
+      # latest one.
+      def choose_best_promo_adjustment
+        if best_promo_adjustment
+          other_promotions = adjustments.competing_promos.where.not(id: best_promo_adjustment.id)
           other_promotions.update_all(eligible: false)
         end
       end
 
-      def best_promotion_adjustment
-        @best_promotion_adjustment ||= begin
-          adjustments.promotion.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+      def best_promo_adjustment
+        @best_promo_adjustment ||= begin
+          adjustments.competing_promos.eligible.reorder("amount ASC, created_at DESC, id DESC").first
         end
       end
     end

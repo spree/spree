@@ -3,11 +3,13 @@ title: "Developer Tips and Tricks"
 section: advanced
 ---
 
+## Overview
+
 This guide presents accumulated wisdom from person-years of Spree use.
 
-### Upgrade Considerations
+## Upgrade Considerations
 
-#### The important commands
+### The important commands
 
 `spree -update` was removed in favor of Bundler.
 
@@ -23,14 +25,14 @@ sandbox's customized files.
 This makes it easier to see when and how some file has changed – which
 is often useful if you need to update a customized version.
 
-#### Dos and Don'ts
+### Dos and Don'ts
 
 !!!
 Try to avoid modifying `config/boot.rb` and
 `config/environment.rb`: use [initializers](#initializers) instead.
 !!!
 
-#### Tracking changes for overridden code
+### Tracking changes for overridden code
 
 Be aware that core changes might have an impact on the components you
 have overridden in your project.
@@ -42,7 +44,7 @@ If you can help us generalise the core code so that your preferred
 effect is achieved by altering a few parameters, this will be more useful than duplicating several
 files. Ideas and suggestions are always welcome.
 
-#### Initializers
+### Initializers
 
 Initializers are run during startup, and are the recommended way to
 execute certain settings. You can put initializers in extensions, thus have a way to execute
@@ -51,14 +53,14 @@ extension-specific configurations.
 See the [extensions guide](extensions_tutorial.html#extension-initializers) for
 more information.
 
-### Debugging techniques
+## Debugging techniques
 
-#### Use tests!
+### Use tests!
 
 Use `rake spec` and `rake test` to test basic functioning after you've
 made changes.
 
-#### Analysing crashes on a non-local machine
+### Analysing crashes on a non-local machine
 
 If you're testing on a server, whether in production or development
 mode, the following code in one
@@ -69,18 +71,18 @@ show the detailed error page
 instead of `404.html`, so you don't have to hunt through the server
 logs.
 
-<% ruby do %>
-    Spree::BaseController.class_eval do
-      def local_request?
-        ENV["RAILS_ENV"] !="production" || current_user.present? &&
-          current_user.has_role?(:admin)
-      end
-    end
-<% end %>
+```ruby
+Spree::BaseController.class_eval do
+  def local_request?
+    ENV["RAILS_ENV"] !="production" || current_user.present? &&
+      current_user.has_role?(:admin)
+  end
+end
+```
 
-### Managing large projects
+## Managing large projects
 
-#### To fork or not to fork…
+### To fork or not to fork…
 
 Suppose there's a few details of Spree that you want to override due to
 personal or client preference,

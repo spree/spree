@@ -1,7 +1,7 @@
 module Spree
   module Sample
     def self.load_sample(file)
-      # If file is exists within application it takes precendence.
+      # If file exists within application it takes precendence.
       if File.exists?(File.join(Rails.root, 'db', 'samples', "#{file}.rb"))
         path = File.expand_path(File.join(Rails.root, 'db', 'samples', "#{file}.rb"))
       else

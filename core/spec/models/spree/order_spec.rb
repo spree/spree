@@ -118,7 +118,7 @@ describe Spree::Order, :type => :model do
     it "should send an order confirmation email" do
       mail_message = double "Mail::Message"
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
-      expect(mail_message).to receive :deliver
+      expect(mail_message).to receive :deliver_later
       order.finalize!
     end
 
@@ -138,7 +138,7 @@ describe Spree::Order, :type => :model do
       # Stub this method as it's called due to a callback
       # and it's irrelevant to this test
       allow(order).to receive :has_available_shipment
-      allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver
+      allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver_later
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       adjustments.each do |adj|
@@ -553,7 +553,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "front_end",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -563,7 +562,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "both",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -573,7 +571,6 @@ describe Spree::Order, :type => :model do
         :name => "Fake",
         :active => true,
         :display_on => "both",
-        :environment => Rails.env
       })
       expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
@@ -603,10 +600,6 @@ describe Spree::Order, :type => :model do
       @line_items = [mock_model(Spree::LineItem, :product => "product1", :variant => @variant1, :variant_id => @variant1.id, :quantity => 1),
                      mock_model(Spree::LineItem, :product => "product2", :variant => @variant2, :variant_id => @variant2.id, :quantity => 2)]
       allow(order).to receive_messages(:line_items => @line_items)
-    end
-
-    it "contains?" do
-      expect(order.contains?(@variant1)).to be true
     end
 
     it "gets the quantity of a given variant" do
@@ -645,37 +638,29 @@ describe Spree::Order, :type => :model do
 
   context "#generate_order_number" do
     context "when no configure" do
-      let(:default_length) { Spree::Order::ORDER_NUMBER_LENGTH + Spree::Order::ORDER_NUMBER_PREFIX.length }
-      subject(:order_number) { order.generate_order_number }
-
-      describe '#class' do
-        subject { super().class }
-        it { is_expected.to eq String }
-      end
-
-      describe '#length' do
-        subject { super().length }
-        it { is_expected.to eq default_length }
-      end
-      it { is_expected.to match /^#{Spree::Order::ORDER_NUMBER_PREFIX}/ }
+      let(:default_length) { 9 + 'R'.length }
+      subject(:order_number) { order.generate_number }
+      its(:class)  { should eq String }
+      its(:length) { should eq default_length }
+      it { should match /^R/ }
     end
 
     context "when length option is 5" do
-      let(:option_length) { 5 + Spree::Order::ORDER_NUMBER_PREFIX.length }
+      let(:option_length) { 5 + 'R'.length }
       it "should be option length for order number" do
-        expect(order.generate_order_number(length: 5).length).to eq option_length
+        expect(order.generate_number(length: 5).length).to eq option_length
       end
     end
 
     context "when letters option is true" do
       it "generates order number include letter" do
-        expect(order.generate_order_number(length: 100, letters: true)).to match /[A-Z]/
+        expect(order.generate_number(length: 100, letters: true)).to match /[A-Z]/
       end
     end
 
     context "when prefix option is 'P'" do
       it "generates order number and it prefix is 'P'" do
-        expect(order.generate_order_number(prefix: 'P')).to match /^P/
+        expect(order.generate_number(prefix: 'P')).to match /^P/
       end
     end
   end
@@ -933,4 +918,46 @@ describe Spree::Order, :type => :model do
       end
     end
   end
+
+  describe "#fully_discounted?" do
+    let(:line_item) { Spree::LineItem.new(price: 10, quantity: 1) }
+    let(:shipment) { Spree::Shipment.new(cost: 10) }
+    let(:payment) { Spree::Payment.new(amount: 10) }
+
+    before do
+      allow(order).to receive(:line_items) { [line_item] }
+      allow(order).to receive(:shipments) { [shipment] }
+      allow(order).to receive(:payments) { [payment] }
+    end
+
+    context "the order had no inventory-related cost" do
+      before do
+        # discount the cost of the line items
+        allow(order).to receive(:adjustment_total) { -5 }
+        allow(line_item).to receive(:adjustment_total) { -5 }
+
+        # but leave some shipment payment amount
+        allow(shipment).to receive(:adjustment_total) { 0 }
+      end
+
+      it { expect(order.fully_discounted?).to eq true }
+
+    end
+
+    context "the order had inventory-related cost" do
+      before do
+        # partially discount the cost of the line item
+        allow(order).to receive(:adjustment_total) { 0 }
+        allow(line_item).to receive(:adjustment_total) { -5 }
+
+        # and partially discount the cost of the shipment so the total
+        # discount matches the item total for test completeness
+        allow(shipment).to receive(:adjustment_total) { -5 }
+      end
+
+      it { expect(order.fully_discounted?).to eq false }
+
+    end
+  end
+
 end

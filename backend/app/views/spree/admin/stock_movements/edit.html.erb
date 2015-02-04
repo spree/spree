@@ -1,9 +1,9 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_stock_movement) %>
+  <%= Spree.t(:editing_resource, resource: Spree::StockMovement.model_name.human) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_stock_movements_list), admin_stock_location_stock_movements_path(stock_location), :class => 'btn btn-default' %></li>
+  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::StockMovement.model_name.human), admin_stock_location_stock_movements_path(stock_location), class: 'btn btn-default' %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @stock_movement } %>

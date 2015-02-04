@@ -20,6 +20,7 @@ module Spree
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
+    validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order
     validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
@@ -28,6 +29,7 @@ module Spree
     after_create :cancel_others, unless: :cancelled?
 
     scope :awaiting_return, -> { where(reception_status: 'awaiting') }
+    scope :received, -> { where(reception_status: 'received') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
     scope :pending, -> { where(acceptance_status: 'pending') }
     scope :accepted, -> { where(acceptance_status: 'accepted') }
@@ -40,6 +42,7 @@ module Spree
     scope :exchange_requested, -> { where.not(exchange_variant: nil) }
     scope :exchange_processed, -> { where.not(exchange_inventory_unit: nil) }
     scope :exchange_required, -> { exchange_requested.where(exchange_inventory_unit: nil) }
+    scope :resellable, -> { where resellable: true }
 
     serialize :acceptance_status_errors
 
@@ -51,8 +54,8 @@ module Spree
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
-      before_transition to: :received, do: :process_inventory_unit!
       after_transition to: :received, do: :attempt_accept
+      after_transition to: :received, do: :process_inventory_unit!
 
       event :receive do
         transition to: :received, from: :awaiting
@@ -181,6 +184,13 @@ module Spree
       end
     end
 
+    def eligible_exchange_variant
+      return unless exchange_variant && exchange_variant_id_changed?
+      unless eligible_exchange_variants.include?(exchange_variant)
+        errors.add(:base, Spree.t(:invalid_exchange_variant))
+      end
+    end
+
     def validator
       @validator ||= return_eligibility_validator.new(self)
     end
@@ -219,7 +229,7 @@ module Spree
     end
 
     def should_restock?
-      variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
+      resellable? && variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
     end
   end
 end

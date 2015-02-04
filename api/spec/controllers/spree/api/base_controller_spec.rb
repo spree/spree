@@ -11,6 +11,12 @@ describe Spree::Api::BaseController, :type => :controller do
     end
   end
 
+  before do
+    @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+      r.draw { get 'index', to: 'spree/api/base#index' }
+    end
+  end
+
   context "signed in as a user using an authentication extension" do
     before do
       user = double(:email => "spree@example.com")
@@ -118,7 +124,9 @@ describe Spree::Api::BaseController, :type => :controller do
       user = double(email: "spree@example.com")
       allow(user).to receive_message_chain :spree_roles, pluck: []
       allow(controller).to receive_messages try_spree_current_user: user
-      routes.draw { get 'foo' => 'fakes#foo' }
+      @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+        r.draw { get 'foo' => 'fakes#foo' }
+      end
     end
 
     it 'should notify notify_error_during_processing' do

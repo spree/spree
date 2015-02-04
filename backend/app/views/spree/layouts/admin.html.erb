@@ -1,58 +1,82 @@
-<!doctype html>
-<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
-<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
   <head data-hook="admin_inside_head">
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
   <body class="admin skin-blue">
 
-    <div id="progress">
+    <%#-------------------------------------------------%>
+    <%# Loading progress bars                           %>
+    <%#-------------------------------------------------%>
+    <div id="progress" class="hidden">
       <div class="alert alert-info alert-progress">
         <div class="spinner"><%= Spree.t(:loading) %>...</div>
         <div class="progress-message"><%= Spree.t(:loading) %>...</div>
       </div>
     </div>
 
+    <%#-------------------------------------------------%>
+    <%# Header navbar                                   %>
+    <%#-------------------------------------------------%>
     <%= render partial: 'spree/admin/shared/header' %>
 
-    <div id="wrapper" class="wrapper row-offcanvas row-offcanvas-left">
+    <%#-------------------------------------------------%>
+    <%# Main content                                    %>
+    <%#-------------------------------------------------%>
+    <div id="wrapper" class="container-fluid <%= wrapper_classes %>">
+      <div class="row">
 
-      <aside class="left-side sidebar-offcanvas">
-        <section class="sidebar">
-          <ul class="sidebar-menu">
-            <%= render partial: 'spree/admin/shared/main_menu' %>
-          </ul>
-        </section>
-      </aside>
+        <%#-------------------------------------------------%>
+        <%# Sidebar                                         %>
+        <%#-------------------------------------------------%>
+        <div class="col-sm-3 col-md-2 hidden-xs sidebar" id="main-sidebar">
+          <%= render partial: 'spree/admin/shared/main_menu' %>
+        </div>
 
-      <aside class="right-side">
+        <%#-------------------------------------------------%>
+        <%# Content                                         %>
+        <%#-------------------------------------------------%>
+        <div class="<%= main_part_classes %> main" id="main-part">
 
-        <%= render partial: 'spree/admin/shared/content_header' %>
-
-        <section class="content <%= "with-sidebar" if content_for?(:sidebar) %>">
-
+          <%#-------------------------------------------------%>
+          <%# Content header (page title/actions)             %>
+          <%#-------------------------------------------------%>
+          <%= render partial: 'spree/admin/shared/content_header' %>
+  
           <div class="row">
-            <div class="<%= main_div_class %> main-content">
+            <%#-------------------------------------------------%>
+            <%# Alerts                                          %>
+            <%#-------------------------------------------------%>
+            <%= flash_alert(flash) %>
+            <%= render partial: 'spree/admin/shared/alert', collection: session[:alerts] %>
 
-              <%= flash_alert(flash) %>
-
-              <%= render partial: 'spree/admin/shared/alert', collection: session[:alerts] %>
-
-              <div class="<%= 'with-sidebar' if content_for?(:sidebar) %>" id="content" data-hook>
-                <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter) %>
-                <%= yield %>
-              </div>
+            <%#-------------------------------------------------%>
+            <%# Main content                                    %>
+            <%#-------------------------------------------------%>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-md-9 col-sm-8' : 'col-sm-12'  %>" id="content" data-hook>
+              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+              <%= yield %>
             </div>
-            <%= render partial: 'spree/admin/shared/sidebar' if content_for?(:sidebar) %>
+
+            <%#-------------------------------------------------%>
+            <%# Inner aside                                     %>
+            <%#-------------------------------------------------%>
+            <% if content_for?(:sidebar) %>
+              <div class="col-md-3 col-sm-4">
+                <%= render partial: 'spree/admin/shared/sidebar' %>  
+              </div>
+            <% end %>
           </div>
+          
+          
+        </div>
+      </div>
+    </div>
 
-        </section>
-      </aside>
-
+    <%#-------------------------------------------------%>
+    <%# Insert footer scripts here                      %>
+    <%#-------------------------------------------------%>
     <div data-hook="admin_footer_scripts"></div>
   </body>
 </html>

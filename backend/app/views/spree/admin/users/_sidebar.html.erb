@@ -12,6 +12,5 @@
     <li<%== ' class="active"' if current == :items %>>
       <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), items_admin_user_path(@user) %>
     </li>
-    <%= collapse_sidebar_link %>
   </ul>
 <% end %>

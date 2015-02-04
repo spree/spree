@@ -7,11 +7,11 @@ class OrderSpecificAbility
   include CanCan::Ability
 
   def initialize(user)
-    can [:admin, :manage], Spree::Order, :number => 'R987654321'
+    can [:admin, :manage], Spree::Order, number: 'R987654321'
   end
 end
 
-describe Spree::Admin::OrdersController, :type => :controller do
+describe Spree::Admin::OrdersController, type: :controller do
 
   context "with authorization" do
     stub_authorization!
@@ -39,7 +39,7 @@ describe Spree::Admin::OrdersController, :type => :controller do
     let(:adjustments) { double('adjustments') }
 
     before do
-      allow(Spree::Order).to receive_messages(find_by_number!: order)
+      allow(Spree::Order).to receive_message_chain(:friendly, :find).and_return(order)
     end
 
     context "#approve" do
@@ -68,7 +68,7 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
     context "pagination" do
       it "can page through the orders" do
-        spree_get :index, :page => 2, :per_page => 10
+        spree_get :index, page: 2, per_page: 10
         expect(assigns[:orders].offset_value).to eq(10)
         expect(assigns[:orders].limit_value).to eq(10)
       end
@@ -85,15 +85,15 @@ describe Spree::Admin::OrdersController, :type => :controller do
     # Regression test for #3684
     context "#edit" do
       it "does not refresh rates if the order is completed" do
-        allow(order).to receive_messages :completed? => true
+        allow(order).to receive_messages completed?: true
         expect(order).not_to receive :refresh_shipment_rates
-        spree_get :edit, :id => order.number
+        spree_get :edit, id: order.number
       end
 
       it "does refresh the rates if the order is incomplete" do
-        allow(order).to receive_messages :completed? => false
+        allow(order).to receive_messages completed?: false
         expect(order).to receive :refresh_shipment_rates
-        spree_get :edit, :id => order.number
+        spree_get :edit, id: order.number
       end
     end
 
@@ -102,7 +102,7 @@ describe Spree::Admin::OrdersController, :type => :controller do
       let(:user) { create(:user) }
 
       before do
-        allow(controller).to receive_messages :spree_current_user => user
+        allow(controller).to receive_messages spree_current_user: user
         user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
 
         create(:completed_order_with_totals)
@@ -172,11 +172,11 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
   context '#authorize_admin' do
     let(:user) { create(:user) }
-    let(:order) { create(:completed_order_with_totals, :number => 'R987654321') }
+    let(:order) { create(:completed_order_with_totals, number: 'R987654321') }
 
     before do
-      allow(Spree::Order).to receive_messages :find_by_number! => order
-      allow(controller).to receive_messages :spree_current_user => user
+      allow(Spree::Order).to receive_messages find: order
+      allow(controller).to receive_messages spree_current_user: user
     end
 
     it 'should grant access to users with an admin role' do
@@ -200,13 +200,13 @@ describe Spree::Admin::OrdersController, :type => :controller do
       user.spree_roles.clear
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
-      spree_put :update, { :id => 'R123' }
+      spree_put :update, id: order.number
       expect(response).to redirect_to('/unauthorized')
       Spree::Ability.remove_ability(BarAbility)
     end
 
     it 'should deny access to users without an admin role' do
-      allow(user).to receive_messages :has_spree_role? => false
+      allow(user).to receive_messages has_spree_role?: false
       spree_post :index
       expect(response).to redirect_to('/unauthorized')
     end
@@ -218,7 +218,7 @@ describe Spree::Admin::OrdersController, :type => :controller do
       expect(Spree::Order.complete.count).to eq 4
       Spree::Ability.register_ability(OrderSpecificAbility)
 
-      allow(user).to receive_messages :has_spree_role? => false
+      allow(user).to receive_messages has_spree_role?: false
       spree_get :index
       expect(response).to render_template :index
       expect(assigns['orders'].size).to eq 1

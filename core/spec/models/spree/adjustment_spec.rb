@@ -24,10 +24,12 @@ describe Spree::Adjustment, :type => :model do
   end
 
   context '#save' do
-    let(:adjustment) { Spree::Adjustment.create(label: "Adjustment", amount: 5, order: order, adjustable: create(:line_item)) }
+    let(:order) { Spree::Order.create! }
+    let!(:adjustment) { Spree::Adjustment.create(label: "Adjustment", amount: 5, order: order, adjustable: order) }
 
     it 'touches the adjustable' do
       expect(adjustment.adjustable).to receive(:touch)
+      adjustment.amount = 3
       adjustment.save
     end
   end
@@ -37,16 +39,54 @@ describe Spree::Adjustment, :type => :model do
       Spree::Adjustment.non_tax.to_a
     end
 
-    let!(:tax_adjustment) { create(:adjustment, order: order, source: create(:tax_rate))                   }
+    let!(:tax_adjustment) { create(:adjustment, order: order, source: create(:tax_rate)) }
     let!(:non_tax_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
-    let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil)                                 }
+    let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
 
     it 'select non-tax adjustments' do
       expect(subject).to_not include tax_adjustment
-      expect(subject).to     include non_tax_adjustment_with_source
-      expect(subject).to     include non_tax_adjustment_without_source
+      expect(subject).to include non_tax_adjustment_with_source
+      expect(subject).to include non_tax_adjustment_without_source
     end
   end
+
+  describe 'competing_promos scope' do    
+    before do
+      allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
+    end
+
+    subject do
+      Spree::Adjustment.competing_promos.to_a
+    end
+
+    let!(:promotion_adjustment) { create(:adjustment, order: order, source_type: 'Spree::PromotionAction', source_id: nil) }
+    let!(:custom_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Custom', source_id: nil) }
+    let!(:non_promotion_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
+    let!(:non_promotion_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
+
+    context 'no custom source_types have been added to competing_promos' do
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction'] }
+
+      it 'selects promotion adjustments by default' do
+        expect(subject).to include promotion_adjustment
+        expect(subject).to_not include custom_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_without_source
+      end
+    end
+
+    context 'a custom source_type has been added to competing_promos' do
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+
+      it 'selects adjustments with registered source_types' do
+        expect(subject).to include promotion_adjustment
+        expect(subject).to include custom_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_with_source
+        expect(subject).to_not include non_promotion_adjustment_without_source
+      end
+    end
+  end
+
 
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, order: order, state: 'open') }
@@ -73,20 +113,8 @@ describe Spree::Adjustment, :type => :model do
   context "#display_amount" do
     before { adjustment.amount = 10.55 }
 
-    context "with display_currency set to true" do
-      before { Spree::Config[:display_currency] = true }
-
-      it "shows the currency" do
-        expect(adjustment.display_amount.to_s).to eq "$10.55 USD"
-      end
-    end
-
-    context "with display_currency set to false" do
-      before { Spree::Config[:display_currency] = false }
-
-      it "does not include the currency" do
-        expect(adjustment.display_amount.to_s).to eq "$10.55"
-      end
+    it "shows the amount" do
+      expect(adjustment.display_amount.to_s).to eq "$10.55"
     end
 
     context "with currency set to JPY" do

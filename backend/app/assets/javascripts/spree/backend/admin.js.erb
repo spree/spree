@@ -5,6 +5,7 @@
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/user_picker
 //= require spree/backend/product_picker
+//= require spree/backend/option_value_picker
 //= require spree/backend/taxons
 
 /**
@@ -31,6 +32,53 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
   });
 
+  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
+    {
+      if($(this).find('.icon-chevron-left').length == 1){
+        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');
+      }
+      else {
+        $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
+      }
+    }
+  )
+
+  // Sidebar nav toggle functionality
+  var sidebar_toggle = $('#sidebar-toggle');
+
+  sidebar_toggle.on('click', function(){
+    var wrapper = $('#wrapper');
+    var main    = $('#main-part');
+
+    if(wrapper.hasClass('sidebar-minimized')){
+      wrapper.removeClass('sidebar-minimized');
+      main
+        .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
+        .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
+      $.cookie('sidebar-minimized', 'false', { path: '/admin' });
+    }
+    else {
+      wrapper.addClass('sidebar-minimized');
+      main
+        .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
+        .addClass('col-sm-12 col-md-12 sidebar-collapsed');
+      $.cookie('sidebar-minimized', 'true', { path: '/admin' });
+    }
+  });
+
+  $('.sidebar-menu-item').mouseover(function(){
+    if($('#wrapper').hasClass('sidebar-minimized')){
+      $(this).addClass('menu-active');
+      $(this).find('ul.nav').addClass('submenu-active');
+    }
+  });
+  $('.sidebar-menu-item').mouseout(function(){
+    if($('#wrapper').hasClass('sidebar-minimized')){
+      $(this).removeClass('menu-active');
+      $(this).find('ul.nav').removeClass('submenu-active');
+    }
+  });
+
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it
@@ -41,6 +89,14 @@ jQuery(function($) {
     $("#table-filter form").submit();
     return false;
   });
+
+  // Main menu active item submenu show
+  var active_item = $('#sidebar').find('.selected');
+  active_item.parent().addClass('in');
+  active_item.parent().prev()
+    .find('.icon-chevron-left')
+    .removeClass('icon-chevron-left')
+    .addClass('icon-chevron-down');
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $(".sort_link").each(function(){
@@ -53,6 +109,33 @@ jQuery(function($) {
     } else if(sort_link_text.indexOf("▲") >= 0){
       $(this).text(sort_link_text.replace("▲",""));
       $(this).append('<span class="icon icon-chevron-up"></span>');
+    }
+  });
+
+  // Clickable ransack filters
+  $(".js-add-filter").click(function() {
+    var ransack_field = $(this).data("ransack-field");
+    var ransack_value = $(this).data("ransack-value");
+
+    $("#" + ransack_field).val(ransack_value);
+    $("#table-filter form").submit();
+  });
+
+  $(document).on("click", ".js-delete-filter", function() {
+    var ransack_field = $(this).parents(".js-filter").data("ransack-field");
+
+    $("#" + ransack_field).val('');
+    $("#table-filter form").submit();
+  });
+
+  $(".js-filterable").each(function(){
+    if($(this).val()){
+      var ransack_field = $(this).attr("id");
+      var ransack_value = $(this).val();
+      var filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + ransack_value + '<span class="icon icon-delete js-delete-filter"></span></span>';
+
+      $(".js-filters").show();
+      $(".js-filters").append(filter);
     }
   });
 
@@ -85,7 +168,7 @@ show_flash = function(type, message) {
   var flash_div = $('.flash.' + type);
   if (flash_div.length == 0) {
     flash_div = $('<div class="alert alert-' + type + '" />');
-    $('.main-content').prepend(flash_div);
+    $('#content').prepend(flash_div);
   }
   flash_div.html(message).show().delay(5000).slideUp();
 }

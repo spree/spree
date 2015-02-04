@@ -1,11 +1,9 @@
-
-
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_tax_category) %>
+  <%= Spree.t(:editing_resource, resource: Spree::TaxCategory.model_name.human) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <li><%= link_to_with_icon 'arrow-left', Spree.t(:back_to_tax_categories_list), admin_tax_categories_path, :class => 'btn btn-default' %></li>
+  <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::TaxCategory.model_name.human), admin_tax_categories_path, class: 'btn btn-primary' %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @tax_category } %>

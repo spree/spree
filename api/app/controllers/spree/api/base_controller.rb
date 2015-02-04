@@ -4,7 +4,6 @@ module Spree
   module Api
     class BaseController < ActionController::Base
       include Spree::Api::ControllerSetup
-      include Spree::Core::ControllerHelpers::SSL
       include Spree::Core::ControllerHelpers::Store
       include Spree::Core::ControllerHelpers::StrongParameters
 
@@ -26,8 +25,6 @@ module Spree
       rescue_from Spree::Core::GatewayError, with: :gateway_error
 
       helper Spree::Api::ApiHelpers
-
-      ssl_allowed
 
       def set_jsonp_format
         if params[:callback] && request.get?

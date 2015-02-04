@@ -6,28 +6,31 @@ describe Spree::InventoryUnit, :type => :model do
 
   context "#backordered_for_stock_item" do
     let(:order) do
-      order = create(:order)
-      order.state = 'complete'
+      order = create(:order, state: 'complete', ship_address: create(:ship_address))
       order.completed_at = Time.now
+      create(:shipment, order: order, stock_location: stock_location)
+      order.shipments.reload
+      create(:line_item, order: order, variant: stock_item.variant)
+      order.line_items.reload
       order.tap(&:save!)
     end
 
     let(:shipment) do
-      shipment = Spree::Shipment.new
-      shipment.stock_location = stock_location
-      shipment.shipping_methods << create(:shipping_method)
-      shipment.order = order
-      # We don't care about this in this test
-      allow(shipment).to receive(:ensure_correct_adjustment)
-      shipment.tap(&:save!)
+      order.shipments.first
+    end
+
+    let(:shipping_method) do
+      shipment.shipping_methods.first
     end
 
     let!(:unit) do
-      unit = shipment.inventory_units.build
+      unit = shipment.inventory_units.first
       unit.state = 'backordered'
-      unit.variant_id = stock_item.variant.id
-      unit.order_id = order.id
       unit.tap(&:save!)
+    end
+
+    before do
+      stock_item.set_count_on_hand(-2)
     end
 
     # Regression for #3066
@@ -56,6 +59,13 @@ describe Spree::InventoryUnit, :type => :model do
       other_variant_unit.save!
 
       expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_variant_unit)
+    end
+
+    it "does not change shipping cost when fulfilling the order" do
+      current_shipment_cost = shipment.cost
+      shipping_method.calculator.set_preference(:amount, current_shipment_cost + 5.0)
+      stock_item.set_count_on_hand(0)
+      expect(shipment.reload.cost).to eq(current_shipment_cost)
     end
 
     context "other shipments" do

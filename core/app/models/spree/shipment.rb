@@ -2,6 +2,17 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
+
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'H'
+      options[:length] ||= 11
+      super(options)
+    end
+
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
@@ -20,8 +31,6 @@ module Spree
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
-
-    make_permalink field: :number, length: 11, prefix: 'H'
 
     scope :pending, -> { with_state('pending') }
     scope :ready,   -> { with_state('ready') }
@@ -146,7 +155,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:amount).sum
+      line_items.map(&:final_amount).sum
     end
 
     def line_items
@@ -175,47 +184,41 @@ module Spree
       pending_payments =  order.pending_payments
                             .sort_by(&:uncaptured_amount).reverse
 
-      # NOTE Do we really need to force orders to have pending payments on dispatch?
-      if pending_payments.empty?
-        raise Spree::Core::GatewayError, Spree.t(:no_pending_payments)
-      else
-        shipment_to_pay = final_price_with_items
-        payments_amount = 0
+      shipment_to_pay = final_price_with_items
+      payments_amount = 0
 
-        payments_pool = pending_payments.each_with_object([]) do |payment, pool|
-          next if payments_amount >= shipment_to_pay
-          payments_amount += payment.uncaptured_amount
-          pool << payment
-        end
-
-        payments_pool.each do |payment|
-          capturable_amount = if payment.amount >= shipment_to_pay
-                                shipment_to_pay
-                              else
-                                payment.amount
-                              end
-          cents = (capturable_amount * 100).to_i
-          payment.capture!(cents)
-          shipment_to_pay -= capturable_amount
-        end
+      payments_pool = pending_payments.each_with_object([]) do |payment, pool|
+        break if payments_amount >= shipment_to_pay
+        payments_amount += payment.uncaptured_amount
+        pool << payment
       end
-    rescue Spree::Core::GatewayError => e
-      errors.add(:base, e.message)
-      return !!Spree::Config[:allow_checkout_on_gateway_error]
+
+      payments_pool.each do |payment|
+        capturable_amount = if payment.amount >= shipment_to_pay
+                              shipment_to_pay
+                            else
+                              payment.amount
+                            end
+
+        cents = (capturable_amount * 100).to_i
+        payment.capture!(cents)
+        shipment_to_pay -= capturable_amount
+      end
     end
 
     def ready_or_pending?
       self.ready? || self.pending?
     end
 
-    def refresh_rates
+    def refresh_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
       return shipping_rates if shipped?
       return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).shipping_rates(to_package)
+      self.shipping_rates = Stock::Estimator.new(order).
+      shipping_rates(to_package, shipping_method_filter)
 
       if shipping_method
         selected_rate = shipping_rates.detect { |rate|
@@ -272,14 +275,10 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location)
-      inventory_units.group_by(&:state).each do |state, state_inventory_units|
+      inventory_units.includes(:variant).joins(:variant).group_by(&:state).each do |state, state_inventory_units|
         package.add_multiple state_inventory_units, state.to_sym
       end
       package
-    end
-
-    def to_param
-      number
     end
 
     def tracking_url
@@ -404,7 +403,7 @@ module Spree
       end
 
       def send_shipped_email
-        ShipmentMailer.shipped_email(self.id).deliver
+        ShipmentMailer.shipped_email(id).deliver_later
       end
 
       def set_cost_zero_when_nil

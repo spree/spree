@@ -48,6 +48,10 @@ module Spree
       end
 
       it "uses the specified template" do
+        @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+          r.draw { get 'custom_show' => 'spree/api/zones#custom_show' }
+        end
+
         request.headers['X-Spree-Template'] = 'show'
         api_get :custom_show, :id => @zone.id
         expect(response).to render_template('spree/api/zones/show')

@@ -46,9 +46,9 @@ module Spree
       end
 
       def user_params
-        params.require(:user).permit(PermittedAttributes.user_attributes |
-                                       [bill_address_attributes: PermittedAttributes.address_attributes,
-                                        ship_address_attributes: PermittedAttributes.address_attributes])
+        params.require(:user).permit(permitted_user_attributes |
+                                       [bill_address_attributes: permitted_address_attributes,
+                                        ship_address_attributes: permitted_address_attributes])
       end
 
     end

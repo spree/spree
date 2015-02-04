@@ -1,0 +1,17 @@
+.content-header.page-header {
+  margin-top: 15px;
+
+  h1 {
+    font-size: $font-size-h1 / 1.5;
+    margin: 0;
+    line-height: 38px;
+  }
+
+  .page-actions {
+    text-align: right;
+
+    form {
+      display: inline-block
+    }
+  }
+}

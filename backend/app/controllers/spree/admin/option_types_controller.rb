@@ -4,13 +4,15 @@ module Spree
       before_action :setup_new_option_value, only: :edit
 
       def update_values_positions
-        params[:positions].each do |id, index|
-          OptionValue.where(:id => id).update_all(:position => index)
+        ActiveRecord::Base.transaction do
+          params[:positions].each do |id, index|
+            Spree::OptionValue.where(id: id).update_all(position: index)
+          end
         end
 
         respond_to do |format|
           format.html { redirect_to admin_product_variants_url(params[:product_id]) }
-          format.js  { render :text => 'Ok' }
+          format.js { render text: 'Ok' }
         end
       end
 

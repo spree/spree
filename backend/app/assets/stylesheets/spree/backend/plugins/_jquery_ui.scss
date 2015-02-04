@@ -1,0 +1,109 @@
+.ui-widget {
+  font-family: $headings-font-family;
+  font-size: $font-size-base - 1;
+  font-weight: 400;
+}
+
+#ui-datepicker-div {
+  background-color: white;
+  background-image: none;
+  color: $gray;
+  border-color: $input-border;
+  width: auto;
+  padding: 20px;
+
+  &.ui-corner-all {
+    border-radius: $border-radius-base;
+  }
+
+  .ui-datepicker-header {
+    border-radius: 0;
+    border: none;
+    background-image: none;
+    background-color: transparent;
+  }
+
+  .ui-widget-header .ui-icon {
+    background-color: transparent;
+    background-image: none;
+    text-indent: 0;
+    vertical-align: bottom !important;
+    width: 12px;
+    color: $brand-primary;
+
+    &.ui-icon-circle-triangle-w {
+      @extend .glyphicon;
+      @extend .glyphicon-chevron-left;
+    }
+
+    &.ui-icon-circle-triangle-e {
+      @extend .glyphicon;
+      @extend .glyphicon-chevron-right;
+    }
+  }
+
+  .ui-state-hover {
+    border: none;
+    background-image: none;
+    background-color: transparent;
+    transition: color 0.2s ease-in-out;
+    cursor: pointer;
+    
+    span.ui-icon {
+      color: $brand-success;
+    }
+  }
+
+  .ui-datepicker-next-hover {
+    right: 2;
+  }
+
+  .ui-datepicker-prev-hover {
+    left: 2;
+  }
+
+  .ui-datepicker-title {
+    font-weight: 500;
+    color: $gray;
+  }
+
+  table.ui-datepicker-calendar {
+    th {
+      span {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: $brand-primary;
+        font-weight: 500;
+      }
+    }
+
+    td {
+      width: 31px;
+      height: 29px;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+      .ui-state-default, 
+      .ui-widget-content .ui-state-default, 
+      .ui-widget-header .ui-state-default {
+        background-color: transparent;
+        background-image: none;
+        border: none;
+        text-align: center;
+        font-weight: 300;
+      }
+
+      &:hover {
+        background-color: $gray-lighter;
+      }
+
+      &:active {
+        background-color: $brand-success;
+
+        a {
+          color: white;  
+        }        
+      }
+    }
+  }
+}
+

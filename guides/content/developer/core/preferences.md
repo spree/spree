@@ -331,22 +331,6 @@ Determines if an `InventoryUnit` can ship or not. Defaults to `false`.
 
 Continues the checkout process even if the payment gateway error failed. Defaults to `false`.
 
-`allow_ssl_in_development_and_test`
-
-Enables SSL support in development and test environments. Defaults to `false`.
-
-`allow_ssl_in_production`
-
-Enables SSL support in production environment. Defaults to `true`.
-
-`allow_ssl_in_staging`
-
-Enables SSL support in production environment. Defaults to `true`.
-
-`alternative_billing_phone`
-
-Determines if an alternative phone number should be present for the billing address on the checkout page. Defaults to `false`.
-
 `alternative_shipping_phone`
 
 Determines if an alternative phone number should be present for the shipping address on the checkout page. Defaults to `false`.
@@ -395,14 +379,6 @@ Determines whether or not a field for "Company" displays on the checkout pages f
 `currency`
 
 The three-letter currency code for the currency that prices will be displayed in. Defaults to "USD".
-
-`currency_symbol_position`
-
-The position of the symbol for a currency. Can be either `before` or `after`. Defaults to `before`.
-
-`display_currency`
-
-Determines whether or not a currency is displayed with a price. Defaults to `false`.
 
 `default_country_id`
 

@@ -115,20 +115,8 @@ describe Spree::Product, :type => :model do
     context "#display_price" do
       before { product.price = 10.55 }
 
-      context "with display_currency set to true" do
-        before { Spree::Config[:display_currency] = true }
-
-        it "shows the currency" do
-          expect(product.display_price.to_s).to eq("$10.55 USD")
-        end
-      end
-
-      context "with display_currency set to false" do
-        before { Spree::Config[:display_currency] = false }
-
-        it "does not include the currency" do
-          expect(product.display_price.to_s).to eq("$10.55")
-        end
+      it "shows the amount" do
+        expect(product.display_price.to_s).to eq("$10.55")
       end
 
       context "with currency set to JPY" do
@@ -442,5 +430,10 @@ describe Spree::Product, :type => :model do
 
     subject { second_product }
     it { is_expected.to be_invalid }
+  end
+
+  it "initializes a master variant when building a product" do
+    product = Spree::Product.new
+    expect(product.master.is_master).to be true
   end
 end

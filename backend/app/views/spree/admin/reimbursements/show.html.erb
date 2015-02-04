@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:reimbursement) %> #<%= @reimbursement.number %>
+  / <%= Spree::Reimbursement.model_name.human %> #<%= @reimbursement.number %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
@@ -33,7 +33,7 @@
             <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
           </td>
           <td>
-            <%= return_item.exchange_variant.try(:options_text) %>
+            <%= return_item.exchange_variant.try(:exchange_name) %>
           </td>
           <td>
             <%= return_item.display_pre_tax_amount %>

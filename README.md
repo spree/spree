@@ -30,6 +30,7 @@ spree_api.
 
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
@@ -44,9 +45,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.1.8
+gem install rails -v 4.2.0
 gem install spree
-rails _4.1.8_ new my_store
+rails _4.2.0_ new my_store
 spree install my_store
 ```
 
@@ -96,19 +97,6 @@ gem 'spree', github: 'spree/spree'
 state. It is unwise to use this branch in a production system you care deeply
 about.**
 
-If you wish to have authentication included also, you will need to add the
-`spree_auth_devise` gem as well. Either this:
-
-```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-4-stable'
-```
-
-Or this:
-
-```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise'
-```
-
 Once you've done that, then you can install these gems using this command:
 
 ```shell
@@ -119,19 +107,6 @@ Use the install generator to set up Spree:
 
 ```shell
 rails g spree:install --sample=false --seed=false
-```
-
-At this point, if you are using spree_auth_devise you will need to change this
-line in `config/initializers/spree.rb`:
-
-```ruby
-Spree.user_class = "Spree::LegacyUser"
-```
-
-To this:
-
-```ruby
-Spree.user_class = "Spree::User"
 ```
 
 You can avoid running migrations or generating seed and sample data by passing
@@ -346,11 +321,11 @@ Here are some ways **you** can contribute:
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
 * by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
-* by writing [specs](https://github.com/spree/spree/labels/NeedSpecs)
-* by writing [needed code](https://github.com/spree/spree/labels/NeedCode) or [finishing code](https://github.com/spree/spree/labels/stalled)
-* by [refactoring code](https://github.com/spree/spree/labels/performance)
-* by resolving [issues](https://github.com/spree/spree/issues)
+* by writing [specs](https://github.com/spree/spree/labels/need_specs)
+* by writing [needed code](https://github.com/spree/spree/labels/feature_request) or [finishing code](https://github.com/spree/spree/labels/address_feedback)
+* by [refactoring code](https://github.com/spree/spree/labels/address_feedback)
 * by reviewing [pull requests](https://github.com/spree/spree/pulls)
+* by verifying [issues](https://github.com/spree/spree/labels/unverified)
 
 License
 -------

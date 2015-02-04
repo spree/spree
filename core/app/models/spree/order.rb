@@ -3,14 +3,18 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
-
-    ORDER_NUMBER_LENGTH  = 9
-    ORDER_NUMBER_LETTERS = false
-    ORDER_NUMBER_PREFIX  = 'R'
+    extend FriendlyId
+    friendly_id :number, slug_column: :number, use: :slugged
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
+    include Spree::NumberGenerator
+
+    def generate_number(options = {})
+      options[:prefix] ||= 'R'
+      super(options)
+    end
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -18,6 +22,7 @@ module Spree
                   :shipment_total,      :promo_total,          :total
 
     alias :display_ship_total :display_shipment_total
+    alias_attribute :ship_total, :shipment_total
 
     checkout_flow do
       go_to_state :address
@@ -49,8 +54,7 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    alias_attribute :ship_total, :shipment_total
-
+    belongs_to :store, class_name: 'Spree::Store'
     has_many :state_changes, as: :stateful
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
@@ -80,10 +84,8 @@ module Spree
 
     # Needs to happen before save_permalink is called
     before_validation :set_currency
-    before_validation :generate_order_number, on: :create
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
-
 
     before_create :create_token
     before_create :link_by_email
@@ -91,10 +93,7 @@ module Spree
 
     validates :email, presence: true, if: :require_email
     validates :email, email: true, if: :require_email, allow_blank: true
-    validates :number, presence: true, uniqueness: { allow_blank: true }
     validate :has_available_shipment
-
-    make_permalink field: :number
 
     delegate :update_totals, :persist_totals, :to => :updater
 
@@ -104,23 +103,11 @@ module Spree
     class_attribute :line_item_comparison_hooks
     self.line_item_comparison_hooks = Set.new
 
-    def self.by_number(number)
-      where(number: number)
-    end
-
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
-
-    def self.by_customer(customer)
-      joins(:user).where("#{Spree.user_class.table_name}.email" => customer)
-    end
-
-    def self.by_state(state)
-      where(state: state)
-    end
 
     def self.complete
       where.not(completed_at: nil)
@@ -163,10 +150,6 @@ module Spree
 
     def shipping_discount
       shipment_adjustments.eligible.sum(:amount) * - 1
-    end
-
-    def to_param
-      number.to_s.to_url.upcase
     end
 
     def completed?
@@ -255,35 +238,6 @@ module Spree
       end
     end
 
-    def generate_order_number(options = {})
-      options[:length]  ||= ORDER_NUMBER_LENGTH
-      options[:letters] ||= ORDER_NUMBER_LETTERS
-      options[:prefix]  ||= ORDER_NUMBER_PREFIX
-
-      possible = (0..9).to_a
-      possible += ('A'..'Z').to_a if options[:letters]
-
-      self.number ||= loop do
-        # Make a random number.
-        random = "#{options[:prefix]}#{(0...options[:length]).map { possible.shuffle.first }.join}"
-        # Use the random  number if no other order exists with it.
-        if self.class.exists?(number: random)
-          # If over half of all possible options are taken add another digit.
-          options[:length] += 1 if self.class.count > (10 ** options[:length] / 2)
-        else
-          break random
-        end
-      end
-    end
-
-    def shipped_shipments
-      shipments.shipped
-    end
-
-    def contains?(variant, options = {})
-      find_line_item_by_variant(variant, options).present?
-    end
-
     def quantity_of(variant, options = {})
       line_item = find_line_item_by_variant(variant, options)
       line_item ? line_item.quantity : 0
@@ -316,14 +270,12 @@ module Spree
     # Creates new tax charges if there are any applicable rates. If prices already
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
-      # We want to only look up the applicable tax zone once and pass it to TaxRate calculation to avoid duplicated lookups.
-      order_tax_zone = self.tax_zone
-      Spree::TaxRate.adjust(order_tax_zone, line_items)
-      Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
+      Spree::TaxRate.adjust(self, line_items)
+      Spree::TaxRate.adjust(self, shipments) if shipments.any?
     end
 
     def outstanding_balance
-      if self.state == 'canceled' && self.payments.present? && self.payments.completed.size > 0
+      if state == 'canceled'
         -1 * payment_total
       else
         total - payment_total
@@ -378,8 +330,14 @@ module Spree
       consider_risk
     end
 
+    def fulfill!
+      shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
+      updater.update_shipment_state
+      save!
+    end
+
     def deliver_order_confirmation_email
-      OrderMailer.confirm_email(self.id).deliver
+      OrderMailer.confirm_email(id).deliver_later
       update_column(:confirmation_delivered, true)
     end
 
@@ -405,10 +363,10 @@ module Spree
     end
 
     ##
-    # Check to see if any line item variants are soft, deleted.
+    # Check to see if any line item variants are soft deleted.
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_deleted
-      if line_items.select{ |li| li.variant.destroyed? }.present?
+      if line_items.any?{ |li| !li.variant || li.variant.paranoia_destroyed? }
         errors.add(:base, Spree.t(:deleted_variants_present))
         restart_checkout_flow
         false
@@ -537,8 +495,8 @@ module Spree
       self.next! if self.line_items.size > 0
     end
 
-    def refresh_shipment_rates
-      shipments.map &:refresh_rates
+    def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
+      shipments.map { |s| s.refresh_rates(shipping_method_filter) }
     end
 
     def shipping_eq_billing_address?
@@ -597,19 +555,6 @@ module Spree
       update_column(:considered_risky, false)
     end
 
-    # moved from api order_decorator. This is a better place for it.
-    def update_line_items(line_item_params)
-      return if line_item_params.blank?
-      line_item_params.each_value do |attributes|
-        if attributes[:id].present?
-          self.line_items.find(attributes[:id]).update_attributes!(attributes)
-        else
-          self.line_items.create!(attributes)
-        end
-      end
-      self.ensure_updated_shipments
-    end
-
     def reload(options=nil)
       remove_instance_variable(:@tax_zone) if defined?(@tax_zone)
       super
@@ -627,6 +572,16 @@ module Spree
       refunds.non_reimbursement.exists? ||
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
+
+    # determines whether the inventory is fully discounted
+    #
+    # Returns
+    # - true if inventory amount is the exact negative of inventory related adjustments
+    # - false otherwise
+    def fully_discounted?
+      adjustment_total + line_items.map(&:final_amount).sum == 0.0
+    end
+    alias_method :fully_discounted, :fully_discounted?
 
     private
 
@@ -669,7 +624,7 @@ module Spree
     end
 
     def send_cancel_email
-      OrderMailer.cancel_email(self.id).deliver
+      OrderMailer.cancel_email(id).deliver_later
     end
 
     def after_resume
