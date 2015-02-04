@@ -29,7 +29,6 @@
             <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
             <td>
               <%= link_to order.number, edit_admin_order_path(order) %>
-              <%= "C" if order.can_cancel? %>
             </td>
             <td>
               <span class="label label-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
@@ -49,7 +48,7 @@
               <% end %>
             </td>
             <td><%= order.display_total.to_html %></td>
-            <td class='actions actions-1'>
+            <td class='actions text-center'>
               <%= link_to_with_icon 'search', Spree.t(:details), "javascript:;", :class => 'btn btn-default btn-sm js-view-risky-order', :title => Spree.t(:details), :no_text => true %>
             </td>
           </tr>

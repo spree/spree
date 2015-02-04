@@ -1,4 +1,11 @@
 .risky-order-info {
+  .next-prev {
+    min-width: 200px;
+    text-align: right;
+    a {
+      margin-left: 8px;
+    }
+  }
   h3.order-number {
     margin: 0 0 20px 0;
   }
