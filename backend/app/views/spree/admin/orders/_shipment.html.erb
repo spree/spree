@@ -104,13 +104,17 @@
 
       <tr class="edit-shipment-address is-hidden">
         <td colspan="5">
-          <%#= button_tag Spree.t(:edit_current_address), data: { toggle: "modal", target: "#edit_address_#{ shipment.id }" }, class: "btn btn-primary btn-sm" %>
-
-          <%= button_link_to Spree.t(:edit_order_address), admin_order_customer_url(@order), class: "btn btn-default btn-sm" %>
-          <%= button_tag Spree.t(:change_shipment_address), data: { toggle: "modal", target: "#new_address_#{ shipment.id }" }, class: "btn btn-primary btn-sm js-change-shipment-address" %>
-
-          <%# render partial: "spree/admin/orders/shipment_address_modal", locals: { shipment: shipment, type: :edit } %>
-          <%= render partial: "spree/admin/orders/shipment_address_modal", locals: { shipment: shipment, type: :new } %>
+          <%= button_link_to Spree.t(:edit_order_address),
+                admin_order_customer_url(@order),
+                class: "btn btn-default btn-sm"
+          %>
+          <%= button_tag Spree.t(:change_shipment_address),
+                data: { toggle: "modal", target: "#new_address_#{ shipment.id }" },
+                class: "btn btn-primary btn-sm js-change-shipment-address"
+          %>
+          <%= render partial: "spree/admin/orders/shipment_address_modal",
+                locals: { shipment: shipment, type: :new }
+          %>
         </td>
         <td class="actions text-center">
           <% if can? :update, shipment %>
@@ -125,7 +129,7 @@
           <strong><%= Spree.t(:shipment_address) %>:</strong> <%= shipment.shipment_address %>
         </td>
         <td class="action text-center">
-          <% if can? :update, shipment %>
+          <% if( (can? :update, shipment) and !shipment.shipped?) %>
             <%= link_to_with_icon 'edit', Spree.t('edit'), "#", class: 'edit-shipment-address btn btn-primary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
           <% end %>
         </td>
