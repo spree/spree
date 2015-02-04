@@ -248,7 +248,7 @@ module Spree
 
       it 'ensures_country_id for country fields' do
         [:name, :iso, :iso_name, :iso3].each do |field|
-          address = { country: { field => country.send(field) }}
+          address = { country: { field => country.send(field) } }
           Importer::Order.ensure_country_id_from_params(address)
           expect(address[:country_id]).to eq country.id
         end
@@ -263,7 +263,7 @@ module Spree
 
       it 'ensures_state_id for state fields' do
         [:name, :abbr].each do |field|
-          address = { country_id: country.id, state: { field => state.send(field) }}
+          address = { country_id: country.id, state: { field => state.send(field) } }
           Importer::Order.ensure_state_id_from_params(address)
           expect(address[:state_id]).to eq state.id
         end
