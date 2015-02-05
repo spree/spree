@@ -5,7 +5,7 @@ module Spree
     validates :url, presence: true
     validates :mail_from_address, presence: true
 
-    before_create :ensure_default_exists_and_is_unique
+    before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
     scope :by_url, lambda { |url| where("url like ?", "%#{url}%") }
