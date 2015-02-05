@@ -48,12 +48,12 @@ module Spree
       end
 
       def risky
-        @search = Order.accessible_by(current_ability, :index)
-                       .complete
-                       .where(considered_risky: true)
-                       .where.not(state: 'canceled')
-                       .order(completed_at: :desc)
-                       .ransack(params[:q])
+        @search = Order.accessible_by(current_ability, :index).
+                        complete.
+                        where(considered_risky: true).
+                        where.not(state: 'canceled').
+                        order(completed_at: :desc).
+                        ransack(params[:q])
 
         @orders = @search.result(distinct: true).
           page(params[:page]).

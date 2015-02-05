@@ -25,7 +25,7 @@ function riskyAjaxActionHandler(url){
   $.ajax({
     type: 'PUT',
     url: url
-  }).done(function (data) {
+  }).done(function () {
     processOrderActionSuccess();
   }).error(function (msg) {
     console.log(msg);
