@@ -5,7 +5,7 @@ section: core
 
 ## Overview
 
-Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `logo` and`currency`. Additional preferences can be added by your application or included extensions.
+Spree Preferences support general application configuration and preferences per model instance. Spree comes with preferences for your store like `logo` and `currency`. Additional preferences can be added by your application or included extensions.
 
 To implement preferences for a model, simply add a new column called `preferences`. This is an example migration for the `spree_products` table:
 
@@ -21,7 +21,11 @@ class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration
 end
 ```
 
-All instances will use the default value unless a value has been set for a specific record. For example, you could add a preference to `User` for e-mail notifications. Users would have the ability to modify this value without adding an extra column to your database table.
+This will work because `Spree::Product` is a subclass of `Spree::Base`. If found, the `preferences` attribute gets serialized into a `Hash` and merged with the default values.
+
+As another example, you might want to add preferences for users to manage their notification settings. Just make sure your `User` model inherits from `Spree::Base` then add the `preferences` column. You'll then be able to define preferences for `User`s without adding extra columns to the database table.
+
+> If you're using `spree_auth_devise`, note that the provided `Spree::User` doesn't inherit from `Spree::Base`.
 
 Extensions may add to the Spree General Settings or create their own namespaced preferences.
 
@@ -97,7 +101,7 @@ For each preference, a data type is provided. The types available are:
 * `array`
 * `hash`
 
-An optional default value may be defined.
+An optional default value may be defined which will be used unless a value has been set for that specific instance.
 
 ## Accessing Preferences
 
