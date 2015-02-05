@@ -58,16 +58,6 @@ describe Spree::Money do
       money = Spree::Money.new(10, :symbol_position => :after, :html => false)
       expect(money.to_s).to eq("10.00 $")
     end
-
-    it "passed in option string" do
-      money = Spree::Money.new(10, :symbol_position => "after", :html => false)
-      expect(money.to_s).to eq("10.00 $")
-    end
-
-    it "config option" do
-      money = Spree::Money.new(10, symbol_position: :after, html: false)
-      expect(money.to_s).to eq("10.00 $")
-    end
   end
 
   context "sign before symbol" do

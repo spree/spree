@@ -41,21 +41,15 @@ module Spree
     end
 
     # Attempts to look up StockItem for the variant, and creates one if not found.
-    # This method accepts an id or instance of the variant since it is used in
-    # multiple ways. Other methods in this model attempt to pass a variant,
+    # This method accepts an instance of the variant.
+    # Other methods in this model attempt to pass a variant,
     # but controller actions can pass just the variant id as a parameter.
     #
-    # @param variant_or_id [Variant|String] Variant instance or string id of a variant.
+    # @param variant [Variant] Variant instance.
     #
     # @return [StockItem] Corresponding StockItem for the StockLocation's variant.
-    def stock_item_or_create(variant_or_id)
-      vid = if variant_or_id.is_a?(Variant)
-        variant_or_id.id
-      else
-        ActiveSupport::Deprecation.warn "Passing a Variant ID is deprecated, and will be removed in Spree 3. Please pass a variant instance instead.", caller
-        variant_or_id
-      end
-      stock_item(vid) || stock_items.create(variant_id: vid)
+    def stock_item_or_create(variant)
+      stock_item(variant) || stock_items.create(variant_id: variant.id)
     end
 
     def count_on_hand(variant)

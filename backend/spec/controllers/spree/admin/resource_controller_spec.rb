@@ -39,6 +39,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
         resources :widgets
       end
     end
+    stub_const('Spree::Widget', Widget)
   end
 
   describe '#new' do
@@ -163,3 +164,108 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     end
   end
 end
+
+module Spree
+  module Submodule
+    class Post < Spree::Base
+    end
+  end
+  module Admin
+    module Submodule
+      class PostsController < Spree::Admin::ResourceController
+        prepend_view_path('spec/test_views')
+
+        def model_class
+          Spree::Submodule::Post
+        end
+      end
+    end
+  end
+end
+
+describe Spree::Admin::Submodule::PostsController, type: :controller do
+  stub_authorization!
+
+  after(:all) do
+    # Spree::Core::Engine.routes.reload_routes!
+    Rails.application.reload_routes!
+  end
+
+  with_table 'spree_posts' do |t|
+    t.string :name
+    t.integer :position
+    t.timestamps
+  end
+
+  before do
+    Spree::Core::Engine.routes.draw do
+      namespace :admin do
+        namespace :submodule do
+          resources :posts
+        end
+      end
+    end
+  end
+
+  describe '#new' do
+    subject do
+      spree_get :new
+    end
+
+    it 'succeeds' do
+      subject
+      expect(response).to be_success
+    end
+  end
+
+  describe '#edit' do
+    let(:submodule_post) { Spree::Submodule::Post.create!(name: 'a post') }
+
+    subject do
+      spree_get :edit, id: submodule_post.to_param
+    end
+
+    it 'succeeds' do
+      subject
+      expect(response).to be_success
+    end
+  end
+
+  describe '#create' do
+    let(:params) do
+      { submodule_post: { name: 'a post' } }
+    end
+
+    subject { spree_post :create, params }
+
+    it 'creates the resource' do
+      expect { subject }.to change { Spree::Submodule::Post.count }.by(1)
+    end
+  end
+
+  describe '#update' do
+    let(:post) { Spree::Submodule::Post.create!(name: 'a post') }
+
+    let(:params) do
+      { id: post.to_param, submodule_post: { name: 'post renamed' } }
+    end
+
+    subject { spree_put :update, params }
+
+    it 'updates the resource' do
+      expect { subject }.to change { post.reload.name }.from('a post').to('post renamed')
+    end
+  end
+
+  describe '#destroy' do
+    let!(:post) { Spree::Submodule::Post.create!(name: 'a post') }
+    let(:params) { { id: post.id } }
+
+    subject { spree_delete :destroy, params }
+
+    it 'destroys the resource' do
+      expect { subject }.to change { Spree::Submodule::Post.count }.from(1).to(0)
+    end
+  end
+end
+
