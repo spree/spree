@@ -1267,6 +1267,17 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_credit_payment_method:
+      unable_to_void: "Unable to void code: %{auth_code}"
+      unable_to_credit: "Unable to credit code: %{auth_code}"
+      successful_action: "Successful store credit %{action}"
+      unable_to_find: "Could not find store credit"
+      insufficient_funds: "Store credit amount remaining is not sufficient"
+      currency_mismatch: "Store credit currency does not match order currency"
+      insufficient_authorized_amount: "Unable to capture more than authorized amount"
+      unable_to_find_for_action: "Could not find store credit for auth code: %{auth_code} for action: %{action}"
+      user_has_no_store_credits: "User does not have any available store credit"
+      select_one_store_credit: "Select store credit to go towards remaining balance"
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal
