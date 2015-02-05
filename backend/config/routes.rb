@@ -1,6 +1,6 @@
 Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
-    post '/addresses/create_shipment_address/:shipment_id/', to: "addresses#create_shipment_address", as: :create_shipment_address
+    post '/addresses/shipment/:shipment_id', to: "addresses#create_shipment", as: :create_shipment_address
 
     resources :promotions do
       resources :promotion_rules
