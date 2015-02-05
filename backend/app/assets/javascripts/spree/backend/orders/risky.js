@@ -12,12 +12,12 @@ $(document).on('click', '.js-view-risky-order', function() {
 });
 
 function cancelRiskyOrder(){
-  var url = Spree.routes.orders_api + "/" + getOrderNumber() + '/cancel';
+  var url = Spree.routes.orders_api + '/' + getOrderNumber() + '/cancel';
   riskyAjaxActionHandler(url);
 }
 
 function approveRiskyOrder(){
-  var url = Spree.routes.orders_api + "/" + getOrderNumber() + '/approve';
+  var url = Spree.routes.orders_api + '/' + getOrderNumber() + '/approve';
   riskyAjaxActionHandler(url);
 }
 
@@ -66,7 +66,7 @@ function setRiskyOrder(data){
   // assign the class to the current active tr
   $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')').addClass('info');
 
-  if(activeRiskyOrder == 0){
+  if(activeRiskyOrder === 0){
     showRiskyNav('next');
   } else if (activeRiskyOrder == totalRiskyOrders) {
     showRiskyNav('prev');
@@ -86,13 +86,14 @@ function prevRiskyOrder(){
   loadRiskyOrder();
 }
 
-function viewRiskyOrder(clicked_element){
-  activeRiskyOrder = clicked_element.parents('tr').index();
+function viewRiskyOrder(clickedElement){
+  activeRiskyOrder = clickedElement.parents('tr').index();
   loadRiskyOrder();
 }
 
 function showRiskyNav(type){
-  // need to use .css here, we want the element to be inline block instead of inline (.show())
+  // Need to use .css() here instead of .show()
+  // We want the element to be inline block instead of inline
   $('.js-risky-' + type).css('display', 'inline-block');
 }
 

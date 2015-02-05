@@ -17,7 +17,7 @@ module Spree
       def approve
         authorize! :update, @order, params[:token]
         @order.approved_by(try_spree_current_user)
-        respond_with(@order, :default_template => :show)
+        respond_with(@order, default_template: :show)
       end
 
       def cancel
