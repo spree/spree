@@ -2,7 +2,7 @@ module Spree
   module Admin
     class AddressesController < ResourceController
 
-      def create_shipment_address
+      def create_shipment
         @address = Spree::Address.new(address_params)
         shipment = Spree::Shipment.find(params[:shipment_id])
 
