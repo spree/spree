@@ -72,7 +72,7 @@ describe Spree.user_class, :type => :model do
     end
 
     def load_orders
-      allow(subject).to receive(:spree_orders).and_return(double(complete: orders))
+      allow(subject).to receive(:orders).and_return(double(complete: orders))
     end
 
     describe "#lifetime_value" do

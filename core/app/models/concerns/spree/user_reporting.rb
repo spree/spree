@@ -4,11 +4,11 @@ module Spree
     money_methods :lifetime_value, :average_order_value
 
     def lifetime_value
-      spree_orders.complete.pluck(:total).sum
+      orders.complete.pluck(:total).sum
     end
 
     def order_count
-      BigDecimal(spree_orders.complete.count)
+      BigDecimal(orders.complete.count)
     end
 
     def average_order_value
