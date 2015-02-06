@@ -21,7 +21,7 @@ module Spree
 
           if @simple_current_order
             @simple_current_order.last_ip_address = ip_address
-            return @simple_current_order
+            @simple_current_order
           else
             @simple_current_order = Spree::Order.new
           end
@@ -46,12 +46,13 @@ module Spree
 
           if @current_order
             @current_order.last_ip_address = ip_address
-            return @current_order
+            @current_order
           end
         end
 
         def associate_user
           @order ||= current_order
+
           if try_spree_current_user && @order
             @order.associate_user!(try_spree_current_user) if @order.user.blank? || @order.email.blank?
           end
