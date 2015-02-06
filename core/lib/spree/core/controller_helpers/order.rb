@@ -76,10 +76,6 @@ module Spree
 
         private
 
-        def last_incomplete_order
-          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order
-        end
-
         def current_order_params
           { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
         end
@@ -92,7 +88,7 @@ module Spree
 
           # Find any incomplete orders for the current user
           if order.nil? && try_spree_current_user
-            order = last_incomplete_order
+            order = try_spree_current_user.last_incomplete_spree_order
           end
 
           order
