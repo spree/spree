@@ -24,7 +24,7 @@
 <% if products.any? %>
 <ul id="products" class="inline product-listing" data-hook>
   <% products.each do |product| %>
-    <% url = product_path(product, :taxon_id => @taxon.try(:id)) %>
+    <% url = spree.product_path(product, :taxon_id => @taxon.try(:id)) %>
     <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary", :name => "classes") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
       <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : [I18n.locale, current_currency, product]) do %>
         <div class="product-image">
