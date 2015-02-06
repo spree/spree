@@ -78,7 +78,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       before do
         allow(controller).to receive_messages(
           current_order: order,
-          last_incomplete_order: incomplete_order,
           cookies: double(signed: { guest_token: 'guest_token' })
         )
       end
