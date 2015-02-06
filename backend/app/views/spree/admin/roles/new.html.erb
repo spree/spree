@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:new_role) %>
+<% end %>
+
+<%= form_for [:admin, @role] do |f| %>
+  <fieldset>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>
