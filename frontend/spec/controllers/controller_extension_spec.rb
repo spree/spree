@@ -23,6 +23,15 @@ describe Spree::CustomController, :type => :controller do
     Spree::CustomController.clear_overrides!
   end
 
+  before do
+    @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+      r.draw {
+        get 'index', to: 'spree/custom#index'
+        post 'create', to: 'spree/custom#create'
+      }
+    end
+  end
+
   context "extension testing" do
     context "index" do
       context "specify symbol for handler instead of Proc" do
@@ -37,6 +46,7 @@ describe Spree::CustomController, :type => :controller do
             end
           end
         end
+
         describe "GET" do
           it "has value success" do
             spree_get :index
@@ -53,6 +63,7 @@ describe Spree::CustomController, :type => :controller do
             respond_override({:index => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end
         end
+
         describe "GET" do
           it "has value success" do
             spree_get :index
@@ -69,6 +80,7 @@ describe Spree::CustomController, :type => :controller do
             respond_override({:index => {:html => {:failure => lambda { render(:text => 'failure!!!') }}}})
           end
         end
+
         describe "GET" do
           it "has value success" do
             spree_get :index
@@ -101,6 +113,7 @@ describe Spree::CustomController, :type => :controller do
             respond_override({:index => {:html => {:success => lambda { render(:text => 'success!!!') }}}})
           end
         end
+
         describe "POST" do
           it "should not effect the wrong controller" do
             spree_get :index
@@ -108,8 +121,6 @@ describe Spree::CustomController, :type => :controller do
           end
         end
       end
-
     end
   end
-
 end

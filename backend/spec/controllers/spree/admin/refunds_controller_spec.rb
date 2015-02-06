@@ -11,6 +11,7 @@ describe Spree::Admin::RefundsController do
       subject do
         spree_post :create,
                    refund: { amount: "50.0", refund_reason_id: "1" },
+                   order_id: payment.order_id,
                    payment_id: payment.id
       end
 

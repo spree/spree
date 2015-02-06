@@ -232,7 +232,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     it "raise active record not found" do
       expect {
-        spree_get :edit, id: nil
+        spree_get :edit, id: 99999999
       }.to raise_error ActiveRecord::RecordNotFound
     end
   end

@@ -36,7 +36,9 @@ describe Spree::Admin::WidgetsController, :type => :controller do
   before do
     Spree::Core::Engine.routes.draw do
       namespace :admin do
-        resources :widgets
+        resources :widgets do
+          post :update_positions, on: :member
+        end
       end
     end
     stub_const('Spree::Widget', Widget)
@@ -149,7 +151,10 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     let(:widget_1) { Widget.create!(name: 'widget 1', position: 1) }
     let(:widget_2) { Widget.create!(name: 'widget 2', position: 2) }
 
-    subject { spree_post :update_positions, id: widget_1.to_param, positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js' }
+    subject do
+      spree_post :update_positions, id: widget_1.to_param,
+        positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js'
+    end
 
     it 'updates the position of widget 1' do
       expect { subject }.to change { widget_1.reload.position }.from(1).to(2)
@@ -194,7 +199,7 @@ describe Spree::Admin::Submodule::PostsController, type: :controller do
   with_table 'spree_posts' do |t|
     t.string :name
     t.integer :position
-    t.timestamps
+    t.timestamps null: false
   end
 
   before do
