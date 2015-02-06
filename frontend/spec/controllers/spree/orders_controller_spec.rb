@@ -13,10 +13,10 @@ describe Spree::OrdersController, :type => :controller do
     end
 
     context "#populate" do
-      it "should create a new order when none specified" do
+      it "should not persist empty orders" do
         spree_post :populate, {}, {}
         expect(cookies.signed[:guest_token]).not_to be_blank
-        expect(Spree::Order.find_by_guest_token(cookies.signed[:guest_token])).to be_persisted
+        expect(Spree::Order.find_by_guest_token(cookies.signed[:guest_token])).to be(nil)
       end
 
       context "with Variant" do
@@ -26,14 +26,14 @@ describe Spree::OrdersController, :type => :controller do
         end
 
         it "should handle population" do
-          expect(populator).to receive(:populate).with("2", "5", nil).and_return(true)
+          expect(populator).to receive(:populate).with(2, 5, nil).and_return(true)
           spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
           expect(response).to redirect_to spree.cart_path
         end
 
         it "shows an error when population fails" do
           request.env["HTTP_REFERER"] = spree.root_path
-          expect(populator).to receive(:populate).with("2", "5", nil).and_return(false)
+          expect(populator).to receive(:populate).with(2, 5, nil).and_return(false)
           allow(populator).to receive_message_chain(:errors, :full_messages).and_return(["Order population failed"])
           spree_post :populate, { :order_id => 1, :variant_id => 2, :quantity => 5 }
           expect(flash[:error]).to eq("Order population failed")
@@ -80,7 +80,7 @@ describe Spree::OrdersController, :type => :controller do
     # Regression test for #2750
     context "#update" do
       before do
-        allow(user).to receive :last_incomplete_spree_order
+        allow(user).to receive(:spree_orders).and_return(Spree::Order.none)
         allow(controller).to receive :set_current_order
       end
 

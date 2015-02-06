@@ -28,10 +28,6 @@ Spree::Core::Engine.config.to_prepare do
         spree_roles.where(name: role_in_question.to_s).any?
       end
 
-      def last_incomplete_spree_order
-        spree_orders.incomplete.order('created_at DESC').first
-      end
-
       def analytics_id
         id
       end

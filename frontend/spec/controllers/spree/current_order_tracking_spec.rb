@@ -14,8 +14,8 @@ describe 'current order tracking', :type => :controller do
   it 'automatically tracks who the order was created by & IP address' do
     allow(controller).to receive_messages(:try_spree_current_user => user)
     get :index
-    expect(controller.current_order(create_order_if_necessary: true).created_by).to eq controller.try_spree_current_user
-    expect(controller.current_order.last_ip_address).to eq "0.0.0.0"
+    expect(controller.cart_order.created_by).to eql(controller.try_spree_current_user)
+    expect(controller.cart_order.last_ip_address).to eql('0.0.0.0')
   end
 
   context "current order creation" do

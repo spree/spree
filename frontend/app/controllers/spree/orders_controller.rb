@@ -8,7 +8,7 @@ module Spree
 
     respond_to :html
 
-    before_action :assign_order_with_lock, only: :update
+    before_action :assign_order, only: :update
     before_action :apply_coupon_code, only: :update
     skip_before_action :verify_authenticity_token, only: [:populate]
 
@@ -35,14 +35,15 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order || Order.incomplete.find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+      @order = cart_order
       associate_user
     end
 
     # Adds a new item to the order (creating a new order if none already exists)
     def populate
-      populator = Spree::OrderPopulator.new(current_order(create_order_if_necessary: true))
-      if populator.populate(params[:variant_id], params[:quantity], params[:options])
+      populator = Spree::OrderPopulator.new(cart_order)
+
+      if populator.populate(params[:variant_id].to_i, params[:quantity].to_i, params[:options])
         respond_with(@order) do |format|
           format.html { redirect_to cart_path }
         end
@@ -89,8 +90,8 @@ module Spree
         end
       end
 
-      def assign_order_with_lock
-        @order = current_order(lock: true)
+      def assign_order
+        @order = current_order
         unless @order
           flash[:error] = Spree.t(:order_not_found)
           redirect_to root_path and return
