@@ -10,7 +10,7 @@ module Spree
       separator = raw(separator)
       crumbs = [content_tag(:li, content_tag(:span, link_to(Spree.t(:home), spree.root_path, itemprop: "url") + separator, itemprop: "title"), itemscope: "itemscope", itemtype: "http://data-vocabulary.org/Breadcrumb")]
       if taxon
-        crumbs << content_tag(:li, content_tag(:span, link_to(Spree.t(:products), products_path, itemprop: "url") + separator, itemprop: "title"), itemscope: "itemscope", itemtype: "http://data-vocabulary.org/Breadcrumb")
+        crumbs << content_tag(:li, content_tag(:span, link_to(Spree.t(:products), spree.products_path, itemprop: "url") + separator, itemprop: "title"), itemscope: "itemscope", itemtype: "http://data-vocabulary.org/Breadcrumb")
         crumbs << taxon.ancestors.collect { |ancestor| content_tag(:li, content_tag(:span, link_to(ancestor.name , seo_url(ancestor), itemprop: "url") + separator, itemprop: "title"), itemscope: "itemscope", itemtype: "http://data-vocabulary.org/Breadcrumb") } unless taxon.ancestors.empty?
         crumbs << content_tag(:li, content_tag(:span, link_to(taxon.name , seo_url(taxon), itemprop: "url"), itemprop: "title"), class: 'active', itemscope: "itemscope", itemtype: "http://data-vocabulary.org/Breadcrumb")
       else
