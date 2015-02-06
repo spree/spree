@@ -15,6 +15,9 @@ Hopefully, this will evolve into a propper class.
 **/
 
 jQuery(function($) {
+  var wrapper = $('#wrapper'),
+      sidebar = $('#main-sidebar'),
+      main =    $('#main-part');
 
   // Add some tips
   $('.with-tip').tooltip();
@@ -32,7 +35,7 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
   });
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
+  sidebar.find('[data-toggle="collapse"]').on('click', function()
     {
       if($(this).find('.icon-chevron-left').length == 1){
         $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');
@@ -43,37 +46,46 @@ jQuery(function($) {
     }
   )
 
+  // Expands the left sidebar.
+  function expandSidebar() {
+    wrapper.removeClass('sidebar-minimized');
+    main
+      .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
+      .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
+  }
+
+  // Collapses the left sidebar.
+  function collapseSidebar() {
+    wrapper.addClass('sidebar-minimized');
+    main
+      .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
+      .addClass('col-sm-12 col-md-12 sidebar-collapsed');
+  }
+
+  // Set the sidebar state from cookie
+  if ($.cookie('spree-admin-sidebar-minimized') === 'true') {
+    collapseSidebar();
+  }
+
   // Sidebar nav toggle functionality
-  var sidebar_toggle = $('#sidebar-toggle');
-
-  sidebar_toggle.on('click', function(){
-    var wrapper = $('#wrapper');
-    var main    = $('#main-part');
-
-    if(wrapper.hasClass('sidebar-minimized')){
-      wrapper.removeClass('sidebar-minimized');
-      main
-        .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
-        .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
-      $.cookie('sidebar-minimized', 'false', { path: '/admin' });
-    }
-    else {
-      wrapper.addClass('sidebar-minimized');
-      main
-        .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
-        .addClass('col-sm-12 col-md-12 sidebar-collapsed');
-      $.cookie('sidebar-minimized', 'true', { path: '/admin' });
+  $('#sidebar-toggle').on('click', function(){
+    if (wrapper.hasClass('sidebar-minimized')) {
+      expandSidebar();
+      $.cookie('spree-admin-sidebar-minimized', 'false');
+    } else {
+      collapseSidebar();
+      $.cookie('spree-admin-sidebar-minimized', 'true');
     }
   });
 
   $('.sidebar-menu-item').mouseover(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
+    if(wrapper.hasClass('sidebar-minimized')){
       $(this).addClass('menu-active');
       $(this).find('ul.nav').addClass('submenu-active');
     }
   });
   $('.sidebar-menu-item').mouseout(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
+    if(wrapper.hasClass('sidebar-minimized')){
       $(this).removeClass('menu-active');
       $(this).find('ul.nav').removeClass('submenu-active');
     }
@@ -91,7 +103,7 @@ jQuery(function($) {
   });
 
   // Main menu active item submenu show
-  var active_item = $('#sidebar').find('.selected');
+  var active_item = sidebar.find('.selected');
   active_item.parent().addClass('in');
   active_item.parent().prev()
     .find('.icon-chevron-left')
