@@ -7,27 +7,30 @@ end
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
-  let(:user) { create(:user) }
-  let(:order) { create(:order, user: user) }
+  let(:user)                { create(:user)              }
+  let(:order)               { create(:order, user: user) }
+  let(:request_guest_token) { nil                        }
+
+  before do
+    allow(controller).to receive_messages(
+      try_spree_current_user: user,
+      cookies: double(signed: { guest_token: request_guest_token })
+    )
+  end
 
   describe '#simple_current_order' do
-    before { allow(controller).to receive_messages(try_spree_current_user: user) }
+    let(:request_guest_token) { order.guest_token }
 
     it 'returns an empty order' do
       expect(controller.simple_current_order.item_count).to eql(0)
     end
 
     it 'returns Spree::Order instance' do
-      allow(controller).to receive_messages(cookies: double(signed: { guest_token: order.guest_token }))
       expect(controller.simple_current_order).to eql(order)
     end
   end
 
   describe '#current_order' do
-    before do
-      allow(controller).to receive_messages(try_spree_current_user: user)
-    end
-
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user }
 
@@ -47,7 +50,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#associate_user' do
     before do
-      allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
+      allow(controller).to receive_messages(current_order: order)
     end
 
     context 'users email is blank' do
@@ -70,16 +73,9 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   describe '#set_current_order' do
     let(:incomplete_order) { create(:order, user: user) }
 
-    before do
-      allow(controller).to receive_messages(try_spree_current_user: user)
-    end
-
     context 'when current order not equal to users incomplete orders' do
       before do
-        allow(controller).to receive_messages(
-          current_order: order,
-          cookies: double(signed: { guest_token: 'guest_token' })
-        )
+        allow(controller).to receive_messages(current_order: order)
       end
 
       it 'calls Spree::Order#merge! method' do
