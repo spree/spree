@@ -25,7 +25,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#current_order' do
     before do
-      Spree::Order.destroy_all # TODO data is leaking between specs as database_cleaner or rspec 3 was broken in Rails 4.1.6 & 4.0.10
       allow(controller).to receive_messages(try_spree_current_user: user)
     end
 
