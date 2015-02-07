@@ -20,8 +20,8 @@ Spree::Core::Engine.config.to_prepare do
         spree_roles.where(name: role_in_question.to_s).any?
       end
 
-      def last_incomplete_spree_order
-        spree_orders.incomplete.where(user_id: self.id).order('created_at DESC').first
+      def incomplete_spree_orders
+        spree_orders.incomplete.where(user_id: id).order(:created_at).reverse_order
       end
     end
   end

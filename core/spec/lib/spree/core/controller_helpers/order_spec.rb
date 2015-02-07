@@ -208,6 +208,27 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           before { order }
 
           include_examples 'incomplete order was found'
+
+          # This chain of expectations asserts the record gets locked.
+          # There is no other known in-memory way since AR does not track
+          # if a record was loaded under lock or not.
+          it 'locks the order' do
+            collection = double('Collection')
+
+            expect(user).to receive(:incomplete_spree_orders)
+              .ordered
+              .and_return(collection)
+
+            expect(collection).to receive(:lock)
+              .with(true)
+              .ordered
+              .and_return(collection)
+
+            expect(collection).to receive(:first)
+              .and_return(order)
+
+            apply
+          end
         end
 
         context 'and incomplete order in history does NOT exist' do

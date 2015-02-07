@@ -85,17 +85,15 @@ module Spree
         end
 
         def find_order_by_token_or_user(options={})
-          options[:lock] ||= false
+          lock = options.fetch(:lock, false)
 
           # Find any incomplete orders for the guest_token
-          order = Spree::Order.incomplete.includes(:all_adjustments).lock(options.fetch(:lock)).find_by(current_order_params)
+          order = Spree::Order.incomplete.includes(:all_adjustments).lock(lock).find_by(current_order_params)
 
           # Find any incomplete orders for the current user
-          if order.nil? && try_spree_current_user
-            order = try_spree_current_user.last_incomplete_spree_order
+          order ||= if try_spree_current_user
+            try_spree_current_user.incomplete_spree_orders.lock(lock).first
           end
-
-          order
         end
 
       end

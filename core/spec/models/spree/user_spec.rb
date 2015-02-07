@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::LegacyUser, :type => :model do
   # Regression test for #2844 + #3346
-  context '#last_incomplete_order' do
+  context '#incomplete_orders' do
     let!(:user) { create(:user) }
 
     let!(:order) do
@@ -13,8 +13,8 @@ describe Spree::LegacyUser, :type => :model do
     let!(:order_2) { create(:order, user: user, created_by: user)                        }
     let!(:order_3) { create(:order, user: user, created_by: create(:user))               }
 
-    it 'returns correct order' do
-      expect(user.last_incomplete_spree_order).to eql(order_3)
+    it 'returns correct orders' do
+      expect(user.incomplete_spree_orders.to_a).to eql([order_3, order_2, order_1])
     end
 
     context 'persists order address' do

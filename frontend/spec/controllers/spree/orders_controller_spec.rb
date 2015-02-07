@@ -80,7 +80,7 @@ describe Spree::OrdersController, :type => :controller do
     # Regression test for #2750
     context "#update" do
       before do
-        allow(user).to receive :last_incomplete_spree_order
+        allow(user).to receive(:incomplete_spree_orders).and_return(Spree::Order.none)
         allow(controller).to receive :set_current_order
       end
 
