@@ -14,7 +14,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   before do
     allow(controller).to receive_messages(
       try_spree_current_user: user,
-      cookies: double(signed: { guest_token: request_guest_token })
+      cookies:                double('cookies', signed: { guest_token: request_guest_token })
     )
   end
 
@@ -31,19 +31,188 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#current_order' do
-    context 'create_order_if_necessary option is false' do
-      let!(:order) { create :order, user: user }
+    let(:arguments) { [] }
 
-      it 'returns current order' do
-        expect(controller.current_order).to eql(order)
+    def apply
+      controller.current_order(*arguments)
+    end
+
+    shared_examples_for 'returning order' do
+      # Normally these expectations should be broken up in different blocks.
+      # Sadly this spec touches the DB for each block to make this efficient enough
+      # for mutaiton testing we need to be a bit more coarse grained right now.
+      #
+      # Next passes might turn this into *real* unit tests that do not touch the DB anymore.
+      it 'returns idempotent order with expected attributes' do
+        order = apply
+        expect(order.currency).to eql(controller.current_currency)
+        expect(order.last_ip_address).to eql(controller.ip_address)
+        expect(order.user).to eql(user)
+        expect(apply).to be(order)
       end
     end
 
-    context 'create_order_if_necessary option is true' do
+    shared_examples_for 'creating order' do
+      include_examples 'returning order'
+
+      # Normally these expectations should be broken up in different blocks.
+      # Sadly this spec touches the DB for each block to make this efficient enough
+      # for mutaiton testing we need to be a bit more coarse grained right now.
+      #
+      # Next passes might turn this into *real* unit tests that do not touch the DB anymore.
       it 'creates new order' do
-        expect do
-          controller.current_order(create_order_if_necessary: true)
-        end.to change(Spree::Order, :count).to(1)
+        order = nil
+        expect { order = apply }.to change(Spree::Order, :count).by(1)
+        expect(order.created_by).to eql(user)
+      end
+    end
+
+    shared_examples_for 'incomplete order was found' do
+      it 'returns expected order' do
+        expect(apply).to eql(expected_order)
+      end
+
+      include_examples 'returning order'
+    end
+
+    shared_examples_for 'order was found' do
+      context 'on default arguments' do
+        context 'and order is incomplete' do
+          include_examples 'incomplete order was found'
+        end
+      end
+
+      context 'with options' do
+        let(:arguments) { [options] }
+
+        context 'on create order if necessary' do
+          let(:options) { { create_order_if_necessary: true } }
+
+          context 'and order is incomplete' do
+            it 'returns expected order' do
+              expect(apply).to eql(expected_order)
+            end
+
+            include_examples 'returning order'
+          end
+
+          context 'and order is complete' do
+            before do
+              expected_order.update_column(:completed_at, Time.now)
+            end
+
+            include_examples 'creating order'
+          end
+        end
+      end
+    end
+
+    shared_examples_for 'order was NOT found' do
+      context 'on default arguments' do
+        it 'returns nil' do
+          expect(apply).to be(nil)
+        end
+      end
+
+      context 'with options' do
+        let(:arguments) { [options] }
+
+        context 'on create order if necessary' do
+          let(:options) { { create_order_if_necessary: true } }
+
+          include_examples 'creating order'
+        end
+      end
+    end
+
+    shared_examples_for 'locks the order by token/user' do
+      # This chain of expectations asserts the record gets locked.
+      # There is no other known in-memory way since AR does not track
+      # if a record was loaded under lock or not.
+      it 'locks the order' do
+        collection = double('Collection')
+
+        expect(Spree::Order).to receive(:incomplete)
+          .ordered
+          .and_return(collection)
+
+        expect(collection).to receive(:includes)
+          .with(:all_adjustments)
+          .ordered
+          .and_return(collection)
+
+        expect(collection).to receive(:lock)
+          .with(true)
+          .ordered
+          .and_return(collection)
+
+        expect(collection).to receive(:find_by)
+          .with(currency: 'USD', guest_token: request_guest_token, user_id: user.try(:id))
+          .ordered
+          .and_return(order)
+
+        apply
+      end
+    end
+
+    context 'whithout user' do
+      let(:user)  { nil                  }
+      let(:order) { Spree::Order.create! }
+
+      context 'with matching guest token on order' do
+        let(:request_guest_token) { order.guest_token }
+        let(:expected_order)      { order             }
+
+        include_examples 'order was found'
+        include_examples 'locks the order by token/user'
+      end
+
+      context 'without matching guest token' do
+        include_examples 'order was NOT found'
+      end
+    end
+
+    context 'with user' do
+      let(:expected_created_by) { user }
+
+      context 'with matching guest token' do
+        # Preference is guest token based, even when a more recent order exists.
+        before do
+          order
+          create(:order, user: user)
+        end
+
+        let(:request_guest_token) { order.guest_token }
+        let(:expected_order)      { order             }
+
+        include_examples 'incomplete order was found'
+        include_examples 'locks the order by token/user'
+      end
+
+      context 'and order created by other user is returned' do
+        let(:other_user)     { create(:user)                                      }
+        let!(:order)         { create(:order, user: user, created_by: other_user) }
+        let(:expected_order) { order                                              }
+
+        include_examples 'order was found'
+
+        it 'does not change created by' do
+          expect(apply.created_by).to eql(other_user)
+        end
+      end
+
+      context 'without matching guest token' do
+        context 'and order in history exists' do
+          let(:expected_order) { order }
+
+          before { order }
+
+          include_examples 'incomplete order was found'
+        end
+
+        context 'and incomplete order in history does NOT exist' do
+          include_examples 'order was NOT found'
+        end
       end
     end
   end

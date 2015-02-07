@@ -27,18 +27,18 @@ module Spree
           end
         end
 
-        # The current incomplete order from the guest_token for use in cart and during checkout
-        def current_order(options = {})
-          options[:lock] = true
-          options[:create_order_if_necessary] ||= false
+        DEFAULTS = {
+          create_order_if_necessary: false
+        }.freeze
 
+        # The current incomplete order from the guest_token for use in cart and during checkout
+        def current_order(options = DEFAULTS)
           return @current_order if @current_order
 
-          @current_order = find_order_by_token_or_user(options)
+          @current_order = find_order_by_token_or_user(lock: true)
 
-          if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
+          if options.fetch(:create_order_if_necessary) && @current_order.nil?
             @current_order = Spree::Order.new(current_order_params)
-            @current_order.user ||= try_spree_current_user
             # See issue #3346 for reasons why this line is here
             @current_order.created_by ||= try_spree_current_user
             @current_order.save!
@@ -77,14 +77,18 @@ module Spree
         private
 
         def current_order_params
-          { currency: current_currency, guest_token: cookies.signed[:guest_token], user_id: try_spree_current_user.try(:id) }
+          {
+            currency:    current_currency,
+            guest_token: cookies.signed[:guest_token],
+            user_id:     try_spree_current_user.try(:id)
+          }
         end
 
         def find_order_by_token_or_user(options={})
           options[:lock] ||= false
 
           # Find any incomplete orders for the guest_token
-          order = Spree::Order.incomplete.includes(:all_adjustments).lock(options[:lock]).find_by(current_order_params)
+          order = Spree::Order.incomplete.includes(:all_adjustments).lock(options.fetch(:lock)).find_by(current_order_params)
 
           # Find any incomplete orders for the current user
           if order.nil? && try_spree_current_user
