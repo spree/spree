@@ -102,8 +102,8 @@ module Spree
           case line_items
           when Hash
             ActiveSupport::Deprecation.warn(<<-EOS, caller)
-              Passing a hash is now deprecated, it is recommended that you pass
-              it as an array instead.
+              Passing a hash is now deprecated and will be removed in Spree 3.1.
+              It is recommended that you pass it as an array instead.
 
               New Syntax:
 
