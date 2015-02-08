@@ -65,7 +65,7 @@ module Spree
       end
 
       # Protect admin and user roles
-      cannot [:update, :destroy], Role, name: ['admin', 'user']
+      cannot [:update, :destroy], Role, name: ['admin']
     end
   end
 end
