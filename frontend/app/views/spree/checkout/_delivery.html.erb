@@ -5,7 +5,6 @@
   <div class="panel-body" data-hook="shipping_method_inner">
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
-
         <div class="shipment">
           <h4 class="stock-location" data-hook="stock-location">
             <%= Spree.t(:package_from) %>
@@ -52,7 +51,6 @@
             <% end %>
           </ul>
         </div>
-
       <% end %>
 
       <% if @differentiator.try(:missing?) %>
@@ -86,7 +84,6 @@
           </table>
         </div>
       <% end %>
-
     </div>
     <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>

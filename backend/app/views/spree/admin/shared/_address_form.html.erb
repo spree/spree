@@ -62,9 +62,9 @@
 </div>
 
 <% content_for :head do %>
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     $(document).ready(function(){
       $('span#<%= s_or_b %>country .select2').on('change', function() { update_state('<%= s_or_b %>'); });
     });
-  <% end -%>
+  <% end %>
 <% end %>

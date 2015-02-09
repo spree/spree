@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @adjustments.present? %>
-  <div class="panel panel-default">    
+  <div class="panel panel-default">
     <%= render :partial => 'adjustments_table' %>
   </div>
 <% else %>
@@ -27,8 +27,8 @@
   </div>
 <% end %>
 
-<%= javascript_tag do -%>
+<%= javascript_tag do %>
   var order_number = '<%= @order.number %>';
-<% end -%>
+<% end %>
 
 <%= render partial: 'spree/admin/shared/order_summary' %>
