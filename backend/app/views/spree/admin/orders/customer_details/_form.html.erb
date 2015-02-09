@@ -62,27 +62,36 @@
 
         <div class="panel-body">
 
-          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+          <% if @order.completed? %>
 
-          <div class="modal fade" id="billAddress" tabindex="-1" role="dialog" aria-labelledby="billAddressLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="billAddressLabel"><%= Spree.t(:edit_billing_address) %></h4>
-                </div>
-                <div class="modal-body">
-                  <%= f.fields_for :bill_address do |ba_form| %>
-                    <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
-                  <% end %>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <%= button Spree.t('actions.update'), 'save' %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+            <div class="modal fade" id="billAddress" tabindex="-1" role="dialog" aria-labelledby="billAddressLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="billAddressLabel"><%= Spree.t(:edit_billing_address) %></h4>
+                  </div>
+                  <div class="modal-body">
+                    <%= f.fields_for :bill_address do |ba_form| %>
+                      <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+                    <% end %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <%= button Spree.t('actions.update'), 'save' %>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+          <% else %>
+
+            <%= f.fields_for :bill_address do |ba_form| %>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+            <% end %>
+
+          <% end %>
 
         </div>
       </div>
@@ -96,39 +105,51 @@
         </div>
         <div class="panel-body">
 
-          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+          <% if @order.completed? %>
 
-          <div class="modal fade" id="shipAddress" tabindex="-1" role="dialog" aria-labelledby="shipAddressLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="shipAddressLabel"><%= Spree.t(:edit_shipping_address) %></h4>
-                </div>
-                <div class="modal-body">
-
-                  <div class="alert alert-warning">
-                    <%= Spree.t(:this_is_the_default_shipping_address) %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+            <div class="modal fade" id="shipAddress" tabindex="-1" role="dialog" aria-labelledby="shipAddressLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="shipAddressLabel"><%= Spree.t(:edit_shipping_address) %></h4>
                   </div>
-
-                  <%= f.fields_for :ship_address do |sa_form| %>
-                    <div class="form-group">
-                      <span data-hook="use_billing">
-                        <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
-                        <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
-                      </span>
+                  <div class="modal-body">
+                    <div class="alert alert-warning">
+                      <%= Spree.t(:this_is_the_default_shipping_address) %>
                     </div>
-
-                    <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
-                  <% end %>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  <%= button Spree.t('actions.update'), 'save' %>
+                    <%= f.fields_for :ship_address do |sa_form| %>
+                      <div class="form-group">
+                        <span data-hook="use_billing">
+                          <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+                          <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+                        </span>
+                      </div>
+                      <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+                    <% end %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <%= button Spree.t('actions.update'), 'save' %>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+          <% else %>
+
+            <%= f.fields_for :ship_address do |sa_form| %>
+              <div class="form-group">
+                <span data-hook="use_billing">
+                  <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+                  <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+                </span>
+              </div>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+            <% end %>
+
+          <% end %>
 
         </div>
       </div>
