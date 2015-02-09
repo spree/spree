@@ -17,7 +17,7 @@ module Spree
 
           return @simple_current_order if @simple_current_order
 
-          @simple_current_order = find_order_by_token_or_user
+          @simple_current_order = find_order_by_token_or_user(false)
 
           if @simple_current_order
             @simple_current_order.last_ip_address = ip_address
@@ -27,26 +27,36 @@ module Spree
           end
         end
 
-        DEFAULTS = {
-          create_order_if_necessary: false
-        }.freeze
-
-        # The current incomplete order from the guest_token for use in cart and during checkout
-        def current_order(options = DEFAULTS)
+        # The current incomplete order from the guest_token or users last incomplete carts
+        #
+        # @return [Spree::Order]
+        #   if current order is recoverable from token or history
+        #
+        # @return [nil]
+        def current_order
           return @current_order if @current_order
 
-          @current_order = find_order_by_token_or_user(lock: true)
-
-          if options.fetch(:create_order_if_necessary) && @current_order.nil?
-            @current_order = Spree::Order.new(current_order_params)
+          @current_order = find_order_by_token_or_user(true).try do |order|
+            order.last_ip_address = ip_address
             # See issue #3346 for reasons why this line is here
-            @current_order.created_by ||= try_spree_current_user
+            order.created_by ||= try_spree_current_user
+            order
           end
+        end
 
-          if @current_order
-            @current_order.last_ip_address = ip_address
-            @current_order
-          end
+        # The current order representing cart state
+        #
+        # Order is not persisted in case cart is pristine / empty.
+        #
+        # @return [Spree::Order]
+        def cart_order
+          return current_order if current_order
+          @cart_order ||= Spree::Order.new(
+            current_order_params.merge(
+              created_by:      try_spree_current_user,
+              last_ip_address: ip_address
+            )
+          )
         end
 
         def associate_user
@@ -83,9 +93,7 @@ module Spree
           }
         end
 
-        def find_order_by_token_or_user(options={})
-          lock = options.fetch(:lock, false)
-
+        def find_order_by_token_or_user(lock)
           # Find any incomplete orders for the guest_token
           order = Spree::Order.incomplete.includes(:all_adjustments).lock(lock).find_by(current_order_params)
 
