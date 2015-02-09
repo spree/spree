@@ -34,7 +34,7 @@ module Spree
         #
         # @return [nil]
         def current_order
-          return @current_order if @current_order
+          return @current_order if defined?(@current_order)
 
           @current_order = find_order_by_token_or_user(true).try do |order|
             order.last_ip_address = ip_address

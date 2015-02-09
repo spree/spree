@@ -174,8 +174,9 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     shared_examples_for 'order was NOT found' do
-      # TODO: Assert nil is computed in idempotent way
-      it 'returns nil' do
+      it 'returns idempotent nil' do
+        expect(apply).to be(nil)
+        expect(Spree::Order).to_not receive(:incomplete)
         expect(apply).to be(nil)
       end
     end
