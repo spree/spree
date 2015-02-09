@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-success' } %>
-<% end %>
+<% end if can? :create, Spree::StockTransfer %>
 
 <fieldset>
   <legend><%= Spree.t(:stock_transfer) %></legend>

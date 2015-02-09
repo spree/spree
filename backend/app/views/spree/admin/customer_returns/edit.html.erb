@@ -32,7 +32,7 @@
   </fieldset>
 <% end %>
 
-<% if !@customer_return.fully_reimbursed? && @pending_reimbursements.empty? %>
+<% if !@customer_return.fully_reimbursed? && @pending_reimbursements.empty? && can?(:create, Spree::Reimbursement) %>
   <fieldset data-hook="reimbursements" class="marginb">
     <% if @customer_return.completely_decided? %>
       <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
