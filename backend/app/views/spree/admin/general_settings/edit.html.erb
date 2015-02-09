@@ -2,7 +2,7 @@
   <%= Spree.t(:general_settings) %>
 <% end %>
 
-<%= form_tag admin_general_settings_path, :method => :put do %>
+<%= form_tag admin_general_settings_path, method: :put do %>
   <div id="preferences" data-hook>
 
     <fieldset class="general no-border-top">
@@ -13,7 +13,7 @@
             <div class="form-group" data-hook="admin_general_setting_input_name">
               <%= f.label :name %>
               <%= f.text_field :name, class: 'form-control' %>
-            </div>    
+            </div>
           </div>
 
           <div class="col-md-6">
@@ -29,7 +29,7 @@
             <div class="form-group" data-hook="admin_general_setting_input_meta_keywords">
               <%= f.label :meta_keywords %>
               <%= f.text_field :meta_keywords, class: 'form-control'  %>
-            </div>    
+            </div>
           </div>
 
           <div class="col-md-6">
@@ -75,14 +75,14 @@
                   type = Spree::Config.preference_type(key) %>
                   <div class="checkbox">
                     <%= label_tag key do %>
-                      <%= preference_field_tag(key, Spree::Config[key], :type => type) %>
+                      <%= preference_field_tag(key, Spree::Config[key], type: type) %>
                       <%= Spree.t(key) %>
                     <% end %>
                   </div>
-              <% end %>  
+              <% end %>
             </div>
           </div>
-          
+
           <%#-------------------------------------------------%>
           <%# Clear cache                                     %>
           <%#-------------------------------------------------%>
@@ -97,10 +97,10 @@
               </div>
               <div data-hook="general_settings_clear_cache">
                 <%= button Spree.t(:clear_cache), 'ok', 'button', id: "clear_cache" %>
-              </div>    
+              </div>
             </div>
           </div>
-          
+
         </div>
         <div class="col-md-6">
 
@@ -127,7 +127,7 @@
       <div class="form-actions" data-hook="buttons">
         <%= button Spree.t('actions.update'), 'save' %>
         <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, :icon => 'delete' %>
+        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, icon: 'delete' %>
       </div>
 
     </fieldset>
