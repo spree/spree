@@ -49,6 +49,8 @@ $(document).ready(function() {
               $('#order_bill_address_attributes_state_id').select2("val", billAddress.state_id);
             });
           });
+
+          $(".js-change-customer-bill-address-alert").show();
         }
         return customer.email;
       }

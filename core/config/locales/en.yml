@@ -512,6 +512,7 @@ en:
     categories: Categories
     category: Category
     charged: Charged
+    changing_customer_will_change_bill_address: "When you change the customer the billing address will change to the new customers billing address."
     check_for_spree_alerts: Check for Spree alerts
     checkout: Checkout
     choose_a_customer: Choose a customer
@@ -1313,6 +1314,7 @@ en:
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
+    this_is_the_default_shipping_address: This is the default shipping address. Different addresses can be added to a shipment.
     thumbnail: Thumbnail
     tiers: Tiers
     tiered_flat_rate: Tiered Flat Rate
