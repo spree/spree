@@ -9,7 +9,7 @@
     </div>
 
     <div class="panel-body">
-      <div data-hook="customer_fields" class="row">
+      <div data-hook="customer_fields" class="row no-padding-bottom">
         <div class="col-md-8">
           <div class="form-group">
             <%= f.label :email, Spree.t(:email) %>
@@ -54,32 +54,53 @@
 
   </div>
 
+  <% if @order.completed? %>
+    <div class="alert alert-info">
+      <strong><%= Spree.t(:shipping_address) %></strong>:
+      <%= Spree.t(:this_is_the_default_shipping_address, shipments_link: link_to(Spree.t(:shipments), edit_admin_order_path(@order))).html_safe %>
+    </div>
+  <% end %>
+
+  <div class="alert alert-warning is-hidden js-change-customer-bill-address-alert">
+    <%= Spree.t(:changing_customer_will_change_bill_address) %>
+  </div>
+
   <div class="row">
     <div data-hook="bill_address_wrapper" class="col-md-6">
-      <div class="panel panel-default">
+      <div class="panel panel-default no-margin-bottom">
         <div class="panel-heading">
+          <% if @order.completed? && can?(:edit, @order.user) %>
+            <%= link_to Spree.t(:edit), "#", data: { toggle: "modal", target: "#billAddress" }, class: "pull-right" %>
+            <%= render partial: 'spree/admin/shared/address_form_modal', locals: { type: 'billing', f: f } %>
+          <% end %>
           <h1 class="panel-title"><%= Spree.t(:billing_address) %></h1>
         </div>
 
         <div class="panel-body">
-          <% if can? :edit, @order.user %>
-            <%= f.fields_for :bill_address do |ba_form| %>
-              <%= render 'spree/admin/shared/address_form', f: ba_form, type: "billing" %>
-            <% end %>
+          <% if @order.completed? || cannot?(:edit, @order.user) %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
           <% else %>
-            <%= render 'spree/admin/shared/address', address: @order.bill_address %>
+            <%= f.fields_for :bill_address do |ba_form| %>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+            <% end %>
           <% end %>
         </div>
       </div>
     </div>
 
     <div class="col-md-6" data-hook="ship_address_wrapper">
-      <div class="panel panel-default">
+      <div class="panel panel-default no-margin-bottom">
         <div class="panel-heading">
-          <h1 class="panel-title"><%= Spree.t(:shipping_address) %></h1>
+          <% if @order.completed? && can?(:edit, @order.user) %>
+            <%= link_to Spree.t(:edit), "#", data: { toggle: "modal", target: "#shipAddress" }, class: "pull-right" %>
+            <%= render partial: 'spree/admin/shared/address_form_modal', locals: { type: 'shipping', f: f } %>
+          <% end %>
+          <h1 class="panel-title"><%= Spree.t(:default_shipping_address) %></h1>
         </div>
         <div class="panel-body">
-          <% if can? :edit, @order.user %>
+          <% if @order.completed? || cannot?(:edit, @order.user) %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+          <% else %>
             <%= f.fields_for :ship_address do |sa_form| %>
               <div class="form-group">
                 <span data-hook="use_billing">
@@ -87,11 +108,8 @@
                   <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
                 </span>
               </div>
-
-              <%= render 'spree/admin/shared/address_form', f: sa_form, type: 'shipping' %>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
             <% end %>
-          <% else %>
-            <%= render 'spree/admin/shared/address', address: @order.ship_address %>
           <% end %>
         </div>
       </div>
