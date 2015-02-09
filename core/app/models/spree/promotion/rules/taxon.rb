@@ -18,7 +18,7 @@ module Spree
             end
           else
             order_taxons = taxons_in_order_including_parents(order)
-            add_eligibility_error(:no_matching_taxons) unless taxons.any?(&order_taxons.method(:include?))
+            add_eligibility_error(:no_matching_taxons) unless any_taxons?
           end
 
           eligibility_errors.empty?
@@ -60,6 +60,10 @@ module Spree
 
         def taxon_product_ids
           Spree::Product.joins(:taxons).where(spree_taxons: {id: taxons.pluck(:id)}).pluck(:id).uniq
+        end
+
+        def any_taxons?
+          taxons.any?(&order_taxons.method(:include?))
         end
       end
     end
