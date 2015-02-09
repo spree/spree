@@ -9,7 +9,7 @@ describe Spree::Admin::RootController do
     end
 
     it "redirects to orders path by default" do
-      get :index, use_route: 'admin'
+      get :index
 
       expect(response).to redirect_to '/admin/orders'
     end
@@ -19,7 +19,7 @@ describe Spree::Admin::RootController do
     stub_authorization!
 
     it "redirects to orders path by default" do
-      get :index, use_route: 'admin'
+      get :index
 
       expect(response).to redirect_to '/admin/orders'
     end
@@ -27,7 +27,7 @@ describe Spree::Admin::RootController do
     it "redirects to wherever admin_root_redirects_path tells it to" do
       expect(controller).to receive(:admin_root_redirect_path).and_return('/grooot')
 
-      get :index, use_route: 'admin'
+      get :index
 
       expect(response).to redirect_to '/grooot'
     end
