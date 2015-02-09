@@ -104,22 +104,11 @@
 
       <tr class="edit-shipment-address is-hidden">
         <td colspan="5">
-          <%= button_link_to Spree.t(:edit_order_address),
-                admin_order_customer_url(@order),
-                class: "btn btn-default btn-sm"
-          %>
-          <%= button_tag Spree.t(:new_shipment_address),
-                data: { toggle: "modal", target: "#new_address_#{ shipment.id }" },
-                class: "btn btn-success btn-sm js-new-shipment-address"
-          %>
-          <%= render partial: "spree/admin/orders/shipment_address_modal",
-                locals: { shipment: shipment, type: :new }
-          %>
+          <%= change_shipment_address_button(shipment, @order) %>
         </td>
         <td class="actions text-center">
           <% if can? :update, shipment %>
             <%= link_to_with_icon 'cancel', Spree.t('actions.cancel'), "#", :class => 'cancel-shipment-address btn btn-primary btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :no_text => true %>
-            <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", :class => 'save-shipment-address btn btn-success btn-sm', :data => {'shipment-number' => shipment.number, :action => 'save'}, :title => Spree.t('actions.save'), :no_text => true %>
           <% end %>
         </td>
       </tr>
