@@ -72,6 +72,7 @@ module Spree
 
           try_spree_current_user
             .incomplete_spree_orders
+            .lock
             .where.not(id: current_order)
             .each(&current_order.method(:merge!))
         end

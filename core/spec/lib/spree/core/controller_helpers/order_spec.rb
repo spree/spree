@@ -232,6 +232,20 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       let!(:order_b) { create(:order, user: user)                         }
       let!(:order_c) { create(:order, user: user, completed_at: Time.now) }
 
+      # This chain of expectations asserts the record gets locked.
+      # There is no other known in-memory way since AR does not track
+      # if a record was loaded under lock or not.
+      it 'locks the incomplete orders' do
+        collection = double('collection')
+        expect(user).to receive(:incomplete_spree_orders).ordered.and_return(collection)
+        expect(collection).to receive(:lock).ordered.and_return(collection)
+        expect(collection).to receive(:where).ordered.and_return(collection)
+        expect(collection).to receive(:not).ordered.with(id: order).and_return([order_b, order_a])
+        expect(order).to receive(:merge!).ordered.with(order_b)
+        expect(order).to receive(:merge!).ordered.with(order_a)
+        apply
+      end
+
       it 'merges incomplete orders from history into current one' do
         expect(order).to receive(:merge!).ordered.with(order_b)
         expect(order).to receive(:merge!).ordered.with(order_a)
