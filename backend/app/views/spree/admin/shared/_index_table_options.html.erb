@@ -13,11 +13,11 @@
 </div>
 
 <% content_for :head do %>
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     $(document).ready(function() {
       $("#js-per-page-select").change(function() {
         $("#js-per-page-form").submit();
       });
     });
-  <% end -%>
+  <% end %>
 <% end %>

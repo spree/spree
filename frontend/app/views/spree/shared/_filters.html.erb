@@ -1,4 +1,5 @@
 <% filters = @taxon ? @taxon.applicable_filters : [Spree::Core::ProductFilters.all_taxons] %>
+
 <% unless filters.empty? %>
   <%= form_tag '', :method => :get, :id => 'sidebar_products_search' do %>
     <%= hidden_field_tag 'per_page', params[:per_page] %>

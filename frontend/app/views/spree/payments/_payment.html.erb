@@ -1,4 +1,5 @@
 <% source = payment.source %>
+
 <% if source.is_a?(Spree::CreditCard) %>
   <span class="cc-type">
     <% unless (cc_type = source.cc_type).blank? %>

@@ -26,7 +26,7 @@
     </div>
   <% end %>
 
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     var order_number = '<%= @order.number %>';
     var shipments = [];
 
@@ -35,5 +35,5 @@
     <% end %>
 
     <%= render :partial => 'spree/admin/shared/update_order_state', :handlers => [:js] %>
-  <% end -%>
+  <% end %>
 </div>
