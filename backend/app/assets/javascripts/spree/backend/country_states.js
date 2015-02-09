@@ -36,7 +36,6 @@ function buildStatesSelect(data, $parent){
   var statePara = $('.js-state', $parent);
   var stateSelect = statePara.find('select');
   var stateInput = statePara.find('input');
-  var stateSpanRequired = statePara.find('[id$="state-required"]');
 
   if(states.length > 0){
     var selected = parseInt(stateSelect.val());
@@ -53,7 +52,6 @@ function buildStatesSelect(data, $parent){
     stateSelect.prop('disabled', false).show();
     stateInput.hide().prop('disabled', true);
     statePara.show();
-    stateSpanRequired.show();
     if(statesRequired){
       stateSelect.addClass('required');
     }
@@ -63,11 +61,9 @@ function buildStatesSelect(data, $parent){
     stateSelect.hide().prop('disabled', true);
     stateInput.show();
     if(statesRequired){
-      stateSpanRequired.show();
       stateInput.addClass('required');
     } else {
       stateInput.val('');
-      stateSpanRequired.hide();
       stateInput.removeClass('required');
     }
     statePara.toggle(!!statesRequired);
