@@ -13,7 +13,11 @@
         <div class="col-md-8">
           <div class="form-group">
             <%= f.label :email, Spree.t(:email) %>
-            <%= f.email_field :email, class: 'form-control' %>
+            <% if can? :edit, @order.user %>
+              <%= f.email_field :email, class: 'form-control' %>
+            <% else %>
+              <p><%= @order.user.email %></p>
+            <% end %>
           </div>
         </div>
         <div class="col-md-4">
@@ -56,8 +60,12 @@
         </div>
 
         <div class="panel-body">
-          <%= f.fields_for :bill_address do |ba_form| %>
-            <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+          <% if can? :edit, @order.user %>
+            <%= f.fields_for :bill_address do |ba_form| %>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+            <% end %>
+          <% else %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
           <% end %>
         </div>
       </div>
@@ -69,22 +77,28 @@
           <h1 class="panel-title"><%= Spree.t(:shipping_address) %></h1>
         </div>
         <div class="panel-body">
-          <%= f.fields_for :ship_address do |sa_form| %>
-            <div class="form-group">
-              <span data-hook="use_billing">
-                <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
-                <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
-              </span>
-            </div>
+          <% if can? :edit, @order.user %>
+            <%= f.fields_for :ship_address do |sa_form| %>
+              <div class="form-group">
+                <span data-hook="use_billing">
+                  <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+                  <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
+                </span>
+              </div>
 
-            <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+              <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+            <% end %>
+          <% else %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
           <% end %>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'save' %>
-  </div>
+  <% if can? :edit, @order.user %>
+    <div class="form-actions" data-hook="buttons">
+      <%= button Spree.t('actions.update'), 'save' %>
+    </div>
+  <% end %>
 </div>

@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_order), new_admin_order_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_order' %>
-<% end if can? :edit, Spree::Order.new %>
+<% end if can? :create, Spree::Order %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_orders_index_search">
@@ -217,7 +217,7 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: Spree::Order.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_admin_order_url %>!
+    <%= link_to(Spree.t(:add_one), new_admin_order_url) if can? :create, Spree::Order %>!
   </div>
 <% end %>
 
