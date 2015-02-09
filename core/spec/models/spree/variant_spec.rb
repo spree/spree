@@ -289,7 +289,7 @@ describe Spree::Variant, :type => :model do
     end
 
     context 'variant' do
-      it 'should return options text with name' do
+      it 'should return options text' do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
     end
@@ -309,7 +309,7 @@ describe Spree::Variant, :type => :model do
     end
 
     context 'master variant' do
-      it 'should return name' do
+      it 'should return name with Master identifier' do
         expect(master.descriptive_name).to eql master.name + ' - Master'
       end
     end
