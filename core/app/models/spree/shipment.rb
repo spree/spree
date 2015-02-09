@@ -348,7 +348,9 @@ module Spree
       end
 
       transaction do
-        new_shipment = order.shipments.create!(stock_location: stock_location)
+        new_shipment = order.shipments.create!(
+          stock_location: stock_location,
+          address: self.address)
 
         order.contents.remove(variant, quantity, {shipment: self})
         order.contents.add(variant, quantity, {shipment: new_shipment})
