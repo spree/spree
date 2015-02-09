@@ -41,7 +41,6 @@ module Spree
             @current_order = Spree::Order.new(current_order_params)
             # See issue #3346 for reasons why this line is here
             @current_order.created_by ||= try_spree_current_user
-            @current_order.save!
           end
 
           if @current_order

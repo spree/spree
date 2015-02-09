@@ -52,21 +52,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       end
     end
 
-    shared_examples_for 'creating order' do
-      include_examples 'returning order'
-
-      # Normally these expectations should be broken up in different blocks.
-      # Sadly this spec touches the DB for each block to make this efficient enough
-      # for mutaiton testing we need to be a bit more coarse grained right now.
-      #
-      # Next passes might turn this into *real* unit tests that do not touch the DB anymore.
-      it 'creates new order' do
-        order = nil
-        expect { order = apply }.to change(Spree::Order, :count).by(1)
-        expect(order.created_by).to eql(user)
-      end
-    end
-
     shared_examples_for 'incomplete order was found' do
       it 'returns expected order' do
         expect(apply).to eql(expected_order)
@@ -101,7 +86,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
               expected_order.update_column(:completed_at, Time.now)
             end
 
-            include_examples 'creating order'
+            include_examples 'returning order'
           end
         end
       end
@@ -120,7 +105,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         context 'on create order if necessary' do
           let(:options) { { create_order_if_necessary: true } }
 
-          include_examples 'creating order'
+          include_examples 'returning order'
         end
       end
     end
