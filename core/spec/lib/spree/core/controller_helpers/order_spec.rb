@@ -219,16 +219,40 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#set_current_order' do
-    let(:incomplete_order) { create(:order, user: user) }
+    def apply
+      controller.set_current_order
+    end
 
-    context 'when current order not equal to users incomplete orders' do
-      before do
-        allow(controller).to receive_messages(current_order: order)
+    before do
+      allow(controller).to receive_messages(current_order: order)
+    end
+
+    context 'with user and current order' do
+      let!(:order_a) { create(:order, user: user)                         }
+      let!(:order_b) { create(:order, user: user)                         }
+      let!(:order_c) { create(:order, user: user, completed_at: Time.now) }
+
+      it 'merges incomplete orders from history into current one' do
+        expect(order).to receive(:merge!).ordered.with(order_b)
+        expect(order).to receive(:merge!).ordered.with(order_a)
+        apply
       end
+    end
 
-      it 'calls Spree::Order#merge! method' do
-        expect(order).to receive(:merge!).with(incomplete_order, user)
-        controller.set_current_order
+    context 'without user' do
+      let(:user)  { nil            }
+      let(:order) { create(:order) }
+
+      it 'returns nil' do
+        expect(apply).to be(nil)
+      end
+    end
+
+    context 'without current order' do
+      let(:order) { nil }
+
+      it 'returns nil' do
+        expect(apply).to be(nil)
       end
     end
   end

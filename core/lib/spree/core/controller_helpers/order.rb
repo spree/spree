@@ -68,11 +68,12 @@ module Spree
         end
 
         def set_current_order
-          if try_spree_current_user && current_order
-            try_spree_current_user.orders.incomplete.where('id != ?', current_order.id).each do |order|
-              current_order.merge!(order, try_spree_current_user)
-            end
-          end
+          return unless try_spree_current_user && current_order
+
+          try_spree_current_user
+            .incomplete_spree_orders
+            .where.not(id: current_order)
+            .each(&current_order.method(:merge!))
         end
 
         def current_currency
