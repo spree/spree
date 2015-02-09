@@ -29,6 +29,10 @@ module Spree
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
 
+    def add_eligibility_error(message)
+      eligibility_errors.add(:base, eligibility_error_message(message))
+    end
+
     private
     def unique_per_promotion
       if Spree::PromotionRule.exists?(promotion_id: promotion_id, type: self.class.name)
