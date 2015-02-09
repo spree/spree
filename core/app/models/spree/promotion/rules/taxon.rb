@@ -14,13 +14,11 @@ module Spree
         def eligible?(order, options = {})
           if preferred_match_policy == 'all'
             unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?
-              eligibility_errors.add(:base, eligibility_error_message(:missing_taxon))
+              add_eligibility_error(:missing_taxon)
             end
           else
             order_taxons = taxons_in_order_including_parents(order)
-            unless taxons.any?{ |taxon| order_taxons.include? taxon }
-              eligibility_errors.add(:base, eligibility_error_message(:no_matching_taxons))
-            end
+            add_eligibility_error(:no_matching_taxons) unless taxons.any?(&order_taxons.method(:include?))
           end
 
           eligibility_errors.empty?
