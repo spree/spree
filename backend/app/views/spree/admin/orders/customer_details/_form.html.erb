@@ -117,7 +117,7 @@
                   </div>
                   <div class="modal-body">
                     <div class="alert alert-warning">
-                      <%= Spree.t(:this_is_the_default_shipping_address) %>
+                      <%= Spree.t(:this_is_the_default_shipping_address, shipments_link: link_to(Spree.t(:shipments), edit_admin_order_path(@order))).html_safe %>
                     </div>
                     <%= f.fields_for :ship_address do |sa_form| %>
                       <div class="form-group">
