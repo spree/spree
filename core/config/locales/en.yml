@@ -1314,7 +1314,7 @@ en:
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
-    this_is_the_default_shipping_address: This is the default shipping address. Different addresses can be added to a shipment.
+    this_is_the_default_shipping_address: This is the default shipping address. To amend address of existing shipment please edit the shipment directly. 
     thumbnail: Thumbnail
     tiers: Tiers
     tiered_flat_rate: Tiered Flat Rate
