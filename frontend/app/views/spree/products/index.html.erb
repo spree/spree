@@ -10,9 +10,7 @@
   <% end %>
 <% end %>
 
-
 <% if params[:keywords] %>
-
   <div data-hook="search_results">
     <% if @products.empty? %>
       <h6 class="search-results-title"><%= Spree.t(:no_products_found) %></h6>
@@ -20,9 +18,7 @@
       <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>
     <% end %>
   </div>
-
 <% else %>
-
   <div data-hook="homepage_products">
     <% cache(cache_key_for_products) do %>
       <%= render :partial => 'spree/shared/products', :locals => { :products => @products, :taxon => @taxon } %>

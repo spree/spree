@@ -31,7 +31,7 @@
   </fieldset>
 <% end %>
 
-<%= javascript_tag do -%>
+<%= javascript_tag do %>
   var properties = <%= raw(@properties.to_json) %>;
   $('#product_properties').on('keydown', 'input.autocomplete', function() {
     already_auto_completed = $(this).is('ac_input');
@@ -40,4 +40,4 @@
       $(this).focus();
     }
   });
-<% end -%>
+<% end %>
