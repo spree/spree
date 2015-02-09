@@ -71,7 +71,8 @@
                      class: have_states ? 'form-control' : 'form-control hidden'}) +
              form.text_field(:state_name,
                                 class: !have_states ? 'form-control' : 'form-control hidden',
-                                disabled: have_states)
+                                disabled: have_states,
+                                value: address.state_name)
              ].join.gsub('"', "'").gsub("\n", "")
           %>
           <%= javascript_tag do -%>
