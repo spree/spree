@@ -48,7 +48,7 @@
     <%= form.text_field :zipcode, class: "form-control", value: address.zipcode %>
   </p>
 
-  <div class="row no-padding-bottom">
+  <div class="row no-padding-bottom js-country-states">
     <div class="col-md-6">
       <p class="form-group js-country">
         <%= form.label :country_id, Spree.t(:country) %>
@@ -68,7 +68,7 @@
                     {},
                     {include_blank: true,
                      disabled: !have_states,
-                     class: have_states ? 'form-control' : 'form-control hidden'}) +
+                     class: have_states ? 'select2' : 'select2 hidden'}) +
              form.text_field(:state_name,
                                 class: !have_states ? 'form-control' : 'form-control hidden',
                                 disabled: have_states,
