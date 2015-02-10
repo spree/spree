@@ -49,11 +49,11 @@ $(document).ready(function() {
           $('#order_bill_address_attributes_phone').val(billAddress.phone);
           $('#order_bill_address_attributes_state_name').val(billAddress.state_name);
 
-          $('#order_bill_address_attributes_country_id').select2("val", billAddress.country_id).promise().done(function () {
-            requestStates($('#order_bill_address_attributes_state_id').parents(".js-country-states"));
+          $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
+            requestStates($('#order_bill_address_attributes_state_id').parents('.js-country-states'));
           });
 
-          $(".js-change-customer-bill-address-alert").show();
+          $('.js-change-customer-bill-address-alert').show();
         }
         return Select2.util.escapeMarkup(customer.email);
       }
