@@ -20,11 +20,6 @@ Unicorn, Passenger, Ruby, Capistrano etc.
 Normally the first concern when deploying your store is choosing the
 correct software stack, server sizes and roles.
 
-Using the [Spree Deployment Service](deployment-service) you can
-avoid the hassle of choosing and configuring all the individual
-components, and jump straight to getting your application deployed using
-our preconfigured and tested software stack.
-
 ***
 This guide assumes basic familiarity with Spree. Please refer to
 the [Getting Started Guide](getting_started_tutorial) for details on how to
