@@ -95,18 +95,6 @@ $(document).ready(function () {
     });
   });
 
-  var toggleShipmentAddressEdit = function(event) {
-    event.preventDefault();
-
-    var link = $(this);
-    link.parents('tbody').find('tr.edit-shipment-address').toggle();
-    link.parents('tbody').find('tr.show-shipment-address').toggle();
-  }
-
-  // handle tracking edit click
-  $('a.edit-shipment-address').click(toggleShipmentAddressEdit);
-  $('a.cancel-shipment-address').click(toggleShipmentAddressEdit);
-
   var toggleTrackingEdit = function(event) {
     event.preventDefault();
 
