@@ -40,7 +40,7 @@ function buildStatesSelect(data, $parent){
   var stateInput = statePara.find('input');
 
   if(states.length > 0){
-    var selected = parseInt(stateSelect.val());
+    var selected = parseInt(stateSelect.val(), 10);
     stateSelect.html('');
     var statesWithBlank = [{ name: '', id: ''}].concat(states);
     $.each(statesWithBlank, function(idx, state){
