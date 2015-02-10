@@ -34,10 +34,10 @@ module Spree
 
       variant = Spree::Variant.find(variant_id)
       if quantity > 0
-        line_item = @order.contents.add(variant, quantity, options.merge(currency: currency))
-        unless line_item.valid?
-          errors.add(:base, line_item.errors.messages.values.join(" "))
-          return false
+        begin
+          line_item = @order.contents.add(variant, quantity, options.merge(currency: currency))
+        rescue ActiveRecord::RecordInvalid => e
+          errors.add(:base, e.record.errors.messages.values.join(" "))
         end
       end
     end
