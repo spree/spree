@@ -164,6 +164,7 @@ Spree::Core::Engine.add_routes do
 
     resources :trackers
     resources :payment_methods
+    resources :roles
 
     resources :users do
       member do

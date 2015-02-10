@@ -1,4 +1,5 @@
 <% address_id = address_type.chars.first %>
+
 <div class="inner" data-hook=<%="#{address_type}_inner" %>>
   <p class="form-group" id=<%="#{address_id}firstname" %>>
     <%= form.label :firstname, Spree.t(:first_name) %><span class="required">*</span><br />
@@ -49,7 +50,7 @@
                             :disabled => have_states)
          ].join.gsub('"', "'").gsub("\n", "")
       %>
-      <%= javascript_tag do -%>
+      <%= javascript_tag do %>
         $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
       <% end %>
     </p>

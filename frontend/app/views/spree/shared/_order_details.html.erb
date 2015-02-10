@@ -1,7 +1,5 @@
 <div class="row steps-data">
-
   <% if order.has_step?("address") %>
-
     <div class="col-md-3" data-hook="order-bill-address">
       <h4><%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %></h4>
       <%= render partial: 'spree/shared/address', locals: { address: order.bill_address } %>
@@ -36,7 +34,6 @@
       <% end %>
     </div>
   </div>
-
 </div>
 
 <hr />

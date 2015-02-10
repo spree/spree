@@ -3,6 +3,7 @@
     <%= render partial: 'spree/shared/google_purchase.js', locals: { order: @order } %>
   <% end %>
 <% end %>
+
 <fieldset id="order_summary" data-hook>
   <legend><%= Spree.t(:order_number, number: @order.number) %></legend>
   <h1><%= accurate_title %></h1>

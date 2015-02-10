@@ -15,7 +15,7 @@
 <% end %>
 
 <% content_for :head do %>
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     $(document).ready(function() {
       var field  = $('#permalink_part'),
           target = $('#permalink_part_display'),
@@ -26,5 +26,5 @@
         target.text(permalink_part_default + $(this).val());
       });
     });
-  <% end -%>
+  <% end %>
 <% end %>

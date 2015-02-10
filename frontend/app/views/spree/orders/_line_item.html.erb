@@ -1,5 +1,6 @@
-<% variant = line_item.variant -%>
-<%= order_form.fields_for :line_items, line_item do |item_form| -%>
+<% variant = line_item.variant %>
+
+<%= order_form.fields_for :line_items, line_item do |item_form| %>
   <tr class="line-item">
     <td class="cart-item-image" data-hook="cart_item_image">
       <% if variant.images.length == 0 %>
@@ -33,4 +34,4 @@
       <%= link_to content_tag(:span, '', class: 'glyphicon glyphicon-minus-sign'), '#', class: 'delete', id: "delete_#{dom_id(line_item)}" %>
     </td>
   </tr>
-<% end -%>
+<% end %>

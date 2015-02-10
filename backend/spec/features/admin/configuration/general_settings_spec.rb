@@ -20,8 +20,8 @@ describe "General Settings", type: :feature, js: true do
 
   context "editing general settings (admin)" do
     it "should be able to update the site name" do
-      fill_in "store_name", :with => "Spree Demo Site99"
-      fill_in "store_mail_from_address", :with => "spree@example.org"
+      fill_in "store_name", with: "Spree Demo Site99"
+      fill_in "store_mail_from_address", with: "spree@example.org"
       click_button "Update"
 
       assert_successful_update_message(:general_settings)

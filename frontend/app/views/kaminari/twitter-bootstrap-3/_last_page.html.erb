@@ -7,7 +7,7 @@
     remote:        data-remote
 -%>
 <% unless current_page.last? %>
-<li class="last next"><%# "next" class present for border styling in twitter bootstrap %>
-  <%= link_to_unless current_page.last?, raw(t 'views.pagination.last'), url, {:remote => remote} %>
-</li>
+  <li class="last next"><%# "next" class present for border styling in twitter bootstrap %>
+    <%= link_to_unless current_page.last?, raw(t 'views.pagination.last'), url, {:remote => remote} %>
+  </li>
 <% end %>

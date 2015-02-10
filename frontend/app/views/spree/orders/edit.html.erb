@@ -3,14 +3,11 @@
   <h1><%= Spree.t(:shopping_cart) %></h1>
 
   <% if @order.line_items.empty? %>
-
     <div data-hook="empty_cart">
       <div class="alert alert-info"><%= Spree.t(:your_cart_is_empty) %></div>
       <p><%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-default' %></p>
     </div>
-
   <% else %>
-
     <div data-hook="outside_cart_form">
       <%= form_for @order, url: update_cart_path, html: { id: 'update-cart' } do |order_form| %>
         <div data-hook="inside_cart_form">

@@ -17,16 +17,16 @@ module Spree
 
         current_store.update_attributes store_params
 
-        flash[:success] = Spree.t(:successfully_updated, :resource => Spree.t(:general_settings))
+        flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:general_settings))
         redirect_to edit_admin_general_settings_path
       end
 
       def dismiss_alert
         if request.xhr? and params[:alert_id]
           dismissed = Spree::Config[:dismissed_spree_alerts] || ''
-          Spree::Config.set :dismissed_spree_alerts => dismissed.split(',').push(params[:alert_id]).join(',')
+          Spree::Config.set dismissed_spree_alerts: dismissed.split(',').push(params[:alert_id]).join(',')
           filter_dismissed_alerts
-          render :nothing => true
+          render nothing: true
         end
       end
 

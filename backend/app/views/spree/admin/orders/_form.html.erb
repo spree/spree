@@ -27,26 +27,26 @@
 
   <% if order.line_items.exists? %>
     <div class="alert alert-success" id="order-total" data-hook="order_details_total">
-      <%= Spree.t(:order_total) %>: 
+      <%= Spree.t(:order_total) %>:
       <strong class="order-total">
         <%= order.display_total %>
       </strong>
     </div>
   <% end %>
 
-  <%= javascript_tag do -%>
+  <%= javascript_tag do %>
     var order_number = '<%= @order.number %>';
     var shipments = [];
 
     <% @order.shipments.each do |shipment| %>
       shipments.push(
         <%== shipment.as_json(
-          :root => false, 
+          :root => false,
           :only => [
             :id, :tracking, :number, :state, :stock_location_id
           ], :include => [
             :inventory_units, :stock_location
-          ]).to_json 
+          ]).to_json
         %>
       );
     <% end %>

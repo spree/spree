@@ -27,7 +27,7 @@ production:
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
   encoding: utf8
 <% when 'postgres' %>
-<% db_host = ENV['DB_HOST'] -%>
+<% db_host = ENV['DB_HOST'] %>
 development:
   adapter: postgresql
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
