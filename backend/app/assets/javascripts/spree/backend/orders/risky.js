@@ -70,7 +70,7 @@ function setRiskyOrder(data){
   // assign the class to the current active tr
   $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')').addClass('info');
 
-  if(!totalRiskyOrders === 0){
+  if(!(totalRiskyOrders === 0)){
     if(activeRiskyOrder === 0){
       showRiskyNav('next');
     } else if (activeRiskyOrder == totalRiskyOrders) {
