@@ -70,15 +70,15 @@ function setRiskyOrder(data){
   // assign the class to the current active tr
   $('table#listing_risky_orders tbody tr:eq(' + activeRiskyOrder + ')').addClass('info');
 
-  if(totalRiskyOrders === 0){
-    // no navigation is shown
-  } else if(activeRiskyOrder === 0){
-    showRiskyNav('next');
-  } else if (activeRiskyOrder == totalRiskyOrders) {
-    showRiskyNav('prev');
-  } else {
-    showRiskyNav('next');
-    showRiskyNav('prev');
+  if(!totalRiskyOrders === 0){
+    if(activeRiskyOrder === 0){
+      showRiskyNav('next');
+    } else if (activeRiskyOrder == totalRiskyOrders) {
+      showRiskyNav('prev');
+    } else {
+      showRiskyNav('next');
+      showRiskyNav('prev');
+    }
   }
 }
 
@@ -108,9 +108,9 @@ function getOrderNumber(){
 }
 
 function noRiskyOrdersFound(){
-  var alert_no_risky_found = '<div class="alert alert-success">No risky orders found</div>';
+  var alertNoRiskyFound = '<div class="alert alert-success">No risky orders found</div>';
 
   $('.js-risky-order-info').html('');
-  $(alert_no_risky_found).insertAfter('table#listing_risky_orders');
+  $(alertNoRiskyFound).insertAfter('table#listing_risky_orders');
   $('table#listing_risky_orders').remove();
 }
