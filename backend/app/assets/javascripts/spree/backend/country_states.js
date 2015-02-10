@@ -1,10 +1,11 @@
+// Attach a 'js-country-states' class to a wrapper around both fields
 // Attach a 'js-country' class to country select wrapper
 // Attach a 'js-state' class to the state select wrapper
 // Now the states will be refreshed as the country changes.
 
 $(document).ready(function () {
   $('.js-country select').on('change', function () {
-    var $parent = $(this).parents('form');
+    var $parent = $(this).parents('.js-country-states');
     requestStates($parent);
   });
 });
@@ -26,7 +27,7 @@ function requestStates($parent){
 }
 
 function getCountryId($parent){
-  return $('.js-country select', $parent).val();
+  return $('.js-country select.select2', $parent).val();
 }
 
 function buildStatesSelect(data, $parent){
@@ -35,6 +36,7 @@ function buildStatesSelect(data, $parent){
 
   var statePara = $('.js-state', $parent);
   var stateSelect = statePara.find('select');
+  var stateSelect2 = statePara.find('.select2');
   var stateInput = statePara.find('input');
 
   if(states.length > 0){
@@ -48,27 +50,36 @@ function buildStatesSelect(data, $parent){
       }
       stateSelect.append(opt);
     });
-
-    stateSelect.prop('disabled', false).show();
     stateInput.hide().prop('disabled', true);
-    statePara.show();
-    if(statesRequired){
-      stateSelect.addClass('required');
-    }
-    stateSelect.removeClass('hidden');
-    stateInput.removeClass('required');
+    showStateElement(statePara);
+    showStateSelects(stateSelect, stateSelect2);
   } else {
-    stateSelect.hide().prop('disabled', true);
-    stateInput.show();
-    if(statesRequired){
-      stateInput.addClass('required');
-    } else {
+    hideStateSelects(stateSelect, stateSelect2);
+    showStateElement(stateInput);
+    if(!statesRequired){
       stateInput.val('');
-      stateInput.removeClass('required');
     }
     statePara.toggle(!!statesRequired);
     stateInput.prop('disabled', !statesRequired);
     stateInput.removeClass('hidden');
-    stateSelect.removeClass('required');
   }
+}
+
+function hideStateSelects(select, select2){
+  select.prop('disabled', true);
+  select.hide();
+  select2.hide();
+}
+
+function showStateSelects(select, select2){
+  select.prop('disabled', false);
+  showStateElement(select);
+  select.removeClass('hidden');
+  select2.show();
+}
+
+function showStateElement(element){
+  // jQuery .show() makes an item display inline-block.
+  // We need block to not break te layout.
+  element.css("display", "block");
 }

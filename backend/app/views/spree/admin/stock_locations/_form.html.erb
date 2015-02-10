@@ -69,26 +69,30 @@
     <%= f.phone_field :phone, class: 'form-control' %>
   </div>
 
-  <div class="form-group" data-hook="stock_location_country">
-    <%= f.label :country_id, Spree.t(:country) %>
-    <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %></span>
-  </div>
-
-  <div class="form-group" data-hook="stock_location_state">
-    <% if f.object.country %>
-      <%= f.label :state_id, Spree.t(:state) %>
-      <span id="state" class="region">
-        <%= f.text_field :state_name, style: "#{f.object.country.states.empty? ? '' : 'display: none;'}", disabled: !f.object.country.states.empty?, class: 'state_name form-control' %>
-        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2', style: "#{f.object.country.states.empty? ? 'display: none;' : '' };", disabled: f.object.country.states.empty?} %>
-      </span>
+  <div class="row no-padding-bottom js-country-states">
+    <div class="col-md-6">
+      <div class="form-group js-country" data-hook="stock_location_country">
+        <%= f.label :country_id, Spree.t(:country) %>
+        <span id="country"><%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %></span>
+      </div>
+    </div>
+    <% if Spree::Config[:address_requires_state] %>
+      <div class="col-md-6">
+        <div class="form-group js-state" data-hook="stock_location_state">
+          <% if f.object.country %>
+            <%= f.label :state_id, Spree.t(:state) %>
+            <span id="state" class="region">
+              <%= f.text_field :state_name, style: "#{f.object.country.states.empty? ? '' : 'display: none;'}", disabled: !f.object.country.states.empty?, class: 'state_name form-control' %>
+              <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, {class: 'select2', style: "#{f.object.country.states.empty? ? 'display: none;' : '' };", disabled: f.object.country.states.empty?} %>
+            </span>
+          <% end %>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>
 
-<% content_for :head do %>
-  <%= javascript_tag do %>
-    $(document).ready(function(){
-      $('span#country .select2').on('change', function() { update_state(''); });
-    });
-  <% end %>
-<% end %>
+<script>
+  // loads the rights states for the address form
+  requestStates("form");
+</script>

@@ -48,25 +48,20 @@
     <%= f.text_field :zipcode, class: 'form-control' %>
   </div>
 
-  <div class="row no-padding-bottom">
+  <div class="row no-padding-bottom js-country-states">
     <div class="col-md-6">
-      <div class="form-group <%= "#{type}-row" %>">
+      <div class="form-group <%= "#{type}-row" %> js-country">
         <%= f.label :country_id, Spree.t(:country) %>
-        <span id="<%= s_or_b %>country">
-          <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
-        </span>
+        <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
       </div>
     </div>
     <% if Spree::Config[:address_requires_state] %>
       <div class="col-md-6">
-        <div class="form-group <%= "#{type}-row" %>">
+        <div class="form-group <%= "#{type}-row" %> js-state">
           <%= f.label :state_id, Spree.t(:state) %>
-          <span id="<%= s_or_b %>state">
-            <%= f.text_field :state_name,
-                  style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };",
-                  disabled: !f.object.country.states.empty?, class: 'form-control state_name' %>
-            <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
-          </span>
+          <%= f.text_field :state_name,
+                disabled: !f.object.country.states.empty?, class: "form-control state_name #{f.object.country.states.empty? ? '' : 'hidden' }" %>
+          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: "select2 #{f.object.country.states.empty? ? 'hidden' : '' }", disabled: f.object.country.states.empty? } %>
         </div>
       </div>
     <% end %>
@@ -84,11 +79,3 @@
     </div>
   <% end %>
 </div>
-
-<% content_for :head do %>
-  <%= javascript_tag do %>
-    $(document).ready(function(){
-      $('span#<%= s_or_b %>country .select2').on('change', function() { update_state('<%= s_or_b %>'); });
-    });
-  <% end %>
-<% end %>
