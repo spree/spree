@@ -81,5 +81,5 @@ function showStateSelects(select, select2){
 function showStateElement(element){
   // jQuery .show() makes an item display inline-block.
   // We need block to not break te layout.
-  element.css("display", "block");
+  element.css('display', 'block');
 }
