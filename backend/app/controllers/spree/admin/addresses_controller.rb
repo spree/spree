@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class AddressesController < ResourceController
-
       def create_shipment
         @address = Spree::Address.new(address_params)
         @shipment = Spree::Shipment.find(params[:shipment_id])
@@ -22,22 +21,22 @@ module Spree
 
       private
 
-        def update_shipment_address(shipment, address)
-          shipment.update_attributes address_id: address.id
-        end
+      def update_shipment_address(shipment, address)
+        shipment.update_attributes address_id: address.id
+      end
 
-        def address_params
-          params.require(:address).permit(permitted_address_attributes)
-        end
+      def address_params
+        params.require(:address).permit(permitted_address_attributes)
+      end
 
-        def apply_to_other_shipment
-          if other_shipments = params[:apply_to_other_shipments]
-            other_shipments.each do |shipment_id|
-              shipment = Spree::Shipment.find(shipment_id)
-              update_shipment_address shipment, @address
-            end
+      def apply_to_other_shipment
+        if other_shipments = params[:apply_to_other_shipments]
+          other_shipments.each do |shipment_id|
+            shipment = Spree::Shipment.find(shipment_id)
+            update_shipment_address shipment, @address
           end
         end
+      end
     end
   end
 end
