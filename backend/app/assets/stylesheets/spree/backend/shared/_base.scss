@@ -23,3 +23,7 @@ body {
 .alert-error {
   @extend .alert-danger;
 }
+
+.no-margin-bottom {
+  margin-bottom: 0;
+}
