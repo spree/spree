@@ -93,7 +93,7 @@ describe "Order" do
         before { subject }
 
         it "should invalidate the credit card payment" do
-          expect(cc_payment.reload.state).to == 'invalid'
+          expect(cc_payment.reload.state).to eql 'invalid'
         end
       end
 
@@ -189,8 +189,8 @@ describe "Order" do
 
       context "user has enough store credit to pay for the order" do
         before do
-          user.stub(total_available_store_credit: 10.0)
-          subject.stub(total: 5.0)
+          allow(user).to receive(:total_available_store_credit).and_return(10.0)
+          allow(subject).to receive(:total).and_return(5.0)
         end
 
         it "returns true" do
@@ -200,8 +200,8 @@ describe "Order" do
 
       context "user does not have enough store credit to pay for the order" do
         before do
-          user.stub(total_available_store_credit: 0.0)
-          subject.stub(total: 5.0)
+          allow(user).to receive(:total_available_store_credit).and_return(0.0)
+          allow(subject).to receive(:total).and_return(5.0)
         end
 
         it "returns false" do
@@ -227,7 +227,7 @@ describe "Order" do
       subject { create(:order, user: user) }
 
       before do
-        user.stub(total_available_store_credit: available_store_credit)
+        allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
       end
 
       it "returns the user's available store credit" do
@@ -242,7 +242,7 @@ describe "Order" do
     subject { create(:order, total: order_total) }
 
     before do
-      subject.stub(total_applicable_store_credit: applicable_store_credit)
+      allow(subject).to receive(:total_applicable_store_credit).and_return(applicable_store_credit)
     end
 
     context "order's user has store credits" do
@@ -260,31 +260,6 @@ describe "Order" do
         expect(subject.order_total_after_store_credit).to eq order_total
       end
     end
-  end
-
-  describe "#finalize!" do
-    context "the order contains gift cards and transitions to complete" do
-      let(:order) { create(:order_with_line_items, state: 'complete') }
-
-      subject { order.finalize! }
-
-      it "calls #create_gift_cards" do
-        order.should_receive(:create_gift_cards)
-        subject
-      end
-    end
-  end
-
-  describe "transition to complete" do
-    let(:order) { create(:order_with_line_items, state: 'confirm') }
-    let!(:payment) { create(:payment, order: order, state: 'pending') }
-    subject { order.next! }
-
-    it "calls #send_gift_card_emails" do
-      order.should_receive(:send_gift_card_emails)
-      subject
-    end
-
   end
 
   describe "#total_applicable_store_credit" do
@@ -351,7 +326,9 @@ describe "Order" do
 
     subject { create(:order) }
 
-    before { subject.stub(total_applicable_store_credit: total_applicable_store_credit) }
+    before do
+      allow(subject).to receive(:total_applicable_store_credit).and_return(total_applicable_store_credit)
+    end
 
     it "returns a money instance" do
       expect(subject.display_total_applicable_store_credit).to be_a(Spree::Money)
@@ -367,7 +344,9 @@ describe "Order" do
 
     subject { create(:order) }
 
-    before { subject.stub(order_total_after_store_credit: order_total_after_store_credit) }
+    before do
+      allow(subject).to receive(:order_total_after_store_credit).and_return(order_total_after_store_credit)
+    end
 
     it "returns a money instance" do
       expect(subject.display_order_total_after_store_credit).to be_a(Spree::Money)
@@ -383,7 +362,9 @@ describe "Order" do
 
     subject { create(:order) }
 
-    before { subject.stub(total_available_store_credit: total_available_store_credit) }
+    before do
+      allow(subject).to receive(:total_available_store_credit).and_return(total_available_store_credit)
+    end
 
     it "returns a money instance" do
       expect(subject.display_total_available_store_credit).to be_a(Spree::Money)
@@ -401,8 +382,8 @@ describe "Order" do
     subject { create(:order) }
 
     before do
-      subject.stub(total_available_store_credit: total_available_store_credit,
-      total_applicable_store_credit: total_applicable_store_credit)
+      allow(subject).to receive(:total_available_store_credit).and_return(total_available_store_credit)
+      allow(subject).to receive(:total_applicable_store_credit).and_return(total_applicable_store_credit)
     end
 
     it "returns a money instance" do
