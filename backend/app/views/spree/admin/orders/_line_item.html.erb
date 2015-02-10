@@ -14,7 +14,7 @@
   </td>
   <td data-hook="admin_order_form_line_item_actions" class="actions">
     <%= link_to_delete f.object, { 
-      url: admin_order_line_item_url(@order.number, f.object), 
+      url: spree.admin_order_line_item_url(@order.number, f.object), 
       no_text: true 
     } %>
   </td>
