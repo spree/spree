@@ -23,7 +23,9 @@ module Spree
         @zones = Zone.accessible_by(current_ability, :read).order('name ASC')
                  .includes(zone_members: :zoneable)
                  .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        render json: @zones
+        render json: @zones, meta: {
+          count: @zones.count, pages: (params[:page] || 1), current_page: @zones.num_pages
+        }
       end
 
       def show
