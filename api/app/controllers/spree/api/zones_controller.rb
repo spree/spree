@@ -42,6 +42,7 @@ module Spree
       end
 
       private
+
       def zone_params
         params.require(:zone).permit!
       end
