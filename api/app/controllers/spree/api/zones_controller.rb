@@ -1,8 +1,6 @@
 module Spree
   module Api
     class ZonesController < Spree::Api::BaseController
-      skip_before_action :authenticate_user
-
       def create
         authorize! :create, Zone
         @zone = Zone.new(map_nested_attributes_keys(Spree::Zone, zone_params))
