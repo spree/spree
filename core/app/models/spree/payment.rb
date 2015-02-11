@@ -43,7 +43,7 @@ module Spree
 
     validates :amount, numericality: true
 
-    delegate :store_credit?, to: :payment_method
+    delegate :store_credit?, to: :payment_method, allow_nil: true
 
     default_scope { order("#{self.table_name}.created_at") }
 
