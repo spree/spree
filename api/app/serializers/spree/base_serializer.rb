@@ -1,4 +1,4 @@
 module Spree
-  class BaseSerializer < AcitveModel::Serializer
+  class BaseSerializer < ActiveModel::Serializer
   end
 end
