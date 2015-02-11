@@ -17,11 +17,7 @@ module Spree
     def display_user_total_amount
       Spree::Money.new(user_total_amount, { currency: currency })
     end
-
-    def display_event_date
-      I18n.l(created_at, format: :date_slash)
-    end
-
+    
     def display_action
       case action
       when Spree::StoreCredit::CAPTURE_ACTION

@@ -29,16 +29,6 @@ describe "StoreCreditEvent" do
     end
   end
 
-  describe "#display_event_date" do
-    let(:date) { DateTime.new(2014, 06, 1) }
-
-    subject { create(:store_credit_auth_event, created_at: date) }
-
-    it "returns the date the event was created with the format month/date/year" do
-      expect(subject.display_event_date).to eq "06/01/2014"
-    end
-  end
-
   describe "#display_action" do
     subject { create(:store_credit_auth_event, action: action) }
 
