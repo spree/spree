@@ -20,7 +20,7 @@ module Spree
 
       def index
         @zones = Zone.accessible_by(current_ability, :read).order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@zones)
+        render json: @zones, each_serializer: Spree::ZoneSerializer
       end
 
       def show
