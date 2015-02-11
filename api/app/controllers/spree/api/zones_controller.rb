@@ -1,6 +1,7 @@
 module Spree
   module Api
     class ZonesController < Spree::Api::BaseController
+      skip_before_action :authenticate_user
 
       def create
         authorize! :create, Zone
@@ -22,7 +23,7 @@ module Spree
         @zones = Zone.accessible_by(current_ability, :read).order('name ASC')
                  .includes(zone_members: :zoneable)
                  .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        render json: @zones, each_serializer: Spree::ZoneSerializer
+        render json: @zones
       end
 
       def show
