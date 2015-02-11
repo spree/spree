@@ -25,7 +25,7 @@ module Spree
 
         context 'for store credits that the customer used' do
           before do
-            Spree::ReimbursementType::StoreCredit.should_receive(:store_credit_payments).and_return([payment])
+            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([payment])
           end
 
           it 'creates readonly refunds for all store credit payments' do
@@ -40,7 +40,7 @@ module Spree
 
         context 'for return items that were not paid for with store credit' do
           before do
-            Spree::ReimbursementType::StoreCredit.should_receive(:store_credit_payments).and_return([])
+            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([])
           end
 
           context 'creates one readonly lump credit for all outstanding balance payable to the customer' do
@@ -50,8 +50,8 @@ module Spree
             end
 
             it 'creates a credit which amounts to the sum of the return items rounded down' do
-              return_item.should_receive(:total).and_return(10.0076)
-              return_item2.should_receive(:total).and_return(10.0023)
+              allow(return_item).to receive(:total).and_return(10.0076)
+              allow(return_item2).to receive(:total).and_return(10.0023)
               expect(subject.sum(&:amount)).to eq 20.0
             end
           end
@@ -67,7 +67,7 @@ module Spree
 
         context 'for store credits that the customer used' do
           before do
-            Spree::ReimbursementType::StoreCredit.should_receive(:store_credit_payments).and_return([payment])
+            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([payment])
           end
 
           it 'performs refunds for all store credit payments' do
@@ -78,7 +78,7 @@ module Spree
 
         context 'for return items that were not paid for with store credit' do
           before do
-            Spree::ReimbursementType::StoreCredit.should_receive(:store_credit_payments).and_return([])
+            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([])
           end
 
           it 'creates one lump credit for all outstanding balance payable to the customer' do
@@ -88,7 +88,7 @@ module Spree
 
           it "creates a store credit with the same currency as the reimbursement's order" do
             expect { subject }.to change { Spree::StoreCredit.count }.by(1)
-            Spree::StoreCredit.last.currency.should eq reimbursement.order.currency
+            expect(Spree::StoreCredit.last.currency).to eq reimbursement.order.currency
           end
         end
       end
