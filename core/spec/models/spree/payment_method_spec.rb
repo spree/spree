@@ -13,24 +13,29 @@ describe Spree::PaymentMethod, type: :model do
       end
     end
 
-    it "should have 4 total methods" do
-      expect(Spree::PaymentMethod.all.size).to eq(4)
+    it "should have 5 total methods" do
+      # 5 because of already existing store_credits payment method
+      expect(Spree::PaymentMethod.all.size).to eq(5)
     end
 
     it "should return all methods available to front-end/back-end when no parameter is passed" do
-      expect(Spree::PaymentMethod.available.size).to eq(2)
+      # 2 with display_on set to nil + the already existing store_credits payment method
+      expect(Spree::PaymentMethod.available.size).to eq(3)
     end
 
     it "should return all methods available to front-end/back-end when display_on = :both" do
-      expect(Spree::PaymentMethod.available(:both).size).to eq(2)
+      # 2 with display_on set to nil + the already existing store_credits payment method
+      expect(Spree::PaymentMethod.available(:both).size).to eq(3)
     end
 
     it "should return all methods available to front-end when display_on = :front_end" do
-      expect(Spree::PaymentMethod.available(:front_end).size).to eq(2)
+      # 2 with display_on set to nil + the already existing store_credits payment method
+      expect(Spree::PaymentMethod.available(:front_end).size).to eq(3)
     end
 
     it "should return all methods available to back-end when display_on = :back_end" do
-      expect(Spree::PaymentMethod.available(:back_end).size).to eq(2)
+      # 2 with display_on set to nil + the already existing store_credits payment method
+      expect(Spree::PaymentMethod.available(:back_end).size).to eq(3)
     end
   end
 
