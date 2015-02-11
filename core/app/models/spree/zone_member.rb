@@ -4,8 +4,7 @@ module Spree
     belongs_to :zoneable, polymorphic: true
 
     def name
-      return nil if zoneable.nil?
-      zoneable.name
+      zoneable.try :name
     end
   end
 end
