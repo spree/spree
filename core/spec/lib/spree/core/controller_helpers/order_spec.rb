@@ -18,18 +18,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     )
   end
 
-  describe '#simple_current_order' do
-    let(:request_guest_token) { order.guest_token }
-
-    it 'returns an empty order' do
-      expect(controller.simple_current_order.item_count).to eql(0)
-    end
-
-    it 'returns Spree::Order instance' do
-      expect(controller.simple_current_order).to eql(order)
-    end
-  end
-
   shared_examples_for 'returning order' do
     # Normally these expectations should be broken up in different blocks.
     # Sadly this spec touches the DB for each block to make this efficient enough

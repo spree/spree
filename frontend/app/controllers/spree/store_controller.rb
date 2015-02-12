@@ -10,7 +10,7 @@ module Spree
 
     def cart_link
       render :partial => 'spree/shared/link_to_cart'
-      fresh_when(simple_current_order)
+      fresh_when(current_order)
     end
 
     protected

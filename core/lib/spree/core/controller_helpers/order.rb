@@ -9,22 +9,6 @@ module Spree
 
           helper_method :current_currency
           helper_method :current_order
-          helper_method :simple_current_order
-        end
-
-        # Used in the link_to_cart helper.
-        def simple_current_order
-
-          return @simple_current_order if @simple_current_order
-
-          @simple_current_order = find_order_by_token_or_user(false)
-
-          if @simple_current_order
-            @simple_current_order.last_ip_address = ip_address
-            @simple_current_order
-          else
-            @simple_current_order = Spree::Order.new
-          end
         end
 
         # The current incomplete order from the guest_token or users last incomplete carts
