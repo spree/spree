@@ -207,11 +207,10 @@ module Spree
     def store_event
       return unless amount_changed? || amount_used_changed? || amount_authorized_changed? || action == ELIGIBLE_ACTION
 
-      event = nil
-      if action
-        event = store_credit_events.build(action: action)
+      event = if action
+        store_credit_events.build(action: action)
       else
-        event = store_credit_events.where(action: ALLOCATION_ACTION).first_or_initialize
+        store_credit_events.where(action: ALLOCATION_ACTION).first_or_initialize
       end
 
       event.update_attributes!(
