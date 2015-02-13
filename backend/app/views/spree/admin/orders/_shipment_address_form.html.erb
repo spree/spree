@@ -95,7 +95,7 @@
     </p>
   <% end %>
 
-  <% other_shipments = @order.shipments.where.not(id: shipment.id, state: 'shipped') %>
+  <% other_shipments = @order.shipments.editable.where.not(id: shipment.id) %>
   <% if other_shipments.count >= 1 %>
     <p class="form-group">
       <%= form.field_container :other_shipments, class: ['form-group'] do %>
