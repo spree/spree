@@ -1,5 +1,7 @@
 module Spree
   class Store < Spree::Base
+    has_many :orders, class_name: "Spree::Order"
+
     validates :code, presence: true, uniqueness: { allow_blank: true }
     validates :name, presence: true
     validates :url, presence: true
