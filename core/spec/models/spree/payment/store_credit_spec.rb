@@ -23,7 +23,7 @@ describe "Payment" do
       let(:payment) { create(:store_credit_payment, response_code: auth_code) }
 
       it "attemps to cancels the payment" do
-        payment.payment_method.should_receive(:cancel).with(payment.response_code)
+        expect(payment.payment_method).to receive(:cancel).with(payment.response_code)
         subject
       end
 
@@ -35,18 +35,9 @@ describe "Payment" do
 
       context "does not cancel successfully" do
         it "does not change the payment state" do
-          Spree::PaymentMethod::StoreCredit.any_instance.stub(:cancel).and_return(false)
+          allow_any_instance_of(Spree::PaymentMethod::StoreCredit).to receive(:cancel).and_return(false)
           expect { subject }.to_not change{ payment.state }
         end
-      end
-    end
-
-    context "not a store credit" do
-      let(:payment) { create(:payment) }
-
-      it "should call super" do
-        payment.should_receive(:cancel!)
-        subject
       end
     end
   end
