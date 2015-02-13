@@ -124,7 +124,7 @@
       <div data-hook="admin_product_form_shipping_categories">
         <%= f.field_container :shipping_categories, class: ['form-group'] do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :assign, Spree::ShippingCategory) }) %>
+          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::ShippingCategory) }) %>
           <%= f.error_message_on :shipping_category %>
         <% end %>
       </div>
@@ -132,7 +132,7 @@
       <div data-hook="admin_product_form_tax_category">
         <%= f.field_container :tax_category, class: ['form-group'] do %>
           <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :assign, Spree::TaxCategory) }) %>
+          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::TaxCategory) }) %>
           <%= f.error_message_on :tax_category %>
         <% end %>
       </div>
