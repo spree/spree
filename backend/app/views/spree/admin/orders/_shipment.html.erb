@@ -104,7 +104,7 @@
 
       <tr class="show-shipment-address">
         <td colspan="5">
-          <strong><%= Spree.t(:shipment_address) %>:</strong> <%= shipment.shipment_address %>
+          <strong><%= Spree.t(:shipment_address) %>:</strong> <%= shipment.address %>
           <%= render(partial: "spree/admin/orders/shipment_address_modal",
                 locals: {
                   shipment: shipment,
