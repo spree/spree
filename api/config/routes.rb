@@ -8,7 +8,7 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  namespace :api, defaults: { format: 'json' } do
+  concern :api do
     resources :promotions, only: [:show]
 
     resources :products do
@@ -124,4 +124,6 @@ Spree::Core::Engine.add_routes do
     put '/classifications', to: 'classifications#update', as: :classifications
     get '/taxons/products', to: 'taxons#products', as: :taxon_products
   end
+
+  namespace :api, concerns: :api, defaults: { format: 'json' }
 end
