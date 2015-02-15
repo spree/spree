@@ -1,10 +1,7 @@
 Spree::Core::Engine.add_routes do
   namespace :admin do
     resources :users do
-      member do
-        put :generate_api_key
-        put :clear_api_key
-      end
+      put :generate_api_key, :clear_api_key, on: :member
     end
   end
 
@@ -22,39 +19,22 @@ Spree::Core::Engine.add_routes do
     end
 
     concern :order_routes do
-      member do
-        put :cancel
-        put :empty
-        put :apply_coupon_code
-      end
+      put :cancel, :empty, :apply_coupon_code, on: :member
 
       resources :line_items
       resources :payments do
-        member do
-          put :authorize
-          put :capture
-          put :purchase
-          put :void
-          put :credit
-        end
+        put :authorize, :capture, :purchase, :void, :credit, on: :member
       end
 
       resources :addresses, only: [:show, :update]
 
       resources :return_authorizations do
-        member do
-          put :add
-          put :cancel
-          put :receive
-        end
+        put :add, :cancel, :receive, on: :member
       end
     end
 
     resources :checkouts, only: [:update], concerns: :order_routes do
-      member do
-        put :next
-        put :advance
-      end
+      put :next, :advance, on: :member
     end
 
     resources :variants do
@@ -75,28 +55,19 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :shipments, only: [:create, :update] do
+      put :ready, :ship, :add, :remove, on: :member
+
       collection do
         post 'transfer_to_location'
         post 'transfer_to_shipment'
         get :mine
       end
-
-      member do
-        put :ready
-        put :ship
-        put :add
-        put :remove
-      end
     end
 
     resources :taxonomies do
-      member do
-        get :jstree
-      end
+      get :jstree, on: :member
       resources :taxons do
-        member do
-          get :jstree
-        end
+        get :jstree, on: :member
       end
     end
 
