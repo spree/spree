@@ -9,7 +9,6 @@ Spree::Core::Engine.add_routes do
   end
 
   concern :api do
-    resources :stores
     resources :promotions, only: [:show]
 
     resources :products do
@@ -61,6 +60,7 @@ Spree::Core::Engine.add_routes do
     resources :option_types do
       resources :option_values
     end
+    resources :option_values
 
     resources :option_values, only: :index
 
@@ -127,6 +127,8 @@ Spree::Core::Engine.add_routes do
 
   namespace :api, defaults: { format: 'json' } do
     concerns :api
-    namespace :v1 { concerns :api }
+    namespace :v1 do
+      concerns :api
+    end
   end
 end
