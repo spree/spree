@@ -9,12 +9,16 @@ Spree::Core::Engine.add_routes do
   end
 
   namespace :api, defaults: { format: 'json' } do
-    resources :promotions, only: [:show]
+    resources :properties, :stores, :zones
+
+    resources :promotions, only: :show
+    resources :taxons, :option_values, only: :index
+    resources :inventory_units, only: [:show, :update]
+    resources :stock_items, only: [:index, :update, :destroy]
+    resources :states, only: [:index, :show]
 
     resources :products do
-      resources :images
-      resources :variants
-      resources :product_properties
+      resources :images, :variants, :product_properties
     end
 
     concern :order_routes do
@@ -60,16 +64,12 @@ Spree::Core::Engine.add_routes do
     resources :option_types do
       resources :option_values
     end
-    resources :option_values
-
-    resources :option_values, only: :index
 
     get '/orders/mine', to: 'orders#mine', as: 'my_orders'
     get "/orders/current", to: "orders#current", as: "current_order"
 
     resources :orders, concerns: :order_routes
 
-    resources :zones
     resources :countries, only: [:index, :show] do
       resources :states, only: [:index, :show]
     end
@@ -88,7 +88,6 @@ Spree::Core::Engine.add_routes do
         put :remove
       end
     end
-    resources :states, only: [:index, :show]
 
     resources :taxonomies do
       member do
@@ -101,22 +100,13 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resources :taxons, only: [:index]
-
-    resources :inventory_units, only: [:show, :update]
-
     resources :users do
       resources :credit_cards, only: [:index]
     end
 
-    resources :properties
     resources :stock_locations do
-      resources :stock_movements
-      resources :stock_items
+      resources :stock_movements, :stock_items
     end
-
-    resources :stock_items, only: [:index, :update, :destroy]
-    resources :stores
 
     get '/config/money', to: 'config#money'
     get '/config', to: 'config#show'
