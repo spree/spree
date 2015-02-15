@@ -125,7 +125,8 @@ Spree::Core::Engine.add_routes do
     get '/taxons/products', to: 'taxons#products', as: :taxon_products
   end
 
-  namespace :api, concerns: :api, defaults: { format: 'json' } do
-    namespace :v1, concerns: :api
+  namespace :api, defaults: { format: 'json' } do
+    concerns :api
+    namespace :v1 { concerns :api }
   end
 end
