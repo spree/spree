@@ -9,6 +9,7 @@ Spree::Core::Engine.add_routes do
   end
 
   concern :api do
+    resources :stores
     resources :promotions, only: [:show]
 
     resources :products do
@@ -60,7 +61,6 @@ Spree::Core::Engine.add_routes do
     resources :option_types do
       resources :option_values
     end
-    resources :option_values
 
     resources :option_values, only: :index
 
