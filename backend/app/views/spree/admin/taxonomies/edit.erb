@@ -12,7 +12,7 @@
     <div class="form-group">
       <%= label_tag nil, Spree.t(:tree) %>
       <script>
-        Spree.routes.taxonomy_taxons_path = "<%= spree.api_taxonomy_taxons_path(@taxonomy) %>";
+        Spree.routes.taxonomy_taxons_path = "<%= spree.api_v1_taxonomy_taxons_path(@taxonomy) %>";
         Spree.routes.admin_taxonomy_taxons_path = "<%= spree.admin_taxonomy_taxons_path(@taxonomy) %>";
         Spree.routes.jstree_theme_path = "<%= stylesheet_path("jquery.jstree/themes/apple/style.css") %>";
       </script>
