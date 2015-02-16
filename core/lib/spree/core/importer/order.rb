@@ -41,7 +41,7 @@ module Spree
             end
           end
           order.reload
-        ensure
+        rescue
           order.destroy if order && order.persisted?
         end
 
