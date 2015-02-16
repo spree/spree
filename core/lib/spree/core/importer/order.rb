@@ -161,8 +161,8 @@ module Spree
           payments_hash.each do |p|
             payment = order.payments.build order: order
             payment.amount = p[:amount].to_f
-            # Order API should be using state as that's the normal payment field.
-            # spree_wombat serializes payment state as status so imported orders should fall back to status field.
+            # Order API should be using state as that's the normal payment field. spree_wombat
+            # serializes payment state as status so imported orders should fall back to status field
             payment.state = p[:state] || p[:status] || 'completed'
             payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
             payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
