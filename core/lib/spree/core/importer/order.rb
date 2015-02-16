@@ -41,8 +41,9 @@ module Spree
             end
           end
           order.reload
-        rescue
+        rescue Exception => error
           order.destroy if order && order.persisted?
+          raise error
         end
 
         def self.create_shipments_from_params(shipments_hash, order)
