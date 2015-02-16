@@ -18,11 +18,11 @@
     </div>
 
     <div data-hook="admin_user_edit_form">
-      <%= form_for [:admin, @user], as: :user, url: admin_user_url(@user), method: :put do |f| %>
+      <%= form_for [:admin, @user], as: :user, url: spree.admin_user_url(@user), method: :put do |f| %>
         <%= render :partial => 'form', :locals => { :f => f } %>
 
         <div data-hook="admin_user_edit_form_button">
-          <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
+          <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => spree.admin_users_url } %>
         </div>
       <% end %>
     </div>
