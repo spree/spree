@@ -186,11 +186,9 @@ module Spree
         def self.ensure_variant_id_from_params(hash)
           sku = hash.delete(:sku)
           unless hash[:variant_id].present?
-            hash[:variant_id] = Spree::Variant.active.find_by_sku!(sku).id
+            hash[:variant_id] = Spree::Variant.active.find_by!(sku: sku).id
           end
           hash
-        rescue ActiveRecord::RecordNotFound => e
-          raise "Ensure order import variant: Variant w/SKU #{sku} not found."
         end
 
         def self.ensure_country_id_from_params(address)
