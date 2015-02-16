@@ -1,5 +1,7 @@
 module Spree
   class Taxonomy < Spree::Base
+    acts_as_list
+
     validates :name, presence: true
 
     has_many :taxons, inverse_of: :taxonomy
