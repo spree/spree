@@ -106,6 +106,13 @@ describe Spree::Admin::UsersController, :type => :controller do
       ))
       spree_put :update, { :id => mock_user.id, :user => { :bill_address_attributes => { :city => "New York" } } }
     end
+
+    it "allows updating without password resetting" do
+      expect(mock_user).to receive(:update_attributes).with(hash_not_including(
+        "password" => "", "password_confirmation" => ""
+      ))
+      spree_put :update, { :id => mock_user.id, :user => { :password => '', :password_confirmation => '', :email => 'spree@example.com' }}
+    end
   end
 
   describe "#orders" do
