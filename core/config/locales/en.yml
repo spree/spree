@@ -828,6 +828,7 @@ en:
     new_refund_reason: New Refund Reason
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
+    new_role: New Role
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
     new_shipment_at_location: New shipment at location
@@ -1135,6 +1136,7 @@ en:
     rma_number: RMA Number
     rma_value: RMA Value
     roles: Roles
+    role_id: Role ID
     rules: Rules
     safe: Safe
     sales_total: Sales Total
