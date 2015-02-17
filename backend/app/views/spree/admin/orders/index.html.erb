@@ -171,7 +171,7 @@
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-        <td><%= l (@show_only_completed ? order.completed_at : order.created_at).try(&:to_date) %></td>
+        <td><%= l (@show_only_completed ? order.completed_at : order.created_at).try!(:to_date) %></td>
         <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
           <span class="label label-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
