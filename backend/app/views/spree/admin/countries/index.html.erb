@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::Country.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::Country) %>
 <% end %>
 
 <% content_for :page_actions do %>
