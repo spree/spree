@@ -36,7 +36,7 @@
   </table>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Tracker.model_name.human(count: :many)) %>,
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Tracker)) %>,
     <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::Tracker %>!
   </div>
 <% end %>

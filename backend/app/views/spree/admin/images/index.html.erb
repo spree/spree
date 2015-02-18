@@ -8,7 +8,7 @@
 
 <% unless @product.variant_images.any? %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Image.model_name.human(count: :many)) %>.
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
   </div>
 <% else %>
   <table class="table sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
