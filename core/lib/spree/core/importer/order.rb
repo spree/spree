@@ -193,7 +193,7 @@ module Spree
         end
 
         def self.ensure_country_id_from_params(address)
-          return if address.nil? or address[:country_id].present? or address[:country].nil?
+          return if address.nil? || address[:country_id].present? || address[:country].nil?
 
           search = {}
           if name = address[:country]['name']
