@@ -55,7 +55,7 @@ module Spree
             shipment.tracking = shipment_hash[:tracking]
             shipment.stock_location = Spree::StockLocation.find_by_admin_name(shipment_hash[:stock_location]) || Spree::StockLocation.find_by_name!(shipment_hash[:stock_location])
 
-            inventory_units = s[:inventory_units] || []
+            inventory_units = shipment_hash[:inventory_units] || []
             inventory_units.each do |iu|
               ensure_variant_id_from_params(iu)
 
@@ -73,9 +73,9 @@ module Spree
             end
 
             # Mark shipped if it should be.
-            if s[:shipped_at].present?
-              shipment.shipped_at = s[:shipped_at]
-              shipment.state      = 'shipped'
+            if shipment_hash[:shipped_at].present?
+              shipment.shipped_at = shipment_hash[:shipped_at]
+              shipment.state = 'shipped'
               shipment.inventory_units.each do |unit|
                 unit.state = 'shipped'
               end
