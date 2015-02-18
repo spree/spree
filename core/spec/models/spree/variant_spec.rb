@@ -343,6 +343,7 @@ describe Spree::Variant, :type => :model do
       context 'when stock_items in stock' do
         before do
           variant.stock_items.first.update_column(:count_on_hand, 10)
+          variant.update_counter_cache
         end
 
         it 'returns true if stock_items in stock' do

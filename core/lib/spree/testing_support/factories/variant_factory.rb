@@ -19,7 +19,7 @@ FactoryGirl.define do
     before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
 
     factory :variant do
-      # on_hand 5
+      # total_on_hand 5
       product { |p| p.association(:product) }
     end
 
