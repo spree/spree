@@ -384,7 +384,7 @@ module Spree
       end
 
       def can_get_rates?
-        address && address.valid?
+        (address && address.valid?) || (order.ship_address && order.ship_address.valid?)
       end
 
       def manifest_restock(item)
