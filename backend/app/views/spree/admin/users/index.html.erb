@@ -12,7 +12,7 @@
 
 <% content_for :table_filter do %>
   <div data-hook="admin_users_index_search">
-    <%= search_form_for [:admin, @search], url: admin_users_url do |f| %>
+    <%= search_form_for [:admin, @search], url: spree.admin_users_url do |f| %>
       <div class="form-group">
         <%= f.label Spree.t(:email) %>
         <%= f.text_field :email_cont, class: "form-control js-quick-search-target" %>
