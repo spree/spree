@@ -46,7 +46,7 @@ $(document).ready(function() {
           $('#order_bill_address_attributes_state_name').val(billAddress.state_name);
 
           $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
-            requestStates($('#order_bill_address_attributes_state_id').parents('.js-country-states'));
+            countryStates.requestStates($('#order_bill_address_attributes_state_id').parents('.js-country-states'));
           });
 
           $('.js-change-customer-bill-address-alert').show();
