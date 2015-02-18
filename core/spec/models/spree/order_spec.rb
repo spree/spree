@@ -14,6 +14,8 @@ describe Spree::Order, :type => :model do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  its(:class) { should be_const_defined(:STATES) }
+
   context "#canceled_by" do
     let(:admin_user) { create :admin_user }
     let(:order) { create :order }
