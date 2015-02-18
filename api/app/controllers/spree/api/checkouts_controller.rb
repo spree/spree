@@ -35,7 +35,7 @@ module Spree
 
           return if after_update_attributes
 
-          if @order.next || @order.completed?  
+          if @order.completed? || @order.next
             state_callback(:after)
             respond_with(@order, default_template: 'spree/api/orders/show')
           else
