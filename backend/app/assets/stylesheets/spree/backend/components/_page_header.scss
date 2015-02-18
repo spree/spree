@@ -9,14 +9,16 @@
 
   &.with-page-tabs {
     border-bottom: 0;
-    padding-bottom: 0;
     margin-bottom: 6px;
+    padding-bottom: 0;
+
     h1 {
       margin-bottom: 8px;
     }
+
     .nav-tabs {
-      padding-top: 15px;
       padding-left: 15px;
+      padding-top: 15px;
     }
   }
 
