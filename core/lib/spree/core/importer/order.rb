@@ -50,10 +50,10 @@ module Spree
           return [] unless shipments_hash
 
           line_items = order.line_items
-          shipments_hash.each do |s|
+          shipments_hash.each do |shipment_hash|
             shipment = order.shipments.build
-            shipment.tracking       = s[:tracking]
-            shipment.stock_location = Spree::StockLocation.find_by_admin_name(s[:stock_location]) || Spree::StockLocation.find_by_name!(s[:stock_location])
+            shipment.tracking = shipment_hash[:tracking]
+            shipment.stock_location = Spree::StockLocation.find_by_admin_name(shipment_hash[:stock_location]) || Spree::StockLocation.find_by_name!(shipment_hash[:stock_location])
 
             inventory_units = s[:inventory_units] || []
             inventory_units.each do |iu|
@@ -83,8 +83,8 @@ module Spree
 
             shipment.save!
 
-            shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
-            rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: s[:cost])
+            shipping_method = Spree::ShippingMethod.find_by_name(shipment_hash[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(shipment_hash[:shipping_method])
+            rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: shipment_hash[:cost])
             shipment.selected_shipping_rate_id = rate.id
             shipment.update_amounts
           end
