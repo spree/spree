@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::Order.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::Order) %>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -216,7 +216,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::Order.model_name.human(count: :many)) %>,
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
     <%= link_to(Spree.t(:add_one), new_admin_order_url) if can? :create, Spree::Order %>!
   </div>
 <% end %>

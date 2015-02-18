@@ -36,7 +36,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::Zone.model_name.human(count: :many)) %>,
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Zone)) %>,
     <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::Zone %>!
   </div>
 <% end %>
