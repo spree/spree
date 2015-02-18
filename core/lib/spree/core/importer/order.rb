@@ -67,8 +67,8 @@ module Spree
               # trying to view these units. Note the Importer might not be
               # able to find the line item if line_item.variant_id |= iu.variant_id
               unit.variant_id = iu[:variant_id]
-              unit.line_item_id = line_items.select do |l|
-                l.variant_id.to_i == iu[:variant_id].to_i
+              unit.line_item_id = line_items.select do |line_item|
+                line_item.variant_id.to_i == iu[:variant_id].to_i
               end.first.try(:id)
             end
 
