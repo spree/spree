@@ -1,10 +1,16 @@
+<% args = params.clone %>
+
+<% if defined?(per_page_action) %>
+  <% args.merge!(action: per_page_action) %>
+<% end %>
+
 <div class="row index-pagination-row">
   <div class="col-sm-6">
     <%= paginate collection %>
   </div>
   <div class="col-sm-6">
     <div class="pagination-wrap">
-      <%= form_tag(per_page_dropdown_params, { method: :get, class: 'js-per-page-form form-inline' }) do %>
+      <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline' }) do %>
         <%= per_page_dropdown %>
       <% end %>
       <div class="clearfix"></div>
