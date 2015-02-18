@@ -36,6 +36,7 @@ module Spree
     scope :ready,   -> { with_state('ready') }
     scope :shipped, -> { with_state('shipped') }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
+    scope :editable, -> { where(state: ["pending", "ready"]) }
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc', id: :desc) }
@@ -344,7 +345,9 @@ module Spree
       end
 
       transaction do
-        new_shipment = order.shipments.create!(stock_location: stock_location)
+        new_shipment = order.shipments.create!(
+          stock_location: stock_location,
+          address: self.address)
 
         order.contents.remove(variant, quantity, {shipment: self})
         order.contents.add(variant, quantity, {shipment: new_shipment})
@@ -381,7 +384,7 @@ module Spree
       end
 
       def can_get_rates?
-        order.ship_address && order.ship_address.valid?
+        address.present? ? (address && address.valid?) : (order.ship_address && order.ship_address.valid?)
       end
 
       def manifest_restock(item)

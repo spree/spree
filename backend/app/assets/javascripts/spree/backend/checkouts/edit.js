@@ -43,12 +43,13 @@ $(document).ready(function() {
           $('#order_bill_address_attributes_city').val(billAddress.city);
           $('#order_bill_address_attributes_zipcode').val(billAddress.zipcode);
           $('#order_bill_address_attributes_phone').val(billAddress.phone);
+          $('#order_bill_address_attributes_state_name').val(billAddress.state_name);
 
-          $('#order_bill_address_attributes_country_id').select2("val", billAddress.country_id).promise().done(function () {
-            update_state('b', function () {
-              $('#order_bill_address_attributes_state_id').select2("val", billAddress.state_id);
-            });
+          $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
+            countryStates.requestStates($('#order_bill_address_attributes_state_id').parents('.js-country-states'));
           });
+
+          $('.js-change-customer-bill-address-alert').show();
         }
         return customer.email;
       }

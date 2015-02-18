@@ -1,0 +1,111 @@
+<% address_id = "change_address_#{shipment.id}_" %>
+
+<div data-hook="shipment_address_inner" %>
+  <div class="row no-padding-bottom">
+    <div class="col-md-6">
+      <p class="form-group">
+        <%= form.label :firstname, Spree.t(:first_name) %>
+        <%= form.text_field :firstname, class: 'form-control', value: address.firstname %>
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p class="form-group">
+        <%= form.label :lastname, Spree.t(:last_name) %>
+        <%= form.text_field :lastname, class: 'form-control', value: address.lastname %>
+      </p>
+    </div>
+  </div>
+
+  <div class="row no-padding-bottom">
+    <div class="col-md-6">
+      <p class="form-group">
+        <%= form.label :address1, Spree.t(:street_address) %>
+        <%= form.text_field :address1, class: 'form-control', value: address.address1 %>
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p class="form-group">
+        <%= form.label :address2, Spree.t(:street_address_2) %>
+        <%= form.text_field :address2, class: 'form-control', value: address.address2 %>
+      </p>
+    </div>
+  </div>
+
+  <% if Spree::Config[:company] %>
+    <p class="form-group">
+      <%= form.label :company, Spree.t(:company) %>
+      <%= form.text_field :company, class: 'form-control', value: address.company %>
+    </p>
+  <% end %>
+
+  <p class="form-group">
+    <%= form.label :city, Spree.t(:city) %>
+    <%= form.text_field :city, class: 'form-control', value: address.city %>
+  </p>
+
+  <p class="form-group">
+    <%= form.label :zipcode, Spree.t(:zip) %>
+    <%= form.text_field :zipcode, class: "form-control", value: address.zipcode %>
+  </p>
+
+  <div class="row no-padding-bottom js-country-states">
+    <div class="col-md-6">
+      <p class="form-group js-country">
+        <%= form.label :country_id, Spree.t(:country) %>
+        <%= select :address, :country_id, options_for_select(available_countries.collect {|p| [ p.name, p.id ] }, address.country_id), {}, {class: 'select2'} %>
+      </p>
+    </div>
+    <% if Spree::Config[:address_requires_state] %>
+      <div class="col-md-6">
+        <p class="form-group js-state" id="<%="#{address_id}state" %>">
+          <% have_states = address.country.present? && !address.country.states.empty? %>
+          <%= form.label :state, Spree.t(:state) %>
+
+          <% state_elements = [
+             select(:address,
+                    :state_id,
+                    options_for_select(have_states ? address.country.states.collect {|p| [ p.name, p.id ] } : [], address.state_id),
+                    {},
+                    {include_blank: true,
+                     disabled: !have_states,
+                     class: have_states ? 'select2' : 'select2 hidden'}) +
+             form.text_field(:state_name,
+                                class: !have_states ? 'form-control' : 'form-control hidden',
+                                disabled: have_states,
+                                value: address.state_name)
+             ].join.gsub('"', "'").gsub("\n", "")
+          %>
+          <%= javascript_tag do -%>
+            $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
+          <% end %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <p class="form-group">
+    <%= form.label :phone, Spree.t(:phone) %>
+    <%= form.phone_field :phone, class: "form-control", value: address.phone %>
+  </p>
+
+  <% if Spree::Config[:alternative_shipping_phone] %>
+    <p class="form-group">
+      <%= form.label :alternative_phone, Spree.t(:alternative_phone) %>
+      <%= form.phone_field :alternative_phone, class: 'form-control', value: address.alternative_phone %>
+    </p>
+  <% end %>
+
+  <% other_shipments = @order.shipments.editable.where.not(id: shipment.id) %>
+  <% if other_shipments.count >= 1 %>
+    <p class="form-group">
+      <%= form.field_container :other_shipments, class: ['form-group'] do %>
+        <%= form.label :apply_to_other_shipments, Spree.t(:apply_to_other_shipments) %>
+        <%= select_tag :apply_to_other_shipments,
+          options_from_collection_for_select(other_shipments, :id, :number),
+          class: "select2",
+          multiple: true
+        %>
+      <% end %>
+    </p>
+  <% end %>
+</div>
