@@ -20,6 +20,8 @@
   </div>
 <% end %>
 
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :customer_returns } %>
+
 <% if @collection.any? %>
   <table class="table">
     <thead>
@@ -58,3 +60,5 @@
     <%= Spree.t(:no_resource_found, resource: Spree::CustomerReturn.model_name.human(count: :many)) %>.
   </div>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :customer_returns } %>
