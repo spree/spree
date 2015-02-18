@@ -1,0 +1,60 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:customer_returns) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_return_authorisations_index_filters">
+    <%= search_form_for [:admin, @search], url: admin_customer_returns_index_path do |f| %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :number_cont, Spree.t(:number) %>
+            <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
+          </div>
+        </div>
+      </div>
+      <div data-hook="admin_return_authorisations_index_filters_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @collection.any? %>
+  <table class="table">
+    <thead>
+      <tr data-hook="rate_header">
+        <th><%= Spree.t(:created_at) %></th>
+        <th><%= Spree.t(:number) %></th>
+        <th><%= Spree.t(:order) %></th>
+        <th><%= Spree.t(:reimbursement_status) %></th>
+        <th><%= Spree.t(:pre_tax_total) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @collection.each do |customer_return| %>
+        <tr id="<%= spree_dom_id customer_return %>" data-hook="customer_return_row">
+          <td><%= customer_return.created_at.to_date %></td>
+          <td><%= link_to customer_return.number, edit_admin_order_customer_return_path(customer_return.order, customer_return) %></td>
+          <td><%= link_to customer_return.order.number, edit_admin_order_path(customer_return.order) %></td>
+          <td>
+            <% if customer_return.fully_reimbursed? %>
+              <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
+            <% else %>
+              <span class="label label-info"><%= Spree.t(:incomplete) %></span>
+            <% end %>
+          </td>
+          <td><%= customer_return.display_pre_tax_total.to_html %></td>
+          <td class="actions actions-1 text-right">
+            <%= link_to_edit_url edit_admin_order_customer_return_path(customer_return.order, customer_return), no_text: true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: Spree::CustomerReturn.model_name.human(count: :many)) %>.
+  </div>
+<% end %>
