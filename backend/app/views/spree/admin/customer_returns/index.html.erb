@@ -1,7 +1,7 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => Spree.t(:customer_returns) } %>
 
 <% content_for :page_actions do %>
-  <% if @order.shipments.any?(&:shipped?) %>
+  <% if @order.shipments.any?(&:shipped?) && can?(:create, Spree::CustomerReturn) %>
     <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add', class: 'btn-success' %>
   <% end %>
 <% end %>
@@ -37,7 +37,7 @@
               <% end %>
             </td>
             <td class='actions actions-1' data-hook="admin_orders_customer_returns_index_row_actions">
-              <%= link_to_edit_url edit_admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true %>
+              <%= link_to_edit_url(edit_admin_order_customer_return_path(@order, customer_return), title: "admin_edit_#{dom_id(customer_return)}", no_text: true) if can?(:edit, customer_return) %>
             </td>
           </tr>
         <% end %>
@@ -46,7 +46,7 @@
   <% else %>
     <div class="alert alert-info no-objects-found">
       <%= Spree.t(:no_resource_found, resource: Spree::CustomerReturn.model_name.human(count: :many)) %>,
-      <%= link_to Spree.t(:add_one), spree.new_admin_order_customer_return_path(@order) %>!
+      <%= link_to(Spree.t(:add_one), spree.new_admin_order_customer_return_path(@order)) if can?(:create, Spree::CustomerReturn) %>!
     </div>
   <% end %>
 <% else %>

@@ -270,6 +270,58 @@ describe Spree::Variant, :type => :model do
 
   end
 
+  describe 'exchange_name' do
+    let!(:variant) { create(:variant, option_values: []) }
+    let!(:master) { create(:master_variant) }
+
+    before do
+      variant.option_values << create(:option_value, {
+                                                     name: 'Foo',
+                                                     presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
+                                                   })
+    end
+
+    context 'master variant' do
+      it 'should return name' do
+        expect(master.exchange_name).to eql master.name
+      end
+    end
+
+    context 'variant' do
+      it 'should return options text' do
+        expect(variant.exchange_name).to eql 'Foo Type: Foo'
+      end
+    end
+
+  end
+
+  describe 'descriptive_name' do
+    let!(:variant) { create(:variant, option_values: []) }
+    let!(:master) { create(:master_variant) }
+
+    before do
+      variant.option_values << create(:option_value, {
+                                                     name: 'Foo',
+                                                     presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
+                                                   })
+    end
+
+    context 'master variant' do
+      it 'should return name with Master identifier' do
+        expect(master.descriptive_name).to eql master.name + ' - Master'
+      end
+    end
+
+    context 'variant' do
+      it 'should return options text with name' do
+        expect(variant.descriptive_name).to eql variant.name + ' - Foo Type: Foo'
+      end
+    end
+
+  end
+
   # Regression test for #2744
   describe "set_position" do
     it "sets variant position after creation" do

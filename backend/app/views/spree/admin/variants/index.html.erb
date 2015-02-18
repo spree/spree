@@ -17,14 +17,16 @@
     <% @variants.each do |variant| %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
         <td class="move-handle">
-          <span class="icon icon-move handle"></span>
+          <% if can? :edit, variant %>
+            <span class="icon icon-move handle"></span>
+          <% end %>
         </td>
         <td><%= variant.options_text %></td>
         <td><%= variant.display_price.to_html %></td>
         <td><%= variant.sku %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit(variant, :no_text => true) unless variant.deleted? %>
-          <%= link_to_delete(variant, :no_text => true) unless variant.deleted? %>
+          <%= link_to_edit(variant, :no_text => true) if can?(:edit, variant) && !variant.deleted? %>
+          <%= link_to_delete(variant, :no_text => true) if can?(:destroy, variant) && !variant.deleted? %>
         </td>
       </tr>
       <% end %>
@@ -38,20 +40,22 @@
 <% else %>
   <div class="no-objects-found alert alert-info">
     <%= Spree.t(:no_resource_found, resource: Spree::Variant.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_product_variant_path(@product) %>!
+    <%= link_to(Spree.t(:add_one), spree.new_admin_product_variant_path(@product)) if can? :create, Spree::Variant %>!
   </div>
 <% end %>
 
 <% if @product.empty_option_values? %>
-  <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
-    <%= Spree.t(:to_add_variants_you_must_first_define) %>
-    <%= link_to Spree.t(:option_types), admin_product_url(@product) %>
-    <%= Spree.t(:and) %>
-    <%= link_to Spree.t(:option_values), admin_option_types_url %>
-  </p>
+  <% if can?(:create, Spree::OptionType) && can?(:create, Spree::OptionValue) %>
+    <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
+      <%= Spree.t(:to_add_variants_you_must_first_define) %>
+      <%= link_to(Spree.t(:option_types), admin_product_url(@product)) %>
+      <%= Spree.t(:and) %>
+      <%= link_to Spree.t(:option_values), admin_option_types_url %>
+    </p>
+  <% end %>
 <% else %>
   <% content_for :page_actions do %>
-    <%= button_link_to Spree.t(:new_variant), new_admin_product_variant_url(@product), { :remote => :true, :icon => 'add', :'data-update' => 'new_variant', :class => 'btn-success', id: 'new_var_link' } %>
+    <%= button_link_to(Spree.t(:new_variant), new_admin_product_variant_url(@product), { :remote => :true, :icon => 'add', :'data-update' => 'new_variant', :class => 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
     <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), admin_product_variants_url(@product, :deleted => @deleted.blank? ? "on" : "off"), { :class => 'btn-default', :icon => 'filter' } %>
   <% end %>
 <% end %>
