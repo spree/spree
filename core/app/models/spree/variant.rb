@@ -42,7 +42,8 @@ module Spree
     after_touch :clear_in_stock_cache
     after_save :update_counter_cache
 
-    scope :in_stock, -> { joins(:stock_items).where('spree_stock_items.count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :in_stock, -> { joins(:stock_items).
+                          where("spree_stock_items.count_on_hand > ? OR track_inventory = ?", 0, false) }
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
@@ -215,7 +216,8 @@ module Spree
     end
 
     def update_counter_cache
-      self.update_column(:count_on_hand, computed_total_on_hand) if should_track_inventory?
+      return unless should_track_inventory?
+      update_column(:count_on_hand, computed_total_on_hand)
     end
 
     private
