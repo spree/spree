@@ -17,7 +17,6 @@ Spree::Core::Engine.add_routes do
   end
 
   get '/orders/populate', :to => populate_redirect
-  get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
 
   resources :orders, :except => [:index, :new, :create, :destroy] do
     post :populate, :on => :collection
