@@ -6,7 +6,7 @@
   <span class="js-new-ptype-link"><%= button_link_to Spree.t(:select_from_prototype), available_admin_prototypes_url, { :icon => 'properties', :remote => true, 'data-update' => 'prototypes', :class => 'btn-default' } %></span>
 <% end if can? :create, Spree::ProductProperty %>
 
-<%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
+<%= form_for @product, :url => spree.admin_product_url(@product), :method => :put do |f| %>
   <fieldset>
     <div id="prototypes" data-hook></div>
 

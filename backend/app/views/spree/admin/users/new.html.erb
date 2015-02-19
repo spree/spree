@@ -7,7 +7,7 @@
 </div>
 
 <div data-hook="admin_user_new_form">
-  <%= form_for [:admin, @user], url: admin_users_url, method: :post do |f| %>
+  <%= form_for [:admin, @user], url: spree.admin_users_url, method: :post do |f| %>
     <%= render :partial => 'form', :locals => { :f => f } %>
 
     <div data-hook="admin_user_new_form_buttons">

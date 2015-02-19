@@ -78,7 +78,7 @@
           </div>
           <div class="info-actions">
             <% if can?(:admin, Spree::Variant) %>
-              <%= link_to_with_icon 'variants', 'Manage Variants', admin_product_variants_url(@product), class: "btn btn-default" %>
+              <%= link_to_with_icon 'variants', 'Manage Variants', spree.admin_product_variants_url(@product), class: "btn btn-default" %>
             <% end %>
           </div>
         </div>
@@ -153,7 +153,7 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="alert alert-info"><%= Spree.t(:no_taxons) %></div>
+        <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :taxons) %></div>
       <% end %>
 
     <% end %>
@@ -172,7 +172,7 @@
           <% end %>
         </ul>
       <% else %>
-        <div class="alert alert-info"><%= Spree.t(:no_option_types) %></div>
+        <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :option_types) %></div>
       <% end %>
 
     <% end %>
