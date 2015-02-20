@@ -425,7 +425,7 @@ describe Spree::Product, :type => :model do
       product = create(:product)
       product.stock_items.first.set_count_on_hand 5
       product.variants_including_master(true) # force load association
-      expect(product.total_on_hand).to eql(5)
+      expect(product.reload.total_on_hand).to eql(5)
     end
 
     it 'should return sum of stock items count_on_hand when variants_including_master is not loaded' do

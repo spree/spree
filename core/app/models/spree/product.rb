@@ -207,8 +207,17 @@ module Spree
       if any_variants_not_track_inventory?
         Float::INFINITY
       else
-        stock_items.sum(:count_on_hand)
+        count_on_hand
       end
+    end
+
+    def computed_total_on_hand
+      stock_items.sum(:count_on_hand)
+    end
+
+    def update_counter_cache
+      # return if any_variants_not_track_inventory?
+      update_column(:count_on_hand, computed_total_on_hand)
     end
 
     # Master variant may be deleted (i.e. when the product is deleted)
