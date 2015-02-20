@@ -30,7 +30,7 @@ module Spree
         add(promotions, promotion, source.promotion_id)
       end
 
-      def promotions_adjustments(promotion_id, adjustments = adjustments)
+      def promotions_adjustments(promotion_id, adjustments = adjustments())
         where(sources, promotion_id: promotion_id).map do |source|
           where(adjustments, source_id: source.id)
         end.flatten
