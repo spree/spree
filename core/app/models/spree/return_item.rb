@@ -119,7 +119,7 @@ module Spree
     end
 
     def total
-      pre_tax_amount + additional_tax_total
+      pre_tax_amount + included_tax_total + additional_tax_total
     end
 
     def display_total
