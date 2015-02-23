@@ -18,5 +18,9 @@ module Spree
         computed_amount
       end
     end
+
+    def tax_affected?
+      true
+    end
   end
 end

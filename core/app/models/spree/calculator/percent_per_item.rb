@@ -22,6 +22,10 @@ module Spree
       end
     end
 
+    def tax_affected?
+      true
+    end
+
   private
 
     # Returns all products that match this calculator, but only if the calculator

@@ -10,13 +10,28 @@ module Spree
 
       def compute(return_item)
         return 0.0.to_d if return_item.exchange_requested?
-        weighted_order_adjustment_amount(return_item.inventory_unit) + weighted_line_item_pre_tax_amount(return_item.inventory_unit)
+        adjustments = weighted_order_adjustment_amount(return_item.inventory_unit)
+        line_item_pre_tax = weighted_line_item_pre_tax_amount(return_item.inventory_unit)
+        adjustments + line_item_pre_tax
       end
 
       private
 
       def weighted_order_adjustment_amount(inventory_unit)
-        inventory_unit.order.adjustments.eligible.non_tax.sum(:amount) * percentage_of_order_total(inventory_unit)
+        adjustments = inventory_unit.order.adjustments.eligible.non_tax
+        total_adjustments = adjustments.sum(:amount)
+        total_adjustments -= adjustment_tax(inventory_unit.order, adjustments)
+        total_adjustments * percentage_of_order_total(inventory_unit)
+      end
+
+      def adjustment_tax(order, adjustments)
+        total = tax_affected_adjustments(adjustments).sum(&:amount)
+        return 0.0 if total.zero?
+        total * order.included_tax_total / order.item_total
+      end
+
+      def tax_affected_adjustments(adjustments)
+        adjustments.to_a.keep_if { |a| a.source.tax_affected? }
       end
 
       def weighted_line_item_pre_tax_amount(inventory_unit)

@@ -43,5 +43,9 @@ module Spree
     def available?(object)
       true
     end
+
+    def tax_affected?
+      false
+    end
   end
 end
