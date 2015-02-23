@@ -662,4 +662,21 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
   end
+
+  describe "included tax in total" do
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+    let(:return_item) do
+      create(
+        :return_item,
+        inventory_unit: inventory_unit,
+        included_tax_total: 10
+      )
+    end
+
+    it 'includes included tax total' do
+      expect(return_item.pre_tax_amount).to eq 10
+      expect(return_item.included_tax_total).to eq 10
+      expect(return_item.total).to eq 20
+    end
+  end
 end
