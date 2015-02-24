@@ -8,9 +8,6 @@ Spree::Core::Engine.add_routes do
   end
 
   namespace :api, defaults: { format: 'json' } do
-    get '/config/money', to: 'config#money'
-    get '/config', to: 'config#show'
-
     get '/orders/mine', to: 'orders#mine', as: 'my_orders'
     get "/orders/current", to: "orders#current", as: "current_order"
 
@@ -42,6 +39,10 @@ Spree::Core::Engine.add_routes do
             :receive,
             on: :member
       end
+    end
+
+    resource :config, only: :show do
+      get :money, on: :member
     end
 
     resources :properties, :stores, :zones
