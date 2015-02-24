@@ -81,7 +81,6 @@ module Spree
     end
 
     def check_authorization
-      cookies.permanent.signed[:guest_token] = params[:token] if params[:token]
       order = Spree::Order.find_by_number(params[:id]) || current_order
 
       if order

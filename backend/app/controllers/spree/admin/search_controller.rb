@@ -9,28 +9,28 @@ module Spree
       # And then JSON building with something like Active Model Serializers
       def users
         if params[:ids]
-          @users = Spree.user_class.where(:id => params[:ids].split(','))
+          @users = Spree.user_class.where(id: params[:ids].split(',').flatten)
         else
           @users = Spree.user_class.ransack({
-            :m => 'or',
-            :email_start => params[:q],
-            :ship_address_firstname_start => params[:q],
-            :ship_address_lastname_start => params[:q],
-            :bill_address_firstname_start => params[:q],
-            :bill_address_lastname_start => params[:q]
+            m: 'or',
+            email_start: params[:q],
+            ship_address_firstname_start: params[:q],
+            ship_address_lastname_start: params[:q],
+            bill_address_firstname_start: params[:q],
+            bill_address_lastname_start: params[:q]
           }).result.limit(10)
         end
       end
 
       def products
         if params[:ids]
-          @products = Product.where(:id => params[:ids].split(","))
+          @products = Product.where(id: params[:ids].split(",").flatten)
         else
           @products = Product.ransack(params[:q]).result
         end
 
         @products = @products.distinct.page(params[:page]).per(params[:per_page])
-        expires_in 15.minutes, :public => true
+        expires_in 15.minutes, public: true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
       end
     end

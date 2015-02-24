@@ -62,7 +62,7 @@ Syntax:
 
 * Two spaces, no tabs.
 * No trailing whitespace. Blank lines should not have any space.
-* Prefer &&/|| over and/or.
+* Use &&/|| over and/or.
 * `MyClass.my_method(my_arg)` not `my_method( my_arg )` or `my_method my_arg`.
 * `a = b` and not `a=b`.
 * `a_method { |block| ... }` and not `a_method { | block | ... }`

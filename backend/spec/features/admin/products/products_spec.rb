@@ -319,7 +319,7 @@ describe "Products", type: :feature do
         fill_in "product_available_on", with: "2012/12/25"
         click_button "Update"
         expect(page).to have_content("successfully updated!")
-        expect(Spree::Product.last.available_on).to eq('Tue, 25 Dec 2012 00:00:00 UTC +00:00')
+        expect(Spree::Product.last.available_on.to_s).to eq("2012-12-25 00:00:00 UTC")
       end
 
       it 'should add option_types when selecting a prototype', js: true do

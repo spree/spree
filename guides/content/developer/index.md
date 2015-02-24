@@ -12,4 +12,4 @@ Otherwise, please see the [user documentation](/user/index.html).
 
 ## Wombat Developer Documentation
 
-If you're interested in building an integration for Wombat then the best place to start is our [Wombat support portal](https://suppoert.wombat.co).
+If you're interested in building an integration for Wombat then the best place to start is our [Wombat support portal](https://support.wombat.co).
