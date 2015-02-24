@@ -1,3 +1,4 @@
+require 'carmen'
 connection = ActiveRecord::Base.connection
 state_inserts = []
 
@@ -8,12 +9,19 @@ state_values = -> do
       name       = connection.quote subregion.name
       abbr       = connection.quote subregion.code
       country_id = connection.quote country.id
-
-      state_inserts << [name, abbr, country_id].join(", ")
+      if  connection.adapter_name =~ /SQLite/i 
+        state_inserts << ["#{name} as 'name'", "#{abbr} as 'abbr'", "#{country_id} as 'country_id'"].join(", ")
+      else
+        state_inserts << [name, abbr, country_id].join(", ")
+      end
     end
   end
-
-  state_inserts.map { |x| "(#{x})" }
+  if connection.adapter_name =~ /SQLite/i
+    state_inserts.map { |x| " #{x} " }
+  else
+    state_inserts.map { |x| "(#{x})" }
+  end
+  
 end
 
 columns = ["name", "abbr", "country_id"].map do |column|
@@ -21,8 +29,15 @@ columns = ["name", "abbr", "country_id"].map do |column|
 end.join(', ')
 
 state_values.call.each_slice(500) do |state_values_batch|
-  connection.execute <<-SQL
-    INSERT INTO spree_states (#{columns})
-    VALUES #{state_values_batch.join(", ")};
-  SQL
+  if connection.adapter_name =~ /SQLite/i
+    connection.execute <<-SQL
+      INSERT INTO spree_states (#{columns})
+      SELECT #{state_values_batch.join(" UNION SELECT ")};
+    SQL
+  else
+    connection.execute <<-SQL
+      INSERT INTO spree_states (#{columns})
+      VALUES #{state_values_batch.join(", ")};
+    SQL
+  end
 end
