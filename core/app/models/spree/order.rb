@@ -602,9 +602,9 @@ module Spree
         end
       end
 
-      if payments.valid.sum(:amount) != total
-        errors.add(:base, Spree.t("store_credit.errors.unable_to_fund")) and return false
-      end
+      # if payments.valid.sum(:amount) != total
+      #   errors.add(:base, Spree.t("store_credit.errors.unable_to_fund")) and return false
+      # end
     end
 
     def covered_by_store_credit?
@@ -623,7 +623,7 @@ module Spree
     end
 
     def total_applicable_store_credit
-      if confirm? || complete?
+      if payment? || confirm? || complete?
         payments.store_credits.valid.sum(:amount)
       else
         [total, (user.try(:total_available_store_credit) || 0.0)].min

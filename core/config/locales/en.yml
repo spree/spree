@@ -1272,6 +1272,13 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_credit:
+      credit: "Credit"
+      authorized: "Authorized"
+      captured: "Used"
+      allocated: "Added"
+      errors:
+        unable_to_fund: "Unable to pay for order using store credits"
     store_credit_payment_method:
       unable_to_void: "Unable to void code: %{auth_code}"
       unable_to_credit: "Unable to credit code: %{auth_code}"
