@@ -35,14 +35,16 @@
           <th><%= f.label :usage_limit %></th>
           <th><%= f.label :delete %></th>
         </tr>
-        <%= f.fields_for :promotion_codes, @promotion.promotion_codes do |pc| %>
-          <tr>
-            <td><%= pc.text_field :value %></td>
-            <td><%= pc.date_field :starts_at %></td>
-            <td><%= pc.date_field :expires_at %></td>
-            <td><%= pc.number_field :usage_limit %></td>
-            <td><%= pc.check_box :_destroy %></td>
-          </tr>
+        <% @promotion.promotion_codes.each do |promo_code| %>
+          <%= f.fields_for :promotion_codes, promo_code do |pc| %>
+            <tr>
+              <td><%= pc.text_field :value %></td>
+              <td><%= pc.date_field :starts_at %></td>
+              <td><%= pc.date_field :expires_at %></td>
+              <td><%= pc.number_field :usage_limit %></td>
+              <td><%= pc.check_box :_destroy %></td>
+            </tr>
+          <% end %>
         <% end %>
       </table>
     <% end %>
