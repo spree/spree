@@ -602,9 +602,12 @@ module Spree
         end
       end
 
+      # we add this on before payment, so this should be removed or moved to another place.
+      #
       # if payments.valid.sum(:amount) != total
       #   errors.add(:base, Spree.t("store_credit.errors.unable_to_fund")) and return false
       # end
+      #
     end
 
     def covered_by_store_credit?

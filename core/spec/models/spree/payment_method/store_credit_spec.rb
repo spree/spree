@@ -226,11 +226,11 @@ describe Spree::PaymentMethod::StoreCredit do
     end
 
     context 'with a valid credit request' do
-      before { allow(Spree::StoreCredit).to receive_messages(credit: true) }
+      before { allow_any_instance_of(Spree::StoreCredit).to receive_messages(credit: true) }
 
       it "credits a valid store credit credit request" do
         expect(subject.success?).to be true
-        subject.message.should include Spree.t('store_credit_payment_method.successful_action', action: Spree::StoreCredit::CREDIT_ACTION)
+        expect(subject.message).to include Spree.t('store_credit_payment_method.successful_action', action: Spree::StoreCredit::CREDIT_ACTION)
       end
     end
 
