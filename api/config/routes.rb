@@ -1,7 +1,9 @@
 Spree::Core::Engine.add_routes do
   namespace :admin do
     resources :users do
-      put :generate_api_key, :clear_api_key, on: :member
+      put :generate_api_key,
+          :clear_api_key,
+          on: :member
     end
   end
 
@@ -19,22 +21,35 @@ Spree::Core::Engine.add_routes do
     end
 
     concern :order_routes do
-      put :cancel, :empty, :apply_coupon_code, on: :member
+      put :cancel,
+          :empty,
+          :apply_coupon_code,
+          on: :member
 
       resources :line_items
       resources :payments do
-        put :authorize, :capture, :purchase, :void, :credit, on: :member
+        put :authorize,
+            :capture,
+            :purchase,
+            :void,
+            :credit,
+            on: :member
       end
 
       resources :addresses, only: [:show, :update]
 
       resources :return_authorizations do
-        put :add, :cancel, :receive, on: :member
+        put :add,
+            :cancel,
+            :receive,
+            on: :member
       end
     end
 
     resources :checkouts, only: [:update], concerns: :order_routes do
-      put :next, :advance, on: :member
+      put :next,
+          :advance,
+          on: :member
     end
 
     resources :variants do
