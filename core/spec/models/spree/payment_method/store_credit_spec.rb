@@ -112,12 +112,10 @@ describe Spree::PaymentMethod::StoreCredit do
       end
 
       context 'with an originator' do
-        #let(:originator) { double('originator') }
+        let(:originator) { double('originator') }
 
         it 'passes the originator' do
-          originator = double('originator', primary_key: 3)
-          expect(originator.primary_key).to eql 3
-          expect(store_credit).to receive(:capture).with(anything, anything, anything, action_originator: originator)
+          expect_any_instance_of(Spree::StoreCredit).to receive(:capture).with(anything, anything, anything, action_originator: originator)
           subject
         end
       end
