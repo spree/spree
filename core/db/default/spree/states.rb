@@ -9,10 +9,12 @@ state_values = -> do
       name       = connection.quote subregion.name
       abbr       = connection.quote subregion.code
       country_id = connection.quote country.id
-      if  connection.adapter_name =~ /SQLite/i 
-        state_inserts << ["#{name} as 'name'", "#{abbr} as 'abbr'", "#{country_id} as 'country_id'"].join(", ")
+      if connection.adapter_name =~ /SQLite/i
+        state_inserts << ["#{name} as 'name'", \
+                          "#{abbr} as 'abbr'", \
+                          "#{country_id} as 'country_id'"].join(', ')
       else
-        state_inserts << [name, abbr, country_id].join(", ")
+        state_inserts << [name, abbr, country_id].join(', ')
       end
     end
   end
@@ -21,7 +23,7 @@ state_values = -> do
   else
     state_inserts.map { |x| "(#{x})" }
   end
-  
+
 end
 
 columns = ["name", "abbr", "country_id"].map do |column|
@@ -32,12 +34,12 @@ state_values.call.each_slice(500) do |state_values_batch|
   if connection.adapter_name =~ /SQLite/i
     connection.execute <<-SQL
       INSERT INTO spree_states (#{columns})
-      SELECT #{state_values_batch.join(" UNION SELECT ")};
+      SELECT #{state_values_batch.join(' UNION SELECT ')};
     SQL
   else
     connection.execute <<-SQL
       INSERT INTO spree_states (#{columns})
-      VALUES #{state_values_batch.join(", ")};
+      VALUES #{state_values_batch.join(', ')};
     SQL
   end
 end
