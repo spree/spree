@@ -8,17 +8,15 @@ Spree::Core::Engine.add_routes do
   end
 
   namespace :api, defaults: { format: 'json' } do
-    resources :properties, :stores, :zones
+    get '/config/money', to: 'config#money'
+    get '/config', to: 'config#show'
 
-    resources :promotions, only: :show
-    resources :taxons, :option_values, only: :index
-    resources :inventory_units, only: [:show, :update]
-    resources :stock_items, only: [:index, :update, :destroy]
-    resources :states, only: [:index, :show]
+    get '/orders/mine', to: 'orders#mine', as: 'my_orders'
+    get "/orders/current", to: "orders#current", as: "current_order"
 
-    resources :products do
-      resources :images, :variants, :product_properties
-    end
+    get '/taxons/products', to: 'taxons#products', as: :taxon_products
+
+    put '/classifications', to: 'classifications#update', as: :classifications
 
     concern :order_routes do
       put :cancel,
@@ -26,7 +24,9 @@ Spree::Core::Engine.add_routes do
           :apply_coupon_code,
           on: :member
 
+      resources :addresses, only: [:show, :update]
       resources :line_items
+
       resources :payments do
         put :authorize,
             :capture,
@@ -36,8 +36,6 @@ Spree::Core::Engine.add_routes do
             on: :member
       end
 
-      resources :addresses, only: [:show, :update]
-
       resources :return_authorizations do
         put :add,
             :cancel,
@@ -46,31 +44,40 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    resources :properties, :stores, :zones
+
+    resources :promotions, only: :show
+    resources :taxons, :option_values, only: :index
+    resources :inventory_units, only: [:show, :update]
+    resources :stock_items, only: [:index, :update, :destroy]
+    resources :states, only: [:index, :show]
+
     resources :checkouts, only: [:update], concerns: :order_routes do
       put :next,
           :advance,
           on: :member
     end
 
-    resources :variants do
-      resources :images
+    resources :countries, only: [:index, :show] do
+      resources :states, only: [:index, :show]
     end
 
     resources :option_types do
       resources :option_values
     end
 
-    get '/orders/mine', to: 'orders#mine', as: 'my_orders'
-    get "/orders/current", to: "orders#current", as: "current_order"
-
     resources :orders, concerns: :order_routes
 
-    resources :countries, only: [:index, :show] do
-      resources :states, only: [:index, :show]
+    resources :products do
+      resources :images, :variants, :product_properties
     end
 
     resources :shipments, only: [:create, :update] do
-      put :ready, :ship, :add, :remove, on: :member
+      put :ready,
+          :ship,
+          :add,
+          :remove,
+          on: :member
 
       collection do
         post 'transfer_to_location'
@@ -79,25 +86,24 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    resources :stock_locations do
+      resources :stock_movements, :stock_items
+    end
+
     resources :taxonomies do
       get :jstree, on: :member
+
       resources :taxons do
         get :jstree, on: :member
       end
     end
 
+    resources :variants do
+      resources :images
+    end
+
     resources :users do
       resources :credit_cards, only: [:index]
     end
-
-    resources :stock_locations do
-      resources :stock_movements, :stock_items
-    end
-
-    get '/config/money', to: 'config#money'
-    get '/config', to: 'config#show'
-
-    put '/classifications', to: 'classifications#update', as: :classifications
-    get '/taxons/products', to: 'taxons#products', as: :taxon_products
   end
 end
