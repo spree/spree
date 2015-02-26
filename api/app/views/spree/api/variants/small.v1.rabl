@@ -4,6 +4,7 @@ attributes *variant_attributes
 
 node(:display_price) { |p| p.display_price.to_s }
 node(:options_text) { |v| v.options_text }
+node(:track_inventory) { |v| v.should_track_inventory? }
 node(:in_stock) { |v| v.in_stock? }
 node(:is_backorderable) { |v| v.is_backorderable? }
 node(:total_on_hand) { |v| v.total_on_hand }
