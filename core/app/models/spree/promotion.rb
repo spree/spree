@@ -198,9 +198,9 @@ module Spree
     def update_promotion_code_value
       if code.present?
         if promotion_code.present?
-          promotion_code.update_attributes(value: code)
+          promotion_code.update_attributes!(value: code)
         else
-          build_promotion_code(value: code, usage_limit: usage_limit)
+          build_promotion_code(value: code)
         end
       end
     end
