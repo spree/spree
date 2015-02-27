@@ -5,6 +5,7 @@ class DowncasePromotionCodesValues < ActiveRecord::Migration
   end
 
   def down
-    # Not reversible
+    # can't tell which things we updated vs what things were like before
+    raise ActiveRecord::IrreversibleMigration
   end
 end
