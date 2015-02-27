@@ -21,6 +21,7 @@ module Spree
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
+    validates_associated :promotion_code
 
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
