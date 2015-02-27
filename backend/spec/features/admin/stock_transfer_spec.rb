@@ -8,8 +8,8 @@ describe 'Stock Transfers', type: :feature, js: true do
     destination_location = create(:stock_location, name: 'SF')
     variant = Spree::Variant.last
 
-    visit spree.new_admin_stock_transfer_path
-
+    visit spree.admin_stock_transfers_path
+    click_on 'New Stock Transfer'
     fill_in 'reference', with: 'PO 666'
 
     select2_search variant.name, from: 'Variant'
