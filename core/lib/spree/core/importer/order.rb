@@ -16,9 +16,8 @@ module Spree
 
             shipments_attrs = params.delete(:shipments_attributes)
 
-            create_shipments_from_params(shipments_attrs, order)
             create_line_items_from_params(params.delete(:line_items_attributes),order)
-            create_shipments_from_params(params.delete(:shipments_attributes), order)
+            create_shipments_from_params(shipments_attrs, order)
             create_adjustments_from_params(params.delete(:adjustments_attributes), order)
             create_payments_from_params(params.delete(:payments_attributes), order)
 
