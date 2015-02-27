@@ -79,6 +79,7 @@ Spree::Core::Engine.add_routes do
         put :approve
         put :cancel
         put :resume
+        get :risky_order_info
       end
 
       resources :state_changes, only: [:index]
@@ -112,6 +113,7 @@ Spree::Core::Engine.add_routes do
         end
       end
     end
+    get '/orders/risky', to: "orders#risky", as: :risky_orders
 
     resource :general_settings do
       collection do

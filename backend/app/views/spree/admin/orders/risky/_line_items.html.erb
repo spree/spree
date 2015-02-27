@@ -1,0 +1,34 @@
+<% if order.line_items.exists? %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= Spree.t(:order_line_items) %>
+      </h1>
+    </div>
+    <table class="table table-bordered line-items" data-hook="line-items">
+      <thead>
+        <th colspan="2"><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:price) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th class="text-center"><%= Spree.t(:total_price) %></th>
+      </thead>
+      <tbody>
+        <% order.line_items.each do |item| %>
+          <tr class="line-item" id="line-item-<%= item.id %>">
+            <td class="line-item-image image text-center">
+              <%= mini_image(item.variant) %>
+            </td>
+            <td class="line-item-name">
+              <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+            </td>
+            <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
+            <td class="line-item-qty-show text-center">
+              <%= item.quantity %>
+            </td>
+            <td class="line-item-total text-center"><%= line_item_shipment_price(item, item.quantity) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

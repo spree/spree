@@ -2,7 +2,7 @@ module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
       before_action :initialize_order_events
-      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart]
+      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart, :risky_order_info]
 
       respond_to :html
 
@@ -45,6 +45,23 @@ module Spree
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
         params[:q][:created_at_lt] = created_at_lt
+      end
+
+      def risky
+        @search = Order.accessible_by(current_ability, :index).
+                        complete.
+                        where(considered_risky: true).
+                        where.not(state: 'canceled').
+                        order(completed_at: :desc).
+                        ransack(params[:q])
+
+        @orders = @search.result(distinct: true).
+          page(params[:page]).
+          per(params[:per_page] || Spree::Config[:orders_per_page])
+      end
+
+      def risky_order_info
+        render layout: false
       end
 
       def new
