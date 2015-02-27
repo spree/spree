@@ -16,13 +16,13 @@ describe "Orders Listing", type: :feature, js: true do
     it "should list existing orders" do
       within_row(1) do
         expect(column_text(2)).to eq "R100"
-        expect(find("td:nth-child(3)")).to have_css '.label-considered_risky'
-        expect(column_text(4)).to eq "cart"
+        expect(find("td:nth-child(3)")).to have_css '.considered_risky'
+        expect(column_text(4)).to eq "CART"
       end
 
       within_row(2) do
         expect(column_text(2)).to eq "R200"
-        expect(find("td:nth-child(3)")).to have_css '.label-considered_safe'
+        expect(find("td:nth-child(3)")).to have_css '.considered_safe'
       end
     end
 
@@ -145,19 +145,5 @@ describe "Orders Listing", type: :feature, js: true do
         within("table#listing_orders") { expect(page).not_to have_content("R200") }
       end
     end
-
-    it "should be able to apply a ransack filter by clicking a quickfilter icon" do
-      label_pending = page.find '.label-pending'
-      parent_td = label_pending.find(:xpath, '..')
-
-      # Click the quick filter Pending for order #R100
-      within(parent_td) do
-        find('.js-add-filter').click
-      end
-
-      expect(page).to have_content("R100")
-      expect(page).not_to have_content("R200")
-    end
-
   end
 end
