@@ -44,39 +44,38 @@ module Spree
 
       private
 
+      def content_type
+        case params[:format]
+        when "json"
+          "application/json; charset=utf-8"
+        when "xml"
+          "text/xml; charset=utf-8"
+        end
+      end
+
       def set_content_type
-        content_type = case params[:format]
-                       when "json"
-                         "application/json; charset=utf-8"
-                       when "xml"
-                         "text/xml; charset=utf-8"
-                       end
         headers["Content-Type"] = content_type
       end
 
       def load_user
-        @current_api_user = Spree.user_class.find_by(spree_api_key: api_key.to_s)
+        @current_api_user = try_spree_current_user || Spree.user_class.find_by(spree_api_key: api_key.to_s)
       end
 
       def authenticate_user
-        unless @current_api_user
-          if requires_authentication? && api_key.blank? && order_token.blank?
-            render "spree/api/errors/must_specify_api_key", :status => 401 and return
-          elsif order_token.blank? && (requires_authentication? || api_key.present?)
-            render "spree/api/errors/invalid_api_key", :status => 401 and return
-          else
-            # An anonymous user
-            @current_api_user = Spree.user_class.new
-          end
+        return if @current_api_user
+
+        if requires_authentication? && api_key.blank? && order_token.blank?
+          render "spree/api/errors/must_specify_api_key", status: 401 and return
+        elsif order_token.blank? && (requires_authentication? || api_key.present?)
+          render "spree/api/errors/invalid_api_key", status: 401 and return
+        else
+          # An anonymous user
+          @current_api_user = Spree.user_class.new
         end
       end
 
       def load_user_roles
-        @current_user_roles = if @current_api_user
-                                @current_api_user.spree_roles.pluck(:name)
-                              else
-                                []
-                              end
+        @current_user_roles = @current_api_user ? @current_api_user.spree_roles.pluck(:name) : []
       end
 
       def unauthorized
@@ -117,7 +116,7 @@ module Spree
 
       def invalid_resource!(resource)
         @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render "spree/api/errors/invalid_resource", status: 422
       end
 
       def api_key
@@ -154,7 +153,7 @@ module Spree
       end
 
       def product_includes
-        [ :option_types, :taxons, product_properties: :property, variants: variants_associations, master: variants_associations ]
+        [:option_types, :taxons, product_properties: :property, variants: variants_associations, master: variants_associations]
       end
 
       def order_id
