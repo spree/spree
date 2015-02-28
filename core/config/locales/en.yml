@@ -606,6 +606,7 @@ en:
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
+    delete_from_taxon: Delete From Taxon
     deleted_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
@@ -826,6 +827,7 @@ en:
     new_refund_reason: New Refund Reason
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
+    new_role: New Role
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
     new_shipment_at_location: New shipment at location
@@ -1132,6 +1134,7 @@ en:
     rma_credit: RMA Credit
     rma_number: RMA Number
     rma_value: RMA Value
+    role_id: Role ID
     roles: Roles
     rules: Rules
     safe: Safe

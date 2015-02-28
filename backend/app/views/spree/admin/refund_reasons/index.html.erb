@@ -1,5 +1,6 @@
 <%= render partial: 'spree/admin/shared/named_types/index', locals: {
-  page_title: Spree::RefundReason.model_name.human(count: :many),
+  page_title: plural_resource_name(Spree::RefundReason),
   new_button_text: Spree.t(:new_refund_reason),
-  resource_name: Spree::RefundReason.model_name.human(count: :many)
+  resource_name: plural_resource_name(Spree::RefundReason),
+  resource: Spree::RefundReason
 } %>

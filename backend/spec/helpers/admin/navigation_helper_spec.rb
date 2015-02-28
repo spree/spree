@@ -44,8 +44,7 @@ describe Spree::Admin::NavigationHelper, type: :helper do
 
       context "when match_path option is supplied" do
         before do
-          allow(helper).to receive(:admin_path).and_return("/somepath")
-          allow(helper).to receive(:request).and_return(double(ActionDispatch::Request, fullpath: "/somepath/orders/edit/1"))
+          allow(helper).to receive(:request).and_return(double(ActionDispatch::Request, fullpath: "/admin/orders/edit/1"))
         end
 
         it "should be selected if the fullpath matches" do

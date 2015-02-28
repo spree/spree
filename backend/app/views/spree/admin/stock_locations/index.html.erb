@@ -1,11 +1,10 @@
 <% content_for :page_title do %>
-  <%= Spree::StockLocation.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::StockLocation) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_stock_location), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_stock_location' } %>
-  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { :icon => 'add', :class => 'btn-primary' } %>
-<% end %>
+<% end if can? :create, Spree::StockLocation %>
 
 <% if @stock_locations.any? %>
   <table class="table" id='listing_stock_locations' data-hook>
@@ -27,8 +26,8 @@
           <td><span class="state <%= state(stock_location) %>"><%= Spree.t(state(stock_location)) %></span></td>
           <td><%= link_to Spree.t(:stock_movements), admin_stock_location_stock_movements_path(stock_location.id) %> </td>
           <td class="actions actions-2 text-center">
-            <%= link_to_edit stock_location, :no_text => true %>
-            <%= link_to_delete stock_location, :no_text => true %>
+            <%= link_to_edit(stock_location, :no_text => true) if can? :create, stock_location %>
+            <%= link_to_delete(stock_location, :no_text => true) if can? :create, stock_location %>
           </td>
         </tr>
       <% end %>
@@ -36,7 +35,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::StockLocation.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StockLocation)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::StockLocation %>!
   </div>
 <% end %>

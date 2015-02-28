@@ -38,10 +38,10 @@
           <td class='actions actions-2'>
             <%= button_to [:admin, return_item], { class: 'icon icon-thumbs-up icon_link no-text with-tip display-inline', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
               Spree.t(:accept)
-            <% end %>
+            <% end if can?(:accept, return_item) %>
             <%= button_to [:admin, return_item], { class: 'icon icon-thumbs-down icon_link no-text with-tip display-inline', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
               Spree.t(:reject)
-            <% end %>
+            <% end if can?(:reject, return_item) %>
           </td>
         <% end %>
       </tr>

@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_role), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_role_link' if can? :create, Spree::Role %>
-<% end %>
+<% end if can? :create, Spree::Role %>
 
 <% if @roles.any? %>
   <table class="table">
@@ -28,7 +28,7 @@
   </table>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Role.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Role)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::Role %>!
   </div>
 <% end %>

@@ -1,6 +1,6 @@
 <tr class="product_property fields" id="spree_<%= dom_id(f.object) %>" data-hook="product_property">
   <td class="move-handle">
-    <% if f.object.persisted? %>
+    <% if f.object.persisted? && can?(:edit, f.object) %>
       <span class="icon icon-move handle"></span>
       <%= f.hidden_field :id %>
     <% end %>
@@ -12,7 +12,7 @@
     <%= f.text_field :value, class: 'form-control' %>
   </td>
   <td class="actions actions-1">
-    <% if f.object.persisted? %>
+    <% if f.object.persisted? && can?(:destroy, f.object) %>
       <%= link_to_delete f.object, no_text: true %>
     <% end %>
   </td>
