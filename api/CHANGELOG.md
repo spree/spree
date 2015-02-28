@@ -1,1 +1,3 @@
-## Spree 2.4.0 (unreleased) ##
+## Spree 3.0.0 (unreleased) ##
+
+* Deprecate the Spree::Api::ConfigController
