@@ -41,7 +41,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    resource :config, only: :show do
+    resource :config, controller: "config", only: :show do
       get :money, on: :member
     end
 
