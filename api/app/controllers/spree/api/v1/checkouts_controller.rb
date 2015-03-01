@@ -13,16 +13,16 @@ module Spree
           load_order(true)
           authorize! :update, @order, order_token
           @order.next!
-          respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+          respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
         rescue StateMachines::InvalidTransition
-          respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+          respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
         end
 
         def advance
           load_order(true)
           authorize! :update, @order, order_token
           while @order.next; end
-          respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+          respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
         end
 
         def update
@@ -38,9 +38,9 @@ module Spree
 
             if @order.completed? || @order.next
               state_callback(:after)
-              respond_with(@order, default_template: 'spree/api/orders/show')
+              respond_with(@order, default_template: 'spree/api/v1/orders/show')
             else
-              respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+              respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
             end
           else
             invalid_resource!(@order)
@@ -70,7 +70,7 @@ module Spree
           end
 
           def raise_insufficient_quantity
-            respond_with(@order, default_template: 'spree/api/orders/insufficient_quantity')
+            respond_with(@order, default_template: 'spree/api/v1/orders/insufficient_quantity')
           end
 
           def state_callback(before_or_after = :before)
@@ -84,7 +84,7 @@ module Spree
 
               if handler.error.present?
                 @coupon_message = handler.error
-                respond_with(@order, default_template: 'spree/api/orders/could_not_apply_coupon')
+                respond_with(@order, default_template: 'spree/api/v1/orders/could_not_apply_coupon')
                 return true
               end
             end

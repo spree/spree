@@ -67,7 +67,7 @@ module Spree
           taxon = Spree::Taxon.find(params[:id])
           @products = taxon.products.ransack(params[:q]).result
           @products = @products.page(params[:page]).per(params[:per_page] || 500)
-          render "spree/api/products/index"
+          render "spree/api/v1/products/index"
         end
 
         private

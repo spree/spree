@@ -44,7 +44,7 @@ module Spree
             if @shipment.can_ready?
               @shipment.ready!
             else
-              render 'spree/api/shipments/cannot_ready_shipment', status: 422 and return
+              render 'spree/api/v1/shipments/cannot_ready_shipment', status: 422 and return
             end
           end
           respond_with(@shipment, default_template: :show)
