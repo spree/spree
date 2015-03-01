@@ -49,18 +49,18 @@ module Spree
 
       it "uses the specified template" do
         @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-          r.draw { get 'custom_show' => 'spree/api/zones#custom_show' }
+          r.draw { get 'custom_show' => 'spree/api/v1/zones#custom_show' }
         end
 
         request.headers['X-Spree-Template'] = 'show'
         api_get :custom_show, :id => @zone.id
-        expect(response).to render_template('spree/api/zones/show')
+        expect(response).to render_template('spree/api/v1/zones/show')
       end
 
       it "falls back to the default template if the specified template does not exist" do
         request.headers['X-Spree-Template'] = 'invoice'
         api_get :show, :id => @zone.id
-        expect(response).to render_template('spree/api/zones/show')
+        expect(response).to render_template('spree/api/v1/zones/show')
       end
     end
 
