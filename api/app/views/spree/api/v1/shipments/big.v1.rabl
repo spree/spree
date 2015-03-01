@@ -3,7 +3,7 @@ cache @shipment
 attributes *shipment_attributes
 
 child selected_shipping_rate: :selected_shipping_rate do
-  extends "spree/api/shipping_rates/show"
+  extends "spree/api/v1/shipping_rates/show"
 end
 
 child inventory_units: :inventory_units do
@@ -11,9 +11,9 @@ child inventory_units: :inventory_units do
   attributes *inventory_unit_attributes
 
   child :variant do
-    extends "spree/api/variants/small"
+    extends "spree/api/v1/variants/small"
     attributes :product_id
-    child(images: :images) { extends "spree/api/images/show" }
+    child(images: :images) { extends "spree/api/v1/images/show" }
   end
 
   child :line_item do
@@ -25,18 +25,18 @@ child inventory_units: :inventory_units do
 end
 
 child order: :order do
-  extends "spree/api/orders/order"
+  extends "spree/api/v1/orders/order"
 
   child billing_address: :bill_address do
-    extends "spree/api/addresses/show"
+    extends "spree/api/v1/addresses/show"
   end
 
   child shipping_address: :ship_address do
-    extends "spree/api/addresses/show"
+    extends "spree/api/v1/addresses/show"
   end
 
   child adjustments: :adjustments do
-    extends "spree/api/adjustments/show"
+    extends "spree/api/v1/adjustments/show"
   end
 
   child payments: :payments do

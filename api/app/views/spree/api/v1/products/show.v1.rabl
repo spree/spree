@@ -8,11 +8,11 @@ node(:has_variants) { |p| p.has_variants? }
 node(:taxon_ids) { |p| p.taxon_ids }
 
 child :master => :master do
-  extends "spree/api/variants/small"
+  extends "spree/api/v1/variants/small"
 end
 
 child :variants => :variants do
-  extends "spree/api/variants/small"
+  extends "spree/api/v1/variants/small"
 end
 
 child :option_types => :option_types do
@@ -27,6 +27,6 @@ child :classifications => :classifications do
   attributes :taxon_id, :position
 
   child(:taxon) do
-    extends "spree/api/taxons/show"
+    extends "spree/api/v1/taxons/show"
   end
 end

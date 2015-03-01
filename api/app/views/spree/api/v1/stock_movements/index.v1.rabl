@@ -1,6 +1,6 @@
 object false
 child(@stock_movements => :stock_movements) do
-  extends 'spree/api/stock_movements/show'
+  extends 'spree/api/v1/stock_movements/show'
 end
 node(:count) { @stock_movements.count }
 node(:current_page) { params[:page] || 1 }

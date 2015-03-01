@@ -6,11 +6,11 @@ node(:order_id) { |shipment| shipment.order.number }
 node(:stock_location_name) { |shipment| shipment.stock_location.name }
 
 child :shipping_rates => :shipping_rates do
-  extends "spree/api/shipping_rates/show"
+  extends "spree/api/v1/shipping_rates/show"
 end
 
 child :selected_shipping_rate => :selected_shipping_rate do
-  extends "spree/api/shipping_rates/show"
+  extends "spree/api/v1/shipping_rates/show"
 end
 
 child :shipping_methods => :shipping_methods do
@@ -33,5 +33,5 @@ child :manifest => :manifest do
 end
 
 child :adjustments => :adjustments do
-  extends "spree/api/adjustments/show"
+  extends "spree/api/v1/adjustments/show"
 end
