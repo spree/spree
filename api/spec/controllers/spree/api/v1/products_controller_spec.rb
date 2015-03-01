@@ -69,7 +69,7 @@ module Spree
 
       context "specifying a rabl template for a custom action" do
         before do
-          Spree::Api::ProductsController.class_eval do
+          described_class.class_eval do
             def custom_show
               @product = find_product(params[:id])
               respond_with(@product)

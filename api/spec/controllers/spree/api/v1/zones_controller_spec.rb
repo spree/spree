@@ -40,7 +40,7 @@ module Spree
 
     context "specifying a rabl template to use" do
       before do
-        Spree::Api::ZonesController.class_eval do
+        described_class.class_eval do
           def custom_show
             respond_with(zone)
           end
