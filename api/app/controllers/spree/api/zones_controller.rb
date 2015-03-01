@@ -1,7 +1,6 @@
 module Spree
   module Api
     class ZonesController < Spree::Api::BaseController
-
       def create
         authorize! :create, Zone
         @zone = Zone.new(map_nested_attributes_keys(Spree::Zone, zone_params))
@@ -19,8 +18,12 @@ module Spree
       end
 
       def index
-        @zones = Zone.accessible_by(current_ability, :read).order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@zones)
+        @zones = Zone.accessible_by(current_ability, :read).order('name ASC').
+                 includes(zone_members: :zoneable).
+                 ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        render json: @zones, meta: {
+          count: @zones.count, pages: (params[:page] || 1), current_page: @zones.num_pages
+        }
       end
 
       def show
@@ -37,6 +40,7 @@ module Spree
       end
 
       private
+
       def zone_params
         params.require(:zone).permit!
       end
