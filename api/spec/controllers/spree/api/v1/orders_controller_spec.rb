@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spree/testing_support/bar_ability'
 
 module Spree
-  describe Api::OrdersController, :type => :controller do
+  describe Api::V1::OrdersController, :type => :controller do
     render_views
 
     let!(:order) { create(:order) }

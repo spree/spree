@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'shared_examples/protect_product_actions'
 
 module Spree
-  describe Spree::Api::ProductPropertiesController, :type => :controller do
+  describe Api::V1::ProductPropertiesController, :type => :controller do
     render_views
 
     let!(:product) { create(:product) }

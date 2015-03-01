@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::UsersController, :type => :controller do
+  describe Api::V1::UsersController, :type => :controller do
     render_views
 
     let(:user) { create(:user) }

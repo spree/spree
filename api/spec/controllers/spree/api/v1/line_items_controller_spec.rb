@@ -10,9 +10,9 @@ module Spree
   end
 
   # This should go in an initializer
-  Spree::Api::LineItemsController.line_item_options += [:some_option]
+  Spree::Api::V1::LineItemsController.line_item_options += [:some_option]
 
-  describe Api::LineItemsController, :type => :controller do
+  describe Api::V1::LineItemsController, :type => :controller do
     render_views
 
     let!(:order) { create(:order_with_line_items, line_items_count: 1) }

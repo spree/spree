@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::ShipmentsController, :type => :controller do
+describe Spree::Api::V1::ShipmentsController, :type => :controller do
   render_views
   let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::OptionTypesController, :type => :controller do
+  describe Api::V1::OptionTypesController, :type => :controller do
     render_views
 
     let(:attributes) { [:id, :name, :position, :presentation] }

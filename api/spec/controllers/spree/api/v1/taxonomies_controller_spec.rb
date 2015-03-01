@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::TaxonomiesController, :type => :controller do
+  describe Api::V1::TaxonomiesController, :type => :controller do
     render_views
 
     let(:taxonomy) { create(:taxonomy) }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ClassificationsController, type: :controller do
+  describe Api::V1::ClassificationsController, type: :controller do
     let(:taxon) do
       taxon = create(:taxon)
 

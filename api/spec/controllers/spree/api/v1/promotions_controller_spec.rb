@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::Api::PromotionsController, :type => :controller do
+  describe Api::V1::PromotionsController, :type => :controller do
     render_views
 
     shared_examples "a JSON response" do

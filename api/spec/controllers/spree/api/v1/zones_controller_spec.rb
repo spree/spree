@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ZonesController, :type => :controller do
+  describe Api::V1::ZonesController, :type => :controller do
     render_views
 
     let!(:attributes) { [:id, :name, :zone_members] }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 module Spree
-  describe Spree::Api::PropertiesController, :type => :controller do
+  describe Api::V1::PropertiesController, :type => :controller do
     render_views
 
     let!(:property_1) { Property.create!(:name => "foo", :presentation => "Foo") }

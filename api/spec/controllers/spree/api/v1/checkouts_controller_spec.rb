@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::CheckoutsController, type: :controller do
+  describe Api::V1::CheckoutsController, type: :controller do
     render_views
 
     before(:each) do

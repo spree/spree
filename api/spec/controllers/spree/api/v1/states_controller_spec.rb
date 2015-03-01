@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::StatesController, :type => :controller do
+  describe Api::V1::StatesController, :type => :controller do
     render_views
 
     let!(:state) { create(:state, :name => "Victoria") }
