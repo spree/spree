@@ -10,7 +10,7 @@ describe "Rabl Cache", :type => :request, :caching => true do
   end
   
   it "doesn't create a cache key collision for models with different rabl templates" do
-    get "/api/variants", :token => user.spree_api_key
+    get "/api/v1/variants", :token => user.spree_api_key
     expect(response.status).to eq(200)
 
     # Make sure we get a non master variant
