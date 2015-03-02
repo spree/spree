@@ -21,7 +21,8 @@ $(document).ready(function () {
           return {
             q: {
               name_cont: term
-            }
+            },
+            token: Spree.api_key
           };
         },
         results: function (data) {

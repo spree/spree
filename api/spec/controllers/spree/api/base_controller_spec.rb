@@ -17,20 +17,6 @@ describe Spree::Api::BaseController, :type => :controller do
     end
   end
 
-  context "signed in as a user using an authentication extension" do
-    before do
-      user = double(:email => "spree@example.com")
-      allow(user).to receive_message_chain :spree_roles, pluck: []
-      allow(controller).to receive_messages :try_spree_current_user => user
-    end
-
-    it "can make a request" do
-      api_get :index
-      expect(json_response).to eq({ "products" => [] })
-      expect(response.status).to eq(200)
-    end
-  end
-
   context "when validating based on an order token" do
     let!(:order) { create :order }
 
@@ -123,7 +109,7 @@ describe Spree::Api::BaseController, :type => :controller do
     before do
       user = double(email: "spree@example.com")
       allow(user).to receive_message_chain :spree_roles, pluck: []
-      allow(controller).to receive_messages try_spree_current_user: user
+      allow(Spree.user_class).to receive_messages find_by: user
       @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
         r.draw { get 'foo' => 'fakes#foo' }
       end
@@ -131,7 +117,7 @@ describe Spree::Api::BaseController, :type => :controller do
 
     it 'should notify notify_error_during_processing' do
       expect(MockHoneybadger).to receive(:notify_or_ignore).once.with(kind_of(Exception), rack_env: kind_of(Hash))
-      api_get :foo
+      api_get :foo, token: 123
       expect(response.status).to eq(422)
     end
   end

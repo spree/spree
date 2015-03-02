@@ -4,7 +4,7 @@ describe "Cancelling + Resuming", :type => :feature do
 
   stub_authorization!
 
-  let(:user) { double('id' => 123, 'has_spree_role?' => true) }
+  let(:user) { double(id: 123, has_spree_role?: true, spree_api_key: 'fake') }
 
   before do
     allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(user)

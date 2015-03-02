@@ -22,7 +22,7 @@ module Spree
         end
 
         def stub_authentication!
-          allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
+          allow(Spree.user_class).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
         # This method can be overriden (with a let block) inside a context
