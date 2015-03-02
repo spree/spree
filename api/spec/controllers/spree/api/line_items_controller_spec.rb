@@ -10,8 +10,11 @@ module Spree
     let(:attributes) { [:id, :quantity, :price, :variant, :total, :display_amount, :single_display_amount] }
     let(:resource_scoping) { { :order_id => order.to_param } }
 
+    before do
+      stub_authentication!
+    end
+
     it "can learn how to create a new line item" do
-      controller.stub :try_spree_current_user => current_api_user
       api_get :new
       json_response["attributes"].should == ["quantity", "price", "variant_id"]
       required_attributes = json_response["required_attributes"]
@@ -37,8 +40,7 @@ module Spree
 
     context "as the order owner" do
       before do
-        controller.stub :try_spree_current_user => current_api_user
-        Order.any_instance.stub :user => current_api_user
+        allow_any_instance_of(Order).to receive_messages :user => current_api_user
       end
 
       it "can add a new line item to an existing order" do
@@ -119,7 +121,8 @@ module Spree
     context "as just another user" do
       before do
         user = create(:user)
-        controller.stub :try_spree_current_user => user
+        allow(Spree.user_class).to receive(:find_by).
+                                     and_return(user)
       end
 
       it "cannot add a new line item to the order" do

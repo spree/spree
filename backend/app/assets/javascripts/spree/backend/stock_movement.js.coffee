@@ -8,6 +8,7 @@ jQuery ->
           variant_product_name_cont: term
         per_page: 50
         page: page
+        token: Spree.api_key
       results: (data, page) ->
         more = (page * 50) < data.count
         return { results: data.stock_items, more: more }

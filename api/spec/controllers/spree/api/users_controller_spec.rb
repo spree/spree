@@ -4,70 +4,68 @@ module Spree
   describe Api::UsersController do
     render_views
 
-    let(:user) { create(:user) }
+    let(:user) { create(:user, spree_api_key: rand) }
     let(:stranger) { create(:user, :email => 'stranger@example.com') }
     let(:attributes) { [:id, :email, :created_at, :updated_at] }
 
-    before { stub_authentication! }
-
     context "as a normal user" do
-      before do
-        controller.stub :try_spree_current_user => user
-      end
-
       it "can get own details" do
-        api_get :show, :id => user.id
+        api_get :show, id: user.id, token: user.spree_api_key
 
         json_response['email'].should eq user.email
       end
 
       it "cannot get other users details" do
-        api_get :show, :id => stranger.id
+        api_get :show, id: stranger.id, token: user.spree_api_key
 
         assert_not_found!
       end
 
       it "can learn how to create a new user" do
-        api_get :new
-        json_response["attributes"].should == attributes.map(&:to_s)
+        api_get :new, token: user.spree_api_key
+        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
       end
 
       it "can create a new user" do
-        api_post :create, :user => { :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123' }
-        json_response['email'].should eq 'new@example.com'
+        user_params = {
+          :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123'
+        }
+
+        api_post :create, :user => user_params, token: user.spree_api_key
+        expect(json_response['email']).to eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
       xit "cannot create a new user with invalid attributes" do
-        api_post :create, :user => {}
-        response.status.should == 422
-        json_response["error"].should == "Invalid resource. Please fix errors and try again."
+        api_post :create, :user => {}, token: user.spree_api_key
+        expect(response.status).to eq(422)
+        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
       end
 
       it "can update own details" do
-        api_put :update, :id => user.id, :user => { :email => "mine@example.com" }
+        api_put :update, id: user.id, token: user.spree_api_key, user: { email: "mine@example.com" }
         json_response['email'].should eq 'mine@example.com'
       end
 
       it "cannot update other users details" do
-        api_put :update, :id => stranger.id, :user => { :email => "mine@example.com" }
+        api_put :update, id: stranger.id, token: user.spree_api_key, user: { :email => "mine@example.com" }
         assert_not_found!
       end
 
       it "can delete itself" do
-        api_delete :destroy, :id => user.id
-        response.status.should == 204
+        api_delete :destroy, id: user.id, token: user.spree_api_key
+        expect(response.status).to eq(204)
       end
 
       it "cannot delete other user" do
-        api_delete :destroy, :id => stranger.id
+        api_delete :destroy, id: stranger.id, token: user.spree_api_key
         assert_not_found!
       end
 
       it "should only get own details on index" do
         2.times { create(:user) }
-        api_get :index
+        api_get :index, token: user.spree_api_key
 
         Spree.user_class.count.should eq 3
         json_response['count'].should eq 1
@@ -76,6 +74,8 @@ module Spree
     end
 
     context "as an admin" do
+      before { stub_authentication! }
+
       sign_in_as_admin!
 
       it "gets all users" do

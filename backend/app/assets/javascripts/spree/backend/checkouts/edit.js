@@ -19,7 +19,10 @@ $(document).ready(function() {
         url: Spree.routes.user_search,
         datatype: 'json',
         data: function(term, page) {
-          return { q: term }
+          return {
+            q: term,
+            token: Spree.api_key
+          }
         },
         results: function(data, page) {
           return { results: data }

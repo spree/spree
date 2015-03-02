@@ -24,6 +24,7 @@
 <%= javascript_tag do -%>
   jQuery.alerts.dialogClass = 'spree';
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
-<% end -%>
+  <%== "Spree.api_key = '#{try_spree_current_user.spree_api_key}';" if try_spree_current_user %>
+<% end %>
 
 <%= yield :head %>

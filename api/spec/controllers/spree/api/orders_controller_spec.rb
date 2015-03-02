@@ -135,9 +135,10 @@ module Spree
 
       it "can view an order" do
         user = mock_model(Spree::LegacyUser)
-        user.stub(:has_spree_role?).with('bar').and_return(true)
-        user.stub(:has_spree_role?).with('admin').and_return(false)
-        controller.stub try_spree_current_user: user
+        allow(user).to receive_message_chain(:spree_roles, :pluck).and_return(["bar"])
+        allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
+        allow(user).to receive(:has_spree_role?).with('admin').and_return(false)
+        allow(Spree.user_class).to receive_messages find_by: user
         api_get :show, :id => order.to_param
         response.status.should == 200
       end

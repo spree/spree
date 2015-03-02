@@ -8,16 +8,9 @@ describe Spree::Api::BaseController do
     end
   end
 
-  context "signed in as a user using an authentication extension" do
-    before do
-      controller.stub :try_spree_current_user => double(:email => "spree@example.com")
-      Spree::Api::Config[:requires_authentication] = true
-    end
-
-    it "can make a request" do
-      api_get :index
-      json_response.should == { "products" => [] }
-      response.status.should == 200
+  before do
+    @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
+      r.draw { get 'index', to: 'spree/api/base#index' }
     end
   end
 
