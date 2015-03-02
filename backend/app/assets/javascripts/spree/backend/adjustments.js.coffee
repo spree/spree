@@ -6,6 +6,7 @@ $(@).ready( ->
       url: Spree.url(Spree.routes.apply_coupon_code(order_number))
       data:
         coupon_code: $("#coupon_code").val()
+        token: Spree.api_key
       success: ->
         window.location.reload();
       error: (msg) ->

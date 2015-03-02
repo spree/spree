@@ -9,7 +9,8 @@ $(document).ready(function () {
 
       $.post('/admin/orders/' + $('input#order_number').val() + '/line_items/' + $(id).val(), {
           _method: 'put',
-          'line_item[quantity]': $(this).val()
+          'line_item[quantity]': $(this).val(),
+          token: Spree.api_key
         },
 
         function (resp) {
