@@ -30,7 +30,7 @@ $ ->
 
       $('#transfer_receive_stock').change (event) => @receive_stock_change(event)
 
-      $.getJSON Spree.url(Spree.routes.stock_locations_api), (data) =>
+      $.getJSON Spree.url(Spree.routes.stock_locations_api) + '?token=' + Spree.api_key, (data) =>
         @locations = (location for location in data.stock_locations)
         @force_receive_stock() if @locations.length < 2
 
@@ -109,6 +109,7 @@ $ ->
             query_object = {}
             query_object[query] = term
             q: query_object
+            token: Spree.api_key
 
           results: (data, page) ->
             result = data["variants"] || data["stock_items"]

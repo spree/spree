@@ -14,7 +14,12 @@ handle_move = (e, data) ->
     type: "POST",
     dataType: "json",
     url: url.toString(),
-    data: ({_method: "put", "taxon[parent_id]": new_parent.prop("id"), "taxon[child_index]": position }),
+    data: {
+      _method: "put",
+      "taxon[parent_id]": new_parent.prop("id"),
+      "taxon[child_index]": position,
+      token: Spree.api_key
+    },
     error: handle_ajax_error
 
   true
@@ -30,7 +35,12 @@ handle_create = (e, data) ->
     type: "POST",
     dataType: "json",
     url: base_url.toString(),
-    data: ({"taxon[name]": name, "taxon[parent_id]": new_parent.prop("id"), "taxon[child_index]": position }),
+    data: {
+      "taxon[name]": name,
+      "taxon[parent_id]": new_parent.prop("id"),
+      "taxon[child_index]": position,
+      token: Spree.api_key
+    },
     error: handle_ajax_error,
     success: (data,result) ->
       node.prop('id', data.id)
@@ -47,7 +57,11 @@ handle_rename = (e, data) ->
     type: "POST",
     dataType: "json",
     url: url.toString(),
-    data: {_method: "put", "taxon[name]": name },
+    data: {
+      _method: "put",
+      "taxon[name]": name,
+      token: Spree.api_key
+    },
     error: handle_ajax_error
 
 handle_delete = (e, data) ->
@@ -61,7 +75,10 @@ handle_delete = (e, data) ->
       type: "POST",
       dataType: "json",
       url: delete_url.toString(),
-      data: {_method: "delete"},
+      data: {
+        _method: "delete",
+        token: Spree.api_key
+      },
       error: handle_ajax_error
   else
     $.jstree.rollback(last_rollback)
@@ -75,6 +92,8 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
 
     $.ajax
       url: Spree.url(base_url.path().replace("/taxons", "/jstree")).toString(),
+      data:
+        token: Spree.api_key
       success: (taxonomy) ->
         last_rollback = null
 
@@ -83,7 +102,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
             data: taxonomy,
             ajax:
               url: (e) ->
-                Spree.url(base_url.path() + '/' + e.prop('id') + '/jstree').toString()
+                Spree.url(base_url.path() + '/' + e.prop('id') + '/jstree' + '?token=' + Spree.api_key).toString()
           themes:
             theme: "apple",
             url: Spree.url(Spree.routes.jstree_theme_path)

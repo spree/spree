@@ -23,7 +23,8 @@ var set_taxon_select = function(){
             without_children: true,
             q: {
               name_cont: term
-            }
+            },
+            token: Spree.api_key
           };
         },
         results: function (data, page) {
