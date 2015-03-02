@@ -1,5 +1,10 @@
 class OrderWalkthrough
   def self.up_to(state)
+    # A default store must exist to provide store settings
+    unless Spree::Store.exists?
+      FactoryGirl.create(:store)
+    end
+
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
       FactoryGirl.create(:check_payment_method)

@@ -10,6 +10,8 @@ describe "New Order", :type => :feature do
   stub_authorization!
 
   before do
+    # create default store
+    create(:store)
     visit spree.new_admin_order_path
   end
 
