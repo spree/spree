@@ -39,7 +39,8 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace).select{ |c| c < Spree::ShippingCalculator }
+      spree_calculators.send(model_name_without_spree_namespace)
+        .select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
     # Some shipping methods are only meant to be set via backend
