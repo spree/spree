@@ -172,7 +172,7 @@ module Spree
         allow(user).to receive_message_chain(:spree_roles, :pluck).and_return(["bar"])
         allow(user).to receive(:has_spree_role?).with('bar').and_return(true)
         allow(user).to receive(:has_spree_role?).with('admin').and_return(false)
-        allow(controller).to receive_messages try_spree_current_user: user
+        allow(Spree.user_class).to receive_messages find_by: user
         api_get :show, :id => order.to_param
         expect(response.status).to eq(200)
       end

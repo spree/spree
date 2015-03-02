@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Cancelling + Resuming", :type => :feature do
   stub_authorization!
 
-  let(:order) do 
+  let(:order) do
     order = create(:order)
     order.update_columns({
       :state => 'complete',
