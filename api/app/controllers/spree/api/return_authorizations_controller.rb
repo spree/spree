@@ -3,8 +3,8 @@ module Spree
     class ReturnAuthorizationsController < Spree::Api::BaseController
 
       def create
-        authorize! :create, ReturnAuthorization
         @return_authorization = order.return_authorizations.build(return_authorization_params)
+        authorize! :create, @return_authorization
         if @return_authorization.save
           respond_with(@return_authorization, status: 201, default_template: :show)
         else
