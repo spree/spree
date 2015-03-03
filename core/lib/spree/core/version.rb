@@ -1,5 +1,5 @@
 module Spree
   def self.version
-    "2.4.5.beta"
+    "2.4.5"
   end
 end
