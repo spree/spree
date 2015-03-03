@@ -19,7 +19,8 @@
 // Red
 .label-failed,
 .label-considered_risky,
-.label-error {
+.label-error,
+.label-invalid {
   background-color: $brand-danger;
 }
 
