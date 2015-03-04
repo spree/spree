@@ -73,9 +73,9 @@ module Spree
       def authenticate_user
         unless @current_api_user
           if requires_authentication? && api_key.blank? && order_token.blank?
-            render "spree/api/errors/must_specify_api_key", :status => 401 and return
+            render "spree/api/errors/must_specify_api_key", status: 401 and return
           elsif order_token.blank? && (requires_authentication? || api_key.present?)
-            render "spree/api/errors/invalid_api_key", :status => 401 and return
+            render "spree/api/errors/invalid_api_key", status: 401 and return
           else
             # An anonymous user
             @current_api_user = Spree.user_class.new
@@ -129,7 +129,7 @@ module Spree
 
       def invalid_resource!(resource)
         @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render "spree/api/errors/invalid_resource", status: 422
       end
 
       def api_key
