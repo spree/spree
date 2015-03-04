@@ -37,7 +37,9 @@ module Spree
           end
 
           before do
-            allow_any_instance_of(Api::BaseController).to receive(:try_spree_current_user).and_return(Spree.user_class.new)
+            allow(Spree.user_class).to receive(:find_by).
+                                         with(hash_including(:spree_api_key)).
+                                         and_return(Spree.user_class.new)
           end
         end
 
@@ -56,6 +58,6 @@ module Spree
 end
 
 RSpec.configure do |config|
-  config.extend Spree::TestingSupport::AuthorizationHelpers::Controller, :type => :controller
-  config.extend Spree::TestingSupport::AuthorizationHelpers::Request, :type => :feature
+  config.extend Spree::TestingSupport::AuthorizationHelpers::Controller, type: :controller
+  config.extend Spree::TestingSupport::AuthorizationHelpers::Request, type: :feature
 end

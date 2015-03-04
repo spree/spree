@@ -4,42 +4,40 @@ module Spree
   describe Api::UsersController, :type => :controller do
     render_views
 
-    let(:user) { create(:user) }
+    let(:user) { create(:user, spree_api_key: rand) }
     let(:stranger) { create(:user, :email => 'stranger@example.com') }
     let(:attributes) { [:id, :email, :created_at, :updated_at] }
 
-    before { stub_authentication! }
-
     context "as a normal user" do
-      before do
-        allow(controller).to receive_messages :try_spree_current_user => user
-      end
-
       it "can get own details" do
-        api_get :show, :id => user.id
+        api_get :show, id: user.id, token: user.spree_api_key
 
         expect(json_response['email']).to eq user.email
       end
 
       it "cannot get other users details" do
-        api_get :show, :id => stranger.id
+        api_get :show, id: stranger.id, token: user.spree_api_key
 
         assert_not_found!
       end
 
       it "can learn how to create a new user" do
-        api_get :new
+        api_get :new, token: user.spree_api_key
         expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
       end
 
       it "can create a new user" do
-        api_post :create, :user => { :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123' }
+        user_params = {
+          :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123'
+        }
+
+        api_post :create, :user => user_params, token: user.spree_api_key
         expect(json_response['email']).to eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
       xit "cannot create a new user with invalid attributes" do
-        api_post :create, :user => {}
+        api_post :create, :user => {}, token: user.spree_api_key
         expect(response.status).to eq(422)
         expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
@@ -47,7 +45,7 @@ module Spree
 
       it "can update own details" do
         country = create(:country)
-        api_put :update, id: user.id, user: {
+        api_put :update, id: user.id, token: user.spree_api_key, user: {
           email: "mine@example.com",
           bill_address_attributes: {
             first_name: 'First',
@@ -76,23 +74,23 @@ module Spree
       end
 
       it "cannot update other users details" do
-        api_put :update, :id => stranger.id, :user => { :email => "mine@example.com" }
+        api_put :update, id: stranger.id, token: user.spree_api_key, user: { :email => "mine@example.com" }
         assert_not_found!
       end
 
       it "can delete itself" do
-        api_delete :destroy, :id => user.id
+        api_delete :destroy, id: user.id, token: user.spree_api_key
         expect(response.status).to eq(204)
       end
 
       it "cannot delete other user" do
-        api_delete :destroy, :id => stranger.id
+        api_delete :destroy, id: stranger.id, token: user.spree_api_key
         assert_not_found!
       end
 
       it "should only get own details on index" do
         2.times { create(:user) }
-        api_get :index
+        api_get :index, token: user.spree_api_key
 
         expect(Spree.user_class.count).to eq 3
         expect(json_response['count']).to eq 1
@@ -101,6 +99,8 @@ module Spree
     end
 
     context "as an admin" do
+      before { stub_authentication! }
+
       sign_in_as_admin!
 
       it "gets all users" do
