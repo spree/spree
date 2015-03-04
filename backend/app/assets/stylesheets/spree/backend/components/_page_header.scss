@@ -7,6 +7,21 @@
     line-height: 38px;
   }
 
+  &.with-page-tabs {
+    border-bottom: 0;
+    margin-bottom: 6px;
+    padding-bottom: 0;
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .nav-tabs {
+      padding-left: 15px;
+      padding-top: 15px;
+    }
+  }
+
   .page-actions {
     text-align: right;
 

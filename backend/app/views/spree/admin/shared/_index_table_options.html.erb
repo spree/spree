@@ -3,8 +3,8 @@
     <%= paginate collection %>
   </div>
   <div class="col-sm-6">
-    <div class="pagination-wrap pagination-per-page">
-      <%= form_tag({}, { :method => "get", :id => "js-per-page-form", :class => 'form-inline' }) do %>
+    <div class="pagination-wrap">
+      <%= form_tag({ action: (defined?(per_page_action) ?  per_page_action : :index)}, { method: :get, id: 'js-per-page-form', class: 'form-inline' }) do %>
         <%= per_page_dropdown %>
       <% end %>
       <div class="clearfix"></div>

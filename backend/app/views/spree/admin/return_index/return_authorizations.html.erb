@@ -1,0 +1,76 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:return_authorizations) %>
+<% end %>
+
+<% content_for :page_tabs do %>
+  <li class="<%= "active" if params[:q][:state_eq].blank? %>">
+    <%= link_to Spree.t(:all), spree.admin_return_authorizations_index_path %>
+  </li>
+  <li class="<%= "active" if params[:q][:state_eq] == "authorized" %>">
+    <%= link_to Spree.t(:authorized), params.merge({q: {state_eq: :authorized}}) %>
+  </li>
+  <li class="<%= "active" if params[:q][:state_eq] == "canceled" %>">
+    <%= link_to Spree.t(:canceled), params.merge({q: {state_eq: :canceled}}) %>
+  </li>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_return_authorisations_index_filters">
+    <%= search_form_for [:admin, @search], url: spree.admin_return_authorizations_index_path do |f| %>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :number_cont, Spree.t(:number) %>
+            <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= label_tag :q_state_eq, Spree.t(:status) %>
+            <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2' %>
+          </div>
+        </div>
+      </div>
+      <div data-hook="admin_return_authorisations_index_filters_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :return_authorizations } %>
+
+<% if @collection.any? %>
+  <table class="table">
+    <thead>
+      <tr data-hook="rate_header">
+        <th><%= Spree.t(:created_at) %></th>
+        <th><%= Spree.t(:number) %></th>
+        <th><%= Spree.t(:order) %></th>
+        <th><%= Spree.t(:state) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @collection.each do |return_authorization| %>
+        <tr id="<%= spree_dom_id return_authorization %>" data-hook="return_authorization_row">
+          <td><%= return_authorization.created_at.to_date %></td>
+          <td><%= link_to return_authorization.number, spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) %></td>
+          <td><%= link_to return_authorization.order.number, spree.edit_admin_order_path(return_authorization.order) %></td>
+          <td>
+            <span class="label label-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
+          </td>
+          <td class="actions actions-1 text-right">
+            <%= link_to_edit return_authorization, url: spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization), no_text: true %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: Spree::ReturnAuthorization.model_name.human(count: :many)) %>.
+  </div>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :return_authorizations } %>
