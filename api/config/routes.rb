@@ -8,7 +8,7 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  namespace :api, defaults: { format: 'json' } do
+  namespace :api, defaults: { format: "json" } do
     namespace :v1 do
       resources :promotions, only: [:show]
 
@@ -65,7 +65,7 @@ Spree::Core::Engine.add_routes do
 
       resources :option_values, only: :index
 
-      get '/orders/mine', to: 'orders#mine', as: 'my_orders'
+      get "/orders/mine", to: "orders#mine", as: "my_orders"
       get "/orders/current", to: "orders#current", as: "current_order"
 
       resources :orders, concerns: :order_routes
@@ -77,8 +77,8 @@ Spree::Core::Engine.add_routes do
 
       resources :shipments, only: [:create, :update] do
         collection do
-          post 'transfer_to_location'
-          post 'transfer_to_shipment'
+          post "transfer_to_location"
+          post "transfer_to_shipment"
           get :mine
         end
 
@@ -119,11 +119,11 @@ Spree::Core::Engine.add_routes do
       resources :stock_items, only: [:index, :update, :destroy]
       resources :stores
 
-      put '/classifications', to: 'classifications#update', as: :classifications
-      get '/taxons/products', to: 'taxons#products', as: :taxon_products
+      put "/classifications", to: "classifications#update", as: :classifications
+      get "/taxons/products", to: "taxons#products", as: :taxon_products
     end
 
-    match 'v:api/*path', to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
-    match '*path', to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
+    match "v:api/*path", to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
+    match "*path", to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
   end
 end
