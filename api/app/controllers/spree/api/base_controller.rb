@@ -67,7 +67,7 @@ module Spree
       end
 
       def load_user
-        @current_api_user = (try_spree_current_user || Spree.user_class.find_by(spree_api_key: api_key.to_s))
+        @current_api_user = try_spree_current_user || Spree.user_class.find_by(spree_api_key: api_key.to_s)
       end
 
       def authenticate_user
@@ -162,7 +162,7 @@ module Spree
       end
 
       def product_includes
-        [ :option_types, :taxons, product_properties: :property, variants: variants_associations, master: variants_associations ]
+        [:option_types, :taxons, product_properties: :property, variants: variants_associations, master: variants_associations]
       end
 
       def order_id
