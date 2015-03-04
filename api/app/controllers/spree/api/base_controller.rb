@@ -16,8 +16,6 @@ module Spree
       before_filter :authenticate_user
       before_filter :load_user_roles
 
-      after_filter  :set_jsonp_format
-
       rescue_from Exception, with: :error_during_processing
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from CanCan::AccessDenied, with: :unauthorized
@@ -26,13 +24,6 @@ module Spree
       helper Spree::Api::ApiHelpers
 
       ssl_allowed
-
-      def set_jsonp_format
-        if params[:callback] && request.get?
-          self.response_body = "#{params[:callback]}(#{response.body})"
-          headers["Content-Type"] = 'application/javascript'
-        end
-      end
 
       def map_nested_attributes_keys(klass, attributes)
         nested_keys = klass.nested_attributes_options.keys
