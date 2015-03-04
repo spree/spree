@@ -53,13 +53,16 @@ module Spree
 
       private
 
-      def set_content_type
-        content_type = case params[:format]
+      def content_type
+        case params[:format]
         when "json"
           "application/json; charset=utf-8"
         when "xml"
           "text/xml; charset=utf-8"
         end
+      end
+
+      def set_content_type
         headers["Content-Type"] = content_type
       end
 
