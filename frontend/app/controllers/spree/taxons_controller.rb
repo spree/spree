@@ -17,12 +17,7 @@ module Spree
     private
 
     def accurate_title
-      if @taxon
-        @taxon.seo_title
-      else
-        super
-      end
+      @taxon.try(:seo_title) || super
     end
-
   end
 end
