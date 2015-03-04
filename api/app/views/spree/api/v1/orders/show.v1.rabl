@@ -1,7 +1,7 @@
 object @order
 extends "spree/api/v1/orders/order"
 
-if lookup_context.find_all("spree/api/orders/#{root_object.state}").present?
+if lookup_context.find_all("spree/api/v1/orders/#{root_object.state}").present?
   extends "spree/api/v1/orders/#{root_object.state}"
 end
 
