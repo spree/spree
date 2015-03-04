@@ -26,13 +26,6 @@ module Spree
 
       helper Spree::Api::ApiHelpers
 
-      def set_jsonp_format
-        if params[:callback] && request.get?
-          self.response_body = "#{params[:callback]}(#{response.body})"
-          headers["Content-Type"] = 'application/javascript'
-        end
-      end
-
       def map_nested_attributes_keys(klass, attributes)
         nested_keys = klass.nested_attributes_options.keys
         attributes.inject({}) do |h, (k,v)|
