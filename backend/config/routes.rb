@@ -168,10 +168,12 @@ Spree::Core::Engine.add_routes do
 
     resources :users do
       member do
-        get :orders
-        get :items
         get :addresses
         put :addresses
+        put :clear_api_key
+        put :generate_api_key
+        get :items
+        get :orders
       end
     end
   end
