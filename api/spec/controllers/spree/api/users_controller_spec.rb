@@ -4,7 +4,7 @@ module Spree
   describe Api::UsersController do
     render_views
 
-    let(:user) { create(:user, spree_api_key: rand) }
+    let(:user) { create(:user, spree_api_key: SecureRandom.hex) }
     let(:stranger) { create(:user, :email => 'stranger@example.com') }
     let(:attributes) { [:id, :email, :created_at, :updated_at] }
 
@@ -12,7 +12,7 @@ module Spree
       it "can get own details" do
         api_get :show, id: user.id, token: user.spree_api_key
 
-        json_response['email'].should eq user.email
+        expect(json_response['email']).to eq user.email
       end
 
       it "cannot get other users details" do
