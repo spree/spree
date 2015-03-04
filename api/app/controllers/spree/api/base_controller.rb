@@ -17,7 +17,7 @@ module Spree
       before_action :authenticate_user
       before_action :load_user_roles
 
-      after_filter  :set_jsonp_format
+      after_filter :set_jsonp_format
 
       rescue_from Exception, with: :error_during_processing
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
