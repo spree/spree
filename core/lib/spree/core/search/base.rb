@@ -89,10 +89,10 @@ module Spree
 
             per_page = params[:per_page].to_i
             @properties[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
-            if !params[:page].respond_to?(:to_i)
-              @properties[:page] = 1
-            else
+            if params[:page].respond_to?(:to_i)
               @properties[:page] = (params[:page].to_i <= 0) ? 1 : params[:page].to_i
+            else
+              @properties[:page] = 1              
             end
           end
       end
