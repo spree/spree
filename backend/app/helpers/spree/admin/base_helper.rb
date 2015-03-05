@@ -135,6 +135,11 @@ module Spree
         dom_id(record, 'spree')
       end
 
+      I18N_PLURAL_MANY_COUNT = 2.1
+      def plural_resource_name(resource_class)
+        resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
+      end
+
       private
         def attribute_name_for(field_name)
           field_name.gsub(' ', '_').downcase

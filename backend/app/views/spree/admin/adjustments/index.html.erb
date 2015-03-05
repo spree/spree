@@ -1,11 +1,11 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: Spree.t(:adjustments)} %>
 
 <% content_for :page_title do %>
-   / <%= Spree::Adjustment.model_name.human(count: :many) %>
+   / <%= plural_resource_name(Spree::Adjustment) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add' %>
+  <%= button_link_to(Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add') if can? :create, Spree::Adjustment %>
 <% end %>
 
 <% if @adjustments.present? %>
@@ -14,7 +14,7 @@
   </div>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Adjustment.model_name.human(count: :many)) %>
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Adjustment)) %>
   </div>
 <% end %>
 

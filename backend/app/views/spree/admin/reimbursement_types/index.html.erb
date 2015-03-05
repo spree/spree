@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= Spree::ReimbursementType.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::ReimbursementType) %>
 <% end %>
 
 <% if @reimbursement_types.any? %>
@@ -25,7 +25,6 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::ReimbursementType.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ReimbursementType)) %>
   </div>
 <% end %>

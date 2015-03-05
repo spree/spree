@@ -23,11 +23,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'acts_as_list', '~> 0.6'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
-  s.add_dependency 'cancancan', '~> 1.9.2'
+  s.add_dependency 'cancancan', '~> 1.10.1'
   s.add_dependency 'deface', '~> 1.0.0'
   s.add_dependency 'ffaker', '~> 1.16'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
-  s.add_dependency 'friendly_id', '~> 5.0.4'
+  s.add_dependency 'friendly_id', '~> 5.1.0'
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'httparty', '~> 0.11' # For checking alerts.
   s.add_dependency 'json', '~> 1.7'

@@ -13,7 +13,7 @@
 
     <% if can?(:update, @order) && @order.checkout_steps.include?("address") %>
       <li<%== ' class="active"' if current == 'Customer Details' %> data-hook='admin_order_tabs_customer_details'>
-        <%= link_to_with_icon 'user', Spree.t(:customer), admin_order_customer_url(@order) %>
+        <%= link_to_with_icon 'user', Spree.t(:customer), spree.admin_order_customer_url(@order) %>
       </li>
     <% end %>
 
@@ -25,20 +25,20 @@
 
     <% if can? :index, Spree::Adjustment %>
       <li<%== ' class="active"' if current == 'Adjustments' %> data-hook='admin_order_tabs_adjustments'>
-        <%= link_to_with_icon 'wrench', Spree.t(:adjustments), admin_order_adjustments_url(@order) %>
+        <%= link_to_with_icon 'wrench', Spree.t(:adjustments), spree.admin_order_adjustments_url(@order) %>
       </li>
     <% end %>
 
     <% if can?(:index, Spree::Payment) %>
       <li<%== ' class="active"' if current == 'Payments' %> data-hook='admin_order_tabs_payments'>
-        <%= link_to_with_icon 'credit-card', Spree.t(:payments), admin_order_payments_url(@order) %>
+        <%= link_to_with_icon 'credit-card', Spree.t(:payments), spree.admin_order_payments_url(@order) %>
       </li>
     <% end %>
 
     <% if can? :index, Spree::ReturnAuthorization %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Returns' %> data-hook='admin_order_tabs_return_authorizations'>
-          <%= link_to_with_icon 'transfer', Spree.t(:returns), admin_order_return_authorizations_url(@order) %>
+          <%= link_to_with_icon 'transfer', Spree.t(:returns), spree.admin_order_return_authorizations_url(@order) %>
         </li>
       <% end %>
     <% end %>
@@ -46,14 +46,14 @@
     <% if can? :index, Spree::CustomerReturn %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Customer Returns' %>>
-          <%= link_to_with_icon 'transfer', Spree.t(:customer_returns), admin_order_customer_returns_url(@order) %>
+          <%= link_to_with_icon 'transfer', Spree.t(:customer_returns), spree.admin_order_customer_returns_url(@order) %>
         </li>
       <% end %>
     <% end %>
 
     <% if can? :update, @order %>
       <li<%== ' class="active"' if current == 'State Changes' %> data-hook='admin_order_tabs_state_changes'>
-        <%= link_to_with_icon 'refresh', Spree::StateChange.human_attribute_name(:state_changes), admin_order_state_changes_url(@order) %>
+        <%= link_to_with_icon 'refresh', Spree::StateChange.human_attribute_name(:state_changes), spree.admin_order_state_changes_url(@order) %>
       </li>
     <% end %>
   </ul>

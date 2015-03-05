@@ -32,6 +32,7 @@ module Spree
       alias_action :new_action, to: :create
       alias_action :show, to: :read
       alias_action :index, :read, to: :display
+      alias_action :create, :update, :destroy, to: :modify
 
       user ||= Spree.user_class.new
 

@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= Spree::TaxRate.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::TaxRate) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_tax_rate), new_object_url, class: "btn-success", icon: 'add' %>
-<% end %>
+<% end if can? :create, Spree::TaxRate %>
 
 <% if @tax_rates.any? %>
   <table class="table">
@@ -31,8 +31,8 @@
         <td><%=tax_rate.show_rate_in_label? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
         <td><%=tax_rate.calculator.to_s %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit tax_rate, no_text: true %>
-          <%= link_to_delete tax_rate, no_text: true %>
+          <%= link_to_edit(tax_rate, no_text: true) if can? :edit, tax_rate %>
+          <%= link_to_delete(tax_rate, no_text: true) if can? :delete, tax_rate %>
         </td>
       </tr>
       <% end %>
@@ -40,7 +40,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::TaxRate.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::TaxRate)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::TaxRate %>!
   </div>
 <% end %>

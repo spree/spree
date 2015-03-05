@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= Spree::ShippingMethod.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::ShippingMethod) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :class => "btn-success", :icon => 'add', :id => 'admin_new_shipping_method_link' %>
-<% end %>
+<% end if can? :create, Spree::ShippingMethod %>
 
 <% if @shipping_methods.any? %>
   <table class="table" id='listing_shipping_methods'>
@@ -25,8 +25,8 @@
           <td><%= shipping_method.calculator.description %></td>
           <td class="text-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit shipping_method, :no_text => true %>
-            <%= link_to_delete shipping_method, :no_text => true %>
+            <%= link_to_edit(shipping_method, :no_text => true) if can? :edit, shipping_method %>
+            <%= link_to_delete(shipping_method, :no_text => true) if can? :delete, shipping_method %>
           </td>
         </tr>
       <% end %>
@@ -34,7 +34,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::ShippingMethod.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ShippingMethod)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::PaymentMethod %>!
   </div>
 <% end %>

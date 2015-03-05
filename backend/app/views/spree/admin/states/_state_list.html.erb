@@ -14,8 +14,8 @@
         <td><%= state.name %></td>
         <td class="text-center"><%= state.abbr %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit state, :no_text => true %>
-          <%= link_to_delete state, :no_text => true %>
+          <%= link_to_edit(state, :no_text => true) if can? :edit, state %>
+          <%= link_to_delete(state, :no_text => true) if can? :delete, state %>
         </td>
       </tr>
     <% end %>

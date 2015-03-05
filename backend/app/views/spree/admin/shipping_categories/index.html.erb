@@ -1,10 +1,10 @@
 <% content_for :page_title do %>
-  <%= Spree::ShippingCategory.model_name.human(count: :many) %>
+  <%= plural_resource_name(Spree::ShippingCategory) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_shipping_category), new_object_url, :class => "btn-success", :icon => 'add' %>
-<% end %>
+<% end if can? :create, Spree::ShippingCategory %>
 
 <% if @shipping_categories.any? %>
   <table class="table">
@@ -19,8 +19,8 @@
       <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row">
         <td><%= shipping_category.name %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit shipping_category, :no_text => true %>
-          <%= link_to_delete shipping_category, :no_text => true %>
+          <%= link_to_edit(shipping_category, :no_text => true) if can? :edit, shipping_category %>
+          <%= link_to_delete(shipping_category, :no_text => true) if can? :edit, shipping_category %>
         </td>
       </tr>
       <% end %>
@@ -28,7 +28,7 @@
   </table>
 <% else %>
   <div class="alert alert-info no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: Spree::ShippingCategory.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ShippingCategory)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::ShippingCategory %>!
   </div>
 <% end %>

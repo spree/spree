@@ -257,18 +257,6 @@ The final step is to ensure that the token is passed to CanCan when the authoriz
 authorize! action, resource, session[:access_token]
 ```
 
-Of course this also assumes that the token has been stored in the session. Generally this can be achieved with a route that maps the token to the correct parameter:
-
-```ruby
-get '/orders/:id/token/:token' => 'orders#show', :as => :token_order
-```
-
-This is followed by a call to store the token in the session for possible future access.
-
-```ruby
-  session[:access_token] ||= params[:token]
-```
-
 ## Credit Card Data
 
 ### PCI Compliance

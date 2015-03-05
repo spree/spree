@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: Spree::Address.model_name.human(count: :many)) %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: plural_resource_name(Spree::Address)) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>
@@ -16,7 +16,7 @@
       <%= render :partial => 'addresses_form', :locals => { :f => f } %>
 
       <div class="form-actions text-center well" data-hook="admin_user_edit_form_button">
-        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => admin_users_url } %>
+        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => spree.admin_users_url } %>
       </div>
     <% end %>
   </div>

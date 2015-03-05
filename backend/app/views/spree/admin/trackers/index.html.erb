@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_tracker), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_tracker_link' %>
-<% end %>
+<% end if can? :create, Spree::Tracker %>
 
 <% if @trackers.any? %>
   <table class="table">
@@ -27,8 +27,8 @@
           <td><%= tracker.analytics_id %></td>
           <td class="text-center"><%= tracker.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td class="actions text-right">
-            <%= link_to_edit tracker, :no_text => true %>
-            <%= link_to_delete tracker, :no_text => true %>
+            <%= link_to_edit(tracker, :no_text => true) if can? :edit, tracker %>
+            <%= link_to_delete(tracker, :no_text => true) if can? :delete, tracker %>
           </td>
         </tr>
       <% end %>
@@ -36,7 +36,7 @@
   </table>
 <% else %>
   <div class="alert alert-warning">
-    <%= Spree.t(:no_resource_found, resource: Spree::Tracker.model_name.human(count: :many)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Tracker)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::Tracker %>!
   </div>
 <% end %>
