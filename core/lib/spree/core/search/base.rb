@@ -92,7 +92,7 @@ module Spree
             if params[:page].respond_to?(:to_i)
               @properties[:page] = (params[:page].to_i <= 0) ? 1 : params[:page].to_i
             else
-              @properties[:page] = 1              
+              @properties[:page] = 1
             end
           end
       end
