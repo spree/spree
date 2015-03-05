@@ -16,6 +16,6 @@ prototypes = [
 prototypes.each do |prototype_attrs|
   prototype = Spree::Prototype.create!(:name => prototype_attrs[:name])
   prototype_attrs[:properties].each do |property|
-    prototype.properties << Spree::Property.find_by_name!(property)
+    prototype.properties << Spree::Property.where(name: property).first
   end
 end
