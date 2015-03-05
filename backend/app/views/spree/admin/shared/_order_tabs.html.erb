@@ -56,5 +56,9 @@
         <%= link_to_with_icon 'refresh', Spree::StateChange.human_attribute_name(:state_changes), spree.admin_order_state_changes_url(@order) %>
       </li>
     <% end %>
+
+    <%= content_tag :li, :class => ('active' if current == 'Promotions') do %>
+      <%= link_to_with_icon 'gift', Spree.t(:promotions), spree.admin_order_promotions_path(@order) %>
+    <% end if can?(:stock, Spree::Promotion) %>
   </ul>
 <% end %>

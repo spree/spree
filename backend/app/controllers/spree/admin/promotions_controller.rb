@@ -1,9 +1,37 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
-      before_action :load_data
+      before_action :load_data, except: [:order_promotions, :apply_to_order, :delete_from_order]
+      before_action :load_order, only: [:order_promotions, :apply_to_order, :delete_from_order]
+      before_action :load_promotion, only: [:apply_to_order, :delete_from_order]
 
       helper 'spree/promotion_rules'
+
+      def order_promotions
+        authorize! action, @order
+        @promotions = @order.promotions.order("created_at ASC")
+      end
+
+      def apply_to_order
+        if @promotion.activate(order: @order)
+          update_order_totals(@order)
+          flash[:success] = Spree.t(:promotion_was_succesfully_added_to_order)
+        else
+          flash[:error] = Spree.t(:promotion_was_could_not_be_added_to_order)
+        end
+
+        redirect_to admin_order_promotions_path(@order)
+      end
+
+      def delete_from_order
+        @order.promotions.delete(@promotion)
+
+        #TODO: Delete adjustment added by the promotion
+
+        update_order_totals(@order)
+
+        redirect_to admin_order_promotions_path(@order)
+      end
 
       protected
         def location_after_save
@@ -13,6 +41,14 @@ module Spree
         def load_data
           @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
           @promotion_categories = Spree::PromotionCategory.order(:name)
+        end
+
+        def load_order
+          @order = Order.friendly.find(params[:order_id])
+        end
+
+        def load_promotion
+          @promotion = Spree::Promotion.find(params[:promotion_id])
         end
 
         def collection
@@ -32,6 +68,12 @@ module Spree
 
         def promotion_includes
           [:promotion_actions]
+        end
+
+        def update_order_totals(order)
+          order.update_totals
+          order.persist_totals
+          order.update!
         end
     end
   end
