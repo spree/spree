@@ -28,8 +28,9 @@ module Spree
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
         @order.temporary_address = !params[:save_user_address]
         unless @order.next
-          errors = @order.errors.full_messages << flash[:error]
-          flash[:error] = errors.compact.join("\n")
+          errors = @order.errors.full_messages
+          errors << flash[:error] if flash[:error].present?
+          flash[:error] = errors.join("\n") if errors.present?
           redirect_to checkout_state_path(@order.state) and return
         end
 
