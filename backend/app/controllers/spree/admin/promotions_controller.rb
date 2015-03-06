@@ -17,7 +17,7 @@ module Spree
           update_order_totals(@order)
           flash[:success] = Spree.t(:promotion_was_succesfully_added_to_order)
         else
-          flash[:error] = Spree.t(:promotion_was_could_not_be_added_to_order)
+          flash[:error] = Spree.t(:promotion_could_not_be_added_to_order)
         end
 
         redirect_to admin_order_promotions_path(@order)
