@@ -26,7 +26,10 @@ module Spree
       def delete_from_order
         @order.promotions.delete(@promotion)
 
-        #TODO: Delete adjustment added by the promotion
+        #TODO: optimize the way we find the adjustments which are created by the promotion.
+        adjustment_sources = @order.adjustments.where(source_type: "Spree::PromotionAction").map(&:source)
+        promotion_adjustments = adjustment_sources.select { |source| source.promotion_id == @promotion.id }.flat_map(&:adjustments)
+        promotion_adjustments.map! { |adjustment| adjustment.delete }
 
         update_order_totals(@order)
 
