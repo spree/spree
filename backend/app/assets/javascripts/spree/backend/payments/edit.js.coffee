@@ -3,7 +3,7 @@ jQuery ($) ->
   order_id = $('#payments').data('order-id')
   class Payment
     constructor: (id) ->
-      @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{id}.json")
+      @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{id}.json" + '?token=' + Spree.api_key)
       @json = $.getJSON @url.toString(), (data) =>
         @data = data
 
