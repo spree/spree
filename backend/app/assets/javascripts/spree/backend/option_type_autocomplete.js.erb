@@ -7,7 +7,8 @@ $(document).ready(function () {
       multiple: true,
       initSelection: function (element, callback) {
         var url = Spree.url(Spree.routes.option_type_search, {
-          ids: element.val()
+          ids: element.val(),
+          token: Spree.api_key
         });
         return $.getJSON(url, null, function (data) {
           return callback(data);
