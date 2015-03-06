@@ -50,7 +50,7 @@
           <td><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions actions-2">
-            <%= link_to_with_icon 'delete', Spree.t(:delete), admin_order_delete_promotion_path(@order, promotion_id: promotion.id), class: 'btn btn-danger btn-sm', no_text: true, method: :post %>
+            <%= link_to_with_icon 'delete', Spree.t(:delete), admin_order_delete_promotion_path(@order, promotion_id: promotion.id), class: 'btn btn-danger btn-sm', no_text: true, method: :post, data: { confirm: Spree.t(:are_you_sure) } %>
           </td>
         </tr>
       <% end %>
