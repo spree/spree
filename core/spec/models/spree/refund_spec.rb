@@ -92,6 +92,11 @@ describe Spree::Refund, :type => :model do
         subject
       end
 
+      it 'should update the payment total' do
+        expect(payment.order.updater).to receive(:update)
+        subject
+      end
+
     end
 
     context "processing fails" do
