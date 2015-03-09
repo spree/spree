@@ -18,7 +18,7 @@
       <div class="modal-body">
         <%= form_tag admin_order_apply_promotion_path(@order), method: "POST" do %>
           <div class="form-group">
-            <%= select_tag :promotion_id, options_from_collection_for_select(Spree::Promotion.all, :id, :name), class: 'select2' %>
+            <%= select_tag :promotion_id, options_from_collection_for_select(Spree::Promotion.backend.all, :id, :name), class: 'select2' %>
           </div>
           <%= button Spree.t('actions.add'), 'ok', 'submit', { class: 'btn-success' } %>
         <% end %>
