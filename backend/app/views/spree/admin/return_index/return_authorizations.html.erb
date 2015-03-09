@@ -3,14 +3,17 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <li class="<%= "active" if params[:q][:state_eq].blank? %>">
+  <li class="<%= "active" if params[:q][:state_eq].blank? && !params[:q][:return_items_reception_status_eq] %>">
     <%= link_to Spree.t(:all), spree.admin_return_authorizations_index_path %>
   </li>
   <li class="<%= "active" if params[:q][:state_eq] == "authorized" %>">
-    <%= link_to Spree.t(:authorized), params.merge({q: {state_eq: :authorized}}) %>
+    <%= link_to Spree.t(:authorized), spree.admin_return_authorizations_index_path({q: {state_eq: :authorized}}) %>
   </li>
   <li class="<%= "active" if params[:q][:state_eq] == "canceled" %>">
-    <%= link_to Spree.t(:canceled), params.merge({q: {state_eq: :canceled}}) %>
+    <%= link_to Spree.t(:canceled), spree.admin_return_authorizations_index_path({q: {state_eq: :canceled}}) %>
+  </li>
+  <li class="<%= "active" if params[:q][:return_items_reception_status_eq] == "awaiting" %>">
+    <%= link_to Spree.t(:awaiting_return), spree.admin_return_authorizations_index_path({q: {return_items_reception_status_eq: :awaiting}}) %>
   </li>
 <% end %>
 
@@ -18,16 +21,22 @@
   <div data-hook="admin_return_authorisations_index_filters">
     <%= search_form_for [:admin, @search], url: spree.admin_return_authorizations_index_path do |f| %>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <%= f.label :number_cont, Spree.t(:number) %>
             <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
             <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2' %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= f.label :return_items_reception_status_eq, Spree.t(:return_items_reception_status) %>
+            <%= f.text_field :return_items_reception_status_eq, class: "form-control" %>
           </div>
         </div>
       </div>
@@ -47,6 +56,7 @@
         <th><%= Spree.t(:created_at) %></th>
         <th><%= Spree.t(:number) %></th>
         <th><%= Spree.t(:order) %></th>
+        <th><%= Spree.t(:return_items) %></th>
         <th><%= Spree.t(:state) %></th>
         <th></th>
       </tr>
@@ -57,6 +67,7 @@
           <td><%= return_authorization.created_at.to_date %></td>
           <td><%= link_to return_authorization.number, spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) %></td>
           <td><%= link_to return_authorization.order.number, spree.edit_admin_order_path(return_authorization.order) %></td>
+          <td><%= return_authorization.return_items.count %></td>
           <td>
             <span class="label label-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
           </td>
