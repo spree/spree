@@ -18,14 +18,14 @@ spree_bag = Spree::Product.find_by_name!("Spree Bag")
 ruby_baseball_jersey = Spree::Product.find_by_name!("Ruby Baseball Jersey")
 apache_baseball_jersey = Spree::Product.find_by_name!("Apache Baseball Jersey")
 
-small = Spree::OptionValue.find_by_name!("Small")
-medium = Spree::OptionValue.find_by_name!("Medium")
-large = Spree::OptionValue.find_by_name!("Large")
-extra_large = Spree::OptionValue.find_by_name!("Extra Large")
+small = Spree::OptionValue.where(name: "Small").first
+medium = Spree::OptionValue.where(name: "Medium").first
+large = Spree::OptionValue.where(name: "Large").first
+extra_large = Spree::OptionValue.where(name: "Extra Large").first
 
-red = Spree::OptionValue.find_by_name!("Red")
-blue = Spree::OptionValue.find_by_name!("Blue")
-green = Spree::OptionValue.find_by_name!("Green")
+red = Spree::OptionValue.where(name: "Red").first
+blue = Spree::OptionValue.where(name: "Blue").first
+green = Spree::OptionValue.where(name: "Green").first
 
 variants = [
   {
