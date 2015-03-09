@@ -7,7 +7,6 @@ module Spree
         included do
           before_filter :set_current_order
 
-          helper_method :current_currency
           helper_method :current_order
           helper_method :simple_current_order
         end
@@ -62,10 +61,6 @@ module Spree
               current_order.merge!(order, try_spree_current_user)
             end
           end
-        end
-
-        def current_currency
-          Spree::Config[:currency]
         end
 
         def ip_address
