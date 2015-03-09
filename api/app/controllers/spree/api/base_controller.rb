@@ -110,11 +110,6 @@ module Spree
         Spree::Ability.new(current_api_user)
       end
 
-      def current_currency
-        Spree::Config[:currency]
-      end
-      helper_method :current_currency
-
       def invalid_resource!(resource)
         @resource = resource
         render "spree/api/errors/invalid_resource", :status => 422
