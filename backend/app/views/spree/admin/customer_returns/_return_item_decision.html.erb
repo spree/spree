@@ -35,7 +35,7 @@
           <%= return_item.acceptance_status_errors %>
         </td>
         <% if show_decision %>
-          <td class="actions" width="160">
+          <td class="actions forms-inline">
             <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-success btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
               <%= Spree.t(:accept) %>
             <% end if can?(:accept, return_item) %>

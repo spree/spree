@@ -84,9 +84,9 @@
   </table>
 
   <% if @order.has_non_reimbursement_related_refunds? %>
-    <span class="alert alert-danger">
+    <div class="alert alert-danger">
       <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
-    </span>
+    </div>
   <% end %>
 
   <div class="form-actions" data-hook="reimburse-buttons">
