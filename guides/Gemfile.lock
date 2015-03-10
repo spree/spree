@@ -23,7 +23,7 @@ GEM
     hitimes (1.2.2)
     jsmin (1.0.1)
     kramdown (1.6.0)
-    listen (2.8.5)
+    listen (2.9.0)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
