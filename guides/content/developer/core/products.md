@@ -110,7 +110,7 @@ $ product.price
 => "15.99"
 ```
 
-If you have products where prices are greater than 9999999.99 then you should decorate `Spree::Price` and customize `maximum_amount` method in order to support this prices.
+If you have products where prices are greater than 9999999.99 then you should decorate `Spree::Price` and customize `maximum_amount` method in order to support the prices.
 
 To find a list of currencies that this product is available in, call `prices` to get a list of related `Price` objects:
 
