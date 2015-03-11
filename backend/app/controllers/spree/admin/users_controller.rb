@@ -27,7 +27,7 @@ module Spree
         if @user.save
           set_roles
 
-          flash.now[:success] = Spree.t(:created_successfully)
+          flash.now[:success] = flash_message_for(@user, :successfully_created)
           render :edit
         else
           render :new
