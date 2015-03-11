@@ -7,6 +7,12 @@ describe Spree::Variant, :type => :model do
 
   it_behaves_like 'default_price'
 
+  context 'sorting' do
+    it 'responds to set_list_position' do
+      expect(variant.respond_to?(:set_list_position)).to eq(true)
+    end
+  end
+
   context "validations" do
     it "should validate price is greater than 0" do
       variant.price = -1
