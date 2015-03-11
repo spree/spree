@@ -18,6 +18,10 @@ module Spree
 
     def update_cart(params)
       if order.update_attributes(filter_order_items(params))
+        order.line_items.each do |item|
+          available = item.available_stock.to_i
+          item.update_attribute(:quantity, available) if item.quantity > available
+        end
         order.line_items = order.line_items.select { |li| li.quantity > 0 }
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
