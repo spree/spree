@@ -1,18 +1,31 @@
 require 'spec_helper'
 
-describe "Orders Listing", type: :feature, js: true do
+describe "Orders Listing", type: :feature do
   stub_authorization!
 
-  let!(:promotion) { create(:promotion_with_item_adjustment) }
+  let(:order1) do
+    create :order_with_line_items,
+      created_at: 1.day.from_now,
+      completed_at: 1.day.from_now,
+      considered_risky: true,
+      number: "R100"
+  end
 
-  before(:each) do
+  let(:order2) do
+    create :order,
+      created_at: 1.day.ago,
+      completed_at: 1.day.ago,
+      number: "R200"
+  end
+
+  before do
     allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
-    @order1 = create(:order_with_line_items, created_at: 1.day.from_now, completed_at: 1.day.from_now, considered_risky: true, number: "R100")
-    @order2 = create(:order, created_at: 1.day.ago, completed_at: 1.day.ago, number: "R200")
+    # create the order instances after stubbing the `add_to_shipment` method
+    order1; order2
     visit spree.admin_orders_path
   end
 
-  context "listing orders" do
+  describe "listing orders" do
     it "should list existing orders" do
       within_row(1) do
         expect(column_text(2)).to eq "R100"
@@ -45,9 +58,8 @@ describe "Orders Listing", type: :feature, js: true do
     end
   end
 
-  context "searching orders" do
+  describe "searching orders" do
     it "should be able to search orders" do
-      click_on 'Filter'
       fill_in "q_number_cont", with: "R200"
       click_on 'Filter Results'
       within_row(1) do
@@ -59,12 +71,10 @@ describe "Orders Listing", type: :feature, js: true do
     end
 
     it "should be able to filter risky orders" do
-      click_on 'Filter'
       # Check risky and filter
       check "q_considered_risky_eq"
       click_on 'Filter Results'
 
-      click_on 'Filter'
       # Insure checkbox still checked
       expect(find("#q_considered_risky_eq")).to be_checked
       # Insure we have the risky order, R100
@@ -76,19 +86,18 @@ describe "Orders Listing", type: :feature, js: true do
     end
 
     it "should be able to filter on variant_id" do
-      click_on 'Filter'
       # Insure we have the SKU in the options
-      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
+      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(order1.line_items.first.variant.sku)
 
       # Select and filter
       find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
       click_on 'Filter Results'
 
       within_row(1) do
-        expect(page).to have_content(@order1.number)
+        expect(page).to have_content(order1.number)
       end
 
-      expect(page).not_to have_content(@order2.number)
+      expect(page).not_to have_content(order2.number)
     end
 
     context "when pagination is really short" do
@@ -104,26 +113,20 @@ describe "Orders Listing", type: :feature, js: true do
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
         10.times { Spree::Order.create email: "incomplete@example.com" }
-        click_on 'Filter'
         uncheck "q_completed_at_not_null"
         click_on 'Filter Results'
         within(".pagination") do
           click_link "2"
         end
         expect(page).to have_content("incomplete@example.com")
-        click_on 'Filter'
         expect(find("#q_completed_at_not_null")).not_to be_checked
       end
     end
 
     it "should be able to search orders using only completed at input" do
-      click_on 'Filter'
       fill_in "q_created_at_gt", with: Date.current
-
-      # Just so the datepicker gets out of poltergeists way.
-      page.execute_script("$('#q_created_at_gt').datepicker('widget').hide();")
-
       click_on 'Filter Results'
+
       within_row(1) { expect(page).to have_content("R100") }
 
       # Ensure that the other order doesn't show up
@@ -131,22 +134,23 @@ describe "Orders Listing", type: :feature, js: true do
     end
 
     context "filter on promotions" do
-      before(:each) do
-        @order1.promotions << promotion
-        @order1.save
+      let!(:promotion) { create(:promotion_with_item_adjustment) }
+
+      before do
+        order1.promotions << promotion
+        order1.save
         visit spree.admin_orders_path
       end
 
       it "only shows the orders with the selected promotion" do
-        click_on 'Filter'
-        select2 promotion.name, from: "Promotion"
+        select promotion.name, from: "Promotion"
         click_on 'Filter Results'
         within_row(1) { expect(page).to have_content("R100") }
         within("table#listing_orders") { expect(page).not_to have_content("R200") }
       end
     end
 
-    it "should be able to apply a ransack filter by clicking a quickfilter icon" do
+    it "should be able to apply a ransack filter by clicking a quickfilter icon", js: true do
       label_pending = page.find '.label-pending'
       parent_td = label_pending.find(:xpath, '..')
 
