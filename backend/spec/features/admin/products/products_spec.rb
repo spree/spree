@@ -66,7 +66,7 @@ describe "Products", type: :feature do
       end
     end
 
-    context "searching products", js: true do
+    context "searching products" do
       it "should be able to search deleted products" do
         create(:product, name: 'apache baseball cap', deleted_at: "2011-01-06 18:21:13")
         create(:product, name: 'zomg shirt')
@@ -75,14 +75,12 @@ describe "Products", type: :feature do
         expect(page).to have_content("zomg shirt")
         expect(page).not_to have_content("apache baseball cap")
 
-        click_on 'Filter'
         check "Show Deleted"
         click_on 'Search'
 
         expect(page).to have_content("zomg shirt")
         expect(page).to have_content("apache baseball cap")
 
-        click_on 'Filter'
         uncheck "Show Deleted"
         click_on 'Search'
 
@@ -96,7 +94,6 @@ describe "Products", type: :feature do
         create(:product, name: 'zomg shirt')
 
         visit spree.admin_products_path
-        click_on 'Filter'
         fill_in "q_name_cont", with: "ap"
         click_on 'Search'
 
@@ -104,7 +101,6 @@ describe "Products", type: :feature do
         expect(page).to have_content("apache baseball cap2")
         expect(page).not_to have_content("zomg shirt")
 
-        click_on 'Filter'
         fill_in "q_variants_including_master_sku_cont", with: "A1"
         click_on 'Search'
 
