@@ -128,14 +128,24 @@ jQuery(function($) {
     $("#table-filter form").submit();
   });
 
-  $(".js-filterable").each(function(){
-    if($(this).val()){
-      var ransack_field = $(this).attr("id");
-      var ransack_value = $(this).val();
-      var filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + ransack_value + '<span class="icon icon-delete js-delete-filter"></span></span>';
+  $(".js-filterable").each(function() {
+    var $this = $(this);
 
-      $(".js-filters").show();
-      $(".js-filters").append(filter);
+    if ($this.val()) {
+      var ransack_value, filter;
+      var ransack_field = $this.attr("id");
+      var label = $('label[for="' + ransack_field + '"]');
+
+      if ($this.is("select")) {
+        ransack_value = $this.find('option:selected').text();
+      } else {
+        ransack_value = $this.val();
+      }
+
+      label = label.text() + ': ' + ransack_value;
+      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
+
+      $(".js-filters").append(filter).show();
     }
   });
 
