@@ -12,11 +12,11 @@ class MigrateOldShippingCalculators < ActiveRecord::Migration
         "SELECT calculable_id FROM spree_calculators WHERE id = '#{old_calculator_id}'"
       ).first
 
-      new_calculator = eval(old_calculator_class_name.sub("::Calculator::", "::Calculator::Shipping::")).new
+      new_calculator = eval(old_calculator_class_name.sub('::Calculator::', '::Calculator::Shipping::')).new
       new_calculator.calculable_id = old_calculator_calculable_id
       new_calculator.calculable_type = 'Spree::ShippingMethod'
       new_calculator.preferences.keys.each do |pref|
-        preference_key = old_calculator_class_name.snakecase + "/#{pref.to_s}/#{old_calculator_id}"
+        preference_key = old_calculator_class_name.snakecase + "/#{pref}/#{old_calculator_id}"
         old_preference = Spree::Preference.where(key: preference_key).first
         next if old_preference.nil?
         # Preferences can't be read/set by name, you have to prefix preferred_
