@@ -3,6 +3,9 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
+    PAYMENT_STATES = %w(balance_due checkout completed credit_owed failed paid pending processing void).freeze
+    SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped).freeze
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
 
