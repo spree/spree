@@ -11,7 +11,7 @@ module Spree
         params[:q][:completed_at_not_null] ||= '1' if Spree::Config[:show_only_complete_orders_by_default]
         @show_only_completed = params[:q][:completed_at_not_null] == '1'
         params[:q][:s] ||= @show_only_completed ? 'completed_at desc' : 'created_at desc'
-        params[:q].delete(:completed_at_not_null) unless @show_only_completed
+        params[:q][:completed_at_not_null] = '' unless @show_only_completed
 
         # As date params are deleted if @show_only_completed, store
         # the original date so we can restore them into the params

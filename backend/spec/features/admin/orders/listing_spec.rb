@@ -103,7 +103,8 @@ describe "Orders Listing", type: :feature, js: true do
 
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
-        10.times { Spree::Order.create email: "incomplete@example.com" }
+        Spree::Order.destroy_all
+        2.times { Spree::Order.create! email: "incomplete@example.com", completed_at: nil, state: 'cart' }
         click_on 'Filter'
         uncheck "q_completed_at_not_null"
         click_on 'Filter Results'
