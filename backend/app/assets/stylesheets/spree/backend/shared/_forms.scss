@@ -43,3 +43,7 @@ input.form-control {
   display: block;
   width: 100%;
 }
+
+.form-actions form, .forms-inline form {
+  display: inline;
+}

@@ -4,6 +4,12 @@
   </ul>
 <% end %>
 
+<% if can?(:admin, Spree::ReturnAuthorization) || can?(:admin, Spree::CustomerReturn) %>
+  <ul class="nav nav-sidebar">
+    <%= main_menu_tree Spree.t(:returns), icon: "transfer", sub_menu: "returns", url: "#sidebar-returns" %>
+  </ul>
+<% end %>
+
 <% if can? :admin, Spree::Product %>
   <ul class="nav nav-sidebar">
     <%= main_menu_tree Spree.t(:products), icon: "th-large", sub_menu: "product", url: "#sidebar-product" %>

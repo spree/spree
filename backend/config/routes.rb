@@ -170,6 +170,9 @@ Spree::Core::Engine.add_routes do
     resources :payment_methods
     resources :roles
 
+    get '/return_index/return_authorizations', to: "return_index#return_authorizations", as: :return_authorizations_index
+    get '/return_index/customer_returns', to: "return_index#customer_returns", as: :customer_returns_index
+
     resources :users do
       member do
         get :orders
