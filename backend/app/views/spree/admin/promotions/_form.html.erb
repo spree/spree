@@ -4,18 +4,38 @@
   <div class="col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
-      <%= f.text_field :name, :class => 'form-control' %>
+      <%= f.text_field :name, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :code, class: ['form-group'] do %>
       <%= f.label :code %>
-      <%= f.text_field :code, :class => 'form-control' %>
+      <%= f.text_field :code, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
-      <%= f.text_field :path, :class => 'form-control' %>
+      <%= f.text_field :path, class: 'form-control' %>
     <% end %>
+
+    <div id="expiry_fields">
+      <%= f.field_container :usage_limit, class: ['form-group'] do %>
+        <%= f.label :usage_limit %>
+        <%= f.number_field :usage_limit, :min => 0, class: 'form-control' %>
+        <p class="help-block">
+          <%= Spree.t(:current_promotion_usage, :count => @promotion.credits_count) %>
+        </p>
+      <% end %>
+
+      <div id="starts_at_field" class="form-group">
+        <%= f.label :starts_at %>
+        <%= f.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker datepicker-from form-control' %>
+      </div>
+
+      <div id="expires_at_field" class="form-group">
+        <%= f.label :expires_at %>
+        <%= f.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker datepicker-to form-control' %>
+      </div>
+    </div>
 
     <%= f.field_container :advertise, class: ['checkbox'] do %>
       <%= f.label :advertise do %>
@@ -23,62 +43,46 @@
         <%= Spree.t(:advertise) %>
       <% end %>
     <% end %>
+
   </div>
 
-  <div class="sixteen columns">
-    <%= f.field_container :promotion_codes do %>
-      <table>
-        <tr>
-          <th><%= f.label :value %></th>
-          <th><%= f.label :starts_at %></th>
-          <th><%= f.label :expires_at %></th>
-          <th><%= f.label :usage_limit %></th>
-          <th><%= f.label :delete %></th>
-        </tr>
-        <% @promotion.promotion_codes.each do |promo_code| %>
-          <%= f.fields_for :promotion_codes, promo_code do |pc| %>
-            <tr>
-              <td><%= pc.text_field :value %></td>
-              <td><%= pc.date_field :starts_at %></td>
-              <td><%= pc.date_field :expires_at %></td>
-              <td><%= pc.number_field :usage_limit %></td>
-              <td><%= pc.check_box :_destroy %></td>
-            </tr>
-          <% end %>
-        <% end %>
-      </table>
-    <% end %>
-  </div>
-
-  <div class="omega nine columns">
-    <%= f.field_container :description do %>
-      <%= f.label :description %><br />
-      <%= f.text_area :description, :rows => 7, :class => 'fullwidth' %>
+  <div class="col-md-9">
+    <%= f.field_container :description, class: ['form-group'] do %>
+      <%= f.label :description %>
+      <%= f.text_area :description, :rows => 7, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :category, class: ['form-group'] do %>
       <%= f.label :promotion_category %>
-      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { class: 'select2' }) %>
     <% end %>
   </div>
+</div>
 
-  <div id="expiry_fields" class="col-md-3">
-    <%= f.field_container :usage_limit do %>
-      <%= f.label :usage_limit %>
-      <%= f.number_field :usage_limit, :min => 0, :class => 'form-control' %>
-      <p class="help-block">
-        <%= Spree.t(:current_promotion_usage, :count => @promotion.credits_count) %>
-      </p>
-    <% end %>
-
-    <div id="starts_at_field" class="form-group">
-      <%= f.label :starts_at %>
-      <%= f.text_field :starts_at, :value => datepicker_field_value(@promotion.starts_at), :class => 'datepicker datepicker-from form-control' %>
-    </div>
-
-    <div id="expires_at_field" class="form-group">
-      <%= f.label :expires_at %>
-      <%= f.text_field :expires_at, :value => datepicker_field_value(@promotion.expires_at), :class => 'datepicker datepicker-to form-control' %>
-    </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= Spree.t(:promotion_codes) %></h3>
   </div>
+  <%= f.field_container :promotion_codes do %>
+    <table class="table no-margin-bottom">
+      <tr>
+        <th><%= f.label :value %></th>
+        <th><%= f.label :starts_at %></th>
+        <th><%= f.label :expires_at %></th>
+        <th><%= f.label :usage_limit %></th>
+        <th><%= f.label :delete %></th>
+      </tr>
+      <% @promotion.promotion_codes.each do |promo_code| %>
+        <%= f.fields_for :promotion_codes, promo_code do |pc| %>
+          <tr>
+            <td><%= pc.text_field :value, class: "form-control" %></td>
+            <td><%= pc.text_field :starts_at, value: datepicker_field_value(promo_code.starts_at), class: 'datepicker form-control' %></td>
+            <td><%= pc.text_field :expires_at, value: datepicker_field_value(promo_code.expires_at), class: 'datepicker form-control' %></td>
+            <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
+            <td><%= pc.check_box :_destroy %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+  <% end %>
 </div>
