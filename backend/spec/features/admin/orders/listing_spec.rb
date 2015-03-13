@@ -70,6 +70,16 @@ describe "Orders Listing", type: :feature do
       within("table#listing_orders") { expect(page).not_to have_content("R100") }
     end
 
+    it "should return both complete and incomplete orders when only complete orders is not checked" do
+      Spree::Order.create! email: "incomplete@example.com", completed_at: nil, state: 'cart'
+      click_on 'Filter'
+      uncheck "q_completed_at_not_null"
+      click_on 'Filter Results'
+
+      expect(page).to have_content("R200")
+      expect(page).to have_content("incomplete@example.com")
+    end
+
     it "should be able to filter risky orders" do
       # Check risky and filter
       check "q_considered_risky_eq"
@@ -112,7 +122,9 @@ describe "Orders Listing", type: :feature do
 
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
-        10.times { Spree::Order.create email: "incomplete@example.com" }
+        Spree::Order.destroy_all
+        2.times { Spree::Order.create! email: "incomplete@example.com", completed_at: nil, state: 'cart' }
+        click_on 'Filter'
         uncheck "q_completed_at_not_null"
         click_on 'Filter Results'
         within(".pagination") do
