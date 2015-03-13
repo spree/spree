@@ -41,7 +41,7 @@ module Spree
       order    = current_order(create_order_if_necessary: true)
       variant  = Spree::Variant.find(params[:variant_id])
       quantity = params[:quantity].to_i
-      options  = (params[:options] || {}).merge(currency: current_currency)
+      options  = params[:options] || {}
 
       # 2,147,483,647 is crazy. See issue #2695.
       if quantity.between?(1, 2_147_483_647)
