@@ -2,6 +2,7 @@ module Spree
   class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    BACKEND_PROMOTIONS = ["backend"]
 
     attr_reader :eligibility_errors
 
@@ -38,6 +39,9 @@ module Spree
     end
     scope :coupons, -> do
       joins(:promotion_codes).where("#{Spree::PromotionCode.table_name}.value IS NOT NULL")
+    end
+    scope :backend, -> do
+      joins(:promotion_category).where("#{Spree::PromotionCategory.table_name}.code IN (?)", BACKEND_PROMOTIONS)
     end
 
     def self.advertised

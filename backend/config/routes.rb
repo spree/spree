@@ -109,6 +109,10 @@ Spree::Core::Engine.add_routes do
         resources :refunds, only: [:new, :create, :edit, :update]
       end
 
+      get :promotions, to: "promotions#order_promotions", as: :promotions
+      post :apply_promotion, to: "promotions#apply_to_order", as: :apply_promotion
+      post :delete_promotion, to: "promotions#delete_from_order", as: :delete_promotion
+
       resources :reimbursements, only: [:create, :show, :edit, :update] do
         member do
           post :perform
