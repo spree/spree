@@ -91,7 +91,9 @@ module Spree
       # support all the old preference methods with a warning
       define_method "preferred_#{old_preference_name}" do
         ActiveSupport::Deprecation.warn("#{old_preference_name} is no longer supported on Spree::Config, please access it through #{store_method} on Spree::Store")
-        Store.default.send(store_method) if ActiveRecord::Base.connection.table_exists?('spree_stores') # guards against 2.2 upgraders unable to rake db migration
+        if ActiveRecord::Base.connection.table_exists?("spree_stores") # guards against 2.2 upgraders unable to rake db migration
+          Store.default.send(store_method)
+        end
       end
     end
   end
