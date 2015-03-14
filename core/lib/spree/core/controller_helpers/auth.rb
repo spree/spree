@@ -66,7 +66,7 @@ module Spree
         def redirect_unauthorized_access(exception)
           if try_spree_current_user
             flash[:error] = Spree.t(:authorization_failure) 
-            log("#{Spree.t(:authorization_failure)} - #{Spree.t(:action)}: #{exception.action}  #{Spree.t(:subject)} #{exception.subject.inspect}")
+            Rails.logger.error ("#{Spree.t(:authorization_failure)} - #{Spree.t(:action)}: #{exception.action}  #{Spree.t(:subject)} #{exception.subject.inspect}")
             redirect_to '/unauthorized'
           else
             store_location
