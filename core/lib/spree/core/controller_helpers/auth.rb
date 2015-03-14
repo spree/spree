@@ -65,8 +65,9 @@ module Spree
         # to access the requested action.  For example, a popup window might simply close itself.
         def redirect_unauthorized_access(exception)
           if try_spree_current_user
-            flash[:error] = Spree.t(:authorization_failure) 
-            Rails.logger.error ("#{Spree.t(:authorization_failure)} - #{Spree.t(:action)}: #{exception.action}  #{Spree.t(:subject)} #{exception.subject.inspect}")
+            flash[:error] = Spree.t(:authorization_failure)
+            Rails.logger.error "#{Spree.t(:authorization_failure)} - #{Spree.t(:action)}: #{exception.action}  
+              #{Spree.t(:subject)} #{exception.subject.inspect}"
             redirect_to '/unauthorized'
           else
             store_location
