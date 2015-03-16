@@ -6,7 +6,8 @@ $.fn.productAutocomplete = function () {
     multiple: true,
     initSelection: function (element, callback) {
       $.get(Spree.routes.product_search, {
-        ids: element.val().split(',')
+        ids: element.val().split(','),
+        token: Spree.api_key
       }, function (data) {
         callback(data.products);
       });
