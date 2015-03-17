@@ -47,6 +47,15 @@ module Spree
       end
     end
 
+    def expires_at
+      # Credit cards expire at the end of the expiry month.
+      Date.parse("#{year}-#{month}-01") + 1.month
+    end
+
+    def expired?
+      expires_at < Date.today
+    end
+
     def expiry=(expiry)
       return unless expiry.present?
 
