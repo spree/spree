@@ -326,6 +326,13 @@ module Spree
           expect(json_response['option_types'].count).to eq(2)
         end
 
+        it "creates product with option_types ids" do
+          option_type = create(:option_type)
+          product_data.merge!(option_type_ids: [option_type.id])
+          api_post :create, product: product_data
+          expect(json_response['option_types'].first['id']).to eq option_type.id
+        end
+
         it "creates with shipping categories" do
           hash = { :name => "The Other Product",
                    :price => 19.99,
