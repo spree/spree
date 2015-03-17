@@ -279,15 +279,22 @@ module Spree
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: [{ sku: sku }]
+                inventory_units: 3.times.map { { sku: sku } }
+              },
+              {
+                tracking: '123456789',
+                cost: '14.99',
+                shipping_method: shipping_method.name,
+                stock_location: stock_location.name,
+                inventory_units: 2.times.map { { sku: sku } }
               }
             ]
           }
         end
 
         it 'ensures variant exists and is not deleted' do
-          expect(Importer::Order).to receive(:ensure_variant_id_from_params).exactly(2).times { line_items.first }
-          order = Importer::Order.import(user,params)
+          expect(Importer::Order).to receive(:ensure_variant_id_from_params).exactly(6).times { line_items.first }
+          order = Importer::Order.import(user, params)
         end
 
         it 'builds them properly' do
@@ -300,7 +307,15 @@ module Spree
           expect(shipment.shipping_rates.first.cost).to eq 14.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           expect(shipment.stock_location).to eq stock_location
-          expect(order.shipment_total.to_f).to eq 14.99
+          expect(order.shipment_total.to_f).to eq 29.98
+        end
+
+        it "allocates inventory units to the correct shipments" do
+          order = Importer::Order.import(user, params)
+
+          expect(order.inventory_units.count).to eq 5
+          expect(order.shipments.first.inventory_units.count).to eq 3
+          expect(order.shipments.last.inventory_units.count).to eq 2
         end
 
         it "accepts admin name for stock location" do
@@ -322,6 +337,7 @@ module Spree
           let(:params) do
             {
               completed_at: 2.days.ago,
+              line_items_attributes: line_items,
               shipments_attributes: [
                 { tracking: '123456789',
                   cost: '4.99',
