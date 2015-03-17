@@ -91,23 +91,28 @@ module Spree
       # Promotions without rules are eligible by default.
       return [] if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
-      specific_rules = rules.for(promotable)
+      specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
+
+      rule_eligibility = Hash[specific_rules.map do |rule|
+        [rule, rule.eligible?(promotable, options)]
+      end]
 
       if match_all?
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
-        unless specific_rules.all?(&eligible)
+        unless rule_eligibility.values.all?
           @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
           return nil
         end
         specific_rules
       else
-        unless specific_rules.any?(&eligible)
+        unless rule_eligibility.values.any?
           @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
           return nil
         end
-        specific_rules.select(&eligible)
+
+        [rule_eligibility.detect { |_, eligibility| eligibility }.first]
       end
     end
 
