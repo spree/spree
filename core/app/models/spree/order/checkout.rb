@@ -229,12 +229,12 @@ module Spree
             success = false
             @updating_params = params
             run_callbacks :updating_from_params do
+              existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+
               attributes = @updating_params[:order] ? @updating_params[:order].permit(permitted_params).delete_if { |k,v| v.nil? } : {}
 
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              existing_card_id = @updating_params[:order] ? @updating_params[:order][:existing_card] : nil
-
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
                 if credit_card.user_id != self.user_id || credit_card.user_id.blank?
