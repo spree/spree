@@ -105,7 +105,7 @@ module Spree
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
-      return '' if max_level < 1 || root_taxon.children.empty?
+      return '' if max_level < 1 || root_taxon.leaf?
       content_tag :ul, class: 'taxons-list' do
         root_taxon.children.map do |taxon|
           css_class = (current_taxon && current_taxon.self_and_ancestors.include?(taxon)) ? 'current' : nil
