@@ -4,10 +4,11 @@ module Spree
   describe Api::V1::VariantsController, :type => :controller do
     render_views
 
+    let(:option_value) { create(:option_value) }
     let!(:product) { create(:product) }
     let!(:variant) do
       variant = product.master
-      variant.option_values << create(:option_value)
+      variant.option_values << option_value
       variant
     end
 
@@ -166,10 +167,12 @@ module Spree
       end
 
       it "can create a new variant" do
-        api_post :create, :variant => { :sku => "12345" }
+        api_post :create, variant: { sku: "12345", option_value_ids: [option_value.id] }
+
         expect(json_response).to have_attributes(new_attributes)
         expect(response.status).to eq(201)
         expect(json_response["sku"]).to eq("12345")
+        expect(json_response["option_values"].first["id"]).to eq option_value.id
 
         expect(variant.product.variants.count).to eq(1)
       end
