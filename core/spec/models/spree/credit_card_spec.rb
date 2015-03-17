@@ -184,6 +184,21 @@ describe Spree::CreditCard, type: :model do
       expect { credit_card.expiry = '' }.not_to raise_error
     end
 
+    it "should not be expired" do
+      credit_card.expiry = "12 / #{(Time.now.year + 2).to_s.last(2)}"
+      expect(credit_card.expired?).to eq false
+    end
+
+    it "should not be expired when date is on the expiration month" do
+      credit_card.expiry = "#{Time.now.month.to_s.rjust(2,'0')} / #{(Time.now.year).to_s.last(2)}"
+      expect(credit_card.expired?).to eq false
+    end
+
+    it "shoul be expired when date is in the past" do
+      credit_card.expiry = "12 / #{(Time.now.year - 2).to_s.last(2)}"
+      expect(credit_card.expired?).to eq true
+    end
+
     # Regression test for #4725
     it "does not blow up when passed one number" do
       expect { credit_card.expiry = '12' }.not_to raise_error
