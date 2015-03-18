@@ -6,6 +6,7 @@ $(document).ready ->
       url: Spree.routes.classifications_api,
       method: 'PUT',
       data:
+        token: Spree.api_key,
         product_id: ui.item.data('product-id'),
         taxon_id: $('#taxon_id').val(),
         position: ui.item.index()
