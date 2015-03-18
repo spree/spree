@@ -102,16 +102,16 @@ module Spree
         params = { line_items_attributes: line_items }
 
         expect {
-          order = Importer::Order.import(user, params)
+          Importer::Order.import(user, params)
         }.to raise_error /XXX/
       end
 
       it 'handles line_item updating exceptions' do
         line_items.first[:currency] = 'GBP'
-        params = { :line_items_attributes => line_items }
+        params = { line_items_attributes: line_items }
 
         expect {
-          order = Importer::Order.import(user, params)
+          Importer::Order.import(user, params)
         }.to raise_error /Validation failed/
       end
 
@@ -128,7 +128,7 @@ module Spree
       it 'handles exceptions when sku is not found' do
         params = { line_items_attributes: [{ sku: 'XXX', quantity: 5 }] }
         expect {
-          order = Importer::Order.import(user, params)
+          Importer::Order.import(user, params)
         }.to raise_error /XXX/
       end
 
@@ -153,11 +153,11 @@ module Spree
       it 'handles country lookup exceptions' do
         ship_address.delete(:country_id)
         ship_address[:country] = { 'iso' => 'XXX' }
-        params = { :ship_address_attributes => ship_address,
-                   :line_items_attributes => line_items }
+        params = { ship_address_attributes: ship_address,
+                   line_items_attributes: line_items }
 
         expect {
-          order = Importer::Order.import(user, params)
+          Importer::Order.import(user, params)
         }.to raise_error /XXX/
       end
 
@@ -329,7 +329,7 @@ module Spree
         it "raises if cant find stock location" do
           params[:shipments_attributes][0][:stock_location] = "doesnt exist"
           expect {
-            order = Importer::Order.import(user, params)
+            Importer::Order.import(user, params)
           }.to raise_error
         end
 
@@ -414,7 +414,7 @@ module Spree
             { label: 'Promotion Discount', amount: '-3.00' }] }
 
         expect {
-          order = Importer::Order.import(user, params)
+          Importer::Order.import(user, params)
         }.to raise_error /XXX/
       end
 
@@ -444,17 +444,17 @@ module Spree
 
       it 'build a source payment using years and month' do
         params = { payments_attributes: [{
-                                           amount: '4.99',
-                                           payment_method: payment_method.name,
-                                           status: 'completed',
-                                           source: {
-                                             name: 'Fox',
-                                             last_digits: "7424",
-                                             cc_type: "visa",
-                                             year: '2022',
-                                             month: "5"
-                                           }
-                                         }]}
+                                          amount: '4.99',
+                                          payment_method: payment_method.name,
+                                          status: 'completed',
+                                          source: {
+                                            name: 'Fox',
+                                            last_digits: "7424",
+                                            cc_type: "visa",
+                                            year: '2022',
+                                            month: "5"
+                                          }
+                                        }] }
 
         order = Importer::Order.import(user, params)
         expect(order.payments.first.source.last_digits).to eq '7424'
@@ -462,29 +462,29 @@ module Spree
 
       it 'handles source building exceptions when do not have years and month' do
         params = { payments_attributes: [{
-                                           amount: '4.99',
-                                           payment_method: payment_method.name,
-                                           status: 'completed',
-                                           source: {
-                                             name: 'Fox',
-                                             last_digits: "7424",
-                                             cc_type: "visa"
-                                           }
-                                         }]}
+                                          amount: '4.99',
+                                          payment_method: payment_method.name,
+                                          status: 'completed',
+                                          source: {
+                                            name: 'Fox',
+                                            last_digits: "7424",
+                                            cc_type: "visa"
+                                          }
+                                        }] }
 
         expect {
           order = Importer::Order.import(user, params)
         }.to raise_error /Validation failed: Credit card Month is not a number, Credit card Year is not a number/
       end
 
-      it 'builds a payment with an optional completed_at' do
+      it 'builds a payment with an optional created_at' do
         created_at = 2.days.ago
         params = { payments_attributes: [{ amount: '4.99',
                                            payment_method: payment_method.name,
                                            state: 'completed',
                                            created_at: created_at }] }
         order = Importer::Order.import(user, params)
-        expect(order.payments.first.created_at).to eq created_at
+        expect(order.payments.first.created_at).to be_within(0.1).of created_at
       end
 
       context "raises error" do
@@ -492,7 +492,7 @@ module Spree
           params = { payments_attributes: [{ payment_method: "XXX" }] }
           count = Order.count
 
-          expect { order = Importer::Order.import(user, params) }.to raise_error
+          expect { Importer::Order.import(user, params) }.to raise_error
           expect(Order.count).to eq count
         end
       end
