@@ -1,6 +1,16 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:taxons) %>
+    <%= Spree.t(:taxons) %>
 <% end %>
+
+<div class="row">
+  <div class="col-sm-6"></div>
+  <div class="col-sm-6">
+    <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form", :class => 'form-inline' }) do %>
+        <%= per_page_dropdown %>
+    <% end %>
+  </div>
+</div>
+
 
 <div class="taxon-products-view">
   <div class="form-group">
@@ -9,5 +19,19 @@
 
   <ul id="taxon_products" class="taxon"></ul>
 
+  <div class="col-md-12">
+    <button id="load-more" class="btn-default form-control" style="display: none;"><%= Spree.t(:load_more) %></button>
+  </div>
+
   <%= render :partial => "spree/admin/products/autocomplete", :formats => :js %>
 </div>
+
+<% content_for :head do %>
+    <%= javascript_tag do -%>
+        $(document).ready(function() {
+        $("#js-per-page-select").change(function() {
+        $("#js-per-page-form").submit();
+        });
+        });
+    <% end -%>
+<% end %>
