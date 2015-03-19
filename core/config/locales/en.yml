@@ -1297,6 +1297,7 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
+    load_more: Load more
     test: Test
     test_mailer:
       test_email:
