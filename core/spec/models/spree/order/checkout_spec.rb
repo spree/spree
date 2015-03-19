@@ -695,6 +695,34 @@ describe Spree::Order, :type => :model do
         order.update_from_params(params, permitted_params)
       end
 
+      context 'has existing_card param' do
+        let(:permitted_params) do
+          Spree::PermittedAttributes.checkout_attributes +
+            [payments_attributes: Spree::PermittedAttributes.payment_attributes]
+        end
+        let(:credit_card) { create(:credit_card, user_id: order.user_id) }
+        let(:params) do
+          ActionController::Parameters.new(
+            order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id }
+          )
+        end
+
+        before do
+          Dummy::Application.config.action_controller.action_on_unpermitted_parameters = :raise
+          order.user_id = 3
+        end
+
+        after do
+          Dummy::Application.config.action_controller.action_on_unpermitted_parameters = :log
+        end
+
+        it 'does not attempt to permit existing_card' do
+          expect {
+            order.update_from_params(params, permitted_params)
+          }.not_to raise_error
+        end
+      end
+
       context 'has allowed params' do
         let(:params) { ActionController::Parameters.new(order: {  good_param: 'okay' } ) }
 
