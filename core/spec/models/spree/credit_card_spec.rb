@@ -36,6 +36,10 @@ describe Spree::CreditCard, type: :model do
     allow(@payment).to receive_messages payment_method: @payment_gateway
   end
 
+  it 'should respond to track_data' do
+    expect(credit_card.respond_to?(:track_data)).to be true
+  end
+
   context "#can_capture?" do
     it "should be true if payment is pending" do
       payment = mock_model(Spree::Payment, pending?: true, created_at: Time.now)
