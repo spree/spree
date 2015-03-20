@@ -24,6 +24,14 @@ module Spree
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
 
+    # ActiveMerchant::Billing::CreditCard added this accessor used by some gateways.
+    # More info: https://github.com/spree/spree/issues/6209
+    #
+    # Returns or sets the track data for the card
+    #
+    # @return [String]
+    attr_accessor :track_data
+
     CARD_TYPES = {
       visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
       master: /(^5[1-5][0-9]{14}$)|(^6759[0-9]{2}([0-9]{10})$)|(^6759[0-9]{2}([0-9]{12})$)|(^6759[0-9]{2}([0-9]{13})$)/,
