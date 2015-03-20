@@ -177,7 +177,7 @@ module Spree
       return 0 unless options.present?
 
       options.keys.map { |key|
-        m = "#{options[key]}_price_modifier_amount".to_sym
+        m = "#{key}_price_modifier_amount".to_sym
         if self.respond_to? m
           self.send(m, options[key])
         else
