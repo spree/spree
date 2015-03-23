@@ -4,6 +4,9 @@ module Spree
       module Order
         extend ActiveSupport::Concern
 
+        LOCK_MODE             = 'FOR UPDATE NOWAIT'.freeze
+        PG_LOCK_NOT_AVAILABLE = 'PG::LockNotAvailable:'.freeze
+
         included do
           before_filter :set_current_order
 
@@ -20,7 +23,7 @@ module Spree
         def current_order
           return @current_order if defined?(@current_order)
 
-          @current_order = find_order_by_token_or_user(true).try do |order|
+          @current_order = find_order_by_token_or_user(LOCK_MODE).try do |order|
             order.last_ip_address = ip_address
             # See issue #3346 for reasons why this line is here
             order.created_by ||= try_spree_current_user
@@ -87,6 +90,12 @@ module Spree
           order ||= if try_spree_current_user
             try_spree_current_user.incomplete_spree_orders.lock(lock).first
           end
+        rescue ActiveRecord::StatementInvalid => exception
+          if exception.message.start_with?(PG_LOCK_NOT_AVAILABLE)
+            fail Spree::Order::OrderBusyError
+          end
+
+          raise
         end
 
       end

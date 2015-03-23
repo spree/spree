@@ -42,57 +42,94 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     include_examples 'returning order'
   end
 
-  shared_examples_for 'locks the order by token/user' do
-    # This chain of expectations asserts the record gets locked.
-    # There is no other known in-memory way since AR does not track
-    # if a record was loaded under lock or not.
-    it 'locks the order' do
-      collection = double('Collection')
+  shared_examples_for 'lock cannot be aquired' do
+    context 'when lock cannot be aquired' do
+      context 'because lock is not available' do
+        before do
+          expect(collection).to receive(:lock)
+            .with('FOR UPDATE NOWAIT')
+            .ordered
+            .and_raise(ActiveRecord::StatementInvalid.new('PG::LockNotAvailable: ERROR: details'))
+        end
 
+        it 'raises busy order exception' do
+          expect { apply }.to raise_error(Spree::Order::OrderBusyError)
+        end
+      end
+
+      context 'because of unrelated exception' do
+        let(:unrelated_exception) { ActiveRecord::StatementInvalid.new('generic other error') }
+
+        before do
+          expect(collection).to receive(:lock)
+            .with('FOR UPDATE NOWAIT')
+            .ordered
+            .and_raise(unrelated_exception)
+        end
+
+        it 'raises the unrelated exception' do
+          expect { apply }.to raise_error(unrelated_exception)
+        end
+      end
+    end
+  end
+
+  shared_examples_for 'locks the order by token/user' do
+    let(:collection) { double('Collection') }
+
+    before do
       expect(Spree::Order).to receive(:incomplete)
         .ordered
         .and_return(collection)
-
       expect(collection).to receive(:includes)
         .with(:all_adjustments)
         .ordered
         .and_return(collection)
-
-      expect(collection).to receive(:lock)
-        .with(true)
-        .ordered
-        .and_return(collection)
-
-      expect(collection).to receive(:find_by)
-        .with(currency: 'USD', guest_token: request_guest_token, user_id: user.try(:id))
-        .ordered
-        .and_return(order)
-
-      apply
     end
+
+    context 'when lock can be aquired immediately' do
+      before do
+        expect(collection).to receive(:lock)
+          .with('FOR UPDATE NOWAIT')
+          .ordered
+          .and_return(collection)
+
+        expect(collection).to receive(:find_by)
+          .with(currency: 'USD', guest_token: request_guest_token, user_id: user.try(:id))
+          .ordered
+          .and_return(order)
+      end
+
+      include_examples 'returning expected order'
+    end
+
+    include_examples 'lock cannot be aquired'
   end
 
   shared_examples_for 'locks the last incomplete order' do
-    # This chain of expectations asserts the record gets locked.
-    # There is no other known in-memory way since AR does not track
-    # if a record was loaded under lock or not.
-    it 'locks the order' do
-      collection = double('Collection')
+    let(:collection) { double('Collection') }
 
+    before do
       expect(user).to receive(:incomplete_spree_orders)
         .ordered
         .and_return(collection)
-
-      expect(collection).to receive(:lock)
-        .with(true)
-        .ordered
-        .and_return(collection)
-
-      expect(collection).to receive(:first)
-        .and_return(order)
-
-      apply
     end
+
+    context 'when lock can be aquired immediately' do
+      before do
+        expect(collection).to receive(:lock)
+          .with('FOR UPDATE NOWAIT')
+          .ordered
+          .and_return(collection)
+
+        expect(collection).to receive(:first)
+          .and_return(order)
+      end
+
+      include_examples 'returning expected order'
+    end
+
+    include_examples 'lock cannot be aquired'
   end
 
   shared_examples_for 'order lookup' do
@@ -106,7 +143,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         let(:request_guest_token) { order.guest_token }
         let(:expected_order)      { order             }
 
-        include_examples 'returning expected order'
         include_examples 'locks the order by token/user'
       end
 
@@ -126,7 +162,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         let(:request_guest_token) { order.guest_token }
         let(:expected_order)      { order             }
 
-        include_examples 'returning expected order'
         include_examples 'locks the order by token/user'
       end
 
@@ -136,7 +171,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         let(:expected_order)      { order                                              }
         let(:expected_created_by) { other_user                                         }
 
-        include_examples 'returning expected order'
+        include_examples 'locks the last incomplete order'
       end
 
       context 'without matching guest token' do
@@ -145,7 +180,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
           before { order }
 
-          include_examples 'returning expected order'
           include_examples 'locks the last incomplete order'
         end
 
