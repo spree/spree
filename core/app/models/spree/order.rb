@@ -7,6 +7,9 @@ module Spree
     include Spree::Order::CurrencyUpdater
     include Spree::Core::Permalinks.new(prefix: 'R')
 
+    # Error raised on concurrent order operations
+    OrderBusyError = Class.new(RuntimeError)
+
     MONEY_THRESHOLD  = 999_999
     MONEY_VALIDATION = {
       presence:     true,
