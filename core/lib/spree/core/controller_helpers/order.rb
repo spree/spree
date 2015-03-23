@@ -4,6 +4,8 @@ module Spree
       module Order
         extend ActiveSupport::Concern
 
+        PG_LOCK_NOT_AVAILABLE = 'PG::LockNotAvailable:'.freeze
+
         included do
           before_filter :set_current_order
 
@@ -94,6 +96,12 @@ module Spree
             .includes(:all_adjustments)
             .lock
             .reduce(*other, :merge!)
+        rescue ActiveRecord::StatementInvalid => exception
+          if exception.message.start_with?(PG_LOCK_NOT_AVAILABLE)
+            fail Spree::Order::OrderBusyError
+          end
+
+          raise
         end
 
       end

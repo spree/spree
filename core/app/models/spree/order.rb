@@ -8,6 +8,9 @@ module Spree
     include Spree::Order::Payments
     include Spree::Core::NumberGenerator.new(prefix: 'R')
 
+    # Error raised on concurrent order operations
+    OrderBusyError = Class.new(RuntimeError)
+
     MONEY_THRESHOLD  = 999_999
     MONEY_VALIDATION = {
       presence:     true,

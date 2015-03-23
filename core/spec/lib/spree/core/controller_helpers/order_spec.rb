@@ -77,6 +77,13 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           expect(apply).to be(relation)
           expect(relation).to have_received(:lock).with(no_args)
         end
+
+        it 'raises error on lock error' do
+          expect(relation).to receive(:lock).and_raise(
+            ActiveRecord::StatementInvalid.new('PG::LockNotAvailable:')
+          )
+          expect { apply }.to raise_error(Spree::Order::OrderBusyError)
+        end
       end
     end
 
@@ -102,6 +109,12 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         it 'locks the order' do
           expect(apply).to be(relation)
           expect(relation).to have_received(:lock).with(no_args)
+        end
+
+        it 'raises error on lock error' do
+          error = ActiveRecord::StatementInvalid.new('other')
+          expect(relation).to receive(:lock).and_raise(error)
+          expect { apply }.to raise_error(error)
         end
       end
     end
