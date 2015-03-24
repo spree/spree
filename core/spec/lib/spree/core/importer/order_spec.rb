@@ -390,6 +390,30 @@ module Spree
         expect(order.adjustments.first.amount).to eq -4.99
       end
 
+      it 'adds line item adjustments' do
+        params = {
+          line_items_attributes: line_items,
+          adjustments_attributes: [
+            { label: 'Line Item Discount', amount: -4.99, variant_id: line_items.first[:variant_id] },
+            { label: 'Order Discount', amount: -5.99 }
+          ]
+        }
+
+        order = Importer::Order.import(user, params)
+
+        line_item_adjustment = order.line_item_adjustments.first
+        expect(line_item_adjustment.closed?).to be true
+        expect(line_item_adjustment.label).to eq 'Line Item Discount'
+        expect(line_item_adjustment.amount).to eq -4.99
+
+        order_adjustment = order.adjustments.first
+        expect(order_adjustment.closed?).to be true
+        expect(order_adjustment.label).to eq 'Order Discount'
+        expect(order_adjustment.amount).to eq -5.99
+
+        expect(order.all_adjustments.count).to eq 2
+      end
+
       it "calculates final order total correctly" do
         params = {
           adjustments_attributes: [

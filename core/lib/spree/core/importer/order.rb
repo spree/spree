@@ -170,13 +170,25 @@ module Spree
           return [] unless adjustments
           adjustments.each do |a|
             begin
-              adjustment = order.adjustments.build(
-                order:  order,
-                amount: a[:amount].to_f,
-                label:  a[:label]
-              )
-              adjustment.save!
-              adjustment.close!
+              if a[:sku] || a[:variant_id]
+                a = ensure_variant_id_from_params(a)
+                line_item = order.line_items.detect { |li| li.variant_id.to_i == a[:variant_id].to_i }
+                adjustment = line_item.adjustments.build(
+                  order: order,
+                  amount: a[:amount].to_f,
+                  label: a[:label]
+                )
+                adjustment.save!
+                adjustment.close!
+              else
+                adjustment = order.adjustments.build(
+                  order:  order,
+                  amount: a[:amount].to_f,
+                  label:  a[:label]
+                )
+                adjustment.save!
+                adjustment.close!
+              end
             rescue Exception => e
               raise "Order import adjustments: #{e.message} #{a}"
             end
