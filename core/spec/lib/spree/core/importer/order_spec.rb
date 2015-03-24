@@ -390,6 +390,46 @@ module Spree
         expect(order.adjustments.first.amount).to eq -4.99
       end
 
+      it 'adds line item adjustments from promotion' do
+        line_items.first[:adjustments_attributes] = [
+          { label: 'Line Item Discount', amount: -4.99, promotion: true }
+        ]
+        params = {
+          line_items_attributes: line_items,
+          adjustments_attributes: [
+            { label: 'Order Discount', amount: -5.99 }
+          ]
+        }
+
+        order = Importer::Order.import(user, params)
+
+        line_item_adjustment = order.line_item_adjustments.first
+        expect(line_item_adjustment.closed?).to be true
+        expect(line_item_adjustment.label).to eq 'Line Item Discount'
+        expect(line_item_adjustment.amount).to eq -4.99
+        expect(order.line_items.first.adjustment_total).to eq -4.99
+      end
+
+      it 'adds line item adjustments from taxation' do
+        line_items.first[:adjustments_attributes] = [
+          { label: 'Line Item Tax', amount: -4.99, tax: true }
+        ]
+        params = {
+          line_items_attributes: line_items,
+          adjustments_attributes: [
+            { label: 'Order Discount', amount: -5.99 }
+          ]
+        }
+
+        order = Importer::Order.import(user, params)
+
+        line_item_adjustment = order.line_item_adjustments.first
+        expect(line_item_adjustment.closed?).to be true
+        expect(line_item_adjustment.label).to eq 'Line Item Tax'
+        expect(line_item_adjustment.amount).to eq -4.99
+        expect(order.line_items.first.adjustment_total).to eq -4.99
+      end
+
       it "calculates final order total correctly" do
         params = {
           adjustments_attributes: [

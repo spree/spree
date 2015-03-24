@@ -130,6 +130,7 @@ module Spree
 
             line_items.each_key do |k|
               begin
+                adjustments = line_items[k].delete(:adjustments_attributes)
                 extra_params = line_items[k].except(:variant_id, :quantity, :sku)
                 line_item = ensure_variant_id_from_params(line_items[k])
                 variant = Spree::Variant.find(line_item[:variant_id])
@@ -141,6 +142,7 @@ module Spree
                 else
                   line_item.save!
                 end
+                create_adjustments_from_params(adjustments, order, line_item)
               rescue Exception => e
                 raise "Order import line items: #{e.message} #{line_item}"
               end
@@ -148,6 +150,7 @@ module Spree
           when Array
             line_items.each do |line_item|
               begin
+                adjustments = line_item.delete(:adjustments_attributes)
                 extra_params = line_item.except(:variant_id, :quantity, :sku)
                 line_item = ensure_variant_id_from_params(line_item)
                 variant = Spree::Variant.find(line_item[:variant_id])
@@ -159,6 +162,7 @@ module Spree
                 else
                   line_item.save!
                 end
+                create_adjustments_from_params(adjustments, order, line_item)
               rescue Exception => e
                 raise "Order import line items: #{e.message} #{line_item}"
               end
@@ -166,14 +170,15 @@ module Spree
           end
         end
 
-        def self.create_adjustments_from_params(adjustments, order)
+        def self.create_adjustments_from_params(adjustments, order, line_item = nil)
           return [] unless adjustments
           adjustments.each do |a|
             begin
-              adjustment = order.adjustments.build(
-                order:  order,
+              adjustment = (line_item || order).adjustments.build(
+                order: order,
                 amount: a[:amount].to_f,
-                label:  a[:label]
+                label: a[:label],
+                source_type: source_type_from_adjustment(a)
               )
               adjustment.save!
               adjustment.close!
@@ -281,6 +286,13 @@ module Spree
           end
         end
 
+        def self.source_type_from_adjustment(adjustment)
+          if adjustment[:tax]
+            'Spree::TaxRate'
+          elsif adjustment[:promotion]
+            'Spree::PromotionAction'
+          end
+        end
       end
     end
   end
