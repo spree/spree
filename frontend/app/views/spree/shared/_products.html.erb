@@ -1,11 +1,6 @@
-<%
-  paginated_products = @searcher.retrieve_products if params.key?(:keywords)
-  paginated_products ||= products
-%>
-
 <% content_for :head do %>
-  <% if paginated_products.respond_to?(:num_pages) %>
-    <%= rel_next_prev_link_tags paginated_products %>
+  <% if products.respond_to?(:num_pages) %>
+    <%= rel_next_prev_link_tags products %>
   <% end %>
 <% end %>
 
@@ -45,6 +40,6 @@
   </div>
 <% end %>
 
-<% if paginated_products.respond_to?(:num_pages) %>
-  <%= paginate paginated_products, theme: 'twitter-bootstrap-3' %>
+<% if products.respond_to?(:num_pages) %>
+  <%= paginate products, theme: 'twitter-bootstrap-3' %>
 <% end %>
