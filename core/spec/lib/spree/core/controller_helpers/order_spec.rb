@@ -47,7 +47,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       context 'because lock is not available' do
         before do
           expect(collection).to receive(:lock)
-            .with('FOR UPDATE NOWAIT')
+            .with(true)
             .ordered
             .and_raise(ActiveRecord::StatementInvalid.new('PG::LockNotAvailable: ERROR: details'))
         end
@@ -62,7 +62,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
         before do
           expect(collection).to receive(:lock)
-            .with('FOR UPDATE NOWAIT')
+            .with(true)
             .ordered
             .and_raise(unrelated_exception)
         end
@@ -90,7 +90,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     context 'when lock can be aquired immediately' do
       before do
         expect(collection).to receive(:lock)
-          .with('FOR UPDATE NOWAIT')
+          .with(true)
           .ordered
           .and_return(collection)
 
@@ -118,7 +118,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     context 'when lock can be aquired immediately' do
       before do
         expect(collection).to receive(:lock)
-          .with('FOR UPDATE NOWAIT')
+          .with(true)
           .ordered
           .and_return(collection)
 
