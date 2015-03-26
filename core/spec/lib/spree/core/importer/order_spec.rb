@@ -406,6 +406,8 @@ module Spree
         expect(line_item_adjustment.label).to eq 'Line Item Discount'
         expect(line_item_adjustment.amount).to eq -4.99
 
+        expect(order.line_items.first.adjustment_total).to eq -4.99
+
         order_adjustment = order.adjustments.first
         expect(order_adjustment.closed?).to be true
         expect(order_adjustment.label).to eq 'Order Discount'
