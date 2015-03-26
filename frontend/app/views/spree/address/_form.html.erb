@@ -15,7 +15,7 @@
   </p>
   <% if Spree::Config[:company] %>
     <p class="form-group" id=<%="#{address_id}company" %>>
-      <%= form.label :company, Spree.t(:company) %><br />
+      <%= form.label :company, Spree.t(:company) %>
       <%= form.text_field :company, :class => 'form-control' %>
     </p>
   <% end %>
@@ -26,7 +26,7 @@
     <%= form.text_field :address1, :class => 'form-control  required' %>
   </p>
   <p class="form-group" id=<%="#{address_id}address2" %>>
-    <%= form.label :address2, Spree.t(:street_address_2) %><br />
+    <%= form.label :address2, Spree.t(:street_address_2) %>
     <%= form.text_field :address2, :class => 'form-control' %>
   </p>
   <p class="form-group" id=<%="#{address_id}city" %>>
@@ -85,7 +85,7 @@
   </p>
   <% if Spree::Config[:alternative_shipping_phone] %>
     <p class="form-group" id=<%="#{address_id}altphone" %>>
-      <%= form.label :alternative_phone, Spree.t(:alternative_phone) %><br />
+      <%= form.label :alternative_phone, Spree.t(:alternative_phone) %>
       <%= form.phone_field :alternative_phone, :class => 'form-control' %>
     </p>
   <% end %>
