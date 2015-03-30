@@ -521,7 +521,9 @@ describe Spree::Payment, :type => :model do
 
       context "when there is an error connecting to the gateway" do
         it "should call gateway_error " do
-          expect(gateway).to receive(:create_profile).and_raise(ActiveMerchant::ConnectionError)
+          message = double("gateway_error")
+          connection_error = ActiveMerchant::ConnectionError.new(message, nil)
+          expect(gateway).to receive(:create_profile).and_raise(connection_error)
           expect do
             Spree::Payment.create(
               :amount => 100,
