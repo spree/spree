@@ -97,7 +97,7 @@ describe "Orders Listing", type: :feature do
 
     it "should be able to filter on variant_sku" do
       click_on 'Filter'
-      fill_in "q_line_items_variant_sku_eq", with: @order1.line_items.first.variant.sku
+      fill_in "q_line_items_variant_sku_eq", with: order1.line_items.first.variant.sku
       click_on 'Filter Results'
 
       within_row(1) do
