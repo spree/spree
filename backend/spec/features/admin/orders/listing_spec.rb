@@ -95,12 +95,18 @@ describe "Orders Listing", type: :feature do
       expect(page).not_to have_content("R200")
     end
 
+<<<<<<< HEAD
     it "should be able to filter on variant_id" do
       # Insure we have the SKU in the options
       expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(order1.line_items.first.variant.sku)
 
       # Select and filter
       find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
+=======
+    it "should be able to filter on variant_sku" do
+      click_on 'Filter'
+      fill_in "q_line_items_variant_sku_eq", with: @order1.line_items.first.variant.sku
+>>>>>>> Replace select of sku with simple text field in orders filter because of big performance issues. Fixes #6225
       click_on 'Filter Results'
 
       within_row(1) do

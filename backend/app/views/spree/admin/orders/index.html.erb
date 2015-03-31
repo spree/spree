@@ -99,8 +99,8 @@
 
         <div class="col-md-4">
           <div class="form-group">
-            <%= label_tag :q_line_items_variant_id_in, Spree.t(:sku) %>
-            <%= f.select :line_items_variant_id_in, Spree::Variant.having_orders.order(:sku).pluck(:sku, :id), {:include_blank => true}, :class => 'select2' %>
+            <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
+            <%= f.text_field :line_items_variant_sku_eq %>
           </div>
         </div>
 
