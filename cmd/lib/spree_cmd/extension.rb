@@ -49,11 +49,20 @@ module SpreeCmd
         Thor::Util.camel_case file_name
       end
 
+      def unprefixed_class_name
+        Thor::Util.camel_case unprefixed_file_name
+      end
+
+      def unprefixed_file_name
+        @file_name.match(/^#{@prefix}(.*)/)[1]
+      end
+
       def spree_version
         '3.1.0.beta'
       end
 
       def use_prefix(prefix)
+        @prefix = prefix
         unless file_name =~ /^#{prefix}/
           @file_name = prefix + Thor::Util.snake_case(file_name)
         end

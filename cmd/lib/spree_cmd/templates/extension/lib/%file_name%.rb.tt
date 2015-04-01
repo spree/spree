@@ -1,2 +1,1 @@
-require 'spree_core'
-require '<%=file_name%>/engine'
+require 'spree/<%= unprefixed_file_name %>'
