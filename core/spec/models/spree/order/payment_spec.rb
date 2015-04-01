@@ -161,6 +161,22 @@ module Spree
         order.payment_total = 10.20
         expect(order.outstanding_balance).to be_within(0.001).of(-2.00)
       end
+      it 'should incorporate refund reimbursements' do
+        # Creates an order w/total 10
+        reimbursement = create :reimbursement
+        # Set the payment amount to actually be the order total of 10
+        reimbursement.order.payments.first.update_column :amount, 10
+        # Creates a refund of 10
+        create :refund, amount: 10,
+                        payment: reimbursement.order.payments.first,
+                        reimbursement: reimbursement
+        order = reimbursement.order.reload
+        # Update the order totals so payment_total goes to 0 reflecting the refund..
+        order.update!
+        # Order Total - (Payment Total + Reimbursed)
+        # 10 - (0 + 10) = 0
+        expect(order.outstanding_balance).to eq 0
+      end
     end
 
     context "#outstanding_balance?" do
