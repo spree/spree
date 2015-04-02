@@ -1,7 +1,7 @@
 module Spree
   class CreditCard < Spree::Base
     belongs_to :payment_method
-    has_many :payments, as: :source
+    has_many :payments, as: :source, dependent: :restrict_with_exception
 
     before_create :set_missing_info
 
