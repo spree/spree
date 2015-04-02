@@ -10,8 +10,8 @@ module Spree
     belongs_to :source, polymorphic: true
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
 
-    has_many :offsets, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") },
-      class_name: "Spree::Payment", foreign_key: :source_id
+    has_many :offsets, -> { where("amount < 0 AND state = 'completed'") },
+      class_name: 'Spree::Payment', as: :source
     has_many :log_entries, as: :source, dependent: :restrict_with_exception
     has_many :state_changes, as: :stateful, dependent: :restrict_with_exception
     has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
