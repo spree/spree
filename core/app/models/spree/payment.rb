@@ -11,8 +11,8 @@ module Spree
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
 
     has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
-    has_many :log_entries, as: :source
-    has_many :state_changes, as: :stateful
+    has_many :log_entries, as: :source, dependent: :restrict_with_exception
+    has_many :state_changes, as: :stateful, dependent: :restrict_with_exception
     has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 

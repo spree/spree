@@ -1,6 +1,6 @@
 module Spree
   class StockTransfer < Spree::Base
-    has_many :stock_movements, :as => :originator
+    has_many :stock_movements, :as => :originator, :dependent => :restrict_with_exception
 
     belongs_to :source_location, :class_name => 'StockLocation'
     belongs_to :destination_location, :class_name => 'StockLocation'

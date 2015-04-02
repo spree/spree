@@ -2,7 +2,7 @@ module Spree
   class CreditCard < Spree::Base
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class, foreign_key: 'user_id'
-    has_many :payments, as: :source
+    has_many :payments, as: :source, dependent: :restrict_with_exception
 
     before_save :set_last_digits
 
