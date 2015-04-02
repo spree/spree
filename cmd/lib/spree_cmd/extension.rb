@@ -5,6 +5,7 @@ module SpreeCmd
 
     desc "builds a spree extension"
     argument :file_name, :type => :string, :desc => 'rails app_path', :default => '.'
+    class_option :preferences, alias: "-p", type: :boolean, default: false, desc: 'generate namespaced configuration preferences'
 
     source_root File.expand_path('../templates/extension', __FILE__)
 
@@ -27,6 +28,10 @@ module SpreeCmd
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
       template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
+
+      if options[:preferences]
+        directory '../extension_preferences/app', "#{file_name}/app"
+      end
     end
 
     def final_banner

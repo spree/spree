@@ -5,6 +5,12 @@ module Spree
       isolate_namespace Spree
       engine_name '<%= file_name %>'
 
+      <%- if options[:preferences] %>
+      initializer 'spree.require_registration.environment', :before => :load_config_initializers do |app|
+        Spree::<%= unprefixed_class_name %>::Config = Spree::<%= unprefixed_class_name %>Configuration.new
+      end
+      <%- end %>
+
       # use rspec for tests
       config.generators do |g|
         g.test_framework :rspec
