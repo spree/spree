@@ -10,7 +10,7 @@ module Spree
 
     has_many :shipping_rates, -> { order('cost ASC') }, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
-    has_many :state_changes, as: :stateful
+    has_many :state_changes, as: :stateful, dependent: :restrict_with_exception
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
 
     after_save :update_adjustments
