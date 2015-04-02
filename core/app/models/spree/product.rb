@@ -264,7 +264,7 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.now.to_i}_#{slug}" unless frozen?
+      update_column :slug, "#{Time.now.to_i}_#{slug}"[0..254] unless frozen?
     end
 
     def anything_changed?
