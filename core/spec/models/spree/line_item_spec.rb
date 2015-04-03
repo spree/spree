@@ -119,18 +119,12 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
-  describe '.discounted_amount' do
+  describe '#discounted_amount' do
     it "returns the amount minus any discounts" do
       line_item.price = 10
       line_item.quantity = 2
       line_item.promo_total = -5
       expect(line_item.discounted_amount).to eq(15)
-    end
-  end
-
-  describe "#discounted_money" do
-    it "should return a money object with the discounted amount" do
-      expect(line_item.discounted_money.to_s).to eq "$10.00"
     end
   end
 
@@ -140,7 +134,30 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
-  describe ".money" do
+  describe "#discounted_money" do
+    it "should return a money object with the discounted amount" do
+      expect(line_item.discounted_money.to_s).to eq "$10.00"
+    end
+  end
+
+  describe '#display_discounted_amount_adding_vat' do
+    context "with included vat" do
+      let!(:included_tax_rate) do
+        create(:tax_rate,
+          included_in_price: true,
+          tax_category: order.line_items.first.tax_category,
+          zone: order.tax_zone,
+          amount: 0.4
+        )
+      end
+
+      it "returns a Spree::Money including vat" do
+        expect(line_item.display_discounted_amount_adding_vat).to eq(Spree::Money.new(14))
+      end
+    end
+  end
+
+  describe "#money" do
     before do
       line_item.price = 3.50
       line_item.quantity = 2
@@ -149,12 +166,73 @@ describe Spree::LineItem, :type => :model do
     it "returns a Spree::Money representing the total for this line item" do
       expect(line_item.money.to_s).to eq("$7.00")
     end
+
   end
 
-  describe '.single_money' do
-    before { line_item.price = 3.50 }
+  describe '#display_total_adding_vat' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
+    context "with no included vat" do
+      it "returns a Spree::Money equalling the price" do
+        expect(line_item.display_total_adding_vat).to eq(Spree::Money.new(7.0))
+      end
+    end
+
+    context "with included vat" do
+      let!(:included_tax_rate) do
+        create(:tax_rate,
+          included_in_price: true,
+          tax_category: order.line_items.first.tax_category,
+          zone: order.tax_zone,
+          amount: 0.4
+        )
+      end
+
+      it "returns a Spree::Money including vat" do
+        expect(line_item.display_total_adding_vat).to eq(Spree::Money.new(7.0*1.4))
+      end
+    end
+  end
+
+  describe '#single_money' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
     it "returns a Spree::Money representing the price for one variant" do
       expect(line_item.single_money.to_s).to eq("$3.50")
+    end
+  end
+
+  describe '#display_price_adding_vat' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
+    context "without vat" do
+      it "returns a Spree::Money representing the price for one variant" do
+        expect(line_item.display_price_adding_vat.to_s).to eq("$3.50")
+      end
+    end
+
+    context "with included vat" do
+      let!(:included_tax_rate) do
+        create(:tax_rate,
+          included_in_price: true,
+          tax_category: order.line_items.first.tax_category,
+          zone: order.tax_zone,
+          amount: 0.4
+        )
+      end
+
+      it "returns a Spree::Money including vat" do
+        expect(line_item.display_price_adding_vat).to eq(Spree::Money.new(3.5*1.4))
+      end
     end
   end
 
