@@ -22,6 +22,17 @@ shared_examples_for "default_price" do
     subject { instance.default_price }
 
     its(:class) { should eql Spree::Price }
+    it 'delegates price' do
+      expect(instance.default_price). to receive(:price)
+      instance.price
+    end
+
+    # this delegation is necessary to apply VAT to prices before they're shown
+    # in form fields. 
+    it 'delegates form_field_price' do
+      expect(instance.default_price). to receive(:form_field_price)
+      instance.form_field_price
+    end
   end
 
   its(:has_default_price?) { should be_truthy }
