@@ -24,19 +24,14 @@ Each controller is configured to serve the content using these keyword-relevant,
 
 ### On Page Keyword Targeting
 
-Several enhancements have been made to improve on-page keyword
-targeting. The admin interface provides the ability to manage meta
-descriptions and meta keywords at the product level. Additionally, H1
-tags are used throughout the site for product and taxonomy names. The
-ease of extension development and layout changes allows you to target
-keywords throughout the site.
+Several enhancements have been made to improve on-page keyword targeting. The admin interface provides the ability to manage meta descriptions and meta keywords at the product level. Additionally, H1 tags are used throughout the site for product and taxonomy names. The ease of extension development and layout changes allows you to target keywords throughout the site.
+
+Starting with Spree 2.0, Taxons also have `meta_keywords` and `meta_description` on them. (You can configure these in the Admin > Configuration > Taxonomies). If you want to add keywords and description to another kind of object in Spree, you can do so simply by adding those two fields (`meta_keywords` and `meta_description`) onto the object in question. The Spree controller must instantiate an instance variable of the same class name as the controller (so, for example, `@taxon` for the TaxonsController) for this to work. Check out the `meta_data` method on spree_core/app/helpers/spree/base_helper.rb for details on how that works. 
+
 
 ### Clean Content
 
-Spree uses Skeleton, a responsive CSS framework that allows clean HTML
-that also responds well to any screen size. Having clean HTML with
-minimal inline JavaScript and CSS is considered to be a factor in search
-engine optimization.
+Spree 2.4 and earlier uses Skeleton and Spree 3.0 uses Bootstrap. Both are a responsive CSS framework that allows clean HTML that also responds well to any screen size. Having clean HTML with minimal inline JavaScript and CSS is considered to be a factor in search engine optimization.
 
 ### On Site Performance Optimization
 
@@ -53,28 +48,7 @@ managed from the "Analytics Trackers" section of the admin. Google
 Analytics is not included on your store if this preference is not set.
 The Google Analytics setup includes e-commerce conversion tracking.
 
-## Planned Search Engine Optimization Features
-
-Although several common search engine optimization issues have been
-addressed, we are always looking for the new best practices in SEO.
-Contributions to address issues will be very welcome. Visit the
-[contributing to spree section](contributing.html) to learn
-more about contributing.
-
-### Product and Taxonomy Page Title Enhancements
-
-Page titles are an important part of search engine optimization and
-should be meaningful and relevant to the page content. There are a few
-configuration settings for getting the best page titles possible. "Site
-Name" will appear in the beginning of each of your titles. When
-possible, we assign an appropriate title after that (product name, taxon
-name, etc), but when we can't do that, we use the "Default Seo Title".
-
-### Alt Attribute on Product Images
-
-The alt attribute on product images currently pulls data from product
-titles or the image filename. Enhancing the image alt tag can improve
-image search performance.
+## Gotchas, Known Issues, and Further Considerations
 
 ### Known Duplicate Content Issues
 
@@ -87,6 +61,8 @@ external links are divided among duplicate content pages. As a result,
 duplicate content pages may not only not be excluded from the main
 search engine index, but pages may also rank poorly in comparison to
 other sites where all external links go to one non-duplicated page.
+
+If you change your home page this won't be an issue for you. Alternatively, you can have your [demo.spreecommerce.com/products](http://demo.spreecommerce.com/products) page redirect to your home page to eliminate this problem.
 
 ### Integration of Content Management System or Content
 
@@ -106,16 +82,33 @@ Webmaster Tools and Quantcast. Social media optimization tools such as
 Pinterest, Reddit, Digg, Delicious, Facebook, Google+ and Twitter may
 also be integrated to improve social networking site performance.
 
-## Spree SEO Extensions
+Many of these can be implemented with minimal changes to your Spree store. 
+
+### Spree SEO Extensions
 
 The following list shows extensions that can improve search engine
 performance. Refer to the GitHub README for developer notes.
 
--   [Static Content Management](https://github.com/spree/spree_static_content)
--   [Spree Sitemap Generation](https://github.com/romul/spree_dynamic_sitemaps)
--   [Product Reviews](https://github.com/spree/spree_reviews)
+-   [Spree Sitemap Generator](https://github.com/spree-contrib/spree_sitemap)
+-   [Static Content Management](https://github.com/spree-contrib/spree_static_content)
+-   [Product Reviews](https://github.com/spree-contrib/spree_reviews)
 
-## External Search Engine Optimization Efforts
+(for stores older than Spree 1.0, check out [Spree Sitemap Generation](https://github.com/romul/spree_dynamic_sitemaps))
+
+
+## Planned Search Engine Optimization Features (TODO)
+
+Although several common search engine optimization issues have been
+addressed, we are always looking for the new best practices in SEO.
+Contributions to address issues will be very welcome. Visit the
+[contributing to spree section](contributing.html) to learn
+more about contributing.
+
+Here are some of the specific planned ideas we have for the future of Spree:
+
+- Make the `alt` field from spree_assets output as the alt attribute in the image tag
+
+## In Conclusion
 
 Spree cannot control factors such as external links, quality of external
 links, server performance and capabilities. These areas should not be
