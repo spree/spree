@@ -28,22 +28,10 @@ module Spree
       def calculate_shipping_rates(package, ui_filter)
         shipping_methods(package, ui_filter).map do |shipping_method|
           cost = shipping_method.calculator.compute(package)
-          tax_category = shipping_method.tax_category
-          if tax_category
-            tax_rate = tax_category.tax_rates.detect do |rate|
-              # If the rate's zone matches the order's zone, a positive adjustment will be applied.
-              # If the rate is from the default tax zone, then a negative adjustment will be applied.
-              # See the tests in shipping_rate_spec.rb for an example of this.d
-              rate.zone == order.tax_zone || rate.zone.default_tax?
-            end
-          end
+          tax_rate = Spree::TaxRate.potential_rates_for_zone(order.tax_zone)
+            .where(tax_category: shipping_method.tax_category).first
 
-          if cost
-            rate = shipping_method.shipping_rates.new(cost: cost)
-            rate.tax_rate = tax_rate if tax_rate
-          end
-
-          rate
+          shipping_method.shipping_rates.new(cost: cost, tax_rate: tax_rate ) if cost
         end.compact
       end
 
