@@ -134,4 +134,67 @@ describe Spree::BaseHelper, type: :helper do
       expect(pretty_time(DateTime.new(2012, 5, 6, 13, 33))).to eq "May 06, 2012  1:33 PM"
     end
   end
+
+  describe '#display_price' do
+    let!(:product) { create(:product) }
+    let(:current_currency) { "USD" }
+
+    context "with a new, empty order" do
+      let(:current_order)  { Spree::Order.new }
+
+      context "with no default VAT" do
+        it "returns the price" do
+          expect(display_price(product)).to eq("$19.99")
+        end
+      end
+
+      context "with a default VAT" do
+        let(:default_zone) { create(:zone_with_country, default_tax: true) }
+        let!(:tax_rate) do
+          create(:tax_rate,
+            included_in_price: true,
+            zone: default_zone,
+            tax_category: product.tax_category,
+            amount: 0.2
+          )
+        end
+
+        it "returns the price adding the VAT" do
+          expect(display_price(product)).to eq("$23.99")
+        end
+      end
+    end
+
+    context "with an order that has a tax zone" do
+
+      context "that matches a VAT" do
+        let(:current_order)  { Spree::Order.new }
+        let(:non_default_zone) { create(:zone_with_country) }
+
+        before { allow(current_order).to receive(:tax_zone).and_return(non_default_zone) }
+        let!(:tax_rate) do
+          create(:tax_rate,
+            included_in_price: true,
+            zone: non_default_zone,
+            tax_category: product.tax_category,
+            amount: 0.4
+          )
+        end
+
+        it "returns the price adding the VAT" do
+          expect(display_price(product)).to eq("$27.99")
+        end
+      end
+      context "that matches no VAT" do
+        let(:current_order)  { Spree::Order.new }
+        let(:non_default_zone) { create(:zone_with_country) }
+
+        before { allow(current_order).to receive(:tax_zone).and_return(non_default_zone) }
+
+        it "returns the price adding the VAT" do
+          expect(display_price(product)).to eq("$19.99")
+        end
+      end
+    end
+  end
 end

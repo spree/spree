@@ -262,6 +262,36 @@ describe "Products", type: :feature do
         click_button "Update"
         expect(page).to have_content("successfully updated!")
       end
+
+      # It stores a product excluding VAT
+      context "with VAT included" do
+        let!(:tax_category) { create(:tax_category) }
+        let!(:default_zone) { create(:zone_with_country, default_tax: true) }
+        let!(:tax_rate) do
+          FactoryGirl.create(
+            :tax_rate,
+            tax_category: tax_category,
+            amount: 0.20,
+            zone: default_zone,
+            included_in_price: true
+          )
+        end
+
+        it "stores the product price excluding vat, exactly" do
+          visit spree.new_admin_product_path
+          fill_in "product_name", with: "Baseball Cap"
+          fill_in "product_price", with: "100"
+          select @shipping_category.name, from: "product_shipping_category_id"
+          select tax_category.name, from: "product_tax_category_id"
+          click_button "Create"
+          expect(page).to have_content("successfully created!")
+          save_and_open_page
+          expect(first('input#product_price').value).to eq("100.00")
+          product = Spree::Product.find_by(name: "Baseball Cap")
+          expect(product.display_price).to eq(Spree::Money.new("83.33"))
+
+        end
+      end
     end
 
 
