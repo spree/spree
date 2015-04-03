@@ -40,6 +40,9 @@ module Spree
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc', id: :desc) }
 
+    # needed for displaying adjustment amounts including vat
+    delegate :tax_zone, to: :order
+
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
       event :ready do
@@ -124,6 +127,7 @@ module Spree
       cost + promo_total
     end
     alias discounted_amount discounted_cost
+    alias pre_tax_amount discounted_cost
 
     def editable_by?(user)
       !shipped?
