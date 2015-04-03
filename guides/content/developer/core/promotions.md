@@ -50,13 +50,18 @@ The eligibility of the item for this promotion is re-checked whenever the item i
 
 An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
 
+!!!
+The Spree::Promotion::Actions::CreateItemAdjustments object has a specific bloat issue in Spree 2.2 and will not scale on larger stores. Spree 2.3 fixes the root cause of the problem. For this reason, you may want to upgrade to Spree 2.3 before using this promotion action.
+!!!
+
 ### Free Shipping
 
 When a `FreeShipping` action is undertaken, all shipments within the order have their prices negated. Just like with prior actions, the eligibility of this promotion is checked again whenever a shipment changes.
 
-### Adding a Line Item
+### Create Line Items
 
 When a `CreateLineItem` action is undertaken, a series of line items are automatically added to the order, which may alter the order's price. The promotion with an action to add a line item can also have another action to add an adjustment to the order to nullify the cost of adding the product to the order.
+
 
 
 ### Registering a New Action
