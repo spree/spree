@@ -24,7 +24,7 @@ There are three steps we need to take to install spree_i18n.
 First, we need to add the gem to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_i18n', git: 'git://github.com/spree/spree_fancy.git', branch: '3-0-stable'
+gem 'spree_i18n', git: 'git://github.com/spree/spree_i18n.git', branch: '3-0-stable'
 ```
 ****
 
