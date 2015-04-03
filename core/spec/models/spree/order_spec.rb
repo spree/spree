@@ -299,6 +299,25 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  context "#display_item_total_adding_vat" do
+    let(:order) { create(:order_with_line_items) }
+
+    let!(:tax_rate) do
+      create(:tax_rate,
+        included_in_price: true,
+        tax_category: order.line_items.first.tax_category,
+        zone: order.tax_zone,
+        amount: 0.10
+      )
+    end
+
+    it 'returns the value as spree money including tax' do
+      Spree::TaxRate.adjust(order, order.line_items)
+      order.update!
+      expect(order.display_item_total_adding_vat).to eq(Spree::Money.new(11.00))
+    end
+  end
+
   context "#currency" do
     context "when object currency is ABC" do
       before { order.currency = "ABC" }

@@ -22,7 +22,8 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total
+                  :shipment_total,      :promo_total,          :total,
+                  :item_total_adding_vat
 
     alias :display_ship_total :display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -585,6 +586,10 @@ module Spree
       adjustment_total + line_items.map(&:final_amount).sum == 0.0
     end
     alias_method :fully_discounted, :fully_discounted?
+
+    def item_total_adding_vat
+      line_items.map(&:amount_adding_vat).sum
+    end
 
     private
 
