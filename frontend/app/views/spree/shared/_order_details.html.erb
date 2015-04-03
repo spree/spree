@@ -85,7 +85,7 @@
   <tfoot id="subtotal" data-hook="order_details_subtotal">
     <tr class="total" id="subtotal-row">
       <td colspan="4"><b><%= Spree.t(:subtotal) %>:</b></td>
-      <td class="total"><span><%= order.display_item_total.to_html %></span></td>
+      <td class="total"><span><%= order.display_item_total_adding_vat.to_html %></span></td>
     </tr>
   </tfoot>
 
