@@ -60,7 +60,7 @@ module Spree
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
-    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
+    delegate_belongs_to :master, :sku, :price, :form_field_price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
 
     delegate_belongs_to :master, :cost_price
 
@@ -76,6 +76,8 @@ module Spree
     after_destroy :punch_slug
 
     after_initialize :ensure_master
+
+    before_save :convert_price_to_net, if: :price_has_vat?
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
@@ -218,7 +220,21 @@ module Spree
       super || variants_including_master.with_deleted.where(is_master: true).first
     end
 
+    def price_has_vat?
+      @price_has_vat ||= begin
+        !Spree::Zone.default_tax.nil? && tax_category.has_vat_rate_for_default_zone?
+      end
+    end
+
     private
+
+    def convert_price_to_net
+      self.price /= (1 + included_tax_amount)
+    end
+
+    def included_tax_amount
+      @included_tax_amount ||= Spree::TaxRate.included_tax_amount_for(Spree::Zone.default_tax, tax_category)
+    end
 
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)

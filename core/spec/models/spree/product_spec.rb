@@ -439,4 +439,101 @@ describe Spree::Product, :type => :model do
     product = Spree::Product.new
     expect(product.master.is_master).to be true
   end
+
+  # Spec for saving prices excluding VAT
+  context "#price=" do
+    let(:default_zone) { create(:zone_with_country, default_tax: true) }
+    let(:tax_category) { create(:tax_category) }
+
+    context "when there is no default VAT" do
+      before { @product = create(:product, price: 120) }
+
+      it "saves the product price as entered" do
+        expect(@product.price).to eq(120)
+      end
+    end
+
+    context "when there is a default vat" do
+      let!(:default_vat) do
+        create(
+          :tax_rate,
+          included_in_price: true,
+          tax_category: tax_category,
+          amount: 0.2,
+          zone: default_zone
+        )
+      end
+
+      before { @product = create(:product, price: 120) }
+
+      it "saves the product price without VAT" do
+        expect(@product.price).to eq(100)
+      end
+    end
+
+    context "when there is a VAT, but for another zone" do
+      let!(:non_default_vat) do
+        create(
+          :tax_rate,
+          included_in_price: true,
+          tax_category: tax_category,
+          amount: 0.2,
+          zone: create(:zone_with_country)
+        )
+      end
+      before { @product = create(:product, price: 120) }
+
+      it "saves the product price as entered" do
+        expect(@product.price).to eq(120)
+      end
+    end
+  end
+
+  context "#price_has_vat?" do
+    let(:default_zone) { create(:zone_with_country, default_tax: true) }
+    let(:tax_category) { create(:tax_category) }
+
+    context "when there is no default VAT" do
+      before { @product = create(:product) }
+
+      it "saves the product price as entered" do
+        expect(@product.price_has_vat?).to eq(false)
+      end
+    end
+
+    context "when there is a default vat" do
+      let!(:default_vat) do
+        create(
+          :tax_rate,
+          included_in_price: true,
+          tax_category: tax_category,
+          amount: 0.2,
+          zone: default_zone
+        )
+      end
+
+      before { @product = create(:product) }
+
+      it "saves the product price without VAT" do
+        expect(@product.price_has_vat?).to eq(true)
+      end
+    end
+
+    context "when there is a VAT, but for another zone" do
+      let!(:non_default_vat) do
+        create(
+          :tax_rate,
+          included_in_price: true,
+          tax_category: tax_category,
+          amount: 0.2,
+          zone: create(:zone_with_country)
+        )
+      end
+      before { @product = create(:product) }
+
+      it "saves the product price as entered" do
+        expect(@product.price_has_vat?).to eq(false)
+      end
+    end
+  end
 end
