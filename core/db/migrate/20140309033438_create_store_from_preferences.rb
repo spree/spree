@@ -1,5 +1,12 @@
 class CreateStoreFromPreferences < ActiveRecord::Migration
   def change
+    # workaround for spree_i18n and Store translations
+    Spree::Store.class_eval do
+      def self.translated?(name)
+        false
+      end
+    end
+    
     preference_store = Spree::Preferences::Store.instance
     if store = Spree::Store.where(default: true).first
       store.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
