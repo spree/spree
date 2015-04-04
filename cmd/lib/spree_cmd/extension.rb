@@ -5,7 +5,8 @@ module SpreeCmd
 
     desc "builds a spree extension"
     argument :file_name, :type => :string, :desc => 'rails app_path', :default => '.'
-    class_option :preferences, alias: "-p", type: :boolean, default: false, desc: 'generate namespaced configuration preferences'
+    class_option :preferences, alias: "-p", type: :boolean, default: false, desc: "generate namespaced configuration preferences"
+    class_option :preference_pane, alias: "-pp", type: :boolean, default: false, desc: "generate backend configuration preference pane"
 
     source_root File.expand_path('../templates/extension', __FILE__)
 
@@ -29,8 +30,14 @@ module SpreeCmd
       template 'rspec', "#{file_name}/.rspec"
       template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
 
-      if options[:preferences]
+      if options[:preferences] || options[:preference_pane]
         directory '../extension_preferences/app', "#{file_name}/app"
+      end
+
+      if options[:preference_pane]
+        directory '../extension_preference_pane/app', "#{file_name}/app"
+        append_to_file "#{file_name}/config/locales/en.yml", i18n_strings
+        insert_into_file "#{file_name}/config/routes.rb", routes, after: '  # Add your extension routes here'
       end
     end
 
@@ -71,6 +78,26 @@ module SpreeCmd
         unless file_name =~ /^#{prefix}/
           @file_name = prefix + Thor::Util.snake_case(file_name)
         end
+      end
+
+      def i18n_strings
+        <<-END
+  spree:
+    #{ unprefixed_file_name }:
+      menu_tab: #{ unprefixed_class_name }
+      resource: #{ unprefixed_class_name } Extension
+      preferences_title: #{ unprefixed_class_name } Preferences
+      active: Active
+        END
+      end
+
+      def routes
+        <<-END
+
+  namespace :admin do
+    resource :#{ unprefixed_file_name }_preferences, only: [:edit, :update]
+  end
+        END
       end
     end
 

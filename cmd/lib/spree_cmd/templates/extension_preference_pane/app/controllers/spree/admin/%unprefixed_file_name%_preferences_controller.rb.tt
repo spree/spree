@@ -1,0 +1,24 @@
+module Spree
+  module Admin
+    class <%= unprefixed_class_name %>PreferencesController < BaseController
+
+      def edit
+        @<%= unprefixed_file_name %>_active = Spree::<%= unprefixed_class_name %>::Config.active
+      end
+
+      def update
+        Spree::<%= unprefixed_class_name %>::Config.active = <%= unprefixed_file_name %>_params[:active]
+
+        flash[:success] = Spree.t(:successfully_updated, resource: Spree.t('<%= unprefixed_file_name %>.resource'))
+        redirect_to edit_admin_<%= unprefixed_file_name %>_preferences_path
+      end
+
+      private
+      def <%= unprefixed_file_name %>_params
+        params.require(:<%= unprefixed_file_name %>).permit(:active)
+      end
+
+    end
+  end
+end
+
