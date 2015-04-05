@@ -24,6 +24,7 @@ $(document).ready ->
         data: (term, page) ->
           per_page: 50,
           page: page,
+          without_children: true,
           token: Spree.api_key,
           q:
             name_cont: term
