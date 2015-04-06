@@ -14,6 +14,7 @@ module Spree
         return unless persisted?
         update_promo_adjustments
         update_tax_adjustments
+        update_sourceless_adjustments
         persist_totals
       end
 
@@ -35,12 +36,16 @@ module Spree
         @additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
       end
 
+      def update_sourceless_adjustments
+        @sourceless_total = adjustments.sourceless.reload.map(&:update!).compact.sum
+      end
+
       def persist_totals
         adjustable.update_columns(
           promo_total: @promo_total,
           included_tax_total: @included_tax_total,
           additional_tax_total: @additional_tax_total,
-          adjustment_total: @promo_total + @additional_tax_total,
+          adjustment_total: @promo_total + @additional_tax_total + @sourceless_total,
           updated_at: Time.now
         )
       end
