@@ -64,6 +64,10 @@ $ spree extension simple_sales
 
 This creates a `spree_simple_sales` directory containing a skeleton structure for our new extension.
 
+***
+The `spree extension` command can take optional parameters to add other parts to the skeleton. For details see the [Optional Parameters](#optional-parameters) section below.
+***
+
 ### Installing our Extension to the Spree Application
 
 Now we'll install our extension. These steps are the same as [Installing an Extension](#installing-an-extension) above, except this time we're going to point the `:path` entry in the `Gemfile` to the directory containing the code for our new extension.
@@ -383,6 +387,26 @@ Different versions of Spree may act differently with your extension. It's advisa
 It's advisable that your extension follows the same versioning pattern as Spree itself. If your extension is compatible with Spree 3.0.x, then create a `3-0-stable` branch on your extension and advise people to use that branch for your extension. If it's only compatible with 243.x, then create a 2-4-stable branch and advise the use of that branch.
 
 Having a consistent branching naming scheme across Spree and its extensions will reduce confusion in the long run.
+
+## Optional Parameters
+
+The `spree extension` command takes some optional parameters that control what is generated in the extension skeleton.
+
+### Preferences
+
+Spree provides a configuration system (see [Preferences](/developer/preferences.html) for details). You can use these parameters to easily allow your extension to take advantage of this system and provide extension-specific configuration options.
+
+#### preferences option
+
+Passing `--preferences` generates a namespaced configuration class that is initialized in the extension's `engine.rb` file. It contains an example preference named `active` with a default setting of `true`.
+
+For example, if your extension is named `spree_simple_sales` the configuration class will be `Spree::SimpleSalesConfiguration` in `app/models/spree/simple_sales_configuration.rb`. The engine will instantiate this and assign it to a constant named `Spree::SimpleSales::Config` that you can use in your application.
+
+#### preference-pane option
+
+Passing `--preference-pane` generates the same configuration class as above and also generates a backend page you can use to view/edit your extension's pereferences through the browser.
+
+For example, if your extension is named `spree_simple_sales`, the configuration page will be accessible at `/admin/simple_sales_preferences/edit.html`. A link to this page is inserted at the bottom of the `Configurations` sub menu.
 
 ## Summary
 
