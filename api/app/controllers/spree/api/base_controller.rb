@@ -53,6 +53,16 @@ module Spree
 
       private
 
+      def pagination(collection)
+        {
+         count: collection.count,
+         total_count: collection.total_count,
+         current_page: params[:page] ? params[:page].to_i : 1,
+         per_page: params[:per_page] || Kaminari.config.default_per_page,
+         pages: collection.num_pages
+        }
+      end
+
       def set_content_type
         content_type = case params[:format]
         when "json"
