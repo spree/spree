@@ -12,7 +12,7 @@ module Spree
         @products = @products.distinct.page(params[:page]).per(params[:per_page])
         expires_in 15.minutes, :public => true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
-        respond_with(@products)
+        render json: @products, each_serializer: Spree::ProductSerializer, meta: pagination(@products)
       end
 
       def show
