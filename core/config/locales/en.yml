@@ -617,7 +617,7 @@ en:
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
-    doesnt_track_inventory: It doesnt track inventory
+    doesnt_track_inventory: It doesn't track inventory
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
