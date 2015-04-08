@@ -7,19 +7,19 @@ module Spree
         else
           @option_types = Spree::OptionType.includes(:option_values).accessible_by(current_ability, :read).load.ransack(params[:q]).result
         end
-        respond_with(@option_types)
+        render json: @option_types
       end
 
       def show
         @option_type = Spree::OptionType.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@option_type)
+        render json: @option_type
       end
 
       def create
         authorize! :create, Spree::OptionType
         @option_type = Spree::OptionType.new(option_type_params)
         if @option_type.save
-          render :show, :status => 201
+          render json: @option_type, status: 201
         else
           invalid_resource!(@option_type)
         end
@@ -28,7 +28,7 @@ module Spree
       def update
         @option_type = Spree::OptionType.accessible_by(current_ability, :update).find(params[:id])
         if @option_type.update_attributes(option_type_params)
-          render :show
+          render json: @option_type
         else
           invalid_resource!(@option_type)
         end
