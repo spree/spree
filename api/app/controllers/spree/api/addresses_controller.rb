@@ -14,7 +14,7 @@ module Spree
         find_address
 
         if @address.update_attributes(address_params)
-          render json: @address, default_template: :show
+          render json: @address
         else
           invalid_resource!(@address)
         end
