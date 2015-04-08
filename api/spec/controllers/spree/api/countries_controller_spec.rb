@@ -20,28 +20,28 @@ module Spree
 
       it "can view all countries" do
         api_get :index
-        expect(json_response['count']).to eq(2)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(1)
+        expect(json_response['meta']['count']).to eq(2)
+        expect(json_response['meta']['current_page']).to eq(1)
+        expect(json_response['meta']['pages']).to eq(1)
       end
 
       it 'can query the results through a paramter' do
         api_get :index, :q => { :name_cont => 'zam' }
-        expect(json_response['count']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
         expect(json_response['countries'].first['name']).to eq @zambia.name
       end
 
       it 'can control the page size through a parameter' do
         api_get :index, :per_page => 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(2)
+        expect(json_response['meta']['count']).to eq(1)
+        expect(json_response['meta']['current_page']).to eq(1)
+        expect(json_response['meta']['pages']).to eq(2)
       end
     end
 
     it "includes states" do
       api_get :show, :id => @country.id
-      states = json_response['states']
+      states = json_response["country"]['states']
       expect(states.first['name']).to eq @state.name
     end
   end
