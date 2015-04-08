@@ -80,9 +80,9 @@ module Spree
       def authenticate_user
         unless @current_api_user
           if requires_authentication? && api_key.blank? && order_token.blank?
-            render "spree/api/errors/must_specify_api_key", :status => 401 and return
+            render error: I18n.t(:must_specify_api_key, :scope => "spree.api"), :status => 401 and return
           elsif order_token.blank? && (requires_authentication? || api_key.present?)
-            render "spree/api/errors/invalid_api_key", :status => 401 and return
+            render error: I18n.t(:invalid_api_key, :scope => "spree.api"), :status => 401 and return
           else
             # An anonymous user
             @current_api_user = Spree.user_class.new
@@ -99,7 +99,8 @@ module Spree
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", status: 401 and return
+        render json: { error: I18n.t(:unauthorized, :scope => "spree.api") },
+          status: 401 and return
       end
 
       def error_during_processing(exception)
@@ -122,7 +123,8 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", status: 404 and return
+        render json: { error: I18n.t(:resource_not_found, :scope => "spree.api") },
+          status: 404 and return
       end
 
       def current_ability
@@ -135,8 +137,10 @@ module Spree
       helper_method :current_currency
 
       def invalid_resource!(resource)
-        @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render json: {
+          error: I18n.t(:invalid_resource, :scope => "spree.api"),
+          errors: resource.errors
+        }, status: 422 and return
       end
 
       def api_key
