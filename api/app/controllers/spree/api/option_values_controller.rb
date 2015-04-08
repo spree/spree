@@ -7,19 +7,19 @@ module Spree
         else
           @option_values = scope.ransack(params[:q]).result.distinct
         end
-        respond_with(@option_values)
+        render json: @option_values
       end
 
       def show
         @option_value = scope.find(params[:id])
-        respond_with(@option_value)
+        render json: @option_value
       end
 
       def create
         authorize! :create, Spree::OptionValue
         @option_value = scope.new(option_value_params)
         if @option_value.save
-          render :show, :status => 201
+          render json: @option_value, status: 201
         else
           invalid_resource!(@option_value)
         end
@@ -28,7 +28,7 @@ module Spree
       def update
         @option_value = scope.accessible_by(current_ability, :update).find(params[:id])
         if @option_value.update_attributes(option_value_params)
-          render :show
+          render json: @option_value
         else
           invalid_resource!(@option_value)
         end
@@ -37,7 +37,7 @@ module Spree
       def destroy
         @option_value = scope.accessible_by(current_ability, :destroy).find(params[:id])
         @option_value.destroy
-        render :text => nil, :status => 204
+        render nothing: true, status: 204
       end
 
       private
