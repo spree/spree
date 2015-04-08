@@ -11,7 +11,7 @@ module Spree
     it "returns Spree::Money settings" do
       api_get :money
       expect(response).to be_success
-      expect(json_response["symbol"]).to eq("$")
+      expect(json_response["currency"]["symbol"]).to eq("$")
     end
 
     it "returns some configuration settings" do
