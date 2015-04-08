@@ -4,30 +4,30 @@ module Spree
 
       def index
         @images = scope.images.accessible_by(current_ability, :read)
-        respond_with(@images)
+        render json: @images
       end
 
       def show
         @image = Image.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@image)
+        render json: @image
       end
 
       def create
         authorize! :create, Image
         @image = scope.images.create(image_params)
-        respond_with(@image, :status => 201, :default_template => :show)
+        render json: @image, status: 201, default_template: :show
       end
 
       def update
         @image = scope.images.accessible_by(current_ability, :update).find(params[:id])
         @image.update_attributes(image_params)
-        respond_with(@image, :default_template => :show)
+        render json: @image, default_template: :show
       end
 
       def destroy
         @image = scope.images.accessible_by(current_ability, :destroy).find(params[:id])
         @image.destroy
-        respond_with(@image, :status => 204)
+        render json: @image, status: 204
       end
 
       private

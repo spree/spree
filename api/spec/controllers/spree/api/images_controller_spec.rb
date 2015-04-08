@@ -24,7 +24,7 @@ module Spree
                                :viewable_id => product.master.to_param  },
                    :product_id => product.id
           expect(response.status).to eq(201)
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['image']).to have_attributes(attributes)
         end.to change(Image, :count).by(1)
       end
 
@@ -34,13 +34,13 @@ module Spree
         it "can get a single product image" do
           api_get :show, :id => product_image.id, :product_id => product.id
           expect(response.status).to eq(200)
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['image']).to have_attributes(attributes)
         end
 
         it "can get a single variant image" do
           api_get :show, :id => product_image.id, :variant_id => product.master.id
           expect(response.status).to eq(200)
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['image']).to have_attributes(attributes)
         end
 
         it "can get a list of product images" do
@@ -61,7 +61,7 @@ module Spree
           expect(product_image.position).to eq(1)
           api_post :update, :image => { :position => 2 }, :id => product_image.id, :product_id => product.id
           expect(response.status).to eq(200)
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['image']).to have_attributes(attributes)
           expect(product_image.reload.position).to eq(2)
         end
 
