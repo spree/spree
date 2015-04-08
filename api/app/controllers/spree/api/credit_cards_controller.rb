@@ -9,7 +9,7 @@ module Spree
           .accessible_by(current_ability, :read)
           .with_payment_profile
           .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@credit_cards)
+        render json: @credit_cards, meta: pagination(@credit_cards)
       end
 
       private
