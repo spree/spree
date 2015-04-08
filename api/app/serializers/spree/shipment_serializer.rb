@@ -10,20 +10,15 @@ module Spree
 
     def manifest
       object.manifest.map do |item|
-        { 
-          variant: {
-            id: item.variant.id,
-            name: item.variant.name,
-            sku: item.variant.sku,
-            price: item.variant.price
-          },
+        {
+          variant_id: item.variant.id,
           states: item.states,
           line_item: item.line_item,
           quantity: item.quantity
-        }  
+        }
       end
     end
-    
+
     def order_id
       object.order.number
     end
