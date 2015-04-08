@@ -65,7 +65,7 @@ module Spree
         @product = Core::Importer::Product.new(nil, product_params, options).create
 
         if @product.persisted?
-          render json: @product, status: 201, default_template :show
+          render json: @product, status: 201, default_template: :show
         else
           invalid_resource!(@product)
         end
