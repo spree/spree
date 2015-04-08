@@ -7,7 +7,7 @@ module Spree
                :channel, :included_tax_total, :additional_tax_total,
                :display_included_tax_total, :display_additional_tax_total,
                :display_total, :total_quantity, :display_item_total,
-               :checkout_steps, :token, :display_ship_total
+               :checkout_steps, :guest_token, :display_ship_total
 
     has_many :line_items
     has_many :payments
