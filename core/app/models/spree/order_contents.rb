@@ -6,11 +6,13 @@ module Spree
       @order = order
     end
 
-    def add(variant, quantity = 1, currency = nil, shipment = nil)
+    def add(variant, quantity = 1, currency = nil, shipment = nil, halt_recursive_promotion_handling = nil)
       line_item = add_to_line_item(variant, quantity, currency, shipment)
       reload_totals
       shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-      PromotionHandler::Cart.new(order, line_item).activate
+      if ! halt_recursive_promotion_handling
+        PromotionHandler::Cart.new(order, line_item).activate 
+      end
       ItemAdjustments.new(line_item).update
       reload_totals
       line_item

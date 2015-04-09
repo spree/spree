@@ -38,11 +38,10 @@ module Spree
         def perform(options = {})
           order = options[:order]
           return unless self.eligible? order
-
           promotion_action_line_items.each do |item|
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity
-              order.contents.add(item.variant, item.quantity - current_quantity)
+              order.contents.add(item.variant, item.quantity - current_quantity, nil, nil, true)
             end
           end
           true
