@@ -17,7 +17,7 @@ module Spree
       def cancel
         authorize! :update, @order, params[:token]
         @order.cancel!
-        respond_with(@order, :default_template => :show)
+        render json: @order
       end
 
       def create
@@ -35,24 +35,24 @@ module Spree
         end
 
         @order = Spree::Core::Importer::Order.import(order_user, import_params)
-        respond_with(@order, default_template: :show, status: 201)
+        render json: @order, status: 201
       end
 
       def empty
         authorize! :update, @order, order_token
         @order.empty!
-        render text: nil, status: 204
+        render nothing: true, status: 204
       end
 
       def index
         authorize! :index, Order
         @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@orders)
+        render json: @orders, meta: pagination(@orders)
       end
 
       def show
         authorize! :show, @order, order_token
-        respond_with(@order)
+        render json: @order
       end
 
       def update
@@ -64,7 +64,7 @@ module Spree
           if current_api_user.has_spree_role?('admin') && user_id
             @order.associate_user!(Spree.user_class.find(user_id))
           end
-          respond_with(@order, default_template: :show)
+          render json: @order
         else
           invalid_resource!(@order)
         end
@@ -73,7 +73,7 @@ module Spree
       def current
         @order = find_current_order
         if @order
-          respond_with(@order, default_template: :show, locals: { root_object: @order })
+          render json: @order
         else
           head :no_content
         end
@@ -82,8 +82,9 @@ module Spree
       def mine
         if current_api_user.persisted?
           @orders = current_api_user.orders.reverse_chronological.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          render json: @orders, meta: pagination(@orders)
         else
-          render "spree/api/errors/unauthorized", status: :unauthorized
+          unauthorized
         end
       end
 
@@ -93,7 +94,11 @@ module Spree
         @order.coupon_code = params[:coupon_code]
         @handler = PromotionHandler::Coupon.new(@order).apply
         status = @handler.successful? ? 200 : 422
-        render "spree/api/promotions/handler", :status => status
+        render json: {
+          success: @handler.success,
+          error: @handler.error,
+          successful: @handler.successful?
+        }, status: status
       end
 
       private
