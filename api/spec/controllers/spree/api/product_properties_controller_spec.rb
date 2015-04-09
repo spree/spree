@@ -36,27 +36,27 @@ module Spree
     it "can control the page size through a parameter" do
       api_get :index, :per_page => 1
       expect(json_response['product_properties'].count).to eq(1)
-      expect(json_response['current_page']).to eq(1)
-      expect(json_response['pages']).to eq(2)
+      expect(json_response['meta']['current_page']).to eq(1)
+      expect(json_response['meta']['pages']).to eq(2)
     end
 
     it 'can query the results through a parameter' do
       Spree::ProductProperty.last.update_attribute(:value, 'loose')
       property = Spree::ProductProperty.last
       api_get :index, :q => { :value_cont => 'loose' }
-      expect(json_response['count']).to eq(1)
+      expect(json_response['meta']['count']).to eq(1)
       expect(json_response['product_properties'].first['value']).to eq property.value
     end
 
     it "can see a single product_property" do
       api_get :show, :id => property_1.property_name
-      expect(json_response).to have_attributes(attributes)
+      expect(json_response['product_property']).to have_attributes(attributes)
     end
 
     it "can learn how to create a new product property" do
       api_get :new
       expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
-      expect(json_response["required_attributes"]).to be_empty
+      expect(json_response['product_property']["required_attributes"]).to be_empty
     end
 
     it "cannot create a new product property if not an admin" do
@@ -82,7 +82,7 @@ module Spree
         expect do
           api_post :create, :product_property => { :property_name => "My Property 3", :value => "my value 3" }
         end.to change(product.product_properties, :count).by(1)
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['product_property']).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
 
@@ -108,7 +108,7 @@ module Spree
 
       it "can see a single product_property by id" do
         api_get :show, :id => property_1.id
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['product_property']).to have_attributes(attributes)
       end
     end
 

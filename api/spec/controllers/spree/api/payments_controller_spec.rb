@@ -29,7 +29,7 @@ module Spree
         it "can learn how to create a new payment" do
           api_get :new
           # What?
-          # expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
+          expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
           expect(json_response["payment_methods"]).not_to be_empty
           expect(json_response["payment_methods"].first).to have_attributes([:id, :name, :description])
         end
