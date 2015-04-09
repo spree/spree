@@ -5,6 +5,7 @@ module Spree
 
     has_many :shipping_rates
     has_many :shipping_methods
+    has_many :adjustments
 
     has_one :selected_shipping_rate
 
