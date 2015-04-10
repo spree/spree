@@ -55,7 +55,7 @@ module Spree
       end
 
       def currency
-        #TODO calculate from first variant?
+        order.currency
       end
 
       def shipping_categories
