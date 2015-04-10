@@ -21,11 +21,8 @@ module Spree
         # @return [nil]
         def current_order
           return @current_order if defined?(@current_order)
-
-          @current_order = find_order_by_token_or_user(true).try do |order|
+          @current_order = find_order_by_token_or_user.try do |order|
             order.last_ip_address = ip_address
-            # See issue #3346 for reasons why this line is here
-            order.created_by ||= try_spree_current_user
             order
           end
         end
@@ -79,14 +76,30 @@ module Spree
           }
         end
 
-        def find_order_by_token_or_user(lock)
-          # Find any incomplete orders for the guest_token
-          order = Spree::Order.incomplete.includes(:all_adjustments).lock(lock).find_by(current_order_params)
+        def find_order_by_token_or_user
+          user = try_spree_current_user
 
-          # Find any incomplete orders for the current user
-          order ||= if try_spree_current_user
-            try_spree_current_user.incomplete_spree_orders.lock(lock).first
+          # Merge all incomplete orders
+          order = merge_orders(user.incomplete_spree_orders) if user
+
+          # Merge all anonymous orders
+          if current_order_params[:guest_token].present?
+            order = merge_orders(anonymous_orders, order)
           end
+
+          # Associate the user to the order
+          order.try(:associate_user!, user) if user
+
+          order
+        end
+
+        def anonymous_orders
+          Spree::Order.incomplete
+            .where(current_order_params.merge(user_id: nil))
+        end
+
+        def merge_orders(orders, other = nil)
+          orders.includes(:all_adjustments).lock.reduce(*other, :merge!)
         rescue ActiveRecord::StatementInvalid => exception
           if exception.message.start_with?(PG_LOCK_NOT_AVAILABLE)
             fail Spree::Order::OrderBusyError
