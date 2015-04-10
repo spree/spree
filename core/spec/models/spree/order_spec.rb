@@ -269,6 +269,10 @@ describe Spree::Order, :type => :model do
       expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    it "returns self" do
+      expect(order_1.merge!(order_2)).to be(order_1)
+    end
+
     context "user is provided" do
       it "assigns user to new order" do
         order_1.merge!(order_2, user)

@@ -493,13 +493,10 @@ module Spree
     def merge!(order, user = nil)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
-
         contents.add(line_item.variant, line_item.quantity, line_item.currency)
       end
-
-      associate_user!(user) if user && !self.user
-
       order.destroy
+      associate_user!(user)
     end
 
     def empty!
