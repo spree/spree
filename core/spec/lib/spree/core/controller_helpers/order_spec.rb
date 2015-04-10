@@ -18,6 +18,12 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     )
   end
 
+  shared_examples_for 'idempotent method' do
+    it 'is idempotent' do
+      expect(apply).to be(apply)
+    end
+  end
+
   shared_examples_for 'returning order' do
     # Normally these expectations should be broken up in different blocks.
     # Sadly this spec touches the DB for each block to make this efficient enough
@@ -211,11 +217,44 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       controller.cart_order
     end
 
-    shared_examples_for 'order was NOT found' do
-      include_examples 'returning order'
+    before do
+      allow(controller).to receive(:current_order).and_return(current_order)
     end
 
-    include_examples 'order lookup'
+    context 'current order is found' do
+      let(:current_order) { order }
+
+      it 'returns the current order' do
+        expect(apply).to be(current_order)
+      end
+
+      include_examples 'idempotent method'
+    end
+
+    context 'current order is not found' do
+      let(:current_order) { nil }
+
+      let(:new_order) do
+        build(
+          :order,
+          bill_address:    nil,
+          ship_address:    nil,
+          email:           nil,
+          currency:        'USD',
+          user:            user,
+          created_by:      user,
+          last_ip_address: '0.0.0.0'
+        )
+      end
+
+      it 'initializes a new order' do
+        order = apply
+        expect(order).to be_kind_of(Spree::Order)
+        expect(order.attributes).to eql(new_order.attributes)
+      end
+
+      include_examples 'idempotent method'
+    end
   end
 
   describe '#associate_user' do

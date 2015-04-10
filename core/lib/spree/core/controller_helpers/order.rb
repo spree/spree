@@ -36,8 +36,7 @@ module Spree
         #
         # @return [Spree::Order]
         def cart_order
-          return current_order if current_order
-          @cart_order ||= Spree::Order.new(
+          @cart_order ||= current_order || Spree::Order.new(
             current_order_params.merge(
               created_by:      try_spree_current_user,
               last_ip_address: ip_address
