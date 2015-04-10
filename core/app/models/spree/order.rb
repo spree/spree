@@ -316,6 +316,8 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
+      return self if user.nil?
+
       self.user           = user
       self.email          = user.email if override_email
       self.created_by   ||= user
@@ -327,6 +329,8 @@ module Spree
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
       self.class.unscoped.where(id: self).update_all(changes)
+
+      self
     end
 
     def shipped_shipments

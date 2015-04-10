@@ -562,6 +562,30 @@ describe Spree::Order, :type => :model do
             .from(false)
         end
       end
+
+      it "returns self" do
+        expect(order.associate_user!(user, override_email)).to be(order)
+      end
+    end
+
+    context "when user is nil" do
+      let(:user) { nil }
+
+      it "does not change the state of the order" do
+        expect { order.associate_user!(user) }
+          .to_not change(order, :changes)
+          .from("state" => [nil, "cart"])
+      end
+
+      it "does not persist the order" do
+        expect { order.associate_user!(user) }
+          .to_not change(order, :persisted?)
+          .from(false)
+      end
+
+      it "returns self" do
+        expect(order.associate_user!(user)).to be(order)
+      end
     end
 
     context "when email is set" do
