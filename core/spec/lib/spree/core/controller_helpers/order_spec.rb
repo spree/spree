@@ -376,7 +376,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#current_currency' do
     it 'returns current currency' do
-      Spree::Config[:currency] = 'USD'
       expect(controller.current_currency).to eql('USD')
     end
   end
