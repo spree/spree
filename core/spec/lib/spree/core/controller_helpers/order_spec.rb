@@ -345,47 +345,28 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       controller.set_current_order
     end
 
-    before do
-      allow(controller).to receive_messages(current_order: order)
-    end
+    context 'with a user' do
+      before do
+        allow(controller).to receive_messages(current_order: order)
+      end
 
-    context 'with user and current order' do
-      let!(:order_a) { create(:order, user: user)                         }
-      let!(:order_b) { create(:order, user: user)                         }
-      let!(:order_c) { create(:order, user: user, completed_at: Time.now) }
-
-      # This chain of expectations asserts the record gets locked.
-      # There is no other known in-memory way since AR does not track
-      # if a record was loaded under lock or not.
-      it 'locks the incomplete orders' do
-        collection = double('collection')
-        expect(user).to receive(:incomplete_spree_orders).ordered.and_return(collection)
-        expect(collection).to receive(:lock).ordered.and_return(collection)
-        expect(collection).to receive(:where).ordered.and_return(collection)
-        expect(collection).to receive(:not).ordered.with(id: order).and_return([order_b, order_a])
-        expect(order).to receive(:merge!).ordered.with(order_b)
-        expect(order).to receive(:merge!).ordered.with(order_a)
+      it 'initializes the current order' do
+        expect(controller).to receive_messages(current_order: order)
         apply
       end
 
-      it 'merges incomplete orders from history into current one' do
-        expect(order).to receive(:merge!).ordered.with(order_b)
-        expect(order).to receive(:merge!).ordered.with(order_a)
+      it 'returns the current order' do
+        expect(apply).to be(order)
+      end
+    end
+
+    context 'without a user' do
+      let(:user) { nil }
+
+      it 'does not initialize the current order' do
+        expect(controller).to_not receive(:current_order)
         apply
       end
-    end
-
-    context 'without user' do
-      let(:user)  { nil            }
-      let(:order) { create(:order) }
-
-      it 'returns nil' do
-        expect(apply).to be(nil)
-      end
-    end
-
-    context 'without current order' do
-      let(:order) { nil }
 
       it 'returns nil' do
         expect(apply).to be(nil)

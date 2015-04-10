@@ -49,13 +49,7 @@ module Spree
         end
 
         def set_current_order
-          return unless try_spree_current_user && current_order
-
-          try_spree_current_user
-            .incomplete_spree_orders
-            .lock
-            .where.not(id: current_order)
-            .each(&current_order.method(:merge!))
+          current_order if try_spree_current_user
         end
 
         def current_currency
