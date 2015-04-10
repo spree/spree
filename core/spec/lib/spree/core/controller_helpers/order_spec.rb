@@ -48,20 +48,59 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#associate_user' do
+    def apply
+      controller.associate_user
+    end
+
     before do
       allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
     end
-    context "user's email is blank" do
-      let(:user) { create(:user, email: '') }
-      it 'calls Spree::Order#associate_user! method' do
-        expect_any_instance_of(Spree::Order).to receive(:associate_user!)
-        controller.associate_user
+
+    context 'the current user is nil' do
+      let(:user)  { nil                                   }
+      let(:order) { create(:order, user: nil, email: nil) }
+
+      it 'does not call Spree::Order#associate_user! method' do
+        expect(order).to_not receive(:associate_user!)
+        apply
       end
     end
-    context "user isn't blank" do
-      it 'does not calls Spree::Order#associate_user! method' do
-        expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
-        controller.associate_user
+
+    context 'current order is nil' do
+      let(:order) { nil }
+
+      it 'does not call Spree::Order#associate_user! method' do
+        expect_any_instance_of(Spree::Order).to_not receive(:associate_user!)
+        apply
+      end
+    end
+
+    context 'when the order user is blank' do
+      before do
+        order.user = nil
+      end
+
+      it 'calls Spree::Order#associate_user! method' do
+        expect(order).to receive(:associate_user!).with(user)
+        apply
+      end
+    end
+
+    context 'when the order email is blank' do
+      before do
+        order.email = nil
+      end
+
+      it 'calls Spree::Order#associate_user! method' do
+        expect(order).to receive(:associate_user!).with(user)
+        apply
+      end
+    end
+
+    context 'when the order user and email are not blank' do
+      it 'does not call Spree::Order#associate_user! method' do
+        expect(order).to_not receive(:associate_user!)
+        apply
       end
     end
   end
