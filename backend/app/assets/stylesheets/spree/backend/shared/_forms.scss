@@ -45,10 +45,10 @@ input.form-control {
 }
 
 .help-block {
-  color: #A6A6A6;
+  color: $medium-grey;
   font-weight: 300;
 }
 
 .checkbox > .help-block {
-  margin-top: 0px;
+  margin-top: 0;
 }
