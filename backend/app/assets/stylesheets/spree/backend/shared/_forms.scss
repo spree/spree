@@ -45,7 +45,7 @@ input.form-control {
 }
 
 .help-block {
-  color: $medium-grey;
+  color: color: lighten($gray-light, 20);
   font-weight: 300;
 }
 
