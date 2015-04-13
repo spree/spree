@@ -52,13 +52,13 @@ module Spree
                                 included: true)
           end
 
-          it "tax has no bearing on final price" do
+          it "tax applies to line item" do
             subject.update
             line_item.reload
             expect(line_item.included_tax_total).to eq(0.5)
             expect(line_item.additional_tax_total).to eq(0)
             expect(line_item.promo_total).to eq(-10)
-            expect(line_item.adjustment_total).to eq(-10)
+            expect(line_item.adjustment_total).to eq(-9.5)
           end
 
           it "tax linked to order" do

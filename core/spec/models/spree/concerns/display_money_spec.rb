@@ -38,6 +38,20 @@ module Spree
           expect(test_class.new.display_amount).to eq Spree::Money.new(20.0, no_cents: true)
         end
       end
+
+      context "with 10% vat" do
+        before do
+          test_class.class_eval do
+            def included_tax_amount
+              0.1
+            end
+          end
+        end
+
+        it "generates a display_*_adding_vat method that builds a Spree::Money that adds vat on the fly" do
+          expect(test_class.new.display_total_adding_vat).to eq(Spree::Money.new(11.0))
+        end
+      end
     end
   end
 end

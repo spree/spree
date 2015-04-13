@@ -17,7 +17,8 @@ module Spree
     end
 
     def display_price(product_or_variant)
-      product_or_variant.price_in(current_currency).display_price.to_html
+      product_or_variant.price_in(current_currency)
+        .display_price_adding_vat_for(current_order).to_html
     end
 
     def link_to_tracking(shipment, options = {})

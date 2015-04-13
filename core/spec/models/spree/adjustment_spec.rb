@@ -50,7 +50,7 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
-  describe 'competing_promos scope' do    
+  describe 'competing_promos scope' do
     before do
       allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
     end
@@ -160,4 +160,32 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
+  context "#amount_adding_vat" do
+
+    before { adjustment.amount = 10 }
+
+    subject { adjustment.amount_adding_vat }
+
+    context "with a VAT on the adjustable" do
+      before do
+        expect(adjustment).to receive(:is_vat_applicable?).and_return(true)
+        expect(adjustment).to receive(:included_tax_amount).and_return(0.2)
+      end
+
+      it "returns the adjustments amount adding the vat" do
+        expect(subject).to eq(12)
+      end
+    end
+
+    context "with a VAT on the adjustable, but the adjustable being a tax or an order" do
+      before do
+        expect(adjustment).to receive(:is_vat_applicable?).and_return(false)
+        allow(adjustment).to receive(:included_tax_amount).and_return(0.2)
+      end
+
+      it "returns the adjustments amount with no vat added" do
+        expect(subject).to eq(10)
+      end
+    end
+  end
 end

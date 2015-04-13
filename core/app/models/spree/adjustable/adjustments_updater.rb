@@ -40,7 +40,7 @@ module Spree
           promo_total: @promo_total,
           included_tax_total: @included_tax_total,
           additional_tax_total: @additional_tax_total,
-          adjustment_total: @promo_total + @additional_tax_total,
+          adjustment_total: @promo_total + @included_tax_total + @additional_tax_total,
           updated_at: Time.now
         )
       end

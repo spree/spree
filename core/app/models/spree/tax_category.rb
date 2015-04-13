@@ -7,6 +7,12 @@ module Spree
 
     before_save :set_default_category
 
+    def has_vat_rate_for_default_zone?
+      Spree::TaxRate.for_default_zone.included_in_price.for_tax_category(self).any?
+    end
+
+    private
+
     def set_default_category
       #set existing default tax category to false if this one has been marked as default
 

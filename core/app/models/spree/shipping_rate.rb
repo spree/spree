@@ -8,7 +8,7 @@ module Spree
     delegate :name, to: :shipping_method
 
     def display_base_price
-      Spree::Money.new(cost, currency: currency)
+      Spree::Money.new(price_for_display, currency: currency)
     end
 
     def calculate_tax_amount
@@ -17,25 +17,22 @@ module Spree
 
     def display_price
       price = display_base_price.to_s
-      if tax_rate
-        tax_amount = calculate_tax_amount
-        if tax_amount != 0
-          if tax_rate.included_in_price?
-            if tax_amount > 0
-              amount = "#{display_tax_amount(tax_amount)} #{tax_rate.name}"
-              price += " (#{Spree.t(:incl)} #{amount})"
-            else
-              amount = "#{display_tax_amount(tax_amount*-1)} #{tax_rate.name}"
-              price += " (#{Spree.t(:excl)} #{amount})"
-            end
-          else
-            amount = "#{display_tax_amount(tax_amount)} #{tax_rate.name}"
-            price += " (+ #{amount})"
-          end
+
+      return price if tax_rate.nil?
+      tax_amount = calculate_tax_amount
+      if tax_amount != 0
+        if tax_rate.included_in_price?
+          amount = "#{display_tax_amount(tax_amount)} #{tax_rate.name}"
+          price += " (#{Spree.t(:incl)} #{amount})"
+        else
+          amount = "#{display_tax_amount(tax_amount)} #{tax_rate.name}"
+          price += " (+ #{amount})"
         end
       end
+
       price
     end
+
     alias_method :display_cost, :display_price
 
     def display_tax_amount(tax_amount)
@@ -52,6 +49,17 @@ module Spree
 
     def tax_rate
       Spree::TaxRate.unscoped { super }
+    end
+
+    private
+
+    # display_price was already taken :(
+    def price_for_display
+      if tax_rate && tax_rate.included_in_price
+        cost + calculate_tax_amount
+      else
+        cost
+      end
     end
   end
 end

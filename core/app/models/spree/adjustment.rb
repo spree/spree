@@ -71,6 +71,19 @@ module Spree
     extend DisplayMoney
     money_methods :amount
 
+    # Sometimes the amount must not include VAT.
+    # This overrides #amound_adding_vat defined by
+    # .money_methods above, because we have special
+    # needs here.
+    # See the doc for #is_vat_applicable? for cases.
+    def amount_adding_vat
+      if is_vat_applicable?
+        (amount * (1 + included_tax_amount)).round(2)
+      else
+        amount
+      end
+    end
+
     def closed?
       state == "closed"
     end
@@ -97,10 +110,23 @@ module Spree
 
     private
 
+    # Taxes should not be taxed.
+    # Order-wide adjustments are hard: For a mixed cart, you can't know which
+    # VAT amount to apply.
+    def is_vat_applicable?
+      source_type != "Spree::TaxRate" && adjustable_type != "Spree::Order"
+    end
+
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
       Adjustable::AdjustmentsUpdater.update(adjustable)
     end
 
+    def included_tax_amount
+      Spree::TaxRate.included_tax_amount_for(
+        adjustable.tax_zone,
+        adjustable.tax_category
+      )
+    end
   end
 end

@@ -64,12 +64,8 @@ describe Spree::Calculator::DefaultTax, :type => :model do
       context "when tax is included in price" do
         let(:included_in_price) { true }
 
-        it "will return the deducted amount from the totals" do
-          # total price including 5% tax = $60
-          # ex pre-tax = $57.14
-          # 57.14 + %5 = 59.997 (or "close enough" to $60)
-          # 60 - 57.14 = $2.86
-          expect(calculator.compute(order).to_f).to eql 2.86
+        it "will still return the tax from the net total" do
+          expect(calculator.compute(order).to_f).to eq(3)
         end
       end
     end
@@ -81,17 +77,15 @@ describe Spree::Calculator::DefaultTax, :type => :model do
         context "when line item is discounted" do
           before do
             line_item.promo_total = -1
-            Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           end
 
-          it "should be equal to the item's discounted total * rate" do
-            expect(calculator.compute(line_item)).to eql 1.38
+          it "should be equal to the item's net discounted total * rate" do
+            expect(calculator.compute(line_item)).to eql 1.45
           end
         end
 
-        it "should be equal to the item's full price * rate" do
-          Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
-          expect(calculator.compute(line_item)).to eql 1.43
+        it "should be equal to the item's net price * rate" do
+          expect(calculator.compute(line_item)).to eql 1.50
         end
       end
     end
@@ -121,6 +115,31 @@ describe Spree::Calculator::DefaultTax, :type => :model do
         shipment.promo_total = -1
         # 5% of 14
         expect(calculator.compute(shipment)).to eq(0.7)
+      end
+    end
+  end
+
+  context "when given a line_item" do
+    let(:rate) { create(:tax_rate, amount: 0.07, included_in_price: true) }
+    let(:line_item) { create(:line_item, quantity: 50, price: 7.94392) }
+
+    subject { Spree::Calculator::DefaultTax.new(calculable: rate).compute_line_item(line_item) }
+
+    describe "#compute_line_item" do
+      it "computes the line item right" do
+        expect(subject).to eq(27.80)
+      end
+
+      context "with a 40$ promo" do
+
+        before do
+          # 40$ gross -> $37,38 net (at 7%)
+          allow(line_item).to receive(:promo_total).and_return(BigDecimal.new("-37.38"))
+        end
+
+        it "computes the line item right" do
+          expect(subject).to eq(25.19)
+        end
       end
     end
   end

@@ -4,7 +4,7 @@
   <tbody>
     <tr data-hook="item_total">
       <td><strong><%= Spree.t(:item_total) %>:</strong></td>
-      <td><strong><%= order.display_item_total.to_html %></strong></td>
+      <td><strong><%= order.display_item_total_adding_vat.to_html %></strong></td>
     </tr>
 
     <% if order.line_item_adjustments.nonzero.exists? %>
@@ -30,7 +30,7 @@
     <% if order.passed_checkout_step?("delivery") && order.shipments.any? %>
       <tr data-hook="shipping_total">
         <td><%= Spree.t(:shipping_total) %>:</td>
-        <td><%= Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency).to_html %></td>
+        <td><%= Spree::Money.new(order.shipments.sum("cost + included_tax_total"), currency: order.currency).to_html %></td>
       </tr>
 
       <% if order.shipment_adjustments.nonzero.exists? %>

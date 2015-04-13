@@ -13,7 +13,7 @@ describe Spree::ShippingRate, :type => :model do
     context "when tax included in price" do
       context "when the tax rate is from the default zone" do
         let!(:zone) { create(:zone, :default_tax => true) }
-        let(:tax_rate) do 
+        let(:tax_rate) do
           create(:tax_rate,
             :name => "VAT",
             :amount => 0.1,
@@ -24,7 +24,7 @@ describe Spree::ShippingRate, :type => :model do
         before { shipping_rate.tax_rate = tax_rate }
 
         it "shows correct tax amount" do
-          expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
+          expect(shipping_rate.display_price.to_s).to eq("$11.00 (incl. $1.00 #{tax_rate.name})")
         end
 
         context "when cost is zero" do
@@ -38,7 +38,7 @@ describe Spree::ShippingRate, :type => :model do
         end
       end
 
-      context "when the tax rate is from a non-default zone" do
+      context "when the tax rate is from another zone" do
         let!(:default_zone) { create(:zone, :default_tax => true) }
         let!(:non_default_zone) { create(:zone, :default_tax => false) }
         let(:tax_rate) do
@@ -51,7 +51,7 @@ describe Spree::ShippingRate, :type => :model do
         before { shipping_rate.tax_rate = tax_rate }
 
         it "shows correct tax amount" do
-          expect(shipping_rate.display_price.to_s).to eq("$10.00 (excl. $0.91 #{tax_rate.name})")
+          expect(shipping_rate.display_price.to_s).to eq("$11.00 (incl. $1.00 #{tax_rate.name})")
         end
 
         context "when cost is zero" do

@@ -54,6 +54,13 @@
         <% end %>
       </div>
 
+      <div data-hook="new_product_tax_category" class="col-md-4">
+        <%= f.field_container :tax_category, :class => ['form-group'] do %>
+          <%= f.label :tax_category_id, Spree.t(:tax_categories) %>
+          <%= f.collection_select :tax_category_id, @tax_categories, :id, :name, {include_blank: Spree.t('match_choices.none')}, {class: 'select2'} %>
+          <%= f.error_message_on :tax_category_id %>
+        <% end %>
+      </div>
     </div>
 
     <div data-hook="product-from-prototype" id="product-from-prototype">

@@ -8,7 +8,7 @@ module Spree
     #
     #
     # ==== Examples
-    # Decorate a method, with the default option of using the base object's 
+    # Decorate a method, with the default option of using the base object's
     # currency
     #
     #     extend Spree::DisplayMoney
@@ -24,6 +24,15 @@ module Spree
           define_method("display_#{method_name}") do
             default_opts = respond_to?(:currency) ? { currency: currency } : {}
             Spree::Money.new(send(method_name), default_opts.merge(opts))
+          end
+
+          define_method("display_#{method_name}_adding_vat") do
+            tax_multiplier = 1
+            if respond_to?(:included_tax_amount)
+              tax_multiplier = (1 + send(:included_tax_amount))
+            end
+            default_opts = respond_to?(:currency) ? { currency: currency } : {}
+            Spree::Money.new(send(method_name) * tax_multiplier, default_opts.merge(opts))
           end
         end
       end
