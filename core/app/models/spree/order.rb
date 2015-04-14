@@ -490,13 +490,13 @@ module Spree
       end
     end
 
-    def merge!(order, user = nil)
+    def merge!(order)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
         contents.add(line_item.variant, line_item.quantity, line_item.currency)
       end
       order.destroy
-      associate_user!(user)
+      self
     end
 
     def empty!
