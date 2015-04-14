@@ -3,7 +3,8 @@ eval(File.read(File.dirname(__FILE__) + '/../common_spree_dependencies.rb'))
 gem 'spree_core', :path => '../core'
 
 group :development do
-  gem 'guard'
+  gem 'guard-rspec'
+  gem 'pry'
 end
 
 gemspec
