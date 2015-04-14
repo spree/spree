@@ -301,11 +301,21 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       allow(controller).to receive_messages(current_order: order)
     end
 
+    context 'the current user is nil' do
+      let(:user)  { nil                                   }
+      let(:order) { create(:order, user: nil, email: nil) }
+
+      it 'does not call Spree::Order#associate_user! method' do
+        expect(order).to_not receive(:associate_user!)
+        apply
+      end
+    end
+
     context 'current order is nil' do
       let(:order) { nil }
 
       it 'does not call Spree::Order#associate_user! method' do
-        expect(order).to_not receive(:associate_user!)
+        expect_any_instance_of(Spree::Order).to_not receive(:associate_user!)
         apply
       end
     end

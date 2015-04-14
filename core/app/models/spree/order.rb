@@ -316,8 +316,6 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
-      return self if user.nil?
-
       self.user           = user
       self.email          = user.email if override_email
       self.created_by   ||= user

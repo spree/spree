@@ -574,20 +574,9 @@ describe Spree::Order, :type => :model do
     context "when user is nil" do
       let(:user) { nil }
 
-      it "does not change the state of the order" do
+      it "raises an error" do
         expect { order.associate_user!(user) }
-          .to_not change(order, :changes)
-          .from("state" => [nil, "cart"])
-      end
-
-      it "does not persist the order" do
-        expect { order.associate_user!(user) }
-          .to_not change(order, :persisted?)
-          .from(false)
-      end
-
-      it "returns self" do
-        expect(order.associate_user!(user)).to be(order)
+          .to raise_error(NoMethodError)
       end
     end
 

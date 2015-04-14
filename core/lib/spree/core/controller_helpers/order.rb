@@ -43,8 +43,9 @@ module Spree
 
         def associate_user
           @order ||= current_order
-          if @order && (@order.user.nil? || @order.email.blank?)
-            @order.associate_user!(try_spree_current_user)
+          user = try_spree_current_user
+          if user && @order && (@order.user.nil? || @order.email.blank?)
+            @order.associate_user!(user)
           end
         end
 
