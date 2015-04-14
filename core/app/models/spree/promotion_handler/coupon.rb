@@ -79,21 +79,15 @@ module Spree
       end
 
       def determine_promotion_application_result
-        detector = lambda { |p|
-          if p.source.promotion.code
-            p.source.promotion.code.downcase == order.coupon_code.downcase
-          end
-        }
-
         # Check for applied adjustments.
-        discount = order.line_item_adjustments.promotion.detect(&detector)
-        discount ||= order.shipment_adjustments.promotion.detect(&detector)
-        discount ||= order.adjustments.promotion.detect(&detector)
+        discount = order.all_adjustments.promotion.eligible.detect do |p|
+          p.source.promotion.code.try(:downcase) == order.coupon_code.downcase
+        end
 
         # Check for applied line items.
         created_line_items = promotion.actions.detect { |a| a.type == 'Spree::Promotion::Actions::CreateLineItems' }
 
-        if (discount && discount.eligible) || created_line_items
+        if discount || created_line_items
           order.update_totals
           order.persist_totals
           set_success_code :coupon_code_applied
