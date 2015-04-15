@@ -14,7 +14,7 @@ module Spree
       return if amount == 0
       adjustments.new(order: order,
                       adjustable: adjustable,
-                      label: label(amount),
+                      label: label,
                       amount: amount,
                       included: included).save
     end

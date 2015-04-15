@@ -1020,6 +1020,7 @@ en:
       match_policies:
         all: Match all of these rules
         any: Match any of these rules
+    promotion_label: 'Promotion (%{name})'
     promotion_rule: Promotion Rule
     promotion_rule_types:
       first_order:

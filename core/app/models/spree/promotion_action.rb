@@ -1,4 +1,4 @@
-# Base class for all types of promotion action.
+## Base class for all types of promotion action.
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree::Base
@@ -18,8 +18,8 @@ module Spree
 
     protected
 
-    def label(amount)
-      "#{Spree.t(:promotion)} (#{promotion.name})"
+    def label
+      Spree.t(:promotion_label, name: promotion.name)
     end
   end
 end

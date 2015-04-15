@@ -32,15 +32,20 @@ module Spree
     after_create :update_tax_charge
 
     delegate :name, :description, :sku, :should_track_inventory?, to: :variant
+    delegate :tax_zone, to: :order
 
     attr_accessor :target_shipment
 
     def copy_price
       if variant
-        self.price = variant.price if price.nil?
+        update_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
         self.currency = variant.currency if currency.nil?
       end
+    end
+
+    def update_price
+      self.price = variant.price_including_vat_for(tax_zone)
     end
 
     def copy_tax_category
