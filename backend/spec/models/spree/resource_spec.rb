@@ -14,6 +14,7 @@ module Spree
     describe Resource, type: :model do
       let(:resource_base) { Resource.new('spree/admin/test', 'test', 'widget') }
       let(:resource_submodule) { Resource.new('spree/admin/submodule/test', 'test', 'widget') }
+      let(:resource_object_name) { Resource.new('spree/admin/test', 'test', 'gadget', 'widget') }
 
       it "can get base model class" do
         expect(resource_base.model_class).to eq(Spree::Test)
@@ -37,6 +38,10 @@ module Spree
 
       it "can get submodule object name" do
         expect(resource_submodule.object_name).to eq('submodule_test')
+      end
+
+      it "can get overridden object name" do
+        expect(resource_object_name.object_name).to eq('widget')
       end
     end
   end
