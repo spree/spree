@@ -5,11 +5,11 @@ section: deployment
 
 ## Overview
 
-This guide is intended to provide some generally useful hints and tips\
+This guide is intended to provide some generally useful hints and tips
 for troubleshooting standard deployment issues, including:
 
 * How static assets are served in production
-* Enabling & Configuringn SSL use within Spree
+* Enabling & Configuring SSL use within Spree
 * Email configuration
 * and more ...
 
@@ -35,7 +35,7 @@ config.serve_static_files = true
 ```
 
 ***
-There is a good reason why this is disabled by default in Rails
+There is a good reason why this is disabled by default in Rails,
 which is that Rails is not a general purpose web server. Servers such as
 Apache and Nginx are optimized for rapidly serving up static content.
 You should consider the advice of the Rails core team and let your
