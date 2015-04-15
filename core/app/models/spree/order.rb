@@ -277,6 +277,13 @@ module Spree
       Spree::TaxRate.adjust(self, shipments) if shipments.any?
     end
 
+    def update_line_item_prices!
+      line_items.each do |line_item|
+        line_item.update_price
+        line_item.save
+      end
+    end
+
     def outstanding_balance
       if state == 'canceled'
         -1 * payment_total

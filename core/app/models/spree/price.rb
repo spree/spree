@@ -22,12 +22,44 @@ module Spree
       self[:amount] = Spree::LocalizedNumber.parse(price)
     end
 
+    def price_including_vat_for(zone)
+      if !default_zone || !zone || zone == default_zone
+        price
+      else
+        gross_price_for(zone)
+      end
+    end
+
+    def display_price_including_vat_for(zone)
+      Spree::Money.new(price_including_vat_for(zone), currency: currency)
+    end
+
     # Remove variant default_scope `deleted_at: nil`
     def variant
       Spree::Variant.unscoped { super }
     end
 
     private
+
+    def default_zone
+      @_default_zone ||= Spree::Zone.default_tax
+    end
+
+    def net_price
+      @_net_price ||= price / (1 + included_tax_amount(default_zone))
+    end
+
+    def gross_price_for(zone)
+      round_to_two_places(net_price * (1 + included_tax_amount(zone)))
+    end
+
+    def round_to_two_places(amount)
+      BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
+    end
+
+    def included_tax_amount(zone = default_zone)
+      Spree::TaxRate.included_tax_amount_for(zone, variant.tax_category)
+    end
 
     def check_price
       self.currency ||= Spree::Config[:currency]

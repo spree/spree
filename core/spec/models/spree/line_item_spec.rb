@@ -110,6 +110,16 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
+  # test for copying prices when the vat changes
+  context '#update_price' do
+    it 'copies over a variants differing price for another vat zone' do
+      expect(line_item.variant).to receive(:price_including_vat_for).and_return(12)
+      line_item.price = 10
+      line_item.update_price
+      expect(line_item.price).to eq(12)
+    end
+  end
+
   # Test for #3481
   context '#copy_tax_category' do
     it "copies over a variant's tax category" do
