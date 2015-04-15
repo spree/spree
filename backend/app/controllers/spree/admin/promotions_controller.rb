@@ -19,7 +19,7 @@ module Spree
         total_promotions_computable = 0
 
         Spree::Promotion.backend.active.each do |promotion|
-          if promotion.active && promotion.class.order_activatable?(@order)
+          if promotion.class.order_activatable?(@order)
             available_promotions_actions += promotion.promotion_actions
           end
         end
