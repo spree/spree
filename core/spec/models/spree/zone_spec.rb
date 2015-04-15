@@ -327,10 +327,6 @@ describe Spree::Zone, :type => :model do
       it "only returns each zone once" do
         expect(@result.select { |z| z == zone }.size).to be 1
       end
-
-      it "will include the default_tax zone" do
-        expect(@result).to include(default_tax_zone)
-      end
     end
 
     context "finding potential matches for a state zone" do
@@ -363,10 +359,6 @@ describe Spree::Zone, :type => :model do
 
       it "only returns each zone once" do
         expect(@result.select { |z| z == zone }.size).to be 1
-      end
-
-      it "will include the default tax zone" do
-        expect(@result).to include(default_tax_zone)
       end
     end
   end

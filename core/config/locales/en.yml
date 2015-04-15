@@ -317,7 +317,6 @@ en:
             base:
               cannot_destroy_default_store: Cannot destroy the default Store.
 
-
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -356,6 +355,7 @@ en:
     user_sessions:
       signed_in: Signed in successfully.
       signed_out: Signed out successfully.
+
   errors:
     messages:
       already_confirmed: was already confirmed
@@ -364,6 +364,12 @@ en:
       not_saved:
         one: ! '1 error prohibited this %{resource} from being saved:'
         other: ! '%{count} errors prohibited this %{resource} from being saved:'
+
+  number:
+    percentage:
+      format:
+        precision: 1
+
   spree:
     abbreviation: Abbreviation
     accept: Accept
@@ -409,6 +415,10 @@ en:
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
+    adjustment_labels:
+      tax_rates:
+        including_tax: '%{name}%{amount} (Included in Price)'
+        excluding_tax: '%{name}%{amount}'
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
@@ -1020,6 +1030,7 @@ en:
       match_policies:
         all: Match all of these rules
         any: Match any of these rules
+    promotion_label: 'Promotion (%{name})'
     promotion_rule: Promotion Rule
     promotion_rule_types:
       first_order:
@@ -1200,6 +1211,10 @@ en:
     shipping_method: Shipping Method
     shipping_methods: Shipping Methods
     shipping_price_sack: Price sack
+    shipping_rates:
+      display_price:
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
     shipping_total: Shipping total
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart

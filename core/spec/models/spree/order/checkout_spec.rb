@@ -172,6 +172,7 @@ describe Spree::Order, :type => :model do
       it "updates totals" do
         allow(order).to receive_messages(:ensure_available_shipping_rates => true)
         line_item = FactoryGirl.create(:line_item, :price => 10, :adjustment_total => 10)
+        line_item.variant.update_attributes!(price: 10)
         order.line_items << line_item
         tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
         allow(Spree::TaxRate).to receive_messages :match => [tax_rate]
@@ -182,6 +183,28 @@ describe Spree::Order, :type => :model do
         expect(order.additional_tax_total).to eq(0.5)
         expect(order.included_tax_total).to eq(0)
         expect(order.total).to eq(10.5)
+      end
+
+      it 'updates prices' do
+        allow(order).to receive_messages(ensure_available_shipping_rates: true)
+        line_item = FactoryGirl.create(:line_item, price: 10, adjustment_total: 10)
+        line_item.variant.update_attributes!(price: 20)
+        order.line_items << line_item
+        tax_rate = create :tax_rate,
+                          included_in_price: true,
+                          tax_category: line_item.tax_category,
+                          amount: 0.05
+        allow(Spree::TaxRate).to receive_messages(match: [tax_rate])
+        FactoryGirl.create :tax_adjustment,
+                           adjustable: line_item,
+                           source: tax_rate,
+                           order: order
+        order.email = "user@example.com"
+        order.next!
+        expect(order.adjustment_total).to eq(0)
+        expect(order.additional_tax_total).to eq(0)
+        expect(order.included_tax_total).to eq(0.95)
+        expect(order.total).to eq(20)
       end
 
       it "transitions to delivery" do

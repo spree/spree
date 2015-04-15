@@ -25,8 +25,7 @@ module Spree
       if zone.country?
         # Match zones of the same kind with simialr countries
         joins(countries: :zones).
-          where('zone_members_spree_countries_join.zone_id = ? OR ' +
-                'spree_zones.default_tax = ?', zone.id, true).
+          where("zone_members_spree_countries_join.zone_id = ?", zone.id).
           uniq
       else
         # Match zones of the same kind with similar states in AND match zones
@@ -35,11 +34,9 @@ module Spree
           "(spree_zone_members.zoneable_type = 'Spree::State' AND
             spree_zone_members.zoneable_id IN (?))
            OR (spree_zone_members.zoneable_type = 'Spree::Country' AND
-            spree_zone_members.zoneable_id IN (?))
-           OR default_tax = ?",
+            spree_zone_members.zoneable_id IN (?))",
           zone.state_ids,
-          zone.states.pluck(:country_id),
-          true
+          zone.states.pluck(:country_id)
         ).uniq
       end
     end
