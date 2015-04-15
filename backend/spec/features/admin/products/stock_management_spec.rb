@@ -28,7 +28,7 @@ describe "Stock Management", type: :feature, js: true do
       end
     end
 
-    context "toggle track inventory for a vaniant's stock item" do
+    context "toggle track inventory for a variant's stock item" do
       let(:track_inventory) { find ".track_inventory_checkbox" }
 
       before do
@@ -42,7 +42,6 @@ describe "Stock Management", type: :feature, js: true do
         expect(track_inventory).not_to be_checked
       end
     end
-
 
     # Regression test for #2896
     # The regression was that unchecking the last checkbox caused a redirect

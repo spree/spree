@@ -33,7 +33,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_updated)
       respond_with(@object) do |format|
         format.html { redirect_to location_after_save }
-        format.js   { render layout: false }
+        format.js { render layout: false }
       end
     else
       invoke_callbacks(:update, :fails)
@@ -240,6 +240,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
   end
 
+  # This method should be overridden when object_name does not match the controller name
   def object_name
   end
 
