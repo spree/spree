@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class Resource
-      def initialize(controller_path, controller_name, parent_model, object_name)
+      def initialize(controller_path, controller_name, parent_model, object_name = nil)
         @controller_path = controller_path
         @controller_name = controller_name
         @parent_model = parent_model
