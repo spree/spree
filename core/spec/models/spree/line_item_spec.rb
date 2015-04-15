@@ -119,18 +119,12 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
-  describe '.discounted_amount' do
+  describe '#discounted_amount' do
     it "returns the amount minus any discounts" do
       line_item.price = 10
       line_item.quantity = 2
       line_item.promo_total = -5
       expect(line_item.discounted_amount).to eq(15)
-    end
-  end
-
-  describe "#discounted_money" do
-    it "should return a money object with the discounted amount" do
-      expect(line_item.discounted_money.to_s).to eq "$10.00"
     end
   end
 
@@ -140,7 +134,13 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
-  describe ".money" do
+  describe "#discounted_money" do
+    it "should return a money object with the discounted amount" do
+      expect(line_item.discounted_money.to_s).to eq "$10.00"
+    end
+  end
+
+  describe "#money" do
     before do
       line_item.price = 3.50
       line_item.quantity = 2
@@ -149,10 +149,15 @@ describe Spree::LineItem, :type => :model do
     it "returns a Spree::Money representing the total for this line item" do
       expect(line_item.money.to_s).to eq("$7.00")
     end
+
   end
 
-  describe '.single_money' do
-    before { line_item.price = 3.50 }
+  describe '#single_money' do
+    before do
+      line_item.price = 3.50
+      line_item.quantity = 2
+    end
+
     it "returns a Spree::Money representing the price for one variant" do
       expect(line_item.single_money.to_s).to eq("$3.50")
     end

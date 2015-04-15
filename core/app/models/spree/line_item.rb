@@ -49,6 +49,12 @@ module Spree
       end
     end
 
+    extend DisplayMoney
+    money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price
+
+    alias single_money display_price
+    alias single_display_amount display_price
+
     def amount
       price * quantity
     end
@@ -57,26 +63,13 @@ module Spree
     def discounted_amount
       amount + promo_total
     end
-
-    def discounted_money
-      Spree::Money.new(discounted_amount, { currency: currency })
-    end
+    alias discounted_money display_discounted_amount
 
     def final_amount
       amount + adjustment_total
     end
     alias total final_amount
-
-    def single_money
-      Spree::Money.new(price, { currency: currency })
-    end
-    alias single_display_amount single_money
-
-    def money
-      Spree::Money.new(amount, { currency: currency })
-    end
-    alias display_total money
-    alias display_amount money
+    alias money display_total
 
     def invalid_quantity_check
       self.quantity = 0 if quantity.nil? || quantity < 0
