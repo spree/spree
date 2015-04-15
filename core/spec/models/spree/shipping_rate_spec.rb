@@ -11,20 +11,20 @@ describe Spree::ShippingRate, :type => :model do
 
   context "#display_price" do
     context "when tax included in price" do
+      let!(:default_zone) { create(:zone, :default_tax => true) }
+      let(:default_tax_rate) do
+        create(:tax_rate,
+          :name => "VAT",
+          :amount => 0.1,
+          :included_in_price => true,
+          :zone => default_zone)
+      end
       context "when the tax rate is from the default zone" do
-        let!(:zone) { create(:zone, :default_tax => true) }
-        let(:tax_rate) do 
-          create(:tax_rate,
-            :name => "VAT",
-            :amount => 0.1,
-            :included_in_price => true,
-            :zone => zone)
-        end
 
-        before { shipping_rate.tax_rate = tax_rate }
+        before { shipping_rate.tax_rate = default_tax_rate }
 
         it "shows correct tax amount" do
-          expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{tax_rate.name})")
+          expect(shipping_rate.display_price.to_s).to eq("$10.00 (incl. $0.91 #{default_tax_rate.name})")
         end
 
         context "when cost is zero" do
@@ -38,20 +38,21 @@ describe Spree::ShippingRate, :type => :model do
         end
       end
 
-      context "when the tax rate is from a non-default zone" do
-        let!(:default_zone) { create(:zone, :default_tax => true) }
+      context "when the tax rate is from another zone" do
         let!(:non_default_zone) { create(:zone, :default_tax => false) }
-        let(:tax_rate) do
+
+        let(:non_default_tax_rate) do
           create(:tax_rate,
             :name => "VAT",
-            :amount => 0.1,
+            :amount => 0.2,
             :included_in_price => true,
             :zone => non_default_zone)
         end
-        before { shipping_rate.tax_rate = tax_rate }
+        before { shipping_rate.tax_rate = non_default_tax_rate }
 
-        it "shows correct tax amount" do
-          expect(shipping_rate.display_price.to_s).to eq("$10.00 (excl. $0.91 #{tax_rate.name})")
+        pending "I would expect this to be analogue to line items: First calculate the net price, then add the foreign VAT.\n"+
+                "However, I'm still waiting for the requirements to be properly defined here. " do
+          expect(shipping_rate.display_price.to_s).to eq("$10.91 (incl. $1.82 #{non_default_tax_rate.name})")
         end
 
         context "when cost is zero" do

@@ -54,7 +54,11 @@ module Spree
     def cache_key_for_products
       count = @products.count
       max_updated_at = (@products.maximum(:updated_at) || Date.today).to_s(:number)
-      "#{I18n.locale}/#{current_currency}/spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}"
+      "#{I18n.locale}/#{current_currency}/#{current_tax_zone.try(:cache_key)}/spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}"
+    end
+
+    def cache_key_for_product(product = @product)
+      "#{I18n.locale}/#{current_currency}/#{current_tax_zone.try(:cache_key)}/#{product.cache_key}"
     end
   end
 end
