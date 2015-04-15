@@ -8,6 +8,7 @@
     <table class="table table-bordered line-items" data-hook="line-items">
       <thead>
         <th colspan="2"><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:sku) %></th>
         <th class="text-center"><%= Spree.t(:price) %></th>
         <th class="text-center"><%= Spree.t(:quantity) %></th>
         <th class="text-center"><%= Spree.t(:total_price) %></th>
@@ -21,6 +22,9 @@
             </td>
             <td class="line-item-name text-center">
               <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+            </td>
+            <td class="line-item-id text-center">
+              <%= item.variant.product.sku %>
             </td>
             <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
             <td class="line-item-qty-show text-center">
