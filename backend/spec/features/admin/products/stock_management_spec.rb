@@ -28,6 +28,21 @@ describe "Stock Management", type: :feature, js: true do
       end
     end
 
+    context "toggle track inventory for a variant's stock item" do
+      let(:track_inventory) { find ".track_inventory_checkbox" }
+
+      before do
+        expect(track_inventory).to be_checked
+        track_inventory.set(false)
+        wait_for_ajax
+      end
+
+      it "persists the value when page reloaded", js: true do
+        visit current_path
+        expect(track_inventory).not_to be_checked
+      end
+    end
+
     # Regression test for #2896
     # The regression was that unchecking the last checkbox caused a redirect
     # to happen. By ensuring that we're still on an /admin/products URL, we

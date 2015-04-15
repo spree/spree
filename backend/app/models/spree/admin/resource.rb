@@ -1,10 +1,11 @@
 module Spree
   module Admin
     class Resource
-      def initialize(controller_path, controller_name, parent_model)
+      def initialize(controller_path, controller_name, parent_model, object_name = nil)
         @controller_path = controller_path
         @controller_name = controller_name
         @parent_model = parent_model
+        @object_name = object_name
       end
 
       def sub_namespace_parts
@@ -24,6 +25,7 @@ module Spree
       end
 
       def object_name
+        return @object_name if @object_name
         sub_namespace = sub_namespace_parts.join('_')
         sub_namespace = "#{sub_namespace}_" if sub_namespace.length > 0
         "#{sub_namespace}#{@controller_name.singularize}"
