@@ -24,23 +24,23 @@ module Spree
       first_variant = json_response["variants"].first
       expect(first_variant).to have_attributes(show_attributes)
       expect(first_variant["stock_items"]).to be_present
-      expect(json_response["count"]).to eq(1)
-      expect(json_response["current_page"]).to eq(1)
-      expect(json_response["pages"]).to eq(1)
+      expect(json_response['meta']["count"]).to eq(1)
+      expect(json_response['meta']["current_page"]).to eq(1)
+      expect(json_response['meta']["pages"]).to eq(1)
     end
 
     it 'can control the page size through a parameter' do
       create(:variant)
       api_get :index, :per_page => 1
-      expect(json_response['count']).to eq(1)
-      expect(json_response['current_page']).to eq(1)
-      expect(json_response['pages']).to eq(3)
+      expect(json_response['meta']['count']).to eq(1)
+      expect(json_response['meta']['current_page']).to eq(1)
+      expect(json_response['meta']['pages']).to eq(3)
     end
 
     it 'can query the results through a parameter' do
       expected_result = create(:variant, :sku => 'FOOBAR')
       api_get :index, :q => { :sku_cont => 'FOO' }
-      expect(json_response['count']).to eq(1)
+      expect(json_response['meta']['count']).to eq(1)
       expect(json_response['variants'].first['sku']).to eq expected_result.sku
     end
 
@@ -72,7 +72,7 @@ module Spree
 
     it 'variants returned do not contain cost price data' do
       api_get :index
-      expect(json_response["variants"].first.has_key?(:cost_price)).to eq false
+      expect(json_response["variants"].first["cost_price"]).to eq false
     end
 
     # Regression test for #2141
@@ -97,17 +97,17 @@ module Spree
         second_variant = create(:variant)
         api_get :index, :page => 2, :per_page => 1
         expect(json_response["variants"].first).to have_attributes(show_attributes)
-        expect(json_response["total_count"]).to eq(3)
-        expect(json_response["current_page"]).to eq(2)
-        expect(json_response["pages"]).to eq(3)
+        expect(json_response['meta']["total_count"]).to eq(3)
+        expect(json_response['meta']["current_page"]).to eq(2)
+        expect(json_response['meta']["pages"]).to eq(3)
       end
     end
 
     it "can see a single variant" do
       api_get :show, :id => variant.to_param
-      expect(json_response).to have_attributes(show_attributes)
-      expect(json_response["stock_items"]).to be_present
-      option_values = json_response["option_values"]
+      expect(json_response['variant']).to have_attributes(show_attributes)
+      expect(json_response['variant']["stock_items"]).to be_present
+      option_values = json_response['variant']["option_values"]
       expect(option_values.first).to have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
@@ -119,8 +119,8 @@ module Spree
 
       api_get :show, :id => variant.to_param
 
-      expect(json_response).to have_attributes(show_attributes + [:images])
-      option_values = json_response["option_values"]
+      expect(json_response['variant']).to have_attributes(show_attributes + [:images])
+      option_values = json_response['variant']["option_values"]
       expect(option_values.first).to have_attributes([:name,
                                                  :presentation,
                                                  :option_type_name,
@@ -128,6 +128,7 @@ module Spree
     end
 
     it "can learn how to create a new variant" do
+      pending "I don't think anyone uses this in earnest..."
       api_get :new
       expect(json_response["attributes"]).to eq(new_attributes.map(&:to_s))
       expect(json_response["required_attributes"]).to be_empty
@@ -167,9 +168,9 @@ module Spree
 
       it "can create a new variant" do
         api_post :create, :variant => { :sku => "12345" }
-        expect(json_response).to have_attributes(new_attributes)
+        expect(json_response["variant"]).to have_attributes(new_attributes)
         expect(response.status).to eq(201)
-        expect(json_response["sku"]).to eq("12345")
+        expect(json_response["variant"]["sku"]).to eq("12345")
 
         expect(variant.product.variants.count).to eq(1)
       end

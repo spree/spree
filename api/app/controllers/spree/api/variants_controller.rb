@@ -7,7 +7,7 @@ module Spree
         authorize! :create, Variant
         @variant = scope.new(variant_params)
         if @variant.save
-          respond_with(@variant, status: 201, default_template: :show)
+          render json: @variant, status: 201, serializer: Spree::BigVariantSerializer
         else
           invalid_resource!(@variant)
         end
@@ -16,7 +16,7 @@ module Spree
       def destroy
         @variant = scope.accessible_by(current_ability, :destroy).find(params[:id])
         @variant.destroy
-        respond_with(@variant, status: 204)
+        render nothing: true, status: 204
       end
 
       # The lazyloaded associations here are pretty much attached to which nodes
@@ -25,22 +25,24 @@ module Spree
       def index
         @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
           .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@variants)
+        render json: @variants, meta: pagination(@variants), each_serializer: Spree::BigVariantSerializer
       end
 
       def new
+        authorize! :new, Variant
+        render json: Spree::Variant.new, each_serializer: Spree::BigVariantSerializer
       end
 
       def show
         @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images, { stock_items: :stock_location })
           .find(params[:id])
-        respond_with(@variant)
+        render json: @variant, serializer: Spree::BigVariantSerializer
       end
 
       def update
         @variant = scope.accessible_by(current_ability, :update).find(params[:id])
         if @variant.update_attributes(variant_params)
-          respond_with(@variant, status: 200, default_template: :show)
+          render json: @variant, each_serializer: Spree::BigVariantSerializer
         else
           invalid_resource!(@product)
         end

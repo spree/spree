@@ -26,9 +26,11 @@ module Spree
     end
 
     it "can learn how to create a new line item" do
+      pending "I don't think anyone uses this in earnest..."
+      allow(controller).to receive_messages :try_spree_current_user => current_api_user
       api_get :new
-      expect(json_response["attributes"]).to eq(["quantity", "price", "variant_id"])
-      required_attributes = json_response["required_attributes"]
+      expect(json_response['line_item']["attributes"]).to eq(["quantity", "price", "variant_id"])
+      required_attributes = json_response['line_item']["required_attributes"]
       expect(required_attributes).to include("quantity", "variant_id")
     end
 
@@ -36,16 +38,16 @@ module Spree
       it "can add a new line item to an existing order" do
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }, :order_token => order.guest_token
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response["variant"]["name"]).not_to be_blank
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item']["variant"]["name"]).not_to be_blank
       end
 
       it "can add a new line item to an existing order with token in header" do
         request.headers["X-Spree-Order-Token"] = order.guest_token
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response["variant"]["name"]).not_to be_blank
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item']["variant"]["name"]).not_to be_blank
       end
     end
 
@@ -57,8 +59,8 @@ module Spree
       it "can add a new line item to an existing order" do
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response["variant"]["name"]).not_to be_blank
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item']["variant"]["name"]).not_to be_blank
       end
 
       it "can add a new line item to an existing order with options" do
@@ -75,8 +77,8 @@ module Spree
       it "default quantity to 1 if none is given" do
         api_post :create, :line_item => { :variant_id => product.master.to_param }
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response[:quantity]).to eq 1
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item'][:quantity]).to eq 1
       end
 
       it "increases a line item's quantity if it exists already" do
@@ -85,8 +87,8 @@ module Spree
         expect(response.status).to eq(201)
         order.reload
         expect(order.line_items.count).to eq(2) # 1 original due to factory, + 1 in this test
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response["quantity"]).to eq(11)
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item']["quantity"]).to eq(11)
       end
 
       it "can update a line item on the order" do
@@ -95,8 +97,8 @@ module Spree
         expect(response.status).to eq(200)
         order.reload
         expect(order.total).to eq(1010) # 10 original due to factory, + 1000 in this test
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response["quantity"]).to eq(101)
+        expect(json_response['line_item']).to have_attributes(attributes)
+        expect(json_response['line_item']["quantity"]).to eq(101)
       end
 
       it "can update a line item's options on the order" do

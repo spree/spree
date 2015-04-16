@@ -1,0 +1,31 @@
+<fieldset data-hook="admin_user_api_key" class="omega six columns">
+  <legend><%= Spree.t('access', :scope => 'api') %></legend>
+
+  <% if @user.spree_api_key.present? %>
+    <div class="field">
+      <%= label_tag Spree.t('key', :scope => 'api') %>:
+      <%= @user.spree_api_key %>
+    </div>
+    <div class="filter-actions actions">
+      <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('clear_key', :scope => 'api'), 'icon-trash' %>
+      <% end %>
+
+      <span class="or"><%= Spree.t(:or)%></span>
+
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('regenerate_key', :scope => 'api'), 'icon-refresh' %>
+      <% end %>
+    </div>
+
+  <% else %>
+
+    <div class="no-objects-found"><%= Spree.t('no_key', :scope => 'api') %></div>
+
+    <div class="filter-actions actions">
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('generate_key', :scope => 'api'), 'icon-key' %>
+      <% end %>
+    </div>
+  <% end %>
+</fieldset>

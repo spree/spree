@@ -7,18 +7,18 @@ module Spree
 
       def index
         @payments = @order.payments.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@payments)
+        render json: @payments, meta: pagination(@payments)
       end
 
       def new
         @payment_methods = Spree::PaymentMethod.available
-        respond_with(@payment_methods)
+        render json: { payment_methods: @payment_methods }
       end
 
       def create
         @payment = @order.payments.build(payment_params)
         if @payment.save
-          respond_with(@payment, status: 201, default_template: :show)
+          render json: @payment, status: 201
         else
           invalid_resource!(@payment)
         end
@@ -27,16 +27,22 @@ module Spree
       def update
         authorize! params[:action], @payment
         if ! @payment.pending?
-          render 'update_forbidden', status: 403
+          render json: {
+            error: I18n.t(
+              :update_forbidden,
+              :state => @payment.state,
+              :scope => 'spree.api.payment'
+            )
+          }, status: 403
         elsif @payment.update_attributes(payment_params)
-          respond_with(@payment, default_template: :show)
+          render json: @payment
         else
           invalid_resource!(@payment)
         end
       end
 
       def show
-        respond_with(@payment)
+        render json: @payment
       end
 
       def authorize
@@ -69,7 +75,7 @@ module Spree
         def perform_payment_action(action, *args)
           authorize! action, Payment
           @payment.send("#{action}!", *args)
-          respond_with(@payment, default_template: :show)
+          render json: @payment, default_template: :show
         end
 
         def payment_params
