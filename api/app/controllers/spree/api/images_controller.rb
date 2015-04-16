@@ -8,12 +8,12 @@ module Spree
       end
 
       def show
-        @image = Image.accessible_by(current_ability, :read).find(params[:id])
+        @image = Spree::Image.accessible_by(current_ability, :read).find(params[:id])
         respond_with(@image)
       end
 
       def create
-        authorize! :create, Image
+        authorize! :create, Spree::Image
         @image = scope.images.create(image_params)
         respond_with(@image, :status => 201, :default_template => :show)
       end

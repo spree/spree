@@ -57,12 +57,12 @@ module Spree
       #   }
       #
       def create
-        authorize! :create, Product
+        authorize! :create, Spree::Product
         params[:product][:available_on] ||= Time.now
         set_up_shipping_category
 
         options = { variants_attrs: variants_params, options_attrs: option_types_params }
-        @product = Core::Importer::Product.new(nil, product_params, options).create
+        @product = Spree::Core::Importer::Product.new(nil, product_params, options).create
 
         if @product.persisted?
           respond_with(@product, :status => 201, :default_template => :show)
@@ -76,7 +76,7 @@ module Spree
         authorize! :update, @product
 
         options = { variants_attrs: variants_params, options_attrs: option_types_params }
-        @product = Core::Importer::Product.new(@product, product_params, options).update
+        @product = Spree::Core::Importer::Product.new(@product, product_params, options).update
 
         if @product.errors.empty?
           respond_with(@product.reload, :status => 200, :default_template => :show)
@@ -119,7 +119,7 @@ module Spree
 
         def set_up_shipping_category
           if shipping_category = params[:product].delete(:shipping_category)
-            id = ShippingCategory.find_or_create_by(name: shipping_category).id
+            id = Spree::ShippingCategory.find_or_create_by(name: shipping_category).id
             params[:product][:shipping_category_id] = id
           end
         end

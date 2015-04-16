@@ -67,7 +67,7 @@ module Spree
         end
 
         def perform_payment_action(action, *args)
-          authorize! action, Payment
+          authorize! action, Spree::Payment
           @payment.send("#{action}!", *args)
           respond_with(@payment, default_template: :show)
         end
