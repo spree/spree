@@ -13,16 +13,31 @@ module Spree
         end
 
         @taxons = @taxons.page(params[:page]).per(params[:per_page])
-        respond_with(@taxons)
+
+        if params["without_children"] == 1
+          render json: @taxons, meta: pagination(@taxons), each_serializer: Spree::TaxonNoChildrenSerializer
+        else
+          render json: @taxons, meta: pagination(@taxons), each_serializer: Spree::TaxonSerializer
+        end
       end
 
       def show
-        @taxon = taxon
-        respond_with(@taxon)
+        render json: taxon
       end
 
       def jstree
-        show
+        tree = taxon.children.map do |taxon|
+          {
+            data: taxon.name,
+            attr: {
+              id: taxon.id,
+              name: taxon.name
+              },
+              state: 'closed'
+          }
+        end
+
+        render json: tree, root: false
       end
 
       def create
@@ -33,13 +48,14 @@ module Spree
 
         if taxonomy.nil?
           @taxon.errors[:taxonomy_id] = I18n.t(:invalid_taxonomy_id, scope: 'spree.api')
-          invalid_resource!(@taxon) and return
+          invalid_resource!(@taxon)
+          return
         end
 
         @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
 
         if @taxon.save
-          respond_with(@taxon, status: 201, default_template: :show)
+          render json: @taxon, status: 201
         else
           invalid_resource!(@taxon)
         end
@@ -48,7 +64,7 @@ module Spree
       def update
         authorize! :update, taxon
         if taxon.update_attributes(taxon_params)
-          respond_with(taxon, status: 200, default_template: :show)
+          render json: taxon
         else
           invalid_resource!(taxon)
         end
@@ -57,7 +73,7 @@ module Spree
       def destroy
         authorize! :destroy, taxon
         taxon.destroy
-        respond_with(taxon, status: 204)
+        render nothing: true, status: 204
       end
 
       def products
@@ -66,7 +82,7 @@ module Spree
         taxon = Spree::Taxon.find(params[:id])
         @products = taxon.products.ransack(params[:q]).result
         @products = @products.page(params[:page]).per(params[:per_page] || 500)
-        render "spree/api/products/index"
+        render json: @products, meta: pagination(@products), root: "products"
       end
 
       private

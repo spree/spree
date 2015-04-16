@@ -15,13 +15,17 @@ module Spree
 
         state = @states.last
         if stale?(state)
-          respond_with(@states)
+          render json: @states, meta: {
+            count: @states.count,
+            current_page: params[:page] ? params[:page].to_i : 1,
+            per_page: params[:per_page] || Kaminari.config.default_per_page,
+          }
         end
       end
 
       def show
         @state = scope.find(params[:id])
-        respond_with(@state)
+        render json: @state
       end
 
       private

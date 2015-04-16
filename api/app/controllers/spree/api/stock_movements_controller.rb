@@ -6,19 +6,19 @@ module Spree
       def index
         authorize! :read, StockMovement
         @stock_movements = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
-        respond_with(@stock_movements)
+        render json: @stock_movements, meta: pagination(@stock_movements)
       end
 
       def show
         @stock_movement = scope.find(params[:id])
-        respond_with(@stock_movement)
+        render json: @stock_movement
       end
 
       def create
         authorize! :create, StockMovement
         @stock_movement = scope.new(stock_movement_params)
         if @stock_movement.save
-          respond_with(@stock_movement, status: 201, default_template: :show)
+          render json: @stock_movement, status: 201
         else
           invalid_resource!(@stock_movement)
         end
@@ -27,7 +27,7 @@ module Spree
       private
 
       def stock_location
-        render 'spree/api/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
+        render json: { error: I18n.t(:stock_location_required, scope: "spree.api") }, status: 402 and return unless params[:stock_location_id]
         @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
       end
 

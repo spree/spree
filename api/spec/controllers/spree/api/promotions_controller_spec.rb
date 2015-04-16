@@ -13,7 +13,7 @@ module Spree
         payload = HashWithIndifferentAccess.new(JSON.parse(subject.body))
         expect(payload).to_not be_nil
         Spree::Api::ApiHelpers.promotion_attributes.each do |attribute|
-          expect(payload.has_key?(attribute)).to be true
+          expect(payload["promotion"].has_key?(attribute)).to be true
         end
       end
     end

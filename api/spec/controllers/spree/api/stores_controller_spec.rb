@@ -55,7 +55,7 @@ module Spree
 
       it "I can get the store details" do
         api_get :show, id: store.id
-        expect(json_response).to eq(
+        expect(json_response["store"]).to eq(
           "id" => store.id,
           "name" => "My Spree Store",
           "url" => "spreestore.example.com",

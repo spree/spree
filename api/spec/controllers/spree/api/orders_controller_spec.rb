@@ -49,8 +49,8 @@ module Spree
         api_get :mine
 
         expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(1)
-        expect(json_response["current_page"]).to eq(1)
+        expect(json_response['meta']["pages"]).to eq(1)
+        expect(json_response['meta']["current_page"]).to eq(1)
         expect(json_response["orders"].length).to eq(1)
         expect(json_response["orders"].first["number"]).to eq(order.number)
         expect(json_response["orders"].first["line_items"].length).to eq(1)
@@ -76,7 +76,7 @@ module Spree
 
         api_get :mine
         expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(1)
+        expect(json_response['meta']["pages"]).to eq(1)
         expect(json_response["orders"].length).to eq(4)
         expect(json_response["orders"][0]["number"]).to eq(order.number)
         expect(json_response["orders"][1]["number"]).to eq(order2.number)
@@ -95,7 +95,7 @@ module Spree
 
       context "an incomplete order exists" do
         it "returns that order" do
-          expect(JSON.parse(subject.body)['id']).to eq order.id
+          expect(JSON.parse(subject.body)['order']['id']).to eq order.id
           expect(subject).to be_success
         end
       end
@@ -104,7 +104,7 @@ module Spree
         it "returns the latest incomplete order" do
           new_order = Spree::Order.create! user: order.user
           expect(new_order.created_at).to be > order.created_at
-          expect(JSON.parse(subject.body)['id']).to eq new_order.id
+          expect(JSON.parse(subject.body)['order']['id']).to eq new_order.id
         end
       end
 
@@ -132,8 +132,8 @@ module Spree
       allow_any_instance_of(Order).to receive_messages :user => current_api_user
       api_get :show, :id => order.to_param
       expect(response.status).to eq(200)
-      expect(json_response).to have_attributes(attributes)
-      expect(json_response["adjustments"]).to be_empty
+      expect(json_response['order']).to have_attributes(attributes)
+      expect(json_response['order']["adjustments"]).to be_empty
     end
 
     describe 'GET #show' do
@@ -149,12 +149,13 @@ module Spree
       context 'when inventory information is present' do
         it 'contains stock information on variant' do
           subject
-          variant = json_response['line_items'][0]['variant']
+          variant = json_response['order']['line_items'][0]['variant']
           expect(variant).to_not be_nil
-          expect(variant['in_stock']).to eq(false)
+
           expect(variant['total_on_hand']).to eq(0)
-          expect(variant['is_backorderable']).to eq(true)
           expect(variant['is_destroyed']).to eq(false)
+          expect(variant['in_stock']).to eq(false)
+          expect(variant['is_backorderable']).to eq(true)
         end
       end
 
@@ -167,7 +168,7 @@ module Spree
           subject
 
           # Test to insure shipment has adjustments
-          shipment = json_response['shipments'][0]
+          shipment = json_response['order']['shipments'][0]
           expect(shipment).to_not be_nil
           expect(shipment['adjustments'][0]).not_to be_empty
           expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
@@ -179,7 +180,7 @@ module Spree
       allow_any_instance_of(Order).to receive_messages :user => current_api_user
       api_get :show, :id => order.to_param
       expect(response.status).to eq(200)
-      expect(json_response["checkout_steps"]).to eq(["address", "delivery", "complete"])
+      expect(json_response['order']["checkout_steps"]).to eq(["address", "delivery", "complete"])
     end
 
     # Regression test for #1992
@@ -237,18 +238,18 @@ module Spree
       expect(order.line_items.first.variant).to eq(variant)
       expect(order.line_items.first.quantity).to eq(5)
 
-      expect(json_response['number']).to be_present
-      expect(json_response["token"]).not_to be_blank
-      expect(json_response["state"]).to eq("cart")
+      expect(json_response['order']['number']).to be_present
+      expect(json_response['order']["guest_token"]).not_to be_blank
+      expect(json_response['order']["state"]).to eq("cart")
       expect(order.user).to eq(current_api_user)
       expect(order.email).to eq(current_api_user.email)
-      expect(json_response["user_id"]).to eq(current_api_user.id)
+      expect(json_response['order']["user_id"]).to eq(current_api_user.id)
     end
 
     it "assigns email when creating a new order" do
       api_post :create, :order => { :email => "guest@spreecommerce.com" }
-      expect(json_response['email']).not_to eq controller.current_api_user
-      expect(json_response['email']).to eq "guest@spreecommerce.com"
+      expect(json_response['order']['email']).not_to eq controller.current_api_user
+      expect(json_response['order']['email']).to eq "guest@spreecommerce.com"
     end
 
     # Regression test for #3404
@@ -283,7 +284,7 @@ module Spree
       it "is able to set any default unpermitted attribute" do
         api_post :create, :order => { number: "WOW" }
         expect(response.status).to eq 201
-        expect(json_response['number']).to eq "WOW"
+        expect(json_response['order']['number']).to eq "WOW"
       end
     end
 
@@ -300,7 +301,7 @@ module Spree
       expect { api_post :create }.not_to raise_error
       expect(response.status).to eq(201)
       order = Order.last
-      expect(json_response["state"]).to eq("cart")
+      expect(json_response['order']["state"]).to eq("cart")
     end
 
     context "working with an order" do
@@ -351,8 +352,8 @@ module Spree
         }
 
         expect(response.status).to eq(200)
-        expect(json_response['line_items'].count).to eq(1)
-        expect(json_response['line_items'].first['quantity']).to eq(10)
+        expect(json_response['order']['line_items'].count).to eq(1)
+        expect(json_response['order']['line_items'].first['quantity']).to eq(10)
       end
 
       it "adds an extra line item" do
@@ -365,10 +366,10 @@ module Spree
         }
 
         expect(response.status).to eq(200)
-        expect(json_response['line_items'].count).to eq(2)
-        expect(json_response['line_items'][0]['quantity']).to eq(10)
-        expect(json_response['line_items'][1]['variant_id']).to eq(variant2.id)
-        expect(json_response['line_items'][1]['quantity']).to eq(1)
+        expect(json_response['order']['line_items'].count).to eq(2)
+        expect(json_response['order']['line_items'][0]['quantity']).to eq(10)
+        expect(json_response['order']['line_items'][1]['variant_id']).to eq(variant2.id)
+        expect(json_response['order']['line_items'][1]['quantity']).to eq(1)
       end
 
       it "cannot change the price of an existing line item" do
@@ -379,9 +380,9 @@ module Spree
         }
 
         expect(response.status).to eq(200)
-        expect(json_response['line_items'].count).to eq(1)
-        expect(json_response['line_items'].first['price'].to_f).to_not eq(0)
-        expect(json_response['line_items'].first['price'].to_f).to eq(line_item.variant.price)
+        expect(json_response['order']['line_items'].count).to eq(1)
+        expect(json_response['order']['line_items'].first['price'].to_f).to_not eq(0)
+        expect(json_response['order']['line_items'].first['price'].to_f).to eq(line_item.variant.price)
       end
 
       it "can add billing address" do
@@ -424,7 +425,7 @@ module Spree
         original_id = order.user_id
         api_post :update, :id => order.to_param, :order => { user_id: user.id }
         expect(response.status).to eq 200
-        expect(json_response["user_id"]).to eq(original_id)
+        expect(json_response['order']["user_id"]).to eq(original_id)
       end
 
       context "order has shipments" do
@@ -462,22 +463,22 @@ module Spree
 
           api_get :show, :id => order.to_param
 
-          expect(json_response['line_items'].first['variant']).to have_attributes([:images])
+          expect(json_response['order']['line_items'].first['variant']).to have_attributes([:images])
         end
 
         it "lists variants product id" do
           api_get :show, :id => order.to_param
 
-          expect(json_response['line_items'].first['variant']).to have_attributes([:product_id])
+          expect(json_response['order']['line_items'].first['variant']).to have_attributes([:product_id])
         end
 
         it "includes the tax_total in the response" do
           api_get :show, :id => order.to_param
 
-          expect(json_response['included_tax_total']).to eq('0.0')
-          expect(json_response['additional_tax_total']).to eq('0.0')
-          expect(json_response['display_included_tax_total']).to eq('$0.00')
-          expect(json_response['display_additional_tax_total']).to eq('$0.00')
+          expect(json_response['order']['included_tax_total']).to eq('0.0')
+          expect(json_response['order']['additional_tax_total']).to eq('0.0')
+          expect(json_response['order']['display_included_tax_total']).to eq('$0.00')
+          expect(json_response['order']['display_additional_tax_total']).to eq('$0.00')
         end
 
         it "lists line item adjustments" do
@@ -488,7 +489,7 @@ module Spree
           adjustment.update_column(:amount, 5)
           api_get :show, :id => order.to_param
 
-          adjustment = json_response['line_items'].first['adjustments'].first
+          adjustment = json_response['order']['line_items'].first['adjustments'].first
           expect(adjustment['label']).to eq("10% off!")
           expect(adjustment['amount']).to eq("5.0")
         end
@@ -497,7 +498,7 @@ module Spree
           order.payments.push payment = create(:payment)
           api_get :show, :id => order.to_param
 
-          source = json_response[:payments].first[:source]
+          source = json_response['order'][:payments].first[:source]
           expect(source[:name]).to eq payment.source.name
           expect(source[:cc_type]).to eq payment.source.cc_type
           expect(source[:last_digits]).to eq payment.source.last_digits
@@ -525,15 +526,15 @@ module Spree
           it "includes the ship_total in the response" do
             api_get :show, id: order.to_param
 
-            expect(json_response['ship_total']).to eq '10.0'
-            expect(json_response['display_ship_total']).to eq '$10.00'
+            expect(json_response['order']['ship_total']).to eq '10.0'
+            expect(json_response['order']['display_ship_total']).to eq '$10.00'
           end
 
           it "returns available shipments for an order" do
             api_get :show, :id => order.to_param
             expect(response.status).to eq(200)
-            expect(json_response["shipments"]).not_to be_empty
-            shipment = json_response["shipments"][0]
+            expect(json_response['order']["shipments"]).not_to be_empty
+            shipment = json_response['order']["shipments"][0]
             # Test for correct shipping method attributes
             # Regression test for #3206
             expect(shipment["shipping_methods"]).not_to be_nil
@@ -608,7 +609,7 @@ module Spree
         order.payments.push payment = create(:payment)
         api_get :show, :id => order.to_param
 
-        source = json_response[:payments].first[:source]
+        source = json_response['order'][:payments].first[:source]
         expect(source[:name]).to eq payment.source.name
         expect(source[:cc_type]).to eq payment.source.cc_type
         expect(source[:last_digits]).to eq payment.source.last_digits
@@ -624,9 +625,9 @@ module Spree
         it "can view all orders" do
           api_get :index
           expect(json_response["orders"].first).to have_attributes(attributes)
-          expect(json_response["count"]).to eq(2)
-          expect(json_response["current_page"]).to eq(1)
-          expect(json_response["pages"]).to eq(1)
+          expect(json_response['meta']["count"]).to eq(2)
+          expect(json_response['meta']["current_page"]).to eq(1)
+          expect(json_response['meta']["pages"]).to eq(1)
         end
 
         # Test for #1763
@@ -634,9 +635,9 @@ module Spree
           api_get :index, :per_page => 1
           expect(json_response["orders"].count).to eq(1)
           expect(json_response["orders"].first).to have_attributes(attributes)
-          expect(json_response["count"]).to eq(1)
-          expect(json_response["current_page"]).to eq(1)
-          expect(json_response["pages"]).to eq(2)
+          expect(json_response['meta']["count"]).to eq(1)
+          expect(json_response['meta']["current_page"]).to eq(1)
+          expect(json_response['meta']["pages"]).to eq(2)
         end
       end
 
@@ -653,9 +654,9 @@ module Spree
           expect(json_response["orders"].count).to eq(1)
           expect(json_response["orders"].first).to have_attributes(attributes)
           expect(json_response["orders"].first["email"]).to eq(expected_result.email)
-          expect(json_response["count"]).to eq(1)
-          expect(json_response["current_page"]).to eq(1)
-          expect(json_response["pages"]).to eq(1)
+          expect(json_response['meta']["count"]).to eq(1)
+          expect(json_response['meta']["current_page"]).to eq(1)
+          expect(json_response['meta']["pages"]).to eq(1)
         end
       end
 
@@ -664,7 +665,7 @@ module Spree
           expect { api_post :create }.not_to raise_error
           expect(response.status).to eq(201)
           order = Order.last
-          expect(json_response["state"]).to eq("cart")
+          expect(json_response['order']["state"]).to eq("cart")
         end
 
         it "can arbitrarily set the line items price" do
@@ -679,7 +680,7 @@ module Spree
           user = Spree.user_class.create
           api_post :create, :order => { user_id: user.id }
           expect(response.status).to eq 201
-          expect(json_response["user_id"]).to eq(user.id)
+          expect(json_response['order']["user_id"]).to eq(user.id)
         end
       end
 
@@ -688,7 +689,7 @@ module Spree
           user = Spree.user_class.create
           api_post :update, :id => order.number, :order => { user_id: user.id }
           expect(response.status).to eq 200
-          expect(json_response["user_id"]).to eq(user.id)
+          expect(json_response['order']["user_id"]).to eq(user.id)
         end
       end
 
@@ -702,7 +703,7 @@ module Spree
 
         specify do
           api_put :cancel, :id => order.to_param
-          expect(json_response["state"]).to eq("canceled")
+          expect(json_response['order']["state"]).to eq("canceled")
         end
       end
     end
