@@ -19,11 +19,7 @@ module Spree
         end
 
         def current_tax_zone
-          if current_order
-            current_order.tax_zone
-          else
-            Spree::Zone.default_tax
-          end
+          current_order.try(:tax_zone) || Spree::Zone.default_tax
         end
       end
     end
