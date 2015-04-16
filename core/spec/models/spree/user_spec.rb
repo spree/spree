@@ -9,14 +9,6 @@ describe Spree::LegacyUser, :type => :model do
       create(:order, bill_address: create(:address), ship_address: create(:address))
     end
 
-    let!(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user) }
-    let!(:order_2) { create(:order, user: user, created_by: user)                        }
-    let!(:order_3) { create(:order, user: user, created_by: create(:user))               }
-
-    it 'returns correct orders' do
-      expect(user.incomplete_spree_orders.to_a).to eql([order_3, order_2, order_1])
-    end
-
     context 'persists order address' do
       it 'copies over order addresses' do
         expect do

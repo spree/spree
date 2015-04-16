@@ -83,22 +83,11 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     shared_examples_for 'anonymous order returned' do
       include_examples 'order found'
 
-      # Prevent user.incomplete_spree_orders from accessing
-      # Spree::Order.incomplete, allowing the lock count to be asserted
-      def stub_incomplete_spree_orders
-        if user
-          allow(user).to receive_messages(
-            incomplete_spree_orders: double.as_null_object
-          )
-        end
-      end
-
       it 'returns the anonymous order' do
         expect(apply).to eql(anonymous_order)
       end
 
       it 'locks the order' do
-        stub_incomplete_spree_orders
         relation = double('relation').as_null_object
         stub_const('Spree::Order', relation)
         expect(apply).to be(relation)
