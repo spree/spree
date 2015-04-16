@@ -21,7 +21,7 @@ Spree::Core::Engine.config.to_prepare do
       end
 
       def incomplete_spree_orders
-        spree_orders.incomplete.where(user_id: id).order(:created_at).reverse_order
+        spree_orders.incomplete.where(user_id: id)
       end
     end
   end

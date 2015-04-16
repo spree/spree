@@ -65,7 +65,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       it 'locks the order' do
         relation = double('relation').as_null_object
-        expect(user).to receive(:incomplete_spree_orders).and_return(relation)
+        expect(user).to receive(:spree_orders).and_return(relation)
         expect(apply).to be(relation)
         expect(relation).to have_received(:lock).with(no_args)
       end
@@ -100,7 +100,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       it 'locks the order' do
         stub_incomplete_spree_orders
         relation = double('relation').as_null_object
-        expect(Spree::Order).to receive(:incomplete).and_return(relation)
+        stub_const('Spree::Order', relation)
         expect(apply).to be(relation)
         expect(relation).to have_received(:lock).with(no_args)
       end

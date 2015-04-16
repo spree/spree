@@ -75,7 +75,7 @@ module Spree
           user = try_spree_current_user
 
           # Merge all incomplete orders
-          order = merge_orders(user.incomplete_spree_orders) if user
+          order = merge_orders(user.spree_orders) if user
 
           # Merge all anonymous orders
           if current_order_params[:guest_token].present?
@@ -89,12 +89,12 @@ module Spree
         end
 
         def anonymous_orders
-          Spree::Order.incomplete
-            .where(current_order_params.merge(user_id: nil))
+          Spree::Order.where(current_order_params.merge(user_id: nil))
         end
 
         def merge_orders(orders, other = nil)
-          orders.includes(:all_adjustments).lock.reduce(*other, :merge!)
+          orders.incomplete.includes(:all_adjustments).lock
+            .reduce(*other, :merge!)
         rescue ActiveRecord::StatementInvalid => exception
           if exception.message.start_with?(PG_LOCK_NOT_AVAILABLE)
             fail Spree::Order::OrderBusyError
