@@ -10,21 +10,22 @@
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
-    <table class="table table-condensed table-bordered stock-contents" id="listing_items" data-hook="stock-contents">
+    <table class="table stock-contents" id="listing_items" data-hook="stock-contents">
       <thead>
         <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
+        <th><%= sort_link @search, :number, Spree.t(:order_num, :scope => 'admin.user'), {}, {:title => 'orders_number_title'} %></th>
         <th colspan=2><%= Spree.t(:description) %></th>
         <th><%= I18n.t(:price, :scope => 'activerecord.attributes.spree/line_item') %></th>
         <th><%= I18n.t(:quantity, :scope => 'activerecord.attributes.spree/line_item') %></th>
         <th><%= Spree.t(:total) %></th>
         <th><%= sort_link @search, :state, I18n.t(:state, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_state_title'} %></th>
-        <th><%= sort_link @search, :number, Spree.t(:order_num, :scope => 'admin.user'), {}, {:title => 'orders_number_title'} %></th>
       </thead>
       <tbody>
         <% @orders.each do |order| %>
           <% order.line_items.each do |item| %>
             <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
               <td class="order-completed-at"><%= l(order.completed_at.to_date) if order.completed_at %></td>
+              <td class="order-number"><%= link_to order.number, edit_admin_order_url(order) %></td>
               <td class="item-image">
                 <%= mini_image(item.variant) %>
               </td>
@@ -46,7 +47,6 @@
                   <div class="state <%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></div>
                 <% end %>
               </td>
-              <td class="order-number"><%= link_to order.number, edit_admin_order_url(order) %></td>
             </tr>
           <% end %>
         <% end %>
@@ -59,5 +59,3 @@
   <% end %>
   <%= paginate @orders %>
 </fieldset>
-
-<%= render 'spree/admin/users/lifetime_stats' %>
