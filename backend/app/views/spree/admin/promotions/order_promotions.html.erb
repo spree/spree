@@ -5,27 +5,33 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to(Spree.t(:add_promotion), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addPromotion" }, icon: 'add') if can? :create, Spree::Promotion %>
-<% end %>
+  <%= button_link_to(Spree.t(:add_promotion), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addPromotion" }, icon: 'add') %>
+<% end if can?(:create, Spree::Promotion) && @available_promotions %>
 
-<div class="modal fade" id="addPromotion" tabindex="-1" role="dialog" aria-labelledby="addPromotionLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="addPromotionLabel"><%= Spree.t(:add_promotion) %></h4>
-      </div>
-      <div class="modal-body">
-        <%= form_tag admin_order_apply_promotion_path(@order), method: "POST" do %>
-          <div class="form-group">
-            <%= select_tag :promotion_id, options_from_collection_for_select(Spree::Promotion.backend.all, :id, :name), class: 'select2' %>
-          </div>
-          <%= button Spree.t('actions.add'), 'ok', 'submit', { class: 'btn-success' } %>
-        <% end %>
+<% if @available_promotions %>
+  <div class="modal fade" id="addPromotion" tabindex="-1" role="dialog" aria-labelledby="addPromotionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="addPromotionLabel"><%= Spree.t(:add_promotion) %></h4>
+        </div>
+        <div class="modal-body">
+          <%= form_tag admin_order_apply_promotion_path(@order), method: "POST" do %>
+            <div class="form-group">
+              <%= select_tag :promotion_id, options_from_collection_for_select(Spree::Promotion.backend.active.all, :id, :name), class: 'select2' %>
+            </div>
+            <%= button Spree.t('actions.add'), 'ok', 'submit', { class: 'btn-success' } %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
-</div>
+<% else %>
+  <div class="alert alert-warning">
+    <%= Spree.t(:there_are_no_available_backend_promotions_which_can_be_applied_to_this_order) %>
+  </div>
+<% end %>
 
 <% if @promotions.any? %>
   <table class="table">

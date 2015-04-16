@@ -1,7 +1,7 @@
 module Spree
   class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
-    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    UNACTIVATABLE_ORDER_STATES = ["awaiting_return", "returned"]
     BACKEND_PROMOTIONS = ["backend"]
 
     attr_reader :eligibility_errors

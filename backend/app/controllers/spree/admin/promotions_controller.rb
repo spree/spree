@@ -10,6 +10,18 @@ module Spree
       def order_promotions
         authorize! action, @order
         @promotions = @order.promotions.order("created_at ASC")
+
+        # this is pretty heavy way to calculate @available_promotions
+        # but we need to communicate to the user if there are any active
+        # promotions to apply to the order.
+
+        @available_promotions = Spree::Promotion
+          .backend
+          .active
+          .flat_map { |promo| promo.promotion_actions if promo.class.order_activatable?(@order) }
+          .compact
+          .map { |action| @order.line_items.map { |i| action.compute(i) }.sum }
+          .sum > 0
       end
 
       def apply_to_order
