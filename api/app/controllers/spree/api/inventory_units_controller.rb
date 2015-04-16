@@ -4,8 +4,7 @@ module Spree
       before_action :prepare_event, only: :update
 
       def show
-        @inventory_unit = inventory_unit
-        respond_with(@inventory_unit)
+         render json: inventory_unit
       end
 
       def update
@@ -14,7 +13,7 @@ module Spree
         inventory_unit.transaction do
           if inventory_unit.update_attributes(inventory_unit_params)
             fire
-            render :show, :status => 200
+            render json: inventory_unit
           else
             invalid_resource!(inventory_unit)
           end
@@ -43,7 +42,7 @@ module Spree
       def fire
         inventory_unit.send("#{@event}!") if @event
       end
-      
+
       def inventory_unit_params
         params.require(:inventory_unit).permit(permitted_inventory_unit_attributes)
       end

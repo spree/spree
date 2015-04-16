@@ -6,7 +6,7 @@ module Spree
         authorize! :create, ReturnAuthorization
         @return_authorization = order.return_authorizations.build(return_authorization_params)
         if @return_authorization.save
-          respond_with(@return_authorization, status: 201, default_template: :show)
+          render json: @return_authorization, status: 201
         else
           invalid_resource!(@return_authorization)
         end
@@ -15,7 +15,7 @@ module Spree
       def destroy
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :destroy).find(params[:id])
         @return_authorization.destroy
-        respond_with(@return_authorization, status: 204)
+        render nothing: true, status: 204
       end
 
       def index
@@ -23,7 +23,7 @@ module Spree
         @return_authorizations = order.return_authorizations.accessible_by(current_ability, :read).
                                  ransack(params[:q]).result.
                                  page(params[:page]).per(params[:per_page])
-        respond_with(@return_authorizations)
+        render json: @return_authorizations, meta: pagination(@return_authorizations)
       end
 
       def new
@@ -33,13 +33,13 @@ module Spree
       def show
         authorize! :admin, ReturnAuthorization
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :read).find(params[:id])
-        respond_with(@return_authorization)
+        render json: @return_authorization
       end
 
       def update
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
         if @return_authorization.update_attributes(return_authorization_params)
-          respond_with(@return_authorization, default_template: :show)
+          render json: @return_authorization
         else
           invalid_resource!(@return_authorization)
         end
@@ -48,7 +48,7 @@ module Spree
       def cancel
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
         if @return_authorization.cancel
-          respond_with @return_authorization, default_template: :show
+          render json: @return_authorization
         else
           invalid_resource!(@return_authorization)
         end

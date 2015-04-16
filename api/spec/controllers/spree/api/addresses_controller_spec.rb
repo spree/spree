@@ -17,13 +17,13 @@ module Spree
 
       it "gets an address" do
         api_get :show, :id => @address.id, :order_id => @order.number
-        expect(json_response['address1']).to eq @address.address1
+        expect(json_response['address']['address1']).to eq @address.address1
       end
 
       it "updates an address" do
         api_put :update, :id => @address.id, :order_id => @order.number,
                          :address => { :address1 => "123 Test Lane" }
-        expect(json_response['address1']).to eq '123 Test Lane'
+        expect(json_response['address']['address1']).to eq '123 Test Lane'
       end
 
       it "receives the errors object if address is invalid" do

@@ -27,6 +27,7 @@ module Spree
         end
 
         it "can learn how to create a new payment" do
+          pending "I don't think anyone uses this in earnest..."
           api_get :new
           expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
           expect(json_response["payment_methods"]).not_to be_empty
@@ -36,12 +37,12 @@ module Spree
         it "can create a new payment" do
           api_post :create, :payment => { :payment_method_id => PaymentMethod.first.id, :amount => 50 }
           expect(response.status).to eq(201)
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['payment']).to have_attributes(attributes)
         end
 
         it "can view a pre-existing payment's details" do
           api_get :show, :id => payment.to_param
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['payment']).to have_attributes(attributes)
         end
 
         it "cannot update a payment" do
@@ -86,19 +87,19 @@ module Spree
 
         it "can view all payments on an order" do
           api_get :index
-          expect(json_response["count"]).to eq(2)
+          expect(json_response['meta']["count"]).to eq(2)
         end
 
         it 'can control the page size through a parameter' do
           api_get :index, :per_page => 1
-          expect(json_response['count']).to eq(1)
-          expect(json_response['current_page']).to eq(1)
-          expect(json_response['pages']).to eq(2)
+          expect(json_response['meta']['count']).to eq(1)
+          expect(json_response['meta']['current_page']).to eq(1)
+          expect(json_response['meta']['pages']).to eq(2)
         end
 
         it 'can query the results through a paramter' do
           api_get :index, :q => { :response_code_cont => '999' }
-          expect(json_response['count']).to eq(1)
+          expect(json_response['meta']['count']).to eq(1)
           expect(json_response['payments'].first['response_code']).to eq @payment.response_code
         end
       end

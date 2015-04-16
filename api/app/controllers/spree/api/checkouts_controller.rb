@@ -12,16 +12,19 @@ module Spree
         load_order(true)
         authorize! :update, @order, order_token
         @order.next!
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+        render json: @order, status: 200
       rescue StateMachines::InvalidTransition
-        respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+        render json: {
+          error: I18n.t(:could_not_transition, :scope => "spree.api.order"),
+          errors: @order.errors
+        }, status: 422
       end
 
       def advance
         load_order(true)
         authorize! :update, @order, order_token
         while @order.next; end
-        respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
+        render json: @order
       end
 
       def update
@@ -37,9 +40,12 @@ module Spree
 
           if @order.completed? || @order.next
             state_callback(:after)
-            respond_with(@order, default_template: 'spree/api/orders/show')
+            render json: @order
           else
-            respond_with(@order, default_template: 'spree/api/orders/could_not_transition', status: 422)
+            render json: {
+              error: I18n.t(:could_not_transition, :scope => "spree.api.order"),
+              errors: @order.errors
+            }, status: 422
           end
         else
           invalid_resource!(@order)
@@ -69,7 +75,10 @@ module Spree
         end
 
         def raise_insufficient_quantity
-          respond_with(@order, default_template: 'spree/api/orders/insufficient_quantity')
+          render json: {
+            error: I18n.t(:insufficient_quantity, :scope => "spree.api.order"),
+            errors: @order.errors
+          }, status: 422
         end
 
         def state_callback(before_or_after = :before)
@@ -82,8 +91,10 @@ module Spree
             handler = PromotionHandler::Coupon.new(@order).apply
 
             if handler.error.present?
-              @coupon_message = handler.error
-              respond_with(@order, default_template: 'spree/api/orders/could_not_apply_coupon')
+              render json: {
+                error: I18n.t(:could_not_apply_coupon, :scope => "spree.api.order"),
+                errors: handler.error
+              }, status: 422
               return true
             end
           end

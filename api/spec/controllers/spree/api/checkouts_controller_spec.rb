@@ -101,9 +101,9 @@ module Spree
               bill_address_attributes: address,
               ship_address_attributes: address
             }
-          expect(json_response['state']).to eq('delivery')
-          expect(json_response['bill_address']['firstname']).to eq('John')
-          expect(json_response['ship_address']['firstname']).to eq('John')
+          expect(json_response['order']['state']).to eq('delivery')
+          expect(json_response['order']['bill_address']['firstname']).to eq('John')
+          expect(json_response['order']['ship_address']['firstname']).to eq('John')
           expect(response.status).to eq(200)
         end
 
@@ -130,8 +130,8 @@ module Spree
             }
           # Shipments manifests should not return the ENTIRE variant
           # This information is already present within the order's line items
-          expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil
-          expect(json_response['shipments'].first['manifest'].first['variant_id']).to_not be_nil
+          expect(json_response['order']['shipments'].first['manifest'].first['variant']).to be_nil
+          expect(json_response['order']['shipments'].first['manifest'].first['variant_id']).to_not be_nil
         end
       end
 
@@ -144,22 +144,22 @@ module Spree
           order: { shipments_attributes: { "0" => { selected_shipping_rate_id: shipping_rate.id, id: shipment.id } } }
         expect(response.status).to eq(200)
         # Find the correct shipment...
-        json_shipment = json_response['shipments'].detect { |s| s["id"] == shipment.id }
+        json_shipment = json_response['order']['shipments'].detect { |s| s["id"] == shipment.id }
         # Find the correct shipping rate for that shipment...
         json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr["id"] == shipping_rate.id }
         # ... And finally ensure that it's selected
         expect(json_shipping_rate['selected']).to be true
         # Order should automatically transfer to payment because all criteria are met
-        expect(json_response['state']).to eq('payment')
+        expect(json_response['order']['state']).to eq('payment')
       end
 
       it "can update payment method and transition from payment to confirm" do
         order.update_column(:state, "payment")
         api_put :update, id: order.to_param, order_token: order.guest_token,
           order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
-        expect(json_response['state']).to eq('confirm')
-        expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
-        expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
+        expect(json_response['order']['state']).to eq('confirm')
+        expect(json_response['order']['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
+        expect(json_response['order']['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)
       end
 
@@ -176,8 +176,8 @@ module Spree
         api_put :update, id: order.to_param, order_token: order.guest_token,
           order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
                       payment_source: { @payment_method.id.to_s => source_attributes } }
-        expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
-        expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
+        expect(json_response['order']['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
+        expect(json_response['order']['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)
       end
 
@@ -214,14 +214,14 @@ module Spree
         order.update_columns(completed_at: Time.now, state: 'complete')
         allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: false)
         api_put :update, id: order.to_param, order_token: order.guest_token
-        expect(json_response['state']).to eq('complete')
+        expect(json_response['order']['state']).to eq('complete')
         expect(response.status).to eq(200)
       end
 
       it "returns the order if the order is already complete" do
         order.update_columns(completed_at: Time.now, state: 'complete')
         api_put :update, id: order.to_param, order_token: order.guest_token
-        expect(json_response['number']).to eq(order.number)
+        expect(json_response['order']['number']).to eq(order.number)
         expect(response.status).to eq(200)
       end
 
@@ -230,7 +230,7 @@ module Spree
         instructions = "Don't drop it. (Please)"
         api_put :update, id: order.to_param, order_token: order.guest_token,
           order: { special_instructions: instructions }
-        expect(json_response['special_instructions']).to eql(instructions)
+        expect(json_response['order']['special_instructions']).to eql(instructions)
       end
 
       context "as an admin" do
@@ -241,14 +241,14 @@ module Spree
           api_put :update, id: order.to_param, order_token: order.guest_token,
             order: { user_id: user.id, email: "guest@spreecommerce.com" }
           expect(response.status).to eq(200)
-          expect(json_response['user_id']).to eq(user.id)
+          expect(json_response['order']['user_id']).to eq(user.id)
         end
       end
 
       it "can assign an email to the order" do
         api_put :update, id: order.to_param, order_token: order.guest_token,
           order: { email: "guest@spreecommerce.com" }
-        expect(json_response['email']).to eq("guest@spreecommerce.com")
+        expect(json_response['order']['email']).to eq("guest@spreecommerce.com")
         expect(response.status).to eq(200)
       end
 
@@ -277,7 +277,7 @@ module Spree
 
         api_put :next, id: order.to_param, order_token: order.guest_token
         expect(response.status).to eq(200)
-        expect(json_response['state']).to eq('address')
+        expect(json_response['order']['state']).to eq('address')
       end
 
       it "cannot transition if order email is blank" do
@@ -308,7 +308,7 @@ module Spree
 
       it 'returns the order' do
         api_put :advance, id: order.to_param, order_token: order.guest_token
-        expect(json_response['id']).to eq(order.id)
+        expect(json_response['order']['id']).to eq(order.id)
       end
     end
   end

@@ -38,15 +38,15 @@ module Spree
         api_get :index, user_id: normal_user.id
 
         expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(0)
+        expect(json_response['meta']["pages"]).to eq(0)
       end
 
       it "can view all credit cards for user" do
         api_get :index, user_id: current_api_user.id
 
         expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(1)
-        expect(json_response["current_page"]).to eq(1)
+        expect(json_response['meta']["pages"]).to eq(1)
+        expect(json_response['meta']["current_page"]).to eq(1)
         expect(json_response["credit_cards"].length).to eq(1)
         expect(json_response["credit_cards"].first["id"]).to eq(card.id)
       end
@@ -70,8 +70,8 @@ module Spree
         api_get :index, user_id: normal_user.id
 
         expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(1)
-        expect(json_response["current_page"]).to eq(1)
+        expect(json_response['meta']["pages"]).to eq(1)
+        expect(json_response['meta']["current_page"]).to eq(1)
         expect(json_response["credit_cards"].length).to eq(1)
         expect(json_response["credit_cards"].first["id"]).to eq(card.id)
       end

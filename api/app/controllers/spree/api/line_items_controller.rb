@@ -14,7 +14,7 @@ module Spree
         )
 
         if @line_item.errors.empty?
-          respond_with(@line_item, status: 201, default_template: :show)
+          render json: @line_item, status: 201
         else
           invalid_resource!(@line_item)
         end
@@ -24,7 +24,7 @@ module Spree
         @line_item = find_line_item
         if @order.contents.update_cart(line_items_attributes)
           @line_item.reload
-          respond_with(@line_item, default_template: :show)
+          render json: @line_item
         else
           invalid_resource!(@line_item)
         end
@@ -34,7 +34,7 @@ module Spree
         @line_item = find_line_item
         variant = Spree::Variant.unscoped.find(@line_item.variant_id)
         @order.contents.remove(variant, @line_item.quantity)
-        respond_with(@line_item, status: 204)
+        render json: @line_item, status: 204
       end
 
       private

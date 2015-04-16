@@ -9,11 +9,11 @@ module Spree
         @product_properties = @product.product_properties.accessible_by(current_ability, :read).
                               ransack(params[:q]).result.
                               page(params[:page]).per(params[:per_page])
-        respond_with(@product_properties)
+        render json: @product_properties, meta: pagination(@product_properties)
       end
 
       def show
-        respond_with(@product_property)
+        render json: @product_property
       end
 
       def new
@@ -23,7 +23,7 @@ module Spree
         authorize! :create, ProductProperty
         @product_property = @product.product_properties.new(product_property_params)
         if @product_property.save
-          respond_with(@product_property, status: 201, default_template: :show)
+          render json: @product_property, status: 201
         else
           invalid_resource!(@product_property)
         end
@@ -33,7 +33,7 @@ module Spree
         if @product_property
           authorize! :update, @product_property
           @product_property.update_attributes(product_property_params)
-          respond_with(@product_property, status: 200, default_template: :show)
+          render json: @product_property, status: 200
         else
           invalid_resource!(@product_property)
         end
@@ -43,7 +43,7 @@ module Spree
         if @product_property
           authorize! :destroy, @product_property
           @product_property.destroy
-          respond_with(@product_property, status: 204)
+          render json: @product_property, status: 204
         else
           invalid_resource!(@product_property)
         end

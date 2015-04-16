@@ -26,8 +26,8 @@ module Spree
 
       it "can retrieve a list of all option values" do
         api_get :index
-        expect(json_response.count).to eq(2)
-        expect(json_response.first).to have_attributes(attributes)
+        expect(json_response['option_values'].count).to eq(2)
+        expect(json_response['option_values'].first).to have_attributes(attributes)
       end
     end
 
@@ -36,27 +36,27 @@ module Spree
 
       it "can list all option values" do
         api_get :index
-        expect(json_response.count).to eq(1)
-        expect(json_response.first).to have_attributes(attributes)
+        expect(json_response['option_values'].count).to eq(1)
+        expect(json_response['option_values'].first).to have_attributes(attributes)
       end
 
       it "can search for an option type" do
         create(:option_value, :name => "buzz")
         api_get :index, :q => { :name_cont => option_value.name }
-        expect(json_response.count).to eq(1)
-        expect(json_response.first).to have_attributes(attributes)
+        expect(json_response['option_values'].count).to eq(1)
+        expect(json_response['option_values'].first).to have_attributes(attributes)
       end
 
       it "can retrieve a list of option types" do
         option_value_1 = create(:option_value, :option_type => option_type)
         option_value_2 = create(:option_value, :option_type => option_type)
         api_get :index, :ids => [option_value.id, option_value_1.id]
-        expect(json_response.count).to eq(2)
+        expect(json_response['option_values'].count).to eq(2)
       end
 
       it "can list a single option value" do
         api_get :show, :id => option_value.id
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['option_value']).to have_attributes(attributes)
       end
 
       it "cannot create a new option value" do
@@ -91,7 +91,7 @@ module Spree
                             :name => "Option Value",
                             :presentation => "Option Value"
                           }
-          expect(json_response).to have_attributes(attributes)
+          expect(json_response['option_value']).to have_attributes(attributes)
           expect(response.status).to eq(201)
         end
 

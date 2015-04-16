@@ -68,21 +68,21 @@ module Spree
 
       it 'can control the page size through a parameter' do
         api_get :index, stock_location_id: stock_location.to_param, per_page: 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
+        expect(json_response['meta']['current_page']).to eq(1)
       end
 
       it 'can query the results through a paramter' do
         stock_item.update_column(:count_on_hand, 30)
         api_get :index, stock_location_id: stock_location.to_param, q: { count_on_hand_eq: '30' }
-        expect(json_response['count']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
         expect(json_response['stock_items'].first['count_on_hand']).to eq 30
       end
 
       it 'gets a stock item' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_item.to_param
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response['count_on_hand']).to eq stock_item.count_on_hand
+        expect(json_response["stock_item"]).to have_attributes(attributes)
+        expect(json_response["stock_item"]['count_on_hand']).to eq stock_item.count_on_hand
       end
 
       it 'can create a new stock item' do
@@ -100,7 +100,7 @@ module Spree
 
         api_post :create, params
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['stock_item']).to have_attributes(attributes)
       end
 
       it 'can update a stock item to add new inventory' do
@@ -114,7 +114,7 @@ module Spree
 
         api_put :update, params
         expect(response.status).to eq(200)
-        expect(json_response['count_on_hand']).to eq 50
+        expect(json_response['stock_item']['count_on_hand']).to eq 50
       end
 
       it 'can set a stock item to modify the current inventory' do
@@ -130,7 +130,7 @@ module Spree
 
         api_put :update, params
         expect(response.status).to eq(200)
-        expect(json_response['count_on_hand']).to eq 40
+        expect(json_response['stock_item']['count_on_hand']).to eq 40
       end
 
       it 'can delete a stock item' do

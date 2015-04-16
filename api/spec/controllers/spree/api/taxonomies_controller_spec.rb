@@ -19,32 +19,31 @@ module Spree
     context "as a normal user" do
       it "gets all taxonomies" do
         api_get :index
-
         expect(json_response["taxonomies"].first['name']).to eq taxonomy.name
-        expect(json_response["taxonomies"].first['root']['taxons'].count).to eq 1
+        expect(json_response["taxonomies"].first['root_taxon']['taxons'].count).to eq 1
       end
 
       it 'can control the page size through a parameter' do
         create(:taxonomy)
         api_get :index, :per_page => 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(2)
+        expect(json_response['meta']['count']).to eq(1)
+        expect(json_response['meta']['current_page']).to eq(1)
+        expect(json_response['meta']['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:taxonomy, :name => 'Style')
         api_get :index, :q => { :name_cont => 'style' }
-        expect(json_response['count']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
         expect(json_response['taxonomies'].first['name']).to eq expected_result.name
       end
 
       it "gets a single taxonomy" do
         api_get :show, :id => taxonomy.id
 
-        expect(json_response['name']).to eq taxonomy.name
+        expect(json_response['taxonomy']['name']).to eq taxonomy.name
 
-        children = json_response['root']['taxons']
+        children = json_response['taxonomy']['root_taxon']['taxons']
         expect(children.count).to eq 1
         expect(children.first['name']).to eq taxon.name
         expect(children.first.key?('taxons')).to be false
@@ -52,10 +51,9 @@ module Spree
 
       it "gets a single taxonomy with set=nested" do
         api_get :show, :id => taxonomy.id, :set => 'nested'
+        expect(json_response['taxonomy']['name']).to eq taxonomy.name
 
-        expect(json_response['name']).to eq taxonomy.name
-
-        children = json_response['root']['taxons']
+        children = json_response['taxonomy']['root_taxon']['taxons']
         expect(children.first.key?('taxons')).to be true
       end
 
@@ -67,6 +65,7 @@ module Spree
       end
 
       it "can learn how to create a new taxonomy" do
+        pending "I don't think anyone uses this in earnest..."
         api_get :new
         expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
         required_attributes = json_response["required_attributes"]
@@ -94,7 +93,7 @@ module Spree
 
       it "can create" do
         api_post :create, :taxonomy => { :name => "Colors"}
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['taxonomy']).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
 

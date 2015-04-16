@@ -6,13 +6,13 @@ module Spree
 
       def show
         if @promotion
-          respond_with(@promotion, default_template: :show)
+          render json: @promotion
         else
           raise ActiveRecord::RecordNotFound
         end
       end
 
-      private 
+      private
         def requires_admin
           return if @current_user_roles.include?("admin")
           unauthorized and return

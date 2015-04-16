@@ -6,7 +6,7 @@ module Spree
       def show
         authorize! :read, @order, order_token
         find_address
-        respond_with(@address)
+        render json: @address
       end
 
       def update
@@ -14,7 +14,7 @@ module Spree
         find_address
 
         if @address.update_attributes(address_params)
-          respond_with(@address, :default_template => :show)
+          render json: @address
         else
           invalid_resource!(@address)
         end
