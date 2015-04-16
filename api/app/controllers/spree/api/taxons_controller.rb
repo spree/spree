@@ -26,7 +26,7 @@ module Spree
       end
 
       def create
-        authorize! :create, Taxon
+        authorize! :create, Spree::Taxon
         @taxon = Spree::Taxon.new(taxon_params)
         @taxon.taxonomy_id = params[:taxonomy_id]
         taxonomy = Spree::Taxonomy.find_by(id: params[:taxonomy_id])

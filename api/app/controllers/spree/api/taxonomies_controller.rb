@@ -16,8 +16,8 @@ module Spree
       end
 
       def create
-        authorize! :create, Taxonomy
-        @taxonomy = Taxonomy.new(taxonomy_params)
+        authorize! :create, Spree::Taxonomy
+        @taxonomy = Spree::Taxonomy.new(taxonomy_params)
         if @taxonomy.save
           respond_with(@taxonomy, :status => 201, :default_template => :show)
         else
@@ -43,13 +43,13 @@ module Spree
       private
 
       def taxonomies
-        @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
+        @taxonomies = Spree::Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
                       ransack(params[:q]).result.
                       page(params[:page]).per(params[:per_page])
       end
 
       def taxonomy
-        @taxonomy ||= Taxonomy.accessible_by(current_ability, :read).find(params[:id])
+        @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:id])
       end
 
       def taxonomy_params

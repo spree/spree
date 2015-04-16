@@ -3,7 +3,7 @@ module Spree
     class ReturnAuthorizationsController < Spree::Api::BaseController
 
       def create
-        authorize! :create, ReturnAuthorization
+        authorize! :create, Spree::ReturnAuthorization
         @return_authorization = order.return_authorizations.build(return_authorization_params)
         if @return_authorization.save
           respond_with(@return_authorization, status: 201, default_template: :show)
@@ -19,7 +19,7 @@ module Spree
       end
 
       def index
-        authorize! :admin, ReturnAuthorization
+        authorize! :admin, Spree::ReturnAuthorization
         @return_authorizations = order.return_authorizations.accessible_by(current_ability, :read).
                                  ransack(params[:q]).result.
                                  page(params[:page]).per(params[:per_page])
@@ -27,11 +27,11 @@ module Spree
       end
 
       def new
-        authorize! :admin, ReturnAuthorization
+        authorize! :admin, Spree::ReturnAuthorization
       end
 
       def show
-        authorize! :admin, ReturnAuthorization
+        authorize! :admin, Spree::ReturnAuthorization
         @return_authorization = order.return_authorizations.accessible_by(current_ability, :read).find(params[:id])
         respond_with(@return_authorization)
       end
