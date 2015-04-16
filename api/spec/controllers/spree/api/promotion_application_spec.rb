@@ -10,7 +10,7 @@ module Spree::Api
 
     context "with an available promotion" do
       let!(:order) { create(:order_with_line_items, :line_items_count => 1) }
-      let!(:promotion) do 
+      let!(:promotion) do
         promotion = Spree::Promotion.create(name: "10% off", code: "10off")
         calculator = Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10")
         action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)

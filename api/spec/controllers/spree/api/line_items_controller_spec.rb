@@ -22,7 +22,7 @@ module Spree
     let(:resource_scoping) { { :order_id => order.to_param } }
 
     it "can learn how to create a new line item" do
-      skip "not sure if this test is valid"
+      pending "I don't think anyone uses this in earnest..."
       allow(controller).to receive_messages :try_spree_current_user => current_api_user
       api_get :new
       expect(json_response['line_item']["attributes"]).to eq(["quantity", "price", "variant_id"])

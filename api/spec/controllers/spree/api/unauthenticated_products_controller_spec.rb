@@ -14,9 +14,9 @@ module Spree
       it "retrieves a list of products" do
         api_get :index
         expect(json_response["products"].first).to have_attributes(attributes)
-        expect(json_response["count"]).to eq(1)
-        expect(json_response["current_page"]).to eq(1)
-        expect(json_response["pages"]).to eq(1)
+        expect(json_response['meta']["count"]).to eq(1)
+        expect(json_response['meta']["current_page"]).to eq(1)
+        expect(json_response['meta']["pages"]).to eq(1)
       end
 
       it_behaves_like "modifying product actions are restricted"

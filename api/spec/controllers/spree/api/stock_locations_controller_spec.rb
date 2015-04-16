@@ -45,7 +45,7 @@ module Spree
       end
     end
 
-    
+
     context "as an admin" do
       sign_in_as_admin!
 
@@ -59,22 +59,22 @@ module Spree
       it 'can control the page size through a parameter' do
         create(:stock_location)
         api_get :index, per_page: 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(2)
+        expect(json_response['meta']['count']).to eq(1)
+        expect(json_response['meta']['current_page']).to eq(1)
+        expect(json_response['meta']['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:stock_location, name: 'South America')
         api_get :index, q: { name_cont: 'south' }
-        expect(json_response['count']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
         expect(json_response['stock_locations'].first['name']).to eq expected_result.name
       end
 
       it "gets a stock location" do
         api_get :show, id: stock_location.to_param
-        expect(json_response).to have_attributes(attributes)
-        expect(json_response['name']).to eq stock_location.name
+        expect(json_response['stock_location']).to have_attributes(attributes)
+        expect(json_response['stock_location']['name']).to eq stock_location.name
       end
 
       it "can create a new stock location" do
@@ -87,7 +87,7 @@ module Spree
 
         api_post :create, params
         expect(response.status).to eq(201)
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['stock_location']).to have_attributes(attributes)
       end
 
       it "can update a stock location" do
@@ -100,7 +100,7 @@ module Spree
 
         api_put :update, params
         expect(response.status).to eq(200)
-        expect(json_response['name']).to eq 'South Pole'
+        expect(json_response['stock_location']['name']).to eq 'South Pole'
       end
 
       it "can delete a stock location" do

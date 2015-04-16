@@ -18,7 +18,7 @@ module Spree
       it "can get own details" do
         api_get :show, :id => user.id
 
-        expect(json_response['email']).to eq user.email
+        expect(json_response['user']['email']).to eq user.email
       end
 
       it "cannot get other users details" do
@@ -28,13 +28,14 @@ module Spree
       end
 
       it "can learn how to create a new user" do
+        pending "I don't think anyone uses this in earnest..."
         api_get :new
         expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
       end
 
       it "can create a new user" do
         api_post :create, :user => { :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123' }
-        expect(json_response['email']).to eq 'new@example.com'
+        expect(json_response['user']['email']).to eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
@@ -70,9 +71,10 @@ module Spree
             phone: '5555555555'
           }
         }
-        expect(json_response['email']).to eq 'mine@example.com'
-        expect(json_response['bill_address']).to_not be_nil
-        expect(json_response['ship_address']).to_not be_nil
+
+        expect(json_response['user']['email']).to eq 'mine@example.com'
+        expect(json_response['user']['bill_address']).to_not be_nil
+        expect(json_response['user']['ship_address']).to_not be_nil
       end
 
       it "cannot update other users details" do
@@ -95,7 +97,7 @@ module Spree
         api_get :index
 
         expect(Spree.user_class.count).to eq 3
-        expect(json_response['count']).to eq 1
+        expect(json_response['meta']['count']).to eq 1
         expect(json_response['users'].size).to eq 1
       end
     end
@@ -110,28 +112,28 @@ module Spree
 
         api_get :index
         expect(Spree.user_class.count).to eq 2
-        expect(json_response['count']).to eq 2
+        expect(json_response['meta']['count']).to eq 2
         expect(json_response['users'].size).to eq 2
       end
 
       it 'can control the page size through a parameter' do
         2.times { create(:user) }
         api_get :index, :per_page => 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(2)
+        expect(json_response['meta']['count']).to eq(1)
+        expect(json_response['meta']['current_page']).to eq(1)
+        expect(json_response['meta']['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
         expected_result = create(:user, :email => 'brian@spreecommerce.com')
         api_get :index, :q => { :email_cont => 'brian' }
-        expect(json_response['count']).to eq(1)
+        expect(json_response['meta']['count']).to eq(1)
         expect(json_response['users'].first['email']).to eq expected_result.email
       end
 
       it "can create" do
         api_post :create, :user => { :email => "new@example.com", :password => 'spree123', :password_confirmation => 'spree123' }
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['user']).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
 

@@ -54,7 +54,7 @@ module Spree
 
       it "gets all states for a country" do
         country = create(:country, :states_required => true)
-        state.country = country 
+        state.country = country
         state.save
 
         api_get :index, :country_id => country.id
@@ -76,7 +76,7 @@ module Spree
 
     it "can view a state" do
       api_get :show, :id => state.id
-      expect(json_response).to have_attributes(attributes)
+      expect(json_response["state"]).to have_attributes(attributes)
     end
   end
 end

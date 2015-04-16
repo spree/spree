@@ -30,7 +30,6 @@ module Spree
       # Regression test for #4112
       it "does not include children when asked not to" do
         api_get :index, :taxonomy_id => taxonomy.id, :without_children => 1
-
         expect(json_response['taxons'].first['name']).to eq(taxon.name)
         expect(json_response['taxons'].first['taxons']).to be_nil
       end
@@ -40,11 +39,11 @@ module Spree
         taxonomy.root.children << new_taxon
         expect(taxonomy.root.children.count).to eql(2)
         api_get :index, :taxonomy_id => taxonomy.id, :page => 1, :per_page => 1
-        expect(json_response["count"]).to eql(1)
-        expect(json_response["total_count"]).to eql(2)
-        expect(json_response["current_page"]).to eql(1)
-        expect(json_response["per_page"]).to eql(1)
-        expect(json_response["pages"]).to eql(2)
+        expect(json_response['meta']["count"]).to eql(1)
+        expect(json_response['meta']["total_count"]).to eql(2)
+        expect(json_response['meta']["current_page"]).to eql(1)
+        expect(json_response['meta']["per_page"]).to eql(1)
+        expect(json_response['meta']["pages"]).to eql(2)
       end
 
       describe 'searching' do
@@ -87,9 +86,8 @@ module Spree
 
       it "gets a single taxon" do
         api_get :show, :id => taxon.id, :taxonomy_id => taxonomy.id
-
-        expect(json_response['name']).to eq taxon.name
-        expect(json_response['taxons'].count).to eq 1
+        expect(json_response['taxon']['name']).to eq taxon.name
+        expect(json_response['taxon']['taxons'].count).to eq 1
       end
 
       it "gets all taxons in JSTree form" do
@@ -101,6 +99,7 @@ module Spree
       end
 
       it "can learn how to create a new taxon" do
+        pending "I don't think anyone uses this in earnest..."
         api_get :new, :taxonomy_id => taxonomy.id
         expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
         required_attributes = json_response["required_attributes"]
@@ -128,7 +127,7 @@ module Spree
 
       it "can create" do
         api_post :create, :taxonomy_id => taxonomy.id, :taxon => { :name => "Colors" }
-        expect(json_response).to have_attributes(attributes)
+        expect(json_response['taxon']).to have_attributes(attributes)
         expect(response.status).to eq(201)
 
         expect(taxonomy.reload.root.children.count).to eq 2

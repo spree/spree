@@ -586,7 +586,7 @@ module Spree
         before { Spree::Order.delete_all }
         it "still returns a root :orders key" do
           api_get :index
-          expect(json_response['order']["orders"]).to eq([])
+          expect(json_response["orders"]).to eq([])
         end
       end
 
