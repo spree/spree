@@ -17,22 +17,3 @@ body {
 .no-margin-bottom {
   margin-bottom: 0;
 }
-
-.flash-messages {
-  position: absolute;
-  top: 9px;
-  left: 50%;
-  width: 50%;
-  margin-left: -25%;
-  z-index: 1031;
-  .flash {
-    @extend .alert;
-    padding: 5px 8px;
-    &.error {
-      @extend .alert-danger;
-    }
-    &.success {
-      @extend .alert-success;
-    }
-  }
-}
