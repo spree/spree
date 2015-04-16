@@ -4,11 +4,11 @@ describe "Rabl Cache", :type => :request, :caching => true do
   let!(:user)  { create(:admin_user) }
 
   before do
-    create(:variant) 
+    create(:variant)
     user.generate_spree_api_key!
     expect(Spree::Product.count).to eq(1)
   end
-  
+
   it "doesn't create a cache key collision for models with different rabl templates" do
     get "/api/v1/variants", :token => user.spree_api_key
     expect(response.status).to eq(200)
