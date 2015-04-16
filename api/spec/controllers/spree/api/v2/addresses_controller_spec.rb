@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::AddressesController, :type => :controller do
+  describe Api::V2::AddressesController, :type => :controller do
     render_views
 
     before do

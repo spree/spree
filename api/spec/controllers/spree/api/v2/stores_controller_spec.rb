@@ -1,7 +1,7 @@
 require "spec_helper"
 
 module Spree
-  describe Api::StoresController, type: :controller do
+  describe Api::V2::StoresController, type: :controller do
     render_views
 
     let!(:store) do

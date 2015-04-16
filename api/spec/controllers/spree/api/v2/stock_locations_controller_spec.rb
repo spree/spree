@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::StockLocationsController, :type => :controller do
+  describe Api::V2::StockLocationsController, :type => :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location) }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::InventoryUnitsController, :type => :controller do
+  describe Api::V2::InventoryUnitsController, :type => :controller do
     render_views
 
     before do

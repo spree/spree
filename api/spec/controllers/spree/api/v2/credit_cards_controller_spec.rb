@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::CreditCardsController, :type => :controller do
+  describe Api::V2::CreditCardsController, :type => :controller do
     render_views
 
     let!(:admin_user) do

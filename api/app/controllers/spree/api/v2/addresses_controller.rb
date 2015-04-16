@@ -1,26 +1,27 @@
 module Spree
   module Api
-    class AddressesController < Spree::Api::BaseController
-      before_action :find_order
+    module V2
+      class AddressesController < Spree::Api::BaseController
+        before_action :find_order
 
-      def show
-        authorize! :read, @order, order_token
-        find_address
-        render json: @address
-      end
-
-      def update
-        authorize! :update, @order, order_token
-        find_address
-
-        if @address.update_attributes(address_params)
+        def show
+          authorize! :read, @order, order_token
+          find_address
           render json: @address
-        else
-          invalid_resource!(@address)
         end
-      end
 
-      private
+        def update
+          authorize! :update, @order, order_token
+          find_address
+
+          if @address.update_attributes(address_params)
+            render json: @address
+          else
+            invalid_resource!(@address)
+          end
+        end
+
+        private
         def address_params
           params.require(:address).permit(permitted_address_attributes)
         end
@@ -38,6 +39,7 @@ module Spree
             raise CanCan::AccessDenied
           end
         end
+      end
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::ReturnAuthorizationsController, :type => :controller do
+  describe Api::V2::ReturnAuthorizationsController, :type => :controller do
     render_views
 
     let!(:order) { create(:shipped_order) }

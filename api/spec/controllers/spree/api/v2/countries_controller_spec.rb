@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::CountriesController, :type => :controller do
+  describe Api::V2::CountriesController, :type => :controller do
     render_views
 
     before do

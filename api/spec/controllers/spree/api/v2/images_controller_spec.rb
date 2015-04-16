@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::Api::ImagesController, :type => :controller do
+  describe Spree::Api::V2::ImagesController, :type => :controller do
     render_views
 
     let!(:product) { create(:product) }

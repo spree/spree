@@ -1,3 +1,5 @@
+require 'spree/api/responders'
+
 module Spree
   module Api
     module ControllerSetup

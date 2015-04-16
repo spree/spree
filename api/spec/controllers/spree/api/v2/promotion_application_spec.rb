@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module Spree::Api
+module Spree::Api::V2
   describe OrdersController, :type => :controller do
     render_views
 

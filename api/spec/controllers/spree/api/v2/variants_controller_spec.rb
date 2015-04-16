@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::VariantsController, :type => :controller do
+  describe Api::V2::VariantsController, :type => :controller do
     render_views
 
     let(:option_value) { create(:option_value) }
