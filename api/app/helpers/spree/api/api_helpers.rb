@@ -49,7 +49,7 @@ module Spree
       @@product_attributes = [
         :id, :name, :description, :price, :display_price, :available_on,
         :slug, :meta_description, :meta_keywords, :shipping_category_id,
-        :taxon_ids, :total_on_hand
+        :taxon_ids, :has_variants, :total_on_hand
       ]
 
       @@product_property_attributes = [
