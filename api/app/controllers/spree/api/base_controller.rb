@@ -49,16 +49,19 @@ module Spree
       helper_method :current_api_user
 
       private
+      helper_method :current_api_user
+
+      private
 
       def pagination(collection)
         {
-         count: collection.count,
-         total_count: collection.total_count,
-         current_page: params[:page] ? params[:page].to_i : 1,
-         per_page: params[:per_page] || Kaminari.config.default_per_page,
-         pages: collection.num_pages
+          count: collection.count,
+          total_count: collection.total_count,
+          current_page: params[:page] ? params[:page].to_i : 1,
+          per_page: params[:per_page] || Kaminari.config.default_per_page,
+          pages: collection.num_pages
         }
-      end
+     end
 
       def set_content_type
         content_type = case params[:format]
@@ -82,9 +85,11 @@ module Spree
       def authenticate_user
         unless @current_api_user
           if requires_authentication? && api_key.blank? && order_token.blank?
-            render json: { error: I18n.t(:must_specify_api_key, scope: "spree.api") } , status: 401 and return
+            render json: { error: I18n.t(:must_specify_api_key, scope: "spree.api") } ,
+              status: 401 && return
           elsif order_token.blank? && (requires_authentication? || api_key.present?)
-            render json: { error: I18n.t(:invalid_api_key, :key => api_key, :scope => "spree.api") }, status: 401 and return
+            render json: { error: I18n.t(:invalid_api_key, :key => api_key, :scope => "spree.api") },
+              status: 401 && return
           else
             # An anonymous user
             @current_api_user = Spree.user_class.new
@@ -102,7 +107,7 @@ module Spree
 
       def unauthorized
         render json: { error: I18n.t(:unauthorized, scope: "spree.api") },
-          status: 401 and return
+          status: 401 && return
       end
 
       def error_during_processing(exception)
@@ -112,7 +117,7 @@ module Spree
         error_notifier.call(exception, self) if error_notifier
 
         render text: { exception: exception.message }.to_json,
-          status: 422 and return
+          status: 422 && return
       end
 
       def gateway_error(exception)
@@ -126,7 +131,7 @@ module Spree
 
       def not_found
         render json: { error: I18n.t(:resource_not_found, scope: "spree.api") },
-          status: 404 and return
+          status: 404 && return
       end
 
       def current_ability
@@ -137,7 +142,7 @@ module Spree
         render json: {
           error: I18n.t(:invalid_resource, scope: "spree.api"),
           errors: resource.errors
-        }, status: 422 and return
+        }, status: 422 && return
       end
 
       def api_key
