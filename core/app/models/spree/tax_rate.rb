@@ -83,7 +83,7 @@ module Spree
       rates = match(order.tax_zone)
       tax_categories = rates.map(&:tax_category)
       relevant_items, non_relevant_items = items.partition { |item| tax_categories.include?(item.tax_category) }
-      Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all # using destroy_all to ensure adjustment destroy callback fires.
+      Spree::Adjustment.where(adjustable: relevant_items).tax.destroy_all if relevant_items.length > 0 # using destroy_all to ensure adjustment destroy callback fires.
       relevant_items.each do |item|
         relevant_rates = rates.select { |rate| rate.tax_category == item.tax_category }
         store_pre_tax_amount(item, relevant_rates)
