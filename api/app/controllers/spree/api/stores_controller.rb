@@ -7,7 +7,7 @@ module Spree
       def index
         authorize! :read, Store
         @stores = Store.accessible_by(current_ability, :read).all
-        respond_with(@stores)
+        render json: @stores
       end
 
       def create
@@ -15,7 +15,7 @@ module Spree
         @store = Store.new(store_params)
         @store.code = params[:store][:code]
         if @store.save
-          respond_with(@store, status: 201, default_template: :show)
+          render json: @store, status: 201
         else
           invalid_resource!(@store)
         end
@@ -24,7 +24,7 @@ module Spree
       def update
         authorize! :update, @store
         if @store.update_attributes(store_params)
-          respond_with(@store, status: 200, default_template: :show)
+          render json: @store
         else
           invalid_resource!(@store)
         end
@@ -32,13 +32,17 @@ module Spree
 
       def show
         authorize! :read, @store
-        respond_with(@store)
+        render json: @store
       end
 
       def destroy
         authorize! :destroy, @store
         @store.destroy
-        respond_with(@store, status: 204)
+        if @store.errors.any?
+          invalid_resource!(@store)
+        else
+          render json: @store, status: 204
+        end
       end
 
       private

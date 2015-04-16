@@ -3,23 +3,37 @@ module Spree
     class TaxonomiesController < Spree::Api::BaseController
 
       def index
-        respond_with(taxonomies)
+        render json: taxonomies, meta: pagination(taxonomies),
+               each_serializer: Spree::NestedTaxonomySerializer
       end
 
       def show
-        respond_with(taxonomy)
+        if params[:set]
+          render json: taxonomy,
+                    serializer: Spree::NestedTaxonomySerializer,
+                    root: :taxonomy
+        else
+          render json: taxonomy
+        end
       end
 
       # Because JSTree wants parameters in a *slightly* different format
       def jstree
-        show
+        render json: {
+          data: taxonomy.root.name,
+          attr: {
+            id: taxonomy.root.id,
+            name: taxonomy.root.name
+          },
+          state: "closed"
+        }
       end
 
       def create
         authorize! :create, Taxonomy
         @taxonomy = Taxonomy.new(taxonomy_params)
         if @taxonomy.save
-          respond_with(@taxonomy, :status => 201, :default_template => :show)
+          render json: @taxonomy, status: 201
         else
           invalid_resource!(@taxonomy)
         end
@@ -28,7 +42,7 @@ module Spree
       def update
         authorize! :update, taxonomy
         if taxonomy.update_attributes(taxonomy_params)
-          respond_with(taxonomy, :status => 200, :default_template => :show)
+          render json: taxonomy
         else
           invalid_resource!(taxonomy)
         end
@@ -37,7 +51,7 @@ module Spree
       def destroy
         authorize! :destroy, taxonomy
         taxonomy.destroy
-        respond_with(taxonomy, :status => 204)
+        render nothing: true, status: 204
       end
 
       private

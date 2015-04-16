@@ -97,7 +97,8 @@ module Spree
         render json: {
           success: @handler.success,
           error: @handler.error,
-          successful: @handler.successful?
+          successful: @handler.successful?,
+          status_code: @handler.status_code
         }, status: status
       end
 

@@ -26,6 +26,8 @@ module Spree
 
       helper Spree::Api::ApiHelpers
 
+      serialization_scope :view_context
+
       def set_jsonp_format
         if params[:callback] && request.get?
           self.response_body = "#{params[:callback]}(#{response.body})"
@@ -50,6 +52,9 @@ module Spree
           super
         end
       end
+
+      protected
+      helper_method :current_api_user
 
       private
 
