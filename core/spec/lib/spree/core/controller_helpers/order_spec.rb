@@ -7,186 +7,19 @@ end
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
-  let(:user)                { create(:user)              }
-  let(:order)               { create(:order, user: user) }
-  let(:request_guest_token) { nil                        }
+  let(:user)        { create(:user)              }
+  let(:order)       { create(:order, user: user) }
+  let(:guest_token) { nil                        }
 
   before do
-    allow(controller).to receive_messages(
-      try_spree_current_user: user,
-      cookies:                double('cookies', signed: { guest_token: request_guest_token })
-    )
+    allow(controller).to receive_messages(try_spree_current_user: user)
+    allow(controller).to receive_message_chain(:cookies, :signed)
+      .and_return(guest_token: guest_token)
   end
 
-  shared_examples_for 'returning order' do
-    # Normally these expectations should be broken up in different blocks.
-    # Sadly this spec touches the DB for each block to make this efficient enough
-    # for mutaiton testing we need to be a bit more coarse grained right now.
-    #
-    # Next passes might turn this into *real* unit tests that do not touch the DB anymore.
-    it 'returns idempotent order with expected attributes' do
-      order = apply
-      expect(order.currency).to eql(controller.current_currency)
-      expect(order.last_ip_address).to eql(controller.ip_address)
-      expect(order.user).to eql(user)
-      expect(order.created_by).to eql(expected_created_by)
-      expect(apply).to be(order)
-    end
-  end
-
-  shared_examples_for 'returning expected order' do
-    it 'returns expected order' do
-      expect(apply).to eql(expected_order)
-    end
-
-    include_examples 'returning order'
-  end
-
-  shared_examples_for 'lock cannot be aquired' do
-    context 'when lock cannot be aquired' do
-      context 'because lock is not available' do
-        before do
-          expect(collection).to receive(:lock)
-            .with(true)
-            .ordered
-            .and_raise(ActiveRecord::StatementInvalid.new('PG::LockNotAvailable: ERROR: details'))
-        end
-
-        it 'raises busy order exception' do
-          expect { apply }.to raise_error(Spree::Order::OrderBusyError)
-        end
-      end
-
-      context 'because of unrelated exception' do
-        let(:unrelated_exception) { ActiveRecord::StatementInvalid.new('generic other error') }
-
-        before do
-          expect(collection).to receive(:lock)
-            .with(true)
-            .ordered
-            .and_raise(unrelated_exception)
-        end
-
-        it 'raises the unrelated exception' do
-          expect { apply }.to raise_error(unrelated_exception)
-        end
-      end
-    end
-  end
-
-  shared_examples_for 'locks the order by token/user' do
-    let(:collection) { double('Collection') }
-
-    before do
-      expect(Spree::Order).to receive(:incomplete)
-        .ordered
-        .and_return(collection)
-      expect(collection).to receive(:includes)
-        .with(:all_adjustments)
-        .ordered
-        .and_return(collection)
-    end
-
-    context 'when lock can be aquired immediately' do
-      before do
-        expect(collection).to receive(:lock)
-          .with(true)
-          .ordered
-          .and_return(collection)
-
-        expect(collection).to receive(:find_by)
-          .with(currency: 'USD', guest_token: request_guest_token, user_id: user.try(:id))
-          .ordered
-          .and_return(order)
-      end
-
-      include_examples 'returning expected order'
-    end
-
-    include_examples 'lock cannot be aquired'
-  end
-
-  shared_examples_for 'locks the last incomplete order' do
-    let(:collection) { double('Collection') }
-
-    before do
-      expect(user).to receive(:incomplete_spree_orders)
-        .ordered
-        .and_return(collection)
-    end
-
-    context 'when lock can be aquired immediately' do
-      before do
-        expect(collection).to receive(:lock)
-          .with(true)
-          .ordered
-          .and_return(collection)
-
-        expect(collection).to receive(:first)
-          .and_return(order)
-      end
-
-      include_examples 'returning expected order'
-    end
-
-    include_examples 'lock cannot be aquired'
-  end
-
-  shared_examples_for 'order lookup' do
-    let(:expected_created_by) { user }
-
-    context 'whithout user' do
-      let(:user)  { nil                  }
-      let(:order) { Spree::Order.create! }
-
-      context 'with matching guest token on order' do
-        let(:request_guest_token) { order.guest_token }
-        let(:expected_order)      { order             }
-
-        include_examples 'locks the order by token/user'
-      end
-
-      context 'without matching guest token' do
-        include_examples 'order was NOT found'
-      end
-    end
-
-    context 'with user' do
-      context 'with matching guest token' do
-        # Preference is guest token based, even when a more recent order exists.
-        before do
-          order
-          create(:order, user: user)
-        end
-
-        let(:request_guest_token) { order.guest_token }
-        let(:expected_order)      { order             }
-
-        include_examples 'locks the order by token/user'
-      end
-
-      context 'and order created by other user is returned' do
-        let(:other_user)          { create(:user)                                      }
-        let!(:order)              { create(:order, user: user, created_by: other_user) }
-        let(:expected_order)      { order                                              }
-        let(:expected_created_by) { other_user                                         }
-
-        include_examples 'locks the last incomplete order'
-      end
-
-      context 'without matching guest token' do
-        context 'and order in history exists' do
-          let(:expected_order) { order }
-
-          before { order }
-
-          include_examples 'locks the last incomplete order'
-        end
-
-        context 'and incomplete order in history does NOT exist' do
-          include_examples 'order was NOT found'
-        end
-      end
+  shared_examples_for 'idempotent method' do
+    it 'is idempotent' do
+      expect(apply).to be(apply)
     end
   end
 
@@ -195,15 +28,212 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       controller.current_order
     end
 
-    shared_examples_for 'order was NOT found' do
-      it 'returns idempotent nil' do
-        expect(apply).to be(nil)
-        expect(Spree::Order).to_not receive(:incomplete)
-        expect(apply).to be(nil)
+    shared_examples_for 'order found' do
+      it 'returns an order' do
+        expect(apply).to be_instance_of(Spree::Order)
+      end
+
+      it 'returns a persisted order' do
+        expect(apply.persisted?).to be(true)
+      end
+
+      it 'sets the created_by attribute in the order' do
+        expect(apply.created_by).to be(user)
+      end
+
+      it 'sets the last_ip_address attribute in the order' do
+        expect(apply.last_ip_address).to eql('0.0.0.0')
+      end
+
+      it 'eager loads all adjustments' do
+        expect(apply.association(:all_adjustments).loaded?).to be(true)
       end
     end
 
-    include_examples 'order lookup'
+    shared_examples_for 'order not found' do
+      it 'returns nil' do
+        expect(apply).to be_nil
+      end
+    end
+
+    shared_examples_for 'incomplete order returned' do
+      include_examples 'order found'
+
+      it 'returns the incomplete order' do
+        expect(apply).to eql(order)
+      end
+
+      it 'locks the order' do
+        relation = double('relation').as_null_object
+        expect(user).to receive(:spree_orders).and_return(relation)
+        expect(apply).to be(relation)
+        expect(relation).to have_received(:lock).with(no_args)
+      end
+
+      it 'raises error on lock error' do
+        relation = double('relation').as_null_object
+        expect(user).to receive(:spree_orders).and_return(relation)
+        expect(relation).to receive(:lock).and_raise(
+          ActiveRecord::StatementInvalid.new('PG::LockNotAvailable:')
+        )
+        expect { apply }.to raise_error(Spree::Order::OrderBusyError)
+      end
+    end
+
+    shared_examples_for 'anonymous order returned' do
+      include_examples 'order found'
+
+      it 'returns the anonymous order' do
+        expect(apply).to eql(anonymous_order)
+      end
+
+      it 'locks the order' do
+        relation = double('relation').as_null_object
+        stub_const('Spree::Order', relation)
+        expect(apply).to be(relation)
+        expect(relation).to have_received(:lock).with(no_args)
+      end
+
+      it 'raises error on lock error' do
+        error = ActiveRecord::StatementInvalid.new('other')
+        relation = double('relation').as_null_object
+        stub_const('Spree::Order', relation)
+        expect(relation).to receive(:lock).and_raise(error)
+        expect { apply }.to raise_error(error)
+      end
+    end
+
+    shared_context 'blank guest token' do
+      let(:guest_token) { '' }
+    end
+
+    shared_context 'non-blank guest token' do
+      let(:guest_token) { 'ABC123' }
+    end
+
+    shared_context 'setup anonymous order' do
+      let!(:anonymous_order) do
+        create(
+          :order_with_totals,
+          guest_token: guest_token,
+          user:        nil,
+          email:       nil
+        )
+      end
+    end
+
+    context 'when the user is present' do
+      # This record should never be returned due to the incomplete
+      # scope being used on the order lookup
+      let!(:completed_order) do
+        create(:order, completed_at: Time.at(0), user: user)
+      end
+
+      context 'with no incomplete orders' do
+        let!(:order) { nil }
+
+        context 'with no guest token' do
+          include_context  'blank guest token'
+          include_examples 'order not found'
+          include_examples 'idempotent method'
+        end
+
+        context 'with a guest token' do
+          include_context 'non-blank guest token'
+
+          context 'with no anonymous orders' do
+            include_examples 'order not found'
+            include_examples 'idempotent method'
+          end
+
+          context 'with anonymous orders' do
+            include_context  'setup anonymous order'
+            include_examples 'anonymous order returned'
+            include_examples 'idempotent method'
+
+            it 'associates the user with the order' do
+              expect { apply }.to change { anonymous_order.reload.user }
+                .from(nil)
+                .to(user)
+            end
+          end
+        end
+      end
+
+      context 'with an incomplete order' do
+        let!(:order) do
+          create(:order_with_totals, user: user)
+        end
+
+        context 'with no guest token' do
+          include_context  'blank guest token'
+          include_examples 'incomplete order returned'
+          include_examples 'idempotent method'
+        end
+
+        context 'with a guest token' do
+          include_context 'non-blank guest token'
+
+          context 'with no anonymous orders' do
+            include_examples 'incomplete order returned'
+            include_examples 'idempotent method'
+          end
+
+          context 'with anonymous orders' do
+            include_context  'setup anonymous order'
+            include_examples 'incomplete order returned'
+            include_examples 'idempotent method'
+
+            it 'merges the anonymous order into the incomplete order' do
+              variants = [order, anonymous_order].flat_map(&:variants)
+              expect(apply.variants).to eq(variants)
+            end
+          end
+        end
+      end
+    end
+
+    context 'when the user is not present' do
+      let!(:order) { nil }
+      let(:user)   { nil }
+
+      # This record should never be returned due to the guard clause
+      # that wraps the anonymous order lookup
+      let!(:anonymous_order_with_blank_guest_token) do
+        create(
+          :order_with_totals,
+          guest_token: '',
+          user:        nil,
+          email:       nil
+        )
+      end
+
+      context 'with no guest token' do
+        include_context  'blank guest token'
+        include_examples 'order not found'
+        include_examples 'idempotent method'
+      end
+
+      context 'with a guest token' do
+        include_context 'non-blank guest token'
+
+        context 'with no anonymous orders' do
+          include_examples 'order not found'
+          include_examples 'idempotent method'
+        end
+
+        context 'with anonymous orders' do
+          include_context  'setup anonymous order'
+          include_examples 'anonymous order returned'
+          include_examples 'idempotent method'
+
+          it 'does not associate the user with the order' do
+            expect { apply }.to_not change { anonymous_order.reload.user }
+              .from(nil)
+          end
+        end
+      end
+    end
   end
 
   describe '#cart_order' do
@@ -211,31 +241,100 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       controller.cart_order
     end
 
-    shared_examples_for 'order was NOT found' do
-      include_examples 'returning order'
+    before do
+      allow(controller).to receive(:current_order).and_return(current_order)
     end
 
-    include_examples 'order lookup'
+    context 'current order is found' do
+      let(:current_order) { order }
+
+      it 'returns the current order' do
+        expect(apply).to be(current_order)
+      end
+
+      include_examples 'idempotent method'
+    end
+
+    context 'current order is not found' do
+      let(:current_order) { nil }
+
+      let(:new_order) do
+        build(
+          :order,
+          bill_address:    nil,
+          ship_address:    nil,
+          email:           nil,
+          currency:        'USD',
+          user:            user,
+          created_by:      user,
+          last_ip_address: '0.0.0.0'
+        )
+      end
+
+      it 'initializes a new order' do
+        order = apply
+        expect(order).to be_kind_of(Spree::Order)
+        expect(order.attributes).to eql(new_order.attributes)
+      end
+
+      include_examples 'idempotent method'
+    end
   end
 
   describe '#associate_user' do
+    def apply
+      controller.associate_user
+    end
+
     before do
       allow(controller).to receive_messages(current_order: order)
     end
 
-    context 'users email is blank' do
-      let(:user) { create(:user, email: '') }
+    context 'the current user is nil' do
+      let(:user)  { nil                                   }
+      let(:order) { create(:order, user: nil, email: nil) }
 
-      it 'calls Spree::Order#associate_user! method' do
-        expect_any_instance_of(Spree::Order).to receive(:associate_user!)
-        controller.associate_user
+      it 'does not call Spree::Order#associate_user! method' do
+        expect(order).to_not receive(:associate_user!)
+        apply
       end
     end
 
-    context 'user is not blank' do
-      it 'does not calls Spree::Order#associate_user! method' do
-        expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
-        controller.associate_user
+    context 'current order is nil' do
+      let(:order) { nil }
+
+      it 'does not call Spree::Order#associate_user! method' do
+        expect_any_instance_of(Spree::Order).to_not receive(:associate_user!)
+        apply
+      end
+    end
+
+    context 'when the order user is blank' do
+      before do
+        order.user = nil
+      end
+
+      it 'calls Spree::Order#associate_user! method' do
+        expect(order).to receive(:associate_user!).with(user)
+        apply
+      end
+    end
+
+    context 'when the order email is blank' do
+      before do
+        order.email = nil
+      end
+
+      it 'calls Spree::Order#associate_user! method' do
+        expect(order).to receive(:associate_user!).with(user)
+        apply
+      end
+    end
+
+    context 'when the order user and email are not blank' do
+      it 'does not call Spree::Order#associate_user! method' do
+        expect(order).to_not receive(:associate_user!)
+        apply
       end
     end
   end
@@ -245,47 +344,28 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       controller.set_current_order
     end
 
-    before do
-      allow(controller).to receive_messages(current_order: order)
-    end
+    context 'with a user' do
+      before do
+        allow(controller).to receive_messages(current_order: order)
+      end
 
-    context 'with user and current order' do
-      let!(:order_a) { create(:order, user: user)                         }
-      let!(:order_b) { create(:order, user: user)                         }
-      let!(:order_c) { create(:order, user: user, completed_at: Time.now) }
-
-      # This chain of expectations asserts the record gets locked.
-      # There is no other known in-memory way since AR does not track
-      # if a record was loaded under lock or not.
-      it 'locks the incomplete orders' do
-        collection = double('collection')
-        expect(user).to receive(:incomplete_spree_orders).ordered.and_return(collection)
-        expect(collection).to receive(:lock).ordered.and_return(collection)
-        expect(collection).to receive(:where).ordered.and_return(collection)
-        expect(collection).to receive(:not).ordered.with(id: order).and_return([order_b, order_a])
-        expect(order).to receive(:merge!).ordered.with(order_b)
-        expect(order).to receive(:merge!).ordered.with(order_a)
+      it 'initializes the current order' do
+        expect(controller).to receive_messages(current_order: order)
         apply
       end
 
-      it 'merges incomplete orders from history into current one' do
-        expect(order).to receive(:merge!).ordered.with(order_b)
-        expect(order).to receive(:merge!).ordered.with(order_a)
+      it 'returns the current order' do
+        expect(apply).to be(order)
+      end
+    end
+
+    context 'without a user' do
+      let(:user) { nil }
+
+      it 'does not initialize the current order' do
+        expect(controller).to_not receive(:current_order)
         apply
       end
-    end
-
-    context 'without user' do
-      let(:user)  { nil            }
-      let(:order) { create(:order) }
-
-      it 'returns nil' do
-        expect(apply).to be(nil)
-      end
-    end
-
-    context 'without current order' do
-      let(:order) { nil }
 
       it 'returns nil' do
         expect(apply).to be(nil)
@@ -295,7 +375,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#current_currency' do
     it 'returns current currency' do
-      Spree::Config[:currency] = 'USD'
       expect(controller.current_currency).to eql('USD')
     end
   end

@@ -264,19 +264,20 @@ describe Spree::Order, :type => :model do
     let(:order_1) { Spree::Order.create }
     let(:order_2) { Spree::Order.create }
 
-    it "destroys the other order" do
-      order_1.merge!(order_2)
-      expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
-    end
+    shared_examples '#merge!' do
+      it "destroys the other order" do
+        order_1.merge!(order_2)
+        expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
 
-    context "user is provided" do
-      it "assigns user to new order" do
-        order_1.merge!(order_2, user)
-        expect(order_1.user).to eq user
+      it "returns self" do
+        expect(order_1.merge!(order_2)).to be(order_1)
       end
     end
 
     context "merging together two orders with line items for the same variant" do
+      include_examples '#merge!'
+
       before do
         order_1.contents.add(variant, 1)
         order_2.contents.add(variant, 1)
@@ -293,6 +294,8 @@ describe Spree::Order, :type => :model do
     end
 
     context "merging together two orders with different line items" do
+      include_examples '#merge!'
+
       let(:variant_2) { create(:variant) }
 
       before do
@@ -561,6 +564,19 @@ describe Spree::Order, :type => :model do
             .to_not change(order, :persisted?)
             .from(false)
         end
+      end
+
+      it "returns self" do
+        expect(order.associate_user!(user, override_email)).to be(order)
+      end
+    end
+
+    context "when user is nil" do
+      let(:user) { nil }
+
+      it "raises an error" do
+        expect { order.associate_user!(user) }
+          .to raise_error(NoMethodError)
       end
     end
 

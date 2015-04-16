@@ -142,7 +142,7 @@ module Spree
     end
 
     def self.incomplete
-      where(completed_at: nil)
+      where(completed_at: nil).order(:created_at).reverse_order
     end
 
     # Use this method in other gems that wish to register their own custom logic
@@ -327,6 +327,8 @@ module Spree
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
       self.class.unscoped.where(id: self).update_all(changes)
+
+      self
     end
 
     def shipped_shipments
@@ -486,16 +488,13 @@ module Spree
       end
     end
 
-    def merge!(order, user = nil)
+    def merge!(order)
       order.line_items.each do |line_item|
         next unless line_item.currency == currency
-
         contents.add(line_item.variant, line_item.quantity, line_item.currency)
       end
-
-      associate_user!(user) if user && !self.user
-
       order.destroy
+      self
     end
 
     def empty!

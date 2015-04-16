@@ -19,10 +19,6 @@ Spree::Core::Engine.config.to_prepare do
       def has_spree_role?(role_in_question)
         spree_roles.where(name: role_in_question.to_s).any?
       end
-
-      def incomplete_spree_orders
-        spree_orders.incomplete.where(user_id: id).order(:created_at).reverse_order
-      end
     end
   end
 end

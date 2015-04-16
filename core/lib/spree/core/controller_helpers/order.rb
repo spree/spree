@@ -21,11 +21,8 @@ module Spree
         # @return [nil]
         def current_order
           return @current_order if defined?(@current_order)
-
-          @current_order = find_order_by_token_or_user(true).try do |order|
+          @current_order = find_order_by_token_or_user.try do |order|
             order.last_ip_address = ip_address
-            # See issue #3346 for reasons why this line is here
-            order.created_by ||= try_spree_current_user
             order
           end
         end
@@ -36,8 +33,7 @@ module Spree
         #
         # @return [Spree::Order]
         def cart_order
-          return current_order if current_order
-          @cart_order ||= Spree::Order.new(
+          @cart_order ||= current_order || Spree::Order.new(
             current_order_params.merge(
               created_by:      try_spree_current_user,
               last_ip_address: ip_address
@@ -47,24 +43,18 @@ module Spree
 
         def associate_user
           @order ||= current_order
-
-          if try_spree_current_user && @order
-            @order.associate_user!(try_spree_current_user) if @order.user.blank? || @order.email.blank?
+          user = try_spree_current_user
+          if user && @order && (@order.user.nil? || @order.email.blank?)
+            @order.associate_user!(user)
           end
         end
 
         def set_current_order
-          return unless try_spree_current_user && current_order
-
-          try_spree_current_user
-            .incomplete_spree_orders
-            .lock
-            .where.not(id: current_order)
-            .each(&current_order.method(:merge!))
+          current_order if try_spree_current_user
         end
 
         def current_currency
-          Spree::Config[:currency]
+          Config[:currency]
         end
 
         def ip_address
@@ -81,14 +71,30 @@ module Spree
           }
         end
 
-        def find_order_by_token_or_user(lock)
-          # Find any incomplete orders for the guest_token
-          order = Spree::Order.incomplete.includes(:all_adjustments).lock(lock).find_by(current_order_params)
+        def find_order_by_token_or_user
+          user = try_spree_current_user
 
-          # Find any incomplete orders for the current user
-          order ||= if try_spree_current_user
-            try_spree_current_user.incomplete_spree_orders.lock(lock).first
+          # Merge all incomplete orders
+          order = merge_orders(user.spree_orders) if user
+
+          # Merge all anonymous orders
+          if current_order_params[:guest_token].present?
+            order = merge_orders(anonymous_orders, order)
           end
+
+          # Associate the user to the order
+          order.try(:associate_user!, user) if user
+
+          order
+        end
+
+        def anonymous_orders
+          Spree::Order.where(current_order_params.merge(user_id: nil))
+        end
+
+        def merge_orders(orders, other = nil)
+          orders.incomplete.includes(:all_adjustments).lock
+            .reduce(*other, :merge!)
         rescue ActiveRecord::StatementInvalid => exception
           if exception.message.start_with?(PG_LOCK_NOT_AVAILABLE)
             fail Spree::Order::OrderBusyError
