@@ -7,7 +7,7 @@ module Spree
       before_action :find_order, except: [:create, :mine, :current, :index, :update]
 
       # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
-      Order.checkout_steps.keys.each do |step|
+      Spree::Order.checkout_steps.keys.each do |step|
         define_method step do
           find_order
           authorize! :update, @order, params[:token]
@@ -21,7 +21,7 @@ module Spree
       end
 
       def create
-        authorize! :create, Order
+        authorize! :create, Spree::Order
         order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
           Spree.user_class.find(order_params[:user_id])
         else
@@ -46,7 +46,7 @@ module Spree
 
       def index
         authorize! :index, Order
-        @orders = Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+        @orders = Spree::Order.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
         respond_with(@orders)
       end
 
@@ -91,7 +91,7 @@ module Spree
         find_order
         authorize! :update, @order, order_token
         @order.coupon_code = params[:coupon_code]
-        @handler = PromotionHandler::Coupon.new(@order).apply
+        @handler = Spree::PromotionHandler::Coupon.new(@order).apply
         status = @handler.successful? ? 200 : 422
         render "spree/api/promotions/handler", :status => status
       end

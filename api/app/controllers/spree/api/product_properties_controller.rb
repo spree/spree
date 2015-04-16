@@ -20,7 +20,7 @@ module Spree
       end
 
       def create
-        authorize! :create, ProductProperty
+        authorize! :create, Spree::ProductProperty
         @product_property = @product.product_properties.new(product_property_params)
         if @product_property.save
           respond_with(@product_property, status: 201, default_template: :show)

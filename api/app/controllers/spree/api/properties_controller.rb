@@ -25,7 +25,7 @@ module Spree
       end
 
       def create
-        authorize! :create, Property
+        authorize! :create, Spree::Property
         @property = Spree::Property.new(property_params)
         if @property.save
           respond_with(@property, status: 201, default_template: :show)

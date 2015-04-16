@@ -4,7 +4,7 @@ module Spree
       before_action :product
 
       def create
-        authorize! :create, Variant
+        authorize! :create, Spree::Variant
         @variant = scope.new(variant_params)
         if @variant.save
           respond_with(@variant, status: 201, default_template: :show)
@@ -55,10 +55,10 @@ module Spree
           if @product
             variants = @product.variants_including_master
           else
-            variants = Variant
+            variants = Spree::Variant
           end
 
-          if current_ability.can?(:manage, Variant) && params[:show_deleted]
+          if current_ability.can?(:manage, Spree::Variant) && params[:show_deleted]
             variants = variants.with_deleted
           end
 

@@ -52,7 +52,7 @@ module Spree
         end
 
         def nested_params
-          map_nested_attributes_keys Order, params[:order] || {}
+          map_nested_attributes_keys Spree::Order, params[:order] || {}
         end
 
         # Should be overriden if you have areas of your checkout that don't match
@@ -79,7 +79,7 @@ module Spree
 
         def after_update_attributes
           if nested_params && nested_params[:coupon_code].present?
-            handler = PromotionHandler::Coupon.new(@order).apply
+            handler = Spree::PromotionHandler::Coupon.new(@order).apply
 
             if handler.error.present?
               @coupon_message = handler.error
