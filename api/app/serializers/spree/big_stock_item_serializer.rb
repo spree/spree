@@ -1,5 +1,6 @@
 module Spree
   class BigStockItemSerializer < ActiveModel::Serializer
+    # attributes *Spree::Api::ApiHelpers.stock_item_attributes
     attributes :id, :count_on_hand, :stock_location_id, :backorderable,
                :available, :stock_location_name
 
