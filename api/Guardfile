@@ -31,8 +31,9 @@ directories %w(app spec)
 #                          installed the spring binstubs per the docs)
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
+# cmd_additional_args: '--fail-fast',
+guard :rspec, cmd: "RAILS_ENV=test bundle exec rspec", failed_mode: :focus, all_after_pass: false, all_on_start: false do
 
-guard :rspec, cmd: "RAILS_ENV=test bundle exec rspec" do
   require "guard/rspec/dsl"
   dsl = Guard::RSpec::Dsl.new(self)
 
