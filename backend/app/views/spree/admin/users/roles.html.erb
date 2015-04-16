@@ -1,0 +1,36 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:editing_user) %> <%= @user.email %> / <%= Spree.t(:"admin.roles") %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :roles } %>
+<%= render :partial => 'spree/admin/users/user_page_actions' %>
+
+<div data-hook="admin_user_edit_general_settings">
+
+  <div data-hook="admin_user_edit_form">
+    <%= form_for [:admin, @user], as: :user, url: spree.admin_user_url(@user), method: :put do |f| %>
+
+      <%=
+        # needs to be here to pass the user in params
+        f.hidden_field :email
+      %>
+
+      <div data-hook="admin_user_form_roles" class="form-group">
+        <strong><%= Spree.t(:roles) %></strong>
+        <% @roles.each do |role| %>
+          <div class="checkbox">
+            <%= label_tag "user_spree_role_#{role.name}" do %>
+              <%= check_box_tag 'user[spree_role_ids][]', role.id, @user.spree_roles.include?(role), :id => "user_spree_role_#{role.name}" %>
+              <%= role.name %>
+            <% end %>
+          </div>
+        <% end %>
+        <%= hidden_field_tag 'user[spree_role_ids][]', '' %>
+      </div>
+
+      <div class="form-actions" data-hook="admin_user_edit_form_button">
+        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => spree.admin_users_url } %>
+      </div>
+    <% end %>
+  </div>
+</div>

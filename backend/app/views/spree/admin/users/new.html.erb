@@ -2,10 +2,6 @@
   <%= Spree.t(:new_user) %>
 <% end %>
 
-<div data-hook="admin_user_new_form_header">
-  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @user } %>
-</div>
-
 <div data-hook="admin_user_new_form">
   <%= form_for [:admin, @user], url: spree.admin_users_url, method: :post do |f| %>
     <%= render :partial => 'form', :locals => { :f => f } %>

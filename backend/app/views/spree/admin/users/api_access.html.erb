@@ -1,0 +1,44 @@
+<% content_for :page_title do %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t('access', :scope => 'api') %>
+<% end %>
+
+<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :api_access } %>
+<%= render :partial => 'spree/admin/users/user_page_actions' %>
+
+<div data-hook="admin_user_api_key" id="admin_user_edit_api_key">
+
+  <% if @user.spree_api_key.present? && can?(:manage, Spree::Api) %>
+
+    <div class="form-group">
+      <div id="current-api-key">
+        <label><%= Spree.t('key', :scope => 'api') %>: </label>
+        <strong><%= @user.spree_api_key %></strong>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= form_tag spree.clear_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('clear_key', :scope => 'api'), 'delete', 'submit', class: "btn-danger" %>
+      <% end %>
+
+      <span class="or"><%= Spree.t(:or)%></span>
+
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('regenerate_key', :scope => 'api'), 'save' %>
+      <% end %>
+    </div>
+
+  <% else %>
+
+    <div class="alert alert-warning">
+      <%= Spree.t('no_key', :scope => 'api') %>
+    </div>
+
+    <div class="form-actions">
+      <%= form_tag spree.generate_api_key_admin_user_path(@user), :method => :put do %>
+        <%= button Spree.t('generate_key', :scope => 'api'), 'key' %>
+      <% end if can?(:manage, Spree::Api) %>
+    </div>
+  <% end %>
+
+</div>

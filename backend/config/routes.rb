@@ -183,6 +183,8 @@ Spree::Core::Engine.add_routes do
         get :items
         get :addresses
         put :addresses
+        get :api_access
+        get :roles
       end
     end
   end
