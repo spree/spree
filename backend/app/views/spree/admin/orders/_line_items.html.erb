@@ -16,11 +16,15 @@
       <tbody>
         <% order.line_items.each do |item| %>
           <tr class="line-item" id="line-item-<%= item.id %>">
-            <td class="line-item-image image text-center">
+            <td class="line-item-image image text-center" width="48">
               <%= mini_image(item.variant) %>
             </td>
-            <td class="line-item-name text-center">
-              <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+            <td class="line-item-name">
+              <%= item.variant.product.name %><br>
+              <% if !item.variant.option_values.empty? %>
+                <strong><%= variant_options(item.variant) %></strong><br/>
+              <% end %>
+              <%= item.variant.product.try(:sku) %>
             </td>
             <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
             <td class="line-item-qty-show text-center">
@@ -30,7 +34,7 @@
               <%= number_field_tag :quantity, item.quantity, :min => 0, :class => "line_item_quantity form-control", :size => 5 %>
             </td>
             <td class="line-item-total text-center"><%= line_item_shipment_price(item, item.quantity) %></td>
-            <td class="cart-line-item-delete actions actions-4 text-center" data-hook="cart_line_item_delete">
+            <td class="cart-line-item-delete actions actions-4 text-center" data-hook="cart_line_item_delete" width="130">
               <% if can? :update, item %>
                 <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", :class => 'save-line-item btn btn-success btn-sm', :no_text => true, :data => { :'line-item-id' => item.id, :action => 'save'}, :title => Spree.t('actions.save'), :style => 'display: none' %>
                 <%= link_to_with_icon 'delete', Spree.t('actions.cancel'), "#", :class => 'cancel-line-item btn btn-danger btn-sm', :data => {:action => 'cancel'}, :title => Spree.t('actions.cancel'), :style => 'display: none', :no_text => true %>
