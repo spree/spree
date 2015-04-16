@@ -92,7 +92,7 @@ module Spree
 
             if handler.error.present?
               render json: {
-                error: I18n.t(:could_not_apply_coupon, :scope => "spree.api.order"),
+                error: I18n.t(:could_not_apply_coupon, scope: "spree.api.order"),
                 errors: handler.error
               }, status: 422
               return true
