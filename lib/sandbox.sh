@@ -12,7 +12,7 @@ cd ./sandbox
 
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-0-stable'
 
 group :test, :development do
   gem 'bullet'

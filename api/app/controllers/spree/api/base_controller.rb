@@ -24,6 +24,8 @@ module Spree
 
       helper Spree::Api::ApiHelpers
 
+      serialization_scope :view_context
+
       def map_nested_attributes_keys(klass, attributes)
         nested_keys = klass.nested_attributes_options.keys
         attributes.inject({}) do |h, (k,v)|
@@ -51,7 +53,23 @@ module Spree
         end
       end
 
+      protected
+
+      # So it will be available in serializer
+      helper_method :current_api_user
+
       private
+
+      # TODO: Extracted as a serializer
+      def pagination(collection)
+        {
+          count: collection.count,
+          total_count: collection.total_count,
+          current_page: params[:page] ? params[:page].to_i : 1,
+          per_page: params[:per_page] || Kaminari.config.default_per_page,
+          pages: collection.num_pages
+        }
+      end
 
       def set_content_type
         headers["Content-Type"] = content_type
