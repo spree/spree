@@ -282,6 +282,23 @@ describe Spree::Product, :type => :model do
       }.to change { product.properties.length }.by(1)
     end
 
+    context 'optional property_presentation' do
+      subject { Spree::Property.where(name: 'foo').first.presentation }
+      let(:name) { 'foo' }
+      let(:presentation) { 'baz' }
+
+      describe 'is not used' do
+        before { product.set_property(name, 'bar') }
+        it { is_expected.to eq name }
+      end
+
+      describe 'is used' do
+        before { product.set_property(name, 'bar', presentation) }
+        it { is_expected.to eq presentation }
+      end
+    end
+
+
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
       Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
