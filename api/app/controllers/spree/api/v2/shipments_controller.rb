@@ -18,8 +18,9 @@ module Spree
 
             render json: @shipments, meta: pagination(@shipments)
           else
-            render json: { error: I18n.t(:unauthorized, scope: "spree.api") },
-              status: 401 and return
+            render json: {
+              error: I18n.t(:unauthorized, scope: "spree.api")
+              }, status: 401 and return
           end
         end
 
