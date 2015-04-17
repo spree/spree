@@ -22,6 +22,7 @@ module Spree
         end
 
         private
+
         def address_params
           params.require(:address).permit(permitted_address_attributes)
         end
@@ -32,12 +33,12 @@ module Spree
 
         def find_address
           @address = if @order.bill_address_id == params[:id].to_i
-            @order.bill_address
-          elsif @order.ship_address_id == params[:id].to_i
-            @order.ship_address
-          else
-            raise CanCan::AccessDenied
-          end
+                       @order.bill_address
+                     elsif @order.ship_address_id == params[:id].to_i
+                       @order.ship_address
+                     else
+                       raise CanCan::AccessDenied
+                     end
         end
       end
     end

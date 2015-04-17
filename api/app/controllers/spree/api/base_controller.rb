@@ -28,7 +28,7 @@ module Spree
 
       def map_nested_attributes_keys(klass, attributes)
         nested_keys = klass.nested_attributes_options.keys
-        attributes.inject({}) do |h, (k,v)|
+        attributes.inject({}) do |h, (k, v)|
           key = nested_keys.include?(k.to_sym) ? "#{k}_attributes" : k
           h[key] = v
           h
@@ -46,10 +46,10 @@ module Spree
 
       def content_type
         case params[:format]
-        when "json"
-          "application/json; charset=utf-8"
-        when "xml"
-          "text/xml; charset=utf-8"
+          when "json"
+            "application/json; charset=utf-8"
+          when "xml"
+            "text/xml; charset=utf-8"
         end
       end
 
@@ -83,9 +83,9 @@ module Spree
         return if @current_api_user
 
         if requires_authentication? && api_key.blank? && order_token.blank?
-          render "spree/api/errors/must_specify_api_key", status: 401 and return
+          render("spree/api/errors/must_specify_api_key", status: 401) && return
         elsif order_token.blank? && (requires_authentication? || api_key.present?)
-          render "spree/api/errors/invalid_api_key", status: 401 and return
+          render("spree/api/errors/invalid_api_key", status: 401) && return
         else
           # An anonymous user
           @current_api_user = Spree.user_class.new
@@ -97,7 +97,7 @@ module Spree
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", status: 401 and return
+        render("spree/api/errors/unauthorized", status: 401) && return
       end
 
       def error_during_processing(exception)
@@ -106,8 +106,8 @@ module Spree
 
         error_notifier.call(exception, self) if error_notifier
 
-        render text: { exception: exception.message }.to_json,
-            status: 422
+        render text: {exception: exception.message}.to_json,
+               status: 422
       end
 
       def gateway_error(exception)
@@ -120,7 +120,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", status: 404 and return
+        render("spree/api/errors/not_found", status: 404) && return
       end
 
       def current_ability
@@ -135,6 +135,7 @@ module Spree
       def api_key
         request.headers["X-Spree-Token"] || params[:token]
       end
+
       helper_method :api_key
 
       def order_token
@@ -162,7 +163,7 @@ module Spree
       end
 
       def variants_associations
-        [{ option_values: :option_type }, :default_price, :images]
+        [{option_values: :option_type}, :default_price, :images]
       end
 
       def product_includes
