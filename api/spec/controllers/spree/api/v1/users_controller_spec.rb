@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::UsersController, :type => :controller do
     render_views
 
-    let(:user) { create(:user, spree_api_key: rand) }
+    let(:user) { create(:user, spree_api_key: rand.to_s) }
     let(:stranger) { create(:user, :email => 'stranger@example.com') }
     let(:attributes) { [:id, :email, :created_at, :updated_at] }
 
