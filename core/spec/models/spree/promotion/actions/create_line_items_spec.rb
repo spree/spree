@@ -7,6 +7,11 @@ describe Spree::Promotion::Actions::CreateLineItems, :type => :model do
   let(:shirt) { create(:variant) }
   let(:mug) { create(:variant) }
 
+  def empty_stock(variant)
+    variant.stock_items.update_all(backorderable: false)
+    variant.stock_items.each { |i| i.reduce_count_on_hand_to_zero }
+  end
+
   context "#perform" do
     before do
       allow(action).to receive_messages :promotion => promotion
@@ -48,6 +53,28 @@ describe Spree::Promotion::Actions::CreateLineItems, :type => :model do
         expect(line_item).not_to be_nil
         expect(line_item.quantity).to eq(3)
       end
+
+      it "doesn't try to add an item if it's out of stock" do
+        empty_stock(mug)
+        empty_stock(shirt)
+
+        expect(order.contents).to_not receive(:add)
+        action.perform(:order => order)
+      end
+    end
+  end
+
+  describe '#item_available?' do
+    let(:item_out_of_stock) { action.promotion_action_line_items.create!(:variant => mug, :quantity => 1) }
+    let(:item_in_stock) { action.promotion_action_line_items.create!(:variant => shirt, :quantity => 1) }
+
+    it "returns false if the item is out of stock" do 
+      empty_stock(mug)
+      expect(action.item_available? item_out_of_stock).to be false
+    end
+
+    it "returns true if the item is in stock" do 
+      expect(action.item_available? item_in_stock).to be true
     end
   end
 end
