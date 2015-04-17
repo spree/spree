@@ -298,7 +298,6 @@ describe Spree::Product, :type => :model do
       end
     end
 
-
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
       Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
