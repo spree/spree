@@ -16,16 +16,15 @@ module Spree
           render json: @order, status: 200
         rescue StateMachines::InvalidTransition
           render json: {
-                   error: I18n.t(:could_not_transition, scope: "spree.api.order"),
-                   errors: @order.errors
-                 }, status: 422
+            error: I18n.t(:could_not_transition, scope: "spree.api.order"),
+            errors: @order.errors
+          }, status: 422
         end
 
         def advance
           load_order(true)
           authorize! :update, @order, order_token
-          while @order.next;
-          end
+          while @order.next; end
           render json: @order
         end
 
@@ -45,9 +44,9 @@ module Spree
               render json: @order
             else
               render json: {
-                       error: I18n.t(:could_not_transition, scope: "spree.api.order"),
-                       errors: @order.errors
-                     }, status: 422
+                error: I18n.t(:could_not_transition, scope: "spree.api.order"),
+                errors: @order.errors
+              }, status: 422
             end
           else
             invalid_resource!(@order)
@@ -79,9 +78,9 @@ module Spree
 
         def raise_insufficient_quantity
           render json: {
-                   error: I18n.t(:insufficient_quantity, scope: "spree.api.order"),
-                   errors: @order.errors
-                 }, status: 422
+            error: I18n.t(:insufficient_quantity, scope: "spree.api.order"),
+            errors: @order.errors
+          }, status: 422
         end
 
         def state_callback(before_or_after = :before)
@@ -95,9 +94,9 @@ module Spree
 
             if handler.error.present?
               render json: {
-                       error: I18n.t(:could_not_apply_coupon, scope: "spree.api.order"),
-                       errors: handler.error
-                     }, status: 422
+                error: I18n.t(:could_not_apply_coupon, scope: "spree.api.order"),
+                errors: handler.error
+              }, status: 422
               return true
             end
           end

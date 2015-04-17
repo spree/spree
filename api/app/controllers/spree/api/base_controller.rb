@@ -46,10 +46,10 @@ module Spree
 
       def content_type
         case params[:format]
-          when "json"
-            "application/json; charset=utf-8"
-          when "xml"
-            "text/xml; charset=utf-8"
+        when "json"
+          "application/json; charset=utf-8"
+        when "xml"
+          "text/xml; charset=utf-8"
         end
       end
 
@@ -106,8 +106,7 @@ module Spree
 
         error_notifier.call(exception, self) if error_notifier
 
-        render text: {exception: exception.message}.to_json,
-               status: 422
+        render text: {exception: exception.message}.to_json, status: 422
       end
 
       def gateway_error(exception)

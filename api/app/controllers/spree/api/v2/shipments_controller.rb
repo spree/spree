@@ -13,7 +13,8 @@ module Spree
               .joins(:order)
               .where(spree_orders: {user_id: current_api_user.id})
               .includes(mine_includes)
-              .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+              .ransack(params[:q]).result.page(params[:page])
+              .per(params[:per_page])
 
             render json: @shipments, meta: pagination(@shipments)
           else
@@ -23,11 +24,13 @@ module Spree
         end
 
         def create
-          @order = Spree::Order.find_by!(number: params.fetch(:shipment).fetch(:order_id))
+          @order = Spree::Order.find_by!(number: params.fetch(:shipment)
+            .fetch(:order_id))
           authorize! :read, @order
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
-          @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
+          @shipment = @order.shipments.create(stock_location_id: params
+            .fetch(:stock_location_id))
           @order.contents.add(variant, quantity, {shipment: @shipment})
 
           @shipment.save!
@@ -36,7 +39,10 @@ module Spree
         end
 
         def update
-          @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find(params[:id])
+          @shipment = Spree::Shipment.accessible_by(current_ability, :update)
+            .readonly(false)
+            .friendly
+            .find(params[:id])
           @shipment.update_attributes_and_order(shipment_params)
 
           render json: @shipment
@@ -47,8 +53,9 @@ module Spree
             if @shipment.can_ready?
               @shipment.ready!
             else
-              render json: { error: I18n.t(:cannot_ready, scope: "spree.api.shipment") },
-                status: 422 and return
+              render json: {
+                error: I18n.t(:cannot_ready, scope: "spree.api.shipment")
+                }, status: 422 and return
             end
           end
           render json: @shipment
@@ -72,35 +79,48 @@ module Spree
         def remove
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.remove(variant, quantity, {shipment: @shipment})
+          @shipment.order
+            .contents
+            .remove(variant, quantity, {shipment: @shipment})
           @shipment.reload if @shipment.persisted?
           render json: @shipment
         end
 
         def transfer_to_location
-          @stock_location = Spree::StockLocation.find(params[:stock_location_id])
-          @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          @stock_location = Spree::StockLocation
+            .find(params[:stock_location_id])
+          @original_shipment
+            .transfer_to_location(@variant, @quantity, @stock_location)
+          render json: {
+              success: true,
+              message: Spree.t(:shipment_transfer_success)
+            }, status: 201
         end
 
         def transfer_to_shipment
-          @target_shipment  = Spree::Shipment.friendly.find(params[:target_shipment_number])
+          @target_shipment  = Spree::Shipment.friendly
+            .find(params[:target_shipment_number])
           @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          render json: {
+              success: true,
+              message: Spree.t(:shipment_transfer_success)
+            }, status: 201
         end
 
         private
 
         def load_transfer_params
-          @original_shipment         = Spree::Shipment.friendly.find(params[:original_shipment_number])
-          @variant                   = Spree::Variant.find(params[:variant_id])
-          @quantity                  = params[:quantity].to_i
+          @original_shipment = Spree::Shipment.friendly
+            .find(params[:original_shipment_number])
+          @variant = Spree::Variant.find(params[:variant_id])
+          @quantity = params[:quantity].to_i
           authorize! :read, @original_shipment
           authorize! :create, Shipment
         end
 
         def find_and_update_shipment
-          @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).friendly.find(params[:id])
+          @shipment = Spree::Shipment.accessible_by(current_ability, :update)
+            .readonly(false).friendly.find(params[:id])
           @shipment.update_attributes(shipment_params)
           @shipment.reload
         end
