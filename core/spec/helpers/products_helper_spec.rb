@@ -173,6 +173,10 @@ THIS IS THE BEST PRODUCT EVER!
         let(:description) { 'test&nbsp;desc' }
         it { is_expected.to eq('test desc') }
       end
+      context 'description has line endings' do
+        let(:description) { "test\n\r\ndesc" }
+        it { is_expected.to eq('test desc') }
+      end
     end
 
     context "#line_item_description" do
