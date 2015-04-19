@@ -45,7 +45,7 @@ module Spree
 
     def line_item_description_text description_text
       if description_text.present?
-        truncate(strip_tags(description_text.gsub('&nbsp;', ' ').gsub(/\r?\n\r?\n/, ' ')), length: 100)
+        truncate(strip_tags(description_text.gsub('&nbsp;', ' ').squish), length: 100)
       else
         Spree.t(:product_has_no_description)
       end
