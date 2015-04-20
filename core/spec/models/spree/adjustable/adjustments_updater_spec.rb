@@ -279,8 +279,20 @@ module Spree
           expect(line_item.adjustments.promotion.eligible.count).to eq(1)
           expect(line_item.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
         end
-      end
 
+        context "sourceless adjustments are accounted for" do
+          before do
+            create(:adjustment, adjustable: line_item, order: order, amount: -5, source: nil)
+          end
+
+          it "should apply the sourceless line item adjustment" do
+            subject.update
+            expect(line_item.adjustments.count).to eq(1)
+            expect(line_item.adjustments.first.source_type).to be_nil
+            expect(line_item.adjustment_total).to eq(-5)
+          end
+        end
+      end
     end
   end
 end

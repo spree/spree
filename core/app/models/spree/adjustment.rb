@@ -55,6 +55,7 @@ module Spree
       source_type = arel_table[:source_type]
       where(source_type.not_eq('Spree::TaxRate').or source_type.eq(nil))
     end
+    scope :sourceless, -> { where(source_type: nil) }
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
     scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
     scope :optional, -> { where(mandatory: false) }

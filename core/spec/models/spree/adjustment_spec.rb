@@ -50,6 +50,22 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
+  describe 'sourceless scope' do
+    subject do
+      Spree::Adjustment.sourceless.to_a
+    end
+
+    let!(:tax_adjustment) { create(:adjustment, order: order, source: create(:tax_rate)) }
+    let!(:non_tax_adjustment_with_source) { create(:adjustment, order: order, source_type: 'Spree::Order', source_id: nil) }
+    let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
+
+    it 'selects sourceless adjustments' do
+      expect(subject).to_not include tax_adjustment
+      expect(subject).to_not include non_tax_adjustment_with_source
+      expect(subject).to include non_tax_adjustment_without_source
+    end
+  end
+
   describe 'competing_promos scope' do    
     before do
       allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
