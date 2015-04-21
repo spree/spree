@@ -1,6 +1,8 @@
 module Spree
   module Stock
     class Estimator
+      include VatPriceCalculation
+
       attr_reader :order, :currency
 
       def initialize(order)
@@ -28,14 +30,20 @@ module Spree
       def calculate_shipping_rates(package, ui_filter)
         shipping_methods(package, ui_filter).map do |shipping_method|
           cost = shipping_method.calculator.compute(package)
-          tax_rate = Spree::TaxRate.potential_rates_for_zone(order.tax_zone).
-            where(tax_category: shipping_method.tax_category).first
+          tax_category = shipping_method.tax_category
+          zone = @order.tax_zone
 
           shipping_method.shipping_rates.new(
-            cost: cost,
-            tax_rate: tax_rate
+            cost: gross_amount(cost, zone, tax_category),
+            tax_rate: first_tax_rate_for(zone, tax_category)
           ) if cost
         end.compact
+      end
+
+      def first_tax_rate_for(zone, tax_category)
+        return unless zone && tax_category
+        Spree::TaxRate.for_tax_category(tax_category).
+          potential_rates_for_zone(@order.tax_zone).first
       end
 
       def shipping_methods(package, display_filter)

@@ -45,13 +45,16 @@ describe Spree::Price, :type => :model do
     let(:default_zone) { Spree::Zone.new }
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }
+    let(:tax_category) { Spree::TaxCategory.new }
     subject { Spree::Price.new variant: variant, amount: amount }
 
     context 'when called with a non-default zone' do
       before do
+        allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(subject).to receive(:default_zone).at_least(:once).and_return(default_zone)
-        allow(subject).to receive(:included_tax_amount).with(default_zone) { 0.19 }
-        allow(subject).to receive(:included_tax_amount).with(zone) { 0.25 }
+        allow(subject).to receive(:apply_foreign_vat?).and_return(true)
+        allow(subject).to receive(:included_tax_amount).with(default_zone, tax_category) { 0.19 }
+        allow(subject).to receive(:included_tax_amount).with(zone, tax_category) { 0.25 }
       end
 
       it "returns the correct price including another VAT to two digits" do
@@ -61,6 +64,7 @@ describe Spree::Price, :type => :model do
 
     context 'when called from the default zone' do
       before do
+        allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(subject).to receive(:default_zone).at_least(:once).and_return(zone)
       end
 
@@ -72,6 +76,7 @@ describe Spree::Price, :type => :model do
 
     context 'when no default zone is set' do
       before do
+        allow(variant).to receive(:tax_category).and_return(tax_category)
         expect(subject).to receive(:default_zone).at_least(:once).and_return(nil)
       end
 
