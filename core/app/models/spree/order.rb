@@ -278,9 +278,9 @@ module Spree
     end
 
     def update_line_item_prices!
-      line_items.each do |line_item|
-        line_item.update_price
-        line_item.save
+      transaction do
+        line_items.each(&:update_price)
+        save!
       end
     end
 
