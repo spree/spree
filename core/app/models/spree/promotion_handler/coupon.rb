@@ -50,7 +50,7 @@ module Spree
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order,
                                                                                  order.coupon_code)
         return promotion_applied if promotion_exists_on_order?(order, promotion)
-        unless promotion.eligible?(order, order.coupon_code)
+        unless promotion.eligible?(order) && promotion.code_for(order.coupon_code).try(:eligible?, order)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (self.error || ineligible_for_this_order)
         end

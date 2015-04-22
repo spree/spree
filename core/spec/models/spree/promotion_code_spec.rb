@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe Spree::PromotionCode do
 
-  describe "normalize_blank_values" do
-    let(:code) { create(:promotion_code, value: '') }
+  describe "normalize_value" do
+    let(:code) { create(:promotion_code, value: '  BaNaNA ') }
 
-    it "will save blank value as nil value instead" do
-      expect(code.value).to be_nil
+    it "will strip and downcase value" do
+      expect(code.value).to eq 'banana'
     end
   end
 

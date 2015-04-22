@@ -37,7 +37,7 @@ module Spree
         "#{order_join_table}.promotion_id = #{table_name}.id").distinct
     end
     scope :coupons, -> do
-      joins(:promotion_codes).where("#{Spree::PromotionCode.table_name}.value IS NOT NULL")
+      joins(:promotion_codes)
     end
 
     def self.advertised
@@ -45,31 +45,22 @@ module Spree
     end
 
     def self.with_coupon_code(coupon_code)
-      joins(:promotion_codes).where(
-        "lower(#{Spree::PromotionCode.table_name}.value) = ?", coupon_code.strip.downcase
-      ).first
+      joins(:promotion_codes).where(promotion_codes: { value: coupon_code }).first
     end
 
     def self.active
-      where("#{Spree::Promotion.table_name}.starts_at IS NULL OR " \
-        "#{Spree::Promotion.table_name}.starts_at < ? AND " \
-        "#{Spree::Promotion.table_name}.expires_at IS NULL OR " \
-        "#{Spree::Promotion.table_name}.expires_at > ?", Time.now, Time.now)
+      where("#{table_name}.starts_at IS NULL OR " \
+        "#{table_name}.starts_at < ? AND " \
+        "#{table_name}.expires_at IS NULL OR " \
+        "#{table_name}.expires_at > ?", Time.now, Time.now)
     end
 
     def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
-    def expired?(coupon_code = nil)
-      promo_exp = !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
-      code      = codes.where(value: coupon_code) if coupon_code.present?
-
-      if code.present?
-        promo_exp && code.expired?
-      else
-        promo_exp
-      end
+    def expired?
+      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
     end
 
     def activate(payload)
@@ -97,21 +88,27 @@ module Spree
       return action_taken
     end
 
-    # Failsafe - backwards compatibility
     def code
+      ActiveSupport::Deprecation.warn("Spree::Promotion#code has been replaced by #codes")
       codes.first.try(:value)
     end
 
-    # Failsafe - backwards compatibility
     def code=(value)
-      codes.build(value: value) unless value.blank?
+      ActiveSupport::Deprecation.warn("Spree::Promotion#code has been replaced by #codes")
+      if codes.any?
+        codes.first.update_attribute(:value, value)
+      else
+        codes.build(value: value)
+      end
+    end
+
+    def code_for(value)
+      codes.find_by(value: value)
     end
 
     # called anytime order.update! happens
-    def eligible?(promotable, coupon_code = nil)
-      return false if expired?(coupon_code) ||
-                        usage_limit_exceeded?(promotable, coupon_code) ||
-                        blacklisted?(promotable)
+    def eligible?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
       !!eligible_rules(promotable, {})
     end
 
@@ -151,15 +148,8 @@ module Spree
       rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
     end
 
-    def usage_limit_exceeded?(promotable, coupon_code = nil)
-      promo_exc = usage_limit.to_i > 0 && adjusted_credits_count(promotable) >= usage_limit
-      code      = codes.where(value: coupon_code) if coupon_code.present?
-
-      if code.present?
-        promo_exc && code.usage_limit_exceeded?
-      else
-        promo_exc
-      end
+    def usage_limit_exceeded?(promotable)
+      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
     end
 
     def adjusted_credits_count(promotable)
