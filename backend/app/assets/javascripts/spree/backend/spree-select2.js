@@ -5,4 +5,4 @@ jQuery(function($) {
     allowClear: true,
     dropdownAutoWidth: true
   });
-})
+});
