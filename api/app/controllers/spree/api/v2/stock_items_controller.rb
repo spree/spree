@@ -59,12 +59,12 @@ module Spree
         private
 
         def stock_location
-          render json: { error: I18n.t(:stock_location_required, scope: "spree.api") }, status: 422 and return unless params[:stock_location_id]
+          render(json: { error: I18n.t(:stock_location_required, scope: "spree.api") }, status: 422) && return unless params[:stock_location_id]
           @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
         end
 
         def scope
-          includes = {:variant => [{ :option_values => :option_type }, :product] }
+          includes = { variant: [{ option_values: :option_type }, :product] }
           @stock_location.stock_items.accessible_by(current_ability, :read).includes(includes)
         end
 

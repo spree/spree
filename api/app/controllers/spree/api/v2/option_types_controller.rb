@@ -38,13 +38,14 @@ module Spree
         def destroy
           @option_type = Spree::OptionType.accessible_by(current_ability, :destroy).find(params[:id])
           @option_type.destroy
-          render :text => nil, :status => 204
+          render text: nil, status: 204
         end
 
         private
-          def option_type_params
-            params.require(:option_type).permit(permitted_option_type_attributes)
-          end
+
+        def option_type_params
+          params.require(:option_type).permit(permitted_option_type_attributes)
+        end
       end
     end
   end

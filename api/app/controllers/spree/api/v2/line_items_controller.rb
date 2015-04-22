@@ -39,32 +39,33 @@ module Spree
         end
 
         private
-          def order
-            @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
-            authorize! :update, @order, order_token
-          end
 
-          def find_line_item
-            id = params[:id].to_i
-            order.line_items.detect { |line_item| line_item.id == id } or
-                raise ActiveRecord::RecordNotFound
-          end
+        def order
+          @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
+          authorize! :update, @order, order_token
+        end
 
-          def line_items_attributes
-            {line_items_attributes: {
-                id: params[:id],
-                quantity: params[:line_item][:quantity],
-                options: line_item_params[:options] || {}
-            }}
-          end
+        def find_line_item
+          id = params[:id].to_i
+          order.line_items.detect { |line_item| line_item.id == id } ||
+            raise(ActiveRecord::RecordNotFound)
+        end
 
-          def line_item_params
-            params.require(:line_item).permit(
-                :quantity,
-                :variant_id,
-                options: line_item_options
-            )
-          end
+        def line_items_attributes
+          { line_items_attributes: {
+            id: params[:id],
+            quantity: params[:line_item][:quantity],
+            options: line_item_params[:options] || {}
+          } }
+        end
+
+        def line_item_params
+          params.require(:line_item).permit(
+              :quantity,
+              :variant_id,
+              options: line_item_options
+          )
+        end
       end
     end
   end

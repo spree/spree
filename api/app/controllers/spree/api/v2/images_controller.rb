@@ -2,7 +2,6 @@ module Spree
   module Api
     module V2
       class ImagesController < Spree::Api::BaseController
-
         def index
           @images = scope.images.accessible_by(current_ability, :read)
           render json: @images
@@ -32,17 +31,18 @@ module Spree
         end
 
         private
-          def image_params
-            params.require(:image).permit(permitted_image_attributes)
-          end
 
-          def scope
-            if params[:product_id]
-              scope = Spree::Product.friendly.find(params[:product_id])
-            elsif params[:variant_id]
-              scope = Spree::Variant.find(params[:variant_id])
-            end
+        def image_params
+          params.require(:image).permit(permitted_image_attributes)
+        end
+
+        def scope
+          if params[:product_id]
+            scope = Spree::Product.friendly.find(params[:product_id])
+          elsif params[:variant_id]
+            scope = Spree::Variant.find(params[:variant_id])
           end
+        end
       end
     end
   end
