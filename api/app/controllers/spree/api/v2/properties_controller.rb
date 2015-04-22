@@ -14,6 +14,7 @@ module Spree
           end
 
           @properties = @properties.page(params[:page]).per(params[:per_page])
+
           render json: @properties, meta: pagination(@properties)
         end
 
