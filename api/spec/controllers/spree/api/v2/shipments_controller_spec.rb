@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::V2::ShipmentsController, :type => :controller do
+describe Spree::Api::V2::ShipmentsController, type: :controller do
   render_views
   let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
@@ -53,7 +53,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
           it 'should return proper error' do
             subject
             expect(response.status).to eq(422)
-            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field.to_s}")
+            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field}")
           end
         end
       end
@@ -96,7 +96,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
       let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
-        api_put :add, { variant_id: variant.to_param, quantity: 2 }
+        api_put :add,  variant_id: variant.to_param, quantity: 2
         expect(response.status).to eq(200)
         expect(json_response["shipment"]['manifest'].detect { |h| h['variant_id'] == variant.id }["quantity"]).to eq(2)
       end
@@ -104,7 +104,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
       it 'removes a variant from a shipment' do
         order.contents.add(variant, 2)
 
-        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        api_put :remove,  variant_id: variant.to_param, quantity: 1
         expect(response.status).to eq(200)
         expect(json_response["shipment"]['manifest'].detect { |h| h['variant_id'] == variant.id }["quantity"]).to eq(1)
       end
@@ -113,7 +113,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         order.contents.add(variant, 2)
         variant.destroy
 
-        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        api_put :remove,  variant_id: variant.to_param, quantity: 1
         expect(response.status).to eq(200)
         expect(json_response["shipment"]['manifest'].detect { |h| h['variant_id'] == variant.id }["quantity"]).to eq(1)
       end
@@ -124,7 +124,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
         shipment.update!(shipment.order)
         expect(shipment.state).to eq("ready")
-        allow_any_instance_of(Spree::ShippingRate).to receive_messages(:cost => 5)
+        allow_any_instance_of(Spree::ShippingRate).to receive_messages(cost: 5)
       end
 
       it "can transition a shipment from ready to ship" do
@@ -133,7 +133,6 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         expect(json_response["shipment"]).to have_attributes(attributes)
         expect(json_response["shipment"]["state"]).to eq("shipped")
       end
-
     end
 
     describe '#mine' do
@@ -156,9 +155,9 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         describe 'json output' do
           render_views
 
-          let(:rendered_shipment_ids) {
+          let(:rendered_shipment_ids) do
             json_response['shipments'].map { |s| s['id'] }
-          }
+          end
 
           it 'contains the shipments' do
             expect(rendered_shipment_ids).to match_array current_api_user.orders.flat_map(&:shipments).map(&:id)
@@ -166,7 +165,7 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         end
 
         context 'with filtering' do
-          let(:params) { {q: {order_completed_at_not_null: 1}} }
+          let(:params) { { q: { order_completed_at_not_null: 1 } } }
 
           let!(:incomplete_order) { create(:order, user: current_api_user) }
 
@@ -184,6 +183,5 @@ describe Spree::Api::V2::ShipmentsController, :type => :controller do
         end
       end
     end
-
   end
 end

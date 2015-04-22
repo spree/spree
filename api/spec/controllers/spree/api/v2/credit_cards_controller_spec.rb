@@ -1,23 +1,23 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V2::CreditCardsController, :type => :controller do
+  describe Api::V2::CreditCardsController, type: :controller do
     render_views
 
     let!(:admin_user) do
-      user = Spree.user_class.new(:email => "spree@example.com", :id => 1)
+      user = Spree.user_class.new(email: "spree@example.com", id: 1)
       user.generate_spree_api_key!
       allow(user).to receive(:has_spree_role?).with('admin').and_return(true)
       user
     end
 
     let!(:normal_user) do
-      user = Spree.user_class.new(:email => "spree2@example.com", :id => 2)
+      user = Spree.user_class.new(email: "spree2@example.com", id: 2)
       user.generate_spree_api_key!
       user
     end
 
-    let!(:card) { create(:credit_card, :user_id => admin_user.id, gateway_customer_profile_id: "random") }
+    let!(:card) { create(:credit_card, user_id: admin_user.id, gateway_customer_profile_id: "random") }
 
     before do
       stub_authentication!
@@ -58,7 +58,7 @@ module Spree
         user
       end
 
-      let!(:card) { create(:credit_card, :user_id => normal_user.id, gateway_customer_profile_id: "random") }
+      let!(:card) { create(:credit_card, user_id: normal_user.id, gateway_customer_profile_id: "random") }
 
       it "can not view user" do
         api_get :index, user_id: admin_user.id

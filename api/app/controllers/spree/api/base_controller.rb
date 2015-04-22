@@ -106,7 +106,7 @@ module Spree
 
         error_notifier.call(exception, self) if error_notifier
 
-        render text: {exception: exception.message}.to_json, status: 422
+        render text: { exception: exception.message }.to_json, status: 422
       end
 
       def gateway_error(exception)
@@ -162,7 +162,7 @@ module Spree
       end
 
       def variants_associations
-        [{option_values: :option_type}, :default_price, :images]
+        [{ option_values: :option_type }, :default_price, :images]
       end
 
       def product_includes

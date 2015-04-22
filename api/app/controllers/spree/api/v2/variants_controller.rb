@@ -24,8 +24,8 @@ module Spree
         # we render on the view so we better update it any time a node is included
         # or removed from the views.
         def index
-          @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
-            .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images,  stock_items: :stock_location).
+                      ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           render json: @variants, meta: pagination(@variants), each_serializer: Spree::BigVariantSerializer
         end
 
@@ -35,8 +35,8 @@ module Spree
         end
 
         def show
-          @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images, { stock_items: :stock_location })
-            .find(params[:id])
+          @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images,  stock_items: :stock_location).
+                     find(params[:id])
           render json: @variant, serializer: Spree::BigVariantSerializer
         end
 
@@ -50,27 +50,28 @@ module Spree
         end
 
         private
-          def product
-            @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+
+        def product
+          @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+        end
+
+        def scope
+          if @product
+            variants = @product.variants_including_master
+          else
+            variants = Variant
           end
 
-          def scope
-            if @product
-              variants = @product.variants_including_master
-            else
-              variants = Variant
-            end
-
-            if current_ability.can?(:manage, Variant) && params[:show_deleted]
-              variants = variants.with_deleted
-            end
-
-            variants.accessible_by(current_ability, :read)
+          if current_ability.can?(:manage, Variant) && params[:show_deleted]
+            variants = variants.with_deleted
           end
 
-          def variant_params
-            params.require(:variant).permit(permitted_variant_attributes)
-          end
+          variants.accessible_by(current_ability, :read)
+        end
+
+        def variant_params
+          params.require(:variant).permit(permitted_variant_attributes)
+        end
       end
     end
   end

@@ -28,7 +28,7 @@ module Spree
         private
 
         def stock_location
-          render json: { error: I18n.t(:stock_location_required, scope: "spree.api") }, status: 402 and return unless params[:stock_location_id]
+          render(json: { error: I18n.t(:stock_location_required, scope: "spree.api") }, status: 402) && return unless params[:stock_location_id]
           @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
         end
 
