@@ -2,8 +2,9 @@ module Spree
   module Api
     module V2
       class UsersController < Spree::Api::BaseController
+
         def index
-          @users = Spree.user_class.accessible_by(current_ability, :read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           render json: @users, meta: pagination(@users)
         end
 
@@ -50,6 +51,7 @@ module Spree
                                          [bill_address_attributes: permitted_address_attributes,
                                           ship_address_attributes: permitted_address_attributes])
         end
+
       end
     end
   end

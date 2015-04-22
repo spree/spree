@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V2::StockLocationsController, type: :controller do
+  describe Api::V2::StockLocationsController, :type => :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location) }
@@ -18,7 +18,7 @@ module Spree
       end
 
       it "cannot see a single stock location" do
-        api_get :show, id: stock_location.id
+        api_get :show, :id => stock_location.id
         expect(response.status).to eq(404)
       end
 
@@ -35,15 +35,16 @@ module Spree
       end
 
       it "cannot update a stock location" do
-        api_put :update, stock_location: { name: "South Pole" }, id: stock_location.to_param
+        api_put :update, :stock_location => { :name => "South Pole" }, :id => stock_location.to_param
         expect(response.status).to eq(404)
       end
 
       it "cannot delete a stock location" do
-        api_put :destroy, id: stock_location.to_param
+        api_put :destroy, :id => stock_location.to_param
         expect(response.status).to eq(404)
       end
     end
+
 
     context "as an admin" do
       sign_in_as_admin!

@@ -17,9 +17,9 @@ module Spree
 
       let!(:non_default_store) do
         create(:store,
-               name: "Extra Store",
-               url: "spreestore-5.example.com",
-               default: false
+          name: "Extra Store",
+          url: "spreestore-5.example.com",
+          default: false
         )
       end
 
@@ -108,6 +108,7 @@ module Spree
     end
 
     context "as an user" do
+
       it "I cannot list all the stores" do
         api_get :index
         expect(response.status).to eq(401)

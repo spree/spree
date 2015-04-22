@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V2::InventoryUnitsController, type: :controller do
+  describe Api::V2::InventoryUnitsController, :type => :controller do
     render_views
 
     before do
@@ -13,34 +13,34 @@ module Spree
       sign_in_as_admin!
 
       it "gets an inventory unit" do
-        api_get :show, id: @inventory_unit.id
+        api_get :show, :id => @inventory_unit.id
         expect(json_response['inventory_unit']['state']).to eq @inventory_unit.state
       end
 
       it "updates an inventory unit (only shipment is accessable by default)" do
-        api_put :update, id: @inventory_unit.id,
-                         inventory_unit: { shipment: nil }
+        api_put :update, :id => @inventory_unit.id,
+                         :inventory_unit => { :shipment => nil }
         expect(json_response['inventory_unit']['shipment_id']).to be_nil
       end
 
       context 'fires state event' do
         it 'if supplied with :fire param' do
-          api_put :update, id: @inventory_unit.id,
-                           fire: 'ship',
-                           inventory_unit: { shipment: nil }
+          api_put :update, :id => @inventory_unit.id,
+                           :fire => 'ship',
+                           :inventory_unit => { :shipment => nil }
 
           expect(json_response['inventory_unit']['state']).to eq 'shipped'
         end
 
         it 'and returns exception if cannot fire' do
-          api_put :update, id: @inventory_unit.id,
-                           fire: 'return'
+          api_put :update, :id => @inventory_unit.id,
+                           :fire => 'return'
           expect(json_response['exception']).to match /cannot transition to return/
         end
 
         it 'and returns exception bad state' do
-          api_put :update, id: @inventory_unit.id,
-                           fire: 'bad'
+          api_put :update, :id => @inventory_unit.id,
+                           :fire => 'bad'
           expect(json_response['exception']).to match /cannot transition to bad/
         end
       end

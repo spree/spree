@@ -5,7 +5,7 @@ module Spree
         before_action :prepare_event, only: :update
 
         def show
-          render json: inventory_unit
+           render json: inventory_unit
         end
 
         def update
@@ -34,8 +34,8 @@ module Spree
 
           unless inventory_unit.respond_to?(can_event) &&
                  inventory_unit.send(can_event)
-            render text: { exception: "cannot transition to #{@event}" }.to_json,
-                   status: 200
+            render :text => { :exception => "cannot transition to #{@event}" }.to_json,
+                   :status => 200
             false
           end
         end

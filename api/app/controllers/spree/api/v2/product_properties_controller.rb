@@ -2,6 +2,7 @@ module Spree
   module Api
     module V2
       class ProductPropertiesController < Spree::Api::BaseController
+
         before_action :find_product
         before_action :product_property, only: [:show, :update, :destroy]
 
@@ -51,22 +52,22 @@ module Spree
 
         private
 
-        def find_product
-          @product = super(params[:product_id])
-          authorize! :read, @product
-        end
-
-        def product_property
-          if @product
-            @product_property ||= @product.product_properties.find_by(id: params[:id])
-            @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
-            authorize! :read, @product_property
+          def find_product
+            @product = super(params[:product_id])
+            authorize! :read, @product
           end
-        end
 
-        def product_property_params
-          params.require(:product_property).permit(permitted_product_properties_attributes)
-        end
+          def product_property
+            if @product
+              @product_property ||= @product.product_properties.find_by(id: params[:id])
+              @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
+              authorize! :read, @product_property
+            end
+          end
+
+          def product_property_params
+            params.require(:product_property).permit(permitted_product_properties_attributes)
+          end
       end
     end
   end

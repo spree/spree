@@ -2,6 +2,7 @@ module Spree
   module Api
     module V2
       class PaymentsController < Spree::Api::BaseController
+
         before_action :find_order
         before_action :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void]
 
@@ -30,8 +31,8 @@ module Spree
             render json: {
               error: I18n.t(
                 :update_forbidden,
-                state: @payment.state,
-                scope: 'spree.api.payment'
+                :state => @payment.state,
+                :scope => 'spree.api.payment'
               )
             }, status: 403
           elsif @payment.update_attributes(payment_params)
@@ -63,24 +64,24 @@ module Spree
 
         private
 
-        def find_order
-          @order = Spree::Order.friendly.find(order_id)
-          authorize! :read, @order, order_token
-        end
+          def find_order
+            @order = Spree::Order.friendly.find(order_id)
+            authorize! :read, @order, order_token
+          end
 
-        def find_payment
-          @payment = @order.payments.friendly.find(params[:id])
-        end
+          def find_payment
+            @payment = @order.payments.friendly.find(params[:id])
+          end
 
-        def perform_payment_action(action, *args)
-          authorize! action, Payment
-          @payment.send("#{action}!", *args)
-          render json: @payment, default_template: :show
-        end
+          def perform_payment_action(action, *args)
+            authorize! action, Payment
+            @payment.send("#{action}!", *args)
+            render json: @payment, default_template: :show
+          end
 
-        def payment_params
-          params.require(:payment).permit(permitted_payment_attributes)
-        end
+          def payment_params
+            params.require(:payment).permit(permitted_payment_attributes)
+          end
       end
     end
   end

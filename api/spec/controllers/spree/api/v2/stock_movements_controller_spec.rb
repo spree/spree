@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V2::StockMovementsController, type: :controller do
+  describe Api::V2::StockMovementsController, :type => :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location_with_items) }
@@ -81,3 +81,4 @@ module Spree
     end
   end
 end
+
