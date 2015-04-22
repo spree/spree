@@ -3,6 +3,10 @@ class window.Spree
   @ready: (callback) ->
     jQuery(document).ready(callback)
 
+    # fire ready callbacks also on turbolinks page change event
+    jQuery(document).on 'page:load', ->
+      callback(jQuery)
+
   @mountedAt: ->
     "<%= Rails.application.routes.url_helpers.spree_path %>"
 
