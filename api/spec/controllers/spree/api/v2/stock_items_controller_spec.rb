@@ -1,13 +1,15 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V2::StockItemsController, :type => :controller do
+  describe Api::V2::StockItemsController, type: :controller do
     render_views
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_item) { stock_location.stock_items.order(:id).first }
-    let!(:attributes) { [:id, :count_on_hand, :backorderable,
-                         :stock_location_id, :variant_id] }
+    let!(:attributes) do
+      [:id, :count_on_hand, :backorderable,
+       :stock_location_id, :variant_id]
+    end
 
     before do
       stub_authentication!
@@ -40,13 +42,13 @@ module Spree
 
       it "cannot update a stock item" do
         api_put :update, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                         id: stock_item.to_param
         expect(response.status).to eq(404)
       end
 
       it "cannot destroy a stock item" do
         api_delete :destroy, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                             id: stock_item.to_param
         expect(response.status).to eq(404)
       end
     end

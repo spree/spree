@@ -2,7 +2,6 @@ module Spree
   module Api
     module V2
       class ZonesController < Spree::Api::BaseController
-
         def create
           authorize! :create, Zone
           @zone = Zone.new(map_nested_attributes_keys(Spree::Zone, zone_params))
@@ -38,6 +37,7 @@ module Spree
         end
 
         private
+
         def zone_params
           params.require(:zone).permit!
         end

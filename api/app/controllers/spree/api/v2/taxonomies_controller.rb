@@ -2,7 +2,6 @@ module Spree
   module Api
     module V2
       class TaxonomiesController < Spree::Api::BaseController
-
         def index
           render json: taxonomies, meta: pagination(taxonomies),
                  each_serializer: Spree::NestedTaxonomySerializer
@@ -11,8 +10,8 @@ module Spree
         def show
           if params[:set]
             render json: taxonomy,
-                      serializer: Spree::NestedTaxonomySerializer,
-                      root: :taxonomy
+                   serializer: Spree::NestedTaxonomySerializer,
+                   root: :taxonomy
           else
             render json: taxonomy
           end
@@ -58,7 +57,7 @@ module Spree
         private
 
         def taxonomies
-          @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
+          @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(root: :children).
                         ransack(params[:q]).result.
                         page(params[:page]).per(params[:per_page])
         end
