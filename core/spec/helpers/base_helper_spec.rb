@@ -103,7 +103,7 @@ describe Spree::BaseHelper, type: :helper do
       # Because the controller_name method returns "test"
       # controller_name is used by this method to infer what it is supposed
       # to be generating meta_data_tags for
-      text = Faker::Lorem.paragraphs(2).join(" ")
+      text = FFaker::Lorem.paragraphs(2).join(" ")
       @test = Spree::Product.new(:description => text)
       tags = Nokogiri::HTML.parse(meta_data_tags)
       content = tags.css("meta[name=description]").first["content"]
