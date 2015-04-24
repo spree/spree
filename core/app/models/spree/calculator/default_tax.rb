@@ -2,6 +2,7 @@ require_dependency 'spree/calculator'
 
 module Spree
   class Calculator::DefaultTax < Calculator
+    include VatPriceCalculation
     def self.description
       Spree.t(:default_tax)
     end
@@ -38,11 +39,7 @@ module Spree
     def compute_shipping_rate(shipping_rate)
       if rate.included_in_price
         pre_tax_amount = shipping_rate.cost / (1 + rate.amount)
-        if rate.zone == shipping_rate.shipment.order.tax_zone
-          deduced_total_by_rate(pre_tax_amount, rate)
-        else
-          deduced_total_by_rate(pre_tax_amount, rate) * - 1
-        end
+        deduced_total_by_rate(pre_tax_amount, rate)
       else
         with_tax_amount = shipping_rate.cost * rate.amount
         round_to_two_places(with_tax_amount)
@@ -55,13 +52,8 @@ module Spree
       self.calculable
     end
 
-    def round_to_two_places(amount)
-      BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
-    end
-
     def deduced_total_by_rate(pre_tax_amount, rate)
       round_to_two_places(pre_tax_amount * rate.amount)
     end
-
   end
 end

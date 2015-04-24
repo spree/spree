@@ -105,16 +105,12 @@ Finally, if the taxable address (either the shipping or billing, depending on th
 
 Many jurisdictions have what is commonly referred to as a Value Added Tax (VAT.) In these cases the tax is typically applied to the price. This means that prices for items are "inclusive of tax" and no additional tax needs to be applied during checkout.
 
-In the case of tax inclusive pricing the store owner should enter all prices inclusive of tax. This makes it easy for Spree to display the tax inclusive price since it won't have to be constantly calculated on the fly.
+In the case of tax inclusive pricing the store owner can enter all prices inclusive of tax if their home country is the default zone. If there is no default zone set, any taxes that are included in the price will be added to the net prices on the fly depending on the current order's tax zone.
+
+If the current order's tax zone is outside the default zone, prices will be shown and used with only the included taxes for that zone applied. If there is no VAT for that zone (for example when the current order's shipping address is outside the EU), the net price will be shown and used.
 
 ***
 Keep in mind that each order records the price a customer paid (including the tax) as part of the line item record. This means you don't have to worry about changing prices or tax rates affecting older orders.
-***
-
-If you are going to designate one or more tax rates as being included in the price then you must first set up a default tax zone. Spree will not allow you to proceed without performing this step. This default zone is needed in cases where a customer might not be eligible to pay the tax.
-
-***
-You must choose a default tax zone if you are going to mark at a tax rate as being included in your product prices.
 ***
 
 When tax is included in the price there is no order adjustment needed (unlike the sales tax case). Stores are, however, typically interested in showing the amount of tax the user paid. These totals are for informational purposes only and do not affect the order total.
@@ -132,6 +128,25 @@ Now let's assume an additional tax rate of 10% on a "Consumer Electronics" tax c
 Finally, if the order's address is changed to being outside this tax zone, then there will be two negative adjustments applied to remove these tax rates from the order.
 
 ### Additional Examples
+
+
+#### Differing VATs for different product categories depending on the customer's zone
+
+As of January 1st, 2015, digital products sold within the EU must have the VAT of the receiving country applied. Physical products must have the seller's VAT applied. In order to set this up, please proceed as follows:
+
+1. Create zones for all EU countries and a zone for all EU countries except your home zone.
+
+2. Mark your home zone as the default zone so you can conveniently enter gross prices.
+
+3. Create a tax category "Digital products", and a tax category "Physical products".
+
+4. Add tax rates that are "included in tax" for the tax category "Physical goods" for all EU countries.
+
+5. Add two tax rates for the tax category "Physical products":
+  1. One for your home country, with your home country's VAT
+  2. One for the rest of the EU, also with your home country's VAT
+
+If you change the tax zone of the current order (by changing the relevant address), prices will now be shown and used including the correct VAT for the current order.
 
 !!!
 All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive interpretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.

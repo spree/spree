@@ -22,6 +22,15 @@ shared_examples_for "default_price" do
     subject { instance.default_price }
 
     its(:class) { should eql Spree::Price }
+    it 'delegates price' do
+      expect(instance.default_price). to receive(:price)
+      instance.price
+    end
+
+    it 'delegates price_including_vat_for' do
+      expect(instance.default_price). to receive(:price_including_vat_for)
+      instance.price_including_vat_for
+    end
   end
 
   its(:has_default_price?) { should be_truthy }

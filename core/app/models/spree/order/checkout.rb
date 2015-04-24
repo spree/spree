@@ -87,6 +87,7 @@ module Spree
               before_transition from: :cart, do: :ensure_line_items_present
 
               if states[:address]
+                before_transition from: :address, do: :update_line_item_prices!
                 before_transition from: :address, do: :create_tax_charge!
                 before_transition to: :address, do: :assign_default_addresses!
                 before_transition from: :address, do: :persist_user_address!

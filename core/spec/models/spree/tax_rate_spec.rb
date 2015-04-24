@@ -98,10 +98,7 @@ describe Spree::TaxRate, :type => :model do
         context "when the order has the same tax zone" do
           before do
             allow(order).to receive_messages :tax_zone => @zone
-            allow(order).to receive_messages :tax_address => tax_address
           end
-
-          let(:tax_address) { stub_model(Spree::Address) }
 
           context "when the tax is not a VAT" do
             it { is_expected.to eq([rate]) }
@@ -116,41 +113,21 @@ describe Spree::TaxRate, :type => :model do
         context "when the order has a different tax zone" do
           before do
             allow(order).to receive_messages :tax_zone => create(:zone, :name => "Other Zone")
-            allow(order).to receive_messages :tax_address => tax_address
           end
 
-          context "when the order has a tax_address" do
-            let(:tax_address) { stub_model(Spree::Address) }
-
-            context "when the tax is a VAT" do
-              let(:included_in_price) { true }
-              # The rate should match in this instance because:
-              # 1) It's the default rate (and as such, a negative adjustment should apply)
-              it { is_expected.to eq([rate]) }
-            end
-
-            context "when the tax is not VAT" do
-              it "returns no tax rate" do
-                expect(subject).to be_empty
-              end
+          context "when the tax is a VAT" do
+            let(:included_in_price) { true }
+            # The rate should NOT match in this instance because:
+            # The order has a different tax zone, and the price is
+            # henceforth a net price and will not change.
+            it 'return no tax rate' do
+              expect(subject).to be_empty
             end
           end
 
-          context "when the order does not have a tax_address" do
-            let(:tax_address) { nil}
-
-            context "when the tax is a VAT" do
-              let(:included_in_price) { true }
-              # The rate should match in this instance because:
-              # 1) The order has no tax address by this stage
-              # 2) With no tax address, it has no tax zone
-              # 3) Therefore, we assume the default tax zone
-              # 4) This default zone has a default tax rate.
-              it { is_expected.to eq([rate]) }
-            end
-
-            context "when the tax is not a VAT" do
-              it { is_expected.to be_empty }
+          context "when the tax is not VAT" do
+            it "returns no tax rate" do
+              expect(subject).to be_empty
             end
           end
         end
@@ -158,7 +135,7 @@ describe Spree::TaxRate, :type => :model do
     end
   end
 
-  context ".adjust" do
+  describe ".adjust" do
     let(:order) { stub_model(Spree::Order) }
     let(:tax_category_1) { stub_model(Spree::TaxCategory) }
     let(:tax_category_2) { stub_model(Spree::TaxCategory) }
@@ -201,9 +178,179 @@ describe Spree::TaxRate, :type => :model do
         Spree::TaxRate.adjust(order, shipments)
       end
     end
+
+    context "for MOSS taxation in Europe" do
+      let(:germany) { create :country, name: "Germany" }
+      let(:india) { create :country, name: "India" }
+      let(:france) { create :country, name: "France" }
+      let(:france_zone) { create :zone_with_country, name: "France Zone" }
+      let(:germany_zone) { create :zone_with_country, name: "Germany Zone", default_tax: true }
+      let(:india_zone) { create :zone_with_country, name: "India" }
+      let(:moss_category) { Spree::TaxCategory.create(name: "Digital Goods") }
+      let(:normal_category) { Spree::TaxCategory.create(name: "Analogue Goods") }
+      let(:eu_zone) { create(:zone, name: "EU") }
+
+      let!(:german_vat) do
+        Spree::TaxRate.create(
+          name: "German VAT",
+          amount: 0.19,
+          calculator: Spree::Calculator::DefaultTax.create,
+          tax_category: moss_category,
+          zone: germany_zone,
+          included_in_price: true
+        )
+      end
+      let!(:french_vat) do
+        Spree::TaxRate.create(
+          name: "French VAT",
+          amount: 0.25,
+          calculator: Spree::Calculator::DefaultTax.create,
+          tax_category: moss_category,
+          zone: france_zone,
+          included_in_price: true
+        )
+      end
+      let!(:eu_vat) do
+        Spree::TaxRate.create(
+          name: "EU_VAT",
+          amount: 0.19,
+          calculator: Spree::Calculator::DefaultTax.create,
+          tax_category: normal_category,
+          zone: eu_zone,
+          included_in_price: true
+        )
+      end
+
+      let(:download) { create(:product, tax_category: moss_category, price: 100) }
+      let(:tshirt) { create(:product, tax_category: normal_category, price: 100) }
+      let(:order) { Spree::Order.create }
+
+      before do
+        germany_zone.zone_members.create(zoneable: germany)
+        france_zone.zone_members.create(zoneable: france)
+        india_zone.zone_members.create(zoneable: india)
+        eu_zone.zone_members.create(zoneable: germany)
+        eu_zone.zone_members.create(zoneable: france)
+      end
+
+      context "a download" do
+        before do
+          order.contents.add(download.master, 1)
+        end
+
+        it "without an adress costs 100 euros including tax" do
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.display_total).to eq(Spree::Money.new(100))
+          expect(order.included_tax_total).to eq(15.97)
+        end
+
+        it "to germany costs 100 euros including tax" do
+          allow(order).to receive(:tax_zone).and_return(germany_zone)
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.display_total).to eq(Spree::Money.new(100))
+          expect(order.included_tax_total).to eq(15.97)
+        end
+
+        it "to france costs more including tax" do
+          allow(order).to receive(:tax_zone).and_return(france_zone)
+          order.update_line_item_prices!
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.display_total).to eq(Spree::Money.new(105.04))
+          expect(order.included_tax_total).to eq(21.01)
+          expect(order.additional_tax_total).to eq(0)
+        end
+
+        it "to somewhere else costs the net amount" do
+          allow(order).to receive(:tax_zone).and_return(india_zone)
+          order.update_line_item_prices!
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.included_tax_total).to eq(0)
+          expect(order.included_tax_total).to eq(0)
+          expect(order.display_total).to eq(Spree::Money.new(84.03))
+        end
+      end
+
+      context "a t-shirt" do
+        before do
+          order.contents.add(tshirt.master, 1)
+        end
+
+        it "to germany costs 100 euros including tax" do
+          allow(order).to receive(:tax_zone).and_return(germany_zone)
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.display_total).to eq(Spree::Money.new(100))
+          expect(order.included_tax_total).to eq(15.97)
+        end
+
+        it "to france costs 100 euros including tax" do
+          allow(order).to receive(:tax_zone).and_return(france_zone)
+          order.update_line_item_prices!
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.display_total).to eq(Spree::Money.new(100.00))
+          expect(order.included_tax_total).to eq(15.97)
+          expect(order.additional_tax_total).to eq(0)
+        end
+
+        it "to somewhere else costs the net amount" do
+          allow(order).to receive(:tax_zone).and_return(india_zone)
+          order.update_line_item_prices!
+          Spree::TaxRate.adjust(order, order.line_items)
+          order.update!
+          expect(order.included_tax_total).to eq(0)
+          expect(order.display_total).to eq(Spree::Money.new(84.03))
+        end
+      end
+    end
   end
 
-  context "#adjust" do
+  describe ".included_tax_amount_for" do
+    let!(:order) { create :order_with_line_items }
+    let!(:included_tax_rate) do
+      create :tax_rate,
+             included_in_price: true,
+             tax_category: order.line_items.first.tax_category,
+             zone: order.tax_zone,
+             amount: 0.4
+    end
+
+    let!(:other_included_tax_rate) do
+      create :tax_rate,
+             included_in_price: true,
+             tax_category: order.line_items.first.tax_category,
+             zone: order.tax_zone,
+             amount: 0.05
+    end
+
+    let!(:additional_tax_rate) do
+      create :tax_rate,
+             included_in_price: false,
+             tax_category: order.line_items.first.tax_category,
+             zone: order.tax_zone,
+             amount: 0.2
+    end
+
+    let!(:included_tax_rate_from_somewhere_else) do
+      create :tax_rate,
+             included_in_price: true,
+             tax_category: order.line_items.first.tax_category,
+             zone: create(:zone_with_country),
+             amount: 0.1
+    end
+
+    let(:line_item) { order.line_items.first }
+    subject { Spree::TaxRate.included_tax_amount_for(order.tax_zone, line_item.tax_category) }
+    it 'will only get me tax amounts from tax_rates that match' do
+      expect(subject).to eq(included_tax_rate.amount + other_included_tax_rate.amount)
+    end
+  end
+
+  describe "#adjust" do
     before do
       @country = create(:country)
       @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
@@ -254,7 +401,7 @@ describe Spree::TaxRate, :type => :model do
         context "when zone is contained by default tax zone" do
           it "should create two adjustments, one for each tax rate" do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.count).to eq(1)
+            expect(line_item.adjustments.count).to eq(2)
           end
 
           it "should not create a tax refund" do
@@ -265,11 +412,16 @@ describe Spree::TaxRate, :type => :model do
 
         context "when order's zone is neither the default zone, or included in the default zone, but matches the rate's zone" do
           before do
-            # With no zone members, this zone will not contain anything
-            # Previously:
-            # Zone.stub_chain :default_tax, :contains? => false
-            @zone.zone_members.delete_all
+            new_rate = Spree::TaxRate.create(
+              amount: 0.2,
+              included_in_price: true,
+              calculator: Spree::Calculator::DefaultTax.create,
+              tax_category: @category,
+              zone: create(:zone_with_country)
+            )
+            allow(@order).to receive(:tax_zone).and_return(new_rate.zone)
           end
+
           it "should create an adjustment" do
             Spree::TaxRate.adjust(@order, @order.line_items)
             expect(line_item.adjustments.charge.count).to eq(1)
@@ -295,9 +447,9 @@ describe Spree::TaxRate, :type => :model do
             expect(line_item.adjustments.charge.count).to eq(0)
           end
 
-          it "should create a tax refund for each tax rate" do
+          it "should not create a tax refund for each tax rate" do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.credit.count).to eq(1)
+            expect(line_item.adjustments.credit.count).to eq(0)
           end
         end
 
@@ -372,7 +524,7 @@ describe Spree::TaxRate, :type => :model do
 
           it "price adjustments should be accurate" do
             included_tax = @order.line_item_adjustments.sum(:amount)
-            expect(@price_before_taxes + included_tax).to eq(line_item.price)
+            expect(@price_before_taxes + included_tax).to eq(line_item.total)
           end
         end
       end
