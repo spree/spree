@@ -9,7 +9,7 @@ describe Spree::Promotion::Actions::CreateLineItems do
 
   def empty_stock(variant)
     variant.stock_items.update_all(backorderable: false)
-    variant.stock_items.each(&:reduce_count_on_hand_to_zero)
+    variant.stock_items.update_all(count_on_hand: 0)
   end
 
   context "#perform" do
