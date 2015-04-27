@@ -1,8 +1,8 @@
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model do
   let(:order) { create(:order_with_totals) }
 
   context "ensure shipments will be updated" do
-    before { Spree::Shipment.create!(order: order) }
+    before { Spree::Shipment.create!(order: order, stock_location: create(:stock_location)) }
 
     it "destroys current shipments" do
       order.ensure_updated_shipments
@@ -24,7 +24,7 @@ describe Spree::Order, :type => :model do
       it "doesn't touch anything" do
         allow(order).to receive_messages completed?: true
         order.update_column(:shipment_total, 5)
-        order.shipments.create!
+        order.shipments.create!(stock_location: create(:stock_location))
 
         expect {
           order.ensure_updated_shipments
