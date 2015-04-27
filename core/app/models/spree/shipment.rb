@@ -27,6 +27,8 @@ module Spree
 
     before_validation :set_cost_zero_when_nil
 
+    validates :stock_location, presence: true
+
     attr_accessor :special_instructions
 
     accepts_nested_attributes_for :address

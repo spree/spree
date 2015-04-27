@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model do
   let(:order) { Spree::Order.new }
   before do
     # Ensure state machine has been re-defined correctly
@@ -14,8 +14,8 @@ describe Spree::Order, :type => :model do
       before do
         order.state = "confirm"
         order.run_callbacks(:create)
-        allow(order).to receive_messages :payment_required? => true
-        allow(order).to receive_messages :process_payments! => true
+        allow(order).to receive_messages payment_required?: true
+        allow(order).to receive_messages process_payments!: true
         allow(order).to receive :has_available_shipment
       end
 
@@ -31,28 +31,28 @@ describe Spree::Order, :type => :model do
         end
 
         context "when credit card processing fails" do
-          before { allow(order).to receive_messages :process_payments! => false }
+          before { allow(order).to receive_messages process_payments!: false }
 
           it "should not complete the order" do
-             order.next
-             expect(order.state).to eq("confirm")
-           end
+            order.next
+            expect(order.state).to eq("confirm")
+          end
         end
       end
 
       context "when payment processing fails" do
-        before { allow(order).to receive_messages :process_payments! => false }
+        before { allow(order).to receive_messages process_payments!: false }
 
         it "cannot transition to complete" do
-         order.next
-         expect(order.state).to eq("confirm")
+          order.next
+          expect(order.state).to eq("confirm")
         end
       end
     end
 
     context "when current state is delivery" do
       before do
-        allow(order).to receive_messages :payment_required? => true
+        allow(order).to receive_messages payment_required?: true
         allow(order).to receive :apply_free_shipping_promotions
         order.state = "delivery"
       end
@@ -66,7 +66,7 @@ describe Spree::Order, :type => :model do
 
       it "adjusts tax rates twice if there are any shipments" do
         # Once for the line items, once for the shipments
-        order.shipments.build
+        order.shipments.build stock_location: create(:stock_location)
         expect(Spree::TaxRate).to receive(:adjust).twice
         allow(order).to receive :set_shipments_cost
         order.next!
@@ -77,7 +77,7 @@ describe Spree::Order, :type => :model do
   context "#can_cancel?" do
     %w(pending backorder ready).each do |shipment_state|
       it "should be true if shipment_state is #{shipment_state}" do
-        allow(order).to receive_messages :completed? => true
+        allow(order).to receive_messages completed?: true
         order.shipment_state = shipment_state
         expect(order.can_cancel?).to be true
       end
@@ -85,7 +85,7 @@ describe Spree::Order, :type => :model do
 
     (Spree::Shipment.state_machine.states.keys - [:pending, :backorder, :ready]).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
-        allow(order).to receive_messages :completed? => true
+        allow(order).to receive_messages completed?: true
         order.shipment_state = shipment_state
         expect(order.can_cancel?).to be false
       end
@@ -94,32 +94,31 @@ describe Spree::Order, :type => :model do
 
   context "#cancel" do
     let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, :variant => variant),
-                              stub_model(Spree::InventoryUnit, :variant => variant) ]}
+    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, variant: variant),
+                              stub_model(Spree::InventoryUnit, variant: variant)] }
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
-      allow(shipment).to receive_messages :inventory_units => inventory_units, :order => order
-      allow(order).to receive_messages :shipments => [shipment]
+      allow(shipment).to receive_messages inventory_units: inventory_units, order: order
+      allow(order).to receive_messages shipments: [shipment]
       shipment
     end
 
     before do
-
       2.times do
-        create(:line_item, :order => order, price: 10)
+        create(:line_item, order: order, price: 10)
       end
 
-      allow(order.line_items).to receive_messages :find_by_variant_id => order.line_items.first
+      allow(order.line_items).to receive_messages find_by_variant_id: order.line_items.first
 
-      allow(order).to receive_messages :completed? => true
-      allow(order).to receive_messages :allow_cancel? => true
+      allow(order).to receive_messages completed?: true
+      allow(order).to receive_messages allow_cancel?: true
 
       shipments = [shipment]
-      allow(order).to receive_messages :shipments => shipments
-      allow(shipments).to receive_messages :states => []
-      allow(shipments).to receive_messages :ready => []
-      allow(shipments).to receive_messages :pending => []
-      allow(shipments).to receive_messages :shipped => []
+      allow(order).to receive_messages shipments: shipments
+      allow(shipments).to receive_messages states: []
+      allow(shipments).to receive_messages ready: []
+      allow(shipments).to receive_messages pending: []
+      allow(shipments).to receive_messages shipped: []
 
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total) { 10 }
     end
@@ -152,7 +151,6 @@ describe Spree::Order, :type => :model do
     end
 
     context "resets payment state" do
-
       let(:payment) { create(:payment, amount: order.total) }
 
       before do
@@ -203,7 +201,6 @@ describe Spree::Order, :type => :model do
       end
     end
   end
-
 
   # Another regression test for #729
   context "#resume" do
