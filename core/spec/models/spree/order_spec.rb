@@ -99,18 +99,18 @@ describe Spree::Order, :type => :model do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      Spree::Shipment.create(order: order)
+      Spree::Shipment.create(order: order, stock_location: create(:stock_location))
       order.shipments.reload
 
-      allow(order).to receive_messages(:paid? => true, :complete? => true)
+      allow(order).to receive_messages(paid?: true, complete?: true)
       order.finalize!
       order.reload # reload so we're sure the changes are persisted
       expect(order.shipment_state).to eq('ready')
     end
 
-    after { Spree::Config.set :track_inventory_levels => true }
+    after { Spree::Config.set track_inventory_levels: true }
     it "should not sell inventory units if track_inventory_levels is false" do
-      Spree::Config.set :track_inventory_levels => false
+      Spree::Config.set track_inventory_levels: false
       expect(Spree::InventoryUnit).not_to receive(:sell_units)
       order.finalize!
     end
