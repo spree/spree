@@ -16,8 +16,19 @@ module Spree
       after_add_or_remove(line_item, options)
     end
 
-    def update_cart(params)
-      if order.update_attributes(filter_order_items(params))
+    # Arguments Example: [
+    #   {
+    #     "id": 2,
+    #     "quantity": 4
+    #   },
+    #   {
+    #     "id": 3,
+    #     "quantity": 2
+    #   }
+    # ]
+    def update_cart(attributes)
+      line_items_attributes = { line_items_attributes: attributes }
+      if order.update_attributes(line_items_attributes)
         order.line_items = order.line_items.select { |li| li.quantity > 0 }
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
