@@ -70,7 +70,7 @@ module Spree
       code      = codes.find_by_value(coupon_code) if coupon_code.present?
 
       if code.present?
-        promo_exp && code.expired?
+        promo_exp || code.expired?
       else
         promo_exp
       end
