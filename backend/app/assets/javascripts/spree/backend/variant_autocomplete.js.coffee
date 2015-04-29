@@ -19,6 +19,7 @@ $.fn.variantAutocomplete = ->
         callback data
     ajax:
       url: Spree.url(Spree.routes.variants_api)
+      quietMillis: 200
       datatype: "json"
       data: (term, page) ->
         q:
