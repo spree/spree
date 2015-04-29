@@ -1,5 +1,5 @@
 <%= form_for :order, :url => populate_orders_path do |f| %>
-  <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+  <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="col-md-6">
         <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
@@ -38,7 +38,7 @@
           </div>
 
           <% if @product.master.can_supply? %>
-            <link itemprop="availability" href="http://schema.org/InStock" />
+            <link itemprop="availability" href="https://schema.org/InStock" />
           <% elsif @product.variants.empty? %>
             <br />
             <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
