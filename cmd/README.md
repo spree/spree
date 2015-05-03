@@ -34,13 +34,13 @@ Examples
 --------
 
 If you want to accept all the defaults pass --auto_accept
-
+```
 spree install my_store --edge --auto_accept
-
+```
 to use a local clone of Spree, pass the --path option
-
+```
 spree install my_store --path=../spree
-
+```
 
 Options
 -------
