@@ -302,9 +302,9 @@ Further Documentation
 ------------
 Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
 
-Roadmap
+Request for Comments
 ------------
-Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.com/b/PQsUfCL0/spree-roadmap).
+Spree feature and change request for comments can be found at [https://github.com/spree-contrib/rfcs](https://github.com/spree-contrib/rfcs).
 
 Contributing
 ------------
