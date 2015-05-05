@@ -37,7 +37,7 @@ describe 'Product Details', type: :feature, js: true do
       click_button "Update"
       expect(page).to have_content("successfully updated!")
 
-      fill_in "product_slug", with: ''
+      fill_in "product_slug", with: 'a'
       click_button "Update"
       within('#product_slug_field') { expect(page).to have_content("is too short") }
 
