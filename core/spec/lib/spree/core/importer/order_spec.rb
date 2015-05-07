@@ -333,6 +333,18 @@ module Spree
           }.to raise_error
         end
 
+        context 'when a shipping adjustment is present' do
+          it 'creates the shipping adjustment' do
+            adjustment_attributes = [{ label: 'Shipping Discount', amount: -5.00 }]
+            params[:shipments_attributes][0][:adjustments_attributes] = adjustment_attributes
+            order = Importer::Order.import(user, params)
+            shipment = order.shipments.first
+
+            expect(shipment.adjustments.first.label).to eq('Shipping Discount')
+            expect(shipment.adjustments.first.amount).to eq(-5.00)
+          end
+        end
+
         context 'when completed_at and shipped_at present' do
           let(:params) do
             {

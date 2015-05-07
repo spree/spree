@@ -82,7 +82,7 @@ module Spree
                 shipment.shipped_at = s[:shipped_at]
                 shipment.state      = 'shipped'
               end
-
+ 
               shipment.save!
 
               shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
@@ -91,6 +91,8 @@ module Spree
               shipment.selected_shipping_rate_id = rate.id
               shipment.update_amounts
 
+              adjustments = s.delete(:adjustments_attributes)
+              create_adjustments_from_params(adjustments, order, shipment)
             rescue Exception => e
               raise "Order import shipments: #{e.message} #{s}"
             end
@@ -170,11 +172,11 @@ module Spree
           end
         end
 
-        def self.create_adjustments_from_params(adjustments, order, line_item = nil)
+        def self.create_adjustments_from_params(adjustments, order, adjustable = nil)
           return [] unless adjustments
           adjustments.each do |a|
             begin
-              adjustment = (line_item || order).adjustments.build(
+              adjustment = (adjustable || order).adjustments.build(
                 order: order,
                 amount: a[:amount].to_f,
                 label: a[:label],
