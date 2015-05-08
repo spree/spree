@@ -8,9 +8,9 @@
   <%= render 'form', f: f %>
 
   <div class="form-actions" data-hook="buttons">
-    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), icon: "remove" %>
-    <%= Spree.t(:or) %>
     <%= button Spree.t('actions.update'), 'save' %>
+    <%= Spree.t(:or) %>
+    <%= button_link_to Spree.t('actions.cancel'), edit_admin_taxonomy_url(@taxonomy), icon: "remove" %>
   </div>
 <% end %>
 
