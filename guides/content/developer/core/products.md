@@ -68,7 +68,7 @@ Spree automatically handles creation and storage of several size versions of eac
 }
 ```
 
-These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. Once `Spree::Config[:attachment_styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
+These sizes can be changed by altering the value of `Spree::Image.attachment_definitions[:attachment][:styles]`. Once `Spree::Image.attachment_definitions[:attachment][:styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
 
 ```bash
 $ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image
