@@ -17,6 +17,17 @@ FactoryGirl.define do
       end
     end
 
+    factory :order_with_line_item_quantity do
+      transient do
+        line_items_quantity 1
+      end
+
+      after(:create) do |order, evaluator|
+        create(:line_item, order: order, price: evaluator.line_items_price, quantity: evaluator.line_items_quantity)
+        order.line_items.reload # to ensure order.line_items is accessible after
+      end
+    end
+
     factory :order_with_line_items do
       bill_address
       ship_address
