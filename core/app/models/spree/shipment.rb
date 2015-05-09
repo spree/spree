@@ -157,7 +157,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:final_amount).sum
+      manifest.map { |m| ((m.line_item.price * m.quantity) + (m.line_item.adjustment_total / m.line_item.quantity)) }.sum
     end
 
     def line_items
