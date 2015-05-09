@@ -21,6 +21,14 @@ describe Spree::Shipment, :type => :model do
   let(:variant) { mock_model(Spree::Variant) }
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
+  def create_shipment(order, stock_location)
+    order.shipments.create({stock_location_id: stock_location.id}).inventory_units.create(
+      order_id: order.id,
+      variant_id: order.line_items.first.variant_id,
+      line_item_id: order.line_items.first.id
+    )
+  end
+
   # Regression test for #4063
   context "number generation" do
     before do
@@ -101,6 +109,20 @@ describe Spree::Shipment, :type => :model do
   end
 
   context "#item_cost" do
+    it 'should equal shipment line items amount with tax' do
+      order = create(:order_with_line_item_quantity, line_items_quantity: 2)
+
+      stock_location = create(:stock_location)
+
+      create_shipment(order, stock_location)
+      create_shipment(order, stock_location)
+
+      create :tax_adjustment, adjustable: order.line_items.first, order: order
+
+      expect(order.shipments.first.item_cost).to eql(11.0)
+      expect(order.shipments.last.item_cost).to eql(11.0)
+    end
+
     it 'should equal line items final amount with tax' do
       shipment = create(:shipment, order: create(:order_with_totals))
       create :tax_adjustment, adjustable: shipment.order.line_items.first, order: shipment.order
