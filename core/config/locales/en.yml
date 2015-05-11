@@ -815,7 +815,7 @@ en:
     my_orders: My Orders
     name: Name
     name_on_card: Name on card
-    name_or_sku: Name or SKU (enter at least first 4 characters of product name)
+    name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     new: New
     new_adjustment: New Adjustment
     new_customer: New Customer
