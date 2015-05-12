@@ -104,7 +104,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
               url: (e) ->
                 Spree.url(base_url.path() + '/' + e.prop('id') + '/jstree' + '?token=' + Spree.api_key).toString()
           themes:
-            theme: "apple",
+            theme: "spree",
             url: Spree.url(Spree.routes.jstree_theme_path)
           strings:
             new_node: new_taxon,
