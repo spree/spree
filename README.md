@@ -285,10 +285,10 @@ please ensure that you have a postgres user:
 createuser -s -r postgres
 ```
 
-And also ensure that you have [PhantomJS](http://phantomjs.org/) installed as well:
+And also ensure that you have [PhantomJS](http://phantomjs.org/) in version 1.8 installed as well:
 
 ```shell
-brew update && brew install phantomjs
+brew update && brew install phantomjs182
 ```
 
 To execute all the tests, you may want to run this command at the
