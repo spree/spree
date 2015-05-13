@@ -39,6 +39,13 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
+      initializer 'spree.register.competing_promos_source_types' do |app|
+        app.config.spree.add_class('competing_promos_source_types')
+        app.config.spree.competing_promos_source_types = [
+          Spree::PromotionAction
+        ]
+      end
+
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|

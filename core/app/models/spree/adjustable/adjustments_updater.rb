@@ -1,8 +1,20 @@
 module Spree
   module Adjustable
     class AdjustmentsUpdater
+
       def self.update(adjustable)
         new(adjustable).update
+      end
+
+      class_attribute :update_hooks
+      self.update_hooks = Set.new
+
+      # Use this method in other gems that wish to register their own custom
+      # adjustment updater logic called during AdjustmentsUpdater#update.
+      # Methods registered here should return the adjustment amount
+      # made so it is added to the adjustment_total.
+      def self.register_update_hook(hook)
+        self.update_hooks.add(hook)
       end
 
       def initialize(adjustable)
@@ -14,6 +26,7 @@ module Spree
         return unless persisted?
         update_promo_adjustments
         update_tax_adjustments
+        update_hooked_adjustments
         persist_totals
       end
 
@@ -35,12 +48,16 @@ module Spree
         @additional_tax_total = tax.additional.reload.map(&:update!).compact.sum
       end
 
+      def update_hooked_adjustments
+        @hooked_adjustment_total = update_hooks.map { |hook| self.send(hook) }.sum
+      end
+
       def persist_totals
         adjustable.update_columns(
           promo_total: @promo_total,
           included_tax_total: @included_tax_total,
           additional_tax_total: @additional_tax_total,
-          adjustment_total: @promo_total + @additional_tax_total,
+          adjustment_total: @promo_total + @additional_tax_total + @hooked_adjustment_total,
           updated_at: Time.now
         )
       end

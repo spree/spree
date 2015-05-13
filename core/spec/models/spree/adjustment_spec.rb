@@ -50,7 +50,7 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
-  describe 'competing_promos scope' do    
+  describe 'competing_promos scope' do
     before do
       allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
     end
@@ -65,8 +65,6 @@ describe Spree::Adjustment, :type => :model do
     let!(:non_promotion_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
 
     context 'no custom source_types have been added to competing_promos' do
-      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction'] }
-
       it 'selects promotion adjustments by default' do
         expect(subject).to include promotion_adjustment
         expect(subject).to_not include custom_adjustment_with_source
@@ -76,7 +74,8 @@ describe Spree::Adjustment, :type => :model do
     end
 
     context 'a custom source_type has been added to competing_promos' do
-      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+      before { Rails.application.config.spree.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+      after { Rails.application.config.spree.competing_promos_source_types = ['Spree::PromotionAction'] }
 
       it 'selects adjustments with registered source_types' do
         expect(subject).to include promotion_adjustment
