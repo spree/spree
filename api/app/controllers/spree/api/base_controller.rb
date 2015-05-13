@@ -9,15 +9,14 @@ module Spree
 
       attr_accessor :current_api_user
 
-      class_attribute :error_notifier
-
       before_action :set_content_type
       before_action :load_user
       before_action :authorize_for_order, if: Proc.new { order_token.present? }
       before_action :authenticate_user
       before_action :load_user_roles
 
-      rescue_from Exception, with: :error_during_processing
+      rescue_from ActionController::ParameterMissing, with: :error_during_processing
+      rescue_from ActiveRecord::RecordInvalid, with: :error_during_processing
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from CanCan::AccessDenied, with: :unauthorized
       rescue_from Spree::Core::GatewayError, with: :gateway_error
@@ -86,10 +85,11 @@ module Spree
         Rails.logger.error exception.message
         Rails.logger.error exception.backtrace.join("\n")
 
-        error_notifier.call(exception, self) if error_notifier
+        unprocessable_entity(exception.message)
+      end
 
-        render text: { exception: exception.message }.to_json,
-          status: 422 and return
+      def unprocessable_entity(message)
+        render text: { exception: message }.to_json, status: 422
       end
 
       def gateway_error(exception)
