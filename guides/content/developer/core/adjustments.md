@@ -98,3 +98,46 @@ Simiarly, if you want to grab the adjustments applied to shipments, call `shipme
 ```ruby
 order.shipment_adjustments
 ```
+
+## Extending Adjustments
+
+### Creating a New Adjustment Source
+
+To create a new adjustment source for Spree, create a new model that includes the `Spree::AdjustmentSource` concern and implements `compute_amount` and `label` methods:
+
+```ruby
+class CustomAdjustmentSource < Spree::Base
+   include Spree::AdjustmentSource
+   
+   def compute_amount(adjustable)
+     # Returns the value after performing the required calculation
+   end
+   
+   private
+   
+   def label
+     # Returns the label for this adjustment
+   end
+end
+```
+
+Next you need to define a method in `AdjustmentUpdater` that performs the update for your custom adjustment (notice the scope added to Adjustments):
+
+```ruby
+Spree::Adjustable::AdjustmentsUpdater.class_eval do
+  def update_custom_adjustments
+    # Perform the adjustment and return the adjustment value
+    custom_adjustment_total = adjustments.custom_adjustment_scope.reload.map(&:update!).compact.sum
+    adjustable.update_columns(:custom_adjustment_total => custom_adjustment_total)
+    custom_adjustment_total
+  end
+end
+```
+
+And finally register this method in an initializer:
+
+```ruby
+Spree::Adjustable::AdjustmentsUpdater.register_update_hook(:update_custom_adjustment)
+```
+
+Your custom adjustment source is ready to go, now you just need to add it to an order, line_item or shipment.
