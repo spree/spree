@@ -38,9 +38,9 @@ describe Spree::Api::V1::ShipmentsController, :type => :controller do
           shipment: { order_id: order.number },
           stock_location_id: stock_location.to_param
         }
-      end 
-      
-      subject do 
+      end
+
+      subject do
         api_post :create, params
       end
 
