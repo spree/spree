@@ -44,10 +44,6 @@ module Spree
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
 
-    class_attribute :competing_promos_source_types
-
-    self.competing_promos_source_types = ['Spree::PromotionAction']
-
     scope :open, -> { where(state: 'open') }
     scope :closed, -> { where(state: 'closed') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
@@ -66,7 +62,7 @@ module Spree
     scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
     scope :is_included, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
-    scope :competing_promos, -> { where(source_type: competing_promos_source_types) }
+    scope :competing_promos, -> { where(source_type: Rails.application.config.spree.competing_promos_source_types) }
 
     extend DisplayMoney
     money_methods :amount
