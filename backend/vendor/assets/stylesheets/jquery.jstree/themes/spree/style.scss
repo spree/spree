@@ -210,18 +210,7 @@
     margin: 0;
   }
 
-  .fa {
-    line-height: 1;
-    vertical-align: middle;
-    font-family: 'Glyphicons Halflings';
-    font-size: 16px;
-    font-style: normal;
+  .icon {
     margin: 0 10px 0 5px;
-
-    &.fa-plus:before   { content: '\002b' }
-    &.fa-pencil:before { content: '\270f' }
-    &.fa-trash:before  { content: '\e020' }
-    &.fa-edit:before   { content: '\e019' }
-    &.fa-flag:before   { content: '\e034' }
   }
 }
