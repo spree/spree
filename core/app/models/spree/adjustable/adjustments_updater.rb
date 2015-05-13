@@ -1,7 +1,6 @@
 module Spree
   module Adjustable
     class AdjustmentsUpdater
-
       def self.update(adjustable)
         new(adjustable).update
       end
