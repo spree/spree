@@ -33,79 +33,80 @@ module Spree
     end
 
     private
-      def after_add_or_remove(line_item, options = {})
-        persist_totals
-        shipment = options[:shipment]
-        shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
-        PromotionHandler::Cart.new(order, line_item).activate
-        Adjustable::AdjustmentsUpdater.update(line_item)
-        persist_totals
-        line_item
-      end
 
-      def filter_order_items(params)
-        filtered_params = params.symbolize_keys
-        return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
+    def after_add_or_remove(line_item, options = {})
+      persist_totals
+      shipment = options[:shipment]
+      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+      PromotionHandler::Cart.new(order, line_item).activate
+      Adjustable::AdjustmentsUpdater.update(line_item)
+      persist_totals
+      line_item
+    end
 
-        line_item_ids = order.line_items.pluck(:id)
+    def filter_order_items(params)
+      filtered_params = params.symbolize_keys
+      return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
 
-        params[:line_items_attributes].each_pair do |id, value|
-          unless line_item_ids.include?(value[:id].to_i) || value[:variant_id].present?
-            filtered_params[:line_items_attributes].delete(id)
-          end
+      line_item_ids = order.line_items.pluck(:id)
+
+      params[:line_items_attributes].each_pair do |id, value|
+        unless line_item_ids.include?(value[:id].to_i) || value[:variant_id].present?
+          filtered_params[:line_items_attributes].delete(id)
         end
-        filtered_params
       end
+      filtered_params
+    end
 
-      def order_updater
-        @updater ||= OrderUpdater.new(order)
+    def order_updater
+      @updater ||= OrderUpdater.new(order)
+    end
+
+    def persist_totals
+      order_updater.update_item_count
+      order_updater.update
+    end
+
+    def add_to_line_item(variant, quantity, options = {})
+      line_item = grab_line_item_by_variant(variant, false, options)
+
+      if line_item
+        line_item.quantity += quantity.to_i
+        line_item.currency = currency unless currency.nil?
+      else
+        opts = { currency: order.currency }.merge ActionController::Parameters.new(options).
+                                            permit(PermittedAttributes.line_item_attributes)
+        line_item = order.line_items.new(quantity: quantity,
+                                          variant: variant,
+                                          options: opts)
       end
+      line_item.target_shipment = options[:shipment] if options.has_key? :shipment
+      line_item.save!
+      line_item
+    end
 
-      def persist_totals
-        order_updater.update_item_count
-        order_updater.update
-      end
+    def remove_from_line_item(variant, quantity, options = {})
+      line_item = grab_line_item_by_variant(variant, true, options)
+      line_item.quantity -= quantity
+      line_item.target_shipment= options[:shipment]
 
-      def add_to_line_item(variant, quantity, options = {})
-        line_item = grab_line_item_by_variant(variant, false, options)
-
-        if line_item
-          line_item.quantity += quantity.to_i
-          line_item.currency = currency unless currency.nil?
-        else
-          opts = { currency: order.currency }.merge ActionController::Parameters.new(options).
-                                              permit(PermittedAttributes.line_item_attributes)
-          line_item = order.line_items.new(quantity: quantity,
-                                            variant: variant,
-                                            options: opts)
-        end
-        line_item.target_shipment = options[:shipment] if options.has_key? :shipment
+      if line_item.quantity.zero?
+        order.line_items.destroy(line_item)
+      else
         line_item.save!
-        line_item
       end
 
-      def remove_from_line_item(variant, quantity, options = {})
-        line_item = grab_line_item_by_variant(variant, true, options)
-        line_item.quantity -= quantity
-        line_item.target_shipment= options[:shipment]
+      line_item
+    end
 
-        if line_item.quantity.zero?
-          order.line_items.destroy(line_item)
-        else
-          line_item.save!
-        end
+    def grab_line_item_by_variant(variant, raise_error = false, options = {})
+      line_item = order.find_line_item_by_variant(variant, options)
 
-        line_item
+      if !line_item.present? && raise_error
+        raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
       end
 
-      def grab_line_item_by_variant(variant, raise_error = false, options = {})
-        line_item = order.find_line_item_by_variant(variant, options)
-
-        if !line_item.present? && raise_error
-          raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
-        end
-
-        line_item
-      end
+      line_item
+    end
   end
 end
