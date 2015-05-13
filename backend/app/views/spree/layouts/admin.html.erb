@@ -4,12 +4,12 @@
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
-  <body class="admin skin-blue">
+  <body class="admin">
 
     <%#-------------------------------------------------%>
     <%# Loading progress bars                           %>
     <%#-------------------------------------------------%>
-    <div id="progress" class="hidden">
+    <div id="progress">
       <div class="alert alert-info alert-progress">
         <div class="spinner"><%= Spree.t(:loading) %>...</div>
         <div class="progress-message"><%= Spree.t(:loading) %>...</div>
@@ -30,7 +30,7 @@
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
-        <div class="col-sm-3 col-md-2 hidden-xs sidebar" id="main-sidebar">
+        <div class="col-sm-3 col-md-2 hidden-xs sidebar" id="main-sidebar" data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
         </div>
 
@@ -43,7 +43,7 @@
           <%# Content header (page title/actions)             %>
           <%#-------------------------------------------------%>
           <%= render partial: 'spree/admin/shared/content_header' %>
-  
+
           <div class="row">
             <%#-------------------------------------------------%>
             <%# Alerts                                          %>
@@ -64,12 +64,12 @@
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
               <div class="col-md-3 col-sm-4">
-                <%= render partial: 'spree/admin/shared/sidebar' %>  
+                <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
           </div>
-          
-          
+
+
         </div>
       </div>
     </div>

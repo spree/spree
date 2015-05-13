@@ -22,13 +22,13 @@ module Spree
         end
 
         def stub_authentication!
-          allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
+          allow(Spree.user_class).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 
         # This method can be overriden (with a let block) inside a context
         # For instance, if you wanted to have an admin user instead.
         def current_api_user
-          @current_api_user ||= stub_model(Spree::LegacyUser, email: "spree@example.com")
+          @current_api_user ||= stub_model(Spree.user_class, email: "spree@example.com")
         end
 
         def image(filename)

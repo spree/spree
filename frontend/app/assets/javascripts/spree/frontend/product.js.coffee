@@ -1,4 +1,4 @@
-$ ->
+Spree.ready ($) ->
   Spree.addImageHandlers = ->
     thumbnails = ($ '#product-images ul.thumbnails')
     ($ '#main-image').data 'selectedThumb', ($ '#main-image img').attr('src')

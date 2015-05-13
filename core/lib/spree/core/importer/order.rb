@@ -16,9 +16,8 @@ module Spree
 
             shipments_attrs = params.delete(:shipments_attributes)
 
-            create_shipments_from_params(shipments_attrs, order)
             create_line_items_from_params(params.delete(:line_items_attributes),order)
-            create_shipments_from_params(params.delete(:shipments_attributes), order)
+            create_shipments_from_params(shipments_attrs, order)
             create_adjustments_from_params(params.delete(:adjustments_attributes), order)
             create_payments_from_params(params.delete(:payments_attributes), order)
 
@@ -50,47 +49,50 @@ module Spree
         def self.create_shipments_from_params(shipments_hash, order)
           return [] unless shipments_hash
 
-          line_items = order.line_items
+          inventory_units = Spree::Stock::InventoryUnitBuilder.new(order).units
+
           shipments_hash.each do |s|
             begin
               shipment = order.shipments.build
               shipment.tracking       = s[:tracking]
               shipment.stock_location = Spree::StockLocation.find_by_admin_name(s[:stock_location]) || Spree::StockLocation.find_by_name!(s[:stock_location])
 
-              inventory_units = s[:inventory_units] || []
-              inventory_units.each do |iu|
-                ensure_variant_id_from_params(iu)
+              shipment_units = s[:inventory_units] || []
+              shipment_units.each do |su|
+                ensure_variant_id_from_params(su)
 
-                unit = shipment.inventory_units.build
-                unit.order = order
+                inventory_unit = inventory_units.detect { |iu| iu.variant_id.to_i == su[:variant_id].to_i }
 
-                # Spree expects a Inventory Unit to always reference a line
-                # item and variant otherwise users might get exceptions when
-                # trying to view these units. Note the Importer might not be
-                # able to find the line item if line_item.variant_id |= iu.variant_id
-                unit.variant_id = iu[:variant_id]
-                unit.line_item_id = line_items.select do |l|
-                  l.variant_id.to_i == iu[:variant_id].to_i
-                end.first.try(:id)
-              end
+                if inventory_unit.present?
+                  inventory_unit.shipment = shipment
 
-              # Mark shipped if it should be.
-              if s[:shipped_at].present?
-                shipment.shipped_at = s[:shipped_at]
-                shipment.state      = 'shipped'
-                shipment.inventory_units.each do |unit|
-                  unit.state = 'shipped'
+                  if s[:shipped_at].present?
+                    inventory_unit.pending = false
+                    inventory_unit.state = 'shipped'
+                  end
+
+                  inventory_unit.save!
+
+                  # Don't assign shipments to this inventory unit more than once
+                  inventory_units.delete(inventory_unit)
                 end
               end
 
+              if s[:shipped_at].present?
+                shipment.shipped_at = s[:shipped_at]
+                shipment.state      = 'shipped'
+              end
+ 
               shipment.save!
 
               shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
-              rate = shipment.shipping_rates.create!(:shipping_method => shipping_method,
-                                                     :cost => s[:cost])
+              rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: s[:cost])
+
               shipment.selected_shipping_rate_id = rate.id
               shipment.update_amounts
 
+              adjustments = s.delete(:adjustments_attributes)
+              create_adjustments_from_params(adjustments, order, shipment)
             rescue Exception => e
               raise "Order import shipments: #{e.message} #{s}"
             end
@@ -99,10 +101,10 @@ module Spree
 
         def self.create_line_items_from_params(line_items, order)
           return {} unless line_items
-          case line_items
+          iterator = case line_items
           when Hash
             ActiveSupport::Deprecation.warn(<<-EOS, caller)
-              Passing a hash is now deprecated and will be removed in Spree 3.1.
+              Passing a hash is now deprecated and will be removed in Spree 4.0.
               It is recommended that you pass it as an array instead.
 
               New Syntax:
@@ -127,53 +129,41 @@ module Spree
                 }
               }
             EOS
-
-            line_items.each_key do |k|
-              begin
-                extra_params = line_items[k].except(:variant_id, :quantity, :sku)
-                line_item = ensure_variant_id_from_params(line_items[k])
-                variant = Spree::Variant.find(line_item[:variant_id])
-                line_item = order.contents.add(variant, line_item[:quantity])
-                # Raise any errors with saving to prevent import succeeding with line items
-                # failing silently.
-                if extra_params.present?
-                  line_item.update_attributes!(extra_params)
-                else
-                  line_item.save!
-                end
-              rescue Exception => e
-                raise "Order import line items: #{e.message} #{line_item}"
-              end
-            end
+            :each_value
           when Array
-            line_items.each do |line_item|
-              begin
-                extra_params = line_item.except(:variant_id, :quantity, :sku)
-                line_item = ensure_variant_id_from_params(line_item)
-                variant = Spree::Variant.find(line_item[:variant_id])
-                line_item = order.contents.add(variant, line_item[:quantity])
-                # Raise any errors with saving to prevent import succeeding with line items
-                # failing silently.
-                if extra_params.present?
-                  line_item.update_attributes!(extra_params)
-                else
-                  line_item.save!
-                end
-              rescue Exception => e
-                raise "Order import line items: #{e.message} #{line_item}"
+            :each
+          end
+
+          line_items.send(iterator) do |line_item|
+            begin
+              adjustments = line_item.delete(:adjustments_attributes)
+              extra_params = line_item.except(:variant_id, :quantity, :sku)
+              line_item = ensure_variant_id_from_params(line_item)
+              variant = Spree::Variant.find(line_item[:variant_id])
+              line_item = order.contents.add(variant, line_item[:quantity])
+              # Raise any errors with saving to prevent import succeeding with line items
+              # failing silently.
+              if extra_params.present?
+                line_item.update_attributes!(extra_params)
+              else
+                line_item.save!
               end
+              create_adjustments_from_params(adjustments, order, line_item)
+            rescue Exception => e
+              raise "Order import line items: #{e.message} #{line_item}"
             end
           end
         end
 
-        def self.create_adjustments_from_params(adjustments, order)
+        def self.create_adjustments_from_params(adjustments, order, adjustable = nil)
           return [] unless adjustments
           adjustments.each do |a|
             begin
-              adjustment = order.adjustments.build(
-                order:  order,
+              adjustment = (adjustable || order).adjustments.build(
+                order: order,
                 amount: a[:amount].to_f,
-                label:  a[:label]
+                label: a[:label],
+                source_type: source_type_from_adjustment(a)
               )
               adjustment.save!
               adjustment.close!
@@ -192,6 +182,7 @@ module Spree
               # Order API should be using state as that's the normal payment field.
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
               payment.state = p[:state] || p[:status] || 'completed'
+              payment.created_at = p[:created_at] if p[:created_at]
               payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
               payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
               payment.save!
@@ -280,6 +271,13 @@ module Spree
           end
         end
 
+        def self.source_type_from_adjustment(adjustment)
+          if adjustment[:tax]
+            'Spree::TaxRate'
+          elsif adjustment[:promotion]
+            'Spree::PromotionAction'
+          end
+        end
       end
     end
   end

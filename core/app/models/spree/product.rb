@@ -90,7 +90,7 @@ module Spree
     validates :name, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
-    validates :slug, length: { minimum: 3 }, uniqueness: { allow_blank: true }
+    validates :slug, length: { minimum: 3 }, allow_blank: true, uniqueness: true
 
     attr_accessor :option_values_hash
 
@@ -184,13 +184,13 @@ module Spree
       product_properties.find_by(property: prop).try(:value)
     end
 
-    def set_property(property_name, property_value)
+    def set_property(property_name, property_value, property_presentation = property_name)
       ActiveRecord::Base.transaction do
         # Works around spree_i18n #301
         property = if Property.exists?(name: property_name)
           Property.where(name: property_name).first
         else
-          Property.create(name: property_name, presentation: property_name)
+          Property.create(name: property_name, presentation: property_presentation)
         end
         product_property = ProductProperty.where(product: self, property: property).first_or_initialize
         product_property.value = property_value
@@ -264,7 +264,7 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.now.to_i}_#{slug}" unless frozen?
+      update_column :slug, "#{Time.now.to_i}_#{slug}"[0..254] unless frozen?
     end
 
     def anything_changed?

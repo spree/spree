@@ -32,6 +32,17 @@
   </fieldset>
 <% end %>
 
+<fieldset data-hook="reimbursements">
+  <legend><%= plural_resource_name(Spree::Reimbursement) %></legend>
+  <% if @customer_return.reimbursements.any? %>
+    <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
+  <% else %>
+    <div class="alert alert-info no-objects-found">
+      <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Reimbursement)) %>
+    </div>
+  <% end %>
+</fieldset>
+
 <% if !@customer_return.fully_reimbursed? && @pending_reimbursements.empty? && can?(:create, Spree::Reimbursement) %>
   <fieldset data-hook="reimbursements" class="marginb">
     <% if @customer_return.completely_decided? %>
@@ -48,14 +59,3 @@
     <% end %>
   </fieldset>
 <% end %>
-
-<fieldset data-hook="reimbursements">
-  <legend><%= plural_resource_name(Spree::Reimbursement) %></legend>
-  <% if @customer_return.reimbursements.any? %>
-    <%= render partial: 'reimbursements_table', locals: {reimbursements: @customer_return.reimbursements} %>
-  <% else %>
-    <div class="alert alert-info no-objects-found">
-      <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Reimbursement)) %>
-    </div>
-  <% end %>
-</fieldset>

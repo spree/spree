@@ -1,11 +1,6 @@
-<%
-  paginated_products = @searcher.retrieve_products if params.key?(:keywords)
-  paginated_products ||= products
-%>
-
 <% content_for :head do %>
-  <% if paginated_products.respond_to?(:num_pages) %>
-    <%= rel_next_prev_link_tags paginated_products %>
+  <% if products.respond_to?(:num_pages) %>
+    <%= rel_next_prev_link_tags products %>
   <% end %>
 <% end %>
 
@@ -25,15 +20,15 @@
   <div id="products" class="row" data-hook>
     <% products.each do |product| %>
       <% url = spree.product_url(product, taxon_id: @taxon.try(:id)) %>
-      <div id="product_<%= product.id %>" class="col-md-3 col-sm-6 product-list-item" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+      <div id="product_<%= product.id %>" class="col-md-3 col-sm-6 product-list-item" data-hook="products_list_item" itemscope itemtype="https://schema.org/Product">
         <div class="panel panel-default">
-          <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : [I18n.locale, current_currency, product]) do %>
+          <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : cache_key_for_product(product)) do %>
             <div class="panel-body text-center product-body">
               <%= link_to small_image(product, itemprop: "image"), url, itemprop: 'url' %><br/>
               <%= link_to truncate(product.name, length: 50), url, class: 'info', itemprop: "name", title: product.name %>
             </div>
             <div class="panel-footer text-center">
-              <span itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+              <span itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                 <span class="price selling lead" itemprop="price"><%= display_price(product) %></span>
               </span>
             </div>
@@ -45,6 +40,6 @@
   </div>
 <% end %>
 
-<% if paginated_products.respond_to?(:num_pages) %>
-  <%= paginate paginated_products, theme: 'twitter-bootstrap-3' %>
+<% if products.respond_to?(:num_pages) %>
+  <%= paginate products, theme: 'twitter-bootstrap-3' %>
 <% end %>

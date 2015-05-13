@@ -1,5 +1,7 @@
 module Spree
   class Price < Spree::Base
+    include VatPriceCalculation
+
     acts_as_paranoid
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
@@ -20,6 +22,14 @@ module Spree
 
     def price=(price)
       self[:amount] = Spree::LocalizedNumber.parse(price)
+    end
+
+    def price_including_vat_for(zone)
+      gross_amount(price, zone, variant.tax_category)
+    end
+
+    def display_price_including_vat_for(zone)
+      Spree::Money.new(price_including_vat_for(zone), currency: currency)
     end
 
     # Remove variant default_scope `deleted_at: nil`

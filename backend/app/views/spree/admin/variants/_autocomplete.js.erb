@@ -1,13 +1,11 @@
 <script type='text/template' id='variant_autocomplete_template'>
   <div class='variant-autocomplete-item media'>
     <figure class='variant-image media-left'>
-      <span class="thumbnail no-marginb">
-        {{#if variant.image }}
-          <img src='{{variant.image}}' />
-        {{ else }}
-          <img src='<%= image_path("noimage/mini.png") %>' />
-        {{/if}}
-      </span>
+      {{#if variant.image }}
+        <img src='{{variant.image}}' class="thumbnail no-marginb" />
+      {{ else }}
+        <img src='<%= image_path("noimage/mini.png") %>' class="thumbnail no-marginb" />
+      {{/if}}
     </figure>
 
     <div class='variant-details media-body'>

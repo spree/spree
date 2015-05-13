@@ -70,14 +70,6 @@ module Spree
           it_should_behave_like "shipping rate doesn't match"
         end
 
-        context "when the shipping method's calculator raises an exception" do
-          before do
-            allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
-            expect(subject).to receive(:log_calculator_exception)
-          end
-          it_should_behave_like "shipping rate doesn't match"
-        end
-
         it "sorts shipping rates by cost" do
           shipping_methods = 3.times.map { create(:shipping_method) }
           allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
@@ -146,6 +138,62 @@ module Spree
           it "links the shipping rate and the tax rate" do
             shipping_rates = subject.shipping_rates(package)
             expect(shipping_rates.first.tax_rate).to eq(tax_rate)
+          end
+        end
+
+        context "VAT price calculation" do
+          let(:tax_category) { create :tax_category }
+          let!(:shipping_method) { create(:shipping_method, tax_category: tax_category) }
+
+          let(:default_zone) { create(:zone_with_country, default_tax: true) }
+          let!(:default_vat) do
+            create :tax_rate,
+                   included_in_price: true,
+                   zone: default_zone,
+                   amount: 0.2,
+                   tax_category: shipping_method.tax_category
+          end
+
+          context "when the order does not have a tax zone" do
+            before { allow(order).to receive(:tax_zone).and_return nil }
+            it_should_behave_like "shipping rate matches"
+          end
+
+          context "when the order's tax zone is the default zone" do
+            before { allow(order).to receive(:tax_zone).and_return(default_zone) }
+            it_should_behave_like "shipping rate matches"
+          end
+
+          context "when the order's tax zone is a non-VAT zone" do
+            let!(:zone_without_vat) { create(:zone_with_country) }
+            before { allow(order).to receive(:tax_zone).and_return(zone_without_vat) }
+
+            it 'deducts the default VAT from the cost' do
+              shipping_rates = subject.shipping_rates(package)
+              # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
+              expect(shipping_rates.first.cost).to eq(3.33)
+            end
+          end
+
+          context "when the order's tax zone is a zone with VAT outside the default zone" do
+            let(:other_vat_zone) { create(:zone_with_country) }
+            let!(:other_vat) do
+              create :tax_rate,
+                     included_in_price: true,
+                     zone: other_vat_zone,
+                     amount: 0.3,
+                     tax_category: shipping_method.tax_category
+            end
+
+            before { allow(order).to receive(:tax_zone).and_return(other_vat_zone) }
+
+            it 'deducts the default vat and applies the foreign vat to calculate the price' do
+              shipping_rates = subject.shipping_rates(package)
+              #
+              # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
+              # apply foreign vat: 3.33 * 1.3 = 4.33 (rounded)
+              expect(shipping_rates.first.cost).to eq(4.33)
+            end
           end
         end
       end

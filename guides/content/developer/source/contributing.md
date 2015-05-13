@@ -45,13 +45,13 @@ The important thing is that you communicate your intention in advance of doing a
 
 * Master branch receives *all* patches, including new features and breaking API changes (with deprecation warnings, if necessary).
 
-* One branch "back" from master (currently 2-4-stable) receives patches that fix all bugs, and security issues, and modifications for recently added features (for example, split shipments). Breaking API changes should be avoided, but if unavoidable then a deprecation warning MUST be provided before that change takes place.
+* One branch "back" from master (currently 3-0-stable) receives patches that fix all bugs, and security issues, and modifications for recently added features (for example, split shipments). Breaking API changes should be avoided, but if unavoidable then a deprecation warning MUST be provided before that change takes place.
 
-* Two branches "back" from master (currently 2-3-stable) receives patches for major and minor issues, and security problems. Absolutely no new features, tweaking or API changes.
+* Two branches "back" from master (currently 2-4-stable) receives patches for major and minor issues, and security problems. Absolutely no new features, tweaking or API changes.
 
-* Three branches back from master (currently 2-2-stable) receives patches for major issues and security problems. The severity of an issue will be determined by the person investigating the issue. Absolutely no features, tweaking or API changes.
+* Three branches back from master (currently 2-3-stable) receives patches for major issues and security problems. The severity of an issue will be determined by the person investigating the issue. Absolutely no features, tweaking or API changes.
 
-* Four branches and more "back" from master (currently 2-1-stable and lesser) receive patches only for security issues, as people are still using these branches and may not be able to or wish to upgrade to the latest version of Spree.
+* Four branches and more "back" from master (currently 2-2-stable and lesser) receive patches only for security issues, as people are still using these branches and may not be able to or wish to upgrade to the latest version of Spree.
 
 To determine how often minor branches of Spree are released, please check the [RubyGems version page for Spree](http://rubygems.org/gems/spree/versions).
 

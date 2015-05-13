@@ -327,10 +327,6 @@ The path to the logo to display on the admin interface. Can be different from `S
 
 How many products to display on the products listing in the admin interface. Defaults to 10.
 
-`allow_backorder_shipping`
-
-Determines if an `InventoryUnit` can ship or not. Defaults to `false`.
-
 `allow_checkout_on_gateway_error`
 
 Continues the checkout process even if the payment gateway error failed. Defaults to `false`.

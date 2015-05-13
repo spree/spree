@@ -68,7 +68,7 @@ Spree automatically handles creation and storage of several size versions of eac
 }
 ```
 
-These sizes can be changed by altering the value of `Spree::Config[:attachment_styles]`. Once `Spree::Config[:attachment_styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
+These sizes can be changed by altering the value of `Spree::Image.attachment_definitions[:attachment][:styles]`. Once `Spree::Image.attachment_definitions[:attachment][:styles]` has been changed, you *must* regenerate the paperclip thumbnails by running this command:
 
 ```bash
 $ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image
@@ -109,6 +109,8 @@ You may see what price a product would be in the current currency (`Spree::Confi
 $ product.price
 => "15.99"
 ```
+
+If you have products where prices are greater than 9999999.99 then you should decorate `Spree::Price` and customize `maximum_amount` method in order to support the prices.
 
 To find a list of currencies that this product is available in, call `prices` to get a list of related `Price` objects:
 

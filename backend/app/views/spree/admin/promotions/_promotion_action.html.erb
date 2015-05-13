@@ -1,12 +1,12 @@
 <div class="promotion_action promotion-block <%= promotion_action.type.to_s.demodulize.underscore %> panel panel-default" id="<%= dom_id promotion_action %>">
   <% type_name = promotion_action.class.name.demodulize.underscore %>
   <div class="panel-heading">
-    <%= link_to_with_icon 'delete', '', spree.admin_promotion_promotion_action_path(@promotion, promotion_action), :remote => true, :method => :delete, :class => 'delete pull-right' %>
+    <%= link_to_with_icon 'delete', '', spree.admin_promotion_promotion_action_path(@promotion, promotion_action), remote: true, method: :delete, class: 'delete pull-right' %>
     <h3 class="panel-title promotion-title"><%= Spree.t("promotion_action_types.#{type_name}.description") %></h3>
   </div>
   <% param_prefix = "promotion[promotion_actions_attributes][#{promotion_action.id}]" %>
   <%= hidden_field_tag "#{param_prefix}[id]", promotion_action.id %>
 
-  <%= render :partial => "spree/admin/promotions/actions/#{type_name}",
-             :locals => { :promotion_action => promotion_action, :param_prefix => param_prefix } %>
+  <%= render partial: "spree/admin/promotions/actions/#{type_name}",
+             locals: { promotion_action: promotion_action, param_prefix: param_prefix } rescue nil %>
 </div>

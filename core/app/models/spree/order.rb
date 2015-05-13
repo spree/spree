@@ -3,6 +3,9 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
+    PAYMENT_STATES = %w(balance_due checkout completed credit_owed failed paid pending processing void).freeze
+    SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped).freeze
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
 
@@ -55,7 +58,7 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
-    has_many :state_changes, as: :stateful
+    has_many :state_changes, as: :stateful, dependent: :destroy
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy, inverse_of: :order
@@ -274,9 +277,23 @@ module Spree
       Spree::TaxRate.adjust(self, shipments) if shipments.any?
     end
 
+    def update_line_item_prices!
+      transaction do
+        line_items.each(&:update_price)
+        save!
+      end
+    end
+
     def outstanding_balance
       if state == 'canceled'
         -1 * payment_total
+      elsif reimbursements.includes(:refunds).size > 0
+        reimbursed = reimbursements.includes(:refunds).inject(0) do |sum, reimbursement|
+          sum + reimbursement.refunds.sum(:amount)
+        end
+        # If reimbursement has happened add it back to total to prevent balance_due payment state
+        # See: https://github.com/spree/spree/issues/6229
+        total - (payment_total + reimbursed)
       else
         total - payment_total
       end
@@ -423,6 +440,7 @@ module Spree
       updater.update_item_count
       adjustments.destroy_all
       shipments.destroy_all
+      state_changes.destroy_all
 
       update_totals
       persist_totals

@@ -27,6 +27,8 @@ module Spree
 
     before_validation :set_cost_zero_when_nil
 
+    validates :stock_location, presence: true
+
     attr_accessor :special_instructions
 
     accepts_nested_attributes_for :address
@@ -155,7 +157,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:final_amount).sum
+      manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
     end
 
     def line_items

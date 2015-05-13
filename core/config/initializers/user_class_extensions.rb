@@ -3,6 +3,7 @@ Spree::Core::Engine.config.to_prepare do
     Spree.user_class.class_eval do
 
       include Spree::UserApiAuthentication
+      include Spree::UserPaymentSource
       include Spree::UserReporting
 
       has_and_belongs_to_many :spree_roles,

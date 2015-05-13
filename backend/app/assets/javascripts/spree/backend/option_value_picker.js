@@ -12,7 +12,8 @@ $.fn.optionValueAutocomplete = function (options) {
     multiple: multiple,
     initSelection: function (element, callback) {
       $.get(Spree.routes.option_value_search, {
-        ids: element.val().split(',')
+        ids: element.val().split(','),
+        token: Spree.api_key
       }, function (data) {
         callback(multiple ? data : data[0]);
       });

@@ -43,3 +43,12 @@ input.form-control {
   display: block;
   width: 100%;
 }
+
+.help-block {
+  color: lighten($gray-light, 20);
+  font-weight: 300;
+}
+
+.checkbox > .help-block {
+  margin-top: 0;
+}

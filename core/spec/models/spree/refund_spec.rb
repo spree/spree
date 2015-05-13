@@ -91,6 +91,11 @@ describe Spree::Refund, :type => :model do
         subject
       end
 
+      it 'should update the payment total' do
+        expect(payment.order.updater).to receive(:update)
+        subject
+      end
+
     end
 
     context "processing fails" do
@@ -136,10 +141,13 @@ describe Spree::Refund, :type => :model do
 
     context 'with an activemerchant gateway connection error' do
       before do
-        expect(payment.payment_method)
-          .to receive(:credit)
-          .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-          .and_raise(ActiveMerchant::ConnectionError)
+        message = double("gateway_error")
+        expect(payment.payment_method).to receive(:credit).with(
+          amount_in_cents,
+          payment.source,
+          payment.transaction_id,
+          originator: an_instance_of(Spree::Refund)
+        ).and_raise(ActiveMerchant::ConnectionError.new(message, nil))
       end
 
       it 'raises Spree::Core::GatewayError' do

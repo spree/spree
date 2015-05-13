@@ -10,6 +10,8 @@ body {
   display: none;
 }
 
-.no-padding-bottom {
-  padding-bottom: 0;
+// No-margin and no-padding helper classes
+@each $side in top bottom left right {
+  .no-margin-#{$side}  { margin-#{side}: 0; }
+  .no-padding-#{$side} { padding-#{side}: 0; }
 }

@@ -7,8 +7,8 @@ module Spree
     NUMBER_PREFIX  = 'N'
 
     included do
-      before_validation :generate_number, on: :create # generate number before make_permalink
-      validates :number, uniqueness: true
+      before_validation :generate_number, on: :create
+      validates :number, presence: true, uniqueness: true
     end
 
     def self.by_number(number)

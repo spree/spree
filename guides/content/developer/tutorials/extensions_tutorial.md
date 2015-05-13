@@ -17,21 +17,21 @@ The [Spree Extension Registry](http://spreecommerce.com/extensions) is a searcha
 
 ## Installing an Extension
 
-We are going to be adding the [spree_fancy](https://github.com/spree/spree_fancy) extension to our store. SpreeFancy is a theme so it only changes the look and feel of the application. Extensions can also add models, controllers, and views to create new functionality, but spree_fancy is intended as a starting point to show how a barebones Spree application can be easily modified to give a nice look and feel. As a special bonus it's fully responsive and looks good on mobile devices as well as on larger screens.
+We are going to be adding the [spree_i18n](https://github.com/spree-contrib/spree_i18n) extension to our store. SpreeI18n is a extension containing community contributed translations of Spree & ability to supply different attribute values per language such as product names and descriptions. Extensions can also add models, controllers, and views to create new functionality.
 
-There are three steps we need to take to install spree_fancy.
+There are three steps we need to take to install spree_i18n.
 
 First, we need to add the gem to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_fancy', :git => 'git://github.com/spree/spree_fancy.git', :branch => '2-1-stable'
+gem 'spree_i18n', git: 'git://github.com/spree/spree_i18n.git', branch: '3-0-stable'
 ```
 ****
 
-Note that if you are using the edge version of spree, you should omit the branch parameter to get the latest version of spree_fancy. Alternatively, you should select the version of spree_fancy that corresponds with your version of spree.
+Note that if you are using the edge version of Spree, you should omit the branch parameter to get the latest version of spree_i18n. Alternatively, you should select the version of spree_i18n that corresponds with your version of spree.
 
 ***
-If you are using a 2.1.x version of Spree, the above line will work fine. If you're using a 2.0.x version of Spree, you'll need to change the "branch" option to point to the "2-0-stable" branch. If you're using the "master" branch of Spree, change the "branch" argument for "spree_fancy" to be "master" as well.
+If you are using a 3.0.x version of Spree, the above line will work fine. If you're using a 2.4.x version of Spree, you'll need to change the "branch" option to point to the "2-4-stable" branch. If you're using the "master" branch of Spree, change the "branch" argument for "spree_i18n" to be "master" as well.
 ***
 
 Now, let's install the gem via Bundler with the following command:
@@ -43,12 +43,10 @@ $ bundle install
 Finally, let's copy over the required migrations and assets from the extension with the following command:
 
 ```bash
-$ bundle exec rails g spree_fancy:install
+$ bundle exec rails g spree_i18n:install
 ```
 
 Answer **yes** when prompted to run migrations.
-
-When the last command is done running, you can start your application again and navigate to `http://localhost:3000` to see our brand new theme.
 
 ## Creating an Extension
 

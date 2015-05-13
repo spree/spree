@@ -197,6 +197,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -213,6 +214,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -229,6 +231,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -324,6 +327,7 @@ describe "Order Details", type: :feature, js: true do
               click_icon :save
 
               wait_for_ajax
+              order.reload
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
@@ -343,6 +347,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -367,6 +372,7 @@ describe "Order Details", type: :feature, js: true do
           click_icon :save
 
           wait_for_ajax
+          order.reload
 
           expect(order.shipments.count).to eq(1)
           expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)
@@ -501,7 +507,9 @@ describe "Order Details", type: :feature, js: true do
     end
 
     before do
-      allow_any_instance_of(Spree::Api::BaseController).to receive_messages :try_spree_current_user => Spree.user_class.new
+      allow(Spree.user_class).to receive(:find_by).
+                                   with(hash_including(:spree_api_key)).
+                                   and_return(Spree.user_class.new)
     end
 
     it 'should not display order tabs or edit buttons without ability' do

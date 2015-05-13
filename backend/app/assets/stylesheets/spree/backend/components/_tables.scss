@@ -36,12 +36,17 @@ table.table {
 .table-active-filters {
   display: none;
   margin: -0.5em 0 0.9em 0;
+
   .label {
+    display: inline-block;
     margin-right: 0.5em;
+    margin-bottom: 0.5em;
     font-size: 85%;
+
     &:hover {
       opacity: 0.8;
     }
+
     span.icon {
       margin: 0.3em 0 0 0.6em;
       font-size: 80%;

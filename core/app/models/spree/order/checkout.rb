@@ -88,6 +88,7 @@ module Spree
               before_transition from: :cart, do: :ensure_line_items_present
 
               if states[:address]
+                before_transition from: :address, do: :update_line_item_prices!
                 before_transition from: :address, do: :create_tax_charge!
                 before_transition to: :address, do: :assign_default_addresses!
                 before_transition from: :address, do: :persist_user_address!
@@ -230,11 +231,11 @@ module Spree
             success = false
             @updating_params = params
             run_callbacks :updating_from_params do
-              attributes = @updating_params[:order] ? @updating_params[:order].permit(permitted_params).delete_if { |k,v| v.nil? } : {}
-
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              existing_card_id = @updating_params[:order] ? @updating_params[:order][:existing_card] : nil
+              existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+
+              attributes = @updating_params[:order] ? @updating_params[:order].permit(permitted_params).delete_if { |k,v| v.nil? } : {}
 
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id

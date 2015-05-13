@@ -6,7 +6,11 @@
     <div class="container-fluid">
       <div class="row">
         <div class="navbar-header col-sm-3 col-md-2">
-          <%= link_to image_tag(Spree::Config[:admin_interface_logo], id: 'logo', height: '100%'), spree.admin_path, class: "logo navbar-brand" %>
+          <%= link_to(
+            image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
+            spree.admin_path,
+            class: "logo navbar-brand"
+          ) %>
           <% if admin %>
             <span class="navbar-toggle" id="sidebar-toggle">
               <span class="icon-bar"></span>

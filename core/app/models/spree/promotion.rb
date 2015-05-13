@@ -41,8 +41,8 @@ module Spree
     end
 
     def self.active
-      where('starts_at IS NULL OR starts_at < ?', Time.now).
-        where('expires_at IS NULL OR expires_at > ?', Time.now)
+      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.now).
+        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.now)
     end
 
     def self.order_activatable?(order)
@@ -91,23 +91,28 @@ module Spree
       # Promotions without rules are eligible by default.
       return [] if rules.none?
       eligible = lambda { |r| r.eligible?(promotable, options) }
-      specific_rules = rules.for(promotable)
+      specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
+
+      rule_eligibility = Hash[specific_rules.map do |rule|
+        [rule, rule.eligible?(promotable, options)]
+      end]
 
       if match_all?
         # If there are rules for this promotion, but no rules for this
         # particular promotable, then the promotion is ineligible by default.
-        unless specific_rules.all?(&eligible)
+        unless rule_eligibility.values.all?
           @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
           return nil
         end
         specific_rules
       else
-        unless specific_rules.any?(&eligible)
+        unless rule_eligibility.values.any?
           @eligibility_errors = specific_rules.map(&:eligibility_errors).detect(&:present?)
           return nil
         end
-        specific_rules.select(&eligible)
+
+        [rule_eligibility.detect { |_, eligibility| eligibility }.first]
       end
     end
 
@@ -120,7 +125,8 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      credits_count - promotable.adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
+      credits_count - adjustments.promotion.where(:source_id => actions.pluck(:id)).count
     end
 
     def credits

@@ -203,10 +203,26 @@ describe Spree::Product, :type => :model do
         expect(product.slug).not_to match "/"
       end
 
-      it "renames slug on destroy" do
-        old_slug = product.slug
-        product.destroy
-        expect(old_slug).to_not eq product.slug
+      context "when product destroyed" do
+
+        it "renames slug" do
+          expect { product.destroy }.to change { product.slug }
+        end
+
+        context "when slug is already at or near max length" do
+
+          before do
+            product.slug = "x" * 255
+            product.save!
+          end
+
+          it "truncates renamed slug to ensure it remains within length limit" do
+            product.destroy
+            expect(product.slug.length).to eq 255
+          end
+
+        end
+
       end
 
       it "validates slug uniqueness" do
@@ -264,6 +280,22 @@ describe Spree::Product, :type => :model do
         product.reload
         expect(product.property('the_prop_new')).to eq('value')
       }.to change { product.properties.length }.by(1)
+    end
+
+    context 'optional property_presentation' do
+      subject { Spree::Property.where(name: 'foo').first.presentation }
+      let(:name) { 'foo' }
+      let(:presentation) { 'baz' }
+
+      describe 'is not used' do
+        before { product.set_property(name, 'bar') }
+        it { is_expected.to eq name }
+      end
+
+      describe 'is used' do
+        before { product.set_property(name, 'bar', presentation) }
+        it { is_expected.to eq presentation }
+      end
     end
 
     # Regression test for #2455

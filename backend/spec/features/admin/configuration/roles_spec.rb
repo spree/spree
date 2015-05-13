@@ -8,6 +8,8 @@ describe "Roles", type: :feature, js: true do
     create(:role, name: "user")
     visit spree.admin_path
     click_link "Configuration"
+    # Crap workaround for animation to finish expanding so click doesn't hit ReimbursementTypes.
+    sleep 1
     click_link "Roles"
   end
 

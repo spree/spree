@@ -61,7 +61,6 @@ module Spree
 
     # Default mail headers settings
     preference :send_core_emails, :boolean, default: true
-    preference :mails_from, :string, default: 'spree@example.com'
 
     # Store credits configurations
     preference :non_expiring_credit_types, :array, default: []

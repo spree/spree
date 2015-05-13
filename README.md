@@ -45,9 +45,9 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.2.0
+gem install rails -v 4.2.1
 gem install spree
-rails _4.2.0_ new my_store
+rails _4.2.1_ new my_store
 spree install my_store
 ```
 
@@ -72,18 +72,18 @@ To select a specific branch, pass in the `--branch` option. If there is no branc
 will be given the latest version of either spree_auth_devise or spree_gateway.
 
 ```shell
-spree install my_store --branch "2-4-stable"
+spree install my_store --branch "3-0-stable"
 ```
 
 Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails application. To use the 2-4-stable branch of Spree, add this line to
+Rails application. To use the 3-0-stable branch of Spree, add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-4-stable'
+gem 'spree', github: 'spree/spree', branch: '3-0-stable'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
@@ -302,9 +302,9 @@ Further Documentation
 ------------
 Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
 
-Roadmap
+Request for Comments
 ------------
-Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.com/b/PQsUfCL0/spree-roadmap).
+Spree feature and change request for comments can be found at [https://github.com/spree-contrib/rfcs](https://github.com/spree-contrib/rfcs).
 
 Contributing
 ------------

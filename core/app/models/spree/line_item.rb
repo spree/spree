@@ -32,15 +32,20 @@ module Spree
     after_create :update_tax_charge
 
     delegate :name, :description, :sku, :should_track_inventory?, to: :variant
+    delegate :tax_zone, to: :order
 
     attr_accessor :target_shipment
 
     def copy_price
       if variant
-        self.price = variant.price if price.nil?
+        update_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
         self.currency = variant.currency if currency.nil?
       end
+    end
+
+    def update_price
+      self.price = variant.price_including_vat_for(tax_zone)
     end
 
     def copy_tax_category
@@ -48,6 +53,12 @@ module Spree
         self.tax_category = variant.tax_category
       end
     end
+
+    extend DisplayMoney
+    money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price
+
+    alias single_money display_price
+    alias single_display_amount display_price
 
     def amount
       price * quantity
@@ -57,26 +68,13 @@ module Spree
     def discounted_amount
       amount + promo_total
     end
-
-    def discounted_money
-      Spree::Money.new(discounted_amount, { currency: currency })
-    end
+    alias discounted_money display_discounted_amount
 
     def final_amount
       amount + adjustment_total
     end
     alias total final_amount
-
-    def single_money
-      Spree::Money.new(price, { currency: currency })
-    end
-    alias single_display_amount single_money
-
-    def money
-      Spree::Money.new(amount, { currency: currency })
-    end
-    alias display_total money
-    alias display_amount money
+    alias money display_total
 
     def invalid_quantity_check
       self.quantity = 0 if quantity.nil? || quantity < 0

@@ -46,6 +46,7 @@ module Spree
 
       self.transaction_id = @response.authorization
       update_columns(transaction_id: transaction_id)
+      update_order
     end
 
     # return an activemerchant response object if successful or else raise an error
@@ -76,6 +77,10 @@ module Spree
       if amount > payment.credit_allowed
         errors.add(:amount, :greater_than_allowed)
       end
+    end
+
+    def update_order
+      payment.order.updater.update
     end
   end
 end

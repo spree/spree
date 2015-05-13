@@ -319,7 +319,6 @@ en:
             base:
               cannot_destroy_default_store: Cannot destroy the default Store.
 
-
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -358,6 +357,7 @@ en:
     user_sessions:
       signed_in: Signed in successfully.
       signed_out: Signed out successfully.
+
   errors:
     messages:
       already_confirmed: was already confirmed
@@ -366,6 +366,12 @@ en:
       not_saved:
         one: ! '1 error prohibited this %{resource} from being saved:'
         other: ! '%{count} errors prohibited this %{resource} from being saved:'
+
+  number:
+    percentage:
+      format:
+        precision: 1
+
   spree:
     abbreviation: Abbreviation
     accept: Accept
@@ -402,7 +408,6 @@ en:
     add_rule_of_type: Add rule of type
     add_state: Add State
     add_stock: Add Stock
-    add_stock_management: Add Stock Management
     add_to_cart: Add To Cart
     add_variant: Add Variant
     additional_item: Additional Item
@@ -412,6 +417,10 @@ en:
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
+    adjustment_labels:
+      tax_rates:
+        including_tax: '%{name}%{amount} (Included in Price)'
+        excluding_tax: '%{name}%{amount}'
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
@@ -619,7 +628,7 @@ en:
     discount_amount: Discount Amount
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
-    doesnt_track_inventory: It doesnt track inventory
+    doesnt_track_inventory: It doesn't track inventory
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
@@ -808,7 +817,7 @@ en:
     my_orders: My Orders
     name: Name
     name_on_card: Name on card
-    name_or_sku: Name or SKU (enter at least first 4 characters of product name)
+    name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     new: New
     new_adjustment: New Adjustment
     new_customer: New Customer
@@ -1023,6 +1032,7 @@ en:
       match_policies:
         all: Match all of these rules
         any: Match any of these rules
+    promotion_label: 'Promotion (%{name})'
     promotion_rule: Promotion Rule
     promotion_rule_types:
       first_order:
@@ -1073,6 +1083,7 @@ en:
     received: Received
     reception_status: Reception Status
     reference: Reference
+    reference_contains: Reference Contains
     refund: Refund
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
@@ -1202,6 +1213,10 @@ en:
     shipping_method: Shipping Method
     shipping_methods: Shipping Methods
     shipping_price_sack: Price sack
+    shipping_rates:
+      display_price:
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
     shipping_total: Shipping total
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart

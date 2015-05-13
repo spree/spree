@@ -1,11 +1,20 @@
 module Spree
   module Admin
     module NavigationHelper
-      # Make an admin tab that coveres one or more resources supplied by symbols
+      # Makes an admin navigation tab (<li> tag) that links to a routing resource under /admin.
+      # The arguments should be a list of symbolized controller names that will cause this tab to
+      # be highlighted, with the first being the name of the resouce to link (uses URL helpers).
+      #
       # Option hash may follow. Valid options are
       #   * :label to override link text, otherwise based on the first resource name (translated)
       #   * :route to override automatically determining the default route
-      #   * :match_path as an alternative way to control when the tab is active, /products would match /admin/products, /admin/products/5/variants etc.
+      #   * :match_path as an alternative way to control when the tab is active, /products would
+      #     match /admin/products, /admin/products/5/variants etc.  Can be a String or a Regexp.
+      #     Controller names are ignored if :match_path is provided.
+      #
+      # Example:
+      #   # Link to /admin/orders, also highlight tab for ProductsController and ShipmentsController
+      #   tab :orders, :products, :shipments
       def tab(*args)
         options = { label: args.first.to_s }
 

@@ -1,0 +1,22 @@
+// The progress loader which is positioned at the bottom of the page
+#progress {
+  display: none;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 1001;
+  .alert {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+    .progress-message {
+      color: #31708f;
+      font-weight: bold;
+      text-align: center;
+    }
+    .spinner {
+      float: right;
+    }
+  }
+}

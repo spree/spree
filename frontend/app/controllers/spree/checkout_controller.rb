@@ -5,8 +5,8 @@ module Spree
   # is waranted.
   class CheckoutController < Spree::StoreController
     before_action :load_order_with_lock
-    before_filter :ensure_valid_state_lock_version, only: [:update]
-    before_filter :set_state_if_present
+    before_action :ensure_valid_state_lock_version, only: [:update]
+    before_action :set_state_if_present
 
     before_action :ensure_order_not_completed
     before_action :ensure_checkout_allowed
@@ -154,6 +154,13 @@ module Spree
           @differentiator.missing.each do |variant, quantity|
             @order.contents.remove(variant, quantity)
           end
+
+          # @order.contents.remove did transitively call reload in the past.
+          # Hiding the fact that the machine advanced already to "payment" state.
+          #
+          # As an intermediary step to optimize reloads out of high volume code path
+          # the reload was lifted here and will be removed by later passes.
+          @order.reload
         end
 
         if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)

@@ -33,7 +33,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_updated)
       respond_with(@object) do |format|
         format.html { redirect_to location_after_save }
-        format.js   { render :layout => false }
+        format.js { render layout: false }
       end
     else
       invoke_callbacks(:update, :fails)
@@ -125,7 +125,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if parent_data
       parent_model_name = parent_data[:model_name]
     end
-    @resource = Spree::Admin::Resource.new controller_path, controller_name, parent_model_name
+    @resource = Spree::Admin::Resource.new controller_path, controller_name, parent_model_name, object_name
   end
 
   def load_resource
@@ -238,6 +238,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     else
       spree.polymorphic_url([:admin, model_class], options)
     end
+  end
+
+  # This method should be overridden when object_name does not match the controller name
+  def object_name
   end
 
   # Allow all attributes to be updatable.

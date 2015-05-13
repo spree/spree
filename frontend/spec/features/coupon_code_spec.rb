@@ -7,6 +7,7 @@ describe "Coupon code promotions", type: :feature, js: true do
   let!(:shipping_method) { create(:shipping_method) }
   let!(:payment_method) { create(:check_payment_method) }
   let!(:product) { create(:product, name: "RoR Mug", price: 20) }
+  let!(:store) { create(:store) }
 
   context "visitor makes checkout as guest without registration" do
     def create_basic_coupon_promotion(code)
