@@ -103,7 +103,7 @@ order.shipment_adjustments
 
 ### Creating a New Adjustment Source
 
-To create a new adjustment source for Spree, createa new model that includes the `Spree::AdjustmentSource` concern and implements `compute_amount` and `label` methods:
+To create a new adjustment source for Spree, create a new model that includes the `Spree::AdjustmentSource` concern and implements `compute_amount` and `label` methods:
 
 ```ruby
 class CustomAdjustmentSource < Spree::Base
@@ -121,7 +121,7 @@ class CustomAdjustmentSource < Spree::Base
 end
 ```
 
-Next you need to add method to `AdjustmentUpdater` that performs the update (notice the scope added to Adjustments):
+Next you need to define a method in `AdjustmentUpdater` that performs the update for your custom adjustment (notice the scope added to Adjustments):
 
 ```ruby
 Spree::Adjustable::AdjustmentsUpdater.class_eval do
@@ -133,7 +133,6 @@ Spree::Adjustable::AdjustmentsUpdater.class_eval do
   end
 end
 ```
-
 
 And finally register this method in an initializer:
 
