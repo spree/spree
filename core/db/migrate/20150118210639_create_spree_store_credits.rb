@@ -13,7 +13,7 @@ class CreateSpreeStoreCredits < ActiveRecord::Migration
       t.integer :originator_id
       t.string :originator_type
       t.integer :type_id
-      t.timestamps
+      t.timestamps null: false
     end
 
     add_index :spree_store_credits, :deleted_at
