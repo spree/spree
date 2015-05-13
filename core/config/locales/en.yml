@@ -767,6 +767,7 @@ en:
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
+    loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location
     lock: Lock
