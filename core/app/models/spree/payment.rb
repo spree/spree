@@ -173,6 +173,10 @@ module Spree
       amount - captured_amount
     end
 
+    def editable?
+      checkout? || pending?
+    end
+
     private
 
       def validate_source
