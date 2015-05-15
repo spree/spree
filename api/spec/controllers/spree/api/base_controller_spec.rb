@@ -65,12 +65,12 @@ describe Spree::Api::BaseController, :type => :controller do
     end
   end
 
-  it 'handles exceptions' do
+  it 'handles parameter missing exceptions' do
     expect(subject).to receive(:authenticate_user).and_return(true)
     expect(subject).to receive(:load_user_roles).and_return(true)
-    expect(subject).to receive(:index).and_raise(Exception.new("no joy"))
-    get :index, :token => "fake_key"
-    expect(json_response).to eq({ "exception" => "no joy" })
+    expect(subject).to receive(:index).and_raise(ActionController::ParameterMissing.new('foo'))
+    get :index, token: 'exception-message'
+    expect(json_response).to eql('exception' => 'param is missing or the value is empty: foo')
   end
 
   it "maps semantic keys to nested_attributes keys" do

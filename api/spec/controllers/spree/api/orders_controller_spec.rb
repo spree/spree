@@ -262,7 +262,9 @@ module Spree
     it "does not update line item needlessly" do
       expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
       allow(order).to receive(:associate_user!)
-      allow(order).to receive_message_chain(:contents, :add).and_return(line_item = double('LineItem'))
+      line_item = double('LineItem')
+      allow(line_item).to receive_messages(save!: line_item)
+      allow(order).to receive_message_chain(:contents, :add).and_return(line_item)
       expect(line_item).not_to receive(:update_attributes)
       api_post :create, :order => {
         :line_items => {

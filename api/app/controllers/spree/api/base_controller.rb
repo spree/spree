@@ -18,7 +18,7 @@ module Spree
 
       after_filter  :set_jsonp_format
 
-      rescue_from Exception, with: :error_during_processing
+      rescue_from ActionController::ParameterMissing, with: :unprocessable_entity
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from CanCan::AccessDenied, with: :unauthorized
       rescue_from Spree::Core::GatewayError, with: :gateway_error
@@ -93,7 +93,7 @@ module Spree
         render "spree/api/errors/unauthorized", status: 401 and return
       end
 
-      def error_during_processing(exception)
+      def unprocessable_entity(exception)
         Rails.logger.error exception.message
         Rails.logger.error exception.backtrace.join("\n")
 
