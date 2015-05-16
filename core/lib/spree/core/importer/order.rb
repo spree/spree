@@ -35,7 +35,8 @@ module Spree
             order.updater.update
             if shipments_attrs.present?
               order.shipments.each_with_index do |shipment, index|
-                shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
+                cost = shipments_attrs[index][:cost].presence
+                shipment.update_columns(cost: cost.to_f) if cost
               end
             end
             order.reload
