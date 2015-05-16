@@ -184,19 +184,20 @@ module Spree
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest
-      # Grouping by the ID means that we don't have to call out to the association accessor
-      # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |variant_id, units|
-        units.group_by(&:line_item_id).map do |line_item_id, units|
-
-          states = {}
-          units.group_by(&:state).each { |state, iu| states[state] = iu.count }
-
-          line_item = units.first.line_item
-          variant = units.first.variant
-          ManifestItem.new(line_item, variant, units.length, states)
+      inventory_units
+        .includes(:line_item, :variant)
+        .joins(:line_item)
+        .order("#{LineItem.table_name}.created_at")
+        .group_by { |unit| [unit.line_item, unit.variant] }
+        .flat_map do |group, units|
+          ManifestItem.new(
+            *group,
+            units.count,
+            units.group_by(&:state).map do |state, grouped_units|
+              [state, grouped_units.count]
+            end.to_h
+          )
         end
-      end.flatten
     end
 
     def process_order_payments

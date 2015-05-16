@@ -188,16 +188,39 @@ describe Spree::Shipment, :type => :model do
     let!(:line_item) { order.contents.add variant }
     let!(:shipment) { order.create_proposed_shipments.first }
 
-    it "returns variant expected" do
-      expect(shipment.manifest.first.variant).to eq variant
+    shared_examples_for 'Spree::Shipment#manifest' do
+      it 'returns the expected line_item' do
+        expect(shipment.manifest.first.line_item).to eql(line_item)
+      end
+
+      it 'returns the expected variant' do
+        expect(shipment.manifest.first.variant).to eql(variant)
+      end
+
+      it 'returns the expected quantity' do
+        expect(shipment.manifest.first.quantity).to be(1)
+      end
+
+      it 'returns the expected states' do
+        expect(shipment.manifest.first.states).to eql('backordered' => 1)
+      end
+
+      it 'includes the line_items and variant' do
+        relation = double('relation').as_null_object
+        expect(shipment).to receive(:inventory_units).and_return(relation)
+        shipment.manifest
+        expect(relation).to have_received(:includes).with(:line_item, :variant)
+      end
     end
 
-    context "variant was removed" do
+    context 'variant is active' do
+      include_examples 'Spree::Shipment#manifest'
+    end
+
+    context 'variant is destroyed' do
       before { variant.destroy }
 
-      it "still returns variant expected" do
-        expect(shipment.manifest.first.variant).to eq variant
-      end
+      include_examples 'Spree::Shipment#manifest'
     end
   end
 
@@ -418,7 +441,9 @@ describe Spree::Shipment, :type => :model do
     end
 
     it 'restocks the items' do
-      allow(shipment).to receive_message_chain(inventory_units: [mock_model(Spree::InventoryUnit, state: "on_hand", line_item: line_item, variant: variant)])
+      allow(shipment).to receive_message_chain(:inventory_units, :includes, :joins, :order) do
+        [mock_model(Spree::InventoryUnit, state: 'on_hand', line_item: line_item, variant: variant)]
+      end
       shipment.stock_location = mock_model(Spree::StockLocation)
       expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -465,7 +490,9 @@ describe Spree::Shipment, :type => :model do
     end
 
     it 'unstocks them items' do
-      allow(shipment).to receive_message_chain(inventory_units: [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)])
+      allow(shipment).to receive_message_chain(:inventory_units, :includes, :joins, :order) do
+        [mock_model(Spree::InventoryUnit, line_item: line_item, variant: variant)]
+      end
       shipment.stock_location = mock_model(Spree::StockLocation)
       expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
