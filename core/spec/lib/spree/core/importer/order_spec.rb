@@ -271,7 +271,8 @@ module Spree
 
       context "shipments" do
         let(:params) do
-          { :shipments_attributes => [
+          { :line_items_attributes => line_items,
+            :shipments_attributes => [
               { :tracking => '123456789',
                 :cost => '14.99',
                 :shipping_method => shipping_method.name,
@@ -283,6 +284,7 @@ module Spree
 
         it 'ensures variant exists and is not deleted' do
           expect(Importer::Order).to receive(:ensure_variant_id_from_params)
+            .twice.and_call_original
           order = Importer::Order.import(user,params)
         end
 
@@ -318,6 +320,7 @@ module Spree
           let(:params) do
             {
               :completed_at => 2.days.ago,
+              :line_items_attributes => line_items,
               :shipments_attributes => [
                 { :tracking => '123456789',
                   :cost => '4.99',

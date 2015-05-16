@@ -37,6 +37,10 @@ module Spree
       end
     end
 
+    validates :state, :variant, :order, :shipment, :line_item, presence: true
+    validates :state,   inclusion: { in: %w[on_hand shipped backordered returned] }
+    validates :pending, inclusion: { in: [true, false] }
+
     # This was refactored from a simpler query because the previous implementation
     # led to issues once users tried to modify the objects returned. That's due
     # to ActiveRecord `joins(shipment: :stock_location)` only returning readonly

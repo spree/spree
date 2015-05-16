@@ -138,16 +138,17 @@ describe Spree::Shipment, :type => :model do
     end
 
     it 'should equal line items final amount with tax' do
-      shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
+      order = create(:order_with_line_item_quantity, line_items_quantity: 2)
       tax_rate = create(:tax_rate)
 
-      shipment.order.create_adjustment!(
+      order.create_adjustment!(
         amount:     10,
         label:      'VAT',
         source:     tax_rate,
-        adjustable: shipment.order.line_items.first!
+        adjustable: order.line_items.first!
       )
 
+      shipment = create(:shipment, order: order)
       expect(shipment.item_cost).to eql(22.0)
     end
   end
