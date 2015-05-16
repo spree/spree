@@ -44,19 +44,24 @@ describe Spree::InventoryUnit, :type => :model do
     end
 
     it "does not find inventory units that aren't backordered" do
-      on_hand_unit = shipment.inventory_units.build
-      on_hand_unit.state = 'on_hand'
-      on_hand_unit.variant_id = 1
-      on_hand_unit.save!
+      line_item    = order.line_items.first!
+      on_hand_unit = shipment.inventory_units.create!(
+        order:     order,
+        line_item: line_item,
+        variant:   line_item.variant,
+      )
 
       expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(on_hand_unit)
     end
 
     it "does not find inventory units that don't match the stock item's variant" do
-      other_variant_unit = shipment.inventory_units.build
-      other_variant_unit.state = 'backordered'
-      other_variant_unit.variant = create(:variant)
-      other_variant_unit.save!
+      line_item          = order.line_items.first!
+      other_variant_unit = shipment.inventory_units.create!(
+        state:     'backordered',
+        order:     order,
+        line_item: line_item,
+        variant:   create(:variant)
+      )
 
       expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_variant_unit)
     end
@@ -69,12 +74,7 @@ describe Spree::InventoryUnit, :type => :model do
     end
 
     context "other shipments" do
-      let(:other_order) do
-        order = create(:order)
-        order.state = 'payment'
-        order.completed_at = nil
-        order.tap(&:save!)
-      end
+      let(:other_order) { create(:order_with_line_items, state: 'payment') }
 
       let(:other_shipment) do
         shipment = Spree::Shipment.new
@@ -87,11 +87,13 @@ describe Spree::InventoryUnit, :type => :model do
       end
 
       let!(:other_unit) do
-        unit = other_shipment.inventory_units.build
-        unit.state = 'backordered'
-        unit.variant_id = stock_item.variant.id
-        unit.order_id = other_order.id
-        unit.tap(&:save!)
+        line_item = other_order.line_items.first!
+        other_shipment.inventory_units.create!(
+          state:     'backordered',
+          order:     other_order,
+          line_item: line_item,
+          variant:   line_item.variant
+        )
       end
 
       it "does not find inventory units belonging to incomplete orders" do
