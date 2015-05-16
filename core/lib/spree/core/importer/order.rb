@@ -13,13 +13,12 @@ module Spree
             order = Spree::Order.create!
             order.associate_user!(user)
 
-            shipments_attrs = params.delete(:shipments_attributes)
-
-            create_shipments_from_params(shipments_attrs, order)
             create_line_items_from_params(params.delete(:line_items_attributes),order)
-            create_shipments_from_params(params.delete(:shipments_attributes), order)
             create_adjustments_from_params(params.delete(:adjustments_attributes), order)
             create_payments_from_params(params.delete(:payments_attributes), order)
+
+            shipments_attrs = params.delete(:shipments_attributes)
+            create_shipments_from_params(shipments_attrs, order)
 
             if completed_at = params.delete(:completed_at)
               order.completed_at = completed_at
@@ -36,13 +35,14 @@ module Spree
             order.updater.update
             if shipments_attrs.present?
               order.shipments.each_with_index do |shipment, index|
-                shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
+                cost = shipments_attrs[index][:cost].presence
+                shipment.update_columns(cost: cost.to_f) if cost
               end
             end
             order.reload
-          rescue Exception => e
+          rescue Exception
             order.destroy if order && order.persisted?
-            raise e.message
+            raise
           end
         end
 
