@@ -41,9 +41,9 @@ module Spree
               end
             end
             order.reload
-          rescue Exception => e
+          rescue Exception
             order.destroy if order && order.persisted?
-            raise e.message
+            fail
           end
         end
 
