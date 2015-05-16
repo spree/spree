@@ -57,7 +57,7 @@ describe Spree::CustomerReturn, :type => :model do
       end
 
       context "return items are part of different orders" do
-        let(:second_order) { create(:order) }
+        let(:second_order) { create(:order_with_line_items) }
 
         it "is not valid" do
           expect(subject).to eq false

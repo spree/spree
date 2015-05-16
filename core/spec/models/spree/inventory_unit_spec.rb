@@ -103,9 +103,7 @@ describe Spree::InventoryUnit, :type => :model do
   end
 
   context "variants deleted" do
-    let!(:unit) do
-      Spree::InventoryUnit.create!(variant: stock_item.variant)
-    end
+    let!(:unit) { create(:inventory_unit, variant: stock_item.variant) }
 
     it "can still fetch variant" do
       unit.variant.destroy

@@ -248,8 +248,8 @@ describe Spree::Shipment, :type => :model do
 
       context 'to_package' do
         let(:inventory_units) do
-          [build(:inventory_unit, line_item: line_item, variant: variant, state: 'on_hand'),
-           build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
+          [build(:inventory_unit, state: 'on_hand'),
+           build(:inventory_unit, state: 'backordered')]
         end
 
         before do

@@ -1,10 +1,9 @@
 FactoryGirl.define do
   factory :inventory_unit, class: Spree::InventoryUnit do
-    variant
-    order
-    line_item
+    order { create(:order_with_line_items, line_items_count: 1) }
+    line_item { order.line_items.first! }
+    variant { line_item.variant }
     state 'on_hand'
     association(:shipment, factory: :shipment, state: 'pending')
-    # return_authorization
   end
 end

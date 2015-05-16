@@ -17,7 +17,7 @@ describe Spree::ReturnItem::EligibilityValidator::OrderCompleted do
     end
 
     context "the order is not completed" do
-      let(:order) { create(:order) }
+      let(:order) { create(:order_with_line_items) }
 
       it "returns false" do
         expect(subject).to be false
