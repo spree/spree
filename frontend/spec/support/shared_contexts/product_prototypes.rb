@@ -1,7 +1,7 @@
 shared_context "product prototype" do
 
   def build_option_type_with_values(name, values)
-    ot = FactoryGirl.create(:option_type, :name => name)
+    ot = create(:option_type, :name => name)
     values.each do |val|
       ot.option_values.create(:name => val.downcase, :presentation => val)
     end
@@ -16,7 +16,7 @@ shared_context "product prototype" do
 
   let(:prototype) do
     size = build_option_type_with_values("size", %w(Small Medium Large))
-    FactoryGirl.create(:prototype, :name => "Size", :option_types => [ size ])
+    create(:prototype, :name => "Size", :option_types => [ size ])
   end
 
   let(:option_values_hash) do

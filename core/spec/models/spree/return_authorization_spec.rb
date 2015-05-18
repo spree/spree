@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::ReturnAuthorization, :type => :model do
   let(:stock_location) { Spree::StockLocation.create(:name => "test") }
-  let(:order) { FactoryGirl.create(:shipped_order) }
+  let(:order) { create(:shipped_order) }
 
   let(:variant) { order.variants.first }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
@@ -136,7 +136,7 @@ describe Spree::ReturnAuthorization, :type => :model do
     end
 
     context "to a different stock location" do
-      let(:new_stock_location) { FactoryGirl.create(:stock_location, :name => "other") }
+      let(:new_stock_location) { create(:stock_location, :name => "other") }
 
       before do
         allow(return_authorization).to receive_messages(:stock_location_id => new_stock_location.id)

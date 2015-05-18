@@ -16,7 +16,7 @@ module Spree
 
       context "with a default country present" do
         before do
-          country = FactoryGirl.create(:country)
+          country = create(:country)
           Spree::Config[:default_country_id] = country.id
         end
 
@@ -28,7 +28,7 @@ module Spree
 
       context "with a country with the ISO code of 'US' existing" do
         before do
-          FactoryGirl.create(:country, iso: 'US')
+          create(:country, iso: 'US')
         end
 
         it "can create a new stock location" do

@@ -419,7 +419,7 @@ describe Spree::Order, :type => :model do
 
   # Regression tests for #4072
   context "#state_changed" do
-    let(:order) { FactoryGirl.create(:order) }
+    let(:order) { create(:order) }
 
     it "logs state changes" do
       order.update_column(:payment_state, 'balance_due')
@@ -517,14 +517,14 @@ describe Spree::Order, :type => :model do
   end
 
   describe "#associate_user!" do
-    let(:user) { FactoryGirl.create(:user_with_addreses) }
+    let(:user) { create(:user_with_addreses) }
     let(:email) { user.email }
     let(:created_by) { user }
     let(:bill_address) { user.bill_address }
     let(:ship_address) { user.ship_address }
     let(:override_email) { true }
 
-    let(:order) { FactoryGirl.build(:order, order_attributes) }
+    let(:order) { build(:order, order_attributes) }
 
     let(:order_attributes) do
       {
@@ -604,20 +604,20 @@ describe Spree::Order, :type => :model do
 
     context "when bill_address is set" do
       let(:order_attributes) { super().merge(bill_address: bill_address) }
-      let(:bill_address) { FactoryGirl.build(:address) }
+      let(:bill_address) { build(:address) }
 
       it_should_behave_like "#associate_user!"
     end
 
     context "when ship_address is set" do
       let(:order_attributes) { super().merge(ship_address: ship_address) }
-      let(:ship_address) { FactoryGirl.build(:address) }
+      let(:ship_address) { build(:address) }
 
       it_should_behave_like "#associate_user!"
     end
 
     context "when the user is not persisted" do
-      let(:user) { FactoryGirl.build(:user_with_addreses) }
+      let(:user) { build(:user_with_addreses) }
 
       it "does not persist the user" do
         expect { order.associate_user!(user) }
@@ -629,7 +629,7 @@ describe Spree::Order, :type => :model do
     end
 
     context "when the order is persisted" do
-      let(:order) { FactoryGirl.create(:order, order_attributes) }
+      let(:order) { create(:order, order_attributes) }
 
       it "associates a user to a persisted order" do
         order.associate_user!(user)
@@ -645,7 +645,7 @@ describe Spree::Order, :type => :model do
       end
 
       it "does not change any other orders" do
-        other = FactoryGirl.create(:order)
+        other = create(:order)
         order.associate_user!(user)
         expect(other.reload.user).to_not eql(user)
       end

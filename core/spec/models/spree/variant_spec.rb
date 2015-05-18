@@ -55,7 +55,7 @@ describe Spree::Variant, :type => :model do
   context "product has other variants" do
     describe "option value accessors" do
       before {
-        @multi_variant = FactoryGirl.create :variant, :product => variant.product
+        @multi_variant = create :variant, :product => variant.product
         variant.product.reload
       }
 

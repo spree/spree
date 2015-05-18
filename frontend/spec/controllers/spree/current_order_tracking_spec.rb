@@ -9,7 +9,7 @@ describe 'current order tracking', :type => :controller do
     end
   end
 
-  let(:order) { FactoryGirl.create(:order) }
+  let(:order) { create(:order) }
 
   it 'automatically tracks who the order was created by & IP address' do
     allow(controller).to receive_messages(:try_spree_current_user => user)
