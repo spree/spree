@@ -5,37 +5,37 @@ describe Spree::Order, :type => :model do
 
   describe ".is_risky?" do
     context "Not risky order" do
-      let(:order) { FactoryGirl.create(:order, payments: [payment]) }
+      let(:order) { create(:order, payments: [payment]) }
       context "with avs_response == D" do
-        let(:payment) { FactoryGirl.create(:payment, avs_response: "D") }
+        let(:payment) { create(:payment, avs_response: "D") }
         it "is not considered risky" do
           expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with avs_response == M" do
-        let(:payment) { FactoryGirl.create(:payment, avs_response: "M") }
+        let(:payment) { create(:payment, avs_response: "M") }
         it "is not considered risky" do
           expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with avs_response == ''" do
-        let(:payment) { FactoryGirl.create(:payment, avs_response: "") }
+        let(:payment) { create(:payment, avs_response: "") }
         it "is not considered risky" do
           expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with cvv_response_code == M" do
-        let(:payment) { FactoryGirl.create(:payment, cvv_response_code: "M") }
+        let(:payment) { create(:payment, cvv_response_code: "M") }
         it "is not considered risky" do
           expect(order.is_risky?).to eq(false)
         end
       end
 
       context "with cvv_response_message == ''" do
-        let(:payment) { FactoryGirl.create(:payment, cvv_response_message: "") }
+        let(:payment) { create(:payment, cvv_response_message: "") }
         it "is not considered risky" do
           expect(order.is_risky?).to eq(false)
         end
@@ -44,21 +44,21 @@ describe Spree::Order, :type => :model do
 
     context "Risky order" do
       context "AVS response message" do
-        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, avs_response: "A")]) }
+        let(:order) { create(:order, payments: [create(:payment, avs_response: "A")]) }
         it "returns true if the order has an avs_response" do
           expect(order.is_risky?).to eq(true)
         end
       end
 
       context "CVV response code" do
-        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, cvv_response_code: "N")]) }
+        let(:order) { create(:order, payments: [create(:payment, cvv_response_code: "N")]) }
         it "returns true if the order has an cvv_response_code" do
           expect(order.is_risky?).to eq(true)
         end
       end
 
       context "state == 'failed'" do
-        let(:order) { FactoryGirl.create(:order, payments: [FactoryGirl.create(:payment, state: 'failed')]) }
+        let(:order) { create(:order, payments: [create(:payment, state: 'failed')]) }
         it "returns true if the order has state == 'failed'" do
           expect(order.is_risky?).to eq(true)
         end
@@ -68,7 +68,7 @@ describe Spree::Order, :type => :model do
 
   context "is considered risky" do
     let(:order) do
-      order = FactoryGirl.create(:completed_order_with_pending_payment)
+      order = create(:completed_order_with_pending_payment)
       order.considered_risky!
       order
     end

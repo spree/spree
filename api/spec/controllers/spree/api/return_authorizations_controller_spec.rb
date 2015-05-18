@@ -54,7 +54,7 @@ module Spree
       sign_in_as_admin!
 
       it "can show return authorization" do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_get :show, :order_id => order.number, :id => return_authorization.id
         expect(response.status).to eq(200)
@@ -63,8 +63,8 @@ module Spree
       end
 
       it "can get a list of return authorizations" do
-        FactoryGirl.create(:return_authorization, :order => order)
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         api_get :index, { :order_id => order.number }
         expect(response.status).to eq(200)
         return_authorizations = json_response["return_authorizations"]
@@ -73,8 +73,8 @@ module Spree
       end
 
       it 'can control the page size through a parameter' do
-        FactoryGirl.create(:return_authorization, :order => order)
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         api_get :index, :order_id => order.number, :per_page => 1
         expect(json_response['count']).to eq(1)
         expect(json_response['current_page']).to eq(1)
@@ -82,7 +82,7 @@ module Spree
       end
 
       it 'can query the results through a paramter' do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         expected_result = create(:return_authorization, :memo => 'damaged')
         order.return_authorizations << expected_result
         api_get :index, :q => { :memo_cont => 'damaged' }
@@ -98,7 +98,7 @@ module Spree
       end
 
       it "can update a return authorization on the order" do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :memo => "ABC" }
         expect(response.status).to eq(200)
@@ -106,7 +106,7 @@ module Spree
       end
 
       it "can cancel a return authorization on the order" do
-        FactoryGirl.create(:new_return_authorization, :order => order)
+        create(:new_return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         expect(return_authorization.state).to eq("authorized")
         api_delete :cancel, :id => return_authorization.id
@@ -115,7 +115,7 @@ module Spree
       end
 
       it "can delete a return authorization on the order" do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         expect(response.status).to eq(204)
@@ -123,8 +123,8 @@ module Spree
       end
 
       it "can add a new return authorization to an existing order" do
-        stock_location = FactoryGirl.create(:stock_location)
-        reason = FactoryGirl.create(:return_authorization_reason)
+        stock_location = create(:stock_location)
+        reason = create(:return_authorization_reason)
         rma_params = { :stock_location_id => stock_location.id,
                        :return_authorization_reason_id => reason.id,
                        :memo => "Defective" }
@@ -142,7 +142,7 @@ module Spree
       end
 
       it "cannot update a return authorization on the order" do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_put :update, :id => return_authorization.id, :return_authorization => { :memo => "ABC" }
         assert_unauthorized!
@@ -150,7 +150,7 @@ module Spree
       end
 
       it "cannot delete a return authorization on the order" do
-        FactoryGirl.create(:return_authorization, :order => order)
+        create(:return_authorization, :order => order)
         return_authorization = order.return_authorizations.first
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!
