@@ -2,9 +2,9 @@ FactoryGirl.define do
   sequence(:refund_transaction_id) { |n| "fake-refund-transaction-#{n}"}
 
   factory :refund, class: Spree::Refund do
-    amount 100.00
+    amount 100
     transaction_id { generate(:refund_transaction_id) }
-    association(:payment, state: 'completed')
+    association(:payment, amount: 100, state: 'completed')
     association(:reason, factory: :refund_reason)
   end
 

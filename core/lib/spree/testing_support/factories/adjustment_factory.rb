@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :adjustment, class: Spree::Adjustment do
     association(:adjustable, factory: :order)
+    order { adjustable }
     amount 100.0
     label 'Shipping'
     association(:source, factory: :tax_rate)
@@ -9,6 +10,7 @@ FactoryGirl.define do
 
   factory :tax_adjustment, class: Spree::Adjustment do
     association(:adjustable, factory: :line_item)
+    order { adjustable.order }
     amount 10.0
     label 'VAT 5%'
     association(:source, factory: :tax_rate)
