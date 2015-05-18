@@ -10,7 +10,7 @@ module Spree
       country_zone = create(:zone, :name => 'CountryZone')
       @state = create(:state)
       @country = @state.country
-      country_zone.members.create(:zoneable => @country)
+      country_zone.members.create!(:zoneable => @country)
       create(:stock_location)
 
       @shipping_method = create(:shipping_method, :zones => [country_zone])
@@ -69,7 +69,7 @@ module Spree
       it "will return an error if the order cannot transition" do
         skip "not sure if this test is valid"
         order.bill_address = nil
-        order.save
+        order.save!
         order.update_column(:state, "address")
         api_put :update, :id => order.to_param, :order_token => order.guest_token
         # Order has not transitioned

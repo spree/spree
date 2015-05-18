@@ -301,7 +301,7 @@ module Spree
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil
-        order.save
+        order.save!
         expect(order.state).to eq("address")
       end
 
@@ -398,7 +398,7 @@ module Spree
       end
 
       it "cannot set the user_id for the order" do
-        user = Spree.user_class.create
+        user = Spree.user_class.create!
         original_id = order.user_id
         api_post :update, :id => order.to_param, :order => { user_id: user.id }
         expect(response.status).to eq 200
@@ -491,7 +491,7 @@ module Spree
           let!(:shipping_method) do
             create(:shipping_method).tap do |shipping_method|
               shipping_method.calculator.preferred_amount = 10
-              shipping_method.calculator.save
+              shipping_method.calculator.save!
             end
           end
 
@@ -499,7 +499,7 @@ module Spree
             order.bill_address = create(:address)
             order.ship_address = create(:address)
             order.next!
-            order.save
+            order.save!
           end
 
           it "includes the ship_total in the response" do
@@ -568,7 +568,7 @@ module Spree
       context "caching enabled" do
         before do
           ActionController::Base.perform_caching = true
-          3.times { Order.create }
+          3.times { Order.create! }
         end
 
         it "returns unique orders" do
@@ -658,7 +658,7 @@ module Spree
         end
 
         it "can set the user_id for the order" do
-          user = Spree.user_class.create
+          user = Spree.user_class.create!
           api_post :create, :order => { user_id: user.id }
           expect(response.status).to eq 201
           expect(json_response["user_id"]).to eq(user.id)
@@ -667,7 +667,7 @@ module Spree
 
       context "updating" do
         it "can set the user_id for the order" do
-          user = Spree.user_class.create
+          user = Spree.user_class.create!
           api_post :update, :id => order.number, :order => { user_id: user.id }
           expect(response.status).to eq 200
           expect(json_response["user_id"]).to eq(user.id)

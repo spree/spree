@@ -58,7 +58,7 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#destroy" do
-    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -77,7 +77,7 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#save" do
-    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -103,7 +103,7 @@ describe Spree::Promotion, :type => :model do
       promotion.created_at = 2.days.ago
 
       @user = stub_model(Spree::LegacyUser, :email => "spree@example.com")
-      @order = Spree::Order.create user: @user
+      @order = Spree::Order.create! user: @user
       @payload = { :order => @order, :user => @user }
     end
 
@@ -222,7 +222,7 @@ describe Spree::Promotion, :type => :model do
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
       action_params = { :promotion => promotion, :calculator => calculator }
-      action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      action = Spree::Promotion::Actions::CreateAdjustment.create!(action_params)
       promotion.actions << action
       action
     end
@@ -258,7 +258,7 @@ describe Spree::Promotion, :type => :model do
       before do
         promotion_rule.promotion = promotion
         promotion_rule.products << create(:product)
-        promotion_rule.save
+        promotion_rule.save!
       end
 
       it "should have products" do
@@ -283,7 +283,7 @@ describe Spree::Promotion, :type => :model do
       promotion.name = "Foo"
       calculator = Spree::Calculator::FlatRate.new
       action_params = { :promotion => promotion, :calculator => calculator }
-      @action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      @action = Spree::Promotion::Actions::CreateAdjustment.create!(action_params)
     end
 
     context "when it is expired" do
@@ -336,12 +336,12 @@ describe Spree::Promotion, :type => :model do
     end
 
     context "with 'any' match policy" do
-      let(:promotion) { Spree::Promotion.create(:name => "Promo", :match_policy => 'any') }
+      let(:promotion) { Spree::Promotion.create!(:name => "Promo", :match_policy => 'any') }
       let(:promotable) { double('Promotable') }
 
       it "should have eligible rules if any of the rules are eligible" do
         allow_any_instance_of(Spree::PromotionRule).to receive_messages(:applicable? => true)
-        true_rule = Spree::PromotionRule.create(:promotion => promotion)
+        true_rule = Spree::PromotionRule.create!(:promotion => promotion)
         allow(true_rule).to receive_messages(:eligible? => true)
         allow(promotion).to receive_messages(:rules => [true_rule])
         allow(promotion).to receive_message_chain(:rules, :for).and_return([true_rule])
@@ -354,7 +354,7 @@ describe Spree::Promotion, :type => :model do
   # admin form posts the code and path as empty string
   describe "normalize blank values for code & path" do
     it "will save blank value as nil value instead" do
-      promotion = Spree::Promotion.create(:name => "A promotion", :code => "", :path => "")
+      promotion = Spree::Promotion.create!(:name => "A promotion", :code => "", :path => "")
       expect(promotion.code).to be_nil
       expect(promotion.path).to be_nil
     end

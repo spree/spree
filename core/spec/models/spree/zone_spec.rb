@@ -10,7 +10,7 @@ describe Spree::Zone, :type => :model do
       country
     end
 
-    before { country_zone.members.create(zoneable: country) }
+    before { country_zone.members.create!(zoneable: country) }
 
     context "when there is only one qualifying zone" do
       let(:address) { create(:address, country: country, state: country.states.first) }
@@ -24,7 +24,7 @@ describe Spree::Zone, :type => :model do
       let(:address) { create(:address, country: country, state: country.states.first) }
       let(:second_zone) { create(:zone, name: 'SecondZone') }
 
-      before { second_zone.members.create(zoneable: country) }
+      before { second_zone.members.create!(zoneable: country) }
 
       context "when both zones have the same number of members" do
         it "should return the zone that was created first" do
@@ -35,7 +35,7 @@ describe Spree::Zone, :type => :model do
       context "when one of the zones has fewer members" do
         let(:country2) { create(:country) }
 
-        before { country_zone.members.create(zoneable: country2) }
+        before { country_zone.members.create!(zoneable: country2) }
 
         it "should return the zone with fewer members" do
           expect(Spree::Zone.match(address)).to eq(second_zone)
@@ -47,7 +47,7 @@ describe Spree::Zone, :type => :model do
       let(:state_zone) { create(:zone, name: 'StateZone') }
       let(:address) { create(:address, country: country, state: country.states.first) }
 
-      before { state_zone.members.create(zoneable: country.states.first) }
+      before { state_zone.members.create!(zoneable: country.states.first) }
 
       it "should return the zone with the more specific member type" do
         expect(Spree::Zone.match(address)).to eq(state_zone)
@@ -68,7 +68,7 @@ describe Spree::Zone, :type => :model do
     context "when zone consists of countries" do
       let(:country_zone) { create(:zone, name: 'CountryZone') }
 
-      before { country_zone.members.create(zoneable: country) }
+      before { country_zone.members.create!(zoneable: country) }
 
       it 'should return a list of countries' do
         expect(country_zone.country_list).to eq([country])
@@ -78,7 +78,7 @@ describe Spree::Zone, :type => :model do
     context "when zone consists of states" do
       let(:state_zone) { create(:zone, name: 'StateZone') }
 
-      before { state_zone.members.create(zoneable: state) }
+      before { state_zone.members.create!(zoneable: state) }
 
       it 'should return a list of countries' do
         expect(state_zone.country_list).to eq([state.country])
@@ -93,7 +93,7 @@ describe Spree::Zone, :type => :model do
 
     context "when zone is country type" do
       let(:country_zone) { create(:zone, name: 'CountryZone') }
-      before { country_zone.members.create(zoneable: country) }
+      before { country_zone.members.create!(zoneable: country) }
 
       it "should be true" do
         expect(country_zone.include?(address)).to be true
@@ -102,7 +102,7 @@ describe Spree::Zone, :type => :model do
 
     context "when zone is state type" do
       let(:state_zone) { create(:zone, name: 'StateZone') }
-      before { state_zone.members.create(zoneable: state) }
+      before { state_zone.members.create!(zoneable: state) }
 
       it "should be true" do
         expect(state_zone.include?(address)).to be true
@@ -138,7 +138,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when the target has no members" do
-      before { @source.members.create(zoneable: country1) }
+      before { @source.members.create!(zoneable: country1) }
 
       it "should be false" do
         expect(@source.contains?(@target)).to be false
@@ -146,7 +146,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when the source has no members" do
-      before { @target.members.create(zoneable: country1) }
+      before { @target.members.create!(zoneable: country1) }
 
       it "should be false" do
         expect(@source.contains?(@target)).to be false
@@ -155,7 +155,7 @@ describe Spree::Zone, :type => :model do
 
     context "when both zones are the same zone" do
       before do
-        @source.members.create(zoneable: country1)
+        @source.members.create!(zoneable: country1)
         @target = @source
       end
 
@@ -166,14 +166,14 @@ describe Spree::Zone, :type => :model do
 
     context "when both zones are of the same type" do
       before do
-        @source.members.create(zoneable: country1)
-        @source.members.create(zoneable: country2)
+        @source.members.create!(zoneable: country1)
+        @source.members.create!(zoneable: country2)
       end
 
       context "when all members are included in the zone we check against" do
         before do
-          @target.members.create(zoneable: country1)
-          @target.members.create(zoneable: country2)
+          @target.members.create!(zoneable: country1)
+          @target.members.create!(zoneable: country2)
         end
 
         it "should be true" do
@@ -183,9 +183,9 @@ describe Spree::Zone, :type => :model do
 
       context "when some members are included in the zone we check against" do
         before do
-          @target.members.create(zoneable: country1)
-          @target.members.create(zoneable: country2)
-          @target.members.create(zoneable: create(:country))
+          @target.members.create!(zoneable: country1)
+          @target.members.create!(zoneable: country2)
+          @target.members.create!(zoneable: create(:country))
         end
 
         it "should be false" do
@@ -195,8 +195,8 @@ describe Spree::Zone, :type => :model do
 
       context "when none of the members are included in the zone we check against" do
         before do
-          @target.members.create(zoneable: create(:country))
-          @target.members.create(zoneable: create(:country))
+          @target.members.create!(zoneable: create(:country))
+          @target.members.create!(zoneable: create(:country))
         end
 
         it "should be false" do
@@ -207,8 +207,8 @@ describe Spree::Zone, :type => :model do
 
     context "when checking country against state" do
       before do
-        @source.members.create(zoneable: create(:state))
-        @target.members.create(zoneable: country1)
+        @source.members.create!(zoneable: create(:state))
+        @target.members.create!(zoneable: country1)
       end
 
       it "should be false" do
@@ -217,13 +217,13 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when checking state against country" do
-      before { @source.members.create(zoneable: country1) }
+      before { @source.members.create!(zoneable: country1) }
 
       context "when all states contained in one of the countries we check against" do
 
         before do
           state1 = create(:state, country: country1)
-          @target.members.create(zoneable: state1)
+          @target.members.create!(zoneable: state1)
         end
 
         it "should be true" do
@@ -235,8 +235,8 @@ describe Spree::Zone, :type => :model do
 
         before do
           state1 = create(:state, country: country1)
-          @target.members.create(zoneable: state1)
-          @target.members.create(zoneable: create(:state, country: country2))
+          @target.members.create!(zoneable: state1)
+          @target.members.create!(zoneable: create(:state, country: country2))
         end
 
         it "should be false" do
@@ -247,8 +247,8 @@ describe Spree::Zone, :type => :model do
       context "when none of the states contained in any of the countries we check against" do
 
         before do
-          @target.members.create(zoneable: create(:state, country: country2))
-          @target.members.create(zoneable: create(:state, country: country2))
+          @target.members.create!(zoneable: create(:state, country: country2))
+          @target.members.create!(zoneable: create(:state, country: country2))
         end
 
         it "should be false" do
@@ -273,9 +273,9 @@ describe Spree::Zone, :type => :model do
         zone = create(:zone, name: 'foo', zone_members: [])
         state = create(:state)
         country = create(:country)
-        zone.members.create(zoneable: state)
-        country_member = zone.members.create(zoneable: country)
-        zone.save
+        zone.members.create!(zoneable: state)
+        country_member = zone.members.create!(zoneable: country)
+        zone.save!
         expect(zone.reload.members).to eq([country_member])
       end
     end
@@ -285,7 +285,7 @@ describe Spree::Zone, :type => :model do
     context "when the zone consists of country zone members" do
       before do
         @zone = create(:zone, name: 'country', zone_members: [])
-        @zone.members.create(zoneable: create(:country))
+        @zone.members.create!(zoneable: create(:country))
       end
       it "should return the kind of zone member" do
         expect(@zone.kind).to eq("country")
@@ -295,7 +295,7 @@ describe Spree::Zone, :type => :model do
     context "when the zone consists of state zone members" do
       before do
         @zone = create(:zone, name: 'state', zone_members: [])
-        @zone.members.create(zoneable: create(:state))
+        @zone.members.create!(zoneable: create(:state))
       end
       it "should return the kind of zone member" do
         expect(@zone.kind).to eq("state")

@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 describe Spree::ReturnAuthorization, :type => :model do
-  let(:stock_location) { Spree::StockLocation.create(:name => "test") }
+  let(:stock_location) { Spree::StockLocation.create!(:name => "test") }
   let(:order) { create(:shipped_order) }
 
   let(:variant) { order.variants.first }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
   context "save" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
 
     it "should be invalid when order has no inventory units" do
-      return_authorization.save
+      expect(return_authorization.valid?).to be(false)
       expect(return_authorization.errors[:order]).to eq(["has no shipped units"])
     end
   end
@@ -19,19 +19,27 @@ describe Spree::ReturnAuthorization, :type => :model do
   describe ".before_create" do
     describe "#generate_number" do
       context "number is assigned" do
-        let(:return_authorization) { Spree::ReturnAuthorization.new(number: '123') }
+        let(:return_authorization) do
+          super().tap do |return_authorization|
+            return_authorization.number = '123'
+          end
+        end
 
         it "should return the assigned number" do
-          return_authorization.save
+          return_authorization.save!
           expect(return_authorization.number).to eq('123')
         end
       end
 
       context "number is not assigned" do
-        let(:return_authorization) { Spree::ReturnAuthorization.new(number: nil) }
+        let(:return_authorization) do
+          super().tap do |return_authorization|
+            return_authorization.number = nil
+          end
+        end
 
         it "should assign number with random RMA number" do
-          return_authorization.save
+          return_authorization.save!
           expect(return_authorization.number).to match(/RMA\d{9}/)
         end
       end

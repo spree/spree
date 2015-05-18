@@ -146,7 +146,7 @@ describe Spree::StockItem, :type => :model do
   end
 
   context "with stock movements" do
-    before { Spree::StockMovement.create(stock_item: subject, quantity: 1) }
+    before { Spree::StockMovement.create!(stock_item: subject, quantity: 1) }
 
     it "doesnt raise ReadOnlyRecord error" do
       expect { subject.destroy }.not_to raise_error
@@ -234,7 +234,7 @@ describe Spree::StockItem, :type => :model do
     describe 'count_on_hand' do
       shared_examples_for 'valid count_on_hand' do
         before(:each) do
-          subject.save
+          subject.valid?
         end
 
         it 'has :no errors_on' do
@@ -244,7 +244,7 @@ describe Spree::StockItem, :type => :model do
 
       shared_examples_for 'not valid count_on_hand' do
         before(:each) do
-          subject.save
+          subject.valid?
         end
 
         it 'has 1 error_on' do

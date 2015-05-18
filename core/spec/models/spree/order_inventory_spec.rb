@@ -91,9 +91,9 @@ describe Spree::OrderInventory, :type => :model do
     before do
       subject.verify
 
-      order.shipments.create(:stock_location_id => stock_location.id, :cost => 5)
+      order.shipments.create!(:stock_location_id => stock_location.id, :cost => 5)
 
-      shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id, :cost => 10)
+      shipped = order.shipments.create!(:stock_location_id => order.shipments.first.stock_location.id, :cost => 10)
       shipped.update_column(:state, 'shipped')
     end
 

@@ -11,7 +11,7 @@ FactoryGirl.define do
 
       shipment.order.line_items.each do |line_item|
         line_item.quantity.times do
-          shipment.inventory_units.create(
+          shipment.inventory_units.create!(
             order:     line_item.order,
             variant:   line_item.variant,
             line_item: line_item

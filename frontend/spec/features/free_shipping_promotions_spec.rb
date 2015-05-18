@@ -7,7 +7,7 @@ describe "Free shipping promotions", :type => :feature, :js => true do
   let!(:shipping_method) do
     sm = create(:shipping_method)
     sm.calculator.preferred_amount = 10
-    sm.calculator.save
+    sm.calculator.save!
     sm
   end
 
@@ -20,7 +20,7 @@ describe "Free shipping promotions", :type => :feature, :js => true do
 
     action = Spree::Promotion::Actions::FreeShipping.new
     action.promotion = promotion
-    action.save
+    action.save!
 
     promotion.reload # so that promotion.actions is available
   end

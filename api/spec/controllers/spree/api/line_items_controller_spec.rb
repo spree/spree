@@ -56,7 +56,7 @@ module Spree
       end
 
       it "increases a line item's quantity if it exists already" do
-        order.line_items.create(:variant_id => product.master.id, :quantity => 10)
+        order.line_items.create!(:variant_id => product.master.id, :quantity => 10)
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
         expect(response.status).to eq(201)
         order.reload
@@ -85,7 +85,7 @@ module Spree
       end
 
       context "order contents changed after shipments were created" do
-        let!(:order) { Order.create }
+        let!(:order) { Order.create! }
         let!(:line_item) { order.contents.add(product.master) }
 
         before { order.create_proposed_shipments }

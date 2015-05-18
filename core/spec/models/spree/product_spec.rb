@@ -49,7 +49,7 @@ describe Spree::Product, :type => :model do
 
         it "saves the master" do
           expect(product.master).to receive(:save!)
-          product.save
+          product.save!
         end
       end
 
@@ -72,12 +72,12 @@ describe Spree::Product, :type => :model do
 
         it "saves the master" do
           expect(product.master).to receive(:save!)
-          product.save
+          product.save!
         end
 
         it "saves the default price" do
           expect do
-            product.save
+            product.save!
           end.to change{ @price.new_record? }.from(true).to(false)
         end
 
@@ -93,19 +93,19 @@ describe Spree::Product, :type => :model do
 
         it "saves the master" do
           expect(product.master).to receive(:save!)
-          product.save
+          product.save!
         end
 
         it "saves the default price" do
           expect(product.master.default_price).to receive(:save)
-          product.save
+          product.save!
         end
       end
 
       context "when master variant and price haven't changed" do
         it "does not save the master" do
           expect(product.master).not_to receive(:save!)
-          product.save
+          product.save!
         end
       end
     end
@@ -293,13 +293,13 @@ describe Spree::Product, :type => :model do
     it "should not create duplicate properties when set_property is called" do
       expect {
         product.set_property('the_prop', 'value2')
-        product.save
+        product.save!
         product.reload
       }.not_to change(product.properties, :length)
 
       expect {
         product.set_property('the_prop_new', 'value')
-        product.save
+        product.save!
         product.reload
         expect(product.property('the_prop_new')).to eq('value')
       }.to change { product.properties.length }.by(1)
@@ -320,7 +320,7 @@ describe Spree::Product, :type => :model do
         create(:promotion, advertise: true, starts_at: 1.day.ago)
       end
       let!(:rule) do
-        Spree::Promotion::Rules::Product.create(
+        Spree::Promotion::Rules::Product.create!(
           promotion: promotion,
           products: [product]
         )
@@ -340,7 +340,7 @@ describe Spree::Product, :type => :model do
 
     context "when prototype is supplied" do
       it "should create properties based on the prototype" do
-        product.save
+        product.save!
         expect(product.properties.count).to eq(1)
       end
     end
@@ -349,7 +349,7 @@ describe Spree::Product, :type => :model do
       def build_option_type_with_values(name, values)
         ot = create(:option_type, :name => name)
         values.each do |val|
-          ot.option_values.create(:name => val.downcase, :presentation => val)
+          ot.option_values.create!(:name => val.downcase, :presentation => val)
         end
         ot
       end
@@ -368,26 +368,26 @@ describe Spree::Product, :type => :model do
       end
 
       it "should create option types based on the prototype" do
-        product.save
+        product.save!
         expect(product.option_type_ids.length).to eq(1)
         expect(product.option_type_ids).to eq(prototype.option_type_ids)
       end
 
       it "should create product option types based on the prototype" do
-        product.save
+        product.save!
         expect(product.product_option_types.pluck(:option_type_id)).to eq(prototype.option_type_ids)
       end
 
       it "should create variants from an option values hash with one option type" do
         product.option_values_hash = option_values_hash
-        product.save
+        product.save!
         expect(product.variants.length).to eq(3)
       end
 
       it "should still create variants when option_values_hash is given but prototype id is nil" do
         product.option_values_hash = option_values_hash
         product.prototype_id = nil
-        product.save
+        product.save!
         expect(product.option_type_ids.length).to eq(1)
         expect(product.option_type_ids).to eq(prototype.option_type_ids)
         expect(product.variants.length).to eq(3)
@@ -399,7 +399,7 @@ describe Spree::Product, :type => :model do
         option_values_hash[color.id.to_s] = color.option_value_ids
         option_values_hash[logo.id.to_s] = logo.option_value_ids
         product.option_values_hash = option_values_hash
-        product.save
+        product.save!
         product.reload
         expect(product.option_type_ids.length).to eq(3)
         expect(product.variants.length).to eq(27)
@@ -413,9 +413,9 @@ describe Spree::Product, :type => :model do
     let(:params) { {:viewable_id => product.master.id, :viewable_type => 'Spree::Variant', :attachment => image, :alt => "position 2", :position => 2} }
 
     before do
-      Spree::Image.create(params)
-      Spree::Image.create(params.merge({:alt => "position 1", :position => 1}))
-      Spree::Image.create(params.merge({:viewable_type => 'ThirdParty::Extension', :alt => "position 1", :position => 2}))
+      Spree::Image.create!(params)
+      Spree::Image.create!(params.merge({:alt => "position 1", :position => 1}))
+      Spree::Image.create!(params.merge({:viewable_type => 'ThirdParty::Extension', :alt => "position 1", :position => 2}))
     end
 
     it "only looks for variant images" do

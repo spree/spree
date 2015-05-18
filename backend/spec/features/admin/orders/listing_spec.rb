@@ -91,7 +91,7 @@ describe "Orders Listing", :type => :feature do
 
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
-        10.times { Spree::Order.create :email => "incomplete@example.com" }
+        10.times { Spree::Order.create! :email => "incomplete@example.com" }
         uncheck "q_completed_at_not_null"
         click_button "Filter Results"
         within(".pagination") do
@@ -114,7 +114,7 @@ describe "Orders Listing", :type => :feature do
     context "filter on promotions", :js => true do
       before(:each) do
         @order1.promotions << promotion
-        @order1.save
+        @order1.save!
         click_link "Orders"
       end
 

@@ -232,7 +232,7 @@ describe Spree::Preferences::Preferable, :type => :model do
     end
 
     before(:each) do
-      @pt = PrefTest.create
+      @pt = PrefTest.create!
     end
 
     describe "pending preferences for new activerecord objects" do

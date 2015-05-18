@@ -58,7 +58,7 @@ module Spree
       it "gets all states for a country" do
         country = create(:country, :states_required => true)
         state.country = country
-        state.save
+        state.save!
 
         api_get :index, :country_id => country.id
         expect(json_response["states"].first).to have_attributes(attributes)

@@ -45,7 +45,7 @@ module Spree
         end
 
         context "doesn't track inventory levels" do
-          let(:order) { Order.create }
+          let(:order) { Order.create! }
           let!(:line_item) { order.contents.add(create(:variant), 30) }
 
           before { Config.track_inventory_levels = false }

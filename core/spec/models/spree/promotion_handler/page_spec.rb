@@ -5,10 +5,10 @@ module Spree
     describe Page, :type => :model do
       let(:order) { create(:order_with_line_items, :line_items_count => 1) }
 
-      let(:promotion) { Promotion.create(name: "10% off", :path => '10off') }
+      let(:promotion) { Promotion.create!(name: "10% off", :path => '10off') }
       before do
         calculator = Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
-        action = Promotion::Actions::CreateItemAdjustments.create(:calculator => calculator)
+        action = Promotion::Actions::CreateItemAdjustments.create!(:calculator => calculator)
         promotion.actions << action
       end
 

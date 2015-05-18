@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrderContents, type: :model, db: :isolate do
-  let(:order) { Spree::Order.create }
+  let(:order) { Spree::Order.create! }
   let(:variant) { create(:variant) }
 
   subject { described_class.new(order) }
@@ -127,7 +127,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       end
 
       context 'one active order promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion, calculator: calculator) }
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)
@@ -138,7 +138,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       end
 
       context 'one active line item promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create!(promotion: promotion, calculator: calculator) }
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)

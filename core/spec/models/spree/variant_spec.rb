@@ -22,7 +22,7 @@ describe Spree::Variant, :type => :model do
 
     it "propagate to stock items" do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
-      product.variants.create(:name => "Foobar")
+      product.variants.create!(:name => "Foobar")
     end
 
     context "stock location has disable propagate all variants" do
@@ -30,7 +30,7 @@ describe Spree::Variant, :type => :model do
 
       it "propagate to stock items" do
         expect_any_instance_of(Spree::StockLocation).not_to receive(:propagate_variant)
-        product.variants.create(:name => "Foobar")
+        product.variants.create!(:name => "Foobar")
       end
     end
 

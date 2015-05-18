@@ -7,7 +7,7 @@ describe Spree::LineItem, :type => :model do
   context '#save' do
     it 'touches the order' do
       expect(line_item.order).to receive(:touch)
-      line_item.save
+      line_item.save!
     end
   end
 
@@ -51,14 +51,14 @@ describe Spree::LineItem, :type => :model do
       it "triggers adjustment total recalculation" do
         expect(line_item).to receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
         expect(line_item).to receive(:recalculate_adjustments)
-        line_item.save
+        line_item.save!
       end
     end
 
     context "line item does not change" do
       it "does not trigger adjustment total recalculation" do
         expect(line_item).not_to receive(:recalculate_adjustments)
-        line_item.save
+        line_item.save!
       end
     end
 
@@ -66,7 +66,7 @@ describe Spree::LineItem, :type => :model do
       it "verifies inventory" do
         line_item.target_shipment = Spree::Shipment.new
         expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
-        line_item.save
+        line_item.save!
       end
     end
   end
@@ -94,7 +94,7 @@ describe Spree::LineItem, :type => :model do
       before do
         order.bill_address = nil
         order.ship_address = nil
-        order.save
+        order.save!
         expect(order.reload.tax_zone).to be_nil
       end
 
@@ -163,7 +163,7 @@ describe Spree::LineItem, :type => :model do
   end
 
   context "has inventory (completed order so items were already unstocked)" do
-    let(:order) { Spree::Order.create(email: 'spree@example.com') }
+    let(:order) { Spree::Order.create!(email: 'spree@example.com') }
     let(:variant) { create(:variant) }
 
     context "nothing left on stock" do
@@ -179,7 +179,7 @@ describe Spree::LineItem, :type => :model do
         line_item.quantity -= 1
         line_item.target_shipment = order.shipments.first
 
-        line_item.save
+        line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
 
@@ -206,7 +206,7 @@ describe Spree::LineItem, :type => :model do
         line_item.quantity += 2
         line_item.target_shipment = order.shipments.first
 
-        line_item.save
+        line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
 

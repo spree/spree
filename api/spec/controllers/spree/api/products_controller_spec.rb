@@ -96,7 +96,7 @@ module Spree
       end
 
       context "product has more than one price" do
-        before { product.master.prices.create currency: "EUR", amount: 22 }
+        before { product.master.prices.create! currency: "EUR", amount: 22 }
 
         it "returns distinct products only" do
           api_get :index

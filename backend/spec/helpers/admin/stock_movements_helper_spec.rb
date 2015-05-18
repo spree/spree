@@ -12,7 +12,7 @@ describe Spree::Admin::StockMovementsHelper, :type => :helper do
       let(:variant) { stock_item.variant }
 
       before do
-        @stock_transfer = Spree::StockTransfer.create(reference: 'PO123')
+        @stock_transfer = Spree::StockTransfer.create!(reference: 'PO123')
         variants = { variant => 5 }
         @stock_transfer.transfer(source_location,
                        destination_location,

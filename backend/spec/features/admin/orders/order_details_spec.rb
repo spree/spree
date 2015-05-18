@@ -11,7 +11,7 @@ describe "Order Details", type: :feature, js: true do
   let!(:shipping_method) { create(:shipping_method, :name => "Default") }
 
   before do
-    order.shipments.create(stock_location_id: stock_location.id)
+    order.shipments.create!(stock_location_id: stock_location.id)
     order.contents.add(product.master, 2)
   end
 

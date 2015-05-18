@@ -281,7 +281,7 @@ describe Spree::CheckoutController, :type => :controller do
             # A different country which is not included in the list of shippable countries
             address.country = create(:country, :name => "Australia")
             address.state_name = 'Victoria'
-            address.save
+            address.save!
           end
         end
 

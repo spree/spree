@@ -4,7 +4,7 @@ module Spree
   describe OrderUpdater, :type => :model do
     subject { described_class.new(order) }
 
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
 
     context "order totals" do
       before do

@@ -62,7 +62,7 @@ module Spree
       end
 
       it "keeps source attributes after updating" do
-        persisted_order = Spree::Order.create
+        persisted_order = Spree::Order.create!
         credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
           :payments_attributes => [
@@ -71,14 +71,14 @@ module Spree
               :source_attributes => {
                 :name => "Ryan Bigg",
                 :number => "41111111111111111111",
-                :expiry => "01 / 15",
+                :expiry => "01 / #{Time.now.year.succ}",
                 :verification_value => "123"
               }
             }
           ]
         }
 
-        persisted_order.update_attributes(attributes)
+        persisted_order.update_attributes!(attributes)
         expect(persisted_order.pending_payments.last.source.number).to be_present
       end
     end

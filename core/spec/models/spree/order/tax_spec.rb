@@ -7,7 +7,7 @@ module Spree
     context "#tax_zone" do
       let(:bill_address) { create :address }
       let(:ship_address) { create :address }
-      let(:order) { Spree::Order.create(:ship_address => ship_address, :bill_address => bill_address) }
+      let(:order) { Spree::Order.create!(:ship_address => ship_address, :bill_address => bill_address) }
       let(:zone) { create :zone }
 
       context "when no zones exist" do

@@ -7,7 +7,7 @@ module Spree
     let(:stock_item) { source_location.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
-    subject { StockTransfer.create(reference: 'PO123') }
+    subject { StockTransfer.create!(reference: 'PO123') }
 
     describe '#reference' do
       subject { super().reference }

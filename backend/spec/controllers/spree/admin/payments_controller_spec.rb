@@ -83,7 +83,7 @@ module Spree
       context "order does not have a billing address" do
         before do
           order.bill_address = nil
-          order.save
+          order.save!
         end
 
         it "should redirect to the customer details page" do

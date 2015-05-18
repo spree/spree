@@ -14,15 +14,15 @@ describe "Automatic promotions", :type => :feature, :js => true do
    calculator = Spree::Calculator::FlatRate.new
    calculator.preferred_amount = 10
 
-   rule = Spree::Promotion::Rules::ItemTotal.create
+   rule = Spree::Promotion::Rules::ItemTotal.create!
    rule.preferred_amount = 100
-   rule.save
+   rule.save!
 
    promotion.rules << rule
 
-   action = Spree::Promotion::Actions::CreateAdjustment.create
+   action = Spree::Promotion::Actions::CreateAdjustment.create!
    action.calculator = calculator
-   action.save
+   action.save!
 
    promotion.actions << action
   end

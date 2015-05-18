@@ -13,7 +13,7 @@ describe "Log entries", :type => :feature do
         :transid => "ABCD1234"
       )
 
-      payment.log_entries.create(
+      payment.log_entries.create!(
         :source => payment.source,
         :details => response.to_yaml
       )
@@ -37,7 +37,7 @@ describe "Log entries", :type => :feature do
         :transid => "ABCD1234"
       )
 
-      payment.log_entries.create(
+      payment.log_entries.create!(
         :source => payment.source,
         :details => response.to_yaml
       )

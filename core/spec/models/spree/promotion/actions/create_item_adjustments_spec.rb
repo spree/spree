@@ -91,7 +91,7 @@ module Spree
           before { promotion.promotion_actions = [other_action] }
 
           it "destroys adjustments for incompleted orders" do
-            order = Order.create
+            order = Order.create!
             action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
 
             expect {
@@ -100,7 +100,7 @@ module Spree
           end
 
           it "nullifies adjustments for completed orders" do
-            order = Order.create(completed_at: Time.now)
+            order = Order.create!(completed_at: Time.now)
             adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
 
             expect {

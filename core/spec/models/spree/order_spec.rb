@@ -17,7 +17,7 @@ describe Spree::Order, :type => :model do
   end
 
   context "#create" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
 
     it "should assign an order number" do
       expect(order.number).not_to be_nil
@@ -57,7 +57,7 @@ describe Spree::Order, :type => :model do
   end
 
   context "#finalize!" do
-    let(:order) { Spree::Order.create(email: 'test@example.com') }
+    let(:order) { Spree::Order.create!(email: 'test@example.com') }
 
     before do
       order.update_column :state, 'complete'
@@ -84,7 +84,7 @@ describe Spree::Order, :type => :model do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      Spree::Shipment.create(order: order)
+      Spree::Shipment.create!(order: order)
       order.shipments.reload
 
       allow(order).to receive_messages(:paid? => true, :complete? => true)
@@ -261,8 +261,8 @@ describe Spree::Order, :type => :model do
   # Regression tests for #2179
   context "#merge!" do
     let(:variant) { create(:variant) }
-    let(:order_1) { Spree::Order.create }
-    let(:order_2) { Spree::Order.create }
+    let(:order_1) { Spree::Order.create! }
+    let(:order_2) { Spree::Order.create! }
 
     shared_examples '#merge!' do
       it "destroys the other order" do
@@ -663,7 +663,7 @@ describe Spree::Order, :type => :model do
   end
 
   context "#can_ship?" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
 
     it "should be true for order in the 'complete' state" do
       allow(order).to receive_messages(:complete? => true)
@@ -769,7 +769,7 @@ describe Spree::Order, :type => :model do
 
   # Regression test for #4923
   context "locking" do
-    let(:order) { Spree::Order.create } # need a persisted in order to test locking
+    let(:order) { Spree::Order.create! } # need a persisted in order to test locking
 
     it 'can lock' do
       expect { order.with_lock {} }.to_not raise_error

@@ -8,7 +8,7 @@ describe Spree::Admin::SearchController, :type => :controller do
   before do
     user.ship_address = create(:address)
     user.bill_address = create(:address)
-    user.save
+    user.save!
   end
 
   it "can find a user by their email "do

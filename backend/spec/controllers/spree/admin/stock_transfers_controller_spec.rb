@@ -5,14 +5,14 @@ module Spree
     stub_authorization!
 
     let!(:stock_transfer1) {
-      StockTransfer.create do |transfer|
+      StockTransfer.create! do |transfer|
         transfer.source_location_id = 1
         transfer.destination_location_id = 2
         transfer.reference = 'PO 666'
       end }
 
     let!(:stock_transfer2) {
-      StockTransfer.create do |transfer|
+      StockTransfer.create! do |transfer|
         transfer.source_location_id = 3
         transfer.destination_location_id = 4
         transfer.reference = 'PO 666'
