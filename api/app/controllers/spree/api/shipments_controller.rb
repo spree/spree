@@ -23,7 +23,7 @@ module Spree
         authorize! :read, @order
         authorize! :create, Shipment
         quantity = params[:quantity].to_i
-        @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
+        @shipment = @order.shipments.create!(stock_location_id: params.fetch(:stock_location_id))
         @order.contents.add(variant, quantity, {shipment: @shipment})
 
         @shipment.save!

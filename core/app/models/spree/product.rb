@@ -126,7 +126,7 @@ module Spree
       return if option_values_hash.nil?
       option_values_hash.keys.map(&:to_i).each do |id|
         self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create(option_type_id: id) unless product_option_types.pluck(:option_type_id).include?(id)
+        product_option_types.create!(option_type_id: id) unless product_option_types.pluck(:option_type_id).include?(id)
       end
     end
 
@@ -194,7 +194,7 @@ module Spree
         property = if Property.exists?(name: property_name)
           Property.where(name: property_name).first
         else
-          Property.create(name: property_name, presentation: property_name)
+          Property.create!(name: property_name, presentation: property_name)
         end
         product_property = ProductProperty.where(product: self, property: property).first_or_initialize
         product_property.value = property_value
@@ -227,7 +227,7 @@ module Spree
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         prototype.properties.each do |property|
-          product_properties.create(property: property)
+          product_properties.create!(property: property)
         end
         self.option_types = prototype.option_types
         self.taxons = prototype.taxons
@@ -249,12 +249,12 @@ module Spree
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
       values.each do |ids|
-        variant = variants.create(
+        variants.create!(
           option_value_ids: ids,
           price: master.price
         )
       end
-      save
+      save!
     end
 
     def ensure_master

@@ -519,7 +519,7 @@ module Spree
         old_state = self.send("#{state}_was")
         new_state = self.send(state)
         unless old_state == new_state
-          self.state_changes.create(
+          state_changes.create!(
             previous_state: old_state,
             next_state:     new_state,
             name:           name,

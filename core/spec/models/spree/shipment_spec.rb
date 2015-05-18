@@ -29,7 +29,7 @@ describe Spree::Shipment, :type => :model do
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
   def create_shipment(order, stock_location)
-    order.shipments.create({ stock_location_id: stock_location.id }).inventory_units.create(
+    order.shipments.create!(stock_location_id: stock_location.id).inventory_units.create!(
       order_id: order.id,
       variant_id: order.line_items.first!.variant_id,
       line_item_id: order.line_items.first!.id
@@ -724,7 +724,7 @@ describe Spree::Shipment, :type => :model do
     before { allow(shipment).to receive_messages inventory_units: inventory_units }
 
     it "associates variant and order" do
-      expect(inventory_units).to receive(:create).with(params)
+      expect(inventory_units).to receive(:create!).with(params)
       unit = shipment.set_up_inventory('on_hand', variant, order, line_item)
     end
   end

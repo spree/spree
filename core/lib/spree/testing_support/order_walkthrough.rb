@@ -16,7 +16,7 @@ class OrderWalkthrough
       FactoryGirl.create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 10
         sm.calculator.preferred_currency = Spree::Config[:currency]
-        sm.calculator.save
+        sm.calculator.save!
       end
     end
 

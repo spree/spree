@@ -202,7 +202,7 @@ module Spree
       order.shipment_state = 'shipped'
       state_changes = double
       allow(order).to receive_messages state_changes: state_changes
-      expect(state_changes).to receive(:create).with(
+      expect(state_changes).to receive(:create!).with(
         previous_state: nil,
         next_state: 'shipped',
         name: 'shipment',

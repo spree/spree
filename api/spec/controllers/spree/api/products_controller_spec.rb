@@ -250,7 +250,7 @@ module Spree
 
         it "creates with embedded variants" do
           product_data.merge!({
-            variants: [attributes_for_variant, attributes_for_variant]
+            variants: [attributes_for_variant, attributes_for_variant.merge(sku: "ABC-#{Kernel.rand(9999)}")]
           })
 
           api_post :create, :product => product_data

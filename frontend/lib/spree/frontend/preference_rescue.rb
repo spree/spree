@@ -14,7 +14,7 @@ module Spree
             old_pref.key = [owner.class.name, old_pref.name, owner.id].join('::').underscore
             old_pref.value_type = owner.preference_type(old_pref.name)
             puts "Migrating Preference: #{old_pref.key}"
-            old_pref.save
+            old_pref.save!
           rescue NoMethodError => ex
             puts ex.message
           end

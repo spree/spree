@@ -284,6 +284,7 @@ describe Spree::Order, :type => :model do
 
     context "from delivery" do
       before do
+        order.email = 'user@example.com'
         order.state = 'delivery'
         allow(order).to receive(:apply_free_shipping_promotions)
       end
@@ -377,6 +378,7 @@ describe Spree::Order, :type => :model do
 
     context "from payment" do
       before do
+        order.email = 'user@example.com'
         order.state = 'payment'
       end
 
@@ -530,6 +532,10 @@ describe Spree::Order, :type => :model do
   # Regression test for #3665
   context "with only a complete step" do
     before do
+      order.email = 'user@example.com'
+    end
+
+    before do
       @old_checkout_flow = Spree::Order.checkout_flow
       Spree::Order.class_eval do
         checkout_flow do
@@ -551,7 +557,6 @@ describe Spree::Order, :type => :model do
       order.next!
       assert_state_changed(order, 'cart', 'complete')
     end
-
   end
 
   context "insert checkout step" do

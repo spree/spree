@@ -16,7 +16,7 @@ module Spree
           if product.save
             variants_attrs.each do |variant_attribute|
               # make sure the product is assigned before the options=
-              product.variants.create({ product: product }.merge(variant_attribute))
+              product.variants.create!({ product: product }.merge(variant_attribute))
             end
 
             set_up_options
@@ -30,10 +30,10 @@ module Spree
             variants_attrs.each do |variant_attribute|
               # update the variant if the id is present in the payload
               if variant_attribute['id'].present?
-                product.variants.find(variant_attribute['id'].to_i).update_attributes(variant_attribute)
+                product.variants.find(variant_attribute['id'].to_i).update_attributes!(variant_attribute)
               else
                 # make sure the product is assigned before the options=
-                product.variants.create({ product: product }.merge(variant_attribute))
+                product.variants.create!({ product: product }.merge(variant_attribute))
               end
             end
 

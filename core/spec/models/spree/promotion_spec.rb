@@ -99,6 +99,7 @@ describe Spree::Promotion, :type => :model do
       allow(@action1).to receive_messages perform: true
       allow(@action2).to receive_messages perform: true
 
+      promotion.name = 'Test'
       promotion.promotion_actions = [@action1, @action2]
       promotion.created_at = 2.days.ago
 

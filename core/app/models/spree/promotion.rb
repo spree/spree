@@ -71,10 +71,10 @@ module Spree
       action_taken = results.include?(true)
 
       if action_taken
-      # connect to the order
-      # create the join_table entry.
+        # connect to the order
+        # create the join_table entry.
         self.orders << order
-        self.save
+        save!
       end
 
       return action_taken

@@ -75,7 +75,7 @@ module Spree::Preferences
 
       preference = Spree::Preference.where(:key => cache_key).first_or_initialize
       preference.value = value
-      preference.save
+      preference.save!
     end
 
     def destroy(cache_key)

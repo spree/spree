@@ -147,7 +147,7 @@ module Spree
       end
 
       self.option_values << option_value
-      self.save
+      save
     end
 
     def option_value(opt_name)

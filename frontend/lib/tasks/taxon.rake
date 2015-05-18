@@ -7,7 +7,7 @@ namespace :spree do
   def redo_permalinks(taxon)
     taxon.permalink = nil
     puts "#{taxon.permalink} => #{taxon.set_permalink}"
-    taxon.save
+    taxon.save!
 
     taxon.children.each { |t| redo_permalinks(t) }
   end

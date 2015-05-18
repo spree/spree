@@ -44,13 +44,13 @@ module Spree
               # Persist the state on the order
               after_transition do |order, transition|
                 order.state = order.state
-                order.state_changes.create(
+                order.state_changes.create!(
                   previous_state: transition.from,
                   next_state:     transition.to,
                   name:           'order',
                   user_id:        order.user_id
                 )
-                order.save
+                order.save!
               end
 
               event :cancel do
@@ -252,7 +252,7 @@ module Spree
                 attributes[:payments_attributes].first[:request_env] = request_env
               end
 
-              success = self.update_attributes(attributes)
+              success = update_attributes(attributes)
               set_shipments_cost if self.shipments.any?
             end
 

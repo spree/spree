@@ -4,7 +4,7 @@ module Spree
       before_action :determine_backorderable, only: :update
 
       def update
-        stock_item.save
+        stock_item.save!
         respond_to do |format|
           format.js { head :ok }
         end

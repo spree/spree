@@ -55,7 +55,7 @@ module Spree
         ActiveSupport::Deprecation.warn "Passing a Variant ID is deprecated, and will be removed in Spree 3. Please pass a variant instance instead.", caller
         variant_or_id
       end
-      stock_item(vid) || stock_items.create(variant_id: vid)
+      stock_item(vid) || stock_items.create!(variant_id: vid)
     end
 
     def count_on_hand(variant)

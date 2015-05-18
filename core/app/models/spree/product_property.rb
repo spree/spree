@@ -21,7 +21,7 @@ module Spree
     def property_name=(name)
       unless name.blank?
         unless property = Property.find_by(name: name)
-          property = Property.create(name: name, presentation: name)
+          property = Property.create!(name: name, presentation: name)
         end
         self.property = property
       end
