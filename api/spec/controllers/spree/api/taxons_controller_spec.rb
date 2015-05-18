@@ -94,7 +94,7 @@ module Spree
 
       it "gets all taxons in JSTree form" do
         api_get :jstree, :taxonomy_id => taxonomy.id, :id => taxon.id
-        response = json_response.first
+        response = json_response.first!
         expect(response["data"]).to eq(taxon2.name)
         expect(response["attr"]).to eq({ "name" => taxon2.name, "id" => taxon2.id})
         expect(response["state"]).to eq("closed")
@@ -132,7 +132,7 @@ module Spree
         expect(response.status).to eq(201)
 
         expect(taxonomy.reload.root.children.count).to eq 2
-        taxon = Spree::Taxon.where(:name => 'Colors').first
+        taxon = Spree::Taxon.where(:name => 'Colors').first!
 
         expect(taxon.parent_id).to eq taxonomy.root.id
         expect(taxon.taxonomy_id).to eq taxonomy.id

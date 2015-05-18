@@ -32,7 +32,7 @@ feature "Tiered Calculator Promotions" do
 
     within('#actions_container') { click_button "Update" }
 
-    first_action = promotion.actions.first
+    first_action = promotion.actions.first!
     expect(first_action.class).to eq Spree::Promotion::Actions::CreateAdjustment
 
     first_action_calculator = first_action.calculator
@@ -45,7 +45,7 @@ feature "Tiered Calculator Promotions" do
     let(:promotion) { create :promotion, :with_order_adjustment }
 
     background do
-      action = promotion.actions.first
+      action = promotion.actions.first!
 
       action.calculator = Spree::Calculator::TieredFlatRate.new
       action.calculator.preferred_base_amount = 5

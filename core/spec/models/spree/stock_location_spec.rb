@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe StockLocation, :type => :model do
     subject { create(:stock_location_with_items, backorderable_default: true) }
-    let(:stock_item) { subject.stock_items.order(:id).first }
+    let(:stock_item) { subject.stock_items.order(:id).first! }
     let(:variant) { stock_item.variant }
 
     it 'creates stock_items for all variants' do

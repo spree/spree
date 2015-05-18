@@ -21,7 +21,7 @@ module Spree
 
     it "can see a paginated list of variants" do
       api_get :index
-      first_variant = json_response["variants"].first
+      first_variant = json_response["variants"].first!
       expect(first_variant).to have_attributes(show_attributes)
       expect(first_variant["stock_items"]).to be_present
       expect(json_response["count"]).to eq(1)

@@ -66,7 +66,7 @@ module Spree
       end
 
       it "can update a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => line_item.id, :line_item => { :quantity => 101 }
         expect(response.status).to eq(200)
         order.reload
@@ -76,7 +76,7 @@ module Spree
       end
 
       it "can delete a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_delete :destroy, :id => line_item.id
         expect(response.status).to eq(204)
         order.reload
@@ -135,14 +135,14 @@ module Spree
       end
 
       it "cannot update a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
         assert_unauthorized!
         expect(line_item.reload.quantity).not_to eq(1000)
       end
 
       it "cannot delete a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_delete :destroy, :id => line_item.id
         assert_unauthorized!
         expect { line_item.reload }.not_to raise_error

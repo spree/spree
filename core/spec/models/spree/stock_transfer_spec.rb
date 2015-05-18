@@ -4,7 +4,7 @@ module Spree
   describe StockTransfer, :type => :model do
     let(:destination_location) { create(:stock_location_with_items) }
     let(:source_location) { create(:stock_location_with_items) }
-    let(:stock_item) { source_location.stock_items.order(:id).first }
+    let(:stock_item) { source_location.stock_items.order(:id).first! }
     let(:variant) { stock_item.variant }
 
     subject { StockTransfer.create!(reference: 'PO123') }

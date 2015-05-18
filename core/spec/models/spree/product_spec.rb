@@ -222,7 +222,7 @@ describe Spree::Product, :type => :model do
     context "has stock movements" do
       let(:product) { create(:product) }
       let(:variant) { product.master }
-      let(:stock_item) { variant.stock_items.first }
+      let(:stock_item) { variant.stock_items.first! }
 
       it "doesnt raise ReadOnlyRecord error" do
         Spree::StockMovement.create!(stock_item: stock_item, quantity: 1)

@@ -287,7 +287,7 @@ describe Spree::Order, :type => :model do
         order_1.merge!(order_2)
         expect(order_1.line_items.count).to eq(1)
 
-        line_item = order_1.line_items.first
+        line_item = order_1.line_items.first!
         expect(line_item.quantity).to eq(2)
         expect(line_item.variant_id).to eq(variant.id)
       end

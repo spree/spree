@@ -101,7 +101,7 @@ module Spree
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
-        shipment = order.shipments.first
+        shipment = order.shipments.first!
         order.create_adjustment!(
           adjustable: shipment,
           amount: 5,
@@ -468,7 +468,7 @@ module Spree
           adjustment.update_column(:amount, 5)
           api_get :show, :id => order.to_param
 
-          adjustment = json_response['line_items'].first['adjustments'].first
+          adjustment = json_response['line_items'].first['adjustments'].first!
           expect(adjustment['label']).to eq("10% off!")
           expect(adjustment['amount']).to eq("5.0")
         end

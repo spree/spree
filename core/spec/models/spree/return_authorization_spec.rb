@@ -4,7 +4,7 @@ describe Spree::ReturnAuthorization, :type => :model do
   let(:stock_location) { Spree::StockLocation.create!(:name => "test") }
   let(:order) { create(:shipped_order) }
 
-  let(:variant) { order.variants.first }
+  let(:variant) { order.variants.first! }
   let(:return_authorization) { Spree::ReturnAuthorization.new(:order => order, :stock_location_id => stock_location.id) }
 
   context "save" do
@@ -88,7 +88,7 @@ describe Spree::ReturnAuthorization, :type => :model do
   end
 
   context "receive!" do
-    let(:inventory_unit) { order.shipments.first.inventory_units.first }
+    let(:inventory_unit) { order.shipments.first.inventory_units.first! }
 
     context "to the initial stock location" do
       before do
@@ -110,7 +110,7 @@ describe Spree::ReturnAuthorization, :type => :model do
         adjustments = order.all_adjustments.source(return_authorization)
         expect(adjustments.count).to eq(1)
 
-        adjustment = adjustments.first
+        adjustment = adjustments.first!
         expect(adjustment.adjustable).to be(order)
         expect(adjustment.amount).to eql(-20)
         expect(adjustment.label).to eql(Spree.t(:rma_credit))

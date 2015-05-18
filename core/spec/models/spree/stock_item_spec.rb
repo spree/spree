@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::StockItem, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
 
-  subject { stock_location.stock_items.order(:id).first }
+  subject { stock_location.stock_items.order(:id).first! }
 
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10

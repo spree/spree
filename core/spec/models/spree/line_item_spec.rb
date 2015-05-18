@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::LineItem, :type => :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
-  let(:line_item) { order.line_items.first }
+  let(:line_item) { order.line_items.first! }
 
   context '#save' do
     it 'touches the order' do
@@ -175,20 +175,20 @@ describe Spree::LineItem, :type => :model do
       end
 
       it "allows to decrease item quantity" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         line_item.quantity -= 1
-        line_item.target_shipment = order.shipments.first
+        line_item.target_shipment = order.shipments.first!
 
         line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
 
       it "doesnt allow to increase item quantity" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_shipment = order.shipments.first!
 
-        line_item.save
+        line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(1)
       end
     end
@@ -202,20 +202,20 @@ describe Spree::LineItem, :type => :model do
       end
 
       it "allows to increase quantity up to stock availability" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_shipment = order.shipments.first!
 
         line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
 
       it "doesnt allow to increase quantity over stock availability" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         line_item.quantity += 3
-        line_item.target_shipment = order.shipments.first
+        line_item.target_shipment = order.shipments.first!
 
-        line_item.save
+        line_item.save!
         expect(line_item.errors_on(:quantity).size).to eq(1)
       end
     end
@@ -223,7 +223,7 @@ describe Spree::LineItem, :type => :model do
 
   context "currency same as order.currency" do
     it "is a valid line item" do
-      line_item = order.line_items.first
+      line_item = order.line_items.first!
       line_item.currency = order.currency
       line_item.valid?
 
@@ -233,7 +233,7 @@ describe Spree::LineItem, :type => :model do
 
   context "currency different than order.currency" do
     it "is not a valid line item" do
-      line_item = order.line_items.first
+      line_item = order.line_items.first!
       line_item.currency = "no currency"
       line_item.valid?
 

@@ -111,7 +111,7 @@ describe Spree::Shipment, :type => :model do
     let(:order) { Spree::Order.create! }
     let(:variant) { create(:variant) }
     let!(:line_item) { order.contents.add variant }
-    let!(:shipment) { order.create_proposed_shipments.first }
+    let!(:shipment) { order.create_proposed_shipments.first! }
 
     it "returns variant expected" do
       expect(shipment.manifest.first.variant).to eq variant
@@ -330,11 +330,11 @@ describe Spree::Shipment, :type => :model do
       end
 
       it "doesn't fill backorders when restocking inventory units" do
-        shipment = order.shipments.first
+        shipment = order.shipments.first!
         expect(shipment.inventory_units.count).to eq 1
         expect(shipment.inventory_units.first).to be_backordered
 
-        other_shipment = other_order.shipments.first
+        other_shipment = other_order.shipments.first!
         expect(other_shipment.inventory_units.count).to eq 1
         expect(other_shipment.inventory_units.first).to be_backordered
 
@@ -583,7 +583,7 @@ describe Spree::Shipment, :type => :model do
       expect(shipment.state_changes).to be_empty
       expect(shipment.ready!).to be true
       expect(shipment.state_changes.count).to eq(1)
-      state_change = shipment.state_changes.first
+      state_change = shipment.state_changes.first!
       expect(state_change.previous_state).to eq('pending')
       expect(state_change.next_state).to eq('ready')
     end

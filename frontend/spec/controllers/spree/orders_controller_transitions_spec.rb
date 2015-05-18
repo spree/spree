@@ -14,7 +14,7 @@ module Spree
         allow(controller).to receive_messages :current_order => order
         expect(controller).to receive(:authorize!).at_least(:once).and_return(true)
 
-        first_state, _ = Spree::Order.checkout_steps.first
+        first_state, _ = Spree::Order.checkout_steps.first!
         Spree::Order.state_machine.after_transition :to => first_state do |order|
           order.did_transition = true
         end

@@ -258,7 +258,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
   context 'completed order' do
     let(:order) { create(:order, state: 'complete', completed_at: Time.now) }
 
-    before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
+    before { order.shipments.create! stock_location_id: variant.stock_location_ids.first! }
 
     it 'updates order payment state' do
       expect {

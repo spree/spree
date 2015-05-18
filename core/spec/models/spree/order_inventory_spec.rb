@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrderInventory, :type => :model do
   let(:order) { create :completed_order_with_totals }
-  let(:line_item) { order.line_items.first }
+  let(:line_item) { order.line_items.first! }
 
   subject { described_class.new(order, line_item) }
 
@@ -16,7 +16,7 @@ describe Spree::OrderInventory, :type => :model do
   end
 
   context "#add_to_shipment" do
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.shipments.first! }
 
     context "order is not completed" do
       before { allow(order).to receive_messages completed?: false }
@@ -141,7 +141,7 @@ describe Spree::OrderInventory, :type => :model do
     end
 
     context '#remove_from_shipment' do
-      let(:shipment) { order.shipments.first }
+      let(:shipment) { order.shipments.first! }
       let(:variant) { subject.variant }
 
       context "order is not completed" do

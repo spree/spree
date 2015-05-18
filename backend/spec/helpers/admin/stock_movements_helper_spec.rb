@@ -8,7 +8,7 @@ describe Spree::Admin::StockMovementsHelper, :type => :helper do
     context "transfering between two locations" do
       let(:destination_location) { create(:stock_location_with_items) }
       let(:source_location) { create(:stock_location_with_items) }
-      let(:stock_item) { source_location.stock_items.order(:id).first }
+      let(:stock_item) { source_location.stock_items.order(:id).first! }
       let(:variant) { stock_item.variant }
 
       before do

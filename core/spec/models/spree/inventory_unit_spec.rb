@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::InventoryUnit, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
-  let(:stock_item) { stock_location.stock_items.order(:id).first }
+  let(:stock_item) { stock_location.stock_items.order(:id).first! }
 
   context "#backordered_for_stock_item" do
     let(:order) do
@@ -16,15 +16,15 @@ describe Spree::InventoryUnit, :type => :model do
     end
 
     let(:shipment) do
-      order.shipments.first
+      order.shipments.first!
     end
 
     let(:shipping_method) do
-      shipment.shipping_methods.first
+      shipment.shipping_methods.first!
     end
 
     let!(:unit) do
-      unit = shipment.inventory_units.first
+      unit = shipment.inventory_units.first!
       unit.state = 'backordered'
       unit.tap(&:save!)
     end

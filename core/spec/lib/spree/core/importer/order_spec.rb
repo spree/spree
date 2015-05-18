@@ -94,7 +94,7 @@ module Spree
         expect(Importer::Order).to receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
         order = Importer::Order.import(user,params)
         expect(order.user).to eq(nil)
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         expect(line_item.quantity).to eq(5)
         expect(line_item.variant_id).to eq(variant_id)
       end
@@ -114,7 +114,7 @@ module Spree
 
         order = Importer::Order.import(user,params)
 
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         expect(line_item.variant_id).to eq(variant_id)
         expect(line_item.quantity).to eq(5)
       end
@@ -257,7 +257,7 @@ module Spree
 
         it 'builds them properly' do
           order = Importer::Order.import(user, params)
-          shipment = order.shipments.first
+          shipment = order.shipments.first!
 
           expect(shipment.cost.to_f).to eq 14.99
           expect(shipment.inventory_units.first.variant_id).to eq product.master.id
@@ -271,7 +271,7 @@ module Spree
         it "accepts admin name for stock location" do
           params[:shipments_attributes][0][:stock_location] = stock_location.admin_name
           order = Importer::Order.import(user, params)
-          shipment = order.shipments.first
+          shipment = order.shipments.first!
 
           expect(shipment.stock_location).to eq stock_location
         end
@@ -302,7 +302,7 @@ module Spree
 
           it 'builds them properly' do
             order = Importer::Order.import(user, params)
-            shipment = order.shipments.first
+            shipment = order.shipments.first!
 
             expect(shipment.cost.to_f).to eq 4.99
             expect(shipment.inventory_units.first.variant_id).to eq product.master.id
@@ -337,7 +337,7 @@ module Spree
 
         order = Importer::Order.import(user,params)
         order.adjustments.all?(&:closed?).should be(true)
-        first = order.adjustments.first
+        first = order.adjustments.first!
         expect(first.label).to eql('Shipping Discount')
         expect(first.amount).to eql(-4.99)
       end

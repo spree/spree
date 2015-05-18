@@ -51,7 +51,7 @@ module Spree
       end
 
       it "can take line_items_attributes as a parameter" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => order.to_param, :order_token => order.guest_token,
                          :order => { :line_items_attributes => { 0 => { :id => line_item.id, :quantity => 1 } } }
         expect(response.status).to eq(200)
@@ -59,7 +59,7 @@ module Spree
       end
 
       it "can take line_items as a parameter" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => order.to_param, :order_token => order.guest_token,
                          :order => { :line_items => { 0 => { :id => line_item.id, :quantity => 1 } } }
         expect(response.status).to eq(200)
@@ -126,7 +126,7 @@ module Spree
         order.update_column(:state, "delivery")
         shipment = create(:shipment, :order => order)
         shipment.refresh_rates
-        shipping_rate = shipment.shipping_rates.where(:selected => false).first
+        shipping_rate = shipment.shipping_rates.where(:selected => false).first!
         api_put :update, :id => order.to_param, :order_token => order.guest_token,
           :order => { :shipments_attributes => { "0" => { :selected_shipping_rate_id => shipping_rate.id, :id => shipment.id } } }
         expect(response.status).to eq(200)

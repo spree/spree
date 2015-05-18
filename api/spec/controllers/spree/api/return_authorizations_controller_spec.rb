@@ -55,7 +55,7 @@ module Spree
 
       it "can show return authorization" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_get :show, :order_id => order.number, :id => return_authorization.id
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
@@ -99,7 +99,7 @@ module Spree
 
       it "can update a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
@@ -107,8 +107,8 @@ module Spree
 
       it "can add an inventory unit to a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
-        inventory_unit = return_authorization.returnable_inventory.first
+        return_authorization = order.return_authorizations.first!
+        inventory_unit = return_authorization.returnable_inventory.first!
         expect(inventory_unit).to be
         expect(return_authorization.inventory_units).to be_empty
         api_put :add, :id => return_authorization.id, variant_id: inventory_unit.variant.id, quantity: 1
@@ -119,11 +119,11 @@ module Spree
 
       it "can mark a return authorization as received on the order with an inventory unit" do
         create(:new_return_authorization, :order => order, :stock_location_id => order.shipments.first.stock_location.id)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         expect(return_authorization.state).to eq("authorized")
 
         # prep (use a rspec context or a factory instead?)
-        inventory_unit = return_authorization.returnable_inventory.first
+        inventory_unit = return_authorization.returnable_inventory.first!
         expect(inventory_unit).to be
         expect(return_authorization.inventory_units).to be_empty
         api_put :add, :id => return_authorization.id, variant_id: inventory_unit.variant.id, quantity: 1
@@ -136,7 +136,7 @@ module Spree
 
       it "cannot mark a return authorization as received on the order with no inventory units" do
         create(:new_return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         expect(return_authorization.state).to eq("authorized")
         api_delete :receive, :id => return_authorization.id
         expect(response.status).to eq(422)
@@ -145,7 +145,7 @@ module Spree
 
       it "can cancel a return authorization on the order" do
         create(:new_return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         expect(return_authorization.state).to eq("authorized")
         api_delete :cancel, :id => return_authorization.id
         expect(response.status).to eq(200)
@@ -154,7 +154,7 @@ module Spree
 
       it "can delete a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_delete :destroy, :id => return_authorization.id
         expect(response.status).to eq(204)
         expect { return_authorization.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -176,7 +176,7 @@ module Spree
 
       it "cannot update a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_put :update, :id => return_authorization.id, :return_authorization => { :amount => 19.99 }
         assert_unauthorized!
         expect(return_authorization.reload.amount).not_to eq(19.99)
@@ -184,7 +184,7 @@ module Spree
 
       it "cannot delete a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!
         expect { return_authorization.reload }.not_to raise_error
