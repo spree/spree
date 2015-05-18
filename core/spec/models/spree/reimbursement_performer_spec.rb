@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::ReimbursementPerformer, :type => :model do
   let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
-  let(:return_item)             { reimbursement.return_items.first }
+  let(:return_item)             { reimbursement.return_items.first! }
   let(:reimbursement_type)      { double("ReimbursementType") }
   let(:reimbursement_type_hash) { { reimbursement_type => [return_item]} }
 

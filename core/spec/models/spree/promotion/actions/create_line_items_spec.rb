@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateLineItems, type: :model do
   let(:order) { create(:order) }
-  let(:action) { Spree::Promotion::Actions::CreateLineItems.create }
+  let(:action) { Spree::Promotion::Actions::CreateLineItems.create! }
   let(:promotion) { stub_model(Spree::Promotion) }
   let(:shirt) { create(:variant) }
   let(:mug) { create(:variant) }

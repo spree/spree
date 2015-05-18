@@ -113,7 +113,7 @@ describe Spree::Order, type: :model do
       )
 
       allow(order.line_items).to receive_messages(
-        find_by_variant_id: order.line_items.first
+        find_by_variant_id: order.line_items.first!
       )
 
       allow(shipments).to receive_messages(

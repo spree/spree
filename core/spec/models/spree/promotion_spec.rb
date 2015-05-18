@@ -32,7 +32,7 @@ describe Spree::Promotion, :type => :model do
       expect(Spree::Promotion.coupons).to be_empty
 
       promotion.update_column :code, "check"
-      expect(Spree::Promotion.coupons.first).to eq promotion
+      expect(Spree::Promotion.coupons.first!).to eq promotion
     end
   end
 
@@ -42,7 +42,7 @@ describe Spree::Promotion, :type => :model do
       expect(Spree::Promotion.applied).to be_empty
 
       promotion.orders << create(:order)
-      expect(Spree::Promotion.applied.first).to eq promotion
+      expect(Spree::Promotion.applied.first!).to eq promotion
     end
   end
 
@@ -58,7 +58,7 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#destroy" do
-    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -77,7 +77,7 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#save" do
-    let(:promotion) { Spree::Promotion.create(:name => "delete me") }
+    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -88,7 +88,7 @@ describe Spree::Promotion, :type => :model do
     it "should deeply autosave records and preferences" do
       promotion.actions[0].calculator.preferred_flat_percent = 10
       promotion.save!
-      expect(Spree::Calculator.first.preferred_flat_percent).to eq(10)
+      expect(Spree::Calculator.first!.preferred_flat_percent).to eq(10)
     end
   end
 
@@ -103,7 +103,7 @@ describe Spree::Promotion, :type => :model do
       promotion.created_at = 2.days.ago
 
       @user = stub_model(Spree::LegacyUser, :email => "spree@example.com")
-      @order = Spree::Order.create user: @user
+      @order = Spree::Order.create! user: @user
       @payload = { :order => @order, :user => @user }
     end
 
@@ -139,7 +139,7 @@ describe Spree::Promotion, :type => :model do
         it "assigns the order" do
           expect(promotion.orders).to be_empty
           expect(promotion.activate(@payload)).to be true
-          expect(promotion.orders.first).to eql @order
+          expect(promotion.orders.first!).to eql @order
         end
       end
       context "when not activated" do
@@ -222,7 +222,7 @@ describe Spree::Promotion, :type => :model do
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
       action_params = { :promotion => promotion, :calculator => calculator }
-      action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      action = Spree::Promotion::Actions::CreateAdjustment.create!(action_params)
       promotion.actions << action
       action
     end
@@ -257,16 +257,16 @@ describe Spree::Promotion, :type => :model do
       order.reload
     end
 
-    let(:promotion) { Spree::Promotion.create name: 'promo', code: '10off' }
+    let(:promotion) { Spree::Promotion.create!(name: 'promo', code: '10off') }
 
     let(:order_action) do
-      action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::Promotion::Actions::CreateAdjustment.create!(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
     end
 
     let(:item_action) do
-      action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
     end
@@ -313,7 +313,7 @@ describe Spree::Promotion, :type => :model do
       before do
         promotion_rule.promotion = promotion
         promotion_rule.products << create(:product)
-        promotion_rule.save
+        promotion_rule.save!
       end
 
       it "should have products" do
@@ -425,12 +425,12 @@ describe Spree::Promotion, :type => :model do
     end
 
     context "with 'any' match policy" do
-      let(:promotion) { Spree::Promotion.create(:name => "Promo", :match_policy => 'any') }
+      let(:promotion) { Spree::Promotion.create!(:name => "Promo", :match_policy => 'any') }
       let(:promotable) { double('Promotable') }
 
       it "should have eligible rules if any of the rules are eligible" do
         allow_any_instance_of(Spree::PromotionRule).to receive_messages(:applicable? => true)
-        true_rule = Spree::PromotionRule.create(:promotion => promotion)
+        true_rule = Spree::PromotionRule.create!(:promotion => promotion)
         allow(true_rule).to receive_messages(:eligible? => true)
         allow(promotion).to receive_messages(:rules => [true_rule])
         allow(promotion).to receive_message_chain(:rules, :for).and_return([true_rule])
@@ -517,7 +517,7 @@ describe Spree::Promotion, :type => :model do
   # admin form posts the code and path as empty string
   describe "normalize blank values for code & path" do
     it "will save blank value as nil value instead" do
-      promotion = Spree::Promotion.create(:name => "A promotion", :code => "", :path => "")
+      promotion = Spree::Promotion.create!(:name => "A promotion", :code => "", :path => "")
       expect(promotion.code).to be_nil
       expect(promotion.path).to be_nil
     end

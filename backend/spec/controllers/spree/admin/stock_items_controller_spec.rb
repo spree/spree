@@ -6,7 +6,7 @@ module Spree
       stub_authorization!
 
       context "formats" do
-        let!(:stock_item) { create(:variant).stock_items.first }
+        let!(:stock_item) { create(:variant).stock_items.first! }
 
         it "destroy stock item via js" do
           expect {

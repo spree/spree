@@ -12,7 +12,7 @@ module Spree
 
       context "#shipping rates" do
         before(:each) do
-          shipping_method.zones.first.members.create(:zoneable => order.ship_address.country)
+          shipping_method.zones.first!.members.create!(:zoneable => order.ship_address.country)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return({:currency => currency})
@@ -137,7 +137,7 @@ module Spree
           before do
             Spree::ShippingMethod.all.each do |sm|
               sm.tax_category_id = tax_rate.tax_category_id
-              sm.save
+              sm.save!
             end
             package.shipping_methods.map(&:reload)
           end

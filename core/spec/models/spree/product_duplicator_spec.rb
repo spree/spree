@@ -11,7 +11,7 @@ module Spree
     let(:params) { {:viewable_id => product.master.id, :viewable_type => 'Spree::Variant', :attachment => image, :alt => "position 1", :position => 1} }
 
     before do
-      Spree::Image.create(params)
+      Spree::Image.create!(params)
     end
 
     it "will duplicate the product" do
@@ -77,7 +77,7 @@ module Spree
 
       it "copied the properties" do
         expect(new_product.product_properties.count).to be 1
-        expect(new_product.product_properties.first.property.name).to eql "MyProperty"
+        expect(new_product.product_properties.first!.property.name).to eql "MyProperty"
       end
     end
 

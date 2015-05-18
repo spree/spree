@@ -85,7 +85,7 @@ module Spree
         expect(shipment.stock_location).to eq subject.stock_location
         expect(shipment.inventory_units.size).to eq 3
 
-        first_unit = shipment.inventory_units.first
+        first_unit = shipment.inventory_units.first!
         expect(first_unit.variant).to eq variant
         expect(first_unit.state).to eq 'on_hand'
         expect(first_unit).to be_pending

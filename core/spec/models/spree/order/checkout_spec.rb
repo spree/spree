@@ -256,13 +256,13 @@ describe Spree::Order, :type => :model do
       context 'when order has default selected_shipping_rate_id' do
         let(:shipment) { create(:shipment, order: order) }
         let(:shipping_method) { create(:shipping_method) }
-        let(:shipping_rate) { [
+        let(:shipping_rates) { [
           Spree::ShippingRate.create!(shipping_method: shipping_method, cost: 10.00, shipment: shipment)
         ] }
 
         before do
           order.state = 'address'
-          shipment.selected_shipping_rate_id = shipping_rate.first.id
+          shipment.selected_shipping_rate_id = shipping_rates.first.id
           order.email = "user@example.com"
           order.save!
 
@@ -331,7 +331,7 @@ describe Spree::Order, :type => :model do
 
         context "with a shipment that has a price" do
           before do
-            shipment.shipping_rates.first.update_column(:cost, 10)
+            shipment.shipping_rates.first!.update_column(:cost, 10)
             order.set_shipments_cost
           end
 
@@ -343,7 +343,7 @@ describe Spree::Order, :type => :model do
 
         context "with a shipment that is free" do
           before do
-            shipment.shipping_rates.first.update_column(:cost, 0)
+            shipment.shipping_rates.first!.update_column(:cost, 0)
             order.set_shipments_cost
           end
 
@@ -371,7 +371,7 @@ describe Spree::Order, :type => :model do
 
         expect(order.state).to eq 'payment'
         expect(order.payments.count).to eq 1
-        expect(order.payments.first.source).to eq @default_credit_card
+        expect(order.payments.first!.source).to eq @default_credit_card
       end
     end
 
@@ -466,7 +466,7 @@ describe Spree::Order, :type => :model do
       it "makes the current credit card a user's default credit card" do
         order.next!
         expect(order.state).to eq 'complete'
-        expect(order.user.reload.default_credit_card.try(:id)).to eq(order.credit_cards.first.id)
+        expect(order.user.reload.default_credit_card.try(:id)).to eq(order.credit_cards.first!.id)
       end
 
       it "does not assign a default credit card if temporary_credit_card is set" do

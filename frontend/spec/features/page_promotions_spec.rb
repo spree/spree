@@ -11,7 +11,7 @@ describe 'page promotions', :type => :feature do
    calculator = Spree::Calculator::FlatRate.new
    calculator.preferred_amount = 10
 
-   action = Spree::Promotion::Actions::CreateItemAdjustments.create(:calculator => calculator)
+   action = Spree::Promotion::Actions::CreateItemAdjustments.create!(:calculator => calculator)
    promotion.actions << action
 
    visit spree.root_path

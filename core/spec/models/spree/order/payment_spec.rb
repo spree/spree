@@ -60,7 +60,7 @@ module Spree
       end
 
       it "keeps source attributes after updating" do
-        persisted_order = Spree::Order.create
+        persisted_order = Spree::Order.create!
         credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
           :payments_attributes => [
@@ -69,14 +69,14 @@ module Spree
               :source_attributes => {
                 :name => "Ryan Bigg",
                 :number => "41111111111111111111",
-                :expiry => "01 / 15",
+                :expiry => "01 / #{Time.now.year.succ}",
                 :verification_value => "123"
               }
             }
           ]
         }
 
-        persisted_order.update_attributes(attributes)
+        persisted_order.update_attributes!(attributes)
         expect(persisted_order.unprocessed_payments.last.source.number).to be_present
       end
     end
@@ -165,10 +165,10 @@ module Spree
         # Creates an order w/total 10
         reimbursement = create :reimbursement
         # Set the payment amount to actually be the order total of 10
-        reimbursement.order.payments.first.update_column :amount, 10
+        reimbursement.order.payments.first!.update_column :amount, 10
         # Creates a refund of 10
         create :refund, amount: 10,
-                        payment: reimbursement.order.payments.first,
+                        payment: reimbursement.order.payments.first!,
                         reimbursement: reimbursement
         order = reimbursement.order.reload
         # Update the order totals so payment_total goes to 0 reflecting the refund..

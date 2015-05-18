@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe ItemAdjustments, :type => :model do
     let(:order) { create :order_with_line_items, line_items_count: 1 }
-    let(:line_item) { order.line_items.first }
+    let(:line_item) { order.line_items.first! }
 
     let(:subject) { ItemAdjustments.new(line_item) }
     let(:order_subject) { ItemAdjustments.new(order) }
@@ -32,18 +32,18 @@ module Spree
       end
 
       let!(:promotion) do
-        Spree::Promotion.create(:name => "$10 off")
+        Spree::Promotion.create!(:name => "$10 off")
       end
 
       let!(:promotion_action) do
         calculator = Calculator::FlatRate.new(:preferred_amount => 10)
-        Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion: promotion
+        Promotion::Actions::CreateItemAdjustments.create! calculator: calculator, promotion: promotion
       end
 
       before do
         line_item.price = 20
         line_item.tax_category = tax_rate.tax_category
-        line_item.save
+        line_item.save!
         order.create_adjustment!(
           label: 'Test Promotion',
           amount: 100,
@@ -113,7 +113,7 @@ module Spree
     context "best promotion is always applied" do
       let(:calculator) { Calculator::FlatRate.new(:preferred_amount => 10) }
 
-      let(:source) { Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
+      let(:source) { Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator) }
 
       def create_adjustment(label, amount)
         order.create_adjustment!(
@@ -187,7 +187,7 @@ module Spree
               expect(order.all_adjustments.eligible.first.source.promotion).to eql(order_promo1)
 
               order.contents.add(create(:variant, price: 10), 1)
-              order.save
+              order.save!
 
               expect(order.all_adjustments.count).to be(2)
               expect(order.all_adjustments.eligible.count).to be(1)
@@ -205,7 +205,7 @@ module Spree
               expect(order.all_adjustments.first.source.promotion).to eql(line_item_promo1)
 
               order.contents.add(create(:variant, price: 10), 1)
-              order.save
+              order.save!
 
               expect(order.all_adjustments.count).to be(4)
               expect(order.all_adjustments.eligible.count).to be(2)

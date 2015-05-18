@@ -13,7 +13,7 @@ describe "Adjustments Promotions", :type => :feature do
                          :adjustment_rate => 10)
 
     order = create(:order_with_totals)
-    line_item = order.line_items.first
+    line_item = order.line_items.first!
     # so we can be sure of a determinate price in our assertions
     line_item.update_column(:price, 10)
 

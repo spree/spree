@@ -10,8 +10,8 @@ describe Spree::Admin::ReimbursementsController, :type => :controller do
   describe '#create' do
     let(:customer_return)  { create(:customer_return, line_items_count: 1) }
     let(:order) { customer_return.order }
-    let(:return_item) { customer_return.return_items.first }
-    let(:payment) { order.payments.first }
+    let(:return_item) { customer_return.return_items.first! }
+    let(:payment) { order.payments.first! }
 
     subject do
       spree_post :create, order_id: order.to_param, build_from_customer_return_id: customer_return.id
@@ -33,7 +33,7 @@ describe Spree::Admin::ReimbursementsController, :type => :controller do
     let(:customer_return) { reimbursement.customer_return }
     let(:order) { reimbursement.order }
     let(:return_items) { reimbursement.return_items }
-    let(:payment) { order.payments.first }
+    let(:payment) { order.payments.first! }
 
     subject do
       spree_post :perform, order_id: order.to_param, id: reimbursement.to_param

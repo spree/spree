@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::OrderInventory, :type => :model do
   let(:order) { create :completed_order_with_totals }
-  let(:line_item) { order.line_items.first }
+  let(:line_item) { order.line_items.first! }
 
   subject { described_class.new(order, line_item) }
 
@@ -16,7 +16,7 @@ describe Spree::OrderInventory, :type => :model do
   end
 
   context "#add_to_shipment" do
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.shipments.first! }
 
     context "order is not completed" do
       before { allow(order).to receive_messages completed?: false }
@@ -91,9 +91,9 @@ describe Spree::OrderInventory, :type => :model do
     before do
       subject.verify
 
-      order.shipments.create(:stock_location_id => stock_location.id, :cost => 5)
+      order.shipments.create!(:stock_location_id => stock_location.id, :cost => 5)
 
-      shipped = order.shipments.create(:stock_location_id => order.shipments.first.stock_location.id, :cost => 10)
+      shipped = order.shipments.create!(:stock_location_id => order.shipments.first!.stock_location.id, :cost => 10)
       shipped.update_column(:state, 'shipped')
     end
 
@@ -131,7 +131,7 @@ describe Spree::OrderInventory, :type => :model do
     end
 
     it 'should be a messed up order' do
-      expect(order.shipments.first.inventory_units_for(line_item.variant).size).to eq(3)
+      expect(order.shipments.first!.inventory_units_for(line_item.variant).size).to eq(3)
       expect(line_item.quantity).to eq(2)
     end
 
@@ -141,7 +141,7 @@ describe Spree::OrderInventory, :type => :model do
     end
 
     context '#remove_from_shipment' do
-      let(:shipment) { order.shipments.first }
+      let(:shipment) { order.shipments.first! }
       let(:variant) { subject.variant }
 
       context "order is not completed" do

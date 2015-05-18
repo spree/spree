@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Payment, :type => :model do
-  let(:order) { Spree::Order.create }
+  let(:order) { Spree::Order.create! }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
@@ -63,7 +63,7 @@ describe Spree::Payment, :type => :model do
       end
 
       it "with some capture events" do
-        payment.save
+        payment.save!
         payment.capture_events.create!(amount: 2.0)
         payment.capture_events.create!(amount: 3.0)
         expect(payment.captured_amount).to eq(5)
@@ -78,7 +78,7 @@ describe Spree::Payment, :type => :model do
       end
 
       it "with some capture events" do
-        payment.save
+        payment.save!
         payment.capture_events.create!(amount: 2.0)
         payment.capture_events.create!(amount: 3.0)
         expect(payment.uncaptured_amount).to eq(0)
@@ -266,7 +266,7 @@ describe Spree::Payment, :type => :model do
         it "should log a capture event" do
           payment.purchase!
           expect(payment.capture_events.count).to eq(1)
-          expect(payment.capture_events.first.amount).to eq(payment.amount)
+          expect(payment.capture_events.first!.amount).to eq(payment.amount)
         end
 
         it "should set the uncaptured amount to 0" do
@@ -315,7 +315,7 @@ describe Spree::Payment, :type => :model do
             it "logs capture events" do
               payment.capture!
               expect(payment.capture_events.count).to eq(1)
-              expect(payment.capture_events.first.amount).to eq(payment.amount)
+              expect(payment.capture_events.first!.amount).to eq(payment.amount)
             end
           end
 
@@ -334,16 +334,16 @@ describe Spree::Payment, :type => :model do
               payments = order.payments
 
               expect(payments.size).to eq 2
-              expect(payments.pending.first.amount).to eq 1
+              expect(payments.pending.first!.amount).to eq 1
               # Payment stays processing for spec because of receive(:complete!) stub.
-              expect(payments.processing.first.amount).to eq(capture_amount / 100)
-              expect(payments.processing.first.source).to eq(payments.pending.first.source)
+              expect(payments.processing.first!.amount).to eq(capture_amount / 100)
+              expect(payments.processing.first!.source).to eq(payments.pending.first!.source)
             end
 
             it "logs capture events" do
               payment.capture!(capture_amount)
               expect(payment.capture_events.count).to eq(1)
-              expect(payment.capture_events.first.amount).to eq(capture_amount / 100)
+              expect(payment.capture_events.first!.amount).to eq(capture_amount / 100)
             end
           end
         end
@@ -506,7 +506,7 @@ describe Spree::Payment, :type => :model do
     context "not completed payments" do
       it "doesn't update order payment total" do
         expect {
-          Spree::Payment.create(:amount => 100, :order => order)
+          Spree::Payment.create!(:amount => 100, :order => order, payment_method: gateway)
         }.not_to change { order.payment_total }
       end
 
@@ -517,10 +517,11 @@ describe Spree::Payment, :type => :model do
 
     context 'when the payment was completed but now void' do
       let(:payment) do
-        Spree::Payment.create(
+        Spree::Payment.create!(
           amount: 100,
           order: order,
-          state: 'completed'
+          state: 'completed',
+          payment_method: gateway
         )
       end
 
@@ -536,7 +537,7 @@ describe Spree::Payment, :type => :model do
       it "updates payment_state and shipments" do
         expect(order.updater).to receive(:update_payment_state)
         expect(order.updater).to receive(:update_shipment_state)
-        Spree::Payment.create(amount: 100, order: order, payment_method: gateway)
+        Spree::Payment.create!(amount: 100, order: order, payment_method: gateway)
       end
     end
 
@@ -550,7 +551,7 @@ describe Spree::Payment, :type => :model do
         it "should call gateway_error " do
           expect(gateway).to receive(:create_profile).and_raise(ActiveMerchant::ConnectionError)
           expect do
-            Spree::Payment.create(
+            Spree::Payment.create!(
               :amount => 100,
               :order => order,
               :source => card,
@@ -584,7 +585,7 @@ describe Spree::Payment, :type => :model do
       context "when successfully connecting to the gateway" do
         it "should create a payment profile" do
           expect(payment.payment_method).to receive :create_profile
-          payment = Spree::Payment.create(
+          payment = Spree::Payment.create!(
             :amount => 100,
             :order => order,
             :source => card,
@@ -599,7 +600,7 @@ describe Spree::Payment, :type => :model do
 
       it "should not create a payment profile" do
         expect(gateway).not_to receive :create_profile
-        payment = Spree::Payment.create(
+        payment = Spree::Payment.create!(
           :amount => 100,
           :order => order,
           :source => card,
@@ -618,9 +619,9 @@ describe Spree::Payment, :type => :model do
       }
 
     it 'should not invalidate other payments if not valid' do
-      payment.save
+      payment.save!
       invalid_payment = Spree::Payment.new(:amount => 100, :order => order, :state => 'invalid', :payment_method => gateway)
-      invalid_payment.save
+      invalid_payment.save!
       expect(payment.reload.state).to eq('checkout')
     end
   end
@@ -696,13 +697,13 @@ describe Spree::Payment, :type => :model do
       # Sets the payment's order to a different Ruby object entirely
       payment.order = Spree::Order.find(payment.order_id)
       email = 'foo@example.com'
-      order.update_attributes(:email => email)
+      order.update_attributes!(:email => email)
       expect(payment.gateway_options[:email]).to eq(email)
     end
 
     it "contains the adjustment total as the discount" do
       adjustment_total = BigDecimal('9.99')
-      order.update_attributes(:adjustment_total => adjustment_total)
+      order.update_attributes!(:adjustment_total => adjustment_total)
       expect(payment.gateway_options[:discount]).to eql(BigDecimal('999'))
     end
   end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::InventoryUnit, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
-  let(:stock_item) { stock_location.stock_items.order(:id).first }
+  let(:stock_item) { stock_location.stock_items.order(:id).first! }
 
   context "#backordered_for_stock_item" do
     let(:order) do
@@ -16,15 +16,15 @@ describe Spree::InventoryUnit, :type => :model do
     end
 
     let(:shipment) do
-      order.shipments.first
+      order.shipments.first!
     end
 
     let(:shipping_method) do
-      shipment.shipping_methods.first
+      shipment.shipping_methods.first!
     end
 
     let!(:unit) do
-      unit = shipment.inventory_units.first
+      unit = shipment.inventory_units.first!
       unit.state = 'backordered'
       unit.tap(&:save!)
     end
@@ -104,7 +104,7 @@ describe Spree::InventoryUnit, :type => :model do
 
   context "variants deleted" do
     let!(:unit) do
-      Spree::InventoryUnit.create(variant: stock_item.variant)
+      Spree::InventoryUnit.create!(variant: stock_item.variant)
     end
 
     it "can still fetch variant" do
@@ -115,7 +115,7 @@ describe Spree::InventoryUnit, :type => :model do
     it "can still fetch variants by eager loading (remove default_scope)" do
       skip "find a way to remove default scope when eager loading associations"
       unit.variant.destroy
-      expect(Spree::InventoryUnit.joins(:variant).includes(:variant).first.variant).to be_a Spree::Variant
+      expect(Spree::InventoryUnit.joins(:variant).includes(:variant).first!.variant).to be_a Spree::Variant
     end
   end
 

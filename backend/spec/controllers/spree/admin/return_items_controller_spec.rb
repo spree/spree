@@ -5,7 +5,7 @@ describe Spree::Admin::ReturnItemsController, :type => :controller do
 
   describe '#update' do
     let(:customer_return) { create(:customer_return) }
-    let(:return_item) { customer_return.return_items.first }
+    let(:return_item) { customer_return.return_items.first! }
     let(:old_acceptance_status) { 'accepted' }
     let(:new_acceptance_status) { 'rejected' }
 

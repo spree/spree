@@ -30,7 +30,7 @@ describe Spree::Variant, :type => :model do
 
     it "propagate to stock items" do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
-      product.variants.create(:name => "Foobar")
+      product.variants.create!(:name => "Foobar")
     end
 
     context "stock location has disable propagate all variants" do
@@ -38,13 +38,13 @@ describe Spree::Variant, :type => :model do
 
       it "propagate to stock items" do
         expect_any_instance_of(Spree::StockLocation).not_to receive(:propagate_variant)
-        product.variants.create(:name => "Foobar")
+        product.variants.create!(:name => "Foobar")
       end
     end
 
     describe 'mark_master_out_of_stock' do
       before do
-        product.master.stock_items.first.set_count_on_hand(5)
+        product.master.stock_items.first!.set_count_on_hand(5)
       end
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
@@ -348,7 +348,7 @@ describe Spree::Variant, :type => :model do
 
       context 'when stock_items in stock' do
         before do
-          variant.stock_items.first.update_column(:count_on_hand, 10)
+          variant.stock_items.first!.update_column(:count_on_hand, 10)
         end
 
         it 'returns true if stock_items in stock' do
@@ -480,7 +480,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe "stock movements" do
-    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first) }
+    let!(:movement) { create(:stock_movement, stock_item: variant.stock_items.first!) }
 
     it "builds out collection just fine through stock items" do
       expect(variant.stock_movements.to_a).not_to be_empty
@@ -492,7 +492,7 @@ describe Spree::Variant, :type => :model do
       in_stock_variant = create(:variant)
       out_of_stock_variant = create(:variant)
 
-      in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
+      in_stock_variant.stock_items.first!.update_column(:count_on_hand, 10)
 
       expect(Spree::Variant.in_stock).to eq [in_stock_variant]
     end

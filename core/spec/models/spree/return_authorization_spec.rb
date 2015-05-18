@@ -4,9 +4,9 @@ describe Spree::ReturnAuthorization, :type => :model do
   let(:order) { create(:shipped_order) }
   let(:stock_location) { create(:stock_location) }
   let(:rma_reason) { create(:return_authorization_reason) }
-  let(:inventory_unit_1) { order.inventory_units.first }
+  let(:inventory_unit_1) { order.inventory_units.first! }
 
-  let(:variant) { order.variants.first }
+  let(:variant) { order.variants.first! }
   let(:return_authorization) do
     Spree::ReturnAuthorization.new(order: order,
       stock_location_id: stock_location.id,
@@ -14,16 +14,16 @@ describe Spree::ReturnAuthorization, :type => :model do
   end
 
   context "save" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
 
     it "should be invalid when order has no inventory units" do
-      return_authorization.save
+      expect(return_authorization.valid?).to be(false)
       expect(return_authorization.errors[:order]).to eq(["has no shipped units"])
     end
 
     context "expedited exchanges are configured" do
       let(:order)                { create(:shipped_order, line_items_count: 2) }
-      let(:exchange_return_item) { create(:exchange_return_item, inventory_unit: order.inventory_units.first) }
+      let(:exchange_return_item) { create(:exchange_return_item, inventory_unit: order.inventory_units.first!) }
       let(:return_item)          { create(:return_item, inventory_unit: order.inventory_units.last) }
       subject                    { create(:return_authorization, order: order, return_items: [exchange_return_item, return_item]) }
 
@@ -150,7 +150,7 @@ describe Spree::ReturnAuthorization, :type => :model do
 
     context "has associated customer returns" do
       let(:customer_return) { create(:customer_return) }
-      let(:return_authorization) { customer_return.return_authorizations.first }
+      let(:return_authorization) { customer_return.return_authorizations.first! }
 
       it "returns true" do
         expect(subject).to eq true

@@ -19,7 +19,7 @@ describe 'Order Risk Analysis', :type => :feature do
     before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive_messages :try_spree_current_user => create(:user)
 
-      order.payments.first.update_column(:avs_response, 'X')
+      order.payments.first!.update_column(:avs_response, 'X')
       order.considered_risky!
       visit_order
     end
@@ -35,10 +35,10 @@ describe 'Order Risk Analysis', :type => :feature do
       expect(page).to have_content 'Status: complete'
     end
   end
-  
+
   context "the order is not considered risky" do
     before do
-      visit_order      
+      visit_order
     end
 
     it "does not display 'Risk Analysis' box" do

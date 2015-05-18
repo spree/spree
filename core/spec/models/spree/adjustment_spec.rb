@@ -29,7 +29,7 @@ describe Spree::Adjustment, :type => :model do
 
     it 'touches the adjustable' do
       expect(adjustment.adjustable).to receive(:touch)
-      adjustment.save
+      adjustment.save!
     end
   end
 

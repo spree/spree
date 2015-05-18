@@ -35,20 +35,20 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
 
     it 'displays metas' do
-      jersey.update_attributes metas
+      jersey.update_attributes!(metas)
       click_link jersey.name
       expect(page).to have_meta(:description, 'Brand new Ruby on Rails Jersey')
       expect(page).to have_meta(:keywords, 'ror, jersey, ruby')
     end
 
     it 'displays title if set' do
-      jersey.update_attributes metas
+      jersey.update_attributes!(metas)
       click_link jersey.name
       expect(page).to have_title('Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel')
     end
 
     it "doesn't use meta_title as heading on page" do
-      jersey.update_attributes metas
+      jersey.update_attributes!(metas)
       click_link jersey.name
       within("h1") do
         expect(page).to have_content(jersey.name)
@@ -57,7 +57,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
 
     it 'uses product name in title when meta_title set to empty string' do
-      jersey.update_attributes meta_title: ''
+      jersey.update_attributes!(meta_title: '')
       click_link jersey.name
       expect(page).to have_title('Ruby on Rails Baseball Jersey - ' + store_name)
     end

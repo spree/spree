@@ -31,8 +31,8 @@ describe Spree::Shipment, :type => :model do
   def create_shipment(order, stock_location)
     order.shipments.create({ stock_location_id: stock_location.id }).inventory_units.create(
       order_id: order.id,
-      variant_id: order.line_items.first.variant_id,
-      line_item_id: order.line_items.first.id
+      variant_id: order.line_items.first!.variant_id,
+      line_item_id: order.line_items.first!.id
     )
   end
 
@@ -43,7 +43,7 @@ describe Spree::Shipment, :type => :model do
     end
 
     it "generates a number containing a letter + 11 numbers" do
-      shipment.save
+      shipment.save!
       expect(shipment.number[0]).to eq("H")
       expect(/\d{11}/.match(shipment.number)).not_to be_nil
       expect(shipment.number.length).to eq(12)
@@ -130,10 +130,10 @@ describe Spree::Shipment, :type => :model do
         amount:     10,
         label:      'VAT',
         source:     tax_rate,
-        adjustable: order.line_items.first
+        adjustable: order.line_items.first!
       )
 
-      expect(order.shipments.first.item_cost).to eql(11.0)
+      expect(order.shipments.first!.item_cost).to eql(11.0)
       expect(order.shipments.last.item_cost).to eql(11.0)
     end
 
@@ -145,7 +145,7 @@ describe Spree::Shipment, :type => :model do
         amount:     10,
         label:      'VAT',
         source:     tax_rate,
-        adjustable: shipment.order.line_items.first
+        adjustable: shipment.order.line_items.first!
       )
 
       expect(shipment.item_cost).to eql(22.0)
@@ -181,8 +181,8 @@ describe Spree::Shipment, :type => :model do
     expect(shipment.final_price).to eq(8)
   end
 
-  context "manifest" do
-    let(:order) { Spree::Order.create }
+  describe '#manifest' do
+    let(:order) { Spree::Order.create! }
     let(:variant) { create(:variant) }
     let!(:line_item) { order.contents.add variant }
     let!(:shipment) { order.create_proposed_shipments.first }
@@ -211,7 +211,7 @@ describe Spree::Shipment, :type => :model do
 
     it 'returns shipping_method from selected shipping_rate' do
       shipment.shipping_rates.delete_all
-      shipment.shipping_rates.create shipping_method: shipping_method1, cost: 10.00, selected: true
+      shipment.shipping_rates.create! shipping_method: shipping_method1, cost: 10.00, selected: true
       expect(shipment.shipping_method).to eq shipping_method1
     end
 
@@ -437,17 +437,17 @@ describe Spree::Shipment, :type => :model do
       end
 
       it "doesn't fill backorders when restocking inventory units" do
-        shipment = order.shipments.first
+        shipment = order.shipments.first!
         expect(shipment.inventory_units.count).to eq 1
         expect(shipment.inventory_units.first).to be_backordered
 
-        other_shipment = other_order.shipments.first
+        other_shipment = other_order.shipments.first!
         expect(other_shipment.inventory_units.count).to eq 1
         expect(other_shipment.inventory_units.first).to be_backordered
 
         expect {
           shipment.cancel!
-        }.not_to change { other_shipment.inventory_units.first.state }
+        }.not_to change { other_shipment.inventory_units.first!.state }
       end
     end
   end
@@ -639,15 +639,15 @@ describe Spree::Shipment, :type => :model do
 
   context "changes shipping rate via general update" do
     let(:order) do
-      Spree::Order.create(
+      Spree::Order.create!(
         payment_total: 100, payment_state: 'paid', total: 100, item_total: 100
       )
     end
 
-    let(:shipment) { Spree::Shipment.create order_id: order.id, stock_location: create(:stock_location) }
+    let(:shipment) { Spree::Shipment.create! order_id: order.id, stock_location: create(:stock_location) }
 
     let(:shipping_rate) do
-      Spree::ShippingRate.create shipment_id: shipment.id, cost: 10
+      Spree::ShippingRate.create! shipment_id: shipment.id, cost: 10
     end
 
     before do
@@ -670,20 +670,20 @@ describe Spree::Shipment, :type => :model do
 
       it "triggers adjustment total recalculation" do
         expect(shipment).to receive(:recalculate_adjustments)
-        shipment.save
+        shipment.save!
       end
 
       it "does not trigger adjustment recalculation if shipment has shipped" do
         shipment.state = 'shipped'
         expect(shipment).not_to receive(:recalculate_adjustments)
-        shipment.save
+        shipment.save!
       end
     end
 
     context "line item does not change" do
       it "does not trigger adjustment total recalculation" do
         expect(shipment).not_to receive(:recalculate_adjustments)
-        shipment.save
+        shipment.save!
       end
     end
   end
@@ -760,7 +760,7 @@ describe Spree::Shipment, :type => :model do
       expect(shipment.state_changes).to be_empty
       expect(shipment.ready!).to be true
       expect(shipment.state_changes.count).to eq(1)
-      state_change = shipment.state_changes.first
+      state_change = shipment.state_changes.first!
       expect(state_change.previous_state).to eq('pending')
       expect(state_change.next_state).to eq('ready')
     end

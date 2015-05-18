@@ -14,7 +14,7 @@ describe Spree::Preference, :type => :model do
       p = Spree::Preference.new
       p.value = value
       p.key = key
-      p.save
+      p.save!
 
       Spree::Preference.find_by_key(key)
     end

@@ -43,7 +43,7 @@ describe "Checkout", type: :feature, inaccessible: true do
     context "full checkout" do
       before do
         shipping_method.calculator.update!(preferred_amount: 10)
-        mug.shipping_category = shipping_method.shipping_categories.first
+        mug.shipping_category = shipping_method.shipping_categories.first!
         mug.save!
       end
 
@@ -350,9 +350,9 @@ describe "Checkout", type: :feature, inaccessible: true do
   end
 
   context "in coupon promotion, submits coupon along with payment", js: true do
-    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", code: "huhu") }
-    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
-    let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
+    let!(:promotion) { Spree::Promotion.create!(name: "Huhuhu", code: "huhu") }
+    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: "10") }
+    let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator) }
 
     before do
       promotion.actions << action
@@ -373,7 +373,7 @@ describe "Checkout", type: :feature, inaccessible: true do
       click_on "Save and Continue"
 
       expect(page).to have_content(promotion.name)
-      expect(Spree::Payment.first.amount.to_f).to eq Spree::Order.last.total.to_f
+      expect(Spree::Payment.first!.amount.to_f).to eq Spree::Order.last.total.to_f
     end
 
     context "invalid coupon" do

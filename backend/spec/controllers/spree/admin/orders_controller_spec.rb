@@ -111,7 +111,7 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
       it "does not display duplicated results" do
         spree_get :index, q: {
-          line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
+          line_items_variant_id_in: Spree::Order.first!.variants.map(&:id)
         }
         expect(assigns[:orders].map { |o| o.number }.count).to eq 1
       end

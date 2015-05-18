@@ -132,7 +132,7 @@ module Spree
         expect(response.status).to eq(201)
 
         expect(taxonomy.reload.root.children.count).to eq 2
-        taxon = Spree::Taxon.where(:name => 'Colors').first
+        taxon = Spree::Taxon.where(:name => 'Colors').first!
 
         expect(taxon.parent_id).to eq taxonomy.root.id
         expect(taxon.taxonomy_id).to eq taxonomy.id

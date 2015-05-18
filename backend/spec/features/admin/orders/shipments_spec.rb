@@ -54,7 +54,7 @@ describe "Shipments", :type => :feature do
       targetted_select2 'LA', from: '#s2id_item_stock_location'
       click_icon :ok
       wait_for_ajax
-      expect(page.find("#shipment_#{order.shipments.first.id}")).to be_present
+      expect(page.find("#shipment_#{order.shipments.first!.id}")).to be_present
 
       within_row(2) { click_icon 'arrows-h' }
       targetted_select2 "LA(#{order.reload.shipments.last.number})", from: '#s2id_item_stock_location'

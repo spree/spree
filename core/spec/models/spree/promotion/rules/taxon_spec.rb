@@ -9,7 +9,7 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
     let(:order){ create :order_with_line_items }
 
     before do
-      rule.save
+      rule.save!
     end
 
     context 'with any match policy' do
@@ -18,14 +18,14 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
       end
 
       it 'is eligible if order does has any prefered taxon' do
-        order.products.first.taxons << taxon
+        order.products.first!.taxons << taxon
         rule.taxons << taxon
         expect(rule).to be_eligible(order)
       end
 
       context 'when order contains items from different taxons' do
         before do
-          order.products.first.taxons << taxon
+          order.products.first!.taxons << taxon
           rule.taxons << taxon
         end
 
@@ -52,7 +52,7 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
       context 'when a product has a taxon child of a taxon rule' do
         before do
           taxon.children << taxon2
-          order.products.first.taxons << taxon2
+          order.products.first!.taxons << taxon2
           rule.taxons << taxon2
         end
 
@@ -66,7 +66,7 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
       end
 
       it 'is eligible order has all prefered taxons' do
-        order.products.first.taxons << taxon2
+        order.products.first!.taxons << taxon2
         order.products.last.taxons << taxon
 
         rule.taxons = [taxon, taxon2]
@@ -89,7 +89,7 @@ describe Spree::Promotion::Rules::Taxon, :type => :model do
 
         before do
           taxon.children << taxon2
-          order.products.first.taxons << taxon2
+          order.products.first!.taxons << taxon2
           order.products.last.taxons << taxon3
           rule.taxons << taxon2
           rule.taxons << taxon3

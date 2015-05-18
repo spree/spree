@@ -80,7 +80,7 @@ module Spree
       end
 
       it "increases a line item's quantity if it exists already" do
-        order.line_items.create(:variant_id => product.master.id, :quantity => 10)
+        order.line_items.create!(:variant_id => product.master.id, :quantity => 10)
         api_post :create, :line_item => { :variant_id => product.master.to_param, :quantity => 1 }
         expect(response.status).to eq(201)
         order.reload
@@ -90,7 +90,7 @@ module Spree
       end
 
       it "can update a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => line_item.id, :line_item => { :quantity => 101 }
         expect(response.status).to eq(200)
         order.reload
@@ -101,7 +101,7 @@ module Spree
 
       it "can update a line item's options on the order" do
         expect_any_instance_of(LineItem).to receive(:some_option=).with(12)
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update,
                 id: line_item.id,
                 line_item: { quantity: 1, options: { some_option: 12 } }
@@ -109,7 +109,7 @@ module Spree
       end
 
       it "can delete a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_delete :destroy, :id => line_item.id
         expect(response.status).to eq(204)
         order.reload
@@ -118,7 +118,7 @@ module Spree
       end
 
       context "order contents changed after shipments were created" do
-        let!(:order) { Order.create }
+        let!(:order) { Order.create! }
         let!(:line_item) { order.contents.add(product.master) }
 
         before { order.create_proposed_shipments }
@@ -167,14 +167,14 @@ module Spree
       end
 
       it "cannot update a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_put :update, :id => line_item.id, :line_item => { :quantity => 1000 }
         assert_unauthorized!
         expect(line_item.reload.quantity).not_to eq(1000)
       end
 
       it "cannot delete a line item on the order" do
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         api_delete :destroy, :id => line_item.id
         assert_unauthorized!
         expect { line_item.reload }.not_to raise_error

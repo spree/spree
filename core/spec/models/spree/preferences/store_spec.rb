@@ -19,7 +19,7 @@ describe Spree::Preferences::Store, :type => :model do
   it "will return db value when cache is emtpy and cache the db value" do
     preference = Spree::Preference.where(:key => 'test').first_or_initialize
     preference.value = '123'
-    preference.save
+    preference.save!
 
     Rails.cache.clear
     expect(@store.get(:test)).to eq '123'

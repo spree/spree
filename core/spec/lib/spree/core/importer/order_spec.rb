@@ -12,12 +12,14 @@ module Spree
       let(:shipping_method) { create(:shipping_method) }
       let(:payment_method) { create(:check_payment_method) }
 
-      let(:product) { product = Spree::Product.create(:name => 'Test',
-                                             :sku => 'TEST-1',
-                                             :price => 33.22)
-                      product.shipping_category = create(:shipping_category)
-                      product.save
-                      product }
+      let(:product) {
+        Spree::Product.create!(
+          :name => 'Test',
+          :sku => 'TEST-1',
+          :price => 33.22,
+          :shipping_category => create(:shipping_category)
+        )
+      }
 
       let(:variant) { variant = product.master
                       variant.stock_items.each { |si| si.update_attribute(:count_on_hand, 10) }
@@ -92,7 +94,7 @@ module Spree
         expect(Importer::Order).to receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
         order = Importer::Order.import(user,params)
         expect(order.user).to eq(nil)
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         expect(line_item.quantity).to eq(5)
         expect(line_item.variant_id).to eq(variant_id)
       end
@@ -121,7 +123,7 @@ module Spree
 
         order = Importer::Order.import(user,params)
 
-        line_item = order.line_items.first
+        line_item = order.line_items.first!
         expect(line_item.variant_id).to eq(variant_id)
         expect(line_item.quantity).to eq(5)
       end
@@ -286,12 +288,12 @@ module Spree
 
         it 'builds them properly' do
           order = Importer::Order.import(user, params)
-          shipment = order.shipments.first
+          shipment = order.shipments.first!
 
           expect(shipment.cost.to_f).to eq 14.99
-          expect(shipment.inventory_units.first.variant_id).to eq product.master.id
+          expect(shipment.inventory_units.first!.variant_id).to eq product.master.id
           expect(shipment.tracking).to eq '123456789'
-          expect(shipment.shipping_rates.first.cost).to eq 14.99
+          expect(shipment.shipping_rates.first!.cost).to eq 14.99
           expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
           expect(shipment.stock_location).to eq stock_location
           expect(order.shipment_total.to_f).to eq 14.99
@@ -300,7 +302,7 @@ module Spree
         it "accepts admin name for stock location" do
           params[:shipments_attributes][0][:stock_location] = stock_location.admin_name
           order = Importer::Order.import(user, params)
-          shipment = order.shipments.first
+          shipment = order.shipments.first!
 
           expect(shipment.stock_location).to eq stock_location
         end
@@ -330,13 +332,13 @@ module Spree
 
           it 'builds them properly' do
             order = Importer::Order.import(user, params)
-            shipment = order.shipments.first
+            shipment = order.shipments.first!
 
             expect(shipment.cost.to_f).to eq 4.99
-            expect(shipment.inventory_units.first.variant_id).to eq product.master.id
+            expect(shipment.inventory_units.first!.variant_id).to eq product.master.id
             expect(shipment.tracking).to eq '123456789'
             expect(shipment.shipped_at).to be_present
-            expect(shipment.shipping_rates.first.cost).to eq 4.99
+            expect(shipment.shipping_rates.first!.cost).to eq 4.99
             expect(shipment.selected_shipping_rate).to eq(shipment.shipping_rates.first)
             expect(shipment.stock_location).to eq stock_location
             expect(shipment.state).to eq('shipped')
@@ -404,7 +406,7 @@ module Spree
                                               payment_method: payment_method.name,
                                               state: 'completed' }] }
         order = Importer::Order.import(user,params)
-        expect(order.payments.first.amount).to eq 4.99
+        expect(order.payments.first!.amount).to eq 4.99
       end
 
       it 'builds a payment using status as fallback' do
@@ -412,7 +414,7 @@ module Spree
                                               payment_method: payment_method.name,
                                               status: 'completed' }] }
         order = Importer::Order.import(user,params)
-        expect(order.payments.first.amount).to eq 4.99
+        expect(order.payments.first!.amount).to eq 4.99
       end
 
       it 'handles payment building exceptions' do
@@ -438,7 +440,7 @@ module Spree
                                             }]}
 
         order = Importer::Order.import(user, params)
-        expect(order.payments.first.source.last_digits).to eq '7424'
+        expect(order.payments.first!.source.last_digits).to eq '7424'
       end
 
       it 'handles source building exceptions when do not have years and month' do

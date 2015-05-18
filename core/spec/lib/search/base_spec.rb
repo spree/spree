@@ -22,14 +22,14 @@ describe Spree::Core::Search::Base do
     subject { described_class.new(params).retrieve_products }
 
     before do
-      @product1.master.images.create(attachment_file_name: "Test", position: 2)
-      @product1.master.images.create(attachment_file_name: "Test1", position: 1)
+      @product1.master.images.create!(attachment_file_name: "Test", position: 2)
+      @product1.master.images.create!(attachment_file_name: "Test1", position: 1)
       @product1.reload
     end
 
     it "returns images in correct order" do
-      expect(subject.first).to eq @product1
-      expect(subject.first.images).to eq @product1.master.images
+      expect(subject.first!).to eq @product1
+      expect(subject.first!.images).to eq @product1.master.images
     end
   end
 

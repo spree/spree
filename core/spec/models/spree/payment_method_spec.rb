@@ -4,7 +4,7 @@ describe Spree::PaymentMethod, :type => :model do
   describe "#available" do
     before do
       [nil, 'both', 'front_end', 'back_end'].each do |display_on|
-        Spree::Gateway::Test.create(
+        Spree::Gateway::Test.create!(
           :name => 'Display Both',
           :display_on => display_on,
           :active => true,

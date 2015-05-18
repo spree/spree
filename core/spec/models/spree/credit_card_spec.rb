@@ -23,7 +23,7 @@ describe Spree::CreditCard, type: :model do
   before(:each) do
 
     @order = create(:order)
-    @payment = Spree::Payment.create(:amount => 100, :order => @order)
+    @payment = Spree::Payment.create(amount: 100, order: @order)
 
     @success_response = double('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
     @fail_response = double('gateway_response', success?: false)
@@ -149,7 +149,7 @@ describe Spree::CreditCard, type: :model do
 
     it "should only validate on create" do
       credit_card.attributes = valid_credit_card_attributes
-      credit_card.save
+      credit_card.save!
       expect(credit_card).to be_valid
     end
 

@@ -12,7 +12,7 @@ describe Spree::Address, :type => :model do
                          :address2 => 'address2',
                          :alternative_phone => 'alternative_phone',
                          :city => 'city',
-                         :country => Spree::Country.first,
+                         :country => Spree::Country.first!,
                          :firstname => 'firstname',
                          :lastname => 'lastname',
                          :company => 'company',
@@ -215,7 +215,7 @@ describe Spree::Address, :type => :model do
       # Regression test for #1142
       it "uses the first available country if :default_country_id is set to an invalid value" do
         Spree::Config[:default_country_id] = "0"
-        expect(Spree::Address.default.country).to eq(Spree::Country.first)
+        expect(Spree::Address.default.country).to eq(Spree::Country.first!)
       end
     end
 

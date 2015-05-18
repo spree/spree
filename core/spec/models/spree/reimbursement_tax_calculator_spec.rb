@@ -5,7 +5,7 @@ describe Spree::ReimbursementTaxCalculator, :type => :model do
   let!(:tax_rate) { nil }
 
   let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
-  let(:return_item) { reimbursement.return_items.first }
+  let(:return_item) { reimbursement.return_items.first! }
   let(:line_item) { return_item.inventory_unit.line_item }
 
   subject do

@@ -4,7 +4,7 @@ describe Spree::Order, :type => :model do
   let(:order) { stub_model("Spree::Order") }
 
   context "#finalize!" do
-    let(:order) { Spree::Order.create(email: 'test@example.com') }
+    let(:order) { Spree::Order.create!(email: 'test@example.com') }
 
     before do
       order.update_column :state, 'complete'
@@ -31,7 +31,7 @@ describe Spree::Order, :type => :model do
     end
 
     it "should change the shipment state to ready if order is paid" do
-      Spree::Shipment.create(order: order, stock_location: create(:stock_location))
+      Spree::Shipment.create!(order: order, stock_location: create(:stock_location))
       order.shipments.reload
 
       allow(order).to receive_messages(paid?: true, complete?: true)

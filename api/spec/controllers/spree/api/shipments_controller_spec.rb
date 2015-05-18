@@ -34,7 +34,7 @@ describe Spree::Api::ShipmentsController, :type => :controller do
     describe 'POST #create' do
       let(:params) do
         {
-          variant_id: stock_location.stock_items.first.variant.to_param,
+          variant_id: stock_location.stock_items.first!.variant.to_param,
           shipment: { order_id: order.number },
           stock_location_id: stock_location.to_param
         }
@@ -93,7 +93,7 @@ describe Spree::Api::ShipmentsController, :type => :controller do
 
     context 'for completed shipments' do
       let(:order) { create :completed_order_with_totals }
-      let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
+      let!(:resource_scoping) { { id: order.shipments.first!.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
         api_put :add, { variant_id: variant.to_param, quantity: 2 }

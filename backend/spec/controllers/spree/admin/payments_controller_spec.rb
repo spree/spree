@@ -37,7 +37,7 @@ module Spree
 
         # Regression for #4768
         it "doesnt process the same payment twice" do
-          expect(Spree::LogEntry.where(source: order.payments.first).count).to eq(1)
+          expect(Spree::LogEntry.where(source: order.payments.first!).count).to eq(1)
         end
       end
 
@@ -83,7 +83,7 @@ module Spree
       context "order does not have a billing address" do
         before do
           order.bill_address = nil
-          order.save
+          order.save!
         end
 
         it "should redirect to the customer details page" do

@@ -16,7 +16,7 @@ module Spree
                         :payment_state, :email, :special_instructions,
                         :total_quantity, :display_item_total, :currency] }
 
-    let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
+    let(:address_params) { { :country_id => Country.first!.id, :state_id => State.first!.id } }
 
     let(:current_api_user) do
       user = Spree.user_class.new(:email => "spree@example.com")
@@ -90,11 +90,11 @@ module Spree
       it "returns orders in reverse chronological order by completed_at" do
         order.update_columns completed_at: Time.now
 
-        order2 = Order.create user: order.user, completed_at: Time.now - 1.day
+        order2 = Order.create!(user: order.user, completed_at: Time.now - 1.day)
         expect(order2.created_at).to be > order.created_at
-        order3 = Order.create user: order.user, completed_at: nil
+        order3 = Order.create!(user: order.user, completed_at: nil)
         expect(order3.created_at).to be > order2.created_at
-        order4 = Order.create user: order.user, completed_at: nil
+        order4 = Order.create!(user: order.user, completed_at: nil)
         expect(order4.created_at).to be > order3.created_at
 
         api_get :mine
@@ -125,7 +125,7 @@ module Spree
 
       context "multiple incomplete orders exist" do
         it "returns the latest incomplete order" do
-          new_order = Spree::Order.create! user: order.user
+          new_order = Spree::Order.create!(user: order.user)
           expect(new_order.created_at).to be > order.created_at
           expect(JSON.parse(subject.body)['id']).to eq new_order.id
         end
@@ -166,7 +166,7 @@ module Spree
 
       before do
         allow_any_instance_of(Order).to receive_messages :user => current_api_user
-        shipment = order.shipments.first
+        shipment = order.shipments.first!
         order.create_adjustment!(
           adjustable: shipment,
           amount:     5,
@@ -194,7 +194,7 @@ module Spree
           shipment = json_response['shipments'][0]
           expect(shipment).to_not be_nil
           expect(shipment['adjustments'][0]).not_to be_empty
-          expect(shipment['adjustments'][0]['label']).to eq(order.shipments.first.adjustments.first.label)
+          expect(shipment['adjustments'][0]['label']).to eq(order.shipments.first!.adjustments.first.label)
         end
       end
     end
@@ -263,8 +263,8 @@ module Spree
 
       order = Order.last
       expect(order.line_items.count).to eq(1)
-      expect(order.line_items.first.variant).to eq(variant)
-      expect(order.line_items.first.quantity).to eq(5)
+      expect(order.line_items.first!.variant).to eq(variant)
+      expect(order.line_items.first!.quantity).to eq(5)
 
       expect(json_response['number']).to be_present
       expect(json_response["token"]).not_to be_blank
@@ -308,7 +308,7 @@ module Spree
       }
 
       expect(response.status).to eq 201
-      expect(Order.last.line_items.first.price.to_f).to eq(variant.price)
+      expect(Order.last.line_items.first!.price.to_f).to eq(variant.price)
     end
 
     context "admin user imports order" do
@@ -368,7 +368,7 @@ module Spree
         order.next # Switch from cart to address
         order.bill_address = nil
         order.ship_address = nil
-        order.save
+        order.save!
         expect(order.state).to eq("address")
       end
 
@@ -465,7 +465,7 @@ module Spree
       end
 
       it "cannot set the user_id for the order" do
-        user = Spree.user_class.create
+        user = Spree.user_class.create!
         original_id = order.user_id
         api_post :update, :id => order.to_param, :order => { user_id: user.id }
         expect(response.status).to eq 200
@@ -507,7 +507,7 @@ module Spree
         end
 
         it "can list its line items with images" do
-          order.line_items.first.variant.images.create!(:attachment => image("thinking-cat.jpg"))
+          order.line_items.first!.variant.images.create!(:attachment => image("thinking-cat.jpg"))
 
           api_get :show, :id => order.to_param
 
@@ -533,7 +533,7 @@ module Spree
           adjustment = order.create_adjustment!(
             amount:     100,
             label:      '10% off!',
-            adjustable: order.line_items.first
+            adjustable: order.line_items.first!
           )
           adjustment.update_column(:amount, 5)
           api_get :show, :id => order.to_param
@@ -561,7 +561,7 @@ module Spree
           let!(:shipping_method) do
             create(:shipping_method).tap do |shipping_method|
               shipping_method.calculator.preferred_amount = 10
-              shipping_method.calculator.save
+              shipping_method.calculator.save!
             end
           end
 
@@ -569,7 +569,7 @@ module Spree
             order.bill_address = create(:address)
             order.ship_address = create(:address)
             order.next!
-            order.save
+            order.save!
           end
 
           it "includes the ship_total in the response" do
@@ -607,7 +607,7 @@ module Spree
             expect(shipment["stock_location_name"]).not_to be_blank
             manifest_item = shipment["manifest"][0]
             expect(manifest_item["quantity"]).to eq(1)
-            expect(manifest_item["variant_id"]).to eq(order.line_items.first.variant_id)
+            expect(manifest_item["variant_id"]).to eq(order.line_items.first!.variant_id)
           end
         end
       end
@@ -640,7 +640,7 @@ module Spree
       context "caching enabled" do
         before do
           ActionController::Base.perform_caching = true
-          3.times { Order.create }
+          3.times { Order.create! }
         end
 
         it "returns unique orders" do
@@ -726,11 +726,11 @@ module Spree
             }
           }
           expect(response.status).to eq 201
-          expect(Order.last.line_items.first.price.to_f).to eq(33.0)
+          expect(Order.last.line_items.first!.price.to_f).to eq(33.0)
         end
 
         it "can set the user_id for the order" do
-          user = Spree.user_class.create
+          user = Spree.user_class.create!
           api_post :create, :order => { user_id: user.id }
           expect(response.status).to eq 201
           expect(json_response["user_id"]).to eq(user.id)
@@ -739,7 +739,7 @@ module Spree
 
       context "updating" do
         it "can set the user_id for the order" do
-          user = Spree.user_class.create
+          user = Spree.user_class.create!
           api_post :update, :id => order.number, :order => { user_id: user.id }
           expect(response.status).to eq 200
           expect(json_response["user_id"]).to eq(user.id)

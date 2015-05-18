@@ -13,7 +13,7 @@ describe "exchanges:charge_unreturned_items" do
 
   context "there are unreturned items" do
     let!(:order) { create(:shipped_order, line_items_count: 2) }
-    let(:return_item_1) { create(:exchange_return_item, inventory_unit: order.inventory_units.first) }
+    let(:return_item_1) { create(:exchange_return_item, inventory_unit: order.inventory_units.first!) }
     let(:return_item_2) { create(:exchange_return_item, inventory_unit: order.inventory_units.last) }
     let!(:rma) { create(:return_authorization, order: order, return_items: [return_item_1, return_item_2]) }
     let!(:tax_rate) { create(:tax_rate, zone: order.tax_zone, tax_category: return_item_2.exchange_variant.tax_category) }
@@ -71,7 +71,7 @@ describe "exchanges:charge_unreturned_items" do
         subject.invoke
         new_order = Spree::Order.last
         expect(new_order.credit_cards).to be_present
-        expect(new_order.credit_cards.first).to eq order.valid_credit_cards.first
+        expect(new_order.credit_cards.first!).to eq order.valid_credit_cards.first!
       end
 
       it "authorizes the order for the full amount of the unreturned items including taxes" do
@@ -79,7 +79,7 @@ describe "exchanges:charge_unreturned_items" do
         new_order = Spree::Order.last
         expected_amount = return_item_2.reload.exchange_variant.price + new_order.additional_tax_total + new_order.included_tax_total
         expect(new_order.total).to eq expected_amount
-        payment = new_order.payments.first
+        payment = new_order.payments.first!
         expect(payment.amount).to eq expected_amount
         expect(payment).to be_pending
         expect(new_order.item_total).to eq return_item_2.reload.exchange_variant.price
@@ -106,7 +106,7 @@ describe "exchanges:charge_unreturned_items" do
           expect { subject.invoke }.to change { Spree::Payment.count }.by(1)
           new_order = Spree::Order.last
           expect(new_order.credit_cards).to be_present
-          expect(new_order.credit_cards.first).to eq credit_card
+          expect(new_order.credit_cards.first!).to eq credit_card
         end
       end
 

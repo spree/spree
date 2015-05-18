@@ -13,7 +13,7 @@ module Spree
     describe Quantifier, :type => :model do
 
       let!(:stock_location) { create :stock_location_with_items  }
-      let!(:stock_item) { stock_location.stock_items.order(:id).first }
+      let!(:stock_item) { stock_location.stock_items.order(:id).first! }
 
       subject { described_class.new(stock_item.variant) }
 
@@ -49,7 +49,7 @@ module Spree
         end
 
         context 'when stock item prevents backordering' do
-          before { stock_item.update_attributes(backorderable: false) }
+          before { stock_item.update_attributes!(backorderable: false) }
 
           specify { expect(subject.backorderable?).to be false }
 
@@ -82,7 +82,7 @@ module Spree
         end
 
         context 'when all stock items prevent backordering' do
-          before { stock_item.update_attributes(backorderable: false) }
+          before { stock_item.update_attributes!(backorderable: false) }
 
           specify { expect(subject.backorderable?).to be false }
 

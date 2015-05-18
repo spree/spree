@@ -17,7 +17,7 @@ describe 'orders', :type => :feature do
 
   it "should display line item price" do
     # Regression test for #2772
-    line_item = order.line_items.first
+    line_item = order.line_items.first!
     line_item.target_shipment = create(:shipment)
     line_item.price = 19.00
     line_item.save!
@@ -51,7 +51,7 @@ describe 'orders', :type => :feature do
     before do
       credit_card = create(:credit_card)
       credit_card.update_column(:cc_type, '')
-      payment = order.payments.first
+      payment = order.payments.first!
       payment.source = credit_card
       payment.save!
     end

@@ -311,13 +311,13 @@ describe Spree::CheckoutController, :type => :controller do
             # A different country which is not included in the list of shippable countries
             address.country = create(:country, :name => "Australia")
             address.state_name = 'Victoria'
-            address.save
+            address.save!
           end
         end
 
         it "due to no available shipping rates for any of the shipments" do
           expect(order.shipments.count).to eq(1)
-          order.shipments.first.shipping_rates.delete_all
+          order.shipments.first!.shipping_rates.delete_all
           spree_put :update, :order => {}
           expect(flash[:error]).to eq(Spree.t(:items_cannot_be_shipped))
           expect(response).to redirect_to(spree.checkout_state_path('address'))

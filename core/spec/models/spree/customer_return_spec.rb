@@ -174,7 +174,7 @@ describe Spree::CustomerReturn, :type => :model do
         expect {
           create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
         }.to change {
-          Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
+          Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first!.count_on_hand
         }.by(1)
       end
 

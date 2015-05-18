@@ -11,7 +11,7 @@ describe "Order Details", type: :feature, js: true do
   let!(:shipping_method) { create(:shipping_method, :name => "Default") }
 
   before do
-    order.shipments.create(stock_location_id: stock_location.id)
+    order.shipments.create!(stock_location_id: stock_location.id)
     order.contents.add(product.master, 2)
   end
 
@@ -21,7 +21,7 @@ describe "Order Details", type: :feature, js: true do
 
     context "cart edit page" do
       before do
-        product.master.stock_items.first.update_column(:count_on_hand, 100)
+        product.master.stock_items.first!.update_column(:count_on_hand, 100)
         visit spree.cart_admin_order_path(order)
       end
 
@@ -109,7 +109,7 @@ describe "Order Details", type: :feature, js: true do
       it "will show the variant sku" do
         order = create(:completed_order_with_totals)
         visit spree.edit_admin_order_path(order)
-        sku = order.line_items.first.variant.sku
+        sku = order.line_items.first!.variant.sku
         expect(page).to have_content("SKU: #{sku}")
       end
 
@@ -143,8 +143,8 @@ describe "Order Details", type: :feature, js: true do
 
       context "variant out of stock and not backorderable" do
         before do
-          product.master.stock_items.first.update_column(:backorderable, false)
-          product.master.stock_items.first.update_column(:count_on_hand, 0)
+          product.master.stock_items.first!.update_column(:backorderable, false)
+          product.master.stock_items.first!.update_column(:count_on_hand, 0)
         end
 
         it "displays out of stock instead of add button" do
@@ -162,8 +162,8 @@ describe "Order Details", type: :feature, js: true do
       let!(:stock_location2) { create(:stock_location_with_items, name: 'Clarksville') }
 
       before do
-        product.master.stock_items.first.update_column(:backorderable, true)
-        product.master.stock_items.first.update_column(:count_on_hand, 100)
+        product.master.stock_items.first!.update_column(:backorderable, true)
+        product.master.stock_items.first!.update_column(:count_on_hand, 100)
         product.master.stock_items.last.update_column(:count_on_hand, 100)
       end
 
@@ -176,7 +176,7 @@ describe "Order Details", type: :feature, js: true do
         context 'there is enough stock at the other location' do
           it 'should allow me to make a split' do
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first!.inventory_units_for(product.master).count).to eq(2)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -187,12 +187,12 @@ describe "Order Details", type: :feature, js: true do
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.first!.inventory_units_for(product.master).count).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
 
           it 'should allow me to make a transfer via splitting off all stock' do
-            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
+            expect(order.shipments.first!.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -204,12 +204,12 @@ describe "Order Details", type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
-            expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
+            expect(order.shipments.first!.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first!.stock_location.id).to eq(stock_location2.id)
           end
 
           it 'should allow me to split more than I have if available there' do
-            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
+            expect(order.shipments.first!.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'arrows-h' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -346,7 +346,7 @@ describe "Order Details", type: :feature, js: true do
 
       context 'splitting to shipment' do
         before do
-          @shipment2 = order.shipments.create(stock_location_id: stock_location2.id)
+          @shipment2 = order.shipments.create!(stock_location_id: stock_location2.id)
           visit spree.edit_admin_order_path(order)
         end
 

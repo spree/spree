@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe OrderUpdater, type: :model do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
     subject { Spree::OrderUpdater.new(order) }
 
     context "order totals" do
@@ -64,11 +64,11 @@ module Spree
       it "update order adjustments" do
         # A line item will not have both additional and included tax,
         # so please just humour me for now.
-        order.line_items.first.update_columns({
+        order.line_items.first!.update_columns(
           adjustment_total: 10.05,
           additional_tax_total: 0.05,
-          included_tax_total: 0.05,
-        })
+          included_tax_total: 0.05
+        )
         subject.update_adjustment_total
         expect(order.adjustment_total).to eq(10.05)
         expect(order.additional_tax_total).to eq(0.05)

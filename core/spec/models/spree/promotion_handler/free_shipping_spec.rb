@@ -6,9 +6,9 @@ module Spree
       let(:order) { create(:order) }
       let(:shipment) { create(:shipment, order: order ) }
 
-      let(:promotion) { Promotion.create(name: "Free Shipping") }
+      let(:promotion) { Promotion.create!(name: "Free Shipping") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
-      let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
+      let!(:action) { Promotion::Actions::FreeShipping.create!(promotion: promotion) }
 
       subject { Spree::PromotionHandler::FreeShipping.new(shipment.order) }
 

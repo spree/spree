@@ -26,7 +26,7 @@ module Spree
 
       describe "#new" do
         let(:order) { create(:shipped_order, line_items_count: 1) }
-        let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first)] }
+        let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first!)] }
         let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
         let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
         let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
@@ -49,7 +49,7 @@ module Spree
           let(:order) { create(:shipped_order, line_items_count: 4) }
           let(:rma) { create(:return_authorization, order: order) }
 
-          let!(:rma_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.first) }
+          let!(:rma_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.first!) }
           let!(:customer_return_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.last) }
 
           context "there is a return item associated with an rma but not a customer return" do
@@ -74,7 +74,7 @@ module Spree
         let(:order)           { customer_return.order }
         let(:customer_return) { create(:customer_return, line_items_count: 3) }
 
-        let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
+        let!(:accepted_return_item)            { customer_return.return_items.order('id').first!.tap(&:accept!) }
         let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!)}
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
 
@@ -133,7 +133,7 @@ module Spree
                 stock_location_id: stock_location.id,
                 return_items_attributes: {
                   "0" => {
-                    id: return_authorization.return_items.first.id,
+                    id: return_authorization.return_items.first!.id,
                     returned: "1",
                     "pre_tax_amount"=>"15.99",
                     inventory_unit_id: order.inventory_units.shipped.last.id

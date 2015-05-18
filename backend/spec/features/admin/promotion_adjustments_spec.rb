@@ -34,12 +34,12 @@ describe "Promotion Adjustments", :type => :feature do
       promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to eq("order")
 
-      first_rule = promotion.rules.first
+      first_rule = promotion.rules.first!
       expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
       expect(first_rule.preferred_amount_min).to eq(30)
       expect(first_rule.preferred_amount_max).to eq(60)
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
@@ -64,7 +64,7 @@ describe "Promotion Adjustments", :type => :feature do
       expect(promotion.usage_limit).to eq(1)
       expect(promotion.code).to eq("single_use")
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
@@ -93,12 +93,12 @@ describe "Promotion Adjustments", :type => :feature do
       promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to be_blank
 
-      first_rule = promotion.rules.first
+      first_rule = promotion.rules.first!
       expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
       expect(first_rule.preferred_amount_min).to eq(30)
       expect(first_rule.preferred_amount_max).to eq(60)
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::FlatPercentItemTotal)
@@ -127,11 +127,11 @@ describe "Promotion Adjustments", :type => :feature do
       promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to be_blank
 
-      first_rule = promotion.rules.first
+      first_rule = promotion.rules.first!
       expect(first_rule.class).to eq(Spree::Promotion::Rules::Product)
       expect(first_rule.products.map(&:name)).to include("RoR Mug")
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateItemAdjustments)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::PercentOnLineItem)
@@ -156,10 +156,10 @@ describe "Promotion Adjustments", :type => :feature do
       promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to be_blank
 
-      first_rule = promotion.rules.first
+      first_rule = promotion.rules.first!
       expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::FreeShipping)
@@ -183,7 +183,7 @@ describe "Promotion Adjustments", :type => :feature do
       expect(promotion.code).to be_blank
       expect(promotion.rules).to be_blank
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
       expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
@@ -217,7 +217,7 @@ describe "Promotion Adjustments", :type => :feature do
       promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to eq("complex")
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateLineItems)
       line_item = expect(first_action.promotion_action_line_items).not_to be_empty
     end
@@ -242,12 +242,12 @@ describe "Promotion Adjustments", :type => :feature do
 
       promotion = Spree::Promotion.find_by_name("Promotion")
 
-      first_rule = promotion.rules.first
+      first_rule = promotion.rules.first!
       expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
       expect(first_rule.preferred_amount_min).to eq(50)
       expect(first_rule.preferred_amount_max).to eq(150)
 
-      first_action = promotion.actions.first
+      first_action = promotion.actions.first!
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       expect(first_action.calculator.class).to eq(Spree::Calculator::FlatRate)
       expect(first_action.calculator.preferred_amount).to eq(5)

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrderContents, type: :model, db: :isolate do
-  let(:order) { Spree::Order.create }
+  let(:order) { Spree::Order.create! }
   let(:variant) { create(:variant) }
 
   subject { described_class.new(order) }
@@ -27,7 +27,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
         it 'populates target shipments' do
           shipment = create(:shipment)
           subject.add(variant, 1, shipment: shipment)
-          expect(order.line_items.first.target_shipment).to eql(shipment)
+          expect(order.line_items.first!.target_shipment).to eql(shipment)
         end
       end
 
@@ -35,10 +35,10 @@ describe Spree::OrderContents, type: :model, db: :isolate do
         it 'populates target shipments' do
           shipment = create(:shipment)
           subject.add(variant, 1)
-          expect(order.line_items.first.target_shipment).to be(nil)
+          expect(order.line_items.first!.target_shipment).to be(nil)
           subject.add(variant, 1, shipment: shipment)
-          expect(order.line_items.first.target_shipment).to eql(shipment)
-          expect(order.line_items.first.price).to eql(variant.price)
+          expect(order.line_items.first!.target_shipment).to eql(shipment)
+          expect(order.line_items.first!.price).to eql(variant.price)
         end
       end
     end
@@ -54,7 +54,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(1)
       expect(order.line_items.size).to eq(1)
-      expect(order.line_items.first.price).to eql(variant.price)
+      expect(order.line_items.first!.price).to eql(variant.price)
     end
 
     it 'should update line item if one exists' do
@@ -62,7 +62,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       line_item = subject.add(variant, 1)
       expect(line_item.quantity).to eq(2)
       expect(order.line_items.size).to eq(1)
-      expect(order.line_items.first.price).to eql(variant.price)
+      expect(order.line_items.first!.price).to eql(variant.price)
     end
 
     it 'should update order totals' do
@@ -85,7 +85,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       end
 
       context 'one active order promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion, calculator: calculator) }
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)
@@ -96,7 +96,7 @@ describe Spree::OrderContents, type: :model, db: :isolate do
       end
 
       context 'one active line item promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create!(promotion: promotion, calculator: calculator) }
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)

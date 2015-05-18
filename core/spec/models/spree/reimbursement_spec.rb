@@ -27,8 +27,8 @@ describe Spree::Reimbursement, type: :model do
 
     let(:order)                   { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
     let(:line_items_price)        { BigDecimal.new(10) }
-    let(:line_item)               { order.line_items.first }
-    let(:inventory_unit)          { line_item.inventory_units.first }
+    let(:line_item)               { order.line_items.first! }
+    let(:inventory_unit)          { line_item.inventory_units.first! }
     let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
     let(:payment_amount)          { order.total }
     let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
@@ -111,7 +111,7 @@ describe Spree::Reimbursement, type: :model do
       before { return_item.exchange_variant = exchange_variant }
       it "generates an exchange shipment for the order for the exchange items" do
         expect { subject }.to change { order.reload.shipments.count }.by 1
-        expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
+        expect(order.shipments.last.inventory_units.first!.variant).to eq exchange_variant
       end
     end
 
@@ -164,7 +164,7 @@ describe Spree::Reimbursement, type: :model do
   describe '.build_from_customer_return' do
     let(:customer_return) { create(:customer_return, line_items_count: 5) }
 
-    let!(:pending_return_item) { customer_return.return_items.first.tap { |ri| ri.update!(acceptance_status: 'pending') } }
+    let!(:pending_return_item) { customer_return.return_items.first!.tap { |ri| ri.update!(acceptance_status: 'pending') } }
     let!(:accepted_return_item) { customer_return.return_items.second.tap(&:accept!) }
     let!(:rejected_return_item) { customer_return.return_items.third.tap(&:reject!) }
     let!(:manual_intervention_return_item) { customer_return.return_items.fourth.tap(&:require_manual_intervention!) }

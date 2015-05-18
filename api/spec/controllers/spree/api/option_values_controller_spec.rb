@@ -14,7 +14,7 @@ module Spree
 
     def check_option_values(option_values)
       expect(option_values.count).to eq(1)
-      expect(option_values.first).to have_attributes([:id, :name, :presentation,
+      expect(option_values.first!).to have_attributes([:id, :name, :presentation,
                                                   :option_type_name, :option_type_id])
     end
 

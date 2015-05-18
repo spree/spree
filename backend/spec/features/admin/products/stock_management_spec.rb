@@ -77,7 +77,7 @@ describe "Stock Management", :type => :feature do
     context "with multiple variants" do
       before do
         variant = product.variants.create!(sku: 'SPREEC')
-        variant.stock_items.first.update_column(:count_on_hand, 30)
+        variant.stock_items.first!.update_column(:count_on_hand, 30)
         click_link "Stock Management"
       end
 

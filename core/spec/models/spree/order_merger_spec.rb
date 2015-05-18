@@ -4,8 +4,8 @@ require 'spec_helper'
 module Spree
   describe OrderMerger, type: :model do
     let(:variant) { create(:variant) }
-    let(:order_1) { Spree::Order.create }
-    let(:order_2) { Spree::Order.create }
+    let(:order_1) { Spree::Order.create! }
+    let(:order_2) { Spree::Order.create! }
     let(:user) { stub_model(Spree::LegacyUser, email: "spree@example.com") }
     let(:subject) { Spree::OrderMerger.new(order_1) }
 
@@ -36,7 +36,7 @@ module Spree
         subject.merge!(order_2, user)
         expect(order_1.line_items.count).to eq(1)
 
-        line_item = order_1.line_items.first
+        line_item = order_1.line_items.first!
         expect(line_item.quantity).to eq(2)
         expect(line_item.variant_id).to eq(variant.id)
       end

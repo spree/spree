@@ -18,7 +18,7 @@ module Spree
     it "validates unique rules for a promotion" do
       p1 = TestRule.new
       p1.promotion_id = 1
-      p1.save
+      p1.save!
 
       p2 = TestRule.new
       p2.promotion_id = 1

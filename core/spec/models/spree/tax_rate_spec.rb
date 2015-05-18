@@ -14,13 +14,18 @@ describe Spree::TaxRate, :type => :model do
 
     context "when no rate zones match the tax zone" do
       before do
-        Spree::TaxRate.create(:amount => 1, :zone => create(:zone))
+        Spree::TaxRate.create!(
+          :amount       => 1,
+          :zone         => create(:zone),
+          :calculator   => calculator,
+          :tax_category => tax_category
+        )
       end
 
       context "when there is no default tax zone" do
         before do
           @zone = create(:zone, :name => "Country Zone", :default_tax => false, :zone_members => [])
-          @zone.zone_members.create(:zoneable => country)
+          @zone.zone_members.create!(:zoneable => country)
         end
 
         it "should return an empty array" do
@@ -29,7 +34,7 @@ describe Spree::TaxRate, :type => :model do
         end
 
         it "should return the rate that matches the rate zone" do
-          rate = Spree::TaxRate.create(
+          rate = Spree::TaxRate.create!(
             :amount => 1,
             :zone => @zone,
             :tax_category => tax_category,
@@ -41,14 +46,14 @@ describe Spree::TaxRate, :type => :model do
         end
 
         it "should return all rates that match the rate zone" do
-          rate1 = Spree::TaxRate.create(
+          rate1 = Spree::TaxRate.create!(
             :amount => 1,
             :zone => @zone,
             :tax_category => tax_category,
             :calculator => calculator
           )
 
-          rate2 = Spree::TaxRate.create(
+          rate2 = Spree::TaxRate.create!(
             :amount => 2,
             :zone => @zone,
             :tax_category => tax_category,
@@ -62,9 +67,9 @@ describe Spree::TaxRate, :type => :model do
         context "when the tax_zone is contained within a rate zone" do
           before do
             sub_zone = create(:zone, :name => "State Zone", :zone_members => [])
-            sub_zone.zone_members.create(:zoneable => create(:state, :country => country))
+            sub_zone.zone_members.create!(:zoneable => create(:state, :country => country))
             allow(order).to receive_messages :tax_zone => sub_zone
-            @rate = Spree::TaxRate.create(
+            @rate = Spree::TaxRate.create!(
               :amount => 1,
               :zone => @zone,
               :tax_category => tax_category,
@@ -81,12 +86,12 @@ describe Spree::TaxRate, :type => :model do
       context "when there is a default tax zone" do
         before do
           @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
-          @zone.zone_members.create(:zoneable => country)
+          @zone.zone_members.create!(:zoneable => country)
         end
 
         let(:included_in_price) { false }
         let!(:rate) do
-          Spree::TaxRate.create(:amount => 1,
+          Spree::TaxRate.create!(:amount => 1,
                                 :zone => @zone,
                                 :tax_category => tax_category,
                                 :calculator => calculator,
@@ -208,18 +213,18 @@ describe Spree::TaxRate, :type => :model do
     before do
       @country = create(:country)
       @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
-      @zone.zone_members.create(:zoneable => @country)
-      @category    = Spree::TaxCategory.create :name => "Taxable Foo"
-      @category2   = Spree::TaxCategory.create(:name => "Non Taxable")
-      @rate1        = Spree::TaxRate.create(
+      @zone.zone_members.create!(:zoneable => @country)
+      @category    = Spree::TaxCategory.create! :name => "Taxable Foo"
+      @category2   = Spree::TaxCategory.create!(:name => "Non Taxable")
+      @rate1        = Spree::TaxRate.create!(
         :amount => 0.10,
-        :calculator => Spree::Calculator::DefaultTax.create,
+        :calculator => Spree::Calculator::DefaultTax.create!,
         :tax_category => @category,
         :zone => @zone
       )
-      @rate2       = Spree::TaxRate.create(
+      @rate2       = Spree::TaxRate.create!(
         :amount => 0.05,
-        :calculator => Spree::Calculator::DefaultTax.create,
+        :calculator => Spree::Calculator::DefaultTax.create!,
         :tax_category => @category,
         :zone => @zone
       )
@@ -287,9 +292,9 @@ describe Spree::TaxRate, :type => :model do
           before do
             @new_zone = create(:zone, :name => "New Zone", :default_tax => false)
             @new_country = create(:country, :name => "New Country")
-            @new_zone.zone_members.create(:zoneable => @new_country)
+            @new_zone.zone_members.create!(:zoneable => @new_country)
             @order.ship_address = create(:address, :country => @new_country)
-            @order.save
+            @order.save!
             @order.reload
           end
 
@@ -310,7 +315,7 @@ describe Spree::TaxRate, :type => :model do
             [@rate1, @rate2].each do |rate|
               rate.included_in_price = false
               rate.zone = @zone
-              rate.save
+              rate.save!
             end
             Spree::TaxRate.adjust(@order, @order.line_items)
           end

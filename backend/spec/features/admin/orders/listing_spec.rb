@@ -88,7 +88,7 @@ describe "Orders Listing", type: :feature, js: true do
     it "should be able to filter on variant_id" do
       click_on 'Filter'
       # Insure we have the SKU in the options
-      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
+      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first!.variant.sku)
 
       # Select and filter
       find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
@@ -144,7 +144,7 @@ describe "Orders Listing", type: :feature, js: true do
     context "filter on promotions" do
       before(:each) do
         @order1.promotions << promotion
-        @order1.save
+        @order1.save!
         visit spree.admin_orders_path
       end
 

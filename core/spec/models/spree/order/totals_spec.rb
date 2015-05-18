@@ -2,13 +2,13 @@ require 'spec_helper'
 
 module Spree
   describe Order, :type => :model do
-    let(:order) { Order.create }
+    let(:order) { Order.create! }
     let(:shirt) { create(:variant) }
 
     context "adds item to cart and activates promo" do
-      let(:promotion) { Promotion.create name: 'Huhu' }
+      let(:promotion) { Promotion.create! name: 'Huhu' }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
-      let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+      let!(:action) { Promotion::Actions::CreateAdjustment.create!(promotion: promotion, calculator: calculator) }
 
       before { order.contents.add(shirt, 1) }
 

@@ -5,7 +5,7 @@ describe "Adjustments", :type => :feature do
 
   let!(:order) { create(:completed_order_with_totals, line_items_count: 5) }
   let!(:line_item) do
-    line_item = order.line_items.first
+    line_item = order.line_items.first!
     # so we can be sure of a determinate price in our assertions
     line_item.update_column(:price, 10)
     line_item

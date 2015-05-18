@@ -7,7 +7,7 @@ describe Spree::Order do
     let!(:shipping_method) do
       sm = create(:shipping_method)
       sm.calculator.preferred_amount = 10
-      sm.save
+      sm.save!
       sm
     end
 
@@ -17,7 +17,7 @@ describe Spree::Order do
       persisted_order.line_items << line_item
       persisted_order.create_adjustment!(amount: -line_item.amount, label: "Promotion", adjustable: line_item, order: persisted_order)
       persisted_order.state = 'delivery'
-      persisted_order.save # To ensure new state_change event
+      persisted_order.save! # To ensure new state_change event
     end
 
     it "transitions from delivery to payment" do

@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe "viewing products", type: :feature, inaccessible: true do
   let!(:taxonomy) { create(:taxonomy, :name => "Category") }
-  let!(:super_clothing) { taxonomy.root.children.create(:name => "Super Clothing") }
-  let!(:t_shirts) { super_clothing.children.create(:name => "T-Shirts") }
-  let!(:xxl) { t_shirts.children.create(:name => "XXL") }
+  let!(:super_clothing) { taxonomy.root.children.create!(:name => "Super Clothing") }
+  let!(:t_shirts) { super_clothing.children.create!(:name => "T-Shirts") }
+  let!(:xxl) { t_shirts.children.create!(:name => "XXL") }
   let!(:product) do
     product = create(:product, :name => "Superman T-Shirt")
     product.taxons << t_shirts
@@ -28,14 +28,14 @@ describe "viewing products", type: :feature, inaccessible: true do
 
   describe 'meta tags and title' do
     it 'displays metas' do
-      t_shirts.update_attributes metas
+      t_shirts.update_attributes!(metas)
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_meta(:description, 'Brand new Ruby on Rails TShirts')
       expect(page).to have_meta(:keywords, 'ror, tshirt, ruby')
     end
 
     it 'display title if set' do
-      t_shirts.update_attributes metas
+      t_shirts.update_attributes!(metas)
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title("Ruby On Rails TShirt")
     end
@@ -47,7 +47,7 @@ describe "viewing products", type: :feature, inaccessible: true do
 
     # Regression test for #2814
     it "doesn't use meta_title as heading on page" do
-      t_shirts.update_attributes metas
+      t_shirts.update_attributes!(metas)
       visit '/t/category/super-clothing/t-shirts'
       within("h1.taxon-title") do
         expect(page).to have_content(t_shirts.name)

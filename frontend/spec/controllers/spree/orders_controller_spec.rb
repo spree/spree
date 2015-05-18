@@ -5,7 +5,7 @@ describe Spree::OrdersController, :type => :controller do
 
   context "Order model mock" do
     let(:order) do
-      Spree::Order.create
+      Spree::Order.create!
     end
 
     before do
@@ -93,7 +93,7 @@ describe Spree::OrdersController, :type => :controller do
   end
 
   context "line items quantity is 0" do
-    let(:order) { Spree::Order.create }
+    let(:order) { Spree::Order.create! }
     let(:variant) { create(:variant) }
     let!(:line_item) { order.contents.add(variant, 1) }
 

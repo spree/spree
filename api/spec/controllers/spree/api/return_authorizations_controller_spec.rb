@@ -55,7 +55,7 @@ module Spree
 
       it "can show return authorization" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_get :show, :order_id => order.number, :id => return_authorization.id
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
@@ -99,7 +99,7 @@ module Spree
 
       it "can update a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_put :update, :id => return_authorization.id, :return_authorization => { :memo => "ABC" }
         expect(response.status).to eq(200)
         expect(json_response).to have_attributes(attributes)
@@ -107,7 +107,7 @@ module Spree
 
       it "can cancel a return authorization on the order" do
         create(:new_return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         expect(return_authorization.state).to eq("authorized")
         api_delete :cancel, :id => return_authorization.id
         expect(response.status).to eq(200)
@@ -116,7 +116,7 @@ module Spree
 
       it "can delete a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_delete :destroy, :id => return_authorization.id
         expect(response.status).to eq(204)
         expect { return_authorization.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -143,7 +143,7 @@ module Spree
 
       it "cannot update a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_put :update, :id => return_authorization.id, :return_authorization => { :memo => "ABC" }
         assert_unauthorized!
         expect(return_authorization.reload.memo).not_to eq("ABC")
@@ -151,7 +151,7 @@ module Spree
 
       it "cannot delete a return authorization on the order" do
         create(:return_authorization, :order => order)
-        return_authorization = order.return_authorizations.first
+        return_authorization = order.return_authorizations.first!
         api_delete :destroy, :id => return_authorization.id
         assert_unauthorized!
         expect { return_authorization.reload }.not_to raise_error
