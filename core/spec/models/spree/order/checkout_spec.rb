@@ -41,8 +41,13 @@ describe Spree::Order, :type => :model do
 
     it '.remove_transition' do
       options = {:from => transitions.first.keys.first, :to => transitions.first.values.first}
-      allow(Spree::Order).to receive(:next_event_transition).and_return([options])
+      expect(Spree::Order).to receive_messages(
+        removed_transitions:    [],
+        next_event_transitions: transitions.dup
+      )
       expect(Spree::Order.remove_transition(options)).to be_truthy
+      expect(Spree::Order.removed_transitions).to eql([options])
+      expect(Spree::Order.next_event_transitions).to_not include(transitions.first)
     end
 
     it '.remove_transition when contract was broken' do
