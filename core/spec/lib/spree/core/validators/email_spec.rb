@@ -18,6 +18,8 @@ describe EmailValidator do
     'valid.email@email.com'
   ]}
   let(:invalid_emails) {[
+    '',
+    ' ',
     'invalid email@email.com',
     'invalidemail @email.com',
     'invalidemail@email..com',
