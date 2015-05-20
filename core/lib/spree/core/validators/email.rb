@@ -3,7 +3,7 @@ class EmailValidator < ActiveModel::EachValidator
     unless value =~ %r{\A(([A-Za-z0-9]+_+)|
                           ([A-Za-z0-9]+\-+)|
                           ([A-Za-z0-9]+\.+)|
-                          ([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|
+                          ([A-Za-z0-9]+\++))*[A-Za-z0-9_]+@((\w+\-+)|
                           (\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}\z}xi
       record.errors.add(attribute, :invalid, { value: value }.merge!(options))
     end
