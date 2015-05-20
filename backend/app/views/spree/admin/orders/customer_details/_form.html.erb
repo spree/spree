@@ -16,7 +16,7 @@
             <% if can? :edit, @order.user %>
               <%= f.email_field :email, class: 'form-control' %>
             <% else %>
-              <p><%= @order.user.email %></p>
+              <p><%= @order.user.try(:email) || @order.email %></p>
             <% end %>
           </div>
         </div>
