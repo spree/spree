@@ -11,7 +11,7 @@
     <div data-hook="admin_shipping_method_form_display_field" class="col-md-6">
       <%= f.field_container :display_on, :class => ['form-group'] do %>
         <%= f.label :display_on, Spree.t(:display) %>
-        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2'}) %>
+        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, { :class => 'select2' }) %>
         <%= error_message_on :shipping_method, :display_on %>
       <% end %>
     </div>
@@ -21,7 +21,7 @@
     <div data-hook="admin_shipping_method_form_internal_name_field" class="col-md-4">
       <%= f.field_container :admin_name, :class => ['form-group'] do %>
         <%= f.label :admin_name, Spree.t(:internal_name) %>
-        <%= f.text_field :admin_name, :class => 'form-control', :label => false  %>
+        <%= f.text_field :admin_name, :class => 'form-control', :label => false %>
         <%= error_message_on :shipping_method, :admin_name %>
       <% end %>
     </div>
@@ -29,7 +29,7 @@
     <div data-hook="admin_shipping_method_form_code" class="col-md-4">
       <%= f.field_container :code, :class => ['form-group'] do %>
         <%= f.label :code, Spree.t(:code) %>
-        <%= f.text_field :code, :class => 'form-control', :label => false  %>
+        <%= f.text_field :code, :class => 'form-control', :label => false %>
         <%= error_message_on :shipping_method, :code %>
       <% end %>
     </div>
@@ -56,10 +56,12 @@
       <div class="panel-body">
         <%= f.field_container :categories, :class => ['form-group'] do %>
           <% Spree::ShippingCategory.all.each do |category| %>
-            <%= label_tag do %>
-              <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %>
-              <%= category.name %>
-            <% end %>
+            <div class="checkbox">
+              <%= label_tag do %>
+                <%= check_box_tag('shipping_method[shipping_categories][]', category.id, @shipping_method.shipping_categories.include?(category)) %>
+                <%= category.name %>
+              <% end %>
+            </div>
           <% end %>
           <%= error_message_on :shipping_method, :shipping_category_id %>
         <% end %>
@@ -79,13 +81,15 @@
         <%= f.field_container :zones, :class => ['form-group'] do %>
           <% shipping_method_zones = @shipping_method.zones.to_a %>
           <% Spree::Zone.all.each do |zone| %>
-            <%= label_tag do %>
-              <%= check_box_tag('shipping_method[zones][]', zone.id, shipping_method_zones.include?(zone)) %>
-              <%= zone.name %>
-            <% end %>
+            <div class="checkbox">
+              <%= label_tag do %>
+                <%= check_box_tag('shipping_method[zones][]', zone.id, shipping_method_zones.include?(zone)) %>
+                <%= zone.name %>
+              <% end %>
+            </div>
           <% end %>
           <%= error_message_on :shipping_method, :zone_id %>
-        <% end %>  
+        <% end %>
       </div>
     </div>
   </div>
@@ -106,7 +110,7 @@
 
       <div class="panel-body">
         <%= f.field_container :categories, :class => ['form-group'] do %>
-          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, {include_blank: true}, class: "select2" %>
+          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, { include_blank: true }, class: "select2" %>
           <%= error_message_on :shipping_method, :tax_category_id %>
         <% end %>
       </div>
