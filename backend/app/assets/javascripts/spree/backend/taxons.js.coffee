@@ -55,14 +55,20 @@ $(document).ready ->
             el.append(productTemplate({ product: product }))
 
   $('#taxon_products').on "click", ".js-delete-product", (e) ->
-    current_taxon_id = $("#taxon_id").val();
+    current_taxon_id = $("#taxon_id").val()
     product = $(this).parents(".product")
-    product_id = product.data("product-id");
-    product_taxons = String(product.data("taxons")).split(',').map(Number);
-    product_index = product_taxons.indexOf(parseFloat(current_taxon_id));
-    product_taxons.splice(product_index, 1);
+    product_id = product.data("product-id")
+    product_taxons = String(product.data("taxons")).split(',').map(Number)
+    product_index = product_taxons.indexOf(parseFloat(current_taxon_id))
+    product_taxons.splice(product_index, 1)
+    taxon_ids = if product_taxons.length > 0 then product_taxons else [""]
+
     $.ajax
-      url: Spree.routes.products_api + "/" + product_id + "?product[taxon_ids]=" + product_taxons + '&token=' + Spree.api_key,
+      url: Spree.routes.products_api + "/" + product_id
+      data:
+        product:
+          taxon_ids: taxon_ids
+        token: Spree.api_key
       type: "PUT",
       success: (data) ->
         product.fadeOut 400, (e) ->
