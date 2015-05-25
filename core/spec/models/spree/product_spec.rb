@@ -246,12 +246,32 @@ describe Spree::Product, :type => :model do
 
         expect(product2.slug).to eq 'test-456'
       end
-
     end
 
     context "hard deletion" do
       it "doesnt raise ActiveRecordError error" do
         expect { product.really_destroy! }.to_not raise_error
+      end
+    end
+
+    context 'history' do
+      before(:each) do
+        @product = create(:product)
+      end
+
+      it 'should keep the history when the product is destroyed' do
+        @product.destroy
+
+        expect(@product.slugs.with_deleted).to_not be_empty
+      end
+
+      it 'should update the history when the product is restored' do
+        @product.destroy
+
+        @product.restore(recursive: true)
+
+        latest_slug = @product.slugs.find_by slug: @product.slug
+        expect(latest_slug).to_not be_nil
       end
     end
   end
