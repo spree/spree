@@ -32,7 +32,7 @@ module Spree
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|
           if Spree::Config.track_inventory_levels
-            next unless stock_location.stock_items.where(:variant_id => inventory_units.map(&:variant_id).uniq).exists?
+            next unless stock_location.stock_items.where(variant_id: inventory_units.map(&:variant_id).uniq).exists?
           end
           packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
