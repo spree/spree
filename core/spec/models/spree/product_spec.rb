@@ -260,9 +260,28 @@ describe Spree::Product, :type => :model do
 
         expect(product2.slug).to eq 'test-456'
       end
-
     end
 
+    context 'history' do
+      before(:each) do
+        @product = create(:product)
+      end
+
+      it 'should keep the history when the product is destroyed' do
+        @product.destroy
+
+        expect(@product.slugs.with_deleted).to_not be_empty
+      end
+
+      it 'should update the history when the product is restored' do
+        @product.destroy
+
+        @product.restore(recursive: true)
+
+        latest_slug = @product.slugs.find_by slug: @product.slug
+        expect(latest_slug).to_not be_nil
+      end
+    end
   end
 
   context "properties" do
@@ -450,7 +469,7 @@ describe Spree::Product, :type => :model do
       expect(product.reload.total_on_hand).to eql(5)
     end
   end
-  
+
   # Regression spec for https://github.com/spree/spree/issues/5588
   context '#validate_master when duplicate SKUs entered' do
     let!(:first_product) { create(:product, sku: 'a-sku') }
