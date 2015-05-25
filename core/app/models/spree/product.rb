@@ -74,6 +74,7 @@ module Spree
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_destroy :punch_slug
+    after_restore :update_slug_history
 
     after_initialize :ensure_master
 
@@ -264,6 +265,10 @@ module Spree
 
     def punch_slug
       update_column :slug, "#{Time.now.to_i}_#{slug}" # punch slug with date prefix to allow reuse of original
+    end
+
+    def update_slug_history
+      self.save!
     end
 
     def anything_changed?
