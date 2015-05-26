@@ -31,8 +31,6 @@ describe 'shipping', type: :feature, js: true do
       @order = Spree::Order.last
       @order.update_column(:email, "test@example.com")
 
-      puts Spree::StockLocation.all.to_a.map { |s| s.name }
-
       @east_coast_address = create(:ship_address,
                                    zipcode: '27703',
                                    city: 'Durham',
