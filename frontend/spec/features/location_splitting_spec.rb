@@ -42,7 +42,10 @@ describe 'shipping', type: :feature, js: true do
     end
 
     it 'ensures that packages ship from both locations since there is one in each' do
-      Spree::StockItem.all.each { |si| si.set_count_on_hand(1); si.update_attributes!(backorderable: false) }
+      Spree::StockItem.all.each do |si|
+        si.set_count_on_hand(1)
+        si.update_attributes!(backorderable: false)
+      end
 
       fill_in_address 'order_bill_address', @order.ship_address
       check 'order_use_billing'
