@@ -34,8 +34,7 @@ describe Spree::ProductsController, :type => :controller do
   end
 
   context 'with history slugs present' do
-
-    let!(:product) { create(:product, :available_on => 1.day.ago) }
+    let!(:product) { create(:product, available_on: 1.day.ago) }
 
     it 'will redirect with a 301 with legacy url used' do
       legacy_params = product.to_param
