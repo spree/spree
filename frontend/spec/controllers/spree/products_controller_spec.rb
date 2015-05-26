@@ -33,4 +33,24 @@ describe Spree::ProductsController, :type => :controller do
     expect { spree_get :show, :id => product.to_param }.not_to raise_error
   end
 
+  context 'with history slugs present' do
+    let!(:product) { create(:product, available_on: 1.day.ago) }
+
+    it 'will redirect with a 301 with legacy url used' do
+      legacy_params = product.to_param
+      product.name = product.name + " Brand New"
+      product.slug = nil
+      product.save!
+      spree_get :show, id: legacy_params
+      expect(response.status).to eq(301)
+    end
+
+    it 'will redirect with a 301 with id used' do
+      product.name = product.name + " Brand New"
+      product.slug = nil
+      product.save!
+      spree_get :show, id: product.id
+      expect(response.status).to eq(301)
+    end
+  end
 end
