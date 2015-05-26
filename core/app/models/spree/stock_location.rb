@@ -77,8 +77,10 @@ module Spree
     end
 
     def move(variant, quantity, originator = nil)
-      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
+      if Config.track_inventory_levels
+        stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
                                                             originator: originator)
+      end
     end
 
     def fill_status(variant, quantity)
