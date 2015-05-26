@@ -24,5 +24,20 @@ FactoryGirl.define do
         stock_location.stock_items.where(variant_id: product_2.master.id).first.adjust_count_on_hand(20)
       end
     end
+
+    factory :east_coast_stock_location, parent: :stock_location do
+      name 'East Coast'
+      address1 'Some St'
+      city 'Durham'
+      state factory: :nc_state
+      zipcode '27703'
+    end
+
+    factory :west_coast_stock_location, parent: :stock_location do
+      name 'West Coast'
+      city 'RENO'
+      state factory: :nv_state
+      zipcode '89512'
+    end
   end
 end
