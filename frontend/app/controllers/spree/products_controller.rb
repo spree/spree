@@ -18,7 +18,7 @@ module Spree
       @variants = @product.variants_including_master.active(current_currency).includes([:option_values, :images])
       @product_properties = @product.product_properties.includes(:property)
       @taxon = Spree::Taxon.find(params[:taxon_id]) if params[:taxon_id]
-
+      
       # If an old id or a numeric id was used to find the record, then
       # the request path will not match the product_path, and we should do
       # a 301 redirect that uses the current friendly id.
