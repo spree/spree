@@ -217,10 +217,26 @@ describe Spree::Product, :type => :model do
         expect(product.slug).not_to match "/"
       end
 
-      it "renames slug on destroy" do
-        old_slug = product.slug
-        product.destroy
-        expect(old_slug).to_not eq product.slug
+      context "when product destroyed" do
+
+        it "renames slug" do
+          expect { product.destroy }.to change { product.slug }
+        end
+
+        context "when slug is already at or near max length" do
+
+          before do
+            product.slug = "x" * 255
+            product.save!
+          end
+
+          it "truncates renamed slug to ensure it remains within length limit" do
+            product.destroy
+            expect(product.slug.length).to eq 255
+          end
+
+        end
+
       end
 
       it "validates slug uniqueness" do
