@@ -13,11 +13,16 @@ module Spree
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
+    has_many :promotion_codes, dependent: :destroy
+    alias_method :codes, :promotion_codes
+
     has_and_belongs_to_many :orders, join_table: 'spree_orders_promotions'
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
+    accepts_nested_attributes_for :promotion_codes, allow_destroy: true
 
     validates_associated :rules
+    validates_associated :promotion_codes
 
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
@@ -26,23 +31,28 @@ module Spree
 
     before_save :normalize_blank_values
 
-    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
-
     order_join_table = reflect_on_association(:orders).join_table
-
-    scope :applied, -> { joins("INNER JOIN #{order_join_table} ON #{order_join_table}.promotion_id = #{table_name}.id").uniq }
+    scope :applied, -> do
+      joins("INNER JOIN #{order_join_table} ON " \
+        "#{order_join_table}.promotion_id = #{table_name}.id").distinct
+    end
+    scope :coupons, -> do
+      joins(:promotion_codes)
+    end
 
     def self.advertised
       where(advertise: true)
     end
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{self.table_name}.code) = ?", coupon_code.strip.downcase).first
+      joins(:promotion_codes).where(promotion_codes: { value: coupon_code }).first
     end
 
     def self.active
-      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.now).
-        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.now)
+      where("#{table_name}.starts_at IS NULL OR " \
+        "#{table_name}.starts_at < ? AND " \
+        "#{table_name}.expires_at IS NULL OR " \
+        "#{table_name}.expires_at > ?", Time.now, Time.now)
     end
 
     def self.order_activatable?(order)
@@ -76,6 +86,24 @@ module Spree
       end
 
       return action_taken
+    end
+
+    def code
+      ActiveSupport::Deprecation.warn("Spree::Promotion#code has been replaced by #codes")
+      codes.first.try(:value)
+    end
+
+    def code=(value)
+      ActiveSupport::Deprecation.warn("Spree::Promotion#code has been replaced by #codes")
+      if codes.any?
+        codes.first.update_attribute(:value, value)
+      else
+        codes.build(value: value)
+      end
+    end
+
+    def code_for(value)
+      codes.find_by(value: value)
     end
 
     # called anytime order.update! happens
@@ -182,9 +210,7 @@ module Spree
     end
 
     def normalize_blank_values
-      [:code, :path].each do |column|
-        self[column] = nil if self[column].blank?
-      end
+      self[:path] = nil if self[:path].blank?
     end
 
     def match_all?
