@@ -25,6 +25,7 @@ end
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
+require 'timeout'
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
@@ -56,4 +57,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+
+  config.around do |example|
+    Timeout.timeout(20, &example)
+  end
 end

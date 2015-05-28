@@ -42,4 +42,5 @@ group :test, :development do
     gem 'pry-byebug'
   end
   gem 'rspec-retry'
+  gem 'mutant-rspec', '~> 0.7.8'
 end
