@@ -8,7 +8,15 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       Spree::Payment,
       order: order,
       number: "P1566",
-      currency: "EUR"
+      currency: "EUR",
+      payment_method: payment_method
+    )
+  end
+
+  let(:payment_method) do
+    double(
+      Spree::Gateway::Bogus,
+      exchange_percentage: 100,
     )
   end
 

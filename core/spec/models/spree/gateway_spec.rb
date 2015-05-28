@@ -51,4 +51,10 @@ describe Spree::Gateway, :type => :model do
       expect(has_card.reusable_sources(payment.order)).not_to be_empty
     end
   end
+
+  it "returns exchange percentage for gateway" do
+    gateway = TestGateway.new
+
+    expect(gateway.exchange_percentage).to eq Spree::Gateway::FROM_DOLLAR_TO_CENT_PERCENTAGE
+  end
 end
