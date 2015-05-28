@@ -46,7 +46,6 @@ describe Spree::ProductsController, :type => :controller do
     end
 
     it 'will redirect with a 301 with id used' do
-      legacy_params = product.to_param
       product.name = product.name + " Brand New"
       product.slug = nil
       product.save!
