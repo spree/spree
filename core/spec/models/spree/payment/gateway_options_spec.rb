@@ -16,7 +16,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:payment_method) do
     double(
       Spree::Gateway::Bogus,
-      exchange_percentage: Spree::Gateway::FROM_DOLLAR_TO_CENT_PERCENTAGE
+      exchange_multiplier: Spree::Gateway::FROM_DOLLAR_TO_CENT_RATE
     )
   end
 

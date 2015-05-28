@@ -52,9 +52,10 @@ describe Spree::Gateway, :type => :model do
     end
   end
 
-  it "returns exchange percentage for gateway" do
+  it "returns exchange multiplier for gateway" do
     gateway = TestGateway.new
 
-    expect(gateway.exchange_percentage).to eq Spree::Gateway::FROM_DOLLAR_TO_CENT_PERCENTAGE
+    rate = Spree::Gateway::FROM_DOLLAR_TO_CENT_RATE
+    expect(gateway.exchange_multiplier).to eq rate
   end
 end
