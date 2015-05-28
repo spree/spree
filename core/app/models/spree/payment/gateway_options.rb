@@ -26,19 +26,19 @@ module Spree
       end
 
       def shipping
-        order.ship_total * 100
+        order.ship_total * gateway.exchange_percentage
       end
 
       def tax
-        order.additional_tax_total * 100
+        order.additional_tax_total * gateway.exchange_percentage
       end
 
       def subtotal
-        order.item_total * 100
+        order.item_total * gateway.exchange_percentage
       end
 
       def discount
-        order.promo_total * 100
+        order.promo_total * gateway.exchange_percentage
       end
 
       def currency
@@ -80,6 +80,10 @@ module Spree
 
       def order
         @payment.order
+      end
+
+      def gateway
+        @payment.payment_method
       end
     end
   end
