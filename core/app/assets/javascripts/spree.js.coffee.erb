@@ -12,7 +12,7 @@ class window.Spree
 
   @pathFor: (path) ->
     locationOrigin = "#{window.location.protocol}//#{window.location.hostname}" + (if window.location.port then ":#{window.location.port}" else "")
-    "#{locationOrigin}#{@mountedAt()}#{path}"
+    @url("#{locationOrigin}#{@mountedAt()}#{path}", @url_params)
 
   # Helper function to take a URL and add query parameters to it
   # Uses the JSUri library from here: https://github.com/derek-watson/jsUri
@@ -48,3 +48,6 @@ class window.Spree
     states_search: @pathFor('api/v1/states')
     apply_coupon_code: (order_id) ->
       Spree.pathFor("api/v1/orders/#{order_id}/apply_coupon_code")
+
+  @url_params:
+    {}
