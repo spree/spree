@@ -37,7 +37,6 @@ module Spree
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
     after_create :create_stock_items
-    after_create :set_position
     after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
@@ -243,10 +242,6 @@ module Spree
         StockLocation.where(propagate_all_variants: true).each do |stock_location|
           stock_location.propagate_variant(self)
         end
-      end
-
-      def set_position
-        self.update_column(:position, product.variants.maximum(:position).to_i + 1)
       end
 
       def in_stock_cache_key
