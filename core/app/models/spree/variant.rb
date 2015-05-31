@@ -152,7 +152,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.select{ |price| price.currency == currency }.first || Spree::Price.new(variant_id: self.id, currency: currency)
+      prices.find{ |price| price.currency == currency } || Spree::Price.new(variant_id: self.id, currency: currency)
     end
 
     def amount_in(currency)
