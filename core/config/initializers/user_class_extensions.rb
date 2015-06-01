@@ -23,6 +23,10 @@ Spree::Core::Engine.config.to_prepare do
       def last_incomplete_spree_order
         spree_orders.incomplete.where(user_id: self.id).order('created_at DESC').first
       end
+
+      def analytics_id
+        id
+      end
     end
   end
 end
