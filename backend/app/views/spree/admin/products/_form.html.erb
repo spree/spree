@@ -78,7 +78,7 @@
           </div>
           <div class="info-actions">
             <% if can?(:admin, Spree::Variant) %>
-              <%= link_to_with_icon 'variants', 'Manage Variants', spree.admin_product_variants_url(@product), class: "btn btn-default" %>
+              <%= link_to_with_icon 'variants', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-default" %>
             <% end %>
           </div>
         </div>
