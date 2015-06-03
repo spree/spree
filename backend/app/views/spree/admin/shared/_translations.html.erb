@@ -20,7 +20,8 @@
     :find_a_taxon             => Spree.t(:find_a_taxon),
     :item_stock_placeholder   => Spree.t(:choose_location),
     :loading                  => Spree.t(:loading),
-    :month_names              => I18n.t(:month_names, :scope => :date).reject(&:blank?),
+    :month_names              => I18n.t(:month_names, :scope => :date).instance_eval {|o|
+                                     o.try(:reject, &:blank?) || o},
     :more                     => Spree.t(:more),
     :name                     => Spree.t(:name),
     :next                     => Spree.t(:next),
