@@ -1,7 +1,9 @@
 module Spree
   class OrderPopulator
-    attr_accessor :order
-    attr_reader :errors
+    QUANTITY_RANGE  = (1..2**31 - 1).freeze
+    ERROR_SEPARATOR = ', '.freeze
+
+    attr_reader :order, :errors
 
     def initialize(order)
       @order = order
@@ -22,20 +24,33 @@ module Spree
 
     private
 
-    def attempt_cart_add(variant_id, quantity, options)
-      quantity = quantity.to_i
-      # 2,147,483,647 is crazy.
-      # See issue #2695.
-      if quantity > 2_147_483_647
-        errors.add(:base, Spree.t(:please_enter_reasonable_quantity, scope: :order_populator))
-        return false
+    def validate_variant(variant)
+      unless variant
+        errors.add(:base, Spree.t(:invalid_variant, scope: :order_populator))
       end
+    end
 
+    def validate_quantity(quantity)
+      if quantity.zero?
+        errors.add(:base, Spree.t(:please_enter_positive_quantity, scope: :order_populator))
+      elsif !QUANTITY_RANGE.cover?(quantity)
+        errors.add(:base, Spree.t(:please_enter_reasonable_quantity, scope: :order_populator))
+      end
+    end
+
+    def attempt_cart_add(variant_id, quantity, options)
       variant = order.line_items.detect { |line_item| line_item.variant_id.equal?(variant_id) }.try(:variant) ||
         Spree::Variant.find(variant_id)
 
+      validate_variant(variant)
+      validate_quantity(quantity)
+
+      return unless valid?
+
       begin
-        @order.contents.add(variant, quantity, options)
+        line_item = @order.contents.add(variant, quantity, options)
+        return if line_item.valid?
+        errors.add(:base, line_item.errors.values.join(ERROR_SEPARATOR))
       rescue ActiveRecord::RecordInvalid => e
         errors.add(:base, e.record.errors.messages.values.join(" "))
       end

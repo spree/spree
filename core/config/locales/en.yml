@@ -957,8 +957,10 @@ en:
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_populator:
+      invalid_variant: 'Please specify a valid variant.'
       out_of_stock: ! '%{item} is out of stock.'
       selected_quantity_not_available: ! 'selected of %{item} is not available.'
+      please_enter_positive_quantity: Please enter a quantity greater than 0.
       please_enter_reasonable_quantity: Please enter a reasonable quantity.
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
