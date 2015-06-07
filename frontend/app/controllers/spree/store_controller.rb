@@ -4,6 +4,10 @@ module Spree
 
     skip_before_action :set_current_order, only: :cart_link
 
+    def forbidden
+      render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
+    end
+
     def unauthorized
       render 'spree/shared/unauthorized', layout: Spree::Config[:layout], status: 401
     end
