@@ -50,7 +50,6 @@ module Spree
     end
 
     def process_return!
-      return_items.each(&:receive!)
       order.return! if order.all_inventory_units_returned?
     end
 

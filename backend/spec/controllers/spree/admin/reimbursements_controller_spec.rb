@@ -12,6 +12,7 @@ describe Spree::Admin::ReimbursementsController, :type => :controller do
     let(:order) { customer_return.order }
     let(:return_item) { customer_return.return_items.first }
     let(:payment) { order.payments.first }
+    before { return_item.receive! }
 
     subject do
       spree_post :create, order_id: order.to_param, build_from_customer_return_id: customer_return.id

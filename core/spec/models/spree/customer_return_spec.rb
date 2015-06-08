@@ -130,18 +130,20 @@ describe Spree::CustomerReturn, :type => :model do
 
   context ".after_save" do
     let(:inventory_unit)  { create(:inventory_unit, state: 'shipped', order: create(:shipped_order)) }
-    let(:return_item)     { create(:return_item, inventory_unit: inventory_unit) }
+    let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
 
     context "to the initial stock location" do
 
-      it "should mark all inventory units are returned" do
+      it "should mark the received inventory units are returned" do
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        return_item.receive!
         expect(inventory_unit.reload.state).to eq 'returned'
       end
 
       it "should update the stock item counts in the stock location" do
         expect do
           create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+          return_item.receive!
         end.to change { inventory_unit.find_stock_item.count_on_hand }.by(1)
       end
 
@@ -166,6 +168,7 @@ describe Spree::CustomerReturn, :type => :model do
       it "should update the stock item counts in new stock location" do
         expect {
           create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
+          return_item.receive!
         }.to change {
           Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
         }.by(1)
@@ -180,6 +183,24 @@ describe Spree::CustomerReturn, :type => :model do
         count_on_hand = inventory_unit.find_stock_item.count_on_hand
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
         expect(inventory_unit.find_stock_item.count_on_hand).to eq(count_on_hand)
+      end
+    end
+
+    context "it was not received" do
+
+      before do
+        return_item.update_attributes!(reception_status: "lost_in_transit")
+      end
+
+      it 'should not updated inventory unit to returned' do
+        create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        expect(inventory_unit.reload.state).to eq 'shipped'
+      end
+
+      it "should not update the stock item counts in the stock location" do
+        expect do
+          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        end.to_not change { inventory_unit.find_stock_item.count_on_hand }
       end
     end
   end

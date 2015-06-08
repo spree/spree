@@ -166,7 +166,8 @@ module Spree
                   "0" => {
                     returned: "1",
                     "pre_tax_amount"=>"15.99",
-                    inventory_unit_id: order.inventory_units.shipped.last.id
+                    inventory_unit_id: order.inventory_units.shipped.last.id,
+                    reception: 'receive'
                   }
                 }
               }
@@ -193,7 +194,8 @@ module Spree
                   "0" => {
                     returned: "1",
                     "pre_tax_amount"=>"15.99",
-                    inventory_unit_id: order.inventory_units.shipped.last.id
+                    inventory_unit_id: order.inventory_units.shipped.last.id,
+                    reception: 'receive'
                   }
                 }
               }
