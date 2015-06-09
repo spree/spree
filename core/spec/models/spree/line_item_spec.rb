@@ -269,4 +269,12 @@ describe Spree::LineItem, :type => :model do
       expect(line_item.price).to eq 21.98
     end
   end
+
+  describe "precision of pre_tax_amount" do
+    let!(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+
+    it "keeps four digits of precision even when reloading" do
+      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
+    end
+  end
 end
