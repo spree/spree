@@ -27,6 +27,15 @@ describe Spree::Shipment, :type => :model do
       variant_id: order.line_items.first.variant_id,
       line_item_id: order.line_items.first.id
     )
+
+  end
+
+  describe "precision of pre_tax_amount" do
+    let!(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+
+    it "keeps four digits of precision even when reloading" do
+      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
+    end
   end
 
   # Regression test for #4063
