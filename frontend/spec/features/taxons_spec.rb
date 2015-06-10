@@ -30,6 +30,7 @@ describe "viewing products", type: :feature, inaccessible: true do
     before do
       visit '/t/category/super-clothing/t-shirts'
     end
+
 #    it "should render breadcrumbs" do
 #      expect(page.find("#breadcrumbs")).to have_link("T-Shirts")
 #    end
@@ -144,4 +145,5 @@ describe "viewing products", type: :feature, inaccessible: true do
       expect(tmp.sort!).to eq(["Ruby on Rails Bag", "Ruby on Rails Tote"])
     end
   end
+end
 end
