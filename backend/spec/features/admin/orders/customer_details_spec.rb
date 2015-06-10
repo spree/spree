@@ -15,6 +15,29 @@ describe "Customer Details", type: :feature, js: true do
 
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
 
+  # "Intelligiently" wait on condition
+  #
+  # Much better than a random sleep "here and there"
+  # it will not cause any delay in case the condition is fullfilled on first cycle.
+  def wait_for_condition
+    time = Capybara.default_wait_time
+    step = 0.1
+    while time > 0
+      return if yield
+      sleep(step)
+      time -= 0.1
+    end
+    fail "Could archieve condition within #{Capybara.default_wait_time} seconds"
+  end
+
+  # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
+  # As the browser might take time to make the values visible in the dom we need to
+  # "intelligiently" wait for that event o prevent a race.
+  def expect_form_value(id, value)
+    node = page.find(id)
+    wait_for_condition { node.value.eql?(value) }
+  end
+
   context "brand new order" do
     before do
       visit spree.new_admin_order_path
@@ -30,15 +53,15 @@ describe "Customer Details", type: :feature, js: true do
       click_link "Customer"
       targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
       # 5317 - Address prefills using user's default.
-      expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
-      expect(find('#order_bill_address_attributes_lastname').value).to eq user.bill_address.lastname
-      expect(find('#order_bill_address_attributes_address1').value).to eq user.bill_address.address1
-      expect(find('#order_bill_address_attributes_address2').value).to eq user.bill_address.address2
-      expect(find('#order_bill_address_attributes_city').value).to eq user.bill_address.city
-      expect(find('#order_bill_address_attributes_zipcode').value).to eq user.bill_address.zipcode
-      expect(find('#order_bill_address_attributes_country_id').value).to eq user.bill_address.country_id.to_s
-      expect(find('#order_bill_address_attributes_state_id').value).to eq user.bill_address.state_id.to_s
-      expect(find('#order_bill_address_attributes_phone').value).to eq user.bill_address.phone
+      expect_form_value('#order_bill_address_attributes_firstname', user.bill_address.firstname)
+      expect_form_value('#order_bill_address_attributes_lastname', user.bill_address.lastname)
+      expect_form_value('#order_bill_address_attributes_address1', user.bill_address.address1)
+      expect_form_value('#order_bill_address_attributes_address2', user.bill_address.address2)
+      expect_form_value('#order_bill_address_attributes_city', user.bill_address.city)
+      expect_form_value('#order_bill_address_attributes_zipcode', user.bill_address.zipcode)
+      expect_form_value('#order_bill_address_attributes_country_id', user.bill_address.country_id.to_s)
+      expect_form_value('#order_bill_address_attributes_state_id', user.bill_address.state_id.to_s)
+      expect_form_value('#order_bill_address_attributes_phone', user.bill_address.phone)
       click_button "Update"
       expect(Spree::Order.last.user).not_to be_nil
     end
