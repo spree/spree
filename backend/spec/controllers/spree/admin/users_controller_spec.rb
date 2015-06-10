@@ -49,20 +49,20 @@ describe Spree::Admin::UsersController, :type => :controller do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
       spree_post :index
-      expect(response).to redirect_to '/unauthorized'
+      expect(response).to redirect_to '/forbidden'
     end
 
     it 'deny access to users with an bar role' do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
       spree_post :update, { id: '9' }
-      expect(response).to redirect_to '/unauthorized'
+      expect(response).to redirect_to '/forbidden'
     end
 
     it 'deny access to users without an admin role' do
       allow(user).to receive_messages :has_spree_role? => false
       spree_post :index
-      expect(response).to redirect_to '/unauthorized'
+      expect(response).to redirect_to '/forbidden'
     end
   end
 
