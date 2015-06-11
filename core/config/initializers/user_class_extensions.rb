@@ -24,6 +24,10 @@ Spree::Core::Engine.config.to_prepare do
       def last_incomplete_spree_order
         orders.incomplete.order('created_at DESC').first
       end
+
+      def analytics_id
+        id
+      end
     end
   end
 end
