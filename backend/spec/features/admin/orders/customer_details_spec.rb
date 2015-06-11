@@ -27,7 +27,7 @@ describe "Customer Details", type: :feature, js: true do
       sleep(step)
       time -= 0.1
     end
-    fail "Could archieve condition within #{Capybara.default_wait_time} seconds"
+    fail "Could not achieve condition within #{Capybara.default_wait_time} seconds."
   end
 
   # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
