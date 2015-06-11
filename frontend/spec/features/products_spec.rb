@@ -183,55 +183,6 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     expect(page.all('#products .product-list-item').size).to eq(0)
   end
 
-
-  it "should be able to display products priced under 10 dollars" do
-    within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_Under_$10.00"
-    within(:css, '#sidebar_products_search') { click_button "Search" }
-    expect(page).to have_content("No products found")
-  end
-
-  it "should be able to display products priced between 15 and 18 dollars" do
-    within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_$15.00_-_$18.00"
-    within(:css, '#sidebar_products_search') { click_button "Search" }
-
-    expect(page.all('#products .product-list-item').size).to eq(3)
-    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-    tmp.delete("")
-    expect(tmp.sort!).to eq(["Ruby on Rails Mug", "Ruby on Rails Stein", "Ruby on Rails Tote"])
-  end
-
-  it "should be able to display products priced between 15 and 18 dollars across multiple pages" do
-    Spree::Config.products_per_page = 2
-    within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_$15.00_-_$18.00"
-    within(:css, '#sidebar_products_search') { click_button "Search" }
-
-    expect(page.all('#products .product-list-item').size).to eq(2)
-    products = page.all('#products .product-list-item a[itemprop=name]')
-    expect(products.count).to eq(2)
-
-    find('.pagination .next a').click
-    products = page.all('#products .product-list-item a[itemprop=name]')
-    expect(products.count).to eq(1)
-  end
-
-  it "should be able to display products priced 18 dollars and above" do
-    within(:css, '#taxonomies') { click_link "Ruby on Rails" }
-    check "Price_Range_$18.00_-_$20.00"
-    check "Price_Range_$20.00_or_over"
-    within(:css, '#sidebar_products_search') { click_button "Search" }
-
-    expect(page.all('#products .product-list-item').size).to eq(4)
-    tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-    tmp.delete("")
-    expect(tmp.sort!).to eq(["Ruby on Rails Bag",
-                         "Ruby on Rails Baseball Jersey",
-                         "Ruby on Rails Jr. Spaghetti",
-                         "Ruby on Rails Ringer T-Shirt"])
-  end
-
   it "should be able to put a product without a description in the cart" do
     product = FactoryGirl.create(:base_product, :description => nil, :name => 'Sample', :price => '19.99')
     visit spree.product_path(product)

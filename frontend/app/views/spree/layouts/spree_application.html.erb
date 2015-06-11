@@ -13,7 +13,8 @@
 
     <div class="container">
       <div class="row" data-hook>
-        <%= breadcrumbs(@taxon) %>
+
+        <% breadcrumbs(@taxon) %>
 
         <%= render partial: 'spree/shared/sidebar' if content_for? :sidebar %>
 

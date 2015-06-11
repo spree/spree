@@ -12,7 +12,7 @@
           <% labels.each do |nm,val| %>
             <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
             <li class="list-group-item">
-              <input type="checkbox"
+              <input type="radio"
                      id="<%= label %>"
                      name="search[<%= filter[:scope].to_s %>][]"
                      value="<%= val %>"

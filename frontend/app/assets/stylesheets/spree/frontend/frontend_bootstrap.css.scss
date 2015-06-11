@@ -44,6 +44,11 @@
   color: white;
 }
 
+#home-link
+{
+  visibility: hidden;
+}
+
 // -- Spree Layout Custom Rules -------------------------
 
 .alert-notice { @extend .alert-success; }

@@ -30,13 +30,14 @@ describe "viewing products", type: :feature, inaccessible: true do
     before do
       visit '/t/category/super-clothing/t-shirts'
     end
-    it "should render breadcrumbs" do
-      expect(page.find("#breadcrumbs")).to have_link("T-Shirts")
-    end
-    it "should mark last breadcrumb as active" do
-      expect(page.find('#breadcrumbs .active')).to have_link("T-Shirts")
-    end
-  end
+
+#    it "should render breadcrumbs" do
+#      expect(page.find("#breadcrumbs")).to have_link("T-Shirts")
+#    end
+#    it "should mark last breadcrumb as active" do
+#      expect(page.find('#breadcrumbs .active')).to have_link("T-Shirts")
+#    end
+#  end
 
   describe 'meta tags and title' do
     it 'displays metas' do
@@ -144,4 +145,5 @@ describe "viewing products", type: :feature, inaccessible: true do
       expect(tmp.sort!).to eq(["Ruby on Rails Bag", "Ruby on Rails Tote"])
     end
   end
+end
 end
