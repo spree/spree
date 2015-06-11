@@ -473,6 +473,7 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
+    at_symbol: '@'
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
