@@ -12,6 +12,8 @@ module Spree
 
     scope :by_url, lambda { |url| where("url like ?", "%#{url}%") }
 
+    preference :analytics_id, :string
+
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
       current_store || Store.default
@@ -19,6 +21,10 @@ module Spree
 
     def self.default
       where(default: true).first || new
+    end
+
+    def analytics_id
+      get_preference :analytics_id
     end
 
     private
@@ -32,9 +38,7 @@ module Spree
     end
 
     def validate_not_default
-      if default
-        errors.add(:base, :cannot_destroy_default_store)
-      end
+      errors.add(:base, :cannot_destroy_default_store) if default
     end
   end
 end
