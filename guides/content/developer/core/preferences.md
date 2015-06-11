@@ -327,10 +327,6 @@ The path to the logo to display on the admin interface. Can be different from `S
 
 How many products to display on the products listing in the admin interface. Defaults to 10.
 
-`allow_backorder_shipping`
-
-Determines if an `InventoryUnit` can ship or not. Defaults to `false`.
-
 `allow_checkout_on_gateway_error`
 
 Continues the checkout process even if the payment gateway error failed. Defaults to `false`.
@@ -449,46 +445,3 @@ Determines if tax information should be based on shipping address, rather than t
 `track_inventory_levels`
 
 Determines if inventory levels should be tracked when products are purchased at checkout. This option causes new `InventoryUnit` objects to be created when a product is bought. Defaults to `true`.
-
-## S3 Support
-
-To configure Spree to upload images to S3, put these lines into `config/initializers/spree.rb`:
-
-```ruby
-Spree.config do |config|
-  config.use_s3 = true
-  config.s3_bucket = '<bucket>'
-  config.s3_access_key = "<key>"
-  config.s3_secret = "<secret>"
-end
-```
-
-It's also a good idea to not include the `rails_root` path inside the `attachment_path` configuration option, which by default is this:
-
-```ruby
-:rails_root/public/spree/products/:id/:style/:basename.:extension
-```
-
-To change this, add the following line underneath the `s3_secret` configuration setting:
-
-```ruby
-config.attachment_path = '/spree/products/:id/:style/:basename.:extension'
-```
-
-If you're using the Western Europe S3 server, you will need to set two additional options inside this block:
-
-```ruby
-Spree.config do |config|
-  ...
-  config.attachment_url = ":s3_eu_url"
-  config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end
-```
-
-Additionally, you will need to tell `paperclip` how to construct the URLs for your images by placing this code outside the `config` block inside `config/initializers/spree.rb`:
-
-```ruby
-Paperclip.interpolates(:s3_eu_url) do |attachment, style|
-  "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
-end
-```

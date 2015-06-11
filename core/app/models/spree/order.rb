@@ -12,12 +12,7 @@ module Spree
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'R'
-      super(options)
-    end
+    include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -58,7 +53,7 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
-    has_many :state_changes, as: :stateful
+    has_many :state_changes, as: :stateful, dependent: :destroy
     has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy, inverse_of: :order
@@ -70,6 +65,11 @@ module Spree
     has_many :products, through: :variants
     has_many :variants, through: :line_items
     has_many :refunds, through: :payments
+    has_many :all_adjustments,
+             class_name: 'Spree::Adjustment',
+             foreign_key: :order_id,
+             dependent: :destroy,
+             inverse_of: :order
 
     has_and_belongs_to_many :promotions, join_table: 'spree_orders_promotions'
 
@@ -130,11 +130,6 @@ module Spree
     # that should be called when determining if two line items are equal.
     def self.register_line_item_comparison_hook(hook)
       self.line_item_comparison_hooks.add(hook)
-    end
-
-    def all_adjustments
-      Adjustment.where("order_id = :order_id OR (adjustable_id = :order_id AND adjustable_type = 'Spree::Order')",
-                       order_id: self.id)
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -229,16 +224,17 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
-      self.user = user
-      attrs_to_set = { user_id: user.id }
-      attrs_to_set[:email] = user.email if override_email
-      attrs_to_set[:created_by_id] = user.id if self.created_by.blank?
-      assign_attributes(attrs_to_set)
+      self.user           = user
+      self.email          = user.email if override_email
+      self.created_by   ||= user
+      self.bill_address ||= user.bill_address
+      self.ship_address ||= user.ship_address
 
-      if persisted?
-        # immediately persist the changes we just made, but don't use save since we might have an invalid address associated
-        self.class.unscoped.where(id: id).update_all(attrs_to_set)
-      end
+      changes = slice(:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id)
+
+      # immediately persist the changes we just made, but don't use save
+      # since we might have an invalid address associated
+      self.class.unscoped.where(id: self).update_all(changes)
     end
 
     def quantity_of(variant, options = {})
@@ -440,6 +436,7 @@ module Spree
       updater.update_item_count
       adjustments.destroy_all
       shipments.destroy_all
+      state_changes.destroy_all
 
       update_totals
       persist_totals

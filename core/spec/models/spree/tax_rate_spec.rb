@@ -440,6 +440,7 @@ describe Spree::TaxRate, :type => :model do
             @new_zone.zone_members.create(:zoneable => @new_country)
             @order.ship_address = create(:address, :country => @new_country)
             @order.save
+            @order.reload
           end
 
           it "should not create positive adjustments" do

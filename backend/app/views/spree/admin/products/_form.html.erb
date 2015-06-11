@@ -78,7 +78,7 @@
           </div>
           <div class="info-actions">
             <% if can?(:admin, Spree::Variant) %>
-              <%= link_to_with_icon 'variants', 'Manage Variants', spree.admin_product_variants_url(@product), class: "btn btn-default" %>
+              <%= link_to_with_icon 'variants', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-default" %>
             <% end %>
           </div>
         </div>
@@ -179,28 +179,29 @@
   </div>
 
 
-<div data-hook="admin_product_form_meta">
+  <div data-hook="admin_product_form_meta">
 
-  <div data-hook="admin_product_form_meta_keywords">
-    <%= f.field_container :meta_keywords, class: ['form-group'] do %>
-      <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
-      <%= f.text_field :meta_keywords, class: 'form-control' %>
-    <% end %>
+    <div data-hook="admin_product_form_meta_keywords">
+      <%= f.field_container :meta_keywords, class: ['form-group'] do %>
+        <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
+        <%= f.text_field :meta_keywords, class: 'form-control' %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_meta_description">
+      <%= f.field_container :meta_description, class: ['form-group'] do %>
+        <%= f.label :meta_description, Spree.t(:meta_description) %>
+        <%= f.text_field :meta_description, class: 'form-control' %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_additional_fields"></div>
+
   </div>
 
-  <div data-hook="admin_product_form_meta_description">
-    <%= f.field_container :meta_description, class: ['form-group'] do %>
-      <%= f.label :meta_description, Spree.t(:meta_description) %>
-      <%= f.text_field :meta_description, class: 'form-control' %>
-    <% end %>
-  </div>
-
-  <div data-hook="admin_product_form_additional_fields"></div>
-
+  <% unless Rails.env.test? %>
+    <script>
+      $('.select2-container').css();
+    </script>
+  <% end %>
 </div>
-
-<% unless Rails.env.test? %>
-  <script>
-    $('.select2-container').css();
-  </script>
-<% end %>

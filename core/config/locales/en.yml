@@ -473,6 +473,7 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
+    at_symbol: '@'
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
@@ -777,6 +778,7 @@ en:
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
+    loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location
     lock: Lock
@@ -815,7 +817,7 @@ en:
     my_orders: My Orders
     name: Name
     name_on_card: Name on card
-    name_or_sku: Name or SKU (enter at least first 4 characters of product name)
+    name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     new: New
     new_adjustment: New Adjustment
     new_customer: New Customer

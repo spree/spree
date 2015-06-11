@@ -101,7 +101,7 @@ describe Spree::OrderContents, :type => :model do
         line_item = subject.add(variant, 3)
         subject.remove(variant)
 
-        expect(line_item.reload.quantity).to eq(2)
+        expect(line_item.quantity).to eq(2)
       end
     end
 
@@ -127,14 +127,15 @@ describe Spree::OrderContents, :type => :model do
       line_item = subject.add(variant, 3)
       subject.remove(variant, 1)
 
-      expect(line_item.reload.quantity).to eq(2)
+      expect(line_item.quantity).to eq(2)
     end
 
     it 'should remove line_item if quantity matches line_item quantity' do
       subject.add(variant, 1)
-      subject.remove(variant, 1)
+      removed_line_item = subject.remove(variant, 1)
 
-      expect(order.reload.find_line_item_by_variant(variant)).to be_nil
+      # Should reflect the change already in Order#line_item
+      expect(order.line_items).to_not include(removed_line_item)
     end
 
     it "should update order totals" do
@@ -163,7 +164,7 @@ describe Spree::OrderContents, :type => :model do
 
     it "changes item quantity" do
       subject.update_cart params
-      expect(shirt.reload.quantity).to eq 3
+      expect(shirt.quantity).to eq 3
     end
 
     it "updates order totals" do
@@ -209,7 +210,7 @@ describe Spree::OrderContents, :type => :model do
   end
 
   context "completed order" do
-    let(:order) { Spree::Order.create! state: 'complete', completed_at: Time.now }
+    let(:order) { create(:order, state: 'complete', completed_at: Time.now) }
 
     before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
 

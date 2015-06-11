@@ -11,6 +11,7 @@ describe Spree::Order, :type => :model do
   let(:order) { stub_model(Spree::Order, :user => user) }
 
   before do
+    create(:store)
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
@@ -248,8 +249,9 @@ describe Spree::Order, :type => :model do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
-      allow(order).to receive_messages(:line_items => line_items = [1, 2])
-      allow(order).to receive_messages(:adjustments => adjustments = [])
+      allow(order).to receive_messages(line_items: [1, 2])
+      allow(order).to receive_messages(adjustments: [])
+      allow(order).to receive_message_chain(:line_items, sum: 0)
     end
 
     it "clears out line items, adjustments and update totals" do
@@ -636,88 +638,136 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "#generate_order_number" do
-    context "when no configure" do
-      let(:default_length) { 9 + 'R'.length }
-      subject(:order_number) { order.generate_number }
-      its(:class)  { should eq String }
-      its(:length) { should eq default_length }
-      it { should match /^R/ }
+  describe "#associate_user!" do
+    let(:user) { FactoryGirl.create(:user_with_addreses) }
+    let(:email) { user.email }
+    let(:created_by) { user }
+    let(:bill_address) { user.bill_address }
+    let(:ship_address) { user.ship_address }
+    let(:override_email) { true }
+
+    let(:order) { FactoryGirl.build(:order, order_attributes) }
+
+    let(:order_attributes) do
+      {
+        user:         nil,
+        email:        nil,
+        created_by:   nil,
+        bill_address: nil,
+        ship_address: nil
+      }
     end
 
-    context "when length option is 5" do
-      let(:option_length) { 5 + 'R'.length }
-      it "should be option length for order number" do
-        expect(order.generate_number(length: 5).length).to eq option_length
+    def assert_expected_order_state
+      expect(order.user).to eql(user)
+      expect(order.user_id).to eql(user.id)
+
+      expect(order.email).to eql(email)
+
+      expect(order.created_by).to eql(created_by)
+      expect(order.created_by_id).to eql(created_by.id)
+
+      expect(order.bill_address).to eql(bill_address)
+      expect(order.bill_address_id).to eql(bill_address.id)
+
+      expect(order.ship_address).to eql(ship_address)
+      expect(order.ship_address_id).to eql(ship_address.id)
+    end
+
+    shared_examples_for "#associate_user!" do |persisted = false|
+      it "associates a user to an order" do
+        order.associate_user!(user, override_email)
+        assert_expected_order_state
+      end
+
+      unless persisted
+        it "does not persist the order" do
+          expect { order.associate_user!(user) }
+            .to_not change(order, :persisted?)
+            .from(false)
+        end
       end
     end
 
-    context "when letters option is true" do
-      it "generates order number include letter" do
-        expect(order.generate_number(length: 100, letters: true)).to match /[A-Z]/
+    context "when email is set" do
+      let(:order_attributes) { super().merge(email: 'test@example.com') }
+
+      context "when email should be overridden" do
+        it_should_behave_like "#associate_user!"
+      end
+
+      context "when email should not be overridden" do
+        let(:override_email) { false }
+        let(:email) { 'test@example.com' }
+
+        it_should_behave_like "#associate_user!"
       end
     end
 
-    context "when prefix option is 'P'" do
-      it "generates order number and it prefix is 'P'" do
-        expect(order.generate_number(prefix: 'P')).to match /^P/
+    context "when created_by is set" do
+      let(:order_attributes) { super().merge(created_by: created_by) }
+      let(:created_by) { create(:user_with_addreses) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when bill_address is set" do
+      let(:order_attributes) { super().merge(bill_address: bill_address) }
+      let(:bill_address) { FactoryGirl.build(:address) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when ship_address is set" do
+      let(:order_attributes) { super().merge(ship_address: ship_address) }
+      let(:ship_address) { FactoryGirl.build(:address) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when the user is not persisted" do
+      let(:user) { FactoryGirl.build(:user_with_addreses) }
+
+      it "does not persist the user" do
+        expect { order.associate_user!(user) }
+          .to_not change(user, :persisted?)
+          .from(false)
       end
-    end
-  end
 
-  context "#associate_user!" do
-    let!(:user) { FactoryGirl.create(:user) }
-
-    it "should associate a user with a persisted order" do
-      order = FactoryGirl.create(:order_with_line_items, created_by: nil)
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
-
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
+      it_should_behave_like "#associate_user!"
     end
 
-    it "should not overwrite the created_by if it already is set" do
-      creator = create(:user)
-      order = FactoryGirl.create(:order_with_line_items, created_by: creator)
+    context "when the order is persisted" do
+      let(:order) { FactoryGirl.create(:order, order_attributes) }
 
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
-
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
-    end
-
-    it "should associate a user with a non-persisted order" do
-      order = Spree::Order.new
-
-      expect do
+      it "associates a user to a persisted order" do
         order.associate_user!(user)
-      end.to change { [order.user, order.email] }.from([nil, nil]).to([user, user.email])
-    end
+        order.reload
+        assert_expected_order_state
+      end
 
-    it "should not persist an invalid address" do
-      address = Spree::Address.new
-      order.user = nil
-      order.email = nil
-      order.ship_address = address
-      expect do
+      it "does not persist other changes to the order" do
+        order.state = 'complete'
         order.associate_user!(user)
-      end.not_to change { address.persisted? }.from(false)
+        order.reload
+        expect(order.state).to eql('cart')
+      end
+
+      it "does not change any other orders" do
+        other = FactoryGirl.create(:order)
+        order.associate_user!(user)
+        expect(other.reload.user).to_not eql(user)
+      end
+
+      it "is not affected by scoping" do
+        order.class.where.not(id: order).scoping do
+          order.associate_user!(user)
+        end
+        order.reload
+        assert_expected_order_state
+      end
+
+      it_should_behave_like "#associate_user!", true
     end
   end
 

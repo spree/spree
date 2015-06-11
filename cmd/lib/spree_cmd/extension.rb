@@ -35,10 +35,10 @@ module SpreeCmd
 
         Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
 
-        Please update the Versionfile to designate compatibility with different versions of Spree.
-        See http://spreecommerce.com/documentation/extensions.html#versionfile
+        For more information on the versioning of Spree.
+        See https://guides.spreecommerce.com/developer/extensions_tutorial.html#versioning-your-extension
 
-        Consider listing your extension in the official extension registry http://spreecommerce.com/extensions
+        Consider listing your extension in the official extension registry https://spreecommerce.com/extensions
 
         #{'*' * 80}
       }

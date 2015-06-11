@@ -9,7 +9,7 @@
   <div class="panel-body">
     <div data-hook="add_product_name" class="form-group">
       <%= label_tag :add_line_item_variant_id, Spree.t(:name_or_sku) %>
-      <%= hidden_field_tag :add_line_item_variant_id, "", :class => "variant_autocomplete" %>
+      <%= hidden_field_tag :add_line_item_variant_id, "", class: "variant_autocomplete fullwidth-input" %>
     </div>
 
     <div id="stock_details"></div>

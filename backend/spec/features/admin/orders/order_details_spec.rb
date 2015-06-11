@@ -197,6 +197,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -213,6 +214,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -229,6 +231,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -324,6 +327,7 @@ describe "Order Details", type: :feature, js: true do
               click_icon :save
 
               wait_for_ajax
+              order.reload
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
@@ -343,6 +347,7 @@ describe "Order Details", type: :feature, js: true do
             click_icon :save
 
             wait_for_ajax
+            order.reload
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
@@ -367,6 +372,7 @@ describe "Order Details", type: :feature, js: true do
           click_icon :save
 
           wait_for_ajax
+          order.reload
 
           expect(order.shipments.count).to eq(1)
           expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)

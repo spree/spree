@@ -1,5 +1,6 @@
 module Spree
   class CustomerReturn < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     belongs_to :stock_location
 
     has_many :return_items, inverse_of: :customer_return
@@ -7,7 +8,6 @@ module Spree
     has_many :reimbursements, inverse_of: :customer_return
 
     after_create :process_return!
-    before_create :generate_number
 
     validates :return_items, presence: true
     validates :stock_location, presence: true
@@ -41,13 +41,6 @@ module Spree
     end
 
     private
-
-    def generate_number
-      self.number ||= loop do
-        random = "CR#{Array.new(9){rand(9)}.join}"
-        break random unless self.class.exists?(number: random)
-      end
-    end
 
     def process_return!
       return_items.each(&:receive!)

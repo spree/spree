@@ -70,14 +70,6 @@ module Spree
           it_should_behave_like "shipping rate doesn't match"
         end
 
-        context "when the shipping method's calculator raises an exception" do
-          before do
-            allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_raise(Exception, "Something went wrong!")
-            expect(subject).to receive(:log_calculator_exception)
-          end
-          it_should_behave_like "shipping rate doesn't match"
-        end
-
         it "sorts shipping rates by cost" do
           shipping_methods = 3.times.map { create(:shipping_method) }
           allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)

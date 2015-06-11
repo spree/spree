@@ -4,6 +4,8 @@ describe Spree::LineItem, :type => :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
+  before { create(:store) }
+
   context '#save' do
     it 'touches the order' do
       expect(line_item.order).to receive(:touch)
@@ -267,6 +269,14 @@ describe Spree::LineItem, :type => :model do
       expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with("USD", true).and_return 1.99
       line_item.options = { gift_wrap: true }
       expect(line_item.price).to eq 21.98
+    end
+  end
+
+  describe "precision of pre_tax_amount" do
+    let!(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+
+    it "keeps four digits of precision even when reloading" do
+      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order, :type => :model do
-  let(:order) { stub_model(Spree::Order) }
+  let(:order) { create(:order) }
 
   context "#update!" do
     let(:line_items) { [mock_model(Spree::LineItem, :amount => 5) ]}

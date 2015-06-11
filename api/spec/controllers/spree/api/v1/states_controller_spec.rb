@@ -24,26 +24,29 @@ module Spree
     end
 
     context "pagination" do
+      let(:scope) { double('scope') }
+
       before do
-        expect(State).to receive(:accessible_by).and_return(@scope = double)
-        allow(@scope).to receive_message_chain(:ransack, :result, :includes, :order).and_return(@scope)
+        expect(scope).to receive_messages(last: state)
+        expect(State).to receive_messages(accessible_by: scope)
+        allow(scope).to receive_message_chain(:ransack, :result, :includes, :order).and_return(scope)
       end
 
       it "does not paginate states results when asked not to do so" do
-        expect(@scope).not_to receive(:page)
-        expect(@scope).not_to receive(:per)
+        expect(scope).not_to receive(:page)
+        expect(scope).not_to receive(:per)
         api_get :index
       end
 
       it "paginates when page parameter is passed through" do
-        expect(@scope).to receive(:page).with(1).and_return(@scope)
-        expect(@scope).to receive(:per).with(nil)
+        expect(scope).to receive(:page).with(1).and_return(scope)
+        expect(scope).to receive(:per).with(nil).and_return(scope)
         api_get :index, :page => 1
       end
 
       it "paginates when per_page parameter is passed through" do
-        expect(@scope).to receive(:page).with(nil).and_return(@scope)
-        expect(@scope).to receive(:per).with(25)
+        expect(scope).to receive(:page).with(nil).and_return(scope)
+        expect(scope).to receive(:per).with(25).and_return(scope)
         api_get :index, :per_page => 25
       end
     end
@@ -54,7 +57,7 @@ module Spree
 
       it "gets all states for a country" do
         country = create(:country, :states_required => true)
-        state.country = country 
+        state.country = country
         state.save
 
         api_get :index, :country_id => country.id

@@ -60,12 +60,22 @@ describe Spree::Api::BaseController, :type => :controller do
     end
   end
 
-  it 'handles exceptions' do
+  it 'handles parameter missing exceptions' do
     expect(subject).to receive(:authenticate_user).and_return(true)
     expect(subject).to receive(:load_user_roles).and_return(true)
-    expect(subject).to receive(:index).and_raise(Exception.new("no joy"))
-    get :index, :token => "fake_key"
-    expect(json_response).to eq({ "exception" => "no joy" })
+    expect(subject).to receive(:index).and_raise(ActionController::ParameterMissing.new('foo'))
+    get :index, token: 'exception-message'
+    expect(json_response).to eql('exception' => 'param is missing or the value is empty: foo')
+  end
+
+  it 'handles record invalid exceptions' do
+    expect(subject).to receive(:authenticate_user).and_return(true)
+    expect(subject).to receive(:load_user_roles).and_return(true)
+    resource = Spree::Product.new
+    resource.valid? # get some errors
+    expect(subject).to receive(:index).and_raise(ActiveRecord::RecordInvalid.new(resource))
+    get :index, token: 'exception-message'
+    expect(json_response).to eql('exception' => "Validation failed: Name can't be blank, Price can't be blank, Shipping category can't be blank")
   end
 
   it "maps semantic keys to nested_attributes keys" do
@@ -82,43 +92,5 @@ describe Spree::Api::BaseController, :type => :controller do
 
   it "lets a subclass override the product associations that are eager-loaded" do
     expect(controller.respond_to?(:product_includes, true)).to be
-  end
-
-  describe '#error_during_processing' do
-    controller(FakesController) do
-      # GET /foo
-      # Simulates a failed API call.
-      def foo
-        raise StandardError
-      end
-    end
-
-    # What would be placed in config/initializers/spree.rb
-    Spree::Api::BaseController.error_notifier = Proc.new do |e, controller|
-      MockHoneybadger.notify_or_ignore(e, rack_env: controller.request.env)
-    end
-
-    ##
-    # Fake HB alert class
-    class MockHoneybadger
-      # https://github.com/honeybadger-io/honeybadger-ruby/blob/master/lib/honeybadger.rb#L136
-      def self.notify_or_ignore(exception, opts = {})
-      end
-    end
-
-    before do
-      user = double(email: "spree@example.com")
-      allow(user).to receive_message_chain :spree_roles, pluck: []
-      allow(Spree.user_class).to receive_messages find_by: user
-      @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-        r.draw { get 'foo' => 'fakes#foo' }
-      end
-    end
-
-    it 'should notify notify_error_during_processing' do
-      expect(MockHoneybadger).to receive(:notify_or_ignore).once.with(kind_of(Exception), rack_env: kind_of(Hash))
-      api_get :foo, token: 123
-      expect(response.status).to eq(422)
-    end
   end
 end

@@ -2,16 +2,11 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
 
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'H'
-      options[:length] ||= 11
-      super(options)
-    end
 
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
@@ -157,7 +152,7 @@ module Spree
     end
 
     def item_cost
-      line_items.map(&:final_amount).sum
+      manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
     end
 
     def line_items

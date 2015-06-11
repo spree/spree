@@ -660,48 +660,6 @@ describe Spree::Payment, :type => :model do
     end
   end
 
-  describe "#set_unique_number" do
-    # Regression test for #1998
-    it "sets a unique number on create" do
-      payment.generate_number
-      payment.save
-
-      expect(payment.number).to_not be_blank
-      expect(payment.number.length).to eq 8
-      expect(payment.number).to be_a(String)
-    end
-
-    # Regression test for #3733
-    it "does not regenerate the number on re-save" do
-      payment.run_callbacks(:create)
-      payment.save
-      old_number = payment.number
-      payment.save
-      expect(payment.number).to eq old_number
-    end
-
-    context "other payment exists" do
-      let(:other_payment) {
-        payment = Spree::Payment.new
-        payment.source = card
-        payment.order = order
-        payment.payment_method = gateway
-        payment
-      }
-
-      it "doesn't set duplicate number" do
-        other_payment.run_callbacks(:create)
-        other_payment.save!
-
-        payment.run_callbacks(:create)
-        payment.save!
-
-        expect(payment.number).to_not be_blank
-        expect(payment.number).to_not eq other_payment.number
-      end
-    end
-  end
-
   describe "#amount=" do
     before do
       subject.amount = amount
@@ -873,6 +831,34 @@ describe Spree::Payment, :type => :model do
       (%w{N P S U} << "").each do |char|
         payment.update_attribute(:cvv_response_code, char)
         expect(payment.is_cvv_risky?).to eq(true)
+      end
+    end
+  end
+
+  describe "#editable?" do
+    subject { payment }
+
+    before do
+      subject.state = state
+    end
+
+    context "when the state is 'checkout'" do
+      let(:state) { 'checkout' }
+
+      its(:editable?) { should be(true) }
+    end
+
+    context "when the state is 'pending'" do
+      let(:state) { 'pending' }
+
+      its(:editable?) { should be(true) }
+    end
+
+    %w[processing completed failed void invalid].each do |state|
+      context "when the state is '#{state}'" do
+        let(:state) { state }
+
+        its(:editable?) { should be(false) }
       end
     end
   end

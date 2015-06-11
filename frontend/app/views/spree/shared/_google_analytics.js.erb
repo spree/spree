@@ -5,7 +5,12 @@
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', '<%= tracker.analytics_id %>', 'auto');
+    <% if user_analytics_id = try_spree_current_user.try(:analytics_id) %>
+      ga('create', { 'trackingId': '<%= tracker.analytics_id %>', 'cookieDomain': 'auto', 'userId': '<%= user_analytics_id %>' });
+    <% else %>
+      ga('create', '<%= tracker.analytics_id %>', 'auto');
+    <% end %>
+
     ga('require', 'displayfeatures');
     <%= yield :google_analytics %>
     ga('send', 'pageview');

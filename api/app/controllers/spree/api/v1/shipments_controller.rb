@@ -75,12 +75,24 @@ module Spree
 
         def transfer_to_location
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
+
+          unless @quantity > 0
+            unprocessable_entity('ArgumentError')
+            return
+          end
+
           @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
           render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
         end
 
         def transfer_to_shipment
           @target_shipment  = Spree::Shipment.friendly.find(params[:target_shipment_number])
+
+          if @quantity < 0 || @target_shipment == @original_shipment
+            unprocessable_entity('ArgumentError')
+            return
+          end
+
           @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
           render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
         end

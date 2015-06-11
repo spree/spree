@@ -86,6 +86,8 @@ handle_delete = (e, data) ->
 
 root = exports ? this
 root.setup_taxonomy_tree = (taxonomy_id) ->
+  $taxonomy_tree = $("#taxonomy_tree")
+
   if taxonomy_id != undefined
     # this is defined within admin/taxonomies/edit
     root.base_url = Spree.url(Spree.routes.taxonomy_taxons_path)
@@ -104,7 +106,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
               url: (e) ->
                 Spree.url(base_url.path() + '/' + e.prop('id') + '/jstree' + '?token=' + Spree.api_key).toString()
           themes:
-            theme: "apple",
+            theme: "spree",
             url: Spree.url(Spree.routes.jstree_theme_path)
           strings:
             new_node: new_taxon,
@@ -130,7 +132,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
               taxon_tree_menu(obj, this)
           plugins: ["themes", "json_data", "dnd", "crrm", "contextmenu"]
 
-        $("#taxonomy_tree").jstree(conf)
+        $taxonomy_tree.jstree(conf)
           .bind("move_node.jstree", handle_move)
           .bind("remove.jstree", handle_delete)
           .bind("create.jstree", handle_create)
@@ -138,8 +140,8 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
           .bind "loaded.jstree", ->
             $(this).jstree("core").toggle_node($('.jstree-icon').first())
 
-    $("#taxonomy_tree a").on "dblclick", (e) ->
-      $("#taxonomy_tree").jstree("rename", this)
+    $taxonomy_tree.on "dblclick", "a", (e) ->
+      $taxonomy_tree.jstree("rename", this)
 
     # surpress form submit on enter/return
     $(document).keypress (e) ->

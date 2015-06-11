@@ -1,0 +1,216 @@
+/*
+ * jsTree Spree theme 1.0
+ */
+
+.jstree-spree {
+
+  li, li ul {
+    border-color: #ededed;
+    border-style: solid;
+  }
+
+  li {
+    margin-left: 26px;
+    border-width: 0 0 1px 0;
+
+    &:last-of-type {
+      border-bottom-width: 0;
+    }
+
+    ul {
+      border-width: 1px 0 0 0;
+    }
+  }
+
+  ins {
+    position: relative;
+    cursor: pointer;
+    width: 24px;
+    line-height: 1;
+    height: 38px;
+    vertical-align: middle;
+    font-family: 'Glyphicons Halflings';
+    color: #555;
+
+    &:before {
+      position: absolute;
+      top: 12px;
+      padding-left: 4px;
+      font-size: 12px;
+    }
+  }
+
+  .jstree-open > ins:before { content: '\e114' }
+
+  .jstree-closed > ins:before { content: '\e080' }
+
+  .jstree-leaf > ins {
+    background-position: -36px 0;
+  }
+
+  .jstree-locked a {
+    color: silver;
+    cursor: default;
+  }
+
+  a {
+    line-height: 38px;
+    height: 38px;
+    padding: 0;
+    color: #555;
+    cursor: context-menu;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+
+    &.jstree-search {
+      color: aqua;
+    }
+
+    &.jstree-loading .jstree-icon {
+      background: image-url("jquery.jstree/themes/spree/throbber.gif") center center no-repeat !important;
+
+      &:before { content: '' }
+    }
+
+    .jstree-icon {
+      vertical-align: middle;
+      font-family: 'Glyphicons Halflings';
+      line-height: 20px;
+      width: 20px;
+      height: 24px;
+      text-align: center;
+      margin-right: 8px;
+      pointer-events: none;
+
+      &:before {
+        content: "\e118";
+        top: 1px;
+        padding-left: 0;
+      }
+    }
+  }
+
+  .jstree-rename-input {
+    height: 38px !important;
+    line-height: 38px !important;
+    left: 46px !important;
+    padding: 0 5px !important;
+  }
+
+  .jstree-hovered {
+    background: #e7f4f9;
+    border: 1px solid #d8f0fa;
+    padding: 0 3px 0 1px;
+    text-shadow: 1px 1px 1px silver;
+  }
+
+  .jstree-clicked {
+    background: #beebff;
+    border: 1px solid #99defd;
+    padding: 0 3px 0 1px;
+  }
+
+  .jstree-no-dots li,
+  .jstree-no-dots .jstree-leaf > ins {
+    background: transparent;
+  }
+
+  .jstree-no-dots .jstree-open > ins {
+    background-position: -18px 0;
+  }
+
+  .jstree-no-dots .jstree-closed > ins {
+    background-position: 0 0;
+  }
+
+  .jstree-no-icons a .jstree-icon {
+    display: none;
+  }
+
+  .jstree-search {
+    font-style: italic;
+  }
+
+  .jstree-no-icons .jstree-checkbox {
+    display: inline-block;
+  }
+
+  .jstree-no-checkboxes .jstree-checkbox {
+    display: none !important;
+  }
+
+  .jstree-checked > a > .jstree-checkbox {
+    background-position: -38px -19px;
+  }
+
+  .jstree-unchecked > a > .jstree-checkbox {
+    background-position: -2px -19px;
+  }
+
+  .jstree-undetermined > a > .jstree-checkbox {
+    background-position: -20px -19px;
+  }
+
+  .jstree-checked > a > .checkbox:hover {
+    background-position: -38px -37px;
+  }
+
+  .jstree-unchecked > a > .jstree-checkbox:hover {
+    background-position: -2px -37px;
+  }
+
+  .jstree-undetermined > a > .jstree-checkbox:hover {
+    background-position: -20px -37px;
+  }
+}
+
+#vakata-dragged.jstree-spree ins {
+  background: transparent !important;
+}
+
+#vakata-contextmenu.jstree-spree-context {
+  background: #fbfbfb;
+  border: 1px solid #eee;
+  margin-top: 15px;
+  margin-left: -4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  -moz-box-shadow:    0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow:         0 6px 12px rgba(0, 0, 0, 0.175);
+
+  li {
+
+    ins { display: none }
+    a { line-height: 38px }
+  }
+
+  a { color: #555; }
+
+  a:hover,
+  .vakata-hover > a {
+    color: inherit;
+    padding: 0 5px;
+    background: #ededed;
+    border: 1px solid #ededed;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+  }
+
+  li.jstree-contextmenu-disabled a ,
+  li.jstree-contextmenu-disabled a:hover {
+    color: silver;
+    background: transparent;
+    border: 0;
+    padding: 1px 4px;
+  }
+
+  li.vakata-separator {
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    margin: 0;
+  }
+
+  .icon {
+    margin: 0 10px 0 5px;
+  }
+}
