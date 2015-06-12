@@ -800,6 +800,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     minimal_amount: Minimal Amount
+    missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
@@ -930,7 +931,6 @@ en:
     order_total: Order Total
     order_updated: Order Updated
     orders: Orders
-    other_items_in_other: Other Items in Order
     out_of_stock: Out of Stock
     overview: Overview
     package_from: package from
