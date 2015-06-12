@@ -22,23 +22,11 @@
           <% end %>
         </fieldset>
 
-        <fieldset>
-          <legend><%= Spree.t(:other_items_in_other) %></legend>
-          <% if @new_return_items.any? %>
-            <%= render partial: 'return_item_selection', locals: {f: f, return_items: @new_return_items} %>
-          <% else %>
-            <div class="alert alert-info no-objects-found">
-              <%= Spree.t(:none) %>
-            </div>
-          <% end %>
-        </fieldset>
-
         <%= f.field_container :stock_location, class: ['form-group'] do %>
           <%= f.label :stock_location, Spree.t(:stock_location) %>
           <%= f.select :stock_location_id, Spree::StockLocation.order_default.active.to_a.collect{|l|[l.name.humanize, l.id]}, {include_blank: true}, {class: 'select2', "data-placeholder" => Spree.t(:select_a_stock_location)} %>
           <%= f.error_message_on :stock_location_id %>
         <% end %>
-
       </div>
 
       <div class="form-actions" data-hook="buttons">
