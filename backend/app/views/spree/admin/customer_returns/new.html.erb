@@ -4,7 +4,7 @@
   / <%= Spree.t(:new_customer_return) %>
 <% end %>
 
-<% if @rma_return_items.any? || @new_return_items.any? %>
+<% if @rma_return_items.any? %>
 
   <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
 
