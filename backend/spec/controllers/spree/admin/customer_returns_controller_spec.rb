@@ -26,6 +26,7 @@ module Spree
 
       describe "#new" do
         let(:order) { create(:shipped_order, line_items_count: 1) }
+        let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first)] }
         let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
         let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
         let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
@@ -49,46 +50,13 @@ module Spree
           let(:rma) { create(:return_authorization, order: order) }
 
           let!(:rma_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.first) }
-          let!(:customer_return_return_item) { create(:return_item, return_authorization: nil, inventory_unit: order.inventory_units.last) }
-
-          context "all return items are associated with a customer return" do
-            let!(:previous_customer_return) { create(:customer_return_without_return_items, return_items: [rma_return_item, customer_return_return_item]) }
-
-            before { subject }
-
-            it "loads the possible return items" do
-              total_inventory_count = 4
-              rma_return_items_count = 1
-              customer_return_return_items_count = 1
-              expect(assigns(:new_return_items).length).to eq (total_inventory_count - rma_return_items_count - customer_return_return_items_count)
-            end
-
-            it "creates new return items" do
-              expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
-            end
-
-            it "does not have any rma return items" do
-              expect(assigns(:rma_return_items)).to eq []
-            end
-          end
+          let!(:customer_return_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.last) }
 
           context "there is a return item associated with an rma but not a customer return" do
             let!(:previous_customer_return) { create(:customer_return_without_return_items, return_items: [customer_return_return_item]) }
 
             before do
               subject
-            end
-
-            it "loads the possible return items" do
-              rma_return_item_count = rma.return_items.count
-              total_unit_count = order.inventory_units.count
-              customer_returned_count =  previous_customer_return.return_items.count
-              expected_total = total_unit_count - customer_returned_count - rma_return_item_count
-              expect(assigns(:new_return_items).length).to eq expected_total
-            end
-
-            it "creates new return items" do
-              expect(assigns(:new_return_items).all? { |return_item| !return_item.persisted? }).to eq true
             end
 
             it "loads the persisted rma return items" do
@@ -149,6 +117,7 @@ module Spree
 
       describe "#create" do
         let(:order) { create(:shipped_order, line_items_count: 1) }
+        let!(:return_authorization) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.shipped.last)] }
 
         subject do
           spree_post :create, customer_return_params
@@ -164,6 +133,7 @@ module Spree
                 stock_location_id: stock_location.id,
                 return_items_attributes: {
                   "0" => {
+                    id: return_authorization.return_items.first.id,
                     returned: "1",
                     "pre_tax_amount"=>"15.99",
                     inventory_unit_id: order.inventory_units.shipped.last.id
