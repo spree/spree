@@ -74,7 +74,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
       it 'redirects forbidden path' do
         get :index
-        expect(response).to redirect_to('/forbidden')
+        expect(response).to redirect_to(spree.forbidden_path)
       end
     end
     context 'when guest user' do
