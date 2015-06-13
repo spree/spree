@@ -17,9 +17,6 @@ module Spree
 
     accepts_nested_attributes_for :return_items
 
-    extend DisplayMoney
-    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
-
     def completely_decided?
       !return_items.undecided.exists?
     end
