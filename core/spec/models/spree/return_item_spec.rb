@@ -97,7 +97,7 @@ describe Spree::ReturnItem, :type => :model do
     end
 
     context 'when the item was lost in transit' do
-      before { return_item.update_attributes!(reception_status: 'lost_in_transit') }
+      before { return_item.update_attributes!(reception_status: 'missing') }
 
       it 'processes the inventory unit' do
         subject
@@ -270,8 +270,8 @@ describe Spree::ReturnItem, :type => :model do
     it_behaves_like "an invalid state transition", 'cancelled', 'given_to_customer'
   end
 
-  describe "#give" do
-    let(:return_item) { create(:return_item, reception_status: 'lost_in_transit', inventory_unit: inventory_unit) }
+  describe "#missing" do
+    let(:return_item) { create(:return_item, reception_status: 'missing', inventory_unit: inventory_unit) }
     let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
 
     subject { return_item.lost! }
@@ -299,7 +299,44 @@ describe Spree::ReturnItem, :type => :model do
 
       it "transitions successfully" do
         subject
-        expect(return_item).to be_lost_in_transit
+        expect(return_item).to be_missing
+      end
+    end
+
+    it_behaves_like "an invalid state transition", 'cancelled', 'given_to_customer'
+  end
+
+
+  describe "#out_of_stock" do
+    let(:return_item) { create(:return_item, reception_status: 'out_of_stock', inventory_unit: inventory_unit) }
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+
+    subject { return_item.lost! }
+
+    context "awaiting status" do
+      before do
+        return_item.update_attributes!(reception_status: 'awaiting')
+        return_item.stub(:eligible_for_return?).and_return(true)
+      end
+
+      it "attempts to accept the return" do
+        expect(return_item).to receive(:attempt_accept)
+        subject
+      end
+
+      it 'accepts the return' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
+      end
+
+      it 'does not decrease inventory' do
+        subject
+        expect(return_item).to_not receive(:process_inventory_unit)
+      end
+
+      it "transitions successfully" do
+        subject
+        expect(return_item).to be_out_of_stock
       end
     end
 

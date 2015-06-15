@@ -189,7 +189,25 @@ describe Spree::CustomerReturn, :type => :model do
     context "it was not received" do
 
       before do
-        return_item.update_attributes!(reception_status: "lost_in_transit")
+        return_item.update_attributes!(reception_status: "missing")
+      end
+
+      it 'should not updated inventory unit to returned' do
+        create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        expect(inventory_unit.reload.state).to eq 'shipped'
+      end
+
+      it "should not update the stock item counts in the stock location" do
+        expect do
+          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        end.to_not change { inventory_unit.find_stock_item.count_on_hand }
+      end
+    end
+
+    context "it was out of stock" do
+
+      before do
+        return_item.update_attributes!(reception_status: "out_of_stock")
       end
 
       it 'should not updated inventory unit to returned' do

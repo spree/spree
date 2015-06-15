@@ -1,7 +1,7 @@
 module Spree
   class ReturnItem < Spree::Base
 
-    COMPLETED_RECEPTION_STATUSES = %i(received given_to_customer lost_in_transit)
+    COMPLETED_RECEPTION_STATUSES = %i(received given_to_customer missing out_of_stock)
 
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
@@ -33,7 +33,8 @@ module Spree
     scope :received, -> { where(reception_status: 'received') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
     scope :given_to_customer, -> { where(reception_status: 'given_to_customer') }
-    scope :lost_in_transit, -> { where(reception_status: 'lost_in_transit') }
+    scope :missing, -> { where(reception_status: 'missing') }
+    scope :out_of_stock, -> { where(reception_status: 'out_of_stock') }
     scope :received, -> { where(reception_status: 'received') }
     scope :pending, -> { where(acceptance_status: 'pending') }
     scope :accepted, -> { where(acceptance_status: 'accepted') }
@@ -62,7 +63,7 @@ module Spree
       after_transition to: :received, do: :process_inventory_unit!
 
       event :receive do
-        transition to: :received, from: [:awaiting, :given_to_customer, :lost_in_transit]
+        transition to: :received, from: [:awaiting, :given_to_customer, :missing]
       end
 
       event :cancel do
@@ -74,7 +75,11 @@ module Spree
       end
 
       event :lost do
-        transition to: :lost_in_transit, from: :awaiting
+        transition to: :missing, from: :awaiting
+      end
+
+      event :oos do
+        transition to: :out_of_stock, from :awaiting
       end
     end
 
