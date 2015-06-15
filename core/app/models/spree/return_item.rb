@@ -79,7 +79,7 @@ module Spree
       end
 
       event :oos do
-        transition to: :out_of_stock, from :awaiting
+        transition to: :out_of_stock, from: :awaiting
       end
     end
 
