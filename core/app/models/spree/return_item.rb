@@ -189,7 +189,7 @@ module Spree
       inventory_unit.return!
 
       Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1) if should_restock?
-      customer_return.process_return! if customer_return
+      customer_return.send(:process_return!) if customer_return
     end
 
     # This logic is also present in the customer return. The reason for the

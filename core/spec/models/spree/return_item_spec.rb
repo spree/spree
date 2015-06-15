@@ -243,7 +243,7 @@ describe Spree::ReturnItem, :type => :model do
       before do
         inventory_unit.update_attributes!(state: 'shipped')
         return_item.update_attributes!(reception_status: 'awaiting')
-        return_item.stub(:eligible_for_return?).and_return(true)
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
       end
 
       it "attempts to accept the return" do
@@ -279,7 +279,7 @@ describe Spree::ReturnItem, :type => :model do
     context "awaiting status" do
       before do
         return_item.update_attributes!(reception_status: 'awaiting')
-        return_item.stub(:eligible_for_return?).and_return(true)
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
       end
 
       it "attempts to accept the return" do
@@ -311,12 +311,12 @@ describe Spree::ReturnItem, :type => :model do
     let(:return_item) { create(:return_item, reception_status: 'out_of_stock', inventory_unit: inventory_unit) }
     let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
 
-    subject { return_item.lost! }
+    subject { return_item.oos! }
 
     context "awaiting status" do
       before do
         return_item.update_attributes!(reception_status: 'awaiting')
-        return_item.stub(:eligible_for_return?).and_return(true)
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
       end
 
       it "attempts to accept the return" do
