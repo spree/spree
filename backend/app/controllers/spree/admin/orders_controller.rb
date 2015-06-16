@@ -62,8 +62,10 @@ module Spree
       end
 
       def new
-        @order = Order.create(order_params)
-        redirect_to cart_admin_order_url(@order)
+        @order = Order.incomplete.where.not(user_id: nil)
+          .where(order_params.slice(:user_id)).first_or_initialize
+        @order.update_attributes!(order_params)
+        redirect_to(cart_admin_order_url(@order), status: :see_other)
       end
 
       def edit
@@ -141,7 +143,7 @@ module Spree
       private
         def order_params
           params[:created_by_id] = try_spree_current_user.try(:id)
-          params.permit(:created_by_id)
+          params.permit(:created_by_id, :user_id)
         end
 
         def load_order

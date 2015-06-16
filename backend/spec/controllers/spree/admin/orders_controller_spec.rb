@@ -74,11 +74,91 @@ describe Spree::Admin::OrdersController, :type => :controller do
       end
     end
 
-    # Test for #3346
     context "#new" do
-      it "a new order has the current user assigned as a creator" do
-        spree_get :new
-        expect(assigns[:order].created_by).to eq(controller.try_spree_current_user)
+      def do_request
+        spree_get :new, user_id: user_id
+      end
+
+      shared_examples_for '#new' do
+        it 'does not use the other incomplete order' do
+          expect(assigns[:order]).to_not eql(other_incomplete_order)
+        end
+
+        # Test for #3346
+        it 'a new order has the current user assigned as a creator' do
+          expect(assigns[:order].created_by).to eq(controller.try_spree_current_user)
+        end
+
+        it 'sets the expected user' do
+          expect(assigns[:order].user).to eql(user)
+        end
+
+        it 'redirects to the order edit url' do
+          expect(response).to have_http_status(:see_other)
+          expect(response).to redirect_to(
+            "http://test.host/admin/orders/#{assigns[:order].number}/cart"
+          )
+        end
+      end
+
+      let(:user)    { nil }
+      let(:user_id) { nil }
+
+      # Create incomplete order with a nil user to ensure the
+      # order scope filters out orders with a nil user_id
+      let!(:other_incomplete_order) do
+        create(
+          :order_with_line_items,
+          user:  nil,
+          email: 'test@example.com'
+        )
+      end
+
+      context 'when the user_id is not provided' do
+        include_examples '#new'
+
+        before { do_request }
+      end
+
+      context 'when the user_id is provided' do
+        let(:user)    { create(:user) }
+        let(:user_id) { user.id       }
+
+        context 'the user has no incomplete orders' do
+          include_examples '#new'
+
+          let!(:complete_order) do
+            create(:completed_order_with_totals, user: user)
+          end
+
+          before { do_request }
+
+          it 'creates an order' do
+            expect(assigns[:order]).to_not be_a_new(Spree::Order)
+          end
+
+          it 'does not use the complete order' do
+            expect(assigns[:order]).to_not eql(complete_order)
+          end
+        end
+
+        context 'the user has incomplete orders' do
+          include_examples '#new'
+
+          let!(:incomplete_order) do
+            create(:order_with_line_items, user: user, created_by: user)
+          end
+
+          let!(:incomplete_order_other_user) do
+            create(:order_with_line_items)
+          end
+
+          before { do_request }
+
+          it 'uses the incomplete order' do
+            expect(assigns[:order]).to eql(incomplete_order)
+          end
+        end
       end
     end
 
