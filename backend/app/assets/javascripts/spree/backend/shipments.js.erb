@@ -291,7 +291,8 @@ advanceOrder = function() {
   $.ajax({
     type: "PUT",
     async: false,
-    url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance")
+    url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance"),
+    data: { token: Spree.api_key }
   }).done(function() {
     window.location.reload();
   });
