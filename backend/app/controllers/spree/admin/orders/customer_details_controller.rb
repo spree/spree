@@ -23,7 +23,7 @@ module Spree
             if params[:guest_checkout] == "false"
               @order.associate_user!(Spree.user_class.find(params[:user_id]), @order.email.blank?)
             end
-            @order.next
+            while @order.next; end
             @order.refresh_shipment_rates
             flash[:success] = Spree.t('customer_details_updated')
             redirect_to edit_admin_order_url(@order)

@@ -145,7 +145,7 @@ describe "New Order", :type => :feature do
       click_link "Customer Details"
       targetted_select2 user.email, from: "#s2id_customer_search"
       click_button "Update"
-      expect(Spree::Order.last.state).to eq 'delivery'
+      expect(Spree::Order.last.state).to eq 'confirm'
     end
   end
 

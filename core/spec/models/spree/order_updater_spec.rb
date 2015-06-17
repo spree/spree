@@ -212,77 +212,43 @@ module Spree
       order.state_changed('shipment')
     end
 
-    context "completed order" do
-      before { allow(order).to receive_messages completed?: true }
-
-      it "updates payment state" do
-        expect(subject).to receive(:update_payment_state)
-        subject.update
-      end
-
-      it "updates shipment state" do
-        expect(subject).to receive(:update_shipment_state)
-        subject.update
-      end
-
-      it "updates each shipment" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-        allow(shipments).to receive_messages states: []
-        allow(shipments).to receive_messages ready: []
-        allow(shipments).to receive_messages pending: []
-        allow(shipments).to receive_messages shipped: []
-
-        expect(shipment).to receive(:update!).with(order)
-        subject.update_shipments
-      end
-
-      it "refreshes shipment rates" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-
-        expect(shipment).to receive(:refresh_rates)
-        subject.update_shipments
-      end
-
-      it "updates the shipment amount" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-
-        expect(shipment).to receive(:update_amounts)
-        subject.update_shipments
-      end
+    it "updates payment state" do
+      expect(subject).to receive(:update_payment_state)
+      subject.update
     end
 
-    context "incompleted order" do
-      before { allow(order).to receive_messages completed?: false }
+    it "updates shipment state" do
+      expect(subject).to receive(:update_shipment_state)
+      subject.update
+    end
 
-      it "doesnt update payment state" do
-        expect(subject).not_to receive(:update_payment_state)
-        subject.update
-      end
+    it "doesnt update each shipment" do
+      shipment = stub_model(Spree::Shipment)
+      shipments = [shipment]
+      allow(order).to receive_messages shipments: shipments
+      allow(shipments).to receive_messages states: []
+      allow(shipments).to receive_messages ready: []
+      allow(shipments).to receive_messages pending: []
+      allow(shipments).to receive_messages shipped: []
 
-      it "doesnt update shipment state" do
-        expect(subject).not_to receive(:update_shipment_state)
-        subject.update
-      end
+      allow(subject).to receive(:update_totals) # Otherwise this gets called and causes a scene
+      expect(subject).not_to receive(:update_shipments).with(order)
+      subject.update
+    end
 
-      it "doesnt update each shipment" do
-        shipment = stub_model(Spree::Shipment)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-        allow(shipments).to receive_messages states: []
-        allow(shipments).to receive_messages ready: []
-        allow(shipments).to receive_messages pending: []
-        allow(shipments).to receive_messages shipped: []
+    it "refreshes shipment rates" do
+      shipment = stub_model(Spree::Shipment, :order => order)
+      shipments = [shipment]
+      allow(order).to receive_messages :shipments => shipments
 
-        allow(subject).to receive(:update_totals) # Otherwise this gets called and causes a scene
-        expect(subject).not_to receive(:update_shipments).with(order)
-        subject.update
-      end
+      expect(shipment).to receive(:refresh_rates)
+      subject.update_shipments
+    end
+
+    it "updates the shipment amount" do
+      shipment = stub_model(Spree::Shipment, :order => order)
+      shipments = [shipment]
+      allow(order).to receive_messages :shipments => shipments
     end
 
     describe "#persist_totals" do

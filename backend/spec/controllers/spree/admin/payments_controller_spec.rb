@@ -27,6 +27,7 @@ module Spree
             }
           }
           spree_post :create, attributes
+          order.reload
         end
 
         it "should process payment correctly" do

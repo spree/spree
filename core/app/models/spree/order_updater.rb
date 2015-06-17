@@ -15,12 +15,11 @@ module Spree
     # object with callbacks (otherwise you will end up in an infinite recursion as the
     # associations try to save and then in turn try to call +update!+ again.)
     def update
+      update_payment_state
+      update_shipments
+      update_shipment_state
+
       update_totals
-      if order.completed?
-        update_payment_state
-        update_shipments
-        update_shipment_state
-      end
       run_hooks
       persist_totals
     end

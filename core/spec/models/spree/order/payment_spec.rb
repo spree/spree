@@ -164,18 +164,21 @@ module Spree
       it 'should incorporate refund reimbursements' do
         # Creates an order w/total 10
         reimbursement = create :reimbursement
+        order         = reimbursement.order
+
         # Set the payment amount to actually be the order total of 10
-        reimbursement.order.payments.first!.update_column :amount, 10
+        reimbursement.order.payments.first!.update_column :amount, order.total
         # Creates a refund of 10
-        create :refund, amount: 10,
+        create :refund, amount: order.total,
                         payment: reimbursement.order.payments.first!,
                         reimbursement: reimbursement
-        order = reimbursement.order.reload
+        order.reload
+
         # Update the order totals so payment_total goes to 0 reflecting the refund..
         order.update!
         # Order Total - (Payment Total + Reimbursed)
         # 10 - (0 + 10) = 0
-        expect(order.outstanding_balance).to eq 0
+        expect(order.outstanding_balance).to eql(0)
       end
     end
 

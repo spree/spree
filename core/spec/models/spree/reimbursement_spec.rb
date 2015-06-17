@@ -20,19 +20,19 @@ describe Spree::Reimbursement, type: :model do
   end
 
   describe "#perform!" do
-    let!(:adjustments)            { [] } # placeholder to ensure it gets run prior the "before" at this level
+    let!(:adjustments)     { [] } # placeholder to ensure it gets run prior the "before" at this level
 
-    let!(:tax_rate)               { nil }
-    let!(:tax_zone)               { create(:zone, default_tax: true) }
+    let!(:tax_rate)        { nil }
+    let!(:tax_zone)        { create(:zone, default_tax: true) }
 
-    let(:order)                   { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
-    let(:line_items_price)        { BigDecimal.new(10) }
-    let(:line_item)               { order.line_items.first! }
-    let(:inventory_unit)          { line_item.inventory_units.first! }
-    let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
-    let(:payment_amount)          { order.total }
-    let(:customer_return)         { build(:customer_return, return_items: [return_item]) }
-    let(:return_item)             { build(:return_item, inventory_unit: inventory_unit) }
+    let(:order)            { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
+    let(:line_items_price) { BigDecimal.new(10) }
+    let(:line_item)        { order.line_items.first! }
+    let(:inventory_unit)   { line_item.inventory_units.first! }
+    let(:payment)          { build(:payment, amount: payment_amount, order: order, state: 'completed') }
+    let(:payment_amount)   { order.total }
+    let(:customer_return)  { build(:customer_return, return_items: [return_item]) }
+    let(:return_item)      { build(:return_item, inventory_unit: inventory_unit) }
 
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
@@ -65,7 +65,7 @@ describe Spree::Reimbursement, type: :model do
       expect {
         subject
       }.to change{ Spree::Refund.count }.by(1)
-      expect(Spree::Refund.last.amount).to eq order.total
+      expect(Spree::Refund.last.amount).to eq order.item_total
     end
 
     context 'with additional tax' do
@@ -99,7 +99,7 @@ describe Spree::Reimbursement, type: :model do
     end
 
     context 'when reimbursement cannot be fully performed' do
-      let!(:non_return_refund) { create(:refund, amount: 1, payment: payment) }
+      let!(:non_return_refund) { create(:refund, reimbursement: reimbursement, amount: 1, payment: payment) }
 
       it 'raises IncompleteReimbursement error' do
         expect { subject }.to raise_error(Spree::Reimbursement::IncompleteReimbursementError)
