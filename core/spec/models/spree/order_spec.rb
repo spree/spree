@@ -279,24 +279,28 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "empty!" do
+  describe '#empty!' do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
       allow(order).to receive_messages(line_items: line_items = [1, 2])
       allow(order).to receive_messages(adjustments: [])
       allow(order).to receive_message_chain(:line_items, sum: 0)
+      order.state = 'address'
     end
 
     it "clears out line items, adjustments and update totals" do
       expect(order.line_items).to receive(:destroy_all)
       expect(order.adjustments).to receive(:destroy_all)
       expect(order.shipments).to receive(:destroy_all)
+      expect(order.state_changes).to receive(:destroy_all)
       expect(order.updater).to receive(:update_totals)
       expect(order.updater).to receive(:persist_totals)
 
-      order.empty!
-      expect(order.item_total).to eq 0
+      expect(order.empty!).to be(order)
+
+      expect(order.item_count).to be(0)
+      expect(order.state).to eql('cart')
     end
   end
 

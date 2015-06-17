@@ -508,6 +508,8 @@ module Spree
 
       update_totals
       persist_totals
+      update_attribute(:state, 'cart')
+      self
     end
 
     def has_step?(step)
