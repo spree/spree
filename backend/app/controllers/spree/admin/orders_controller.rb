@@ -65,6 +65,7 @@ module Spree
         @order = Order.incomplete.where.not(user_id: nil)
           .where(user_id: order_params[:user_id]).first_or_initialize
         @order.update_attributes!(order_params)
+        while @order.next; end
         redirect_to(cart_admin_order_url(@order), status: :see_other)
       end
 

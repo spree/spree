@@ -159,6 +159,8 @@ describe Spree::Admin::OrdersController, :type => :controller do
         context 'the user has incomplete orders' do
           include_examples '#new'
 
+          let(:user) { create(:user_with_addreses) }
+
           let!(:incomplete_order) do
             create(:order_with_line_items, user: user, created_by: user)
           end
@@ -167,6 +169,10 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
           it 'uses the incomplete order' do
             expect(assigns[:order]).to eql(incomplete_order)
+          end
+
+          it 'advances the order to the latest possible state' do
+            expect(assigns[:order].state).to eql('payment')
           end
         end
       end
