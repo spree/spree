@@ -84,6 +84,10 @@ describe Spree::Admin::OrdersController, :type => :controller do
           expect(assigns[:order]).to_not eql(other_incomplete_order)
         end
 
+        it 'does not use the incomplete order for other user' do
+          expect(assigns[:order]).to_not eql(incomplete_order_other_user)
+        end
+
         # Test for #3346
         it 'a new order has the current user assigned as a creator' do
           expect(assigns[:order].created_by).to eq(controller.try_spree_current_user)
@@ -114,8 +118,18 @@ describe Spree::Admin::OrdersController, :type => :controller do
         )
       end
 
+      # Create incomplete order with another user to ensure the
+      # order scope searches for a nil user id
+      let!(:incomplete_order_other_user) do
+        create(:order_with_line_items)
+      end
+
       context 'when the user_id is not provided' do
         include_examples '#new'
+
+        def do_request
+          spree_get :new
+        end
 
         before { do_request }
       end
@@ -147,10 +161,6 @@ describe Spree::Admin::OrdersController, :type => :controller do
 
           let!(:incomplete_order) do
             create(:order_with_line_items, user: user, created_by: user)
-          end
-
-          let!(:incomplete_order_other_user) do
-            create(:order_with_line_items)
           end
 
           before { do_request }
