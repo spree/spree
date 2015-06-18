@@ -70,14 +70,13 @@ module Spree
 
       def cancel!
         protect_from_connection_error do
-
           response = payment_method.cancel(response_code)
 
           record_response(response)
 
           if response.success?
             self.response_code = response.authorization
-            self.void
+            void
           else
             gateway_error(response)
           end
