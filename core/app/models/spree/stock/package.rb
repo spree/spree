@@ -91,6 +91,10 @@ module Spree
       def contents_by_weight
         contents.sort { |x, y| y.weight <=> x.weight }
       end
+
+      def volume
+        contents.sum(&:volume)
+      end
     end
   end
 end

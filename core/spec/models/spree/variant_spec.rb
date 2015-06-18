@@ -497,4 +497,18 @@ describe Spree::Variant, :type => :model do
       expect(Spree::Variant.in_stock).to eq [in_stock_variant]
     end
   end
+
+  context "#volume" do
+    let(:variant_zero_width) { create(:variant, width: 0) }
+    let(:variant) { create(:variant) }
+
+    it "it is zero if any dimension parameter is zero" do
+      expect(variant_zero_width.volume).to eq 0
+    end
+
+    it "return the volume if the dimension parameters are different of zero" do
+      volume_expected = variant.width * variant.depth * variant.height
+      expect(variant.volume).to eq (volume_expected)
+    end
+  end
 end
