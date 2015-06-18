@@ -33,6 +33,7 @@ group :test do
   gem 'poltergeist', '1.6.0'
   gem 'timecop'
   gem 'with_model'
+  gem 'mutant-rspec', '~> 0.7.9'
 end
 
 group :test, :development do
