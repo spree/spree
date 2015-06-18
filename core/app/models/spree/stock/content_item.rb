@@ -43,6 +43,10 @@ module Spree
         # but this massively simplifies things for now
         1
       end
+
+      def volume
+        variant.volume * quantity
+      end
     end
   end
 end
