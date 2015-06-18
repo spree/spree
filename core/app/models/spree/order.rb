@@ -642,9 +642,9 @@ module Spree
     end
 
     def after_cancel
-      shipments.each { &:cancel! }
-      payments.pending.each { &:cancel! } if Spree::Config[:auto_capture_on_dispatch]
-      payments.completed.each { &:cancel! }
+      shipments.each(&:cancel!)
+      payments.pending.each(&:cancel!) if Spree::Config[:auto_capture_on_dispatch]
+      payments.completed.each(&:cancel!)
       send_cancel_email
       self.update!
     end
