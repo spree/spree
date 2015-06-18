@@ -643,6 +643,7 @@ module Spree
 
     def after_cancel
       shipments.each { |shipment| shipment.cancel! }
+      payments.pending.each { |payment| payment.cancel! } if Spree::Config[:auto_capture_on_dispatch]
       payments.completed.each { |payment| payment.cancel! }
       send_cancel_email
       self.update!
