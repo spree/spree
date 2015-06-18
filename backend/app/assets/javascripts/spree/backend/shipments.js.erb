@@ -246,7 +246,8 @@ completeItemSplit = function(event) {
   var target_shipment_number = selected_shipment.data('shipment-number');
   var new_shipment = selected_shipment.data('new-shipment');
 
-  if (stock_location_id != 'new_shipment') {
+  //Don't fire ajax if original and target shipments are same
+  if (original_shipment_number != target_shipment_number) {
     // first remove item(s) from original shipment
     $.ajax({
       type: "PUT",
