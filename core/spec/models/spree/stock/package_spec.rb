@@ -167,6 +167,17 @@ module Spree
           end
         end
       end
+
+      context "#volume" do
+        it "calculates the sum of the volume of all the items" do
+          contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant)))]
+          package = Package.new(stock_location, contents)
+          expect(package.volume).to eq contents.sum(&:volume)
+        end
+      end
     end
   end
 end
