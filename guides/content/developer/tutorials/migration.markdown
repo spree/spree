@@ -412,10 +412,10 @@ to encode each variant in the spreadsheet, and this is stored in the variable
 the option values for the new variant (see below for variant creation).
 
 ```ruby
-*,opts,sku,price = opt_info.match\s*=\s*\s*@.\*?)/).to_a
+*, opts, sku, price = opt_info.match(/(.+)\s=\s(\w+)\s@\s\$(.+)/).to_a
 v = Spree::Variant.create :product => p, :sku => sku, :price => price
-v.option_values = opts.split.map do |nm|
-  Spree::OptionValue.where.first_or_create
+v.option_values = opts.split('&').map do |nm|
+  Spree::OptionValue.where.first_or_create nm.strip
 end
 ```
 
