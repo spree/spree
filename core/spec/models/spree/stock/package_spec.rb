@@ -178,6 +178,17 @@ module Spree
           expect(package.volume).to eq contents.sum(&:volume)
         end
       end
+
+      context "#dimension" do
+        it "calculates the sum of the dimension of all the items" do
+          contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
+                      ContentItem.new(build(:inventory_unit, variant: build(:variant)))]
+          package = Package.new(stock_location, contents)
+          expect(package.dimension).to eq contents.sum(&:dimension)
+        end
+      end
     end
   end
 end

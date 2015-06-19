@@ -11,6 +11,12 @@ module Spree
           expect(subject.volume).to eq variant.volume * subject.quantity
         end
       end
+
+      context "#dimension" do
+        it "calculate the total dimension of the variant" do
+          expect(subject.dimension).to eq variant.dimension * subject.quantity
+        end
+      end
     end
   end
 end
