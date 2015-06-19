@@ -47,6 +47,10 @@ module Spree
       def volume
         variant.volume * quantity
       end
+
+      def dimension
+        variant.dimension * quantity
+      end
     end
   end
 end

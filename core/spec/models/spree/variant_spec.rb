@@ -511,4 +511,13 @@ describe Spree::Variant, :type => :model do
       expect(variant.volume).to eq (volume_expected)
     end
   end
+
+  context "#dimension" do
+    let(:variant) { create(:variant) }
+
+    it "return the dimension if the dimension parameters are different of zero" do
+      dimension_expected = variant.width + variant.depth + variant.height
+      expect(variant.dimension).to eq (dimension_expected)
+    end
+  end
 end

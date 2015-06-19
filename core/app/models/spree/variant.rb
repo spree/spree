@@ -217,6 +217,10 @@ module Spree
       (width || 0) * (height || 0) * (depth || 0)
     end
 
+    def dimension
+      (width || 0) + (height || 0) + (depth || 0)
+    end
+
     private
 
       def set_master_out_of_stock

@@ -95,6 +95,10 @@ module Spree
       def volume
         contents.sum(&:volume)
       end
+
+      def dimension
+        contents.sum(&:dimension)
+      end
     end
   end
 end
