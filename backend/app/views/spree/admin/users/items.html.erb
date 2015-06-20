@@ -2,8 +2,8 @@
   <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"admin.user.items_purchased") %>
 <% end %>
 
-<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :items } %>
-<%= render :partial => 'spree/admin/users/user_page_actions' %>
+<%= render partial: 'spree/admin/users/sidebar', locals: { current: :items } %>
+<%= render partial: 'spree/admin/users/user_page_actions' %>
 
 <fieldset data-hook="admin_user_items_purchased">
   <%= paginate @orders %>
@@ -12,13 +12,13 @@
     <%# TODO add search interface %>
     <table class="table table-condensed table-bordered stock-contents" id="listing_items" data-hook="stock-contents">
       <thead>
-        <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
+        <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_completed_at_title'} %></th>
         <th colspan=2><%= Spree.t(:description) %></th>
-        <th><%= I18n.t(:price, :scope => 'activerecord.attributes.spree/line_item') %></th>
-        <th><%= I18n.t(:quantity, :scope => 'activerecord.attributes.spree/line_item') %></th>
+        <th><%= I18n.t(:price, scope: 'activerecord.attributes.spree/line_item') %></th>
+        <th><%= I18n.t(:quantity, scope: 'activerecord.attributes.spree/line_item') %></th>
         <th><%= Spree.t(:total) %></th>
-        <th><%= sort_link @search, :state, I18n.t(:state, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_state_title'} %></th>
-        <th><%= sort_link @search, :number, Spree.t(:order_num, :scope => 'admin.user'), {}, {:title => 'orders_number_title'} %></th>
+        <th><%= sort_link @search, :state, I18n.t(:state, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_state_title'} %></th>
+        <th><%= sort_link @search, :number, Spree.t(:order_num, scope: 'admin.user'), {}, {title: 'orders_number_title'} %></th>
       </thead>
       <tbody>
         <% @orders.each do |order| %>
