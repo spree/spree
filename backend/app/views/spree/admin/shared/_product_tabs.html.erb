@@ -5,19 +5,19 @@
 
 <% content_for :sidebar do %>
   <ul class="nav nav-pills nav-stacked" data-hook="admin_product_tabs">
-    <%= content_tag :li, :class => ('active' if current == 'Product Details') do %>
+    <%= content_tag :li, class: ('active' if current == :details) do %>
       <%= link_to_with_icon 'edit', Spree.t(:details), edit_admin_product_url(@product) %>
     <% end if can?(:admin, Spree::Product) %>
-    <%= content_tag :li, :class => ('active' if current == 'Images') do %>
+    <%= content_tag :li, class: ('active' if current == :images) do %>
       <%= link_to_with_icon 'picture', Spree.t(:images), spree.admin_product_images_url(@product) %>
     <% end if can?(:admin, Spree::Image) %>
-    <%= content_tag :li, :class => ('active' if current == 'Variants') do %>
+    <%= content_tag :li, class: ('active' if current == :variants) do %>
       <%= link_to_with_icon 'th-large', Spree.t(:variants),  spree.admin_product_variants_url(@product) %>
     <% end if can?(:admin, Spree::Variant) %>
-    <%= content_tag :li, :class => ('active' if current == 'Product Properties') do %>
+    <%= content_tag :li, class: ('active' if current == :properties) do %>
       <%= link_to_with_icon 'list-alt', Spree.t(:properties), spree.admin_product_product_properties_url(@product) %>
     <% end if can?(:admin, Spree::ProductProperty) %>
-    <%= content_tag :li, :class => ('active' if current == 'Stock Management') do %>
+    <%= content_tag :li, class: ('active' if current == :stock) do %>
       <%= link_to_with_icon 'home', Spree.t(:stock), stock_admin_product_url(@product) %>
     <% end if can?(:stock, Spree::Product) %>
   </ul>

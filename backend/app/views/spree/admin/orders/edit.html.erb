@@ -7,7 +7,7 @@
   <% end %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Shipments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :shipments } %>
 
 <% content_for :page_title do %>
   / <%= plural_resource_name(Spree::Shipment) %>

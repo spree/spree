@@ -1,15 +1,15 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :payments } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:new_payment) %>
 <% end %>
 
 <% if @payment_methods.any? %>
-  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment } %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment } %>
 
-  <%= form_for @payment, :url => admin_order_payments_path(@order) do |f| %>
+  <%= form_for @payment, url: admin_order_payments_path(@order) do |f| %>
     <fieldset>
-      <%= render :partial => 'form', :locals => { :f => f } %>
+      <%= render partial: 'form', locals: { f: f } %>
 
       <div class="form-actions" data-hook="buttons">
         <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right' : 'save' %>
