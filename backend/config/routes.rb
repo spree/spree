@@ -97,7 +97,7 @@ Spree::Core::Engine.add_routes do
 
     resource :general_settings do
       collection do
-        post :dismiss_alert
+        post :clear_cache
       end
     end
 
