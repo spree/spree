@@ -1,10 +1,10 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :customer_returns } %>
 
 <% content_for :page_title do %>
   / <%= Spree::Reimbursement.model_name.human %> #<%= @reimbursement.number %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @reimbursement } %>
 
 <fieldset class='no-border-bottom'>
   <legend><%= Spree.t(:items_reimbursed) %></legend>

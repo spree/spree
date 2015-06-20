@@ -1,10 +1,10 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Reimbursements' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :reimbursements } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:edit_reimbursement) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @customer_return } %>
 
 <table class="table">
   <thead data-hook="customer_return_header">

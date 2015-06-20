@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => Spree.t(:customer_returns) } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :customer_returns } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:new_customer_return) %>
@@ -6,7 +6,7 @@
 
 <% if @rma_return_items.any? %>
 
-  <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @customer_return } %>
 
   <%= form_for [:admin, @order, @customer_return] do |f| %>
     <fieldset class="no-border-top">
@@ -32,7 +32,7 @@
       <div class="form-actions" data-hook="buttons">
         <%= button Spree.t(:create), 'save' %>
         <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_customer_returns_url(@order), :icon => 'delete' %>
+        <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_customer_returns_url(@order), icon: 'delete' %>
       </div>
     </fieldset>
   <% end %>

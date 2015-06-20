@@ -1,4 +1,4 @@
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'State Changes' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :state_changes } %>
 
 <% content_for :page_title do %>
   <%= plural_resource_name(Spree::StateChange) %>
