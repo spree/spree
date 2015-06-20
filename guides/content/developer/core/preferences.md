@@ -384,14 +384,6 @@ The three-letter currency code for the currency that prices will be displayed in
 
 The default country's id. Defaults to 214, as this is the id for the United States within the seed data.
 
-`dismissed_spree_alerts`
-
-The list of alert IDs that you have dismissed.
-
-`last_check_for_spree_alerts`
-
-Stores the last time that alerts were checked for. Alerts are checked for every 12 hours.
-
 `layout`
 
 The path to the layout of your application, relative to the `app/views` directory. Defaults to `spree/layouts/spree_application`. To make Spree use your application's layout rather than Spree's default, use this:
