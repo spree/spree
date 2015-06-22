@@ -512,6 +512,11 @@ module Spree
       self
     end
 
+    def advance
+      while self.next; end
+      self
+    end
+
     def has_step?(step)
       checkout_steps.include?(step)
     end

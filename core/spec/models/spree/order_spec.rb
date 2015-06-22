@@ -304,6 +304,24 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe '#advance' do
+    subject do
+      create(:completed_order_with_pending_payment, state: initial_state)
+    end
+
+    let(:initial_state) { 'cart' }
+
+    it 'is a command method' do
+      expect(subject.advance).to be(subject)
+    end
+
+    it 'advances the order to the expected state' do
+      expect { subject.advance }.to change(subject, :state)
+        .from(initial_state)
+        .to('complete')
+    end
+  end
+
   context "#display_outstanding_balance" do
     it "returns the value as a spree money" do
       allow(order).to receive(:outstanding_balance) { 10.55 }
