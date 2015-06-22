@@ -120,7 +120,7 @@ describe "New Order", :type => :feature do
       wait_for_ajax
 
       click_on "Payments"
-      click_on "Continue"
+      click_on "Update"
 
       within(".additional-info .state") do
         expect(page).to have_content("COMPLETE")

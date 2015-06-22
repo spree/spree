@@ -178,18 +178,17 @@ describe Spree::Admin::OrdersController, :type => :controller do
       end
     end
 
-    # Regression test for #3684
-    context "#edit" do
-      it "does not refresh rates if the order is completed" do
-        allow(order).to receive_messages :completed? => true
-        expect(order).not_to receive :refresh_shipment_rates
-        spree_get :edit, :id => order.number
+    describe '#edit' do
+      let(:order) { create(:order) }
+
+      it 'advances the order' do
+        expect(order).to receive(:advance).and_call_original
+        spree_get :edit, id: order.number
       end
 
-      it "does refresh the rates if the order is incomplete" do
-        allow(order).to receive_messages :completed? => false
-        expect(order).to receive :refresh_shipment_rates
-        spree_get :edit, :id => order.number
+      it 'silences errors' do
+        spree_get :edit, id: order.number
+        expect(order.errors).to be_empty
       end
     end
 

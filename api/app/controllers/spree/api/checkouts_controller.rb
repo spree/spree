@@ -20,7 +20,7 @@ module Spree
       def advance
         load_order(true)
         authorize! :update, @order, order_token
-        while @order.next; end
+        @order.advance
         respond_with(@order, default_template: 'spree/api/orders/show', status: 200)
       end
 

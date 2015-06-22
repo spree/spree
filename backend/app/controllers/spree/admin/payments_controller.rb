@@ -31,7 +31,7 @@ module Spree
           if @payment.save
             invoke_callbacks(:create, :after)
             # Transition order as far as it will go.
-            while @order.next; end
+            @order.advance
             # If "@order.next" didn't trigger payment processing already (e.g. if the order was
             # already complete) then trigger it manually now
             @payment.process! if @order.completed? && @payment.checkout?
