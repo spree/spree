@@ -286,9 +286,9 @@ module Spree
           end
 
           def assign_default_credit_card
-            if self.payments.from_credit_card.count == 0 && self.user && self.user.default_credit_card.try(:valid?)
+            if self.payments.from_credit_card.count == 0 && self.user && self.user.default_credit_card.try(:valid?) && self.payment_required?
               cc = self.user.default_credit_card
-              self.payments.create!(payment_method_id: cc.payment_method_id, source: cc)
+              self.payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: self.total)
             end
           end
 
