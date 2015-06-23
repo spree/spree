@@ -14,7 +14,7 @@ module Spree
         end
 
         respond_with(@shipment.order) do |format|
-          format.html { redirect_to edit_admin_order_path(@shipment.order) }
+          format.html { redirect_to shipments_admin_order_url(@shipment.order) }
           format.js   { render layout: false }
         end
       end

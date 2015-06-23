@@ -5,11 +5,13 @@ module Spree
       def event_links
         links = []
         @order_events.sort.each do |event|
+          next if event == "approve" && (!@order.is_risky? || @order.approved?)
           if @order.send("can_#{event}?")
             links << button_link_to(Spree.t(event).capitalize, [event, :admin, @order],
-                                    :method => :put,
-                                    :icon => "#{event}",
-                                    :data => { :confirm => Spree.t(:order_sure_want_to, :event => Spree.t(event)) })
+                                    method: :put,
+                                    icon: "#{event}",
+                                    class: "btn-#{event}",
+                                    data: { confirm: Spree.t(:order_sure_want_to, event: Spree.t(event)) })
           end
         end
         links.join(' ').html_safe

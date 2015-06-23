@@ -55,7 +55,7 @@
   <% if @order.completed? %>
     <div class="alert alert-info">
       <strong><%= Spree.t(:shipping_address) %></strong>:
-      <%= Spree.t(:this_is_the_default_shipping_address, shipments_link: link_to(Spree.t(:shipments), edit_admin_order_path(@order))).html_safe %>
+      <%= Spree.t(:this_is_the_default_shipping_address, shipments_link: link_to(Spree.t(:shipments), shipments_admin_order_url(@order))).html_safe %>
     </div>
   <% end %>
 

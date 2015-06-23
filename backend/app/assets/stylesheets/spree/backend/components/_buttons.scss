@@ -15,7 +15,7 @@
   &:focus {
     outline: 0 !important;
   }
-  
+
   &:hover,
   &:focus,
   &:active,
@@ -35,3 +35,4 @@
 .btn.action-void { @extend .btn-danger; }
 .btn.action-capture { @extend .btn-success; }
 .btn.payment-action-edit { @extend .btn-primary; }
+.btn-approve { @extend .btn-success; }

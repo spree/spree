@@ -2,7 +2,7 @@ module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
       before_action :initialize_order_events
-      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart, :risky_order_info]
+      before_action :load_order, only: [:edit, :shipments, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart, :risky_order_info]
 
       respond_to :html
 
@@ -69,7 +69,9 @@ module Spree
         redirect_to cart_admin_order_url(@order)
       end
 
-      def edit
+      def edit; end
+
+      def shipments
         can_not_transition_without_customer_info
 
         unless @order.completed?

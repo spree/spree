@@ -23,7 +23,3 @@
 <%= form_for @order, url: spree.admin_order_customer_url(@order) do |f| %>
   <%= render 'form', f: f %>
 <% end %>
-
-<br>
-
-<%= render partial: 'spree/admin/shared/order_summary' %>

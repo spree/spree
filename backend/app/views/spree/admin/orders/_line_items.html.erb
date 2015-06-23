@@ -26,7 +26,9 @@
               <% end %>
               <%= item.variant.product.try(:sku) %>
             </td>
-            <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
+            <td class="line-item-price text-center">
+              <%= item.single_money.to_html %>
+            </td>
             <td class="line-item-qty-show text-center">
               <%= item.quantity %>
             </td>
@@ -42,6 +44,40 @@
                 <%= link_to_with_icon 'delete', Spree.t('delete'), "#", :class => 'delete-line-item btn btn-danger btn-sm', :data => { 'line-item-id' => item.id, :action => 'remove'}, :title => Spree.t('delete'), :no_text => true %>
               <% end %>
             </td>
+          </tr>
+          <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+            <td></td>
+            <td colspan="3">
+              <%= t(:pre_tax_amount) %>
+            </td>
+            <td class="text-center">
+              <%= Spree::Money.new(item.pre_tax_amount, { currency: item.currency }) %>
+            </td>
+            <td></td>
+          </tr>
+          <% if item.adjustments.eligible.any? %>
+            <% item.adjustments.eligible.each do |adjustment| %>
+              <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+                <td></td>
+                <td colspan="3">
+                  <%= adjustment.label %>
+                </td>
+                <td class="text-center">
+                  <%= adjustment.display_amount.to_html %>
+                </td>
+                <td></td>
+              </tr>
+            <% end %>
+          <% end %>
+          <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+            <td></td>
+            <td colspan="3">
+              <strong><%= t(:total) %></strong>
+            </td>
+            <td class="text-center">
+              <strong><%= line_item_shipment_price(item, item.quantity) %></strong>
+            </td>
+            <td></td>
           </tr>
         <% end %>
       </tbody>
