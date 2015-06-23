@@ -90,9 +90,11 @@ module Spree
                 expect(order.reload.total).to eq(100)
               end
 
-              context 'and first line item is not promotionable' do
+              context "and first line item is not promotionable" do
                 before(:each) do
-                  order.line_items.first.variant.product.update_attributes!(promotionable: false)
+                  order.line_items.first.variant.product.update_attributes!(
+                    promotionable: false
+                  )
                   order.reload
                 end
 
@@ -103,8 +105,8 @@ module Spree
                   order.line_items.each do |line_item|
                     expect(line_item.adjustments.count).to eq(1)
                   end
-                  # Ensure that applying the adjustment actually affects the order's total!
-                  expect(order.reload.total).to eq(110) #only 2 items discounted
+
+                  expect(order.reload.total).to eq(110) # only 2 items discounted
                 end
               end
 
