@@ -86,7 +86,7 @@ module Spree
         }
 
         # Check for applied adjustments.
-        discount = order.line_item_adjustments.promotion.detect(&detector)
+        discount = order.line_item_adjustments.promotion.eligible.detect(&detector)
         discount ||= order.shipment_adjustments.promotion.detect(&detector)
         discount ||= order.adjustments.promotion.detect(&detector)
 
