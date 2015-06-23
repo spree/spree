@@ -35,8 +35,7 @@ module Spree
       end
 
       def adjusters
-        [Spree::Adjustable::Adjuster::Promo, Spree::Adjustable::Adjuster::Tax]
-        #Rails.application.config.spree.adjustable_adjusters
+        Rails.application.config.spree.adjusters
       end
     end
   end
