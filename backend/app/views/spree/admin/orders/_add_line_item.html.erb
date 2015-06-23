@@ -1,10 +1,20 @@
 <%= render partial: "spree/admin/variants/autocomplete", formats: :js %>
-
 <%= render partial: "spree/admin/variants/autocomplete_line_items_stock", formats: :js %>
 
-<div data-hook="add_product_name" class="form-group">
-  <%= label_tag :add_line_item_variant_id, Spree.t(:name_or_sku) %>
-  <%= hidden_field_tag :add_line_item_variant_id, "", class: "variant_autocomplete" %>
+<div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="addItemLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addItemLabel"><%= Spree.t(:add_item) %></h4>
+      </div>
+      <div class="modal-body">
+        <div data-hook="add_product_name" class="form-group">
+          <%= label_tag :add_line_item_variant_id, Spree.t(:name_or_sku) %>
+          <%= hidden_field_tag :add_line_item_variant_id, "", class: "variant_autocomplete" %>
+        </div>
+        <div id="stock_details"></div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div id="stock_details"></div>

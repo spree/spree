@@ -47,3 +47,7 @@ input.form-control {
 .form-actions form, .forms-inline form {
   display: inline;
 }
+
+.alert-error {
+  @extend .alert-danger;
+}

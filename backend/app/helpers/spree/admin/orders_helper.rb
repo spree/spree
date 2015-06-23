@@ -21,6 +21,14 @@ module Spree
         Spree::Money.new(line_item.price * quantity, { currency: line_item.currency })
       end
 
+      def line_item_shipped?(line_item)
+        return true if line_item.inventory_units.blank?
+        
+        states = line_item.inventory_units.flatten.map(&:state).uniq
+        return false if states.count > 1
+        return true if states.include?("shipped")
+      end
+
       def avs_response_code
         {
           "A" => "Street address matches, but 5-digit and 9-digit postal code do not match.",

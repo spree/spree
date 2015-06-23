@@ -6,6 +6,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to(Spree.t(:new_adjustment), new_admin_order_adjustment_url(@order), class: "btn-success", icon: 'add') if can? :create, Spree::Adjustment %>
+  <%= button_link_to(Spree.t(:add_coupon), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addCoupon" }, icon: 'add') if @order.can_add_coupon? %>
 <% end %>
 
 <% if @adjustments.present? %>

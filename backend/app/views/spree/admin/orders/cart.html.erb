@@ -10,19 +10,7 @@
   / <%= Spree.t(:items) %>
 <% end %>
 
-<div class="modal fade" id="addItem" tabindex="-1" role="dialog" aria-labelledby="addItemLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="addItemLabel"><%= Spree.t(:add_item) %></h4>
-      </div>
-      <div class="modal-body">
-        <%= render :partial => 'add_line_item' if can_add_line_item %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render partial: 'add_line_item' if can_add_line_item %>
 
 <div data-hook="admin_order_edit_header">
   <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @order } %>
