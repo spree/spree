@@ -4,7 +4,7 @@ module Spree
       include EnvironmentExtension
 
       attr_accessor :calculators, :payment_methods, :preferences,
-                    :stock_splitters
+                    :adjusters, :stock_splitters
 
       def initialize
         @calculators = Calculators.new

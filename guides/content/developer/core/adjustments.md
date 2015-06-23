@@ -98,3 +98,47 @@ Simiarly, if you want to grab the adjustments applied to shipments, call `shipme
 ```ruby
 order.shipment_adjustments
 ```
+
+## Extending Adjustments
+
+### Creating a New Adjuster
+
+To create a new adjuster for Spree, create a new ruby object that inherits from `Spree::Adjustable::Adjuster::Base` and implements an `update` method:
+
+```ruby
+module Spree
+  module Adjustable
+    module Adjuster
+      class Tax < Spree::Adjustable::Adjuster::Base
+        def update
+          ...
+          #your ruby magic
+          ...
+          update_totals(included_tax_total, additional_tax_total)
+        end
+
+        private
+
+        # Note to persist your totals you need to update @totals
+        # This is shown in a separate method for readability
+        def update_totals(included_tax_total, additional_tax_total)
+          @totals[:included_tax_total] = included_tax_total
+          @totals[:additional_tax_total] = additional_tax_total
+          @totals[:adjustment_total] += additional_tax_total
+        end
+      end
+    end
+  end
+end
+```
+
+Next you need to add the class to spree `Rails.application.config.spree.adjusters` so it is included whenever adjustments are updated (Promotion and Tax are included by default):
+
+```ruby
+# NOTE: it is advisable that that Tax be implemented last so Tax is calculated correctly
+app.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax]
+```
+
+That's it! Your custom adjuster is ready to go.

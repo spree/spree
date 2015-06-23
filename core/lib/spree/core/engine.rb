@@ -39,6 +39,12 @@ module Spree
             Spree::PaymentMethod::Check ]
       end
 
+      initializer "spree.register.adjustable_adjusters" do |app|
+        app.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax]
+      end
+
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
       initializer 'spree.promo.environment' do |app|
