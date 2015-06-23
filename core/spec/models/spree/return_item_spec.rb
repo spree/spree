@@ -19,7 +19,9 @@ describe Spree::ReturnItem, :type => :model do
 
   describe '#receive!' do
     let(:now)            { Time.now }
-    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+    let(:order)          { create(:shipped_order)}
+    let(:inventory_unit) { create(:inventory_unit, order: order,state: 'shipped') }
+    let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
     let(:return_item)    { create(:return_item, inventory_unit: inventory_unit) }
 
     before do
@@ -29,7 +31,6 @@ describe Spree::ReturnItem, :type => :model do
     end
 
     subject { return_item.receive! }
-
 
     it 'returns the inventory unit' do
       subject
@@ -43,7 +44,6 @@ describe Spree::ReturnItem, :type => :model do
 
     context 'with a stock location' do
       let(:stock_item)      { inventory_unit.find_stock_item }
-      let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do
         inventory_unit.update_attributes!(state: 'shipped')
@@ -79,6 +79,34 @@ describe Spree::ReturnItem, :type => :model do
         it 'does not increase the count on hand' do
           expect { subject }.to_not change { stock_item.reload.count_on_hand }
         end
+      end
+    end
+
+    context 'when the item was given to customer' do
+      before { return_item.update_attributes!(reception_status: 'given_to_customer') }
+
+      it 'processes the inventory unit' do
+        subject
+        expect(return_item.inventory_unit.reload.state).to eq('returned')
+      end
+
+      it 'return remains accepted' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
+      end
+    end
+
+    context 'when the item was lost in transit' do
+      before { return_item.update_attributes!(reception_status: 'missing') }
+
+      it 'processes the inventory unit' do
+        subject
+        expect(return_item.inventory_unit.reload.state).to eq('returned')
+      end
+
+      it 'return remains accepted' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
       end
     end
   end
@@ -177,10 +205,8 @@ describe Spree::ReturnItem, :type => :model do
       end
     end
 
-    (all_reception_statuses - ['awaiting']).each do |invalid_transition_status|
-      context "return_item has a reception status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'received'
-      end
+    context "return_item has a reception status of cancelled" do
+      it_behaves_like "an invalid state transition", 'cancelled', 'received'
     end
   end
 
@@ -207,25 +233,114 @@ describe Spree::ReturnItem, :type => :model do
   end
 
   describe "#give" do
-    let(:return_item) { create(:return_item, reception_status: status) }
+    let(:return_item) { create(:return_item, reception_status: 'given_to_customer', inventory_unit: inventory_unit) }
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+
 
     subject { return_item.give! }
 
     context "awaiting status" do
-      let(:status) { 'awaiting' }
+      before do
+        inventory_unit.update_attributes!(state: 'shipped')
+        return_item.update_attributes!(reception_status: 'awaiting')
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
+      end
 
-      before { subject }
+      it "attempts to accept the return" do
+        expect(return_item).to receive(:attempt_accept)
+        subject
+      end
+
+      it 'accepts the return' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
+      end
+
+      it 'does not decrease inventory' do
+        subject
+        expect(return_item).to_not receive(:process_inventory_unit)
+      end
 
       it "transitions successfully" do
+        subject
         expect(return_item).to be_given_to_customer
       end
     end
 
-    (all_reception_statuses - ['awaiting']).each do |invalid_transition_status|
-      context "return_item has a reception status of #{invalid_transition_status}" do
-        it_behaves_like "an invalid state transition", invalid_transition_status, 'give_to_customer'
+    it_behaves_like "an invalid state transition", 'cancelled', 'given_to_customer'
+  end
+
+  describe "#missing" do
+    let(:return_item) { create(:return_item, reception_status: 'missing', inventory_unit: inventory_unit) }
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+
+    subject { return_item.lost! }
+
+    context "awaiting status" do
+      before do
+        return_item.update_attributes!(reception_status: 'awaiting')
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
+      end
+
+      it "attempts to accept the return" do
+        expect(return_item).to receive(:attempt_accept)
+        subject
+      end
+
+      it 'accepts the return' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
+      end
+
+      it 'does not decrease inventory' do
+        subject
+        expect(return_item).to_not receive(:process_inventory_unit)
+      end
+
+      it "transitions successfully" do
+        subject
+        expect(return_item).to be_missing
       end
     end
+
+    it_behaves_like "an invalid state transition", 'cancelled', 'given_to_customer'
+  end
+
+
+  describe "#out_of_stock" do
+    let(:return_item) { create(:return_item, reception_status: 'out_of_stock', inventory_unit: inventory_unit) }
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+
+    subject { return_item.oos! }
+
+    context "awaiting status" do
+      before do
+        return_item.update_attributes!(reception_status: 'awaiting')
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
+      end
+
+      it "attempts to accept the return" do
+        expect(return_item).to receive(:attempt_accept)
+        subject
+      end
+
+      it 'accepts the return' do
+        subject
+        expect(return_item.acceptance_status).to eq('accepted')
+      end
+
+      it 'does not decrease inventory' do
+        subject
+        expect(return_item).to_not receive(:process_inventory_unit)
+      end
+
+      it "transitions successfully" do
+        subject
+        expect(return_item).to be_out_of_stock
+      end
+    end
+
+    it_behaves_like "an invalid state transition", 'cancelled', 'given_to_customer'
   end
 
   describe "#attempt_accept" do

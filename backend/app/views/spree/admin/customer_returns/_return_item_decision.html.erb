@@ -7,9 +7,14 @@
       <th><%= Spree.t(:preferred_reimbursement_type) %></th>
       <th><%= Spree.t(:exchange_for) %></th>
       <th><%= Spree.t(:acceptance_errors) %></th>
-      <% if show_decision %>
-        <th></th>
+      <th><%= Spree.t(:reception_status) %></th>
+      <% unless return_items.all?(&:received?)%>
+        <th><%= Spree.t(:item_received?) %></th>
       <% end %>
+       <% if show_decision %>
+        <th></th>
+        <th class="actions"></th>
+       <% end %>
     </tr>
   </thead>
   <tbody>
@@ -22,26 +27,39 @@
         <td>
           <%= return_item.inventory_unit.variant.sku %>
         </td>
-        <td>
+        <td class="align-center">
           <%= return_item.display_pre_tax_amount %>
         </td>
-        <td>
+        <td class="align-center">
           <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
         </td>
-        <td>
-          <%= return_item.exchange_variant.try(:exchange_name) %>
+        <td class="align-center">
+          <%= return_item.exchange_variant.try(:options_text) %>
         </td>
-        <td>
+        <td class="align-center">
           <%= return_item.acceptance_status_errors %>
         </td>
+        <td class-"align-center">
+          <%= return_item.reception_status.humanize %>
+        </td>
+        <% unless return_item.received? %>
+          <td class='align-center'>
+            <%= form_for [:admin, return_item] do |f| %>
+              <%= f.hidden_field 'reception_status_event', value: 'receive' %>
+              <%= f.button Spree.t(:receive), class: 'fa icon_link no-text with-tip', "data-action" => 'save' %>
+            <% end %>
+          </td>
+        <% end %>
         <% if show_decision %>
           <td class="actions forms-inline">
-            <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-success btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
-              <%= Spree.t(:accept) %>
-            <% end if can?(:accept, return_item) %>
-            <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-danger btn-sm', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t(:reject), method: 'put' } do %>
-              <%= Spree.t(:reject) %>
-            <% end if can?(:reject, return_item) %>
+            <%= form_for [:admin, return_item] do |f| %>
+              <%= f.hidden_field 'acceptance_status', value: 'accepted' %>
+              <%= f.button Spree.t(:accept), class: 'fa fa-thumbs-up icon_link no-text with-tip', title: Spree.t(:accept), "data-action" => 'save' %>
+            <% end %>
+            <%= form_for [:admin, return_item] do |f| %>
+              <%= f.hidden_field 'acceptance_status', value: 'rejected' %>
+              <%= f.button Spree.t(:reject), class: 'fa fa-thumbs-down icon_link no-text with-tip', title: Spree.t(:reject), "data-action" => 'remove' %>
+            <% end %>
           </td>
         <% end %>
       </tr>

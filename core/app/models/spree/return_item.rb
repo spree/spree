@@ -1,6 +1,7 @@
 module Spree
   class ReturnItem < Spree::Base
-    COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
+
+    COMPLETED_RECEPTION_STATUSES = %i(received given_to_customer missing out_of_stock)
 
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
@@ -31,6 +32,10 @@ module Spree
     scope :awaiting_return, -> { where(reception_status: 'awaiting') }
     scope :received, -> { where(reception_status: 'received') }
     scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
+    scope :given_to_customer, -> { where(reception_status: 'given_to_customer') }
+    scope :missing, -> { where(reception_status: 'missing') }
+    scope :out_of_stock, -> { where(reception_status: 'out_of_stock') }
+    scope :received, -> { where(reception_status: 'received') }
     scope :pending, -> { where(acceptance_status: 'pending') }
     scope :accepted, -> { where(acceptance_status: 'accepted') }
     scope :rejected, -> { where(acceptance_status: 'rejected') }
@@ -54,11 +59,11 @@ module Spree
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
-      after_transition to: :received, do: :attempt_accept
+      after_transition to: COMPLETED_RECEPTION_STATUSES,  do: :attempt_accept
       after_transition to: :received, do: :process_inventory_unit!
 
       event :receive do
-        transition to: :received, from: :awaiting
+        transition to: :received, from: [:awaiting, :given_to_customer, :missing]
       end
 
       event :cancel do
@@ -67,6 +72,14 @@ module Spree
 
       event :give do
         transition to: :given_to_customer, from: :awaiting
+      end
+
+      event :lost do
+        transition to: :missing, from: :awaiting
+      end
+
+      event :oos do
+        transition to: :out_of_stock, from: :awaiting
       end
     end
 
@@ -145,6 +158,14 @@ module Spree
       self.pre_tax_amount = refund_amount_calculator.new.compute(self)
     end
 
+    def available_active_status_paths
+      status_paths = reception_status_paths.to_states
+      event_paths = reception_status_paths.events
+      status_paths.delete(:cancelled)
+      event_paths.delete(:cancel)
+      status_paths.map{ |s| s.to_s.humanize }.zip(event_paths)
+    end
+
     private
 
     def persist_acceptance_status_errors
@@ -168,6 +189,7 @@ module Spree
       inventory_unit.return!
 
       Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1) if should_restock?
+      customer_return.send(:process_return!) if customer_return
     end
 
     # This logic is also present in the customer return. The reason for the

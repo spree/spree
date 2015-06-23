@@ -9,6 +9,7 @@
       <th><%= Spree.t(:pre_tax_amount) %></th>
       <th><%= Spree.t(:exchange_for) %></th>
       <th><%= Spree.t(:resellable) %></th>
+      <th><%= Spree.t(:reception_status) %></th>
     </tr>
   </thead>
   <tbody>
@@ -34,10 +35,13 @@
           <%= return_item.display_pre_tax_amount %>
         </td>
         <td class="align-center">
-          <%= return_item.exchange_variant.try(:exchange_name) %>
+          <%= return_item.exchange_variant.try(:options_text) %>
         </td>
         <td class="align-center">
           <%= item_fields.check_box :resellable, { checked: return_item.resellable } %>
+        </td>
+        <td class="align-center">
+          <%= item_fields.select :reception_status_event, return_item.available_active_status_paths, {include_blank: false}, {class: 'add-item select2 fullwidth'} %>
         </td>
       </tr>
     <% end %>
