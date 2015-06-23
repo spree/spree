@@ -106,7 +106,7 @@ module Spree
                     expect(line_item.adjustments.count).to eq(1)
                   end
 
-                  expect(order.reload.total).to eq(110) # only 2 items discounted
+                  expect(order.reload.total).to eq(110) # only 2 items
                 end
               end
 
