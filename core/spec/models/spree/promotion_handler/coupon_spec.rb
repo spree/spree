@@ -90,6 +90,26 @@ module Spree
                 expect(order.reload.total).to eq(100)
               end
 
+              context "and first line item is not promotionable" do
+                before(:each) do
+                  order.line_items.first.variant.product.update_attributes!(
+                    promotionable: false
+                  )
+                  order.reload
+                end
+
+                it "successfully activates promo" do
+                  expect(order.total).to eq(130)
+                  subject.apply
+                  expect(subject.success).to be_present
+                  order.line_items.each do |line_item|
+                    expect(line_item.adjustments.count).to eq(1)
+                  end
+
+                  expect(order.reload.total).to eq(110) # only 2 items
+                end
+              end
+
               it "coupon already applied to the order" do
                 subject.apply
                 expect(subject.success).to be_present
