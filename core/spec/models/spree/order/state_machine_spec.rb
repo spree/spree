@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { Spree::Order.new }
+  let(:order) { described_class.new }
+
   before do
     # Ensure state machine has been re-defined correctly
     Spree::Order.define_state_machine!
@@ -21,6 +22,7 @@ describe Spree::Order, type: :model do
 
       context "when payment processing succeeds" do
         before do
+          order.line_items << build(:line_item)
           order.payments << create(:payment, state: 'checkout', order: order)
           allow(order).to receive_messages process_payments: true
         end
@@ -54,6 +56,7 @@ describe Spree::Order, type: :model do
       before do
         allow(order).to receive_messages payment_required?: true
         allow(order).to receive :apply_free_shipping_promotions
+        order.line_items << create(:line_item)
         order.state = "delivery"
       end
 

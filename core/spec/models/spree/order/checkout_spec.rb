@@ -166,7 +166,10 @@ describe Spree::Order, :type => :model do
     end
 
     context "from address" do
+      let!(:line_item) { create(:line_item, price: 10, adjustment_total: 10) }
+
       before do
+        order.line_items << line_item
         order.state = 'address'
         allow(order).to receive(:has_available_payment)
         shipment = create(:shipment, :order => order)
@@ -176,8 +179,6 @@ describe Spree::Order, :type => :model do
 
       it "updates totals" do
         allow(order).to receive_messages(:ensure_available_shipping_rates => true)
-        line_item = create(:line_item, :price => 10, :adjustment_total => 10)
-        order.line_items << line_item
         tax_rate = create(:tax_rate, :tax_category => line_item.tax_category, :amount => 0.05)
         allow(Spree::TaxRate).to receive_messages :match => [tax_rate]
         order.create_adjustment!(adjustable: line_item, source: tax_rate, amount: 10, label: 'VAT')
@@ -261,6 +262,7 @@ describe Spree::Order, :type => :model do
         ] }
 
         before do
+          order.line_items << create(:line_item)
           order.state = 'address'
           shipment.selected_shipping_rate_id = shipping_rates.first.id
           order.email = "user@example.com"
@@ -284,6 +286,7 @@ describe Spree::Order, :type => :model do
 
     context "from delivery" do
       before do
+        order.line_items << create(:line_item)
         order.email = 'user@example.com'
         order.state = 'delivery'
         allow(order).to receive(:apply_free_shipping_promotions)
@@ -359,7 +362,9 @@ describe Spree::Order, :type => :model do
     context "to payment" do
       before do
         @default_credit_card = create(:credit_card)
+        order.line_items << create(:line_item, order: order)
         order.user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
+        order.email = order.user.email
 
         allow(order).to receive_messages(payment_required?: true)
         order.state = 'delivery'
@@ -396,6 +401,7 @@ describe Spree::Order, :type => :model do
 
       context "without confirmation required" do
         before do
+          order.line_items << create(:line_item)
           order.email = "spree@example.com"
           allow(order).to receive_messages :confirmation_required? => false
           allow(order).to receive_messages :payment_required? => true
@@ -432,6 +438,7 @@ describe Spree::Order, :type => :model do
       # Regression test for #2028
       context "when payment is not required" do
         before do
+          order.line_items << create(:line_item)
           allow(order).to receive_messages :payment_required? => false
         end
 
