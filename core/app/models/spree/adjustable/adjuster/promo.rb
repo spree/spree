@@ -2,17 +2,14 @@ module Spree
   module Adjustable
     module Adjuster
       class Promo < Spree::Adjustable::Adjuster::Base
-
         def update
           promo_adjustments = adjustments.competing_promos.reload.map { |a| a.update!(adjustable) }
           promos_total = promo_adjustments.compact.sum
           choose_best_promo_adjustment unless promos_total == 0
           promo_total = best_promo_adjustment.try(:amount).to_f
 
-          @totals[:promo_total] = promo_total
-          @totals[:adjustment_total] += promo_total
+          update_totals(promo_total)
         end
-
 
         private
 
@@ -33,6 +30,10 @@ module Spree
           end
         end
 
+        def update_totals(promo_total)
+          @totals[:promo_total] = promo_total
+          @totals[:adjustment_total] += promo_total
+        end
       end
     end
   end

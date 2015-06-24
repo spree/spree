@@ -1,7 +1,6 @@
 module Spree
   module Adjustable
     class AdjustmentsUpdater
-
       def self.update(adjustable)
         new(adjustable).update
       end
@@ -24,7 +23,7 @@ module Spree
 
       private
 
-      def persist_totals totals
+      def persist_totals(totals)
         attributes = totals
         attributes[:updated_at] = Time.now
         @adjustable.update_columns(totals)
