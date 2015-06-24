@@ -105,7 +105,7 @@ Spree::Core::Engine.add_routes do
         resources :refunds, only: [:new, :create, :edit, :update]
       end
 
-      resources :reimbursements, only: [:create, :show, :edit, :update] do
+      resources :reimbursements, only: [:index, :create, :show, :edit, :update] do
         member do
           post :perform
         end
