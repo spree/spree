@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Adjustable::Adjuster::Tax, :type => :model do
+describe Spree::Adjustable::Adjuster::Tax, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
@@ -18,7 +18,7 @@ describe Spree::Adjustable::Adjuster::Tax, :type => :model do
 
     let!(:promotion_action) do
       calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
-     Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator,
+      Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator,
                                                        promotion: promotion)
     end
 
@@ -31,7 +31,8 @@ describe Spree::Adjustable::Adjuster::Tax, :type => :model do
 
     context "tax included in price" do
       before do
-        create(:adjustment, source: tax_rate,
+        create(:adjustment,
+               source: tax_rate,
                adjustable: line_item,
                order: order,
                included: true)
@@ -56,7 +57,8 @@ describe Spree::Adjustable::Adjuster::Tax, :type => :model do
 
     context "tax excluded from price" do
       before do
-        create(:adjustment, source: tax_rate,
+        create(:adjustment,
+               source: tax_rate,
                adjustable: line_item,
                order: order,
                included: false)
