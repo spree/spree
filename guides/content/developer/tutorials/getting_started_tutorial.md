@@ -9,14 +9,14 @@ Before starting this tutorial, make sure you have Ruby and RubyGems installed on
 
 By following this tutorial, you will create a simple Spree project called `mystore`. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
-To run Spree 3.0 you need the latest Rails version, 4.2.1.
+To run Spree 3.0 you need the latest Rails version, 4.2.2.
 
 ### Installing Rails
 
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-$ gem install rails -v 4.2.1
+$ gem install rails -v 4.2.2
 ```
 
 ### Installing Bundler
