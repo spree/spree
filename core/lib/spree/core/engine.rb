@@ -41,7 +41,7 @@ module Spree
 
       initializer "spree.register.adjustable_adjusters" do |app|
         app.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promo,
+          Spree::Adjustable::Adjuster::Promotion,
           Spree::Adjustable::Adjuster::Tax]
       end
 

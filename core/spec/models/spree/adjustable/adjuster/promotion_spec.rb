@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Adjustable::Adjuster::Promo, type: :model do
+describe Spree::Adjustable::Adjuster::Promotion, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 

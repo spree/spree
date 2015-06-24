@@ -1,7 +1,7 @@
 module Spree
   module Adjustable
     module Adjuster
-      class Promo < Spree::Adjustable::Adjuster::Base
+      class Promotion < Spree::Adjustable::Adjuster::Base
         def update
           promo_adjustments = adjustments.competing_promos.reload.map { |a| a.update!(adjustable) }
           promos_total = promo_adjustments.compact.sum
