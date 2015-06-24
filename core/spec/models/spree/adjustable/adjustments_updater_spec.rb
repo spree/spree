@@ -22,6 +22,38 @@ module Spree
         end
       end
 
+      context "add_update_hook" do
+        before do
+          AdjustmentsUpdater.class_eval do
+            register_update_hook :update_custom_adjustments
+          end
+
+          allow_any_instance_of(AdjustmentsUpdater).to receive(:update_custom_adjustments).and_return(1)
+        end
+
+        after do
+          AdjustmentsUpdater.update_hooks = Set.new
+        end
+
+        it "calls hook during update" do
+          expect(subject).to receive(:update_custom_adjustments)
+          subject.update
+        end
+
+        it "adds additional adjustment values into the adjustment_total" do
+          allow(subject).to receive(:update_custom_adjustments).and_return(1)
+
+          tax_rate = create(:tax_rate, amount: 0.05)
+          create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
+          line_item.price = 10
+          line_item.tax_category = tax_rate.tax_category
+
+          subject.update
+          expect(line_item.additional_tax_total).to eq(0.5)
+          expect(line_item.adjustment_total).to eq(1.5)
+        end
+      end
+
       context "taxes and promotions" do
         let!(:tax_rate) do
           create(:tax_rate, amount: 0.05)
