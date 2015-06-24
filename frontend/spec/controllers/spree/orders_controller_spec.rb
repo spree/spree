@@ -34,7 +34,7 @@ describe Spree::OrdersController, :type => :controller do
         end
 
         it "shows an error when population fails" do
-          request.env["HTTP_REFERER"] = spree.root_path
+          request.env["HTTP_REFERER"] = '/dummy_redirect'
           allow_any_instance_of(Spree::LineItem).to(
             receive(:valid?).and_return(false)
           )
@@ -45,19 +45,19 @@ describe Spree::OrdersController, :type => :controller do
 
           spree_post :populate, variant_id: variant.id, quantity: 5
 
-          expect(response).to redirect_to(spree.root_path)
+          expect(response).to redirect_to('/dummy_redirect')
           expect(flash[:error]).to eq("Order population failed")
         end
 
         it "shows an error when quantity is invalid" do
-          request.env["HTTP_REFERER"] = spree.root_path
+          request.env["HTTP_REFERER"] = '/dummy_redirect'
 
           spree_post(
             :populate,
             variant_id: variant.id, quantity: -1
           )
 
-          expect(response).to redirect_to(spree.root_path)
+          expect(response).to redirect_to('/dummy_redirect')
           expect(flash[:error]).to eq(
             Spree.t(:please_enter_reasonable_quantity)
           )
