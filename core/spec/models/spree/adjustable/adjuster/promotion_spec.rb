@@ -3,24 +3,22 @@ require 'spec_helper'
 describe Spree::Adjustable::Adjuster::Promotion, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
-
   let(:subject) { Spree::Adjustable::AdjustmentsUpdater.new(line_item) }
   let(:order_subject) { Spree::Adjustable::AdjustmentsUpdater.new(order) }
 
   context "best promotion is always applied" do
     let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
-
     let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
 
     def create_adjustment(label, amount)
       create(:adjustment,
-             order:      order,
+             order: order,
              adjustable: line_item,
-             source:     source,
-             amount:     amount,
-             state:      "closed",
-             label:      label,
-             mandatory:  false)
+             source: source,
+             amount: amount,
+             state: "closed",
+             label: label,
+             mandatory: false)
     end
 
     it "should use only the most valuable promotion" do
@@ -28,12 +26,12 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       create_adjustment("Promotion B", -200)
       create_adjustment("Promotion C", -300)
       create(:adjustment,
-             order:  order,
-             adjustable:  line_item,
-             source:  nil,
-             amount:  -500,
-             state:  "closed",
-             label:  "Some other credit")
+             order: order,
+             adjustable: line_item,
+             source: nil,
+             amount: -500,
+             state: "closed",
+             label: "Some other credit")
       line_item.adjustments.each { |a| a.update_column(:eligible, true) }
 
       subject.update
