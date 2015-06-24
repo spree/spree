@@ -19,7 +19,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
     let!(:promotion_action) do
       calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
       Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator,
-                                                       promotion: promotion)
+                                                              promotion: promotion)
     end
 
     before do

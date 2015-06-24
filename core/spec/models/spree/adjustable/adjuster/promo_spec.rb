@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Adjustable::Adjuster::Promo, :type => :model do
+describe Spree::Adjustable::Adjuster::Promo, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
@@ -13,7 +13,8 @@ describe Spree::Adjustable::Adjuster::Promo, :type => :model do
     let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
 
     def create_adjustment(label, amount)
-      create(:adjustment, order:      order,
+      create(:adjustment,
+             order:      order,
              adjustable: line_item,
              source:     source,
              amount:     amount,
@@ -22,12 +23,12 @@ describe Spree::Adjustable::Adjuster::Promo, :type => :model do
              mandatory:  false)
     end
 
-    it "should make all but the most valuable promotion adjustment ineligible, " +
-         "leaving non promotion adjustments alone" do
+    it "should use only the most valuable promotion" do
       create_adjustment("Promotion A", -100)
       create_adjustment("Promotion B", -200)
       create_adjustment("Promotion C", -300)
-      create(:adjustment, order:  order,
+      create(:adjustment,
+             order:  order,
              adjustable:  line_item,
              source:  nil,
              amount:  -500,
@@ -190,5 +191,4 @@ describe Spree::Adjustable::Adjuster::Promo, :type => :model do
       expect(line_item.adjustments.promotion.eligible.first.amount.to_i).to eq(-200)
     end
   end
-
 end
