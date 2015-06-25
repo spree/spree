@@ -1,19 +1,33 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Customer Details' } %>
 
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:change_customer), "javascript:;", class: "btn-primary", data: { toggle: "modal", target: "#changeCustomer" }, icon: 'pencil' %>
+<% end if can? :edit, @order.user %>
+
 <% content_for :page_title do %>
   / <%= Spree.t(:customer_details) %>
 <% end %>
 
 <% if can? :edit, @order.user %>
-  <div id="select-customer" class="panel panel-default" data-hook>
-    <div class="panel-heading">
-      <h1 class="panel-title">
-        <%= Spree.t(:customer_search) %>
-      </h1>
-    </div>
-    <div class="panel-body">
-      <%= hidden_field_tag :customer_search,  nil, class: 'error-message' %>
-      <%= render partial: "spree/admin/orders/customer_details/autocomplete", formats: :js %>
+  <div class="modal fade" id="changeCustomer" tabindex="-1" role="dialog" aria-labelledby="changeCustomerLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="changeCustomerLabel"><%= Spree.t(:change_customer) %></h4>
+        </div>
+        <div class="modal-body">
+          <form class="js-change-customer-search-form form-group">
+            <div class="input-group js-change-customer-search">
+              <%= text_field_tag 'query', nil, placeholder: "Search for e-mailaddress..", class: "form-control" %>
+              <span class="input-group-btn">
+                <%= link_to Spree.t(:search), "javascript:;", class: "btn btn-default" %>
+              </span>
+            </div>
+          </form>
+          <div class="js-change-customer-index"></div>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>

@@ -19,11 +19,21 @@
 <% end %>
 
 <% if @order.can_add_coupon? %>
-  <div class="well" data-hook="adjustments_new_coupon_code">
-    <div class="form-group">
-      <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
+  <div class="modal fade" id="addCoupon" tabindex="-1" role="dialog" aria-labelledby="addCouponLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="addCouponLabel"><%= Spree.t(:add_coupon) %></h4>
+        </div>
+        <div class="modal-body" data-hook="adjustments_new_coupon_code">
+          <div class="form-group">
+            <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
+          </div>
+          <%= button Spree.t(:add_coupon_code), 'plus', 'submit', id: "add_coupon_code", class: "btn-sm" %>
+        </div>
+      </div>
     </div>
-    <%= button Spree.t(:add_coupon_code), 'plus', 'submit', :id => "add_coupon_code" %>
   </div>
 <% end %>
 

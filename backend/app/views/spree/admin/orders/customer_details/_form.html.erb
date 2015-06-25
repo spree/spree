@@ -10,26 +10,30 @@
 
     <div class="panel-body">
       <div data-hook="customer_fields" class="row no-padding-bottom">
-        <div class="col-md-8">
+        <div class="col-md-6">
           <div class="form-group">
             <%= f.label :email, Spree.t(:email) %>
             <% if can? :edit, @order.user %>
               <%= f.email_field :email, class: 'form-control' %>
             <% else %>
-              <p><%= @order.user.email %></p>
+              <p><%= @order.user.try(:email) || @order.email %></p>
             <% end %>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
-            <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
             <% if @order.completed? %>
-              <div>
-                <span class="badge">
-                  <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-                </span>
+              <%= f.label :user, Spree.t(:user) %>
+              <%= f.hidden_field :user_id, value: @order.user_id %>
+              <div class="alert alert-warning" style="padding: 8px;">
+                <% if @order.user.nil? %>
+                  <%= Spree.t(:guest_checkout) %>
+                <% else %>
+                  <%= link_to @order.user.try(:email), edit_admin_user_path(@order.user) %>
+                <% end %>
               </div>
             <% else %>
+              <%= label_tag nil, Spree.t(:guest_checkout) %>
               <% guest = @order.user.nil? %>
               <div class="radio no-margint">
                 <%= label_tag :guest_checkout_true do %>
@@ -43,7 +47,6 @@
                   <%= Spree.t(:say_no) %>
                 <% end %>
               </div>
-              <%= hidden_field_tag :user_id, @order.user_id %>
             <% end %>
           </div>
         </div>
@@ -58,10 +61,6 @@
       <%= Spree.t(:this_is_the_default_shipping_address, shipments_link: link_to(Spree.t(:shipments), shipments_admin_order_url(@order))).html_safe %>
     </div>
   <% end %>
-
-  <div class="alert alert-warning is-hidden js-change-customer-bill-address-alert">
-    <%= Spree.t(:changing_customer_will_change_bill_address) %>
-  </div>
 
   <div class="row">
     <div data-hook="bill_address_wrapper" class="col-md-6">

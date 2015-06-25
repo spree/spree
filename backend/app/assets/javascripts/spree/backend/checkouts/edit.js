@@ -1,60 +1,41 @@
 //= require_self
 $(document).ready(function() {
-  if ($('#customer_autocomplete_template').length > 0) {
-    window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text());
-  }
+  function performCustomerSearch(){
+    var query = $('.js-change-customer-search input').val();
+    $('.js-change-customer-index').html("Loading..");
 
-  formatCustomerResult = function(customer) {
-    return customerTemplate({
-      customer: customer,
-      bill_address: customer.bill_address,
-      ship_address: customer.ship_address
-    })
-  }
-
-  if ($("#customer_search").length > 0) {
-    $("#customer_search").select2({
-      placeholder: Spree.translations.choose_a_customer,
-      ajax: {
-        url: Spree.routes.user_search,
-        datatype: 'json',
-        data: function(term, page) {
-          return { q: term }
-        },
-        results: function(data, page) {
-          return { results: data }
+    $.ajax({
+      type: 'GET',
+      url: '/admin/users',
+      data: {
+        q: {
+          email_cont: query
         }
-      },
-      dropdownCssClass: 'customer_search',
-      formatResult: formatCustomerResult,
-      formatSelection: function (customer) {
-        $('#order_email').val(customer.email);
-        $('#user_id').val(customer.id);
-        $('#guest_checkout_true').prop("checked", false);
-        $('#guest_checkout_false').prop("checked", true);
-        $('#guest_checkout_false').prop("disabled", false);
-
-        var billAddress = customer.bill_address;
-        if(billAddress) {
-          $('#order_bill_address_attributes_firstname').val(billAddress.firstname);
-          $('#order_bill_address_attributes_lastname').val(billAddress.lastname);
-          $('#order_bill_address_attributes_address1').val(billAddress.address1);
-          $('#order_bill_address_attributes_address2').val(billAddress.address2);
-          $('#order_bill_address_attributes_city').val(billAddress.city);
-          $('#order_bill_address_attributes_zipcode').val(billAddress.zipcode);
-          $('#order_bill_address_attributes_phone').val(billAddress.phone);
-          $('#order_bill_address_attributes_state_name').val(billAddress.state_name);
-
-          $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
-            requestStates($('#order_bill_address_attributes_state_id').parents('.js-country-states'));
-          });
-
-          $('.js-change-customer-bill-address-alert').show();
-        }
-        return customer.email;
       }
-    })
+    }).done(function (data) {
+      $('.js-change-customer-index').html(data);
+    }).error(function (msg) {
+      console.log(msg);
+    });
   }
+
+  $(".js-change-customer-search-form").submit(function(){
+    performCustomerSearch();
+    return false;
+  });
+
+  $('.js-change-customer-search .btn').click(function(){
+    performCustomerSearch();
+  });
+
+  $(document).on("click", ".js-change-customer-index a", function(e) {
+    e.preventDefault();
+    var customer_id = $(this).data("id");
+
+    $("#order_user_id").val(customer_id);
+    $('#changeCustomer').modal('hide');
+    $("form.edit_order").submit();
+  });
 
   var order_use_billing_input = $('input#order_use_billing');
 
@@ -73,8 +54,6 @@ $(document).ready(function() {
   order_use_billing();
 
   $('#guest_checkout_true').change(function() {
-    $('#customer_search').val("");
-    $('#user_id').val("");
     $('#checkout_email').val("");
 
     var fields = ["firstname", "lastname", "company", "address1", "address2",
