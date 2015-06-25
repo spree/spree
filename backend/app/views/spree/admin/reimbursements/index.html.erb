@@ -1,28 +1,58 @@
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Reimbursements' } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:edit_reimbursement) %>
+  / <%= Spree.t(:reimbursements) %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @customer_return } %>
 
-<table class="table">
-  <thead data-hook="customer_return_header">
-    <tr>
-      <th><%= Spree.t(:id) %></th>
-      <th><%= Spree.t(:total) %></th>
-      <th><%= Spree.t(:status) %></th>
-      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @reimbursements.each do |reimbursement| %>
-      <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
-        <td><%= reimbursement.id %></td>
-        <td><%= reimbursement.total %></td>
-        <td><%= reimbursement.reimbursement_status %></td>
-        <td><%= pretty_time(reimbursement.created_at) %></td>
+<% if @reimbursements.any? %>
+  <table class="table">
+    <thead data-hook="customer_return_header">
+      <tr>
+        <th><%= Spree.t(:number) %></th>
+        <th><%= Spree.t(:total) %></th>
+        <th><%= Spree.t(:customer_return) %></th>
+        <th><%= Spree.t(:'admin.status') %></th>
+        <th><%= Spree.t(:created_at) %></th>
+        <th></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @reimbursements.each do |reimbursement| %>
+        <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
+          <td>
+            <% if reimbursement.reimbursed? %>
+              <%= link_to reimbursement.number, url_for([:admin, @order, reimbursement]) %>
+            <% else %>
+              <%= link_to reimbursement.number, spree.edit_admin_order_reimbursement_path(@order, reimbursement) %>
+            <% end %>
+          </td>
+          <td><%= reimbursement.total %></td>
+          <td>
+            <% if reimbursement.customer_return %>
+              <%= link_to reimbursement.customer_return.number, admin_order_customer_return_path(@order, reimbursement.customer_return) %>
+            <% end %>
+          </td>
+          <td>
+            <span class="label label-<%= reimbursement_status_color(reimbursement) %>">
+              <%= reimbursement.reimbursement_status %>
+            </span>
+          </td>
+          <td><%= pretty_time(reimbursement.created_at) %></td>
+          <td class="actions">
+            <% if !reimbursement.reimbursed? %>
+              <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
+            <% else %>
+              <%= link_to_with_icon('search', Spree.t(:details), spree.edit_admin_order_reimbursement_path(@order, reimbursement), no_text: true, class: "btn btn-default btn-sm") if can?(:view, reimbursement) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Reimbursement)) %>
+  </div>
+<% end %>

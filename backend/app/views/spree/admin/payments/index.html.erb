@@ -20,15 +20,24 @@
 
 <% if @payments.any? %>
 
-  <div data-hook="payment_list" class="panel panel-default no-border-bottom">
+  <div class="panel panel-default" data-hook="payment_list">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <%= Spree.t(:payments) %>
+      </h3>
+    </div>
     <%= render partial: 'list', locals: { payments: @payments } %>
   </div>
 
   <% if @refunds.any? %>
-    <fieldset data-hook="payment_list" class="no-border-bottom">
-      <legend><%= Spree.t(:refunds) %></legend>
+    <div class="panel panel-default" data-hook="payment_list">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <%= Spree.t(:refunds) %>
+        </h3>
+      </div>
       <%= render partial: 'spree/admin/shared/refunds', locals: { refunds: @refunds, show_actions: true } %>
-    </fieldset>
+    </div>
   <% end %>
 
 <% else %>

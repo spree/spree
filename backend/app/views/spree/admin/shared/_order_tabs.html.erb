@@ -25,7 +25,7 @@
 
     <% if can? :update, @order %>
       <li<%== ' class="active"' if current == 'Shipments' %> data-hook='admin_order_tabs_shipment_details'>
-        <%= link_to_with_icon 'road', Spree.t(:shipments), shipments_admin_order_url(@order) %>
+        <%= link_to_with_icon 'road', Spree.t(:shipments), spree.shipments_admin_order_url(@order) %>
       </li>
     <% end %>
 
@@ -44,7 +44,7 @@
     <% if can? :index, Spree::ReturnAuthorization %>
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Returns' %> data-hook='admin_order_tabs_return_authorizations'>
-          <%= link_to_with_icon 'transfer', Spree.t(:returns), spree.admin_order_return_authorizations_url(@order) %>
+          <%= link_to_with_icon 'transfer', Spree.t(:return_authorizations), spree.admin_order_return_authorizations_url(@order) %>
         </li>
       <% end %>
     <% end %>
@@ -53,6 +53,14 @@
       <% if @order.completed? %>
         <li<%== ' class="active"' if current == 'Customer Returns' %>>
           <%= link_to_with_icon 'transfer', Spree.t(:customer_returns), spree.admin_order_customer_returns_url(@order) %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% if can? :index, Spree::Reimbursement %>
+      <% if @order.completed? %>
+        <li<%== ' class="active"' if current == 'Reimbursements' %>>
+          <%= link_to_with_icon 'transfer', Spree.t(:reimbursements), spree.admin_order_reimbursements_url(@order) %>
         </li>
       <% end %>
     <% end %>
