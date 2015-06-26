@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::LineItem, :type => :model do
+describe Spree::LineItem, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
 
@@ -67,7 +67,7 @@ describe Spree::LineItem, :type => :model do
     let(:variant) { create(:variant) }
 
     before do
-      create(:tax_rate, :zone => order.tax_zone, :tax_category => variant.tax_category)
+      create(:tax_rate, zone: order.tax_zone, tax_category: variant.tax_category)
     end
 
     context "when order has a tax zone" do
@@ -161,7 +161,6 @@ describe Spree::LineItem, :type => :model do
     it "returns a Spree::Money representing the total for this line item" do
       expect(line_item.money.to_s).to eq("$7.00")
     end
-
   end
 
   describe '#single_money' do
