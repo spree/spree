@@ -13,7 +13,10 @@ module Spree
       def update
         return unless @adjustable.persisted?
 
-        totals = { adjustment_total: 0 }
+        totals = {
+          non_taxable_adjustment_total: 0,
+          taxable_adjustment_total: 0
+        }
         adjusters.each do |klass|
           klass.adjust(@adjustable, totals)
         end
@@ -25,6 +28,9 @@ module Spree
 
       def persist_totals(totals)
         attributes = totals
+        attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] +
+                                        totals[:taxable_adjustment_total] +
+                                        totals[:additional_tax_total]
         attributes[:updated_at] = Time.now
         @adjustable.update_columns(totals)
       end

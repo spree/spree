@@ -32,7 +32,7 @@ module Spree
 
         def update_totals(promo_total)
           @totals[:promo_total] = promo_total
-          @totals[:adjustment_total] += promo_total
+          @totals[:taxable_adjustment_total] += promo_total
         end
       end
     end

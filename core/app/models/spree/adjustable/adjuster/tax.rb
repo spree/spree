@@ -19,7 +19,6 @@ module Spree
         def update_totals(included_tax_total, additional_tax_total)
           @totals[:included_tax_total] = included_tax_total
           @totals[:additional_tax_total] = additional_tax_total
-          @totals[:adjustment_total] += additional_tax_total
         end
       end
     end

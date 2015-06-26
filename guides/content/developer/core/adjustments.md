@@ -29,7 +29,7 @@ The *source* is the source of the adjustment. Typically a `Spree::TaxRate` objec
 
 The *adjustable* is the object being adjusted, which is either an order, line item or shipment.
 
-Adjustments can come from one of two locations:
+Adjustments can come from one of two locations within Spree's core:
 
 * Tax Rates
 * Promotions
@@ -109,22 +109,24 @@ To create a new adjuster for Spree, create a new ruby object that inherits from 
 module Spree
   module Adjustable
     module Adjuster
-      class Tax < Spree::Adjustable::Adjuster::Base
+      class MyAdjuster < Spree::Adjustable::Adjuster::Base
         def update
           ...
           #your ruby magic
           ...
-          update_totals(included_tax_total, additional_tax_total)
+          update_totals(some_total, my_other_total)
         end
 
         private
 
         # Note to persist your totals you need to update @totals
         # This is shown in a separate method for readability
-        def update_totals(included_tax_total, additional_tax_total)
-          @totals[:included_tax_total] = included_tax_total
-          @totals[:additional_tax_total] = additional_tax_total
-          @totals[:adjustment_total] += additional_tax_total
+        def update_totals(some_total, my_other_total)
+          # if you want to keep track of your total, 
+          # you will need the column defined
+          @totals[:total_you_want_to_track] += some_total
+          @totals[:taxable_adjustment_total] += some_total
+          @totals[:non_taxable_adjustment_total] += my_other_total
         end
       end
     end
@@ -137,8 +139,10 @@ Next you need to add the class to spree `Rails.application.config.spree.adjuster
 ```ruby
 # NOTE: it is advisable that that Tax be implemented last so Tax is calculated correctly
 app.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::MyAdjuster,
           Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax]
+          Spree::Adjustable::Adjuster::Tax
+          ]
 ```
 
 That's it! Your custom adjuster is ready to go.
