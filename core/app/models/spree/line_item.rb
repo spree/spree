@@ -67,12 +67,12 @@ module Spree
 
     alias subtotal amount
 
-    def adjusted_amount
+    def taxable_amount
       amount + taxable_adjustment_total
     end
 
     alias discounted_money display_discounted_amount
-    alias_method :discounted_amount, :adjusted_amount
+    alias_method :discounted_amount, :taxable_amount
 
     def final_amount
       amount + adjustment_total
