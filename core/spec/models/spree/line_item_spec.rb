@@ -135,7 +135,7 @@ describe Spree::LineItem, :type => :model do
     it "returns the amount minus any discounts" do
       line_item.price = 10
       line_item.quantity = 2
-      line_item.promo_total = -5
+      line_item.taxable_adjustment_total = -5
       expect(line_item.discounted_amount).to eq(15)
     end
   end

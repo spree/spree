@@ -80,7 +80,7 @@ describe Spree::Calculator::DefaultTax, :type => :model do
 
         context "when line item is discounted" do
           before do
-            line_item.promo_total = -1
+            line_item.taxable_adjustment_total = -1
             Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           end
 
@@ -97,7 +97,7 @@ describe Spree::Calculator::DefaultTax, :type => :model do
 
     context "when tax is not included in price" do
       context "when the line item is discounted" do
-        before { line_item.promo_total = -1 }
+        before { line_item.taxable_adjustment_total = -1 }
 
         it "should be equal to the item's pre-tax total * rate" do
           expect(calculator.compute(line_item)).to eq(1.45)
@@ -141,7 +141,7 @@ describe Spree::Calculator::DefaultTax, :type => :model do
 
       context "with a 40$ promo" do
         before do
-          allow(line_item).to receive(:promo_total).and_return(BigDecimal.new("-40"))
+          allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal.new("-40"))
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
         end
 

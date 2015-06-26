@@ -414,7 +414,6 @@ module Spree
         }
 
         order = Importer::Order.import(user, params)
-
         line_item_adjustment = order.line_item_adjustments.first
         expect(line_item_adjustment.closed?).to be true
         expect(line_item_adjustment.label).to eq 'Line Item Discount'
