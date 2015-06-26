@@ -28,7 +28,9 @@ module Spree
 
       def persist_totals(totals)
         attributes = totals
-        attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] + totals[:taxable_adjustment_total]
+        attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] +
+                                        totals[:taxable_adjustment_total] +
+                                        totals[:additional_tax_total]
         attributes[:updated_at] = Time.now
         @adjustable.update_columns(totals)
       end
