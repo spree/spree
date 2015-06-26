@@ -1,23 +1,23 @@
 require 'spec_helper'
 
-describe Spree::Calculator::DefaultTax, :type => :model do
+describe Spree::Calculator::DefaultTax, type: :model do
   let!(:country) { create(:country) }
-  let!(:zone) { create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => []) }
-  let!(:tax_category) { create(:tax_category, :tax_rates => []) }
-  let!(:rate) { create(:tax_rate, :tax_category => tax_category, :amount => 0.05, :included_in_price => included_in_price) }
+  let!(:zone) { create(:zone, name: "Country Zone", default_tax: true, zone_members: []) }
+  let!(:tax_category) { create(:tax_category, tax_rates: []) }
+  let!(:rate) { create(:tax_rate, tax_category: tax_category, amount: 0.05, included_in_price: included_in_price) }
   let(:included_in_price) { false }
-  let!(:calculator) { Spree::Calculator::DefaultTax.new(:calculable => rate ) }
+  let!(:calculator) { Spree::Calculator::DefaultTax.new(calculable: rate) }
   let!(:order) { create(:order) }
-  let!(:line_item) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
-  let!(:shipment) { create(:shipment, :cost => 15) }
+  let!(:line_item) { create(:line_item, price: 10, quantity: 3, tax_category: tax_category) }
+  let!(:shipment) { create(:shipment, cost: 15) }
 
   context "#compute" do
     context "when given an order" do
       let!(:line_item_1) { line_item }
-      let!(:line_item_2) { create(:line_item, :price => 10, :quantity => 3, :tax_category => tax_category) }
+      let!(:line_item_2) { create(:line_item, price: 10, quantity: 3, tax_category: tax_category) }
 
       before do
-        allow(order).to receive_messages :line_items => [line_item_1, line_item_2]
+        allow(order).to receive_messages line_items: [line_item_1, line_item_2]
       end
 
       context "when no line items match the tax category" do
@@ -51,7 +51,6 @@ describe Spree::Calculator::DefaultTax, :type => :model do
             # Amount is 0.51665, which will be rounded to...
             expect(calculator.compute(order)).to eq(0.52)
           end
-
         end
       end
 
@@ -77,7 +76,6 @@ describe Spree::Calculator::DefaultTax, :type => :model do
     context "when tax is included in price" do
       let(:included_in_price) { true }
       context "when the variant matches the tax category" do
-
         context "when line item is discounted" do
           before do
             line_item.taxable_adjustment_total = -1
