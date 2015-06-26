@@ -14,11 +14,12 @@ module Spree
     before_validation :copy_tax_category
 
     validates :variant, presence: true
-    validates :quantity, numericality: {
-                         only_integer: true,
-                         greater_than: -1,
-                         message: Spree.t('validation.must_be_int')
-                       }
+    validates :quantity, numericality:
+                        {
+                          only_integer: true,
+                          greater_than: -1,
+                          message: Spree.t('validation.must_be_int')
+                        }
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
 
@@ -103,13 +104,20 @@ module Spree
       Spree::Variant.unscoped { super }
     end
 
-    def options=(options={})
+    def options=(options = {})
       return unless options.present?
 
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
       currency = opts.delete(:currency) || order.try(:currency)
 
+      update_price_from_modifier(currency, opts)
+      assign_attributes opts
+    end
+
+    private
+
+    def update_price_from_modifier(currency, opts)
       if currency
         self.currency = currency
         self.price = variant.price_in(currency).amount +
@@ -118,15 +126,11 @@ module Spree
         self.price = variant.price +
           variant.price_modifier_amount(opts)
       end
-
-      self.assign_attributes opts
     end
 
-    private
-
     def update_inventory
-      if (changed? || target_shipment.present?) && self.order.has_checkout_step?("delivery")
-        Spree::OrderInventory.new(self.order, self).verify(target_shipment)
+      if (changed? || target_shipment.present?) && order.has_checkout_step?("delivery")
+        Spree::OrderInventory.new(order, self).verify(target_shipment)
       end
     end
 
