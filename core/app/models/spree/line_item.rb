@@ -132,8 +132,8 @@ module Spree
 
       def update_adjustments
         if quantity_changed?
-          update_tax_charge # Called to ensure pre_tax_amount is updated.
           recalculate_adjustments
+          update_tax_charge # Called to ensure pre_tax_amount is updated.
         end
       end
 
