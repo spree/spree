@@ -84,6 +84,35 @@ describe Spree::OrderContents, :type => :model do
 
         include_context "discount changes order total"
       end
+
+      context "VAT for variant with percent promotion" do
+        let!(:category) { Spree::TaxCategory.create name: "Taxable Foo" }
+        let!(:rate) do
+          Spree::TaxRate.create(
+            amount: 0.25,
+            included_in_price: true,
+            calculator: Spree::Calculator::DefaultTax.create,
+            tax_category: category,
+            zone: create(:zone_with_country, default_tax: true)
+          )
+        end
+        let(:variant) { create(:variant, price: 1000) }
+        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(:preferred_percent => 50) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+
+        it "should update included_tax_total" do
+          expect(order.included_tax_total.to_f).to eq(0.00)
+          subject.add(variant, 1)
+          expect(order.included_tax_total.to_f).to eq(100)
+        end
+
+        it "should update included_tax_total after adding two line items" do
+          subject.add(variant, 1)
+          expect(order.included_tax_total.to_f).to eq(100)
+          subject.add(variant, 1)
+          expect(order.included_tax_total.to_f).to eq(200)
+        end
+      end
     end
   end
 
