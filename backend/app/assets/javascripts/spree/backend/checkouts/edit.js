@@ -31,10 +31,18 @@ $(document).ready(function() {
   $(document).on("click", ".js-change-customer-index a", function(e) {
     e.preventDefault();
     var customer_id = $(this).data("id");
+    var customer_email = $(this).text();
 
     $("#order_user_id").val(customer_id);
     $('#changeCustomer').modal('hide');
-    $("form.edit_order").submit();
+    if($("#order_email").val().length == 0){
+      $("#order_email").val(customer_email);
+    }
+    if($("#order_bill_address_attributes_firstname").val().length > 0){
+      // if not this order is created manually
+      // we need to fill in the billing address before we save
+      $("form.edit_order").submit();
+    }
   });
 
   var order_use_billing_input = $('input#order_use_billing');

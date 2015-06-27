@@ -62,6 +62,7 @@ describe "Adjustments", type: :feature do
         fill_in "adjustment_label", with: "rebate"
         click_button "Continue"
         expect(page).to have_content("successfully created!")
+        click_link "Overview"
         expect(page).to have_content("Total: $180.00")
       end
     end
@@ -94,6 +95,7 @@ describe "Adjustments", type: :feature do
           expect(page).to have_content("$99.00")
         end
 
+        click_link "Overview"
         expect(page).to have_content("Total: $259.00")
       end
     end
@@ -117,13 +119,16 @@ describe "Adjustments", type: :feature do
     end
 
     it "should update the total", js: true do
+      # the total was 170, we delete 1 adjustment of 10
+      # total should be 160 after that
       accept_alert do
         within_row(2) do
           click_icon(:delete)
         end
       end
 
-      expect(page).to have_content(/Total: ?\$170\.00/)
+      click_link "Overview"
+      expect(page).to have_content("Total: $160.00")
     end
   end
 end

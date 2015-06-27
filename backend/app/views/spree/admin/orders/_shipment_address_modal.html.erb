@@ -9,7 +9,7 @@
           </h4>
         </div>
         <div class="modal-body">
-          <%= render partial: 'spree/admin/orders/shipment_address_form', locals: { form: form, address: shipment.shipment_address, shipment: shipment } %>
+          <%= render partial: 'spree/admin/orders/shipment_address_form', locals: { form: form, address: (shipment.shipment_address || Spree::Address.new), shipment: shipment } %>
         </div>
         <div class="modal-footer">
           <%= button_tag Spree.t(:cancel), data: { dismiss: "modal" }, class: "btn btn-default" %>

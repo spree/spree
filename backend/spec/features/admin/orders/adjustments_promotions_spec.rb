@@ -18,6 +18,7 @@ describe "Adjustments Promotions", type: :feature do
     line_item.update_column(:price, 10)
 
     visit spree.admin_order_adjustments_path(order)
+    click_on "Add Coupon"
   end
 
   context "admin adding a promotion" do
@@ -44,6 +45,7 @@ describe "Adjustments Promotions", type: :feature do
         click_button "Add Coupon Code"
         expect(page).to have_content('-$10.00')
 
+        click_on "Add Coupon"
         fill_in "coupon_code", with: "10_off"
         click_button "Add Coupon Code"
         expect(page).to have_content("already been applied")

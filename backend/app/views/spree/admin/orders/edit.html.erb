@@ -28,31 +28,35 @@
 <% end %>
 
 <div class="row">
-  <div data-hook="bill_address_wrapper" class="col-md-4">
-    <div class="panel panel-default no-margin-bottom">
-      <div class="panel-heading">
-        <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
-        <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
-      </div>
-      <div class="panel-body" style="min-height: 210px;">
-        <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-4" data-hook="ship_address_wrapper">
-    <div class="panel panel-default no-margin-bottom">
-      <div class="panel-heading">
-        <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
-        <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
-      </div>
-      <div class="panel-body" style="min-height: 210px;">
-        <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+  <% if @order.bill_address %>
+    <div data-hook="bill_address_wrapper" class="col-md-4">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
-  <div class="col-md-4">
+  <% if @order.ship_address %>
+    <div class="col-md-4" data-hook="ship_address_wrapper">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="col-md-4 additional-info">
     <div class="panel panel-default no-margin-bottom">
       <div class="panel-heading">
         <h3 class="panel-title"><%= Spree.t(:general) %></h3>
@@ -75,26 +79,30 @@
               </span>
             </td>
           </tr>
-          <tr>
-            <td>
-              <%= link_to "#{Spree.t :shipments_count, count: @order.shipments.count, default: pluralize(@order.shipments.count, Spree.t(:shipment))}", spree.shipments_admin_order_url(@order) %>
-            </td>
-            <td>
-              <span class="state label label-<%= @order.shipment_state %>">
-                <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <%= link_to "#{Spree.t :payments_count, count: @order.payments.count, default: pluralize(@order.payments.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
-            </td>
-            <td>
-              <span class="state block-label label label-<%= @order.payment_state %>">
-                <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
-              </span>
-            </td>
-          </tr>
+          <% if can?(:index, Spree::Shipment) %>
+            <tr>
+              <td>
+                <%= link_to "#{Spree.t :shipments_count, count: @order.shipments.count, default: pluralize(@order.shipments.count, Spree.t(:shipment))}", spree.shipments_admin_order_url(@order) %>
+              </td>
+              <td>
+                <span class="state label label-<%= @order.shipment_state %>">
+                  <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+          <% if can?(:index, Spree::Payment) %>
+            <tr>
+              <td>
+                <%= link_to "#{Spree.t :payments_count, count: @order.payments.count, default: pluralize(@order.payments.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
+              </td>
+              <td>
+                <span class="state block-label label label-<%= @order.payment_state %>">
+                  <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
           <% if @order.completed? %>
             <tr>
               <td>
@@ -161,15 +169,12 @@
             <td class="text-center">
               <%= mini_image(item.variant) %>
             </td>
-            <td>
+            <td class="line-item-name">
               <%= link_to item.variant.product.try(:name), edit_admin_product_path(item.variant.product) %><br/>
               <% if !item.variant.option_values.empty? %>
                 <strong><%= variant_options(item.variant) %></strong><br/>
               <% end %>
-              <%= item.variant.sku %> <br />
-              <% if item.variant.part? && item.line_item %>
-                <i><%= Spree.t(:part_of_bundle, sku: item.variant.product.sku) %></i>
-              <% end %>
+              <%= item.variant.sku %>
             </td>
             <td class="text-center line-item-price">
               <%= item.single_money.to_html %>
@@ -271,7 +276,7 @@
           <td colspan="4">
             <strong><%= Spree.t(:total) %>:</strong>
           </td>
-          <td class="text-center">
+          <td class="text-center" id="order_total">
             <strong><%= @order.display_total.to_html %></strong>
           </td>
         </tr>
@@ -281,7 +286,7 @@
   </div>
 <% end %>
 
-<% if @order.shipments.any? %>
+<% if @order.shipments.any? && can?(:index, Spree::Shipment) %>
   <div class="panel panel-default">
     <div class="panel-heading">
       <%= link_to Spree.t(:manage_shipments), spree.shipments_admin_order_url(@order), class: "pull-right" %>
@@ -316,7 +321,7 @@
   </div>
 <% end %>
 
-<% if @order.payments.any? %>
+<% if @order.payments.any? && can?(:index, Spree::Payment) %>
   <div class="panel panel-default">
     <div class="panel-heading">
       <%= link_to Spree.t(:manage_payments), spree.admin_order_payments_path(@order), class: "pull-right" %>

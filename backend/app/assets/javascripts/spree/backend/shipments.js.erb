@@ -251,7 +251,7 @@ completeItemSplit = function(event) {
             stock_location_id: stock_location_id
         }
       }).error(function(msg) {
-          alert(msg.responseJSON['message']);
+        console.log(msg['statusText']);
       }).done(function(msg) {
         window.Spree.advanceOrder();
       });
@@ -268,9 +268,9 @@ completeItemSplit = function(event) {
                 quantity: quantity
             }
         }).error(function(msg) {
-            alert(msg.responseJSON['message']);
+          console.log(msg['statusText']);
         }).done(function(msg) {
-            window.Spree.advanceOrder();
+          window.Spree.advanceOrder();
         });
     }
   }

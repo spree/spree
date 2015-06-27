@@ -69,7 +69,11 @@ module Spree
         redirect_to cart_admin_order_url(@order)
       end
 
-      def edit; end
+      def edit
+        unless @order.completed?
+          @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+        end
+      end
 
       def shipments
         can_not_transition_without_customer_info

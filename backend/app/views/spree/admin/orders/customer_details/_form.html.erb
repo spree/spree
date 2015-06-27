@@ -22,9 +22,9 @@
         </div>
         <div class="col-md-6">
           <div class="form-group">
+            <%= f.hidden_field :user_id %>
             <% if @order.completed? %>
               <%= f.label :user, Spree.t(:user) %>
-              <%= f.hidden_field :user_id, value: @order.user_id %>
               <div class="alert alert-warning" style="padding: 8px;">
                 <% if @order.user.nil? %>
                   <%= Spree.t(:guest_checkout) %>
@@ -63,18 +63,18 @@
   <% end %>
 
   <div class="row">
-    <div data-hook="bill_address_wrapper" class="col-md-6">
+    <div data-hook="bill_address_wrapper" class="col-md-6 billing-address">
       <div class="panel panel-default no-margin-bottom">
         <div class="panel-heading">
-          <%= link_to Spree.t(:edit), "#", data: { toggle: "modal", target: "#billAddress" }, class: "pull-right" %>
+          <%= link_to(Spree.t(:edit), "#", data: { toggle: "modal", target: "#billAddress" }, class: "pull-right") if @order.completed? %>
           <h1 class="panel-title"><%= Spree.t(:billing_address) %></h1>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body js-billing-address">
 
           <% if @order.completed? %>
 
-            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+            <%= render(partial: 'spree/admin/shared/address', locals: { address: @order.bill_address }) if @order.bill_address %>
             <div class="modal fade" id="billAddress" tabindex="-1" role="dialog" aria-labelledby="billAddressLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -107,7 +107,7 @@
       </div>
     </div>
 
-    <div class="col-md-6" data-hook="ship_address_wrapper">
+    <div data-hook="ship_address_wrapper" class="col-md-6 shipping-address">
       <div class="panel panel-default no-margin-bottom">
         <div class="panel-heading">
           <h1 class="panel-title"><%= Spree.t(:default_shipping_address) %></h1>
@@ -115,12 +115,12 @@
         <div class="panel-body">
 
           <% if @order.completed? %>
-            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+            <%= render(partial: 'spree/admin/shared/address', locals: { address: @order.ship_address }) if @order.ship_address %>
           <% else %>
             <%= f.fields_for :ship_address do |sa_form| %>
               <div class="form-group">
                 <span data-hook="use_billing">
-                  <%= check_box_tag 'order[use_billing]', '1', ((@order.bill_address.empty? && @order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
+                  <%= check_box_tag 'order[use_billing]', '1', ((!@order.bill_address.empty? && !@order.ship_address.empty?) && @order.bill_address.same_as?(@order.ship_address)) %>
                   <%= label_tag 'order[use_billing]', Spree.t(:use_billing_address) %>
                 </span>
               </div>

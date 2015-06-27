@@ -1,5 +1,5 @@
 <div class="address vcard">
-  <div class="fn"><%= address.full_name %></div>
+  <div class="fn"><%= address.try(:full_name) %></div>
   <% unless address.company.blank? %>
     <div class="org">
       <%= address.company %>
@@ -8,7 +8,7 @@
   <div class="adr">
     <div class="street-address">
       <div class="street-address-line">
-        <%= address.address1 %>
+        <%= address.try(:address1) %>
       </div>
       <% unless address.address2.blank? %>
         <div class="street-address-line">
@@ -17,9 +17,9 @@
       <% end %>
     </div>
     <div class="local">
-      <span class="locality"><%= address.city %></span>
-      <span class="region"><%= address.state_text %></span>
-      <span class="postal-code"><%= address.zipcode %></span>
+      <span class="locality"><%= address.try(:city) %></span>
+      <span class="region"><%= address.try(:state_text) %></span>
+      <span class="postal-code"><%= address.try(:zipcode) %></span>
       <div class="country-name"><%= address.country.try(:name) %></div>
     </div>
   </div>

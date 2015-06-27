@@ -58,7 +58,7 @@
     <% if Spree::Config[:address_requires_state] %>
       <div class="col-md-6">
         <div class="form-group <%= "#{type}-row" %> js-state">
-          <%= f.label :state_id, Spree.t(:state) %>
+          <%= f.label :state_id, Spree.t(:'admin.state') %>
           <%= f.text_field :state_name,
                 disabled: !f.object.country.states.empty?, class: "form-control state_name #{f.object.country.states.empty? ? '' : 'hidden' }" %>
           <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: "select2 #{f.object.country.states.empty? ? 'hidden' : '' }", disabled: f.object.country.states.empty? } %>

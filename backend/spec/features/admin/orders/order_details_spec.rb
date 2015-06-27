@@ -33,17 +33,22 @@ describe "Order Details", type: :feature, js: true do
         end
         click_icon :save
 
+        click_on "Overview"
+
         within("#order_total") do
           expect(page).to have_content("$20.00")
         end
       end
 
       it "can add an item to a shipment" do
+        click_on "Add Item"
         select2_search "spree t-shirt", from: Spree.t(:name_or_sku)
         within("table.stock-levels") do
           fill_in "variant_quantity", with: 2
           click_icon :add
         end
+
+        click_on "Overview"
 
         within("#order_total") do
           expect(page).to have_content("$80.00")
@@ -78,7 +83,7 @@ describe "Order Details", type: :feature, js: true do
       end
 
       it "can add tracking information" do
-        visit spree.edit_admin_order_path(order)
+        visit spree.shipments_admin_order_path(order)
 
         within(".show-tracking") do
           click_icon :edit
@@ -92,7 +97,7 @@ describe "Order Details", type: :feature, js: true do
 
       it "can change the shipping method" do
         order = create(:completed_order_with_totals)
-        visit spree.edit_admin_order_path(order)
+        visit spree.shipments_admin_order_path(order)
         within("table.table tr.show-method") do
           click_icon :edit
         end
@@ -109,7 +114,7 @@ describe "Order Details", type: :feature, js: true do
           :completed_order_with_totals,
           shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
         )
-        visit spree.edit_admin_order_path(order)
+        visit spree.shipments_admin_order_path(order)
         within("table tr.show-method") do
           click_icon :edit
         end
@@ -124,13 +129,13 @@ describe "Order Details", type: :feature, js: true do
         order = create(:completed_order_with_totals)
         visit spree.edit_admin_order_path(order)
         sku = order.line_items.first.variant.sku
-        expect(page).to have_content("SKU: #{sku}")
+        expect(page).to have_content(sku)
       end
 
       context "with special_instructions present" do
         let(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15", number: "R100", special_instructions: "Very special instructions here") }
         it "will show the special_instructions" do
-          visit spree.edit_admin_order_path(order)
+          visit spree.shipments_admin_order_path(order)
           expect(page).to have_content("Very special instructions here")
         end
       end
@@ -143,6 +148,7 @@ describe "Order Details", type: :feature, js: true do
         end
 
         it "adds variant to order just fine" do
+          click_on "Add Item"
           select2_search tote.name, from: Spree.t(:name_or_sku)
           within("table.stock-levels") do
             fill_in "variant_quantity", with: 1
@@ -162,6 +168,7 @@ describe "Order Details", type: :feature, js: true do
         end
 
         it "displays out of stock instead of add button" do
+          click_on "Add Item"
           select2_search product.name, from: Spree.t(:name_or_sku)
 
           within("table.stock-levels") do
@@ -170,7 +177,6 @@ describe "Order Details", type: :feature, js: true do
         end
       end
     end
-
 
     context 'Shipment edit page' do
       let!(:stock_location2) { create(:stock_location_with_items, name: 'Clarksville') }
@@ -182,7 +188,7 @@ describe "Order Details", type: :feature, js: true do
       end
 
       context 'splitting to location' do
-        before { visit spree.edit_admin_order_path(order) }
+        before { visit spree.shipments_admin_order_path(order) }
         # can not properly implement until poltergeist supports checking alert text
         # see https://github.com/teampoltergeist/poltergeist/pull/516
         it 'should warn you if you have not selected a location or shipment'
@@ -242,6 +248,7 @@ describe "Order Details", type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 'ff'
+
             click_icon :save
 
             wait_for_ajax
@@ -278,14 +285,10 @@ describe "Order Details", type: :feature, js: true do
 
           context 'A shipment has shipped' do
 
-            it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
+            it 'should not show the shipment edit buttons' do
               order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
 
-              visit spree.cart_admin_order_path(order)
-
-              expect(page.current_path).to eq(spree.edit_admin_order_path(order))
-              expect(page).not_to have_text 'Cart'
               expect(page).not_to have_selector('.fa-split')
               expect(page).not_to have_selector('.fa-trash')
             end
@@ -355,7 +358,7 @@ describe "Order Details", type: :feature, js: true do
       context 'splitting to shipment' do
         before do
           @shipment2 = order.shipments.create(stock_location_id: stock_location2.id)
-          visit spree.edit_admin_order_path(order)
+          visit spree.shipments_admin_order_path(order)
         end
 
         it 'should delete the old shipment if enough are split off' do
@@ -497,7 +500,7 @@ describe "Order Details", type: :feature, js: true do
       # allow dispatch to :admin, :index, and :edit on Spree::Order
       can [:admin, :edit, :index, :read], Spree::Order
       # allow dispatch to :index, :show, :create and :update shipments on the admin
-      can [:admin, :manage, :read, :ship], Spree::Shipment
+      can [:admin, :manage, :read, :ship, :index], Spree::Shipment
     end
 
     before do
@@ -515,13 +518,19 @@ describe "Order Details", type: :feature, js: true do
       expect(page).not_to have_link('Adjustments')
       expect(page).not_to have_link('Payments')
       expect(page).not_to have_link('Returns')
+
+      expect(page).to have_link('Shipments')
     end
 
     it "can add tracking information" do
-      visit spree.edit_admin_order_path(order)
+      # cancan will denie access, how do I check what the exeption is?
+      # somehow we are not able to see the shipments page due cancan
+      visit spree.shipments_admin_order_path(order)
+
       within("table.table tr:nth-child(5)") do
         click_icon :edit
       end
+
       fill_in "tracking", with: "FOOBAR"
       click_icon :save
 
