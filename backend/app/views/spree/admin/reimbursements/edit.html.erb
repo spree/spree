@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Customer Returns' } %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Reimbursements' } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:editing_resource, resource: Spree::Reimbursement.model_name.human) %> #<%= @reimbursement.number %>
@@ -7,26 +7,33 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @reimbursement } %>
 
 <%= form_for [:admin, @order, @reimbursement] do |f| %>
-  <fieldset class='no-border-bottom'>
-    <legend><%= Spree.t(:items_to_be_reimbursed) %></legend>
-    <table class="table table-condensed table-bordered reimbursement-return-items-table">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <%= Spree.t(:items_to_be_reimbursed) %>
+      </h3>
+    </div>
+    <table class="table reimbursement-return-items-table">
       <thead>
         <tr>
-          <th><%= Spree.t(:product) %></th>
-          <th><%= Spree.t(:preferred_reimbursement_type) %></th>
-          <th><%= Spree.t(:reimbursement_type_override) %></th>
-          <th><%= Spree.t(:pre_tax_refund_amount) %></th>
-          <th><%= Spree.t(:total) %></th>
+          <th width="30%"><%= Spree.t(:product) %></th>
+          <th><%= Spree.t(:preferred_type) %></th>
+          <th><%= Spree.t(:type_override) %></th>
           <th><%= Spree.t(:exchange_for) %></th>
+          <th width="130"><%= Spree.t(:pre_tax_amount) %></th>
+          <th width="100"><%= Spree.t(:total) %></th>
         </tr>
       </thead>
       <tbody>
         <%= f.fields_for :return_items, @reimbursement.return_items.sort_by(&:id) do |item_fields| %>
           <% return_item = item_fields.object %>
           <tr>
-            <td>
-              <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
-              <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+            <td class="return-line-item-name">
+              <%= link_to return_item.variant.product.try(:name), edit_admin_product_path(return_item.variant.product) %><br/>
+              <% if !return_item.variant.option_values.empty? %>
+                <strong><%= variant_options(return_item.variant) %></strong><br/>
+              <% end %>
+              <%= return_item.variant.sku %>
             </td>
             <td>
               <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
@@ -39,37 +46,41 @@
               ) %>
             </td>
             <td>
-              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
-            </td>
-            <td>
-              <%= return_item.display_total %>
-            </td>
-            <td>
               <% if return_item.exchange_processed? %>
                 <%= return_item.exchange_variant.exchange_name %>
               <% else %>
                 <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
               <% end %>
             </td>
+            <td>
+              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control', style: 'width: 120px;' } %>
+            </td>
+            <td>
+              <%= return_item.display_total %>
+            </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-  </fieldset>
-
-  <div class="form-actions filter-actions actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'update' %>
+    <div class="panel-footer" data-hook="buttons">
+      <%= button Spree.t('actions.update'), 'update', 'submit', class: "btn-sm btn-info pull-right" %>
+      <div class="clearfix"></div>
+    </div>
   </div>
 <% end %>
 
-<fieldset class="margint">
-  <legend><%= Spree.t(:calculated_reimbursements) %></legend>
-  <table class="table table-condensed table-bordered">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <%= Spree.t(:calculated_reimbursements) %>
+    </h3>
+  </div>
+  <table class="table">
     <thead data-hook="customer_return_header">
       <tr>
         <th><%= Spree.t(:reimbursement_type) %></th>
         <th><%= Spree.t(:description) %></th>
-        <th><%= Spree.t(:amount) %></th>
+        <th width="100"><%= Spree.t(:amount) %></th>
       </tr>
     </thead>
     <tbody>
@@ -82,21 +93,21 @@
       <% end %>
     </tbody>
   </table>
+</div>
 
-  <% if @order.has_non_reimbursement_related_refunds? %>
-    <div class="alert alert-danger">
-      <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
-    </div>
-  <% end %>
-
-  <div class="form-actions" data-hook="reimburse-buttons">
-    <% if !@reimbursement.reimbursed? %>
-      <%= button_to [:perform, :admin, @order, @reimbursement], { class: 'btn btn-primary', method: 'post' } do %>
-        <span class="icon icon-save"></span>
-        <%= Spree.t(:reimburse) %>
-      <% end %>
-      <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'remove-sign' %>
-    <% end %>
+<% if @order.has_non_reimbursement_related_refunds? %>
+  <div class="alert alert-danger">
+    <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
   </div>
-</fieldset>
+<% end %>
+
+<div class="form-actions" data-hook="reimburse-buttons">
+  <% if !@reimbursement.reimbursed? %>
+    <%= button_to [:perform, :admin, @order, @reimbursement], { class: 'btn btn-primary', method: 'post' } do %>
+      <span class="icon icon-save"></span>
+      <%= Spree.t(:reimburse) %>
+    <% end %>
+    <span class="or"><%= Spree.t(:or) %></span>
+    <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), :icon => 'remove-sign' %>
+  <% end %>
+</div>

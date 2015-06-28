@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Cancelling + Resuming", :type => :feature do
+describe "Cancelling + Resuming", :type => :feature, js: true do
 
   stub_authorization!
 
@@ -22,6 +22,7 @@ describe "Cancelling + Resuming", :type => :feature do
   it "can cancel an order" do
     visit spree.edit_admin_order_path(order.number)
     click_button 'Cancel'
+    page.accept_alert
     within(".additional-info") do
       within(".state") do
         expect(page).to have_content("canceled")
@@ -37,6 +38,7 @@ describe "Cancelling + Resuming", :type => :feature do
     it "can resume an order" do
       visit spree.edit_admin_order_path(order.number)
       click_button 'Resume'
+      page.accept_alert
       within(".additional-info") do
         within(".state") do
           expect(page).to have_content("resumed")

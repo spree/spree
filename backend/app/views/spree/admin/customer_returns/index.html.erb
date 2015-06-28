@@ -18,8 +18,9 @@
         <tr>
           <th><%= Spree.t(:return_number) %></th>
           <th><%= Spree.t(:pre_tax_total) %></th>
+          <th><%= Spree.t(:stock_location) %></th>
           <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-          <th><%= Spree.t(:reimbursement_status) %></th>
+          <th><%= Spree.t(:'admin.status') %></th>
           <th></th>
         </tr>
       </thead>
@@ -28,12 +29,13 @@
           <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row">
             <td><%= link_to customer_return.number, edit_admin_order_customer_return_path(@order, customer_return) %></td>
             <td><%= customer_return.display_pre_tax_total.to_html %></td>
+            <td><%= customer_return.stock_location.try(:name) %></td>
             <td><%= pretty_time(customer_return.created_at) %></td>
             <td>
               <% if customer_return.fully_reimbursed? %>
                 <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
               <% else %>
-                <span class="label label-info"><%= Spree.t(:incomplete) %></span>
+                <span class="label label-danger"><%= Spree.t(:incomplete) %></span>
               <% end %>
             </td>
             <td class='actions actions-1' data-hook="admin_orders_customer_returns_index_row_actions">

@@ -20,13 +20,10 @@ module Spree
 
         def update
           if @order.update_attributes(order_params)
-            if params[:guest_checkout] == "false"
-              @order.associate_user!(Spree.user_class.find(params[:user_id]), @order.email.blank?)
-            end
             @order.next
             @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
             flash[:success] = Spree.t('customer_details_updated')
-            redirect_to edit_admin_order_url(@order)
+            redirect_to spree.admin_order_customer_url(@order)
           else
             render action: :edit
           end
@@ -36,6 +33,7 @@ module Spree
         private
           def order_params
             params.require(:order).permit(
+              :user_id,
               :email,
               :use_billing,
               bill_address_attributes: permitted_address_attributes,

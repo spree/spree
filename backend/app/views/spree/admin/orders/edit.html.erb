@@ -7,10 +7,16 @@
   <% end %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Shipments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Overview' } %>
 
 <% content_for :page_title do %>
-  / <%= plural_resource_name(Spree::Shipment) %>
+  / <%= t(:overview) %>
+<% end %>
+
+<% if @order.is_risky? %>
+  <div class="alert alert-danger">
+    <%= link_to Spree.t(:order_is_risky), "javascript:;", data: { toggle: "modal", target: "#riskAnalysis" } %>
+  </div>
 <% end %>
 
 <div data-hook="admin_order_edit_header">
@@ -21,22 +27,327 @@
   <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.valid.last %>
 <% end %>
 
-<%= render partial: 'add_product' if @order.shipment_state != 'shipped' && can?(:update, @order) %>
+<div class="row">
+  <% if @order.bill_address %>
+    <div data-hook="bill_address_wrapper" class="col-md-4">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
-<% if @order.line_items.empty? %>
-  <div class="alert alert-warning">
-    <%= Spree.t(:your_order_is_empty_add_product)%>
-  </div>
-<% end %>
+  <% if @order.ship_address %>
+    <div class="col-md-4" data-hook="ship_address_wrapper">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
-<div data-hook="admin_order_edit_form">
-  <div id="order-form-wrapper">
-    <%= render partial: 'form', locals: { order: @order } %>
+  <div class="col-md-4 additional-info">
+    <div class="panel panel-default no-margin-bottom">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= Spree.t(:general) %></h3>
+      </div>
+      <div class="panel-body" style="min-height: 210px;">
+        <table class="table table-condensed no-margin-bottom">
+          <tr>
+            <td class="no-border-top">
+              <%= Spree.t(:number) %>
+            </td>
+            <td class="no-border-top">
+              <%= @order.number %>
+            </td>
+          </tr>
+          <tr>
+            <td><%= Spree.t(:status) %></td>
+            <td>
+              <span class="state label label-<%= @order.state %>">
+                <%= Spree.t(@order.state, scope: :order_state) %>
+              </span>
+            </td>
+          </tr>
+          <% if can?(:index, Spree::Shipment) %>
+            <tr>
+              <td>
+                <%= link_to "#{Spree.t :shipments_count, count: @order.shipments.count, default: pluralize(@order.shipments.count, Spree.t(:shipment))}", spree.shipments_admin_order_url(@order) %>
+              </td>
+              <td>
+                <span class="state label label-<%= @order.shipment_state %>">
+                  <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+          <% if can?(:index, Spree::Payment) %>
+            <tr>
+              <td>
+                <%= link_to "#{Spree.t :payments_count, count: @order.payments.count, default: pluralize(@order.payments.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
+              </td>
+              <td>
+                <span class="state block-label label label-<%= @order.payment_state %>">
+                  <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+          <% if @order.completed? %>
+            <tr>
+              <td>
+                <%= Spree.t(:date_completed) %>
+              </td>
+              <td>
+                <%= pretty_time(@order.completed_at) %>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <%= Spree.t(:guest) %>
+              </td>
+              <td>
+                <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+              </td>
+            </tr>
+          <% end %>
+
+          <% if @order.approved? %>
+            <tr>
+              <td><%= Spree.t(:approver) %></td>
+              <td><%= @order.approver.email %></td>
+            </tr>
+            <tr>
+              <td><%= Spree.t(:approved_at) %></td>
+              <td><%= pretty_time(@order.approved_at) %></td>
+            </tr>
+          <% end %>
+
+          <% if @order.canceled? && @order.canceler && @order.canceled_at %>
+            <tr>
+              <td><%= Spree.t(:canceler) %></td>
+              <td><%= @order.canceler.email %></td>
+            </tr>
+            <tr>
+              <td><%= Spree.t(:canceled_at) %></td>
+              <td><%= pretty_time(@order.canceled_at) %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
-<% content_for :head do %>
-  <%= javascript_tag 'var expand_variants = true;' %>
+<% if @order.line_items.exists? %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= Spree.t(:items) %>
+      </h1>
+    </div>
+    <table class="table table-bordered line-items" data-hook="line-items">
+      <thead>
+        <th colspan="2"><%= Spree.t(:name) %></th>
+        <th class="text-center"><%= Spree.t(:price) %></th>
+        <th class="text-center"><%= Spree.t(:quantity) %></th>
+        <th class="text-center"><%= Spree.t(:total_price) %></th>
+      </thead>
+      <tbody>
+        <% @order.line_items.each do |item| %>
+          <tr>
+            <td class="text-center">
+              <%= mini_image(item.variant) %>
+            </td>
+            <td class="line-item-name">
+              <%= link_to item.variant.product.try(:name), edit_admin_product_path(item.variant.product) %><br/>
+              <% if !item.variant.option_values.empty? %>
+                <strong><%= variant_options(item.variant) %></strong><br/>
+              <% end %>
+              <%= item.variant.sku %>
+            </td>
+            <td class="text-center line-item-price">
+              <%= item.single_money.to_html %>
+            </td>
+            <td class="text-center line-item-quantity">
+              <%= item.quantity %>
+            </td>
+            <td class="line-item-total text-center">
+              <%= link_to line_item_shipment_price(item, item.quantity), "javascript:;", class: "js-toggle-extra-line-item-info", data: { id: item.id } %>
+            </td>
+          </tr>
+          <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+            <td></td>
+            <td colspan="3">
+              <%= t(:pre_tax_amount) %>
+            </td>
+            <td class="text-center">
+              <%= Spree::Money.new(item.pre_tax_amount, { currency: item.currency }) %>
+            </td>
+          </tr>
+          <% if item.adjustments.eligible.any? %>
+            <% item.adjustments.eligible.each do |adjustment| %>
+              <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+                <td></td>
+                <td colspan="3">
+                  <%= adjustment.label %>
+                </td>
+                <td class="text-center">
+                  <%= adjustment.display_amount.to_html %>
+                </td>
+              </tr>
+            <% end %>
+          <% end %>
+          <tr class="warning-small is-hidden js-extra-line-item-info" data-id="<%= item.id %>">
+            <td></td>
+            <td colspan="3">
+              <strong><%= t(:total) %></strong>
+            </td>
+            <td class="text-center">
+              <strong><%= line_item_shipment_price(item, item.quantity) %></strong>
+            </td>
+          </tr>
+        <% end %>
+
+        <tr>
+          <td colspan="4">
+            <%= Spree.t(:subtotal) %>
+          </td>
+          <td class="text-center">
+            <%= @order.display_item_total.to_html %>
+          </td>
+        </tr>
+
+        <% if @order.checkout_steps.include?("delivery") && @order.ship_total > 0 %>
+          <tr>
+            <td colspan="4" data-hook="ship_total_label">
+              <%= Spree.t(:ship_total) %>
+            </td>
+            <td class="text-center" data-hook="ship_total_amount">
+              <%= @order.display_ship_total.to_html %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @order.included_tax_total != 0 %>
+          <tr>
+            <td colspan="4">
+              <%= Spree.t(:tax_included) %>
+            </td>
+            <td class="text-center">
+              <%= @order.display_included_tax_total.to_html %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @order.additional_tax_total != 0 %>
+          <tr>
+            <td colspan="4">
+              <%= Spree.t(:tax) %>
+            </td>
+            <td class="text-center">
+              <%= @order.display_additional_tax_total.to_html %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @order.promo_total != 0 %>
+          <tr>
+            <td colspan="4">
+              <%= Spree.t(:promotion_total) %>
+            </td>
+            <td class="text-center">
+              <%= @order.display_promo_total.to_html %>
+            </td>
+          </tr>
+        <% end %>
+
+        <tr>
+          <td colspan="4">
+            <strong><%= Spree.t(:total) %>:</strong>
+          </td>
+          <td class="text-center" id="order_total">
+            <strong><%= @order.display_total.to_html %></strong>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/order_summary' %>
+<% if @order.shipments.any? && can?(:index, Spree::Shipment) %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= link_to Spree.t(:manage_shipments), spree.shipments_admin_order_url(@order), class: "pull-right" %>
+      <h1 class="panel-title">
+        <%= Spree.t(:shipments) %>
+      </h1>
+    </div>
+    <table class="table table-bordered line-items" data-hook="shipments">
+      <thead>
+        <th width="15%"><%= Spree.t(:number) %></th>
+        <th width="20%" class="text-center"><%= Spree.t(:shipped_at) %></th>
+        <th data-hook="th-shipment-status" class="text-center"><%= Spree.t(:'admin.status') %></th>
+        <th class="text-center"><%= Spree.t(:manifest_count) %></th>
+      </thead>
+      <% @order.shipments.each do |shipment| %>
+        <td>
+          <%= shipment.number %>
+        </td>
+        <td class="text-center">
+          <%= pretty_time(shipment.shipped_at) if shipment.shipped_at %>
+        </td>
+        <td class="text-center" data-hook="td-shipment-status">
+          <span class="label label-<%= shipment.state %>">
+            <%= Spree.t("shipment_states.#{shipment.state}") %>
+          </span>
+        </td>
+        <td class="text-center">
+          <%= shipment.manifest.count if shipment.manifest %>
+        </td>
+      <% end %>
+    </table>
+  </div>
+<% end %>
+
+<% if @order.payments.any? && can?(:index, Spree::Payment) %>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= link_to Spree.t(:manage_payments), spree.admin_order_payments_path(@order), class: "pull-right" %>
+      <h1 class="panel-title">
+        <%= Spree.t(:payments) %>
+      </h1>
+    </div>
+    <table class="table table-bordered line-items" data-hook="shipments">
+      <thead>
+        <th width="15%"><%= Spree::Payment.human_attribute_name(:number) %></th>
+        <th width="20%" class="text-center"><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th class="text-center"><%= Spree.t(:amount) %></th>
+        <th class="text-center"><%= Spree.t(:payment_method) %></th>
+        <th class="text-center"><%= Spree.t(:payment_state) %></th>
+      </thead>
+      <% @order.payments.each do |payment| %>
+        <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
+        <td class="text-center"><%= pretty_time(payment.created_at) %></td>
+        <td class="amount text-center"><%= payment.display_amount %></td>
+        <td class="text-center"><%= payment_method_name(payment) %></td>
+        <td class="text-center">
+          <span class="label label-<%= payment.state %>">
+            <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
+          </span>
+        </td>
+      <% end %>
+    </table>
+  </div>
+<% end %>

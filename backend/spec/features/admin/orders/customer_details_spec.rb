@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Customer Details", type: :feature, js: true do
+describe "Customer Details", type: :feature do
   stub_authorization!
 
   let(:country) { create(:country, name: "Kangaland") }
@@ -20,7 +20,8 @@ describe "Customer Details", type: :feature, js: true do
       visit spree.new_admin_order_path
     end
     # Regression test for #3335 & #5317
-    it "associates a user when not using guest checkout" do
+    it "associates a user when not using guest checkout", js: true do
+      click_on "Add Item"
       select2_search product.name, from: Spree.t(:name_or_sku)
       within("table.stock-levels") do
         fill_in "variant_quantity", with: 1
@@ -28,19 +29,18 @@ describe "Customer Details", type: :feature, js: true do
       end
       wait_for_ajax
       click_link "Customer"
-      targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
-      # 5317 - Address prefills using user's default.
-      expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
-      expect(find('#order_bill_address_attributes_lastname').value).to eq user.bill_address.lastname
-      expect(find('#order_bill_address_attributes_address1').value).to eq user.bill_address.address1
-      expect(find('#order_bill_address_attributes_address2').value).to eq user.bill_address.address2
-      expect(find('#order_bill_address_attributes_city').value).to eq user.bill_address.city
-      expect(find('#order_bill_address_attributes_zipcode').value).to eq user.bill_address.zipcode
-      expect(find('#order_bill_address_attributes_country_id').value).to eq user.bill_address.country_id.to_s
-      expect(find('#order_bill_address_attributes_state_id').value).to eq user.bill_address.state_id.to_s
-      expect(find('#order_bill_address_attributes_phone').value).to eq user.bill_address.phone
+      click_on "Change Customer"
+      click_on "Search"
+      within("table#listing_users") do
+        within_row(1) do
+          first('td > a').click
+        end
+      end
+
+      fill_in_address "bill"
+
       click_button "Update"
-      expect(Spree::Order.last.user).not_to be_nil
+      expect(Spree::Order.last.user_id).not_to be_nil
     end
   end
 
@@ -56,17 +56,23 @@ describe "Customer Details", type: :feature, js: true do
     end
 
     context "selected country has no state" do
-      before { create(:country, iso: "BRA", name: "Brazil") }
+      before { create(:country, iso: "BRA", name: "Brazil", states_required: true) }
 
       it "changes state field to text input" do
         click_link "Customer"
 
-        within("#billing") do
+        within(".billing-address") do
+          click_on "Edit"
           targetted_select2 "Brazil", from: "#s2id_order_bill_address_attributes_country_id"
           fill_in "order_bill_address_attributes_state_name", with: "Piaui"
         end
 
         click_button "Update"
+
+        within(".billing-address") do
+          click_on "Edit"
+        end
+
         expect(find_field("order_bill_address_attributes_state_name").value).to eq("Piaui")
       end
     end
@@ -76,23 +82,34 @@ describe "Customer Details", type: :feature, js: true do
       order.save!
 
       click_link "Customer"
-      within("#shipping") { fill_in_address "ship" }
-      within("#billing") { fill_in_address "bill" }
+
+      within(".billing-address") do
+        click_on "Edit"
+        fill_in_address "bill"
+      end
 
       click_button "Update"
-      click_link "Customer"
+      click_link "Overview"
 
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
-      within("#order_tab_summary") do
-        expect(find(".state").text).to eq("complete")
+      within(".additional-info") do
+        within(".state") do
+          expect(page).to have_content("complete")
+        end
       end
     end
 
     it "should show validation errors" do
       click_link "Customer"
+
+      within(".billing-address") do
+        click_on "Edit"
+        fill_in "order_bill_address_attributes_firstname", with: ""
+      end
+
       click_button "Update"
-      expect(page).to have_content("Shipping address first name can't be blank")
+      expect(page).to have_content("Billing address first name can't be blank")
     end
 
     it "updates order email for an existing order with a user" do
@@ -117,11 +134,17 @@ describe "Customer Details", type: :feature, js: true do
 
       it "sets default country when displaying form" do
         click_link "Customer"
+
+        within(".billing-address") do
+          click_on "Edit"
+        end
+
         expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
       end
     end
 
     # Regression test for #942
+    # I dont get this test, context says it errors, expect no errors?
     context "errors when no shipping methods are available" do
       before do
         Spree::ShippingMethod.delete_all
@@ -129,17 +152,14 @@ describe "Customer Details", type: :feature, js: true do
 
       specify do
         click_link "Customer"
-        # Need to fill in valid information so it passes validations
-        fill_in "order_ship_address_attributes_firstname",  with: "John 99"
-        fill_in "order_ship_address_attributes_lastname",   with: "Doe"
-        fill_in "order_ship_address_attributes_lastname",   with: "Company"
-        fill_in "order_ship_address_attributes_address1",   with: "100 first lane"
-        fill_in "order_ship_address_attributes_address2",   with: "#101"
-        fill_in "order_ship_address_attributes_city",       with: "Bethesda"
-        fill_in "order_ship_address_attributes_zipcode",    with: "20170"
 
-        page.select('Alabama', from: 'order_ship_address_attributes_state_id')
-        fill_in "order_ship_address_attributes_phone", with: "123-456-7890"
+        within(".billing-address") do
+          click_on "Edit"
+        end
+
+        # Need to fill in valid information so it passes validations
+        fill_in_address "bill"
+
         expect { click_button "Update" }.not_to raise_error
       end
     end

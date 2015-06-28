@@ -8,7 +8,8 @@
       <th><%= Spree.t(:adjustable) %></th>
       <th><%= Spree.t(:description) %></th>
       <th class="text-center"><%= Spree.t(:amount) %></th>
-      <th class="text-center"><%= Spree.t(:state) %></th>
+      <th class="text-center"><%= Spree.t(:'admin.state') %></th>
+      <th class="text-center"><%= Spree.t(:eligible) %></th>
       <th class="actions"></th>
     </tr>
   </thead>
@@ -19,12 +20,12 @@
 
 <% if can?(:edit, Spree::Adjustment) %>
   <div class="panel-footer">
-    <div class="row text-center">
+    <div class="row text-center no-padding-bottom">
       <div class="col-md-6">
-        <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success" %>
+        <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success btn-sm" %>
       </div>
       <div class="col-md-6">
-        <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger" %>
+        <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger btn-sm" %>
       </div>
     </div>
   </div>

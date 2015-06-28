@@ -1,4 +1,4 @@
-<table class="table table-condensed table-bordered">
+<table class="table">
   <thead data-hook="customer_return_header">
     <tr>
       <th><%= Spree.t(:number) %></th>
@@ -20,7 +20,7 @@
         </td>
         <td><%= reimbursement.display_total %></td>
         <td>
-          <span class="state <%= reimbursement_status_color(reimbursement) %>">
+          <span class="state label label-<%= reimbursement_status_color(reimbursement) %>">
             <%= reimbursement.reimbursement_status %>
           </span>
         </td>

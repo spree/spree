@@ -1,38 +1,25 @@
+<% can_add_line_item = ((can? :update, @order) && (@order.shipments.count == 0 || @order.shipments.shipped.count == 0)) %>
+
 <% content_for :page_actions do %>
-  <% if can?(:fire, @order) %>
-    <%= event_links %>
-  <% end %>
-  <% if can?(:resend, @order) %>
-    <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), :method => :post, :icon => 'envelope' %>
-  <% end %>
-<% end %>
+  <%= button_link_to Spree.t(:add_item), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addItem" }, icon: 'add' %>
+<% end if can_add_line_item %>
 
 <%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Cart' } %>
+
+<% content_for :page_title do %>
+  / <%= Spree.t(:items) %>
+<% end %>
+
+<%= render partial: 'add_line_item' if can_add_line_item %>
 
 <div data-hook="admin_order_edit_header">
   <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @order } %>
 </div>
 
-<% if @order.payments.exists? && @order.considered_risky? %>
-  <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.order("created_at DESC").first %>
-<% end %>
-
-<%= render :partial => 'add_line_item' if can?(:update, @order) %>
-
-<% if @order.line_items.empty? %>
-  <div class="alert alert-warning">
-    <%= Spree.t(:your_order_is_empty_add_product)%>
-  </div>
-<% end %>
+<%= content_tag(:div, Spree.t(:your_order_is_empty_add_product), class: 'alert alert-warning') if @order.line_items.empty? %>
 
 <div data-hook="admin_order_edit_form">
   <div id="order-form-wrapper">
     <%= render :partial => 'line_items_edit_form', :locals => { :order => @order } %>
   </div>
 </div>
-
-<% content_for :head do %>
-  <%= javascript_tag 'var expand_variants = true;' %>
-<% end %>
-
-<%= render partial: 'spree/admin/shared/order_summary' %>

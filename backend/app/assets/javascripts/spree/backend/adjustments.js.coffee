@@ -9,6 +9,7 @@ $(@).ready( ->
       success: ->
         window.location.reload();
       error: (msg) ->
+        $('#addCoupon').modal('hide');
         if msg.responseJSON["error"]
           show_flash 'error', msg.responseJSON["error"]
         else

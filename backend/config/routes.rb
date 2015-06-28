@@ -74,6 +74,7 @@ Spree::Core::Engine.add_routes do
 
     resources :orders, except: [:show] do
       member do
+        get :shipments
         get :cart
         post :resend
         get :open_adjustments
@@ -113,7 +114,7 @@ Spree::Core::Engine.add_routes do
       post :apply_promotion, to: "promotions#apply_to_order", as: :apply_promotion
       post :delete_promotion, to: "promotions#delete_from_order", as: :delete_promotion
 
-      resources :reimbursements, only: [:create, :show, :edit, :update] do
+      resources :reimbursements do
         member do
           post :perform
         end

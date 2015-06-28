@@ -43,6 +43,7 @@
 <% end %>
 
 <table class="table" id="listing_users" data-hook>
+  <% if !request.xhr? %>
   <thead>
     <tr data-hook="admin_users_index_headers">
       <th>
@@ -51,17 +52,20 @@
       <th data-hook="admin_users_index_header_actions" class="actions"></th>
     </tr>
   </thead>
+  <% end %>
   <tbody>
     <% @users.each do |user|%>
       <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
-        <td class='user_email'><%=link_to user.email, edit_admin_user_url(user) %></td>
-        <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
-          <%= link_to_edit user, :no_text => true %>
-          <%= link_to_delete user, :no_text => true %>
-        </td>
+        <td class='user_email'><%= link_to user.email, edit_admin_user_url(user), data: { id: user.id } %></td>
+        <% if !request.xhr? %>
+          <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
+            <%= link_to_edit user, :no_text => true %>
+            <%= link_to_delete user, :no_text => true %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= paginate @users %>
+<%= paginate(@users) if !request.xhr? %>

@@ -26,7 +26,7 @@
           <td class="inventory-unit-checkbox">
             <% if editable %>
               <%= item_fields.hidden_field :inventory_unit_id %>
-              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
+              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', data: { price: return_item.pre_tax_amount, id: inventory_unit.id } }, '0', '1' %>
             <% end %>
           </td>
           <td>
@@ -39,7 +39,7 @@
           </td>
           <td>
             <% if editable %>
-              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
+              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control js-refund-amount-input-' + inventory_unit.id.to_s } %>
             <% else %>
               <%= return_item.display_pre_tax_amount %>
             <% end %>
@@ -87,5 +87,7 @@
 </div>
 
 <% if Spree::Config[:expedited_exchanges] %>
-  <div class="expedited-exchanges-warning"><%= Spree.t(:expedited_exchanges_warning, days_window: Spree::Config[:expedited_exchanges_days_window]) %></div>
+  <div class="expedited-exchanges-warning alert alert-danger">
+    <%= Spree.t(:expedited_exchanges_warning, days_window: Spree::Config[:expedited_exchanges_days_window]) %>
+  </div>
 <% end %>

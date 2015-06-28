@@ -49,3 +49,17 @@ table.table {
     }
   }
 }
+
+tr.warning-small {
+  @extend .warning;
+  td {
+    font-size: 0.8em;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+}
+
+td.no-border-top {
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
