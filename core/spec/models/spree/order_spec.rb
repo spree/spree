@@ -15,6 +15,25 @@ describe Spree::Order, :type => :model do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  context "#cancel" do
+    let(:order) { create(:completed_order_with_totals) }
+    let!(:payment) do
+      create(
+        :payment,
+        order: order,
+        amount: order.total,
+        state: "completed"
+      )
+    end
+    let(:payment_method) { double }
+    it "should mark the payments as void" do
+      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_return(true)
+      order.cancel
+      order.reload
+      expect(order.payments.first).to be_void
+    end
+  end
+
   context "#canceled_by" do
     let(:admin_user) { create :admin_user }
     let(:order) { create :order }
