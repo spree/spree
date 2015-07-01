@@ -1,4 +1,4 @@
-<% cache [I18n.locale, current_currency, @product] do %>
+<% cache [I18n.locale, current_currency, @product, @product.possible_promotions] do %>
   <div data-hook="product_show" itemscope itemtype="http://schema.org/Product">
     <% @body_id = 'product-details' %>
 
