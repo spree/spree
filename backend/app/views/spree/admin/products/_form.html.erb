@@ -90,6 +90,14 @@
           <% end %>
         </div>
 
+        <div data-hook="admin_product_form_promotionable">
+          <%= f.field_container :promotionable, class: ['form-group'] do %>
+              <%= f.label :promotionable %>
+              <%= f.error_message_on :promotionable %>
+              <%= f.check_box :promotionable, class: 'form-control' %>
+          <% end %>
+        </div>
+
         <div id="shipping_specs" class="row">
           <div class="col-md-6">
             <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">
