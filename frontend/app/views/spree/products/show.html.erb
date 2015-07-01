@@ -1,6 +1,6 @@
 <% @body_id = 'product-details' %>
 
-<% cache [I18n.locale, current_currency, @product] do %>
+<% cache [I18n.locale, current_currency, @product, @product.possible_promotions] do %>
   <div data-hook="product_show" itemscope itemtype="https://schema.org/Product">
     <div class="col-md-4" data-hook="product_left_part">
       <div data-hook="product_left_part_wrap">
