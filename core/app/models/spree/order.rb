@@ -95,9 +95,6 @@ module Spree
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
-    class_attribute :line_item_comparison_hooks
-    self.line_item_comparison_hooks = Set.new
-
     def self.by_number(number)
       where(number: number)
     end
@@ -128,12 +125,6 @@ module Spree
     # that should be called after Order#update
     def self.register_update_hook(hook)
       self.update_hooks.add(hook)
-    end
-
-    # Use this method in other gems that wish to register their own custom logic
-    # that should be called when determining if two line items are equal.
-    def self.register_line_item_comparison_hook(hook)
-      self.line_item_comparison_hooks.add(hook)
     end
 
     # Return adjustments memory scope
@@ -341,27 +332,7 @@ module Spree
     end
 
     def find_line_item_by_variant(variant, options = {})
-      line_items.detect { |line_item|
-                    line_item.variant_id == variant.id &&
-                    line_item_options_match(line_item, options)
-                  }
-    end
-
-    # This method enables extensions to participate in the
-    # "Are these line items equal" decision.
-    #
-    # When adding to cart, an extension would send something like:
-    # params[:product_customizations]={...}
-    #
-    # and would provide:
-    #
-    # def product_customizations_match
-    def line_item_options_match(line_item, options)
-      return true unless options
-
-      self.line_item_comparison_hooks.all? { |hook|
-        self.send(hook, line_item, options)
-      }
+      line_items.detect { |line_item| line_item.variant_id == variant.id }
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already

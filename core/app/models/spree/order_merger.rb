@@ -24,14 +24,9 @@ module Spree
     end
 
     # Compare the line item of the other order with mine.
-    # Make sure you allow any extensions to chime in on whether or
-    # not the extension-specific parts of the line item match
     def find_matching_line_item(other_order_line_item)
       order.line_items.detect do |my_li|
-        my_li.variant == other_order_line_item.variant &&
-          order.line_item_comparison_hooks.all? do |hook|
-            order.send(hook, my_li, other_order_line_item.serializable_hash)
-          end
+        my_li.variant == other_order_line_item.variant
       end
     end
 

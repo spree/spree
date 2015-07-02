@@ -541,27 +541,6 @@ describe Spree::Order, :type => :model do
       expect(order.find_line_item_by_variant(@variant1)).not_to be_nil
       expect(order.find_line_item_by_variant(mock_model(Spree::Variant))).to be_nil
     end
-
-    context "match line item with options" do
-      before do
-        Spree::Order.register_line_item_comparison_hook(:foos_match)
-      end
-
-      after do
-        # reset to avoid test pollution
-        Spree::Order.line_item_comparison_hooks = Set.new
-      end
-
-      it "matches line item when options match" do
-        allow(order).to receive(:foos_match).and_return(true)
-        expect(order.line_item_options_match(@line_items.first, {foos: {bar: :zoo}})).to be true
-      end
-
-      it "does not match line item without options" do
-        allow(order).to receive(:foos_match).and_return(false)
-        expect(order.line_item_options_match(@line_items.first, {})).to be false
-      end
-    end
   end
 
   describe "#associate_user!" do
