@@ -243,7 +243,7 @@ THIS IS THE BEST PRODUCT EVER!
       context "when there is no current tax zone" do
         let(:zone) { nil }
 
-        it { is_expected.to eq("en/USD/#{product.cache_key}") }
+        it { is_expected.to eq("en/USD/#{product.cache_key}/") }
       end
     end
   end
