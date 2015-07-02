@@ -5,7 +5,7 @@
   <%= button_link_to Spree.t(:back), spree.admin_order_return_authorizations_url(@order), icon: 'arrow-left' %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Return Authorizations' } %>
+<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Returns' } %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:return_authorization) %> <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
