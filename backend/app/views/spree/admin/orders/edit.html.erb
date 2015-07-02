@@ -28,38 +28,10 @@
 <% end %>
 
 <div class="row">
-  <% if @order.bill_address %>
-    <div data-hook="bill_address_wrapper" class="col-md-4">
-      <div class="panel panel-default no-margin-bottom">
-        <div class="panel-heading">
-          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
-          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
-        </div>
-        <div class="panel-body" style="min-height: 210px;">
-          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <% if @order.ship_address %>
-    <div class="col-md-4" data-hook="ship_address_wrapper">
-      <div class="panel panel-default no-margin-bottom">
-        <div class="panel-heading">
-          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
-          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
-        </div>
-        <div class="panel-body" style="min-height: 210px;">
-          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
   <div class="col-md-4 additional-info">
     <div class="panel panel-default no-margin-bottom">
       <div class="panel-heading">
-        <h3 class="panel-title"><%= Spree.t(:general) %></h3>
+        <h3 class="panel-title">#<%= @order.number %></h3>
       </div>
       <div class="panel-body" style="min-height: 210px;">
         <table class="table table-condensed no-margin-bottom">
@@ -147,6 +119,34 @@
       </div>
     </div>
   </div>
+
+  <% if @order.bill_address %>
+    <div data-hook="bill_address_wrapper" class="col-md-4">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @order.ship_address %>
+    <div class="col-md-4" data-hook="ship_address_wrapper">
+      <div class="panel panel-default no-margin-bottom">
+        <div class="panel-heading">
+          <%= link_to Spree.t(:edit), spree.admin_order_customer_url(@order), class: "pull-right" %>
+          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
+        </div>
+        <div class="panel-body" style="min-height: 210px;">
+          <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
 
 <% if @order.line_items.exists? %>
@@ -161,7 +161,7 @@
         <th colspan="2"><%= Spree.t(:name) %></th>
         <th class="text-center"><%= Spree.t(:price) %></th>
         <th class="text-center"><%= Spree.t(:quantity) %></th>
-        <th class="text-center"><%= Spree.t(:total_price) %></th>
+        <th class="text-center"><%= Spree.t(:item_total) %></th>
       </thead>
       <tbody>
         <% @order.line_items.each do |item| %>
