@@ -49,9 +49,9 @@ module Spree
     end
 
     def self.with_coupon_code(coupon_code)
-      joins(:promotion_codes).where(
-        "lower(#{Spree::PromotionCode.table_name}.value) = ?", coupon_code.strip.downcase
-      ).first
+      clean_code = coupon_code.strip
+      joins(:promotion_codes)
+        .find_by("#{Spree::PromotionCode.table_name}": { value: clean_code })
     end
 
     def self.active
