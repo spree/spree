@@ -70,6 +70,7 @@ module Spree
 
       def cancel!
         payment_method.cancel(response_code)
+        void
       end
 
       def gateway_options

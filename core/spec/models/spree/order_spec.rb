@@ -25,7 +25,6 @@ describe Spree::Order, :type => :model do
         state: "completed"
       )
     end
-    let(:payment_method) { double }
     it "should mark the payments as void" do
       allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_return(true)
       order.cancel
