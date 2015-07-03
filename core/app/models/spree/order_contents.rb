@@ -7,7 +7,9 @@ module Spree
     end
 
     def add(variant, quantity = 1, options = {})
+      timestamp = Time.now
       line_item = add_to_line_item(variant, quantity, options)
+      options[:line_item_created] = true if timestamp <= line_item.created_at
       after_add_or_remove(line_item, options)
     end
 
@@ -40,7 +42,7 @@ module Spree
       shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
       PromotionHandler::Cart.new(order, line_item).activate
       Adjustable::AdjustmentsUpdater.update(line_item)
-      TaxRate.adjust(order, [line_item]) if line_item.quantity == 1
+      TaxRate.adjust(order, [line_item]) if options[:line_item_created]
       persist_totals
       line_item
     end
