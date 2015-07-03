@@ -1,6 +1,7 @@
 module Spree
   class PaymentMethod < Spree::Base
     acts_as_paranoid
+    acts_as_list
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 

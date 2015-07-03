@@ -13,10 +13,10 @@ describe "Payment Methods", type: :feature do
       visit current_path
 
       within("table#listing_payment_methods") do
-        expect(all("th")[0].text).to eq("Name")
-        expect(all("th")[1].text).to eq("Provider")
-        expect(all("th")[2].text).to eq("Display")
-        expect(all("th")[3].text).to eq("Active")
+        expect(all("th")[1].text).to eq("Name")
+        expect(all("th")[2].text).to eq("Provider")
+        expect(all("th")[3].text).to eq("Display")
+        expect(all("th")[4].text).to eq("Active")
       end
 
       within('table#listing_payment_methods') do

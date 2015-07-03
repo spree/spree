@@ -158,7 +158,11 @@ Spree::Core::Engine.add_routes do
     resources :tax_rates
 
     resources :trackers
-    resources :payment_methods
+    resources :payment_methods do
+      collection do
+        post :update_positions
+      end
+    end
     resources :roles
 
     resources :users do
