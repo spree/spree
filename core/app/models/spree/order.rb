@@ -448,6 +448,7 @@ module Spree
       adjustments.destroy_all
       shipments.destroy_all
       state_changes.destroy_all
+      restart_checkout_flow
 
       update_totals
       persist_totals
