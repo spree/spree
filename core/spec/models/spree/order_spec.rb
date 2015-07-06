@@ -26,10 +26,12 @@ describe Spree::Order, :type => :model do
       )
     end
     let(:payment_method) { double }
+
     it "should mark the payments as void" do
-      allow_any_instance_of(Spree::Gateway::Bogus).to receive(:cancel).and_return(true)
+      allow_any_instance_of(Spree::Shipment).to receive(:refresh_rates).and_return(true)
       order.cancel
       order.reload
+
       expect(order.payments.first).to be_void
     end
   end
