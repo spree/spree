@@ -175,6 +175,14 @@ describe Spree::Order, type: :model do
         it "should set payment state to 'void'" do
           expect { order.cancel! }.to change{ order.reload.payment_state }.to("void")
         end
+
+        context "when a reason is set" do
+          it "should set the cancellation_reason on the state change" do
+            order.state_change_reason = "Unwanted Gift"
+            order.cancel!
+            expect(order.state_changes.first.reason).to eq "Unwanted Gift"
+          end
+        end
       end
 
       context "with shipped items" do

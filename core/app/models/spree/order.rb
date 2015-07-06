@@ -22,7 +22,7 @@ module Spree
     end
 
     attr_reader :coupon_code
-    attr_accessor :temporary_address, :temporary_credit_card
+    attr_accessor :temporary_address, :temporary_credit_card, :state_change_reason
 
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s
