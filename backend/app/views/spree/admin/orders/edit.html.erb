@@ -302,20 +302,22 @@
         <th class="text-center"><%= Spree.t(:manifest_count) %></th>
       </thead>
       <% @order.shipments.each do |shipment| %>
-        <td>
-          <%= shipment.number %>
-        </td>
-        <td class="text-center">
-          <%= pretty_time(shipment.shipped_at) if shipment.shipped_at %>
-        </td>
-        <td class="text-center" data-hook="td-shipment-status">
-          <span class="label label-<%= shipment.state %>">
-            <%= Spree.t("shipment_states.#{shipment.state}") %>
-          </span>
-        </td>
-        <td class="text-center">
-          <%= shipment.manifest.count if shipment.manifest %>
-        </td>
+        <tr>
+          <td>
+            <%= shipment.number %>
+          </td>
+          <td class="text-center">
+            <%= pretty_time(shipment.shipped_at) if shipment.shipped_at %>
+          </td>
+          <td class="text-center" data-hook="td-shipment-status">
+            <span class="label label-<%= shipment.state %>">
+              <%= Spree.t("shipment_states.#{shipment.state}") %>
+            </span>
+          </td>
+          <td class="text-center">
+            <%= shipment.manifest.count if shipment.manifest %>
+          </td>
+        </tr>
       <% end %>
     </table>
   </div>
@@ -338,15 +340,17 @@
         <th class="text-center"><%= Spree.t(:payment_state) %></th>
       </thead>
       <% @order.payments.each do |payment| %>
-        <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
-        <td class="text-center"><%= pretty_time(payment.created_at) %></td>
-        <td class="amount text-center"><%= payment.display_amount %></td>
-        <td class="text-center"><%= payment_method_name(payment) %></td>
-        <td class="text-center">
-          <span class="label label-<%= payment.state %>">
-            <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
-          </span>
-        </td>
+        <tr>
+          <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
+          <td class="text-center"><%= pretty_time(payment.created_at) %></td>
+          <td class="amount text-center"><%= payment.display_amount %></td>
+          <td class="text-center"><%= payment_method_name(payment) %></td>
+          <td class="text-center">
+            <span class="label label-<%= payment.state %>">
+              <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
+            </span>
+          </td>
+        </tr>
       <% end %>
     </table>
   </div>
