@@ -60,6 +60,10 @@ module Spree
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, :test => true, :authorization => '12345')
     end
 
+    def cancel(_response_code)
+      ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
+    end
+
     def test?
       # Test mode is not really relevant with bogus gateway (no such thing as live server)
       true
