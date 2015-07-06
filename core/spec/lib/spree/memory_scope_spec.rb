@@ -1,75 +1,134 @@
 require 'spec_helper'
 
 describe Spree::MemoryScope do
+  let(:base)             { [item(1), item(2), item(3, destroyed?: true)] }
+  let(:object)           { described_class.new(base, parent_predicate)   }
+  let(:parent_predicate) { described_class::TAUTOLOGY                    }
+  let(:results)          { subject.to_a                                  }
 
-  let(:base)             { [1, 2, 3]                                   }
-  let(:object)           { described_class.new(base, parent_predicate) }
-  let(:parent_predicate) { described_class::TAUTOLOGY                  }
-  let(:results)          { subject.to_a                                }
+  def item(id, attributes = {})
+    name = "item #{id}"
+    double(
+      name,
+      attributes.reverse_merge(
+        id:         id,
+        name:       name,
+        created_at: Time.at(0),
+        destroyed?: false
+      )
+    )
+  end
 
   describe '.new' do
-    it 'returns frozen objects' do
-      expect(object.frozen?).to be(true)
+    context 'without a predicate' do
+      let(:object) { described_class.new(base) }
+
+      it 'returns frozen objects' do
+        expect(object.frozen?).to be(true)
+      end
+
+      it 'does not filter the members' do
+        expect(object.to_a).to eql(base.first(2))
+      end
+    end
+
+    context 'with a predicate' do
+      let(:object) do
+        described_class.new(base, ->(member) { member.id.equal?(1) })
+      end
+
+      it 'returns frozen objects' do
+        expect(object.frozen?).to be(true)
+      end
+
+      it 'filters the members' do
+        expect(object.to_a).to eql([base[0]])
+      end
     end
   end
 
   describe '.memory_scope' do
     it 'defines a named memory scope' do
       scope = Class.new(described_class) do
-        memory_scope(:foo) { |member| member.equal?(2) }
+        memory_scope(:foo) { |member| member.id.equal?(1) }
       end.new(base)
-      expect(scope.foo.to_a).to eql([2])
+      expect(scope.foo.to_a).to eql([base[0]])
     end
   end
 
   describe '.memory_scope_attribute_value' do
     it 'defines a named memory scope for attribute value comparison' do
       scope = Class.new(described_class) do
-        memory_scope_attribute_value(:foo, :upcase, 'A')
-      end.new(%w[a aa])
-      expect(scope.foo.to_a).to eql(['a'])
-    end
-  end
-
-  shared_examples_for '#each method' do
-    context 'with block' do
-      subject { object.each { |_item| } }
-      it { should be(object) }
-    end
-
-    context 'with no block' do
-      subject { object.each }
-
-      it { should be_instance_of(to_enum.class) }
-
-      it 'yields the expected values' do
-        expect(subject.to_a).to eql(object.to_a)
-      end
+        memory_scope_attribute_value(:foo, :name, "item 1")
+      end.new(base)
+      expect(scope.foo.to_a).to eql([base[0]])
     end
   end
 
   describe '#each' do
     subject { object.each }
 
+    shared_examples_for '#each method' do
+      context 'with block' do
+        subject { object.each { |_item| } }
+        it { should be(object) }
+      end
+
+      context 'with no block' do
+        subject { object.each }
+
+        it { should be_instance_of(to_enum.class) }
+
+        it 'yields the expected values' do
+          expect(subject.to_a).to eql(object.to_a)
+        end
+      end
+    end
+
     context 'with default scope' do
       let(:object) { described_class.new(base) }
 
-      it 'returns all members' do
-        expect(results).to eql(base)
+      it 'returns all non-deleted members' do
+        expect(results).to eql(base.first(2))
       end
 
       include_examples '#each method'
     end
 
     context 'with selective predicate' do
-      let(:parent_predicate) { ->(member) { member.equal?(1) } }
+      let(:parent_predicate) { ->(member) { member.id.equal?(1) } }
 
       it 'returns all selected members' do
-        expect(results).to eql([1])
+        expect(results).to eql([base[0]])
       end
 
       include_examples '#each method'
     end
+
+    context 'with a base relation sorted newest to oldest' do
+      let(:base)   { [item_1, item_2]                }
+      let(:item_1) { item(1, created_at: Time.at(1)) }
+      let(:item_2) { item(2, created_at: Time.at(0)) }
+
+      it 'returns members sorted from oldest to newest' do
+        expect(results).to eql([item_2, item_1])
+      end
+
+      include_examples '#each method'
+    end
+
+    context 'with a base relation having the same created_at' do
+      let(:base)   { [item_2, item_1]                }
+      let(:item_1) { item(1, created_at: Time.at(0)) }
+      let(:item_2) { item(2, created_at: Time.at(0)) }
+
+      it 'returns members sorted from lowest to highest id' do
+        expect(results).to eql([item_1, item_2])
+      end
+
+      include_examples '#each method'
+    end
+
   end
 
   describe '#restrict' do
@@ -89,7 +148,7 @@ describe Spree::MemoryScope do
         end
 
         it 'returns all members' do
-          expect(results).to eql(base)
+          expect(results).to eql(base.first(2))
         end
 
         it 'still operates on original base' do
@@ -100,34 +159,34 @@ describe Spree::MemoryScope do
       end
 
       context 'on restricted parent scope' do
-        let(:parent_predicate) { ->(member) { member.equal?(1) } }
+        let(:parent_predicate) { ->(member) { member.id.equal?(1) } }
 
         it 'returns restricted members' do
-          expect(results).to eql([1])
+          expect(results).to eql([base[0]])
         end
       end
     end
 
     context 'with selective predicate' do
-      let(:restrict_predicate) { ->(member) { member.equal?(1) } }
+      let(:restrict_predicate) { ->(member) { member.id.equal?(1) } }
 
       context 'on default parent scope' do
         it 'returns all selected members' do
-          expect(results).to eql([1])
+          expect(results).to eql([base[0]])
         end
       end
 
       context 'on restricted parent scope' do
         context 'when predicate includes parent items' do
-          let(:parent_predicate) { ->(member) { member < 3 } }
+          let(:parent_predicate) { ->(member) { member.id < 3 } }
 
           it 'returns the intersection' do
-            expect(results).to eql([1])
+            expect(results).to eql([base[0]])
           end
         end
 
         context 'when predicate does not include parent items' do
-          let(:parent_predicate) { ->(member) { member > 3 } }
+          let(:parent_predicate) { ->(member) { member.id > 3 } }
 
           it 'returns the intersection' do
             expect(results).to eql([])
@@ -140,12 +199,7 @@ describe Spree::MemoryScope do
   describe '#where' do
     subject { object.where(*arguments) }
 
-    let(:base) do
-      [
-        double('member a', id: 1, foo: 'bar'),
-        double('member b', id: 2, foo: 'baz')
-      ]
-    end
+    let(:base) { [item(1, foo: 'bar'), item(2, foo: 'baz')] }
 
     context 'with single argument' do
       let(:arguments) { [argument] }
@@ -243,10 +297,10 @@ describe Spree::MemoryScope do
   end
 
   describe '#sum' do
-    subject { object.sum(:to_f) }
+    subject { object.sum(:id) }
 
     it 'returns the sum per attribute' do
-      should be(6.0)
+      should be(3)
     end
   end
 
@@ -277,13 +331,12 @@ describe Spree::MemoryScope do
   describe '#update_all' do
     let(:attributes) { double('attributes') }
 
-    let(:base) { [double('member a'), double('member b')] }
-
     subject { object.update_all(attributes) }
 
     it 'calls #update_columns on all members' do
-      base.each do |member|
+      base.first(2).each do |member|
         expect(member).to receive(:update_columns).with(attributes)
+          .and_return(true)
       end
       should be(2)
     end
@@ -291,8 +344,6 @@ describe Spree::MemoryScope do
 
   describe '#delete_all' do
     subject { object.delete_all }
-
-    let(:base) { [double('member a', id: 1), double('member b', id: 2)] }
 
     it 'calls #delete_all on member #id based relation and #reset base' do
       relation      = double('relation')
@@ -308,8 +359,6 @@ describe Spree::MemoryScope do
   describe '#destroy_all' do
     subject { object.destroy_all }
 
-    let(:base) { [double('member a', id: 1), double('member b', id: 2)] }
-
     it 'calls #delete_all on member #id based relation and #reset base' do
       relation          = double('relation')
       objects_destroyed = double('objects destroyed')
@@ -323,7 +372,6 @@ describe Spree::MemoryScope do
 
   describe '#find' do
     subject { object.find(argument) }
-    let(:base) { [double('member a', id: 1), double('member b', id: 2)] }
 
     context 'when member with matching id as Fixnum is found' do
       let(:argument) { 2 }
@@ -340,7 +388,9 @@ describe Spree::MemoryScope do
     context 'when member with matching id as String containing trailing garbadge is found' do
       let(:argument) { '2-foo' }
 
-      it { should be(base.at(1)) }
+      it 'should raise an error' do
+        expect { subject }.to raise_error(ArgumentError)
+      end
     end
 
     context 'when member with matching id is NOT found' do
@@ -357,8 +407,15 @@ describe Spree::MemoryScope do
                  )
                )
              )
-          ),
-          each: nil
+          )
+        )
+      end
+
+      before do
+        expect(base).to receive_messages(
+          select:  base,
+          sort_by: base,
+          each:    base
         )
       end
 
@@ -372,8 +429,6 @@ describe Spree::MemoryScope do
   end
 
   describe '#pluck' do
-    let(:base) { [double('member a', id: 1), double('member b', id: 2)] }
-
     subject { object.pluck(:id) }
 
     it 'returns an array of attributes of members' do
@@ -384,6 +439,6 @@ describe Spree::MemoryScope do
   describe '#inspect' do
     subject { object.inspect}
 
-    it { should eql("<Spree::MemoryScope @base=#{base.inspect} @predicate=#{parent_predicate.inspect}>") }
+    it { should eql("#<Spree::MemoryScope base=#{base.inspect} predicate=#{parent_predicate.inspect}>") }
   end
 end

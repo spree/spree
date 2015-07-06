@@ -128,25 +128,6 @@ module Spree
         restrict { |adjustment| adjustables.include?(adjustment.adjustable) }
       end
 
-      # Enumerate members in scope
-      #
-      # To reduce the chance for ordering issues. And to make sure that members that got just
-      # created are returned in correct order we manually sort the adjustments before yielding
-      # them to the enumerator.
-      #
-      # @return [self]
-      #   if block given
-      #
-      # @return [Enumerator]
-      #   otherwise
-      #
-      # @api private
-      def each(&block)
-        return to_enum unless block
-        @base.to_a.select(&@predicate).sort_by(&:created_at).each(&block)
-        self
-      end
-
       memory_scope(:non_tax) { |adjustment| !adjustment.source_type.eql?('Spree::TaxRate') }
       memory_scope(:charge)  { |adjustment| adjustment.amount >= 0                         }
       memory_scope(:credit)  { |adjustment| adjustment.amount <  0                         }

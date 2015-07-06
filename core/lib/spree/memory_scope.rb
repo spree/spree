@@ -2,7 +2,7 @@ module Spree
   # Memory scope library namespace
   #
   # This module allows to define memory scopes. Scopes that are read against
-  # a base association, avoiding duplicate loads of the same object that can result
+  # a base relation, avoiding duplicate loads of the same object that can result
   # in performance degeration via N+1 lazy loads per duplicate and the need to #reload
   # entire object trees.
   #
@@ -10,13 +10,15 @@ module Spree
   # spree actually uses on adjustment associations / scopes right now.
   #
   class MemoryScope
-    include Enumerable
+    include Enumerable, Adamantium::Flat, Concord.new(:base, :predicate)
 
     # Raised for unsupported finder interfaces
     class UnsupportedInterfaceError < NotImplementedError
     end
 
     TAUTOLOGY = ->(_object) { true }
+
+    delegate :create!, :build, to: :base
 
     # Define a memory scope capturing the block as predicate
     #
@@ -27,9 +29,7 @@ module Spree
     #
     # @api private
     def self.memory_scope(name, &predicate)
-      define_method(name) do
-        restrict(&predicate)
-      end
+      define_method(name) { restrict(&predicate) }
     end
     private_class_method :memory_scope
 
@@ -55,23 +55,19 @@ module Spree
     end
     private_class_method :memory_scope_attribute_value
 
-    # Initialize scope
+    # Construct a memory scope
     #
-    # @param [ActiveRecord::Association] base
-    #   the base association that gets scoped
-    # @param [#call] predicate
+    # @param [ActiveRecord::Relation] _base
+    #   the base relation that gets scoped
+    # @param [#call] _predicate
     #   the predicate used to filter scope
     #
     # @return [undefined]
     #
     # @api private
-    def initialize(base, predicate = TAUTOLOGY)
-      @base, @predicate = base, predicate
-      freeze
+    def self.new(_base, _predicate = TAUTOLOGY)
+      super
     end
-
-    delegate :create!, to: :@base
-    delegate :build, to: :@base
 
     # Return array representation
     #
@@ -89,11 +85,9 @@ module Spree
     #   otherwise
     #
     # @api private
-    def each
-      return to_enum unless block_given?
-      @base.each do |object|
-        yield object if @predicate.call(object)
-      end
+    def each(&block)
+      return to_enum unless block
+      records.each(&block)
       self
     end
 
@@ -107,7 +101,6 @@ module Spree
     # @api private
     def where(*arguments)
       conditions = extract_where_conditions(arguments)
-
       conditions.reduce(self) do |scope, (name, value)|
         scope.restrict { |record| record.public_send(name).eql?(value) }
       end
@@ -119,7 +112,10 @@ module Spree
     #
     # @api private
     def restrict
-      self.class.new(@base, ->(object) { @predicate.call(object) && yield(object) })
+      self.class.new(
+        base,
+        ->(object) { predicate.call(object) && yield(object) }
+      )
     end
 
     # Test if any matching record exists
@@ -164,44 +160,33 @@ module Spree
     #
     # @api private
     def update_all(attributes)
-      each do |object|
-        object.update_columns(attributes)
-      end
-      count
+      count { |object| object.update_columns(attributes) }
     end
 
     # Destroy all records of scope
-    #
-    # TODO: Avoid #reset via removing records from association proxy directly.
     #
     # @return [Enumerable<Object>]
     #   the collection of destroyed objects
     #
     # @api private
     def destroy_all
-      @base.where(id: pluck(:id)).destroy_all.tap do
-        @base.reset
-      end
+      command_all(__method__)
     end
 
     # Delete all records of scope
-    #
-    # TODO: Avoid #reset via removing records from association proxy directly.
     #
     # @return [Fixnum]
     #   the number of rows affected
     #
     # @api private
     def delete_all
-      @base.where(id: pluck(:id)).delete_all.tap do
-        @base.reset
-      end
+      command_all(__method__)
     end
 
     # Find a record based on id
     #
     # @param [Fixnum, String] id
-    #   the record id in Fixnum or String form. Will get coerced via #to_i.
+    #   the record id will be coerced to an integer
     #
     # @return [Object]
     #   when object matching id was found
@@ -211,10 +196,9 @@ module Spree
     #
     # @api private
     def find(id)
-      id = id.to_i
-      record = detect { |record| record.id.equal?(id) }
-      raise ActiveRecord::RecordNotFound, "Couldn't find #{@base.proxy_association.reflection.inverse_of.active_record} with 'id'=#{id}" unless record
-      record
+      id = Integer(id)
+      detect { |record| record.id.equal?(id) } or
+        raise ActiveRecord::RecordNotFound,"Couldn't find #{base.proxy_association.reflection.inverse_of.active_record} with 'id'=#{id}"
     end
 
     # Return an array of record attribute values
@@ -228,16 +212,20 @@ module Spree
       map(&attribute_name)
     end
 
-    # Return inspection of scope
-    #
-    # @return [String]
-    #
-    # @api pirvate
-    def inspect
-      "<#{self.class} @base=#{@base} @predicate=#{@predicate}>"
-    end
-
   private
+
+    # Execute a command against all records and reset the relation
+    #
+    # TODO: Avoid #reset via removing records from proxy directly.
+    #
+    # @param [Symbol] method_name
+    #
+    # @return [Object]
+    #
+    # @api private
+    def command_all(method_name)
+      base.where(id: pluck(:id)).public_send(method_name).tap { base.reset }
+    end
 
     # Extract supported #where conditions
     #
@@ -259,6 +247,17 @@ module Spree
       end
 
       argument
+    end
+
+    # The filtered and sorted records
+    #
+    # @return [Array]
+    #
+    # @api private
+    def records
+      base
+        .select  { |record| !record.destroyed? && predicate.call(record) }
+        .sort_by { |record| [record.created_at, record.id]               }
     end
 
   end # MemoryScope
