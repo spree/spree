@@ -143,9 +143,9 @@ module Spree
       return false if zone_members.empty? || target.zone_members.empty?
 
       if kind == target.kind
-        if kind == 'state'
+        if state?
           return false if (target.states.pluck(:id) - states.pluck(:id)).present?
-        elsif kind == 'country'
+        elsif country?
           return false if (target.countries.pluck(:id) - countries.pluck(:id)).present?
         end
       else
