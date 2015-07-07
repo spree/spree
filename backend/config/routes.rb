@@ -34,6 +34,7 @@ Spree::Core::Engine.add_routes do
       member do
         get :clone
         get :stock
+        get :taxons
       end
       resources :variants do
         collection do

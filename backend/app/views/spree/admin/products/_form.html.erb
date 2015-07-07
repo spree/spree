@@ -140,25 +140,6 @@
 
   </div>
 
-  <div data-hook="admin_product_form_taxons">
-    <%= f.field_container :taxons, class: ['form-group'] do %>
-      <%= f.label :taxon_ids, Spree.t(:taxons) %>
-
-      <% if can? :modify, Spree::Classification %>
-        <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(',') %>
-      <% elsif @product.taxons.any? %>
-        <ul class="text_list">
-          <% @product.taxons.each do |taxon| %>
-            <li><%= taxon.name %></li>
-          <% end %>
-        </ul>
-      <% else %>
-        <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :taxons) %></div>
-      <% end %>
-
-    <% end %>
-  </div>
-
   <div data-hook="admin_product_form_option_types">
     <%= f.field_container :option_types, class: ['form-group'] do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
