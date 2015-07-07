@@ -1,5 +1,10 @@
 module Spree
   class Calculator < Spree::Base
+    # Conditional check for backwards compatibilty since acts as paranoid was added late https://github.com/spree/spree/issues/5858
+    if connection.table_exists?(:spree_calculators) && connection.column_exists?(:spree_calculators, :deleted_at)
+      acts_as_paranoid
+    end
+
     belongs_to :calculable, polymorphic: true
 
     # This method calls a compute_<computable> method. must be overriden in concrete calculator.
