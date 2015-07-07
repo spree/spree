@@ -2,7 +2,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
-  <fieldset>
+  <fieldset data-hook="admin_product_form_meta">
     <div data-hook="admin_product_form_meta_keywords">
       <%= f.field_container :meta_keywords, class: ['form-group'] do %>
         <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>

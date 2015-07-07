@@ -1,0 +1,83 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Search' } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
+
+<%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
+  <fieldset>
+    <div data-hook="admin_product_form_available_on">
+      <%= f.field_container :available_on, class: ['form-group'] do %>
+        <%= f.label :available_on, Spree.t(:available_on) %>
+        <%= f.error_message_on :available_on %>
+        <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'datepicker form-control' %>
+      <% end %>
+    </div>
+
+    <% unless @product.has_variants? %>
+      <div id="shipping_specs" class="row no-padding-bottom">
+        <div class="col-md-6">
+          <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">
+            <%= f.label :weight, Spree.t(:weight) %>
+            <%= f.text_field :weight, size: 4, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div id="shipping_specs_height_field" data-hook="admin_product_form_height" class="form-group">
+            <%= f.label :height, Spree.t(:height) %>
+            <%= f.text_field :height, size: 4, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div id="shipping_specs_width_field" data-hook="admin_product_form_width" class="form-group">
+            <%= f.label :width, Spree.t(:width) %>
+            <%= f.text_field :width, size: 4, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="form-group">
+            <%= f.label :depth, Spree.t(:depth) %>
+            <%= f.text_field :depth, size: 4, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div data-hook="admin_product_form_shipping_categories">
+      <%= f.field_container :shipping_categories, class: ['form-group'] do %>
+        <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
+        <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::ShippingCategory) }) %>
+        <%= f.error_message_on :shipping_category %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_tax_category">
+      <%= f.field_container :tax_category, class: ['form-group'] do %>
+        <%= f.label :tax_category_id, Spree.t(:tax_category) %>
+        <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::TaxCategory) }) %>
+        <%= f.error_message_on :tax_category %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_option_types">
+      <%= f.field_container :option_types, class: ['form-group'] do %>
+        <%= f.label :option_type_ids, Spree.t(:option_types) %>
+
+        <% if can? :modify, Spree::OptionType %>
+          <%= f.hidden_field :option_type_ids, value: @product.option_type_ids.join(',') %>
+        <% elsif @product.option_types.any? %>
+          <ul class="text_list">
+            <% @product.option_types.each do |type| %>
+              <li><%= type.presentation %> (<%= type.name %>)</li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :option_types) %></div>
+        <% end %>
+
+      <% end %>
+    </div>
+
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
+<% end %>
