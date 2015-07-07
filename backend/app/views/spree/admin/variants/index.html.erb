@@ -4,10 +4,11 @@
 <div id="new_variant" data-hook></div>
 
 <% if @variants.any? %>
-  <table class="table sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
+  <table class="table js-sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <thead data-hook="variants_header">
       <tr>
-        <th colspan="2"><%= Spree.t(:options) %></th>
+        <th></th>
+        <th><%= Spree.t(:options) %></th>
         <th><%= Spree.t(:price) %></th>
         <th><%= Spree.t(:sku) %></th>
         <th class="actions"></th>
@@ -16,9 +17,9 @@
     <tbody>
     <% @variants.each do |variant| %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
-        <td class="move-handle">
+        <td>
           <% if can? :edit, variant %>
-            <span class="icon icon-move handle"></span>
+            <span class="icon icon-move js-sort-handle"></span>
           <% end %>
         </td>
         <td><%= variant.options_text %></td>

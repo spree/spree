@@ -1,8 +1,8 @@
 $(document).ready ->
   window.productTemplate = Handlebars.compile($('#product_template').text());
   $('#taxon_products').sortable({
-      handle: ".js-sort-handle"
-    });
+    handle: ".js-sort-handle"
+  });
   $('#taxon_products').on "sortstop", (event, ui) ->
     $.ajax
       url: Spree.routes.classifications_api,
