@@ -3,9 +3,9 @@ module Spree
     has_many :zone_members, dependent: :destroy, class_name: "Spree::ZoneMember", inverse_of: :zone
     has_many :tax_rates, dependent: :destroy, inverse_of: :zone
     has_many :countries, through: :zone_members, source: :zoneable,
-      source_type: "Spree::Country"
+             source_type: "Spree::Country"
     has_many :states, through: :zone_members, source: :zoneable,
-      source_type: "Spree::State"
+             source_type: "Spree::State"
 
     has_and_belongs_to_many :shipping_methods, :join_table => 'spree_shipping_methods_zones'
 
@@ -80,12 +80,12 @@ module Spree
 
       members.any? do |zone_member|
         case zone_member.zoneable_type
-        when 'Spree::Country'
-          zone_member.zoneable_id == address.country_id
-        when 'Spree::State'
-          zone_member.zoneable_id == address.state_id
-        else
-          false
+          when 'Spree::Country'
+            zone_member.zoneable_id == address.country_id
+          when 'Spree::State'
+            zone_member.zoneable_id == address.state_id
+          else
+            false
         end
       end
     end
@@ -93,9 +93,12 @@ module Spree
     # convenience method for returning the countries contained within a zone
     def country_list
       @countries ||= case kind
-                     when 'country' then zoneables
-                     when 'state' then zoneables.collect(&:country)
-                     else []
+                       when 'country' then
+                         zoneables
+                       when 'state' then
+                         zoneables.collect(&:country)
+                       else
+                         []
                      end.flatten.compact.uniq
     end
 
@@ -140,7 +143,11 @@ module Spree
       return false if zone_members.empty? || target.zone_members.empty?
 
       if kind == target.kind
-        return false if (target.countries.pluck(:id) - countries.pluck(:id)).present?
+        if kind == 'state'
+          return false if (target.states.pluck(:id) - states.pluck(:id)).present?
+        elsif kind == 'country'
+          return false if (target.countries.pluck(:id) - countries.pluck(:id)).present?
+        end
       else
         return false if (target.states.pluck(:country_id) - countries.pluck(:id)).present?
       end
@@ -148,24 +155,24 @@ module Spree
     end
 
     private
-      def remove_defunct_members
-        if zone_members.any?
-          zone_members.where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.classify}").destroy_all
-        end
+    def remove_defunct_members
+      if zone_members.any?
+        zone_members.where('zoneable_id IS NULL OR zoneable_type != ?', "Spree::#{kind.classify}").destroy_all
       end
+    end
 
-      def remove_previous_default
-        Spree::Zone.where('id != ?', self.id).update_all(default_tax: false) if default_tax
-      end
+    def remove_previous_default
+      Spree::Zone.where('id != ?', self.id).update_all(default_tax: false) if default_tax
+    end
 
-      def set_zone_members(ids, type)
-        zone_members.destroy_all
-        ids.reject{ |id| id.blank? }.map do |id|
-          member = ZoneMember.new
-          member.zoneable_type = type
-          member.zoneable_id = id
-          members << member
-        end
+    def set_zone_members(ids, type)
+      zone_members.destroy_all
+      ids.reject { |id| id.blank? }.map do |id|
+        member = ZoneMember.new
+        member.zoneable_type = type
+        member.zoneable_id = id
+        members << member
       end
+    end
   end
 end
