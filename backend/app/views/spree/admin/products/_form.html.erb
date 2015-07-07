@@ -60,29 +60,7 @@
         <% end %>
       </div>
 
-      <% if @product.has_variants? %>
-        <div data-hook="admin_product_form_multiple_variants" class="well">
-          <%= f.label :skus, Spree.t(:sku).pluralize %>
-          <div class="info marginb">
-            <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.count) %>
-            <ul class="text_list">
-              <% @product.variants.first(5).each do |variant| %>
-                <li><%= variant.sku %></li>
-              <% end %>
-            </ul>
-            <% if @product.variants.count > 5 %>
-              <em>
-                <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.count - 5) %>
-              </em>
-            <% end %>
-          </div>
-          <div class="info-actions">
-            <% if can?(:admin, Spree::Variant) %>
-              <%= link_to_with_icon 'variants', 'Manage Variants', spree.admin_product_variants_url(@product), class: "btn btn-default" %>
-            <% end %>
-          </div>
-        </div>
-      <% else %>
+      <% unless @product.has_variants? %>
         <div data-hook="admin_product_form_sku">
           <%= f.field_container :sku, class: ['form-group'] do %>
             <%= f.label :sku, Spree.t(:sku) %>
