@@ -2,6 +2,7 @@ module Spree
   class ReturnItem < Spree::Base
 
     COMPLETED_RECEPTION_STATUSES = %i(received given_to_customer missing out_of_stock)
+    NOT_RETURNED_RECEPTION_STATUSES = %i(given_to_customer missing out_of_stock)
 
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
@@ -62,7 +63,12 @@ module Spree
       after_transition to: COMPLETED_RECEPTION_STATUSES,  do: :attempt_accept
       after_transition to: :received, do: :process_inventory_unit!
 
+      event :wait do
+        transition to: :awaiting, from: :awaiting
+      end
+
       event :receive do
+        transition to: :out_of_stock, from: :out_of_stock
         transition to: :received, from: [:awaiting, :given_to_customer, :missing]
       end
 
@@ -189,7 +195,6 @@ module Spree
       inventory_unit.return!
 
       Spree::StockMovement.create!(stock_item_id: stock_item.id, quantity: 1) if should_restock?
-      customer_return.send(:process_return!) if customer_return
     end
 
     # This logic is also present in the customer return. The reason for the
