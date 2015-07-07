@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Taxons' } %>
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
-<%= form_for [:admin, @product], :method => :put, :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
   <fieldset>
     <div data-hook="admin_product_form_taxons">
       <%= f.field_container :taxons, class: ['form-group'] do %>
@@ -21,6 +21,6 @@
 
       <% end %>
     </div>
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </fieldset>
 <% end %>
