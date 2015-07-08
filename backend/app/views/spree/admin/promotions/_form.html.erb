@@ -1,30 +1,4 @@
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @promotion } %>
-
-<% content_for :head do %>
-  <script type="text/javascript">
-    // Javascript to handle add new promotion code
-    var addNewPromotionCode = false;
-    $(document).ready(function(){
-      $(".js-add-promotion-code").click(function(){
-        $("tr.js-new-promotion-code").show();
-        addNewPromotionCode = true;
-        $("tr.js-add-promotion-code-tr").hide();
-      });
-
-      $(".js-cancel-add-promotion-code").click(function(){
-        $("tr.js-new-promotion-code").hide();
-        addNewPromotionCode = false;
-        $("tr.js-add-promotion-code-tr").show();
-      });
-
-      $("form.edit_promotion").submit(function(){
-        if(addNewPromotionCode == false || $(".js-new-promotion-code input:first").val() == ""){
-          $("tr.js-new-promotion-code").remove();
-        }
-      });
-    });
-  </script>
-<% end %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields" >
   <div class="col-md-3">
@@ -41,9 +15,9 @@
     <div id="expiry_fields">
       <%= f.field_container :usage_limit, class: ['form-group'] do %>
         <%= f.label :usage_limit %>
-        <%= f.number_field :usage_limit, :min => 0, class: 'form-control' %>
+        <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
         <p class="help-block">
-          <%= Spree.t(:current_promotion_usage, :count => @promotion.credits_count) %>
+          <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
         </p>
       <% end %>
 
@@ -70,64 +44,12 @@
   <div class="col-md-9">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
-      <%= f.text_area :description, :rows => 7, class: 'form-control' %>
+      <%= f.text_area :description, rows: 7, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :category, class: ['form-group'] do %>
       <%= f.label :promotion_category %>
-      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { class: 'select2' }) %>
+      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
     <% end %>
   </div>
 </div>
-
-<% if !@promotion.new_record? %>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title"><%= Spree.t(:promotion_codes) %></h3>
-    </div>
-    <%= f.field_container :promotion_codes do %>
-      <table class="table no-margin-bottom" id="promotion_codes">
-        <thead>
-          <tr>
-            <th><%= f.label :value %></th>
-            <th><%= f.label :starts_at %></th>
-            <th><%= f.label :expires_at %></th>
-            <th><%= f.label :usage_limit %></th>
-            <th width="85"><%= f.label :delete %></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @promotion.promotion_codes.each do |promo_code| %>
-            <%= f.fields_for :promotion_codes, promo_code do |pc| %>
-              <tr>
-                <td><%= pc.text_field :value, class: "form-control" %></td>
-                <td><%= pc.text_field :starts_at, value: datepicker_field_value(promo_code.starts_at), class: 'datepicker form-control' %></td>
-                <td><%= pc.text_field :expires_at, value: datepicker_field_value(promo_code.expires_at), class: 'datepicker form-control' %></td>
-                <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
-                <td><%= pc.check_box :_destroy %></td>
-              </tr>
-            <% end %>
-          <% end %>
-          <%= f.fields_for :promotion_codes, Spree::PromotionCode.new do |pc| %>
-            <tr class="js-new-promotion-code" style="display: none">
-              <td><%= pc.text_field :value, class: "form-control" %></td>
-              <td><%= pc.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker form-control' %></td>
-              <td><%= pc.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker form-control' %></td>
-              <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
-              <td>
-                <%= link_to "Cancel", "javascript:;", class: "js-cancel-add-promotion-code btn btn-sm btn-danger" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-        <tfoot>
-          <tr class="js-add-promotion-code-tr">
-            <td colspan="5">
-              <%= link_to Spree.t(:add_promotion_code), "javascript:;", class: "js-add-promotion-code btn btn-sm btn-primary" %>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    <% end %>
-  </div>
-<% end %>

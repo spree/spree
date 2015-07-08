@@ -49,6 +49,12 @@ module Spree
         redirect_to admin_order_promotions_path(@order)
       end
 
+      def codes
+         params[:q] ||= {}
+         @search = @promotion.promotion_codes.ransack(params[:q])
+         @promotion_codes = @search.result.page(params[:page]).per(params[:per_page])
+      end
+
       protected
         def location_after_save
           :back
