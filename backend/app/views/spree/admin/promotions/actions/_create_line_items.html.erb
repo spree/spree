@@ -1,7 +1,11 @@
 <div class="panel-body calculator-fields">
   <% promotion_action.promotion_action_line_items.each do |item| %>
-    <strong><%= item.quantity %> x <%= item.variant.product.name %></strong>
-    <%= item.variant.options_text %>
+    <% if item.variant %>
+      <strong><%= item.quantity %> x <%= item.variant.product.name %></strong>
+      <%= item.variant.options_text %>
+    <% else %>
+      <%= Spree.t(:no_variant_selected) %>
+    <% end %>
   <% end %>
 
   <% if promotion_action.promotion_action_line_items.empty? %>

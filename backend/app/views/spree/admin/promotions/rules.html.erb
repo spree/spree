@@ -33,7 +33,7 @@
     </div>
   </div>
 
-  <div id="rules" class="filter_list margint">
+  <div id="rules" class="filter_list">
     <% if @promotion.rules.any? %>
       <%= render partial: 'promotion_rule', collection: @promotion.rules, locals: {} %>
     <% else %>

@@ -51,7 +51,7 @@ module Spree
 
       protected
         def location_after_save
-          spree.edit_admin_promotion_url(@promotion)
+          :back
         end
 
         def load_data

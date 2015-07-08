@@ -9,7 +9,8 @@ Spree::Core::Engine.add_routes do
       resources :promotion_rules
       resources :promotion_actions
       member do
-        get :rules        
+        get :rules
+        get :actions
       end
     end
 
