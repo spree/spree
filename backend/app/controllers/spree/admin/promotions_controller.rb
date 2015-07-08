@@ -3,6 +3,7 @@ module Spree
     class PromotionsController < ResourceController
       before_action :load_data, except: [:order_promotions, :apply_to_order, :delete_from_order]
       before_action :load_order, only: [:order_promotions, :apply_to_order, :delete_from_order]
+      before_action :load_promotion_category, only: [:index]
       before_action :load_promotion, only: [:apply_to_order, :delete_from_order]
 
       helper 'spree/promotion_rules'
@@ -66,12 +67,18 @@ module Spree
           @promotion = Spree::Promotion.find(params[:promotion_id])
         end
 
+        def load_promotion_category
+          @promotion_category = Spree::PromotionCategory.where(id: params[:promotion_category_id]).first
+        end
+
         def collection
+          load_promotion_category
+
           return @collection if defined?(@collection)
           params[:q] ||= HashWithIndifferentAccess.new
           params[:q][:s] ||= 'id desc'
 
-          @collection = super
+          @collection = @promotion_category ? @promotion_category.promotions : super
           @search = @collection.ransack(params[:q])
           @collection = @search.result(distinct: true).
             includes(promotion_includes).

@@ -37,6 +37,12 @@ module Spree
       joins("INNER JOIN #{order_join_table} ON " \
         "#{order_join_table}.promotion_id = #{table_name}.id").distinct
     end
+    scope :active, -> do
+      where("#{Spree::Promotion.table_name}.starts_at IS NULL OR " \
+        "#{Spree::Promotion.table_name}.starts_at < ? AND " \
+        "#{Spree::Promotion.table_name}.expires_at IS NULL OR " \
+        "#{Spree::Promotion.table_name}.expires_at > ?", Time.now, Time.now)
+    end
     scope :coupons, -> do
       joins(:promotion_codes).where("#{Spree::PromotionCode.table_name}.value IS NOT NULL")
     end

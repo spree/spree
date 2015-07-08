@@ -10,7 +10,9 @@ Spree::Core::Engine.add_routes do
       resources :promotion_actions
     end
 
-    resources :promotion_categories, except: [:show]
+    resources :promotion_categories, except: [:show] do
+      resources :promotions, only: [:index]
+    end
 
     resources :zones
 

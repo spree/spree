@@ -1,4 +1,8 @@
 <% content_for :page_title do %>
+  <% if @promotion_category %>
+    <%= link_to Spree.t(:promotion_categories), admin_promotion_categories_path %> /
+    <%= @promotion_category.name %> /
+  <% end %>
   <%= plural_resource_name(Spree::Promotion) %>
 <% end %>
 
@@ -8,21 +12,21 @@
 
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
-    <%= search_form_for [:admin, @search] do |f| %>
+    <%= search_form_for [:admin, @search], url: @promotion_category ? admin_promotion_category_promotions_path(@promotion_category) : spree.admin_promotions_path do |f| %>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
           </div>
-
-          <div class="four columns">
-            <div class="field">
-              <%= label_tag :q_path_cont, Spree.t(:path) %>
-              <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
-            </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_path_cont, Spree.t(:path) %>
+            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
             <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
