@@ -443,7 +443,7 @@ describe Spree::Shipment, :type => :model do
       allow(shipment.order).to receive(:update!)
 
       shipment.state = 'canceled'
-      expect(shipment).to receive(:determine_state).and_return(:ready)
+      expect(shipment).to receive(:determine_state).and_return('ready')
       expect(shipment).to receive(:after_resume)
       shipment.resume!
       expect(shipment.state).to eq 'ready'
