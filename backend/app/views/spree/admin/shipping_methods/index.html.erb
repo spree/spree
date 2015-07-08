@@ -42,6 +42,8 @@
 <% end %>
 
 <% if @shipping_methods.any? %>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @shipping_methods } %>
+
   <table class="table" id='listing_shipping_methods'>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
@@ -67,6 +69,8 @@
       <% end %>
     </tbody>
   </table>
+
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @shipping_methods } %>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ShippingMethod)) %>,
