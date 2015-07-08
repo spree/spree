@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:editing_resource, resource: Spree::Promotion.model_name.human) %>
+<% end %>
+
+<% content_for :sidebar do %>
+  <ul class="nav nav-pills nav-stacked" data-hook="admin_promotion_tabs">
+    <%= content_tag :li, class: ('active' if current == :details) do %>
+      <%= link_to_with_icon 'home', Spree.t(:details), edit_admin_promotion_path(@promotion) %>
+    <% end if can?(:admin, @promotion) %>
+    <%= content_tag :li, class: ('active' if current == :rules) do %>
+      <%= link_to_with_icon 'th-list', Spree.t(:rules), rules_admin_promotion_path(@promotion) %>
+    <% end if can?(:admin, @promotion) %>
+  </ul>
+<% end %>

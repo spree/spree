@@ -1,29 +1,21 @@
-<% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::Promotion.model_name.human) %>
-<% end %>
+<%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :details } %>
 
-<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
+<%= form_for @promotion, url: object_url, method: :put do |f| %>
   <div class="row">
     <div class="col-md-12">
-      <%= render :partial => 'form', :locals => { :f => f } %>
-      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>  
-    </div>    
-  </div>
-  
-<% end %>
-
-<div id="promotion-filters" class="row">
-  <div id="rules_container" class="col-md-6">
-    <div class="panel panel-default">
-      <%= render :partial => 'rules' %>
+      <%= render partial: 'form', locals: { f: f } %>
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </div>
 
+<% end %>
+
+<div id="promotion-filters" class="row">
   <div id="actions_container" class="col-md-6">
     <div class="panel panel-default">
-      <%= render :partial => 'actions' %>
+      <%= render partial: 'actions' %>
     </div>
   </div>
 </div>
 
-<%= render :partial => "spree/admin/variants/autocomplete", :formats => [:js] %>
+<%= render partial: "spree/admin/variants/autocomplete", formats: [:js] %>

@@ -8,6 +8,9 @@ Spree::Core::Engine.add_routes do
     resources :promotions do
       resources :promotion_rules
       resources :promotion_actions
+      member do
+        get :rules        
+      end
     end
 
     resources :promotion_categories, except: [:show] do
