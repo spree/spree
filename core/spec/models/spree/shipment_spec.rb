@@ -439,14 +439,25 @@ describe Spree::Shipment, :type => :model do
   end
 
   context "#resume" do
-    it 'will determine new state based on order' do
+    it 'transitions state to ready if the order is ready' do
       allow(shipment.order).to receive(:update!)
 
       shipment.state = 'canceled'
-      expect(shipment).to receive(:determine_state).and_return(:ready)
+      expect(shipment).to receive(:determine_state).and_return('ready')
       expect(shipment).to receive(:after_resume)
       shipment.resume!
       expect(shipment.state).to eq 'ready'
+    end
+
+    it 'transitions state to pending if the order is not ready' do
+      allow(shipment.order).to receive(:update!)
+
+      shipment.state = 'canceled'
+      expect(shipment).to receive(:determine_state).and_return('pending')
+      expect(shipment).to receive(:after_resume)
+      shipment.resume!
+      # Shipment is pending because order is already paid
+      expect(shipment.state).to eq 'pending'
     end
 
     it 'unstocks them items' do
@@ -454,17 +465,6 @@ describe Spree::Shipment, :type => :model do
       shipment.stock_location = mock_model(Spree::StockLocation)
       expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
-    end
-
-    it 'will determine new state based on order' do
-      allow(shipment.order).to receive(:update!)
-
-      shipment.state = 'canceled'
-      expect(shipment).to receive(:determine_state).twice.and_return('ready')
-      expect(shipment).to receive(:after_resume)
-      shipment.resume!
-      # Shipment is pending because order is already paid
-      expect(shipment.state).to eq 'pending'
     end
   end
 
