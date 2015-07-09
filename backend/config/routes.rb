@@ -14,6 +14,7 @@ Spree::Core::Engine.add_routes do
         get :codes
         get :codes_as_csv
         post :batch_add_codes
+        delete :delete_all_codes
       end
     end
 

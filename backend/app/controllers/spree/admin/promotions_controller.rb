@@ -82,6 +82,13 @@ module Spree
         redirect_to spree.codes_admin_promotion_path(@promotion)
       end
 
+      def delete_all_codes
+        @promotion.promotion_codes.delete_all
+
+        flash[:success] = Spree.t(:succesfully_deleted_all_codes)
+        redirect_to spree.codes_admin_promotion_path(@promotion)
+      end
+
       protected
 
         # isolated method so this can be overwritten (for example implement background job)
