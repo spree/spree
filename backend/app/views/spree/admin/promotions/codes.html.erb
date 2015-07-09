@@ -1,32 +1,6 @@
-<% content_for :head do %>
-  <script type="text/javascript">
-    // Javascript to handle add new promotion code
-    var addNewPromotionCode = false;
-    $(document).ready(function(){
-      $(".js-add-promotion-code").click(function(){
-        $("tr.js-new-promotion-code").show();
-        addNewPromotionCode = true;
-        $(this).hide();
-      });
-
-      $(".js-cancel-add-promotion-code").click(function(){
-        $("tr.js-new-promotion-code").hide();
-        addNewPromotionCode = false;
-        $(".js-add-promotion-code").show();
-      });
-
-      $("form.edit_promotion").submit(function(){
-        if(addNewPromotionCode == false || $(".js-new-promotion-code input:first").val() == ""){
-          $("tr.js-new-promotion-code").remove();
-        }
-      });
-    });
-  </script>
-<% end %>
-
 <% content_for :page_actions do %>
   <%= button_link_to(Spree.t(:export_as_csv), codes_as_csv_admin_promotion_path(@promotion, format: :csv), class: "btn-default", icon: 'download-alt') %>
-  <%= button_link_to(Spree.t(:add_code), 'javascript:;', class: "js-add-promotion-code btn-success", icon: 'add') if can?(:create, Spree::PromotionCode) %>
+  <%= button_link_to(Spree.t(:add_code), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addSingleCode" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :codes } %>
@@ -53,42 +27,65 @@
 <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @promotion_codes } %>
 
 <%= form_for @promotion, url: object_url, method: :put do |f| %>
-  <%= f.field_container :promotion_codes do %>
-    <table class="table" id="promotion_codes">
-      <thead>
-        <tr>
-          <th><%= Spree.t(:value) %></th>
-          <th><%= Spree.t(:starts_at) %></th>
-          <th><%= Spree.t(:expires_at) %></th>
-          <th><%= Spree.t(:usage_limit) %></th>
-          <th width="85"><%= Spree.t(:delete) %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @promotion_codes.each do |promo_code| %>
-          <%= f.fields_for :promotion_codes, promo_code do |pc| %>
-            <tr>
-              <td><%= pc.text_field :value, class: "form-control" %></td>
-              <td><%= pc.text_field :starts_at, value: datepicker_field_value(promo_code.starts_at), class: 'datepicker form-control' %></td>
-              <td><%= pc.text_field :expires_at, value: datepicker_field_value(promo_code.expires_at), class: 'datepicker form-control' %></td>
-              <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
-              <td><%= pc.check_box :_destroy %></td>
-            </tr>
-          <% end %>
-        <% end %>
-        <%= f.fields_for :promotion_codes, Spree::PromotionCode.new do |pc| %>
-          <tr class="js-new-promotion-code" style="display: none">
+  <table class="table" id="promotion_codes">
+    <thead>
+      <tr>
+        <th><%= Spree.t(:value) %></th>
+        <th><%= Spree.t(:starts_at) %></th>
+        <th><%= Spree.t(:expires_at) %></th>
+        <th><%= Spree.t(:usage_limit) %></th>
+        <th width="85" class="text-center"><%= Spree.t(:delete) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @promotion_codes.each do |promo_code| %>
+        <%= f.fields_for :promotion_codes, promo_code do |pc| %>
+          <tr>
             <td><%= pc.text_field :value, class: "form-control" %></td>
-            <td><%= pc.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker form-control' %></td>
-            <td><%= pc.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker form-control' %></td>
+            <td><%= pc.text_field :starts_at, value: datepicker_field_value(promo_code.starts_at), class: 'datepicker form-control' %></td>
+            <td><%= pc.text_field :expires_at, value: datepicker_field_value(promo_code.expires_at), class: 'datepicker form-control' %></td>
             <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
-            <td>
-              <%= link_to "Cancel", "javascript:;", class: "js-cancel-add-promotion-code btn btn-sm btn-danger" %>
-            </td>
+            <td class="text-center"><%= pc.check_box :_destroy %></td>
           </tr>
-        <% end if can?(:create, Spree::PromotionCode) %>
-      </tbody>
-    </table>
-  <% end %>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
   <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% end %>
+
+<% if can?(:create, Spree::PromotionCode) %>
+  <div class="modal fade" id="addSingleCode" tabindex="-1" role="dialog" aria-labelledby="addSingleCodeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="addSingleCodeLabel"><%= Spree.t(:add_single_code) %></h4>
+        </div>
+        <div class="modal-body">
+          <%= form_for @promotion, url: object_url, method: :put do |f| %>
+            <%= f.fields_for :promotion_codes, Spree::PromotionCode.new do |pc| %>
+              <div class="form-group">
+                <%= f.label :value, Spree.t(:value) %>
+                <%= pc.text_field :value, class: "form-control" %>
+              </div>
+              <div class="form-group">
+                <%= f.label :starts_at, Spree.t(:starts_at) %>
+                <%= pc.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker form-control' %>
+              </div>
+              <div class="form-group">
+                <%= f.label :expires_at, Spree.t(:expires_at) %>
+                <%= pc.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker form-control' %>
+              </div>
+              <div class="form-group">
+                <%= f.label :usage_limit, Spree.t(:usage_limit) %>
+                <%= pc.number_field :usage_limit, class: "form-control" %>
+              </div>
+              <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
