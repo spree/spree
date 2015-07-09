@@ -1,8 +1,8 @@
 <% content_for :page_actions do %>
-  <%= button_link_to(Spree.t(:export_as_csv), codes_as_csv_admin_promotion_path(@promotion, format: :csv), class: "btn-default", icon: 'download-alt') %>
-  <%= button_link_to(Spree.t(:delete_all_codes), delete_all_codes_admin_promotion_path(@promotion), method: :delete, class: "btn-danger", data: { action: :remove, confirm: Spree.t(:are_you_sure) }, icon: 'delete') if can?(:destroy, Spree::PromotionCode) %>
-  <%= button_link_to(Spree.t(:add_code), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addSingleCode" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
-  <%= button_link_to(Spree.t(:batch_add_codes), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#batchAddCodes" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
+  <%= button_link_to(Spree.t(:export_csv), codes_as_csv_admin_promotion_path(@promotion, format: :csv), class: "btn-default", icon: 'download-alt') %>
+  <%= button_link_to(Spree.t(:delete_all), delete_all_codes_admin_promotion_path(@promotion), method: :delete, class: "btn-danger", data: { action: :remove, confirm: Spree.t(:are_you_sure) }, icon: 'delete') if can?(:destroy, Spree::PromotionCode) %>
+  <%= button_link_to(Spree.t(:add), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addSingleCode" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
+  <%= button_link_to(Spree.t(:batch_add), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#batchAddCodes" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :codes } %>
