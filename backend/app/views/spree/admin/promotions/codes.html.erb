@@ -8,7 +8,7 @@
 <%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :codes } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:codes) %>
+  / <%= @promotion_codes.total_count %> <%= Spree.t(:codes) %>
 <% end %>
 
 <% content_for :table_filter do %>
