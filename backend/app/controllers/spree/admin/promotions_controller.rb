@@ -63,7 +63,32 @@ module Spree
         end
       end
 
+      def batch_add_codes
+        amount = params[:amount].to_i
+        promotion_codes = []
+
+        amount.times do
+          promotion_codes << @promotion.promotion_codes.new(
+            value: "#{params[:prefix]}#{Digest::SHA1.hexdigest([Time.now, rand].join)}",
+            usage_limit: params[:usage_limit],
+            starts_at: params[:starts_at],
+            expires_at: params[:expires_at]
+          )
+        end
+
+        import_promotion_codes promotion_codes
+
+        flash[:success] = Spree.t(:promotion_codes_where_succesfully_generated)
+        redirect_to spree.codes_admin_promotion_path(@promotion)
+      end
+
       protected
+
+        # isolated method so this can be overwritten (for example implement background job)
+        def import_promotion_codes(promotion_codes)
+          Spree::PromotionCode.import promotion_codes
+        end
+
         def location_after_save
           :back
         end

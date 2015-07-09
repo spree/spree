@@ -3,6 +3,7 @@ require 'jquery-rails'
 require 'jquery-ui-rails'
 require 'deface'
 require 'select2-rails'
+require 'activerecord-import'
 
 require 'spree_core'
 require 'spree_api'

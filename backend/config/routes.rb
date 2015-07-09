@@ -13,6 +13,7 @@ Spree::Core::Engine.add_routes do
         get :actions
         get :codes
         get :codes_as_csv
+        post :batch_add_codes
       end
     end
 
