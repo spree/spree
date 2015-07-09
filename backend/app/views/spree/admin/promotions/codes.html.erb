@@ -25,7 +25,8 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:add_code), 'javascript:;', class: "js-add-promotion-code btn-success", icon: 'add' %>
+  <%= button_link_to(Spree.t(:export_as_csv), codes_as_csv_admin_promotion_path(@promotion, format: :csv), class: "btn-default", icon: 'download-alt') %>
+  <%= button_link_to(Spree.t(:add_code), 'javascript:;', class: "js-add-promotion-code btn-success", icon: 'add') if can?(:create, Spree::PromotionCode) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :codes } %>
@@ -37,12 +38,10 @@
 <% content_for :table_filter do %>
   <%= search_form_for [:admin, @search], url: codes_admin_promotion_path(@promotion) do |f| %>
     <%- locals = { f: f} %>
-    <div data-hook="admin_shipping_method_filters" class="row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <%= f.label :value_cont, Spree.t(:value) %>
-          <%= f.text_field :value_cont, size: 15, class: "form-control js-quick-search-target" %>
-        </div>
+    <div data-hook="admin_shipping_method_filters">
+      <div class="form-group">
+        <%= f.label :value_cont, Spree.t(:value) %>
+        <%= f.text_field :value_cont, size: 15, class: "form-control js-quick-search-target" %>
       </div>
     </div>
     <div class="form-actions">
@@ -87,7 +86,7 @@
               <%= link_to "Cancel", "javascript:;", class: "js-cancel-add-promotion-code btn btn-sm btn-danger" %>
             </td>
           </tr>
-        <% end %>
+        <% end if can?(:create, Spree::PromotionCode) %>
       </tbody>
     </table>
   <% end %>

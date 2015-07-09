@@ -1,10 +1,6 @@
 <%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :details } %>
 
 <%= form_for @promotion, url: object_url, method: :put do |f| %>
-  <div class="row">
-    <div class="col-md-12">
-      <%= render partial: 'form', locals: { f: f } %>
-      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
-    </div>
-  </div>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
 <% end %>

@@ -12,6 +12,7 @@ Spree::Core::Engine.add_routes do
         get :rules
         get :actions
         get :codes
+        get :codes_as_csv
       end
     end
 

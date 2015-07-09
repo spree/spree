@@ -55,6 +55,14 @@ module Spree
          @promotion_codes = @search.result.page(params[:page]).per(params[:per_page])
       end
 
+      def codes_as_csv
+        promotion_codes = @promotion.promotion_codes.collect{ |x| x.value }.join("\n")
+
+        respond_to do |format|
+          format.csv { render text: promotion_codes }
+        end
+      end
+
       protected
         def location_after_save
           :back
