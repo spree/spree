@@ -82,7 +82,7 @@ module Spree
         end
 
         flash[:success] = Spree.t(:promotion_codes_where_succesfully_generated)
-        redirect_to spree.codes_admin_promotion_path(@promotion)
+        redirect_to :back
       end
 
       def delete_all_codes
