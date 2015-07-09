@@ -100,7 +100,7 @@ module Spree
         end
 
         def location_after_save
-          :back
+          (params[:action] == "create") ? spree.edit_admin_promotion_url(@promotion) : :back
         end
 
         def load_data

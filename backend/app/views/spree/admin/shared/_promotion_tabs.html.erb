@@ -15,6 +15,6 @@
     <% end if can?(:admin, Spree::PromotionAction) %>
     <%= content_tag :li, class: ('active' if current == :codes) do %>
       <%= link_to_with_icon 'file', Spree.t(:codes), spree.codes_admin_promotion_path(@promotion) %>
-    <% end if can?(:admin, Spree::PromotionCode) && !@promotion.new_record? %>
+    <% end if can?(:admin, Spree::PromotionCode) %>
   </ul>
 <% end %>
