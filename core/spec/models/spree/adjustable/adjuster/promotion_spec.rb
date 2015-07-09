@@ -21,6 +21,25 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
              mandatory: false)
     end
 
+    describe "competing promos" do
+      before { Spree::Adjustment.competing_promos_source_types = ['Spree::PromotionAction', 'Custom'] }
+
+      it "do not update promo_total" do
+        create(:adjustment,
+               order: order,
+               adjustable: line_item,
+               source_type: 'Custom',
+               source_id: nil,
+               amount: -3.50,
+               label: "Other",
+               mandatory: false)
+        create_adjustment("Promotion A", -2.50)
+
+        subject.update
+        expect(line_item.promo_total).to eql 0.0
+      end
+    end
+
     it "should use only the most valuable promotion" do
       create_adjustment("Promotion A", -100)
       create_adjustment("Promotion B", -200)

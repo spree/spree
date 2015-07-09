@@ -6,7 +6,7 @@ module Spree
           promo_adjustments = adjustments.competing_promos.reload.map { |a| a.update!(adjustable) }
           promos_total = promo_adjustments.compact.sum
           choose_best_promo_adjustment unless promos_total == 0
-          promo_total = best_promo_adjustment.try(:amount).to_f
+          promo_total = best_promo_adjustment.try(:amount).to_f if best_promo_adjustment.try(:promotion?)
 
           update_totals(promo_total)
         end
@@ -31,6 +31,7 @@ module Spree
         end
 
         def update_totals(promo_total)
+          promo_total ||= 0.0
           @totals[:promo_total] = promo_total
           @totals[:taxable_adjustment_total] += promo_total
         end
