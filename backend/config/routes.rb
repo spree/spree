@@ -186,6 +186,7 @@ Spree::Core::Engine.add_routes do
         put :addresses
         get :api_access
         get :roles
+        get :store_credits
       end
     end
   end

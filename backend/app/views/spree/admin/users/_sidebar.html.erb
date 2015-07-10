@@ -14,12 +14,17 @@
     </li>
     <% if can?(:manage, Spree::Api) %>
       <li<%== ' class="active"' if current == :api_access %>>
-        <%= link_to_with_icon 'lock', Spree.t('access', :scope => 'api'), spree.api_access_admin_user_path(@user) %>
+        <%= link_to_with_icon 'lock', Spree.t('access', scope: 'api'), spree.api_access_admin_user_path(@user) %>
       </li>
     <% end %>
     <% if can?(:manage, Spree::Role) %>
       <li<%== ' class="active"' if current == :roles %>>
         <%= link_to_with_icon 'cog', Spree.t(:"admin.roles"), spree.roles_admin_user_path(@user) %>
+      </li>
+    <% end %>
+    <% if can?(:manage, Spree::StoreCredit) %>
+      <li<%== ' class="active"' if current == :store_credits %>>
+        <%= link_to_with_icon 'gift', Spree.t(:"admin.store_credits"), spree.store_credits_admin_user_path(@user) %>
       </li>
     <% end %>
   </ul>

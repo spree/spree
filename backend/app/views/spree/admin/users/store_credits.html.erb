@@ -1,0 +1,37 @@
+<% content_for :page_title do %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"admin.store_credits") %>
+<% end %>
+
+<%= render partial: 'spree/admin/users/sidebar', locals: { current: :store_credits } %>
+<%= render partial: 'spree/admin/users/user_page_actions' %>
+
+<% if @user.store_credits.any? %>
+  <table class="table" id='listing_properties' data-hook>
+    <thead>
+      <tr data-hook="listing_properties_header">
+        <th><%= Spree.t(:created_by) %></th>
+        <th><%= Spree.t(:currency) %></th>
+        <th><%= Spree.t(:amount) %></th>
+        <th><%= Spree.t(:amount_used) %></th>
+        <th><%= Spree.t(:amount_authorized) %></th>
+        <th><%= Spree.t(:memo) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @user.store_credits.each do |store_credit| %>
+        <tr id="<%= spree_dom_id store_credit %>" data-hook="listing_store_credits_row">
+          <td><%= store_credit.created_by.email %></td>
+          <td><%= store_credit.currency %></td>
+          <td><%= store_credit.amount %></td>
+          <td><%= store_credit.amount_used %></td>
+          <td><%= store_credit.amount_authorized %></td>
+          <td><%= store_credit.memo %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>.
+  </div>
+<% end %>
