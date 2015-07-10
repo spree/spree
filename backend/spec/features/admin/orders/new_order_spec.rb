@@ -20,21 +20,27 @@ describe "New Order", :type => :feature do
   end
 
   it "completes new order succesfully without using the cart", js: true do
+    click_on "Add Item"
     select2_search product.name, from: Spree.t(:name_or_sku)
     click_icon :add
     wait_for_ajax
     click_on "Customer"
 
-    within "#select-customer" do
-      targetted_select2_search user.email, from: "#s2id_customer_search"
+    click_on "Change Customer"
+    click_on "Search"
+    within("table#listing_users") do
+      within_row(1) do
+        first('td > a').click
+      end
     end
 
     check "order_use_billing"
     fill_in_address
+
     click_on "Update"
 
     click_on "Payments"
-    click_on "Update"
+    click_on "Continue"
 
     expect(current_path).to eql(spree.admin_order_payments_path(Spree::Order.last))
     click_icon "capture"
@@ -48,6 +54,7 @@ describe "New Order", :type => :feature do
 
   context "adding new item to the order", js: true do
     it "inventory items show up just fine and are also registered as shipments" do
+      click_on "Add Item"
       select2_search product.name, from: Spree.t(:name_or_sku)
 
       within("table.stock-levels") do
@@ -61,8 +68,12 @@ describe "New Order", :type => :feature do
 
       click_on "Customer"
 
-      within "#select-customer" do
-        targetted_select2_search user.email, from: "#s2id_customer_search"
+      click_on "Change Customer"
+      click_on "Search"
+      within("table#listing_users") do
+        within_row(1) do
+          first('td > a').click
+        end
       end
 
       check "order_use_billing"
@@ -71,9 +82,7 @@ describe "New Order", :type => :feature do
 
       click_on "Shipments"
 
-      within(".stock-contents") do
-        expect(page).to have_content(product.name)
-      end
+      expect(page).to have_content(product.name)
     end
   end
 

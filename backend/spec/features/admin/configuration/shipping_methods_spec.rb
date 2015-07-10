@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Shipping Methods", type: :feature do
+describe "Shipping Methods", type: :feature, js: true do
   stub_authorization!
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
@@ -22,9 +22,8 @@ describe "Shipping Methods", type: :feature do
     it "should display existing shipping methods" do
       within_row(1) do
         expect(column_text(1)).to eq(shipping_method.name)
-        expect(column_text(2)).to eq(zone.name)
-        expect(column_text(3)).to eq("Flat rate")
-        expect(column_text(4)).to eq("Both")
+        expect(column_text(3)).to eq(zone.name)
+        expect(column_text(4)).to eq("Flat rate")
       end
     end
   end
