@@ -1,7 +1,7 @@
 <fieldset data-id="credit-card">
   <div class="form-group" data-hook="previous_cards">
     <ul>
-      <% if previous_cards.any? %>
+      <% if previous_cards && previous_cards.any? %>
         <% previous_cards.each do |card| %>
           <li>
             <label>
