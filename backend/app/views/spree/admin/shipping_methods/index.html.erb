@@ -3,17 +3,54 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  :class => "btn-success", :icon => 'add', :id => 'admin_new_shipping_method_link' %>
+  <%= button_link_to Spree.t(:new_shipping_method), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_shipping_method_link' %>
 <% end if can? :create, Spree::ShippingMethod %>
 
+<% content_for :table_filter do %>
+  <%= search_form_for [:admin, @search] do |f| %>
+    <%- locals = { f: f} %>
+    <div data-hook="admin_shipping_method_filters" class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <%= f.label :name_cont, Spree.t(:name) %>
+          <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target" %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= f.label :shipping_categories_id_eq, Spree.t(:category) %>
+          <%= f.collection_select(:shipping_categories_id_eq, Spree::ShippingCategory.all, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2' }) %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= f.label :country, Spree.t(:country) %>
+          <%= select_tag :countries, options_from_collection_for_select(Spree::Country.order(:name).all, "id", "name"), class: 'js-zones-by-country select2', prompt: Spree.t(:select_a_country_to_refine_zones) %>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          <%= f.label :zones_id_eq, Spree.t(:zone) %>
+          <%= f.collection_select(:zones_id_eq, Spree::Zone.all, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'js-zones-select' }) %>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <%= button Spree.t(:search), 'search' %>
+    </div>
+  <% end %>
+<% end %>
+
 <% if @shipping_methods.any? %>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @shipping_methods } %>
+
   <table class="table" id='listing_shipping_methods'>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
         <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:category) %></th>
         <th><%= Spree.t(:zone) %></th>
         <th><%= Spree.t(:calculator) %></th>
-        <th class="text-center"><%= Spree.t(:display) %></th>
         <th data-hook="admin_shipping_methods_index_header_actions" class="actions"></th>
       </tr>
     </thead>
@@ -21,17 +58,19 @@
       <% @shipping_methods.includes(:zones, :calculator).each do |shipping_method|%>
         <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
           <td><%= shipping_method.admin_name + ' / ' if shipping_method.admin_name.present? %><%= shipping_method.name %></td>
+          <td><%= shipping_method.shipping_categories.map(&:name).join(",") if shipping_method.shipping_categories.any? %></td>
           <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
           <td><%= shipping_method.calculator.description %></td>
-          <td class="text-center"><%= shipping_method.display_on.blank? ? Spree.t(:both) : Spree.t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit(shipping_method, :no_text => true) if can? :edit, shipping_method %>
-            <%= link_to_delete(shipping_method, :no_text => true) if can? :delete, shipping_method %>
+            <%= link_to_edit(shipping_method, no_text: true) if can? :edit, shipping_method %>
+            <%= link_to_delete(shipping_method, no_text: true) if can? :delete, shipping_method %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
+
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @shipping_methods } %>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ShippingMethod)) %>,

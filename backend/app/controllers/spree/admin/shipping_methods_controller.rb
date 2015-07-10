@@ -16,6 +16,14 @@ module Spree
         end
       end
 
+      protected
+
+      def collection
+        params[:q] ||= {}
+        @search = super.ransack(params[:q])
+        @zones = @search.result.includes(:shipping_categories).includes(:zones).page(params[:page]).per(params[:per_page])
+      end
+
       private
 
       def set_shipping_category

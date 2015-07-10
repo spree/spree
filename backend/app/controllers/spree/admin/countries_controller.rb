@@ -6,6 +6,10 @@ module Spree
           super.order(:name)
         end
 
+        def zones
+          render json: @object.zones.to_json
+        end
+
     end
   end
 end

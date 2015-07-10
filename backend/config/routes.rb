@@ -16,6 +16,9 @@ Spree::Core::Engine.add_routes do
 
     resources :countries do
       resources :states
+      member do
+        get :zones
+      end
     end
     resources :states
     resources :tax_categories
