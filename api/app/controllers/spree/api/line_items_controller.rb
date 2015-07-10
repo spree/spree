@@ -1,13 +1,16 @@
 module Spree
   module Api
     class LineItemsController < Spree::Api::BaseController
+      before_filter :load_order, only: [:create, :update, :destroy]
+      around_filter :lock_order, only: [:create, :update, :destroy]
+
       class_attribute :line_item_options
 
       self.line_item_options = []
 
       def create
         variant = Spree::Variant.find(params[:line_item][:variant_id])
-        @line_item = order.contents.add(
+        @line_item = @order.contents.add(
             variant,
             params[:line_item][:quantity] || 1,
             line_item_params[:options] || {}
@@ -38,15 +41,15 @@ module Spree
       end
 
       private
-        def order
+        def load_order
           @order ||= Spree::Order.includes(:line_items).find_by!(number: order_id)
           authorize! :update, @order, order_token
         end
 
         def find_line_item
           id = params[:id].to_i
-          order.line_items.detect { |line_item| line_item.id == id } or
-              raise ActiveRecord::RecordNotFound
+          @order.line_items.detect {|line_item| line_item.id == id} or
+            raise ActiveRecord::RecordNotFound
         end
 
         def line_items_attributes
