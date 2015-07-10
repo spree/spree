@@ -168,6 +168,26 @@ describe Spree::CheckoutController, :type => :controller do
             expect(order.ship_address.id).to eq(@expected_ship_address_id)
           end
         end
+
+        context "with zip codes with leading and trailing spaces" do
+          before do
+            spree_post :update, {
+                :state => "address",
+                :order => {
+                    :bill_address_attributes => order.bill_address.attributes.except("created_at", "updated_at").merge("zipcode": " 12345 "),
+                    :ship_address_attributes => order.ship_address.attributes.except("created_at", "updated_at").merge("zipcode": " 54321 "),
+                    :use_billing => false
+                }
+            }
+
+            order.reload
+          end
+
+          it "strips the spaces befroe updateing the billing and shipping address" do
+            expect(order.bill_address.zipcode).to eq("12345")
+            expect(order.ship_address.zipcode).to eq("54321")
+          end
+        end
       end
 
       context "when in the confirm state" do
