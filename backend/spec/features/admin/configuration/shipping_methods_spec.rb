@@ -21,7 +21,6 @@ describe "Shipping Methods", type: :feature, js: true do
   context "show" do
     it "should display existing shipping methods" do
       within_row(1) do
-        puts shipping_method.name
         expect(column_text(1)).to eq(shipping_method.name)
         expect(column_text(3)).to eq(zone.name)
         expect(column_text(4)).to eq("Flat rate")
