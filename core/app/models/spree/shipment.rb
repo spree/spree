@@ -181,7 +181,11 @@ module Spree
       inventory_units.includes(:line_item).map(&:line_item).uniq
     end
 
-    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
+    ManifestItem = Struct.new(:line_item, :variant, :quantity, :states) do
+      include Adamantium::Flat
+
+      delegate :sufficient_stock?, to: :line_item
+    end
 
     def manifest
       inventory_units

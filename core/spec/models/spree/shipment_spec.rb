@@ -189,20 +189,22 @@ describe Spree::Shipment, :type => :model do
     let!(:shipment) { order.create_proposed_shipments.first }
 
     shared_examples_for 'Spree::Shipment#manifest' do
+      let(:manifest_item) { shipment.manifest.first }
+
       it 'returns the expected line_item' do
-        expect(shipment.manifest.first.line_item).to eql(line_item)
+        expect(manifest_item.line_item).to eql(line_item)
       end
 
       it 'returns the expected variant' do
-        expect(shipment.manifest.first.variant).to eql(variant)
+        expect(manifest_item.variant).to eql(variant)
       end
 
       it 'returns the expected quantity' do
-        expect(shipment.manifest.first.quantity).to be(1)
+        expect(manifest_item.quantity).to be(1)
       end
 
       it 'returns the expected states' do
-        expect(shipment.manifest.first.states).to eql('backordered' => 1)
+        expect(manifest_item.states).to eql('backordered' => 1)
       end
 
       it 'includes the line_items and variant' do
@@ -211,13 +213,23 @@ describe Spree::Shipment, :type => :model do
         shipment.manifest
         expect(relation).to have_received(:includes).with(:line_item, :variant)
       end
+
+      it 'forwards #sufficient_stock? to the line item' do
+        expect(manifest_item.line_item)
+          .to receive_messages(sufficient_stock?: sufficient_stock)
+        expect(manifest_item.sufficient_stock?).to be(sufficient_stock)
+      end
     end
 
     context 'variant is active' do
+      let(:sufficient_stock) { true }
+
       include_examples 'Spree::Shipment#manifest'
     end
 
     context 'variant is destroyed' do
+      let(:sufficient_stock) { false }
+
       before { variant.destroy }
 
       include_examples 'Spree::Shipment#manifest'
