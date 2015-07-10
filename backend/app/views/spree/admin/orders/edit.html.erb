@@ -17,15 +17,12 @@
   <div class="alert alert-danger">
     <%= link_to Spree.t(:order_is_risky), "javascript:;", data: { toggle: "modal", target: "#riskAnalysis" } %>
   </div>
+  <%= render 'spree/admin/orders/risk_analysis' %>
 <% end %>
 
 <div data-hook="admin_order_edit_header">
   <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
 </div>
-
-<% if @order.payments.valid.any? && @order.considered_risky? %>
-  <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.valid.last %>
-<% end %>
 
 <div class="row">
   <div class="col-md-4 additional-info">
