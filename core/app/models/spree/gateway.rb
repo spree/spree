@@ -61,7 +61,7 @@ module Spree
 
     def sources_by_order(order)
       source_ids = order.payments.where(source_type: payment_source_class.to_s, payment_method_id: self.id).pluck(:source_id).uniq
-      payment_source_class.where(id: source_ids).with_payment_profile
+      payment_source_class.where(id: source_ids).with_payment_profile if source_ids.any?
     end
 
     def reusable_sources(order)
