@@ -26,6 +26,10 @@
 .label-closed,
 .label-false {
   background-color: $brand-danger;
+
+  a {
+    color: white !important;
+  }
 }
 
 // Orange
