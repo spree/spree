@@ -33,7 +33,7 @@
     </thead>
 
     <tbody data-shipment-number="<%= shipment.number %>" data-order-number="<%= order.number %>">
-      <%= render 'spree/admin/orders/shipment_manifest', shipment: shipment %>
+      <%= render partial: 'spree/admin/orders/shipment_manifest', collection: shipment.manifest, as: :item, locals: { shipment: shipment } %>
 
       <% unless shipment.shipped? %>
         <tr class="edit-method hidden total">

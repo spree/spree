@@ -1,40 +1,41 @@
-<% shipment.manifest.each do |item| %>
-  <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
-    <td class="item-image">
-      <%= mini_image(item.variant) %>
-    </td>
-    <td class="item-name">
-      <%= item.variant.product.name %><br>
-      <%= "(#{variant_options(item.variant)})" if item.variant.option_values.any? %>
-      <% if item.variant.sku.present? %>
-        <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
-      <% end %>
-    </td>
-    <td class="item-price align-center">
-      <%= item.line_item.single_money.to_html %>
-    </td>
-    <td class="item-qty-show align-center">
-      <% item.states.each do |state,count| %>
-        <%= "#{count} x #{Spree.t(state)}" %>
-      <% end %>
-    </td>
-    <% unless shipment.shipped? %>
-      <td class="item-qty-edit hidden">
-        <%= number_field_tag :quantity, item.quantity, min: 0, class: 'line_item_quantity', size: 5 %>
-      </td>
+<tr class="stock-item" data-item-quantity="<%= item.quantity %>">
+  <td class="item-image">
+    <%= mini_image(item.variant) %>
+  </td>
+  <td class="item-name">
+    <%= item.variant.product.name %><br>
+    <%= "(#{variant_options(item.variant)})" if item.variant.option_values.any? %>
+    <% if item.variant.sku.present? %>
+      <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
     <% end %>
-    <td class="item-total align-center">
-      <%= line_item_shipment_price(item.line_item, item.quantity) %>
+  </td>
+  <td class="item-price align-center">
+    <%= item.line_item.single_money.to_html %>
+  </td>
+  <td class="item-qty-show align-center">
+    <% item.states.each do |state, count| %>
+      <%= "#{count} x #{Spree.t(state)}" %>
+    <% end %>
+  </td>
+  <% unless shipment.shipped? %>
+    <td class="item-qty-edit hidden">
+      <%= number_field_tag :quantity, item.quantity, min: 0, class: 'line_item_quantity', size: 5 %>
     </td>
+  <% end %>
+  <td class="item-total align-center">
+    <%= line_item_shipment_price(item.line_item, item.quantity) %>
+  </td>
+  <% unless shipment.shipped? %>
     <td class="cart-item-delete actions" data-hook="cart_item_delete">
-      <% if !shipment.shipped? && can?(:update, item.line_item) %>
-        <%= link_to '', '#', class: 'save-item fa fa-ok no-text with-tip',       data: { action: 'save',  'shipment-number' => shipment.number, 'variant-id' => item.variant.id }, title: Spree.t('actions.save'),   style: 'display: none' %>
-        <%= link_to '', '#', class: 'cancel-item fa fa-cancel no-text with-tip', data: { action: 'cancel'                                                                       }, title: Spree.t('actions.cancel'), style: 'display: none' %>
+      <% if can?(:update, item.line_item) %>
+        <%= link_to '', '#', class: 'save-item fa fa-ok no-text with-tip',                  data: { action: 'save',   'shipment-number' => shipment.number, 'variant-id' => item.variant.id }, title: Spree.t('actions.save'),   style: 'display: none' %>
+        <%= link_to '', '#', class: 'cancel-item fa fa-cancel no-text with-tip',            data: { action: 'cancel'                                                                        }, title: Spree.t('actions.cancel'), style: 'display: none' %>
+        <%= link_to '', '#', class: 'edit-item fa fa-edit no-text with-tip',                data: { action: 'edit'                                                                          }, title: Spree.t('edit')                                   %>
         <% if shipment.order.shipped_shipments.empty? %>
-          <%= link_to '', '#', class: 'split-item icon_link fa fa-arrows-h no-text with-tip', data: { action: 'split',  'variant-id' => item.variant.id                                       }, title: Spree.t('split') %>
-          <%= link_to '', '#', class: 'delete-item fa fa-trash no-text with-tip',             data: { action: 'remove', 'variant-id' => item.variant.id, 'shipment-number' => shipment.number }, title: Spree.t('delete') %>
+          <%= link_to '', '#', class: 'split-item icon_link fa fa-arrows-h no-text with-tip', data: { action: 'split',                                        'variant-id' => item.variant.id }, title: Spree.t('split')                                  %>
+          <%= link_to '', '#', class: 'delete-item fa fa-trash no-text with-tip',             data: { action: 'remove', 'shipment-number' => shipment.number, 'variant-id' => item.variant.id }, title: Spree.t('delete')                                 %>
         <% end %>
       <% end %>
     </td>
-  </tr>
-<% end %>
+  <% end %>
+</tr>
