@@ -56,7 +56,7 @@ module Spree
       end
 
       def codes_as_csv
-        promotion_codes = @promotion.promotion_codes.collect{ |x| x.value }.join("\n")
+        promotion_codes = @promotion.promotion_codes.map(&:value).join("\n")
 
         respond_to do |format|
           format.csv { render text: promotion_codes }
@@ -66,7 +66,7 @@ module Spree
       def batch_add_codes
         amount = params[:amount].to_i
 
-        (1..amount).each_slice(10000) do |slice|
+        (1..amount).each_slice(Spree::Promotion::CODES_BATCH_AMOUNT) do |slice|
           promotion_codes = []
 
           (slice.count).times do
@@ -86,7 +86,7 @@ module Spree
       end
 
       def delete_all_codes
-        @promotion.promotion_codes.delete_all
+        @promotion.promotion_codes.destroy_all
 
         flash[:success] = Spree.t(:succesfully_deleted_all_codes)
         redirect_to spree.codes_admin_promotion_path(@promotion)

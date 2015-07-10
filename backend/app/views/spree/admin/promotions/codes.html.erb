@@ -12,7 +12,6 @@
 
 <% content_for :table_filter do %>
   <%= search_form_for [:admin, @search], url: codes_admin_promotion_path(@promotion) do |f| %>
-    <%- locals = { f: f} %>
     <div data-hook="admin_shipping_method_filters">
       <div class="form-group">
         <%= f.label :value_cont, Spree.t(:value) %>
