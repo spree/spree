@@ -1,4 +1,4 @@
-<% if order.line_items.exists? %>
+<% if line_items.any? %>
   <table class="line-items index" data-hook="line-items">
     <colgroup>
       <col style="width: 10%;" />
@@ -16,8 +16,7 @@
     </thead>
 
     <tbody>
-      <% order.line_items.each do |item| %>
-        
+      <% line_items.each do |item| %>
         <tr class="line-item" id="line-item-<%= item.id %>">
           <td class="line-item-image"><%= mini_image(item.variant) %></td>
           <td class="line-item-name">

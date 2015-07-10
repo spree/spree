@@ -3,7 +3,7 @@
       <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @line_item } %>
   <% end %>
 
-  <%= render :partial => "spree/admin/orders/line_items", :locals => { :order => order } %>
+  <%= render :partial => "spree/admin/orders/line_items", :locals => { :line_items => order.line_items } %>
   <%= render :partial => "spree/admin/orders/adjustments", :locals => {
           :adjustments => @order.line_item_adjustments,
           :order => order,
