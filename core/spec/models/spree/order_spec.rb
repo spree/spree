@@ -176,9 +176,7 @@ describe Spree::Order, :type => :model do
       allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
-      adjustments.each do |adj|
-	      expect(adj).to receive(:close)
-      end
+      expect(adjustments).to all(receive(:close))
       order.finalize!
     end
 
@@ -205,14 +203,31 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "insufficient_stock_lines" do
-    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+  describe '#sufficient_stock_lines' do
+    let(:line_item) do
+      instance_double(Spree::LineItem, sufficient_stock?: true)
+    end
 
-    before { allow(order).to receive_messages(:line_items => [line_item]) }
+    before do
+      expect(order).to receive_messages(line_items: [line_item])
+    end
 
-    it "should return line_item that has insufficient stock on hand" do
-      expect(order.insufficient_stock_lines.size).to eq(1)
-      expect(order.insufficient_stock_lines.include?(line_item)).to be true
+    it 'returns line items with sufficient stock on hand' do
+      expect(order.sufficient_stock_lines).to eql([line_item])
+    end
+  end
+
+  describe '#insufficient_stock_lines' do
+    let(:line_item) do
+      instance_double(Spree::LineItem, insufficient_stock?: true)
+    end
+
+    before do
+      expect(order).to receive_messages(line_items: [line_item])
+    end
+
+    it 'returns line items without sufficient stock on hand' do
+      expect(order.insufficient_stock_lines).to eql([line_item])
     end
   end
 

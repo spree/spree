@@ -472,6 +472,10 @@ module Spree
       bill_address.try(:lastname)
     end
 
+    def sufficient_stock_lines
+      line_items.select(&:sufficient_stock?)
+    end
+
     def insufficient_stock_lines
       line_items.select(&:insufficient_stock?)
     end
