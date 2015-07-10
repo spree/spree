@@ -41,7 +41,7 @@
             <% if can?(:update, item) %>
               <%= link_to '', '#', class: 'save-line-item fa fa-ok no-text with-tip',       data: { action: 'save',   'line-item-id' => item.id }, title: Spree.t('actions.save'),   style: 'display: none' %>
               <%= link_to '', '#', class: 'cancel-line-item fa fa-cancel no-text with-tip', data: { action: 'cancel'                            }, title: Spree.t('actions.cancel'), style: 'display: none' %>
-              <%= link_to '', '#', class: 'edit-line-item fa fa-edit no-text with-tip',     data: { action: 'edit'                              }, title: Spree.t('edit')                                   %>
+              <%= link_to '', '#', class: 'edit-line-item fa fa-edit no-text with-tip',     data: { action: 'edit'                              }, title: Spree.t('edit') if item.sufficient_stock?         %>
               <%= link_to '', '#', class: 'delete-line-item fa fa-trash no-text with-tip',  data: { action: 'remove', 'line-item-id' => item.id }, title: Spree.t('delete')                                 %>
             <% end %>
           </td>

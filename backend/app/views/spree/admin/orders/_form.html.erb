@@ -6,7 +6,14 @@
   <% if Spree::Order.checkout_step_names.include?(:delivery) %>
     <%= render partial: 'spree/admin/orders/shipment', collection: @order.shipments.order(:created_at), locals: { order: order } %>
   <% else %>
-    <%= render partial: 'spree/admin/orders/line_items', locals: { line_items: order.line_items } %>
+    <%= render partial: 'spree/admin/orders/line_items', locals: { line_items: order.sufficient_stock_lines } %>
+  <% end %>
+
+  <% if order.insufficient_stock_lines.any?  %>
+    <fieldset class="no-border-bottom">
+      <legend>Out-of-Stock Items</legend>
+      <%= render partial: 'spree/admin/orders/line_items', locals: { line_items: order.insufficient_stock_lines } %>
+    </fieldset>
   <% end %>
 
   <%= render :partial => "spree/admin/orders/adjustments", locals: {
