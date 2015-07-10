@@ -1,31 +1,35 @@
 <% content_for :page_title do %>
+  <% if @promotion_category %>
+    <%= link_to Spree.t(:promotion_categories), admin_promotion_categories_path %> /
+    <%= @promotion_category.name %> /
+  <% end %>
   <%= plural_resource_name(Spree::Promotion) %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion), new_object_url, :class => "btn-success", :icon => 'add' %>
+  <%= button_link_to Spree.t(:new_promotion), new_object_url(promotion_category_id: @promotion_category.try(:id)), class: "btn-success", icon: 'add' %>
 <% end %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
-    <%= search_form_for [:admin, @search] do |f| %>
+    <%= search_form_for [:admin, @search], url: @promotion_category ? admin_promotion_category_promotions_path(@promotion_category) : spree.admin_promotions_path do |f| %>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
           </div>
-
-          <div class="four columns">
-            <div class="field">
-              <%= label_tag :q_path_cont, Spree.t(:path) %>
-              <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
-            </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_path_cont, Spree.t(:path) %>
+            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
           </div>
-
+        </div>
+        <div class="col-md-4">
           <div class="form-group">
             <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
-            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
+            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2' }) %>
           </div>
         </div>
       </div>
@@ -45,10 +49,10 @@
       <tr>
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:code) %></th>
-        <th><%= Spree.t(:description) %></th>
-        <th><%= Spree.t(:usage_limit) %></th>
+        <th class="text-center"><%= Spree.t(:usage_limit) %></th>
         <th><%= Spree.t(:promotion_uses) %></th>
         <th><%= Spree.t(:expiration) %></th>
+        <th class="text-center"><%= Spree.t(:codes) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
@@ -57,15 +61,21 @@
         <tr id="<%= spree_dom_id promotion %>">
           <td><%= link_to promotion.name, edit_admin_promotion_path(promotion) %></td>
           <td><%= promotion.code %></td>
-          <td><%= promotion.description %></td>
-          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
-          <td><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
+          <td class="text-center"><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
+          <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-          <td class="actions actions-2">
-            <%= link_to_edit promotion, :no_text => true %>
-            <%= link_to_delete promotion, :no_text => true %>
+          <td class="text-center">
+            <%= link_to promotion.promotion_codes.count, spree.codes_admin_promotion_path(promotion), style: 'margin-right: 7px;' %>
+          </td>
+          <td class="actions">
+            <% if can?(:create, Spree::PromotionCode) %>
+              <%= link_to_with_icon('add', "Add codes", "javascript:;", data: { toggle: "modal", target: "#addCodes_#{ promotion.id }" }, class: 'btn btn-success btn-sm', no_text: true) %>
+            <% end %>
+            <%= link_to_edit promotion, no_text: true %>
+            <%= link_to_delete promotion, no_text: true %>
           </td>
         </tr>
+        <%= render(partial: 'spree/admin/promotions/add_codes_modal', locals: { promotion: promotion }) if can?(:create, Spree::PromotionCode) %>
       <% end %>
     </tbody>
   </table>

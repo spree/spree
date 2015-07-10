@@ -3,6 +3,7 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["awaiting_return", "returned"]
     BACKEND_PROMOTIONS = ["backend"]
+    CODES_BATCH_AMOUNT = 10000
 
     attr_reader :eligibility_errors
 

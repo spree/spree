@@ -1,0 +1,63 @@
+<% content_for :page_actions do %>
+  <%= button_link_to(Spree.t(:export_csv), codes_as_csv_admin_promotion_path(@promotion, format: :csv), class: "btn-default", icon: 'download-alt') %>
+  <%= button_link_to(Spree.t(:delete_all), delete_all_codes_admin_promotion_path(@promotion), method: :delete, class: "btn-danger", data: { action: :remove, confirm: Spree.t(:are_you_sure) }, icon: 'delete') if can?(:destroy, Spree::PromotionCode) %>
+  <%= button_link_to(Spree.t(:add_codes), "javascript:;", class: "btn-success", data: { toggle: "modal", target: "#addCodes_#{ @promotion.id }" }, icon: 'add') if can?(:create, Spree::PromotionCode) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :codes } %>
+
+<% content_for :page_title do %>
+  / <%= @promotion_codes.total_count %> <%= Spree.t(:codes) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <%= search_form_for [:admin, @search], url: codes_admin_promotion_path(@promotion) do |f| %>
+    <div data-hook="admin_shipping_method_filters">
+      <div class="form-group">
+        <%= f.label :value_cont, Spree.t(:value) %>
+        <%= f.text_field :value_cont, size: 15, class: "form-control js-quick-search-target" %>
+      </div>
+    </div>
+    <div class="form-actions">
+      <%= button Spree.t(:search), 'search' %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @promotion_codes } %>
+
+<% if @promotion_codes.any? %>
+  <%= form_for @promotion, url: object_url, method: :put do |f| %>
+    <table class="table" id="promotion_codes">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:value) %></th>
+          <th><%= Spree.t(:starts_at) %></th>
+          <th><%= Spree.t(:expires_at) %></th>
+          <th><%= Spree.t(:usage_limit) %></th>
+          <th width="85" class="text-center"><%= Spree.t(:delete) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @promotion_codes.each do |promo_code| %>
+          <%= f.fields_for :promotion_codes, promo_code do |pc| %>
+            <tr>
+              <td><%= pc.text_field :value, class: "form-control" %></td>
+              <td><%= pc.text_field :starts_at, value: datepicker_field_value(promo_code.starts_at), class: 'datepicker form-control' %></td>
+              <td><%= pc.text_field :expires_at, value: datepicker_field_value(promo_code.expires_at), class: 'datepicker form-control' %></td>
+              <td><%= pc.number_field :usage_limit, class: "form-control" %></td>
+              <td class="text-center"><%= pc.check_box :_destroy %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+  <% end %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionCode)) %>
+  </div>
+<% end %>
+
+<%= render(partial: 'spree/admin/promotions/add_codes_modal', locals: { promotion: @promotion }) if can?(:create, Spree::PromotionCode) %>

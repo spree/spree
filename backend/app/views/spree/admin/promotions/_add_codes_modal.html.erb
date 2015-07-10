@@ -1,0 +1,72 @@
+<div class="modal fade" id="addCodes_<%= promotion.id %>" tabindex="-1" role="dialog" aria-labelledby="addCodesLabel_<%= promotion.id %>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="addCodesLabel_<%= promotion.id %>"><%= Spree.t(:add_codes) %></h4>
+      </div>
+
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#single_<%= promotion.id %>" aria-controls="single_<%= promotion.id %>" role="tab" data-toggle="tab"><%= Spree.t(:add_single_code) %></a></li>
+        <li role="presentation"><a href="#batch_<%= promotion.id %>" aria-controls="batch_<%= promotion.id %>" role="tab" data-toggle="tab"><%= Spree.t(:batch_generate) %></a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content modal-body">
+        <div role="tabpanel" class="tab-pane active" id="single_<%= promotion.id %>">
+          <%= form_for promotion, url: object_url(promotion.id), method: :put do |f| %>
+            <%= f.fields_for :promotion_codes, Spree::PromotionCode.new do |pc| %>
+              <div class="form-group">
+                <%= f.label :value, Spree.t(:value) %>
+                <%= pc.text_field :value, class: "form-control" %>
+              </div>
+              <div class="form-group">
+                <%= f.label :starts_at, Spree.t(:starts_at) %>
+                <%= pc.text_field :starts_at, value: nil, class: 'datepicker form-control' %>
+              </div>
+              <div class="form-group">
+                <%= f.label :expires_at, Spree.t(:expires_at) %>
+                <%= pc.text_field :expires_at, value: nil, class: 'datepicker form-control' %>
+              </div>
+              <div class="form-group">
+                <%= f.label :usage_limit, Spree.t(:usage_limit) %>
+                <%= pc.number_field :usage_limit, class: "form-control", value: nil %>
+              </div>
+              <div class="form-actions" data-hook="buttons">
+                <%= button Spree.t('actions.submit'), 'ok', 'submit', {class: 'btn-success'} %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="batch_<%= promotion.id %>">
+          <%= form_tag batch_add_codes_admin_promotion_path(promotion) do %>
+            <div class="form-group">
+              <%= label_tag :amount, Spree.t(:amount_of_codes) %>
+              <%= text_field_tag :amount, nil, class: "form-control", required: true %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :prefix, Spree.t(:prefix) %>
+              <%= text_field_tag :prefix, nil, class: "form-control" %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :starts_at, Spree.t(:starts_at) %>
+              <%= text_field_tag :starts_at, nil, class: 'datepicker form-control' %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :expires_at, Spree.t(:expires_at) %>
+              <%= text_field_tag :expires_at, nil, class: 'datepicker form-control' %>
+            </div>
+            <div class="form-group">
+              <%= label_tag :usage_limit, Spree.t(:usage_limit) %>
+              <%= number_field_tag :usage_limit, nil, class: "form-control" %>
+            </div>
+            <div class="form-actions" data-hook="buttons">
+              <%= button Spree.t('actions.generate'), 'refresh', 'submit', {class: 'btn-success'} %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ module Spree
     class PromotionsController < ResourceController
       before_action :load_data, except: [:order_promotions, :apply_to_order, :delete_from_order]
       before_action :load_order, only: [:order_promotions, :apply_to_order, :delete_from_order]
+      before_action :load_promotion_category, only: [:index]
       before_action :load_promotion, only: [:apply_to_order, :delete_from_order]
 
       helper 'spree/promotion_rules'
@@ -48,9 +49,58 @@ module Spree
         redirect_to admin_order_promotions_path(@order)
       end
 
+      def codes
+         params[:q] ||= {}
+         @search = @promotion.promotion_codes.ransack(params[:q])
+         @promotion_codes = @search.result.page(params[:page]).per(params[:per_page])
+      end
+
+      def codes_as_csv
+        promotion_codes = @promotion.promotion_codes.map(&:value).join("\n")
+
+        respond_to do |format|
+          format.csv { render text: promotion_codes }
+        end
+      end
+
+      def batch_add_codes
+        amount = params[:amount].to_i
+
+        (1..amount).each_slice(Spree::Promotion::CODES_BATCH_AMOUNT) do |slice|
+          promotion_codes = []
+
+          (slice.count).times do
+            promotion_codes << @promotion.promotion_codes.new(
+              value: "#{params[:prefix]}#{Digest::SHA1.hexdigest([Time.now, rand].join)}",
+              usage_limit: params[:usage_limit],
+              starts_at: params[:starts_at],
+              expires_at: params[:expires_at]
+            )
+          end
+
+          import_promotion_codes promotion_codes
+        end
+
+        flash[:success] = Spree.t(:promotion_codes_where_succesfully_generated)
+        redirect_to :back
+      end
+
+      def delete_all_codes
+        @promotion.promotion_codes.destroy_all
+
+        flash[:success] = Spree.t(:succesfully_deleted_all_codes)
+        redirect_to spree.codes_admin_promotion_path(@promotion)
+      end
+
       protected
+
+        # isolated method so this can be overwritten (for example implement background job)
+        def import_promotion_codes(promotion_codes)
+          Spree::PromotionCode.import promotion_codes
+        end
+
         def location_after_save
-          spree.edit_admin_promotion_url(@promotion)
+          (params[:action] == "create") ? spree.edit_admin_promotion_url(@promotion) : :back
         end
 
         def load_data
@@ -66,12 +116,18 @@ module Spree
           @promotion = Spree::Promotion.find(params[:promotion_id])
         end
 
+        def load_promotion_category
+          @promotion_category = Spree::PromotionCategory.where(id: params[:promotion_category_id]).first
+        end
+
         def collection
+          load_promotion_category
+
           return @collection if defined?(@collection)
           params[:q] ||= HashWithIndifferentAccess.new
           params[:q][:s] ||= 'id desc'
 
-          @collection = super
+          @collection = @promotion_category ? @promotion_category.promotions : super
           @search = @collection.ransack(params[:q])
           @collection = @search.result(distinct: true).
             includes(promotion_includes).

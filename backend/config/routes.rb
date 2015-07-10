@@ -8,9 +8,19 @@ Spree::Core::Engine.add_routes do
     resources :promotions do
       resources :promotion_rules
       resources :promotion_actions
+      member do
+        get :rules
+        get :actions
+        get :codes
+        get :codes_as_csv
+        post :batch_add_codes
+        delete :delete_all_codes
+      end
     end
 
-    resources :promotion_categories, except: [:show]
+    resources :promotion_categories, except: [:show] do
+      resources :promotions, only: [:index]
+    end
 
     resources :zones
 

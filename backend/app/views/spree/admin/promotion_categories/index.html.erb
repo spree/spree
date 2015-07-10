@@ -3,24 +3,26 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion_category), new_object_url, :icon => 'add', :class => 'btn-success' %>
+  <%= button_link_to Spree.t(:new_promotion_category), new_object_url, icon: 'add', class: 'btn-success' %>
 <% end %>
 
 <% if @promotion_categories.any? %>
   <table class="table">
     <thead>
-      <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
-      <th><%= Spree::PromotionCategory.human_attribute_name :code %></th>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:code) %></th>
+      <th><%= Spree.t(:active_promotions) %></th>
       <th></th>
     </thead>
     <tbody>
       <% @promotion_categories.each do |promotion_category| %>
         <tr>
-          <td><%= promotion_category.name %></td>
+          <td><%= link_to promotion_category.name, admin_promotion_category_promotions_path(promotion_category) %></td>
           <td><%= promotion_category.code %></td>
+          <td><%= link_to promotion_category.promotions.active.count, admin_promotion_category_promotions_path(promotion_category) %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_edit promotion_category, :no_text => true %>
-            <%= link_to_delete promotion_category, :no_text => true %>
+            <%= link_to_edit promotion_category, no_text: true %>
+            <%= link_to_delete promotion_category, no_text: true %>
           </td>
         </tr>
       <% end %>

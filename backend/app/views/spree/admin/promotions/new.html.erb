@@ -2,9 +2,9 @@
   <%= Spree.t(:new_promotion) %>
 <% end %>
 
-<%= form_for :promotion, :url => collection_url do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <div class="text-center">
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>  
+<%= form_for :promotion, url: collection_url do |f| %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <div class="form-actions" data-hook="buttons">
+    <%= render partial: 'spree/admin/shared/new_resource_links' %>
   </div>
 <% end %>
