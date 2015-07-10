@@ -58,7 +58,7 @@ describe "Customer Details", type: :feature do
     context "selected country has no state" do
       before { create(:country, iso: "BRA", name: "Brazil", states_required: true) }
 
-      it "changes state field to text input" do
+      it "changes state field to text input", js: true do
         click_link "Customer"
 
         within(".billing-address") do
@@ -77,7 +77,7 @@ describe "Customer Details", type: :feature do
       end
     end
 
-    it "should be able to update customer details for an existing order" do
+    it "should be able to update customer details for an existing order", js: true do
       order.ship_address = create(:address)
       order.save!
 
@@ -100,7 +100,7 @@ describe "Customer Details", type: :feature do
       end
     end
 
-    it "should show validation errors" do
+    it "should show validation errors", js: true do
       click_link "Customer"
 
       within(".billing-address") do
@@ -112,7 +112,7 @@ describe "Customer Details", type: :feature do
       expect(page).to have_content("Billing address first name can't be blank")
     end
 
-    it "updates order email for an existing order with a user" do
+    it "updates order email for an existing order with a user", js: true do
       order.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id, state: "confirm", completed_at: nil)
       previous_user = order.user
       click_link "Customer"
@@ -132,7 +132,7 @@ describe "Customer Details", type: :feature do
         end
       end
 
-      it "sets default country when displaying form" do
+      it "sets default country when displaying form", js: true do
         click_link "Customer"
 
         within(".billing-address") do
@@ -145,7 +145,7 @@ describe "Customer Details", type: :feature do
 
     # Regression test for #942
     # I dont get this test, context says it errors, expect no errors?
-    context "errors when no shipping methods are available" do
+    context "errors when no shipping methods are available", js: true do
       before do
         Spree::ShippingMethod.delete_all
       end

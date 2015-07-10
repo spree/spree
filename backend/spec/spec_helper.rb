@@ -42,9 +42,6 @@ require 'spree/testing_support/capybara_ext'
 
 require 'paperclip/matchers'
 
-require 'capybara/poltergeist'
-Capybara.javascript_driver = :poltergeist
-
 RSpec.configure do |config|
   config.color = true
   config.fail_fast = ENV['FAIL_FAST'] || false

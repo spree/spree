@@ -75,22 +75,6 @@ describe "Orders Listing", type: :feature, js: true do
       expect(page).not_to have_content("R200")
     end
 
-    it "should be able to filter on variant_id" do
-      click_on 'Filter'
-      # Insure we have the SKU in the options
-      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
-
-      # Select and filter
-      find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
-      click_on 'Filter Results'
-
-      within_row(1) do
-        expect(page).to have_content(@order1.number)
-      end
-
-      expect(page).not_to have_content(@order2.number)
-    end
-
     context "when pagination is really short" do
       before do
         @old_per_page = Spree::Config[:orders_per_page]
@@ -137,9 +121,9 @@ describe "Orders Listing", type: :feature, js: true do
         visit spree.admin_orders_path
       end
 
-      it "only shows the orders with the selected promotion" do
+      it "only shows the orders with the selected promotion", js: true do
         click_on 'Filter'
-        select2 promotion.name, from: "Promotion"
+        targetted_select2_search promotion.name, from: "#s2id_q_promotions_id_in"
         click_on 'Filter Results'
         within_row(1) { expect(page).to have_content("R100") }
         within("table#listing_orders") { expect(page).not_to have_content("R200") }

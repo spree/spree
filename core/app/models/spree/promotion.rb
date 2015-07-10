@@ -52,7 +52,7 @@ module Spree
     def self.with_coupon_code(coupon_code)
       clean_code = coupon_code.strip
       joins(:promotion_codes)
-        .find_by("#{Spree::PromotionCode.table_name}": { value: clean_code })
+        .find_by(Spree::PromotionCode.table_name => { value: clean_code })
     end
 
     def self.active
