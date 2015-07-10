@@ -1,0 +1,21 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Search' } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
+
+<%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
+  <fieldset data-hook="admin_product_form_meta">
+    <div data-hook="admin_product_form_meta_keywords">
+      <%= f.field_container :meta_keywords, class: ['form-group'] do %>
+        <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
+        <%= f.text_field :meta_keywords, class: 'form-control' %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_meta_description">
+      <%= f.field_container :meta_description, class: ['form-group'] do %>
+        <%= f.label :meta_description, Spree.t(:meta_description) %>
+        <%= f.text_field :meta_description, class: 'form-control' %>
+      <% end %>
+    </div>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
+<% end %>

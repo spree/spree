@@ -11,7 +11,7 @@
 <div id="new_option_type"></div>
 
 <% if @option_types.any? %>
-<table class="table sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
+<table class="table js-sortable" id="listing_option_types" data-hook data-sortable-link="<%= update_positions_admin_option_types_url %>">
   <thead>
     <tr data-hook="option_header">
       <th class="no-border"></th>
@@ -23,8 +23,8 @@
   <tbody>
     <% @option_types.each do |option_type| %>
       <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
-        <td class="move-handle text-center">
-          <span class="icon icon-move handle"></span>
+        <td>
+          <span class="icon icon-move js-sort-handle"></span>
         </td>
         <td><%= option_type.name %></td>
         <td class="presentation"><%= option_type.presentation %></td>
