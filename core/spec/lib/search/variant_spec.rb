@@ -13,8 +13,8 @@ describe Spree::Core::Search::Variant do
     }
 
     searcher = Spree::Core::Search::Variant.new(params)
-    searcher.search.should include(@variant)
-    searcher.search.should_not include(@variant_2)
+    expect(searcher.search).to include(@variant)
+    expect(searcher.search).to_not include(@variant_2)
   end
 
   context "searching based on product name" do
@@ -28,8 +28,8 @@ describe Spree::Core::Search::Variant do
       }
 
       searcher = Spree::Core::Search::Variant.new(params)
-      searcher.search.should include(@variant)
-      searcher.search.should_not include(@variant_2)
+      expect(searcher.search).to include(@variant)
+      expect(searcher.search).to_not include(@variant_2)
     end
   end
 
@@ -49,8 +49,8 @@ describe Spree::Core::Search::Variant do
       }
 
       searcher = Spree::Core::Search::Variant.new(params)
-      searcher.search.should include(@variant)
-      searcher.search.should_not include(@variant_2)
+      expect(searcher.search).to include(@variant)
+      expect(searcher.search).to_not include(@variant_2)
     end
   end
 
@@ -71,8 +71,8 @@ describe Spree::Core::Search::Variant do
       }
 
       searcher = Spree::Core::Search::Variant.new(params)
-      searcher.search.should include(@variant)
-      searcher.search.should_not include(@variant_2)
+      expect(searcher.search).to include(@variant)
+      expect(searcher.search).to_not include(@variant_2)
     end
   end
 end

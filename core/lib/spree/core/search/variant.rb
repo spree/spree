@@ -4,7 +4,8 @@ module Spree
       class Variant < Base
         def initialize(params)
           super
-          params[:scope] ||= Spree::Variant.scoped
+          params[:scope] ||= Spree::Variant.all
+          params[:q] ||= ''
         end
 
         def search

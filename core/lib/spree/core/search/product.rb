@@ -37,19 +37,19 @@ module Spree
           # `where` constraints affecting joined tables are added to the search;
           # which is the case as soon as a taxon is added to the base scope.
           scope = scope.preload(master: :prices)
-          scope = scope.preload(master: :images) if include_images
+          scope = scope.preload(master: :images) if params[:include_images]
           scope
         end
 
         def add_search_scopes(base_scope)
-          search.each do |name, scope_attribute|
+          params[:search].each do |name, scope_attribute|
             scope_name = name.to_sym
             if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
               base_scope = base_scope.send(scope_name, *scope_attribute)
             else
               base_scope = base_scope.merge(Spree::Product.ransack({scope_name => scope_attribute}).result)
             end
-          end if search
+          end if params[:search]
           base_scope
         end
 
@@ -74,11 +74,11 @@ module Spree
           @params[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
 
           per_page = params[:per_page].to_i
-          @properties[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
+          @params[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
           if params[:page].respond_to?(:to_i)
-            @properties[:page] = (params[:page].to_i <= 0) ? 1 : params[:page].to_i
+            @params[:page] = (params[:page].to_i <= 0) ? 1 : params[:page].to_i
           else
-            @properties[:page] = 1
+            @params[:page] = 1
           end
         end
       end

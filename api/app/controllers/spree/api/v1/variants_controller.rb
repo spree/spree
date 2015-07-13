@@ -23,11 +23,6 @@ module Spree
         end
 
         def index
-          # The lazyloaded associations here are pretty much attached to which nodes
-          # we render on the view so we better update it any time a node is included
-          # or removed from the views.
-          scope = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
-
           @variants = build_searcher(
             :Variant, {
               scope:    scope,

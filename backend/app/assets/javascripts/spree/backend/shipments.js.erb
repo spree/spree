@@ -205,15 +205,12 @@ startItemSplit = function(event){
   $.ajax({
     type: "GET",
     async: false,
-    url: Spree.url(Spree.routes.variants_api),
+    url: Spree.url(Spree.routes.variants_api + '/' + variant_id),
     data: {
-      q: {
-        "id_eq": variant_id
-      },
       token: Spree.api_key
     }
   }).success(function( data ) {
-    variant = data['variants'][0];
+    variant = data;
   }).error(function( msg ) {
     console.log(msg);
   });

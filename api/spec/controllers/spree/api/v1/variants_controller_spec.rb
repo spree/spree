@@ -40,7 +40,7 @@ module Spree
 
     it 'can query the results through a parameter' do
       expected_result = create(:variant, :sku => 'FOOBAR')
-      api_get :index, :q => 'FOO'
+      api_get :index, q: 'FOO'
       expect(json_response['count']).to eq(1)
       expect(json_response['variants'].first['sku']).to eq expected_result.sku
     end

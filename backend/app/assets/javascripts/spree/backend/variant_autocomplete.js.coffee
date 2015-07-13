@@ -22,8 +22,7 @@ $.fn.variantAutocomplete = ->
       quietMillis: 200
       datatype: "json"
       data: (term, page) ->
-        q:
-          product_name_or_sku_cont: term
+        q: term
         token: Spree.api_key
 
       results: (data, page) ->
