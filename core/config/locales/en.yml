@@ -911,6 +911,7 @@ en:
         subtotal: ! 'Subtotal:'
         thanks: Thank you for your business.
         total: ! 'Order Total:'
+    order_mutex_error: Something went wrong. Please try again.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully

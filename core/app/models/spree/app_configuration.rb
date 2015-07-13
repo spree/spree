@@ -43,6 +43,7 @@ module Spree
     preference :layout, :string, default: 'spree/layouts/spree_application'
     preference :logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
+    preference :order_mutex_max_age, :integer, default: 2.minutes
     preference :orders_per_page, :integer, default: 15
     preference :properties_per_page, :integer, default: 15
     preference :products_per_page, :integer, default: 12
