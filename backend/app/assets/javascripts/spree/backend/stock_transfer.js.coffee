@@ -93,7 +93,8 @@ $ ->
 
     _search_transfer_stock_items: ->
       stock_location_id = $('#transfer_source_location_id').val()
-      @build_select(Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items"))
+      url = Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items")
+      @build_select(url)
 
     format_variant_result: (result) ->
       "#{result.name} - #{result.sku}"

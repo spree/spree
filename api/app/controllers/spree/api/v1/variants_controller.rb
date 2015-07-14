@@ -26,15 +26,21 @@ module Spree
           # The lazyloaded associations here are pretty much attached to which nodes
           # we render on the view so we better update it any time a node is included
           # or removed from the views.
-          base_scope = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
+          base_scope = scope.includes(
+            :option_values,
+            :product,
+            :default_price,
+            :images,
+            stock_items: :stock_location,
+            option_values: :option_type
+          )
 
           @variants = build_searcher(
-            :Variant, {
-              scope:    base_scope,
-              q:        params[:q],
-              page:     params[:page],
-              per_page: params[:per_page]
-            }
+            :Variant,
+            scope: scope,
+            q: params[:q],
+            page: params[:page],
+            per_page: params[:per_page]
           ).search
 
           respond_with(@variants)
@@ -61,7 +67,9 @@ module Spree
         private
 
         def product
-          @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+          if params[:product_id]
+            @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id])
+          end
         end
 
         def scope
