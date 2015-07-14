@@ -37,7 +37,7 @@ module Spree
 
           @variants = build_searcher(
             :Variant,
-            scope: scope,
+            scope: base_scope,
             q: params[:q],
             page: params[:page],
             per_page: params[:per_page]
