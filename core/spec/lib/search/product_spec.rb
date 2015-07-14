@@ -47,7 +47,7 @@ describe Spree::Core::Search::Product do
 
   it "maps search params to named scopes" do
     params = { per_page: "",
-               search: { "price_range_any" => ["Under $10.00"] }}
+               search: { "price_range_any" => ["Under $10.00"] } }
     searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.search.count).to eq(1)
@@ -55,7 +55,7 @@ describe Spree::Core::Search::Product do
 
   it "maps multiple price_range_any filters" do
     params = { per_page: "",
-               search: { "price_range_any" => ["Under $10.00", "$10.00 - $15.00"] }}
+               search: { "price_range_any" => ["Under $10.00", "$10.00 - $15.00"] } }
     searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.send(:get_base_scope).to_sql).to match /between 10 and 15/i
@@ -64,7 +64,7 @@ describe Spree::Core::Search::Product do
 
   it "uses ransack if scope not found" do
     params = { per_page: "",
-               search: { "name_not_cont" => "Shirt" }}
+               search: { "name_not_cont" => "Shirt" } }
     searcher = Spree::Core::Search::Product.new(params)
     expect(searcher.search.count).to eq(1)
   end
@@ -77,7 +77,7 @@ describe Spree::Core::Search::Product do
   end
 
   it "finds products in alternate currencies" do
-    price = create(:price, currency: 'EUR', variant: @product1.master)
+    create(:price, currency: 'EUR', variant: @product1.master)
     searcher = Spree::Core::Search::Product.new({})
     searcher.current_currency = 'EUR'
     expect(searcher.search).to eq([@product1])

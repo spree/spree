@@ -2,7 +2,6 @@ module Spree
   module Core
     module Search
       class Product < Base
-
         def initialize(params)
           super
           prepare(params)
@@ -20,7 +19,7 @@ module Spree
 
         protected
 
-        def add_eagerload_scopes scope
+        def add_eagerload_scopes(scope)
           # TL;DR Switch from `preload` to `includes` as soon as Rails starts honoring
           # `order` clauses on `has_many` associations when a `where` constraint
           # affecting a joined table is present (see
@@ -47,7 +46,7 @@ module Spree
             if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
               base_scope = base_scope.send(scope_name, *scope_attribute)
             else
-              base_scope = base_scope.merge(Spree::Product.ransack({scope_name => scope_attribute}).result)
+              base_scope = base_scope.merge(Spree::Product.ransack(scope_name => scope_attribute).result)
             end
           end if params[:search]
           base_scope

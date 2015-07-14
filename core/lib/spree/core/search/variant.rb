@@ -30,14 +30,9 @@ module Spree
             grouping_count += 1
           end
 
-          result = params[:scope]
-            .ransack(query)
-            .result
-            .page(params[:page])
-            .per(params[:per_page])
+          params[:scope].ransack(query).result.page(params[:page]).per(params[:per_page])
         end
       end
     end
   end
 end
-
