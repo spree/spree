@@ -23,9 +23,14 @@ module Spree
         end
 
         def index
+          # The lazyloaded associations here are pretty much attached to which nodes
+          # we render on the view so we better update it any time a node is included
+          # or removed from the views.
+          base_scope = scope.includes({ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location })
+
           @variants = build_searcher(
             :Variant, {
-              scope:    scope,
+              scope:    base_scope,
               q:        params[:q],
               page:     params[:page],
               per_page: params[:per_page]
@@ -54,27 +59,24 @@ module Spree
         end
 
         private
-          def product
-            @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+
+        def product
+          @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+        end
+
+        def scope
+          variants = @product.present? ? @product.variants_including_master : Variant
+
+          if current_ability.can?(:manage, Variant) && params[:show_deleted]
+            variants = variants.with_deleted
           end
 
-          def scope
-            if @product
-              variants = @product.variants_including_master
-            else
-              variants = Variant
-            end
+          variants.accessible_by(current_ability, :read)
+        end
 
-            if current_ability.can?(:manage, Variant) && params[:show_deleted]
-              variants = variants.with_deleted
-            end
-
-            variants.accessible_by(current_ability, :read)
-          end
-
-          def variant_params
-            params.require(:variant).permit(permitted_variant_attributes)
-          end
+        def variant_params
+          params.require(:variant).permit(permitted_variant_attributes)
+        end
       end
     end
   end
