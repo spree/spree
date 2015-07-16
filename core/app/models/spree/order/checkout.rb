@@ -89,7 +89,6 @@ module Spree
               after_transition to: :complete, do: :persist_user_credit_card
               before_transition to: :payment, do: :set_shipments_cost
               before_transition to: :payment, do: :create_tax_charge!
-              before_transition to: :payment, do: :assign_default_credit_card
             end
 
             before_transition from: :cart, do: :ensure_line_items_present
@@ -290,13 +289,6 @@ module Spree
             default_cc.user_id = user_id
             default_cc.default = true
             default_cc.save
-          end
-        end
-
-        def assign_default_credit_card
-          if payments.from_credit_card.count == 0 && user_has_valid_default_card? && payment_required?
-            cc = user.default_credit_card
-            payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
           end
         end
 
