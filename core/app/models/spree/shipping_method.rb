@@ -20,6 +20,8 @@ module Spree
                                     :class_name => 'Spree::Zone',
                                     :foreign_key => 'shipping_method_id'
 
+    has_and_belongs_to_many :stock_locations
+
     belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
 
     validates :name, presence: true
