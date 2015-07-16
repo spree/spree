@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class AddressesController < ResourceController
+      skip_before_action :load_resource
+
       def create_shipment
         @address = Spree::Address.new(address_params)
         @shipment = Spree::Shipment.find(params[:shipment_id])
