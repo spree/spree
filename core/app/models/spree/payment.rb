@@ -16,6 +16,7 @@ module Spree
     has_many :capture_events, :class_name => 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
+    validates_presence_of :payment_method
     before_validation :validate_source
     before_create :set_unique_identifier
 
