@@ -41,10 +41,7 @@ class Project
   # @return [Boolean]
   #   the success of the build
   def pass?
-    chdir do
-      setup_test_app unless name.eql?('guides')
-      run_tests
-    end
+    chdir { run_project }
   end
 
 private
@@ -54,6 +51,25 @@ private
   # @return [Boolean]
   def bundle_check
     system(%W[bundle check --path=#{VENDOR_BUNDLE}])
+  end
+
+  # Run project
+  #
+  # @return [Boolean]
+  def run_project
+    test_steps.all?(&method(:__send__))
+  end
+
+  # Return test steps
+  #
+  # @return [Array<Symbol>]
+  def test_steps
+    guides = name.eql?('guides')
+    steps = []
+    steps << :setup_test_app unless guides
+    steps << :run_tests
+    steps << :run_mutant unless guides
+    steps
   end
 
   # Install the current bundle
@@ -82,7 +98,12 @@ private
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system(%w[bundle exec rspec spec --order random])
+    system(%w[bundle exec rspec spec --order random]) or fail 'Tests failed'
+  end
+
+  def run_mutant
+    system(%w[bundle exec mutant -r./spec/dummy/config/environment --use rspec -j1 --since HEAD~1 -- Spree*]) or
+      fail 'Mutation testing failed'
   end
 
   # Execute system command via execve
