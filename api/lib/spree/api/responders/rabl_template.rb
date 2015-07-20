@@ -13,7 +13,7 @@ module Spree
         end
 
         def template
-          request.headers['X-Spree-Template'] || controller.params[:template] || options[:default_template]
+          options[:default_template]
         end
 
         def api_behavior
