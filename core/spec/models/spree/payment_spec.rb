@@ -585,7 +585,7 @@ describe Spree::Payment, :type => :model do
   describe "#save" do
     context "completed payments" do
       it "updates order payment total" do
-        payment = Spree::Payment.create(:amount => 100, :order => order, state: "completed")
+        payment = Spree::Payment.create(amount: 100, order: order, payment_method: gateway, state: "completed")
         expect(order.payment_total).to eq payment.amount
       end
     end
