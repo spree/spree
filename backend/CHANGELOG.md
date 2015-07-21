@@ -1,1 +1,3 @@
-## Spree 2.4.0 (unreleased) ##
+## Spree Edge ##
+
+* Allow appropriate feedback on customer details update
