@@ -437,6 +437,11 @@ en:
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+      order:
+        events:
+          approve: approve
+          cancel: cancel
+          resume: resume
       user:
         account: Account
         addresses: Addresses
