@@ -51,9 +51,9 @@ module Spree
                 order.state = order.state
                 order.state_changes.create(
                   previous_state: transition.from,
-                  next_state:     transition.to,
-                  name:           'order',
-                  user_id:        order.user_id
+                  next_state: transition.to,
+                  name: 'order',
+                  user_id: order.user_id
                 )
                 order.save
               end
@@ -113,7 +113,7 @@ module Spree
               before_transition to: :complete, do: :ensure_line_items_are_in_stock
 
               after_transition to: :complete, do: :finalize!
-              after_transition to: :resumed,  do: :after_resume
+              after_transition to: :resumed, do: :after_resume
               after_transition to: :canceled, do: :after_cancel
 
               after_transition from: any - :cart, to: any - [:confirm, :complete] do |order|
