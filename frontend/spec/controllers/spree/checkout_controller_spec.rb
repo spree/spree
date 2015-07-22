@@ -174,35 +174,6 @@ describe Spree::CheckoutController, type: :controller do
             expect(order.ship_address.id).to eq(@expected_ship_address_id)
           end
         end
-
-        context "with zip codes with leading and trailing spaces" do
-          let(:bill_address_params) do
-            order.bill_address.attributes.except("created_at", "updated_at").merge("zipcode": " 12345 ")
-          end
-          let(:ship_address_params) do
-            order.ship_address.attributes.except("created_at", "updated_at").merge("zipcode": " 54321 ")
-          end
-          let(:update_params) do
-            {
-              state: "address",
-              order: {
-                bill_address_attributes: bill_address_params,
-                ship_address_attributes: ship_address_params,
-                use_billing: false
-              }
-            }
-          end
-
-          before do
-            spree_post :update, update_params
-            order.reload
-          end
-
-          it 'accepts the zip codes as valid' do
-            expect(order.bill_address.zipcode).to eq(" 12345 ")
-            expect(order.ship_address.zipcode).to eq(" 54321 ")
-          end
-        end
       end
 
       context "when in the confirm state" do
