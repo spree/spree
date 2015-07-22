@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order
     module Checkout
       extend ActiveSupport::Concern
 
