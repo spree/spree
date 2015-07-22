@@ -144,18 +144,28 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context "with a billing and shipping address" do
+          let(:bill_address_params) do
+            order.bill_address.attributes.except("created_at", "updated_at")
+          end
+          let(:ship_address_params) do
+            order.ship_address.attributes.except("created_at", "updated_at")
+          end
+          let(:update_params) do
+            {
+              state: "address",
+              order: {
+                bill_address_attributes: bill_address_params,
+                ship_address_attributes: ship_address_params,
+                use_billing: false
+              }
+            }
+          end
+
           before do
             @expected_bill_address_id = order.bill_address.id
             @expected_ship_address_id = order.ship_address.id
 
-            spree_post :update,
-                       state: "address",
-                       order: {
-                         bill_address_attributes: order.bill_address.attributes.except("created_at", "updated_at"),
-                         ship_address_attributes: order.ship_address.attributes.except("created_at", "updated_at"),
-                         use_billing: false
-                       }
-
+            spree_post :update, update_params
             order.reload
           end
 
@@ -166,21 +176,31 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context "with zip codes with leading and trailing spaces" do
-          before do
-            spree_post :update,
-                       state: "address",
-                       order: {
-                         bill_address_attributes: order.bill_address.attributes.except("created_at", "updated_at").merge("zipcode": " 12345 "),
-                         ship_address_attributes: order.ship_address.attributes.except("created_at", "updated_at").merge("zipcode": " 54321 "),
-                         use_billing: false
-                       }
+          let(:bill_address_params) do
+            order.bill_address.attributes.except("created_at", "updated_at").merge("zipcode": " 12345 ")
+          end
+          let(:ship_address_params) do
+            order.ship_address.attributes.except("created_at", "updated_at").merge("zipcode": " 54321 ")
+          end
+          let(:update_params) do
+            {
+              state: "address",
+              order: {
+                bill_address_attributes: bill_address_params,
+                ship_address_attributes: ship_address_params,
+                use_billing: false
+              }
+            }
+          end
 
+          before do
+            spree_post :update, update_params
             order.reload
           end
 
-          it "strips the spaces befroe updateing the billing and shipping address" do
-            expect(order.bill_address.zipcode).to eq("12345")
-            expect(order.ship_address.zipcode).to eq("54321")
+          it 'accepts the zip codes as valid' do
+            expect(order.bill_address.zipcode).to eq(" 12345 ")
+            expect(order.ship_address.zipcode).to eq(" 54321 ")
           end
         end
       end

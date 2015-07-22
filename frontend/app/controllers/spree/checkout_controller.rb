@@ -19,8 +19,6 @@ module Spree
 
     before_action :setup_for_current_state
 
-    before_action :sanitize_zip_code, only: :update
-
     helper 'spree/orders'
 
     rescue_from Spree::Core::GatewayError, with: :rescue_from_spree_gateway_error
