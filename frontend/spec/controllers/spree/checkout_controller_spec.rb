@@ -82,9 +82,12 @@ describe Spree::CheckoutController, type: :controller do
 
       before do
         # Must have *a* shipping method and a payment method so updating from address works
-        allow(order).to receive_messages available_shipping_methods: [stub_model(Spree::ShippingMethod)]
-        allow(order).to receive_messages available_payment_methods: [stub_model(Spree::PaymentMethod)]
-        allow(order).to receive_messages ensure_available_shipping_rates: true
+        allow(order).to receive_message(:available_shipping_methods).
+          and_return [stub_model(Spree::ShippingMethod)]
+        allow(order).to receive_message(:available_payment_methods).
+          and_return [stub_model(Spree::PaymentMethod)]
+        allow(order).to receive_message(:ensure_available_shipping_rates).
+          and_return true
         order.line_items << FactoryGirl.create(:line_item)
       end
 
@@ -396,7 +399,8 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       it "should set flash message for no inventory" do
-        expect(flash[:error]).to eq(Spree.t(:inventory_error_flash_for_insufficient_quantity, names: "'#{product.name}'"))
+        expect(flash[:error]).to eq(
+          Spree.t(:inventory_error_flash_for_insufficient_quantity, names: "'#{product.name}'"))
       end
     end
   end

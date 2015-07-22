@@ -101,7 +101,9 @@ module Spree
 
     def set_state_if_present
       if params[:state]
-        redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
+        if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
+          redirect_to checkout_state_path(@order.state)
+        end
         @order.state = params[:state]
       end
     end
