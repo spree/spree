@@ -145,7 +145,7 @@
 
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders } %>
+<%= render 'spree/admin/shared/index_table_options', collection: @orders %>
 
 <% if @orders.any? %>
   <table class="table" id="listing_orders" data-hook>
@@ -221,4 +221,4 @@
   </div>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders, :simple => true } %>
+<%= render 'spree/admin/shared/index_table_options', collection: @orders, simple: true %>
