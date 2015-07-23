@@ -92,6 +92,7 @@ module Spree
     def define_image_method(style)
       self.class.send :define_method, "#{style}_image" do |product, *options|
         options = options.first || {}
+        options[:alt] ||= product.name
         if product.images.empty?
           if !product.is_a?(Spree::Variant) && !product.variant_images.empty?
             create_product_image_tag(product.variant_images.first, product, options, style)
