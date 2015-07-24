@@ -10,12 +10,12 @@ module Spree
         end
 
         def edit
-          country_id = Address.default.country.id
-          @order.build_bill_address(:country_id => country_id) if @order.bill_address.nil?
-          @order.build_ship_address(:country_id => country_id) if @order.ship_address.nil?
+          bill_address = @order.bill_address ||= Address.default
+          ship_address = @order.ship_address ||= Address.default
 
-          @order.bill_address.country_id = country_id if @order.bill_address.country.nil?
-          @order.ship_address.country_id = country_id if @order.ship_address.country.nil?
+          country = Address.default.country
+          bill_address.country ||= country
+          ship_address.country ||= country
         end
 
         def update
