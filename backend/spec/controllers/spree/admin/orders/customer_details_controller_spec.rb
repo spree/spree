@@ -24,6 +24,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       it "does refresh the shipment rates with all shipping methods" do
         allow(order).to receive_messages(update_attributes: true)
         allow(order).to receive_messages(next: false)
+        allow(order).to receive_messages(complete?: true)
         expect(order).to receive(:refresh_shipment_rates)
           .with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
         attributes = {
