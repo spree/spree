@@ -3,6 +3,7 @@ module Spree
     class OrdersController < Spree::Admin::BaseController
       before_action :initialize_order_events
       before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart]
+      before_action :can_not_transition_without_customer_info, only: :edit
 
       respond_to :html
 
@@ -70,9 +71,7 @@ module Spree
       end
 
       def edit
-        can_not_transition_without_customer_info
-
-        @order.advance.errors.clear
+        @order.advance
       end
 
       def cart

@@ -517,7 +517,12 @@ module Spree
     end
 
     def advance
-      while self.next; end
+      begin
+        while self.next; end
+      rescue ActiveRecord::RecordInvalid
+        # do nothing
+      end
+      errors.clear
       self
     end
 

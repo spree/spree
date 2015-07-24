@@ -336,6 +336,19 @@ describe Spree::Order, type: :model, db: :isolate do
       expect(subject.advance).to be(subject)
     end
 
+    it 'catches invalid record exceptions' do
+      expect(subject).to receive(:next)
+        .and_raise(ActiveRecord::RecordInvalid.new(subject))
+      expect { subject.advance }.to_not raise_error
+    end
+
+    it 'clears all errors' do
+      subject.errors.add(:base, 'test')
+      expect { subject.advance }.to change(subject, :errors)
+        .from(be_one)
+        .to(be_empty)
+    end
+
     it 'advances the order to the expected state' do
       expect { subject.advance }.to change(subject, :state)
         .from(initial_state)
