@@ -62,7 +62,7 @@ $(document).ready(function () {
         token: Spree.api_key
       }
     }).done(function () {
-      window.location.reload();
+      window.Spree.advanceOrder();
     }).error(function (msg) {
       console.log(msg);
     });
