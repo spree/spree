@@ -12,6 +12,9 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :price
 
+    scope :amount_present, -> { where.not(amount: nil) }
+    scope :with_currency, ->(currency = nil) { where(currency: currency || Spree::Config[:currency]) }
+
     def money
       Spree::Money.new(amount || 0, { currency: currency })
     end

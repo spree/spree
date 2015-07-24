@@ -9,8 +9,7 @@ module Spree
       @taxon = Taxon.friendly.find(params[:id])
       return unless @taxon
 
-      @searcher = build_searcher(params.merge(taxon: @taxon.id, include_images: true))
-      @products = @searcher.retrieve_products
+      @products = build_searcher(:Product, params.merge(taxon: @taxon.id, include_images: true)).search
       @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
 

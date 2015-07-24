@@ -89,26 +89,24 @@ $ ->
         @_search_transfer_stock_items()
 
     _search_transfer_variants: ->
-      @build_select(Spree.url(Spree.routes.variants_api), 'product_name_or_sku_cont')
+      @build_select(Spree.url(Spree.routes.variants_api))
 
     _search_transfer_stock_items: ->
       stock_location_id = $('#transfer_source_location_id').val()
-      @build_select(Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items"),
-        'variant_product_name_or_variant_sku_cont')
+      url = Spree.url(Spree.routes.stock_locations_api + "/#{stock_location_id}/stock_items")
+      @build_select(url)
 
     format_variant_result: (result) ->
       "#{result.name} - #{result.sku}"
 
-    build_select: (url, query) ->
+    build_select: (url) ->
       $('#transfer_variant').select2
         minimumInputLength: 3
         ajax:
           url: url
           datatype: "json"
           data: (term, page) ->
-            query_object = {}
-            query_object[query] = term
-            q: query_object
+            q: term
             token: Spree.api_key
 
           results: (data, page) ->
