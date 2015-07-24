@@ -419,8 +419,7 @@ describe Spree::CheckoutController, :type => :controller do
     allow(order).to receive_messages :payment_required? => true
     allow(controller).to receive_messages :check_authorization => true
 
-    expect {
-      spree_post :update, { :state => "payment" }
-    }.to change { order.reload.line_items.length }
+    expect { spree_get(:edit, { state: 'payment' }) }
+      .to change { order.line_items.to_a }
   end
 end
