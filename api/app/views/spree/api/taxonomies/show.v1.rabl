@@ -1,7 +1,7 @@
 object @taxonomy
 
-if set = params[:set]
-  extends "spree/api/taxonomies/#{set}"
+if params[:set] == 'nested'
+  extends "spree/api/taxonomies/nested"
 else
   attributes *taxonomy_attributes
 
