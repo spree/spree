@@ -2,14 +2,22 @@ module Spree
   class Address < Spree::Base
     require 'twitter_cldr'
 
+    LENGTH_VALIDATOR = IceNine.deep_freeze(allow_blank: true, in: 1..255)
+
     belongs_to :country, class_name: "Spree::Country"
     belongs_to :state, class_name: "Spree::State"
 
     has_many :shipments, inverse_of: :address
 
-    validates :firstname, :lastname, :address1, :city, :country, presence: true
-    validates :zipcode, presence: true, if: :require_zipcode?
-    validates :phone, presence: true, if: :require_phone?
+    validates :firstname, presence: true, length: LENGTH_VALIDATOR
+    validates :lastname,  presence: true, length: LENGTH_VALIDATOR
+    validates :company,                   length: LENGTH_VALIDATOR
+    validates :address1,  presence: true, length: LENGTH_VALIDATOR
+    validates :address2,                  length: LENGTH_VALIDATOR
+    validates :city,      presence: true, length: LENGTH_VALIDATOR
+    validates :country,   presence: true
+    validates :zipcode,   presence: true, length: LENGTH_VALIDATOR, if: :require_zipcode?
+    validates :phone,     presence: true, length: LENGTH_VALIDATOR, if: :require_phone?
 
     validate :state_validate, :postal_code_validate
 
