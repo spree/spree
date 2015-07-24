@@ -47,17 +47,15 @@ scope :additional, -> { where(included: false) }
 ```
 
 * `open`: All open adjustments.
-* `eligible`: All eligible adjustments for the order. Useful for determining which adjustments are applying to the adjustable.
 * `tax`: All adjustments which have a source that is a `Spree::TaxRate` object
 * `price`: All adjustments which adjust a `Spree::LineItem` object.
 * `shipping`: All adjustments which adjust a `Spree::Shipment` object.
 * `promotion`: All adjustments where the source is a `Spree::PromotionAction` object.
 * `optional`: All adjustments which are not `mandatory`.
 * `return_authorization`: All adjustments where the source is a `Spree::ReturnAuthorization`.
-* `eligible`: Adjustments which have been determined to be `eligible` for their adjustable.
+* `eligible`: Adjustments which have been determined to be `eligible` for their adjustable. Useful for determining which adjustments are applying to the adjustable.
 * `charge`: Adjustments which *increase* the price of their adjustable.
 * `credit`: Adjustments which *decrease* the price of their adjustable.
-* `optional`: Adjustments which are not mandatory.
 * `included`: Adjustments which are included in the object's price. Typically tax adjustments.
 * `additional`: Adjustments which modify the object's price. The default for all adjustments.
 
