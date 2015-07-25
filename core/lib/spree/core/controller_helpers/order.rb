@@ -69,7 +69,7 @@ module Spree
           user = try_spree_current_user
 
           # Merge all incomplete orders
-          order = merge_orders(user.spree_orders) if user
+          order = merge_orders(user.orders) if user
 
           # Merge all anonymous orders
           order = merge_orders(anonymous_orders, order) if guest_token
