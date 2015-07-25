@@ -103,12 +103,12 @@ describe Spree::OrdersController, :type => :controller do
     # Regression test for #2750
     context "#update" do
       before do
-        allow(user).to receive(:spree_orders).and_return(Spree::Order.none)
+        allow(user).to receive(:orders).and_return(Spree::Order.none)
         allow(controller).to receive :set_current_order
       end
 
       it "cannot update a blank order" do
-        spree_put :update, :order => { :email => "foo" }
+        spree_put :update, order: { email: "foo" }
         expect(flash[:error]).to eq(Spree.t(:order_not_found))
         expect(response).to redirect_to(spree.root_path)
       end
