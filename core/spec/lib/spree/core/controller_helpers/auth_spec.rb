@@ -75,7 +75,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
     context 'when logged in' do
       before do
-        allow(controller).to receive_messages(try_spree_current_user: double('User', to_param: 1, spree_orders: Spree::Order.none))
+        allow(controller).to receive_messages(try_spree_current_user: double('User', to_param: 1, orders: Spree::Order.none))
       end
       it 'redirects unauthorized path' do
         get :index
