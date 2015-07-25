@@ -67,7 +67,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       context 'locking behaviour' do
         before do
-          expect(user).to receive(:spree_orders).and_return(relation)
+          expect(user).to receive(:orders).and_return(relation)
 
           expect(relation).to receive(:where).with(currency: 'USD')
             .and_return(relation)
