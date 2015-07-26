@@ -28,17 +28,19 @@ module Spree
     before_save :normalize_blank_values
 
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
-
-    order_join_table = reflect_on_association(:orders).join_table
-
-    scope :applied, -> { joins("INNER JOIN #{order_join_table} ON #{order_join_table}.promotion_id = #{table_name}.id").uniq }
+    scope :applied, lambda {
+      joins(<<-SQL).uniq
+        INNER JOIN #{order_promotions.table_name}
+        ON #{order_promotions.table_name}.id = #{table_name}.id
+      SQL
+    }
 
     def self.advertised
       where(advertise: true)
     end
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{self.table_name}.code) = ?", coupon_code.strip.downcase).first
+      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).first
     end
 
     def self.active
