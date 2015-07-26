@@ -2,7 +2,8 @@ module Spree
   class Promotion
     module Rules
       class Taxon < PromotionRule
-        has_and_belongs_to_many :taxons, class_name: '::Spree::Taxon', join_table: 'spree_taxons_promotion_rules', foreign_key: 'promotion_rule_id'
+        has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', foreign_key: 'promotion_rule_id'
+        has_many :taxons, through: :promotion_rule_taxons, class_name: 'Spree::Taxon'
 
         MATCH_POLICIES = %w(any all)
         preference :match_policy, default: MATCH_POLICIES.first
