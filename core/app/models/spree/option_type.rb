@@ -5,7 +5,9 @@ module Spree
     has_many :option_values, -> { order(:position) }, dependent: :destroy, inverse_of: :option_type
     has_many :product_option_types, dependent: :destroy, inverse_of: :option_type
     has_many :products, through: :product_option_types
-    has_and_belongs_to_many :prototypes, join_table: 'spree_option_types_prototypes'
+
+    has_many :option_type_prototypes, class_name: 'Spree::OptionTypePrototype'
+    has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
 
     validates :name, presence: true, uniqueness: true
     validates :presentation, presence: true
