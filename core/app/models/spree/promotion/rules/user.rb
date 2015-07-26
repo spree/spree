@@ -4,10 +4,9 @@ module Spree
       class User < PromotionRule
         belongs_to :user, class_name: "::#{Spree.user_class.to_s}"
 
-        has_and_belongs_to_many :users, class_name: "::#{Spree.user_class.to_s}",
-          join_table: 'spree_promotion_rules_users',
-          foreign_key: 'promotion_rule_id',
-          association_foreign_key: :user_id
+        has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser',
+                                        foreign_key: :promotion_rule_id
+        has_many :users, through: :promotion_rule_users, class_name: ::Spree.user_class.to_s
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
