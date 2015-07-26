@@ -31,7 +31,7 @@ module Spree
     scope :applied, lambda {
       joins(<<-SQL).uniq
         INNER JOIN spree_order_promotions
-        ON spree_order_promotions.id = #{table_name}.id
+        ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
 
