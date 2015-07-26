@@ -5,7 +5,7 @@ module Spree
   class Promotion
     module Rules
       class Product < PromotionRule
-        has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
+        has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule',
                                            foreign_key: :promotion_rule_id
         has_many :products, through: :product_promotion_rules, class_name: 'Spree::Product'
 
