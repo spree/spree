@@ -5,13 +5,8 @@ Spree::Core::Engine.config.to_prepare do
       include Spree::UserPaymentSource
       include Spree::UserReporting
 
-      has_and_belongs_to_many :spree_roles,
-                              join_table: 'spree_roles_users',
-                              foreign_key: "user_id",
-                              class_name: "Spree::Role"
-
-      has_many :role_users, class_name: 'Spree::RoleUser'
-      has_many :spree_roles, through: :role_users, class_name: 'Spree::Role'
+      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id
+      has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
 
       has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"
 
