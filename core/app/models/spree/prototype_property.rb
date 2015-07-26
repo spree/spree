@@ -3,6 +3,6 @@ module Spree
     self.table_name = 'spree_properties_prototypes'
 
     belongs_to :prototype, class_name: 'Spree::Prototype'
-    belongs_to :properties, class_name: 'Spree::Property'
+    belongs_to :property, class_name: 'Spree::Property'
   end
 end
