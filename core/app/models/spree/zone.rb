@@ -6,7 +6,7 @@ module Spree
     has_many :states, through: :zone_members, source: :zoneable, source_type: "Spree::State"
 
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
-    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone', inverse_of: :shipping_methods
+    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
     validates :name, presence: true, uniqueness: { allow_blank: true }
 

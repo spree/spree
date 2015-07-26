@@ -22,8 +22,7 @@ module Spree
 
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone',
                                      foreign_key: 'shipping_method_id'
-    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone',
-                     inverse_of: :shipping_methods
+    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
     belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
 
