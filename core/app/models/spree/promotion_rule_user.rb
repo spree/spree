@@ -1,5 +1,5 @@
 module Spree
-  class PromotionRuleUser < Spree::User
+  class PromotionRuleUser < Spree::Base
     self.table_name = 'spree_promotion_rules_users'
 
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
