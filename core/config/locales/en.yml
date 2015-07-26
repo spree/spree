@@ -437,6 +437,12 @@ en:
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+      order:
+        events:
+          approve: approve
+          cancel: cancel
+          resume: resume
+          resend: Resend
       user:
         account: Account
         addresses: Addresses
@@ -1108,7 +1114,6 @@ en:
     report: Report
     reports: Reports
     resellable: Resellable
-    resend: Resend
     reset_password: Reset my password
     response_code: Response Code
     resume: resume

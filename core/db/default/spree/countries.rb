@@ -26,4 +26,4 @@ connection.execute <<-SQL
   VALUES (#{country_values.call});
 SQL
 
-Spree::Config[:default_country_id] = Spree::Country.find_by(name: "United States").id
+Spree::Config[:default_country_id] = Spree::Country.find_by(iso: "US").id

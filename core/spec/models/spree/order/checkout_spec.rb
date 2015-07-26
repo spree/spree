@@ -380,37 +380,6 @@ describe Spree::Order, :type => :model do
       end
     end
 
-    context "to payment" do
-      before do
-        @default_credit_card = FactoryGirl.create(:credit_card)
-        order.user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
-
-        allow(order).to receive_messages(payment_required?: true)
-        allow(order).to receive_messages(total: 20.00)
-        order.state = 'delivery'
-        order.save!
-      end
-
-      it "assigns the user's default credit card" do
-        order.next!
-        order.reload
-
-        expect(order.state).to eq 'payment'
-        expect(order.payments.count).to eq 1
-        expect(order.payments.first.amount).to eq 20.00
-        expect(order.payments.first.source).to eq @default_credit_card
-      end
-
-      it "only generates payment if payment required" do
-        allow(order).to receive_messages(payment_required?: false)
-        order.next!
-        order.reload
-
-        expect(order.state).to eq 'complete'
-        expect(order.payments.count).to eq 0
-      end
-    end
-
     context "from payment" do
       before do
         order.state = 'payment'

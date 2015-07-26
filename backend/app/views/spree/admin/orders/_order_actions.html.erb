@@ -1,0 +1,12 @@
+<% content_for :page_actions do %>
+  <% if can?(:fire, order) %>
+    <%= event_links(order, events) %>
+  <% end %>
+  <% if can?(:resend, order) %>
+    <%= button_link_to Spree.t(:resend, scope: 'admin.order.events', default: Spree.t(:resend)),
+          resend_admin_order_url(order),
+          method: :post,
+          icon: 'envelope'
+    %>
+  <% end %>
+<% end %>

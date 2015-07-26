@@ -156,6 +156,19 @@ There are three configuration options for currency:
 * `Spree::Config[:currency_symbol_position]`: Whether to include the symbol before or after the monetary amount.
 * `Spree::Config[:display_currency]`: Whether or not to display the currency with prices.
 
+### Localizing Seed Data
+
+Spree use [Carmen](https://github.com/jim/carmen) to seed the Country and State data. You can localize the seed data by adding Carmen configuration to your `seeds.rb`. See example below:
+
+```ruby
+# add Carmen counfiguration with the following 2 lines
+require 'carmen'
+Carmen.i18n_backend.locale = :ja
+
+Spree::Core::Engine.load_seed if defined?(Spree::Core)
+Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
+```
+
 ## Creating and Modifying Locales
 
 While we have used [LocaleApp](http://localeapp.com) in the past to manage the translations for the spree_i18n project, Localeapp does not have support for different branches within the same project. As such, please submit Pull Requests or issues directly to https://github.com/spree/spree_i18n for missing translations.

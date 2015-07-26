@@ -488,7 +488,7 @@ module Spree
     end
 
     def create_proposed_shipments
-      adjustments.shipping.delete_all
+      all_adjustments.shipping.delete_all
       shipments.destroy_all
       self.shipments = Spree::Stock::Coordinator.new(self).shipments
     end
@@ -637,7 +637,7 @@ module Spree
       if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
-        shipments.delete_all
+        shipments.destroy_all
         errors.add(:base, Spree.t(:items_cannot_be_shipped)) and return false
       end
     end
