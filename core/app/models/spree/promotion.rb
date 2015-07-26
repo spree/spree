@@ -30,8 +30,8 @@ module Spree
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
     scope :applied, lambda {
       joins(<<-SQL).uniq
-        INNER JOIN #{order_promotions.table_name}
-        ON #{order_promotions.table_name}.id = #{table_name}.id
+        INNER JOIN spree_order_promotions
+        ON spree_order_promotions.id = #{table_name}.id
       SQL
     }
 
