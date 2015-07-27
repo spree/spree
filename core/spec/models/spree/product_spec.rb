@@ -356,11 +356,9 @@ describe Spree::Product, :type => :model do
 
     context "when prototype with option types is supplied" do
       def build_option_type_with_values(name, values)
-        ot = create(:option_type, :name => name)
-        values.each do |val|
-          ot.option_values.create(:name => val.downcase, :presentation => val)
+        values.each_with_object(create :option_type, name: name) do |val, ot|
+          ot.option_values.create(name: val.downcase, presentation: val)
         end
-        ot
       end
 
       let(:prototype) do

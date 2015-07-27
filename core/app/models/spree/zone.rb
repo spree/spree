@@ -5,7 +5,8 @@ module Spree
     has_many :countries, through: :zone_members, source: :zoneable, source_type: "Spree::Country"
     has_many :states, through: :zone_members, source: :zoneable, source_type: "Spree::State"
 
-    has_and_belongs_to_many :shipping_methods, join_table: 'spree_shipping_methods_zones'
+    has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
+    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
     validates :name, presence: true, uniqueness: { allow_blank: true }
 

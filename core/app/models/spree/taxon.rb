@@ -13,7 +13,11 @@ module Spree
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
-    has_and_belongs_to_many :prototypes, join_table: :spree_taxons_prototypes
+    has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
+    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
+
+    has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon'
+    has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true
     validates :meta_keywords, length: { maximum: 255 }
