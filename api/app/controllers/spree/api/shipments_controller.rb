@@ -2,7 +2,6 @@ module Spree
   module Api
     class ShipmentsController < Spree::Api::BaseController
       before_action :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
-      before_action :find_order
       before_action :find_order_on_create, only: :create
       around_action :lock_order
       before_action :find_shipment, only: [:update, :ship, :ready, :add, :remove]
