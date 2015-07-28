@@ -18,7 +18,7 @@ module Spree
     before_create :generate_number
 
     scope :reimbursed, -> { where(reimbursement_status: 'reimbursed') }
-
+    
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
     # associated ReturnItems.
