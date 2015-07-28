@@ -3,7 +3,6 @@ module Spree
     class StoreCreditError < StandardError; end
 
     class StoreCreditsController < Spree::Admin::BaseController
-
       before_filter :load_user
       before_filter :load_categories, only: [:new, :edit]
       before_filter :load_store_credit, only: [:new, :edit, :update]
@@ -15,10 +14,10 @@ module Spree
 
       def create
         @store_credit = @user.store_credits.build(
-          permitted_store_credit_params.merge({
+          permitted_store_credit_params.merge(
             created_by: try_spree_current_user,
             action_originator: try_spree_current_user,
-          })
+          )
         )
 
         if @store_credit.save
@@ -52,7 +51,7 @@ module Spree
         if @store_credit.destroy
           respond_with(@store_credit) do |format|
             format.html { redirect_to admin_user_store_credits_path(@user) }
-            format.js  { render_js_for_destroy }
+            format.js { render_js_for_destroy }
           end
         else
           render text: Spree.t("store_credit.errors.unable_to_delete"), status: :unprocessable_entity
@@ -88,7 +87,6 @@ module Spree
           raise StoreCreditError.new(Spree.t('store_credit.errors.cannot_change_used_store_credit'))
         end
       end
-
     end
   end
 end

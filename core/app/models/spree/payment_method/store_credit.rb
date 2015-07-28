@@ -97,7 +97,7 @@ module Spree
             true,
             Spree.t('store_credit_payment_method.successful_action', action: action_name),
             {},
-            { authorization: auth_code || response }
+            authorization: auth_code || response
           )
         else
           ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.join, {}, {})

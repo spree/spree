@@ -70,5 +70,4 @@ describe "Store credits admin" do
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
     end
   end
-
 end
