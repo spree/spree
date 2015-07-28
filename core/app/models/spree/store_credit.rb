@@ -176,12 +176,11 @@ module Spree
     def create_credit_record(amount, action_attributes={})
       # Setting credit_to_new_allocation to true will create a new allocation anytime #credit is called
       # If it is not set, it will update the store credit's amount in place
-      credit = nil
-      if Spree::Config.credit_to_new_allocation
-        credit = Spree::StoreCredit.new(create_credit_record_params(amount))
+      credit = if Spree::Config.credit_to_new_allocation
+        Spree::StoreCredit.new(create_credit_record_params(amount))
       else
         self.amount_used = amount_used - amount
-        credit = self
+        self
       end
 
       credit.assign_attributes(action_attributes)
@@ -228,18 +227,21 @@ module Spree
 
       if amount_used > amount
         errors.add(:amount_used, Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
+        false
       end
     end
 
     def amount_authorized_less_than_or_equal_to_amount
       if (amount_used + amount_authorized) > amount
         errors.add(:amount_authorized, Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+        false
       end
     end
 
     def validate_no_amount_used
       if amount_used > 0
         errors.add(:amount_used, 'is greater than zero. Can not delete store credit')
+        false
       end
     end
 
