@@ -29,20 +29,22 @@ module Spree
     end
 
     def capture(amount_in_cents, auth_code, gateway_options = {})
-      action = -> (store_credit) {
+      action = -> (store_credit) do
         store_credit.capture(
-        amount_in_cents / 100.0.to_d,
-        auth_code,
-        gateway_options[:currency],
-        action_originator: gateway_options[:originator]
+          amount_in_cents / 100.0.to_d,
+          auth_code,
+          gateway_options[:currency],
+          action_originator: gateway_options[:originator]
         )
-      }
-
+      end
       handle_action(action, :capture, auth_code)
     end
 
     def purchase(amount_in_cents, store_credit, gateway_options = {})
-      eligible_events = store_credit.store_credit_events.where(amount: amount_in_cents / 100.0.to_d, action: Spree::StoreCredit::ELIGIBLE_ACTION)
+      eligible_events = store_credit.store_credit_events.where(
+        amount: amount_in_cents / 100.0.to_d,
+        action: Spree::StoreCredit::ELIGIBLE_ACTION
+      )
       event = eligible_events.find do |eligible_event|
         store_credit.store_credit_events.where(authorization_code: eligible_event.authorization_code)
         .where.not(action: Spree::StoreCredit::ELIGIBLE_ACTION).empty?
@@ -91,9 +93,12 @@ module Spree
       store_credit.with_lock do
         if response = action.call(store_credit)
           # note that we only need to return the auth code on an 'auth', but it's innocuous to always return
-          ActiveMerchant::Billing::Response.new(true,
-          Spree.t('store_credit_payment_method.successful_action', action: action_name),
-          {}, { authorization: auth_code || response })
+          ActiveMerchant::Billing::Response.new(
+            true,
+            Spree.t('store_credit_payment_method.successful_action', action: action_name),
+            {},
+            { authorization: auth_code || response }
+          )
         else
           ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.join, {}, {})
         end
@@ -105,7 +110,12 @@ module Spree
       store_credit = StoreCreditEvent.find_by_authorization_code(auth_code).try(:store_credit)
 
       if store_credit.nil?
-        ActiveMerchant::Billing::Response.new(false, Spree.t('store_credit_payment_method.unable_to_find_for_action', auth_code: auth_code, action: action_name), {}, {})
+        ActiveMerchant::Billing::Response.new(
+          false,
+          Spree.t('store_credit_payment_method.unable_to_find_for_action', auth_code: auth_code, action: action_name),
+          {},
+          {}
+        )
       else
         handle_action_call(store_credit, action, action_name, auth_code)
       end

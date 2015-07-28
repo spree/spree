@@ -652,19 +652,19 @@ module Spree
     end
 
     def display_total_applicable_store_credit
-      Spree::Money.new(-total_applicable_store_credit, { currency: currency })
+      Spree::Money.new(-total_applicable_store_credit, currency: currency)
     end
 
     def display_order_total_after_store_credit
-      Spree::Money.new(order_total_after_store_credit, { currency: currency })
+      Spree::Money.new(order_total_after_store_credit, currency: currency)
     end
 
     def display_total_available_store_credit
-      Spree::Money.new(total_available_store_credit, { currency: currency })
+      Spree::Money.new(total_available_store_credit, currency: currency)
     end
 
     def display_store_credit_remaining_after_capture
-      Spree::Money.new(total_available_store_credit - total_applicable_store_credit, { currency: currency })
+      Spree::Money.new(total_available_store_credit - total_applicable_store_credit, currency: currency)
     end
 
     private
@@ -676,11 +676,13 @@ module Spree
     end
 
     def create_store_credit_payment(payment_method, credit, amount)
-      payments.create!(source: credit,
-      payment_method: payment_method,
-      amount: amount,
-      state: 'checkout',
-      response_code: credit.generate_authorization_code)
+      payments.create!(
+        source: credit,
+        payment_method: payment_method,
+        amount: amount,
+        state: 'checkout',
+        response_code: credit.generate_authorization_code
+      )
     end
 
     def store_credit_amount(credit, total)
@@ -723,7 +725,7 @@ module Spree
       payments.completed.each { |payment| payment.cancel! }
 
       # Free up authorized store credits
-      payments.store_credits.pending.each { |payment| payment.void! }
+      payments.store_credits.pending.each(&:void!)
 
       send_cancel_email
       self.update!
