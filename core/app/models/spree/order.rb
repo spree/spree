@@ -669,12 +669,6 @@ module Spree
 
     private
 
-    def existing_credit_card_payment
-      other_payments = payments.valid.not_store_credits
-      raise "Found #{other_payments.size} payments and only expected 1" if other_payments.size > 1
-      other_payments.first
-    end
-
     def create_store_credit_payment(payment_method, credit, amount)
       payments.create!(
         source: credit,
