@@ -25,7 +25,7 @@
       <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row" class="<%= cycle('odd', 'even')%>">
         <td><%= reimbursement.id %></td>
         <td><%= reimbursement.total %></td>
-        <td><%= t 'spree.'+rereimbursement.reimbursement_status %></td>
+        <td><%= t 'spree.'+reimbursement.reimbursement_status %></td>
         <td><%= pretty_time(reimbursement.created_at) %></td>
         <td></td>
       </tr>
