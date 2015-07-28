@@ -1,12 +1,12 @@
 <% content_for :page_title do %>
-  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: Spree::StoreCredit.model_name.human) %>
+  <%= link_to "#{@user.email}", spree.edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: Spree::StoreCredit.model_name.human) %>
 <% end %>
 
 <%= render partial: 'spree/admin/users/sidebar', locals: { current: :store_credits } %>
 
-<%= form_for @store_credit, url: admin_user_store_credit_path(@user, @store_credit) do |f| %>
+<%= form_for @store_credit, url: spree.admin_user_store_credit_path(@user, @store_credit) do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>
-    <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: admin_user_store_credits_path(@user) } %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: spree.admin_user_store_credits_path(@user) } %>
   </fieldset>
 <% end %>
