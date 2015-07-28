@@ -64,9 +64,6 @@ module Spree
         transition from: :canceled, to: :ready, if: lambda { |shipment|
           shipment.determine_state(shipment.order) == 'ready'
         }
-        transition from: :canceled, to: :pending, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == 'ready'
-        }
         transition from: :canceled, to: :pending
       end
       after_transition from: :canceled, to: [:pending, :ready, :shipped], do: :after_resume
