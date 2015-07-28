@@ -52,7 +52,27 @@ $(document).ready(function() {
               $('#order_bill_address_attributes_state_id').select2("val", billAddress.state_id);
             });
           });
+        } else {
+          $('#order_bill_address_attributes_firstname').val('');
+          $('#order_bill_address_attributes_lastname').val('');
+          $('#order_bill_address_attributes_address1').val('');
+          $('#order_bill_address_attributes_address2').val('');
+          $('#order_bill_address_attributes_city').val('');
+          $('#order_bill_address_attributes_zipcode').val('');
+          $('#order_bill_address_attributes_phone').val('');
+          $('#order_bill_address_attributes_state_id').select2("val", '');
         }
+        
+        if( !$('#order_use_billing').prop('checked') ) $('#order_use_billing').click();
+        $('#order_ship_address_attributes_firstname').val('');
+        $('#order_ship_address_attributes_lastname').val('');
+        $('#order_ship_address_attributes_address1').val('');
+        $('#order_ship_address_attributes_address2').val('');
+        $('#order_ship_address_attributes_city').val('');
+        $('#order_ship_address_attributes_zipcode').val('');
+        $('#order_ship_address_attributes_phone').val('');
+        $('#order_ship_address_attributes_state_id').select2("val", '');
+        
         return customer.email;
       }
     })
