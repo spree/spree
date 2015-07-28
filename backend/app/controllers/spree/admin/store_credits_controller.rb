@@ -61,7 +61,8 @@ module Spree
       protected
 
       def permitted_store_credit_params
-        params.require(:store_credit).permit(permitted_attributes).merge(currency: Spree::Config[:currency])
+        params.require(:store_credit).permit(permitted_store_credit_attributes).
+          merge(currency: Spree::Config[:currency])
       end
 
       private
@@ -76,10 +77,6 @@ module Spree
 
       def load_store_credit
         @store_credit = Spree::StoreCredit.find_by_id(params[:id]) || Spree::StoreCredit.new
-      end
-
-      def permitted_attributes
-        [:amount, :category_id, :memo]
       end
 
       def ensure_unused_store_credit
