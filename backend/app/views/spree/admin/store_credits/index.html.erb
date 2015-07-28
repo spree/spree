@@ -1,0 +1,44 @@
+<% content_for :page_title do %>
+  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"admin.user.store_credits") %>
+<% end %>
+
+<%= render partial: 'spree/admin/users/sidebar', locals: { current: :store_credits } %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:back_to_users_list), spree.admin_users_path, class: 'btn-primary', icon: 'chevron-left' %>
+  <%= button_link_to Spree.t(:add_store_credit), new_admin_user_store_credit_path(@user), class: "btn-success", icon: 'add' %>
+<% end %>
+
+<% if @store_credits.any? %>
+  <table class="table">
+    <thead>
+      <th><%= Spree.t("credited") %></th>
+      <th><%= Spree.t("used") %></th>
+      <th><%= Spree.t("type") %></th>
+      <th><%= Spree.t("created_by") %></th>
+      <th><%= Spree.t("issued_on") %></th>
+      <th data-hook="admin_store_credits_index_header_actions" class="actions"></th>
+    <thead>
+    <tbody>
+      <% @store_credits.each do |store_credit| %>
+        <tr>
+          <td><%= store_credit.display_amount.to_html %></td>
+          <td><%= store_credit.display_amount_used.to_html %></td>
+          <td><%= store_credit.category_name %></td>
+          <td><%= store_credit.created_by_email %></td>
+          <td><%= l store_credit.created_at.to_date %></td>
+          <td class="actions actions-2 text-center" data-hook="admin_store_credits_index_row_actions">
+            <% if store_credit.amount_used.zero? %>
+              <%= link_to_edit_url edit_admin_user_store_credit_path(@user, store_credit), no_text: true if can?(:edit, store_credit) %>
+              <%= link_to_delete store_credit, no_text: true, url: admin_user_store_credit_path(@user, store_credit) if can?(:destroy, store_credit) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
+  </div>
+<% end %>

@@ -174,6 +174,7 @@ Spree::Core::Engine.add_routes do
         get :items
         get :orders
       end
+      resources :store_credits
     end
   end
 

@@ -12,5 +12,8 @@
     <li<%== ' class="active"' if current == :items %>>
       <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), spree.items_admin_user_path(@user) %>
     </li>
+    <li<%== ' class="active"' if current == :store_credits %>>
+      <%= link_to_with_icon 'money', Spree.t(:"admin.user.store_credits"), admin_user_store_credits_path(@user) %>
+    </li>
   </ul>
 <% end %>
