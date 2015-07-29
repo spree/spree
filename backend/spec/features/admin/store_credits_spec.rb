@@ -14,7 +14,7 @@ describe "Store credits admin" do
 
     it "should be on the store credits page" do
       click_link store_credit.user.email
-      click_link "Store Credit"
+      click_link "Store Credits"
       expect(page.current_path).to eq spree.admin_user_store_credits_path(store_credit.user)
 
       store_credit_table = page.find("table")
@@ -31,7 +31,7 @@ describe "Store credits admin" do
       visit spree.admin_path
       click_link "Users"
       click_link store_credit.user.email
-      click_link "Store Credit"
+      click_link "Store Credits"
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
@@ -55,7 +55,7 @@ describe "Store credits admin" do
       visit spree.admin_path
       click_link "Users"
       click_link store_credit.user.email
-      click_link "Store Credit"
+      click_link "Store Credits"
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
