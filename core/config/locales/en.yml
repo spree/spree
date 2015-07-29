@@ -128,6 +128,8 @@ en:
         mail_from_address: Mail From Address
       spree/store_credit:
         amount_used: "Amount used"
+      spree/store_credit_category:
+        name: Name
       spree/tax_category:
         description: Description
         name: Name
@@ -251,6 +253,9 @@ en:
       spree/store_credit:
         one: Store Credit
         other: Store Credits
+      spree/store_credit_category:
+        one: Store Credit Category
+        other: Store Credit Categories
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -855,6 +860,7 @@ en:
     new_stock_movement: New Stock Movement
     new_stock_transfer: New Stock Transfer
     new_store_credit: New Store Credit
+    new_store_credit_category: New Store Credit Category
     new_tax_category: New Tax Category
     new_tax_rate: New Tax Rate
     new_taxon: New Taxon
@@ -1308,6 +1314,7 @@ en:
         unable_to_delete: Unable to delete store credit
         unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
+    store_credit_categories: Store Credit Categories
     store_credit_payment_method:
       unable_to_void: "Unable to void code: %{auth_code}"
       unable_to_credit: "Unable to credit code: %{auth_code}"

@@ -1,6 +1,8 @@
 module Spree
   class StoreCreditCategory < Spree::Base
 
+    validates_presence_of :name
+
     GIFT_CARD_CATEGORY_NAME = 'Gift Card'
     DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME]
 
