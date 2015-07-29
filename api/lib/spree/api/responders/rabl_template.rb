@@ -4,27 +4,18 @@ module Spree
       module RablTemplate
         def to_format
           if template
-            render template, :status => options[:status] || 200
+            render(template, status: options.fetch(:status, :ok))
           else
-            super
+            super()
           end
-
-        rescue ActionView::MissingTemplate => e
-          api_behavior(e)
         end
+
+      private
 
         def template
           options[:default_template]
         end
 
-        def api_behavior(error)
-          if controller.params[:action] == "destroy"
-            # Render a blank template
-            super
-          else
-            # Do nothing and fallback to the default template
-          end
-        end
       end
     end
   end
