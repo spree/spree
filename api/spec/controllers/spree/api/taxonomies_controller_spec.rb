@@ -59,6 +59,11 @@ module Spree
         expect(children.first.key?('taxons')).to be true
       end
 
+      it 'does not load templates other than nested' do
+        expect { api_get(:show, id: taxonomy.id, set: 'show') }
+          .to_not raise_error
+      end
+
       it "gets the jstree-friendly version of a taxonomy" do
         api_get :jstree, :id => taxonomy.id
         expect(json_response["data"]).to eq(taxonomy.root.name)
