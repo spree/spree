@@ -226,6 +226,34 @@ describe "Order" do
     end
   end
 
+  describe "#could_use_store_credit?" do
+    context "order does not have an associated user" do
+      subject { create(:store_credits_order_without_user) }
+
+      it { expect(subject.could_use_store_credit?).to be false }
+    end
+
+    context "order has an associated user" do
+      let(:user)                   { create(:user) }
+
+      subject { create(:order, user: user) }
+
+      context "without store credit" do
+        it { expect(subject.could_use_store_credit?).to be false }
+      end
+
+      context "with store credit" do
+        let(:available_store_credit) { 25.0 }
+
+        before do
+          allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
+        end
+
+        it { expect(subject.could_use_store_credit?).to be true }
+      end
+    end
+  end
+
   describe "#order_total_after_store_credit" do
     let(:order_total) { 100.0 }
 
@@ -308,6 +336,20 @@ describe "Order" do
           expect(subject.total_applicable_store_credit).to be_zero
         end
       end
+    end
+  end
+
+  describe "#using_store_credit?" do
+    subject { create(:order) }
+
+    context "order has store credit payment" do
+      before { allow(subject).to receive(:total_applicable_store_credit).and_return(10.0) }
+      it { expect(subject.using_store_credit?).to be true }
+    end
+
+    context "order has no store credit payments" do
+      before { allow(subject).to receive(:total_applicable_store_credit).and_return(0.0) }
+      it { expect(subject.using_store_credit?).to be false }
     end
   end
 

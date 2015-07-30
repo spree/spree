@@ -39,6 +39,10 @@ module Spree
         user.total_available_store_credit
       end
 
+      def could_use_store_credit?
+        total_available_store_credit > 0
+      end
+
       def order_total_after_store_credit
         total - total_applicable_store_credit
       end
@@ -49,6 +53,10 @@ module Spree
         else
           [total, (user.try(:total_available_store_credit) || 0.0)].min
         end
+      end
+
+      def using_store_credit?
+        total_applicable_store_credit > 0
       end
 
       def display_total_applicable_store_credit
