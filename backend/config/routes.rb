@@ -159,8 +159,8 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :stock_items, only: [:create, :update, :destroy]
+    resources :store_credit_categories
     resources :tax_rates
-
     resources :trackers
     resources :payment_methods
     resources :roles
@@ -174,6 +174,7 @@ Spree::Core::Engine.add_routes do
         get :items
         get :orders
       end
+      resources :store_credits
     end
   end
 

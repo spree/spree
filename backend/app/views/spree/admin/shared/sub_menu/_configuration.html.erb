@@ -14,6 +14,7 @@
   <%= configurations_sidebar_menu_item(Spree.t(:shipping_categories), spree.admin_shipping_categories_path) if can? :manage, Spree::ShippingCategory %>
   <%= configurations_sidebar_menu_item(Spree.t(:stock_transfers), spree.admin_stock_transfers_path) if can? :manage, Spree::StockTransfer %>
   <%= configurations_sidebar_menu_item(Spree.t(:stock_locations), spree.admin_stock_locations_path) if can? :manage, Spree::StockLocation %>
+  <%= configurations_sidebar_menu_item(Spree.t(:store_credit_categories), spree.admin_store_credit_categories_path) if can? :manage, Spree::StoreCreditCategory %>
   <%= configurations_sidebar_menu_item(Spree.t(:analytics_trackers), spree.admin_trackers_path) if can? :manage, Spree::Tracker %>
   <%= configurations_sidebar_menu_item(Spree.t(:refund_reasons), spree.admin_refund_reasons_path) if can? :manage, Spree::RefundReason %>
   <%= configurations_sidebar_menu_item(Spree.t(:reimbursement_types), spree.admin_reimbursement_types_path) if can? :manage, Spree::ReimbursementType %>

@@ -128,6 +128,8 @@ en:
         mail_from_address: Mail From Address
       spree/store_credit:
         amount_used: "Amount used"
+      spree/store_credit_category:
+        name: Name
       spree/tax_category:
         description: Description
         name: Name
@@ -248,6 +250,12 @@ en:
       spree/stock_transfer:
         one: Stock Transfer
         other: Stock Transfers
+      spree/store_credit:
+        one: Store Credit
+        other: Store Credits
+      spree/store_credit_category:
+        one: Store Credit Category
+        other: Store Credit Categories
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -410,6 +418,7 @@ en:
     add_stock: Add Stock
     add_to_cart: Add To Cart
     add_variant: Add Variant
+    add_store_credit: Add Store Credit
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -448,6 +457,7 @@ en:
         order_num: "Order #"
         orders: Orders
         user_information: User Information
+        store_credits: Store Credits
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
@@ -578,11 +588,13 @@ en:
     create_new_order: Create new order
     create_reimbursement: Create reimbursement
     created_at: Created At
+    created_by: Created By
     credit: Credit
-    credits: Credits
     credit_card: Credit Card
     credit_cards: Credit Cards
     credit_owed: Credit Owed
+    credited: Credited
+    credits: Credits
     currency: Currency
     currency_settings: Currency Settings
     current: Current
@@ -756,6 +768,7 @@ en:
     inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
     iso_name: Iso Name
+    issued_on: Issued On
     item: Item
     item_description: Item Description
     item_total: Item Total
@@ -846,6 +859,8 @@ en:
     new_stock_location: New Stock Location
     new_stock_movement: New Stock Movement
     new_stock_transfer: New Stock Transfer
+    new_store_credit: New Store Credit
+    new_store_credit_category: New Store Credit Category
     new_tax_category: New Tax Category
     new_tax_rate: New Tax Rate
     new_taxon: New Taxon
@@ -1168,6 +1183,7 @@ en:
     select_from_prototype: Select From Prototype
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
+    select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
@@ -1293,7 +1309,12 @@ en:
       captured: "Used"
       allocated: "Added"
       errors:
-        unable_to_fund: "Unable to pay for order using store credits"
+        cannot_change_used_store_credit: You cannot change a store credit that has already been used
+        unable_to_create: Unable to create store credit
+        unable_to_delete: Unable to delete store credit
+        unable_to_fund: Unable to pay for order using store credits
+        unable_to_update: Unable to update store credit
+    store_credit_categories: Store Credit Categories
     store_credit_payment_method:
       unable_to_void: "Unable to void code: %{auth_code}"
       unable_to_credit: "Unable to credit code: %{auth_code}"
@@ -1386,6 +1407,7 @@ en:
     use_new_cc: Use a new card
     use_new_cc_or_payment_method: Use a new card / payment method
     use_s3: Use Amazon S3 For Images
+    used: Used
     user: User
     user_rule:
       choose_users: Choose users
