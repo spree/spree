@@ -120,8 +120,8 @@ describe Spree::Reimbursement, type: :model do
         return_item.reload
         expect(return_item.included_tax_total).to be < 0
         expect(return_item.included_tax_total).to eq line_item.included_tax_total
-        expect(reimbursement.total).to eq (line_item.pre_tax_amount + line_item.included_tax_total).round(2, :down)
-        expect(Spree::Refund.last.amount).to eq (line_item.pre_tax_amount + line_item.included_tax_total).round(2, :down)
+        expect(reimbursement.total).to eq (line_item.pre_tax_amount + line_item.included_tax_total).round(2)
+        expect(Spree::Refund.last.amount).to eq (line_item.pre_tax_amount + line_item.included_tax_total).round(2)
       end
     end
 
@@ -157,7 +157,7 @@ describe Spree::Reimbursement, type: :model do
   end
 
   describe "#calculated_total" do
-    context 'with return item amounts that would round up' do
+    context 'with return item amounts that would round up if added' do
       let(:reimbursement) { Spree::Reimbursement.new }
 
       subject { reimbursement.calculated_total }
@@ -168,6 +168,20 @@ describe Spree::Reimbursement, type: :model do
       end
 
       it 'rounds down' do
+        expect(subject).to eq 20
+      end
+    end
+
+    context 'with a return item amount that should round up' do
+      let(:reimbursement) { Spree::Reimbursement.new }
+
+      subject { reimbursement.calculated_total }
+
+      before do
+        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 19.998)
+      end
+
+      it 'rounds up' do
         expect(subject).to eq 20
       end
     end
