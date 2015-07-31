@@ -1,14 +1,9 @@
 module Spree
   class StockTransfer < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'T')
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
-
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'T'
-      super(options)
-    end
 
     has_many :stock_movements, as: :originator
 

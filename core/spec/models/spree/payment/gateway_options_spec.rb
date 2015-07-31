@@ -8,7 +8,15 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       Spree::Payment,
       order: order,
       number: "P1566",
-      currency: "EUR"
+      currency: "EUR",
+      payment_method: payment_method
+    )
+  end
+
+  let(:payment_method) do
+    double(
+      Spree::Gateway::Bogus,
+      exchange_multiplier: Spree::Gateway::FROM_DOLLAR_TO_CENT_RATE
     )
   end
 
@@ -31,6 +39,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:bill_address) do
     double Spree::Address, active_merchant_hash: { bill: :address }
   end
+
   let(:ship_address) do
     double Spree::Address, active_merchant_hash: { ship: :address }
   end
@@ -115,5 +124,4 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     end
     it { should == expected }
   end
-
 end

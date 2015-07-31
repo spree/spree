@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-describe Spree::LineItem, :type => :model do
+describe Spree::LineItem, type: :model do
   let(:order) { create :order_with_line_items, line_items_count: 1 }
   let(:line_item) { order.line_items.first }
+
+  before { create(:store) }
 
   context '#save' do
     it 'touches the order' do
@@ -65,7 +67,7 @@ describe Spree::LineItem, :type => :model do
     let(:variant) { create(:variant) }
 
     before do
-      create(:tax_rate, :zone => order.tax_zone, :tax_category => variant.tax_category)
+      create(:tax_rate, zone: order.tax_zone, tax_category: variant.tax_category)
     end
 
     context "when order has a tax zone" do
@@ -133,7 +135,7 @@ describe Spree::LineItem, :type => :model do
     it "returns the amount minus any discounts" do
       line_item.price = 10
       line_item.quantity = 2
-      line_item.promo_total = -5
+      line_item.taxable_adjustment_total = -5
       expect(line_item.discounted_amount).to eq(15)
     end
   end
@@ -159,7 +161,6 @@ describe Spree::LineItem, :type => :model do
     it "returns a Spree::Money representing the total for this line item" do
       expect(line_item.money.to_s).to eq("$7.00")
     end
-
   end
 
   describe '#single_money' do
@@ -267,6 +268,14 @@ describe Spree::LineItem, :type => :model do
       expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with("USD", true).and_return 1.99
       line_item.options = { gift_wrap: true }
       expect(line_item.price).to eq 21.98
+    end
+  end
+
+  describe "precision of pre_tax_amount" do
+    let!(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+
+    it "keeps four digits of precision even when reloading" do
+      expect(line_item.reload.pre_tax_amount).to eq(4.2051)
     end
   end
 end

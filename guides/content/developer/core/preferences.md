@@ -384,14 +384,6 @@ The three-letter currency code for the currency that prices will be displayed in
 
 The default country's id. Defaults to 214, as this is the id for the United States within the seed data.
 
-`dismissed_spree_alerts`
-
-The list of alert IDs that you have dismissed.
-
-`last_check_for_spree_alerts`
-
-Stores the last time that alerts were checked for. Alerts are checked for every 12 hours.
-
 `layout`
 
 The path to the layout of your application, relative to the `app/views` directory. Defaults to `spree/layouts/spree_application`. To make Spree use your application's layout rather than Spree's default, use this:
@@ -445,46 +437,3 @@ Determines if tax information should be based on shipping address, rather than t
 `track_inventory_levels`
 
 Determines if inventory levels should be tracked when products are purchased at checkout. This option causes new `InventoryUnit` objects to be created when a product is bought. Defaults to `true`.
-
-## S3 Support
-
-To configure Spree to upload images to S3, put these lines into `config/initializers/spree.rb`:
-
-```ruby
-Spree.config do |config|
-  config.use_s3 = true
-  config.s3_bucket = '<bucket>'
-  config.s3_access_key = "<key>"
-  config.s3_secret = "<secret>"
-end
-```
-
-It's also a good idea to not include the `rails_root` path inside the `attachment_path` configuration option, which by default is this:
-
-```ruby
-:rails_root/public/spree/products/:id/:style/:basename.:extension
-```
-
-To change this, add the following line underneath the `s3_secret` configuration setting:
-
-```ruby
-config.attachment_path = '/spree/products/:id/:style/:basename.:extension'
-```
-
-If you're using the Western Europe S3 server, you will need to set two additional options inside this block:
-
-```ruby
-Spree.config do |config|
-  ...
-  config.attachment_url = ":s3_eu_url"
-  config.s3_host_alias = "s3-eu-west-1.amazonaws.com"
-end
-```
-
-Additionally, you will need to tell `paperclip` how to construct the URLs for your images by placing this code outside the `config` block inside `config/initializers/spree.rb`:
-
-```ruby
-Paperclip.interpolates(:s3_eu_url) do |attachment, style|
-  "#{attachment.s3_protocol}://#{Spree::Config[:s3_host_alias]}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
-end
-```

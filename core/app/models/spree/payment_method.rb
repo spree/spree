@@ -1,8 +1,14 @@
 module Spree
   class PaymentMethod < Spree::Base
     acts_as_paranoid
-    DISPLAY = [:both, :front_end, :back_end]
-    default_scope { where(deleted_at: nil) }
+    acts_as_list
+
+    DISPLAY = [:both, :front_end, :back_end].freeze
+
+    scope :active,                 -> { where(active: true) }
+    scope :available,              -> { active.where(display_on: [:front_end, :back_end, :both]) }
+    scope :available_on_front_end, -> { active.where(display_on: [:front_end, :both]) }
+    scope :available_on_back_end,  -> { active.where(display_on: [:back_end, :both]) }
 
     validates :name, presence: true
 
@@ -22,17 +28,6 @@ module Spree
     # nil means the payment method doesn't require a source e.g. check
     def payment_source_class
       raise ::NotImplementedError, 'You must implement payment_source_class method for this gateway.'
-    end
-
-    def self.available(display_on = 'both')
-      all.select do |p|
-        p.active &&
-        (p.display_on == display_on.to_s || p.display_on.blank?)
-      end
-    end
-
-    def self.active?
-      where(type: self.to_s, active: true).count > 0
     end
 
     def method_type

@@ -2,8 +2,8 @@
   <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"admin.user.order_history") %>
 <% end %>
 
-<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :orders } %>
-<%= render :partial => 'spree/admin/users/user_page_actions' %>
+<%= render partial: 'spree/admin/users/sidebar', locals: { current: :orders } %>
+<%= render partial: 'spree/admin/users/user_page_actions' %>
 
 <fieldset data-hook="admin_user_order_history">
   <%= paginate @orders %>
@@ -13,10 +13,10 @@
     <table class="table table-condensed table-bordered" id="listing_orders" data-hook>
       <thead>
         <tr data-hook="admin_orders_index_headers">
-          <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_completed_at_title'} %></th>
-          <th><%= sort_link @search, :number,         I18n.t(:number, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_number_title'} %></th>
-          <th><%= sort_link @search, :state,          I18n.t(:state, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_state_title'} %></th>
-          <th><%= sort_link @search, :total,          I18n.t(:total, :scope => 'activerecord.attributes.spree/order'), {}, {:title => 'orders_total_title'} %></th>
+          <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_completed_at_title'} %></th>
+          <th><%= sort_link @search, :number,         I18n.t(:number, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_number_title'} %></th>
+          <th><%= sort_link @search, :state,          I18n.t(:state, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_state_title'} %></th>
+          <th><%= sort_link @search, :total,          I18n.t(:total, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_total_title'} %></th>
         </tr>
       </thead>
       <tbody>

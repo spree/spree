@@ -2,21 +2,21 @@
   <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:editing_resource, resource: plural_resource_name(Spree::Address)) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/users/sidebar', :locals => { :current => :address } %>
-<%= render :partial => 'spree/admin/users/user_page_actions' %>
+<%= render partial: 'spree/admin/users/sidebar', locals: { current: :address } %>
+<%= render partial: 'spree/admin/users/user_page_actions' %>
 
 <div data-hook="admin_user_addresses" id="admin_user_edit_addresses">
   <div data-hook="admin_user_edit_form_header">
-    <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @user } %>
+    <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @user } %>
   </div>
 
   <div data-hook="admin_user_address_edit_form">
     <%= form_for [:admin, @user], as: :user, url: addresses_admin_user_url(@user), method: :put do |f| %>
 
-      <%= render :partial => 'addresses_form', :locals => { :f => f } %>
+      <%= render partial: 'addresses_form', locals: { f: f } %>
 
       <div class="form-actions text-center well" data-hook="admin_user_edit_form_button">
-        <%= render :partial => 'spree/admin/shared/edit_resource_links', :locals => { :collection_url => spree.admin_users_url } %>
+        <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: spree.admin_users_url } %>
       </div>
     <% end %>
   </div>

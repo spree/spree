@@ -7,9 +7,10 @@
 <% end if can? :create, Spree::PaymentMethod %>
 
 <% if @payment_methods.any? %>
-  <table class="table" id='listing_payment_methods'>
+  <table class="table sortable" id='listing_payment_methods' data-hook data-sortable-link="<%= update_positions_admin_payment_methods_url %>">
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
+        <th></th>
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:provider) %></th>
         <th class="text-center"><%= Spree.t(:display) %></th>
@@ -20,6 +21,11 @@
     <tbody>
       <% @payment_methods.each do |method|%>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
+          <td class="move-handle text-center">
+            <% if can?(:edit, method) %>
+              <span class="icon icon-move handle"></span>
+            <% end %>
+          </td>
           <td><%= method.name %></td>
           <td><%= method.type %></td>
           <td class="text-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>

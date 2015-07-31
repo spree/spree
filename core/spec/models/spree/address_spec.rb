@@ -148,6 +148,13 @@ describe Spree::Address, :type => :model do
         expect(address.errors['zipcode']).to include('is invalid')
       end
 
+      it "accepts a zip code with surrounding white space" do
+        allow(address.country).to receive(:iso).and_return('US')
+        address.zipcode = ' 12345 '
+        address.valid?
+        expect(address.errors['zipcode']).not_to include('is invalid')
+      end
+
       context 'does not validate' do
         it 'does not have a country' do
           address.country = nil

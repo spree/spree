@@ -62,8 +62,8 @@ module Spree
       :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
-      :taxon_ids, :cost_currency, :cost_price,
-      option_type_ids: []
+      :cost_currency, :cost_price,
+      option_type_ids: [], taxon_ids: []
     ]
 
     @@property_attributes = [:name, :presentation]

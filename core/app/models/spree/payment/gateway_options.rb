@@ -26,19 +26,19 @@ module Spree
       end
 
       def shipping
-        order.ship_total * 100
+        order.ship_total * exchange_multiplier
       end
 
       def tax
-        order.additional_tax_total * 100
+        order.additional_tax_total * exchange_multiplier
       end
 
       def subtotal
-        order.item_total * 100
+        order.item_total * exchange_multiplier
       end
 
       def discount
-        order.promo_total * 100
+        order.promo_total * exchange_multiplier
       end
 
       def currency
@@ -80,6 +80,10 @@ module Spree
 
       def order
         @payment.order
+      end
+
+      def exchange_multiplier
+        @payment.payment_method.try(:exchange_multiplier) || 1.0
       end
     end
   end

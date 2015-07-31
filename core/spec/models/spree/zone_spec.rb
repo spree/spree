@@ -134,6 +134,10 @@ describe Spree::Zone, :type => :model do
     let(:country2) { create(:country) }
     let(:country3) { create(:country) }
 
+    let(:state1) { create(:state) }
+    let(:state2) { create(:state) }
+    let(:state3) { create(:state) }
+
     before do
       @source = create(:zone, name: 'source', zone_members: [])
       @target = create(:zone, name: 'target', zone_members: [])
@@ -166,7 +170,7 @@ describe Spree::Zone, :type => :model do
       end
     end
 
-    context "when both zones are of the same type" do
+    context "when checking countries against countries" do
       before do
         @source.members.create(zoneable: country1)
         @source.members.create(zoneable: country2)
@@ -199,6 +203,48 @@ describe Spree::Zone, :type => :model do
         before do
           @target.members.create(zoneable: create(:country))
           @target.members.create(zoneable: create(:country))
+        end
+
+        it "should be false" do
+          expect(@source.contains?(@target)).to be false
+        end
+      end
+    end
+
+
+    context "when checking states against states" do
+      before do
+        @source.members.create(zoneable: state1)
+        @source.members.create(zoneable: state2)
+      end
+
+      context "when all members are included in the zone we check against" do
+        before do
+          @target.members.create(zoneable: state1)
+          @target.members.create(zoneable: state2)
+        end
+
+        it "should be true" do
+          expect(@source.contains?(@target)).to be true
+        end
+      end
+
+      context "when some members are included in the zone we check against" do
+        before do
+          @target.members.create(zoneable: state1)
+          @target.members.create(zoneable: state2)
+          @target.members.create(zoneable: create(:state))
+        end
+
+        it "should be false" do
+          expect(@source.contains?(@target)).to be false
+        end
+      end
+
+      context "when none of the members are included in the zone we check against" do
+        before do
+          @target.members.create(zoneable: create(:state))
+          @target.members.create(zoneable: create(:state))
         end
 
         it "should be false" do

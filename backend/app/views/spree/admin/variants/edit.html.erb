@@ -1,13 +1,13 @@
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Variants' } %>
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: :variants } %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @variant } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
   <fieldset>
     <div data-hook="admin_variant_edit_form">
-      <%= render :partial => 'form', :locals => { :f => f } %>
+      <%= render partial: 'form', locals: { f: f } %>
     </div>
 
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </fieldset>
 <% end %>

@@ -20,7 +20,9 @@ module Spree
     has_many :stock_locations, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
-    has_and_belongs_to_many :option_values, join_table: :spree_option_values_variants
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
+    has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
+
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
 
     has_many :prices,
@@ -37,12 +39,19 @@ module Spree
     validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
 
     after_create :create_stock_items
-    after_create :set_position
     after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+
+    LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
+
+    LOCALIZED_NUMBERS.each do |m|
+      define_method("#{m}=") do |argument|
+        self[m] = Spree::LocalizedNumber.parse(argument) if argument.present?
+      end
+    end
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
@@ -58,14 +67,6 @@ module Spree
       else
         TaxCategory.find(self[:tax_category_id])
       end
-    end
-
-    def cost_price=(price)
-      self[:cost_price] = Spree::LocalizedNumber.parse(price) if price.present?
-    end
-
-    def weight=(weight)
-      self[:weight] = Spree::LocalizedNumber.parse(weight) if weight.present?
     end
 
     # returns number of units currently on backorder for this variant.
@@ -153,7 +154,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.select{ |price| price.currency == currency }.first || Spree::Price.new(variant_id: self.id, currency: currency)
+      prices.detect { |price| price.currency == currency } || Spree::Price.new(variant_id: id, currency: currency)
     end
 
     def amount_in(currency)
@@ -214,6 +215,14 @@ module Spree
       self.track_inventory? && Spree::Config.track_inventory_levels
     end
 
+    def volume
+      (width || 0) * (height || 0) * (depth || 0)
+    end
+
+    def dimension
+      (width || 0) + (height || 0) + (depth || 0)
+    end
+
     private
 
       def set_master_out_of_stock
@@ -243,10 +252,6 @@ module Spree
         StockLocation.where(propagate_all_variants: true).each do |stock_location|
           stock_location.propagate_variant(self)
         end
-      end
-
-      def set_position
-        self.update_column(:position, product.variants.maximum(:position).to_i + 1)
       end
 
       def in_stock_cache_key

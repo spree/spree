@@ -1,5 +1,5 @@
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
+<%= render partial: 'spree/admin/shared/product_tabs', locals: {current: :stock} %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <% if can? :create, Spree::StockMovement %>
   <div id="add_stock_form" class="panel panel-default">

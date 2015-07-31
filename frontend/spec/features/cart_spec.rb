@@ -34,8 +34,9 @@ describe "Cart", type: :feature, inaccessible: true do
     visit spree.root_path
     click_link "RoR Mug"
     click_button "add-to-cart-button"
+    line_item = Spree::LineItem.first!
     within("#line_items") do
-      click_link "delete_line_item_1"
+      click_link "delete_line_item_#{line_item.id}"
     end
 
     expect(page).to_not have_content("Line items quantity must be an integer")
@@ -77,6 +78,7 @@ describe "Cart", type: :feature, inaccessible: true do
       expect(page).to have_content(product.name)
     end
   end
+
   it "should have a surrounding element with data-hook='cart_container'" do
     visit spree.cart_path
     expect(page).to have_selector("div[data-hook='cart_container']")

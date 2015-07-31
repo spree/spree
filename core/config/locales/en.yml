@@ -442,12 +442,19 @@ en:
         overview: Overview
         products: Products
         promotions: Promotions
+        promotion_categories: Promotion Categories
         properties: Properties
         prototypes: Prototypes
         reports: Reports
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+      order:
+        events:
+          approve: approve
+          cancel: cancel
+          resume: resume
+          resend: Resend
       user:
         account: Account
         addresses: Addresses
@@ -485,6 +492,7 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
+    at_symbol: '@'
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
@@ -533,7 +541,6 @@ en:
     categories: Categories
     category: Category
     charged: Charged
-    check_for_spree_alerts: Check for Spree alerts
     checkout: Checkout
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
@@ -792,6 +799,7 @@ en:
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
+    loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location
     lock: Lock
@@ -823,6 +831,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     minimal_amount: Minimal Amount
+    missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
@@ -955,7 +964,6 @@ en:
     order_total: Order Total
     order_updated: Order Updated
     orders: Orders
-    other_items_in_other: Other Items in Order
     out_of_stock: Out of Stock
     overview: Overview
     package_from: package from
@@ -1124,7 +1132,6 @@ en:
     report: Report
     reports: Reports
     resellable: Resellable
-    resend: Resend
     reset_password: Reset my password
     response_code: Response Code
     resume: resume
@@ -1154,7 +1161,6 @@ en:
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
-    returns: Returns
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis

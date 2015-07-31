@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Order, :type => :model do
   let(:order) { stub_model("Spree::Order") }
 
+  before { create(:store) }
+
   context "#finalize!" do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
 

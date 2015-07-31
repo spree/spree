@@ -1,4 +1,4 @@
-<%= render :partial => 'spree/admin/shared/order_tabs', :locals => { :current => 'Payments' } %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :payments } %>
 
 <% content_for :page_title do %>
   /
@@ -7,17 +7,17 @@
   <%= payment_method_name(@payment) %>
   /
   <span class="state <%= @payment.state %>">
-    <%= Spree.t(@payment.state, :scope => :payment_states, :default => @payment.state.capitalize) %>
+    <%= Spree.t(@payment.state, scope: :payment_states, default: @payment.state.capitalize) %>
   </span>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), :icon => 'file' %>
+  <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), icon: 'file' %>
 <% end %>
 
-<%= render :partial => "spree/admin/payments/source_views/#{@payment.payment_method.method_type}",
-           :locals => {
-             :payment => @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment
+<%= render partial: "spree/admin/payments/source_views/#{@payment.payment_method.method_type}",
+           locals: {
+             payment: @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment
            }
 %>
 

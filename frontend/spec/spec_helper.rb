@@ -74,6 +74,13 @@ RSpec.configure do |config|
     end
   end
 
+  # Ensure DB is clean, so that transaction isolated specs see
+  # pristine state.
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+  end
+
   config.before(:each) do
     WebMock.disable!
     if RSpec.current_example.metadata[:js]
