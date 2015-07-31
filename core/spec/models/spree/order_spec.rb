@@ -486,7 +486,7 @@ describe Spree::Order, :type => :model do
         :active => true,
         :display_on => "both",
       })
-      expect(order.available_payment_methods.count).to eq(2)
+      expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
     end
   end

@@ -174,12 +174,15 @@ module Spree
       amount - captured_amount
     end
 
-    def cancel!
-      if store_credit?
-        canceled = payment_method.cancel(response_code)
-        self.void if canceled
-      end
-    end
+    # TODO: This method was added for store_credit, but it breaks normal payments.
+    # spec/models/spree/order_spec.rb:30 # Spree::Order#cancel should mark the payments as void
+    # Need to write more tests to ensure store_credit gets correctly canceled.
+    # def cancel!
+    #   if store_credit?
+    #     canceled = payment_method.cancel(response_code)
+    #     self.void if canceled
+    #   end
+    # end
 
     def editable?
       checkout? || pending?
