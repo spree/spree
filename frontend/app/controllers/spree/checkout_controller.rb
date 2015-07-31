@@ -18,6 +18,7 @@ module Spree
     before_action :apply_coupon_code
 
     before_action :setup_for_current_state
+    before_action :add_store_credit_payments, only: [:update]
 
     helper 'spree/orders'
 
@@ -165,6 +166,21 @@ module Spree
 
         if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
           @payment_sources = try_spree_current_user.payment_sources
+        end
+      end
+
+      def add_store_credit_payments
+        if params.has_key?(:apply_store_credit)
+          @order.add_store_credit_payments
+
+          # Remove other payment method parameters.
+          params[:order].delete(:payments_attributes)
+          params.delete(:payment_source)
+
+          # Return to the Payments page if additional payment is needed.
+          if @order.payments.valid.sum(:amount) < @order.total
+            redirect_to checkout_state_path(@order.state) and return
+          end
         end
       end
 
