@@ -82,7 +82,6 @@ module Spree
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
                 before_transition to: :payment, do: :assign_default_credit_card
-                before_transition to: :payment, do: :add_store_credit_payments
               end
 
               before_transition from: :cart, do: :ensure_line_items_present

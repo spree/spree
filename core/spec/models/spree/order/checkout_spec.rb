@@ -377,7 +377,6 @@ describe Spree::Order, :type => :model do
       before do
         @default_credit_card = FactoryGirl.create(:credit_card)
         user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
-        expect(user).to receive(:store_credits).and_return []
         order.user = user
 
         allow(order).to receive_messages(payment_required?: true)
