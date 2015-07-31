@@ -465,6 +465,8 @@ en:
         orders: Orders
         user_information: User Information
         store_credits: Store Credits
+        no_store_credit: User has no Store Credit available.
+        available_store_credit: User has %{amount} in Store Credit available.
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
