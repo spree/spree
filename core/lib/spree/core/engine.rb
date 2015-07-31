@@ -36,7 +36,8 @@ module Spree
         app.config.spree.payment_methods = [
             Spree::Gateway::Bogus,
             Spree::Gateway::BogusSimple,
-            Spree::PaymentMethod::Check ]
+            Spree::PaymentMethod::Check,
+            Spree::PaymentMethod::StoreCredit ]
       end
 
       # We need to define promotions rules here so extensions and existing apps
