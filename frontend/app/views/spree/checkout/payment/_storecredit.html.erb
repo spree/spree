@@ -4,7 +4,7 @@
     <% if @order.covered_by_store_credit? %>
       <p><%= Spree.t('store_credit.remaining_amount', amount: @order.display_store_credit_remaining_after_capture) %></p>
     <% else %>
-      <p><%= Spree.t('store_credit.additional_payment_needed') %></p>
+      <p><%= Spree.t('store_credit.additional_payment_needed', amount: @order.display_order_total_after_store_credit) %></p>
     <% end %>
   </div>
 

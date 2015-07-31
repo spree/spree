@@ -1312,7 +1312,7 @@ en:
       applicable_amount: "%{amount} in store credit will be applied to this order."
       available_amount: "You have %{amount} in Store Credit available!"
       remaining_amount: "You have %{amount} remaining in your account\'s Store Credit."
-      additional_payment_needed: Select another payment method for the remaining total.
+      additional_payment_needed: Select another payment method for the remaining %{amount}.
       errors:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
         unable_to_create: Unable to create store credit
