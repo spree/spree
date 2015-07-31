@@ -395,6 +395,24 @@ describe "Order" do
     end
   end
 
+  describe "#display_total_applied_store_credit" do
+    let(:total_applied_store_credit) { 10.00 }
+
+    subject { create(:order) }
+
+    before do
+      allow(subject).to receive(:total_applied_store_credit).and_return(total_applied_store_credit)
+    end
+
+    it "returns a money instance" do
+      expect(subject.display_total_applied_store_credit).to be_a(Spree::Money)
+    end
+
+    it "returns a negative amount" do
+      expect(subject.display_total_applied_store_credit.money.cents).to eq (total_applied_store_credit * -100.0)
+    end
+  end
+
   describe "#display_order_total_after_store_credit" do
     let(:order_total_after_store_credit) { 10.00 }
 

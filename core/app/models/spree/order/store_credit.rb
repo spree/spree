@@ -49,7 +49,7 @@ module Spree
 
       def total_applicable_store_credit
         if payment? || confirm? || complete?
-          payments.store_credits.valid.sum(:amount)
+          total_applied_store_credit
         else
           [total, (user.try(:total_available_store_credit) || 0.0)].min
         end
@@ -65,6 +65,10 @@ module Spree
 
       def display_total_applicable_store_credit
         Spree::Money.new(-total_applicable_store_credit, currency: currency)
+      end
+
+      def display_total_applied_store_credit
+        Spree::Money.new(-total_applied_store_credit, currency: currency)
       end
 
       def display_order_total_after_store_credit
