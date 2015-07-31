@@ -339,16 +339,40 @@ describe "Order" do
     end
   end
 
+  describe "#total_applied_store_credit" do
+    context "with valid payments" do
+      let(:order)           { payment.order }
+      let!(:payment)        { create(:store_credit_payment) }
+      let!(:second_payment) { create(:store_credit_payment, order: order) }
+
+      subject { order }
+
+      it "returns the sum of the payment amounts" do
+        expect(subject.total_applied_store_credit).to eq (payment.amount + second_payment.amount)
+      end
+    end
+
+    context "without valid payments" do
+      let(:order) { create(:order) }
+
+      subject { order }
+
+      it "returns 0" do
+        expect(subject.total_applied_store_credit).to be_zero
+      end
+    end
+  end
+
   describe "#using_store_credit?" do
     subject { create(:order) }
 
     context "order has store credit payment" do
-      before { allow(subject).to receive(:total_applicable_store_credit).and_return(10.0) }
+      before { allow(subject).to receive(:total_applied_store_credit).and_return(10.0) }
       it { expect(subject.using_store_credit?).to be true }
     end
 
     context "order has no store credit payments" do
-      before { allow(subject).to receive(:total_applicable_store_credit).and_return(0.0) }
+      before { allow(subject).to receive(:total_applied_store_credit).and_return(0.0) }
       it { expect(subject.using_store_credit?).to be false }
     end
   end

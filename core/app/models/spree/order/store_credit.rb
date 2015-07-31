@@ -55,8 +55,12 @@ module Spree
         end
       end
 
+      def total_applied_store_credit
+        payments.store_credits.valid.sum(:amount)
+      end
+
       def using_store_credit?
-        total_applicable_store_credit > 0
+        total_applied_store_credit > 0
       end
 
       def display_total_applicable_store_credit
