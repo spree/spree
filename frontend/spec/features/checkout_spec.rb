@@ -170,9 +170,9 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_payment').submit(function(){return false;})")
 
-      expect(page).to_not have_selector('input.btn[disabled]')
+      expect(page).to_not have_selector('input.btn.disabled')
       click_button "Save and Continue"
-      expect(page).to have_selector('input.btn[disabled]')
+      expect(page).to have_selector('input.btn.disabled')
     end
 
     it "prevents double clicking the confirm button on checkout", :js => true do
@@ -182,9 +182,9 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
       # prevent form submit to verify button is disabled
       page.execute_script("$('#checkout_form_confirm').submit(function(){return false;})")
 
-      expect(page).to_not have_selector('input.btn[disabled]')
+      expect(page).to_not have_selector('input.btn.disabled')
       click_button "Place Order"
-      expect(page).to have_selector('input.btn[disabled]')
+      expect(page).to have_selector('input.btn.disabled')
     end
   end
 
