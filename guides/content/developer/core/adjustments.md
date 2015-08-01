@@ -29,7 +29,7 @@ The *source* is the source of the adjustment. Typically a `Spree::TaxRate` objec
 
 The *adjustable* is the object being adjusted, which is either an order, line item or shipment.
 
-Adjustments can come from one of two locations:
+Adjustments can come from one of two locations within Spree's core:
 
 * Tax Rates
 * Promotions
@@ -47,17 +47,15 @@ scope :additional, -> { where(included: false) }
 ```
 
 * `open`: All open adjustments.
-* `eligible`: All eligible adjustments for the order. Useful for determining which adjustments are applying to the adjustable.
 * `tax`: All adjustments which have a source that is a `Spree::TaxRate` object
 * `price`: All adjustments which adjust a `Spree::LineItem` object.
 * `shipping`: All adjustments which adjust a `Spree::Shipment` object.
 * `promotion`: All adjustments where the source is a `Spree::PromotionAction` object.
 * `optional`: All adjustments which are not `mandatory`.
 * `return_authorization`: All adjustments where the source is a `Spree::ReturnAuthorization`.
-* `eligible`: Adjustments which have been determined to be `eligible` for their adjustable.
+* `eligible`: Adjustments which have been determined to be `eligible` for their adjustable. Useful for determining which adjustments are applying to the adjustable.
 * `charge`: Adjustments which *increase* the price of their adjustable.
 * `credit`: Adjustments which *decrease* the price of their adjustable.
-* `optional`: Adjustments which are not mandatory.
 * `included`: Adjustments which are included in the object's price. Typically tax adjustments.
 * `additional`: Adjustments which modify the object's price. The default for all adjustments.
 
@@ -98,3 +96,51 @@ Simiarly, if you want to grab the adjustments applied to shipments, call `shipme
 ```ruby
 order.shipment_adjustments
 ```
+
+## Extending Adjustments
+
+### Creating a New Adjuster
+
+To create a new adjuster for Spree, create a new ruby object that inherits from `Spree::Adjustable::Adjuster::Base` and implements an `update` method:
+
+```ruby
+module Spree
+  module Adjustable
+    module Adjuster
+      class MyAdjuster < Spree::Adjustable::Adjuster::Base
+        def update
+          ...
+          #your ruby magic
+          ...
+          update_totals(some_total, my_other_total)
+        end
+
+        private
+
+        # Note to persist your totals you need to update @totals
+        # This is shown in a separate method for readability
+        def update_totals(some_total, my_other_total)
+          # if you want to keep track of your total, 
+          # you will need the column defined
+          @totals[:total_you_want_to_track] += some_total
+          @totals[:taxable_adjustment_total] += some_total
+          @totals[:non_taxable_adjustment_total] += my_other_total
+        end
+      end
+    end
+  end
+end
+```
+
+Next you need to add the class to spree `Rails.application.config.spree.adjusters` so it is included whenever adjustments are updated (Promotion and Tax are included by default):
+
+```ruby
+# NOTE: it is advisable that that Tax be implemented last so Tax is calculated correctly
+app.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::MyAdjuster,
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax
+          ]
+```
+
+That's it! Your custom adjuster is ready to go.

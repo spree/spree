@@ -92,9 +92,9 @@
   </tfoot>
 
   <% if order.line_item_adjustments.exists? %>
-    <% if order.all_adjustments.promotion.eligible.exists? %>
+    <% if order.line_item_adjustments.promotion.eligible.exists? %>
       <tfoot id="price-adjustments" data-hook="order_details_price_adjustments">
-        <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <% order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
          <tr class="total">
            <td colspan="4"><%= Spree.t(:promotion) %>: <strong><%= label %></strong></td>
            <td class="total"><span><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %></span></td>

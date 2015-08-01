@@ -30,6 +30,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
 require 'ffaker'
+require 'timeout'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -44,6 +45,9 @@ require 'paperclip/matchers'
 
 require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
+
+# Set timeout to something high enough to allow CI to pass
+Capybara.default_wait_time = 10
 
 RSpec.configure do |config|
   config.color = true
@@ -85,6 +89,10 @@ RSpec.configure do |config|
     wait_for_ajax if RSpec.current_example.metadata[:js]
 
     DatabaseCleaner.clean
+  end
+
+  config.around do |example|
+    Timeout.timeout(20, &example)
   end
 
   config.after(:each, :type => :feature) do |example|

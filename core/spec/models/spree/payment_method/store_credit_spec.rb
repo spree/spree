@@ -262,6 +262,11 @@ describe Spree::PaymentMethod::StoreCredit do
           allow_any_instance_of(Spree::StoreCredit).to receive(:credit).with(captured_amount, auth_code, store_credit.currency)
           subject
         end
+
+        it "returns a valid store credit cancel request" do
+          expect(subject.success?).to be true
+          expect(subject.message).to include Spree.t('store_credit_payment_method.successful_action', action: Spree::StoreCredit::CANCEL_ACTION)
+        end
       end
 
       context "store credit event not found" do
@@ -269,8 +274,8 @@ describe Spree::PaymentMethod::StoreCredit do
           Spree::PaymentMethod::StoreCredit.new.cancel('INVALID')
         end
 
-        it "returns false" do
-          expect(subject).to be false
+        it "returns an error response" do
+          expect(subject.success?).to be false
         end
       end
     end

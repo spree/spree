@@ -3,6 +3,8 @@ module Spree
     module V1
       class UsersController < Spree::Api::BaseController
 
+        rescue_from Spree::Core::DestroyWithOrdersError, with: :error_during_processing
+
         def index
           @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           respond_with(@users)

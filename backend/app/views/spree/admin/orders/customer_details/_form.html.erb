@@ -16,7 +16,7 @@
             <% if can? :edit, @order.user %>
               <%= f.email_field :email, class: 'form-control' %>
             <% else %>
-              <p><%= @order.user.email %></p>
+              <p><%= @order.user.try(:email) || @order.email %></p>
             <% end %>
           </div>
         </div>
@@ -62,10 +62,10 @@
         <div class="panel-body">
           <% if can? :edit, @order.user %>
             <%= f.fields_for :bill_address do |ba_form| %>
-              <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
+              <%= render 'spree/admin/shared/address_form', f: ba_form, type: "billing" %>
             <% end %>
           <% else %>
-            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.bill_address } %>
+            <%= render 'spree/admin/shared/address', address: @order.bill_address %>
           <% end %>
         </div>
       </div>
@@ -86,10 +86,10 @@
                 </span>
               </div>
 
-              <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: 'shipping' } %>
+              <%= render 'spree/admin/shared/address_form', f: sa_form, type: 'shipping' %>
             <% end %>
           <% else %>
-            <%= render partial: 'spree/admin/shared/address', locals: { address: @order.ship_address } %>
+            <%= render 'spree/admin/shared/address', address: @order.ship_address %>
           <% end %>
         </div>
       </div>

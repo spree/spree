@@ -32,7 +32,9 @@ module Spree
 
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications
-    has_and_belongs_to_many :promotion_rules, join_table: :spree_products_promotion_rules
+
+    has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
+    has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
@@ -74,6 +76,7 @@ module Spree
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_destroy :punch_slug
+    after_restore :update_slug_history
 
     after_initialize :ensure_master
 
@@ -265,6 +268,10 @@ module Spree
     def punch_slug
       # punch slug with date prefix to allow reuse of original
       update_column :slug, "#{Time.now.to_i}_#{slug}"[0..254] unless frozen?
+    end
+
+    def update_slug_history
+      self.save!
     end
 
     def anything_changed?

@@ -1,4 +1,4 @@
-<%= render partial: 'spree/admin/shared/order_tabs', locals: {current: 'Payments'} %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: {current: :payments} %>
 
 <% content_for :page_title do %>
   / <%= link_to "#{Spree.t(:payment)} #{@refund.payment.id}", admin_order_payment_path(@refund.payment.order, @refund.payment) %>
@@ -29,7 +29,7 @@
     <div class="form-actions" data-hook="buttons">
       <%= button Spree.t(:refund), 'save' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_payments_url(@refund.payment.order), :icon => "delete" %>
+      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_payments_url(@refund.payment.order), icon: "delete" %>
     </div>
   </fieldset>
 <% end %>

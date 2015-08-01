@@ -2,14 +2,18 @@ module Spree
   module Admin
     module OrdersHelper
       # Renders all the extension partials that may have been specified in the extensions
-      def event_links
+      def event_links(order, events)
         links = []
-        @order_events.sort.each do |event|
-          if @order.send("can_#{event}?")
-            links << button_link_to(Spree.t(event).capitalize, [event, :admin, @order],
-                                    :method => :put,
-                                    :icon => "#{event}",
-                                    :data => { :confirm => Spree.t(:order_sure_want_to, :event => Spree.t(event)) })
+        events.sort.each do |event|
+          if order.send("can_#{event}?")
+            label = Spree.t(event, scope: 'admin.order.events', default: Spree.t(event))
+            links << button_link_to(
+              label.capitalize,
+              [event, :admin, order],
+              method: :put,
+              icon: "#{event}",
+              data: { confirm: Spree.t(:order_sure_want_to, event: label) }
+            )
           end
         end
         links.join(' ').html_safe

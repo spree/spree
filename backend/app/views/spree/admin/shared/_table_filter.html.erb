@@ -8,7 +8,7 @@
             <%= Spree.t(:filter) %>
           </button>
         </span>
-        <%= form_tag nil, id: "quick-search" do %>
+        <%= form_tag request.fullpath, id: "quick-search" do %>
           <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
         <% end %>
       </div>

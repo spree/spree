@@ -1,5 +1,7 @@
 module Spree
   class Gateway < PaymentMethod
+    FROM_DOLLAR_TO_CENT_RATE = 100.0
+
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
     validates :name, :type, presence: true
@@ -43,6 +45,10 @@ module Spree
 
     def method_type
       'gateway'
+    end
+
+    def exchange_multiplier
+      FROM_DOLLAR_TO_CENT_RATE
     end
 
     def supports?(source)

@@ -1,0 +1,16 @@
+<% if @order.using_store_credit? %>
+  <div class="alert alert-success text-center" data-hook="checkout_payment_store_credit_success">
+    <h3><%= Spree.t('store_credit.applicable_amount', amount: Spree::Money.new(@order.total_applicable_store_credit, { currency: @order.currency })) %></h3>
+    <% if @order.covered_by_store_credit? %>
+      <p><%= Spree.t('store_credit.remaining_amount', amount: @order.display_store_credit_remaining_after_capture) %></p>
+    <% else %>
+      <p><%= Spree.t('store_credit.additional_payment_needed', amount: @order.display_order_total_after_store_credit) %></p>
+    <% end %>
+  </div>
+
+<% elsif @order.could_use_store_credit? %>
+  <div class="alert alert-info text-center" data-hook="checkout_payment_store_credit_available">
+    <h2><%= Spree.t('store_credit.available_amount', amount: @order.display_total_available_store_credit) %></h2>
+    <%= button_tag Spree.t('store_credit.apply'), name: 'apply_store_credit', class: 'continue btn btn-lg btn-primary' %>
+  </div>
+<% end %>

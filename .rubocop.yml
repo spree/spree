@@ -257,3 +257,9 @@ UnderscorePrefixedVariableName:
 
 Void:
   Enabled: false
+
+# Style
+
+Style/IndentationWidth:
+  # Number of spaces for each indentation level.
+  Width: 2

@@ -1,4 +1,4 @@
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: Spree.t(:adjustments)} %>
+<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :adjustments} %>
 
 <% content_for :page_title do %>
    / <%= plural_resource_name(Spree::Adjustment) %>
@@ -10,7 +10,7 @@
 
 <% if @adjustments.present? %>
   <div class="panel panel-default">
-    <%= render :partial => 'adjustments_table' %>
+    <%= render partial: 'adjustments_table' %>
   </div>
 <% else %>
   <div class="alert alert-warning">
@@ -23,7 +23,7 @@
     <div class="form-group">
       <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
     </div>
-    <%= button Spree.t(:add_coupon_code), 'plus', 'submit', :id => "add_coupon_code" %>
+    <%= button Spree.t(:add_coupon_code), 'plus', 'submit', id: "add_coupon_code" %>
   </div>
 <% end %>
 

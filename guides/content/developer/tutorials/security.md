@@ -48,7 +48,7 @@ These configurations represent a reasonable starting point for a typical e-comme
 
 The REST API behaves slightly differently than a standard user. First, an admin has to create the access key before any user can query the REST API. This includes generating the key for the admin him/herself. This is not the case if `Spree::Api::Config[:requires_authentication]` is set to `false`.
 
-In cases where `Spree::Api::Config[:requires_authentication] is set to `false`, read-only requests in the API will be possible for all users. For actions that modify data within Spree, a user will need to have an API key and then their user record would need to have permission to perform those actions.
+In cases where `Spree::Api::Config[:requires_authentication]` is set to `false`, read-only requests in the API will be possible for all users. For actions that modify data within Spree, a user will need to have an API key and then their user record would need to have permission to perform those actions.
 
 It is up to you to communicate that key. As an added measure, this authentication has to occur on every request made through the REST API as no session or cookies are created or stored for the REST API.
 
@@ -281,17 +281,3 @@ Spree has out of the box support for [Authorize.net CIM](http://www.authorize.ne
 There are also third-party extensions for Paypal's [Express Checkout](https://merchant.paypal.com/cgi-bin/marketingweb?cmd=_render-content&content_ID=merchant/express_checkout) (formerly called Paypal Express.) These types of checkout services handle processing of the credit card information offsite (the data never touches your server) and greatly simplify the requirements for PCI compliance.
 
 [Braintree](https://braintreepayments.com) also offers a very interesting gateway option that achieves a similar benefit to Express Checkout but allows the entire process to appear to be taking place on the site. In other words, the customer never appears to leave the store during the checkout. They describe this as a "transparent redirect." The Braintree team is very interested in helping other Ruby developers use their gateway and have provided support to Spree developers in the past who were interested in using their product.
-
-## Security Alerts
-
-Spree will periodically check for important security and release announcements. You will see them on the administration console pages. Alerts may be dismissed after you have read them. The automatic checking can be disabled under "Configuration" => "General Settings", or by setting the `Spree::Config[:check_for_alerts]` setting to `false`. Some configuration information is included when checking so the alerts can be customized to your specific installation. Here is an example of the configuration information included in the alert request:
-
-```json
-{
-  "name": "Spree Demo Site",
-  "rails_version": "3.1.1",
-  "version": "0.70.1",
-  "rails_env": "production",
-  "host": "www.spreecommerce.com"
-}
-```

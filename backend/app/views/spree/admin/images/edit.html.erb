@@ -1,8 +1,8 @@
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Images' } %>
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: :images } %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @image } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @image } %>
 
-<%= form_for [:admin, @product, @image], :html => { :multipart => true } do |f| %>
+<%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>
   <div data-hook="edit_image" class="panel panel-default">
     <div class="panel-heading">
       <h1 class="panel-title">
@@ -16,13 +16,13 @@
           <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>
         </div>
         <div class="col-md-9">
-          <%= render :partial => 'form', :locals => { :f => f } %>
+          <%= render partial: 'form', locals: { f: f } %>
         </div>
 
         <div class="form-actions" data-hook="buttons">
           <%= button Spree.t('actions.update'), 'save' %>
           <span class="or"><%= Spree.t(:or) %></span>
-          <%= button_link_to Spree.t('actions.cancel'), spree.admin_product_images_url(@product), :id => 'cancel_link', :icon => 'delete' %>
+          <%= button_link_to Spree.t('actions.cancel'), spree.admin_product_images_url(@product), id: 'cancel_link', icon: 'delete' %>
         </div>
       </div>
     </div>

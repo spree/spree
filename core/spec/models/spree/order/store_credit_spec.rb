@@ -36,37 +36,16 @@ describe "Order" do
     context "there is no store credit" do
       let(:order) { create(:store_credits_order_without_user, total: order_total) }
 
-      context "there is a credit card payment" do
-        let!(:cc_payment) { create(:payment, order: order) }
-
-        before do
-          # callbacks recalculate total based on line items
-          # this ensures the total is what we expect
-          order.update_column(:total, order_total)
-          subject
-          order.reload
-        end
-
-        xit "charges the outstanding balance to the credit card" do
-          expect(order.payments.count).to eq 1
-          expect(order.payments.first.source).to be_a(Spree::CreditCard)
-          expect(order.payments.first.amount).to eq order_total
-        end
+      before do
+        # callbacks recalculate total based on line items
+        # this ensures the total is what we expect
+        order.update_column(:total, order_total)
+        subject
+        order.reload
       end
 
-      context "there are no other payments" do
-        xit "adds an error to the model" do
-          expect(subject).to be false
-          expect(order.errors.full_messages).to include(Spree.t("store_credit.errors.unable_to_fund"))
-        end
-      end
-
-      context "there is a payment of an unknown type" do
-        let!(:check_payment) { create(:check_payment, order: order) }
-
-        xit "raises an error" do
-          expect { subject }.to raise_error
-        end
+      it "does not create a store credit payment" do
+        expect(order.payments.count).to eq 0
       end
     end
 
@@ -74,25 +53,15 @@ describe "Order" do
       let(:store_credit) { create(:store_credit, amount: order_total) }
       let(:order)        { create(:order, user: store_credit.user, total: order_total) }
 
-      context "there are no other payments" do
-        before do
-          subject
-          order.reload
-        end
-
-        it "creates a store credit payment for the full amount" do
-          expect(order.payments.count).to eq 1
-          expect(order.payments.first).to be_store_credit
-          expect(order.payments.first.amount).to eq order_total
-        end
+      before do
+        subject
+        order.reload
       end
 
-      context "there is a payment of an unknown type" do
-        let!(:check_payment) { create(:check_payment, order: order) }
-
-        xit "raises an error" do
-          expect { subject }.to raise_error
-        end
+      it "creates a store credit payment for the full amount" do
+        expect(order.payments.count).to eq 1
+        expect(order.payments.first).to be_store_credit
+        expect(order.payments.first.amount).to eq order_total
       end
     end
 
@@ -102,38 +71,18 @@ describe "Order" do
       let(:store_credit)       { create(:store_credit, amount: store_credit_total) }
       let(:order)              { create(:order, user: store_credit.user, total: order_total) }
 
-
-      context "there are no other payments" do
-        xit "adds an error to the model" do
-          expect(subject).to be false
-          expect(order.errors.full_messages).to include(Spree.t("store_credit.errors.unable_to_fund"))
-        end
+      before do
+        # callbacks recalculate total based on line items
+        # this ensures the total is what we expect
+        order.update_column(:total, order_total)
+        subject
+        order.reload
       end
 
-      context "there is a credit card payment" do
-        let!(:cc_payment) { create(:payment, order: order) }
-
-        before do
-          # callbacks recalculate total based on line items
-          # this ensures the total is what we expect
-          order.update_column(:total, order_total)
-          subject
-          order.reload
-        end
-
-        xit "charges the outstanding balance to the credit card" do
-          expect(order.payments.count).to eq 2
-          expect(order.payments.first.source).to be_a(Spree::CreditCard)
-          expect(order.payments.first.amount).to eq expected_cc_total
-        end
-      end
-
-      context "there is a payment of an unknown type" do
-        let!(:check_payment) { create(:check_payment, order: order) }
-
-        xit "raises an error" do
-          expect { subject }.to raise_error
-        end
+      it "creates a store credit payment for the available amount" do
+        expect(order.payments.count).to eq 1
+        expect(order.payments.first).to be_store_credit
+        expect(order.payments.first.amount).to eq store_credit_total
       end
     end
 
@@ -226,6 +175,34 @@ describe "Order" do
     end
   end
 
+  describe "#could_use_store_credit?" do
+    context "order does not have an associated user" do
+      subject { create(:store_credits_order_without_user) }
+
+      it { expect(subject.could_use_store_credit?).to be false }
+    end
+
+    context "order has an associated user" do
+      let(:user)                   { create(:user) }
+
+      subject { create(:order, user: user) }
+
+      context "without store credit" do
+        it { expect(subject.could_use_store_credit?).to be false }
+      end
+
+      context "with store credit" do
+        let(:available_store_credit) { 25.0 }
+
+        before do
+          allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
+        end
+
+        it { expect(subject.could_use_store_credit?).to be true }
+      end
+    end
+  end
+
   describe "#order_total_after_store_credit" do
     let(:order_total) { 100.0 }
 
@@ -311,6 +288,44 @@ describe "Order" do
     end
   end
 
+  describe "#total_applied_store_credit" do
+    context "with valid payments" do
+      let(:order)           { payment.order }
+      let!(:payment)        { create(:store_credit_payment) }
+      let!(:second_payment) { create(:store_credit_payment, order: order) }
+
+      subject { order }
+
+      it "returns the sum of the payment amounts" do
+        expect(subject.total_applied_store_credit).to eq (payment.amount + second_payment.amount)
+      end
+    end
+
+    context "without valid payments" do
+      let(:order) { create(:order) }
+
+      subject { order }
+
+      it "returns 0" do
+        expect(subject.total_applied_store_credit).to be_zero
+      end
+    end
+  end
+
+  describe "#using_store_credit?" do
+    subject { create(:order) }
+
+    context "order has store credit payment" do
+      before { allow(subject).to receive(:total_applied_store_credit).and_return(10.0) }
+      it { expect(subject.using_store_credit?).to be true }
+    end
+
+    context "order has no store credit payments" do
+      before { allow(subject).to receive(:total_applied_store_credit).and_return(0.0) }
+      it { expect(subject.using_store_credit?).to be false }
+    end
+  end
+
   describe "#display_total_applicable_store_credit" do
     let(:total_applicable_store_credit) { 10.00 }
 
@@ -326,6 +341,24 @@ describe "Order" do
 
     it "returns a negative amount" do
       expect(subject.display_total_applicable_store_credit.money.cents).to eq (total_applicable_store_credit * -100.0)
+    end
+  end
+
+  describe "#display_total_applied_store_credit" do
+    let(:total_applied_store_credit) { 10.00 }
+
+    subject { create(:order) }
+
+    before do
+      allow(subject).to receive(:total_applied_store_credit).and_return(total_applied_store_credit)
+    end
+
+    it "returns a money instance" do
+      expect(subject.display_total_applied_store_credit).to be_a(Spree::Money)
+    end
+
+    it "returns a negative amount" do
+      expect(subject.display_total_applied_store_credit.money.cents).to eq (total_applied_store_credit * -100.0)
     end
   end
 

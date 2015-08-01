@@ -2,16 +2,11 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
 
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'H'
-      options[:length] ||= 11
-      super(options)
-    end
 
     belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
     belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
@@ -67,10 +62,7 @@ module Spree
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
-        }
-        transition from: :canceled, to: :pending, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == :ready
+          shipment.determine_state(shipment.order) == 'ready'
         }
         transition from: :canceled, to: :pending
       end

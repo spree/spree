@@ -1,27 +1,20 @@
-<% content_for :page_actions do %>
-  <% if can?(:fire, @order) %>
-    <%= event_links %>
-  <% end %>
-  <% if can?(:resend, @order) %>
-    <%= button_link_to Spree.t(:resend), resend_admin_order_url(@order), method: :post, icon: 'envelope' %>
-  <% end %>
-<% end %>
+<%= render 'order_actions', order: @order, events: @order_events %>
 
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Shipments' } %>
+<%= render 'spree/admin/shared/order_tabs', current: :shipments %>
 
 <% content_for :page_title do %>
   / <%= plural_resource_name(Spree::Shipment) %>
 <% end %>
 
 <div data-hook="admin_order_edit_header">
-  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
+  <%= render 'spree/admin/shared/error_messages', target: @order %>
 </div>
 
 <% if @order.payments.valid.any? && @order.considered_risky? %>
   <%= render 'spree/admin/orders/risk_analysis', latest_payment: @order.payments.valid.last %>
 <% end %>
 
-<%= render partial: 'add_product' if @order.shipment_state != 'shipped' && can?(:update, @order) %>
+<%= render 'add_product' if @order.shipment_state != 'shipped' && can?(:update, @order) %>
 
 <% if @order.line_items.empty? %>
   <div class="alert alert-warning">
@@ -39,4 +32,4 @@
   <%= javascript_tag 'var expand_variants = true;' %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/order_summary' %>
+<%= render 'spree/admin/shared/order_summary' %>

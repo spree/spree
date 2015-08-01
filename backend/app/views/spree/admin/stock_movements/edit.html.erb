@@ -6,11 +6,11 @@
   <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::StockMovement.model_name.human), admin_stock_location_stock_movements_path(stock_location), class: 'btn btn-default' %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @stock_movement } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @stock_movement } %>
 
 <%= form_for [:admin, stock_location, @stock_movement] do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/new_resource_links', locals: { collection_url: admin_stock_location_stock_movements_path(stock_location) } %>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { collection_url: admin_stock_location_stock_movements_path(stock_location) } %>
   </fieldset>
 <% end %>

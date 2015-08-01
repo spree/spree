@@ -6,6 +6,40 @@ describe Spree::CustomerReturn, :type => :model do
   end
 
   describe ".validation" do
+    describe "#must_have_return_authorization" do
+      let(:customer_return)       { build(:customer_return) }
+
+      let(:inventory_unit)  { build(:inventory_unit) }
+      let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
+
+      subject { customer_return.valid? }
+
+      before do
+        customer_return.return_items << return_item
+      end
+
+      context "return item does not belong to return authorization" do
+        before do
+          return_item.return_authorization = nil
+        end
+
+        it "is not valid" do
+          expect(subject).to eq false
+        end
+
+        it "adds an error message" do
+          subject
+          expect(customer_return.errors.full_messages).to include(Spree.t(:missing_return_authorization, item_name: inventory_unit.variant.name))
+        end
+      end
+
+      context "return item belongs to return authorization" do
+        it "is valid" do
+          expect(subject).to eq true
+        end
+      end
+    end
+
     describe "#return_items_belong_to_same_order" do
       let(:customer_return)       { build(:customer_return) }
 
@@ -33,7 +67,6 @@ describe Spree::CustomerReturn, :type => :model do
           subject
           expect(customer_return.errors.full_messages).to include(Spree.t(:return_items_cannot_be_associated_with_multiple_orders))
         end
-
       end
 
       context "return items are part of the same order" do
@@ -41,32 +74,6 @@ describe Spree::CustomerReturn, :type => :model do
 
         it "is valid" do
           expect(subject).to eq true
-        end
-      end
-    end
-  end
-
-  describe ".before_create" do
-    describe "#generate_number" do
-      context "number is assigned" do
-        let(:customer_return) { Spree::CustomerReturn.new(number: '123') }
-
-        it "should return the assigned number" do
-          customer_return.save
-          expect(customer_return.number).to eq('123')
-        end
-      end
-
-      context "number is not assigned" do
-        let(:customer_return) { Spree::CustomerReturn.new(number: nil) }
-
-        before do
-          allow(customer_return).to receive_messages(valid?: true, process_return!: true)
-        end
-
-        it "should assign number with random CR number" do
-          customer_return.save
-          expect(customer_return.number).to match(/CR\d{9}/)
         end
       end
     end

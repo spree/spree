@@ -1,17 +1,11 @@
 module Spree
   class Payment < Spree::Base
+    include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
+
     extend FriendlyId
     friendly_id :number, slug_column: :number, use: :slugged
 
     include Spree::Payment::Processing
-    include Spree::NumberGenerator
-
-    def generate_number(options = {})
-      options[:prefix] ||= 'P'
-      options[:letters] ||= true
-      options[:length] ||= 7
-      super(options)
-    end
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -26,6 +20,7 @@ module Spree
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
+    validates_presence_of :payment_method
     before_validation :validate_source
 
     after_save :create_payment_profile, if: :profiles_supported?
@@ -179,11 +174,18 @@ module Spree
       amount - captured_amount
     end
 
-    def cancel!
-      if store_credit?
-        canceled = payment_method.cancel(response_code)
-        self.void if canceled
-      end
+    # TODO: This method was added for store_credit, but it breaks normal payments.
+    # spec/models/spree/order_spec.rb:30 # Spree::Order#cancel should mark the payments as void
+    # Need to write more tests to ensure store_credit gets correctly canceled.
+    # def cancel!
+    #   if store_credit?
+    #     canceled = payment_method.cancel(response_code)
+    #     self.void if canceled
+    #   end
+    # end
+
+    def editable?
+      checkout? || pending?
     end
 
     private

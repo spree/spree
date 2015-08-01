@@ -1,4 +1,4 @@
-<%= render partial: 'spree/admin/shared/order_tabs', locals: { current: 'Customer Details' } %>
+<%= render 'spree/admin/shared/order_tabs', current: :customer_details %>
 
 <% content_for :page_title do %>
   / <%= Spree.t(:customer_details) %>
@@ -18,7 +18,7 @@
   </div>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
+<%= render 'spree/admin/shared/error_messages', target: @order %>
 
 <%= form_for @order, url: spree.admin_order_customer_url(@order) do |f| %>
   <%= render 'form', f: f %>
@@ -26,4 +26,4 @@
 
 <br>
 
-<%= render partial: 'spree/admin/shared/order_summary' %>
+<%= render 'spree/admin/shared/order_summary' %>

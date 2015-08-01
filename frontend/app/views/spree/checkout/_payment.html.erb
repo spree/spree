@@ -35,6 +35,8 @@
       </div>
     <% end %>
 
+    <%= render partial: 'spree/checkout/payment/storecredit' %>
+
     <ul class="list-group" id="payment-method-fields" data-hook>
       <% @order.available_payment_methods.each do |method| %>
         <li class="list-group-item">

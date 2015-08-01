@@ -36,7 +36,14 @@ module Spree
         app.config.spree.payment_methods = [
             Spree::Gateway::Bogus,
             Spree::Gateway::BogusSimple,
-            Spree::PaymentMethod::Check ]
+            Spree::PaymentMethod::Check,
+            Spree::PaymentMethod::StoreCredit ]
+      end
+
+      initializer "spree.register.adjustable_adjusters" do |app|
+        app.config.spree.adjusters = [
+          Spree::Adjustable::Adjuster::Promotion,
+          Spree::Adjustable::Adjuster::Tax]
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -101,6 +108,13 @@ module Spree
 
       initializer "spree.core.checking_migrations" do |app|
         Migrations.new(config, engine_name).check
+      end
+
+      config.to_prepare do
+        # Load application's model / class decorators
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
+          Rails.configuration.cache_classes ? require(c) : load(c)
+        end
       end
     end
   end

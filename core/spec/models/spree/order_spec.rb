@@ -11,7 +11,29 @@ describe Spree::Order, :type => :model do
   let(:order) { stub_model(Spree::Order, :user => user) }
 
   before do
+    create(:store)
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
+  end
+
+  context "#cancel" do
+    let(:order) { create(:completed_order_with_totals) }
+    let!(:payment) do
+      create(
+        :payment,
+        order: order,
+        amount: order.total,
+        state: "completed"
+      )
+    end
+    let(:payment_method) { double }
+
+    it "should mark the payments as void" do
+      allow_any_instance_of(Spree::Shipment).to receive(:refresh_rates).and_return(true)
+      order.cancel
+      order.reload
+
+      expect(order.payments.first).to be_void
+    end
   end
 
   context "#canceled_by" do
@@ -248,8 +270,9 @@ describe Spree::Order, :type => :model do
     let(:order) { stub_model(Spree::Order, item_count: 2) }
 
     before do
-      allow(order).to receive_messages(:line_items => line_items = [1, 2])
-      allow(order).to receive_messages(:adjustments => adjustments = [])
+      allow(order).to receive_messages(line_items: [1, 2])
+      allow(order).to receive_messages(adjustments: [])
+      allow(order).to receive_message_chain(:line_items, sum: 0)
     end
 
     it "clears out line items, adjustments and update totals" do
@@ -313,115 +336,6 @@ describe Spree::Order, :type => :model do
 
       it "returns the globally configured currency" do
         expect(order.currency).to eq("USD")
-      end
-    end
-  end
-
-  # Regression tests for #2179
-  context "#merge!" do
-    let(:variant) { create(:variant) }
-    let(:order_1) { Spree::Order.create }
-    let(:order_2) { Spree::Order.create }
-
-    it "destroys the other order" do
-      order_1.merge!(order_2)
-      expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-
-    context "user is provided" do
-      it "assigns user to new order" do
-        order_1.merge!(order_2, user)
-        expect(order_1.user).to eq user
-      end
-    end
-
-    context "merging together two orders with line items for the same variant" do
-      before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant, 1)
-      end
-
-      specify do
-        order_1.merge!(order_2)
-        expect(order_1.line_items.count).to eq(1)
-
-        line_item = order_1.line_items.first
-        expect(line_item.quantity).to eq(2)
-        expect(line_item.variant_id).to eq(variant.id)
-      end
-
-    end
-
-    context "merging using extension-specific line_item_comparison_hooks" do
-      before do
-        Spree::Order.register_line_item_comparison_hook(:foos_match)
-        allow(Spree::Variant).to receive(:price_modifier_amount).and_return(0.00)
-      end
-
-      after do
-        # reset to avoid test pollution
-        Spree::Order.line_item_comparison_hooks = Set.new
-      end
-
-      context "2 equal line items" do
-        before do
-          @line_item_1 = order_1.contents.add(variant, 1, {foos: {}})
-          @line_item_2 = order_2.contents.add(variant, 1, {foos: {}})
-        end
-
-        specify do
-          expect(order_1).to receive(:foos_match).with(@line_item_1, kind_of(Hash)).and_return(true)
-          order_1.merge!(order_2)
-          expect(order_1.line_items.count).to eq(1)
-
-          line_item = order_1.line_items.first
-          expect(line_item.quantity).to eq(2)
-          expect(line_item.variant_id).to eq(variant.id)
-        end
-      end
-
-      context "2 different line items" do
-        before do
-          allow(order_1).to receive(:foos_match).and_return(false)
-
-          order_1.contents.add(variant, 1, {foos: {}})
-          order_2.contents.add(variant, 1, {foos: {bar: :zoo}})
-        end
-
-        specify do
-          order_1.merge!(order_2)
-          expect(order_1.line_items.count).to eq(2)
-
-          line_item = order_1.line_items.first
-          expect(line_item.quantity).to eq(1)
-          expect(line_item.variant_id).to eq(variant.id)
-
-          line_item = order_1.line_items.last
-          expect(line_item.quantity).to eq(1)
-          expect(line_item.variant_id).to eq(variant.id)
-        end
-      end
-    end
-
-    context "merging together two orders with different line items" do
-      let(:variant_2) { create(:variant) }
-
-      before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant_2, 1)
-      end
-
-      specify do
-        order_1.merge!(order_2)
-        line_items = order_1.line_items.reload
-        expect(line_items.count).to eq(2)
-
-        expect(order_1.item_count).to eq 2
-        expect(order_1.item_total).to eq line_items.map(&:amount).sum
-
-        # No guarantee on ordering of line items, so we do this:
-        expect(line_items.pluck(:quantity)).to match_array([1, 1])
-        expect(line_items.pluck(:variant_id)).to match_array([variant.id, variant_2.id])
       end
     end
   end
@@ -572,7 +486,7 @@ describe Spree::Order, :type => :model do
         :active => true,
         :display_on => "both",
       })
-      expect(order.available_payment_methods.count).to eq(2)
+      expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
     end
   end
@@ -636,88 +550,136 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "#generate_order_number" do
-    context "when no configure" do
-      let(:default_length) { 9 + 'R'.length }
-      subject(:order_number) { order.generate_number }
-      its(:class)  { should eq String }
-      its(:length) { should eq default_length }
-      it { should match /^R/ }
+  describe "#associate_user!" do
+    let(:user) { FactoryGirl.create(:user_with_addreses) }
+    let(:email) { user.email }
+    let(:created_by) { user }
+    let(:bill_address) { user.bill_address }
+    let(:ship_address) { user.ship_address }
+    let(:override_email) { true }
+
+    let(:order) { FactoryGirl.build(:order, order_attributes) }
+
+    let(:order_attributes) do
+      {
+        user:         nil,
+        email:        nil,
+        created_by:   nil,
+        bill_address: nil,
+        ship_address: nil
+      }
     end
 
-    context "when length option is 5" do
-      let(:option_length) { 5 + 'R'.length }
-      it "should be option length for order number" do
-        expect(order.generate_number(length: 5).length).to eq option_length
+    def assert_expected_order_state
+      expect(order.user).to eql(user)
+      expect(order.user_id).to eql(user.id)
+
+      expect(order.email).to eql(email)
+
+      expect(order.created_by).to eql(created_by)
+      expect(order.created_by_id).to eql(created_by.id)
+
+      expect(order.bill_address).to eql(bill_address)
+      expect(order.bill_address_id).to eql(bill_address.id)
+
+      expect(order.ship_address).to eql(ship_address)
+      expect(order.ship_address_id).to eql(ship_address.id)
+    end
+
+    shared_examples_for "#associate_user!" do |persisted = false|
+      it "associates a user to an order" do
+        order.associate_user!(user, override_email)
+        assert_expected_order_state
+      end
+
+      unless persisted
+        it "does not persist the order" do
+          expect { order.associate_user!(user) }
+            .to_not change(order, :persisted?)
+            .from(false)
+        end
       end
     end
 
-    context "when letters option is true" do
-      it "generates order number include letter" do
-        expect(order.generate_number(length: 100, letters: true)).to match /[A-Z]/
+    context "when email is set" do
+      let(:order_attributes) { super().merge(email: 'test@example.com') }
+
+      context "when email should be overridden" do
+        it_should_behave_like "#associate_user!"
+      end
+
+      context "when email should not be overridden" do
+        let(:override_email) { false }
+        let(:email) { 'test@example.com' }
+
+        it_should_behave_like "#associate_user!"
       end
     end
 
-    context "when prefix option is 'P'" do
-      it "generates order number and it prefix is 'P'" do
-        expect(order.generate_number(prefix: 'P')).to match /^P/
+    context "when created_by is set" do
+      let(:order_attributes) { super().merge(created_by: created_by) }
+      let(:created_by) { create(:user_with_addreses) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when bill_address is set" do
+      let(:order_attributes) { super().merge(bill_address: bill_address) }
+      let(:bill_address) { FactoryGirl.build(:address) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when ship_address is set" do
+      let(:order_attributes) { super().merge(ship_address: ship_address) }
+      let(:ship_address) { FactoryGirl.build(:address) }
+
+      it_should_behave_like "#associate_user!"
+    end
+
+    context "when the user is not persisted" do
+      let(:user) { FactoryGirl.build(:user_with_addreses) }
+
+      it "does not persist the user" do
+        expect { order.associate_user!(user) }
+          .to_not change(user, :persisted?)
+          .from(false)
       end
-    end
-  end
 
-  context "#associate_user!" do
-    let!(:user) { FactoryGirl.create(:user) }
-
-    it "should associate a user with a persisted order" do
-      order = FactoryGirl.create(:order_with_line_items, created_by: nil)
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
-
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(user)
+      it_should_behave_like "#associate_user!"
     end
 
-    it "should not overwrite the created_by if it already is set" do
-      creator = create(:user)
-      order = FactoryGirl.create(:order_with_line_items, created_by: creator)
+    context "when the order is persisted" do
+      let(:order) { FactoryGirl.create(:order, order_attributes) }
 
-      order.user = nil
-      order.email = nil
-      order.associate_user!(user)
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
-
-      # verify that the changes we made were persisted
-      order.reload
-      expect(order.user).to eq(user)
-      expect(order.email).to eq(user.email)
-      expect(order.created_by).to eq(creator)
-    end
-
-    it "should associate a user with a non-persisted order" do
-      order = Spree::Order.new
-
-      expect do
+      it "associates a user to a persisted order" do
         order.associate_user!(user)
-      end.to change { [order.user, order.email] }.from([nil, nil]).to([user, user.email])
-    end
+        order.reload
+        assert_expected_order_state
+      end
 
-    it "should not persist an invalid address" do
-      address = Spree::Address.new
-      order.user = nil
-      order.email = nil
-      order.ship_address = address
-      expect do
+      it "does not persist other changes to the order" do
+        order.state = 'complete'
         order.associate_user!(user)
-      end.not_to change { address.persisted? }.from(false)
+        order.reload
+        expect(order.state).to eql('cart')
+      end
+
+      it "does not change any other orders" do
+        other = FactoryGirl.create(:order)
+        order.associate_user!(user)
+        expect(other.reload.user).to_not eql(user)
+      end
+
+      it "is not affected by scoping" do
+        order.class.where.not(id: order).scoping do
+          order.associate_user!(user)
+        end
+        order.reload
+        assert_expected_order_state
+      end
+
+      it_should_behave_like "#associate_user!", true
     end
   end
 
