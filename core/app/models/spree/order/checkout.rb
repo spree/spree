@@ -331,7 +331,7 @@ module Spree
             if @updating_params[:order] && (@updating_params[:order][:payments_attributes] ||
                                             @updating_params[:order][:existing_card])
               @updating_params[:order][:payments_attributes] ||= [{}]
-              @updating_params[:order][:payments_attributes].first[:amount] = total
+              @updating_params[:order][:payments_attributes].first[:amount] = order_total_after_store_credit
             end
           end
         end
