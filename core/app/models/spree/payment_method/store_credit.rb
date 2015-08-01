@@ -79,8 +79,14 @@ module Spree
       store_credit_event = StoreCreditEvent.find_by(authorization_code: auth_code, action: Spree::StoreCredit::CAPTURE_ACTION)
       store_credit = store_credit_event.try(:store_credit)
 
-      return false if !store_credit_event || !store_credit
-      store_credit.credit(store_credit_event.amount, auth_code, store_credit.currency)
+      if !store_credit_event || !store_credit
+        handle_action(nil, :cancel, false)
+      else
+        action = -> (store_credit) do
+          store_credit.credit(store_credit_event.amount, auth_code, store_credit.currency)
+        end
+        handle_action(action, :cancel, auth_code)
+      end
     end
 
     def source_required?

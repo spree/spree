@@ -3,6 +3,7 @@ module Spree
     acts_as_paranoid
 
     VOID_ACTION       = 'void'
+    CANCEL_ACTION     = 'cancel'
     CREDIT_ACTION     = 'credit'
     CAPTURE_ACTION    = 'capture'
     ELIGIBLE_ACTION   = 'eligible'
