@@ -187,7 +187,8 @@ module Spree
     end
 
     def self.currency_available(currency = nil)
-      joins(:master => :prices).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+      joins(:master => :prices).where('spree_prices.currency': currency || Spree::Config[:currency]) \
+      .where('spree_prices.amount IS NOT NULL')
     end
     
     # Can't use add_search_scope for this as it needs a default argument
