@@ -186,9 +186,13 @@ module Spree
       where("#{Product.quoted_table_name}.deleted_at IS NULL or #{Product.quoted_table_name}.deleted_at >= ?", Time.zone.now)
     end
 
+    def self.currency_available(currency = nil)
+      joins(:master => :prices).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+    end
+    
     # Can't use add_search_scope for this as it needs a default argument
     def self.available(available_on = nil, currency = nil)
-      joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now)
+      where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now).currency_available(currency)
     end
     search_scopes << :available
 
