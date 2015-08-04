@@ -194,12 +194,13 @@ THIS IS THE BEST PRODUCT EVER!
 
     context '#cache_key_for_products' do
       let(:zone) { Spree::Zone.new }
+      let(:price_options) { { tax_zone: zone } }
 
       subject { helper.cache_key_for_products }
       before(:each) do
         @products = double('products collection')
         allow(helper).to receive(:params) { {:page => 10} }
-        allow(helper).to receive(:current_tax_zone) { zone }
+        allow(helper).to receive(:current_price_options) { price_options }
       end
 
       context 'when there is a maximum updated date' do
@@ -209,7 +210,7 @@ THIS IS THE BEST PRODUCT EVER!
           allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
-        it { is_expected.to eq("en/USD/#{zone.cache_key}/spree/products/all-10-20111213-5") }
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20111213-5") }
       end
 
       context 'when there is no considered maximum updated date' do
@@ -220,30 +221,71 @@ THIS IS THE BEST PRODUCT EVER!
           allow(Date).to receive(:today) { today }
         end
 
-        it { is_expected.to eq("en/USD/#{zone.cache_key}/spree/products/all-10-20131211-1234567") }
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20131211-1234567") }
       end
     end
 
     context "#cache_key_for_product" do
       let(:product) { Spree::Product.new }
-      subject { helper.cache_key_for_product(product) }
+      let(:price_options) { { tax_zone: zone } }
+
+      subject(:cache_key) { helper.cache_key_for_product(product) }
 
       before do
-        allow(helper).to receive(:current_tax_zone) { zone }
+        allow(helper).to receive(:current_price_options) { price_options }
       end
 
       context "when there is a current tax zone" do
         let(:zone) { Spree::Zone.new }
 
         it "includes the current_tax_zone" do
-          is_expected.to have_content(zone.cache_key)
+          is_expected.to eq("en/USD/spree/zones/new/spree/products/new/")
         end
       end
 
       context "when there is no current tax zone" do
         let(:zone) { nil }
 
-        it { is_expected.to eq("en/USD/#{product.cache_key}/") }
+        it { is_expected.to eq("en/USD/spree/products/new/") }
+      end
+
+      context "when current_price_options includes nil values" do
+        let(:price_options) do
+          {
+            a: nil,
+            b: Spree::Zone.new
+          }
+        end
+
+        it "does not include nil values" do
+          expect(cache_key).to eq("en/USD/spree/zones/new/spree/products/new/")
+        end
+      end
+
+      context "when current_price_options includes values that do not implement cache_key" do
+        let(:price_options) do
+          {
+            a: true,
+            b: Spree::Zone.new
+          }
+        end
+
+        it "includes string representations of these values" do
+          expect(cache_key).to eq("en/USD/true/spree/zones/new/spree/products/new/")
+        end
+      end
+
+      context "when keys in the options hash are inserted in non-alphabetical order" do
+        let(:price_options) do
+          {
+            b: Spree::Zone.new,
+            a: true
+          }
+        end
+
+        it "the values are nevertheless returned in alphabetical order of their keys" do
+          expect(cache_key).to eq("en/USD/true/spree/zones/new/spree/products/new/")
+        end
       end
     end
   end
