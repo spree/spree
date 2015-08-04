@@ -18,6 +18,8 @@ require 'state_machine'
 require 'friendly_id'
 require 'font-awesome-rails'
 require 'stringex'
+require 'sass-rails'
+require 'coffee-rails'
 
 module Spree
 
