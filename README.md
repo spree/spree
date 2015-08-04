@@ -143,27 +143,27 @@ within the context of Rails application. You can easily create a sandbox
 application inside of your cloned source directory for testing purposes.
 
 
-1. Clone the Git repo
+Clone the Git repo
 
 ```shell
 git clone git://github.com/spree/spree.git
 cd spree
 ```
 
-2. Install the gem dependencies
+Install the gem dependencies
 
 ```shell
 bundle install
 ```
 
-3. Create a sandbox Rails application for testing purposes (and automatically
+Create a sandbox Rails application for testing purposes (and automatically
 perform all necessary database setup)
 
 ```shell
 bundle exec rake sandbox
 ```
 
-4. Start the server
+Start the server
 
 ```shell
 cd sandbox
