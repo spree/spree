@@ -12,4 +12,8 @@ class Spree::Base < ActiveRecord::Base
   end
 
   self.abstract_class = true
+
+  def self.spree_base_scopes
+    all
+  end
 end

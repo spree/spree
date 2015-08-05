@@ -17,7 +17,8 @@ module Spree
           curr_page = page || 1
 
           unless Spree::Config.show_products_without_price
-            @products = @products.where("spree_prices.amount IS NOT NULL").where("spree_prices.currency" => current_currency)
+            @products = @products.where("spree_prices.amount IS NOT NULL").
+                                  where("spree_prices.currency" => current_currency)
           end
           @products = @products.page(curr_page).per(per_page)
         end
@@ -32,7 +33,7 @@ module Spree
 
         protected
           def get_base_scope
-            base_scope = Spree::Product.active
+            base_scope = Spree::Product.spree_base_scopes.active
             base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
             base_scope = get_products_conditions_for(base_scope, keywords)
             base_scope = add_search_scopes(base_scope)
