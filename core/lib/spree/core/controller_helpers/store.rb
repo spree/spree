@@ -18,6 +18,12 @@ module Spree
           @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
         end
 
+        # Return a Hash of things that influence the prices displayed in your shop.
+        #
+        # By default, the only thing that influences prices that is the current order's +tax_zone+
+        # (to facilitate differing prices depending on VAT rate for digital products in Europe, see
+        # https://github.com/spree/spree/pull/6295 and https://github.com/spree/spree/pull/6662).
+        #
         def current_price_options
           {
             tax_zone: current_tax_zone
