@@ -24,6 +24,16 @@ module Spree
         # (to facilitate differing prices depending on VAT rate for digital products in Europe, see
         # https://github.com/spree/spree/pull/6295 and https://github.com/spree/spree/pull/6662).
         #
+        # If your prices depend on something else, overwrite this method and add
+        # more key/value pairs to the Hash it returns.
+        #
+        # Be careful though to also patch the following parts of Spree accordingly:
+        #
+        # * `Spree::VatPriceCalculation#gross_amount`
+        # * `Spree::LineItem#update_price`
+        # * `Spree::Stock::Estimator#taxation_options_for`
+        # * Subclass the `DefaultTax` calculator
+        #
         def current_price_options
           {
             tax_zone: current_tax_zone
