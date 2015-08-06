@@ -47,7 +47,7 @@ module Spree
     end
 
     def update_price
-      self.price = variant.price_including_vat_for(tax_zone)
+      self.price = variant.price_including_vat_for(tax_zone: tax_zone)
     end
 
     def copy_tax_category

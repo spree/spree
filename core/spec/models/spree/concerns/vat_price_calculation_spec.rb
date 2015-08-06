@@ -12,14 +12,20 @@ module Spree
     describe "#gross_amount" do
       let(:zone) { Zone.new }
       let(:tax_category) { TaxCategory.new }
+      let(:price_options) do
+        {
+          tax_zone: zone,
+          tax_category: tax_category
+        }
+      end
       let(:amount) { 100 }
 
-      subject { test_class.new.gross_amount(amount, zone, tax_category) }
+      subject(:gross_amount) { test_class.new.gross_amount(amount, price_options) }
 
       context "with no default zone set" do
         it "does not call TaxRate.included_tax_amount_for" do
           expect(TaxRate).not_to receive(:included_tax_amount_for)
-          subject
+          gross_amount
         end
       end
 
@@ -27,7 +33,7 @@ module Spree
         let(:zone) { nil }
         it "does not call TaxRate.included_tax_amount_for" do
           expect(TaxRate).not_to receive(:included_tax_amount_for)
-          subject
+          gross_amount
         end
       end
 
@@ -42,7 +48,7 @@ module Spree
 
           it "does not call 'TaxRate.included_tax_amount_for'" do
             expect(TaxRate).not_to receive(:included_tax_amount_for)
-            subject
+            gross_amount
           end
         end
 
@@ -51,7 +57,7 @@ module Spree
 
           it "calls TaxRate.included_tax_amount_for two times" do
             expect(TaxRate).to receive(:included_tax_amount_for).twice
-            subject
+            gross_amount
           end
         end
       end

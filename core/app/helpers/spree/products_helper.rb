@@ -65,7 +65,13 @@ module Spree
     private
 
     def common_product_cache_keys
-      [I18n.locale, current_currency, current_tax_zone.try(:cache_key)]
+      [I18n.locale, current_currency] + price_options_cache_key
+    end
+
+    def price_options_cache_key
+      current_price_options.sort.map(&:last).map do |value|
+        value.try(:cache_key) || value
+      end
     end
   end
 end

@@ -1,31 +1,39 @@
 module Spree
   module VatPriceCalculation
-    def gross_amount(amount, zone, tax_category)
-      return amount unless outside_default_vat_zone?(zone)
-      round_to_two_places(add_foreign_vat_for(amount, zone, tax_category))
+    def gross_amount(amount, price_options)
+      return amount unless outside_default_vat_zone?(price_options)
+      round_to_two_places(add_foreign_vat_for(amount, price_options))
     end
 
     private
 
-    def add_foreign_vat_for(amount, zone, tax_category)
-      amount = net_amount(amount, tax_category)
-      amount_with_foreign_vat(amount, zone, tax_category)
+    def add_foreign_vat_for(amount, price_options)
+      amount = net_amount(amount, price_options[:tax_category])
+      amount_with_foreign_vat(amount, price_options)
     end
 
     def net_amount(amount, tax_category)
-      amount / (1 + included_tax_amount(default_zone, tax_category))
+      amount / (1 + default_vat(tax_category))
     end
 
-    def amount_with_foreign_vat(amount, zone, tax_category)
-      amount * (1 + included_tax_amount(zone, tax_category))
+    def default_vat(tax_category)
+      included_tax_amount(tax_zone: default_zone, tax_category: tax_category)
     end
 
-    def outside_default_vat_zone?(zone)
-      zone && default_zone && zone != default_zone
+    def foreign_vat(price_options)
+      included_tax_amount(price_options)
     end
 
-    def included_tax_amount(zone, tax_category)
-      Spree::TaxRate.included_tax_amount_for(zone, tax_category).to_f
+    def amount_with_foreign_vat(amount, price_options)
+      amount * (1 + foreign_vat(price_options))
+    end
+
+    def outside_default_vat_zone?(price_options)
+      price_options[:tax_zone] && default_zone && price_options[:tax_zone] != default_zone
+    end
+
+    def included_tax_amount(price_options)
+      Spree::TaxRate.included_tax_amount_for(price_options).to_f
     end
 
     def default_zone

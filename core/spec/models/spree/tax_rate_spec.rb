@@ -342,9 +342,17 @@ describe Spree::TaxRate, :type => :model do
              zone: create(:zone_with_country),
              amount: 0.1
     end
+    let(:price_options) do
+      {
+        tax_zone: order.tax_zone,
+        tax_category: line_item.tax_category
+      }
+    end
+
 
     let(:line_item) { order.line_items.first }
-    subject { Spree::TaxRate.included_tax_amount_for(order.tax_zone, line_item.tax_category) }
+    subject(:included_tax_amount) { Spree::TaxRate.included_tax_amount_for(price_options) }
+
     it 'will only get me tax amounts from tax_rates that match' do
       expect(subject).to eq(included_tax_rate.amount + other_included_tax_rate.amount)
     end
