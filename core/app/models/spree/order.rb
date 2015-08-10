@@ -549,8 +549,8 @@ module Spree
       self.next! if self.line_items.size > 0
     end
 
-    def refresh_shipment_rates
-      shipments.map &:refresh_rates
+    def refresh_shipment_rates(frontend_only = true)
+      shipments.map.map { |s| s.refresh_rates(frontend_only) }
     end
 
     def shipping_eq_billing_address?
