@@ -17,7 +17,15 @@ module Spree
         return @collection if @collection.present?
         params[:q] ||= {}
 
-        @collection = resource.all
+
+        if params[:q][:not_reimbursed]
+          # results of 2 scopes to show the not reimbursed customer returns
+          # looking forward to https://github.com/rails/rails/pull/16052
+          @collection = resource.where(id: resource.without_reimbursements.ids + resource.with_pending_reimbursements.ids)
+        else
+          @collection = resource.all
+        end
+
         # @search needs to be defined as this is passed to search_form_for
         @search = @collection.ransack(params[:q])
         @collection = @search.result.

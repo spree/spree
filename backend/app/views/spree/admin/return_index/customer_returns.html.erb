@@ -3,14 +3,17 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <li class="<%= "active" if params[:q][:state_eq].blank? && !params[:q][:return_items_acceptance_status_eq] && !params[:q][:reimbursement_id_null] %>">
+  <li class="<%= "active" if !params[:q][:return_items_acceptance_status_eq] && !params[:q][:not_reimbursed] && !params[:q][:reimbursements_reimbursement_status_eq] %>">
     <%= link_to Spree.t(:all), spree.admin_customer_returns_index_path %>
   </li>
   <li class="<%= "active" if params[:q][:return_items_acceptance_status_eq] == "manual_intervention_required" %>">
-    <%= link_to Spree.t(:manual_intervention_required), spree.admin_customer_returns_index_path({q: {return_items_acceptance_status_eq: :manual_intervention_required}}) %>
+    <%= link_to Spree.t(:manual_intervention_required), spree.admin_customer_returns_index_path({ q: {return_items_acceptance_status_eq: :manual_intervention_required}}) %>
   </li>
-  <li class="<%= "active" if params[:q][:reimbursement_id_null] == "1" %>">
-    <%= link_to Spree.t(:not_reimbursed), spree.admin_customer_returns_index_path({q: {reimbursement_id_null: 1}}) %>
+  <li class="<%= "active" if params[:q][:not_reimbursed] == "true" %>">
+    <%= link_to Spree.t(:not_reimbursed), spree.admin_customer_returns_index_path({ q: { not_reimbursed: :true }}) %>
+  </li>
+  <li class="<%= "active" if params[:q][:reimbursements_reimbursement_status_eq] == "errored" %>">
+    <%= link_to Spree.t(:reimbursements_errored), spree.admin_customer_returns_index_path({ q: { reimbursements_reimbursement_status_eq: :errored }}) %>
   </li>
 <% end %>
 
@@ -18,23 +21,16 @@
   <div data-hook="admin_return_authorisations_index_filters">
     <%= search_form_for [:admin, @search], url: spree.admin_customer_returns_index_path do |f| %>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
             <%= f.label :number_cont, Spree.t(:number) %>
             <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="form-group">
             <%= f.label :return_items_acceptance_status_eq, Spree.t(:return_items_acceptance_status) %>
             <%= f.text_field :return_items_acceptance_status_eq, class: "form-control" %>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="field checkbox">
-            <%= f.label :reimbursed, Spree.t(:reimbursed) %>
-            <%= f.check_box :reimbursement_id_null, {:checked => params[:q][:reimbursement_id_null] == '1'}, '1', '0' %>
-            <%= Spree.t(:not_reimbursed) %>
           </div>
         </div>
       </div>
