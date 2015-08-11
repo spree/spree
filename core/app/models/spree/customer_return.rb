@@ -18,6 +18,14 @@ module Spree
     extend DisplayMoney
     money_methods pre_tax_total: { currency: Spree::Config[:currency] }
 
+    scope :without_reimbursements, -> {
+      includes(:reimbursements).group('spree_customer_returns.id').having("count(spree_reimbursements.id) = 0").references(:reimbursements)
+    }
+
+    scope :with_pending_reimbursements, -> {
+      joins(:reimbursements).where('spree_reimbursements.reimbursement_status': 'pending')
+    }
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
     end
@@ -63,7 +71,5 @@ module Spree
     def inventory_units
       return_items.flat_map(&:inventory_unit)
     end
-
   end
 end
-
