@@ -1,0 +1,13 @@
+<%= render partial: 'spree/admin/shared/promotion_tabs', locals: { current: :advertise } %>
+
+<%= form_for @promotion, url: object_url, method: :put do |f| %>
+  <div class="form-group">
+    <%= f.field_container :advertise, class: ['checkbox'] do %>
+      <%= f.label :advertise do %>
+        <%= f.check_box :advertise %>
+        <%= Spree.t(:advertise) %>
+      <% end %>
+    <% end %>
+  </div>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+<% end %>

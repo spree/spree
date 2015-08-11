@@ -11,6 +11,7 @@ Spree::Core::Engine.add_routes do
       member do
         get :rules
         get :actions
+        get :advertise
         get :codes
         get :codes_as_csv
         post :batch_add_codes
