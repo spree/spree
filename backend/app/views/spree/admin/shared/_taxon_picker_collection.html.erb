@@ -1,0 +1,22 @@
+<table class="table js-taxon-picker-collection">
+  <thead>
+    <tr>
+      <th><%= Spree.t(:id) %></th>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:path) %></th>
+      <th class="actions" width="35"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% taxon_picker_collection(taxon_ids).each do |taxon| %>
+      <tr>
+        <td><%= taxon.id %></td>
+        <td><%= taxon.name %></td>
+        <td><%= taxon.pretty_name %></td>
+        <td>
+          <%= link_to_with_icon 'delete', Spree.t(:delete), "javascript:;", class: 'btn btn-danger btn-sm js-delete-from-taxon-picker-target', data: { id: taxon.id }, title: Spree.t(:delete), no_text: true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

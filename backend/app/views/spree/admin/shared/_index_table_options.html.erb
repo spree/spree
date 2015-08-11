@@ -1,15 +1,17 @@
 <div class="row index-pagination-row">
-  <div class="col-sm-6">
+  <div class="<%= resource_index_xhr? ? 'col-sm-12' : 'col-sm-6' %>">
     <%= paginate collection %>
   </div>
-  <div class="col-sm-6">
-    <div class="pagination-wrap">
-      <%= form_tag({ action: (defined?(per_page_action) ?  per_page_action : :index)}, { method: :get, id: 'js-per-page-form', class: 'form-inline' }) do %>
-        <%= per_page_dropdown %>
-      <% end %>
-      <div class="clearfix"></div>
+  <% if !resource_index_xhr? %>
+    <div class="col-sm-6">
+      <div class="pagination-wrap">
+        <%= form_tag({ action: (defined?(per_page_action) ?  per_page_action : :index)}, { method: :get, id: 'js-per-page-form', class: 'form-inline' }) do %>
+          <%= per_page_dropdown %>
+        <% end %>
+        <div class="clearfix"></div>
+      </div>
     </div>
-  </div>
+  <% end %>
 </div>
 
 <% content_for :head do %>
@@ -20,4 +22,4 @@
       });
     });
   <% end %>
-<% end %>
+<% end if !resource_index_xhr? %>

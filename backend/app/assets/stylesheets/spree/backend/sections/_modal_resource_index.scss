@@ -1,0 +1,9 @@
+// layout for the pagination when its loaded in a ajax modal
+.modal-resource-index .index-pagination-row {
+  .col-sm-12 {
+    text-align: center;
+  }
+  &:first-of-type nav.pagination {
+    margin-top: 10px;
+  }
+}

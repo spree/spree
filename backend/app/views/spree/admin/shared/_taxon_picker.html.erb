@@ -1,0 +1,24 @@
+<% content_for :above_main_content do %>
+  <!-- We render the modal above the main content to prefend a form in a form (in some cases) -->
+  <div class="modal fade modal-resource-index" id="taxonPicker" tabindex="-1" role="dialog" aria-labelledby="taxonPickerLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="taxonPickerLabel"><%= Spree.t(:add_taxon) %></h4>
+        </div>
+        <div class="modal-body">
+          <form class="js-taxon-picker-search-form form-group">
+            <div class="input-group js-taxon-picker-search">
+              <%= text_field_tag 'query', nil, placeholder: "Search for a taxon..", class: "form-control" %>
+              <span class="input-group-btn">
+                <%= link_to Spree.t(:search), "javascript:;", class: "btn btn-default" %>
+              </span>
+            </div>
+          </form>
+          <div class="js-taxon-picker-index js-modal-resource-index"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

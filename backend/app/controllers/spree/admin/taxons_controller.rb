@@ -1,13 +1,21 @@
 module Spree
   module Admin
-    class TaxonsController < Spree::Admin::BaseController
+    class TaxonsController < Spree::Admin::ResourceController
+      include ActiveSupport::Callbacks
+
+      define_callbacks :load_collection
+      set_callback :load_collection, :after, :paginate_collection
+      set_callback :load_collection, :after, :search
 
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
       respond_to :html, :json, :js
 
       def index
-
+        respond_with(@collection) do |format|
+          format.html { render layout: !request.xhr? }
+          format.json { render json: json_data }
+        end
       end
 
       def search
@@ -64,13 +72,48 @@ module Spree
         end
       end
 
-      def destroy
-        @taxon = Taxon.find(params[:id])
-        @taxon.destroy
-        respond_with(@taxon) { |format| format.json { render :json => '' } }
+      def products
+        @taxon = Spree::Taxon.find(params[:taxon_id])
+        @products = @taxon.products
+      end
+
+      def delete_product
+        @taxon = Spree::Taxon.find(params[:taxon_id])
+        @product = Spree::Product.find(params[:product_id])
+
+        if @product.update(taxon_ids: @product.taxon_ids - [@taxon.id])
+          flash[:success] = Spree.t(:'admin.product_was_succesfully_removed_from_taxon')
+        else
+          flash[:error] = Spree.t(:'admin.product_could_not_be_removed_from_taxon')
+        end
+
+        redirect_to spree.admin_taxon_products_path(@taxon.id)
       end
 
       private
+
+      def collection
+        return @collection if @collection.present?
+
+        run_callbacks :load_collection do
+           @collection = super
+        end
+
+        @collection
+      end
+
+      def paginate_collection
+        @collection = @collection.order(id: :desc)
+                                 .page(params[:page])
+                                 .per(Spree::Config[:admin_products_per_page])
+      end
+
+      def search
+        params[:q] ||= {}
+
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.includes(:translations).uniq
+      end
 
       def taxon_params
         params.require(:taxon).permit(permitted_taxon_attributes)
