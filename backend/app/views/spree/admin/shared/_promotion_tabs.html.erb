@@ -7,6 +7,9 @@
     <%= content_tag :li, class: ('active' if current == :details) do %>
       <%= link_to_with_icon 'pencil', Spree.t(:details), spree.edit_admin_promotion_path(@promotion) %>
     <% end if can?(:admin, @promotion) %>
+    <%= content_tag :li, class: ('active' if current == :advertise) do %>
+      <%= link_to_with_icon 'bullhorn', Spree.t(:advertise), spree.advertise_admin_promotion_path(@promotion) %>
+    <% end if can?(:admin, @promotion) %>
     <%= content_tag :li, class: ('active' if current == :rules) do %>
       <%= link_to_with_icon 'th-list', Spree.t(:rules), spree.rules_admin_promotion_path(@promotion) %>
     <% end if can?(:admin, Spree::PromotionRule) %>

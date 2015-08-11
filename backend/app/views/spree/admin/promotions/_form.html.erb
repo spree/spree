@@ -31,14 +31,6 @@
         <%= f.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker datepicker-to form-control' %>
       </div>
     </div>
-
-    <%= f.field_container :advertise, class: ['checkbox'] do %>
-      <%= f.label :advertise do %>
-        <%= f.check_box :advertise %>
-        <%= Spree.t(:advertise) %>
-      <% end %>
-    <% end %>
-
   </div>
 
   <div class="col-md-9">
