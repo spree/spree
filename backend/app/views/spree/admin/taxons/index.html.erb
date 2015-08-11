@@ -1,13 +1,63 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:taxons) %>
+  <%= plural_resource_name(Spree::Taxon) %>
 <% end %>
 
-<div class="taxon-products-view">
-  <div class="form-group">
-    <%= text_field_tag :taxon_id %>
+<% content_for :table_filter do %>
+  <div data-hook="admin_taxons_sidebar">
+
+    <%= search_form_for [:admin, @search] do |f| %>
+      <div data-hook="admin_taxons_index_search">
+        <div class="form-group">
+          <%= f.label :name_cont, Spree.t(:name) %>
+          <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :id_eq, Spree.t(:id) %>
+          <%= f.text_field :id_eq, class: "form-control" %>
+        </div>
+      </div>
+      <div data-hook="admin_taxons_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+    <% end %>
+
   </div>
+<% end %>
 
-  <ul id="taxon_products" class="taxon"></ul>
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
 
-  <%= render :partial => "spree/admin/products/autocomplete", :formats => :js %>
-</div>
+<% if @collection.any? %>
+  <table class="table" id="listing_taxons">
+    <thead>
+      <tr data-hook="admin_taxons_index_headers">
+        <th><%= Spree.t(:id) %></th>
+        <th><%= Spree.t(:name) %></th>
+        <% if !resource_index_xhr? %>
+          <th><%= Spree.t(:products) %></th>
+          <th data-hook="admin_taxons_index_header_actions" class="actions"></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @collection.each do |taxon| %>
+        <tr id="<%= spree_dom_id taxon %>" data-hook="admin_taxons_index_rows">
+          <td><%= taxon.id %></td>
+          <td><%= link_to taxon.pretty_name, edit_admin_taxonomy_taxon_path(taxon.taxonomy.id, taxon.id), data: { id: taxon.id, name: taxon.name, pretty_name: taxon.pretty_name } %></td>
+          <% if !resource_index_xhr? %>
+            <td><%= link_to "#{ taxon.products.count } #{Spree.t(:products)}", spree.admin_taxon_products_path(taxon.id) %></td>
+            <td class="actions actions-3 text-right" data-hook="admin_taxons_index_row_actions">
+              <%= link_to_edit taxon, no_text: true, url: edit_admin_taxonomy_taxon_path(taxon.taxonomy.id, taxon.id), class: 'edit' if can?(:edit, taxon) %>
+              <%= link_to_delete taxon, no_text: true, url: admin_taxonomy_taxon_path(taxon.taxonomy.id, taxon.id) if can?(:delete, taxon) %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxon)) %>!
+  </div>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>

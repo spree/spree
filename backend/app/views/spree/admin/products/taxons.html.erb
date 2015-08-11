@@ -1,14 +1,18 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Taxons' } %>
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:add_taxon), 'javascript:;', { class: "js-taxon-picker-add btn-primary", icon: 'add', data: { toggle: "modal", target: "#taxonPicker" } } %>
+<% end if can?(:modify, Spree::Classification) %>
+
 <%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
   <fieldset>
     <div data-hook="admin_product_form_taxons">
       <%= f.field_container :taxons, class: ['form-group'] do %>
-        <%= f.label :taxon_ids, Spree.t(:taxons) %>
 
         <% if can? :modify, Spree::Classification %>
-          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(',') %>
+          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(','), class: "js-taxon-picker-target" %>
+          <%= render partial: 'spree/admin/shared/taxon_picker_collection', locals: { taxon_ids: @product.taxon_ids } %>
         <% elsif @product.taxons.any? %>
           <ul class="text_list">
             <% @product.taxons.each do |taxon| %>
@@ -24,3 +28,5 @@
     <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </fieldset>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/taxon_picker' %>

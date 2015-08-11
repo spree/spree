@@ -1,0 +1,40 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:taxons), spree.admin_taxons_path %> / <%= @taxon.name %> / <%= Spree.t(:products) %>
+<% end %>
+
+<%= render :partial => 'spree/admin/taxons/sidebar', locals: { current: :products } %>
+
+<% if @products.any? %>
+  <table class="table" id="listing_products">
+    <thead>
+      <tr data-hook="admin_products_index_headers">
+        <th><%= Spree.t(:sku) %></th>
+        <th colspan="2"><%= Spree.t(:name) %></th>
+        <th class="text-center">
+          <%= Spree.t(:master_price) %>
+        </th>
+        <th data-hook="admin_products_index_header_actions" class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+          <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
+            <td class="sku" data-hook="admin_products_index_row_sku"><%= product.id rescue '' %></td>
+            <td class="image" data-hook="admin_products_index_row_image"><%= mini_image product %></td>
+            <td data-hook="admin_products_index_row_product_name"><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
+            <td class="text-center" data-hook="admin_products_index_row_price"><%= product.display_price.to_html rescue '' %></td>
+            <td class="actions actions-3 text-right" data-hook="admin_products_index_row_actions">
+              <%= link_to_edit product, no_text: true, url: edit_admin_product_path(product), class: 'edit' if can?(:edit, product) && !product.deleted? %>
+              <% if can?(:update, @taxon) && can?(:update, Spree::Product) %>
+                <%= link_to_with_icon 'delete', "Delete product from taxon", admin_taxon_delete_product_path(@taxon.id, product_id: product.id), class: 'btn btn-danger btn-sm', method: :post, title: Spree.t(:delete), no_text: true, data: { confirm: Spree.t(:are_you_sure) } %>
+              <% end %>
+            </td>
+          </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_products_found) %>
+  </div>
+<% end %>

@@ -1,7 +1,9 @@
 <div class="panel-body">
   <div class="form-group taxons_rule_taxons">
-    <%= label_tag "#{param_prefix}_taxon_ids_string", Spree.t('taxon_rule.choose_taxons') %>
-    <%= hidden_field_tag "#{param_prefix}[taxon_ids_string]", promotion_rule.taxon_ids.join(","), :class => "taxon_picker", id: 'product_taxon_ids' %>
+    <%= hidden_field_tag "#{param_prefix}[taxon_ids_string]", promotion_rule.taxon_ids.join(","), class: "js-taxon-picker-target" %>
+
+    <%= render partial: 'spree/admin/shared/taxon_picker_collection', locals: { taxon_ids: promotion_rule.taxon_ids } %>
+    <%= button_link_to Spree.t(:add_taxon), 'javascript:;', { class: "js-taxon-picker-add btn-primary", icon: 'add', data: { toggle: "modal", target: "#taxonPicker" } } %>
   </div>
   <div class="form-group no-marginb">
     <%= label_tag Spree.t('taxon_rule.label') %>

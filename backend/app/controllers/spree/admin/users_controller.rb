@@ -12,8 +12,8 @@ module Spree
 
       def index
         respond_with(@collection) do |format|
-          format.html { render :layout => !request.xhr? }
-          format.json { render :json => json_data }
+          format.html { render layout: !request.xhr? }
+          format.json { render json: json_data }
         end
       end
 

@@ -9,7 +9,7 @@
 <% end %>
 
 <% if can? :edit, @order.user %>
-  <div class="modal fade" id="changeCustomer" tabindex="-1" role="dialog" aria-labelledby="changeCustomerLabel" aria-hidden="true">
+  <div class="modal fade modal-resource-index" id="changeCustomer" tabindex="-1" role="dialog" aria-labelledby="changeCustomerLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -25,7 +25,7 @@
               </span>
             </div>
           </form>
-          <div class="js-change-customer-index"></div>
+          <div class="js-change-customer-index js-modal-resource-index"></div>
         </div>
       </div>
     </div>

@@ -1,0 +1,14 @@
+<% content_for :sidebar do %>
+  <ul class="nav nav-pills nav-stacked" data-hook="admin_user_tab_options">
+    <% if can?(:update, @taxon) %>
+      <li<%== ' class="active"' if current == :edit %>>
+        <%= link_to_with_icon 'pencil', Spree.t(:edit), spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy.id, @taxon.id)%>
+      </li>
+    <% end %>
+    <% if can?(:update, @taxon) && can?(:update, Spree::Product) %>
+      <li<%== ' class="active"' if current == :products %>>
+        <%= link_to_with_icon 'th-large', Spree.t(:products), spree.admin_taxon_products_path(@taxon.id) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
