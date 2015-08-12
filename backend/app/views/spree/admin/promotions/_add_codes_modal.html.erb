@@ -47,7 +47,7 @@
             </div>
             <div class="form-group">
               <%= label_tag :prefix, Spree.t(:prefix) %>
-              <%= text_field_tag :prefix, nil, class: "form-control" %>
+              <%= text_field_tag :prefix, nil, class: "form-control", required: true %>
             </div>
             <div class="form-group">
               <%= label_tag :starts_at, Spree.t(:starts_at) %>
