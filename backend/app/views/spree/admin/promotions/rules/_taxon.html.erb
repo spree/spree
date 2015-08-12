@@ -1,12 +1,20 @@
 <div class="panel-body">
-  <div class="form-group taxons_rule_taxons">
-    <%= hidden_field_tag "#{param_prefix}[taxon_ids_string]", promotion_rule.taxon_ids.join(","), class: "js-taxon-picker-target" %>
+  <% if request.xhr? %>
+    <div class="alert alert-info no-margin-bottom">
+      <%= Spree.t(:please_update_before_you_can_add_taxons) %>
+    </div>
+  <% else %>
+    <div class="form-group taxons_rule_taxons">
+      <%= hidden_field_tag "#{param_prefix}[taxon_ids_string]", promotion_rule.taxon_ids.join(","), class: "js-taxon-picker-target" %>
 
-    <%= render partial: 'spree/admin/shared/taxon_picker_collection', locals: { taxon_ids: promotion_rule.taxon_ids } %>
-    <%= button_link_to Spree.t(:add_taxon), 'javascript:;', { class: "js-taxon-picker-add btn-primary", icon: 'add', data: { toggle: "modal", target: "#taxonPicker" } } %>
-  </div>
-  <div class="form-group no-marginb">
-    <%= label_tag Spree.t('taxon_rule.label') %>
-    <%= select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Taxon::MATCH_POLICIES.map{|s| [Spree.t("taxon_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy), {:class => 'select_taxon form-control'}) %>
-  </div>
+      <%= render partial: 'spree/admin/shared/taxon_picker_collection', locals: { taxon_ids: promotion_rule.taxon_ids } %>
+      <%= render partial: 'spree/admin/shared/taxon_picker' %>
+
+      <%= button_link_to Spree.t(:add_taxon), 'javascript:;', { class: "js-taxon-picker-add btn-success btn-sm", icon: 'add', data: { toggle: "modal", target: "#taxonPicker" } } %>
+    </div>
+    <div class="form-group no-marginb">
+      <%= label_tag Spree.t('taxon_rule.label') %>
+      <%= select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Taxon::MATCH_POLICIES.map{|s| [Spree.t("taxon_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy), {:class => 'select_taxon form-control'}) %>
+    </div>
+  <% end %>
 </div>
