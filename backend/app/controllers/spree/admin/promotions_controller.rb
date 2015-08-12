@@ -66,27 +66,40 @@ module Spree
       def batch_add_codes
         amount = params[:amount].to_i
 
-        (1..amount).each_slice(Spree::Promotion::CODES_BATCH_AMOUNT) do |slice|
-          promotion_codes = []
+        if params[:prefix].blank?
+          flash[:error] = Spree.t(:please_set_a_prefix_for_batch_generated_codes)
+        else
+          (1..amount).each_slice(Spree::Promotion::CODES_BATCH_AMOUNT) do |slice|
+            promotion_codes = []
 
-          (slice.count).times do
-            promotion_codes << @promotion.promotion_codes.new(
-              value: "#{params[:prefix]}#{Digest::SHA1.hexdigest([Time.now, rand].join)}",
-              usage_limit: params[:usage_limit],
-              starts_at: params[:starts_at],
-              expires_at: params[:expires_at]
-            )
+            (slice.count).times do |index|
+              number_value = loop do
+                position = rand(2..9)
+                v = Digest::SHA1.hexdigest([Time.now, rand].join).to_s[-(amount.to_s.size + position)..-position].upcase
+                unless Spree::PromotionCode.exists?(value: v, promotion_id: @promotion.id)
+                  break v
+                end
+              end
+
+              promotion_codes << @promotion.promotion_codes.new(
+                value: "#{params[:prefix].upcase}#{number_value}",
+                usage_limit: params[:usage_limit],
+                starts_at: params[:starts_at],
+                expires_at: params[:expires_at]
+              )
+            end
+
+            import_promotion_codes promotion_codes
           end
 
-          import_promotion_codes promotion_codes
+          flash[:success] = Spree.t(:promotion_codes_where_succesfully_generated)
         end
-
-        flash[:success] = Spree.t(:promotion_codes_where_succesfully_generated)
+        
         redirect_to :back
       end
 
       def delete_all_codes
-        @promotion.promotion_codes.destroy_all
+        @promotion.promotion_codes.delete_all # destroy_all was to slow
 
         flash[:success] = Spree.t(:succesfully_deleted_all_codes)
         redirect_to spree.codes_admin_promotion_path(@promotion)
