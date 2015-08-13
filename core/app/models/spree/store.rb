@@ -12,13 +12,17 @@ module Spree
 
     scope :by_url, lambda { |url| where("url like ?", "%#{url}%") }
 
+    before_save :clear_cache
+
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
       current_store || Store.default
     end
 
     def self.default
-      where(default: true).first || new
+      Rails.cache.fetch("default_store") do
+        where(default: true).first || new
+      end
     end
 
     private
@@ -35,6 +39,10 @@ module Spree
       if default
         errors.add(:base, :cannot_destroy_default_store)
       end
+    end
+
+    def clear_cache
+      Rails.cache.delete("default_store")
     end
   end
 end
