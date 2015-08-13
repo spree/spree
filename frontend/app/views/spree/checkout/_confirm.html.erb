@@ -9,5 +9,8 @@
 
 <div class="well text-right form-buttons" data-hook="buttons">
   <%= submit_tag Spree.t(:place_order), :class => 'btn btn-lg btn-success' %>
-  <script>Spree.disableSaveOnClick();</script>
 </div>
+
+<% content_for :foot do %>
+    <script>Spree.disableSaveOnClick();</script>
+<% end %>

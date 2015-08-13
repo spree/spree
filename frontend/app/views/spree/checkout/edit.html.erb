@@ -37,11 +37,13 @@
   </div>
 </div>
 
-<script>
-  Spree.current_order_id = "<%= @order.number %>"
-  Spree.current_order_token = "<%= @order.guest_token %>"
-</script>
-
-<% if I18n.locale != :en %>
-  <%= javascript_include_tag 'jquery.validate/localization/messages_' + I18n.locale.to_s.downcase.gsub('-', '') %>
+<% content_for :foot do %>
+    <script>
+      Spree.current_order_id = "<%= @order.number %>"
+      Spree.current_order_token = "<%= @order.guest_token %>"
+    </script>
+    <% if I18n.locale != :en %>
+        <%= javascript_include_tag 'jquery.validate/localization/messages_' + I18n.locale.to_s.downcase.gsub('-', '') %>
+    <% end %>
 <% end %>
+
