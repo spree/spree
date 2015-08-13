@@ -26,7 +26,7 @@
         <tbody>
         <% @orders.each do |order| %>
           <tr data-hook="admin_risky_orders_index_rows" data-order-number="<%= order.number %>">
-            <td><%= l (@show_only_completed ? order.completed_at : order.created_at).to_date %></td>
+            <td><%= l (order.completed_at).to_date %></td>
             <td>
               <%= link_to order.number, edit_admin_order_path(order) %>
             </td>
