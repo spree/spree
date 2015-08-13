@@ -23,7 +23,7 @@ module Spree
     }
 
     scope :with_pending_reimbursements, -> {
-      joins(:reimbursements).where('spree_reimbursements.reimbursement_status': 'pending')
+      joins(:reimbursements).where(:'spree_reimbursements.reimbursement_status' => 'pending')
     }
 
     def pre_tax_total
