@@ -17,10 +17,12 @@
       <% end %>
 
       <% if content_for?(:page_tabs) %>
+        <div class="clearfix"></div>
         <ul class="nav nav-tabs">
           <%= yield :page_tabs %>
         </ul>
       <% end %>
     </div>
+
   </div>
 <% end %>
