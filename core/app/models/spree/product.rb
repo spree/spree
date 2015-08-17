@@ -97,6 +97,9 @@ module Spree
 
     alias :options :product_option_types
 
+    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_attributes = %w[slug]
+
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?

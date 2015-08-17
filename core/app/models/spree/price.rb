@@ -12,6 +12,8 @@ module Spree
     end
     alias :display_price :display_amount
 
+    self.whitelisted_ransackable_attributes = ['amount']
+
     def money
       Spree::Money.new(amount || 0, { currency: currency })
     end

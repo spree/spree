@@ -8,6 +8,8 @@ module Spree
 
     after_touch :touch_all_variants
 
+    self.whitelisted_ransackable_attributes = ['presentation']
+
     def touch_all_variants
       # This can cause a cascade of products to be updated
       # To disable it in Rails 4.1, we can do this:

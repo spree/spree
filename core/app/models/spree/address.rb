@@ -14,6 +14,9 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
+
+    self.whitelisted_ransackable_attributes = %w[firstname lastname]
+
     def self.build_default
       country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
       new(country: country)

@@ -93,6 +93,8 @@ module Spree
       selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
 
+    self.whitelisted_ransackable_attributes = ['number']
+
     def add_shipping_method(shipping_method, selected = false)
       shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)
     end

@@ -25,6 +25,8 @@ module Spree
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
     scope :applied, -> { joins(:orders).uniq }
 
+    self.whitelisted_ransackable_attributes = ['code', 'path', 'promotion_category_id']
+
     def self.advertised
       where(advertise: true)
     end
