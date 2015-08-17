@@ -84,7 +84,7 @@ module Spree
 
       @@payment_attributes = [
         :id, :source_type, :source_id, :amount, :display_amount,
-        :payment_method_id, :response_code, :state, :avs_response, :created_at,
+        :payment_method_id, :state, :avs_response, :created_at,
         :updated_at
       ]
 
