@@ -35,6 +35,8 @@ module Spree
       SQL
     }
 
+    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+
     def self.advertised
       where(advertise: true)
     end

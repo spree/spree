@@ -15,6 +15,8 @@ module Spree
 
     scope :recent, -> { order('created_at DESC') }
 
+    self.whitelisted_ransackable_attributes = ['quantity']
+
     def readonly?
       !new_record?
     end

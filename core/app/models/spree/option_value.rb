@@ -11,6 +11,8 @@ module Spree
 
     after_touch :touch_all_variants
 
+    self.whitelisted_ransackable_attributes = ['presentation']
+
     def touch_all_variants
       variants.update_all(updated_at: Time.current)
     end

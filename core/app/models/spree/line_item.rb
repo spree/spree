@@ -38,6 +38,9 @@ module Spree
 
     attr_accessor :target_shipment
 
+    self.whitelisted_ransackable_associations = ['variant']
+    self.whitelisted_ransackable_attributes = ['variant_id']
+
     def copy_price
       if variant
         update_price if price.nil?
