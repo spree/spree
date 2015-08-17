@@ -37,6 +37,8 @@ module Spree
     extend DisplayMoney
     money_methods :pre_tax_total
 
+    self.whitelisted_ransackable_attributes = ['memo']
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
     end

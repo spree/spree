@@ -10,6 +10,8 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :price
 
+    self.whitelisted_ransackable_attributes = ['amount']
+
     def money
       Spree::Money.new(amount || 0, { currency: currency })
     end
