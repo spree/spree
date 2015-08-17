@@ -32,6 +32,8 @@ module Spree
 
     scope :applied, -> { joins("INNER JOIN #{order_join_table} ON #{order_join_table}.promotion_id = #{table_name}.id").uniq }
 
+    self.whitelisted_ransackable_attributes = ['code', 'path', 'promotion_category_id']
+
     def self.advertised
       where(advertise: true)
     end

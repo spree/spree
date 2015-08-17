@@ -11,6 +11,8 @@ module Spree
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
 
+    self.whitelisted_ransackable_attributes = ['description']
+
     def self.default_tax
       where(default_tax: true).first
     end

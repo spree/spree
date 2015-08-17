@@ -7,6 +7,8 @@ module Spree
 
     make_permalink field: :number, prefix: 'T'
 
+    self.whitelisted_ransackable_attributes = %w[reference source_location_id destination_location_id closed_at created_at number]
+
     def to_param
       number
     end

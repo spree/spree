@@ -34,6 +34,8 @@ module Spree
 
     end
 
+    self.whitelisted_ransackable_attributes = ['memo']
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
     end

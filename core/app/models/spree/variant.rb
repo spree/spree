@@ -43,6 +43,9 @@ module Spree
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
 
+    self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
+    self.whitelisted_ransackable_attributes = %w[weight sku]
+
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
