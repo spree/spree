@@ -15,6 +15,8 @@ module Spree
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
 
+    self.whitelisted_ransackable_attributes = ['count_on_hand', 'stock_location_id']
+
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end

@@ -22,6 +22,8 @@ module Spree
 
     before_save :normalize_blank_values
 
+    self.whitelisted_ransackable_attributes = ['code', 'path', 'promotion_category_id']
+
     def self.advertised
       where(advertise: true)
     end

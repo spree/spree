@@ -40,7 +40,7 @@ module Spree
       -> { where is_master: true },
       inverse_of: :product,
       class_name: 'Spree::Variant'
-      
+
     has_many :variants,
       -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
       inverse_of: :product,
@@ -90,6 +90,9 @@ module Spree
     alias :options :product_option_types
 
     after_initialize :ensure_master
+
+    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_attributes = %w[slug]
 
     def to_param
       slug

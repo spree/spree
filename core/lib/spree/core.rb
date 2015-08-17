@@ -49,6 +49,7 @@ end
 
 require 'spree/core/version'
 
+require 'spree/core/ransackable_attributes'
 require 'spree/core/mail_interceptor'
 require 'spree/core/mail_method'
 require 'spree/core/mail_settings'
