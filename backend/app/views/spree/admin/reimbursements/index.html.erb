@@ -31,7 +31,7 @@
           <td><%= reimbursement.total %></td>
           <td>
             <% if reimbursement.customer_return %>
-              <%= link_to reimbursement.customer_return.number, admin_order_customer_return_path(@order, reimbursement.customer_return) %>
+              <%= link_to reimbursement.customer_return.number, spree.edit_admin_order_customer_return_path(@order, reimbursement.customer_return) %>
             <% end %>
           </td>
           <td>
@@ -41,10 +41,10 @@
           </td>
           <td><%= pretty_time(reimbursement.created_at) %></td>
           <td class="actions">
-            <% if !reimbursement.reimbursed? %>
-              <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
-            <% else %>
-              <%= link_to_with_icon('search', Spree.t(:details), spree.edit_admin_order_reimbursement_path(@order, reimbursement), no_text: true, class: "btn btn-default btn-sm") if can?(:view, reimbursement) %>
+            <% if !reimbursement.reimbursed? && can?(:edit, reimbursement) %>
+              <%= link_to_edit_url(spree.edit_admin_order_reimbursement_path(@order, reimbursement), no_text: true)  %>
+            <% elsif can?(:view, reimbursement) %>
+              <%= link_to_with_icon('search', Spree.t(:details), spree.edit_admin_order_reimbursement_path(@order, reimbursement), no_text: true, class: "btn btn-default btn-sm") %>
             <% end %>
           </td>
         </tr>

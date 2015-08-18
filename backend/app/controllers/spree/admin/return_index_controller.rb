@@ -21,7 +21,8 @@ module Spree
         if params[:q][:not_reimbursed]
           # results of 2 scopes to show the not reimbursed customer returns
           # looking forward to https://github.com/rails/rails/pull/16052
-          @collection = resource.where(id: resource.without_reimbursements.ids + resource.with_pending_reimbursements.ids)
+          ids = (resource.without_reimbursements.ids + resource.with_pending_reimbursements.ids) - resource.with_reimbursed_reimbursements.ids
+          @collection = resource.where(id: ids)
         else
           @collection = resource.all
         end

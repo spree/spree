@@ -26,6 +26,10 @@ module Spree
       joins(:reimbursements).where(:'spree_reimbursements.reimbursement_status' => 'pending')
     }
 
+    scope :with_reimbursed_reimbursements, -> {
+      joins(:reimbursements).where(:'spree_reimbursements.reimbursement_status' => 'reimbursed')
+    }
+
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
     end
