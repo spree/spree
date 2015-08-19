@@ -31,6 +31,9 @@ table.table {
       }
     }
   }
+  &.valign-top tbody tr td {
+    vertical-align: top;
+  }
 }
 
 .table-active-filters {
