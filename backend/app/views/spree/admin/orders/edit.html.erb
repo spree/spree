@@ -81,14 +81,25 @@
                 <%= pretty_time(@order.completed_at) %>
               </td>
             </tr>
-            <tr>
-              <td>
-                <%= Spree.t(:guest) %>
-              </td>
-              <td>
-                <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-              </td>
-            </tr>
+            <% if @order.user.nil? %>
+              <tr>
+                <td>
+                  <%= Spree.t(:guest) %>
+                </td>
+                <td>
+                  <%= Spree.t(:say_yes) %>
+                </td>
+              </tr>
+            <% else %>
+              <tr>
+                <td>
+                  <%= Spree.t(:customer) %>
+                </td>
+                <td>
+                  <%= link_to @order.user.email, edit_admin_user_path(@order.user) %>
+                </td>
+              </tr>
+            <% end %>
           <% end %>
 
           <% if @order.approved? %>
