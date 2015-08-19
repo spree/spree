@@ -316,6 +316,10 @@ en:
           attributes:
             base:
               cannot_destroy_default_store: Cannot destroy the default Store.
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items.
 
   devise:
     confirmations:

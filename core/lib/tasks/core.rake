@@ -98,4 +98,35 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     puts "Bootstrap Complete.\n\n"
   end
 
+
+
+  desc "Fix orphan line items after upgrading to Spree 3.1: only needed if you have line items attached to deleted records with Slug (product) and SKU (variant) duplicates of non-deleted records."
+  task :fix_orphan_line_items  do |t, args|
+    def get_input
+      STDOUT.flush
+      input = STDIN.gets.chomp
+      case input.upcase
+        when "Y"
+          return true
+
+        when "N"
+          puts "aborting ....."
+          return false
+        else
+          return true
+      end
+    end
+
+    puts "WARNING: This task will re-associate any line_items associated with deleted variants to non-deleted variants with matching SKUs. Because other attributes and product associations may switch during the re-association, this may have unintended side-effects. If this task finishes successfully, line items for old order should no longer be orphaned from their varaints. You should run this task after you have already run the db migratoin AddDiscontinuedToProductsAndVariants. If the db migration did not warn you that it was leaving deleted records in place because of duplicate SKUs, then you do not need to run this rake task."
+    puts "Are you sure you want to continue? (Y/n):"
+    if get_input
+      puts "looping through all your line items (this may take a while)..."
+
+      Spree::LineItem.all.each do |line_item|
+        if line_item.variant.nil && ! line_item.variant.with_deleted.nil?
+          puts "attempting to fix line_item #{line_item} ..."
+        end
+      end
+    end
+  end
 end
