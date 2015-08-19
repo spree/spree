@@ -28,6 +28,13 @@
         <%= f.label :tax_category_id, Spree.t(:tax_category) %>
         <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
       </div>
+
+      <div class="form-group" data-hook="discontinue_on">
+
+          <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
+          <%= f.error_message_on :discontinue_on %>
+          <%= f.text_field :discontinue_on, value: datepicker_field_value(@variant.discontinue_on), class: 'datepicker form-control' %>
+      </div>
     </div>
   </div>
 
