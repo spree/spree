@@ -180,7 +180,7 @@ show_flash = function(type, message) {
     flash_div = $('<div class="alert alert-' + type + '" />');
     $('#content').prepend(flash_div);
   }
-  flash_div.html(message).show().delay(5000).slideUp();
+  flash_div.html(message).show().delay(10000).slideUp();
 }
 
 
