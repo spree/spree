@@ -298,6 +298,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: "Must match order currency"
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Cannot delete products once they are attached to line items.
         spree/refund:
           attributes:
             amount:

@@ -125,6 +125,15 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       Spree::LineItem.all.each do |line_item|
         if line_item.variant.nil && ! line_item.variant.with_deleted.nil?
           puts "attempting to fix line_item #{line_item} ..."
+          variant = line_item.variant.with_deleted
+
+          # look for a an active Variant with a matchign sku
+          active_variant = Spree::Variant.find_by(sku: variant.sku)
+          if !active_variant
+            puts "WARNING: Unable to find a matching SKU for #{variant.sku}; leaving line item orphaned"
+          else
+            line_item.update_column(variant_id, active_variant.id)
+          end
         end
       end
     end

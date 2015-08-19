@@ -236,7 +236,7 @@ module Spree
 
       def ensure_no_line_items
         if line_items.any?
-          errors.add(:base, Spree.t(:variant_has_line_items))
+          errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
           return false
         end
       end
