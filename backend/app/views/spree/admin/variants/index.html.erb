@@ -15,26 +15,26 @@
       </tr>
     </thead>
     <tbody>
-    <% @variants.each do |variant| %>
-      <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
-        <td>
-          <% if can? :edit, variant %>
-            <span class="icon icon-move js-sort-handle"></span>
-          <% end %>
-        </td>
-        <td><%= variant.options_text %></td>
-        <td><%= variant.display_price.to_html %></td>
-        <td><%= variant.sku %></td>
-        <td class="actions actions-2 text-right">
-          <%= link_to_edit(variant, :no_text => true) if can?(:edit, variant) && !variant.deleted? %>
-          <%= link_to_delete(variant, :no_text => true) if can?(:destroy, variant) && !variant.deleted? %>
-        </td>
-      </tr>
-      <% end %>
-      <% unless @product.has_variants? %>
-        <tr>
-          <td colspan="5"><%= Spree.t(:none) %></td>
+      <% @variants.each do |variant| %>
+        <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
+          <td>
+            <% if can? :edit, variant %>
+              <span class="icon icon-move js-sort-handle"></span>
+            <% end %>
+          </td>
+          <td><%= variant.options_text %></td>
+          <td><%= variant.display_price.to_html %></td>
+          <td><%= variant.sku %></td>
+          <td class="actions actions-2 text-right">
+            <%= link_to_edit(variant, :no_text => true) if can?(:edit, variant) && !variant.deleted? %>
+            <%= link_to_delete(variant, :no_text => true) if can?(:destroy, variant) && !variant.deleted? %>
+          </td>
         </tr>
+        <% end %>
+        <% unless @product.has_variants? %>
+          <tr>
+            <td colspan="5"><%= Spree.t(:none) %></td>
+          </tr>
       <% end %>
     </tbody>
   </table>
