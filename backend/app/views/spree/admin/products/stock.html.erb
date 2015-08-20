@@ -1,5 +1,5 @@
-<%= render :partial => 'spree/admin/shared/product_tabs', :locals => { :current => 'Stock Management' } %>
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @product } %>
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Stock Management' } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <% if can? :create, Spree::StockMovement %>
   <div id="add_stock_form" class="panel panel-default">
@@ -11,23 +11,18 @@
   <table class="table table-bordered" id="listing_product_stock">
     <thead>
       <tr data-hook="admin_product_stock_management_index_headers">
-        <th colspan="2"><%= Spree.t(:variant) %></th>
-        <th colspan="3"><%= Spree.t(:stock_location_info) %></th>
+        <th><%= Spree.t(:variant) %></th>
+        <th colspan="3"></th>
       </tr>
     </thead>
     <tbody>
       <% @variants.each do |variant| %>
         <% if variant.stock_items.present? %>
           <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows">
-            <td class="image text-center">
-              <% if variant.images.present? %>
-                <%= image_tag variant.images.first.attachment.url(:mini) %>
-              <% end %>
-            </td>
             <td>
               <%= variant.sku_and_options_text %>
               <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :post, class: 'toggle_variant_track_inventory' do %>
-                <div class="checkbox">
+                <div class="checkbox no-margin-bottom">
                   <%= label_tag :track_inventory do %>
                     <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
                                       class: 'track_inventory_checkbox' %>
@@ -40,8 +35,8 @@
               <% end if can?(:update, @product) && can?(:update, variant) %>
             </td>
 
-            <td colspan="3" class="stock_location_info">
-              <table class="table table-bordered no-marginb">
+            <td colspan="3" class="stock_location_info" style="padding: 0;">
+              <table class="table no-margin-bottom">
                 <thead>
                   <th><%= Spree.t(:stock_location) %></th>
                   <th class="text-center"><%= Spree.t(:count_on_hand) %></th>
@@ -52,7 +47,9 @@
                   <% variant.stock_items.each do |item| %>
                     <% next unless @stock_locations.include?(item.stock_location) %>
                     <tr id="stock-item-<%= item.id %>">
-                      <td><%= item.stock_location.name %></td>
+                      <td data-hook="stock_location_name">
+                        <%= item.stock_location.name %>
+                      </td>
                       <td class="text-center"><%= item.count_on_hand %></td>
                       <td class="text-center">
                         <%= form_tag admin_stock_item_path(item), method: :put, class: 'toggle_stock_item_backorderable' do %>
@@ -62,7 +59,7 @@
                                 id: "stock_item_backorderable_#{item.stock_location.id}" %>
                         <% end if can? :update, item %>
                       </td>
-                      <td class="actions actions-1 text-center">
+                      <td class="actions text-center" width="35">
                         <%= link_to_with_icon('delete', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, item %>
                       </td>
                     </tr>
