@@ -9,6 +9,7 @@ module Spree
     belongs_to :stock_location
     belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
     before_create :generate_number
+    after_create :authorize_return
 
     after_save :generate_expedited_exchange_reimbursements
 
@@ -60,6 +61,10 @@ module Spree
     end
 
     private
+
+      def authorize_return
+        order.authorize_return!
+      end
 
       def must_have_shipped_units
         if order.nil? || order.inventory_units.shipped.none?
