@@ -226,9 +226,13 @@ $(document).ready(function(){
   });
 
   var uniqueId = 1;
-  $('.spree_add_fields').click(function() {
+  $('body').on('click', '.spree_add_fields', function() {
     var target = $(this).data("target");
-    var new_table_row = $(target + ' tr:visible:last').clone();
+    var $target_tr = $(target + ' tr:visible:last');
+
+    // if we clone a select 2, destroy it first, we enable it later
+    $('select.select2', $target_tr).select2("destroy");
+    var new_table_row = $target_tr.clone();
     var new_id = new Date().getTime() + (uniqueId++);
     new_table_row.find("input, select").each(function () {
       var el = $(this);
@@ -236,15 +240,22 @@ $(document).ready(function(){
       el.prop("id", el.prop("id").replace(/\d+/, new_id))
       el.prop("name", el.prop("name").replace(/\d+/, new_id))
     })
-    // When cloning a new row, set the href of all icons to be an empty "#"
-    // This is so that clicking on them does not perform the actions for the
-    // duplicated row
-    new_table_row.find("a").each(function () {
-      var el = $(this);
-      el.prop('href', '#');
-    })
+    // When cloning a new row, remove all buttons, the actions dont
+    // work so why display them
+    new_table_row.find("a.btn").each(function () {
+      $(this).remove();
+    });
+    new_table_row.find("select.select2").each(function () {
+      // enable the select 2 in the new row
+      // set the first value by default
+      $(this).select2().select2('val', $('option:eq(0)', $(this)).val());
+    });
+    // re-enable the select 2 of the original tr
+    if($('select.select2', $target_tr).length){
+      $('select.select2', $target_tr).select2();
+    }
     $(target).prepend(new_table_row);
-  })
+  });
 
   $('body').on('click', '.delete-resource', function() {
     var el = $(this);

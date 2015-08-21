@@ -3,27 +3,27 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_object_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_property', :id => 'new_property_link' } %>
+  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success", icon: 'add', data: { update: 'new_property' }, id: 'new_property_link' } %>
 <% end %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_property_sidebar">
     <%= search_form_for [:admin, @search] do |f| %>
 
-      <%- locals = {:f => f} %>
+      <%- locals = {f: f} %>
 
       <div class="row">
         <div class="col col-md-6">
           <div data-hook="admin_property_index_search" class="form-group">
             <%= f.label :name_cont, Spree.t(:name) %>
-            <%= f.text_field :name_cont, :class => "form-control js-quick-search-target" %>
+            <%= f.text_field :name_cont, class: "form-control js-quick-search-target" %>
           </div>
         </div>
 
         <div class="col-md-6">
           <div class="form-group">
             <%= f.label :presentation_cont, Spree.t(:presentation) %>
-            <%= f.text_field :presentation_cont, :class => "form-control" %>
+            <%= f.text_field :presentation_cont, class: "form-control" %>
           </div>
         </div>
       </div>
@@ -51,8 +51,8 @@
           <td><%= property.name %></td>
           <td><%= property.presentation %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_edit(property, :no_text => true) %>
-            <%= link_to_delete(property, :no_text => true) %>
+            <%= link_to_edit(property, no_text: true) %>
+            <%= link_to_delete(property, no_text: true) %>
           </td>
         </tr>
       <% end %>

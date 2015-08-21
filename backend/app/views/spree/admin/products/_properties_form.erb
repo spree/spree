@@ -3,8 +3,8 @@
 <% end %>
 
 <% f.fields_for :product_properties do |properties_form| %>
-    <div data-hook="value">
-      <%= properties_form.label :value, properties_form.object.property.presentation %>
-      <%= properties_form.text_field :value, :class => "form-control" %>
-    </div>
+  <div data-hook="value">
+    <%= properties_form.label :value, properties_form.object.property.presentation %>
+    <%= properties_form.text_field :value, class: 'form-control' %>
+  </div>
 <% end %>
