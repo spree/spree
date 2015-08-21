@@ -25,8 +25,8 @@
       </div>
     <% end %>
   <% end %>
-  
-  <% if @order.has_step?("payment") %>
+
+  <% if order.has_step?("payment") %>
     <div class="col-md-3">
       <h4><%= Spree.t(:payment_information) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:payment) unless order.completed? %></h4>
       <div class="payment-info">
