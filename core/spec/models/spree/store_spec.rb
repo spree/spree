@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Store, :type => :model do
+describe Spree::Store, type: :model do
 
-  describe ".by_url" do
+  describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
 
-    it "should find stores by url" do
+    it 'should find stores by url' do
       by_domain = Spree::Store.by_url('www.subdomain.com')
 
       expect(by_domain).to include(store)
@@ -30,20 +30,20 @@ describe Spree::Store, :type => :model do
     end
   end
 
-  describe ".default" do
+  describe '#default' do
     let!(:store)    { create(:store) }
     let!(:store_2)  { create(:store, default: true) }
 
-    it "should ensure there is a default if one doesn't exist yet" do
-      expect(store_2.default).to be true
+    it 'should ensure there is a default if one does not exist yet' do
+      expect(store_2.default).to be(true)
     end
 
-    it "should ensure there is only one default" do
+    it 'should ensure there is only one default' do
       [store, store_2].each(&:reload)
 
       expect(Spree::Store.where(default: true).count).to eq(1)
-      expect(store_2.default).to be true
-      expect(store.default).not_to be true
+      expect(store_2.default).to be(true)
+      expect(store.default).to_not be(true)
     end
   end
 
