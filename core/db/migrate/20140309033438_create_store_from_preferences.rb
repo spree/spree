@@ -6,7 +6,7 @@ class CreateStoreFromPreferences < ActiveRecord::Migration
         false
       end
     end
-    
+
     preference_store = Spree::Preferences::Store.instance
     if store = Spree::Store.where(default: true).first
       store.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
@@ -16,6 +16,7 @@ class CreateStoreFromPreferences < ActiveRecord::Migration
     else
       # we set defaults for the things we now require
       Spree::Store.new do |s|
+        s.default           = true
         s.name              = preference_store.get 'spree/app_configuration/site_name' do
           'Spree Demo Site'
         end

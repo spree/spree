@@ -2,6 +2,8 @@ require 'spec_helper'
 
 # Gigantic regression test for #2191
 describe "Free shipping promotions", :type => :feature, :js => true do
+  before { create(:store, default: true) }
+
   let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
   let!(:state) { create(:state, :name => "Alabama", :country => country) }
   let!(:zone) { create(:zone) }

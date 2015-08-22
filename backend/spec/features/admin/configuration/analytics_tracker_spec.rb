@@ -3,6 +3,8 @@ require 'spec_helper'
 describe "Analytics Tracker", :type => :feature do
   stub_authorization!
 
+  before { create(:store, default: true) }
+
   context "index" do
     before(:each) do
       2.times { create(:tracker, :environment => "test") }

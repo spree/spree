@@ -4,9 +4,7 @@ describe Spree::OrdersController, :type => :controller do
   let(:user) { create(:user) }
 
   context "Order model mock" do
-    let(:order) do
-      Spree::Order.create!
-    end
+    let!(:order) { create(:order) }
 
     before do
       allow(controller).to receive_messages(:try_spree_current_user => user)

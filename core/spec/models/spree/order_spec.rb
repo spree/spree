@@ -6,7 +6,7 @@ class FakeCalculator < Spree::Calculator
   end
 end
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model, db: :isolate do
   let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
   let(:order) { stub_model(Spree::Order, :user => user) }
 
@@ -107,7 +107,13 @@ describe Spree::Order, :type => :model do
   end
 
   context "#finalize!" do
-    let(:order) { Spree::Order.create!(email: 'test@example.com') }
+    let(:store) { create(:store, default: true) }
+
+    let(:order) do
+      store.orders.create!(
+        email: 'test@example.com',
+      )
+    end
 
     before do
       order.update_column :state, 'complete'

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model, db: :isolate do
+  before { create(:store, default: true) }
+
   let(:order) { stub_model("Spree::Order") }
 
   context "#finalize!" do

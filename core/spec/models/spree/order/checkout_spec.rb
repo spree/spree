@@ -1,8 +1,9 @@
 require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
-describe Spree::Order, :type => :model do
-  let(:order) { Spree::Order.new }
+describe Spree::Order, type: :model, db: :isolate do
+  let!(:store) { create(:store, default: true) }
+  let(:order)  { store.orders.new              }
 
   def assert_state_changed(order, from, to)
     state_change_exists = order.state_changes.where(:previous_state => from, :next_state => to).exists?

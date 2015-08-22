@@ -10,6 +10,7 @@ describe "Shipping Methods", :type => :feature do
   end
 
   before do
+    create(:store, default: true)
     Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     allow_any_instance_of(Spree::Order).to receive_messages(:require_email => false)

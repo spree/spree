@@ -5,6 +5,9 @@ require 'spec_helper'
 # Walking through the entire checkout process is rather tedious, don't you think?
 describe Spree::CheckoutController, type: :controller do
   render_views
+
+  before { create(:store, default: true) }
+
   let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
 

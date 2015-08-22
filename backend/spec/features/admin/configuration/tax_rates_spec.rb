@@ -6,6 +6,7 @@ describe "Tax Rates", :type => :feature do
   let!(:tax_rate) { create(:tax_rate, :calculator => stub_model(Spree::Calculator)) }
 
   before do
+    create(:store, default: true)
     visit spree.admin_path
     click_link "Configuration"
   end

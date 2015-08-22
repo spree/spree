@@ -5,6 +5,8 @@ describe Spree::TestMailer, :type => :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
+  before { create(:store, default: true) }
+
   let(:user) { create(:user) }
 
   context ":from not set explicitly" do

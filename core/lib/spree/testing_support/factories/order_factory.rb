@@ -4,7 +4,7 @@ FactoryGirl.define do
     bill_address
     completed_at nil
     email { user.email }
-    store
+    store { Spree::Store.find_by(default: true) || create(:store, default: true) }
 
     transient do
       line_items_price BigDecimal.new(10)

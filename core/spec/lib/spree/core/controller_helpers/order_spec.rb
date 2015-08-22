@@ -7,6 +7,8 @@ end
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
+  let!(:store) { create(:store, default: true) }
+
   let(:user)        { create(:user)              }
   let(:order)       { create(:order, user: user) }
   let(:guest_token) { nil                        }
@@ -291,7 +293,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           currency:        'USD',
           user:            user,
           created_by:      user,
-          store:           nil,
+          store:           store,
           last_ip_address: '0.0.0.0',
           guest_token:     guest_token
         )

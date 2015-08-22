@@ -168,6 +168,8 @@ describe Spree::LineItem, :type => :model do
   end
 
   context "has inventory (completed order so items were already unstocked)" do
+    before { create(:store, default: true) }
+
     let(:order) { Spree::Order.create!(email: 'spree@example.com') }
     let(:variant) { create(:variant) }
 

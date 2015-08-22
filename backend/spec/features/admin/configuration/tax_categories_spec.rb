@@ -4,6 +4,7 @@ describe "Tax Categories", :type => :feature do
   stub_authorization!
 
   before(:each) do
+    create(:store, default: true)
     visit spree.admin_path
     click_link "Configuration"
   end

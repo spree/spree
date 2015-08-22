@@ -4,6 +4,7 @@ describe Spree::Admin::GeneralSettingsController, type: :controller do
   let(:user) { create(:user) }
 
   before do
+    create(:store, default: true)
     allow(controller).to receive_messages :spree_current_user => user
     user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
   end

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe "Checkout", type: :feature, inaccessible: true do
+  before { create(:store, default: true) }
 
   include_context 'checkout setup'
 

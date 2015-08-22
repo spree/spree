@@ -4,6 +4,7 @@ describe "Zones", :type => :feature do
   stub_authorization!
 
   before(:each) do
+    create(:store, default: true)
     Spree::Zone.delete_all
     visit spree.admin_path
     click_link "Configuration"

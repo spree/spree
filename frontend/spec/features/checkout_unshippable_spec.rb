@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "checkout with unshippable items", type: :feature, inaccessible: true do
+  before { create(:store, default: true) }
+
   let!(:stock_location) { create(:stock_location) }
   let(:order) { OrderWalkthrough.up_to(:delivery) }
 

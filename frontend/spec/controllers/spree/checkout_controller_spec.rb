@@ -1,9 +1,11 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController, :type => :controller do
-  let(:token) { 'some_token' }
-  let(:user) { stub_model(Spree::LegacyUser) }
-  let(:order) { create(:order_with_totals) }
+  let!(:store) { create(:store, default: true) }
+
+  let(:token) { 'some_token'                             }
+  let(:user)  { stub_model(Spree::LegacyUser)            }
+  let(:order) { create(:order_with_totals, store: store) }
 
   let(:address_params) do
     address = build(:address)

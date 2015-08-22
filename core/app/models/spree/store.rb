@@ -4,8 +4,7 @@ module Spree
     validates :name, presence: true
     validates :url, presence: true
     validates :mail_from_address, presence: true
-
-    before_save :ensure_default_exists_and_is_unique
+    validates :default, uniqueness: { if: :default? }
 
     has_many :orders
 
@@ -19,18 +18,10 @@ module Spree
     end
 
     def self.default
-      where(default: true).first || new
+      find_by(default: true) or fail 'Default store does not exist'
     end
 
     private
-
-    def ensure_default_exists_and_is_unique
-      if default
-        Store.where.not(id: id).update_all(default: false)
-      elsif Store.where(default: true).count == 0
-        self.default = true
-      end
-    end
 
     def validate_not_default
       if default

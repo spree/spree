@@ -1,9 +1,11 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::OrderMailer, :type => :mailer do
+describe Spree::OrderMailer, type: :mailer, db: :isolate do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
+
+  before { create(:store, default: true) }
 
   let(:order) do
     order = stub_model(Spree::Order)

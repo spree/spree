@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'orders', :type => :feature do
+  before { create(:store, default: true) }
+
   let(:order) { OrderWalkthrough.up_to(:complete) }
   let(:user) { create(:user) }
 

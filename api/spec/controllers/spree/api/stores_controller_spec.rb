@@ -5,7 +5,7 @@ module Spree
     render_views
 
     let!(:store) do
-      create(:store, name: "My Spree Store", url: "spreestore.example.com")
+      create(:store, default: true, name: 'My Spree Store', url: 'spreestore.example.com')
     end
 
     before do

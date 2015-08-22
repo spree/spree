@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 describe "Visiting Products", type: :feature, inaccessible: true do
+  before { create(:store, default: true) }
+
   include_context "custom products"
 
   let(:store_name) do

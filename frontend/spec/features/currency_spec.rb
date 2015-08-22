@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Switching currencies in backend", :type => :feature do
+  before { create(:store, default: true) }
+
   before do
     create(:base_product, :name => "RoR Mug")
   end

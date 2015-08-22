@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Store, type: :model do
+describe Spree::Store, type: :model, db: :isolate do
 
   describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
@@ -15,9 +15,7 @@ describe Spree::Store, type: :model do
   end
 
   describe '.current' do
-    # there is a default store created with the test_app rake task.
-    let!(:store_1) { Spree::Store.first || create(:store) }
-
+    let!(:store_1) { create(:store, default: true,  url: 'spreecommerce.com') }
     let!(:store_2) { create(:store, default: false, url: 'www.subdomain.com') }
 
     it 'should return default when no domain' do
@@ -47,4 +45,13 @@ describe Spree::Store, type: :model do
     end
   end
 
+  describe '.default' do
+    context 'when default store exists' do
+      let!(:store) { create(:store, default: true) }
+
+      it 'returns the default store' do
+        expect(Spree::Store.default).to eql(store)
+      end
+    end
+  end
 end

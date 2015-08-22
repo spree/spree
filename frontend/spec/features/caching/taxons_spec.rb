@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'taxons', :type => :feature, :caching => true do
+  before { create(:store, default: true) }
+
   let!(:taxonomy) { create(:taxonomy) }
   let!(:taxon) { create(:taxon, :taxonomy => taxonomy) }
 

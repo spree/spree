@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'current order tracking', :type => :controller do
+  before { create(:store, default: true) }
+
   let(:user) { create(:user) }
 
   controller(Spree::StoreController) do
@@ -32,7 +34,10 @@ end
 describe Spree::OrdersController, :type => :controller do
   let(:user) { create(:user) }
 
-  before { allow(controller).to receive_messages(:try_spree_current_user => user) }
+  before do
+    create(:store, default: true)
+    allow(controller).to receive_messages(try_spree_current_user: user)
+  end
 
   describe Spree::OrdersController do
     it "doesn't create a new order out of the blue" do

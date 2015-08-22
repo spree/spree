@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Address", type: :feature, inaccessible: true do
+  before { create(:store, default: true) }
+
   let!(:product) { create(:product, :name => "RoR Mug") }
   let!(:order) { create(:order_with_totals, :state => 'cart') }
 

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'products', :type => :feature, :caching => true do
+  before { create(:store, default: true) }
+
   let!(:product) { create(:product) }
   let!(:product2) { create(:product) }
   let!(:taxonomy) { create(:taxonomy) }

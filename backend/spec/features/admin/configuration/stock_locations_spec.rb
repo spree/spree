@@ -4,6 +4,7 @@ describe "Stock Locations", :type => :feature do
   stub_authorization!
 
   before(:each) do
+    create(:store, default: true)
     country = create(:country)
     visit spree.admin_path
     click_link "Configuration"
@@ -30,7 +31,7 @@ describe "Stock Locations", :type => :feature do
     end
     # Wait for API request to complete.
     wait_for_ajax
-    visit current_path 
+    visit current_path
     expect(page).to have_content("NO STOCK LOCATIONS FOUND")
   end
 
