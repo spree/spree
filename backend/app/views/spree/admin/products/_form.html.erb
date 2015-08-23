@@ -60,6 +60,14 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_discontinued_at">
+        <%= f.field_container :discontinued_at, class: ['form-group'] do %>
+          <%= f.label :discontinued_at, Spree.t(:discontinued_at) %>
+          <%= f.error_message_on :discontinued_at %>
+          <%= f.text_field :discontinued_at, value: datepicker_field_value(@product.discontinued_at), class: 'datepicker form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="well">
           <%= f.label :skus, Spree.t(:sku).pluralize %>
