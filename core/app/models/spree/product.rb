@@ -148,7 +148,15 @@ module Spree
     # deleted products and products with nil or future available_on date
     # are not available
     def available?
-      !(available_on.nil? || available_on.future?) && !deleted?
+      !(available_on.nil? || available_on.future?) && !deleted? && !discontinued?
+    end
+
+    def discontinue!
+      update_column(:discontinued_at,  Time.now)
+    end
+
+    def discontinued?
+      discontinued_at ? true : false
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants

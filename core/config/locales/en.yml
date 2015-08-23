@@ -77,6 +77,7 @@ en:
         name: Name
       spree/product:
         available_on: Available On
+        discontinued_at: Discontinued At
         cost_currency: Cost Currency
         cost_price: Cost Price
         description: Description

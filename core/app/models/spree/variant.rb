@@ -225,6 +225,14 @@ module Spree
       (width || 0) + (height || 0) + (depth || 0)
     end
 
+    def discontinue!
+      update_column(:discontinued_at,  Time.now)
+    end
+
+    def discontinued?
+      discontinued_at ? true : false
+    end
+
     private
 
       def set_master_out_of_stock
