@@ -54,7 +54,7 @@ spree install my_store
 This will add the Spree gem to your Gemfile, create initializers, copy migrations
 and optionally generate sample products and orders.
 
-If you get an "sh: identify: command not found" error then you can try installing magick.
+If you get an "sh: identify: command not found" error then you can try installing imagemagick.
 ```shell
 brew install imagemagick
 ```
