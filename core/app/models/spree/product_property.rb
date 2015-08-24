@@ -19,10 +19,10 @@ module Spree
     end
 
     def property_name=(name)
-      unless name.blank?
-        unless property = Property.find_by(name: name)
-          property = Property.create(name: name, presentation: name)
-        end
+      if name.present?
+        # don't use `find_by :name` to workaround globalize/globalize#423 bug
+        property = Property.where(name: name).first ||
+                   Property.create(name: name, presentation: name)
         self.property = property
       end
     end
