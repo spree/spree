@@ -152,11 +152,11 @@ module Spree
     end
 
     def discontinue!
-      update_column(:discontinued_at,  Time.now)
+      update_column(:discontinue_on,  Time.now)
     end
 
     def discontinued?
-      discontinued_at ? true : false
+      !!discontinue_on && discontinue_on <= Time.now
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants

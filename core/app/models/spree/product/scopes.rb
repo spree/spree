@@ -187,7 +187,7 @@ module Spree
     end
 
     add_search_scope :not_discontinued do
-      where("#{Product.quoted_table_name}.discontinued_at IS NULL or #{Product.quoted_table_name}.discontinued_at >= ?", Time.zone.now)
+      where("#{Product.quoted_table_name}.discontinue_on IS NULL or #{Product.quoted_table_name}.discontinue_on >= ?", Time.zone.now)
     end
 
     # Can't use add_search_scope for this as it needs a default argument

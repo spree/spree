@@ -60,11 +60,11 @@
         <% end %>
       </div>
 
-      <div data-hook="admin_product_form_discontinued_at">
-        <%= f.field_container :discontinued_at, class: ['form-group'] do %>
-          <%= f.label :discontinued_at, Spree.t(:discontinued_at) %>
-          <%= f.error_message_on :discontinued_at %>
-          <%= f.text_field :discontinued_at, value: datepicker_field_value(@product.discontinued_at), class: 'datepicker form-control' %>
+      <div data-hook="admin_product_form_discontinue_on">
+        <%= f.field_container :discontinue_on, class: ['form-group'] do %>
+          <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
+          <%= f.error_message_on :discontinue_on %>
+          <%= f.text_field :discontinue_on, value: datepicker_field_value(@product.discontinue_on), class: 'datepicker form-control' %>
         <% end %>
       </div>
 

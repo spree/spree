@@ -1,11 +1,11 @@
 class AddDiscontinuedToProductsAndVariants < ActiveRecord::Migration
   def up
-    add_column :spree_products, :discontinued_at, :datetime, after: :available_on
-    add_column :spree_variants, :discontinued_at, :datetime, after: :deleted_at
+    add_column :spree_products, :discontinue_on, :datetime, after: :available_on
+    add_column :spree_variants, :discontinue_on, :datetime, after: :deleted_at
 
-    puts "Warning: This migration changes the meaning of 'deleted'. Before this change, 'deleted' meant products that were no longer being sold in your store. After this change, you can only delete a product or variant if it has not already been sold to a customer (a model-level check enforces this). Instead, you should use the new field 'discontinued_at' for products or variants which were sold in the past but no longer for sale. This fixes bugs when other objects are attached to deleted products and variants. (Even though acts_as_paranoid gem keeps the records in the database, most associations are automatically scoped to exclude the deleted records.) In thew meaning of 'deleted,' you can still use the delete function on products & variants which are *truly user-error mistakes*, specifically before an order has been placed or the items have gone on sale. You also must use the soft-delete function (which still works after this change) to clean up slug (product) and SKU (variant) duplicates. Otherwise, you should generally over ever need to discontinue products.
+    puts "Warning: This migration changes the meaning of 'deleted'. Before this change, 'deleted' meant products that were no longer being sold in your store. After this change, you can only delete a product or variant if it has not already been sold to a customer (a model-level check enforces this). Instead, you should use the new field 'discontinue_on' for products or variants which were sold in the past but no longer for sale. This fixes bugs when other objects are attached to deleted products and variants. (Even though acts_as_paranoid gem keeps the records in the database, most associations are automatically scoped to exclude the deleted records.) In thew meaning of 'deleted,' you can still use the delete function on products & variants which are *truly user-error mistakes*, specifically before an order has been placed or the items have gone on sale. You also must use the soft-delete function (which still works after this change) to clean up slug (product) and SKU (variant) duplicates. Otherwise, you should generally over ever need to discontinue products.
 
-Data Fix: We will attempt to reverse engineer the old meaning of 'deleted' (no longer for sale) to the new database field 'discontinued_at'. However, since Slugs and SKUs cannot be duplicated on Products and Variants, we cannot gaurantee this to be foolproof if you have deteled Products and Variants that have duplicate Slugs or SKUs in non-deleted records. In these cases, we recommend you use the additional rake task to clean up your old records (see rake db:fix_orphan_line_items). If you have such records, this migration will leave them in place, preferring the non-deleted records over the deleted ones. However, since old line items will still be associated with deleted objects, you will still the bugs in your app until you run:
+Data Fix: We will attempt to reverse engineer the old meaning of 'deleted' (no longer for sale) to the new database field 'discontinue_on'. However, since Slugs and SKUs cannot be duplicated on Products and Variants, we cannot gaurantee this to be foolproof if you have deteled Products and Variants that have duplicate Slugs or SKUs in non-deleted records. In these cases, we recommend you use the additional rake task to clean up your old records (see rake db:fix_orphan_line_items). If you have such records, this migration will leave them in place, preferring the non-deleted records over the deleted ones. However, since old line items will still be associated with deleted objects, you will still the bugs in your app until you run:
 
 rake db:fix_orphan_line_items
 
@@ -22,7 +22,7 @@ We will print out a report of the data we are fixing now: "
 
           old_deleted = product.deleted_at
           product.update_column(:deleted_at, nil) # for some reason .recover doesn't appear to be a method
-          product.update_column(:discontinued_at, old_deleted)
+          product.update_column(:discontinue_on, old_deleted)
         else
           puts "leaving product id #{product.id} deleted because there are no line items attached to it..."
         end
@@ -43,7 +43,7 @@ We will print out a report of the data we are fixing now: "
           puts "recovering deleted variant id #{variant.id} ... this will un-delete the record and set it to be discontinued"
           old_deleted = variant.deleted_at
           variant.update_column(:deleted_at, nil) # for some reason .recover doesn't appear to be a method
-          variant.update_column(:discontinued_at, old_deleted)
+          variant.update_column(:discontinue_on, old_deleted)
         else
           puts "leaving variant id #{variant.id} deleted because there are no line items attached to it..."
         end
@@ -57,10 +57,10 @@ We will print out a report of the data we are fixing now: "
   end
 
   def down
-    execute "UPDATE `spree_products` SET `deleted_at` = `discontinued_at` WHERE `deleted_at` IS NULL"
-    execute "UPDATE `spree_variants` SET `deleted_at` = `discontinued_at` WHERE `deleted_at` IS NULL"
+    execute "UPDATE `spree_products` SET `deleted_at` = `discontinue_on` WHERE `deleted_at` IS NULL"
+    execute "UPDATE `spree_variants` SET `deleted_at` = `discontinue_on` WHERE `deleted_at` IS NULL"
 
-    remove_column :spree_products, :discontinued_at
-    remove_column :spree_variants, :discontinued_at
+    remove_column :spree_products, :discontinue_on
+    remove_column :spree_variants, :discontinue_on
   end
 end

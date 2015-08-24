@@ -539,7 +539,7 @@ describe Spree::Variant, :type => :model do
     end
 
     let(:variant_discontinued) { build(:variant,
-                                       discontinued_at: Time.now)  }
+                                       discontinue_on: Time.now - 1.day)  }
     it "should be true" do
       expect(variant_discontinued.discontinued?).to be(true)
     end
