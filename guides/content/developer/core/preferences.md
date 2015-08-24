@@ -262,7 +262,7 @@ end
 ```
 
 ***
-Initializing preferences in `config/initializer.rb` will overwrite any changes that were made through the admin user interface when you restart.
+Initializing preferences in `config/initializers/spree.rb` will overwrite any changes that were made through the admin user interface when you restart.
 ***
 
 ### Configuration Through the Admin Interface
