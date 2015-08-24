@@ -63,7 +63,7 @@ module Spree
     private
 
       def authorize_return
-        order.authorize_return!
+        order.authorize_return! unless order.nil?
       end
 
       def must_have_shipped_units

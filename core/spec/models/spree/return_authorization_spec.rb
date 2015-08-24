@@ -84,6 +84,18 @@ describe Spree::ReturnAuthorization, :type => :model do
     end
   end
 
+  describe ".after_create" do
+    describe "#authorize_return" do
+      context "return is authorized" do
+        let(:return_authorization) { create(:return_authorization) }
+        it "order state is 'awaiting_return'" do
+          return_authorization.save
+          expect(return_authorization.order.state).to eq('awaiting_return')
+        end
+      end
+    end
+  end
+
   describe ".before_create" do
     describe "#generate_number" do
       context "number is assigned" do
