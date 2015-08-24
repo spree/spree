@@ -54,6 +54,10 @@ spree install my_store
 This will add the Spree gem to your Gemfile, create initializers, copy migrations
 and optionally generate sample products and orders.
 
+If you get an "sh: identify: command not found" error then you can try installing imagemagick.
+```shell
+brew install imagemagick
+```
 If you get an "Unable to resolve dependencies" error when installing the Spree gem
 then you can try installing just the spree_cmd gem which should avoid any circular
 dependency issues.
