@@ -82,6 +82,7 @@ module Spree
     # If the adjustment has no source, do not attempt to re-calculate the amount.
     # Chances are likely that this was a manually created adjustment in the admin backend.
     def update!(target = nil)
+      amount = self.amount
       return amount if closed?
       if source.present?
         amount = source.compute_amount(target || adjustable)

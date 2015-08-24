@@ -79,6 +79,11 @@ describe Spree::Adjustment do
   end
 
   context '#update!' do
+    # Regression test for #6689
+    it "correctly calculates for adjustments with no source" do
+      expect(adjustment.update!).to eq 5
+    end
+
     context "when adjustment is closed" do
       before { expect(adjustment).to receive(:closed?).and_return(true) }
 
