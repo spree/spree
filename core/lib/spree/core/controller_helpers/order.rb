@@ -33,8 +33,7 @@ module Spree
         #
         # @return [Spree::Order]
         def cart_order
-          @cart_order ||= current_order || Spree::Order.new(
-            store:           current_store,
+          @cart_order ||= current_order || current_store.orders.new(
             user:            try_spree_current_user,
             created_by:      try_spree_current_user,
             last_ip_address: ip_address,
