@@ -188,6 +188,12 @@
 
 
   <div data-hook="admin_product_form_meta">
+    <div data-hook="admin_product_form_meta_title">
+      <%= f.field_container :meta_title, class: ['form-group'] do %>
+        <%= f.label :meta_title, Spree.t(:meta_title) %>
+        <%= f.text_field :meta_title, class: 'form-control' %>
+      <% end %>
+    </div>
 
     <div data-hook="admin_product_form_meta_keywords">
       <%= f.field_container :meta_keywords, class: ['form-group'] do %>
