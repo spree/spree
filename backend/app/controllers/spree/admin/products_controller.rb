@@ -5,7 +5,6 @@ module Spree
 
       before_action :load_data, except: :index
       create.before :create_before
-      update.before :update_before
       helper_method :clone_object_url
 
       def show
@@ -83,7 +82,7 @@ module Spree
       end
 
       def location_after_save
-        spree.edit_admin_product_url(@product)
+        :back
       end
 
       def load_data
@@ -117,13 +116,6 @@ module Spree
       def create_before
         return if params[:product][:prototype_id].blank?
         @prototype = Spree::Prototype.find(params[:product][:prototype_id])
-      end
-
-      def update_before
-        # note: we only reset the product properties if we're receiving a post
-        #       from the form on that tab
-        return unless params[:clear_product_properties]
-        params[:product] ||= {}
       end
 
       def product_includes

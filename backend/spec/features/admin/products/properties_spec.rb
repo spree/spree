@@ -34,7 +34,7 @@ describe "Properties", type: :feature, js: true do
         click_on "Filter"
         fill_in "q_name_cont", with: "size"
         click_on 'Search'
-        
+
         expect(page).to have_content("shirt size")
         expect(page).not_to have_content("shirt fit")
       end
@@ -78,6 +78,8 @@ describe "Properties", type: :feature, js: true do
   end
 
   context "linking a property to a product" do
+    let!(:property_shirt) { create(:property, name: 'shirt', presentation: 'shirt') }
+
     before do
       create(:product)
       visit spree.admin_products_path
@@ -87,11 +89,12 @@ describe "Properties", type: :feature, js: true do
 
     # Regression test for #2279
     it "successfully create and then remove product property" do
+      # create 3 propertys
       fill_in_property
       # Sometimes the page doesn't load before the all check is done
       # lazily finding the element gives the page 10 seconds
-      expect(page).to have_css("tbody#product_properties tr:nth-child(2)")
-      expect(all("tbody#product_properties tr").count).to eq(2)
+      expect(page).to have_css("tbody#product_properties tr:nth-child(1)")
+      expect(all("tbody#product_properties tr").count).to eq(1)
 
       delete_product_property
 
@@ -102,12 +105,13 @@ describe "Properties", type: :feature, js: true do
     it "successfully remove and create a product property at the same time" do
       fill_in_property
 
-      fill_in "product_product_properties_attributes_1_property_name", with: "New Property"
-      fill_in "product_product_properties_attributes_1_value", with: "New Value"
+      click_link 'Add Property'
+      within_row(1) do
+        find("input.form-control").set "New Value"
+      end
 
       delete_product_property
 
-      # Give fadeOut time to complete
       expect(page).not_to have_selector("#product_product_properties_attributes_0_property_name")
       expect(page).not_to have_selector("#product_product_properties_attributes_0_value")
 
@@ -115,14 +119,12 @@ describe "Properties", type: :feature, js: true do
 
       expect(page).not_to have_content("Product is not found")
 
-      check_property_row_count(2)
+      check_property_row_count(1)
     end
 
     def fill_in_property
-      fill_in "product_product_properties_attributes_0_property_name", with: "A Property"
       fill_in "product_product_properties_attributes_0_value", with: "A Value"
       click_button "Update"
-      click_link "Properties"
     end
 
     def delete_product_property

@@ -54,7 +54,7 @@ module Spree
 
     @@payment_attributes = [:amount, :payment_method_id, :payment_method]
 
-    @@product_properties_attributes = [:property_name, :value, :position]
+    @@product_properties_attributes = [:id, :property_id, :value, :position]
 
     @@product_attributes = [
       :name, :description, :available_on, :permalink, :meta_description,

@@ -1,17 +1,17 @@
 <tr class="product_property fields" id="spree_<%= dom_id(f.object) %>" data-hook="product_property">
-  <td>
+  <td width="14">
     <% if f.object.persisted? && can?(:edit, f.object) %>
       <span class="icon icon-move js-sort-handle"></span>
-      <%= f.hidden_field :id %>
     <% end %>
+    <%= f.hidden_field :id %>
   </td>
   <td class='property_name'>
-    <%= f.text_field :property_name, class: 'autocomplete form-control' %>
+    <%= f.select :property_id, @properties.map { |p| [p.name, p.id] }, {}, { selected: (f.object.property ? f.object.property.id : nil), class: "select2" } %>
   </td>
   <td class='value'>
     <%= f.text_field :value, class: 'form-control' %>
   </td>
-  <td class="actions actions-1">
+  <td class="actions" width="100">
     <% if f.object.persisted? && can?(:destroy, f.object) %>
       <%= link_to_delete f.object, no_text: true %>
     <% end %>
