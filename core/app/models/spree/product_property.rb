@@ -6,7 +6,6 @@ module Spree
     belongs_to :property, class_name: 'Spree::Property', inverse_of: :product_properties
 
     validates :property, presence: true
-    validates :value, presence: true
 
     validates_with Spree::Validations::DbMaximumLengthValidator, field: :value
 
