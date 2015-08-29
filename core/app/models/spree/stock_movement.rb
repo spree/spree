@@ -1,6 +1,6 @@
 module Spree
   class StockMovement < Spree::Base
-    belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
+    belongs_to :stock_item, inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
 
     after_create :update_stock_item_quantity
@@ -13,7 +13,7 @@ module Spree
                  allow_nil: true
               }
 
-    scope :recent, -> { order('created_at DESC') }
+    scope :recent, -> { order(created_at: :desc) }
 
     self.whitelisted_ransackable_attributes = ['quantity']
 
