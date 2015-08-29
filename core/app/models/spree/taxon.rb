@@ -9,15 +9,15 @@ module Spree
 
     acts_as_nested_set dependent: :destroy
 
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
+    belongs_to :taxonomy, inverse_of: :taxons
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
-    has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
-    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
+    has_many :prototype_taxons
+    has_many :prototypes, through: :prototype_taxons
 
-    has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon'
-    has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
+    has_many :promotion_rule_taxons
+    has_many :promotion_rules, through: :promotion_rule_taxons
 
     validates :name, presence: true
     validates :meta_keywords, length: { maximum: 255 }
