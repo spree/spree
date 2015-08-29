@@ -442,10 +442,12 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     it 'does not advance the order extra even when called twice' do
-      spree_put :update, state: 'payment', order: { payments_attributes: [ { payment_method_id: payment_method_id } ] }
+      spree_put :update, state: 'payment',
+                         order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
       order.reload
       expect(order.state).to eq 'confirm'
-      spree_put :update, state: 'payment', order: { payments_attributes: [ { payment_method_id: payment_method_id } ] }
+      spree_put :update, state: 'payment',
+                         order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
       order.reload
       expect(order.state).to eq 'confirm'
     end
