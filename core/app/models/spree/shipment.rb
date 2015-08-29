@@ -8,13 +8,13 @@ module Spree
     friendly_id :number, slug_column: :number, use: :slugged
 
 
-    belongs_to :address, class_name: 'Spree::Address', inverse_of: :shipments
-    belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :shipments
-    belongs_to :stock_location, class_name: 'Spree::StockLocation'
+    belongs_to :address, inverse_of: :shipments
+    belongs_to :order, touch: true, inverse_of: :shipments
+    belongs_to :stock_location
 
     has_many :adjustments, as: :adjustable, dependent: :delete_all
     has_many :inventory_units, dependent: :delete_all, inverse_of: :shipment
-    has_many :shipping_rates, -> { order('cost ASC') }, dependent: :delete_all
+    has_many :shipping_rates, -> { order(:cost) }, dependent: :delete_all
     has_many :shipping_methods, through: :shipping_rates
     has_many :state_changes, as: :stateful
 
