@@ -430,4 +430,24 @@ describe Spree::CheckoutController, type: :controller do
     expect { spree_post :update, state: "payment" }.
       to change { order.reload.line_items.length }
   end
+
+  context 'in the payment step' do
+    let(:order) { OrderWalkthrough.up_to(:payment) }
+    let(:payment_method_id) { Spree::PaymentMethod.first.id }
+
+    before do
+      expect(order.state).to eq 'payment'
+      allow(order).to receive_messages user: user
+      allow(order).to receive_messages confirmation_required?: true
+    end
+
+    it 'does not advance the order extra even when called twice' do
+      spree_put :update, state: 'payment', order: { payments_attributes: [ { payment_method_id: payment_method_id } ] }
+      order.reload
+      expect(order.state).to eq 'confirm'
+      spree_put :update, state: 'payment', order: { payments_attributes: [ { payment_method_id: payment_method_id } ] }
+      order.reload
+      expect(order.state).to eq 'confirm'
+    end
+  end
 end
