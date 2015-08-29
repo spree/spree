@@ -156,13 +156,6 @@ module Spree
         @differentiator.missing.each do |variant, quantity|
           @order.contents.remove(variant, quantity)
         end
-
-        # @order.contents.remove did transitively call reload in the past.
-        # Hiding the fact that the machine advanced already to "payment" state.
-        #
-        # As an intermediary step to optimize reloads out of high volume code path
-        # the reload was lifted here and will be removed by later passes.
-        @order.reload
       end
 
       if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
