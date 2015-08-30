@@ -20,9 +20,6 @@
 
 module Spree
   class Product < Spree::Base
-    extend FriendlyId
-    friendly_id :slug_candidates, use: :history
-
     acts_as_paranoid
 
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
@@ -82,7 +79,6 @@ module Spree
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
-    before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
     validates :meta_keywords, length: { maximum: 255 }
@@ -258,10 +254,6 @@ module Spree
       self.master ||= build_master
     end
 
-    def normalize_slug
-      self.slug = normalize_friendly_id(slug)
-    end
-
     def punch_slug
       update_column :slug, "#{Time.now.to_i}_#{slug}" # punch slug with date prefix to allow reuse of original
     end
@@ -313,14 +305,6 @@ module Spree
     # ensures the master variant is flagged as such
     def set_master_variant_defaults
       master.is_master = true
-    end
-
-    # Try building a slug based on the following fields in increasing order of specificity.
-    def slug_candidates
-      [
-        :name,
-        [:name, :sku]
-      ]
     end
 
     def run_touch_callbacks
