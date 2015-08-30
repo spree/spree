@@ -14,7 +14,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['value']
 
     # virtual attributes for use with AJAX completion stuff
-    delegate :name, to: :property, allow_nil: true
+    delegate :name, to: :property, allow_nil: true, prefix: true
 
     def property_name=(name)
       if name.present?
