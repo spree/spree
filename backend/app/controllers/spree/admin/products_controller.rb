@@ -77,10 +77,6 @@ module Spree
 
       protected
 
-      def find_resource
-        Product.with_deleted.friendly.find(params[:id])
-      end
-
       def location_after_save
         :back
       end
