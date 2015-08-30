@@ -2,8 +2,8 @@ module Spree
   class Zone < Spree::Base
     has_many :zone_members, dependent: :destroy, inverse_of: :zone
     has_many :tax_rates, dependent: :destroy, inverse_of: :zone
-    has_many :countries, through: :zone_members, source: :zoneable
-    has_many :states, through: :zone_members, source: :zoneable
+    has_many :countries, through: :zone_members, source: :zoneable, source_type: "Spree::Country"
+    has_many :states, through: :zone_members, source: :zoneable, source_type: "Spree::State"
 
     has_many :shipping_method_zones
     has_many :zones, through: :shipping_method_zones
