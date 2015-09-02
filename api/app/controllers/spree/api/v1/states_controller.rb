@@ -7,8 +7,7 @@ module Spree
         skip_before_action :authenticate_user
 
         def index
-          @states = scope.ransack(params[:q]).result.
-                      includes(:country).order('name ASC')
+          @states = scope.ransack(params[:q]).result.includes(:country)
 
           if params[:page] || params[:per_page]
             @states = @states.page(params[:page]).per(params[:per_page])
@@ -29,9 +28,9 @@ module Spree
           def scope
             if params[:country_id]
               @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
-              return @country.states.accessible_by(current_ability, :read)
+              return @country.states.accessible_by(current_ability, :read).order('name ASC')
             else
-              return State.accessible_by(current_ability, :read)
+              return State.accessible_by(current_ability, :read).order('name ASC')
             end
           end
       end
