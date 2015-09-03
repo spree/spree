@@ -59,9 +59,7 @@ describe Spree::CustomerReturn, :type => :model do
       context "return items are part of different orders" do
         let(:second_order) { create(:order) }
 
-        it "is not valid" do
-          expect(subject).to eq false
-        end
+        it { should be_falsey }
 
         it "adds an error message" do
           subject
@@ -72,9 +70,7 @@ describe Spree::CustomerReturn, :type => :model do
       context "return items are part of the same order" do
         let(:second_order) { first_inventory_unit.order }
 
-        it "is valid" do
-          expect(subject).to eq true
-        end
+        it { should be_truthy }
       end
     end
   end
@@ -120,36 +116,31 @@ describe Spree::CustomerReturn, :type => :model do
     context "return item is not associated yet" do
       let(:customer_return) { build(:customer_return) }
 
-      it "is nil" do
-        expect(subject).to be_nil
-      end
+      it { should be_nil }
     end
 
     context "has an associated return item" do
       let(:return_item) { create(:return_item) }
       let(:customer_return) { build(:customer_return, return_items: [return_item]) }
 
-      it "is the return item's inventory unit's order id" do
-        expect(subject).to eq return_item.inventory_unit.order.id
-      end
+      it { should eq return_item.inventory_unit.order.id }
     end
   end
 
-  context ".after_save" do
+  context ".after_commit" do
     let(:inventory_unit)  { create(:inventory_unit, state: 'shipped', order: create(:shipped_order)) }
     let(:return_item)     { create(:return_item, inventory_unit: inventory_unit) }
 
     context "to the initial stock location" do
-
       it "should mark all inventory units are returned" do
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
         expect(inventory_unit.reload.state).to eq 'returned'
       end
 
       it "should update the stock item counts in the stock location" do
-        expect do
-          create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
-        end.to change { inventory_unit.find_stock_item.count_on_hand }.by(1)
+        create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
+        inventory_unit.shipment.stock_location.run_callbacks(:commit)
+        expect(inventory_unit.shipment.stock_location.stock_items.count).to eq 1
       end
 
       context 'with Config.track_inventory_levels == false' do
@@ -168,7 +159,9 @@ describe Spree::CustomerReturn, :type => :model do
     end
 
     context "to a different stock location" do
-      let(:new_stock_location) { create(:stock_location, :name => "other") }
+      let(:new_stock_location) { create(:stock_location, name: "other") }
+
+      before { new_stock_location.run_callbacks(:commit) }
 
       it "should update the stock item counts in new stock location" do
         expect {
