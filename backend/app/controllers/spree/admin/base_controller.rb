@@ -7,6 +7,7 @@ module Spree
 
       before_action :check_alerts
       before_action :authorize_admin
+      before_action :generate_admin_api_key
 
       protected
 
