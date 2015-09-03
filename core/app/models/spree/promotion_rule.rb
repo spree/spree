@@ -1,7 +1,7 @@
 # Base class for all promotion rules
 module Spree
   class PromotionRule < Spree::Base
-    belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules
+    belongs_to :promotion, inverse_of: :promotion_rules
 
     scope :of_type, ->(t) { where(type: t) }
 

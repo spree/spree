@@ -2,8 +2,8 @@ module Spree
   class Address < Spree::Base
     require 'twitter_cldr'
 
-    belongs_to :country, class_name: "Spree::Country"
-    belongs_to :state, class_name: "Spree::State"
+    belongs_to :country
+    belongs_to :state
 
     has_many :shipments, inverse_of: :address
 

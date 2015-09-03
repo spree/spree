@@ -5,8 +5,8 @@ module Spree
 
     include Spree::DefaultPrice
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :product, touch: true, inverse_of: :variants
+    belongs_to :tax_category
 
     delegate_belongs_to :product, :name, :description, :slug, :available_on,
                         :shipping_category_id, :meta_description, :meta_keywords,
@@ -20,15 +20,12 @@ module Spree
     has_many :stock_locations, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
-    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
-    has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
+    has_many :option_value_variants
+    has_many :option_values, through: :option_value_variants
 
-    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
+    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy
 
-    has_many :prices,
-      class_name: 'Spree::Price',
-      dependent: :destroy,
-      inverse_of: :variant
+    has_many :prices, dependent: :destroy, inverse_of: :variant
 
     before_validation :set_cost_currency
 

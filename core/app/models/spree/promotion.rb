@@ -13,8 +13,8 @@ module Spree
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
-    has_many :order_promotions, class_name: 'Spree::OrderPromotion'
-    has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
+    has_many :order_promotions
+    has_many :orders, through: :order_promotions
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 

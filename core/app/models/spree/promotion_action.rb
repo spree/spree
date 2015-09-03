@@ -4,7 +4,7 @@ module Spree
   class PromotionAction < Spree::Base
     acts_as_paranoid
 
-    belongs_to :promotion, class_name: 'Spree::Promotion'
+    belongs_to :promotion
 
     scope :of_type, ->(t) { where(type: t) }
 

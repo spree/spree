@@ -74,13 +74,13 @@ module Spree
     belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
     alias_attribute :shipping_address, :ship_address
 
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :store
     has_many :state_changes, as: :stateful, dependent: :destroy
-    has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
+    has_many :line_items, -> { order(:created_at) }, dependent: :destroy, inverse_of: :order
     has_many :payments, dependent: :destroy
     has_many :return_authorizations, dependent: :destroy, inverse_of: :order
     has_many :reimbursements, inverse_of: :order
-    has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
+    has_many :adjustments, -> { order(:created_at) }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
@@ -93,8 +93,8 @@ module Spree
              dependent: :destroy,
              inverse_of: :order
 
-    has_many :order_promotions, class_name: 'Spree::OrderPromotion'
-    has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
+    has_many :order_promotions
+    has_many :promotions, through: :order_promotions
 
     has_many :shipments, dependent: :destroy, inverse_of: :order do
       def states

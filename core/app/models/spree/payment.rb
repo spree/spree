@@ -10,9 +10,9 @@ module Spree
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
 
-    belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :payments
+    belongs_to :order, touch: true, inverse_of: :payments
     belongs_to :source, polymorphic: true
-    belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
+    belongs_to :payment_method, inverse_of: :payments
 
     has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
@@ -37,7 +37,7 @@ module Spree
 
     validates :amount, numericality: true
 
-    default_scope { order("#{self.table_name}.created_at") }
+    default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }

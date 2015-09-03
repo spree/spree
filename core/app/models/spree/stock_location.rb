@@ -4,15 +4,15 @@ module Spree
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state, class_name: 'Spree::State'
-    belongs_to :country, class_name: 'Spree::Country'
+    belongs_to :state
+    belongs_to :country
 
     validates_presence_of :name
 
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    after_create :create_stock_items, :if => "self.propagate_all_variants?"
+    after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
 
     def state_text

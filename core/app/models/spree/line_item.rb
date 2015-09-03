@@ -1,9 +1,9 @@
 module Spree
   class LineItem < Spree::Base
     before_validation :invalid_quantity_check
-    belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items, touch: true
-    belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
-    belongs_to :tax_category, class_name: "Spree::TaxCategory"
+    belongs_to :order, inverse_of: :line_items, touch: true
+    belongs_to :variant, inverse_of: :line_items
+    belongs_to :tax_category
 
     has_one :product, through: :variant
 
