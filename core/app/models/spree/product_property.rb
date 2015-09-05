@@ -9,7 +9,7 @@ module Spree
 
     validates_with Spree::Validations::DbMaximumLengthValidator, field: :value
 
-    default_scope { order("#{self.table_name}.position") }
+    default_scope { order(:position) }
 
     self.whitelisted_ransackable_attributes = ['value']
 

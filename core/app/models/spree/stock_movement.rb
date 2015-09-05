@@ -13,7 +13,7 @@ module Spree
                  allow_nil: true
               }
 
-    scope :recent, -> { order('created_at DESC') }
+    scope :recent, -> { order(created_at: :desc) }
 
     self.whitelisted_ransackable_attributes = ['quantity']
 

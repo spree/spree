@@ -1,6 +1,6 @@
 module Spree
   class Country < Spree::Base
-    has_many :states, -> { order('name ASC') }, dependent: :destroy
+    has_many :states, -> { order(:name) }, dependent: :destroy
     has_many :addresses, dependent: :nullify
 
     has_many :zone_members,
