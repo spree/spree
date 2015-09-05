@@ -14,7 +14,7 @@ module Spree
     has_many :products, through: :classifications
 
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
-    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
+    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
 
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon'
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
