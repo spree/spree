@@ -45,12 +45,12 @@ module Spree
       class_name: 'Spree::Variant'
 
     has_many :variants,
-      -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      -> { where(is_master: false).order(:position) },
       inverse_of: :product,
       class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      -> { order(:position) },
       inverse_of: :product,
       class_name: 'Spree::Variant',
       dependent: :destroy

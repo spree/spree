@@ -37,7 +37,7 @@ module Spree
 
     validates :amount, numericality: true
 
-    default_scope { order("#{self.table_name}.created_at") }
+    default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
     scope :with_state, ->(s) { where(state: s.to_s) }
