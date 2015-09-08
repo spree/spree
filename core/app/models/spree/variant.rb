@@ -77,10 +77,6 @@ module Spree
       inventory_units.with_state('backordered').size
     end
 
-    def is_backorderable?
-      Spree::Stock::Quantifier.new(self).backorderable?
-    end
-
     def options_text
       values = self.option_values.sort do |a, b|
         a.option_type.position <=> b.option_type.position
@@ -204,13 +200,9 @@ module Spree
       end
     end
 
-    def can_supply?(quantity=1)
-      Spree::Stock::Quantifier.new(self).can_supply?(quantity)
-    end
+    delegate :total_on_hand, :can_supply?, :backorderable?, to: :quantifier
 
-    def total_on_hand
-      Spree::Stock::Quantifier.new(self).total_on_hand
-    end
+    alias is_backorderable? backorderable?
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
     # This considers both variant tracking flag and site-wide inventory tracking settings
@@ -227,6 +219,10 @@ module Spree
     end
 
     private
+
+      def quantifier
+        Spree::Stock::Quantifier.new(self)
+      end
 
       def set_master_out_of_stock
         if product.master && product.master.in_stock?
