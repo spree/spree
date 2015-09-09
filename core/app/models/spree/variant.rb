@@ -40,10 +40,12 @@ module Spree
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
+    before_destroy :ensure_no_line_items
 
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :not_discontinued, -> { where("#{Variant.quoted_table_name}.discontinue_on IS NULL OR #{Variant.quoted_table_name}.discontinue_on <= ?",  Time.now) }
 
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -57,7 +59,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[weight sku]
 
     def self.active(currency = nil)
-      joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
+      not_discontinued.joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
 
     def self.having_orders
@@ -226,12 +228,27 @@ module Spree
       (width || 0) + (height || 0) + (depth || 0)
     end
 
+    def discontinue!
+      update_column(:discontinue_on,  Time.now)
+    end
+
+    def discontinued?
+      !!discontinue_on && discontinue_on <= Time.now
+    end
+
     private
 
       def set_master_out_of_stock
         if product.master && product.master.in_stock?
           product.master.stock_items.update_all(:backorderable => false)
           product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
+        end
+      end
+
+      def ensure_no_line_items
+        if line_items.any?
+          errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+          return false
         end
       end
 
