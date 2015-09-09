@@ -220,45 +220,45 @@ module Spree
 
     private
 
-      def quantifier
-        Spree::Stock::Quantifier.new(self)
-      end
+    def quantifier
+      Spree::Stock::Quantifier.new(self)
+    end
 
-      def set_master_out_of_stock
-        if product.master && product.master.in_stock?
-          product.master.stock_items.update_all(:backorderable => false)
-          product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
-        end
+    def set_master_out_of_stock
+      if product.master && product.master.in_stock?
+        product.master.stock_items.update_all(:backorderable => false)
+        product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
       end
+    end
 
-      # Ensures a new variant takes the product master price when price is not supplied
-      def check_price
-        if price.nil? && Spree::Config[:require_master_price]
-          raise 'No master variant found to infer price' unless (product && product.master)
-          raise 'Must supply price for variant or master.price for product.' if self == product.master
-          self.price = product.master.price
-        end
-        if currency.nil?
-          self.currency = Spree::Config[:currency]
-        end
+    # Ensures a new variant takes the product master price when price is not supplied
+    def check_price
+      if price.nil? && Spree::Config[:require_master_price]
+        raise 'No master variant found to infer price' unless (product && product.master)
+        raise 'Must supply price for variant or master.price for product.' if self == product.master
+        self.price = product.master.price
       end
+      if currency.nil?
+        self.currency = Spree::Config[:currency]
+      end
+    end
 
-      def set_cost_currency
-        self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
-      end
+    def set_cost_currency
+      self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+    end
 
-      def create_stock_items
-        StockLocation.where(propagate_all_variants: true).each do |stock_location|
-          stock_location.propagate_variant(self)
-        end
+    def create_stock_items
+      StockLocation.where(propagate_all_variants: true).each do |stock_location|
+        stock_location.propagate_variant(self)
       end
+    end
 
-      def in_stock_cache_key
-        "variant-#{id}-in_stock"
-      end
+    def in_stock_cache_key
+      "variant-#{id}-in_stock"
+    end
 
-      def clear_in_stock_cache
-        Rails.cache.delete(in_stock_cache_key)
-      end
+    def clear_in_stock_cache
+      Rails.cache.delete(in_stock_cache_key)
+    end
   end
 end
