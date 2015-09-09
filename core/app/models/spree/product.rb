@@ -126,9 +126,10 @@ module Spree
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
-      option_values_hash.keys.map(&:to_i).each do |id|
-        self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create(option_type_id: id) unless product_option_types.pluck(:option_type_id).include?(id)
+      required_option_type_ids = option_values_hash.keys.map(&:to_i)
+      missing_option_type_ids = required_option_type_ids - option_type_ids
+      missing_option_type_ids.each do |id|
+        product_option_types.create(option_type_id: id)
       end
     end
 
