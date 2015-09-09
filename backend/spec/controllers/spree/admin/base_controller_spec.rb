@@ -24,7 +24,7 @@ describe Spree::Admin::BaseController, type: :controller do
   end
 
   context "#generate_api_key" do
-    let(:user) { mock_model(Spree.user_class) }
+    let(:user) { mock_model(Spree.user_class, has_spree_role?: true) }
 
     before do
       allow(controller).to receive(:authorize_admin) { true }
