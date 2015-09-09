@@ -20,7 +20,7 @@ module Spree
         stock_items.any?(&:backorderable)
       end
 
-      def can_supply?(required)
+      def can_supply?(required = 1)
         total_on_hand >= required || backorderable?
       end
 

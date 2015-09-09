@@ -77,10 +77,6 @@ module Spree
       inventory_units.with_state('backordered').size
     end
 
-    def is_backorderable?
-      Spree::Stock::Quantifier.new(self).backorderable?
-    end
-
     def options_text
       values = self.option_values.sort do |a, b|
         a.option_type.position <=> b.option_type.position
@@ -204,13 +200,9 @@ module Spree
       end
     end
 
-    def can_supply?(quantity=1)
-      Spree::Stock::Quantifier.new(self).can_supply?(quantity)
-    end
+    delegate :total_on_hand, :can_supply?, :backorderable?, to: :quantifier
 
-    def total_on_hand
-      Spree::Stock::Quantifier.new(self).total_on_hand
-    end
+    alias is_backorderable? backorderable?
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
     # This considers both variant tracking flag and site-wide inventory tracking settings
@@ -228,41 +220,45 @@ module Spree
 
     private
 
-      def set_master_out_of_stock
-        if product.master && product.master.in_stock?
-          product.master.stock_items.update_all(:backorderable => false)
-          product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
-        end
-      end
+    def quantifier
+      Spree::Stock::Quantifier.new(self)
+    end
 
-      # Ensures a new variant takes the product master price when price is not supplied
-      def check_price
-        if price.nil? && Spree::Config[:require_master_price]
-          raise 'No master variant found to infer price' unless (product && product.master)
-          raise 'Must supply price for variant or master.price for product.' if self == product.master
-          self.price = product.master.price
-        end
-        if currency.nil?
-          self.currency = Spree::Config[:currency]
-        end
+    def set_master_out_of_stock
+      if product.master && product.master.in_stock?
+        product.master.stock_items.update_all(backorderable: false)
+        product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
       end
+    end
 
-      def set_cost_currency
-        self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+    # Ensures a new variant takes the product master price when price is not supplied
+    def check_price
+      if price.nil? && Spree::Config[:require_master_price]
+        raise 'No master variant found to infer price' unless product && product.master
+        raise 'Must supply price for variant or master.price for product.' if self == product.master
+        self.price = product.master.price
       end
+      if currency.nil?
+        self.currency = Spree::Config[:currency]
+      end
+    end
 
-      def create_stock_items
-        StockLocation.where(propagate_all_variants: true).each do |stock_location|
-          stock_location.propagate_variant(self)
-        end
-      end
+    def set_cost_currency
+      self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+    end
 
-      def in_stock_cache_key
-        "variant-#{id}-in_stock"
+    def create_stock_items
+      StockLocation.where(propagate_all_variants: true).each do |stock_location|
+        stock_location.propagate_variant(self)
       end
+    end
 
-      def clear_in_stock_cache
-        Rails.cache.delete(in_stock_cache_key)
-      end
+    def in_stock_cache_key
+      "variant-#{id}-in_stock"
+    end
+
+    def clear_in_stock_cache
+      Rails.cache.delete(in_stock_cache_key)
+    end
   end
 end
