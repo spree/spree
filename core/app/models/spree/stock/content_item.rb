@@ -1,11 +1,10 @@
 module Spree
   module Stock
     class ContentItem
-      attr_accessor :inventory_unit, :state
+      include Adamantium::Flat, Concord::Public.new(:inventory_unit, :state)
 
-      def initialize(inventory_unit, state = :on_hand)
-        @inventory_unit = inventory_unit
-        @state = state
+      def self.new(inventory_unit, state = :on_hand)
+        super
       end
 
       def variant
