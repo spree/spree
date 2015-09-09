@@ -226,15 +226,15 @@ module Spree
 
     def set_master_out_of_stock
       if product.master && product.master.in_stock?
-        product.master.stock_items.update_all(:backorderable => false)
-        product.master.stock_items.each { |item| item.reduce_count_on_hand_to_zero }
+        product.master.stock_items.update_all(backorderable: false)
+        product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
       end
     end
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
       if price.nil? && Spree::Config[:require_master_price]
-        raise 'No master variant found to infer price' unless (product && product.master)
+        raise 'No master variant found to infer price' unless product && product.master
         raise 'Must supply price for variant or master.price for product.' if self == product.master
         self.price = product.master.price
       end
