@@ -12,6 +12,8 @@ module Spree
       }
 
       HTTParty.get('http://alerts.spreecommerce.com/alerts.json', query: params).parsed_response
+    rescue Errno::ETIMEDOUT
+      Rails.logger.warn("Connection to alerts.spreecommerce.com couldn't be established")
     end
   end
 end
