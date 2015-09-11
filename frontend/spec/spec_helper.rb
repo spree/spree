@@ -67,16 +67,6 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  # A workaround to deal with random failure caused by phantomjs. Turn it on
-  # by setting ENV['RSPEC_RETRY_COUNT']. Limit it to features tests where
-  # phantomjs is used.
-  config.before(:all, :type => :feature) do
-    if ENV['RSPEC_RETRY_COUNT']
-      config.verbose_retry       = true # show retry status in spec process
-      config.default_retry_count = ENV['RSPEC_RETRY_COUNT'].to_i
-    end
-  end
-
   if ENV['WEBDRIVER'] == 'accessible'
     config.around(:each, :inaccessible => true) do |example|
       Capybara::Accessible.skip_audit { example.run }
