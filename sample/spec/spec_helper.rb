@@ -1,10 +1,6 @@
-# This file is copied to ~/spec when you run 'ruby script/generate rspec'
-# from the project root directory.
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../dummy/config/environment", __FILE__)
-require 'rspec/rails'
-require 'ffaker'
-require 'spree_sample'
+require File.expand_path('../../shared/spec_helper.rb', __dir__)
+
+SpecHelper.new(__dir__).dummy_app
 
 RSpec.configure do |config|
   config.color = true

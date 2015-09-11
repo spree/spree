@@ -1,37 +1,11 @@
-if ENV["COVERAGE"]
-  # Run Coverage report
-  require 'simplecov'
-  SimpleCov.start do
-    add_group 'Controllers', 'app/controllers'
-    add_group 'Helpers', 'app/helpers'
-    add_group 'Mailers', 'app/mailers'
-    add_group 'Models', 'app/models'
-    add_group 'Views', 'app/views'
-    add_group 'Jobs', 'app/jobs'
-    add_group 'Libraries', 'lib'
-  end
-end
+require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-# This file is copied to ~/spec when you run 'ruby script/generate rspec'
-# from the project root directory.
-ENV["RAILS_ENV"] ||= 'test'
+SpecHelper.new(__dir__)
+  .dummy_app
+  .support
 
-begin
-  require File.expand_path("../dummy/config/environment", __FILE__)
-rescue LoadError
-  puts "Could not load dummy application. Please ensure you have run `bundle exec rake test_app`"
-end
-
-require 'rspec/rails'
-require 'rspec/its'
-require 'database_cleaner'
-require 'ffaker'
-require 'timeout'
-
-Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
-
-if ENV["CHECK_TRANSLATIONS"]
-  require "spree/testing_support/i18n"
+if ENV.key?('CHECK_TRANSLATIONS')
+  require 'spree/testing_support/i18n'
 end
 
 require 'spree/testing_support/factories'

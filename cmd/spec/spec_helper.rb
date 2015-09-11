@@ -1,19 +1,6 @@
-if ENV["COVERAGE"]
-  # Run Coverage report
-  require 'simplecov'
-  SimpleCov.start do
-    add_group 'Controllers', 'app/controllers'
-    add_group 'Helpers', 'app/helpers'
-    add_group 'Mailers', 'app/mailers'
-    add_group 'Models', 'app/models'
-    add_group 'Views', 'app/views'
-    add_group 'Libraries', 'lib'
-  end
-end
+require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-# This file is copied to ~/spec when you run 'ruby script/generate rspec'
-# from the project root directory.
-ENV["RAILS_ENV"] ||= 'test'
+SpecHelper.new(__dir__)
 
 RSpec.configure do |config|
   config.color = true
