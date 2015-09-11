@@ -1,3 +1,3 @@
-eval(File.read(File.dirname(__FILE__) + '/common_spree_dependencies.rb'))
+eval(Pathname.new(__dir__).join('shared/dependencies.rb').read)
 
 gemspec

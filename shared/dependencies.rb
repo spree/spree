@@ -15,7 +15,7 @@ platforms :jruby do
 end
 
 group :test do
-  gem 'capybara', '~> 2.4'
+  gem 'capybara',         '~> 2.4'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
   gem 'factory_girl_rails', '~> 4.5.0'
@@ -23,9 +23,9 @@ group :test do
   gem 'rspec-activemodel-mocks'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 3.1.0'
+  gem 'rspec-rails', '~> 3.3.3'
   gem 'simplecov'
-  gem 'webmock', '1.8.11'
+  gem 'webmock',     '1.8.11'
   gem 'poltergeist', '1.5.0'
   gem 'timecop'
   gem 'with_model'
@@ -38,5 +38,5 @@ group :test, :development do
   platforms :ruby_20, :ruby_21 do
     gem 'pry-byebug'
   end
-  gem 'mutant-rspec', '~> 0.7.8'
+  gem 'mutant-rspec', '~> 0.8.2'
 end
