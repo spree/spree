@@ -5,6 +5,5 @@ class EnsurePaymentsHaveNumbers < ActiveRecord::Migration
       payment.generate_number
       payment.update_columns(number: payment.number)
     end
-    remove_index :spree_payments, :number if index_exists?(:spree_payments, :number)
   end
 end
