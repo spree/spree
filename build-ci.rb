@@ -20,7 +20,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[api backend core frontend sample].map(&method(:new)).freeze
+  ALL = %w[api backend core frontend sample guides].map(&method(:new)).freeze
 
   # Install subproject
   #
@@ -42,7 +42,7 @@ class Project
   #   the success of the build
   def pass?
     chdir do
-      setup_test_app
+      setup_test_app unless name.eql?('guides')
       run_tests
     end
   end
