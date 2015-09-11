@@ -47,13 +47,8 @@ require 'spree/testing_support/caching'
 
 require 'paperclip/matchers'
 
-if ENV['WEBDRIVER'] == 'accessible'
-  require 'capybara/accessible'
-  Capybara.javascript_driver = :accessible
-else
-  require 'capybara/poltergeist'
-  Capybara.javascript_driver = :poltergeist
-end
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
 
 RSpec.configure do |config|
   config.color = true
@@ -66,12 +61,6 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
-
-  if ENV['WEBDRIVER'] == 'accessible'
-    config.around(:each, :inaccessible => true) do |example|
-      Capybara::Accessible.skip_audit { example.run }
-    end
-  end
 
   # Ensure DB is clean, so that transaction isolated specs see
   # prisitine state.
