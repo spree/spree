@@ -49,7 +49,7 @@ We will print out a report of the data we are fixing now: "
         end
       else
         puts "leaving variant id #{variant.id} deleted because there is a duplicate SKU for '#{variant.sku}' (variant id #{the_dup.id}) "
-        if line_items.any?
+        if variant.line_items.any?
           puts "WARNING: You may still have bugs with variant id #{variant.id} (#{variant.name}) until you run rake db:fix_orphan_line_items"
         end
       end
