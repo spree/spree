@@ -456,7 +456,7 @@ module Spree
 
     def state_changed(name)
       state = "#{name}_state"
-      if persisted?
+      if persisted? && Spree::Config[:record_order_state_changes]
         old_state = self.send("#{state}_was")
         new_state = self.send(state)
         unless old_state == new_state
