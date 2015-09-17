@@ -7,7 +7,8 @@
 .label-ready,
 .label-active,
 .label-success,
-.label-sold
+.label-sold,
+.label-open
 {
   background-color: $brand-success;
 
@@ -20,7 +21,8 @@
 .label-failed,
 .label-considered_risky,
 .label-error,
-.label-invalid {
+.label-invalid,
+.label-closed {
   background-color: $brand-danger;
 }
 
