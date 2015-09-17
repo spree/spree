@@ -4,7 +4,7 @@ module Spree
   # checkout which has nothing to do with updating an order that this approach
   # is waranted.
   class CheckoutController < Spree::StoreController
-    before_action :load_order_with_lock
+    before_action :load_order
     before_action :ensure_valid_state_lock_version, only: [:update]
     before_action :set_state_if_present
 
@@ -82,8 +82,8 @@ module Spree
       false
     end
 
-    def load_order_with_lock
-      @order = current_order(lock: true)
+    def load_order
+      @order = current_order
       redirect_to(spree.cart_path) && return unless @order
     end
 

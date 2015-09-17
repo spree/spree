@@ -161,7 +161,7 @@ module Spree
     end
 
     def self.incomplete
-      where(completed_at: nil)
+      where(completed_at: nil).order(:created_at).reverse_order
     end
 
     # Use this method in other gems that wish to register their own custom logic
