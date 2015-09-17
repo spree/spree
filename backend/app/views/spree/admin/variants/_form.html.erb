@@ -5,7 +5,7 @@
         <div class="form-group" data-hook="presentation">
           <%= label :new_variant, option_type.presentation %>
           <%= f.collection_select 'option_value_ids', option_type.option_values, :id, :presentation,
-            { :prompt => true }, { :name => 'variant[option_value_ids][]', :class => 'select2' } %>
+            { :include_blank => true }, { :name => 'variant[option_value_ids][]', :class => 'select2' } %>
         </div>
       <% end %>
 
