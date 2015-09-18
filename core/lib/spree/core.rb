@@ -27,6 +27,9 @@ module Spree
     end
   end
 
+  mattr_accessor :admin_path
+  @@admin_path = "/admin"
+
   # Used to configure Spree.
   #
   # Example:
