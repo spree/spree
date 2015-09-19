@@ -279,7 +279,7 @@ bundle exec rspec spec
 ```
 
 If you would like to run specs against a particular database you may specify the
-dummy apps database, which defaults to sqlite3.
+dummy apps database, which defaults to postgres.
 ```shell
 DB=postgres bundle exec rake test_app
 ```
