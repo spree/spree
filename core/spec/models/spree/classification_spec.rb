@@ -21,8 +21,8 @@ module Spree
     end
 
     def positions_to_be_valid(taxon)
-      taxon.reload
-      expect(taxon.classifications.map(&:position)).to eq((1..taxon.classifications.count).to_a)
+      positions = taxon.reload.classifications.map(&:position)
+      expect(positions).to eq((1..taxon.classifications.count).to_a)
     end
 
     it "has a valid fixtures" do

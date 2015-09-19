@@ -333,10 +333,7 @@ module Spree
 
     def remove_taxon(taxon)
       removed_classifications = classifications.where(taxon: taxon)
-
-      removed_classifications.each do |classification|
-        classification.remove_from_list
-      end
+      removed_classifications.each &:remove_from_list
     end
   end
 end
