@@ -84,6 +84,7 @@ module Spree
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
+    before_destroy :ensure_no_line_items
 
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
@@ -147,7 +148,15 @@ module Spree
     # deleted products and products with nil or future available_on date
     # are not available
     def available?
-      !(available_on.nil? || available_on.future?) && !deleted?
+      !(available_on.nil? || available_on.future?) && !deleted? && !discontinued?
+    end
+
+    def discontinue!
+      update_column(:discontinue_on,  Time.now)
+    end
+
+    def discontinued?
+      !!discontinue_on && discontinue_on <= Time.now
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants
@@ -343,6 +352,13 @@ module Spree
     def touch_taxons
       Spree::Taxon.where(id: taxon_and_ancestors.map(&:id)).update_all(updated_at: Time.current)
       Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
+    end
+
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
+      end
     end
 
   end

@@ -203,15 +203,15 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  describe '#ensure_line_item_variants_are_not_deleted' do
-    subject { order.ensure_line_item_variants_are_not_deleted }
+  describe "#ensure_line_item_variants_are_not_discontinued" do
+    subject { order.ensure_line_item_variants_are_not_discontinued }
 
     let(:order) { create :order_with_line_items }
 
     context 'when variant is destroyed' do
       before do
         allow(order).to receive(:restart_checkout_flow)
-        order.line_items.first.variant.destroy
+        order.line_items.first.variant.discontinue!
       end
 
       it 'should restart checkout flow' do
