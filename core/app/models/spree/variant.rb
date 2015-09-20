@@ -230,16 +230,16 @@ module Spree
 
     private
 
-      def ensure_no_line_items
-        if line_items.any?
-          errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
-          return false
-        end
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
       end
+    end
 
-      def quantifier
-        Spree::Stock::Quantifier.new(self)
-      end
+    def quantifier
+      Spree::Stock::Quantifier.new(self)
+    end
 
     def set_master_out_of_stock
       if product.master && product.master.in_stock?
