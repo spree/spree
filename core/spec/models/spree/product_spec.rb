@@ -501,12 +501,10 @@ describe Spree::Product, :type => :model do
   context "#discontinued?" do
     let(:product_live) { build(:product, sku: 'a-sku') }
     it "should be false" do
-
       expect(product_live.discontinued?).to be(false)
     end
 
-    let(:product_discontinued) { build(:product, sku: 'a-sku',
-                                       discontinue_on: Time.now - 1.day)  }
+    let(:product_discontinued) { build(:product, sku: 'a-sku', discontinue_on: Time.now - 1.day)  }
     it "should be true" do
       expect(product_discontinued.discontinued?).to be(true)
     end

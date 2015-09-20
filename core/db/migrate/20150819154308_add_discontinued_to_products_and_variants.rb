@@ -14,13 +14,12 @@ rake db:fix_orphan_line_items
 
 We will print out a report of the data we are fixing now: "
 
-
     Spree::Product.only_deleted.each do |product|
       # determine if there is a slug duplicate
-      the_dup =  Spree::Product.find_by(slug: product.slug)
+      the_dup = Spree::Product.find_by(slug: product.slug)
       if the_dup.nil?
         # check to see if there are line items attached to any variants
-        if Spree::Variant.with_deleted.where(product_id: product.id).collect{|v| v.line_items}.any?
+        if Spree::Variant.with_deleted.where(product_id: product.id).map(&:line_items).any?
           puts "recovering deleted product id #{product.id} ... this will un-delete the record and set it to be discontinued"
 
           old_deleted = product.deleted_at
@@ -31,7 +30,7 @@ We will print out a report of the data we are fixing now: "
         end
       else
         puts "leaving product id #{product.id} deleted because there is a duplicate slug for '#{product.slug}' (product id #{the_dup.id}) "
-        if variants.collect(&:line_items).any?
+        if variants.map(&:line_items).any?
           puts "WARNING: You may still have bugs with product id #{product.id} (#{product.name}) until you run rake db:fix_orphan_line_items"
         end
       end
@@ -39,7 +38,7 @@ We will print out a report of the data we are fixing now: "
 
     Spree::Variant.only_deleted.each do |variant|
       # determine if there is a slug duplicate
-      the_dup =  Spree::Variant.find_by(sku: variant.sku)
+      the_dup = Spree::Variant.find_by(sku: variant.sku)
       if the_dup.nil?
         # check to see if there are line items attached to any variants
         if variant.line_items.any?
