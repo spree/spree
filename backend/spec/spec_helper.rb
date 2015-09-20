@@ -92,7 +92,7 @@ RSpec.configure do |config|
   end
 
   config.around do |example|
-    Timeout.timeout(35, &example)
+    Timeout.timeout(20, &example)
   end
 
   config.after(:each, :type => :feature) do |example|
