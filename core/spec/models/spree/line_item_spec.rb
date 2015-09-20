@@ -13,7 +13,7 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  context '#discontinued' do
+  context "#discontinued" do
     it "fetches discontinued products" do
       line_item.product.discontinue!
       expect(line_item.reload.product).to be_a Spree::Product
@@ -25,7 +25,7 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  context '#destroy' do
+  context "#destroy" do
     it "returns inventory when a line item is destroyed" do
       expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
       line_item.destroy

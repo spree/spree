@@ -203,7 +203,7 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  describe '#ensure_line_item_variants_are_not_discontinued' do
+  describe "#ensure_line_item_variants_are_not_discontinued" do
     subject { order.ensure_line_item_variants_are_not_discontinued }
 
     let(:order) { create :order_with_line_items }
