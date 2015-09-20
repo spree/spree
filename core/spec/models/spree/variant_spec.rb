@@ -521,7 +521,7 @@ describe Spree::Variant, :type => :model do
     end
   end
 
-  context '#discontinue!' do
+  context "#discontinue!" do
     let(:variant) { create(:variant) }
 
     it "sets the discontinued" do
