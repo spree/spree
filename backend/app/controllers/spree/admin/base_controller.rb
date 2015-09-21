@@ -5,7 +5,7 @@ module Spree
       helper 'spree/admin/tables'
       layout '/spree/layouts/admin'
 
-      before_action :check_alerts
+      # before_action :check_alerts
       before_action :authorize_admin
 
       protected
