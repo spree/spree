@@ -64,7 +64,7 @@ module Spree
       self_attrs = self.attributes
       other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
 
-      [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at', 'order_id') }
+      [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at') }
 
       self_attrs == other_attrs
     end
