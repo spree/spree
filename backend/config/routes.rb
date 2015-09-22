@@ -1,5 +1,5 @@
 Spree::Core::Engine.add_routes do
-  namespace :admin do
+  namespace :admin, path: Spree.admin_path do
     get '/search/users', to: "search#users", as: :search_users
     get '/search/products', to: "search#products", as: :search_products
 
@@ -177,5 +177,5 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  get '/admin', to: 'admin/root#index', as: :admin
+  get Spree.admin_path, to: 'admin/root#index', as: :admin
 end
