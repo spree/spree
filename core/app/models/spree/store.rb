@@ -1,6 +1,6 @@
 module Spree
   class Store < Spree::Base
-    has_many :orders, class_name: "Spree::Order"
+    has_many :orders, class_name: "Spree::Order", dependent: :destroy
 
     validates :code, presence: true, uniqueness: { allow_blank: true }
     validates :name, presence: true
