@@ -29,7 +29,7 @@ module Spree
     end
 
     def last_incomplete_spree_order
-      orders.incomplete.order('created_at DESC').first
+      orders.incomplete.includes(line_items: [variant: [:option_values, :product]]).order('created_at DESC').first
     end
 
     def analytics_id
