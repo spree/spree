@@ -20,14 +20,14 @@ describe "Customer Details", type: :feature, js: true do
   # Much better than a random sleep "here and there"
   # it will not cause any delay in case the condition is fullfilled on first cycle.
   def wait_for_condition
-    time = Capybara.default_wait_time
+    time = Capybara.default_max_wait_time
     step = 0.1
     while time > 0
       return if yield
       sleep(step)
       time -= 0.1
     end
-    fail "Could not achieve condition within #{Capybara.default_wait_time} seconds."
+    fail "Could not achieve condition within #{Capybara.default_max_wait_time} seconds."
   end
 
   # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
