@@ -375,6 +375,42 @@ describe "Order Details", type: :feature, js: true do
             expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
           end
         end
+
+        context "site doesn't track inventory" do
+          before do
+            Spree::Config.set track_inventory_levels: false
+            product.master.update_column(:track_inventory, true)
+            product.master.stock_items.first.update_column(:backorderable, true)
+            product.master.stock_items.first.update_column(:count_on_hand, 0)
+          end
+
+          it "adds variant to order just fine" do
+            select2_search product.name, from: Spree.t(:name_or_sku)
+            within("table.stock-levels") do
+              fill_in "stock_item_quantity", with: 1
+              click_icon :add
+            end
+
+            within(".stock-contents") do
+              expect(page).to have_content(product.name)
+            end
+          end
+        end
+
+        context "variant out of stock and not backorderable" do
+          before do
+            product.master.stock_items.first.update_column(:backorderable, false)
+            product.master.stock_items.first.update_column(:count_on_hand, 0)
+          end
+
+          it "displays out of stock instead of add button" do
+            select2_search product.name, from: Spree.t(:name_or_sku)
+
+            within("table.stock-levels") do
+              expect(page).to have_content(Spree.t(:out_of_stock))
+            end
+          end
+        end
       end
 
       context 'splitting to shipment' do
