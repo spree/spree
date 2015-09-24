@@ -14,7 +14,7 @@ module Spree
         unless tax_category == self
           tax_category.update_columns(
             is_default: false,
-            updated_at: Time.now,
+            updated_at: Time.current,
           )
         end
       end

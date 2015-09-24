@@ -68,7 +68,7 @@ module Spree
       item = stock_item_or_create(variant)
       item.update_columns(
         count_on_hand: item.count_on_hand + quantity,
-        updated_at: Time.now
+        updated_at: Time.current
       )
     end
 

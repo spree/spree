@@ -110,7 +110,7 @@ module Spree
         shipment_total: order.shipment_total,
         promo_total: order.promo_total,
         total: order.total,
-        updated_at: Time.now,
+        updated_at: Time.current,
       )
     end
 
