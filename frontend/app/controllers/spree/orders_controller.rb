@@ -33,8 +33,8 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order || Order.incomplete.
-                                      includes(line_items: [variant: [:option_values, :product]]).
-                                      find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+                                  includes(line_items: [variant: [:option_values, :product]]).
+                                  find_or_initialize_by(guest_token: cookies.signed[:guest_token])
       associate_user
     end
 
