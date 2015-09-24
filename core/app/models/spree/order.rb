@@ -662,7 +662,7 @@ module Spree
     end
 
     def use_billing?
-      @use_billing == true || @use_billing == 'true' || @use_billing == '1'
+      use_billing.in?([true, 'true', '1'])
     end
 
     def set_currency
