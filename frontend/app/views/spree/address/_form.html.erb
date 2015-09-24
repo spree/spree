@@ -51,7 +51,7 @@
         <%= Spree.t(:state) %><abbr class='required' title="required" id=<%="#{address_id}state-required"%>>*</abbr>
       <% end %>
 
-      <% state_elements = [
+      <%== state_elements = [
          form.collection_select(:state_id, address.country.states,
                             :id, :name,
                             {:include_blank => true},
@@ -62,9 +62,6 @@
                             :disabled => have_states)
          ].join.gsub('"', "'").gsub("\n", "")
       %>
-      <%= javascript_tag do %>
-        $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
-      <% end %>
     </p>
       <noscript>
         <%= form.text_field :state_name, :class => 'form-control required' %>
