@@ -12,7 +12,7 @@
     <tbody>
       <tr>
         <td>{{variant.name}}</td>
-        {{#if variant.should_track_inventory?}}
+        {{#if variant.track_inventory}}
           {{#if variant.total_on_hand}}
             <td class="text-center">{{variant.total_on_hand}}</td>
             <td class="text-center">
