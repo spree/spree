@@ -7,7 +7,7 @@ module Spree
     end
 
     def add(variant, quantity = 1, options = {})
-      timestamp = Time.now
+      timestamp = Time.current
       line_item = add_to_line_item(variant, quantity, options)
       options[:line_item_created] = true if timestamp <= line_item.created_at
       after_add_or_remove(line_item, options)

@@ -519,7 +519,7 @@ module Spree
     def restart_checkout_flow
       self.update_columns(
         state: 'cart',
-        updated_at: Time.now,
+        updated_at: Time.current,
       )
       self.next! if self.line_items.size > 0
     end
@@ -547,7 +547,7 @@ module Spree
         cancel!
         self.update_columns(
           canceler_id: user.id,
-          canceled_at: Time.now,
+          canceled_at: Time.current,
         )
       end
     end
@@ -557,7 +557,7 @@ module Spree
         approve!
         self.update_columns(
           approver_id: user.id,
-          approved_at: Time.now,
+          approved_at: Time.current,
         )
       end
     end

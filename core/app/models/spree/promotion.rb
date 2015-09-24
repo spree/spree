@@ -46,8 +46,8 @@ module Spree
     end
 
     def self.active
-      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.now).
-        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.now)
+      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.current).
+        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
     end
 
     def self.order_activatable?(order)
@@ -55,7 +55,7 @@ module Spree
     end
 
     def expired?
-      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
+      !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
     end
 
     def activate(payload)

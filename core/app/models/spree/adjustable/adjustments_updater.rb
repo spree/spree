@@ -31,7 +31,7 @@ module Spree
         attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] +
                                         totals[:taxable_adjustment_total] +
                                         totals[:additional_tax_total]
-        attributes[:updated_at] = Time.now
+        attributes[:updated_at] = Time.current
         @adjustable.update_columns(totals)
       end
 
