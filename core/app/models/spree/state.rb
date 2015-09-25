@@ -3,6 +3,8 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
     has_many :addresses, dependent: :nullify
 
+    has_many :zone_members, as: :zoneable, dependent: :destroy
+
     validates :country, :name, presence: true
 
     def self.find_all_by_name_or_abbr(name_or_abbr)
