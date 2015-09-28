@@ -20,9 +20,9 @@ module Spree
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true
-    validates :meta_keywords, length: { maximum: 255 }
-    validates :meta_description, length: { maximum: 255 }
-    validates :meta_title, length: { maximum: 255 }
+    validates :meta_keywords, length: { maximum: 255 }, allow_blank: true
+    validates :meta_description, length: { maximum: 255 }, allow_blank: true
+    validates :meta_title, length: { maximum: 255 }, allow_blank: true
 
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
