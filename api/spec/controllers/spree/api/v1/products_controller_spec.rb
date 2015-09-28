@@ -6,7 +6,7 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:inactive_product) { create(:product, available_on: Time.now.tomorrow, name: "inactive") }
+    let!(:inactive_product) { create(:product, available_on: Time.current.tomorrow, name: "inactive") }
     let(:base_attributes) { Api::ApiHelpers.product_attributes }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }

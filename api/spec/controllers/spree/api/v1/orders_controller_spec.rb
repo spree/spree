@@ -65,9 +65,9 @@ module Spree
       end
 
       it "returns orders in reverse chronological order by completed_at" do
-        order.update_columns completed_at: Time.now
+        order.update_columns completed_at: Time.current
 
-        order2 = Order.create user: order.user, completed_at: Time.now - 1.day
+        order2 = Order.create user: order.user, completed_at: Time.current - 1.day
         expect(order2.created_at).to be > order.created_at
         order3 = Order.create user: order.user, completed_at: nil
         expect(order3.created_at).to be > order2.created_at
@@ -222,7 +222,7 @@ module Spree
     end
 
     it "cannot cancel an order that doesn't belong to them" do
-      order.update_attribute(:completed_at, Time.now)
+      order.update_attribute(:completed_at, Time.current)
       order.update_attribute(:shipment_state, "ready")
       api_put :cancel, :id => order.to_param
       assert_unauthorized!
@@ -696,7 +696,7 @@ module Spree
 
       context "can cancel an order" do
         before do
-          order.completed_at = Time.now
+          order.completed_at = Time.current
           order.state = 'complete'
           order.shipment_state = 'ready'
           order.save!
