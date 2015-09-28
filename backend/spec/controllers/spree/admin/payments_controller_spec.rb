@@ -21,7 +21,7 @@ module Spree
               :source_attributes => {
                 :name => "Test User",
                 :number => "4111 1111 1111 1111",
-                :expiry => "09 / #{Time.now.year + 1}",
+                :expiry => "09 / #{Time.current.year + 1}",
                 :verification_value => "123"
               }
             }

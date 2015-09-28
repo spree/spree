@@ -14,7 +14,7 @@ describe "Cancelling + Resuming", :type => :feature do
     order = create(:order)
     order.update_columns({
       :state => 'complete',
-      :completed_at => Time.now
+      :completed_at => Time.current
     })
     order
   end

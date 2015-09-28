@@ -20,12 +20,12 @@ describe "Reports", :type => :feature do
     before do
       order = create(:order)
       order.update_columns({:adjustment_total => 100})
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       order.save!
 
       order = create(:order)
       order.update_columns({:adjustment_total => 200})
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       order.save!
 
       #incomplete order
