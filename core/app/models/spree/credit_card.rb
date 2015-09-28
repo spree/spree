@@ -8,8 +8,8 @@ module Spree
 
     after_save :ensure_one_default
 
+    attr_reader :number
     attr_accessor :encrypted_data,
-                    :number,
                     :imported,
                     :verification_value
 
