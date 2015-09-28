@@ -52,7 +52,7 @@ module Spree
       it 'optionally add completed at' do
         params = {
           email: 'test@test.com',
-          completed_at: Time.now,
+          completed_at: Time.current,
           line_items_attributes: line_items
         }
 

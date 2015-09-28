@@ -227,7 +227,7 @@ describe Spree::Address, :type => :model do
     end
 
     context "user given" do
-      let(:bill_address) { Spree::Address.new(phone: Time.now.to_i) }
+      let(:bill_address) { Spree::Address.new(phone: Time.current.to_i) }
       let(:ship_address) { double("ShipAddress") }
       let(:user) { double("User", bill_address: bill_address, ship_address: ship_address) }
 
