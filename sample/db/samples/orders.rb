@@ -33,6 +33,6 @@ orders.each(&:create_proposed_shipments)
 
 orders.each do |order|
   order.state = "complete"
-  order.completed_at = Time.now - 1.day
+  order.completed_at = Time.current - 1.day
   order.save!
 end
