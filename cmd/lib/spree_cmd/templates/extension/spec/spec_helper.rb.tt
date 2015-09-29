@@ -82,6 +82,5 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.fail_fast = ENV['FAIL_FAST'] || false
   config.order = "random"
 end

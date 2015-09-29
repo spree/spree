@@ -17,5 +17,4 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include FactoryGirl::Syntax::Methods
-  config.fail_fast = ENV['FAIL_FAST'] || false
 end

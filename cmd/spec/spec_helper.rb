@@ -22,6 +22,4 @@ RSpec.configure do |config|
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.use_transactional_fixtures = false
-
-  config.fail_fast = ENV['FAIL_FAST'] || false
 end

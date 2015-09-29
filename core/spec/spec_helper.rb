@@ -57,8 +57,6 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
 
-  config.fail_fast = ENV['FAIL_FAST'] || false
-
   # Clean out the database state before the tests run
   config.before(:suite) do
     DatabaseCleaner.clean_with(:truncation)

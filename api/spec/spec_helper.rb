@@ -45,8 +45,6 @@ RSpec.configure do |config|
   config.extend Spree::Api::TestingSupport::Setup, :type => :controller
   config.include Spree::TestingSupport::Preferences, :type => :controller
 
-  config.fail_fast = ENV['FAIL_FAST'] || false
-
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end

@@ -102,6 +102,4 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Flash
 
   config.include Paperclip::Shoulda::Matchers
-
-  config.fail_fast = ENV['FAIL_FAST'] || false
 end
