@@ -23,7 +23,7 @@ module Spree
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
-    validates :description, length: { maximum: 255 }
+    validates :description, length: { maximum: 255 }, allow_blank: true
 
     before_save :normalize_blank_values
 

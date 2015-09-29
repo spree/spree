@@ -88,8 +88,8 @@ module Spree
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
-    validates :meta_keywords, length: { maximum: 255 }
-    validates :meta_title, length: { maximum: 255 }
+    validates :meta_keywords, length: { maximum: 255 }, allow_blank: true
+    validates :meta_title, length: { maximum: 255 }, allow_blank: true
     validates :name, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
     validates :shipping_category_id, presence: true
