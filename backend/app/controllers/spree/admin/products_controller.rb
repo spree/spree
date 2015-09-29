@@ -15,7 +15,7 @@ module Spree
 
       def index
         session[:return_to] = request.url
-        respond_with(@collection)
+        respond_with(@collection.includes(:variant_images).load)
       end
 
       def update
