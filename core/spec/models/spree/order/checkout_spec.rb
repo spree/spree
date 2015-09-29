@@ -692,7 +692,7 @@ describe Spree::Order, :type => :model do
 
         expect {
           order.update_from_params(params, permitted_params)
-        }.to raise_error
+        }.to raise_error(Spree.t(:invalid_credit_card))
       end
     end
 

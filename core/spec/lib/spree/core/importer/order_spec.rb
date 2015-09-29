@@ -246,7 +246,7 @@ module Spree
         it 'raise error as variant shouldnt be found' do
           variant.product.destroy
           hash = { sku: variant.sku }
-          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error
+          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{ hash[:sku] } not found.")
         end
       end
 
@@ -330,7 +330,7 @@ module Spree
 
         it "raises if cant find stock location" do
           params[:shipments_attributes][0][:stock_location] = "doesnt exist"
-          expect { Importer::Order.import(user, params) }.to raise_error
+          expect { Importer::Order.import(user, params) }.to raise_error(StandardError)
         end
 
         context 'when a shipping adjustment is present' do
@@ -596,7 +596,7 @@ module Spree
           params = { payments_attributes: [{ payment_method: "XXX" }] }
           count = Order.count
 
-          expect { Importer::Order.import(user, params) }.to raise_error
+          expect { Importer::Order.import(user, params) }.to raise_error(StandardError)
           expect(Order.count).to eq count
         end
       end
