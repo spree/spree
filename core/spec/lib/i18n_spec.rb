@@ -34,11 +34,11 @@ describe "i18n" do
   it "raise error without any context when using a path" do
     expect {
       Spree.normal_t('.legacy_translation')
-    }.to raise_error
+    }.to raise_error(StandardError)
 
     expect {
       Spree.translate('.legacy_translation')
-    }.to raise_error
+    }.to raise_error(StandardError)
   end
 
   it "prepends a string scope" do

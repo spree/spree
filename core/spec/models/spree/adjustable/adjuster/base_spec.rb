@@ -5,6 +5,6 @@ describe Spree::Adjustable::Adjuster::Base, type: :model do
   let(:subject) { Spree::Adjustable::Adjuster::Base }
 
   it "raises missing update method" do
-    expect { subject.adjust(line_item, {}) }.to raise_error
+    expect { subject.adjust(line_item, {}) }.to raise_error(NotImplementedError)
   end
 end

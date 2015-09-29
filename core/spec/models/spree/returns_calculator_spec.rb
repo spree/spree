@@ -8,7 +8,7 @@ module Spree
     it 'compute_shipment must be overridden' do
       expect {
         subject.compute(return_item)
-      }.to raise_error
+      }.to raise_error(NotImplementedError)
     end
   end
 end
