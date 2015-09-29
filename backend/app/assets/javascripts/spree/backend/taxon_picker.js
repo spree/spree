@@ -57,13 +57,20 @@ $(document).on('click', '.js-taxon-picker-index tbody td a', function(e) {
   var TAXON_ID = $(this).data('id');
   var TAXON_NAME = $(this).data('name');
   var TAXON_PRETTY_NAME = $(this).data('pretty-name');
+  var SINGLE_ID = ($('.js-taxon-picker-target').data('taxon-picker-single') == true);
   var CURRENT_TAXON_IDS = taxonPickerValuesAsArray($('.js-taxon-picker-target').val());
   var ALLREADY_EXIST = CURRENT_TAXON_IDS.indexOf(('' + TAXON_ID)); /* Taxon ID as a string */
 
+  /* only add when it's not yet in the array */
   if (ALLREADY_EXIST == -1) {
-    /* only add when it's not yet in the array */
-    CURRENT_TAXON_IDS.push(TAXON_ID);
-    $('.js-taxon-picker-target').val(CURRENT_TAXON_IDS);
+    if (SINGLE_ID) {
+      /* when only 1 id is supported */
+      $('.js-taxon-picker-target').val(TAXON_ID);
+    } else {
+      /* when we can select multiple ids */
+      CURRENT_TAXON_IDS.push(TAXON_ID);
+      $('.js-taxon-picker-target').val(CURRENT_TAXON_IDS);
+    }
 
     /* add the new taxon as a readable label, and be able to remove it again */
     $('.js-taxon-picker-collection tbody').prepend(taxonPickerCollectionRow(TAXON_ID, TAXON_NAME, TAXON_PRETTY_NAME));
