@@ -15,6 +15,8 @@ module Spree
     after_create :create_stock_items, :if => "self.propagate_all_variants?"
     after_save :ensure_one_default
 
+    attr_accessor :skip_stock_negative_validation
+
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
     end
@@ -77,8 +79,9 @@ module Spree
     end
 
     def move(variant, quantity, originator = nil)
-      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
-                                                            originator: originator)
+      item = stock_item_or_create(variant)
+      item.skip_negative_validation = true if skip_stock_negative_validation
+      item.stock_movements.create!(quantity: quantity, originator: originator)
     end
 
     def fill_status(variant, quantity)

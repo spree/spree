@@ -15,6 +15,8 @@ module Spree
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
 
+    attr_accessor :skip_negative_validation
+
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end
@@ -58,7 +60,9 @@ module Spree
 
     private
       def verify_count_on_hand?
-        count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+        unless skip_negative_validation
+          count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+        end
       end
 
       def count_on_hand=(value)
