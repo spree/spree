@@ -20,7 +20,7 @@ module Spree
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
-    validates_presence_of :payment_method
+    validates :payment_method, presence: true
     before_validation :validate_source
 
     after_save :create_payment_profile, if: :profiles_supported?

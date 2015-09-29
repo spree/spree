@@ -36,7 +36,7 @@ module Spree
 
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates_uniqueness_of :sku, allow_blank: true, conditions: -> { where(deleted_at: nil) }
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) } }, allow_blank: true
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
