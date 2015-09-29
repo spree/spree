@@ -34,7 +34,7 @@ module Spree
     end
 
     attr_reader :coupon_code
-    attr_accessor :temporary_address, :temporary_credit_card
+    attr_accessor :temporary_address, :temporary_credit_card, :skip_stock_negative_validation
 
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s
@@ -310,12 +310,13 @@ module Spree
     # Called after transition to complete state when payments will have been processed
     def finalize!
       # lock all adjustments (coupon promotions, etc.)
-      all_adjustments.each{|a| a.close}
+      all_adjustments.each(&:close)
 
       # update payment and shipment(s) states, and save
       updater.update_payment_state
       shipments.each do |shipment|
         shipment.update!(self)
+        shipment.stock_location.skip_stock_negative_validation = skip_stock_negative_validation
         shipment.finalize!
       end
 
