@@ -13,16 +13,16 @@ module Spree
 
         before do
           attributes = {
-            :order_id => order.number,
-            :card => "new",
-            :payment => {
-              :amount => order.total,
-              :payment_method_id => payment_method.id.to_s,
-              :source_attributes => {
-                :name => "Test User",
-                :number => "4111 1111 1111 1111",
-                :expiry => "09 / #{Time.now.year + 1}",
-                :verification_value => "123"
+            order_id: order.number,
+            card: "new",
+            payment: {
+              amount: order.total,
+              payment_method_id: payment_method.id.to_s,
+              source_attributes: {
+                name: "Test User",
+                number: "4111 1111 1111 1111",
+                expiry: "09 / #{Time.current.year + 1}",
+                verification_value: "123"
               }
             }
           }

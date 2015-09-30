@@ -480,7 +480,7 @@ describe Spree::TaxRate, :type => :model do
           end
 
           it "should not delete adjustments for complete order when taxrate is deleted" do
-            @order.update_column :completed_at, Time.now
+            @order.update_column :completed_at, Time.current
             @rate1.destroy!
             @rate2.destroy!
             expect(line_item.adjustments.count).to eq(2)

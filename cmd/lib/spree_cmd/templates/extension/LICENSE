@@ -1,4 +1,4 @@
-Copyright (c) <%= Time.now.year %> [name of plugin creator]
+Copyright (c) <%= Time.current.year %> [name of plugin creator]
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

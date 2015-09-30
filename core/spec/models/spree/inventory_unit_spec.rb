@@ -7,7 +7,7 @@ describe Spree::InventoryUnit, :type => :model do
   context "#backordered_for_stock_item" do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       create(:shipment, order: order, stock_location: stock_location)
       order.shipments.reload
       create(:line_item, order: order, variant: stock_item.variant)

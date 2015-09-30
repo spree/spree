@@ -441,7 +441,7 @@ describe Spree::Variant, :type => :model do
     it "updates a product" do
       variant.product.update_column(:updated_at, 1.day.ago)
       variant.touch
-      expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.now)
+      expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.current)
     end
 
     it "clears the in_stock cache key" do

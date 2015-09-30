@@ -36,4 +36,4 @@ Simply add this require statement to your spec_helper:
 require '<%= file_name %>/factories'
 ```
 
-Copyright (c) <%= Time.now.year %> [name of extension creator], released under the New BSD License
+Copyright (c) <%= Time.current.year %> [name of extension creator], released under the New BSD License

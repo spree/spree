@@ -197,7 +197,7 @@ displays.
 ***
 
 ```ruby
-p.available_on = Time.now
+p.available_on = Time.current
 ```
 
 #### The Master variant

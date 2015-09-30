@@ -130,7 +130,7 @@ describe Spree::Promotion, :type => :model do
 
     it "does activate if newer then order" do
       expect(@action1).to receive(:perform).with(@payload)
-      promotion.created_at = DateTime.now + 2
+      promotion.created_at = DateTime.current + 2
       expect(promotion.activate(@payload)).to be true
     end
 
@@ -178,28 +178,28 @@ describe Spree::Promotion, :type => :model do
     end
 
     it "should be expired if it hasn't started yet" do
-      promotion.starts_at = Time.now + 1.day
+      promotion.starts_at = Time.current + 1.day
       expect(promotion).to be_expired
     end
 
     it "should be expired if it has already ended" do
-      promotion.expires_at = Time.now - 1.day
+      promotion.expires_at = Time.current - 1.day
       expect(promotion).to be_expired
     end
 
     it "should not be expired if it has started already" do
-      promotion.starts_at = Time.now - 1.day
+      promotion.starts_at = Time.current - 1.day
       expect(promotion).not_to be_expired
     end
 
     it "should not be expired if it has not ended yet" do
-      promotion.expires_at = Time.now + 1.day
+      promotion.expires_at = Time.current + 1.day
       expect(promotion).not_to be_expired
     end
 
     it "should not be expired if current time is within starts_at and expires_at range" do
-      promotion.starts_at  = Time.now - 1.day
-      promotion.expires_at = Time.now + 1.day
+      promotion.starts_at  = Time.current - 1.day
+      promotion.expires_at = Time.current + 1.day
       expect(promotion).not_to be_expired
     end
 
@@ -324,7 +324,7 @@ describe Spree::Promotion, :type => :model do
     let(:promotable) { create :order }
     subject { promotion.eligible?(promotable) }
     context "when promotion is expired" do
-      before { promotion.expires_at = Time.now - 10.days }
+      before { promotion.expires_at = Time.current - 10.days }
       it { is_expected.to be false }
     end
     context "when promotable is a Spree::LineItem" do
@@ -542,7 +542,7 @@ describe Spree::Promotion, :type => :model do
       before do
         promotion.activate(order: order)
         order.update!
-        order.completed_at = Time.now
+        order.completed_at = Time.current
         order.save!
       end
 
