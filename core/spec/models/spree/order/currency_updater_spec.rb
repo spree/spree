@@ -8,7 +8,7 @@ describe Spree::Order, :type => :model do
 
       context "#homogenize_line_item_currencies" do
         it "succeeds without error" do
-          expect { line_item.order.update_attributes!(currency: 'EUR') }.to_not raise_error("no EUR price found for #{line_item.product.name} (#{line_item.variant.sku})")
+          expect { line_item.order.update_attributes!(currency: 'EUR') }.not_to raise_error
         end
 
         it "changes the line_item currencies" do
