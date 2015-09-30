@@ -27,7 +27,7 @@ module Spree
         if @payment_method['type'].to_s != payment_method_type
           @payment_method.update_columns(
             type: payment_method_type,
-            updated_at: Time.now,
+            updated_at: Time.current,
           )
           @payment_method = PaymentMethod.find(params[:id])
         end
