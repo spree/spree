@@ -59,6 +59,6 @@ describe Spree::Store, :type => :model do
         expect(store_2.default).to be true
       end
     end
-   end
+  end
 
 end
