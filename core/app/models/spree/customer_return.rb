@@ -20,6 +20,8 @@ module Spree
     extend DisplayMoney
     money_methods pre_tax_total: { currency: Spree::Config[:currency] }
 
+    delegate :id, to: :order, prefix: true, allow_nil: true
+
     def completely_decided?
       !return_items.undecided.exists?
     end
@@ -34,9 +36,6 @@ module Spree
       return_items.first.inventory_unit.order
     end
 
-    def order_id
-      order.try(:id)
-    end
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
