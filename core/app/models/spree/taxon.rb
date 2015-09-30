@@ -21,6 +21,7 @@ module Spree
     validates :meta_title, length: { maximum: 255 }
 
     after_save :touch_ancestors_and_taxonomy
+    after_save :generate_admin_search_terms
     after_touch :touch_ancestors_and_taxonomy
 
     has_attached_file :icon,
@@ -85,6 +86,15 @@ module Spree
     end
 
     private
+
+    # isolated so can be overwritten for custom search terms
+    def admin_search_term
+      "#{id} #{ancestors.map(&:name).join(' ')} #{name}"
+    end
+
+    def generate_admin_search_terms
+      update_column :admin_search_terms, admin_search_term
+    end
 
     def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.

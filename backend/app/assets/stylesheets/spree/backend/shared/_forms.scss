@@ -59,3 +59,9 @@ input.form-control {
     min-height: 36px;
   }
 }
+
+.input-group-three {
+  .input-group-btn:first-of-type {
+    width: 20%;
+  }
+}
