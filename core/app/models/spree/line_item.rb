@@ -35,6 +35,8 @@ module Spree
 
     delegate :name, :description, :sku, :should_track_inventory?, to: :variant
     delegate :tax_zone, to: :order
+    # Remove product default_scope `deleted_at: nil`
+    delegate :product, to: :variant
 
     attr_accessor :target_shipment
 
@@ -97,10 +99,6 @@ module Spree
       !sufficient_stock?
     end
 
-    # Remove product default_scope `deleted_at: nil`
-    def product
-      variant.product
-    end
 
     # Remove variant default_scope `deleted_at: nil`
     def variant
