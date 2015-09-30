@@ -70,7 +70,7 @@ module Spree
     end
 
     def empty?
-      attributes.except('id', 'created_at', 'updated_at', 'order_id', 'country_id').all? { |_, v| v.nil? }
+      attributes.except('id', 'created_at', 'updated_at', 'country_id').all? { |_, v| v.nil? }
     end
 
     # Generates an ActiveMerchant compatible address hash
