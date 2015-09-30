@@ -9,8 +9,11 @@
       <%= link_to_with_icon 'th-list', Spree.t(:overview), spree.edit_admin_product_url(@product) %>
     <% end if can?(:admin, @product) %>
     <%= content_tag :li, class: ('active' if current == 'General') do %>
-      <%= link_to_with_icon 'edit', Spree.t(:general_details), spree.general_admin_product_url(@product) %>
+      <%= link_to_with_icon 'edit', Spree.t(:general), spree.general_admin_product_url(@product) %>
     <% end if can?(:edit, @product) %>
+    <%= content_tag :li, class: ('active' if current == 'Content') do %>
+      <%= link_to_with_icon 'cog', Spree.t(:content), spree.content_admin_product_url(@product) %>
+    <% end if can?(:admin, @product) %>
     <%= content_tag :li, class: ('active' if current == 'Images') do %>
       <%= link_to_with_icon 'picture', Spree.t(:images), spree.admin_product_images_url(@product) %>
     <% end if can?(:admin, Spree::Image) %>
@@ -26,11 +29,5 @@
     <%= content_tag :li, class: ('active' if current == 'Stock Management') do %>
       <%= link_to_with_icon 'home', Spree.t(:stock), spree.stock_admin_product_url(@product) %>
     <% end if can?(:stock, @product) %>
-    <%= content_tag :li, class: ('active' if current == 'Search') do %>
-      <%= link_to_with_icon 'search', Spree.t(:search), spree.search_admin_product_url(@product) %>
-    <% end if can?(:admin, @product) %>
-    <%= content_tag :li, class: ('active' if current == 'Config') do %>
-      <%= link_to_with_icon 'cog', Spree.t(:config), spree.config_admin_product_url(@product) %>
-    <% end if can?(:admin, @product) %>
   </ul>
 <% end %>

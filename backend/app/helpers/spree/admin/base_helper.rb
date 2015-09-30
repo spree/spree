@@ -145,6 +145,18 @@ module Spree
         request.xhr?
       end
 
+      def fake_input_field value, title
+        value       = '-' unless value
+        html        = ''
+        panel_body  = content_tag :div, value, class: 'panel-body panel-disabled'
+        panel       = content_tag :div, panel_body, class: 'panel panel-default panel-fake-input', data: { hook: "admin_form_field_#{title.to_s.parameterize}" }
+
+        html << label_tag(title, Spree.t(title))
+        html << panel
+
+        return content_tag :div, html.html_safe, class: 'form-group'
+      end
+
       private
         def attribute_name_for(field_name)
           field_name.gsub(' ', '_').downcase

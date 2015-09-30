@@ -7,7 +7,7 @@
         <% if can?(:edit, @product) %>
           <%= link_to Spree.t(:edit), spree.general_admin_product_url(@product), class: 'pull-right' %>
         <% end %>
-        <h3 class="panel-title"><%= Spree.t(:general_details) %></h3>
+        <h3 class="panel-title"><%= Spree.t(:general) %></h3>
       </div>
       <table class="table">
         <tr data-hook="product_overview_general_id">
@@ -18,36 +18,6 @@
           <th width="25%"><%= Spree.t(:name) %></th>
           <td><%= @product.name %></td>
         </tr>
-        <tr data-hook="product_overview_general_slug">
-          <th><%= Spree.t(:slug) %></th>
-          <td><%= @product.slug %></td>
-        </tr>
-        <tr data-hook="product_overview_general_description">
-          <th><%= Spree.t(:description) %></th>
-          <td><%= @product.description %></td>
-        </tr>
-        <tr data-hook="product_overview_general_price">
-          <th><%= Spree.t(:price) %></th>
-          <td>
-            <%= Spree::Money.new @product.price %>
-            <% if @product.cost_price.present? && @product.cost_price > 0 %>
-              <span class="gray">
-                (<%= Spree.t(:cost_price) %>: <%= Spree::Money.new @product.cost_price %> <%= @product.cost_currency %>)
-              </span>
-            <% end %>
-          </td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="panel panel-default" data-hook="product_overview_configuration_panel">
-      <div class="panel-heading">
-        <% if can?(:edit, @product) %>
-          <%= link_to Spree.t(:edit), spree.config_admin_product_url(@product), class: 'pull-right' %>
-        <% end %>
-        <h3 class="panel-title"><%= Spree.t(:configuration) %></h3>
-      </div>
-      <table class="table">
         <tr data-hook="product_overview_configuration_available_on">
           <th width="25%"><%= Spree.t(:available_on) %></th>
           <td><%= @product.available_on %></td>
@@ -59,6 +29,29 @@
         <tr data-hook="product_overview_configuration_tax_category">
           <th><%= Spree.t(:tax_category) %></th>
           <td><%= @product.tax_category.try(:name) || Spree.t(:none) %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="panel panel-default" data-hook="product_overview_search_panel">
+      <div class="panel-heading">
+        <% if can?(:edit, @product) %>
+          <%= link_to Spree.t(:edit), spree.content_admin_product_url(@product), class: 'pull-right' %>
+        <% end %>
+        <h3 class="panel-title"><%= Spree.t(:content) %></h3>
+      </div>
+      <table class="table">
+        <tr data-hook="product_overview_general_description">
+          <th><%= Spree.t(:description) %></th>
+          <td><%= @product.description %></td>
+        </tr>
+        <tr data-hook="product_overview_search_keywords">
+          <th width="25%"><%= Spree.t(:meta_keywords) %></th>
+          <td><%= @product.meta_keywords || Spree.t(:none) %></td>
+        </tr>
+        <tr data-hook="product_overview_search_description">
+          <th><%= Spree.t(:meta_description) %></th>
+          <td><%= @product.meta_description || Spree.t(:none) %></td>
         </tr>
         <tr data-hook="product_overview_configuration_option_types">
           <th><%= Spree.t(:option_types) %></th>
@@ -101,25 +94,6 @@
         </table>
       </div>
     <% end %>
-
-    <div class="panel panel-default" data-hook="product_overview_search_panel">
-      <div class="panel-heading">
-        <% if can?(:edit, @product) %>
-          <%= link_to Spree.t(:edit), spree.search_admin_product_url(@product), class: 'pull-right' %>
-        <% end %>
-        <h3 class="panel-title"><%= Spree.t(:search) %></h3>
-      </div>
-      <table class="table">
-        <tr data-hook="product_overview_search_keywords">
-          <th width="25%"><%= Spree.t(:meta_keywords) %></th>
-          <td><%= @product.meta_keywords || Spree.t(:none) %></td>
-        </tr>
-        <tr data-hook="product_overview_search_description">
-          <th><%= Spree.t(:meta_description) %></th>
-          <td><%= @product.meta_description || Spree.t(:none) %></td>
-        </tr>
-      </table>
-    </div>
 
   </div>
   <div class="col-md-4">
