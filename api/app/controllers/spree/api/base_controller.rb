@@ -139,8 +139,6 @@ module Spree
       end
 
       def find_product(id)
-        product_scope.friendly.find(id.to_s)
-      rescue ActiveRecord::RecordNotFound
         product_scope.find(id)
       end
 
