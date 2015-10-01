@@ -9,10 +9,13 @@
         </div>
         <div class="modal-body">
           <form class="js-taxon-picker-search-form form-group">
-            <div class="input-group js-taxon-picker-search">
-              <%= text_field_tag 'query', nil, placeholder: "Search for a taxon..", class: "form-control" %>
+            <div class="input-group input-group-three js-taxon-picker-search">
+              <span class="input-group-btn" data-hook="taxon_picker_taxonomy">
+                <%= select_tag :taxonomy_id, options_from_collection_for_select(Spree::Taxonomy.all, :id, :name), prompt: Spree.t(:all), class: 'form-control' %>
+              </span>
+              <%= text_field_tag :query, nil, placeholder: "Search for a taxon..", class: "form-control" %>
               <span class="input-group-btn">
-                <%= link_to Spree.t(:search), "javascript:;", class: "btn btn-default" %>
+                <%= link_to Spree.t(:search), "javascript:;", class: "btn btn-primary" %>
               </span>
             </div>
           </form>

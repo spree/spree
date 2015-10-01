@@ -1,13 +1,28 @@
-<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Config' } %>
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Content' } %>
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
   <fieldset>
-    <div data-hook="admin_product_form_available_on">
-      <%= f.field_container :available_on, class: ['form-group'] do %>
-        <%= f.label :available_on, Spree.t(:available_on) %>
-        <%= f.error_message_on :available_on %>
-        <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'datepicker form-control' %>
+
+    <div data-hook="admin_product_form_description">
+      <%= f.field_container :description, class: ['form-group'] do %>
+        <%= f.label :description, Spree.t(:description) %>
+        <%= f.text_area :description, { rows: 10, class: 'form-control' } %>
+        <%= f.error_message_on :description %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_meta_description">
+      <%= f.field_container :meta_description, class: ['form-group'] do %>
+        <%= f.label :meta_description, Spree.t(:meta_description) %>
+        <%= f.text_field :meta_description, class: 'form-control' %>
+      <% end %>
+    </div>
+
+    <div data-hook="admin_product_form_meta_keywords">
+      <%= f.field_container :meta_keywords, class: ['form-group'] do %>
+        <%= f.label :meta_keywords, Spree.t(:meta_keywords) %>
+        <%= f.text_field :meta_keywords, class: 'form-control' %>
       <% end %>
     </div>
 
@@ -42,22 +57,6 @@
         </div>
       </div>
     <% end %>
-
-    <div data-hook="admin_product_form_shipping_categories">
-      <%= f.field_container :shipping_categories, class: ['form-group'] do %>
-        <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
-        <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::ShippingCategory) }) %>
-        <%= f.error_message_on :shipping_category %>
-      <% end %>
-    </div>
-
-    <div data-hook="admin_product_form_tax_category">
-      <%= f.field_container :tax_category, class: ['form-group'] do %>
-        <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-        <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::TaxCategory) }) %>
-        <%= f.error_message_on :tax_category %>
-      <% end %>
-    </div>
 
     <div data-hook="admin_product_form_option_types">
       <%= f.field_container :option_types, class: ['form-group'] do %>

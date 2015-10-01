@@ -11,7 +11,7 @@
       <%= f.field_container :taxons, class: ['form-group'] do %>
 
         <% if can? :modify, Spree::Classification %>
-          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(','), class: "js-taxon-picker-target" %>
+          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(','), class: 'js-taxon-picker-target', data: { taxon_picker_keep_open: true } %>
           <%= render partial: 'spree/admin/shared/taxon_picker_collection', locals: { taxon_ids: @product.taxon_ids } %>
         <% elsif @product.taxons.any? %>
           <ul class="text_list">

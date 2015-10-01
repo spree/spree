@@ -4,53 +4,25 @@
 
     <div class="col-md-8" data-hook="admin_product_form_left">
       <div data-hook="admin_product_form_name">
-        <%= f.field_container :name, class: ['form-group'] do %>
+        <%= f.field_container :name, class: ['form-group'], data: { hook: 'admin_product_form_name' } do %>
           <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
           <%= f.text_field :name, class: 'form-control title' %>
           <%= f.error_message_on :name %>
         <% end %>
       </div>
 
-      <div data-hook="admin_product_form_slug">
-        <%= f.field_container :slug, class: ['form-group'] do %>
-          <%= f.label :slug, raw(Spree.t(:slug) + content_tag(:span, ' *', class: "required")) %>
-          <%= f.text_field :slug, class: 'form-control title' %>
-          <%= f.error_message_on :slug %>
-        <% end %>
-      </div>
+      <%= fake_input_field @product.available_on, :available_on %>
 
-      <div data-hook="admin_product_form_description">
-        <%= f.field_container :description, class: ['form-group'] do %>
-          <%= f.label :description, Spree.t(:description) %>
-          <%= f.text_area :description, { rows: "#{unless @product.has_variants? then '20' else '13' end}", class: 'form-control' } %>
-          <%= f.error_message_on :description %>
-        <% end %>
-      </div>
+      <%= fake_input_field @shipping_category.try(:name), :shipping_category %>
+
+      <%= fake_input_field @tax_category.try(:name), :tax_category %>
     </div>
 
     <div class="col-md-4" data-hook="admin_product_form_right">
-      <div data-hook="admin_product_form_price">
-        <%= f.field_container :price, class: ['form-group'] do %>
-          <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: "required")) %>
-          <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', disabled: (cannot? :update, Spree::Price) %>
-          <%= f.error_message_on :price %>
-        <% end %>
-      </div>
 
-      <div data-hook="admin_product_form_cost_price" class="alpha two columns">
-        <%= f.field_container :cost_price, class: ['form-group'] do %>
-          <%= f.label :cost_price, Spree.t(:cost_price) %>
-          <%= f.text_field :cost_price, value: number_to_currency(@product.cost_price, unit: ''), class: 'form-control' %>
-          <%= f.error_message_on :cost_price %>
-        <% end %>
-      </div>
-      <div data-hook="admin_product_form_cost_currency" class="omega two columns">
-        <%= f.field_container :cost_currency, class: ['form-group'] do %>
-          <%= f.label :cost_currency, Spree.t(:cost_currency) %>
-          <%= f.text_field :cost_currency, class: 'form-control' %>
-          <%= f.error_message_on :cost_currency %>
-        <% end %>
-      </div>
+      <%= fake_input_field @product.cost_price, :cost_price %>
+
+      <%= fake_input_field @product.cost_currency, :cost_currency %>
 
       <% unless @product.has_variants? %>
         <div data-hook="admin_product_form_sku">

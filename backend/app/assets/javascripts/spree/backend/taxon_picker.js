@@ -1,6 +1,8 @@
 $(document).ready(function() {
   function performTaxonPickerSearch() {
-    var QUERY = $('.js-taxon-picker-search input').val();
+    var query = $('.js-taxon-picker-search input').val();
+    var taxonomy = $('.js-taxon-picker-search select').val();
+
     $('.js-taxon-picker-index').html('Loading..');
 
     $.ajax({
@@ -8,7 +10,8 @@ $(document).ready(function() {
       url: '/admin/taxons',
       data: {
         q: {
-          translations_name_cont: QUERY
+          admin_search_terms_cont: query,
+          taxonomy_id_eq: taxonomy
         },
       },
     }).done(function(data) {
@@ -54,28 +57,32 @@ function taxonPickerCollectionRow(id, name, pretty_name) {
 $(document).on('click', '.js-taxon-picker-index tbody td a', function(e) {
   e.preventDefault();
 
-  var TAXON_ID = $(this).data('id');
-  var TAXON_NAME = $(this).data('name');
-  var TAXON_PRETTY_NAME = $(this).data('pretty-name');
-  var SINGLE_ID = ($('.js-taxon-picker-target').data('taxon-picker-single') == true);
-  var CURRENT_TAXON_IDS = taxonPickerValuesAsArray($('.js-taxon-picker-target').val());
-  var ALLREADY_EXIST = CURRENT_TAXON_IDS.indexOf(('' + TAXON_ID)); /* Taxon ID as a string */
+  var $target = $('.js-taxon-picker-target');
+  var taxonId = $(this).data('id');
+  var taxonName = $(this).data('name');
+  var taxonPrettyName = $(this).data('pretty-name');
+  var singleId = ($target.data('taxon-picker-single') == true);
+  var keepOpenOnSelect = ($target.data('taxon-picker-keep-open') == true);
+  var currentTaxonIds = taxonPickerValuesAsArray($target.val());
+  var allreadyExist = currentTaxonIds.indexOf(('' + taxonId)); /* Taxon ID as a string */
 
   /* only add when it's not yet in the array */
-  if (ALLREADY_EXIST == -1) {
-    if (SINGLE_ID) {
+  if (allreadyExist == -1) {
+    if (singleId) {
       /* when only 1 id is supported */
-      $('.js-taxon-picker-target').val(TAXON_ID);
+      $('.js-taxon-picker-target').val(taxonId);
     } else {
       /* when we can select multiple ids */
-      CURRENT_TAXON_IDS.push(TAXON_ID);
-      $('.js-taxon-picker-target').val(CURRENT_TAXON_IDS);
+      currentTaxonIds.push(taxonId);
+      $('.js-taxon-picker-target').val(currentTaxonIds);
     }
 
     /* add the new taxon as a readable label, and be able to remove it again */
-    $('.js-taxon-picker-collection tbody').prepend(taxonPickerCollectionRow(TAXON_ID, TAXON_NAME, TAXON_PRETTY_NAME));
+    $('.js-taxon-picker-collection tbody').prepend(taxonPickerCollectionRow(taxonId, taxonName, taxonPrettyName));
 
-    $('#taxonPicker').modal('hide');
+    if(!keepOpenOnSelect){
+      $('#taxonPicker').modal('hide');
+    }
   } else {
     /* no award winner error but better then nothing */
     alert('This taxon is allready selected');
@@ -85,15 +92,15 @@ $(document).on('click', '.js-taxon-picker-index tbody td a', function(e) {
 $(document).on('click', '.js-delete-from-taxon-picker-target', function(e) {
   e.preventDefault();
 
-  var TAXON_ID = $(this).data('id');
-  var TAXON_NAME = $(this).data('name');
-  var CURRENT_TAXON_IDS = taxonPickerValuesAsArray($('.js-taxon-picker-target').val());
+  var taxonId = $(this).data('id');
+  var taxonName = $(this).data('name');
+  var currentTaxonIds = taxonPickerValuesAsArray($('.js-taxon-picker-target').val());
 
-  CURRENT_TAXON_IDS = jQuery.grep(CURRENT_TAXON_IDS, function(value) {
-    return value != TAXON_ID;
+  currentTaxonIds = jQuery.grep(currentTaxonIds, function(value) {
+    return value != taxonId;
   });
 
-  $('.js-taxon-picker-target').val(CURRENT_TAXON_IDS);
+  $('.js-taxon-picker-target').val(currentTaxonIds);
 
   $(this).parents('tr').remove();
 });

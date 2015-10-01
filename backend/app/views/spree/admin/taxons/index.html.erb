@@ -8,12 +8,16 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <div data-hook="admin_taxons_index_search">
         <div class="form-group">
-          <%= f.label :name_cont, Spree.t(:name) %>
-          <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target" %>
+          <%= f.label :admin_search_terms_cont, Spree.t(:name) %>
+          <%= f.text_field :admin_search_terms_cont, size: 15, class: "form-control js-quick-search-target" %>
         </div>
         <div class="form-group">
           <%= f.label :id_eq, Spree.t(:id) %>
           <%= f.text_field :id_eq, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :taxonomy_id_eq, Spree.t(:taxonomy) %>
+          <%= f.collection_select(:taxonomy_id_eq, Spree::Taxonomy.all, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2' }) %>
         </div>
       </div>
       <div data-hook="admin_taxons_index_search_buttons" class="form-actions">

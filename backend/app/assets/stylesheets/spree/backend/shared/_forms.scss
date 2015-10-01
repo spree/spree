@@ -51,3 +51,17 @@ input.form-control {
 .alert-error {
   @extend .alert-danger;
 }
+
+.panel-fake-input {
+  margin: 0;
+  .panel-body {
+    padding: 8px 16px;
+    min-height: 36px;
+  }
+}
+
+.input-group-three {
+  .input-group-btn:first-of-type {
+    width: 20%;
+  }
+}
