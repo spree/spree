@@ -66,3 +66,14 @@ td.no-border-top {
   padding-top: 0 !important;
   border-top: 0 !important;
 }
+
+tr.inactive {
+  td {
+    background-color: #fbfbfb;
+    color: darken(#e2e2e2, 5%);
+    .btn {
+      background-color: darken(#e2e2e2, 5%);
+      border-color: darken(#e2e2e2, 5%);
+    }
+  }
+}

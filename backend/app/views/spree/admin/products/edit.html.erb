@@ -77,7 +77,7 @@
         <table class="table">
           <thead data-hook="variants_header">
             <tr>
-              <th><%= Spree.t(:options) %></th>
+              <th width="25%"><%= Spree.t(:options) %></th>
               <th><%= Spree.t(:price) %></th>
               <th><%= Spree.t(:sku) %></th>
             </tr>
@@ -94,6 +94,29 @@
         </table>
       </div>
     <% end %>
+
+    <div class="panel panel-default" data-hook="product_overview_prices_panel">
+      <div class="panel-heading">
+        <% if can?(:edit, @product) %>
+          <%= link_to Spree.t(:edit_prices), spree.general_admin_product_url(@product), class: 'pull-right' %>
+        <% end %>
+        <h3 class="panel-title"><%= Spree.t(:prices) %></h3>
+      </div>
+      <table class="table">
+        <tr data-hook="product_overview_prices_price">
+          <th><%= Spree.t(:price) %></th>
+          <td><%= @product.price %></td>
+        </tr>
+        <tr data-hook="product_overview_prices_cost_price">
+          <th width="25%"><%= Spree.t(:cost_price) %></th>
+          <td><%= @product.cost_price || '-' %></td>
+        </tr>
+        <tr data-hook="product_overview_prices_currency">
+          <th><%= Spree.t(:currency) %></th>
+          <td><%= @product.currency || '-' %></td>
+        </tr>
+      </table>
+    </div>
 
   </div>
   <div class="col-md-4">
