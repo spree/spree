@@ -84,8 +84,8 @@ module Spree
       def load_data
         @taxons = Taxon.order(:name)
         @option_types = OptionType.order(:name)
-        @tax_category = TaxCategory.find_by(@product.tax_category_id)
-        @shipping_category = ShippingCategory.find_by(@product.shipping_category_id)
+        @tax_category = TaxCategory.find_by(id: @product.tax_category_id)
+        @shipping_category = ShippingCategory.find_by(id: @product.shipping_category_id)
       end
 
       def collection
