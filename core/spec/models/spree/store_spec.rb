@@ -45,6 +45,20 @@ describe Spree::Store, :type => :model do
       expect(store_2.default).to be true
       expect(store.default).not_to be true
     end
+
+    context 'when store is not saved' do
+      before do
+        store.default = true
+        store.code = nil
+        store.save
+      end
+
+      it "ensure old default location still default" do
+        [store, store_2].each(&:reload)
+        expect(store.default).to be false
+        expect(store_2.default).to be true
+      end
+    end
   end
 
 end
