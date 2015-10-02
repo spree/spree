@@ -14,13 +14,15 @@ module Spree
       payment.state != 'void'
     end
 
-    def capture(*args)
+    def capture(*)
       simulated_successful_billing_response
     end
 
-    def cancel(response); end
+    def cancel(*)
+      simulated_successful_billing_response
+    end
 
-    def void(*args)
+    def void(*)
       simulated_successful_billing_response
     end
 
@@ -28,7 +30,7 @@ module Spree
       false
     end
 
-    def credit(*args)
+    def credit(*)
       simulated_successful_billing_response
     end
 
