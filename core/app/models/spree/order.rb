@@ -143,6 +143,7 @@ module Spree
 
     delegate :update_totals, :persist_totals, :to => :updater
     delegate :merge!, to: :merger
+    delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
@@ -409,14 +410,6 @@ module Spree
 
     def available_payment_methods
       @available_payment_methods ||= PaymentMethod.available_on_front_end
-    end
-
-    def billing_firstname
-      bill_address.try(:firstname)
-    end
-
-    def billing_lastname
-      bill_address.try(:lastname)
     end
 
     def insufficient_stock_lines
