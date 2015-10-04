@@ -442,14 +442,34 @@ describe Spree::Order, :type => :model do
   context "#state_changed" do
     let(:order) { FactoryGirl.create(:order) }
 
-    it "logs state changes" do
-      order.update_column(:payment_state, 'balance_due')
-      order.payment_state = 'paid'
-      expect(order.state_changes).to be_empty
-      order.state_changed('payment')
-      state_change = order.state_changes.find_by(:name => 'payment')
-      expect(state_change.previous_state).to eq('balance_due')
-      expect(state_change.next_state).to eq('paid')
+
+    describe "when Spree::Config[:record_order_state_changes] is true" do
+      before do
+        Spree::Config[:record_order_state_changes] = true
+      end
+      it "logs state changes if Spree Preference" do
+        order.update_column(:payment_state, 'balance_due')
+        order.payment_state = 'paid'
+        expect(order.state_changes).to be_empty
+        order.state_changed('payment')
+        state_change = order.state_changes.find_by(:name => 'payment')
+        expect(state_change.previous_state).to eq('balance_due')
+        expect(state_change.next_state).to eq('paid')
+      end
+    end
+
+    describe "when Spree::Config[:record_order_state_changes] is false" do
+      before do
+        Spree::Config[:record_order_state_changes] = false
+      end
+      it "does not log state changes" do
+        order.update_column(:payment_state, 'balance_due')
+        order.payment_state = 'paid'
+        expect(order.state_changes).to be_empty
+        order.state_changed('payment')
+        state_change = order.state_changes.find_by(:name => 'payment')
+        expect(order.state_changes).to be_empty
+      end
     end
 
     it "does not do anything if state does not change" do
