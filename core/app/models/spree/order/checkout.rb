@@ -284,10 +284,7 @@ module Spree
 
           def persist_user_credit_card
             if !temporary_credit_card && user_id && valid_credit_cards.present?
-              default_cc = valid_credit_cards.first
-              default_cc.user_id = user_id
-              default_cc.default = true
-              default_cc.save
+              valid_credit_cards.first.update(user_id: user_id, default: true)
             end
           end
 
