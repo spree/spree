@@ -10,10 +10,11 @@ module Spree
       create.fails  :load_form_data
 
       def edit
-        @pending_return_items = @customer_return.return_items.select(&:pending?)
-        @accepted_return_items = @customer_return.return_items.select(&:accepted?)
-        @rejected_return_items = @customer_return.return_items.select(&:rejected?)
-        @manual_intervention_return_items = @customer_return.return_items.select(&:manual_intervention_required?)
+        returned_items = @customer_return.return_items
+        @pending_return_items = returned_items.select(&:pending?)
+        @accepted_return_items = returned_items.select(&:accepted?)
+        @rejected_return_items = returned_items.select(&:rejected?)
+        @manual_intervention_return_items = returned_items.select(&:manual_intervention_required?)
         @pending_reimbursements = @customer_return.reimbursements.select(&:pending?)
 
         super
