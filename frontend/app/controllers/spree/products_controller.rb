@@ -40,7 +40,7 @@ module Spree
         else
           @products = Product.active(current_currency)
         end
-        @product = @products.friendly.find(params[:id])
+        @product = @products.includes(:variants_including_master).friendly.find(params[:id])
       end
 
       def load_taxon
