@@ -44,9 +44,14 @@ module Spree
 
       def destroy
         @product = Product.friendly.find(params[:id])
-        @product.destroy
 
-        flash[:success] = Spree.t('notice_messages.product_deleted')
+        begin
+          # TODO: why is @product.destroy raising ActiveRecord::RecordNotDestroyed instead of failing with false result
+          @product.destroy
+          flash[:success] = Spree.t('notice_messages.product_deleted')
+        rescue ActiveRecord::RecordNotDestroyed => e
+          flash[:error] = Spree.t('notice_messages.product_not_deleted')
+        end
 
         respond_with(@product) do |format|
           format.html { redirect_to collection_url }

@@ -62,6 +62,19 @@ module Spree
       (common_product_cache_keys + [product.cache_key, product.possible_promotions]).compact.join("/")
     end
 
+    def available_status(product) # will return a human readable string
+      return Spree.t(:discontinued)  if product.discontinued?
+      return Spree.t(:deleted)  if product.deleted?
+
+      if product.available?
+        Spree.t(:available)
+      elsif product.available_on && product.available_on.future?
+        Spree.t(:pending_sale)
+      else
+        Spree.t(:no_available_date_set)
+      end
+    end
+
     private
 
     def common_product_cache_keys

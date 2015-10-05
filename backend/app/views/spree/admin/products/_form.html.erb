@@ -60,6 +60,14 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_discontinue_on">
+        <%= f.field_container :discontinue_on, class: ['form-group'] do %>
+          <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
+          <%= f.error_message_on :discontinue_on %>
+          <%= f.text_field :discontinue_on, value: datepicker_field_value(@product.discontinue_on), class: 'datepicker form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="well">
           <%= f.label :skus, Spree.t(:sku).pluralize %>

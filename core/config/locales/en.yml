@@ -77,6 +77,7 @@ en:
         name: Name
       spree/product:
         available_on: Available On
+        discontinue_on: Discontinue On
         cost_currency: Cost Currency
         cost_price: Cost Price
         description: Description
@@ -298,6 +299,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: "Must match order currency"
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Cannot delete products once they are attached to line items.
         spree/refund:
           attributes:
             amount:
@@ -316,6 +321,10 @@ en:
           attributes:
             base:
               cannot_destroy_default_store: Cannot destroy the default Store.
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items.
 
   devise:
     confirmations:
@@ -485,6 +494,7 @@ en:
     authorized: Authorized
     auto_capture: Auto Capture
     available_on: Available On
+    available: Available
     average_order_value: Average Order Value
     avs_response: AVS Response
     back: Back
@@ -622,6 +632,7 @@ en:
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
+    deleted: Deleted
     delete_from_taxon: Delete From Taxon
     deleted_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
@@ -631,6 +642,7 @@ en:
     destination: Destination
     destroy: Destroy
     discount_amount: Discount Amount
+    discontinued: Discontinued
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
@@ -863,6 +875,7 @@ en:
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
+    no_available_date_set: No available date set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_products_found: No products found
@@ -984,6 +997,7 @@ en:
     percent_per_item: Percent Per Item
     permalink: Permalink
     pending: Pending
+    pending_sale: Pending Sale
     phone: Phone
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
@@ -1227,6 +1241,7 @@ en:
     show: Show
     show_active: Show Active
     show_deleted: Show Deleted
+    show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
