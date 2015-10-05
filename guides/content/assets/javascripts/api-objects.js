@@ -37,7 +37,7 @@ window.onload = function() {
   // Canvas
   var canvas = new Raphael(document.getElementById('api-objects'), 960, 400);
 
-  // Hexagon attrinutes on hover out & default state
+  // Hexagon attributes on hover out & default state
   var h_attr_out = {
     stroke:         "#9FBBEA",
     "stroke-width": "2",
@@ -45,14 +45,14 @@ window.onload = function() {
     "fill-opacity": 0.2
   }
 
-  // Hexagon attrinutes on hover in state
+  // Hexagon attributes on hover in state
   var h_attr_in = {
     fill: "#78AD2F",
     "fill-opacity": '1',
     stroke: '#fff'
   }
 
-  // Text attrinutes on hover out & default state
+  // Text attributes on hover out & default state
   var t_attr_out = {
     fill:           "white",
     "font-size":    "13px",
@@ -60,7 +60,7 @@ window.onload = function() {
     "fill-opacity": 0.5
   }
 
-  // Text attrinutes on hover in state
+  // Text attributes on hover in state
   var t_attr_in = {
     "fill-opacity": 1
   }
@@ -143,7 +143,7 @@ window.onload = function() {
                })
   }
 
-  // Creatring api objects on canvas
+  // Creating api objects on canvas
   var line_items = new h_object("h_line_items", 57, 74, "line_items.html", "t_line_items")
   var line_items_text = new t_object("t_line_items", "LINE ITEMS", "h_line_items")
 
