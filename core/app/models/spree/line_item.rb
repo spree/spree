@@ -33,10 +33,8 @@ module Spree
     after_create :update_tax_charge
     # after_create :update_adjustment_total
 
-    delegate :name, :description, :sku, :should_track_inventory?, to: :variant
+    delegate :name, :description, :sku, :should_track_inventory?, :product, to: :variant
     delegate :tax_zone, to: :order
-    # Remove product default_scope `deleted_at: nil`
-    delegate :product, to: :variant
 
     attr_accessor :target_shipment
 
@@ -97,10 +95,6 @@ module Spree
 
     def insufficient_stock?
       !sufficient_stock?
-    end
-
-    def product
-      variant.product
     end
 
     def options=(options = {})
