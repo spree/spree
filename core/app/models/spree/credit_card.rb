@@ -8,6 +8,10 @@ module Spree
 
     after_save :ensure_one_default
 
+    # As of rails 4.2 string columns always return strings, we can override it on model level.
+    attribute :month, Type::Integer.new
+    attribute :year,  Type::Integer.new
+
     attr_reader :number
     attr_accessor :encrypted_data,
                     :imported,
@@ -42,20 +46,6 @@ module Spree
       jcb: /^(?:2131|1800|35\d{3})\d{11}$/
     }
 
-    # As of rails 4.2 string columns always return strings, perhaps we should
-    # change these to integer columns on db level
-    def month
-      if type_casted = super
-        type_casted.to_i
-      end
-    end
-
-    def year
-      if type_casted = super
-        type_casted.to_i
-      end
-    end
-
     def expiry=(expiry)
       return unless expiry.present?
 
@@ -66,7 +56,7 @@ module Spree
         [match[1], match[2]]
       end
       if self[:year]
-        self[:year] = "20" + self[:year] if self[:year].length == 2
+        self[:year] = "20#{ self[:year] }" if self[:year] / 100 == 0
         self[:year] = self[:year].to_i
       end
       self[:month] = self[:month].to_i if self[:month]
