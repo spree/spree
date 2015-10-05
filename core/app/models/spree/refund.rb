@@ -8,7 +8,8 @@ module Spree
 
     validates :payment, presence: true
     validates :reason, presence: true
-    validates :transaction_id, presence: true, on: :update # can't require this on create because the before_create needs to run first
+    # can't require this on create because the perform! in after_create needs to run first
+    validates :transaction_id, presence: true, on: :update
     validates :amount, presence: true, numericality: {greater_than: 0}
 
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
