@@ -80,7 +80,7 @@ module Spree
         self.save
       end
 
-      return action_taken
+      action_taken
     end
 
     # called anytime order.update! happens
