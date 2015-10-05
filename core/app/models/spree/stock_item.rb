@@ -67,10 +67,6 @@ module Spree
         count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
       end
 
-      def count_on_hand=(value)
-        write_attribute(:count_on_hand, value)
-      end
-
       # Process backorders based on amount of stock received
       # If stock was -20 and is now -15 (increase of 5 units), then we should process 5 inventory orders.
       # If stock was -20 but then was -25 (decrease of 5 units), do nothing.
