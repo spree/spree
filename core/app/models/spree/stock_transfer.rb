@@ -17,13 +17,11 @@ module Spree
     end
 
     def source_movements
-      stock_movements.joins(:stock_item)
-        .where('spree_stock_items.stock_location_id' => source_location_id)
+      find_stock_location_with_location_id(source_location_id)
     end
 
     def destination_movements
-      stock_movements.joins(:stock_item)
-        .where('spree_stock_items.stock_location_id' => destination_location_id)
+      find_stock_location_with_location_id(destination_location_id)
     end
 
     def transfer(source_location, destination_location, variants)
@@ -41,6 +39,13 @@ module Spree
 
     def receive(destination_location, variants)
       transfer(nil, destination_location, variants)
+    end
+
+    private
+
+    def find_stock_location_with_location_id(location_id)
+      stock_movements.joins(:stock_item)
+        .where('spree_stock_items.stock_location_id' => location_id)
     end
   end
 end
