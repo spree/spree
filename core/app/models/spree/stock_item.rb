@@ -15,6 +15,7 @@ module Spree
                               only_integer: true }, if: :verify_count_on_hand?
 
     delegate :weight, :should_track_inventory?, to: :variant
+    delegate :name, to: :variant, prefix: true
 
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
@@ -23,10 +24,6 @@ module Spree
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
-    end
-
-    def variant_name
-      variant.name
     end
 
     def adjust_count_on_hand(value)
