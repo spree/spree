@@ -15,7 +15,7 @@ module Spree
                               only_integer: true }, if: :verify_count_on_hand?
 
     delegate :weight, :should_track_inventory?, to: :variant
-    delegate :name,                             to: :variant, prefix: true
+    delegate :name, to: :variant, prefix: true
 
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
