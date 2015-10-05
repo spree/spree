@@ -38,7 +38,7 @@ module Spree
 
         def set_available_option_types
           @available_option_types = if @product.option_type_ids.any?
-            OptionType.where('id NOT IN (?)', @product.option_type_ids)
+            OptionType.where.not(id: @product.option_type_ids)
           else
             OptionType.all
           end
