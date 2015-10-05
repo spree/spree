@@ -45,7 +45,7 @@ module Spree
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
-    scope :not_discontinued, -> { where("#{Variant.quoted_table_name}.discontinue_on IS NULL OR #{Variant.quoted_table_name}.discontinue_on <= ?",  Time.now) }
+    scope :not_discontinued, -> { where("#{Variant.quoted_table_name}.discontinue_on IS NULL OR #{Variant.quoted_table_name}.discontinue_on <= ?", Time.current) }
 
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -225,11 +225,11 @@ module Spree
     end
 
     def discontinue!
-      update_column(:discontinue_on, Time.now)
+      update_column(:discontinue_on, Time.current)
     end
 
     def discontinued?
-      !!discontinue_on && discontinue_on <= Time.now
+      !!discontinue_on && discontinue_on <= Time.current
     end
 
     private
