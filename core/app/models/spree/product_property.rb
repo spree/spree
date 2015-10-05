@@ -19,9 +19,7 @@ module Spree
     def property_name=(name)
       if name.present?
         # don't use `find_by :name` to workaround globalize/globalize#423 bug
-        property = Property.where(name: name).first ||
-                   Property.create(name: name, presentation: name)
-        self.property = property
+        self.property = Property.where(name: name).first_or_create(presentation: name)
       end
     end
   end
