@@ -44,8 +44,7 @@ module Spree
     private
 
     def find_stock_location_with_location_id(location_id)
-      stock_movements.joins(:stock_item)
-        .where('spree_stock_items.stock_location_id' => location_id)
+      stock_movements.joins(:stock_item).where('spree_stock_items.stock_location_id' => location_id)
     end
   end
 end
