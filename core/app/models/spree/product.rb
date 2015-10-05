@@ -87,14 +87,16 @@ module Spree
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
+
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_title
     end
     with_options presence: true do
-      validates :name, :shipping_category_id
+      validates :name, :shipping_category
       validates :price, if: proc { Spree::Config[:require_master_price] }
     end
+
     validates :slug, length: { minimum: 3 }, allow_blank: true, uniqueness: true
 
     attr_accessor :option_values_hash
