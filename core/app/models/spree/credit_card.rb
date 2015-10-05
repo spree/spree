@@ -13,10 +13,11 @@ module Spree
                     :imported,
                     :verification_value
 
-    validates :month, :year, numericality: { only_integer: true }, if: :require_card_numbers?, on: :create
-    validates :number, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
-    validates :name, presence: true, if: :require_card_numbers?, on: :create
-    validates :verification_value, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
+    with_options if: :require_card_numbers?, on: :create do
+      validates :month, :year, numericality: { only_integer: true }
+      validates :number, :verification_value, presence: true, unless: :imported
+      validates :name, presence: true
+    end
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
     scope :default, -> { where(default: true) }
