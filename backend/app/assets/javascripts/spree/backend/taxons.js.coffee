@@ -45,13 +45,18 @@ $(document).ready ->
         id: e.val,
         token: Spree.api_key
       success: (data) ->
-        el.empty();
+        el.empty()
         if data.products.length == 0
           $('#taxon_products').html("<div class='alert alert-info'>" + Spree.translations.no_results + "</div>")
         else
           for product in data.products
             if product.master.images[0] != undefined && product.master.images[0].small_url != undefined
               product.image = product.master.images[0].small_url
+            else
+              for variant in product.variants
+                if variant.images[0] != undefined && variant.images[0].small_url != undefined
+                  product.image = variant.images[0].small_url
+                  break
             el.append(productTemplate({ product: product }))
 
   $('#taxon_products').on "click", ".js-delete-product", (e) ->
