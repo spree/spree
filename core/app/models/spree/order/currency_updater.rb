@@ -14,7 +14,7 @@ module Spree
 
       # Updates prices of order's line items
       def update_line_item_currencies!
-        line_items.where('currency != ?', currency).each do |line_item|
+        line_items.where.not(currency: currency).each do |line_item|
           update_line_item_price!(line_item)
         end
       end
