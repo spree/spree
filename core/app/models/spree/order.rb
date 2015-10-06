@@ -117,19 +117,14 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
-    validates :number,               presence:     true,
-                                     length:       { maximum: 32, allow_blank: true },
-                                     uniqueness:   { allow_blank: true }
-    validates :email,                presence:     true,
-                                     length:       { maximum: 254, allow_blank: true },
-                                     email:        { allow_blank: true },
-                                     if:           :require_email
-    validates :state,                presence:     true,
-                                     inclusion:    { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
+    with_options presence: true do
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
+      validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
+      validates :state, inclusion: { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
+      validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+    end
     validates :payment_state,        inclusion:    { in: %w[balance_due paid credit_owed failed void], allow_blank: true }
     validates :shipment_state,       inclusion:    { in: %w[ready pending partial shipped backorder canceled], allow_blank: true }
-    validates :item_count,           presence:     true,
-                                     numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
     validates :item_total,           POSITIVE_MONEY_VALIDATION
     validates :adjustment_total,     MONEY_VALIDATION
     validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
@@ -141,7 +136,7 @@ module Spree
 
     validate :has_available_shipment
 
-    delegate :update_totals, :persist_totals, :to => :updater
+    delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
 

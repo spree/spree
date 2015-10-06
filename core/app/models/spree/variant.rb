@@ -34,8 +34,10 @@ module Spree
 
     validate :check_price
 
-    validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price,      numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+    with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
+      validates :cost_price
+      validates :price
+    end
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) } }, allow_blank: true
 
     after_create :create_stock_items

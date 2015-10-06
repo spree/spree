@@ -10,8 +10,10 @@ module Spree
                class_name: "Spree::TaxCategory",
                inverse_of: :tax_rates
 
-    validates :amount, presence: true, numericality: { allow_nil: true }
-    validates :tax_category_id, presence: true
+    with_options presence: true do
+      validates :amount, numericality: { allow_nil: true }
+      validates :tax_category_id
+    end
 
     scope :by_zone, -> (zone) { where(zone_id: zone.id) }
     scope :potential_rates_for_zone,
