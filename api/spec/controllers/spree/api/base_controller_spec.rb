@@ -75,7 +75,7 @@ describe Spree::Api::BaseController, :type => :controller do
     resource.valid? # get some errors
     expect(subject).to receive(:index).and_raise(ActiveRecord::RecordInvalid.new(resource))
     get :index, token: 'exception-message'
-    expect(json_response).to eql('exception' => "Validation failed: Name can't be blank, Price can't be blank, Shipping category can't be blank")
+    expect(json_response).to eql('exception' => "Validation failed: Name can't be blank, Shipping category can't be blank, Price can't be blank")
   end
 
   it "maps semantic keys to nested_attributes keys" do
