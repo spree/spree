@@ -7,10 +7,9 @@ module Spree
       belongs_to :shipment, class_name: "Spree::Shipment", touch: true
       belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
       belongs_to :line_item, class_name: "Spree::LineItem"
-
-      has_many :return_items
     end
 
+    has_many :return_items, inverse_of: :inventory_unit
     has_one :original_return_item, class_name: "Spree::ReturnItem", foreign_key: :exchange_inventory_unit_id
 
     scope :backordered, -> { where state: 'backordered' }

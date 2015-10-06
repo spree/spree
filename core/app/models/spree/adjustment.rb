@@ -22,8 +22,11 @@
 # it might be reinstated.
 module Spree
   class Adjustment < Spree::Base
-    belongs_to :adjustable, polymorphic: true, touch: true
-    belongs_to :source, polymorphic: true
+
+    with_options polymorphic: true do
+      belongs_to :adjustable, touch: true
+      belongs_to :source
+    end
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
 
     validates :adjustable, presence: true

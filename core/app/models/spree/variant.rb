@@ -12,13 +12,17 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
-    has_many :inventory_units, inverse_of: :variant
-    has_many :line_items, inverse_of: :variant
-    has_many :orders, through: :line_items
+    with_options inverse_of: :variant do
+      has_many :inventory_units
+      has_many :line_items
+      has_many :stock_items, dependent: :destroy
+    end
 
-    has_many :stock_items, dependent: :destroy, inverse_of: :variant
-    has_many :stock_locations, through: :stock_items
-    has_many :stock_movements, through: :stock_items
+    has_many :orders, through: :line_items
+    with_options through: :stock_items do
+      has_many :stock_locations
+      has_many :stock_movements
+    end
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
     has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'

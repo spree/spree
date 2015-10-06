@@ -10,9 +10,11 @@ module Spree
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
 
-    belongs_to :order, class_name: 'Spree::Order', touch: true, inverse_of: :payments
+    with_options inverse_of: :payments do
+      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+    end
     belongs_to :source, polymorphic: true
-    belongs_to :payment_method, class_name: 'Spree::PaymentMethod', inverse_of: :payments
 
     has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source

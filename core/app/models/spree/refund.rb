@@ -1,8 +1,11 @@
 module Spree
   class Refund < Spree::Base
-    belongs_to :payment, inverse_of: :refunds
+
+    with_options inverse_of: :refunds do
+      belongs_to :payment
+      belongs_to :reimbursement
+    end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
-    belongs_to :reimbursement, inverse_of: :refunds
 
     has_many :log_entries, as: :source
 

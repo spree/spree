@@ -5,8 +5,10 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
-    has_many :inventory_units, through: :return_items
-    has_many :customer_returns, through: :return_items
+    with_options through: :return_items do
+      has_many :inventory_units
+      has_many :customer_returns
+    end
 
     belongs_to :stock_location
     belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
