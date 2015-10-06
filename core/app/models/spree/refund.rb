@@ -10,7 +10,7 @@ module Spree
       validates :payment, :reason
       # can't require this on create because the perform! in after_create needs to run first
       validates :transaction_id, on: :update
-      validates :amount, numericality: {greater_than: 0}
+      validates :amount, numericality: { greater_than: 0 }
     end
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
 

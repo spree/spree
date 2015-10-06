@@ -8,11 +8,11 @@ module Spree
     with_options presence: true do
       validates :stock_item
       validates :quantity, numericality: {
-                  greater_than_or_equal_to: -2**31,
-                  less_than_or_equal_to: 2**31-1,
-                  only_integer: true,
-                  allow_nil: true
-                }
+                                            greater_than_or_equal_to: -2**31,
+                                            less_than_or_equal_to: 2**31 - 1,
+                                            only_integer: true,
+                                            allow_nil: true
+                                          }
     end
 
     scope :recent, -> { order(created_at: :desc) }
