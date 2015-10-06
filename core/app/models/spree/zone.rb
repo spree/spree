@@ -23,7 +23,7 @@ module Spree
 
     def self.potential_matching_zones(zone)
       if zone.country?
-        # Match zones of the same kind with simialr countries
+        # Match zones of the same kind with similar countries
         joins(countries: :zones).
           where('zone_members_spree_countries_join.zone_id = ? OR ' +
                 'spree_zones.default_tax = ?', zone.id, true).
