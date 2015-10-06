@@ -3,9 +3,7 @@ module Spree
     has_many :orders, class_name: "Spree::Order"
 
     validates :code, presence: true, uniqueness: { allow_blank: true }
-    validates :name, presence: true
-    validates :url, presence: true
-    validates :mail_from_address, presence: true
+    validates :name, :url, :mail_from_address, presence: true
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
