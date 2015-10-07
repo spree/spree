@@ -55,6 +55,8 @@ module Spree
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: %w(failed invalid)) }
 
+    delegate :currency, to: :order
+
     # transaction_id is much easier to understand
     def transaction_id
       response_code
@@ -97,10 +99,6 @@ module Spree
           name:           'payment',
         )
       end
-    end
-
-    def currency
-      order.currency
     end
 
     def money
