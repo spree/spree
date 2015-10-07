@@ -67,8 +67,8 @@ module Spree
         rename_child_taxons if @update_children
 
         respond_with(@taxon) do |format|
-          format.html {redirect_to edit_admin_taxonomy_url(@taxonomy) }
-          format.json {render :json => @taxon.to_json }
+          format.html { redirect_to edit_admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) }
+          format.json { render json: @taxon.to_json }
         end
       end
 
