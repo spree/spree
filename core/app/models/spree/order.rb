@@ -123,8 +123,8 @@ module Spree
       validates :state, inclusion: { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
     end
-    validates :payment_state,        inclusion:    { in: %w[balance_due paid credit_owed failed void], allow_blank: true }
-    validates :shipment_state,       inclusion:    { in: %w[ready pending partial shipped backorder canceled], allow_blank: true }
+    validates :payment_state,        inclusion:    { in: ['balance_due', 'paid', 'credit_owed', 'failed', 'void'], allow_blank: true }
+    validates :shipment_state,       inclusion:    { in: ['ready', 'pending', 'partial', 'shipped', 'backorder', 'canceled'], allow_blank: true }
     validates :item_total,           POSITIVE_MONEY_VALIDATION
     validates :adjustment_total,     MONEY_VALIDATION
     validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
