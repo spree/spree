@@ -1,13 +1,11 @@
 module Spree
   class Zone < Spree::Base
-
     with_options dependent: :destroy, inverse_of: :zone do
       has_many :zone_members, class_name: "Spree::ZoneMember"
       has_many :tax_rates
     end
-
     with_options through: :zone_members, source: :zoneable do
-      has_many :countries,  source_type: "Spree::Country"
+      has_many :countries, source_type: "Spree::Country"
       has_many :states, source_type: "Spree::State"
     end
 

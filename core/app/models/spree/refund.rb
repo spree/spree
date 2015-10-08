@@ -1,6 +1,5 @@
 module Spree
   class Refund < Spree::Base
-
     with_options inverse_of: :refunds do
       belongs_to :payment
       belongs_to :reimbursement

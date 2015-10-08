@@ -22,7 +22,6 @@
 # it might be reinstated.
 module Spree
   class Adjustment < Spree::Base
-
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
       belongs_to :source
