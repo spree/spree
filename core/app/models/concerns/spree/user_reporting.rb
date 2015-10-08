@@ -8,7 +8,7 @@ module Spree
     end
 
     def order_count
-      BigDecimal(orders.complete.count)
+      BigDecimal(orders.complete.size)
     end
 
     def average_order_value

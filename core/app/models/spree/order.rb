@@ -532,7 +532,7 @@ module Spree
     end
 
     def is_risky?
-      self.payments.risky.count > 0
+      payments.risky.size > 0
     end
 
     def canceled_by(user)

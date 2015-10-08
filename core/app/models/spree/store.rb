@@ -32,7 +32,7 @@ module Spree
         Store.where.not(id: id).each do |store|
           store.update_attribute(:default, false)
         end
-      elsif Store.where(default: true).count == 0
+      elsif Store.where(default: true).count.zero?
         self.default = true
       end
     end
