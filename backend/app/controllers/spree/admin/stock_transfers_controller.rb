@@ -8,7 +8,7 @@ module Spree
 
         @stock_transfers = @q.result.
                              includes(stock_movements: { stock_item: :stock_location }).
-                             order('created_at DESC').
+                             order(created_at: :desc).
                              page(params[:page])
       end
 
@@ -16,9 +16,7 @@ module Spree
         @stock_transfer = StockTransfer.friendly.find(params[:id])
       end
 
-      def new
-
-      end
+      def new; end
 
       def create
         variants = Hash.new(0)

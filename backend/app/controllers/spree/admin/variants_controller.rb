@@ -23,10 +23,11 @@ module Spree
 
       protected
         def new_before
-          @object.attributes = @object.product.master.attributes.except('id', 'created_at', 'deleted_at',
+          master = @object.product.master
+          @object.attributes = master.attributes.except('id', 'created_at', 'deleted_at',
                                                                         'sku', 'is_master')
           # Shallow Clone of the default price to populate the price field.
-          @object.default_price = @object.product.master.default_price.clone
+          @object.default_price = master.default_price.clone
         end
 
         def collection
@@ -35,7 +36,7 @@ module Spree
           if @deleted.blank?
             @collection ||= super.includes(:default_price, option_values: :option_type)
           else
-            @collection ||= Variant.only_deleted.where(:product_id => parent.id)
+            @collection ||= Variant.only_deleted.where(product_id: parent.id)
           end
           @collection
         end
