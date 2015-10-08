@@ -220,8 +220,8 @@ module Spree
     end
 
     def cancel_others
-      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id).where.not(id: id)
-        .not_cancelled.each(&:cancel!)
+      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id).where.not(id: id).
+        not_cancelled.each(&:cancel!)
     end
 
     def should_restock?
