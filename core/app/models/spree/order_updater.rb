@@ -51,11 +51,11 @@ module Spree
 
 
     # give each of the shipments a chance to update themselves
-    def update_shipments
+    def update_shipments shipping_method_filter = Spree::ShippingMethod::DISPLAY_ON_FRONT_END
       shipments.each do |shipment|
         next unless shipment.persisted?
         shipment.update!(order)
-        shipment.refresh_rates
+        shipment.refresh_rates shipping_method_filter
         shipment.update_amounts
       end
     end

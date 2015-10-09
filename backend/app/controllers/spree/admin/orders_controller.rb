@@ -63,7 +63,7 @@ module Spree
 
       def cart
         unless @order.completed?
-          @order.refresh_shipment_rates
+          @order.refresh_shipment_rates Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
         end
         if @order.shipments.shipped.count > 0
           redirect_to edit_admin_order_url(@order)
