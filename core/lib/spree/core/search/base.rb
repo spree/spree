@@ -70,7 +70,7 @@ module Spree
               else
                 base_scope = base_scope.merge(Spree::Product.ransack({scope_name => scope_attribute}).result)
               end
-            end if search
+            end if search.is_a?(Hash)
             base_scope
           end
 
