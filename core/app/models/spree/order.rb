@@ -75,12 +75,15 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
-    has_many :state_changes, as: :stateful, dependent: :destroy
-    has_many :line_items, -> { order(:created_at) }, dependent: :destroy, inverse_of: :order
-    has_many :payments, dependent: :destroy
-    has_many :return_authorizations, dependent: :destroy, inverse_of: :order
+
+    with_options dependent: :destroy do
+      has_many :state_changes, as: :stateful
+      has_many :line_items, -> { order(:created_at) }, inverse_of: :order
+      has_many :payments
+      has_many :return_authorizations, inverse_of: :order
+      has_many :adjustments, -> { order(:created_at) }, as: :adjustable
+    end
     has_many :reimbursements, inverse_of: :order
-    has_many :adjustments, -> { order(:created_at) }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order

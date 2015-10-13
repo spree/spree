@@ -2,8 +2,10 @@ module Spree
   class ProductProperty < Spree::Base
     acts_as_list scope: :product
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :product_properties
-    belongs_to :property, class_name: 'Spree::Property', inverse_of: :product_properties
+    with_options inverse_of: :product_properties do
+      belongs_to :product, touch: true, class_name: 'Spree::Product'
+      belongs_to :property, class_name: 'Spree::Property'
+    end
 
     validates :property, presence: true
 

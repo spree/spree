@@ -20,7 +20,7 @@ module Spree
                                      foreign_key: 'shipping_method_id'
     has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
-    belongs_to :tax_category, :class_name => 'Spree::TaxCategory'
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
     validates :name, presence: true
 

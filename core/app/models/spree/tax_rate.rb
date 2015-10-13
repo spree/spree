@@ -5,10 +5,11 @@ module Spree
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
 
-    belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
-    belongs_to :tax_category,
-               class_name: "Spree::TaxCategory",
-               inverse_of: :tax_rates
+    with_options inverse_of: :tax_rates do
+      belongs_to :zone, class_name: "Spree::Zone"
+      belongs_to :tax_category,
+                 class_name: "Spree::TaxCategory"
+    end
 
     validates :amount, presence: true, numericality: { allow_nil: true }
     validates :tax_category_id, presence: true

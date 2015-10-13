@@ -4,13 +4,16 @@ module Spree
 
     class IncompleteReimbursementError < StandardError; end
 
-    belongs_to :order, inverse_of: :reimbursements
-    belongs_to :customer_return, inverse_of: :reimbursements, touch: true
+    with_options inverse_of: :reimbursements do
+      belongs_to :order
+      belongs_to :customer_return, touch: true
+    end
 
-    has_many :refunds, inverse_of: :reimbursement
-    has_many :credits, inverse_of: :reimbursement, class_name: 'Spree::Reimbursement::Credit'
-
-    has_many :return_items, inverse_of: :reimbursement
+    with_options inverse_of: :reimbursement do
+      has_many :refunds
+      has_many :credits, class_name: 'Spree::Reimbursement::Credit'
+      has_many :return_items
+    end
 
     validates :order, presence: true
     validate :validate_return_items_belong_to_same_order
