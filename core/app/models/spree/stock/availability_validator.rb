@@ -17,6 +17,7 @@ module Spree
 
         line_item.errors[:quantity] << Spree.t(
           :selected_quantity_not_available,
+          scope: :order_populator,
           item: display_name.inspect
         )
       end
