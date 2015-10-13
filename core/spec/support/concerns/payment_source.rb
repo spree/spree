@@ -1,12 +1,14 @@
 RSpec.shared_examples "a payment source" do
-  let(:payment_source) { described_class.new }
+  subject(:payment_source) { described_class.new }
 
-  describe '#name' do
-    it 'has to be implemented' do
-      expect do
-        payment_source.name
-      end.not_to raise_error
-    end
+  describe 'attributes' do
+    it { is_expected.to respond_to(:imported) }
+    it { is_expected.to respond_to(:name) }
+  end
+
+  context "#associations" do
+    it { is_expected.to respond_to(:payments) }
+    it { is_expected.to respond_to(:user) }
   end
 
   context "#can_capture?" do
@@ -40,9 +42,23 @@ RSpec.shared_examples "a payment source" do
     end
   end
 
-  context "#associations" do
-    it "should be able to access its payments" do
-      expect { credit_card.payments.to_a }.not_to raise_error
+  context "#first_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the first name" do
+      expect(credit_card.first_name).to eq "Ludwig"
+    end
+  end
+
+  context "#last_name" do
+    before do
+      credit_card.name = "Ludwig van Beethoven"
+    end
+
+    it "extracts the last name" do
+      expect(credit_card.last_name).to eq "van Beethoven"
     end
   end
 end
