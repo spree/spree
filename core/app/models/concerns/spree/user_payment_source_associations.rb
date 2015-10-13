@@ -1,9 +1,14 @@
 module Spree
-  module UserPaymentSource
+  module UserPaymentSourceAssociations
     extend ActiveSupport::Concern
 
     included do
-      has_many :credit_cards, class_name: "Spree::CreditCard", foreign_key: :user_id
+      has_many :user_payment_sources, foreign_key: "user_id"
+      has_many :credit_cards,
+               through: :user_payment_sources,
+               source: :payment_source,
+               source_type: 'Spree::CreditCard'
+
       def default_credit_card; credit_cards.default.first; end
 
       def payment_sources

@@ -2,7 +2,7 @@
 module Spree
   class LegacyUser < Spree::Base
     include UserAddress
-    include UserPaymentSource
+    include UserPaymentSourceAssociations
     include UserMethods
 
     self.table_name = 'spree_users'

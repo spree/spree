@@ -664,11 +664,11 @@ describe Spree::Order, :type => :model do
           [payments_attributes: Spree::PermittedAttributes.payment_attributes]
       end
 
-      let(:credit_card) { create(:credit_card, user_id: order.user_id) }
+      let(:credit_card) { create(:credit_card, user: order.user) }
 
       let(:params) do
         ActionController::Parameters.new(
-          order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id },
+          order: { payments_attributes: [{payment_method_id: 1}], existing_user_payment_source_id: credit_card.user_payment_source.id },
           cvc_confirm: "737",
           payment_source: {
             "1" => { name: "Luis Braga",
@@ -680,10 +680,10 @@ describe Spree::Order, :type => :model do
         )
       end
 
-      before { order.user_id = 3 }
+      before { order.user = FactoryGirl.create(:user) }
 
       it "sets confirmation value when its available via :cvc_confirm" do
-        allow(Spree::CreditCard).to receive_messages find: credit_card
+        allow(Spree::UserPaymentSource).to receive_message_chain(:find, :payment_source).and_return(credit_card)
         expect(credit_card).to receive(:verification_value=)
         order.update_from_params(params, permitted_params)
       end
@@ -706,7 +706,7 @@ describe Spree::Order, :type => :model do
       end
 
       it "dont let users mess with others users cards" do
-        credit_card.update_column :user_id, 5
+        credit_card.user_payment_source.update_column :user_id, 5
 
         expect {
           order.update_from_params(params, permitted_params)

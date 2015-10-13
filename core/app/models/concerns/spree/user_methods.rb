@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     include Spree::UserApiAuthentication
-    include Spree::UserPaymentSource
+    include Spree::UserPaymentSourceAssociations
     include Spree::UserReporting
     include Spree::RansackableAttributes
 

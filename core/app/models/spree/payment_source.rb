@@ -4,17 +4,24 @@ module Spree
 
     belongs_to :payment_method
 
-    # Refactor me to polymorphic association
-    belongs_to :user, class_name: Spree.user_class, foreign_key: 'user_id'
+    has_one :user_payment_source, as: :payment_source, autosave: true
+    has_one :user, through: :user_payment_source
+
     has_many :payments, as: :source
 
-    # TODO This has to go into the UserPaymentSource class
-    # after_save :ensure_one_default
+    delegate :default, to: :user_payment_source
+    delegate :default=, to: :user_payment_source
 
     attr_accessor :imported
 
-    scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
-    scope :default, -> { where(default: true) }
+    def self.with_payment_profile
+      where('gateway_customer_profile_id IS NOT NULL')
+    end
+
+    # Can't be a scope anymore because of inheritance
+    def self.default
+      joins(:user_payment_source).where(spree_user_payment_sources: { default: true })
+    end
 
     def display_number
       raise NotImplementedError, "Please implement '#{display_number})' in your Payment Source: #{self.class.name}"

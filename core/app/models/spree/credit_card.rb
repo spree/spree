@@ -1,7 +1,6 @@
 module Spree
   class CreditCard < Spree::PaymentSource
     before_save :set_last_digits
-    after_save :ensure_one_default
 
     # As of rails 4.2 string columns always return strings, we can override it on model level.
     attribute :month, Type::Integer.new
@@ -16,8 +15,6 @@ module Spree
       validates :number, :verification_value, presence: true, unless: :imported
       validates :name, presence: true
     end
-
-    scope :default, -> { where(default: true) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
@@ -110,13 +107,6 @@ module Spree
 
     def require_card_numbers?
       !self.encrypted_data.present? && !self.has_payment_profile?
-    end
-
-    def ensure_one_default
-      if self.user_id && self.default
-        CreditCard.where(default: true, user_id: self.user_id).where.not(id: self.id)
-          .update_all(default: false)
-      end
     end
   end
 end

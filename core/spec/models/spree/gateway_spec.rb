@@ -44,7 +44,7 @@ describe Spree::Gateway, :type => :model do
     end
 
     it "finds credit cards associated with the order user" do
-      cc.update_column :user_id, 1
+      cc.user_payment_source.update_column :user_id, 1
       allow(payment.order).to receive_messages completed?: false
 
       expect(no_card.reusable_sources(payment.order)).to be_empty

@@ -578,7 +578,6 @@ describe Spree::Payment, :type => :model do
         let(:attributes) { attributes_for(:credit_card) }
         it "should not try to create profiles on old failed payment attempts" do
           allow_any_instance_of(Spree::Payment).to receive(:payment_method) { gateway }
-
           order.payments.create!(
             source_attributes: attributes,
             payment_method: gateway,
@@ -647,7 +646,7 @@ describe Spree::Payment, :type => :model do
       order = create(:order)
       source = order.payments.new(params).source
 
-      expect(source.user_id).to eq order.user_id
+      expect(source.user).to eq order.user
       expect(source.payment_method_id).to eq gateway.id
     end
 
