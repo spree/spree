@@ -1,4 +1,6 @@
+//= require modernizr
 //= require bootstrap-sprockets
+//= require handlebars
 //= require jquery
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
@@ -6,9 +8,10 @@
 //= require jquery-ui/datepicker
 //= require jquery-ui/sortable
 //= require jquery-ui/autocomplete
-//= require modernizr
+//= require select2
 //= require underscore-min.js
 //= require velocity
+
 //= require spree
 //= require spree/backend/spree-select2
 //= require spree/backend/address_states

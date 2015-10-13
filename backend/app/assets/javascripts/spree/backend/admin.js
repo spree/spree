@@ -1,13 +1,3 @@
-//= require_self
-//= require spree/backend/handlebar_extensions
-//= require spree/backend/variant_autocomplete
-//= require spree/backend/taxon_autocomplete
-//= require spree/backend/option_type_autocomplete
-//= require spree/backend/user_picker
-//= require spree/backend/product_picker
-//= require spree/backend/option_value_picker
-//= require spree/backend/taxons
-
 /**
 This is a collection of javascript functions and whatnot
 under the spree namespace that do stuff we find helpful.
