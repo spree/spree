@@ -1,3 +1,4 @@
+
 <div data-hook="admin_product_form_fields">
 
   <div class="row">
@@ -72,15 +73,15 @@
         <div data-hook="admin_product_form_multiple_variants" class="well">
           <%= f.label :skus, Spree.t(:sku).pluralize %>
           <div class="info marginb">
-            <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.count) %>
+            <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %>
             <ul class="text_list">
               <% @product.variants.first(5).each do |variant| %>
                 <li><%= variant.sku %></li>
               <% end %>
             </ul>
-            <% if @product.variants.count > 5 %>
+            <% if @product.variants.size > 5 %>
               <em>
-                <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.count - 5) %>
+                <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.size - 5) %>
               </em>
             <% end %>
           </div>

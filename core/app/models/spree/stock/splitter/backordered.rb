@@ -6,11 +6,11 @@ module Spree
         def split(packages)
           split_packages = []
           packages.each do |package|
-            if package.on_hand.count > 0
+            if package.on_hand.size > 0
               split_packages << build_package(package.on_hand)
             end
 
-            if package.backordered.count > 0
+            if package.backordered.size > 0
               split_packages << build_package(package.backordered)
             end
           end

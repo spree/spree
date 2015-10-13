@@ -150,7 +150,7 @@ module Spree
     # payments and credits have already been processed, we should allow the
     # reimbursement to show as 'reimbursed' and not 'errored'.
     def unpaid_amount_within_tolerance?
-      reimbursement_count = reimbursement_models.count do |model|
+      reimbursement_count = reimbursement_models.size do |model|
         model.total_amount_reimbursed_for(self) > 0
       end
       leniency = if reimbursement_count > 0
