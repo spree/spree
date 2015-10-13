@@ -20,10 +20,11 @@ module Spree
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-md-12')
     end
 
-    def checkout_progress
+    def checkout_progress(numbers: false)
       states = @order.checkout_steps
-      items = states.map do |state|
+      items = states.each_with_index.map do |state, i|
         text = Spree.t("order_state.#{state}").titleize
+        text.prepend("#{i.succ}. ") if numbers
 
         css_classes = []
         current_index = states.index(@order.state)
