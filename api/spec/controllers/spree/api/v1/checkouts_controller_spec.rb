@@ -229,12 +229,23 @@ module Spree
         expect(cc_errors).to include("Verification Value can't be blank")
       end
 
-      it "allow users to reuse a credit card" do
+      it "allow users to reuse a credit card using the existing_card parameter" do
         order.update_column(:state, "payment")
         credit_card = create(:credit_card, user_id: order.user_id, payment_method_id: @payment_method.id)
 
         api_put :update, id: order.to_param, order_token: order.guest_token,
           order: { existing_card: credit_card.id }
+
+        expect(response.status).to eq 200
+        expect(order.credit_cards).to match_array [credit_card]
+      end
+
+      it "allow users to reuse a credit card using the existing_user_payment_source_id parameter" do
+        order.update_column(:state, "payment")
+        credit_card = create(:credit_card, user_id: order.user_id, payment_method_id: @payment_method.id)
+
+        api_put :update, id: order.to_param, order_token: order.guest_token,
+          order: { existing_user_payment_source_id: credit_card.user_payment_source.id }
 
         expect(response.status).to eq 200
         expect(order.credit_cards).to match_array [credit_card]

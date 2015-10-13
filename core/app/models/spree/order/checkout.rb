@@ -226,9 +226,11 @@ module Spree
             run_callbacks :updating_from_params do
               # Set existing payment source after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              existing_user_payment_source_id = if @updating_params[:order]
-                                                  @updating_params[:order].delete(:existing_user_payment_source_id)
-                                                end
+              payment_source = get_payment_source_from_order_params
+
+              [:existing_card, :existing_user_payment_source_id].each do |key|
+                @updating_params[:order].delete(key) if @updating_params[:order]
+              end
 
               attributes = if @updating_params[:order]
                              @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
@@ -236,8 +238,7 @@ module Spree
                              {}
                            end
 
-              if existing_user_payment_source_id.present?
-                payment_source = UserPaymentSource.find(existing_user_payment_source_id).payment_source
+              if payment_source
                 if payment_source.user != user || payment_source.user.blank?
                   raise Core::GatewayError.new Spree.t(:invalid_credit_card)
                 end
@@ -332,9 +333,20 @@ module Spree
             end
 
             if @updating_params[:order] && (@updating_params[:order][:payments_attributes] ||
+                                            @updating_params[:order][:existing_card] ||
                                             @updating_params[:order][:existing_user_payment_source_id])
               @updating_params[:order][:payments_attributes] ||= [{}]
               @updating_params[:order][:payments_attributes].first[:amount] = total
+            end
+          end
+
+          def get_payment_source_from_order_params
+            if @updating_params[:order] && @updating_params[:order][:existing_user_payment_source_id]
+              existing_user_payment_source_id = @updating_params[:order][:existing_user_payment_source_id]
+              UserPaymentSource.find(existing_user_payment_source_id).payment_source
+            elsif @updating_params[:order] && @updating_params[:order][:existing_card]
+              payment_source_id = @updating_params[:order][:existing_card]
+              CreditCard.find(payment_source_id)
             end
           end
         end
