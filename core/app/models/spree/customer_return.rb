@@ -9,9 +9,7 @@ module Spree
 
     after_create :process_return!
 
-    validates :return_items, presence: true
-    validates :stock_location, presence: true
-
+    validates :return_items, :stock_location, presence: true
     validate :must_have_return_authorization, on: :create
     validate :return_items_belong_to_same_order
 

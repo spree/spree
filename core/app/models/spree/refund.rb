@@ -8,12 +8,12 @@ module Spree
 
     has_many :log_entries, as: :source
 
-    validates :payment, presence: true
-    validates :reason, presence: true
-    # can't require this on create because the perform! in after_create needs to run first
-    validates :transaction_id, presence: true, on: :update
-    validates :amount, presence: true, numericality: {greater_than: 0}
-
+    with_options presence: true do
+      validates :payment, :reason
+      # can't require this on create because the perform! in after_create needs to run first
+      validates :transaction_id, on: :update
+      validates :amount, numericality: { greater_than: 0 }
+    end
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
 
     after_create :perform!

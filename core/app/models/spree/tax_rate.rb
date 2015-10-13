@@ -11,8 +11,10 @@ module Spree
                  class_name: "Spree::TaxCategory"
     end
 
-    validates :amount, presence: true, numericality: { allow_nil: true }
-    validates :tax_category_id, presence: true
+    with_options presence: true do
+      validates :amount, numericality: { allow_nil: true }
+      validates :tax_category_id
+    end
 
     scope :by_zone, -> (zone) { where(zone_id: zone.id) }
     scope :potential_rates_for_zone,

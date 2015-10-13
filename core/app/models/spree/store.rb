@@ -2,10 +2,10 @@ module Spree
   class Store < Spree::Base
     has_many :orders, class_name: "Spree::Order"
 
-    validates :code, presence: true, uniqueness: { allow_blank: true }
-    validates :name, presence: true
-    validates :url, presence: true
-    validates :mail_from_address, presence: true
+    with_options presence: true do
+      validates :code, uniqueness: { allow_blank: true }
+      validates :name, :url, :mail_from_address
+    end
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default

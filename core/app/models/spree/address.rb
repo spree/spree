@@ -7,15 +7,16 @@ module Spree
 
     has_many :shipments, inverse_of: :address
 
-    validates :firstname, :lastname, :address1, :city, :country, presence: true
-    validates :zipcode, presence: true, if: :require_zipcode?
-    validates :phone, presence: true, if: :require_phone?
+    with_options presence: true do
+      validates :firstname, :lastname, :address1, :city, :country
+      validates :zipcode, if: :require_zipcode?
+      validates :phone, if: :require_phone?
+    end
 
     validate :state_validate, :postal_code_validate
 
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
-
 
     self.whitelisted_ransackable_attributes = %w[firstname lastname company]
 

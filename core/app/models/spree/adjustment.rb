@@ -28,9 +28,7 @@ module Spree
     end
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
 
-    validates :adjustable, presence: true
-    validates :order, presence: true
-    validates :label, presence: true
+    validates :adjustable, :order, :label, presence: true
     validates :amount, numericality: true
 
     state_machine :state, initial: :open do
