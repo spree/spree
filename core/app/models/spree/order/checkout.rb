@@ -227,16 +227,14 @@ module Spree
               # Set existing payment source after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
               existing_user_payment_source_id = if @updating_params[:order]
-                @updating_params[:order].delete(:existing_user_payment_source_id)
-              else
-                nil
-              end
+                                                  @updating_params[:order].delete(:existing_user_payment_source_id)
+                                                end
 
               attributes = if @updating_params[:order]
-                @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
-              else
-                {}
-              end
+                             @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
+                           else
+                             {}
+                           end
 
               if existing_user_payment_source_id.present?
                 payment_source = UserPaymentSource.find(existing_user_payment_source_id).payment_source

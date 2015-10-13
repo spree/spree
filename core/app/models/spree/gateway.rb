@@ -14,7 +14,7 @@ module Spree
     end
 
     def payment_sources
-      payment_source_class.where(payment_method_id: self.id)
+      payment_source_class.where(payment_method_id: id)
     end
 
     # instantiates the selected gateway and configures with the options stored in the database
@@ -89,9 +89,9 @@ module Spree
     private
 
     def sources_by_user_id(user_id)
-      self.payment_sources.
+      payment_sources.
         joins(:user_payment_source).
-        where(spree_user_payment_sources: {user_id: user_id}).
+        where(spree_user_payment_sources: { user_id: user_id }).
         with_payment_profile
     end
   end
