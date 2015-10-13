@@ -17,8 +17,6 @@ module Spree
         @collection = @search.result.
               page(params[:page]).
               per(Spree::Config[:properties_per_page])
-
-        @collection
       end
     end
   end
