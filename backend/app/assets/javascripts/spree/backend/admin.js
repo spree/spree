@@ -156,8 +156,8 @@ jQuery(function($) {
     }
   });
 
-  // Make flash messages dissapear
-  setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
+  // Make flash messages disappear
+  setTimeout('$(".alert-auto-disappear").slideUp()', 5000);
 
 });
 
