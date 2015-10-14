@@ -228,15 +228,7 @@ module Spree
               # rails would slice parameters containg ruby objects, apparently
               payment_source = get_payment_source_from_order_params
 
-              [:existing_card, :existing_user_payment_source_id].each do |key|
-                @updating_params[:order].delete(key) if @updating_params[:order]
-              end
-
-              attributes = if @updating_params[:order]
-                             @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
-                           else
-                             {}
-                           end
+              attributes = permitted_order_attributes(permitted_params)
 
               if payment_source
                 if payment_source.user != user || payment_source.user.blank?
@@ -317,37 +309,63 @@ module Spree
           #
           #   {
           #     "order": {
-          #       "existing_user_payment_source_id": "2"
+          #       "existing_credit_card": "2"
+          #     }
+          #   }
+          #
+          # If using the new `existing_payment_source` parameter, the example payload would
+          # be slightly different:
+          #
+          #   {
+          #     "order": {
+          #       "existing_payment_source": "6"
           #     }
           #   }
           #
           def update_params_payment_source
-            if @updating_params[:payment_source].present?
-              source_params = @updating_params.
-                              delete(:payment_source)[@updating_params[:order][:payments_attributes].
-                                                      first[:payment_method_id].to_s]
-
-              if source_params
-                @updating_params[:order][:payments_attributes].first[:source_attributes] = source_params
-              end
+            payment_source_attributes = payment_source_params
+            if payment_source_attributes
+              updating_order_params[:payments_attributes].first[:source_attributes] = payment_source_attributes
             end
 
-            if @updating_params[:order] && (@updating_params[:order][:payments_attributes] ||
-                                            @updating_params[:order][:existing_card] ||
-                                            @updating_params[:order][:existing_user_payment_source_id])
-              @updating_params[:order][:payments_attributes] ||= [{}]
-              @updating_params[:order][:payments_attributes].first[:amount] = total
+            if set_payment_amount?
+              updating_order_params[:payments_attributes] ||= [{}]
+              updating_order_params[:payments_attributes].first[:amount] = total
             end
           end
 
+          def set_payment_amount?
+            return false unless updating_order_params
+            updating_order_params[:payments_attributes] ||
+              updating_order_params[:existing_card] ||
+              updating_order_params[:existing_payment_source]
+          end
+
+          def payment_source_params
+            return false unless @updating_params[:payment_source]
+            source_params = @updating_params.delete(:payment_source)
+            payment_attributes = updating_order_params[:payments_attributes].first
+            payment_method_id = payment_attributes[:payment_method_id].to_s
+            source_params[payment_method_id]
+          end
+
           def get_payment_source_from_order_params
-            if @updating_params[:order] && @updating_params[:order][:existing_user_payment_source_id]
-              existing_user_payment_source_id = @updating_params[:order][:existing_user_payment_source_id]
-              UserPaymentSource.find(existing_user_payment_source_id).payment_source
-            elsif @updating_params[:order] && @updating_params[:order][:existing_card]
-              payment_source_id = @updating_params[:order][:existing_card]
-              CreditCard.find(payment_source_id)
-            end
+            return unless updating_order_params
+
+            existing_payment_source_id = updating_order_params.delete(:existing_payment_source)
+            existing_credit_card_id = updating_order_params.delete(:existing_card)
+
+            UserPaymentSource.find_by(id: existing_payment_source_id).try(:payment_source) ||
+              CreditCard.find_by(id: existing_credit_card_id)
+          end
+
+          def permitted_order_attributes(permitted_params)
+            return {} unless updating_order_params
+            updating_order_params.permit(permitted_params).delete_if { |_k, v| v.nil? }
+          end
+
+          def updating_order_params
+            @updating_params[:order]
           end
         end
       end
