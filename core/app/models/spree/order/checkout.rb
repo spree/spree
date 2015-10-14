@@ -309,7 +309,7 @@ module Spree
           #
           #   {
           #     "order": {
-          #       "existing_credit_card": "2"
+          #       "existing_card": "2"
           #     }
           #   }
           #
