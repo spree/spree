@@ -46,7 +46,7 @@ module Spree
         can [:read, :update], Order do |order, token|
           order.user == user || order.guest_token && token == order.guest_token
         end
-        can :display, CreditCard, user_id: user.id
+        can :display, CreditCard, user_payment_source: { user_id: user.id }
         can :display, Product
         can :display, ProductProperty
         can :display, Property
