@@ -9,7 +9,9 @@ module Spree
                source: :payment_source,
                source_type: 'Spree::CreditCard'
 
-      def default_credit_card; credit_cards.default.first; end
+      def default_payment_source
+        user_payment_sources.default.first.try(:payment_source)
+      end
 
       def payment_sources
         credit_cards.with_payment_profile

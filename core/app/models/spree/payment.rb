@@ -43,6 +43,7 @@ module Spree
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
+    scope :with_payment_source, -> { where.not(source_type: 'Spree::Payment') }
     scope :with_state, ->(s) { where(state: s.to_s) }
     # "offset" is reserved by activerecord
     scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") }

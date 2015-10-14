@@ -88,7 +88,7 @@ module Spree
                     order.process_payments!
                   end
                 end
-                after_transition to: :complete, do: :persist_user_credit_card
+                after_transition to: :complete, do: :persist_user_payment_source
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
               end
@@ -281,21 +281,25 @@ module Spree
             end
           end
 
-          def persist_user_credit_card
-            if !temporary_credit_card && user && valid_credit_cards.present?
-              valid_credit_cards.first.update(user: user, default: true)
+          def persist_user_payment_source
+            if !temporary_payment_source && user && valid_payment_sources.present?
+              valid_payment_sources.first.update(user: user, default: true)
             end
           end
 
-          def assign_default_credit_card
-            if payments.from_credit_card.size == 0 && user_has_valid_default_card? && payment_required?
-              cc = user.default_credit_card
-              payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
+          def assign_default_payment_source
+            if payments.with_payment_source.count == 0 && user_has_valid_default_payment_source? && payment_required?
+              payment_source = user.default_payment_source
+              payments.create!(
+                payment_method_id: payment_source.payment_method_id,
+                source: payment_source,
+                amount: total
+              )
             end
           end
 
-          def user_has_valid_default_card?
-            user && user.default_credit_card.try(:valid?)
+          def user_has_valid_default_payment_source?
+            user && user.default_payment_source.try(:valid?)
           end
 
           private

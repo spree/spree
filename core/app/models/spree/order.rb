@@ -54,7 +54,8 @@ module Spree
     self.whitelisted_ransackable_attributes =  %w[completed_at created_at email number state payment_state shipment_state total considered_risky]
 
     attr_reader :coupon_code
-    attr_accessor :temporary_address, :temporary_credit_card
+    attr_accessor :temporary_address, :temporary_payment_source
+    alias_attribute :temporary_credit_card, :temporary_payment_source
 
     if Spree.user_class
       belongs_to :user, class_name: Spree.user_class.to_s
@@ -362,6 +363,14 @@ module Spree
     def valid_credit_cards
       credit_card_ids = payments.from_credit_card.valid.pluck(:source_id).uniq
       CreditCard.where(id: credit_card_ids)
+    end
+
+    def payment_sources
+      payments.with_payment_source.map(&:source).uniq
+    end
+
+    def valid_payment_sources
+      payments.with_payment_source.valid.map(&:source).uniq
     end
 
     # Finalizes an in progress order after checkout is complete.
