@@ -38,11 +38,11 @@ RSpec.shared_examples "a payment source" do
 
     it "should be false when credit_allowed is zero" do
       payment = mock_model(
-                  Spree::Payment,
-                  completed?: true,
-                  credit_allowed: 0,
-                  order: mock_model(Spree::Order, payment_state: 'credit_owed')
-                )
+        Spree::Payment,
+        completed?: true,
+        credit_allowed: 0,
+        order: mock_model(Spree::Order, payment_state: 'credit_owed')
+      )
       expect(payment_source.can_credit?(payment)).to be false
     end
   end
