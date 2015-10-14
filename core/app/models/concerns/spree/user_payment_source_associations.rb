@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :user_payment_sources, foreign_key: "user_id"
+      has_many :user_payment_sources, foreign_key: "user_id", class_name: "Spree::UserPaymentSource"
       has_many :credit_cards,
                through: :user_payment_sources,
                source: :payment_source,
