@@ -138,7 +138,7 @@ module Spree
 
     def finalize!
       InventoryUnit.finalize_units!(inventory_units)
-      manifest.each { |item| manifest_unstock(item) }
+      after_resume
     end
 
     def include?(variant)
