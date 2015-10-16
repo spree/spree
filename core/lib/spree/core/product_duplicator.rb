@@ -74,7 +74,7 @@ module Spree
     def generate_new_sku(sku)
       loop do
         sku = "COPY OF #{sku}"
-        break sku unless Spree::Variant.where(sku: sku).first
+        break sku unless Spree::Variant.find_by(sku: sku)
       end
     end
   end
