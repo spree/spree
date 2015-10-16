@@ -40,7 +40,7 @@ module Spree
     def duplicate_master
       master = product.master
       master.dup.tap do |new_master|
-        new_master.sku = "COPY OF #{master.sku}"
+        new_master.sku = generate_new_sku(master.sku)
         new_master.deleted_at = nil
         new_master.images = master.images.map { |image| duplicate_image image } if @include_images
         new_master.price = master.price
@@ -50,7 +50,7 @@ module Spree
 
     def duplicate_variant(variant)
       new_variant = variant.dup
-      new_variant.sku = "COPY OF #{new_variant.sku}"
+      new_variant.sku = generate_new_sku(new_variant.sku)
       new_variant.deleted_at = nil
       new_variant.option_values = variant.option_values.map { |option_value| option_value}
       new_variant
@@ -68,6 +68,13 @@ module Spree
           new_prop.created_at = nil
           new_prop.updated_at = nil
         end
+      end
+    end
+
+    def generate_new_sku(sku)
+      loop do
+        sku = "COPY OF #{sku}"
+        break sku unless Spree::Variant.where(sku: sku).first
       end
     end
   end
