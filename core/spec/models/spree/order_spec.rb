@@ -15,6 +15,22 @@ describe Spree::Order, :type => :model do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  describe '.scopes' do
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:completed_order) { FactoryGirl.create(:order, user: user, completed_at: Time.current) }
+    let!(:incompleted_order) { FactoryGirl.create(:order, user: user, completed_at: nil) }
+
+    describe '.complete' do
+      it { expect(Spree::Order.complete).to include completed_order }
+      it { expect(Spree::Order.complete).not_to include incompleted_order }
+    end
+
+    describe '.incomplete' do
+      it { expect(Spree::Order.incomplete).to include incompleted_order }
+      it { expect(Spree::Order.incomplete).not_to include completed_order }
+    end
+  end
+
   context "#cancel" do
     let(:order) { create(:completed_order_with_totals) }
     let!(:payment) do

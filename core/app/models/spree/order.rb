@@ -151,17 +151,11 @@ module Spree
 
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
+    scope :complete, -> { where.not(completed_at: nil) }
+    scope :incomplete, -> { where(completed_at: nil) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
-
-    def self.complete
-      where.not(completed_at: nil)
-    end
-
-    def self.incomplete
-      where(completed_at: nil)
-    end
 
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
