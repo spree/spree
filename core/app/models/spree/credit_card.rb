@@ -14,8 +14,8 @@ module Spree
 
     attr_reader :number
     attr_accessor :encrypted_data,
-                    :imported,
-                    :verification_value
+                  :imported,
+                  :verification_value
 
     with_options if: :require_card_numbers?, on: :create do
       validates :month, :year, numericality: { only_integer: true }
