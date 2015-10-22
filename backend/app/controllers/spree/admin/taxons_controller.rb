@@ -41,7 +41,7 @@ module Spree
       end
 
       def edit
-        @permalink_part = @taxon.permalink.split("/").last
+        @permalink_part = @taxon.permalink.to_s.split("/").last
       end
 
       def update
