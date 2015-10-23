@@ -300,9 +300,11 @@ module Spree
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
       # We want to only look up the applicable tax zone once and pass it to TaxRate calculation to avoid duplicated lookups.
-      order_tax_zone = self.tax_zone
-      Spree::TaxRate.adjust(order_tax_zone, line_items)
-      Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
+      with_lock do
+        order_tax_zone = self.tax_zone
+        Spree::TaxRate.adjust(order_tax_zone, line_items)
+        Spree::TaxRate.adjust(order_tax_zone, shipments) if shipments.any?
+      end
     end
 
     def outstanding_balance
@@ -506,12 +508,14 @@ module Spree
     end
 
     def create_proposed_shipments
-      all_adjustments.shipping.delete_all
-      shipments.destroy_all
+      with_lock do
+        all_adjustments.shipping.delete_all
+        shipments.destroy_all
 
-      packages = Spree::Stock::Coordinator.new(self).packages
-      packages.each do |package|
-        shipments << package.to_shipment
+        packages = Spree::Stock::Coordinator.new(self).packages
+        packages.each do |package|
+          shipments << package.to_shipment
+        end
       end
 
       shipments
