@@ -20,7 +20,7 @@ module Spree
         end
 
         def eligible?(order, options = {})
-          return true if eligible_products.empty?
+          return false if eligible_products.empty?
           if preferred_match_policy == 'all'
             eligible_products.all? {|p| order.products.include?(p) }
           elsif preferred_match_policy == 'any'
