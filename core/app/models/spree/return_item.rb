@@ -52,8 +52,8 @@ module Spree
     delegate :variant, to: :inventory_unit
     delegate :shipment, to: :inventory_unit
 
-    before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
-    before_save :set_exchange_pre_tax_amount
+    before_create :set_default_amount, unless: :amount_changed?
+    before_save :set_exchange_amount
 
     state_machine :reception_status, initial: :awaiting do
       after_transition to: :received, do: :attempt_accept
@@ -73,7 +73,7 @@ module Spree
     end
 
     extend DisplayMoney
-    money_methods :pre_tax_amount, :amount, :total
+    money_methods :net_amount, :amount, :total
 
     def reception_completed?
       COMPLETED_RECEPTION_STATUSES.include?(reception_status)
@@ -107,7 +107,7 @@ module Spree
 
     def self.from_inventory_unit(inventory_unit)
       not_cancelled.find_by(inventory_unit: inventory_unit) ||
-        new(inventory_unit: inventory_unit).tap(&:set_default_pre_tax_amount)
+        new(inventory_unit: inventory_unit).tap(&:set_default_amount)
     end
 
     def exchange_requested?
@@ -124,6 +124,10 @@ module Spree
 
     def total
       amount + additional_tax_total
+    end
+
+    def net_amount
+      amount - included_tax_total
     end
 
     def eligible_exchange_variants
@@ -143,7 +147,7 @@ module Spree
       exchange_inventory_unit.try(:shipment)
     end
 
-    def set_default_pre_tax_amount
+    def set_default_amount
       self.amount = refund_amount_calculator.new.compute(self)
     end
 
@@ -203,8 +207,8 @@ module Spree
       end
     end
 
-    def set_exchange_pre_tax_amount
-      self.pre_tax_amount = 0.0.to_d if exchange_requested?
+    def set_exchange_amount
+      self.amount = 0.0.to_d if exchange_requested?
     end
 
     def validate_no_other_completed_return_items
