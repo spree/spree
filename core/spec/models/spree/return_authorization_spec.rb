@@ -91,52 +91,52 @@ describe Spree::ReturnAuthorization, :type => :model do
     end
   end
 
-  describe "#pre_tax_total" do
-    let(:pre_tax_amount_1) { 15.0 }
-    let!(:return_item_1) { create(:return_item, return_authorization: return_authorization, pre_tax_amount: pre_tax_amount_1) }
+  describe "#amount" do
+    let(:amount_1) { 15.0 }
+    let!(:return_item_1) { create(:return_item, return_authorization: return_authorization, amount: amount_1) }
 
-    let(:pre_tax_amount_2) { 50.0 }
-    let!(:return_item_2) { create(:return_item, return_authorization: return_authorization, pre_tax_amount: pre_tax_amount_2) }
+    let(:amount_2) { 50.0 }
+    let!(:return_item_2) { create(:return_item, return_authorization: return_authorization, amount: amount_2) }
 
-    let(:pre_tax_amount_3) { 5.0 }
-    let!(:return_item_3) { create(:return_item, return_authorization: return_authorization, pre_tax_amount: pre_tax_amount_3) }
+    let(:amount_3) { 5.0 }
+    let!(:return_item_3) { create(:return_item, return_authorization: return_authorization, amount: amount_3) }
 
-    subject { return_authorization.pre_tax_total }
+    subject { return_authorization.amount }
 
     it "sums it's associated return_item's pre-tax amounts" do
-      expect(subject).to eq (pre_tax_amount_1 + pre_tax_amount_2 + pre_tax_amount_3)
+      expect(subject).to eq (amount_1 + amount_2 + amount_3)
     end
   end
 
-  describe "#display_pre_tax_total" do
+  describe "#display_amount" do
     it "returns a Spree::Money" do
-      allow(return_authorization).to receive_messages(pre_tax_total: 21.22)
-      expect(return_authorization.display_pre_tax_total).to eq(Spree::Money.new(21.22))
+      allow(return_authorization).to receive_messages(amount: 21.22)
+      expect(return_authorization.display_amount).to eq(Spree::Money.new(21.22))
     end
   end
 
   describe "#refundable_amount" do
-    let(:weighted_line_item_pre_tax_amount) { 5.0 }
-    let(:line_item_count)                   { return_authorization.order.line_items.count }
+    let(:line_item_price) { 5.0 }
+    let(:line_item_count) { return_authorization.order.line_items.count }
 
     subject { return_authorization.refundable_amount }
 
     before do
-      return_authorization.order.line_items.update_all(pre_tax_amount: weighted_line_item_pre_tax_amount)
+      return_authorization.order.line_items.update_all(price: line_item_price)
       return_authorization.order.update_attribute(:promo_total, promo_total)
     end
 
     context "no promotions" do
       let(:promo_total) { 0.0 }
       it "returns the pre-tax line item total" do
-        expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count)
+        expect(subject).to eq (line_item_price * line_item_count)
       end
     end
 
     context "promotions" do
       let(:promo_total) { -10.0 }
       it "returns the pre-tax line item total minus the order level promotion value" do
-        expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count) + promo_total
+        expect(subject).to eq (line_item_price * line_item_count) + promo_total
       end
     end
   end
