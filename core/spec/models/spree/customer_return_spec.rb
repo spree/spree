@@ -94,12 +94,12 @@ describe Spree::CustomerReturn, :type => :model do
     end
   end
 
-  describe "#display_pre_tax_total" do
+  describe "#display_amount" do
     let(:customer_return) { Spree::CustomerReturn.new }
 
     it "returns a Spree::Money" do
-      allow(customer_return).to receive_messages(pre_tax_total: 21.22)
-      expect(customer_return.display_pre_tax_total).to eq(Spree::Money.new(21.22))
+      allow(customer_return).to receive_messages(amount: 21.22)
+      expect(customer_return.display_amount).to eq(Spree::Money.new(21.22))
     end
   end
 

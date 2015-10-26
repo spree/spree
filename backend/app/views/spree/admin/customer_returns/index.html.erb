@@ -17,7 +17,7 @@
       <thead data-hook="customer_return_header">
         <tr>
           <th><%= Spree.t(:return_number) %></th>
-          <th><%= Spree.t(:pre_tax_total) %></th>
+          <th><%= Spree.t(:amount) %></th>
           <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
           <th><%= Spree.t(:reimbursement_status) %></th>
           <th></th>
@@ -27,7 +27,7 @@
         <% @customer_returns.each do |customer_return| %>
           <tr id="<%= spree_dom_id(customer_return) %>" data-hook="customer_return_row">
             <td><%= link_to customer_return.number, edit_admin_order_customer_return_path(@order, customer_return) %></td>
-            <td><%= customer_return.display_pre_tax_total.to_html %></td>
+            <td><%= customer_return.display_amount.to_html %></td>
             <td><%= pretty_time(customer_return.created_at) %></td>
             <td>
               <% if customer_return.fully_reimbursed? %>
