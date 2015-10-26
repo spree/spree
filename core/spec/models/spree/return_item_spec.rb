@@ -83,12 +83,12 @@ describe Spree::ReturnItem, :type => :model do
     end
   end
 
-  describe "#display_pre_tax_amount" do
-    let(:pre_tax_amount) { 21.22 }
-    let(:return_item) { build(:return_item, pre_tax_amount: pre_tax_amount) }
+  describe "#display_amount" do
+    let(:amount) { 21.22 }
+    let(:return_item) { build(:return_item, amount: amount) }
 
     it "returns a Spree::Money" do
-      expect(return_item.display_pre_tax_amount).to eq(Spree::Money.new(pre_tax_amount))
+      expect(return_item.display_amount).to eq(Spree::Money.new(amount))
     end
   end
 
@@ -98,28 +98,28 @@ describe Spree::ReturnItem, :type => :model do
     end
   end
 
-  describe "pre_tax_amount calculations on create" do
+  describe "amount calculations on create" do
     let(:inventory_unit) { build(:inventory_unit) }
     before { subject.save! }
 
-    context "pre tax amount is not specified" do
+    context "amount is not specified" do
       subject { build(:return_item, inventory_unit: inventory_unit) }
 
       context "not an exchange" do
-        it { expect(subject.pre_tax_amount).to eq Spree::Calculator::Returns::DefaultRefundAmount.new.compute(subject) }
+        it { expect(subject.amount).to eq Spree::Calculator::Returns::DefaultRefundAmount.new.compute(subject) }
       end
 
       context "an exchange" do
         subject { build(:exchange_return_item) }
 
-        it { expect(subject.pre_tax_amount).to eq 0.0 }
+        it { expect(subject.amount).to eq 0.0 }
       end
     end
 
-    context "pre tax amount is specified" do
-      subject { build(:return_item, inventory_unit: inventory_unit, pre_tax_amount: 100) }
+    context "amount is specified" do
+      subject { build(:return_item, inventory_unit: inventory_unit, amount: 100) }
 
-      it { expect(subject.pre_tax_amount).to eq 100 }
+      it { expect(subject.amount).to eq 100 }
     end
   end
 
@@ -466,7 +466,7 @@ describe Spree::ReturnItem, :type => :model do
     end
   end
 
-  describe "exchange pre_tax_amount" do
+  describe "exchange amount" do
     let(:return_item) { build(:return_item) }
 
     context "the return item is intended to be exchanged" do
@@ -476,17 +476,17 @@ describe Spree::ReturnItem, :type => :model do
       end
 
       it do
-        return_item.pre_tax_amount = 5.0
+        return_item.amount = 5.0
         return_item.save!
-        expect(return_item.reload.pre_tax_amount).to eq 0.0
+        expect(return_item.reload.amount).to eq 0.0
       end
     end
 
     context "the return item is not intended to be exchanged" do
       it do
-        return_item.pre_tax_amount = 5.0
+        return_item.amount = 5.0
         return_item.save!
-        expect(return_item.reload.pre_tax_amount).to eq 5.0
+        expect(return_item.reload.amount).to eq 5.0
       end
     end
   end
@@ -669,14 +669,14 @@ describe Spree::ReturnItem, :type => :model do
       create(
         :return_item,
         inventory_unit: inventory_unit,
-        included_tax_total: 10
+        included_tax_total: 2
       )
     end
 
-    it 'includes included tax total' do
-      expect(return_item.pre_tax_amount).to eq 10
-      expect(return_item.included_tax_total).to eq 10
-      expect(return_item.total).to eq 20
+    it 'does not include included tax total' do
+      expect(return_item.net_amount).to eq 8
+      expect(return_item.included_tax_total).to eq 2
+      expect(return_item.total).to eq 10
     end
   end
 end

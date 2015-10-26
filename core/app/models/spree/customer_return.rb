@@ -16,7 +16,7 @@ module Spree
     accepts_nested_attributes_for :return_items
 
     extend DisplayMoney
-    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+    money_methods amount: { currency: Spree::Config[:currency] }
 
     delegate :id, to: :order, prefix: true, allow_nil: true
 
@@ -35,8 +35,8 @@ module Spree
     end
 
 
-    def pre_tax_total
-      return_items.sum(:pre_tax_amount)
+    def amount
+      return_items.sum(:amount)
     end
 
     private

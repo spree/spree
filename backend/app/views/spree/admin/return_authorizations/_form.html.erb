@@ -26,7 +26,7 @@
           <td class="inventory-unit-checkbox">
             <% if editable %>
               <%= item_fields.hidden_field :inventory_unit_id %>
-              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '0', '1' %>
+              <%= item_fields.check_box :_destroy, {checked: return_item.persisted?, class: 'add-item', "data-price" => return_item.amount}, '0', '1' %>
             <% end %>
           </td>
           <td>
@@ -35,13 +35,13 @@
           </td>
           <td><%= inventory_unit.state.humanize %></td>
           <td>
-            <%= return_item.display_pre_tax_amount %>
+            <%= return_item.display_amount %>
           </td>
           <td>
             <% if editable %>
-              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
+              <%= item_fields.text_field :amount, { class: 'refund-amount-input form-control' } %>
             <% else %>
-              <%= return_item.display_pre_tax_amount %>
+              <%= return_item.display_amount %>
             <% end %>
           </td>
           <td>

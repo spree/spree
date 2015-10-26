@@ -36,12 +36,12 @@ module Spree
     end
 
     extend DisplayMoney
-    money_methods :pre_tax_total
+    money_methods :amount
 
     self.whitelisted_ransackable_attributes = ['memo']
 
-    def pre_tax_total
-      return_items.sum(:pre_tax_amount)
+    def amount
+      return_items.sum(:amount)
     end
 
     def currency
@@ -49,7 +49,7 @@ module Spree
     end
 
     def refundable_amount
-      order.pre_tax_item_amount + order.promo_total
+      order.discounted_item_amount + order.promo_total
     end
 
     def customer_returned_items?
