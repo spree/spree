@@ -136,8 +136,8 @@ describe Spree::Reimbursement, type: :model do
       subject { reimbursement.calculated_total }
 
       before do
-        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 10.003)
-        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 10.003)
+        reimbursement.return_items << Spree::ReturnItem.new(amount: 10.003)
+        reimbursement.return_items << Spree::ReturnItem.new(amount: 10.003)
       end
 
       it 'rounds down' do
@@ -151,7 +151,7 @@ describe Spree::Reimbursement, type: :model do
       subject { reimbursement.calculated_total }
 
       before do
-        reimbursement.return_items << Spree::ReturnItem.new(pre_tax_amount: 19.998)
+        reimbursement.return_items << Spree::ReturnItem.new(amount: 19.998)
       end
 
       it 'rounds up' do
