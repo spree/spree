@@ -73,7 +73,7 @@ module Spree
     end
 
     extend DisplayMoney
-    money_methods :pre_tax_amount, :total
+    money_methods :pre_tax_amount, :amount, :total
 
     def reception_completed?
       COMPLETED_RECEPTION_STATUSES.include?(reception_status)
@@ -123,7 +123,7 @@ module Spree
     end
 
     def total
-      pre_tax_amount + included_tax_total + additional_tax_total
+      amount + additional_tax_total
     end
 
     def eligible_exchange_variants
@@ -144,7 +144,7 @@ module Spree
     end
 
     def set_default_pre_tax_amount
-      self.pre_tax_amount = refund_amount_calculator.new.compute(self)
+      self.amount = refund_amount_calculator.new.compute(self)
     end
 
     private

@@ -185,6 +185,11 @@ module Spree
       line_items.to_a.sum(&:pre_tax_amount)
     end
 
+    # Sum of all line item amounts after promotions, before added tax
+    def discounted_item_amount
+      line_items.to_a.sum(&:discounted_amount)
+    end
+
     def currency
       self[:currency] || Spree::Config[:currency]
     end
