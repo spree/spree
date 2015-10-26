@@ -35,8 +35,8 @@ module Spree
     end
 
 
-    def pre_tax_total
-      return_items.sum(:pre_tax_amount)
+    def amount
+      return_items.sum(:amount)
     end
 
     private

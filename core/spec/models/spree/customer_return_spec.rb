@@ -79,18 +79,18 @@ describe Spree::CustomerReturn, :type => :model do
     end
   end
 
-  describe "#pre_tax_total" do
-    let(:pre_tax_amount)  { 15.0 }
+  describe "#amount" do
+    let(:amount)  { 15.0 }
     let(:customer_return) { create(:customer_return, line_items_count: 2) }
 
     before do
-      Spree::ReturnItem.where(customer_return_id: customer_return.id).update_all(pre_tax_amount: pre_tax_amount)
+      Spree::ReturnItem.where(customer_return_id: customer_return.id).update_all(amount: amount)
     end
 
-    subject { customer_return.pre_tax_total }
+    subject { customer_return.amount }
 
-    it "returns the sum of the return item's pre_tax_amount" do
-      expect(subject).to eq (pre_tax_amount * 2)
+    it "returns the sum of the return item's amount" do
+      expect(subject).to eq (amount * 2)
     end
   end
 
