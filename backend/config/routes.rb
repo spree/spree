@@ -206,6 +206,7 @@ Spree::Core::Engine.add_routes do
         get :store_credits
       end
     end
+    get '/csv/users', to: 'users#csv', as: :users_csv
   end
 
   get '/admin', to: 'admin/root#index', as: :admin

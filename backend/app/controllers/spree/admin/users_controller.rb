@@ -94,6 +94,18 @@ module Spree
         Spree.user_class
       end
 
+      def csv
+        @emails = Spree.user_class.
+                        ransack(params[:q]).
+                        result.
+                        map(&:email).
+                        join("\n")
+
+        respond_to do |format|
+          format.csv { render text: @emails }
+        end
+      end
+
       protected
 
       def collection

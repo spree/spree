@@ -3,7 +3,10 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_user), new_admin_user_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_user_link' %>
+  <%= button_link_to(Spree.t(:new_user), new_admin_user_url, class: "btn-success", icon: 'add', id: 'admin_new_user_link') if can? :create, Spree::User %>
+  <% if @collection.any? && can?(:export, Spree::User) %>
+    <%= button_link_to Spree.t(:export_csv), admin_users_csv_path(@promotion, format: :csv, params: params), class: "btn-default", icon: 'download-alt' %>
+  <% end %>
 <% end %>
 
 <% content_for :table_filter_title do %>
@@ -15,25 +18,25 @@
     <%= search_form_for [:admin, @search], url: spree.admin_users_url do |f| %>
       <div class="form-group">
         <%= f.label Spree.t(:email) %>
-        <%= f.text_field :email_cont, class: "form-control js-quick-search-target" %>
+        <%= f.text_field :email_start, class: "form-control js-quick-search-target" %>
       </div>
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
             <%= f.label Spree.t(:first_name) %>
-            <%= f.text_field :bill_address_firstname_cont, :class => 'form-control' %>
+            <%= f.text_field :bill_address_firstname_cont, class: 'form-control' %>
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
             <%= f.label Spree.t(:last_name) %>
-            <%= f.text_field :bill_address_lastname_cont, :class => 'form-control' %>
+            <%= f.text_field :bill_address_lastname_cont, class: 'form-control' %>
           </div>
         </div>
       </div>
       <div class="form-group">
         <%= f.label Spree.t(:company) %>
-        <%= f.text_field :bill_address_company_cont, :class => 'form-control' %>
+        <%= f.text_field :bill_address_company_cont, class: 'form-control' %>
       </div>
       <div data-hook="admin_users_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search' %>
@@ -44,30 +47,36 @@
 
 <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @users } %>
 
-<table class="table" id="listing_users" data-hook>
-  <% if !resource_index_xhr? %>
-  <thead>
-    <tr data-hook="admin_users_index_headers">
-      <th>
-        <%= sort_link @search,:email, Spree.t(:user), {}, {:title => 'users_email_title'} %>
-      </th>
-      <th data-hook="admin_users_index_header_actions" class="actions"></th>
-    </tr>
-  </thead>
-  <% end %>
-  <tbody>
-    <% @users.each do |user|%>
-      <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
-        <td class='user_email'><%= link_to user.email, edit_admin_user_url(user), data: { id: user.id } %></td>
-        <% if !resource_index_xhr? %>
-          <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit user, :no_text => true %>
-            <%= link_to_delete user, :no_text => true %>
-          </td>
-        <% end %>
+<% if @users.any? %>
+  <table class="table" id="listing_users" data-hook>
+    <% if !resource_index_xhr? %>
+    <thead>
+      <tr data-hook="admin_users_index_headers">
+        <th>
+          <%= sort_link @search,:email, Spree.t(:user), {}, {title: 'users_email_title'} %>
+        </th>
+        <th data-hook="admin_users_index_header_actions" class="actions"></th>
       </tr>
+    </thead>
     <% end %>
-  </tbody>
-</table>
+    <tbody>
+      <% @users.each do |user|%>
+        <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
+          <td class='user_email'><%= link_to user.email, edit_admin_user_url(user), data: { id: user.id } %></td>
+          <% if !resource_index_xhr? %>
+            <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
+              <%= link_to_edit(user, no_text: true) if can?(:edit, user) %>
+              <%= link_to_delete(user, no_text: true) if can?(:delete, user) %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::User)) %>
+  </div>
+<% end %>
 
 <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @users } %>
