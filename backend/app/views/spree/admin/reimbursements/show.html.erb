@@ -15,7 +15,7 @@
         <th><%= Spree.t(:preferred_reimbursement_type) %></th>
         <th><%= Spree.t(:reimbursement_type_override) %></th>
         <th><%= Spree.t(:exchange_for) %></th>
-        <th><%= Spree.t(:pre_tax_amount) %></th>
+        <th><%= Spree.t(:amount) %></th>
         <th><%= Spree.t(:total) %></th>
       </tr>
     </thead>
@@ -36,7 +36,7 @@
             <%= return_item.exchange_variant.try(:exchange_name) %>
           </td>
           <td>
-            <%= return_item.display_pre_tax_amount %>
+            <%= return_item.display_amount %>
           </td>
           <td>
             <%= return_item.display_total %>
