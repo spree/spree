@@ -9,5 +9,13 @@ class CreateSpreeUserPaymentSources < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    Spree::CreditCard.find_each do |credit_card|
+      Spree::UserPaymentSource.create(
+        user_id: credit_card.user_id,
+        payment_source_id: credit_card.id,
+        payment_source_class: "Spree::CreditCard"
+      )
+    end
   end
 end
