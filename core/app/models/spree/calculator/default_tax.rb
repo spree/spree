@@ -27,7 +27,7 @@ module Spree
     # When it comes to computing shipments or line items: same same.
     def compute_shipment_or_line_item(item)
       if rate.included_in_price
-        deduced_total_by_rate(item.pre_tax_amount, rate)
+        deduced_total_by_rate(item, rate)
       else
         round_to_two_places(item.discounted_amount * rate.amount)
       end
@@ -38,8 +38,7 @@ module Spree
 
     def compute_shipping_rate(shipping_rate)
       if rate.included_in_price
-        pre_tax_amount = shipping_rate.cost / (1 + rate.amount)
-        deduced_total_by_rate(pre_tax_amount, rate)
+        deduced_total_by_rate(shipping_rate, rate)
       else
         with_tax_amount = shipping_rate.cost * rate.amount
         round_to_two_places(with_tax_amount)
@@ -52,7 +51,14 @@ module Spree
       self.calculable
     end
 
-    def deduced_total_by_rate(pre_tax_amount, rate)
+    def deduced_total_by_rate(item, rate)
+      pre_tax_amount = case item
+                       when Spree::LineItem
+                         default_amount = item.default_price.amount - item.promo_total
+                         net_amount(default_amount, item.tax_category)
+                       when Spree::ShippingRate
+                         item.cost / (1 + rate.amount)
+                       end
       round_to_two_places(pre_tax_amount * rate.amount)
     end
   end
