@@ -788,8 +788,8 @@ describe Spree::Order, :type => :model do
   describe "#pre_tax_item_amount" do
     it "sums all of the line items' pre tax amounts" do
       subject.line_items = [
-        Spree::LineItem.new(price: 10, quantity: 2, pre_tax_amount: 5.0),
-        Spree::LineItem.new(price: 30, quantity: 1, pre_tax_amount: 14.0),
+        Spree::LineItem.new(price: 10, quantity: 2, included_tax_total: 15.0),
+        Spree::LineItem.new(price: 30, quantity: 1, included_tax_total: 16.0),
       ]
 
       expect(subject.pre_tax_item_amount).to eq 19.0
