@@ -403,7 +403,6 @@ describe Spree::TaxRate, :type => :model do
         before do
           @rate1.update_column(:included_in_price, true)
           @rate2.update_column(:included_in_price, true)
-          Spree::TaxRate.store_pre_tax_amount(line_item, [@rate1, @rate2])
         end
 
         context "when zone is contained by default tax zone" do
