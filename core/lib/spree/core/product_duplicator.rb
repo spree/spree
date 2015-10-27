@@ -67,6 +67,7 @@ module Spree
         prop.dup.tap do |new_prop|
           new_prop.created_at = nil
           new_prop.updated_at = nil
+          new_prop.product_id = nil
         end
       end
     end

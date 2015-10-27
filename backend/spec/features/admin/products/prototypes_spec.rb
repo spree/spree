@@ -22,11 +22,11 @@ describe "Prototypes", type: :feature, js: true do
       %w( brand gender manufacturer model shirt_fabric shirt_fit shirt_sleeve_length shirt_type ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end
-      p = create(:prototype, name: "Mug")
+      p = create(:prototype, name: "Mug", properties: [create(:property, name: 'PrototypeMug')])
       %w( mug_size mug_type ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end
-      p = create(:prototype, name: "Bag")
+      p = create(:prototype, name: "Bag", properties: [create(:property, name: 'PrototypeBag')])
       %w( bag_type bag_material ).each do |prop|
         p.properties << Spree::Property.find_by_name(prop)
       end

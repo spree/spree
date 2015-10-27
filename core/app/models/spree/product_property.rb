@@ -7,7 +7,8 @@ module Spree
       belongs_to :property, class_name: 'Spree::Property'
     end
 
-    validates :property, presence: true
+    validates :property, :product, presence: true
+    validates :property_id, uniqueness: { scope: :product_id, message: :already_linked }
 
     validates_with Spree::Validations::DbMaximumLengthValidator, field: :value
 
