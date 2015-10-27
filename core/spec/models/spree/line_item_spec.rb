@@ -272,24 +272,4 @@ describe Spree::LineItem, type: :model do
       expect(line_item.price).to eq 21.98
     end
   end
-
-  describe "precision of included_tax_total" do
-    let(:line_item) { create :line_item, included_tax_total: 4.2051 }
-
-    # Do not actually run the taxation
-    before do
-      Spree::LineItem.class_eval do
-        def update_adjustments; end
-        def update_tax_charge; end
-      end
-    end
-
-    it "keeps four digits of precision even when reloading" do
-      expect(line_item.reload.included_tax_total).to eq(4.2051)
-    end
-
-    it 'this is also reflected in the pre_tax_amount' do
-      expect(line_item.reload.pre_tax_amount).to eq(5.7949)
-    end
-  end
 end
