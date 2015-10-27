@@ -4,7 +4,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
   let!(:country) { create(:country) }
   let!(:zone) { create(:zone, name: "Country Zone", default_tax: true, zone_members: []) }
   let!(:tax_category) { create(:tax_category, tax_rates: []) }
-  let!(:rate) { create(:tax_rate, tax_category: tax_category, amount: 0.05, included_in_price: included_in_price) }
+  let!(:rate) { create(:tax_rate, zone: zone, tax_category: tax_category, amount: 0.05, included_in_price: included_in_price) }
   let(:included_in_price) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(calculable: rate) }
   let!(:order) { create(:order) }
@@ -76,18 +76,22 @@ describe Spree::Calculator::DefaultTax, type: :model do
     context "when tax is included in price" do
       let(:included_in_price) { true }
       context "when the variant matches the tax category" do
+        before do
+          zone.zone_members.create(zoneable: country)
+          expect(line_item).to receive_message_chain(:default_price, :amount).and_return(10)
+        end
+
         context "when line item is discounted" do
           before do
             line_item.taxable_adjustment_total = -1
-            Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           end
 
           it "should be equal to the item's discounted total * rate" do
             expect(calculator.compute(line_item)).to eql 1.38
           end
         end
+
         it "should be equal to the item's full price * rate" do
-          Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           expect(calculator.compute(line_item)).to eql 1.43
         end
       end
@@ -123,24 +127,29 @@ describe Spree::Calculator::DefaultTax, type: :model do
   end
 
   context "when given a line_item" do
-    let(:rate) { create(:tax_rate, amount: 0.07, included_in_price: true) }
-    let(:line_item) { create(:line_item, quantity: 50, price: 8.50) }
+    let(:rate) { create(:tax_rate, amount: 0.07, included_in_price: true, zone: zone) }
+    let(:line_item) { create(:line_item, quantity: 50) }
 
     subject do
       Spree::Calculator::DefaultTax.new(calculable: rate).
         compute_line_item(line_item)
     end
 
+    before do
+      zone.zone_members.create(zoneable: country)
+      expect(line_item).to receive_message_chain(:default_price, :amount).and_return(8.50)
+      expect(line_item).to receive(:tax_category).and_return(rate.tax_category)
+    end
+
+
     describe "#compute_line_item" do
       it "computes the line item right" do
-        Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
         expect(subject).to eq(27.80)
       end
 
       context "with a 40$ promo" do
         before do
           allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal.new("-40"))
-          Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
         end
 
         it "computes the line item right" do

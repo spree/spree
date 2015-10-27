@@ -54,7 +54,7 @@ module Spree
     def deduced_total_by_rate(item, rate)
       pre_tax_amount = case item
                        when Spree::LineItem
-                         default_amount = item.default_price.amount - item.promo_total
+                         default_amount = item.quantity * item.default_price.amount + item.taxable_adjustment_total
                          net_amount(default_amount, item.tax_category)
                        when Spree::ShippingRate
                          item.cost / (1 + rate.amount)
