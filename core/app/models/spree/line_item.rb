@@ -9,6 +9,7 @@ module Spree
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
     has_one :product, through: :variant
+    has_one :default_price, through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
@@ -83,6 +84,10 @@ module Spree
 
     def final_amount
       amount + adjustment_total
+    end
+
+    def pre_tax_amount
+      amount - included_tax_total
     end
 
     alias total final_amount
