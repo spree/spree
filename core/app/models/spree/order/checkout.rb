@@ -296,7 +296,7 @@ module Spree
           end
 
           def user_has_valid_default_card?
-            user && user.default_credit_card.try(:valid?)
+            user && user.default_credit_card.try(:valid?) && !user.default_credit_card.payment_method.nil?
           end
 
           private
