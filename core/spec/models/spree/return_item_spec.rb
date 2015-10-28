@@ -674,7 +674,7 @@ describe Spree::ReturnItem, :type => :model do
     end
 
     it 'does not include included tax total' do
-      expect(return_item.net_amount).to eq 8
+      expect(return_item.pre_tax_amount).to eq 8
       expect(return_item.included_tax_total).to eq 2
       expect(return_item.total).to eq 10
     end
