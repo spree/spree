@@ -126,7 +126,7 @@ module Spree
       amount + additional_tax_total
     end
 
-    def net_amount
+    def pre_tax_amount
       amount - included_tax_total
     end
 

@@ -4,7 +4,16 @@ describe Spree::Calculator::DefaultTax, type: :model do
   let!(:country) { create(:country) }
   let!(:zone) { create(:zone, name: "Country Zone", default_tax: true, zone_members: []) }
   let!(:tax_category) { create(:tax_category, tax_rates: []) }
-  let!(:rate) { create(:tax_rate, zone: zone, tax_category: tax_category, amount: 0.05, included_in_price: included_in_price) }
+
+  let!(:rate) do
+    create(:tax_rate,
+      zone: zone,
+      tax_category: tax_category,
+      amount: 0.05,
+      included_in_price: included_in_price
+    )
+  end
+
   let(:included_in_price) { false }
   let!(:calculator) { Spree::Calculator::DefaultTax.new(calculable: rate) }
   let!(:order) { create(:order) }
@@ -140,7 +149,6 @@ describe Spree::Calculator::DefaultTax, type: :model do
       expect(line_item).to receive_message_chain(:default_price, :amount).and_return(8.50)
       expect(line_item).to receive(:tax_category).and_return(rate.tax_category)
     end
-
 
     describe "#compute_line_item" do
       it "computes the line item right" do

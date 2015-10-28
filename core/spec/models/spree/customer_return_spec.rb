@@ -80,7 +80,7 @@ describe Spree::CustomerReturn, :type => :model do
   end
 
   describe "#amount" do
-    let(:amount)  { 15.0 }
+    let(:amount) { 15.0 }
     let(:customer_return) { create(:customer_return, line_items_count: 2) }
 
     before do
