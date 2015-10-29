@@ -1,6 +1,6 @@
 module Spree
   class ShippingCategory < Spree::Base
-    validates :name, presence: true, uniqueness: true
+    validates :name, presence: true, uniqueness: { allow_blank: true }
 
     with_options inverse_of: :shipping_category do
       has_many :products
