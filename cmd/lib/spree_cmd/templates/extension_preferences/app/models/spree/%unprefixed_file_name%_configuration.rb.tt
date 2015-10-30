@@ -1,0 +1,9 @@
+module Spree
+  class <%= unprefixed_class_name %>Configuration < Preferences::Configuration
+    # Extension-specific namespaced Preferences
+    # this example would be saved with the key: spree/<%= unprefixed_file_name %>/active
+    # It is initialized in lib/spree/<%= unprefixed_file_name %>/engine.rb and is available as Spree::<%= unprefixed_class_name %>::Config.active
+    preference :active, :boolean, default: true
+  end
+end
+

@@ -1,0 +1,7 @@
+Deface::Override.new(
+           name: 'add_<%= unprefixed_file_name %>_configuration_sidebar_menu_item',
+   virtual_path: 'spree/admin/shared/sub_menu/_configuration',
+  insert_bottom: 'ul#sidebar-configuration',
+           text: '<%%= configurations_sidebar_menu_item(Spree.t(\'<%= unprefixed_file_name %>.menu_tab\'), spree.edit_admin_<%= unprefixed_file_name %>_preferences_path) if can? :manage, Spree::Role %>'
+)
+

@@ -1,0 +1,10 @@
+require 'spree_core'
+
+module Spree
+  module <%= unprefixed_class_name %>
+  end
+end
+
+require 'spree/<%= unprefixed_file_name  %>/engine'
+
+
