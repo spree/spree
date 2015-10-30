@@ -271,7 +271,7 @@ module Spree
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+      self.cost_currency = Spree::Config[:currency] if cost_currency.blank?
     end
 
     def create_stock_items
