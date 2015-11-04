@@ -1,0 +1,82 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Taxons' } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
+<%= render partial: 'taxons_page_tabs', locals: { current: :tree } %>
+
+<% if @taxonomy %>
+  <%= form_for [:admin, @product], method: :put, html: { multipart: true, class: 'js-product-taxon-tree-form' } do |f| %>
+    <fieldset>
+      <%= f.field_container :taxons, class: ['form-group'] do %>
+
+        <% if can? :modify, Spree::Classification %>
+          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(','), class: 'js-product-taxon-ids' %>
+
+          <div class="tree-view-search">
+            <div class="input-group">
+              <input type="text" class="form-control" aria-label="..." id="input-search" placeholder="Search for a taxon name..">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <%= @taxonomy.name %> <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <% @taxonomies.each do |taxonomy| %>
+                    <li class="<%= 'active' if @taxonomy == taxonomy %>">
+                      <%= link_to taxonomy.name, spree.taxons_tree_admin_product_path(@product, taxonomy_id: taxonomy.id) %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info text-center js-search-result-info" style="display: none;"></div>
+
+          <div id="tree">
+            <div class="alert alert-info text-center js-tree-alert">
+              <%= Spree.t(:tree_is_loading_please_be_patient) %>...
+            </div>
+          </div>
+
+          <script>
+            // defined in the template because we use some rails variables
+            $(document).ready(function(){
+              $.get('/api/taxonomies/<%= @taxonomy.id %>/bootstrap_treeview', function (data) {
+                if (data) {
+                  $('#tree').treeview({
+                    data: data,
+                    multiSelect: true,
+                    showTags: false,
+                    onNodeSelected: function(event, node) {
+                      addToSelectedNodes(node.nodeId);
+                    },
+                    onNodeUnselected: function(event, node) {
+                      removeFromSelectedNodes(node.nodeId);
+                    },
+                  });
+
+                  // we expand the tree by default
+                  // without expanding we cant select (selectNode) the active taxons
+                  $('#tree').treeview('expandAll', { silent: true });
+
+                  <% @product.taxon_ids.each do |taxon_id| %>
+                    saveAsNodeToSelect(treeNodeIdByTaxonId(<%= taxon_id %>), <%= taxon_id %>);
+                  <% end %>
+
+                  $('#tree').treeview('selectNode', [TaxonTreeNodesToSelect, { silent: true } ]);
+
+                  collapseAndReveal();
+                } else {
+                  displayNoTaxonsFound();
+                }
+              });
+            });
+          </script>
+        <% end %>
+      <% end %>
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+    </fieldset>
+  <% end %>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxonomy)) %>
+  </div>
+<% end %>

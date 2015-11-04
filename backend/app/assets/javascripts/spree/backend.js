@@ -11,6 +11,7 @@
 //= require velocity
 //= require spree
 //= require spree/backend/spree-select2
+//= require bootstrap-treeview
 //= require_tree .
 
 Spree.routes.clear_cache = Spree.pathFor('admin/general_settings/clear_cache')

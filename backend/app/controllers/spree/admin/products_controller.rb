@@ -75,6 +75,11 @@ module Spree
         end
       end
 
+      def taxons_tree
+        @taxonomies = Spree::Taxonomy.all
+        @taxonomy = Spree::Taxonomy.find_by(id: params[:taxonomy_id]) || Spree::Taxonomy.first
+      end
+
       protected
 
       def location_after_save

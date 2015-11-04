@@ -7,5 +7,6 @@
  *= require jquery-ui/autocomplete
  *= require select2
  *= require animate
+ *= require bootstrap-treeview
  *= require spree/backend/spree_admin
 */

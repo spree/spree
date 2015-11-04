@@ -80,7 +80,7 @@ $(document).on('click', '.js-taxon-picker-index tbody td a', function(e) {
     /* add the new taxon as a readable label, and be able to remove it again */
     $('.js-taxon-picker-collection tbody').prepend(taxonPickerCollectionRow(taxonId, taxonName, taxonPrettyName));
 
-    if(!keepOpenOnSelect){
+    if (!keepOpenOnSelect) {
       $('#taxonPicker').modal('hide');
     }
   } else {
