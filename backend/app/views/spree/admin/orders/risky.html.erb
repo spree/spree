@@ -2,24 +2,129 @@
   <%= Spree.t(:risky_orders) %>
 <% end %>
 
+<% content_for :table_filter do %>
+  <div data-hook="admin_orders_index_search">
+
+    <%= search_form_for [:admin, @search], url: admin_risky_orders_path do |f| %>
+      <div class="row">
+        <div class="date-range-filter col-md-8">
+          <div class="form-group">
+            <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
+            <div class="row no-padding-bottom">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <%= f.text_field :created_at_gt, class: 'datepicker datepicker-from form-control', value: (params[:q] ? params[:q][:created_at_gt] : nil), placeholder: Spree.t(:start) %>
+                  <span class="input-group-addon">
+                    <i class="icon icon-calendar"></i>
+                  </span>
+                </div>
+
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <%= f.text_field :created_at_lt, class: 'datepicker datepicker-to form-control', value: (params[:q] ? params[:q][:created_at_lt] : nil), placeholder: Spree.t(:stop) %>
+                  <span class="input-group-addon">
+                    <i class="icon icon-calendar"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
+            <%= f.text_field :number_cont, class: 'form-control js-quick-search-target' %>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_state_eq, Spree.t(:status) %>
+            <%= f.select :state_eq, Spree::Order.state_machines[:state].states.collect {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2 js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+            <%= f.text_field :payment_state_eq, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_shipment_state_eq, Spree.t(:shipment_state) %>
+            <%= f.text_field :shipment_state_eq, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_bill_address_firstname_start, Spree.t(:first_name_begins_with) %>
+            <%= f.text_field :bill_address_firstname_start, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_bill_address_lastname_start, Spree.t(:last_name_begins_with) %>
+            <%= f.text_field :bill_address_lastname_start, class: 'form-control' %>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_email_cont, Spree.t(:email) %>
+            <%= f.text_field :email_cont, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+        <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {include_blank: true}, class: 'select2' %>
+      </div>
+
+      <div data-hook="admin_orders_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:filter_results), 'search' %>
+      </div>
+
+    <% end %>
+
+  </div>
+
+<% end %>
+
+
 <% if @orders.any? %>
   <div class="row">
     <div class="col-md-7">
-      <%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders } %>
+      <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @orders } %>
 
       <table class="table" id="listing_risky_orders" data-hook>
         <thead>
           <tr data-hook="admin_risky_orders_index_headers">
             <% if @show_only_completed %>
-              <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, :scope => 'activerecord.attributes.spree/order') %></th>
+              <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order') %></th>
             <% else %>
-              <th><%= sort_link @search, :created_at,     I18n.t(:created_at, :scope => 'activerecord.attributes.spree/order') %></th>
+              <th><%= sort_link @search, :created_at,     I18n.t(:created_at, scope: 'activerecord.attributes.spree/order') %></th>
             <% end %>
-            <th><%= sort_link @search, :number,           I18n.t(:number, :scope => 'activerecord.attributes.spree/order') %></th>
-            <th><%= sort_link @search, :considered_risky, I18n.t(:considered_risky, :scope => 'activerecord.attributes.spree/order') %></th>
-            <th><%= sort_link @search, :payment_state,    I18n.t(:payment_state, :scope => 'activerecord.attributes.spree/order') %></th>
-            <th><%= sort_link @search, :email,            I18n.t(:email, :scope => 'activerecord.attributes.spree/order') %></th>
-            <th><%= sort_link @search, :total,            I18n.t(:total, :scope => 'activerecord.attributes.spree/order') %></th>
+            <th><%= sort_link @search, :number,           I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
+            <th><%= sort_link @search, :considered_risky, I18n.t(:considered_risky, scope: 'activerecord.attributes.spree/order') %></th>
+            <th><%= sort_link @search, :payment_state,    I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
+            <th><%= sort_link @search, :email,            I18n.t(:email, scope: 'activerecord.attributes.spree/order') %></th>
+            <th><%= sort_link @search, :total,            I18n.t(:total, scope: 'activerecord.attributes.spree/order') %></th>
             <th data-hook="admin_orders_index_header_actions" class="actions"></th>
           </tr>
         </thead>
@@ -49,14 +154,14 @@
             </td>
             <td><%= order.display_total.to_html %></td>
             <td class='actions text-center'>
-              <%= link_to_with_icon 'search', Spree.t(:details), "javascript:;", :class => 'btn btn-default btn-sm js-view-risky-order', :title => Spree.t(:details), :no_text => true %>
+              <%= link_to_with_icon 'search', Spree.t(:details), "javascript:;", class: 'btn btn-default btn-sm js-view-risky-order', title: Spree.t(:details), no_text: true %>
             </td>
           </tr>
         <% end %>
         </tbody>
       </table>
 
-      <%= render :partial => 'spree/admin/shared/index_table_options', :locals => { :collection => @orders, :simple => true } %>
+      <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @orders, simple: true } %>
     </div>
     <div class="col-md-5 js-risky-order-info">
 
