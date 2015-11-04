@@ -94,6 +94,7 @@ Spree::Core::Engine.add_routes do
     resources :taxonomies do
       member do
         get :jstree
+        get :bootstrap_treeview
       end
       resources :taxons do
         member do

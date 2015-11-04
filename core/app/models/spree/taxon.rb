@@ -85,6 +85,16 @@ module Spree
       move_to_child_with_index(parent, idx.to_i) unless self.new_record?
     end
 
+    def rabl_children_count
+      # children count as array for taxon treeview rabl
+      children.count.to_s.split if children.count > 0
+    end
+
+    def rabl_name
+      # name with fallback for taxon treeview rabl
+      name || Spree.t(:not_found, resource: 'Taxon name')
+    end
+
     private
 
     # isolated so can be overwritten for custom search terms

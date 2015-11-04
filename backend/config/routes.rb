@@ -49,6 +49,7 @@ Spree::Core::Engine.add_routes do
         get :clone
         get :stock
         get :taxons
+        get :taxons_tree
         get :content
         get :general
       end

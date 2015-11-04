@@ -1,5 +1,6 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Taxons' } %>
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
+<%= render partial: 'taxons_page_tabs', locals: { current: :list } %>
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:add_taxon), 'javascript:;', { class: "js-taxon-picker-add btn-primary", icon: 'add', data: { toggle: "modal", target: "#taxonPicker" } } %>
