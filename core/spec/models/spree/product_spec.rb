@@ -204,8 +204,8 @@ describe Spree::Product, :type => :model do
         # it's effect is rather complex and dependent on state and config.
         # However, when a new slug is set, it should call slugs.create!
         expect(product.slugs).to receive(:create!)
-        product.slug = "custom-slug" # otherwise the create_slug method avoids
-                                     # writing a new one
+        # Set it, otherwise the create_slug method avoids writing a new one
+        product.slug = "custom-slug"
         product.run_callbacks :save
       end
 
