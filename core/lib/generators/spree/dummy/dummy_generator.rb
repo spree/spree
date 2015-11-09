@@ -7,7 +7,6 @@ module Spree
     desc "Creates blank Rails application, installs Spree"
 
     class_option :lib_name, :default => ''
-    class_option :database, :default => ''
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -20,17 +19,16 @@ module Spree
     end
 
     PASSTHROUGH_OPTIONS = [
-      :skip_active_record, :skip_javascript, :database, :javascript, :quiet, :pretend, :force, :skip
+      :skip_active_record, :skip_javascript, :javascript, :quiet, :pretend, :force, :skip
     ]
 
     def generate_test_dummy
-      # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
-      # object has been known to return nil
-      opts = {}.merge(options).slice(*PASSTHROUGH_OPTIONS)
-      opts[:database] = 'sqlite3' if opts[:database].blank?
-      opts[:force] = true
-      opts[:skip_bundle] = true
-      opts[:old_style_hash] = true
+      opts = options.slice(*PASSTHROUGH_OPTIONS).update(
+        database:       'postgresql',
+        force:          true,
+        skip_bundle:    true,
+        old_style_hash: true
+      )
 
       puts "Generating dummy Rails application..."
       invoke Rails::Generators::AppGenerator,
