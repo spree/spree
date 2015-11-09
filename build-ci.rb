@@ -20,7 +20,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[api backend core frontend sample guides].map(&method(:new)).freeze
+  ALL = %w[api backend core frontend sample].map(&method(:new)).freeze
 
   # Install subproject
   #
@@ -64,11 +64,10 @@ private
   #
   # @return [Array<Symbol>]
   def test_steps
-    guides = name.eql?('guides')
     steps = []
-    steps << :setup_test_app unless guides
+    steps << :setup_test_app
     steps << :run_tests
-    steps << :run_mutant unless guides
+    steps << :run_mutant
     steps
   end
 
