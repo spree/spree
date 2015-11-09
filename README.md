@@ -20,7 +20,6 @@ Spree gem you automatically require all of the necessary gem dependencies which 
 * spree_backend (Admin area)
 * spree_cmd (Command-line tools)
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
-* spree_sample (Sample data)
 
 All of the gems are designed to work together to provide a fully functional
 e-commerce platform. It is also possible, however, to use only the pieces you are
@@ -49,8 +48,7 @@ rails _4.1.11_ new my_store
 spree install my_store
 ```
 
-This will add the Spree gem to your Gemfile, create initializers, copy migrations
-and optionally generate sample products and orders.
+This will add the Spree gem to your Gemfile, create initializers and copy migrations.
 
 If you get an "Unable to resolve dependencies" error when installing the Spree gem
 then you can try installing just the spree_cmd gem which should avoid any circular
@@ -117,7 +115,7 @@ bundle install
 Use the install generator to set up Spree:
 
 ```shell
-rails g spree:install --sample=false --seed=false
+rails g spree:install --seed=false
 ```
 
 At this point, if you are using spree_auth_devise you will need to change this
@@ -133,11 +131,11 @@ To this:
 Spree.user_class = "Spree::User"
 ```
 
-You can avoid running migrations or generating seed and sample data by passing
+You can avoid running migrations or generating seed data by passing
 in these flags:
 
 ```shell
-rails g spree:install --migrate=false --sample=false --seed=false
+rails g spree:install --migrate=false --seed=false
 ```
 
 You can always perform the steps later by using these commands.
@@ -146,7 +144,6 @@ You can always perform the steps later by using these commands.
 bundle exec rake railties:install:migrations
 bundle exec rake db:migrate
 bundle exec rake db:seed
-bundle exec rake spree_sample:load
 ```
 
 Browse Store

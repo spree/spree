@@ -13,7 +13,7 @@ module SpreeCmd
                                :desc => 'Answer yes to all prompts'
 
     class_option :skip_install_data, :type => :boolean, :default => false,
-                 :desc => 'Skip running migrations and loading seed and sample data'
+                 :desc => 'Skip running migrations'
 
     class_option :version, :type => :string, :desc => 'Spree Version to use'
 
@@ -76,15 +76,12 @@ module SpreeCmd
       if options[:skip_install_data]
         @run_migrations = false
         @load_seed_data = false
-        @load_sample_data = false
       else
         @run_migrations = ask_with_default('Would you like to run the migrations?')
         if @run_migrations
           @load_seed_data = ask_with_default('Would you like to load the seed data?')
-          @load_sample_data = ask_with_default('Would you like to load the sample data?')
         else
           @load_seed_data = false
-          @load_sample_data = false
         end
       end
     end
@@ -114,7 +111,6 @@ module SpreeCmd
       spree_options = []
       spree_options << "--migrate=#{@run_migrations}"
       spree_options << "--seed=#{@load_seed_data}"
-      spree_options << "--sample=#{@load_sample_data}"
       spree_options << "--user_class=#{@user_class}"
       spree_options << "--auto_accept" if options[:auto_accept]
 
