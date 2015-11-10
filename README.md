@@ -1,9 +1,5 @@
-**THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
-EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
-SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
-
-SUMMARY
--------
+mrh/spree
+---------
 
 Spree is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by a dedicated
@@ -18,7 +14,6 @@ Spree gem you automatically require all of the necessary gem dependencies which 
 * spree_api (RESTful API)
 * spree_frontend (User-facing components)
 * spree_backend (Admin area)
-* spree_cmd (Command-line tools)
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
 
 All of the gems are designed to work together to provide a fully functional
@@ -34,42 +29,21 @@ spree_api.
 Installation
 ------------
 
-**THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
-EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
-SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
+Add the following to your Gemfile
 
-The fastest way to get started is by using the spree command line tool
-available in the spree gem which will add Spree to an existing Rails application.
-
-```shell
-gem install rails -v 4.1.11
-gem install spree
-rails _4.1.11_ new my_store
-spree install my_store
+```
+group :spree, :default do
+  gem 'spree', '= 2.4.11.beta', git: 'https://github.com/MountainRoseHerbs/spree.git', branch: 'master'
+end
 ```
 
-This will add the Spree gem to your Gemfile, create initializers and copy migrations.
-
-If you get an "Unable to resolve dependencies" error when installing the Spree gem
-then you can try installing just the spree_cmd gem which should avoid any circular
-dependency issues.
-
 ```shell
-gem install spree_cmd
+bundle install
+bundle exec rails new my_store
 ```
 
-To auto accept all prompts while running the install generator, pass -A as an option
-
-```shell
-spree install my_store -A
-```
-
-To select a specific branch, pass in the `--branch` option. If there is no branch, you
-will be given the latest version of either spree_auth_devise or spree_gateway.
-
-```shell
-spree install my_store --branch "2-4-stable"
-```
+Than follow the Rails [Engines documentation](http://guides.rubyonrails.org/engines.html#hooking-into-an-application)
+on howto use the `spree` engine in your application.
 
 Using stable builds and bleeding edge
 -------------
