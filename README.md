@@ -324,17 +324,6 @@ specs for all the facets:
 bash build.sh
 ```
 
-Further Documentation
-------------
-Spree has a number of really useful guides online at [http://guides.spreecommerce.com](http://guides.spreecommerce.com).
-
 Roadmap
 ------------
 Spree roadmap at [https://trello.com/b/PQsUfCL0/spree-roadmap](https://trello.com/b/PQsUfCL0/spree-roadmap).
-
-Contributing
-------------
-
-Spree is an open source project and we encourage contributions. Please see the
-[contributors guidelines](http://guides.spreecommerce.com/developer/contributing.html)
-before contributing.

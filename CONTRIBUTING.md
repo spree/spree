@@ -55,7 +55,7 @@ taken straight from the Ruby on Rails guide:
 
 * Use Rails idioms and helpers
 * Include tests that fail without your code, and pass with it
-* Update the documentation, the surrounding one, examples elsewhere, guides,
+* Update the documentation, the surrounding one, examples elsewhere,
   whatever is affected by your contribution
 
 Syntax:
