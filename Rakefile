@@ -42,7 +42,7 @@ task :clean do
   puts "Deleting pkg directory.."
   FileUtils.rm_rf("pkg")
 
-  %w(api backend cmd core frontend).each do |gem_name|
+  %w(api backend core frontend).each do |gem_name|
     puts "Cleaning #{gem_name}:"
     puts "  Deleting #{gem_name}/Gemfile"
     FileUtils.rm_f("#{gem_name}/Gemfile")
@@ -58,7 +58,7 @@ end
 namespace :gem do
   desc "run rake gem for all gems"
   task :build do
-    %w(core api backend frontend cmd).each do |gem_name|
+    %w(core api backend frontend).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
