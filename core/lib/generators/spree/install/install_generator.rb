@@ -7,7 +7,6 @@ module Spree
   class InstallGenerator < Rails::Generators::Base
     class_option :migrate, :type => :boolean, :default => true, :banner => 'Run Spree migrations'
     class_option :seed, :type => :boolean, :default => true, :banner => 'load seed data (migrations must be run)'
-    class_option :sample, :type => :boolean, :default => true, :banner => 'load sample data (migrations must be run)'
     class_option :auto_accept, :type => :boolean
     class_option :user_class, :type => :string
     class_option :admin_email, :type => :string
@@ -26,11 +25,9 @@ module Spree
     def prepare_options
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
-      @load_sample_data = options[:sample]
 
       unless @run_migrations
-         @load_seed_data = false
-         @load_sample_data = false
+        @load_seed_data = false
       end
     end
 
@@ -155,15 +152,6 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         end
       else
         say_status :skipping, "seed data (you can always run rake db:seed)"
-      end
-    end
-
-    def load_sample_data
-      if @load_sample_data
-        say_status :loading, "sample data"
-        quietly { rake 'spree_sample:load' }
-      else
-        say_status :skipping, "sample data (you can always run rake spree_sample:load)"
       end
     end
 

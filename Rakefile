@@ -18,7 +18,7 @@ task default: :test
 desc "Runs all tests in all Spree engines"
 task :test do
   Rake::Task['test_app'].invoke
-  %w(api backend core frontend sample).each do |gem_name|
+  %w(api backend core frontend).each do |gem_name|
     Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
       system("RSPEC_RETRY_COUNT=2 rspec") or exit!(1)
     end
@@ -28,7 +28,7 @@ end
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
   require File.expand_path('../core/lib/generators/spree/install/install_generator', __FILE__)
-  %w(api backend core frontend sample).each do |engine|
+  %w(api backend core frontend).each do |engine|
     ENV['LIB_NAME'] = File.join('spree', engine)
     ENV['DUMMY_PATH'] = File.expand_path("../#{engine}/spec/dummy", __FILE__)
     Rake::Task['common:test_app'].execute
@@ -58,7 +58,7 @@ end
 namespace :gem do
   desc "run rake gem for all gems"
   task :build do
-    %w(core api backend frontend sample cmd).each do |gem_name|
+    %w(core api backend frontend cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -75,7 +75,7 @@ namespace :gem do
   task :install do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-    %w(core api backend frontend sample cmd).each do |gem_name|
+    %w(core api backend frontend cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       puts "Deleting #{gem_name}/pkg"
       FileUtils.rm_rf("#{gem_name}/pkg")
@@ -94,7 +94,7 @@ namespace :gem do
   task :release do
     version = File.read(File.expand_path("../SPREE_VERSION", __FILE__)).strip
 
-    %w(core api backend frontend sample cmd).each do |gem_name|
+    %w(core api backend frontend cmd).each do |gem_name|
       puts "########################### #{gem_name} #########################"
       cmd = "cd #{gem_name}/pkg && gem push spree_#{gem_name}-#{version}.gem"; puts cmd; system cmd
     end

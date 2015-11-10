@@ -1,5 +1,0 @@
-eval(Pathname.new(__dir__).join('../shared/dependencies.rb').read)
-
-gem 'spree_core', path: '../core'
-
-gemspec
