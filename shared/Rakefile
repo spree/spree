@@ -1,0 +1,32 @@
+require 'generators/spree/dummy/dummy_generator'
+require 'generators/spree/install/install_generator'
+
+desc 'Generates a dummy app for testing'
+task :test_app, :user_class do |t, args|
+  args.with_defaults(user_class: 'Spree::LegacyUser')
+
+  lib_name = File.join('spree', Pathname.pwd.basename)
+
+  require(lib_name)
+
+  Spree::DummyGenerator.start(%W[
+    --lib_name #{lib_name}
+    --quiet
+  ])
+
+  Spree::InstallGenerator.start(%W[
+    --lib_name #{lib_name}
+    --auto-accept
+    --migrate false
+    --seed false
+    --quiet
+    --user_class #{args[:user_class]}
+  ])
+
+  puts 'Setting up dummy database and precompiling asssts'
+  system(
+    { 'RAILS_ENV' => 'test' },
+    *%w[bundle exec rake db:drop db:create db:migrate assets:precompile],
+    out: File::NULL
+  )
+end
