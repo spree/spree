@@ -4,10 +4,6 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
-      rake_tasks do
-        load File.join(root, "lib", "tasks", "exchanges.rake")
-      end
-
       initializer "spree.environment", :before => :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
         Spree::Config = app.config.spree.preferences #legacy access
