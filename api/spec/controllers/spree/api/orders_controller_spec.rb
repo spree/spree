@@ -625,11 +625,7 @@ module Spree
       end
 
       it "responds with orders updated_at with miliseconds precision" do
-        if ActiveRecord::Base.connection.adapter_name == "Mysql2"
-          skip "MySQL does not support millisecond timestamps."
-        else
-          skip "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
-        end
+        skip "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"
 
         api_get :index
         milisecond = order.updated_at.strftime("%L")

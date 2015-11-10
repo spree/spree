@@ -13,19 +13,6 @@ test:
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
-<% when 'mysql' %>
-development:
-  adapter: mysql2
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
-  encoding: utf8
-test:
-  adapter: mysql2
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
-  encoding: utf8
-production:
-  adapter: mysql2
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
-  encoding: utf8
 <% when 'postgres' %>
 <% db_host = ENV['DB_HOST'] -%>
 development:
