@@ -1,19 +1,6 @@
 <% if agent_number = ENV['TC_AGENT_NUMBER']
 database_prefix = agent_number + '_'
 end %>
-<% case ENV['DB']
-  when 'sqlite' %>
-development:
-  adapter: sqlite3
-  database: db/spree_development.sqlite3
-test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
-  timeout: 10000
-production:
-  adapter: sqlite3
-  database: db/spree_production.sqlite3
-<% when 'postgres' %>
 <% db_host = ENV['DB_HOST'] -%>
 development:
   adapter: postgresql
@@ -38,15 +25,4 @@ production:
   min_messages: warning
 <% unless db_host.blank? %>
   host: <%= db_host %>
-<% end %>
-<% else %>
-development:
-  adapter: sqlite3
-  database: db/spree_development.sqlite3
-test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
-production:
-  adapter: sqlite3
-  database: db/spree_production.sqlite3
 <% end %>

@@ -1,7 +1,6 @@
 ---
 machine:
   environment:
-    DB: postgres
     RAILS_ENV: test
     RACK_ENV: test
   services:
