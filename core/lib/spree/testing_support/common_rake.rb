@@ -32,14 +32,6 @@ namespace :common do
 
   task :seed do |t, args|
     puts "Seeding ..."
-    cmd = "bundle exec rake db:seed RAILS_ENV=test"
-
-    if RUBY_PLATFORM =~ /mswin/ #windows
-      cmd += " >nul"
-    else
-      cmd += " >/dev/null"
-    end
-
-    system(cmd)
+    system("bundle exec rake db:seed RAILS_ENV=test >#{File::NULL}")
   end
 end
