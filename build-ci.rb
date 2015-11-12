@@ -86,7 +86,8 @@ private
 
   # Setup the test app
   #
-  # @return [undefined]
+  # @return [Boolean]
+  #   the success of the test app setup
   def setup_test_app
     system(%w[bundle exec rake test_app]) or fail 'Failed to setup the test app'
   end
@@ -99,6 +100,10 @@ private
     system(%w[bundle exec rspec spec --order random]) or fail 'Tests failed'
   end
 
+  # Run mutant for subproject
+  #
+  # @return [Boolean]
+  #   the success of mutation testing
   def run_mutant
     system(%w[bundle exec mutant -r./spec/dummy/config/environment --use rspec -j1 --since HEAD~1 -- Spree*]) or
       fail 'Mutation testing failed'
