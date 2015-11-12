@@ -1,8 +1,5 @@
 ---
 machine:
-  environment:
-    RAILS_ENV: test
-    RACK_ENV: test
   services:
     - postgresql
   ruby:

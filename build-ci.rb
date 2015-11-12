@@ -125,7 +125,7 @@ private
   # @return [Boolean]
   #   the success of the system command
   def system(arguments)
-    Kernel.system(*arguments)
+    Kernel.system({ 'RAILS_ENV' => 'test' }, *arguments)
   end
 
   # Change to subproject directory and execute block
