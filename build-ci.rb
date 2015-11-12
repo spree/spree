@@ -105,8 +105,17 @@ private
   # @return [Boolean]
   #   the success of mutation testing
   def run_mutant
-    system(%w[bundle exec mutant -r./spec/dummy/config/environment --use rspec -j1 --since HEAD~1 -- Spree*]) or
-      fail 'Mutation testing failed'
+    system(%w[
+      bundle
+      exec
+      mutant
+      --require ./spec/dummy/config/environment
+      --use rspec
+      --jobs 1
+      --since HEAD~1
+      --
+      Spree*
+    ]) or fail 'Mutation testing failed'
   end
 
   # Execute system command via execve
