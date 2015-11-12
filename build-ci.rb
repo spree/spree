@@ -67,7 +67,6 @@ private
     steps = []
     steps << :setup_test_app
     steps << :run_tests
-    steps << :run_mutant
     steps
   end
 
