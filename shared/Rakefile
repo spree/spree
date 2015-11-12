@@ -26,7 +26,7 @@ task :test_app, :user_class do |t, args|
   puts 'Setting up dummy database and precompiling asssts'
   system(
     { 'RAILS_ENV' => 'test' },
-    *%w[bundle exec rake db:drop db:create db:migrate assets:precompile],
+    *%w[bundle exec rake db:migrate:reset assets:precompile],
     out: File::NULL
   )
 end
