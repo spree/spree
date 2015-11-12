@@ -37,7 +37,7 @@
     height: 32px;
 
     .ui-datepicker-prev, .ui-datepicker-next {
-      border-radius: 0;      
+      border-radius: 0;
       top: 0;
       height: 32px;
 
@@ -57,7 +57,7 @@
         color: $color-1;
         width: 10px;
         margin-left: -5px;
-        
+
         &:hover {
           color: very-light($color-2, 25);
         }
@@ -67,7 +67,7 @@
       left: 0;
 
       .ui-icon {
-        @extend .fa-arrow-left;        
+        @extend .fa-arrow-left;
       }
     }
 
@@ -81,7 +81,7 @@
       &:hover {
         .ui-icon {
           margin-left: -5px;
-        }        
+        }
       }
     }
 
@@ -97,7 +97,7 @@
     border: none;
 
     thead {
-      th { 
+      th {
         border-bottom: 1px solid $color-border;
         border-right: 1px solid $color-border;
         color: $color-body-text;
@@ -153,7 +153,7 @@
             border: 1px solid darken($color-6, 5);
           }
         }
-      }      
+      }
     }
   }
 }

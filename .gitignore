@@ -1,11 +1,8 @@
 # Generated files in subprojects
-/*/spec/dummy
-/*/Gemfile.lock
-/*/.bundle
-/*/vendor
-
-# Gems installed in project root
-/vendor
+.bundle/
+/*/spec/dummy/
+Gemfile.lock
+vendor/
 
 # Ignore osx folder attribute files
 .DS_Store

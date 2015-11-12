@@ -15,7 +15,7 @@ module Spree
 
       describe 'PUT #update' do
         let(:tax_category) { create :tax_category }
-    
+
         subject { spree_put :update, {id: tax_category.id, tax_category: { name: 'Foo', tax_code: 'Bar' }}}
 
         it 'should redirect' do

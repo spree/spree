@@ -43,7 +43,7 @@ module Spree
       def fire
         inventory_unit.send("#{@event}!") if @event
       end
-      
+
       def inventory_unit_params
         params.require(:inventory_unit).permit(permitted_inventory_unit_attributes)
       end

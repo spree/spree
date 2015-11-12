@@ -5,7 +5,7 @@
   font-size: 125%;
 
   &.security {
-    background: #cc0000; 
+    background: #cc0000;
     border-bottom: 3px solid darken(#cc0000, 10);
     a {
       color: lighten($color-3, 20);

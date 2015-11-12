@@ -24,4 +24,3 @@ $(document).ready ->
 
   $(document).ajaxStop ->
     $("#progress").fadeOut()
-

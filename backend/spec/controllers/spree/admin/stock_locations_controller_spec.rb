@@ -4,7 +4,7 @@ module Spree
   module Admin
     describe StockLocationsController, :type => :controller do
       stub_authorization!
-      
+
       # Regression for #4272
       context "with no countries present" do
         it "cannot create a new stock location" do
@@ -34,7 +34,7 @@ module Spree
         it "can create a new stock location" do
           spree_get :new
           expect(response).to be_success
-        end 
+        end
       end
     end
   end

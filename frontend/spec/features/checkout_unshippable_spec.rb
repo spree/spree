@@ -34,4 +34,3 @@ describe "checkout with unshippable items", type: :feature, inaccessible: true d
     expect(order.line_items.count).to eq 1
   end
 end
-

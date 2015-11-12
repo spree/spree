@@ -25,6 +25,3 @@ describe Spree::Preferences::Configuration, :type => :model do
   end
 
 end
-
-
-

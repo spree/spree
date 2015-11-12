@@ -10,4 +10,3 @@ RSpec::Matchers.define :have_attributes do |expected_attributes|
     expected_attributes.map(&:to_sym).all? { |attr| actual_attributes.include?(attr) }
   end
 end
-

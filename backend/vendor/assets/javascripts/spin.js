@@ -376,4 +376,4 @@
 
     return Spinner
 
-})); 
+}));

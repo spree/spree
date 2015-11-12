@@ -53,4 +53,3 @@ module Spree
 
   end
 end
-

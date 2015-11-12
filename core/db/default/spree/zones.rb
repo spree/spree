@@ -13,5 +13,3 @@ end
 ["United States", "Canada"].each do |name|
   north_america.zone_members.create!(zoneable: Spree::Country.find_by!(name: name))
 end
-
-

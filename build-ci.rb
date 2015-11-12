@@ -30,9 +30,7 @@ class Project
   # @return [self]
   #   otherwise
   def install
-    chdir do
-      bundle_check or bundle_install or fail 'Cannot finish gem installation'
-    end
+    bundle_install or fail 'Cannot finish gem installation'
     self
   end
 
@@ -41,17 +39,10 @@ class Project
   # @return [Boolean]
   #   the success of the build
   def pass?
-    chdir { run_project }
+    run_project
   end
 
 private
-
-  # Check if current bundle is already usable
-  #
-  # @return [Boolean]
-  def bundle_check
-    system(%W[bundle check --path=#{VENDOR_BUNDLE}])
-  end
 
   # Run project
   #
@@ -67,7 +58,6 @@ private
     steps = []
     steps << :setup_test_app
     steps << :run_tests
-    steps << :run_mutant
     steps
   end
 
@@ -79,15 +69,16 @@ private
     system(%W[
       bundle
       install
-      --path=#{VENDOR_BUNDLE}
-      --jobs=#{BUNDLER_JOBS}
-      --retry=#{BUNDLER_RETRIES}
+      --path #{VENDOR_BUNDLE}
+      --jobs #{BUNDLER_JOBS}
+      --retry #{BUNDLER_RETRIES}
     ])
   end
 
   # Setup the test app
   #
-  # @return [undefined]
+  # @return [Boolean]
+  #   the success of the test app setup
   def setup_test_app
     system(%w[bundle exec rake test_app]) or fail 'Failed to setup the test app'
   end
@@ -100,9 +91,22 @@ private
     system(%w[bundle exec rspec spec --order random]) or fail 'Tests failed'
   end
 
+  # Run mutant for subproject
+  #
+  # @return [Boolean]
+  #   the success of mutation testing
   def run_mutant
-    system(%w[bundle exec mutant -r./spec/dummy/config/environment --use rspec -j1 --since HEAD~1 -- Spree*]) or
-      fail 'Mutation testing failed'
+    system(%w[
+      bundle
+      exec
+      mutant
+      --require ./spec/dummy/config/environment
+      --use rspec
+      --jobs 1
+      --since HEAD~1
+      --
+      Spree*
+    ]) or fail 'Mutation testing failed'
   end
 
   # Execute system command via execve
@@ -112,7 +116,7 @@ private
   # @return [Boolean]
   #   the success of the system command
   def system(arguments)
-    Kernel.system(*arguments)
+    chdir { Kernel.system({ 'RAILS_ENV' => 'test' }, *arguments) }
   end
 
   # Change to subproject directory and execute block

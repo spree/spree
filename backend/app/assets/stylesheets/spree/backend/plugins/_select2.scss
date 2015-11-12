@@ -40,7 +40,7 @@
   }
 }
 
-.select2-drop {  
+.select2-drop {
   box-shadow: none !important;
   z-index: 1000000;
   max-width: auto !important;
@@ -53,7 +53,7 @@
 }
 
 .select2-search {
-  @extend .fa; 
+  @extend .fa;
   @extend .fa-search;
 
   font-size: 100%;
@@ -102,7 +102,7 @@
   }
 }
 
-.select2-results { 
+.select2-results {
   padding-left: 0 !important;
 
   li {

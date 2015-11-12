@@ -20,4 +20,3 @@ describe Spree::AppConfiguration, :type => :model do
   end
 
 end
-
