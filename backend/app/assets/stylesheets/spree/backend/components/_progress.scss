@@ -1,7 +1,7 @@
-#progress { 
+#progress {
   display: none;
   position: fixed;
-  top: 0;  
+  top: 0;
   z-index: 1000;
   opacity: 0.8;
   width: 100%;
@@ -19,7 +19,7 @@
     text-align: center;
   }
 
-  #spinner {    
+  #spinner {
     position: absolute;
     top: 10px;
     left: 50%;

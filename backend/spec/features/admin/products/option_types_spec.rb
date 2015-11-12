@@ -75,7 +75,7 @@ describe "Option Types", :type => :feature do
     expect(page).to have_css("tbody#option_values")
     all("tbody#option_values tr input").all? { |input| input.value.blank? }
   end
-  
+
   # Regression test for #3204
   it "can remove a non-persisted option value from an option type", :js => true do
     create(:option_type)

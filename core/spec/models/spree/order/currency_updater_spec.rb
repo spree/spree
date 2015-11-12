@@ -9,7 +9,7 @@ describe Spree::Order, :type => :model do
       context "#homogenize_line_item_currencies" do
         it "succeeds without error" do
           expect { line_item.order.update_attributes!(currency: 'EUR') }.to_not raise_error
-        end      
+        end
 
         it "changes the line_item currencies" do
           expect { line_item.order.update_attributes!(currency: 'EUR') }.to change{ line_item.reload.currency }.from('USD').to('EUR')

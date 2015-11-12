@@ -27,7 +27,7 @@ module Spree
       # to build a package because it would be empty. Plus we avoid errors down
       # the stack because it would assume the stock location has stock items
       # for the given order
-      # 
+      #
       # Returns an array of Package instances
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|

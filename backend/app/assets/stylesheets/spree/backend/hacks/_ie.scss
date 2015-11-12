@@ -10,7 +10,7 @@ html.ie {
   }
 
   // Fix select2 background gradient. (It uses filter gradients for IE)
-  .select2-choice, .select2-choice div, 
+  .select2-choice, .select2-choice div,
   .select2-container-multi .select2-search-choice,
   .select2-container:hover .select2-choice,
   .select2-container.select2-container-active .select2-choice {
@@ -41,7 +41,7 @@ html.ie8 {
     font-style: normal;
   }
 
-  // Fix white border around filter-actions 
+  // Fix white border around filter-actions
   .filter-actions {
     margin-bottom: -45px;
 
@@ -55,12 +55,12 @@ html.ie8 {
     }
   }
 
-  // Fix legend align center 
+  // Fix legend align center
   legend {
     display: table;
   }
 
-  // Sidebar align with fieldsets 
+  // Sidebar align with fieldsets
   #sidebar {
     margin-top: 27px;
 

@@ -13,7 +13,7 @@ describe Spree::ShippingRate, :type => :model do
     context "when tax included in price" do
       context "when the tax rate is from the default zone" do
         let!(:zone) { create(:zone, :default_tax => true) }
-        let(:tax_rate) do 
+        let(:tax_rate) do
           create(:tax_rate,
             :name => "VAT",
             :amount => 0.1,

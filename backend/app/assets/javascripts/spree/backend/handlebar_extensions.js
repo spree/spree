@@ -6,4 +6,3 @@ Handlebars.registerHelper("t", function(key) {
     console.error("No translation found for " + key + ". Does it exist within spree/admin/shared/_translations.html.erb?")
   }
 });
-

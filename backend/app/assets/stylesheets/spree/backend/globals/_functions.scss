@@ -1,5 +1,5 @@
 // Make color very close to white
-@function very-light($color, $adjust: 3){  
+@function very-light($color, $adjust: 3){
   @if type-of($adjust) == 'number' and $adjust > 0 {
     @for $i from 0 through 100 {
       @if lighten($color, $i) == white and ($i - $adjust) > $adjust {

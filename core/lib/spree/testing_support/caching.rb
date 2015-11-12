@@ -31,7 +31,7 @@ RSpec.configure do |config|
 
     ActiveSupport::Notifications.subscribe("read_fragment.action_controller") do |event, start_time, finish_time, _, details|
       @cache_read_events ||= []
-      @cache_read_events << details 
+      @cache_read_events << details
     end
 
     ActiveSupport::Notifications.subscribe("write_fragment.action_controller") do |event, start_time, finish_time, _, details|

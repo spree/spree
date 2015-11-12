@@ -3,4 +3,3 @@ class AddPositionToProductProperties < ActiveRecord::Migration
     add_column :spree_product_properties, :position, :integer, :default => 0
   end
 end
-

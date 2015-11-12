@@ -17,7 +17,7 @@ module Spree
       end
 
       def initialize
-        super 
+        super
         ReportsController.add_available_report!(:sales_total)
       end
 

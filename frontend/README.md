@@ -18,4 +18,3 @@ Run the tests
 Run the coverage. After the rake task open coverage/index.html
 
     bundle exec rake rcov
-

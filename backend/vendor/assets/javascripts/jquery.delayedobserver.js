@@ -4,9 +4,9 @@
 
  (c) Maxime Haineault <haineault@gmail.com>
  http://haineault.com
- 
+
  MIT License (http://www.opensource.org/licenses/mit-license.php)
- 
+
 */
 
 (function($){

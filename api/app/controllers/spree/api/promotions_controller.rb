@@ -12,7 +12,7 @@ module Spree
         end
       end
 
-      private 
+      private
         def requires_admin
           return if @current_user_roles.include?("admin")
           unauthorized and return

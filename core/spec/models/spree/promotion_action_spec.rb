@@ -7,4 +7,3 @@ describe Spree::PromotionAction, :type => :model do
   end
 
 end
-

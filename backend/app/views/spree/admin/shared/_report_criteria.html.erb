@@ -2,7 +2,7 @@
     <div class="date-range-filter field align-center">
         <%= label_tag nil, Spree.t(:start), :class => 'inline' %>
         <%= s.text_field :created_at_gt, :class => 'datepicker datepicker-from', :value => datepicker_field_value(params[:q][:created_at_gt]) %>
-        
+
         <span class="range-divider">
           <i class="fa fa-arrow-right"></i>
         </span>
