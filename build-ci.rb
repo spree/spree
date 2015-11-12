@@ -30,9 +30,7 @@ class Project
   # @return [self]
   #   otherwise
   def install
-    chdir do
-      bundle_check or bundle_install or fail 'Cannot finish gem installation'
-    end
+    bundle_install or fail 'Cannot finish gem installation'
     self
   end
 
@@ -41,17 +39,10 @@ class Project
   # @return [Boolean]
   #   the success of the build
   def pass?
-    chdir { run_project }
+    run_project
   end
 
 private
-
-  # Check if current bundle is already usable
-  #
-  # @return [Boolean]
-  def bundle_check
-    system(%W[bundle check --path=#{VENDOR_BUNDLE}])
-  end
 
   # Run project
   #
@@ -78,9 +69,9 @@ private
     system(%W[
       bundle
       install
-      --path=#{VENDOR_BUNDLE}
-      --jobs=#{BUNDLER_JOBS}
-      --retry=#{BUNDLER_RETRIES}
+      --path #{VENDOR_BUNDLE}
+      --jobs #{BUNDLER_JOBS}
+      --retry #{BUNDLER_RETRIES}
     ])
   end
 
@@ -125,7 +116,7 @@ private
   # @return [Boolean]
   #   the success of the system command
   def system(arguments)
-    Kernel.system({ 'RAILS_ENV' => 'test' }, *arguments)
+    chdir { Kernel.system({ 'RAILS_ENV' => 'test' }, *arguments) }
   end
 
   # Change to subproject directory and execute block
