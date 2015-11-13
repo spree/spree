@@ -11,7 +11,7 @@ Along with the [Manual Ubuntu Deployment Guide](/developer/manual-ubuntu.html), 
 
 To set up a server using Ansible, we're going to use what's referred to as a [playbook](http://www.ansibleworks.com/docs/playbooks.html). This particular playbook is available from [radar/ansible-rails-app](https://github.com/radar/ansible-rails-app) on GitHub and will install the following things:
 
-- Ruby 2.0.0-p253
+- Ruby 2.1
 - PostgreSQL 9.3
 - nginx
 - Puma (jungle)
@@ -57,9 +57,9 @@ app_name: spree
 
 ## stolen from https://github.com/jgrowl/ansible-playbook-ruby-from-src
 rubyTmpDir: /usr/local/src
-rubyUrl: http://cache.ruby-lang.org/pub/ruby/2.0/ruby-2.0.0-p353.tar.gz
-rubyCompressedFile: ruby-2.0.0-p353.tar.gz
-rubyName: ruby-2.0.0-p353
+rubyUrl: http://cache.ruby-lang.org/pub/ruby/2.1/ruby-2.1.0.tar.gz
+rubyCompressedFile: ruby-2.1.0.tar.gz
+rubyName: ruby-2.1.0
 tmpRubyPath: {{rubyTmpDir}}/{{rubyName}}
 ```
 
