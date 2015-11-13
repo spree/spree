@@ -88,6 +88,7 @@ Within the repository, there is a directory called "roles" which contains two su
 Within `roles/webserver/tasks/main.yml`, we have this:
 
 ```yaml
+- include: ruby.yml tags=ruby
 - include: deploy.yml tags=deploy
 - include: puma.yml tags=puma
 - include: nginx.yml tags=nginx
@@ -101,7 +102,7 @@ Within `roles/database/tasks.main.yml`, we have this:
 
 We can run the playbook with this command:
 
-    ansible-playbook ruby-webapp.yml -t deploy,postgresql,nginx
+    ansible-playbook ruby-webapp.yml -t ruby,deploy,postgresql,nginx
 
 The `-t` option tells Ansible that we want to run only the tasks tagged with those tags, in that order.
 
