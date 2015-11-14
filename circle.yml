@@ -9,6 +9,8 @@ machine:
 dependencies:
   override:
     - ./build-ci.rb install
+  cache_directories:
+    - '~/.rvm/gems/ruby-2.2.3/gems/'
 test:
   override:
     - './build-ci.rb test':
