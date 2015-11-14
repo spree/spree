@@ -2,7 +2,9 @@ module Spree
   module Gemspec
     AUTHORS = {
       'Sean Schofield' => 'sean@spreecommerce.com',
-      'Ryan Bigg'      => 'ryan@spreecommerce.com'
+      'Ryan Bigg'      => 'ryan@spreecommerce.com',
+      'Dan Kubb'       => 'dan.kubb@fastmail.com',
+      'Markus Schirp'  => 'mbj@schirp-dso.com'
     }.freeze
 
     # Add shared settings to gemspec
