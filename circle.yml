@@ -4,6 +4,8 @@ machine:
     - postgresql
   ruby:
     version: 2.2.3
+  node:
+    version: 4.2.1
 dependencies:
   override:
     - ./build-ci.rb install
