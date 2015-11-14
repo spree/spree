@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'monetize',           '~> 1.1'
   gem.add_dependency 'paperclip',          '~> 4.2.0'
   gem.add_dependency 'paranoia',           '~> 2.1.0'
+  gem.add_dependency 'pg',                 '~> 0.18.4'
   gem.add_dependency 'premailer-rails',    '~> 1.8.2'
   gem.add_dependency 'rails',              '~> 4.1.11'
   gem.add_dependency 'ransack',            '~> 1.4.1'

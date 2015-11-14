@@ -3,10 +3,6 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-platforms :ruby do
-  gem 'pg'
-end
-
 platforms :jruby do
   gem 'jruby-openssl'
 end
