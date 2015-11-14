@@ -28,9 +28,9 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'premailer-rails',    '~> 1.8.2'
   gem.add_dependency 'rails',              '~> 4.1.11'
   gem.add_dependency 'ransack',            '~> 1.4.1'
-  gem.add_dependency 'state_machine',      '1.2.0'
+  gem.add_dependency 'state_machine',      '~> 1.2.0'
   gem.add_dependency 'stringex',           '~> 1.5.1'
-  gem.add_dependency 'truncate_html',      '0.9.2'
+  gem.add_dependency 'truncate_html',      '~> 0.9.2'
   gem.add_dependency 'twitter_cldr',       '~> 3.0'
   gem.add_dependency 'sass-rails',         '~> 5.0.1'
 
