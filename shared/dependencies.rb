@@ -21,7 +21,6 @@ group :test do
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.3.3'
   gem 'simplecov'
-  gem 'webmock',     '1.8.11'
   gem 'poltergeist', '1.5.0'
   gem 'timecop'
   gem 'with_model'
