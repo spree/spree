@@ -5,7 +5,6 @@ require 'adamantium'
 require 'awesome_nested_set'
 require 'cancan'
 require 'friendly_id'
-require 'font-awesome-rails'
 require 'concord'
 require 'kaminari'
 require 'mail'
@@ -16,10 +15,7 @@ require 'premailer/rails'
 require 'ransack'
 require 'state_machine'
 require 'friendly_id'
-require 'font-awesome-rails'
 require 'stringex'
-require 'sass-rails'
-require 'coffee-rails'
 
 module Spree
 
