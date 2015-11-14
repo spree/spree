@@ -1,8 +1,4 @@
 module CapybaraExt
-  def page!
-    save_and_open_page
-  end
-
   def click_icon(type)
     find(".fa-#{type}").click
   end
