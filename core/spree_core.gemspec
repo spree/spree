@@ -16,7 +16,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'equalizer',          '~> 0.0.11'
   gem.add_dependency 'ffaker',             '~> 1.16'
   gem.add_dependency 'friendly_id',        '~> 5.0.4'
-  gem.add_dependency 'highline',           '~> 1.6.18'  # Necessary for the install generator
   gem.add_dependency 'json',               '~> 1.7'
   gem.add_dependency 'kaminari',           '~> 0.16.3'
   gem.add_dependency 'monetize',           '~> 1.1'
