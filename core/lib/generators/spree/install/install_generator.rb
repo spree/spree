@@ -34,14 +34,6 @@ module Spree
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
 
-    def config_spree_yml
-      create_file "config/spree.yml" do
-        settings = { 'version' => Spree.version }
-
-        settings.to_yaml
-      end
-    end
-
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS

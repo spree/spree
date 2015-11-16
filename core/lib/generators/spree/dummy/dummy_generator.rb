@@ -1,6 +1,5 @@
 require "rails/generators/rails/app/app_generator"
 require 'active_support/core_ext/hash'
-require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
