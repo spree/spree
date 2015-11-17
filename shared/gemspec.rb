@@ -17,7 +17,7 @@ module Spree
       gem.email                 = AUTHORS.values
       gem.files                 = Dir.glob('{LICENSE.md,{app,config,lib,db,vendor}/**/*')
       gem.platform              = Gem::Platform::RUBY
-      gem.required_ruby_version = '>= 1.9.3'
+      gem.required_ruby_version = '>= 2.2.3'
       gem.require_path          = 'lib'
       gem.version               = '2.4.11.beta'
 
