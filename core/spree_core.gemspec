@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.summary = 'Spree Core'
 
   gem.add_dependency 'activemerchant',     '~> 1.44.1'
-  gem.add_dependency 'acts_as_list',       '~> 0.3'
+  gem.add_dependency 'acts_as_list',       '~> 0.7.2'
   gem.add_dependency 'adamantium',         '~> 0.2'
   gem.add_dependency 'awesome_nested_set', '~> 3.0.1'
   gem.add_dependency 'carmen',             '~> 1.0.0'
