@@ -6,9 +6,13 @@ Gem::Specification.new do |gem|
   gem.name         = 'spree_backend'
   gem.summary      = 'Spree Backend'
 
-  gem.add_dependency 'jquery-rails',    '~> 3.1.2'
-  gem.add_dependency 'jquery-ui-rails', '~> 5.0.0'
-  gem.add_dependency 'select2-rails',   '=  3.5.9.1'  # 3.5.9.2 breaks forms
-  gem.add_dependency 'spree_api',       gem.version
-  gem.add_dependency 'spree_core',      gem.version
+  gem.add_dependency 'coffee-rails',       '~> 4.1.0'
+  gem.add_dependency 'deface',             '~> 1.0.0'
+  gem.add_dependency 'font-awesome-rails', '~> 4.0'
+  gem.add_dependency 'jquery-rails',       '~> 3.1.2'
+  gem.add_dependency 'jquery-ui-rails',    '~> 5.0.0'
+  gem.add_dependency 'sass-rails',         '~> 5.0.1'
+  gem.add_dependency 'select2-rails',      '=  3.5.9.1'  # 3.5.9.2 breaks forms
+  gem.add_dependency 'spree_api',          gem.version
+  gem.add_dependency 'spree_core',         gem.version
 end

@@ -1,7 +1,10 @@
 require 'rails/all'
+require 'coffee-rails'
+require 'font-awesome-rails'
 require 'jquery-rails'
 require 'jquery-ui-rails'
 require 'deface'
+require 'sass-rails'
 require 'select2-rails'
 
 require 'spree_core'

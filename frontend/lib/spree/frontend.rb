@@ -1,7 +1,9 @@
 require 'rails/all'
-require 'jquery-rails'
-require 'canonical-rails'
+require 'coffee-rails'
 require 'deface'
+require 'font-awesome-rails'
+require 'jquery-rails'
+require 'sass-rails'
 
 require 'spree/core'
 

@@ -38,7 +38,6 @@ RSpec.configure do |config|
 
   config.before(:each) do
     Rails.cache.clear
-    WebMock.disable!
     if RSpec.current_example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else

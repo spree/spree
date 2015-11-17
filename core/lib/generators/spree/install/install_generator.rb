@@ -1,5 +1,4 @@
 require 'rails/generators'
-require 'highline/import'
 require 'bundler'
 require 'bundler/cli'
 
