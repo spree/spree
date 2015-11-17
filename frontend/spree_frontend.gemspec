@@ -12,6 +12,4 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'jquery-rails',       '~> 3.1.2'
   gem.add_dependency 'sass-rails',         '~> 5.0.1'
   gem.add_dependency 'spree_core',         gem.version
-
-  gem.add_development_dependency 'capybara-accessible'
 end
