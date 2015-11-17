@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'concord',            '~> 0.1.5'
   gem.add_dependency 'equalizer',          '~> 0.0.11'
   gem.add_dependency 'friendly_id',        '~> 5.1.0'
-  gem.add_dependency 'json',               '~> 1.7'
+  gem.add_dependency 'json',               '~> 1.8.3'
   gem.add_dependency 'kaminari',           '~> 0.16.3'
   gem.add_dependency 'monetize',           '~> 1.1'
   gem.add_dependency 'paperclip',          '~> 4.2.0'
