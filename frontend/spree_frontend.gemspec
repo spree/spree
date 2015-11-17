@@ -3,8 +3,8 @@ require_relative '../shared/gemspec'
 Gem::Specification.new do |gem|
   Spree::Gemspec.shared(gem)
 
-  gem.name         = 'spree_frontend'
-  gem.summary      = 'Spree Frontend'
+  gem.name    = 'spree_frontend'
+  gem.summary = 'Spree Frontend'
 
   gem.add_dependency 'coffee-rails',       '~> 4.1.0'
   gem.add_dependency 'deface',             '~> 1.0.0'

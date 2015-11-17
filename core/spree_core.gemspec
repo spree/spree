@@ -3,8 +3,8 @@ require_relative '../shared/gemspec'
 Gem::Specification.new do |gem|
   Spree::Gemspec.shared(gem)
 
-  gem.name                  = 'spree_core'
-  gem.summary               = 'Spree Core'
+  gem.name    = 'spree_core'
+  gem.summary = 'Spree Core'
 
   gem.add_dependency 'activemerchant',     '~> 1.44.1'
   gem.add_dependency 'acts_as_list',       '~> 0.3'
