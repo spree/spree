@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'json',               '~> 1.8.3'
   gem.add_dependency 'kaminari',           '~> 0.16.3'
   gem.add_dependency 'monetize',           '~> 1.3.1'
-  gem.add_dependency 'paperclip',          '~> 4.2.0'
+  gem.add_dependency 'paperclip',          '~> 4.3.1'
   gem.add_dependency 'paranoia',           '~> 2.1.0'
   gem.add_dependency 'pg',                 '~> 0.18.4'
   gem.add_dependency 'premailer-rails',    '~> 1.8.2'
