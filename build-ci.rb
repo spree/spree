@@ -5,12 +5,9 @@ require 'pathname'
 class Project
   attr_reader :name
 
-  NODE_TOTAL = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
-  NODE_INDEX = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
-
-  ROOT          = Pathname.pwd.freeze
-  VENDOR_BUNDLE = ROOT.join('vendor', 'bundle').freeze
-
+  NODE_TOTAL      = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
+  NODE_INDEX      = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
+  ROOT            = Pathname.pwd.freeze
   BUNDLER_JOBS    = 4
   BUNDLER_RETRIES = 3
 
@@ -69,7 +66,6 @@ private
     system(%W[
       bundle
       install
-      --path #{VENDOR_BUNDLE}
       --jobs #{BUNDLER_JOBS}
       --retry #{BUNDLER_RETRIES}
     ])
