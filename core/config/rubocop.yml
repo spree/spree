@@ -1,0 +1,927 @@
+inherit_from: ../../shared/rubocop.yml
+
+AllCops:
+  Exclude:
+  # Exclude templates
+  - 'lib/generators/spree/install/templates/config/initializers/spree.rb'
+  - 'lib/generators/spree/dummy/templates/rails/application.rb'
+  # Exclude generated spec dummy
+  - 'spec/dummy/**/*'
+
+# Offense count: 13
+Lint/AmbiguousOperator:
+  Exclude:
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'app/models/spree/shipment_handler.rb'
+    - 'lib/generators/spree/install/install_generator.rb'
+    - 'lib/spree/core/controller_helpers/ssl.rb'
+    - 'lib/spree/core/controller_helpers/strong_parameters.rb'
+    - 'lib/spree/permitted_attributes.rb'
+    - 'lib/spree/testing_support/preferences.rb'
+    - 'spec/models/spree/promotion_spec.rb'
+    - 'spec/models/spree/reimbursement_type/original_payment_spec.rb'
+    - 'spec/models/spree/stock_transfer_spec.rb'
+
+# Offense count: 15
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - 'spec/lib/search/base_spec.rb'
+    - 'spec/lib/spree/core/importer/order_spec.rb'
+    - 'spec/models/spree/exchange_spec.rb'
+    - 'spec/models/spree/stock_transfer_spec.rb'
+
+# Offense count: 31
+# Configuration parameters: AllowSafeAssignment.
+Lint/AssignmentInCondition:
+  Enabled: false
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Lint/BlockAlignment:
+  Exclude:
+    - 'spec/models/spree/calculator_spec.rb'
+    - 'spec/models/spree/stock_item_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
+Lint/DefEndAlignment:
+  Enabled: false
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Lint/DeprecatedClassMethods:
+  Exclude:
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+    - 'lib/generators/spree/install/install_generator.rb'
+    - 'lib/spree/migrations.rb'
+
+# Offense count: 7
+# Cop supports --auto-correct.
+# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
+Lint/EndAlignment:
+  Enabled: false
+
+# Offense count: 2
+Lint/Eval:
+  Exclude:
+    - 'Gemfile'
+    - 'db/migrate/20130830001159_migrate_old_shipping_calculators.rb'
+
+# Offense count: 2
+Lint/HandleExceptions:
+  Exclude:
+    - 'app/models/spree/order.rb'
+    - 'db/migrate/20130807024301_upgrade_adjustments.rb'
+
+# Offense count: 1
+Lint/LiteralInCondition:
+  Exclude:
+    - 'lib/spree/testing_support/i18n.rb'
+
+# Offense count: 1
+Lint/Loop:
+  Exclude:
+    - 'app/models/spree/payment.rb'
+
+# Offense count: 11
+Lint/NestedMethodDefinition:
+  Exclude:
+    - 'app/models/spree/order/checkout.rb'
+
+# Offense count: 9
+Lint/ParenthesesAsGroupedExpression:
+  Exclude:
+    - 'spec/lib/spree/migrations_spec.rb'
+    - 'spec/models/spree/app_configuration_spec.rb'
+    - 'spec/models/spree/calculator/refunds/default_refund_amount_spec.rb'
+    - 'spec/models/spree/customer_return_spec.rb'
+    - 'spec/models/spree/reimbursement_spec.rb'
+    - 'spec/models/spree/return_authorization_spec.rb'
+
+# Offense count: 10
+Lint/RescueException:
+  Exclude:
+    - 'app/models/spree/stock/estimator.rb'
+    - 'lib/spree/core/importer/order.rb'
+
+# Offense count: 8
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - 'app/helpers/spree/taxons_helper.rb'
+    - 'app/models/spree/adjustment.rb'
+    - 'app/models/spree/order_inventory.rb'
+    - 'lib/spree/core/importer/product.rb'
+    - 'lib/spree/core/product_filters.rb'
+    - 'lib/spree/testing_support/order_walkthrough.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Lint/StringConversionInInterpolation:
+  Exclude:
+    - 'app/models/spree/promotion/rules/user.rb'
+    - 'db/migrate/20140723214541_copy_product_slugs_to_slug_history.rb'
+    - 'lib/spree/core/permalinks.rb'
+    - 'spec/support/big_decimal.rb'
+
+# Offense count: 32
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoreEmptyBlocks.
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+# Offense count: 63
+# Cop supports --auto-correct.
+# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
+Lint/UnusedMethodArgument:
+  Enabled: false
+
+# Offense count: 2
+Lint/UselessAccessModifier:
+  Exclude:
+    - 'app/models/spree/product/scopes.rb'
+    - 'lib/spree/testing_support/order_walkthrough.rb'
+
+# Offense count: 55
+Lint/UselessAssignment:
+  Enabled: false
+
+# Offense count: 54
+Metrics/AbcSize:
+  Max: 364
+
+# Offense count: 2
+Metrics/BlockNesting:
+  Max: 4
+
+# Offense count: 17
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 540
+
+# Offense count: 28
+Metrics/CyclomaticComplexity:
+  Max: 55
+
+# Offense count: 2392
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 493
+
+# Offense count: 125
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 410
+
+# Offense count: 15
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 397
+
+# Offense count: 18
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Max: 5
+
+# Offense count: 23
+Metrics/PerceivedComplexity:
+  Max: 58
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Performance/Detect:
+  Exclude:
+    - 'app/models/spree/variant.rb'
+    - 'lib/spree/core/importer/order.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Performance/ReverseEach:
+  Exclude:
+    - 'app/models/spree/stock/packer.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Performance/Size:
+  Exclude:
+    - 'spec/models/spree/product/scopes_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Performance/StringReplacement:
+  Exclude:
+    - 'app/models/concerns/spree/calculated_adjustments.rb'
+    - 'app/models/spree/preferences/configuration.rb'
+
+# Offense count: 7
+Style/AccessorMethodName:
+  Exclude:
+    - 'app/models/spree/promotion_handler/coupon.rb'
+    - 'app/models/spree/reimbursement_tax_calculator.rb'
+    - 'app/models/spree/stock_item.rb'
+    - 'app/models/spree/stock_location.rb'
+    - 'lib/spree/core/controller_helpers/common.rb'
+    - 'lib/spree/core/search/base.rb'
+
+# Offense count: 18
+# Cop supports --auto-correct.
+Style/Alias:
+  Exclude:
+    - 'app/models/spree/address.rb'
+    - 'app/models/spree/line_item.rb'
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/payment.rb'
+    - 'app/models/spree/preferences/configuration.rb'
+    - 'app/models/spree/price.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/refund.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'app/models/spree/zone.rb'
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/AlignArray:
+  Exclude:
+    - 'app/helpers/spree/base_helper.rb'
+    - 'config/initializers/friendly_id.rb'
+    - 'spec/models/spree/order_spec.rb'
+
+# Offense count: 16
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
+Style/AlignHash:
+  Exclude:
+    - 'app/models/spree/inventory_unit.rb'
+    - 'app/models/spree/payment/processing.rb'
+    - 'app/models/spree/promotion/rules/user.rb'
+    - 'db/migrate/20130417123427_add_shipping_rates_to_shipments.rb'
+    - 'spec/lib/spree/core/controller_helpers/search_spec.rb'
+    - 'spec/models/spree/payment_spec.rb'
+    - 'spec/models/spree/promotion_handler/coupon_spec.rb'
+    - 'spec/models/spree/return_authorization_spec.rb'
+    - 'spec/models/spree/tax_rate_spec.rb'
+
+# Offense count: 18
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/AlignParameters:
+  Exclude:
+    - 'app/models/concerns/spree/default_price.rb'
+    - 'app/models/spree/credit_card.rb'
+    - 'app/models/spree/image.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/taxon.rb'
+    - 'app/models/spree/variant.rb'
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+    - 'spec/lib/i18n_spec.rb'
+    - 'spec/models/spree/address_spec.rb'
+    - 'spec/models/spree/credit_card_spec.rb'
+    - 'spec/models/spree/payment_spec.rb'
+    - 'spec/models/spree/shipping_rate_spec.rb'
+    - 'spec/models/spree/tax_rate_spec.rb'
+
+
+# Offense count: 2
+Style/AsciiComments:
+  Exclude:
+    - 'spec/lib/spree/money_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/Attr:
+  Exclude:
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+
+# Offense count: 14
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/BarePercentLiterals:
+  Exclude:
+    - 'app/models/spree/product/scopes.rb'
+    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+    - 'lib/generators/spree/install/install_generator.rb'
+    - 'lib/spree/testing_support/caching.rb'
+    - 'lib/spree/testing_support/capybara_ext.rb'
+    - 'spec/helpers/products_helper_spec.rb'
+    - 'spec/mailers/order_mailer_spec.rb'
+    - 'spec/mailers/shipment_mailer_spec.rb'
+
+# Offense count: 103
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+Style/BlockDelimiters:
+  Enabled: false
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/BlockEndNewline:
+  Exclude:
+    - 'spec/lib/spree/core/importer/order_spec.rb'
+    - 'spec/lib/spree/core/validators/email_spec.rb'
+    - 'spec/models/spree/inventory_unit_spec.rb'
+    - 'spec/models/spree/order/checkout_spec.rb'
+    - 'spec/models/spree/order/state_machine_spec.rb'
+    - 'spec/models/spree/reimbursement/reimbursement_type_engine_spec.rb'
+    - 'spec/models/spree/shipment_spec.rb'
+    - 'spec/models/spree/shipping_rate_spec.rb'
+
+# Offense count: 90
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+# Offense count: 16
+# Cop supports --auto-correct.
+# Configuration parameters: IndentWhenRelativeTo, SupportedStyles, IndentOneStep.
+Style/CaseIndentation:
+  Enabled: false
+
+# Offense count: 50
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# Offense count: 40
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassCheck:
+  Enabled: false
+
+# Offense count: 6
+# Cop supports --auto-correct.
+Style/ClassMethods:
+  Exclude:
+    - 'lib/spree/core/product_filters.rb'
+
+# Offense count: 25
+Style/ClassVars:
+  Exclude:
+    - 'lib/spree/core/delegate_belongs_to.rb'
+    - 'lib/spree/core/product_duplicator.rb'
+    - 'lib/spree/permitted_attributes.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/ClosingParenthesisIndentation:
+  Exclude:
+    - 'app/models/spree/shipment_handler.rb'
+    - 'spec/models/spree/credit_card_spec.rb'
+    - 'spec/models/spree/tax_rate_spec.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+# Configuration parameters: Keywords.
+Style/CommentAnnotation:
+  Exclude:
+    - 'app/models/spree/item_adjustments.rb'
+    - 'app/models/spree/order_updater.rb'
+    - 'lib/spree/permitted_attributes.rb'
+    - 'spec/lib/spree/memory_scope_spec.rb'
+    - 'spec/models/spree/ability_spec.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/DeprecatedHashMethods:
+  Exclude:
+    - 'app/models/spree/gateway.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'lib/spree/core/search/base.rb'
+    - 'lib/spree/testing_support/capybara_ext.rb'
+
+# Offense count: 51
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/DotPosition:
+  Enabled: false
+
+# Offense count: 7
+Style/DoubleNegation:
+  Exclude:
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/order/payments.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/promotion.rb'
+    - 'app/models/spree/stock/package.rb'
+    - 'app/models/spree/variant.rb'
+
+# Offense count: 1
+Style/EachWithObject:
+  Exclude:
+    - 'app/models/spree/gateway.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/ElseAlignment:
+  Exclude:
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/refund.rb'
+    - 'app/models/spree/reimbursement.rb'
+    - 'app/models/spree/reimbursement_tax_calculator.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'app/models/spree/stock_location.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/EmptyElse:
+  Exclude:
+    - 'app/models/spree/reimbursement/reimbursement_type_engine.rb'
+    - 'lib/spree/core/controller_helpers/auth.rb'
+
+# Offense count: 6
+# Cop supports --auto-correct.
+# Configuration parameters: AllowAdjacentOneLineDefs.
+Style/EmptyLineBetweenDefs:
+  Exclude:
+    - 'db/migrate/20131001013410_remove_unused_credit_card_fields.rb'
+    - 'db/migrate/20140106065820_remove_value_type_from_spree_preferences.rb'
+    - 'db/migrate/20140805171219_make_existing_credit_cards_default.rb'
+    - 'spec/lib/spree/core/controller_helpers/ssl_spec.rb'
+    - 'spec/models/spree/shipment_spec.rb'
+
+# Offense count: 18
+# Cop supports --auto-correct.
+Style/EmptyLines:
+  Exclude:
+    - 'app/models/spree/ability.rb'
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/order_contents.rb'
+    - 'app/models/spree/promotion/rules/item_total.rb'
+    - 'app/models/spree/return_authorization.rb'
+    - 'db/migrate/20120831092320_spree_one_two.rb'
+    - 'db/migrate/20130306181701_add_address_fields_to_stock_location.rb'
+    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
+    - 'lib/spree/core/product_filters.rb'
+    - 'spec/helpers/products_helper_spec.rb'
+    - 'spec/models/spree/order_spec.rb'
+    - 'spec/models/spree/promotion_handler/coupon_spec.rb'
+    - 'spec/models/spree/return_item_spec.rb'
+    - 'spec/models/spree/stock/estimator_spec.rb'
+    - 'spec/models/spree/stock/quantifier_spec.rb'
+
+# Offense count: 34
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundAccessModifier:
+  Enabled: false
+
+# Offense count: 14
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundMethodBody:
+  Exclude:
+    - 'app/models/spree/calculator/default_tax.rb'
+    - 'app/models/spree/gateway/bogus.rb'
+    - 'app/models/spree/return_authorization.rb'
+    - 'db/migrate/20130319063911_change_spree_payments_amount_precision.rb'
+    - 'db/migrate/20130319064308_change_spree_return_authorization_amount_precision.rb'
+    - 'db/migrate/20130319082943_change_adjustments_amount_precision.rb'
+    - 'db/migrate/20140710041921_recreate_spree_return_authorizations.rb'
+    - 'db/migrate/20140723214541_copy_product_slugs_to_slug_history.rb'
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+    - 'spec/models/spree/gateway_spec.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/EmptyLiteral:
+  Exclude:
+    - 'app/models/spree/reimbursement/reimbursement_type_engine.rb'
+    - 'app/models/spree/stock/coordinator.rb'
+    - 'app/models/spree/stock/package.rb'
+    - 'spec/models/spree/credit_card_spec.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/FirstParameterIndentation:
+  Exclude:
+    - 'app/models/spree/shipment_handler.rb'
+    - 'spec/lib/spree/memory_scope_spec.rb'
+    - 'spec/models/spree/promotion_handler/coupon_spec.rb'
+
+# Offense count: 88
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Enabled: false
+
+# Offense count: 1371
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
+Style/HashSyntax:
+  Enabled: false
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/IndentArray:
+  Exclude:
+    - 'app/models/spree/return_item/eligibility_validator/default.rb'
+    - 'lib/spree/core/engine.rb'
+    - 'spec/lib/spree/core/importer/order_spec.rb'
+    - 'spec/models/spree/reimbursement/reimbursement_type_engine_spec.rb'
+
+# Offense count: 53
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentHash:
+  Enabled: false
+
+# Offense count: 108
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentationConsistency:
+  Enabled: false
+
+# Offense count: 28
+# Cop supports --auto-correct.
+# Configuration parameters: Width.
+Style/IndentationWidth:
+  Enabled: false
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/Lambda:
+  Exclude:
+    - 'app/models/spree/inventory_unit.rb'
+    - 'app/models/spree/option_type.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/promotion.rb'
+    - 'app/models/spree/return_authorization.rb'
+    - 'app/models/spree/store.rb'
+    - 'app/models/spree/variant/scopes.rb'
+    - 'lib/generators/spree/install/install_generator.rb'
+    - 'spec/models/spree/classification_spec.rb'
+    - 'spec/models/spree/order/checkout_spec.rb'
+
+# Offense count: 7
+# Cop supports --auto-correct.
+Style/LeadingCommentSpace:
+  Exclude:
+    - 'app/models/spree/address.rb'
+    - 'app/models/spree/app_configuration.rb'
+    - 'app/models/spree/image.rb'
+    - 'app/models/spree/tax_category.rb'
+    - 'lib/spree/core/engine.rb'
+    - 'lib/spree/testing_support/order_walkthrough.rb'
+    - 'spec/models/spree/preferences/preferable_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/LineEndConcatenation:
+  Exclude:
+    - 'lib/spree/core/controller_helpers/respond_with.rb'
+
+# Offense count: 12
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/MethodDefParentheses:
+  Enabled: false
+
+# Offense count: 1
+Style/MultilineBlockChain:
+  Exclude:
+    - 'app/helpers/spree/base_helper.rb'
+
+# Offense count: 11
+# Cop supports --auto-correct.
+Style/MultilineBlockLayout:
+  Exclude:
+    - 'spec/lib/spree/core/importer/order_spec.rb'
+    - 'spec/lib/spree/core/validators/email_spec.rb'
+    - 'spec/models/spree/inventory_unit_spec.rb'
+    - 'spec/models/spree/order/checkout_spec.rb'
+    - 'spec/models/spree/order/state_machine_spec.rb'
+    - 'spec/models/spree/reimbursement/reimbursement_type_engine_spec.rb'
+    - 'spec/models/spree/shipment_spec.rb'
+    - 'spec/models/spree/shipping_rate_spec.rb'
+
+# Offense count: 9
+# Cop supports --auto-correct.
+Style/NegatedIf:
+  Exclude:
+    - 'app/models/spree/address.rb'
+    - 'app/models/spree/order_updater.rb'
+    - 'app/models/spree/payment/processing.rb'
+    - 'app/models/spree/refund.rb'
+    - 'db/migrate/20130826062534_add_depth_to_spree_taxons.rb'
+    - 'lib/generators/spree/install/install_generator.rb'
+    - 'lib/spree/responder.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
+Style/Next:
+  Exclude:
+    - 'db/default/spree/states.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/Not:
+  Exclude:
+    - 'lib/spree/testing_support/capybara_ext.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/NumericLiterals:
+  MinDigits: 8
+
+# Offense count: 2
+Style/OpMethod:
+  Exclude:
+    - 'app/models/spree/address.rb'
+    - 'lib/spree/money.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+# Configuration parameters: AllowSafeAssignment.
+Style/ParenthesesAroundCondition:
+  Exclude:
+    - 'app/helpers/spree/taxons_helper.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'app/models/spree/variant.rb'
+    - 'lib/spree/core/controller_helpers/ssl.rb'
+
+# Offense count: 43
+# Cop supports --auto-correct.
+# Configuration parameters: PreferredDelimiters.
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/PercentQLiterals:
+  Exclude:
+    - 'spec/mailers/order_mailer_spec.rb'
+    - 'spec/mailers/shipment_mailer_spec.rb'
+
+# Offense count: 16
+# Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist.
+Style/PredicateName:
+  Exclude:
+    - 'app/models/concerns/spree/default_price.rb'
+    - 'app/models/spree/credit_card.rb'
+    - 'app/models/spree/legacy_user.rb'
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/order/checkout.rb'
+    - 'app/models/spree/payment.rb'
+    - 'app/models/spree/preferences/preferable.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/variant.rb'
+    - 'app/models/spree/variant/scopes.rb'
+    - 'config/initializers/user_class_extensions.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/Proc:
+  Exclude:
+    - 'lib/spree/core/controller_helpers/ssl.rb'
+
+# Offense count: 13
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/RaiseArgs:
+  Enabled: false
+
+# Offense count: 6
+# Cop supports --auto-correct.
+Style/RedundantBegin:
+  Exclude:
+    - 'app/models/spree/payment/processing.rb'
+    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
+    - 'lib/spree/core/delegate_belongs_to.rb'
+    - 'lib/spree/core/importer/order.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/RedundantException:
+  Exclude:
+    - 'app/models/spree/order/currency_updater.rb'
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: AllowMultipleReturnValues.
+Style/RedundantReturn:
+  Exclude:
+    - 'app/helpers/spree/base_helper.rb'
+    - 'app/models/spree/payment.rb'
+    - 'app/models/spree/promotion.rb'
+    - 'app/models/spree/reimbursement_type/reimbursement_helpers.rb'
+
+# Offense count: 203
+# Cop supports --auto-correct.
+Style/RedundantSelf:
+  Enabled: false
+
+# Offense count: 5
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+Style/RegexpLiteral:
+  Exclude:
+    - 'app/helpers/spree/base_helper.rb'
+    - 'app/models/spree/credit_card.rb'
+    - 'app/models/spree/promotion_handler/page.rb'
+    - 'lib/spree/core/controller_helpers/auth.rb'
+    - 'lib/spree/testing_support/capybara_ext.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/RescueModifier:
+  Exclude:
+    - 'app/models/spree/address.rb'
+    - 'app/models/spree/credit_card.rb'
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/shipment_handler.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: AllowAsExpressionSeparator.
+Style/Semicolon:
+  Exclude:
+    - 'app/models/spree/gateway.rb'
+
+# Offense count: 53
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SignalException:
+  Enabled: false
+
+# Offense count: 5
+# Configuration parameters: Methods.
+Style/SingleLineBlockParams:
+  Exclude:
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/order_updater.rb'
+    - 'app/models/spree/product.rb'
+    - 'app/models/spree/promotion/rules/taxon.rb'
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: AllowIfMethodIsEmpty.
+Style/SingleLineMethods:
+  Exclude:
+    - 'app/models/concerns/spree/user_payment_source.rb'
+    - 'spec/lib/spree/core/controller_helpers/auth_spec.rb'
+    - 'spec/lib/spree/core/controller_helpers/ssl_spec.rb'
+    - 'spec/models/spree/shipment_spec.rb'
+
+# Offense count: 227
+# Cop supports --auto-correct.
+Style/SingleSpaceBeforeFirstArg:
+  Exclude:
+    - 'app/models/concerns/spree/calculated_adjustments.rb'
+    - 'app/models/spree/order/checkout.rb'
+    - 'db/migrate/20120831092320_spree_one_two.rb'
+    - 'db/migrate/20120831092359_spree_promo_one_two.rb'
+    - 'db/migrate/20130328195253_add_seo_metas_to_taxons.rb'
+    - 'db/migrate/20131107132123_add_tax_category_to_variants.rb'
+    - 'db/migrate/20140710041921_recreate_spree_return_authorizations.rb'
+    - 'db/migrate/20140718195325_create_friendly_id_slugs.rb'
+    - 'db/migrate/20140808184039_create_spree_reimbursement_credits.rb'
+    - 'db/migrate/20140827170513_add_meta_title_to_spree_products.rb'
+    - 'spec/lib/spree/core/controller_helpers/order_spec.rb'
+    - 'spec/models/spree/adjustment_spec.rb'
+    - 'spec/models/spree/product_duplicator_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/SpaceAfterColon:
+  Exclude:
+    - 'app/helpers/spree/base_helper.rb'
+
+# Offense count: 64
+# Cop supports --auto-correct.
+Style/SpaceAfterComma:
+  Enabled: false
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyleInsidePipes, SupportedStyles.
+Style/SpaceAroundBlockParameters:
+  Exclude:
+    - 'lib/spree/core/delegate_belongs_to.rb'
+
+# Offense count: 34
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceAroundEqualsInParameterDefault:
+  Enabled: false
+
+# Offense count: 110
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Style/SpaceBeforeComma:
+  Exclude:
+    - 'lib/spree/core/product_filters.rb'
+
+# Offense count: 117
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Offense count: 30
+# Cop supports --auto-correct.
+Style/SpaceInsideBrackets:
+  Exclude:
+    - 'lib/generators/spree/dummy/dummy_generator.rb'
+    - 'lib/spree/core/engine.rb'
+    - 'lib/spree/core/product_filters.rb'
+    - 'spec/models/spree/item_adjustments_spec.rb'
+    - 'spec/models/spree/order/checkout_spec.rb'
+    - 'spec/models/spree/order/state_machine_spec.rb'
+    - 'spec/models/spree/order/updating_spec.rb'
+    - 'spec/models/spree/product_spec.rb'
+    - 'spec/models/spree/reimbursement/reimbursement_type_engine_spec.rb'
+    - 'spec/models/spree/return_item/eligibility_validator/default_spec.rb'
+    - 'spec/models/spree/shipping_method_spec.rb'
+    - 'spec/models/spree/stock/package_spec.rb'
+
+# Offense count: 121
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+# Offense count: 27
+# Cop supports --auto-correct.
+Style/SpaceInsideParens:
+  Exclude:
+    - 'app/models/spree/adjustment.rb'
+    - 'app/models/spree/calculator/default_tax.rb'
+    - 'lib/spree/core/environment_extension.rb'
+    - 'spec/models/spree/calculator/default_tax_spec.rb'
+    - 'spec/models/spree/calculator/refunds/default_refund_amount_spec.rb'
+    - 'spec/models/spree/order/checkout_spec.rb'
+    - 'spec/models/spree/promotion_handler/coupon_spec.rb'
+    - 'spec/models/spree/promotion_handler/free_shipping_spec.rb'
+
+# Offense count: 2925
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/StringLiterals:
+  Enabled: false
+
+# Offense count: 6
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+# Offense count: 91
+Style/SymbolArray:
+  Enabled: false
+
+# Offense count: 19
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoredMethods.
+Style/SymbolProc:
+  Exclude:
+    - 'app/models/spree/item_adjustments.rb'
+    - 'app/models/spree/order.rb'
+    - 'app/models/spree/order/payments.rb'
+    - 'app/models/spree/payment.rb'
+    - 'app/models/spree/return_item.rb'
+    - 'app/models/spree/return_item/eligibility_validator/default.rb'
+    - 'app/models/spree/shipment.rb'
+    - 'app/models/spree/stock/prioritizer.rb'
+    - 'app/models/spree/stock_item.rb'
+    - 'app/models/spree/variant.rb'
+    - 'app/models/spree/zone.rb'
+    - 'lib/spree/core/product_filters.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/Tab:
+  Exclude:
+    - 'db/migrate/20121012071449_add_on_demand_to_product_and_variant.rb'
+    - 'db/migrate/20121124203911_add_position_to_taxonomies.rb'
+
+# Offense count: 43
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
+Style/TrailingComma:
+  Enabled: false
+
+# Offense count: 2
+Style/UnlessElse:
+  Exclude:
+    - 'app/models/spree/taxon.rb'
+    - 'app/models/spree/variant.rb'
+
+# Offense count: 1
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/VariableName:
+  Enabled: false
+
+# Offense count: 25
+# Cop supports --auto-correct.
+# Configuration parameters: WordRegex.
+Style/WordArray:
+  MinSize: 16

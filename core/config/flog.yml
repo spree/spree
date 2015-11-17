@@ -1,0 +1,3 @@
+---
+threshold: 126.1
+lib_dirs: ['app', 'lib']

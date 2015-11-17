@@ -30,3 +30,51 @@ task :test_app, :user_class do |t, args|
     out: File::NULL
   )
 end
+
+require 'devtools'
+Devtools.init_rake_tasks
+
+Rake.application.load_imports
+
+# Remove metrics:mutant from devtools
+task('metrics:mutant').clear
+namespace :metrics do
+  desc 'Run mutant'
+  task mutant: :coverage do
+    puts 'Mutant is disabled while style fixing'
+    next
+
+    require('mutant')
+
+    # Force the environment to be test
+    unless ENV['RAILS_ENV'].eql?('test')
+      fail 'The RAILS_ENV environment variable must be set to "test"'
+    end
+
+    # Eager load application and dependencies
+
+    # rubocop:disable LineLength
+    system(*%w[
+      mutant
+      --use rspec
+      --require ./spec/dummy/config/environment.rb
+      --since HEAD~1
+      --
+      Spree*
+    ]) or fail 'Mutant task is not successful'
+  end
+end
+
+# Remove metrics:coverage from devtools
+#
+# Differs from upstream with executing `spec` instead of just `spec:unit`.
+# Spree is not ready for more fine grained runs.
+task('metrics:coverage').clear
+namespace :metrics do
+  desc 'Measure code coverage'
+  task :coverage do
+    system(
+      *%w[bundle exec rspec spec --order random]
+    ) or fail "Specs failed"
+  end
+end

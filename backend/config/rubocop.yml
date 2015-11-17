@@ -1,0 +1,555 @@
+inherit_from: ../../shared/rubocop.yml
+
+AllCops:
+  Exclude:
+  # Exclude generated spec dummy
+  - 'spec/dummy/**/*'
+
+# Offense count: 2
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - 'spec/features/admin/users_spec.rb'
+
+# Offense count: 3
+# Configuration parameters: AllowSafeAssignment.
+Lint/AssignmentInCondition:
+  Exclude:
+    - 'app/controllers/spree/admin/payments_controller.rb'
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Lint/BlockAlignment:
+  Exclude:
+    - 'spec/features/admin/configuration/analytics_tracker_spec.rb'
+
+# Offense count: 1
+Lint/Eval:
+  Exclude:
+    - 'Gemfile'
+
+# Offense count: 2
+Lint/ParenthesesAsGroupedExpression:
+  Exclude:
+    - 'spec/features/admin/users_spec.rb'
+
+# Offense count: 9
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoreEmptyBlocks.
+Lint/UnusedBlockArgument:
+  Exclude:
+    - 'app/controllers/spree/admin/payment_methods_controller.rb'
+    - 'app/helpers/spree/admin/general_settings_helper.rb'
+    - 'config/initializers/form_builder.rb'
+    - 'lib/spree/backend/engine.rb'
+    - 'spec/controllers/spree/admin/reports_controller_spec.rb'
+    - 'spec/features/admin/homepage_spec.rb'
+    - 'spec/features/admin/orders/order_details_spec.rb'
+    - 'spec/features/admin/products/products_spec.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'app/helpers/spree/admin/adjustments_helper.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+    - 'spec/controllers/spree/admin/orders_controller_spec.rb'
+
+# Offense count: 12
+Lint/UselessAssignment:
+  Exclude:
+    - 'app/helpers/spree/admin/products_helper.rb'
+    - 'spec/features/admin/configuration/stock_locations_spec.rb'
+    - 'spec/features/admin/orders/adjustments_promotions_spec.rb'
+    - 'spec/features/admin/products/stock_management_spec.rb'
+    - 'spec/features/admin/promotion_adjustments_spec.rb'
+    - 'spec/features/admin/stock_transfer_spec.rb'
+
+# Offense count: 1
+Lint/Void:
+  Exclude:
+    - 'spec/features/admin/products/products_spec.rb'
+
+# Offense count: 13
+Metrics/AbcSize:
+  Max: 87
+
+# Offense count: 4
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 209
+
+# Offense count: 6
+Metrics/CyclomaticComplexity:
+  Max: 11
+
+# Offense count: 518
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 217
+
+# Offense count: 24
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 37
+
+# Offense count: 3
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 144
+
+# Offense count: 3
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Max: 4
+
+# Offense count: 6
+Metrics/PerceivedComplexity:
+  Max: 12
+
+# Offense count: 7
+# Cop supports --auto-correct.
+Performance/Count:
+  Exclude:
+    - 'spec/controllers/spree/admin/return_authorizations_controller_spec.rb'
+    - 'spec/features/admin/products/option_types_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Performance/StringReplacement:
+  Exclude:
+    - 'app/helpers/spree/admin/base_helper.rb'
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+
+# Offense count: 1
+Style/AccessorMethodName:
+  Exclude:
+    - 'app/controllers/spree/admin/taxonomies_controller.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
+Style/AlignHash:
+  Exclude:
+    - 'spec/features/admin/products/edit/products_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/AlignParameters:
+  Exclude:
+    - 'app/controllers/spree/admin/users_controller.rb'
+    - 'spec/features/admin/locale_spec.rb'
+    - 'spec/features/admin/orders/adjustments_promotions_spec.rb'
+    - 'spec/features/admin/orders/payments_spec.rb'
+    - 'spec/features/admin/products/products_spec.rb'
+    - 'spec/helpers/admin/stock_movements_helper_spec.rb'
+
+# Offense count: 1
+Style/AsciiComments:
+  Exclude:
+    - 'spec/features/admin/products/products_spec.rb'
+
+# Offense count: 11
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+Style/BlockDelimiters:
+  Exclude:
+    - 'app/helpers/spree/admin/base_helper.rb'
+    - 'spec/controllers/spree/admin/orders_controller_spec.rb'
+    - 'spec/controllers/spree/admin/payment_methods_controller_spec.rb'
+    - 'spec/controllers/spree/admin/reimbursements_controller_spec.rb'
+    - 'spec/controllers/spree/admin/resource_controller_spec.rb'
+    - 'spec/controllers/spree/admin/return_items_controller_spec.rb'
+    - 'spec/controllers/spree/admin/stock_items_controller_spec.rb'
+    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/BlockEndNewline:
+  Exclude:
+    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
+
+# Offense count: 30
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/BracesAroundHashParameters:
+  Exclude:
+    - 'app/controllers/spree/admin/search_controller.rb'
+    - 'app/controllers/spree/admin/users_controller.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+    - 'app/helpers/spree/admin/orders_helper.rb'
+    - 'spec/controllers/spree/admin/customer_returns_controller_spec.rb'
+    - 'spec/controllers/spree/admin/payments_controller_spec.rb'
+    - 'spec/controllers/spree/admin/return_authorizations_controller_spec.rb'
+    - 'spec/controllers/spree/admin/tax_categories_controller_spec.rb'
+    - 'spec/controllers/spree/admin/users_controller_spec.rb'
+    - 'spec/features/admin/orders/cancelling_and_resuming_spec.rb'
+    - 'spec/features/admin/reports_spec.rb'
+
+# Offense count: 11
+# Cop supports --auto-correct.
+# Configuration parameters: IndentWhenRelativeTo, SupportedStyles, IndentOneStep.
+Style/CaseIndentation:
+  Enabled: false
+
+# Offense count: 4
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'app/controllers/spree/admin/promotion_actions_controller.rb'
+    - 'app/controllers/spree/admin/promotion_rules_controller.rb'
+    - 'app/controllers/spree/admin/resource_controller.rb'
+    - 'config/initializers/form_builder.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassCheck:
+  Exclude:
+    - 'app/helpers/spree/admin/images_helper.rb'
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+
+# Offense count: 2
+Style/ClassVars:
+  Exclude:
+    - 'app/controllers/spree/admin/reports_controller.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/ClosingParenthesisIndentation:
+  Exclude:
+    - 'spec/features/admin/orders/payments_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: Keywords.
+Style/CommentAnnotation:
+  Exclude:
+    - 'app/helpers/spree/admin/payments_helper.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/CommentIndentation:
+  Exclude:
+    - 'spec/features/admin/orders/payments_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/DeprecatedHashMethods:
+  Exclude:
+    - 'app/controllers/spree/admin/stock_transfers_controller.rb'
+
+# Offense count: 15
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/DotPosition:
+  Enabled: false
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/EmptyElse:
+  Exclude:
+    - 'app/controllers/spree/admin/resource_controller.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+
+# Offense count: 12
+# Cop supports --auto-correct.
+Style/EmptyLines:
+  Exclude:
+    - 'app/controllers/spree/admin/log_entries_controller.rb'
+    - 'app/controllers/spree/admin/option_types_controller.rb'
+    - 'spec/controllers/spree/admin/products_controller_spec.rb'
+    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
+    - 'spec/features/admin/orders/order_details_spec.rb'
+    - 'spec/features/admin/products/products_spec.rb'
+    - 'spec/helpers/admin/stock_movements_helper_spec.rb'
+
+# Offense count: 14
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundAccessModifier:
+  Exclude:
+    - 'app/controllers/spree/admin/general_settings_controller.rb'
+    - 'app/controllers/spree/admin/option_types_controller.rb'
+    - 'app/controllers/spree/admin/orders/customer_details_controller.rb'
+    - 'app/controllers/spree/admin/orders_controller.rb'
+    - 'app/controllers/spree/admin/product_properties_controller.rb'
+    - 'app/controllers/spree/admin/promotions_controller.rb'
+    - 'app/controllers/spree/admin/root_controller.rb'
+    - 'app/controllers/spree/admin/stock_items_controller.rb'
+    - 'app/controllers/spree/admin/stock_transfers_controller.rb'
+    - 'app/controllers/spree/admin/taxons_controller.rb'
+    - 'app/controllers/spree/admin/users_controller.rb'
+    - 'app/controllers/spree/admin/variants_controller.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundMethodBody:
+  Exclude:
+    - 'app/controllers/spree/admin/orders/customer_details_controller.rb'
+    - 'app/controllers/spree/admin/stock_transfers_controller.rb'
+    - 'app/controllers/spree/admin/taxons_controller.rb'
+    - 'app/helpers/spree/admin/adjustments_helper.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/FirstParameterIndentation:
+  Exclude:
+    - 'spec/controllers/spree/admin/users_controller_spec.rb'
+
+# Offense count: 12
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'app/controllers/spree/admin/base_controller.rb'
+    - 'app/controllers/spree/admin/orders_controller.rb'
+    - 'app/controllers/spree/admin/payment_methods_controller.rb'
+    - 'app/controllers/spree/admin/products_controller.rb'
+    - 'app/controllers/spree/admin/promotion_actions_controller.rb'
+    - 'app/controllers/spree/admin/promotion_rules_controller.rb'
+    - 'app/controllers/spree/admin/return_authorizations_controller.rb'
+    - 'app/controllers/spree/admin/users_controller.rb'
+    - 'app/helpers/spree/admin/tables_helper.rb'
+
+# Offense count: 637
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
+Style/HashSyntax:
+  Enabled: false
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: SupportedStyles.
+Style/IndentHash:
+  EnforcedStyle: consistent
+
+# Offense count: 64
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentationConsistency:
+  Exclude:
+    - 'app/controllers/spree/admin/images_controller.rb'
+    - 'app/controllers/spree/admin/option_types_controller.rb'
+    - 'app/controllers/spree/admin/orders/customer_details_controller.rb'
+    - 'app/controllers/spree/admin/orders_controller.rb'
+    - 'app/controllers/spree/admin/product_properties_controller.rb'
+    - 'app/controllers/spree/admin/promotions_controller.rb'
+    - 'app/controllers/spree/admin/resource_controller.rb'
+    - 'app/controllers/spree/admin/states_controller.rb'
+    - 'app/controllers/spree/admin/stock_items_controller.rb'
+    - 'app/controllers/spree/admin/taxons_controller.rb'
+    - 'app/controllers/spree/admin/users_controller.rb'
+    - 'app/controllers/spree/admin/variants_controller.rb'
+    - 'app/controllers/spree/admin/zones_controller.rb'
+    - 'app/helpers/spree/admin/base_helper.rb'
+    - 'spec/features/admin/orders/payments_spec.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: Width.
+Style/IndentationWidth:
+  Exclude:
+    - 'app/controllers/spree/admin/countries_controller.rb'
+    - 'spec/features/admin/configuration/analytics_tracker_spec.rb'
+    - 'spec/helpers/promotion_rules_helper_spec.rb'
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/LeadingCommentSpace:
+  Exclude:
+    - 'app/controllers/spree/admin/taxons_controller.rb'
+    - 'spec/features/admin/orders/order_details_spec.rb'
+    - 'spec/features/admin/products/edit/images_spec.rb'
+    - 'spec/features/admin/reports_spec.rb'
+
+# Offense count: 1
+Style/MultilineTernaryOperator:
+  Exclude:
+    - 'app/controllers/spree/admin/stock_transfers_controller.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/NegatedIf:
+  Exclude:
+    - 'app/controllers/spree/admin/payment_methods_controller.rb'
+    - 'app/controllers/spree/admin/promotion_actions_controller.rb'
+    - 'app/controllers/spree/admin/promotion_rules_controller.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
+Style/Next:
+  Exclude:
+    - 'app/helpers/spree/admin/orders_helper.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: AllowSafeAssignment.
+Style/ParenthesesAroundCondition:
+  Exclude:
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+
+# Offense count: 9
+# Cop supports --auto-correct.
+# Configuration parameters: PreferredDelimiters.
+Style/PercentLiteralDelimiters:
+  Exclude:
+    - 'app/controllers/spree/admin/orders_controller.rb'
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+    - 'config/initializers/assets.rb'
+    - 'spec/features/admin/products/products_spec.rb'
+    - 'spec/features/admin/products/prototypes_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/Proc:
+  Exclude:
+    - 'config/initializers/form_builder.rb'
+
+# Offense count: 2
+# Configuration parameters: SupportedStyles.
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/RedundantBegin:
+  Exclude:
+    - 'app/controllers/spree/admin/stock_locations_controller.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+Style/RegexpLiteral:
+  Exclude:
+    - 'spec/helpers/admin/navigation_helper_spec.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/RescueModifier:
+  Exclude:
+    - 'app/controllers/spree/admin/orders_controller.rb'
+    - 'app/controllers/spree/admin/reports_controller.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SignalException:
+  Exclude:
+    - 'app/controllers/spree/admin/base_controller.rb'
+    - 'app/helpers/spree/admin/reimbursements_helper.rb'
+    - 'spec/controllers/spree/admin/refunds_controller_spec.rb'
+    - 'spec/controllers/spree/admin/reimbursements_controller_spec.rb'
+    - 'spec/support/appear_before_matcher.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/SingleSpaceBeforeFirstArg:
+  Exclude:
+    - 'app/controllers/spree/admin/customer_returns_controller.rb'
+    - 'app/controllers/spree/admin/return_authorizations_controller.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Style/SpaceAfterComma:
+  Exclude:
+    - 'app/controllers/spree/admin/payment_methods_controller.rb'
+    - 'config/initializers/form_builder.rb'
+    - 'spec/helpers/admin/base_helper_spec.rb'
+
+# Offense count: 5
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceAroundEqualsInParameterDefault:
+  Enabled: false
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/SpaceBeforeComma:
+  Exclude:
+    - 'app/controllers/spree/admin/users_controller.rb'
+
+# Offense count: 20
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Style/SpaceInsideBrackets:
+  Exclude:
+    - 'app/helpers/spree/promotion_rules_helper.rb'
+    - 'spec/features/admin/products/products_spec.rb'
+
+# Offense count: 56
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/SpaceInsideParens:
+  Exclude:
+    - 'app/helpers/spree/admin/taxons_helper.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceInsideStringInterpolation:
+  Exclude:
+    - 'app/helpers/spree/admin/adjustments_helper.rb'
+
+# Offense count: 1853
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/StringLiterals:
+  Enabled: false
+
+# Offense count: 43
+Style/SymbolArray:
+  Enabled: false
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoredMethods.
+Style/SymbolProc:
+  Exclude:
+    - 'app/helpers/spree/admin/navigation_helper.rb'
+    - 'app/helpers/spree/admin/taxons_helper.rb'
+    - 'spec/controllers/spree/admin/customer_returns_controller_spec.rb'
+
+# Offense count: 12
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
+Style/TrailingComma:
+  Exclude:
+    - 'app/controllers/spree/admin/payment_methods_controller.rb'
+    - 'spec/controllers/spree/admin/resource_controller_spec.rb'
+    - 'spec/controllers/spree/admin/return_authorizations_controller_spec.rb'
+    - 'spec/features/admin/locale_spec.rb'
+
+# Offense count: 1
+Style/UnlessElse:
+  Exclude:
+    - 'app/helpers/spree/admin/base_helper.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: WordRegex.
+Style/WordArray:
+  MinSize: 3

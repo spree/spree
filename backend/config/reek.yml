@@ -1,0 +1,111 @@
+---
+Attribute:
+  enabled: true
+  exclude:
+  - Spree::Backend::Callbacks::ClassMethods#callbacks # writable attribute
+BooleanParameter:
+  enabled: true
+  exclude: []
+ClassVariable:
+  enabled: false
+  exclude: []
+ControlParameter:
+  enabled: true
+  exclude:
+  - Spree::Admin::InventorySettingsHelper#show_not # true_or_false
+DataClump:
+  enabled: true
+  max_copies: 4
+  min_clump_size: 2
+DuplicateMethodCall:
+  enabled: true
+  exclude:
+  - Spree::Admin::OrdersController#inde # 28 calls to params[:q]
+  - Spree::Admin::ReportsController#sales_total # 11 calls to params[:q]
+  max_calls: 8
+  allow_calls: []
+FeatureEnvy:
+  enabled: false
+  exclude: []
+IrresponsibleModule:
+  enabled: false
+  exclude: []
+LongParameterList:
+  enabled: true
+  exclude:
+  - Spree::Admin::NavigationHelper#link_to_with_icon
+  - Spree::Admin::NavigationHelper#button
+  max_params: 3
+LongYieldList:
+  enabled: true
+  exclude: []
+  max_params: 2
+ModuleInitialize:
+  enabled: false
+NestedIterators:
+  enabled: true
+  exclude: []
+  max_allowed_nesting: 2
+  ignore_iterators: []
+NilCheck:
+  enabled: false
+  exclude: []
+PrimaDonnaMethod:
+  enabled: true
+  exclude:
+  - Spree::Admin::ReportsController # add_available_report!
+RepeatedConditional:
+  enabled: true
+  exclude:
+  - Spree::Admin::ResourceController # 8 times parent_data.present?
+  max_ifs: 3
+TooManyInstanceVariables:
+  enabled: true
+  exclude: []
+  max_instance_variables: 11
+TooManyMethods:
+  enabled: true
+  exclude:
+  - Spree::Admin::ResourceController # 28 methods
+  - Spree::Admin::UsersController # 16 methods
+TooManyStatements:
+  enabled: true
+  exclude: []
+  max_statements: 25
+UncommunicativeMethodName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^[a-z]$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeModuleName:
+  enabled: true
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  accept: []
+UncommunicativeParameterName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeVariableName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UnusedParameters:
+  enabled: false
+  exclude: []
+UtilityFunction:
+  enabled: false
+  exclude: []

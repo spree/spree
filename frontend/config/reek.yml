@@ -1,0 +1,109 @@
+---
+Attribute:
+  enabled: true
+  exclude:
+  - :Spree::OldPrefs#owner_klass # writable attribute
+BooleanParameter:
+  enabled: true
+  exclude: []
+ClassVariable:
+  enabled: false
+  exclude: []
+ControlParameter:
+  enabled: true
+  exclude: []
+DataClump:
+  enabled: true
+  max_copies: 1
+  min_clump_size: 2
+DuplicateMethodCall:
+  enabled: true
+  exclude:
+  - Spree::CheckoutController#ensure_valid_state # 4 calls to params[:state]
+  max_calls: 3
+  allow_calls: []
+FeatureEnvy:
+  enabled: false
+  exclude: []
+IrresponsibleModule:
+  enabled: false
+  exclude: []
+LongParameterList:
+  enabled: true
+  exclude: []
+  max_params: 2
+LongYieldList:
+  enabled: true
+  exclude: []
+  max_params: 2
+ModuleInitialize:
+  enabled: false
+NestedIterators:
+  enabled: true
+  exclude:
+  - Spree::Frontend::Middleware::SeoAssist#build_query # 2 levels
+  max_allowed_nesting: 1
+  ignore_iterators: []
+NilCheck:
+  enabled: true
+  exclude: []
+PrimaDonnaMethod:
+  enabled: true
+  exclude: []
+RepeatedConditional:
+  enabled: true
+  exclude: []
+  max_ifs: 2
+TooManyInstanceVariables:
+  enabled: true
+  exclude:
+  - Spree::ProductsController # 7 ivars
+  max_instance_variables: 4
+TooManyMethods:
+  enabled: true
+  exclude:
+  - Spree::CheckoutController # 16 methods
+TooManyStatements:
+  enabled: true
+  exclude:
+  - Spree::CheckoutController#update # 9 statements
+  - Spree::PreferenceRescue#self.try # 9 statements
+  max_statements: 7
+UncommunicativeMethodName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^[a-z]$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeModuleName:
+  enabled: true
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  accept: []
+UncommunicativeParameterName:
+  enabled: true
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeVariableName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UnusedParameters:
+  enabled: true
+  exclude: []
+UtilityFunction:
+  enabled: true
+  exclude:
+  - Spree::StoreController#config_locale
