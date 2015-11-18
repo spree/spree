@@ -23,7 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'pg',                 '~> 0.18.4'
   gem.add_dependency 'premailer-rails',    '~> 1.8.2'
   gem.add_dependency 'rails',              '~> 4.1.14'
-  gem.add_dependency 'ransack',            '~> 1.7.0'
+  gem.add_dependency 'ransack',            '~> 1.6'
   gem.add_dependency 'state_machine',      '~> 1.2.0'
   gem.add_dependency 'stringex',           '~> 2.5.2'
   gem.add_dependency 'truncate_html',      '~> 0.9.2'
