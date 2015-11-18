@@ -4,9 +4,6 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *
  *= require spree/backend
-<% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/backend'  %>
- *= require spree/backend/<%= options[:lib_name].gsub("/", "_") %>
-<% end %>
  *= require_self
  *= require_tree .
 */

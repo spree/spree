@@ -15,7 +15,6 @@ Lint/AmbiguousOperator:
     - 'app/models/spree/product.rb'
     - 'app/models/spree/shipment.rb'
     - 'app/models/spree/shipment_handler.rb'
-    - 'lib/generators/spree/install/install_generator.rb'
     - 'lib/spree/core/controller_helpers/ssl.rb'
     - 'lib/spree/core/controller_helpers/strong_parameters.rb'
     - 'lib/spree/permitted_attributes.rb'
@@ -55,7 +54,6 @@ Lint/DefEndAlignment:
 Lint/DeprecatedClassMethods:
   Exclude:
     - 'lib/generators/spree/dummy/dummy_generator.rb'
-    - 'lib/generators/spree/install/install_generator.rb'
     - 'lib/spree/migrations.rb'
 
 # Offense count: 7
@@ -303,7 +301,6 @@ Style/BarePercentLiterals:
     - 'app/models/spree/product/scopes.rb'
     - 'lib/generators/spree/custom_user/custom_user_generator.rb'
     - 'lib/generators/spree/dummy/dummy_generator.rb'
-    - 'lib/generators/spree/install/install_generator.rb'
     - 'lib/spree/testing_support/caching.rb'
     - 'lib/spree/testing_support/capybara_ext.rb'
     - 'spec/helpers/products_helper_spec.rb'
@@ -551,7 +548,6 @@ Style/Lambda:
     - 'app/models/spree/return_authorization.rb'
     - 'app/models/spree/store.rb'
     - 'app/models/spree/variant/scopes.rb'
-    - 'lib/generators/spree/install/install_generator.rb'
     - 'spec/models/spree/classification_spec.rb'
     - 'spec/models/spree/order/checkout_spec.rb'
 
@@ -606,7 +602,6 @@ Style/NegatedIf:
     - 'app/models/spree/payment/processing.rb'
     - 'app/models/spree/refund.rb'
     - 'db/migrate/20130826062534_add_depth_to_spree_taxons.rb'
-    - 'lib/generators/spree/install/install_generator.rb'
     - 'lib/spree/responder.rb'
 
 # Offense count: 1
