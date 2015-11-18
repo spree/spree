@@ -45,17 +45,8 @@ private
   #
   # @return [Boolean]
   def run_project
-    test_steps.all?(&method(:__send__))
-  end
-
-  # Return test steps
-  #
-  # @return [Array<Symbol>]
-  def test_steps
-    steps = []
-    steps << :setup_test_app
-    steps << :run_tests
-    steps
+    setup_test_app
+    run_tests
   end
 
   # Install the current bundle
@@ -84,25 +75,7 @@ private
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system(%w[bundle exec rspec spec --order random]) or fail 'Tests failed'
-  end
-
-  # Run mutant for subproject
-  #
-  # @return [Boolean]
-  #   the success of mutation testing
-  def run_mutant
-    system(%w[
-      bundle
-      exec
-      mutant
-      --require ./spec/dummy/config/environment
-      --use rspec
-      --jobs 1
-      --since HEAD~1
-      --
-      Spree*
-    ]) or fail 'Mutation testing failed'
+    system(%w[bundle exec rake ci]) or fail 'Tests failed'
   end
 
   # Execute system command via execve

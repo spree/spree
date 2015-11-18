@@ -1,0 +1,111 @@
+---
+Attribute:
+  enabled: false
+  exclude: []
+BooleanParameter:
+  enabled: false
+  exclude: []
+ClassVariable:
+  enabled: false
+  exclude: []
+ControlParameter:
+  enabled: false
+  exclude: []
+DataClump:
+  enabled: true
+  max_copies: 10
+  min_clump_size: 4
+DuplicateMethodCall:
+  enabled: true
+  exclude: []
+  max_calls: 11
+  allow_calls: []
+FeatureEnvy:
+  enabled: false
+  exclude: []
+IrresponsibleModule:
+  enabled: false
+  exclude: []
+LongParameterList:
+  enabled: true
+  exclude: []
+  max_params: 5
+  overrides:
+    initialize:
+      max_params: 3
+LongYieldList:
+  enabled: true
+  exclude: []
+  max_params: 2
+# We like to use modules that allow `include Foo.new(:bar)`
+ModuleInitialize:
+  enabled: false
+NestedIterators:
+  enabled: true
+  exclude: []
+  max_allowed_nesting: 3
+  ignore_iterators: []
+NilCheck:
+  enabled: false
+  exclude: []
+PrimaDonnaMethod:
+  enabled: false
+  exclude: []
+RepeatedConditional:
+  enabled: true
+  exclude: []
+  max_ifs: 3
+TooManyInstanceVariables:
+  enabled: true
+  exclude: []
+  max_instance_variables: 5
+TooManyMethods:
+  enabled: true
+  exclude:
+  - Spree::Order # 93! methods
+  - Spree::Shipment # 50 methods
+  max_methods: 31
+TooManyStatements:
+  enabled: true
+  exclude:
+  - Spree::Order::Checkout#self.included #  39 statements
+  - Spree::Order::Checkout#self.included#self.define_state_machine! #  54 statements
+  max_statements: 29
+UncommunicativeMethodName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^[a-z]$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeModuleName:
+  enabled: true
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  accept: []
+UncommunicativeParameterName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UncommunicativeVariableName:
+  enabled: false
+  exclude: []
+  reject:
+  - !ruby/regexp /^.$/
+  - !ruby/regexp /[0-9]$/
+  - !ruby/regexp /[A-Z]/
+  accept: []
+UnusedParameters:
+  enabled: false
+  exclude: []
+UtilityFunction:
+  enabled: false
+  exclude: []
+  max_helper_calls: 0

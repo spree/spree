@@ -1,0 +1,4 @@
+---
+threshold: 52
+total_score: 769
+lib_dirs: ['app', 'lib']

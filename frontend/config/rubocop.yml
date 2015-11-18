@@ -1,0 +1,291 @@
+inherit_from: ../../shared/rubocop.yml
+
+AllCops:
+  Exclude:
+  # Exclude generated spec dummy
+  - 'spec/dummy/**/*'
+
+# Offense count: 1
+Lint/AmbiguousOperator:
+  Exclude:
+    - 'spec/features/checkout_unshippable_spec.rb'
+
+# Offense count: 2
+# Configuration parameters: AllowSafeAssignment.
+Lint/AssignmentInCondition:
+  Exclude:
+    - 'app/controllers/spree/orders_controller.rb'
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
+Lint/DefEndAlignment:
+  Enabled: false
+
+# Offense count: 1
+Lint/Eval:
+  Exclude:
+    - 'Gemfile'
+
+# Offense count: 4
+Lint/ParenthesesAsGroupedExpression:
+  Exclude:
+    - 'spec/controllers/controller_extension_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoreEmptyBlocks.
+Lint/UnusedBlockArgument:
+  Exclude:
+    - 'config/routes.rb'
+    - 'lib/spree/frontend/engine.rb'
+
+# Offense count: 5
+Metrics/AbcSize:
+  Max: 30
+
+# Offense count: 1
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 122
+
+# Offense count: 1
+Metrics/CyclomaticComplexity:
+  Max: 9
+
+# Offense count: 190
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 194
+
+# Offense count: 5
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 17
+
+# Offense count: 1
+Metrics/PerceivedComplexity:
+  Max: 9
+
+# Offense count: 13
+# Cop supports --auto-correct.
+Style/AlignArray:
+  Exclude:
+    - 'spec/features/products_spec.rb'
+    - 'spec/features/taxons_spec.rb'
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+Style/BlockDelimiters:
+  Exclude:
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+    - 'spec/controllers/spree/checkout_controller_spec.rb'
+    - 'spec/controllers/spree/current_order_tracking_spec.rb'
+    - 'spec/features/checkout_spec.rb'
+
+# Offense count: 39
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/BracesAroundHashParameters:
+  Exclude:
+    - 'spec/controllers/controller_extension_spec.rb'
+    - 'spec/controllers/spree/checkout_controller_spec.rb'
+    - 'spec/controllers/spree/orders_controller_ability_spec.rb'
+    - 'spec/controllers/spree/orders_controller_spec.rb'
+    - 'spec/controllers/spree/orders_controller_transitions_spec.rb'
+
+# Offense count: 1
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'spec/controllers/controller_extension_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassCheck:
+  Exclude:
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/DeprecatedHashMethods:
+  Exclude:
+    - 'app/controllers/spree/orders_controller.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/EmptyLines:
+  Exclude:
+    - 'spec/features/checkout_spec.rb'
+    - 'spec/features/coupon_code_spec.rb'
+    - 'spec/features/products_spec.rb'
+    - 'spec/spec_helper.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundAccessModifier:
+  Exclude:
+    - 'app/controllers/spree/checkout_controller.rb'
+    - 'app/controllers/spree/products_controller.rb'
+    - 'app/controllers/spree/store_controller.rb'
+
+# Offense count: 8
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'app/controllers/spree/checkout_controller.rb'
+    - 'app/controllers/spree/orders_controller.rb'
+    - 'app/controllers/spree/store_controller.rb'
+
+# Offense count: 492
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
+Style/HashSyntax:
+  Enabled: false
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentHash:
+  Enabled: false
+
+# Offense count: 46
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentationConsistency:
+  Exclude:
+    - 'app/controllers/spree/checkout_controller.rb'
+    - 'app/controllers/spree/orders_controller.rb'
+    - 'app/controllers/spree/products_controller.rb'
+    - 'app/controllers/spree/store_controller.rb'
+    - 'spec/features/automatic_promotion_adjustments_spec.rb'
+    - 'spec/features/coupon_code_spec.rb'
+    - 'spec/features/page_promotions_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: Width.
+Style/IndentationWidth:
+  Exclude:
+    - 'spec/features/address_spec.rb'
+
+# Offense count: 7
+# Cop supports --auto-correct.
+Style/Lambda:
+  Exclude:
+    - 'spec/controllers/controller_extension_spec.rb'
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/LeadingCommentSpace:
+  Exclude:
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+    - 'spec/features/checkout_spec.rb'
+    - 'spec/spec_helper.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: PreferredDelimiters.
+Style/PercentLiteralDelimiters:
+  Exclude:
+    - 'config/initializers/assets.rb'
+    - 'spec/features/locale_spec.rb'
+    - 'spec/support/shared_contexts/product_prototypes.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+Style/RegexpLiteral:
+  Exclude:
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+    - 'spec/features/free_item_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/SpaceAfterComma:
+  Exclude:
+    - 'spec/features/checkout_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/SpaceBeforeComma:
+  Exclude:
+    - 'config/routes.rb'
+    - 'spec/controllers/spree/checkout_controller_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Offense count: 4
+# Cop supports --auto-correct.
+Style/SpaceInsideBrackets:
+  Exclude:
+    - 'spec/features/checkout_spec.rb'
+    - 'spec/support/shared_contexts/product_prototypes.rb'
+
+# Offense count: 74
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/SpaceInsideParens:
+  Exclude:
+    - 'lib/spree/frontend/middleware/seo_assist.rb'
+    - 'spec/controllers/spree/checkout_controller_spec.rb'
+
+# Offense count: 777
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/StringLiterals:
+  Enabled: false
+
+# Offense count: 5
+Style/SymbolArray:
+  Exclude:
+    - 'app/controllers/spree/products_controller.rb'
+    - 'config/routes.rb'
+    - 'spec/controllers/controller_helpers_spec.rb'
+    - 'spec/features/coupon_code_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoredMethods.
+Style/SymbolProc:
+  Exclude:
+    - 'app/controllers/spree/checkout_controller.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
+Style/TrailingComma:
+  Exclude:
+    - 'spec/features/locale_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: AllowNamedUnderscoreVariables.
+Style/TrailingUnderscoreVariable:
+  Exclude:
+    - 'spec/controllers/spree/orders_controller_transitions_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: MaxLineLength.
+Style/WhileUntilModifier:
+  Exclude:
+    - 'spec/controllers/spree/checkout_controller_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: WordRegex.
+Style/WordArray:
+  MinSize: 3

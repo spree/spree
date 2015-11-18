@@ -1,0 +1,390 @@
+inherit_from: ../../shared/rubocop.yml
+
+AllCops:
+  Exclude:
+  # Exclude generated spec dummy
+  - 'spec/dummy/**/*'
+
+# Offense count: 2
+Lint/AmbiguousOperator:
+  Exclude:
+    - 'app/helpers/spree/api/api_helpers.rb'
+    - 'lib/spree/api/engine.rb'
+
+# Offense count: 2
+Lint/AmbiguousRegexpLiteral:
+  Exclude:
+    - 'spec/controllers/spree/api/inventory_units_controller_spec.rb'
+
+# Offense count: 2
+# Configuration parameters: AllowSafeAssignment.
+Lint/AssignmentInCondition:
+  Exclude:
+    - 'app/controllers/spree/api/inventory_units_controller.rb'
+    - 'app/controllers/spree/api/products_controller.rb'
+
+# Offense count: 1
+Lint/Eval:
+  Exclude:
+    - 'Gemfile'
+
+# Offense count: 3
+Lint/ShadowingOuterLocalVariable:
+  Exclude:
+    - 'spec/requests/ransackable_attributes_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Lint/StringConversionInInterpolation:
+  Exclude:
+    - 'spec/controllers/spree/api/shipments_controller_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: IgnoreEmptyBlocks.
+Lint/UnusedBlockArgument:
+  Exclude:
+    - 'app/helpers/spree/api/api_helpers.rb'
+    - 'lib/spree/api/engine.rb'
+
+# Offense count: 18
+Lint/UselessAssignment:
+  Exclude:
+    - 'app/controllers/spree/api/images_controller.rb'
+    - 'spec/controllers/spree/api/line_items_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_types_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_values_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/products_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_movements_controller_spec.rb'
+    - 'spec/controllers/spree/api/taxonomies_controller_spec.rb'
+    - 'spec/controllers/spree/api/taxons_controller_spec.rb'
+    - 'spec/controllers/spree/api/users_controller_spec.rb'
+    - 'spec/controllers/spree/api/variants_controller_spec.rb'
+    - 'spec/requests/ransackable_attributes_spec.rb'
+
+# Offense count: 5
+Metrics/AbcSize:
+  Max: 41
+
+# Offense count: 3
+# Configuration parameters: CountComments.
+Metrics/ClassLength:
+  Max: 131
+
+# Offense count: 2
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+# Offense count: 468
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 173
+
+# Offense count: 9
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 30
+
+# Offense count: 13
+# Configuration parameters: CountComments.
+Metrics/ModuleLength:
+  Max: 621
+
+# Offense count: 6
+# Configuration parameters: CountKeywordArgs.
+Metrics/ParameterLists:
+  Max: 5
+
+# Offense count: 2
+Metrics/PerceivedComplexity:
+  Max: 11
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Performance/Detect:
+  Exclude:
+    - 'spec/requests/rabl_cache_spec.rb'
+
+# Offense count: 1
+Style/AccessorMethodName:
+  Exclude:
+    - 'app/controllers/spree/api/stores_controller.rb'
+
+# Offense count: 31
+# Cop supports --auto-correct.
+Style/AlignArray:
+  Exclude:
+    - 'spec/controllers/spree/api/option_types_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_values_controller_spec.rb'
+    - 'spec/controllers/spree/api/products_controller_spec.rb'
+    - 'spec/controllers/spree/api/variants_controller_spec.rb'
+
+# Offense count: 14
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
+Style/AlignHash:
+  Exclude:
+    - 'spec/controllers/spree/api/base_controller_spec.rb'
+    - 'spec/controllers/spree/api/checkouts_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_types_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_values_controller_spec.rb'
+    - 'spec/controllers/spree/api/zones_controller_spec.rb'
+
+# Offense count: 6
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+Style/BlockDelimiters:
+  Exclude:
+    - 'spec/controllers/spree/api/images_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/payments_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_items_controller_spec.rb'
+
+# Offense count: 6
+# Cop supports --auto-correct.
+Style/BlockEndNewline:
+  Exclude:
+    - 'spec/controllers/spree/api/images_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/payments_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_items_controller_spec.rb'
+
+# Offense count: 22
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/BracesAroundHashParameters:
+  Exclude:
+    - 'app/controllers/spree/api/shipments_controller.rb'
+    - 'app/controllers/spree/api/variants_controller.rb'
+    - 'lib/spree/api/testing_support/helpers.rb'
+    - 'spec/controllers/spree/api/base_controller_spec.rb'
+    - 'spec/controllers/spree/api/checkouts_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/products_controller_spec.rb'
+    - 'spec/controllers/spree/api/return_authorizations_controller_spec.rb'
+    - 'spec/controllers/spree/api/shipments_controller_spec.rb'
+    - 'spec/controllers/spree/api/taxonomies_controller_spec.rb'
+    - 'spec/controllers/spree/api/taxons_controller_spec.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+# Configuration parameters: IndentWhenRelativeTo, SupportedStyles, IndentOneStep.
+Style/CaseIndentation:
+  Enabled: false
+
+# Offense count: 1
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Exclude:
+    - 'spec/controllers/spree/api/promotion_application_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassCheck:
+  Exclude:
+    - 'app/helpers/spree/api/api_helpers.rb'
+
+# Offense count: 28
+Style/ClassVars:
+  Exclude:
+    - 'app/helpers/spree/api/api_helpers.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/ClosingParenthesisIndentation:
+  Exclude:
+    - 'spec/controllers/spree/api/stores_controller_spec.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/ColonMethodCall:
+  Exclude:
+    - 'app/controllers/spree/api/credit_cards_controller.rb'
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/DeprecatedHashMethods:
+  Exclude:
+    - 'app/controllers/spree/api/products_controller.rb'
+    - 'app/controllers/spree/api/stock_items_controller.rb'
+    - 'spec/controllers/spree/api/base_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/promotions_controller_spec.rb'
+    - 'spec/controllers/spree/api/variants_controller_spec.rb'
+
+# Offense count: 9
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/DotPosition:
+  Enabled: false
+
+# Offense count: 1
+Style/EachWithObject:
+  Exclude:
+    - 'app/controllers/spree/api/base_controller.rb'
+
+# Offense count: 7
+# Cop supports --auto-correct.
+Style/EmptyLines:
+  Exclude:
+    - 'app/controllers/spree/api/shipments_controller.rb'
+    - 'spec/controllers/spree/api/states_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_locations_controller_spec.rb'
+    - 'spec/requests/ransackable_attributes_spec.rb'
+    - 'spec/support/have_attributes_matcher.rb'
+
+# Offense count: 10
+# Cop supports --auto-correct.
+Style/EmptyLinesAroundAccessModifier:
+  Exclude:
+    - 'app/controllers/spree/api/addresses_controller.rb'
+    - 'app/controllers/spree/api/checkouts_controller.rb'
+    - 'app/controllers/spree/api/images_controller.rb'
+    - 'app/controllers/spree/api/line_items_controller.rb'
+    - 'app/controllers/spree/api/option_types_controller.rb'
+    - 'app/controllers/spree/api/orders_controller.rb'
+    - 'app/controllers/spree/api/products_controller.rb'
+    - 'app/controllers/spree/api/promotions_controller.rb'
+    - 'app/controllers/spree/api/states_controller.rb'
+    - 'app/controllers/spree/api/variants_controller.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/FirstParameterIndentation:
+  Exclude:
+    - 'app/controllers/spree/api/line_items_controller.rb'
+    - 'spec/controllers/spree/api/stores_controller_spec.rb'
+
+# Offense count: 13
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'app/controllers/spree/api/base_controller.rb'
+    - 'app/controllers/spree/api/countries_controller.rb'
+    - 'app/controllers/spree/api/credit_cards_controller.rb'
+    - 'app/controllers/spree/api/inventory_units_controller.rb'
+    - 'app/controllers/spree/api/orders_controller.rb'
+    - 'app/controllers/spree/api/product_properties_controller.rb'
+    - 'app/controllers/spree/api/products_controller.rb'
+    - 'app/controllers/spree/api/states_controller.rb'
+    - 'app/controllers/spree/api/taxons_controller.rb'
+    - 'db/migrate/20100107141738_add_api_key_to_spree_users.rb'
+    - 'db/migrate/20120411123334_resize_api_key_field.rb'
+    - 'db/migrate/20120530054546_rename_api_key_to_spree_api_key.rb'
+    - 'db/migrate/20131017162334_add_index_to_user_spree_api_key.rb'
+
+# Offense count: 727
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
+Style/HashSyntax:
+  Enabled: false
+
+# Offense count: 27
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentHash:
+  Enabled: false
+
+# Offense count: 48
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentationConsistency:
+  Enabled: false
+
+# Offense count: 6
+# Cop supports --auto-correct.
+Style/MultilineBlockLayout:
+  Exclude:
+    - 'spec/controllers/spree/api/images_controller_spec.rb'
+    - 'spec/controllers/spree/api/orders_controller_spec.rb'
+    - 'spec/controllers/spree/api/payments_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_items_controller_spec.rb'
+
+# Offense count: 1
+Style/MultilineTernaryOperator:
+  Exclude:
+    - 'app/controllers/spree/api/stock_items_controller.rb'
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/Proc:
+  Exclude:
+    - 'app/controllers/spree/api/base_controller.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
+Style/RegexpLiteral:
+  Exclude:
+    - 'spec/spec_helper.rb'
+
+# Offense count: 3
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SignalException:
+  Exclude:
+    - 'app/controllers/spree/api/addresses_controller.rb'
+    - 'app/controllers/spree/api/line_items_controller.rb'
+    - 'app/controllers/spree/api/promotions_controller.rb'
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/SpaceAfterComma:
+  Exclude:
+    - 'app/controllers/spree/api/base_controller.rb'
+    - 'app/controllers/spree/api/users_controller.rb'
+
+# Offense count: 19
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/SpaceAroundEqualsInParameterDefault:
+  Enabled: false
+
+# Offense count: 5
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+# Offense count: 2
+# Cop supports --auto-correct.
+Style/SpaceInsideBrackets:
+  Exclude:
+    - 'app/controllers/spree/api/base_controller.rb'
+
+# Offense count: 36
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
+Style/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+# Offense count: 1177
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/StringLiterals:
+  Enabled: false
+
+# Offense count: 78
+Style/SymbolArray:
+  Enabled: false
+
+# Offense count: 16
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
+Style/TrailingComma:
+  Exclude:
+    - 'app/controllers/spree/api/products_controller.rb'
+    - 'app/controllers/spree/api/shipments_controller.rb'
+    - 'spec/controllers/spree/api/option_types_controller_spec.rb'
+    - 'spec/controllers/spree/api/option_values_controller_spec.rb'
+    - 'spec/controllers/spree/api/products_controller_spec.rb'
+    - 'spec/controllers/spree/api/stock_items_controller_spec.rb'
+
+# Offense count: 8
+# Cop supports --auto-correct.
+# Configuration parameters: WordRegex.
+Style/WordArray:
+  MinSize: 7
