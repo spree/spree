@@ -28,4 +28,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'stringex',           '~> 2.5.2'
   gem.add_dependency 'truncate_html',      '~> 0.9.2'
   gem.add_dependency 'twitter_cldr',       '~> 3.0'
+  gem.add_dependency 'tzinfo-data',        '~> 1.2015.7'
 end
