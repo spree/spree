@@ -92,9 +92,9 @@ module Spree
       # If an action has been taken, report back to whatever activated this promotion.
       action_taken = results.include?(true)
 
-      if action_taken
-      # connect to the order
-      # create the join_table entry.
+      if action_taken && !self.orders.include?(order)
+        # connect to the order
+        # create the join_table entry.
         self.orders << order
         self.save
       end
