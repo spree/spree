@@ -239,7 +239,7 @@ module Spree
     end
 
     def selected_shipping_rate_id=(id)
-      shipping_rates.update_all(selected: false)
+      shipping_rates.unscope(:order).update_all(selected: false)
       shipping_rates.update(id, selected: true)
       self.save!
     end
