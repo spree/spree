@@ -53,4 +53,27 @@
     </table>
   </div>
 
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"><%= Spree.t(:shipping_methods) %></h3>
+    </div>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:shipment) %></th>
+          <th><%= Spree.t(:shipping_method) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.shipments.each do |shipment| %>
+          <tr>
+            <td width="50%"><%= link_to shipment.number, shipments_admin_order_path(@order) %></td>
+            <td width="50%"><%= shipment.shipping_method.try(:name) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
 </div>
