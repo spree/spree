@@ -5,5 +5,6 @@ unless Spree::Store.where(code: 'spree').exists?
     s.name              = 'Spree Demo Site'
     s.url               = 'demo.spreecommerce.com'
     s.mail_from_address = 'spree@example.com'
+    s.group             = 'surfdome'
   end.save!
 end
