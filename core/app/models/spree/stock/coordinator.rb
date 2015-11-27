@@ -20,26 +20,25 @@ module Spree
         packages = estimate_packages(packages)
       end
 
-      # Build packages as per stock location
-      #
-      # It needs to check whether each stock location holds at least one stock
-      # item for the order. In case none is found it wouldn't make any sense
-      # to build a package because it would be empty. Plus we avoid errors down
-      # the stack because it would assume the stock location has stock items
-      # for the given order
-      # 
-      # Returns an array of Package instances
       def build_packages(packages = Array.new)
-        StockLocation.active.each do |stock_location|
-          next unless stock_location.stock_items.where(:variant_id => inventory_units.map(&:variant_id).uniq).exists?
-
-          packer = build_packer(stock_location, inventory_units)
-          packages += packer.packages
+        stock_locations_with_requested_variants.each do |stock_location|
+          packages += build_packer(stock_location, inventory_units).packages
         end
+
         packages
       end
 
       private
+
+      def stock_locations_with_requested_variants
+        Spree::StockLocation.active.joins(:stock_items).
+          where(spree_stock_items: { variant_id: requested_variant_ids })
+      end
+
+      def requested_variant_ids
+        inventory_units.map(&:variant_id).uniq
+      end
+
       def prioritize_packages(packages)
         prioritizer = Prioritizer.new(inventory_units, packages)
         prioritizer.prioritized_packages
