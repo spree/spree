@@ -299,7 +299,6 @@ Style/Attr:
 Style/BarePercentLiterals:
   Exclude:
     - 'app/models/spree/product/scopes.rb'
-    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
     - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'lib/spree/testing_support/caching.rb'
     - 'lib/spree/testing_support/capybara_ext.rb'
@@ -452,7 +451,6 @@ Style/EmptyLines:
     - 'app/models/spree/return_authorization.rb'
     - 'db/migrate/20120831092320_spree_one_two.rb'
     - 'db/migrate/20130306181701_add_address_fields_to_stock_location.rb'
-    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
     - 'lib/spree/core/product_filters.rb'
     - 'spec/helpers/products_helper_spec.rb'
     - 'spec/models/spree/order_spec.rb'
@@ -684,7 +682,6 @@ Style/RaiseArgs:
 Style/RedundantBegin:
   Exclude:
     - 'app/models/spree/payment/processing.rb'
-    - 'lib/generators/spree/custom_user/custom_user_generator.rb'
     - 'lib/spree/core/delegate_belongs_to.rb'
     - 'lib/spree/core/importer/order.rb'
 
