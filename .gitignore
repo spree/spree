@@ -2,7 +2,6 @@
 .bundle/
 /*/spec/dummy/
 Gemfile.lock
-vendor/
 
 # Ignore osx folder attribute files
 .DS_Store
