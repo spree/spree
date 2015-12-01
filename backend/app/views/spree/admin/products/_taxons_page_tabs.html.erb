@@ -1,8 +1,8 @@
 <% content_for :page_tabs do %>
-  <li class="<%= 'active' if current == :list %>">
-    <%= link_to Spree.t(:list), spree.taxons_admin_product_path(@product) %>
-  </li>
   <li class="<%= 'active' if current == :tree %>">
     <%= link_to Spree.t(:tree), spree.taxons_tree_admin_product_path(@product) %>
+  </li>
+  <li class="<%= 'active' if current == :list %>">
+    <%= link_to Spree.t(:list), spree.taxons_admin_product_path(@product) %>
   </li>
 <% end %>
