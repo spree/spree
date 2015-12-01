@@ -1,3 +1,7 @@
+# No longer maintained
+
+This project is [no longer maintained by Spree Commerce](https://spreecommerce.com/blog/future-of-spree-oss). We recommend using [Solidus](https://github.com/solidusio/solidus), which is a fork of the Spree codebase.
+
 **THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
 EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
 SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
