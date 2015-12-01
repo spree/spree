@@ -1,137 +1,153 @@
-require "rails/generators/rails/app/app_generator"
-require 'active_support/core_ext/hash'
+require 'rails/generators'
+require 'rails/generators/rails/app/app_generator'
+require 'active_support/core_ext/kernel/reporting'
+require 'ice_nine'
 
 module Spree
+  # @api private
   class DummyGenerator < Rails::Generators::Base
-    desc "Creates blank Rails application, installs Spree"
+    class_option :dummy_path, type: :string
 
-    class_option :lib_name, :default => ''
+    # Turn array of strings into array of pathnames
+    #
+    # @param [Array<String>]
+    #
+    # @return [Array<Pathname>]
+    #
+    # @api private
+    def self.pathnames(input)
+      IceNine.deep_freeze(input.map(&Pathname.method(:new)))
+    end
+    private_class_method :pathnames
 
+    REMOVE_DUMMY_FILES = pathnames(%w[
+      .gitignore
+      Gemfile
+      README.rdoc
+      app/assets/images/rails.png
+      app/assets/javascripts/application.js
+      bin
+      config/application.rb
+      config/database.yml
+      config/environments/development.rb
+      config/environments/production.rb
+      config/environments/test.rb
+      db/seeds.rb
+      doc
+      lib/tasks
+      public/favicon.ico
+      public/index.html
+      public/robots.txt
+      spec
+      test
+      vendor
+    ])
+
+    COPY_FILES = pathnames(%w[
+      config/application.rb
+      config/environments/test.rb
+      config/initializers/spree.rb
+      vendor/assets/javascripts/spree/backend/all.js
+      vendor/assets/javascripts/spree/frontend/all.js
+      vendor/assets/stylesheets/spree/backend/all.css
+      vendor/assets/stylesheets/spree/frontend/all.css
+    ])
+
+    private_constant(*constants(false))
+
+    # Template source paths
+    #
+    # @return [Array<String>]
     def self.source_paths
-      paths = self.superclass.source_paths
-      paths << File.expand_path('../templates', __FILE__)
-      paths.flatten
+      superclass.source_paths + [File.join(__dir__, 'files')]
     end
 
+    # Initialize object
+    #
+    # @return [undefined]
+    def initialize(*)
+      super
+      @destination_stack.replace([dummy_path.to_path])
+    end
+
+    # Cleanup existing dummy if exists
+    #
+    # @return [undefined]
     def clean_up
-      remove_directory_if_exists(dummy_path)
+      dummy_path.rmtree if dummy_path.directory?
     end
 
-    PASSTHROUGH_OPTIONS = [
-      :skip_active_record, :skip_javascript, :javascript, :quiet, :pretend, :force, :skip
-    ]
+    # Generate new skeleton rails app to be configured into dummy
+    #
+    # @return [undefined]
+    def generate
+      # AppGenerator generator changes work directory globally.
+      #
+      # Dir.chdir with a block will warn so save and restore the
+      # working directory the old way.
+      original = Pathname.pwd
 
-    def generate_test_dummy
-      opts = options.slice(*PASSTHROUGH_OPTIONS).update(
-        database:       'postgresql',
-        force:          true,
-        skip_bundle:    true,
-        old_style_hash: true
+      invoke(
+        Rails::Generators::AppGenerator,
+        [dummy_path.to_path],
+        database:    'postgresql',
+        skip_bundle: true
       )
 
-      puts "Generating dummy Rails application..."
-      invoke Rails::Generators::AppGenerator,
-        [ File.expand_path(dummy_path, destination_root) ], opts
+      Dir.chdir(original)
     end
 
-    def test_dummy_config
-      @lib_name = options[:lib_name]
-      @database = options[:database]
-
-      template "rails/database.yml", "#{dummy_path}/config/database.yml", :force => true
-      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
-      template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
-      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
-      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", :force => true
-      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
-      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
-      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", :force => true
+    # Cleanup uneeded files from dummy
+    #
+    # @return [undefined]
+    def clean
+      REMOVE_DUMMY_FILES.each(&method(:remove_file))
     end
 
-    def test_dummy_inject_extension_requirements
-      if DummyGeneratorHelper.inject_extension_requirements
-        inside dummy_path do
-          inject_require_for('spree_frontend')
-          inject_require_for('spree_backend')
-          inject_require_for('spree_api')
-        end
+    # Setup files
+    #
+    # @return [undefined]
+    def setup_files
+      COPY_FILES.each do |path|
+        copy_file(path, dummy_path.join(path))
       end
     end
 
-    def test_dummy_clean
-      inside dummy_path do
-        remove_file ".gitignore"
-        remove_file "doc"
-        remove_file "Gemfile"
-        remove_file "lib/tasks"
-        remove_file "app/assets/images/rails.png"
-        remove_file "app/assets/javascripts/application.js"
-        remove_file "public/index.html"
-        remove_file "public/robots.txt"
-        remove_file "README"
-        remove_file "test"
-        remove_file "vendor"
-        remove_file "spec"
+    # Configure dummy
+    #
+    # @return [undefined]
+    def configure
+      template('config/database.yml.erb', 'config/database.yml')
+    end
+
+    # Install migrations
+    #
+    # @return [undefined]
+    def install_migrations
+      silence_stream($stdout) do
+        rake('railties:install:migrations')
       end
-
     end
 
-    attr :lib_name
-    attr :database
-
-    protected
-
-    def inject_require_for(requirement)
-      inject_into_file 'config/application.rb', %Q[
-begin
-  require '#{requirement}'
-rescue LoadError
-  # #{requirement} is not available.
-end
-      ], :before => /require '#{@lib_name}'/, :verbose => true
+    # Add routes
+    #
+    # @return [undefined]
+    def add_routes
+      insert_into_file(
+        'config/routes.rb',
+        "\nmount Spree::Core::Engine, at: '/'",
+        after: 'Rails.application.routes.draw do'
+      )
     end
 
+  private
+
+    # The dummy application path
+    #
+    # @return [Pathname]
     def dummy_path
-      ENV['DUMMY_PATH'] || 'spec/dummy'
+      Pathname.new(options.fetch('dummy_path'))
     end
 
-    def module_name
-      'Dummy'
-    end
-
-    def application_definition
-      @application_definition ||= begin
-
-        dummy_application_path = File.expand_path("#{dummy_path}/config/application.rb", destination_root)
-        unless options[:pretend] || !File.exists?(dummy_application_path)
-          contents = File.read(dummy_application_path)
-          contents[(contents.index("module #{module_name}"))..-1]
-        end
-      end
-    end
-    alias :store_application_definition! :application_definition
-
-    def camelized
-      @camelized ||= name.gsub(/\W/, '_').squeeze('_').camelize
-    end
-
-    def remove_directory_if_exists(path)
-      remove_dir(path) if File.directory?(path)
-    end
-
-    def gemfile_path
-      core_gems = ["spree/core", "spree/api", "spree/backend", "spree/frontend"]
-
-      if core_gems.include?(lib_name)
-        '../../../../../Gemfile'
-      else
-        '../../../../Gemfile'
-      end
-    end
-  end
-end
-
-module Spree::DummyGeneratorHelper
-  mattr_accessor :inject_extension_requirements
-  self.inject_extension_requirements = false
-end
+  end # DummyGenerator
+end # Spree

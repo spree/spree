@@ -2,9 +2,6 @@ inherit_from: ../../shared/rubocop.yml
 
 AllCops:
   Exclude:
-  # Exclude templates
-  - 'lib/generators/spree/install/templates/config/initializers/spree.rb'
-  - 'lib/generators/spree/dummy/templates/rails/application.rb'
   # Exclude generated spec dummy
   - 'spec/dummy/**/*'
 
@@ -53,7 +50,6 @@ Lint/DefEndAlignment:
 # Cop supports --auto-correct.
 Lint/DeprecatedClassMethods:
   Exclude:
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'lib/spree/migrations.rb'
 
 # Offense count: 7
@@ -237,7 +233,6 @@ Style/Alias:
     - 'app/models/spree/refund.rb'
     - 'app/models/spree/shipment.rb'
     - 'app/models/spree/zone.rb'
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -273,7 +268,6 @@ Style/AlignParameters:
     - 'app/models/spree/product.rb'
     - 'app/models/spree/taxon.rb'
     - 'app/models/spree/variant.rb'
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'spec/lib/i18n_spec.rb'
     - 'spec/models/spree/address_spec.rb'
     - 'spec/models/spree/credit_card_spec.rb'
@@ -287,19 +281,12 @@ Style/AsciiComments:
   Exclude:
     - 'spec/lib/spree/money_spec.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/Attr:
-  Exclude:
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
-
 # Offense count: 14
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/BarePercentLiterals:
   Exclude:
     - 'app/models/spree/product/scopes.rb'
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'lib/spree/testing_support/caching.rb'
     - 'lib/spree/testing_support/capybara_ext.rb'
     - 'spec/helpers/products_helper_spec.rb'
@@ -476,7 +463,6 @@ Style/EmptyLinesAroundMethodBody:
     - 'db/migrate/20130319082943_change_adjustments_amount_precision.rb'
     - 'db/migrate/20140710041921_recreate_spree_return_authorizations.rb'
     - 'db/migrate/20140723214541_copy_product_slugs_to_slug_history.rb'
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'spec/models/spree/gateway_spec.rb'
 
 # Offense count: 4
@@ -822,7 +808,6 @@ Style/SpaceInsideBlockBraces:
 # Cop supports --auto-correct.
 Style/SpaceInsideBrackets:
   Exclude:
-    - 'lib/generators/spree/dummy/dummy_generator.rb'
     - 'lib/spree/core/engine.rb'
     - 'lib/spree/core/product_filters.rb'
     - 'spec/models/spree/item_adjustments_spec.rb'
