@@ -59,7 +59,7 @@ module Spree
 
       def taxon_json(taxon)
         {
-          text:   taxon.rabl_name,
+          text:   "#{taxon.rabl_name} (#{taxon.id})",
           id:     taxon.id,
           tabs:   taxon.rabl_children_count,
           nodes:  taxon.children
