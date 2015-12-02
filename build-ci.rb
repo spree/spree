@@ -5,25 +5,8 @@ require 'pathname'
 class Project
   attr_reader :name
 
-  # Lookup env value for first present key
-  #
-  # @param [Enumerable<String>]
-  # @param [String] default
-  #
-  # @return [String]
-  def self.lookup_env(keys, default)
-    keys.each do |name|
-      return ENV.fetch(name) if ENV.key?(name)
-    end
-
-    default
-  end
-  private_class_method :lookup_env
-
-  NODE_TOTAL_KEYS = %w[BUILDKITE_PARALLEL_JOB_COUNT CIRCLE_NODE_TOTAL].freeze
-  NODE_JOB_KEYS   = %w[BUILDKITE_PARALLEL_JOB       CIRCLE_NODE_INDEX].freeze
-  NODE_TOTAL      = Integer(lookup_env(NODE_TOTAL_KEYS, '1'))
-  NODE_INDEX      = Integer(lookup_env(NODE_JOB_KEYS, '0'))
+  NODE_TOTAL      = Integer(ENV.fetch('BUILDKITE_PARALLEL_JOB_COUNT', '1'))
+  NODE_INDEX      = Integer(ENV.fetch('BUILDKITE_PARALLEL_JOB', '0'))
   ROOT            = Pathname.pwd.freeze
   BUNDLER_JOBS    = 4
   BUNDLER_RETRIES = 3
