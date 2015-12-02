@@ -39,18 +39,7 @@ RSpec.configure do |config|
 
   # Test the factories
   config.before(:suite) do
-    DatabaseCleaner.cleaning do
-      factories = FactoryGirl.factories.reject do |factory|
-        %i[
-          customer_return_without_return_items
-          global_zone
-          stock_packer
-          stock_package
-          stock_package_fulfilled
-        ].include?(factory.name)
-      end
-      FactoryGirl.lint(factories)
-    end
+    FactoryValidation.call
   end
 
   # Wrap all db isolated tests in a transaction
