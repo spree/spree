@@ -22,10 +22,10 @@ module Spree
           # it was really slow using partials
           root_children = taxonomy.root.try(:children)
 
-          response = root_children.collect do |child|
-            taxon_json(child)
-          end.to_json if root_children
-
+          response =  root_children
+                        .sort_by { |c| c.name  }
+                        .map     { |c| taxon_json(c) }
+                        .to_json if root_children
           render json: response
         end
       end
@@ -59,12 +59,12 @@ module Spree
 
       def taxon_json(taxon)
         {
-          text: taxon.rabl_name,
-          id: taxon.id,
-          tabs: taxon.rabl_children_count,
-          nodes: taxon.children.collect do |child|
-            taxon_json(child)
-          end
+          text:   "#{taxon.rabl_name} (#{taxon.id})",
+          id:     taxon.id,
+          tabs:   taxon.rabl_children_count,
+          nodes:  taxon.children
+                    .sort_by { |c| c.name  }
+                    .map     { |c| taxon_json(c) }
         }
       end
 
