@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :base_shipping_method, class: Spree::ShippingMethod do
-    zones { |a| [Spree::Zone.global] }
+    zones { |a| [SpreeSpec::Zone.global] }
     name 'UPS Ground'
     code 'UPS_GROUND'
     association(:calculator, factory: :calculator, strategy: :build)

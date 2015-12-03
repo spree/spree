@@ -1,14 +1,18 @@
 require 'factory_girl'
+require 'pathname'
 
-Spree::Zone.class_eval do
-  def self.global
-    find_by(name: 'GlobalZone') || FactoryGirl.create(:global_zone)
+module SpreeSpec
+  module Zone
+    def self.global
+      Spree::Zone.find_by(name: 'GlobalZone') || FactoryGirl.create(:global_zone)
+    end
   end
 end
 
-Dir["#{File.dirname(__FILE__)}/factories/**"].each do |f|
-  require File.expand_path(f)
-end
+Pathname
+  .glob(Pathname.new(__dir__).join('factories/**'))
+  .sort
+  .each { |path| require("spree/testing_support/factories/#{path.basename}") }
 
 FactoryGirl.define do
   sequence(:random_string)      { FFaker::Lorem.sentence }
