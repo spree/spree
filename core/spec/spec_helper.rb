@@ -27,12 +27,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
   end
-
-  # Test the factories
-  config.before(:suite) do
-    FactoryValidation.call
-  end
-
   # Wrap all tests in transaction. While wasting redundant DB
   # traffic on the (rare) specs that do NOT touch the DB its
   # the best default. Later we can port the assetion for non
