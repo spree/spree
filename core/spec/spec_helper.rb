@@ -1,8 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.new(__dir__)
-  .dummy_app
-  .support
+SpecHelper.infect(__dir__)
 
 if ENV.key?('CHECK_TRANSLATIONS')
   require 'spree/testing_support/i18n'

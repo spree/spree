@@ -1,25 +1,39 @@
 require 'adamantium'
 require 'concord'
+require 'database_cleaner'
+require 'ffaker'
+require 'rspec/its'
+require 'timeout'
 
+# @api private
 class SpecHelper
   include Adamantium, Concord.new(:specdir)
 
-  # Return new object
+  # Infect environment with spec helper
   #
   # @param specdir [String]
   #
   # @return [SpecHelper]
+  def self.infect(specdir)
+    new(Pathname.new(specdir))
+  end
+
+private
+
+  # Initialize object
   #
-  # @api private
-  def self.new(specdir)
-    super(Pathname.new(specdir)).base
+  # @return [undfined]
+  def initialize(*)
+    super
+
+    base
+    dummy_app
+    support
   end
 
   # Initialize spec environment shared by all subprojects
   #
-  # @return [self]
-  #
-  # @api private
+  # @return [undefined]
   def base
     if ENV.key?('COVERAGE')
       # Run Coverage report
@@ -35,40 +49,24 @@ class SpecHelper
     end
 
     ENV['RAILS_ENV'] ||= 'test'
-
-    self
   end
 
   # Initialize spec environment for subprojects that require the dummy app
   #
-  # @return [self]
-  #
-  # @api private
+  # @return [undefined]
   def dummy_app
-    begin
-      require(specdir.join('dummy/config/environment'))
-    rescue LoadError
-      fail 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
-    end
-
-    require 'rspec/rails'
-    require 'rspec/its'
-    require 'database_cleaner'
-    require 'ffaker'
-    require 'timeout'
-
-    self
+    require(specdir.join('dummy/config/environment'))
+    require('rspec/rails')  # Can only be loaded after rails :(
   end
 
   # Load spec support files
   #
-  # @return [self]
-  #
-  # @api private
+  # @return [undefined]
   def support
-    Dir.glob(File.join(specdir, 'support/**/*.rb')).sort.each(&method(:require))
-
-    self
+    Pathname
+      .glob(specdir.join('support/**/*.rb'))
+      .sort
+      .each(&method(:require))
   end
 
 end # SpecHelper
