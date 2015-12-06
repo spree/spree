@@ -26,13 +26,6 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
 
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
-
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = false
-
   # Ensure DB is clean, so that transaction isolated specs see
   # prisitine state.
   config.before(:suite) do

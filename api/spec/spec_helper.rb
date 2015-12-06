@@ -22,6 +22,4 @@ RSpec.configure do |config|
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end
-
-  config.use_transactional_fixtures = true
 end
