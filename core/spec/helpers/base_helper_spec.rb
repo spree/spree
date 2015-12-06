@@ -137,8 +137,8 @@ describe Spree::BaseHelper, :type => :helper do
       text = FFaker::Lorem.paragraphs(2).join(" ")
       @test = Spree::Product.new(:description => text)
       tags = Nokogiri::HTML.parse(meta_data_tags)
-      content = tags.css("meta[name=description]").first["content"]
-      assert content.length <= 160, "content length is not truncated to 160 characters"
+      content = tags.css('meta[name=description]').first['content']
+      expect(content.length).to be <= 160
     end
   end
 

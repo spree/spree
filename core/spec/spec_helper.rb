@@ -33,7 +33,11 @@ RSpec.configure do |config|
     FactoryValidation.call
   end
 
-  # Wrap all db isolated tests in a transaction
+  # Wrap all tests in transaction. While wasting redundant DB
+  # traffic on the (rare) specs that do NOT touch the DB its
+  # the best default. Later we can port the assetion for non
+  # DB touching tests and relax this for the non DB touching
+  # tests.
   config.around do |example|
     DatabaseCleaner.cleaning(&example)
   end

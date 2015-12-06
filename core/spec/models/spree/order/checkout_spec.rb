@@ -6,8 +6,12 @@ describe Spree::Order, type: :model, db: :isolate do
   let(:order)  { store.orders.new              }
 
   def assert_state_changed(order, from, to)
-    state_change_exists = order.state_changes.where(:previous_state => from, :next_state => to).exists?
-    assert state_change_exists, "Expected order to transition from #{from} to #{to}, but didn't."
+    expect(
+      order.state_changes.where(
+        previous_state: from,
+        next_state:     to
+      ).exists?
+    ).to be(true)
   end
 
   context "with default state machine" do

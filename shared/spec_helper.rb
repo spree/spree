@@ -29,6 +29,7 @@ private
     base
     dummy_app
     support
+    remove_global_fixture_include
   end
 
   # Initialize spec environment shared by all subprojects
@@ -67,6 +68,28 @@ private
       .glob(specdir.join('support/**/*.rb'))
       .sort
       .each(&method(:require))
+  end
+
+  # Workaround rspec fixture bug that includes the
+  # fixture support (with hooks and DB traffic) in *all* examples
+  # where it should only include it into `use_fixtures: true` examples.
+  #
+  # There is no public API for removing inclusions, so we have to peak
+  # deep into the internals.
+  #
+  # Also makes `assert` that was unintentionally transitively included
+  # unavailable.
+  #
+  # @see https://github.com/rspec/rspec-rails/issues/1355
+  #
+  # @return [undefined]
+  def remove_global_fixture_include
+    RSpec.configure do |config|
+      config
+        .instance_variable_get(:@include_modules)
+        .instance_variable_get(:@items_and_filters)
+        .delete([RSpec::Rails::FixtureSupport, {}])
+    end
   end
 
 end # SpecHelper
