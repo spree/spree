@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "Customer Details", type: :feature, js: true do
+  let!(:store) { create(:store, default: true) }
+
   stub_authorization!
 
   let(:country) { create(:country, name: "Kangaland") }

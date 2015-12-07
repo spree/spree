@@ -2,12 +2,13 @@ require 'spec_helper'
 require 'spree/testing_support/bar_ability'
 
 module Spree
-  describe Api::OrdersController, :type => :controller do
+  describe Api::OrdersController, type: :controller do
     render_views
 
-    let!(:order) { create(:order) }
-    let(:variant) { create(:variant) }
-    let(:line_item) { create(:line_item) }
+    let(:store)      { create(:store, default: true)    }
+    let!(:order)     { create(:order, store: store)     }
+    let(:variant)    { create(:variant)                 }
+    let!(:line_item) { create(:line_item, order: order) }
 
     let(:attributes) { [:number, :item_total, :display_total, :total,
                         :state, :adjustment_total,
@@ -66,7 +67,6 @@ module Spree
 
     context "the current api user is authenticated" do
       let(:current_api_user) { order.user }
-      let(:order) { create(:order, line_items: [line_item]) }
 
       it "can view all of their own orders" do
         api_get :mine
@@ -90,11 +90,11 @@ module Spree
       it "returns orders in reverse chronological order by completed_at" do
         order.update_columns completed_at: Time.now
 
-        order2 = Order.create!(user: order.user, completed_at: Time.now - 1.day)
+        order2 = store.orders.create!(user: order.user, completed_at: Time.now - 1.day)
         expect(order2.created_at).to be > order.created_at
-        order3 = Order.create!(user: order.user, completed_at: nil)
+        order3 = store.orders.create!(user: order.user)
         expect(order3.created_at).to be > order2.created_at
-        order4 = Order.create!(user: order.user, completed_at: nil)
+        order4 = store.orders.create!(user: order.user)
         expect(order4.created_at).to be > order3.created_at
 
         api_get :mine
@@ -110,7 +110,6 @@ module Spree
 
     describe 'current' do
       let(:current_api_user) { order.user }
-      let!(:order) { create(:order, line_items: [line_item]) }
 
       subject do
         api_get :current, format: 'json'
@@ -125,7 +124,7 @@ module Spree
 
       context "multiple incomplete orders exist" do
         it "returns the latest incomplete order" do
-          new_order = Spree::Order.create!(user: order.user)
+          new_order = create(:order, store: store, user: order.user)
           expect(new_order.created_at).to be > order.created_at
           expect(JSON.parse(subject.body)['id']).to eq new_order.id
         end
@@ -160,7 +159,7 @@ module Spree
     end
 
     describe 'GET #show' do
-      let(:order) { create :order_with_line_items }
+      let(:order) { create(:order_with_line_items, store: store) }
 
       subject { api_get :show, id: order.to_param }
 
@@ -281,21 +280,39 @@ module Spree
     end
 
     # Regression test for #3404
-    it "can specify additional parameters for a line item" do
-      expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
-      allow(order).to receive(:associate_user!)
-      allow(order).to receive_message_chain(:contents, :add).and_return(line_item = double('LineItem'))
-      expect(line_item).to receive(:update_attributes!).with("special" => true)
-
-      allow(controller).to receive_messages(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
-      api_post :create, :order => {
-        :line_items => {
-          "0" => {
-            :variant_id => variant.to_param, :quantity => 5, :special => true
+    context 'additional parameters for a line item' do
+      let(:params) do
+        {
+          'order' => {
+            'line_items' => {
+              '0' => {
+                'variant_id' => variant.to_param,
+                'quantity'   => '5',
+                'special'    => '1'
+              }
+            }
           }
         }
-      }
-      expect(response.status).to eq(201)
+      end
+
+      before do
+        expect(controller).to receive_messages(
+          permitted_line_item_attributes: %i[id variant_id quantity special]
+        )
+
+        expect(Spree::Core::Importer::Order).to receive(:import)
+          .with(
+            current_api_user,
+            'line_items_attributes' => params.fetch('order').fetch('line_items')
+          )
+          .and_return(order)
+
+        api_post(:create, params)
+      end
+
+      it 'returns successful' do
+        expect(response).to have_http_status(201)
+      end
     end
 
     it "cannot arbitrarily set the line items price" do
@@ -322,23 +339,6 @@ module Spree
         expect(response.status).to eq 201
         expect(json_response['number']).to eq "WOW"
       end
-    end
-
-    # Regression test for #3404
-    it "does not update line item needlessly" do
-      expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
-      allow(order).to receive(:associate_user!)
-      line_item = double('LineItem')
-      allow(line_item).to receive_messages(save!: line_item)
-      allow(order).to receive_message_chain(:contents, :add).and_return(line_item)
-      expect(line_item).not_to receive(:update_attributes)
-      api_post :create, :order => {
-        :line_items => {
-          "0" => {
-            :variant_id => variant.to_param, :quantity => 5
-          }
-        }
-      }
     end
 
     it "can create an order without any parameters" do
@@ -487,8 +487,7 @@ module Spree
       end
 
       context "with a line item" do
-        let(:order_with_line_items) do
-          order = create(:order_with_line_items)
+        before do
           order.create_adjustment!(
             adjustable: order,
             label:      'Test Adjustment',
@@ -497,13 +496,13 @@ module Spree
           order
         end
 
-        it "can empty an order" do
-          expect(order_with_line_items.adjustments.count).to eq(1)
-          api_put :empty, :id => order_with_line_items.to_param
-          expect(response.status).to eq(204)
-          order_with_line_items.reload
-          expect(order_with_line_items.line_items).to be_empty
-          expect(order_with_line_items.adjustments).to be_empty
+        it 'can empty an order' do
+          expect(order.adjustments.count).to be(1)
+          api_put(:empty, id: order.to_param)
+          expect(response).to have_http_status(204)
+          order.reload
+          expect(order.line_items).to be_empty
+          expect(order.adjustments).to be_empty
         end
 
         it "can list its line items with images" do
@@ -636,7 +635,7 @@ module Spree
       context "caching enabled" do
         before do
           ActionController::Base.perform_caching = true
-          3.times { Order.create! }
+          3.times { create(:order, store: store) }
         end
 
         it "returns unique orders" do

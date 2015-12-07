@@ -99,31 +99,32 @@ module Spree
           end
         end
 
-        context "#destroy" do
-          let!(:action) { CreateItemAdjustments.create! }
+        context '#destroy' do
+          let(:action)       { CreateItemAdjustments.create! }
           let(:other_action) { CreateItemAdjustments.create! }
+
           before { promotion.promotion_actions = [other_action] }
 
-          it "destroys adjustments for incompleted orders" do
-            order = Order.create!
-            action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
+          it 'destroys adjustments for incompleted orders' do
+            order = create(:order)
+            action.adjustments.create!(label: 'Check', amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy
             }.to change { Adjustment.count }.by(-1)
           end
 
-          it "nullifies adjustments for completed orders" do
-            order = Order.create!(completed_at: Time.now)
-            adjustment = action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
+          it 'nullifies adjustments for completed orders' do
+            order = create(:order, completed_at: Time.now)
+            adjustment = action.adjustments.create!(label: 'Check', amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy
-            }.to change { adjustment.reload.source_id }.from(action.id).to nil
+            }.to change { adjustment.reload.source_id }.from(action.id).to(nil)
           end
 
-          it "doesnt mess with unrelated adjustments" do
-            other_action.adjustments.create!(label: "Check", amount: 0, order: order, adjustable: order)
+          it 'doesnt mess with unrelated adjustments' do
+            other_action.adjustments.create!(label: 'Check', amount: 0, order: order, adjustable: order)
 
             expect {
               action.destroy

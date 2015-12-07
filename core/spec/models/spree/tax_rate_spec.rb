@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Spree::TaxRate, :type => :model do
-  context "match" do
-    let(:order) { create(:order) }
-    let(:country) { create(:country) }
-    let(:tax_category) { create(:tax_category) }
-    let(:calculator) { Spree::Calculator::FlatRate.new }
+describe Spree::TaxRate, type: :model do
+  context 'match' do
+    let(:order)        { create(:order)                  }
+    let(:country)      { create(:country)                }
+    let(:tax_category) { create(:tax_category)           }
+    let(:calculator)   { Spree::Calculator::FlatRate.new }
 
     it "should return an empty array when tax_zone is nil" do
       allow(order).to receive_messages :tax_zone => nil
@@ -228,7 +228,7 @@ describe Spree::TaxRate, :type => :model do
         :tax_category => @category,
         :zone => @zone
       )
-      @order       = Spree::Order.create!
+      @order       = create(:order)
       @taxable     = create(:product, :tax_category => @category)
       @nontaxable  = create(:product, :tax_category => @category2)
     end

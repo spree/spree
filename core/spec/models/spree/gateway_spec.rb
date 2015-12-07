@@ -22,11 +22,12 @@ describe Spree::Gateway, :type => :model do
     gateway.imaginary_method('foo')
   end
 
-  context "fetching payment sources" do
-    let(:order) { Spree::Order.create!(user_id: 1) }
+  context 'fetching payment sources' do
+    let(:user)  { create(:user)              }
+    let(:order) { create(:order, user: user) }
 
     let(:has_card) { create(:credit_card_payment_method) }
-    let(:no_card) { create(:credit_card_payment_method) }
+    let(:no_card)  { create(:credit_card_payment_method) }
 
     let(:cc) do
       create(:credit_card, payment_method: has_card, gateway_customer_profile_id: "EFWE")
@@ -44,7 +45,8 @@ describe Spree::Gateway, :type => :model do
     end
 
     it "finds credit cards associated with the order user" do
-      cc.update_column :user_id, 1
+      cc.update_attributes(user: user)
+
       allow(payment.order).to receive_messages completed?: false
 
       expect(no_card.reusable_sources(payment.order)).to be_empty

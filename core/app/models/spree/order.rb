@@ -2,6 +2,7 @@ require 'spree/core/validators/email'
 require 'spree/order/checkout'
 
 module Spree
+  # rubocop:disable ClassLength
   class Order < Spree::Base
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
@@ -104,6 +105,7 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
+    validates :store,                presence:     true
     validates :number,               presence:     true,
                                      length:       { maximum: 32, allow_blank: true },
                                      uniqueness:   { allow_blank: true }

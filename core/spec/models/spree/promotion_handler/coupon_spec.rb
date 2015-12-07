@@ -3,7 +3,12 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe Coupon, :type => :model do
-      let(:order) { double("Order", coupon_code: "10off").as_null_object }
+      let(:order) do
+        mock_model(
+          Spree::Order,
+          coupon_code: '10off'
+        ).as_null_object
+      end
 
       subject { Coupon.new(order) }
 
@@ -134,8 +139,8 @@ module Spree
             end
           end
 
-          context "coexists with a non coupon code promo" do
-            let!(:order) { Order.create! }
+          context 'coexists with a non coupon code promo' do
+            let!(:order) { create(:order) }
 
             before do
               allow(order).to receive_messages :coupon_code => "10off"
@@ -255,7 +260,7 @@ module Spree
                 :zone => @zone
             )
 
-            @order = Spree::Order.create!
+            @order = create(:order)
             allow(@order).to receive_messages :coupon_code => "10off"
           end
           context "and the product price is less than promo discount" do

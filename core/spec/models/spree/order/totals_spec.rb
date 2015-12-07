@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 module Spree
-  describe Order, :type => :model do
-    let(:order) { Order.create! }
+  describe Order, type: :model do
+    let(:order) { create(:order)   }
     let(:shirt) { create(:variant) }
 
     context "adds item to cart and activates promo" do

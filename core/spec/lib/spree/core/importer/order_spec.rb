@@ -1,8 +1,10 @@
 require 'spec_helper'
 
+# rubocop:disable ModuleLength
 module Spree
   module Core
     describe Importer::Order do
+      let!(:store) { create(:store, default: true) }
 
       let!(:country) { create(:country) }
       let!(:state) { country.states.first || create(:state, :country => country) }

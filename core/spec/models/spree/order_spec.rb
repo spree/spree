@@ -7,8 +7,8 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order, type: :model, db: :isolate do
-  let(:user) { stub_model(Spree::LegacyUser, :email => "spree@example.com") }
-  let(:order) { stub_model(Spree::Order, :user => user) }
+  let(:user)  { stub_model(Spree::LegacyUser, email: "spree@example.com") }
+  let(:order) { stub_model(Spree::Order, user: user)                      }
 
   before do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
@@ -72,7 +72,7 @@ describe Spree::Order, type: :model, db: :isolate do
   end
 
   describe '#create' do
-    subject(:order) { Spree::Order.create! }
+    let(:order) { create(:order) }
 
     it "should assign an order number" do
       expect(order.number).not_to be_nil
@@ -111,17 +111,13 @@ describe Spree::Order, type: :model, db: :isolate do
     end
   end
 
-  describe '#finalize!' do
-    let(:store) { create(:store, default: true) }
-
+  context '#finalize!' do
     subject(:order) do
-      store.orders.create!(
-        email: 'test@example.com',
-      )
+      create(:order, email: 'test@example.com')
     end
 
     before do
-      order.update_column :state, 'complete'
+      order.update_column(:state, 'complete')
     end
 
     it "should set completed_at" do
@@ -747,7 +743,7 @@ describe Spree::Order, type: :model, db: :isolate do
   end
 
   context "#can_ship?" do
-    subject(:order) { Spree::Order.create! }
+    subject(:order) { create(:order) }
 
     it "should be true for order in the 'complete' state" do
       allow(order).to receive_messages(:complete? => true)
@@ -853,7 +849,7 @@ describe Spree::Order, type: :model, db: :isolate do
 
   # Regression test for #4923
   context 'locking' do
-    subject(:order) { Spree::Order.create! } # need a persisted in order to test locking
+    subject(:order) { create(:order) }
 
     it 'can lock' do
       expect { order.with_lock {} }.to_not raise_error

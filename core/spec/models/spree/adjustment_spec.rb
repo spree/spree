@@ -5,7 +5,7 @@ require 'spec_helper'
 
 describe Spree::Adjustment, :type => :model do
 
-  let(:order) { Spree::Order.new.tap(&:save!) }
+  let(:order) { create(:order) }
 
   before do
     allow(order).to receive(:update!)

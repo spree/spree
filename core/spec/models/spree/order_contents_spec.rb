@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrderContents, type: :model, db: :isolate do
-  let(:order) { Spree::Order.create! }
+  let(:order)   { create(:order)   }
   let(:variant) { create(:variant) }
 
   subject { described_class.new(order) }

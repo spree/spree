@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'benchmark'
 
-describe Spree::Shipment, :type => :model do
-  let(:order) { Spree::Order.new }
+describe Spree::Shipment, type: :model do
+  let(:order) { create(:order) }
 
   before do
     {
@@ -183,10 +183,10 @@ describe Spree::Shipment, :type => :model do
   end
 
   describe '#manifest' do
-    let(:order) { Spree::Order.create! }
-    let(:variant) { create(:variant) }
-    let!(:line_item) { order.contents.add variant }
-    let!(:shipment) { order.create_proposed_shipments.first }
+    let(:order)      { create(:order)                        }
+    let(:variant)    { create(:variant)                      }
+    let!(:line_item) { order.contents.add variant            }
+    let!(:shipment)  { order.create_proposed_shipments.first }
 
     shared_examples_for 'Spree::Shipment#manifest' do
       let(:manifest_item) { shipment.manifest.first }
@@ -679,8 +679,12 @@ describe Spree::Shipment, :type => :model do
 
   context "changes shipping rate via general update" do
     let(:order) do
-      Spree::Order.create!(
-        payment_total: 100, payment_state: 'paid', total: 100, item_total: 100
+      create(
+        :order,
+        payment_total: 100,
+        payment_state: 'paid',
+        total:         100,
+        item_total:    100
       )
     end
 

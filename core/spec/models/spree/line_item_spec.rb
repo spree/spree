@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::LineItem, :type => :model do
-  let(:order) { create :order_with_line_items, line_items_count: 1 }
-  let(:line_item) { order.line_items.first! }
+describe Spree::LineItem, type: :model do
+  let(:order)     { create(:order_with_line_items, line_items_count: 1) }
+  let(:line_item) { order.line_items.first!                             }
 
   context '#save' do
     it 'touches the order' do
@@ -167,10 +167,8 @@ describe Spree::LineItem, :type => :model do
     end
   end
 
-  context "has inventory (completed order so items were already unstocked)" do
-    before { create(:store, default: true) }
-
-    let(:order) { Spree::Order.create!(email: 'spree@example.com') }
+  context 'has inventory (completed order so items were already unstocked)' do
+    let(:order)   { create(:order)   }
     let(:variant) { create(:variant) }
 
     context "nothing left on stock" do

@@ -5,10 +5,8 @@ describe Spree::OrderMailer, type: :mailer, db: :isolate do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before { create(:store, default: true) }
-
   let(:order) do
-    order = stub_model(Spree::Order)
+    order = create(:order)
     product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
     variant = stub_model(Spree::Variant, :product => product)
     price = stub_model(Spree::Price, :variant => variant, :amount => 5.00)

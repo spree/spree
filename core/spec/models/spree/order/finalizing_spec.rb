@@ -1,12 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model, db: :isolate do
-  before { create(:store, default: true) }
-
-  let(:order) { stub_model("Spree::Order") }
-
   context "#finalize!" do
-    let(:order) { Spree::Order.create!(email: 'test@example.com') }
+    let(:order) { create(:order, email: 'test@example.com') }
 
     before do
       order.update_column :state, 'complete'

@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::Order, :type => :model do
-    let(:order) { stub_model(Spree::Order) }
+  describe Spree::Order, type: :model do
+    let(:order)   { stub_model(Spree::Order)       }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context "processing payments" do
@@ -60,7 +60,7 @@ module Spree
       end
 
       it "keeps source attributes after updating" do
-        persisted_order = Spree::Order.create!
+        persisted_order = create(:order)
         credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
           :payments_attributes => [

@@ -3,16 +3,15 @@ require 'spec_helper'
 # Regression tests for #2179
 module Spree
   describe OrderMerger, type: :model do
-    let(:variant) { create(:variant) }
-    let(:order_1) { Spree::Order.create! }
-    let(:order_2) { Spree::Order.create! }
-    let(:user) { stub_model(Spree::LegacyUser, email: "spree@example.com") }
-    let(:subject) { Spree::OrderMerger.new(order_1) }
+    let(:store)   { create(:store)                                            }
+    let(:variant) { create(:variant)                                          }
+    let(:order_1) { create(:order, store: store)                              }
+    let(:order_2) { create(:order, store: store)                              }
+    let(:user)    { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
+    let(:subject) { Spree::OrderMerger.new(order_1)                           }
 
     context "#merge!" do
       let(:variant) { create(:variant) }
-      let(:order_1) { Spree::Order.create! }
-      let(:order_2) { Spree::Order.create! }
 
       shared_examples '#merge!' do
         it "destroys the other order" do
