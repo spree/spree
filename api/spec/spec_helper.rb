@@ -1,6 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.infect(__dir__)
+SpecHelper.infect(RSpec.configuration, Pathname.new(__dir__))
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'

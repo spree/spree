@@ -1,6 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.infect(__dir__)
+SpecHelper.infect(RSpec.configuration, Pathname.new(__dir__))
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -26,7 +26,6 @@ RSpec.configure do |config|
 
   config.before :suite do
     Capybara.match = :prefer_exact
-    DatabaseCleaner.clean_with :truncation
   end
 
   config.before(:each) do
