@@ -1,6 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.infect(__dir__)
+SpecHelper.infect(RSpec.configuration, Pathname.new(__dir__))
 
 if ENV.key?('CHECK_TRANSLATIONS')
   require 'spree/testing_support/i18n'
@@ -26,25 +26,8 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
 
-  # Ensure DB is clean, so that transaction isolated specs see
-  # prisitine state.
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :truncation
-    DatabaseCleaner.clean
-  end
-
   config.before(:each) do
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-    DatabaseCleaner.start
     reset_spree_preferences
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
   end
 
   config.after(:each, :type => :feature) do |example|

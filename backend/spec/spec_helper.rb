@@ -1,6 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.infect(__dir__)
+SpecHelper.infect(RSpec.configuration, Pathname.new(__dir__))
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -26,26 +26,16 @@ RSpec.configure do |config|
 
   config.before :suite do
     Capybara.match = :prefer_exact
-    DatabaseCleaner.clean_with :truncation
   end
 
   config.before(:each) do
     Rails.cache.clear
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-
-    DatabaseCleaner.start
     reset_spree_preferences
   end
 
   config.after(:each) do
     # Ensure js requests finish processing before advancing to the next test
     wait_for_ajax if RSpec.current_example.metadata[:js]
-
-    DatabaseCleaner.clean
   end
 
   config.around do |example|

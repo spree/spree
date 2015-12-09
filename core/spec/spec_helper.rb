@@ -1,6 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.infect(__dir__)
+SpecHelper.infect(RSpec.configuration, Pathname.new(__dir__))
 
 if ENV.key?('CHECK_TRANSLATIONS')
   require 'spree/testing_support/i18n'
@@ -21,20 +21,6 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
-
-  # Clean out the database state before the tests run
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-    DatabaseCleaner.strategy = :transaction
-  end
-  # Wrap all tests in transaction. While wasting redundant DB
-  # traffic on the (rare) specs that do NOT touch the DB its
-  # the best default. Later we can port the assetion for non
-  # DB touching tests and relax this for the non DB touching
-  # tests.
-  config.around do |example|
-    DatabaseCleaner.cleaning(&example)
-  end
 
   config.around do |example|
     Timeout.timeout(40, &example)
