@@ -1,8 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.new(__dir__)
-  .dummy_app
-  .support
+SpecHelper.infect(__dir__)
 
 if ENV.key?('CHECK_TRANSLATIONS')
   require 'spree/testing_support/i18n'
@@ -15,13 +13,6 @@ RSpec.configure do |config|
   config.color = true
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
-
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
-
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
 
   config.before :each do
     Rails.cache.clear
@@ -36,14 +27,12 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
     DatabaseCleaner.strategy = :transaction
   end
-
-  # Test the factories
-  config.before(:suite) do
-    FactoryValidation.call
-  end
-
-  # Wrap all db isolated tests in a transaction
-  config.around(db: :isolate) do |example|
+  # Wrap all tests in transaction. While wasting redundant DB
+  # traffic on the (rare) specs that do NOT touch the DB its
+  # the best default. Later we can port the assetion for non
+  # DB touching tests and relax this for the non DB touching
+  # tests.
+  config.around do |example|
     DatabaseCleaner.cleaning(&example)
   end
 

@@ -28,11 +28,6 @@ Lint/Eval:
   Exclude:
     - 'Gemfile'
 
-# Offense count: 4
-Lint/ParenthesesAsGroupedExpression:
-  Exclude:
-    - 'spec/controllers/controller_extension_spec.rb'
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoreEmptyBlocks.
@@ -90,17 +85,10 @@ Style/BlockDelimiters:
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/BracesAroundHashParameters:
   Exclude:
-    - 'spec/controllers/controller_extension_spec.rb'
     - 'spec/controllers/spree/checkout_controller_spec.rb'
     - 'spec/controllers/spree/orders_controller_ability_spec.rb'
     - 'spec/controllers/spree/orders_controller_spec.rb'
     - 'spec/controllers/spree/orders_controller_transitions_spec.rb'
-
-# Offense count: 1
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/ClassAndModuleChildren:
-  Exclude:
-    - 'spec/controllers/controller_extension_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -171,12 +159,6 @@ Style/IndentationConsistency:
 Style/IndentationWidth:
   Exclude:
     - 'spec/features/address_spec.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-Style/Lambda:
-  Exclude:
-    - 'spec/controllers/controller_extension_spec.rb'
 
 # Offense count: 4
 # Cop supports --auto-correct.

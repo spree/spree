@@ -1,8 +1,6 @@
 require File.expand_path('../../shared/spec_helper.rb', __dir__)
 
-SpecHelper.new(__dir__)
-  .dummy_app
-  .support
+SpecHelper.infect(__dir__)
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
@@ -24,6 +22,4 @@ RSpec.configure do |config|
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end
-
-  config.use_transactional_fixtures = true
 end
