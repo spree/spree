@@ -4,6 +4,7 @@ require 'database_cleaner'
 require 'ffaker'
 require 'rspec/its'
 require 'timeout'
+require 'ice_nine'
 
 # @api private
 class SpecHelper
@@ -36,6 +37,7 @@ private
     support
     remove_global_fixture_include
     clean_db_before_suite
+    setup_database_cleaning
   end
 
   # Initialize spec environment shared by all subprojects
@@ -82,6 +84,18 @@ private
   def clean_db_before_suite
     rspec_config.before(:suite) do
       DatabaseCleaner.clean_with(:truncation)
+    end
+  end
+
+  # Setup database cleaning for each example
+  #
+  # @return [undefined]
+  def setup_database_cleaning
+    rspec_config.around do |example|
+      DatabaseCleaner.strategy =
+        example.metadata.fetch(:js, false) ? :truncation : :transaction
+
+      DatabaseCleaner.cleaning(&example)
     end
   end
 

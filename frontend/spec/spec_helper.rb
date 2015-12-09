@@ -27,17 +27,7 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   config.before(:each) do
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-    DatabaseCleaner.start
     reset_spree_preferences
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
   end
 
   config.after(:each, :type => :feature) do |example|

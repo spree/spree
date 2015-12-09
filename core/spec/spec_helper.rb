@@ -22,15 +22,6 @@ RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
 
-  # Wrap all tests in transaction. While wasting redundant DB
-  # traffic on the (rare) specs that do NOT touch the DB its
-  # the best default. Later we can port the assetion for non
-  # DB touching tests and relax this for the non DB touching
-  # tests.
-  config.around do |example|
-    DatabaseCleaner.cleaning(&example)
-  end
-
   config.around do |example|
     Timeout.timeout(40, &example)
   end
