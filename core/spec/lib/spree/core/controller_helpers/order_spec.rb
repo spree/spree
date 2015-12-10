@@ -7,11 +7,10 @@ end
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
-  let!(:store) { create(:store, default: true) }
-
-  let(:user)        { create(:user)              }
-  let(:order)       { create(:order, user: user) }
-  let(:guest_token) { nil                        }
+  let(:store)       { create(:store)                           }
+  let(:user)        { create(:user)                            }
+  let(:order)       { create(:order, store: store, user: user) }
+  let(:guest_token) { nil                                      }
 
   before do
     allow(controller).to receive_messages(try_spree_current_user: user)
@@ -144,7 +143,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       # This record should never be returned due to the incomplete
       # scope being used on the order lookup
       let!(:completed_order) do
-        create(:order, completed_at: Time.at(0), user: user)
+        create(:order, store: store, completed_at: Time.at(0), user: user)
       end
 
       context 'with no incomplete orders' do
@@ -187,7 +186,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       context 'with an incomplete order' do
         let!(:order) do
-          create(:order_with_totals, user: user)
+          create(:order_with_totals, store: store, user: user)
         end
 
         context 'with no guest token' do
@@ -267,6 +266,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     before do
+      allow(controller).to receive(:current_store).and_return(store)
       allow(controller).to receive(:current_order).and_return(current_order)
     end
 
@@ -319,8 +319,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'the current user is nil' do
-      let(:user)  { nil                                   }
-      let(:order) { create(:order, user: nil, email: nil) }
+      let(:user)  { nil                                                 }
+      let(:order) { create(:order, store: store, user: nil, email: nil) }
 
       it 'does not call Spree::Order#associate_user! method' do
         expect(order).to_not receive(:associate_user!)

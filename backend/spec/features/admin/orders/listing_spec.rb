@@ -3,6 +3,7 @@ require 'spec_helper'
 describe "Orders Listing", type: :feature, js: true do
   stub_authorization!
 
+  let(:store)      { create(:store)                          }
   let!(:promotion) { create(:promotion_with_item_adjustment) }
 
   before(:each) do
@@ -58,8 +59,15 @@ describe "Orders Listing", type: :feature, js: true do
       within("table#listing_orders") { expect(page).not_to have_content("R100") }
     end
 
-    it "should return both complete and incomplete orders when only complete orders is not checked" do
-      Spree::Order.create! email: "incomplete@example.com", completed_at: nil, state: 'cart'
+    it 'should return both complete and incomplete orders when only complete orders is not checked' do
+      create(
+        :order,
+        store: store,
+        email: 'incomplete@example.com',
+        user:  nil,
+        state: 'cart'
+      )
+
       click_on 'Filter'
       uncheck "q_completed_at_not_null"
       click_on 'Filter Results'
@@ -114,7 +122,17 @@ describe "Orders Listing", type: :feature, js: true do
       # Regression test for #4004
       it "should be able to go from page to page for incomplete orders" do
         Spree::Order.destroy_all
-        2.times { Spree::Order.create! email: "incomplete@example.com", completed_at: nil, state: 'cart' }
+
+        2.times do
+          create(
+            :order,
+            store: store,
+            user:  nil,
+            email: 'incomplete@example.com',
+            state: 'cart'
+          )
+        end
+
         click_on 'Filter'
         uncheck "q_completed_at_not_null"
         click_on 'Filter Results'

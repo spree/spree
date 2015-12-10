@@ -12,11 +12,14 @@ class OrderSpecificAbility
 end
 
 describe Spree::Admin::OrdersController, type: :controller do
+  let!(:store) { create(:store, default: true) }
+
   shared_context 'setup order' do
     let(:order) do
       mock_model(
         Spree::Order,
         completed?:      true,
+        store:           store,
         total:           100,
         number:          'R123456789',
         all_adjustments: adjustments,
@@ -173,7 +176,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         let(:user) { create(:user_with_addreses) }
 
         let!(:incomplete_order) do
-          create(:order_with_line_items, user: user, created_by: user)
+          create(:order_with_line_items, store: store, user: user, created_by: user)
         end
 
         before { do_request }

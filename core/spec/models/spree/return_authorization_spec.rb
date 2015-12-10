@@ -13,10 +13,10 @@ describe Spree::ReturnAuthorization, :type => :model do
       return_authorization_reason_id: rma_reason.id)
   end
 
-  context "save" do
-    let(:order) { Spree::Order.create! }
+  context 'save' do
+    let(:order) { create(:order) }
 
-    it "should be invalid when order has no inventory units" do
+    it 'should be invalid when order has no inventory units' do
       expect(return_authorization.valid?).to be(false)
       expect(return_authorization.errors[:order]).to eq(["has no shipped units"])
     end

@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 module Spree
-  describe OrdersController, :type => :controller do
-    ORDER_TOKEN = 'ORDER_TOKEN'
-
-    let(:user) { create(:user) }
-    let(:guest_user) { create(:user) }
-    let(:order) { Spree::Order.create! }
+  describe OrdersController, type: :controller do
+    let(:user)       { create(:user)  }
+    let(:guest_user) { create(:user)  }
+    let(:order)      { create(:order) }
 
     it 'should understand order routes with token' do
       expect(spree.token_order_path('R123456', 'ABCDEF')).to eq('/orders/R123456/token/ABCDEF')

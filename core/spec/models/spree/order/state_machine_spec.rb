@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { described_class.new }
+  let(:store) { create(:store)                    }
+  let(:order) { described_class.new(store: store) }
 
   before do
     # Ensure state machine has been re-defined correctly

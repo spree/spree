@@ -95,6 +95,7 @@ module Spree
 
     def persist_totals
       attributes = order.slice(
+        :store_id,
         :payment_state,
         :shipment_state,
         :item_count,

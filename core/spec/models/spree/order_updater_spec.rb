@@ -2,8 +2,10 @@ require 'spec_helper'
 
 module Spree
   describe OrderUpdater, type: :model do
-    let(:order) { Spree::Order.create! }
-    subject { Spree::OrderUpdater.new(order) }
+    subject { described_class.new(order) }
+
+    let(:store) { create(:store)               }
+    let(:order) { create(:order, store: store) }
 
     context "order totals" do
       before do
@@ -198,15 +200,15 @@ module Spree
       end
     end
 
-    it "state change" do
+    it 'state change' do
       order.shipment_state = 'shipped'
-      state_changes = double
-      allow(order).to receive_messages state_changes: state_changes
+      state_changes = instance_double(ActiveRecord::Relation)
+      allow(order).to receive_messages(state_changes: state_changes)
       expect(state_changes).to receive(:create!).with(
         previous_state: nil,
-        next_state: 'shipped',
-        name: 'shipment',
-        user_id: nil
+        next_state:     'shipped',
+        name:           'shipment',
+        user_id:        order.user_id
       )
 
       order.state_changed('shipment')
@@ -251,14 +253,15 @@ module Spree
       allow(order).to receive_messages :shipments => shipments
     end
 
-    describe "#persist_totals" do
-      let!(:order) { super() }
-      let(:updated_at) { Time.now }
-      let(:validation_order) { mock_model(Spree::Order, valid?: true) }
-      let(:totals) { attributes.merge(updated_at: updated_at) }
+    describe '#persist_totals' do
+      let!(:order)           { super()                                  }
+      let(:updated_at)       { Time.now                                 }
+      let(:validation_order) { mock_model(Spree::Order, valid?: true)   }
+      let(:totals)           { attributes.merge(updated_at: updated_at) }
 
       let(:attributes) do
         {
+          store_id:             store.id,
           payment_state:        nil,
           shipment_state:       nil,
           item_count:           0,

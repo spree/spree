@@ -63,7 +63,7 @@ module Spree
       end
 
       def new
-        @order = Order.incomplete.where.not(user_id: nil)
+        @order = Spree::Store.current.orders.incomplete.where.not(user_id: nil)
           .where(user_id: order_params[:user_id]).first_or_initialize
         @order.update_attributes!(order_params)
         @order.advance

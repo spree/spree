@@ -3,8 +3,9 @@ require 'spec_helper'
 describe 'General Settings', type: :feature, js: true do
   stub_authorization!
 
+  let!(:store) { create(:store, default: true) }
+
   before do
-    create(:store, default: true)
     visit spree.admin_path
     click_link 'Configuration'
     click_link 'General Settings'
@@ -13,9 +14,9 @@ describe 'General Settings', type: :feature, js: true do
   context 'visiting general settings (admin)' do
     it 'should have the right content' do
       expect(page).to have_content('General Settings')
-      expect(find('#store_name').value).to eql('Spree Test Store')
-      expect(find('#store_url').value).to eql('www.example.com')
-      expect(find('#store_mail_from_address').value).to eql('spree@example.org')
+      expect(find('#store_name').value).to eql(store.name)
+      expect(find('#store_url').value).to eql(store.url)
+      expect(find('#store_mail_from_address').value).to eql(store.mail_from_address)
     end
   end
 

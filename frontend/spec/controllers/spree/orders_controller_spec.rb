@@ -1,10 +1,11 @@
 require 'spec_helper'
 
-describe Spree::OrdersController, :type => :controller do
-  let(:user) { create(:user) }
+describe Spree::OrdersController, type: :controller do
+  let(:user)  { create(:user)                 }
+  let(:store) { create(:store, default: true) }
 
-  context "Order model mock" do
-    let!(:order) { create(:order) }
+  context 'Order model' do
+    let!(:order) { create(:order, store: store, user: user) }
 
     before do
       allow(controller).to receive_messages(:try_spree_current_user => user)
@@ -90,9 +91,9 @@ describe Spree::OrdersController, :type => :controller do
     end
   end
 
-  context "line items quantity is 0" do
-    let(:order) { Spree::Order.create! }
-    let(:variant) { create(:variant) }
+  context 'line items quantity is 0' do
+    let(:order)      { create(:order)                 }
+    let(:variant)    { create(:variant)               }
     let!(:line_item) { order.contents.add(variant, 1) }
 
     before do

@@ -1,14 +1,19 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::Order, :type => :model do
-    let(:order) { stub_model(Spree::Order) }
-
+  describe Spree::Order, type: :model do
     context "#tax_zone" do
-      let(:bill_address) { create :address }
-      let(:ship_address) { create :address }
-      let(:order) { Spree::Order.create!(:ship_address => ship_address, :bill_address => bill_address) }
-      let(:zone) { create :zone }
+      let(:bill_address) { create(:address) }
+      let(:ship_address) { create(:address) }
+      let(:zone)         { create(:zone)    }
+
+      let(:order) do
+        create(
+          :order,
+          ship_address: ship_address,
+          bill_address: bill_address
+        )
+      end
 
       context "when no zones exist" do
         it "should return nil" do
