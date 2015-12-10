@@ -46,12 +46,6 @@ Lint/BlockAlignment:
 Lint/DefEndAlignment:
   Enabled: false
 
-# Offense count: 3
-# Cop supports --auto-correct.
-Lint/DeprecatedClassMethods:
-  Exclude:
-    - 'lib/spree/migrations.rb'
-
 # Offense count: 7
 # Cop supports --auto-correct.
 # Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
@@ -88,7 +82,6 @@ Lint/NestedMethodDefinition:
 # Offense count: 9
 Lint/ParenthesesAsGroupedExpression:
   Exclude:
-    - 'spec/lib/spree/migrations_spec.rb'
     - 'spec/models/spree/app_configuration_spec.rb'
     - 'spec/models/spree/calculator/refunds/default_refund_amount_spec.rb'
     - 'spec/models/spree/customer_return_spec.rb'
