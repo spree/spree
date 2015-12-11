@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order, type: :model, db: :isolate do
+describe Spree::Order, type: :model do
   context "#finalize!" do
     let(:order) { create(:order, email: 'test@example.com') }
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
-describe Spree::Order, type: :model, db: :isolate do
+describe Spree::Order, type: :model do
   let!(:store) { create(:store, default: true) }
   let(:order)  { store.orders.new              }
 
