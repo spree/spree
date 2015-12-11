@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::OrderMailer, type: :mailer, db: :isolate do
+describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 

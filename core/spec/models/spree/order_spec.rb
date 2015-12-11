@@ -6,7 +6,7 @@ class FakeCalculator < Spree::Calculator
   end
 end
 
-describe Spree::Order, type: :model, db: :isolate do
+describe Spree::Order, type: :model do
   let(:user)  { stub_model(Spree::LegacyUser, email: "spree@example.com") }
   let(:order) { stub_model(Spree::Order, user: user)                      }
 
