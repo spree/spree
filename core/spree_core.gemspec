@@ -10,7 +10,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'acts_as_list',       '~> 0.7.2'
   gem.add_dependency 'adamantium',         '~> 0.2'
   gem.add_dependency 'awesome_nested_set', '~> 3.0.1'
-  gem.add_dependency 'carmen',             '~> 1.0.0'
   gem.add_dependency 'cancancan',          '~> 1.9.2'
   gem.add_dependency 'concord',            '~> 0.1.5'
   gem.add_dependency 'equalizer',          '~> 0.0.11'
