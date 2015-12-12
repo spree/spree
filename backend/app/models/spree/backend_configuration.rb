@@ -10,8 +10,7 @@ module Spree
                             :taxons]
     REPORT_TABS        ||= [:reports]
     CONFIGURATION_TABS ||= [:configurations, :general_settings, :tax_categories,
-                            :tax_rates, :zones, :countries, :states,
-                            :payment_methods, :shipping_methods,
+                            :tax_rates, :payment_methods, :shipping_methods,
                             :shipping_categories, :stock_transfers,
                             :stock_locations, :trackers, :refund_reasons,
                             :reimbursement_types, :return_authorization_reasons]
