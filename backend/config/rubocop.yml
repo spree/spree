@@ -342,12 +342,10 @@ Style/IndentationConsistency:
     - 'app/controllers/spree/admin/product_properties_controller.rb'
     - 'app/controllers/spree/admin/promotions_controller.rb'
     - 'app/controllers/spree/admin/resource_controller.rb'
-    - 'app/controllers/spree/admin/states_controller.rb'
     - 'app/controllers/spree/admin/stock_items_controller.rb'
     - 'app/controllers/spree/admin/taxons_controller.rb'
     - 'app/controllers/spree/admin/users_controller.rb'
     - 'app/controllers/spree/admin/variants_controller.rb'
-    - 'app/controllers/spree/admin/zones_controller.rb'
     - 'app/helpers/spree/admin/base_helper.rb'
     - 'spec/features/admin/orders/payments_spec.rb'
 
