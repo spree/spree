@@ -1,4 +1,5 @@
-require 'rspec/expectations'
+require 'spec_helper'
+
 require 'spree/i18n'
 require 'spree/testing_support/i18n'
 
@@ -22,23 +23,6 @@ describe "i18n" do
   it "translates within the spree scope" do
     expect(Spree.normal_t(:foo)).to eql("bar")
     expect(Spree.translate(:foo)).to eql("bar")
-  end
-
-  it "translates within the spree scope using a path" do
-    allow(Spree).to receive(:virtual_path).and_return('bar')
-
-    expect(Spree.normal_t('.legacy_translation')).to eql("back in the day...")
-    expect(Spree.translate('.legacy_translation')).to eql("back in the day...")
-  end
-
-  it "raise error without any context when using a path" do
-    expect {
-      Spree.normal_t('.legacy_translation')
-    }.to raise_error
-
-    expect {
-      Spree.translate('.legacy_translation')
-    }.to raise_error
   end
 
   it "prepends a string scope" do
