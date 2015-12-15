@@ -6,6 +6,7 @@ FactoryGirl.define do
     transaction_id { generate(:refund_transaction_id) }
     association(:payment, amount: 100, state: 'completed')
     association(:reason, factory: :refund_reason)
+    association(:reimbursement, factory: :reimbursement, total: 100)
   end
 
   factory :refund_reason, class: Spree::RefundReason do

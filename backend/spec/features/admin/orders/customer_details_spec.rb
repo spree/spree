@@ -1,48 +1,69 @@
 require 'spec_helper'
 
-describe "Customer Details", type: :feature, js: true do
-  let!(:store) { create(:store, default: true) }
-
+describe 'Customer Details', type: :feature, js: true do
   stub_authorization!
 
-  let(:country) { create(:country, name: "Kangaland") }
-  let(:state) { create(:state, name: "Alabama", country: country) }
-  let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
-  let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
-  let!(:product) { create(:product_in_stock) }
+  let(:store)           { create(:store, default: true)                     }
+  let(:country)         { create(:country)                                  }
+  let(:state)           { create(:state, country: country)                  }
+  let(:shipping_method) { create(:shipping_method, display_on: 'front_end') }
+  let(:product)         { create(:product_in_stock)                         }
+  let!(:ship_address)   { create(:address, country: country, state: state)  }
+  let!(:bill_address)   { create(:address, country: country, state: state)  }
 
   # We need a unique name that will appear for the customer dropdown
-  let!(:ship_address) { create(:address, country: country, state: state, first_name: "Rumpelstiltskin") }
-  let!(:bill_address) { create(:address, country: country, state: state, first_name: "Rumpelstiltskin") }
 
-  let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
+  let!(:order) do
+    create(
+      :order,
+      store:        store,
+      state:        'complete',
+      completed_at: Time.now
+    )
+  end
 
-  context "brand new order" do
+  let!(:user) do
+    create(
+      :user,
+      ship_address: ship_address,
+      bill_address: bill_address
+    )
+  end
+
+  context 'brand new order' do
+    let(:exclude_address_attributes) do
+      %w[id created_at state_name updated_at alternative_phone company]
+    end
+
+    # Expect address in form
+    #
+    # @param id_prefix [String]
+    # @param address [Spree::Address]
+    def expect_address(id_prefix, address)
+      address.attributes.except(*exclude_address_attributes).each do |name, value|
+        page.assert_selector(
+          :field,
+          "#{id_prefix}_#{name}",
+          with: value
+        )
+      end
+    end
+
     # Regression test for #3335 & #5317
-    it "associates a user when not using guest checkout" do
+    it 'associates a user when not using guest checkout' do
       visit spree.admin_path
-      click_link "Orders"
-      click_link "New Order"
+      click_link 'Orders'
+      click_link 'New Order'
       select2_search product.name, from: Spree.t(:name_or_sku)
-      within("table.stock-levels") do
-        fill_in "variant_quantity", with: 1
+      within('table.stock-levels') do
+        fill_in 'variant_quantity', with: 1
         click_icon :plus
       end
-      wait_for_ajax
-      click_link "Customer Details"
-      targetted_select2 "foobar@example.com", from: "#s2id_customer_search"
-      # 5317 - Address prefills using user's default.
-      expect(find('#order_bill_address_attributes_firstname').value).to eq user.bill_address.firstname
-      expect(find('#order_bill_address_attributes_lastname').value).to eq user.bill_address.lastname
-      expect(find('#order_bill_address_attributes_address1').value).to eq user.bill_address.address1
-      expect(find('#order_bill_address_attributes_address2').value).to eq user.bill_address.address2
-      expect(find('#order_bill_address_attributes_city').value).to eq user.bill_address.city
-      expect(find('#order_bill_address_attributes_zipcode').value).to eq user.bill_address.zipcode
-      expect(find('#order_bill_address_attributes_country_id').value).to eq user.bill_address.country_id.to_s
-      expect(find('#order_bill_address_attributes_state_id').value).to eq user.bill_address.state_id.to_s
-      expect(find('#order_bill_address_attributes_phone').value).to eq user.bill_address.phone
-      click_button "Update"
-      expect(Spree::Order.last.user).not_to be_nil
+      click_link 'Customer Details'
+      targetted_select2 user.email, from: '#s2id_customer_search'
+      expect_address('order_bill_address_attributes', user.bill_address)
+      click_button 'Update'
+      expect(Spree::Order.last.user).not_to be(nil)
     end
   end
 
@@ -59,7 +80,7 @@ describe "Customer Details", type: :feature, js: true do
     end
 
     context "selected country has no state" do
-      before { create(:country, iso: "BRA", name: "Brazil") }
+      before { create(:country, iso: 'BR', name: 'Brazil') }
 
       it "changes state field to text input" do
         click_link "Customer Details"
@@ -125,7 +146,7 @@ describe "Customer Details", type: :feature, js: true do
         fill_in "order_ship_address_attributes_city",       with: "Bethesda"
         fill_in "order_ship_address_attributes_zipcode",    with: "20170"
 
-        page.select('Alabama', from: 'order_ship_address_attributes_state_id')
+        page.select(state.name, from: 'order_ship_address_attributes_state_id')
         fill_in "order_ship_address_attributes_phone", with: "123-456-7890"
         expect { click_button "Update" }.not_to raise_error
       end
@@ -140,7 +161,7 @@ describe "Customer Details", type: :feature, js: true do
     fill_in "Street Address (cont'd)", with: "#101"
     fill_in "City",                    with: "Bethesda"
     fill_in "Zip",                     with: "20170"
-    targetted_select2 "Alabama",       from: "#s2id_order_#{kind}_address_attributes_state_id"
+    targetted_select2 state.name,      from: "#s2id_order_#{kind}_address_attributes_state_id"
     fill_in "Phone",                   with: "123-456-7890"
   end
 end

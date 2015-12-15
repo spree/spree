@@ -1,12 +1,17 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::UsersController, :type => :controller do
+  describe Api::UsersController, type: :controller do
     render_views
 
-    let(:user) { create(:user, spree_api_key: rand.to_s) }
-    let(:stranger) { create(:user, :email => 'stranger@example.com') }
-    let(:attributes) { [:id, :email, :created_at, :updated_at] }
+    let(:user)       { create(:user).tap(&:generate_spree_api_key!) }
+    let(:stranger)   { create(:user, email: 'stranger@example.com') }
+    let(:attributes) { %i[id email created_at updated_at]           }
+    let(:address)    { build(:address)                              }
+
+    let(:address_params) do
+      address.attributes.except(:id, :created_at, :updated_at)
+    end
 
     context "as a normal user" do
       it "can get own details" do
@@ -45,29 +50,18 @@ module Spree
 
       it "can update own details" do
         country = create(:country)
-        api_put :update, id: user.id, token: user.spree_api_key, user: {
-          email: "mine@example.com",
-          bill_address_attributes: {
-            first_name: 'First',
-            last_name: 'Last',
-            address1: '1 Test Rd',
-            city: 'City',
-            country_id: country.id,
-            state_id: 1,
-            zipcode: '55555',
-            phone: '5555555555'
-          },
-          ship_address_attributes: {
-            first_name: 'First',
-            last_name: 'Last',
-            address1: '1 Test Rd',
-            city: 'City',
-            country_id: country.id,
-            state_id: 1,
-            zipcode: '55555',
-            phone: '5555555555'
+
+        api_put(
+          :update,
+          id:    user.id,
+          token: user.spree_api_key,
+          user: {
+            email:                   'mine@example.com',
+            bill_address_attributes: address_params,
+            ship_address_attributes: address_params
           }
-        }
+        )
+
         expect(json_response['email']).to eq 'mine@example.com'
         expect(json_response['bill_address']).to_not be_nil
         expect(json_response['ship_address']).to_not be_nil

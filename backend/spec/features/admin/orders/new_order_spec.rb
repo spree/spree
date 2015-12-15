@@ -1,11 +1,18 @@
 require 'spec_helper'
 
-describe "New Order", :type => :feature do
-  let!(:product) { create(:product_in_stock) }
-  let!(:state) { create(:state) }
-  let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
-  let!(:payment_method) { create(:check_payment_method) }
-  let!(:shipping_method) { create(:shipping_method) }
+describe 'New Order', type: :feature do
+  let!(:product)         { create(:product_in_stock)     }
+  let!(:state)           { create(:state)                }
+  let!(:payment_method)  { create(:check_payment_method) }
+  let!(:shipping_method) { create(:shipping_method)      }
+
+  let!(:user) do
+    create(
+      :user,
+      ship_address: create(:address, state: state),
+      bill_address: create(:address, state: state)
+    )
+  end
 
   stub_authorization!
 
@@ -150,14 +157,16 @@ describe "New Order", :type => :feature do
     end
   end
 
-  def fill_in_address(kind = "bill")
-    fill_in "First Name",                with: "John 99"
-    fill_in "Last Name",                 with: "Doe"
-    fill_in "Street Address",            with: "100 first lane"
-    fill_in "Street Address (cont'd)",   with: "#101"
-    fill_in "City",                      with: "Bethesda"
-    fill_in "Zip",                       with: "20170"
+  def fill_in_address(kind = :bill)
+    address = user.public_send(:"#{kind}_address")
+
+    fill_in 'First Name',                with: address.firstname
+    fill_in 'Last Name',                 with: address.lastname
+    fill_in 'Street Address',            with: address.address1
+    fill_in "Street Address (cont'd)",   with: address.address2
+    fill_in 'City',                      with: address.city
+    fill_in 'Zip',                       with: address.zipcode
     targetted_select2_search state.name, from: "#s2id_order_#{kind}_address_attributes_state_id"
-    fill_in "Phone",                     with: "123-456-7890"
+    fill_in 'Phone',                     with: address.phone
   end
 end

@@ -288,12 +288,14 @@ describe Spree::TaxRate, type: :model do
           end
         end
 
-        context "when order's zone does not match default zone, is not included in the default zone, AND does not match the rate's zone" do
+        context 'when order zone does not match default zone, is not included in the default zone, AND does not match the zone rate' do
+          let(:zone)    { create(:zone, default_tax: false) }
+          let(:country) { create(:country)                  }
+          let(:state)   { create(:state, country: country)  }
+
           before do
-            @new_zone = create(:zone, :name => "New Zone", :default_tax => false)
-            @new_country = create(:country, :name => "New Country")
-            @new_zone.zone_members.create!(:zoneable => @new_country)
-            @order.ship_address = create(:address, :country => @new_country)
+            zone.zone_members.create!(zoneable: country)
+            @order.ship_address = create(:address, state: state)
             @order.save!
             @order.reload
           end

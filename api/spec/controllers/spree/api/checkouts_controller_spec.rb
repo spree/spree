@@ -82,24 +82,23 @@ module Spree
         end
 
         let(:address) do
-          {
-            firstname:  'John',
-            lastname:   'Doe',
-            address1:   '7735 Old Georgetown Road',
-            city:       'Bethesda',
-            phone:      '3014445002',
-            zipcode:    '20814',
-            state_id:   @state.id,
-            country_id: @country.id
-          }
+          build(
+            :address,
+            state:   @state,
+            country: @country
+          )
+        end
+
+        let(:address_params) do
+          address.attributes.except(:id, :created_at, :updated_at)
         end
 
         it "can update addresses and transition from address to delivery" do
           api_put :update,
             id: order.to_param, order_token: order.guest_token,
             order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
+              bill_address_attributes: address_params,
+              ship_address_attributes: address_params
             }
           expect(json_response['state']).to eq('delivery')
           expect(json_response['bill_address']['firstname']).to eq('John')
@@ -113,8 +112,8 @@ module Spree
           api_put :update,
             id: order.to_param, order_token: order.guest_token,
             order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
+              bill_address_attributes: address_params,
+              ship_address_attributes: address_params
             }
           expect(json_response['error']).to eq(I18n.t(:could_not_transition, scope: "spree.api.order"))
           expect(response.status).to eq(422)
@@ -125,8 +124,8 @@ module Spree
           api_put :update,
             id: order.to_param, order_token: order.guest_token,
             order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
+              bill_address_attributes: address_params,
+              ship_address_attributes: address_params
             }
           # Shipments manifests should not return the ENTIRE variant
           # This information is already present within the order's line items

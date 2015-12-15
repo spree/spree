@@ -5,7 +5,7 @@ module Spree
 
     has_many :zone_members, as: :zoneable, dependent: :destroy
 
-    validates :name, :iso_name, presence: true
+    validates :name, :iso, :iso3, :iso_name, presence: true
 
     def <=>(other)
       name <=> other.name

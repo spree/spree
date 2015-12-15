@@ -225,24 +225,20 @@ module Spree
       end
     end
 
-    context '#state_text' do
+    describe '#state_text' do
       context 'state is blank' do
-        subject { StockLocation.create!(name: "testing", state: nil, state_name: 'virginia') }
-        specify { expect(subject.state_text).to eq('virginia') }
+        subject { described_class.create!(name: 'Testing', state_name: 'Virginia') }
+
+        specify { expect(subject.state_text).to eql('Virginia') }
       end
 
-      context 'both name and abbr is present' do
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
-        subject { StockLocation.create!(name: "testing", state: state, state_name: nil) }
-        specify { expect(subject.state_text).to eq('va') }
-      end
+      context 'state is present' do
+        subject { described_class.create!(name: 'Testing', state: state) }
 
-      context 'only name is present' do
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
-        subject { StockLocation.create!(name: "testing", state: state, state_name: nil) }
-        specify { expect(subject.state_text).to eq('virginia') }
+        let(:state) { create(:state) }
+
+        specify { expect(subject.state_text).to eql(state.abbr) }
       end
     end
-
   end
 end

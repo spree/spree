@@ -6,41 +6,48 @@ module Spree
     describe Importer::Order do
       let!(:store) { create(:store, default: true) }
 
-      let!(:country) { create(:country) }
-      let!(:state) { country.states.first || create(:state, :country => country) }
-      let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
-
-      let(:user) { stub_model(LegacyUser, :email => 'fox@mudler.com') }
-      let(:shipping_method) { create(:shipping_method) }
-      let(:payment_method) { create(:check_payment_method) }
+      let!(:store)          { create(:store, default: true)    }
+      let!(:country)        { create(:country)                 }
+      let!(:state)          { create(:state, country: country) }
+      let(:address)         { build(:address, state: state)    }
+      let!(:stock_location) { create(:stock_location)          }
+      let(:user)            { create(:user)                    }
+      let(:shipping_method) { create(:shipping_method)         }
+      let(:payment_method)  { create(:check_payment_method)    }
+      let(:sku)             { variant.sku                      }
+      let(:variant_id)      { variant.id                       }
 
       let(:product) {
         Spree::Product.create!(
-          :name => 'Test',
-          :sku => 'TEST-1',
-          :price => 33.22,
-          :shipping_category => create(:shipping_category)
+          name:              'Test',
+          sku:               'TEST-1',
+          price:             33.22,
+          shipping_category: create(:shipping_category)
         )
       }
 
-      let(:variant) { variant = product.master
-                      variant.stock_items.each { |si| si.update_attribute(:count_on_hand, 10) }
-                      variant }
+      let(:variant) do
+        variant = product.master
+        variant.stock_items.each do |stock_item|
+          stock_item.update_attribute(:count_on_hand, 10)
+        end
+        variant
+      end
 
-      let(:sku) { variant.sku }
-      let(:variant_id) { variant.id }
+      let(:line_items) do
+        {
+          '0' => {
+            variant_id: variant.id,
+            quantity:   5
+          }
+        }
+      end
 
-      let(:line_items) {{ "0" => { :variant_id => variant.id, :quantity => 5 }}}
-      let(:ship_address) {{
-         :address1 => '123 Testable Way',
-         :firstname => 'Fox',
-         :lastname => 'Mulder',
-         :city => 'Washington',
-         :country_id => country.id,
-         :state_id => state.id,
-         :zipcode => '66666',
-         :phone => '666-666-6666'
-      }}
+      let(:ship_address) do
+        HashWithIndifferentAccess
+          .new(address.attributes)
+          .except(*%i[id created_at updated_at])
+      end
 
       it 'can import an order number' do
         params = { number: '123-456-789' }
@@ -95,7 +102,7 @@ module Spree
 
         expect(Importer::Order).to receive(:ensure_variant_id_from_params).and_return({variant_id: variant.id, quantity: 5})
         order = Importer::Order.import(user,params)
-        expect(order.user).to eq(nil)
+        expect(order.user).to eql(user)
         line_item = order.line_items.first!
         expect(line_item.quantity).to eq(5)
         expect(line_item.variant_id).to eq(variant_id)
@@ -139,21 +146,28 @@ module Spree
       end
 
       it 'can build an order from API shipping address' do
-        params = { :ship_address_attributes => ship_address,
-                   :line_items_attributes => line_items }
+        params = {
+          ship_address_attributes: ship_address,
+          line_items_attributes:   line_items
+        }
 
-        order = Importer::Order.import(user,params)
-        expect(order.ship_address.address1).to eq '123 Testable Way'
+        order = Importer::Order.import(user, params)
+
+        expect(order.ship_address.address1).to eql(address.address1)
       end
 
       it 'can build an order from API with country attributes' do
         ship_address.delete(:country_id)
-        ship_address[:country] = { 'iso' => 'US' }
-        params = { :ship_address_attributes => ship_address,
-                   :line_items_attributes => line_items }
+        ship_address[:country] = { 'iso' => country.iso }
 
-        order = Importer::Order.import(user,params)
-        expect(order.ship_address.country.iso).to eq 'US'
+        params = {
+          ship_address_attributes: ship_address,
+          line_items_attributes:   line_items
+        }
+
+        order = Importer::Order.import(user, params)
+
+        expect(order.ship_address.country.iso).to eql(country.iso)
       end
 
       it 'handles country lookup exceptions' do
@@ -174,7 +188,7 @@ module Spree
                    :line_items_attributes => line_items }
 
         order = Importer::Order.import(user,params)
-        expect(order.ship_address.state.name).to eq 'Alabama'
+        expect(order.ship_address.state.name).to eql(state.name)
       end
 
       context "with a different currency" do
@@ -201,13 +215,17 @@ module Spree
         end
       end
 
-      context "state passed is not associated with country" do
+      context 'state passed is not associated with country' do
         let(:params) do
-          params = { :ship_address_attributes => ship_address,
-                     :line_items_attributes => line_items }
+          {
+            ship_address_attributes: ship_address,
+            line_items_attributes:   line_items
+          }
         end
 
-        let(:other_state) { create(:state, name: "Uhuhuh", country: create(:country)) }
+        let(:other_state) do
+          create(:state, country: create(:country))
+        end
 
         before do
           ship_address.delete(:state_id)
@@ -222,7 +240,9 @@ module Spree
 
       it 'sets state name if state record not found' do
         ship_address.delete(:state_id)
+
         ship_address[:state] = { 'name' => 'XXX' }
+
         params = { :ship_address_attributes => ship_address,
                    :line_items_attributes => line_items }
 
