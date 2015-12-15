@@ -125,7 +125,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     shared_context 'non-blank guest token' do
-      let(:guest_token) { 'ABC123' }
+      let(:guest_token) { 'A' * 22 }
     end
 
     shared_context 'setup anonymous order' do
@@ -226,7 +226,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       let!(:anonymous_order_with_blank_guest_token) do
         create(
           :order_with_totals,
-          guest_token: '',
+          guest_token: nil,
           user:        nil,
           email:       nil
         )
@@ -282,7 +282,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
     context 'current order is not found' do
       let(:current_order) { nil      }
-      let(:guest_token)   { 'ABC123' }
+      let(:guest_token)   { 'A' * 22 }
 
       let(:new_order) do
         build(

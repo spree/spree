@@ -101,7 +101,7 @@ describe "Stock Management", :type => :feature do
       before do
         @product = create(:product, name: 'apache baseball cap', price: 10)
         v = @product.variants.create!(sku: 'FOOBAR')
-        Spree::StockLocation.delete_all
+        Spree::StockLocation.destroy_all
         click_link "Products"
         within_row(1) do
           click_icon :edit

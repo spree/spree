@@ -66,19 +66,23 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  context "is considered risky" do
+  context 'is considered risky' do
     let(:order) do
-      order = create(:completed_order_with_pending_payment)
-      order.considered_risky!
-      order
+      create(:completed_order_with_pending_payment).tap(&:considered_risky!)
     end
 
-    it "can be approved by a user" do
+    let(:approver) { create(:user) }
+
+    before do
       expect(order).to receive(:approve!)
-      order.approved_by(stub_model(Spree::LegacyUser, id: 1))
-      expect(order.approver_id).to eq(1)
+    end
+
+    it 'can be approved by a user' do
+      order.approved_by(approver)
+      # Yes Order#approved_by does not preserve identity :(
+      expect(order.approver).to eql(approver)
       expect(order.approved_at).to be_present
-      expect(order.approved?).to be true
+      expect(order.approved?).to be(true)
     end
   end
 end

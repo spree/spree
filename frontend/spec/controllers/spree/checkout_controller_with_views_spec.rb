@@ -8,8 +8,8 @@ describe Spree::CheckoutController, type: :controller do
 
   before { create(:store, default: true) }
 
-  let(:token) { 'some_token' }
-  let(:user) { stub_model(Spree::LegacyUser) }
+  let(:token) { 'some_token'  }
+  let(:user)  { create(:user) }
 
   before do
     allow(controller).to receive_messages try_spree_current_user: user

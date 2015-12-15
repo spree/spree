@@ -7,12 +7,8 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order, type: :model do
-  let(:user)  { stub_model(Spree::LegacyUser, email: "spree@example.com") }
-  let(:order) { stub_model(Spree::Order, user: user)                      }
-
-  before do
-    allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
-  end
+  let(:user)  { build(:user)                         }
+  let(:order) { stub_model(Spree::Order, user: user) }
 
   describe '#cancel' do
     subject(:order) { create(:completed_order_with_totals) }
@@ -910,7 +906,13 @@ describe Spree::Order, type: :model do
     context 'a reimbursement related refund exists' do
       subject(:order) { refund.payment.order }
 
-      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5)}
+      let(:refund) do
+        create(
+          :refund,
+          reimbursement: create(:reimbursement),
+          amount:        5
+        )
+      end
 
       it { expect(apply).to be(false) }
     end

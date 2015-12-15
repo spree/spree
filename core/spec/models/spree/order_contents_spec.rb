@@ -231,14 +231,26 @@ describe Spree::OrderContents, type: :model, db: :isolate do
   end
 
   context 'completed order' do
-    let(:order) { create(:order, state: 'complete', completed_at: Time.now) }
+    let(:order) do
+      create(
+        :order,
+        state:        'complete',
+        completed_at: Time.now
+      )
+    end
 
-    before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
+    before do
+      order.shipments.create!(
+        stock_location_id: variant.stock_location_ids.first
+      )
+    end
 
     it 'updates order payment state' do
       expect {
         subject.add variant
       }.to change { order.payment_state }
+
+      subject.order.reload
 
       expect {
         subject.remove variant

@@ -484,17 +484,6 @@ module Spree
           order = Importer::Order.import(user, params)
         }.to raise_error /Validation failed: Credit card Month is not a number, Credit card Year is not a number/
       end
-
-      context "raises error" do
-        it "clears out order from db" do
-          params = { :payments_attributes => [{ payment_method: "XXX" }] }
-          count = Order.count
-
-          expect { order = Importer::Order.import(user,params) }.to raise_error
-          expect(Order.count).to eq count
-        end
-      end
-
     end
   end
 end
