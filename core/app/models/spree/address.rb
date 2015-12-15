@@ -141,7 +141,7 @@ module Spree
       end
 
       def postal_code_validate
-        return if country.blank? || country.iso.blank? || !require_zipcode?
+        return if country.blank? || country.iso.blank? || !require_zipcode? || zipcode.blank?
         return if !TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
 
         postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)

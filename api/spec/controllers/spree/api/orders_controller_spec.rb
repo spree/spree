@@ -17,8 +17,6 @@ module Spree
                         :payment_state, :email, :special_instructions,
                         :total_quantity, :display_item_total, :currency] }
 
-    let(:address_params) { { :country_id => Country.first!.id, :state_id => State.first!.id } }
-
     let(:current_api_user) do
       user = Spree.user_class.new(:email => "spree@example.com")
       user.generate_spree_api_key!
@@ -348,20 +346,16 @@ module Spree
       expect(json_response["state"]).to eq("cart")
     end
 
-    context "working with an order" do
-
-      let(:variant) { create(:variant) }
-      let!(:line_item) { order.contents.add(variant, 1) }
-      let!(:payment_method) { create(:check_payment_method) }
-
-      let(:address_params) { { :country_id => country.id } }
-      let(:billing_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                :city => "Sao Paulo", :zipcode => "01310-300", :phone => "12345678",
-                                :country_id => country.id} }
-      let(:shipping_address) { { :firstname => "Tiago", :lastname => "Motta", :address1 => "Av Paulista",
-                                 :city => "Sao Paulo", :zipcode => "01310-300", :phone => "12345678",
-                                 :country_id => country.id} }
-      let(:country) { create(:country, {name: "Brazil", iso_name: "BRAZIL", iso: "BR", iso3: "BRA", numcode: 76 })}
+    context 'working with an order' do
+      let!(:country)         { create(:country)                                         }
+      let!(:state)           { create(:state, country: country)                         }
+      let(:variant)          { create(:variant)                                         }
+      let!(:line_item)       { order.contents.add(variant, 1)                           }
+      let!(:payment_method)  { create(:check_payment_method)                            }
+      let(:address)          { build(:address, state: state, country: country)          }
+      let(:address_params)   { address.attributes.except(:id, :created_at, :updated_at) }
+      let(:billing_address)  { address_params                                           }
+      let(:shipping_address) { address_params                                           }
 
       before do
         allow_any_instance_of(Order).to receive_messages user: current_api_user
@@ -370,12 +364,6 @@ module Spree
         order.ship_address = nil
         order.save!
         expect(order.state).to eq("address")
-      end
-
-      def clean_address(address)
-        address.delete(:state)
-        address.delete(:country)
-        address
       end
 
       context "line_items hash not present in request" do

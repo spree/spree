@@ -39,7 +39,7 @@ RSpec.configure do |config|
     end
   end
 
-
+  config.include SpreeSpec::AddressHelper
   config.include FactoryGirl::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences

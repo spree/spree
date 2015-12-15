@@ -6,7 +6,12 @@ FactoryGirl.define do
     address1 '10 Lovely Street'
     address2 'Northwest'
     city 'Herndon'
-    zipcode '35005'
+    zipcode do
+      TwitterCldr::Shared::PostalCodes
+        .for_territory(country.iso)
+        .sample(1)
+        .first
+    end
     phone '555-555-0199'
     alternative_phone '555-555-0199'
 

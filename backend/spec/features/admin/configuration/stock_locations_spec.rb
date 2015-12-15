@@ -5,7 +5,9 @@ describe "Stock Locations", :type => :feature do
 
   before(:each) do
     create(:store, default: true)
-    country = create(:country)
+    # Must be the US because of braindead logic here:
+    # app/controllers/spree/admin/stock_locations_controller.rb
+    create(:country, iso: 'US')
     visit spree.admin_path
     click_link "Configuration"
     click_link "Stock Locations"

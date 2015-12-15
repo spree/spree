@@ -309,12 +309,8 @@ describe Spree::CheckoutController, :type => :controller do
 
       context "when the country is not a shippable country" do
         before do
-          order.ship_address.tap do |address|
-            # A different country which is not included in the list of shippable countries
-            address.country = create(:country, :name => "Australia")
-            address.state_name = 'Victoria'
-            address.save!
-          end
+          # A different country which is not included in the list of shippable countries
+          order.ship_address = create(:address, state: create(:state))
         end
 
         it "due to no available shipping rates for any of the shipments" do

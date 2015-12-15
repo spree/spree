@@ -62,7 +62,7 @@ describe "Address", type: :feature, inaccessible: true do
     end
 
     context "user changes to country without states required" do
-      let!(:france) { create(:country, :name => "France", :states_required => false, :iso => "FRA") }
+      let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FR') }
 
       it "clears the state name" do
         skip "This is failing on the CI server, but not when you run the tests manually... It also does not fail locally on a machine."
@@ -82,7 +82,7 @@ describe "Address", type: :feature, inaccessible: true do
   end
 
   context "country does not require state", :js => true do
-    let!(:france) { create(:country, :name => "France", :states_required => false, :iso => "FRA") }
+    let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FR') }
 
     it "shows a disabled state input field" do
        click_button "Checkout"

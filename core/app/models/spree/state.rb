@@ -5,7 +5,7 @@ module Spree
 
     has_many :zone_members, as: :zoneable, dependent: :destroy
 
-    validates :country, :name, presence: true
+    validates :country, :name, :abbr, presence: true
 
     def self.find_all_by_name_or_abbr(name_or_abbr)
       where('name = ? OR abbr = ?', name_or_abbr, name_or_abbr)

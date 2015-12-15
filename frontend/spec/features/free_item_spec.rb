@@ -4,9 +4,14 @@ require 'spec_helper'
 describe "Free shipping promotions", :type => :feature, :js => true do
   before { create(:store, default: true) }
 
-  let!(:country) { create(:country, :name => "United States of America", :states_required => true) }
-  let!(:state) { create(:state, :name => "Alabama", :country => country) }
-  let!(:zone) { create(:zone) }
+  let!(:country)        { create(:country)                 }
+  let!(:state)          { create(:state, country: country) }
+  let!(:zone)           { create(:zone)                    }
+  let!(:payment_method) { create(:check_payment_method)    }
+  let!(:product)        { create(:product, price: 20)      }
+  let!(:free_product)   { create(:product, price: 20)      }
+  let(:address)         { build(:address, state: state)    }
+
   let!(:shipping_method) do
     sm = create(:shipping_method)
     sm.calculator.preferred_amount = 10
@@ -56,16 +61,9 @@ describe "Free shipping promotions", :type => :feature, :js => true do
       expect(page).to have_content("Adjustment: Promotion (Free Shirt!) -$20.00")
       expect(page).to have_content("Total $0.00")
 
-      click_button "Checkout"
-      fill_in "order_email", :with => "spree@example.com"
-      fill_in "First Name", :with => "John"
-      fill_in "Last Name", :with => "Smith"
-      fill_in "Street Address", :with => "1 John Street"
-      fill_in "City", :with => "City of John"
-      fill_in "Zip", :with => "01337"
-      select country.name, :from => "Country"
-      select state.name, :from => "order[bill_address_attributes][state_id]"
-      fill_in "Phone", :with => "555-555-5555"
+      click_button 'Checkout'
+      fill_in 'order_email', with: 'spree@example.com'
+      fill_in_address_form('order_bill_address_attributes', address)
 
       # To shipping method screen
       click_button "Save and Continue"
