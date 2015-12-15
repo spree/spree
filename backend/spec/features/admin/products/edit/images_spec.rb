@@ -48,8 +48,6 @@ describe "Product Images", :type => :feature do
 
     expect(page).not_to have_content("No Images Found.")
     within("table.index") do
-      expect(page).to have_content(variant.options_text)
-
       #ensure no duplicate images are displayed
       expect(page).to have_css("tbody tr", :count => 1)
 
@@ -60,7 +58,7 @@ describe "Product Images", :type => :feature do
 
       #ensure variant header is displayed
       within("tbody") do
-        expect(page).to have_content("Size: S")
+        expect(page).to have_content(variant.options_text)
       end
     end
   end
