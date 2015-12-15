@@ -446,6 +446,9 @@ module Spree
 
       update_totals
       persist_totals
+      
+      #added to ensure order back to cart state
+      restart_checkout_flow
     end
 
     def has_step?(step)
