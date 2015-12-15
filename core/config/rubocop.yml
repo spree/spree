@@ -56,13 +56,11 @@ Lint/EndAlignment:
 Lint/Eval:
   Exclude:
     - 'Gemfile'
-    - 'db/migrate/20130830001159_migrate_old_shipping_calculators.rb'
 
 # Offense count: 2
 Lint/HandleExceptions:
   Exclude:
     - 'app/models/spree/order.rb'
-    - 'db/migrate/20130807024301_upgrade_adjustments.rb'
 
 # Offense count: 1
 Lint/LiteralInCondition:
@@ -109,7 +107,6 @@ Lint/ShadowingOuterLocalVariable:
 Lint/StringConversionInInterpolation:
   Exclude:
     - 'app/models/spree/promotion/rules/user.rb'
-    - 'db/migrate/20140723214541_copy_product_slugs_to_slug_history.rb'
     - 'lib/spree/core/permalinks.rb'
     - 'spec/support/big_decimal.rb'
 
@@ -243,7 +240,6 @@ Style/AlignHash:
     - 'app/models/spree/inventory_unit.rb'
     - 'app/models/spree/payment/processing.rb'
     - 'app/models/spree/promotion/rules/user.rb'
-    - 'db/migrate/20130417123427_add_shipping_rates_to_shipments.rb'
     - 'spec/lib/spree/core/controller_helpers/search_spec.rb'
     - 'spec/models/spree/payment_spec.rb'
     - 'spec/models/spree/promotion_handler/coupon_spec.rb'
@@ -414,9 +410,6 @@ Style/EmptyElse:
 # Configuration parameters: AllowAdjacentOneLineDefs.
 Style/EmptyLineBetweenDefs:
   Exclude:
-    - 'db/migrate/20131001013410_remove_unused_credit_card_fields.rb'
-    - 'db/migrate/20140106065820_remove_value_type_from_spree_preferences.rb'
-    - 'db/migrate/20140805171219_make_existing_credit_cards_default.rb'
     - 'spec/lib/spree/core/controller_helpers/ssl_spec.rb'
     - 'spec/models/spree/shipment_spec.rb'
 
@@ -429,8 +422,6 @@ Style/EmptyLines:
     - 'app/models/spree/order_contents.rb'
     - 'app/models/spree/promotion/rules/item_total.rb'
     - 'app/models/spree/return_authorization.rb'
-    - 'db/migrate/20120831092320_spree_one_two.rb'
-    - 'db/migrate/20130306181701_add_address_fields_to_stock_location.rb'
     - 'lib/spree/core/product_filters.rb'
     - 'spec/helpers/products_helper_spec.rb'
     - 'spec/models/spree/order_spec.rb'
@@ -451,11 +442,6 @@ Style/EmptyLinesAroundMethodBody:
     - 'app/models/spree/calculator/default_tax.rb'
     - 'app/models/spree/gateway/bogus.rb'
     - 'app/models/spree/return_authorization.rb'
-    - 'db/migrate/20130319063911_change_spree_payments_amount_precision.rb'
-    - 'db/migrate/20130319064308_change_spree_return_authorization_amount_precision.rb'
-    - 'db/migrate/20130319082943_change_adjustments_amount_precision.rb'
-    - 'db/migrate/20140710041921_recreate_spree_return_authorizations.rb'
-    - 'db/migrate/20140723214541_copy_product_slugs_to_slug_history.rb'
     - 'spec/models/spree/gateway_spec.rb'
 
 # Offense count: 4
@@ -578,7 +564,6 @@ Style/NegatedIf:
     - 'app/models/spree/order_updater.rb'
     - 'app/models/spree/payment/processing.rb'
     - 'app/models/spree/refund.rb'
-    - 'db/migrate/20130826062534_add_depth_to_spree_taxons.rb'
     - 'lib/spree/responder.rb'
 
 # Offense count: 1
@@ -718,15 +703,6 @@ Style/Semicolon:
 Style/SignalException:
   Enabled: false
 
-# Offense count: 5
-# Configuration parameters: Methods.
-Style/SingleLineBlockParams:
-  Exclude:
-    - 'app/models/spree/order.rb'
-    - 'app/models/spree/order_updater.rb'
-    - 'app/models/spree/product.rb'
-    - 'app/models/spree/promotion/rules/taxon.rb'
-
 # Offense count: 8
 # Cop supports --auto-correct.
 # Configuration parameters: AllowIfMethodIsEmpty.
@@ -743,14 +719,6 @@ Style/SingleSpaceBeforeFirstArg:
   Exclude:
     - 'app/models/concerns/spree/calculated_adjustments.rb'
     - 'app/models/spree/order/checkout.rb'
-    - 'db/migrate/20120831092320_spree_one_two.rb'
-    - 'db/migrate/20120831092359_spree_promo_one_two.rb'
-    - 'db/migrate/20130328195253_add_seo_metas_to_taxons.rb'
-    - 'db/migrate/20131107132123_add_tax_category_to_variants.rb'
-    - 'db/migrate/20140710041921_recreate_spree_return_authorizations.rb'
-    - 'db/migrate/20140718195325_create_friendly_id_slugs.rb'
-    - 'db/migrate/20140808184039_create_spree_reimbursement_credits.rb'
-    - 'db/migrate/20140827170513_add_meta_title_to_spree_products.rb'
     - 'spec/lib/spree/core/controller_helpers/order_spec.rb'
     - 'spec/models/spree/adjustment_spec.rb'
     - 'spec/models/spree/product_duplicator_spec.rb'
@@ -830,7 +798,6 @@ Style/SpaceInsideParens:
     - 'spec/models/spree/calculator/refunds/default_refund_amount_spec.rb'
     - 'spec/models/spree/order/checkout_spec.rb'
     - 'spec/models/spree/promotion_handler/coupon_spec.rb'
-    - 'spec/models/spree/promotion_handler/free_shipping_spec.rb'
 
 # Offense count: 2925
 # Cop supports --auto-correct.
@@ -865,13 +832,6 @@ Style/SymbolProc:
     - 'app/models/spree/variant.rb'
     - 'app/models/spree/zone.rb'
     - 'lib/spree/core/product_filters.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/Tab:
-  Exclude:
-    - 'db/migrate/20121012071449_add_on_demand_to_product_and_variant.rb'
-    - 'db/migrate/20121124203911_add_position_to_taxonomies.rb'
 
 # Offense count: 43
 # Cop supports --auto-correct.
