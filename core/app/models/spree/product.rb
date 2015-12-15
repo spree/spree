@@ -73,7 +73,7 @@ module Spree
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
-    after_destroy :punch_slug
+    after_destroy :set_graveyard_slug
     after_restore :update_slug_history
 
     after_initialize :ensure_master
@@ -266,9 +266,11 @@ module Spree
       self.slug = normalize_friendly_id(slug)
     end
 
-    def punch_slug
-      # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.now.to_i}_#{slug}"[0..254] unless frozen?
+    # Set graveyard slug
+    #
+    # @return [undefined]
+    def set_graveyard_slug
+      update_column(:slug, "product-#{id}")
     end
 
     def update_slug_history
