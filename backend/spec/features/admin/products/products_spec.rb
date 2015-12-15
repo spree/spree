@@ -73,7 +73,14 @@ describe "Products", :type => :feature do
 
     context "searching products" do
       it "should be able to search deleted products", :js => true do
-        create(:product, :name => 'apache baseball cap', :deleted_at => "2011-01-06 18:21:13")
+        create(
+          :product,
+          name:       'apache baseball cap',
+          created_at: 1.days.ago,
+          updated_at: 1.days.ago,
+          deleted_at: 1.days.ago
+        )
+
         create(:product, :name => 'zomg shirt')
 
         click_link "Products"

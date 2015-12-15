@@ -9,7 +9,7 @@ describe 'products', :type => :feature, :caching => true do
   let!(:taxon) { create(:taxon, :taxonomy => taxonomy) }
 
   before do
-    product2.update_column(:updated_at, 1.day.ago)
+    product2.update_columns(created_at: 1.day.ago, updated_at: 1.day.ago)
     # warm up the cache
     visit spree.root_path
     assert_written_to_cache("views/en/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")

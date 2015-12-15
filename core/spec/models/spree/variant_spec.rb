@@ -439,7 +439,11 @@ describe Spree::Variant, :type => :model do
 
   describe "touching" do
     it "updates a product" do
-      variant.product.update_column(:updated_at, 1.day.ago)
+      variant.product.update_attributes!(
+        created_at: 1.day.ago,
+        updated_at: 1.day.ago
+      )
+
       variant.touch
       expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.now)
     end

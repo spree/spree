@@ -225,7 +225,12 @@ module Spree
       # Regression test for #1626
       context "deleted products" do
         before do
-          create(:product, :deleted_at => 1.day.ago)
+          create(
+            :product,
+            created_at: 1.day.ago,
+            updated_at: 1.day.ago,
+            deleted_at: 1.day.ago
+          )
         end
 
         it "does not include deleted products" do
