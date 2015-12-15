@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :promotion, class: Spree::Promotion do
-    name 'Promo'
+    sequence(:name, &'Promo-%d'.method(:%))
+
+    association(:promotion_category)
 
     trait :with_line_item_adjustment do
       transient do

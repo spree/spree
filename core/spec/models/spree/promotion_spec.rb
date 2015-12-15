@@ -5,7 +5,7 @@ describe Spree::Promotion, :type => :model do
 
   describe "validations" do
     before :each do
-      @valid_promotion = Spree::Promotion.new :name => "A promotion"
+      @valid_promotion = create(:promotion)
     end
 
     it "valid_promotion is valid" do
@@ -28,17 +28,17 @@ describe Spree::Promotion, :type => :model do
 
   describe ".coupons" do
     it "scopes promotions with coupon code present only" do
-      promotion = Spree::Promotion.create! name: "test", code: ''
+      promotion = create(:promotion)
       expect(Spree::Promotion.coupons).to be_empty
 
-      promotion.update_column :code, "check"
-      expect(Spree::Promotion.coupons.first!).to eq promotion
+      promotion.update_attributes!(code: 'check')
+      expect(Spree::Promotion.coupons.first!).to eql(promotion)
     end
   end
 
   describe ".applied" do
     it "scopes promotions that have been applied to an order only" do
-      promotion = Spree::Promotion.create! name: "test", code: ''
+      promotion = create(:promotion)
       expect(Spree::Promotion.applied).to be_empty
 
       promotion.orders << create(:order)
@@ -58,10 +58,10 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#destroy" do
-    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
+    let(:promotion) { create(:promotion) }
 
     before(:each) do
-      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+      promotion.promotion_actions << Spree::Promotion::Actions::CreateAdjustment.new
       promotion.rules << Spree::Promotion::Rules::FirstOrder.new
       promotion.save!
       promotion.destroy
@@ -77,7 +77,7 @@ describe Spree::Promotion, :type => :model do
   end
 
   describe "#save" do
-    let(:promotion) { Spree::Promotion.create!(:name => "delete me") }
+    let(:promotion) { create(:promotion) }
 
     before(:each) do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -92,68 +92,78 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  describe "#activate" do
+  describe '#activate' do
+    let(:promotion) do
+      create(
+        :promotion,
+        promotion_actions: [action1, action2]
+      )
+    end
+
+    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create! }
+    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create! }
+
+    let(:user)  { create(:user)              }
+    let(:order) { create(:order, user: user) }
+
+    let(:payload) do
+      {
+        order: order,
+        user:  user
+      }
+    end
+
     before do
-      @action1 = Spree::Promotion::Actions::CreateAdjustment.create!
-      @action2 = Spree::Promotion::Actions::CreateAdjustment.create!
-      allow(@action1).to receive_messages perform: true
-      allow(@action2).to receive_messages perform: true
-
-      promotion.name = 'Test'
-      promotion.promotion_actions = [@action1, @action2]
-      promotion.created_at = 2.days.ago
-
-      @user = stub_model(Spree::LegacyUser, :email => "spree@example.com")
-      @order = create(:order, user: @user)
-      @payload = { :order => @order, :user => @user }
+      allow(action1).to receive_messages(perform: true)
+      allow(action2).to receive_messages(perform: true)
     end
 
-    it "should check path if present" do
+    it 'should check path if present' do
       promotion.path = 'content/cvv'
-      @payload[:path] = 'content/cvv'
-      expect(@action1).to receive(:perform).with(@payload)
-      expect(@action2).to receive(:perform).with(@payload)
-      promotion.activate(@payload)
+      payload[:path] = 'content/cvv'
+
+      expect(action1).to receive(:perform).with(payload)
+      expect(action2).to receive(:perform).with(payload)
+      promotion.activate(payload)
     end
 
-    it "does not perform actions against an order in a finalized state" do
-      expect(@action1).not_to receive(:perform).with(@payload)
+    it 'does not perform actions against an order in a finalized state' do
+      expect(action1).not_to receive(:perform).with(payload)
 
-      @order.state = 'complete'
-      promotion.activate(@payload)
+      order.state = 'complete'
+      promotion.activate(payload)
 
-      @order.state = 'awaiting_return'
-      promotion.activate(@payload)
+      order.state = 'awaiting_return'
+      promotion.activate(payload)
 
-      @order.state = 'returned'
-      promotion.activate(@payload)
+      order.state = 'returned'
+      promotion.activate(payload)
     end
 
-    it "does activate if newer then order" do
-      expect(@action1).to receive(:perform).with(@payload)
+    it 'does activate if newer then order' do
+      expect(action1).to receive(:perform).with(payload)
       promotion.created_at = DateTime.now + 2
-      expect(promotion.activate(@payload)).to be true
+      expect(promotion.activate(payload)).to be(true)
     end
 
-    context "keeps track of the orders" do
-      context "when activated" do
-        it "assigns the order" do
+    context 'keeps track of the orders' do
+      context 'when activated' do
+        it 'assigns the order' do
           expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be true
-          expect(promotion.orders.first!).to eql @order
-        end
-      end
-      context "when not activated" do
-        it "will not assign the order" do
-          @order.state = 'complete'
-          expect(promotion.orders).to be_empty
-          expect(promotion.activate(@payload)).to be_falsey
-          expect(promotion.orders).to be_empty
+          expect(promotion.activate(payload)).to be(true)
+          expect(promotion.orders.first!).to eql(order)
         end
       end
 
+      context 'when not activated' do
+        it 'will not assign the order' do
+          order.state = 'complete'
+          expect(promotion.orders).to be_empty
+          expect(promotion.activate(payload)).to be(nil)
+          expect(promotion.orders).to be_empty
+        end
+      end
     end
-
   end
 
   context "#usage_limit_exceeded" do
@@ -211,14 +221,8 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  context "#credits_count" do
-    let!(:promotion) do
-      promotion = Spree::Promotion.new
-      promotion.name = "Foo"
-      promotion.code = "XXX"
-      calculator = Spree::Calculator::FlatRate.new
-      promotion.tap(&:save)
-    end
+  context '#credits_count' do
+    let(:promotion) { create(:promotion) }
 
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
@@ -258,7 +262,7 @@ describe Spree::Promotion, :type => :model do
       order.reload
     end
 
-    let(:promotion) { Spree::Promotion.create!(name: 'promo', code: '10off') }
+    let(:promotion) { create(:promotion, code: '10off') }
 
     let(:order_action) do
       action = Spree::Promotion::Actions::CreateAdjustment.create!(calculator: Spree::Calculator::FlatPercentItemTotal.new)
@@ -283,7 +287,7 @@ describe Spree::Promotion, :type => :model do
     end
 
     let(:item_adjustment) do
-      Spree::Adjustment.create!(
+      order.create_adjustment!(
         source:     item_action,
         amount:     10,
         adjustable: line_item,
@@ -426,7 +430,7 @@ describe Spree::Promotion, :type => :model do
     end
 
     context "with 'any' match policy" do
-      let(:promotion) { Spree::Promotion.create!(:name => "Promo", :match_policy => 'any') }
+      let(:promotion) { create(:promotion, match_policy: 'any') }
       let(:promotable) { double('Promotable') }
 
       it "should have eligible rules if any of the rules are eligible" do
@@ -518,9 +522,9 @@ describe Spree::Promotion, :type => :model do
   # admin form posts the code and path as empty string
   describe "normalize blank values for code & path" do
     it "will save blank value as nil value instead" do
-      promotion = Spree::Promotion.create!(:name => "A promotion", :code => "", :path => "")
-      expect(promotion.code).to be_nil
-      expect(promotion.path).to be_nil
+      promotion = create(:promotion, code: '', path: '')
+      expect(promotion.code).to be(nil)
+      expect(promotion.path).to be(nil)
     end
   end
 
@@ -537,10 +541,10 @@ describe Spree::Promotion, :type => :model do
   describe '#used_by?' do
     subject { promotion.used_by? user, [excluded_order] }
 
-    let(:promotion) { create :promotion, :with_order_adjustment }
+    let(:promotion) { create(:promotion, :with_order_adjustment) }
     let(:user) { create :user }
     let(:order) { create :order_with_line_items, user: user }
-    let(:excluded_order) { create :order_with_line_items, user: user }
+    let(:excluded_order) { create(:order) }
 
     before do
       order.user_id = user.id
@@ -589,8 +593,11 @@ describe Spree::Promotion, :type => :model do
   describe "adding items to the cart" do
     let(:order) { create :order }
     let(:line_item) { create :line_item, order: order }
-    let(:promo) { create :promotion_with_item_adjustment, adjustment_rate: 5, code: 'promo' }
     let(:variant) { create :variant }
+
+    let(:promo) do
+      create(:promotion_with_item_adjustment, adjustment_rate: 5)
+    end
 
     it "updates the promotions for new line items" do
       expect(line_item.adjustments).to be_empty

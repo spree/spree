@@ -108,7 +108,6 @@ Style/DeprecatedHashMethods:
 Style/EmptyLines:
   Exclude:
     - 'spec/features/checkout_spec.rb'
-    - 'spec/features/coupon_code_spec.rb'
     - 'spec/features/products_spec.rb'
     - 'spec/spec_helper.rb'
 
@@ -150,8 +149,6 @@ Style/IndentationConsistency:
     - 'app/controllers/spree/products_controller.rb'
     - 'app/controllers/spree/store_controller.rb'
     - 'spec/features/automatic_promotion_adjustments_spec.rb'
-    - 'spec/features/coupon_code_spec.rb'
-    - 'spec/features/page_promotions_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -183,7 +180,6 @@ Style/PercentLiteralDelimiters:
 Style/RegexpLiteral:
   Exclude:
     - 'lib/spree/frontend/middleware/seo_assist.rb'
-    - 'spec/features/free_item_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.
@@ -236,7 +232,6 @@ Style/SymbolArray:
     - 'app/controllers/spree/products_controller.rb'
     - 'config/routes.rb'
     - 'spec/controllers/controller_helpers_spec.rb'
-    - 'spec/features/coupon_code_spec.rb'
 
 # Offense count: 2
 # Cop supports --auto-correct.

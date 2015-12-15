@@ -354,10 +354,20 @@ describe "Checkout", type: :feature, inaccessible: true do
     end
   end
 
-  context "in coupon promotion, submits coupon along with payment", js: true do
-    let!(:promotion) { Spree::Promotion.create!(name: "Huhuhu", code: "huhu") }
-    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: "10") }
-    let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator) }
+  context 'in coupon promotion, submits coupon along with payment', js: true do
+    let!(:promotion) { create(:promotion) }
+
+    let!(:calculator) do
+      Spree::Calculator::FlatPercentItemTotal.create!(
+        preferred_flat_percent: 10
+      )
+    end
+
+    let!(:action) do
+      Spree::Promotion::Actions::CreateItemAdjustments.create!(
+        calculator: calculator
+      )
+    end
 
     before do
       promotion.actions << action

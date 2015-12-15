@@ -27,13 +27,8 @@ module Spree
     end
 
     context "taxes and promotions" do
-      let!(:tax_rate) do
-        create(:tax_rate, :amount => 0.05)
-      end
-
-      let!(:promotion) do
-        Spree::Promotion.create!(:name => "$10 off")
-      end
+      let!(:tax_rate)  { create(:tax_rate, amount: 0.05) }
+      let!(:promotion) { create(:promotion)              }
 
       let!(:promotion_action) do
         calculator = Calculator::FlatRate.new(:preferred_amount => 10)

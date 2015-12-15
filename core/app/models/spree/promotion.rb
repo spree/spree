@@ -19,7 +19,7 @@ module Spree
 
     validates_associated :rules
 
-    validates :name, presence: true
+    validates :promotion_category, :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }

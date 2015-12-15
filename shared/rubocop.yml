@@ -148,3 +148,13 @@ ParallelAssignment:
 # Temporarily disable buggy lint check
 FormatParameterMismatch:
   Enabled: false
+
+
+# The suggestions for generic single letter block param names `a` and `e`
+# on #reduce do not make too much sense as they are less readable and
+# less connected to the domain than the names we typically use.
+#
+# Also the cop does not account for intentionally using less params than
+# the recommendation.
+SingleLineBlockParams:
+  Enabled: false
