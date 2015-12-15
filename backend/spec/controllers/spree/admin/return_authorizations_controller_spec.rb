@@ -113,17 +113,26 @@ describe Spree::Admin::ReturnAuthorizationsController, :type => :controller do
     end
   end
 
-  describe "#load_reimbursement_types" do
-    let(:order)                             { create(:order) }
-    let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
-    let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
-    let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
+  describe '#load_reimbursement_types' do
+    let(:order) { create(:order) }
 
-    before do
-      spree_get :new, order_id: order.to_param
+    let!(:inactive_reimbursement_type) do
+      Spree::ReimbursementType::Credit.create(name: 'Check', active: false)
     end
 
-    it "loads all the active reimbursement types" do
+    let!(:first_active_reimbursement_type) do
+      Spree::ReimbursementType::OriginalPayment.create(name: 'Original Payment')
+    end
+
+    let!(:second_active_reimbursement_type) do
+      Spree::ReimbursementType::Exchange.create(name: 'Exchange')
+    end
+
+    before do
+      spree_get(:new, order_id: order.to_param)
+    end
+
+    it 'loads all the active reimbursement types' do
       expect(assigns(:reimbursement_types)).to include(first_active_reimbursement_type)
       expect(assigns(:reimbursement_types)).to include(second_active_reimbursement_type)
       expect(assigns(:reimbursement_types)).not_to include(inactive_reimbursement_type)
