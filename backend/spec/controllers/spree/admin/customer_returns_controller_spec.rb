@@ -27,9 +27,6 @@ module Spree
       describe "#new" do
         let(:order) { create(:shipped_order, line_items_count: 1) }
         let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first!)] }
-        let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
-        let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
-        let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
 
         subject do
           spree_get :new, { order_id: order.to_param }
