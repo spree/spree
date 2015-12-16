@@ -41,6 +41,8 @@ gem install rails -v 4.2.2
 gem install spree
 rails _4.2.2_ new my_store
 spree install my_store
+cd my_store
+rails g spree:auth:install
 ```
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations
