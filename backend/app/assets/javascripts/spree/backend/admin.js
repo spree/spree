@@ -7,7 +7,9 @@ Hopefully, this will evolve into a propper class.
 jQuery(function($) {
 
   // Add some tips
-  $('.with-tip').tooltip();
+  $(document).on('ready', function() {
+    $('.with-tip').tooltip();
+  });
 
   $('.js-show-index-filters').click(function(){
     $(".filter-well").slideToggle();
