@@ -52,14 +52,14 @@ module Spree
       end
 
       context "coupon code promotion doesnt exist" do
-        before { Promotion.create! name: "promo", :code => nil }
+        before { create(:promotion) }
 
         it "doesnt fetch any promotion" do
           expect(subject.promotion).to be_blank
         end
 
         context "with no actions defined" do
-          before { Promotion.create! name: "promo", :code => "10off" }
+          before { create(:promotion) }
 
           it "populates error message" do
             subject.apply
@@ -69,7 +69,7 @@ module Spree
       end
 
       context "existing coupon code promotion" do
-        let!(:promotion) { Promotion.create! name: "promo", :code => "10off"  }
+        let!(:promotion) { create(:promotion, code: '10off')  }
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create!(promotion: promotion, calculator: calculator) }
         let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
@@ -145,7 +145,7 @@ module Spree
             before do
               allow(order).to receive_messages :coupon_code => "10off"
               calculator = Calculator::FlatRate.new(preferred_amount: 10)
-              general_promo = Promotion.create! name: "General Promo"
+              general_promo = create(:promotion)
               general_action = Promotion::Actions::CreateItemAdjustments.create!(promotion: general_promo, calculator: calculator)
 
               order.contents.add create(:variant)
@@ -235,7 +235,7 @@ module Spree
             context "when the a new coupon is less good" do
               let!(:action_5) { Promotion::Actions::CreateAdjustment.create!(promotion: promotion_5, calculator: calculator_5) }
               let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
-              let!(:promotion_5) { Promotion.create! name: "promo", :code => "5off"  }
+              let!(:promotion_5) { create(:promotion, code: '5off') }
 
               it 'notifies of better deal' do
                 subject.apply
@@ -301,7 +301,7 @@ module Spree
           end
           context "and multiple quantity per line item" do
             before(:each) do
-              twnty_off = Promotion.create! name: "promo", :code => "20off"
+              twnty_off = create(:promotion, code: '20off')
               twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
               Promotion::Actions::CreateItemAdjustments.create!(promotion: twnty_off,
                                                                calculator: twnty_off_calc)

@@ -1,48 +1,52 @@
 require 'spec_helper'
 
-module Spree
-  module PromotionHandler
-    describe FreeShipping, type: :model do
-      let(:order) { create(:order) }
-      let(:shipment) { create(:shipment, order: order ) }
+describe Spree::PromotionHandler::FreeShipping, type: :model do
+  let(:order)     { create(:order)                  }
+  let(:shipment)  { create(:shipment, order: order) }
+  let(:promotion) { create(:promotion)              }
 
-      let(:promotion) { Promotion.create!(name: "Free Shipping") }
-      let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
-      let!(:action) { Promotion::Actions::FreeShipping.create!(promotion: promotion) }
+  before do
+    promotion.actions << Spree::Promotion::Actions::FreeShipping
+      .create!(promotion: promotion)
+  end
 
-      subject { Spree::PromotionHandler::FreeShipping.new(shipment.order) }
+  subject { Spree::PromotionHandler::FreeShipping.new(shipment.order) }
 
-      context "activates in Shipment level" do
-        it "creates the adjustment" do
-          expect { subject.activate }.to change { shipment.adjustments.count }.by(1)
-        end
-      end
+  context 'activates in Shipment level' do
+    it 'creates the adjustment' do
+      expect { subject.activate }
+        .to change { shipment.adjustments.count }
+        .from(0)
+        .to(1)
+    end
+  end
 
-      context "if promo has a code" do
-        before do
-          promotion.update_column(:code, "code")
-        end
+  context 'if promo has a code' do
+    before do
+      promotion.update_attributes!(code: 'code')
+    end
 
-        it "does adjust the shipment when applied to order" do
-          order.promotions << promotion
+    it 'does adjust the shipment when applied to order' do
+      order.promotions << promotion
 
-          expect { subject.activate }.to change { shipment.adjustments.count }
-        end
+      expect { subject.activate }
+        .to change { shipment.adjustments.count }
+        .from(0)
+        .to(1)
+    end
 
-        it "does not adjust the shipment when not applied to order" do
-          expect { subject.activate }.to_not change { shipment.adjustments.count }
-        end
-      end
+    it 'does not adjust the shipment when not applied to order' do
+      expect { subject.activate }.to_not change { shipment.adjustments.count }
+    end
+  end
 
-      context "if promo has a path" do
-        before do
-          promotion.update_column(:path, "path")
-        end
+  context 'if promo has a path' do
+    before do
+      promotion.update_attributes!(path: 'path')
+    end
 
-        it "does not adjust the shipment" do
-          expect { subject.activate }.to_not change { shipment.adjustments.count }
-        end
-      end
+    it 'does not adjust the shipment' do
+      expect { subject.activate }.to_not change { shipment.adjustments.count }
     end
   end
 end

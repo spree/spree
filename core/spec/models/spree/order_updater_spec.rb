@@ -32,7 +32,8 @@ module Spree
       end
 
       context 'with order promotion followed by line item addition' do
-        let(:promotion) { Spree::Promotion.create!(name: "10% off") }
+        let(:promotion) { create(:promotion) }
+
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do

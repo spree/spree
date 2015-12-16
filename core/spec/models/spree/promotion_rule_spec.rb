@@ -1,29 +1,30 @@
 require 'spec_helper'
 
-module Spree
-  describe Spree::PromotionRule, :type => :model do
-
-    class BadTestRule < Spree::PromotionRule; end
-
-    class TestRule < Spree::PromotionRule
-      def eligible?
-        true
-      end
+describe Spree::PromotionRule, type: :model do
+  class TestRule < Spree::PromotionRule
+    def eligible?
+      true
     end
+  end
 
-    it "should force developer to implement eligible? method" do
-      expect { BadTestRule.new.eligible? }.to raise_error
+  describe '#eligible' do
+    let(:promotable) { instance_double(Spree::Order) }
+
+    it 'raises error' do
+      expect { subject.eligible?(promotable) }.to raise_error(
+        RuntimeError,
+        'eligible? should be implemented in a sub-class of Spree::PromotionRule'
+      )
     end
+  end
 
-    it "validates unique rules for a promotion" do
-      p1 = TestRule.new
-      p1.promotion_id = 1
-      p1.save!
+  context 'validations' do
+    let(:promotion) { create(:promotion) }
 
-      p2 = TestRule.new
-      p2.promotion_id = 1
-      expect(p2).not_to be_valid
+    it 'is unique on promotion' do
+      TestRule.create!(promotion: promotion)
+
+      expect(TestRule.new(promotion: promotion)).to_not be_valid
     end
-
   end
 end

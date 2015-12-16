@@ -4,6 +4,8 @@ describe "Promotion Adjustments", :type => :feature do
   stub_authorization!
 
   context "coupon promotions", :js => true do
+    let!(:promotion_category) { create(:promotion_category) }
+
     before(:each) do
       visit spree.admin_path
       click_link "Promotions"
@@ -13,7 +15,9 @@ describe "Promotion Adjustments", :type => :feature do
     it "should allow an admin to create a flat rate discount coupon promo" do
       fill_in "Name", :with => "Promotion"
       fill_in "Code", :with => "order"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
+
       expect(page).to have_content("Editing Promotion")
 
       select2 "Item total", :from => "Add rule of type"
@@ -50,6 +54,7 @@ describe "Promotion Adjustments", :type => :feature do
       fill_in "Name", :with => "Promotion"
       fill_in "Usage Limit", :with => "1"
       fill_in "Code", :with => "single_use"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -73,6 +78,7 @@ describe "Promotion Adjustments", :type => :feature do
 
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", :with => "Promotion"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -109,6 +115,7 @@ describe "Promotion Adjustments", :type => :feature do
       create(:product, :name => "RoR Mug")
 
       fill_in "Name", :with => "Promotion"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -138,8 +145,9 @@ describe "Promotion Adjustments", :type => :feature do
       expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
-    xit "should allow an admin to create an automatic promotion with free shipping (no code)" do
+    pending "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", :with => "Promotion"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -168,6 +176,7 @@ describe "Promotion Adjustments", :type => :feature do
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
       fill_in "Name", :with => "Promotion"
       fill_in "Path", :with => "content/cvv"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -194,6 +203,7 @@ describe "Promotion Adjustments", :type => :feature do
       create(:product, :name => "RoR Mug")
       fill_in "Name", :with => "Promotion"
       fill_in "Code", :with => "complex"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 
@@ -224,6 +234,7 @@ describe "Promotion Adjustments", :type => :feature do
 
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", :with => "Promotion"
+      select2 promotion_category.name, from: 'Promotion category'
       click_button "Create"
       expect(page).to have_content("Editing Promotion")
 

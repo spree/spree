@@ -1,23 +1,29 @@
 require 'spec_helper'
 
-module Spree
-  describe Order, type: :model do
-    let(:order) { create(:order)   }
-    let(:shirt) { create(:variant) }
+describe Spree::Order, type: :model do
+  let(:order) { create(:order)   }
+  let(:shirt) { create(:variant) }
 
-    context "adds item to cart and activates promo" do
-      let(:promotion) { Promotion.create! name: 'Huhu' }
-      let(:calculator) { Calculator::FlatPercentItemTotal.new(:preferred_flat_percent => 10) }
-      let!(:action) { Promotion::Actions::CreateAdjustment.create!(promotion: promotion, calculator: calculator) }
+  context 'adds item to cart and activates promo' do
+    let(:promotion) { create(:promotion) }
 
-      before { order.contents.add(shirt, 1) }
+    let!(:action) do
+      Spree::Promotion::Actions::CreateAdjustment.create!(
+        promotion:  promotion,
+        calculator: Spree::Calculator::FlatPercentItemTotal.new(
+          preferred_flat_percent: 10
+        )
+      )
+    end
 
-      context "item quantity changes" do
-        it "recalculates order adjustments" do
-          expect {
-            order.contents.add(shirt, 3)
-          }.to change { order.adjustments.eligible.pluck(:amount) }
-        end
+    before { order.contents.add(shirt, 1) }
+
+    context 'item quantity changes' do
+      it 'recalculates order adjustments' do
+        expect { order.contents.add(shirt, 3) }
+          .to change { order.adjustments.eligible.pluck(:amount) }
+          .from([BigDecimal.new(-2)])
+          .to([BigDecimal.new(-8)])
       end
     end
   end
