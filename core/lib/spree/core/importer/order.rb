@@ -4,47 +4,50 @@ module Spree
       class Order
 
         def self.import(user, params)
-          begin
-            ensure_country_id_from_params params[:ship_address_attributes]
-            ensure_state_id_from_params params[:ship_address_attributes]
-            ensure_country_id_from_params params[:bill_address_attributes]
-            ensure_state_id_from_params params[:bill_address_attributes]
+          ensure_country_id_from_params(params[:ship_address_attributes])
+          ensure_state_id_from_params(params[:ship_address_attributes])
+          ensure_country_id_from_params(params[:bill_address_attributes])
+          ensure_state_id_from_params(params[:bill_address_attributes])
 
-            create_params = params.slice :currency
-            order = Spree::Store.current.orders.create!(create_params)
-            order.associate_user!(user)
+          order = Spree::Store.current.orders.create!(params.slice(:currency))
+          order.associate_user!(user)
 
-            create_line_items_from_params(params.delete(:line_items_attributes),order)
-            create_adjustments_from_params(params.delete(:adjustments_attributes), order)
-            create_payments_from_params(params.delete(:payments_attributes), order)
+          create_line_items_from_params(
+            params.delete(:line_items_attributes),
+            order
+          )
 
-            shipments_attrs = params.delete(:shipments_attributes)
-            create_shipments_from_params(shipments_attrs, order)
+          create_adjustments_from_params(
+            params.delete(:adjustments_attributes),
+            order
+          )
 
-            if completed_at = params.delete(:completed_at)
-              order.completed_at = completed_at
-              order.state = 'complete'
+          create_payments_from_params(
+            params.delete(:payments_attributes),
+            order
+          )
+
+          shipments_attrs = params.delete(:shipments_attributes)
+          create_shipments_from_params(shipments_attrs, order)
+
+          order.state = 'complete' if params[:completed_at]
+
+          params.delete(:user_id) unless user.try(:has_spree_role?, 'admin')
+
+          order.update_attributes!(params)
+
+          order.create_proposed_shipments if shipments_attrs.blank?
+
+          # Really ensure that the order totals & states are correct
+          order.updater.update
+          if shipments_attrs.present?
+            order.shipments.zip(shipments_attrs) do |shipment, shipment_attrs|
+              cost = shipment_attrs[:cost].presence
+              shipment.update_columns(cost: cost) if cost
             end
-
-            params.delete(:user_id) unless user.try(:has_spree_role?, "admin") && params.key?(:user_id)
-
-            order.update_attributes!(params)
-
-            order.create_proposed_shipments unless shipments_attrs.present?
-
-            # Really ensure that the order totals & states are correct
-            order.updater.update
-            if shipments_attrs.present?
-              order.shipments.each_with_index do |shipment, index|
-                cost = shipments_attrs[index][:cost].presence
-                shipment.update_columns(cost: cost.to_f) if cost
-              end
-            end
-            order.reload
-          rescue Exception
-            order.destroy if order && order.persisted?
-            fail
           end
+
+          order.reload
         end
 
         def self.create_shipments_from_params(shipments_hash, order)

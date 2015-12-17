@@ -571,14 +571,15 @@ module Spree
       end
     end
 
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
-      context "with no orders" do
-        before { Spree::Order.delete_all }
-        it "still returns a root :orders key" do
+      context 'with no orders' do
+        before { Spree::Order.destroy_all }
+
+        it 'still returns a root :orders key' do
           api_get :index
-          expect(json_response["orders"]).to eq([])
+          expect(json_response.fetch('orders')).to eql([])
         end
       end
 
@@ -663,12 +664,12 @@ module Spree
         end
       end
 
-      context "creation" do
-        it "can create an order without any parameters" do
-          expect { api_post :create }.not_to raise_error
+      context 'creation' do
+        it 'can create an order without any parameters' do
+          api_post(:create)
           expect(response.status).to eq(201)
           order = Order.last
-          expect(json_response["state"]).to eq("cart")
+          expect(json_response.fetch('state')).to eql('cart')
         end
 
         it "can arbitrarily set the line items price" do
@@ -684,7 +685,7 @@ module Spree
         end
 
         it "can set the user_id for the order" do
-          user = Spree.user_class.create!
+          user = create(:user)
           api_post :create, :order => { user_id: user.id }
           expect(response.status).to eq 201
           expect(json_response["user_id"]).to eq(user.id)

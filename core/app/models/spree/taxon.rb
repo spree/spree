@@ -28,6 +28,13 @@ module Spree
     validates_attachment :icon,
       content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
 
+    # Workaround a bug in awesome nested set that prevents
+    # subgraphs from being destroyed when the initial destroy is
+    # more than one level away from the children.
+    def skip_before_destroy
+      false
+    end
+
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
     def applicable_filters

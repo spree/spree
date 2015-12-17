@@ -103,17 +103,18 @@ module Spree
         2.times { create(:user) }
 
         api_get :index
-        expect(Spree.user_class.count).to eq 2
-        expect(json_response['count']).to eq 2
-        expect(json_response['users'].size).to eq 2
+        expect(Spree.user_class.count).to be(3)
+        expect(json_response['count']).to be(3)
+        expect(json_response['users'].size).to be(3)
       end
 
       it 'can control the page size through a parameter' do
         2.times { create(:user) }
-        api_get :index, :per_page => 1
-        expect(json_response['count']).to eq(1)
-        expect(json_response['current_page']).to eq(1)
-        expect(json_response['pages']).to eq(2)
+
+        api_get(:index, per_page: 1)
+        expect(json_response.fetch('count')).to be(1)
+        expect(json_response.fetch('current_page')).to be(1)
+        expect(json_response.fetch('pages')).to be(3)
       end
 
       it 'can query the results through a paramter' do

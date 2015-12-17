@@ -132,8 +132,10 @@ describe Spree::Order, type: :model do
         end
 
         it "doesn't raise an error if the default address is invalid" do
-          order.user = mock_model(Spree::LegacyUser, ship_address: Spree::Address.new, bill_address: Spree::Address.new)
-          expect { order.next! }.to_not raise_error
+          user = order.user = create(:user)
+          user.ship_address = Spree::Address.new
+          user.bill_address = Spree::Address.new
+          order.next!
         end
 
         context "with default addresses" do
@@ -366,9 +368,12 @@ describe Spree::Order, type: :model do
 
     context "to payment" do
       before do
-        @default_credit_card = create(:credit_card)
         order.line_items << create(:line_item, order: order)
-        order.user = mock_model(Spree::LegacyUser, default_credit_card: @default_credit_card, email: 'spree@example.org')
+
+        order.user = create(:user)
+
+        @default_credit_card = create(:credit_card, user: order.user, default: true)
+
         order.email = order.user.email
 
         allow(order).to receive_messages(payment_required?: true)
@@ -639,8 +644,10 @@ describe Spree::Order, type: :model do
   end
 
   describe 'update_from_params' do
-    let(:permitted_params) { {} }
-    let(:params) { {} }
+    let(:permitted_params) { {}            }
+    let(:params)           { {}            }
+    let(:user)             { create(:user) }
+    let(:other_user)       { create(:user) }
 
     it 'calls update_atributes without order params' do
       expect(order).to receive(:update_attributes).with({})
@@ -658,7 +665,7 @@ describe Spree::Order, type: :model do
           [payments_attributes: Spree::PermittedAttributes.payment_attributes]
       end
 
-      let(:credit_card) { create(:credit_card, user_id: order.user_id) }
+      let(:credit_card) { create(:credit_card, user: user) }
 
       let(:params) do
         ActionController::Parameters.new(
@@ -674,7 +681,7 @@ describe Spree::Order, type: :model do
         )
       end
 
-      before { order.user_id = 3 }
+      before { order.user = user }
 
       it "sets confirmation value when its available via :cvc_confirm" do
         allow(Spree::CreditCard).to receive_messages find: credit_card
@@ -700,7 +707,7 @@ describe Spree::Order, type: :model do
       end
 
       it "dont let users mess with others users cards" do
-        credit_card.update_column :user_id, 5
+        credit_card.update_attributes!(user: other_user)
 
         expect {
           order.update_from_params(params, permitted_params)

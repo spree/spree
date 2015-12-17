@@ -31,7 +31,7 @@ module Spree
           context "when calculator returns a non-zero value" do
             before do
               promotion.promotion_actions = [action]
-              allow(action).to receive_messages :compute_amount => 10
+              allow(action).to receive_messages(compute_amount: -10)
             end
 
             it "creates adjustment with item as adjustable" do
