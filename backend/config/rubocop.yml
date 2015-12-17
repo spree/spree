@@ -164,13 +164,6 @@ Style/BlockDelimiters:
     - 'spec/controllers/spree/admin/resource_controller_spec.rb'
     - 'spec/controllers/spree/admin/return_items_controller_spec.rb'
     - 'spec/controllers/spree/admin/stock_items_controller_spec.rb'
-    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/BlockEndNewline:
-  Exclude:
-    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
 
 # Offense count: 30
 # Cop supports --auto-correct.
@@ -264,7 +257,6 @@ Style/EmptyLines:
     - 'app/controllers/spree/admin/log_entries_controller.rb'
     - 'app/controllers/spree/admin/option_types_controller.rb'
     - 'spec/controllers/spree/admin/products_controller_spec.rb'
-    - 'spec/controllers/spree/admin/stock_transfers_controller_spec.rb'
     - 'spec/features/admin/orders/order_details_spec.rb'
     - 'spec/features/admin/products/products_spec.rb'
     - 'spec/helpers/admin/stock_movements_helper_spec.rb'

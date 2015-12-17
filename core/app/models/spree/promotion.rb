@@ -1,5 +1,7 @@
 module Spree
   class Promotion < Spree::Base
+    acts_as_paranoid
+
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 

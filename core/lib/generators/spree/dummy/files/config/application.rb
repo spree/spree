@@ -23,5 +23,8 @@ module Dummy
 
     # Set ActiveRecord to store/retrieve all dates and times in UTC
     config.active_record.default_timezone = :utc
+
+    # Use SQL for the schema format
+    config.active_record.schema_format = :sql
   end
 end

@@ -15,6 +15,7 @@ require 'premailer/rails'
 require 'ransack'
 require 'state_machine'
 require 'stringex'
+require 'spree/active_record_ext/custom_types'
 
 module Spree
 

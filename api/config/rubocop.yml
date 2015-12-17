@@ -271,10 +271,6 @@ Style/GuardClause:
     - 'app/controllers/spree/api/products_controller.rb'
     - 'app/controllers/spree/api/states_controller.rb'
     - 'app/controllers/spree/api/taxons_controller.rb'
-    - 'db/migrate/20100107141738_add_api_key_to_spree_users.rb'
-    - 'db/migrate/20120411123334_resize_api_key_field.rb'
-    - 'db/migrate/20120530054546_rename_api_key_to_spree_api_key.rb'
-    - 'db/migrate/20131017162334_add_index_to_user_spree_api_key.rb'
 
 # Offense count: 727
 # Cop supports --auto-correct.

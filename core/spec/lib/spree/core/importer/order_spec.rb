@@ -232,22 +232,28 @@ module Spree
           ship_address[:state] = { 'name' => other_state.name }
         end
 
-        it 'sets states name instead of state id' do
-          order = Importer::Order.import(user,params)
-          expect(order.ship_address.state_name).to eq other_state.name
+        it 'fails with invalid address state' do
+          expect { Importer::Order.import(user, params) }.to raise_error(
+            ActiveRecord::RecordInvalid,
+            'Validation failed: Shipping address state is invalid'
+          )
         end
       end
 
-      it 'sets state name if state record not found' do
+      it 'fails if state record not found' do
         ship_address.delete(:state_id)
 
         ship_address[:state] = { 'name' => 'XXX' }
 
-        params = { :ship_address_attributes => ship_address,
-                   :line_items_attributes => line_items }
+        params = {
+          ship_address_attributes: ship_address,
+          line_items_attributes:   line_items
+        }
 
-        order = Importer::Order.import(user,params)
-        expect(order.ship_address.state_name).to eq 'XXX'
+        expect { Importer::Order.import(user, params) }.to raise_error(
+          ActiveRecord::RecordInvalid,
+          'Validation failed: Shipping address state is invalid'
+        )
       end
 
       context 'variant not deleted' do

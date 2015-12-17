@@ -20,6 +20,9 @@ module Spree
     end
     private_class_method :pathnames
 
+    SPREE_SCHEMA_PATH = Pathname.new(__dir__)
+      .join('../../../../db/structure.sql')
+
     REMOVE_DUMMY_FILES = pathnames(%w[
       .gitignore
       Gemfile
@@ -123,10 +126,8 @@ module Spree
     # Install migrations
     #
     # @return [undefined]
-    def install_migrations
-      silence_stream($stdout) do
-        rake('railties:install:migrations')
-      end
+    def install_schema
+      FileUtils.cp(SPREE_SCHEMA_PATH, dummy_path.join('db/structure.sql'))
     end
 
     # Add routes
