@@ -69,12 +69,6 @@ module Spree
         shipping_categories.map(&:shipping_methods).reduce(:&).to_a
       end
 
-      def inspect
-        contents.map do |content_item|
-          "#{content_item.variant.name} #{content_item.state}"
-        end.join(' / ')
-      end
-
       def to_shipment
         # At this point we should only have one content item per inventory unit
         # across the entire set of inventory units to be shipped, which has been
