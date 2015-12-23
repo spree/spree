@@ -62,7 +62,7 @@ module Spree
     end
 
     def process_return!
-      return_items.each(&:receive!)
+      return_items.each { |ri| ri.receive! unless ri.reception_status == 'received' }
       order.return! if order.all_inventory_units_returned?
     end
 
