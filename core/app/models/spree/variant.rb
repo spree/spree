@@ -43,15 +43,27 @@ module Spree
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
 
+    # rubocop:disable Lambda
+    scope :having_orders, -> do
+      line_items_table_name = reflect_on_association(:line_items).quoted_table_name
+
+      where(<<-SQL.squish)
+        EXISTS (
+          SELECT
+            *
+          FROM
+            #{line_items_table_name}
+          WHERE
+            #{line_items_table_name}.variant_id = #{quoted_table_name}.id
+        )
+      SQL
+    end
+
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
 
     def self.active(currency = nil)
       joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
-    end
-
-    def self.having_orders
-      joins(:line_items).distinct
     end
 
     def tax_category
