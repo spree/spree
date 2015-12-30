@@ -32,9 +32,9 @@ Spree::Core::Engine.config.to_prepare do
         spree_orders.incomplete.order('created_at DESC').first
       end
 
-      def analytics_id
-        id
-      end
+      # def analytics_id
+      #        id
+      #      end
     end
   end
 end
