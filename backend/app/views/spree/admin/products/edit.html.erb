@@ -140,7 +140,7 @@
     <div class="panel panel-default" data-hook="product_overview_taxon_panel">
       <div class="panel-heading">
         <% if can?(:stock, @product) %>
-          <%= link_to Spree.t(:manage_taxons), spree.taxons_admin_product_url(@product), class: 'pull-right' %>
+          <%= link_to Spree.t(:manage_taxons), spree.taxons_tree_admin_product_url(@product), class: 'pull-right' %>
         <% end %>
         <h3 class="panel-title"><%= Spree.t(:taxons) %></h3>
       </div>
