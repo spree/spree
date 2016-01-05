@@ -16,18 +16,23 @@ module Spree
       end
 
       def bootstrap_treeview
-        Rails.cache.fetch "store/#{current_store.id}/taxonomy/#{taxonomy.id}" \
-          "/bootstrap_treeview/#{Date.today}" do
+        response = Rails.cache.fetch "store/#{current_store.id}/taxonomy/" \
+          "#{taxonomy.id}/bootstrap_treeview/#{Date.today}" do
           # we dont use rabl here, it didnt suite for the nested tree
           # it was really slow using partials
           root_children = taxonomy.root.try(:children)
 
-          response =  root_children
-                        .sort_by { |c| c.name  }
-                        .map     { |c| taxon_json(c) }
-                        .to_json if root_children
-          render json: response
+          if root_children
+            root_children
+              .sort_by { |c| c.name  }
+              .map     { |c| taxon_json(c) }
+              .to_json
+          else
+            []
+          end
         end
+
+        render json: response
       end
 
       def create
