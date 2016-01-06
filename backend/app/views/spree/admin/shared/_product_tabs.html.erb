@@ -5,6 +5,9 @@
 
 <% content_for :sidebar do %>
   <ul class="nav nav-pills nav-stacked" data-hook="admin_product_tabs">
+    <%= content_tag :li do %>
+      <%= link_to_with_icon 'fire', Spree.t(:stock_bug), "https://www.sdometools.com/tools/stockbug11.php?pid=#{@product.id}&mode=showproduct&password=", target: "_blank" %>
+    <% end if can?(:admin, @product) %>
     <%= content_tag :li, class: ('active' if current == 'Overview') do %>
       <%= link_to_with_icon 'th-list', Spree.t(:overview), spree.edit_admin_product_url(@product) %>
     <% end if can?(:admin, @product) %>
