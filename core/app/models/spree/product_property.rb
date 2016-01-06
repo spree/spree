@@ -11,6 +11,10 @@ module Spree
 
     default_scope { order("#{self.table_name}.position") }
 
+    scope :not_empty, -> { where.not(value: ["", nil]) }
+    scope :not_text, -> { includes(:property)
+                            .where.not(Spree::Property.table_name => { name: "Text" }) }
+
     # virtual attributes for use with AJAX completion stuff
     def property_name
       property.name

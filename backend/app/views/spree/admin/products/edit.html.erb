@@ -33,6 +33,24 @@
       </table>
     </div>
 
+    <div class="panel panel-default" data-hook="product_overview_properties">
+      <div class="panel-heading">
+        <% if can?(:edit, @product) %>
+          <%= link_to Spree.t(:edit), spree.admin_product_product_properties_url(@product),
+            class: 'pull-right' %>
+        <% end %>
+        <h3 class="panel-title"><%= Spree.t(:properties) %></h3>
+      </div>
+      <table class="table">
+        <% @product.product_properties.not_empty.not_text.each do |prop| %>
+          <tr>
+            <th><%= prop.property.presentation %></th>
+            <td><%= prop.value %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+
     <div class="panel panel-default" data-hook="product_overview_search_panel">
       <div class="panel-heading">
         <% if can?(:edit, @product) %>
@@ -43,7 +61,7 @@
       <table class="table">
         <tr data-hook="product_overview_general_description">
           <th><%= Spree.t(:description) %></th>
-          <td><%= @product.description %></td>
+          <td><%= raw(@product.description) %></td>
         </tr>
         <tr data-hook="product_overview_search_keywords">
           <th width="25%"><%= Spree.t(:meta_keywords) %></th>
@@ -140,7 +158,7 @@
     <div class="panel panel-default" data-hook="product_overview_taxon_panel">
       <div class="panel-heading">
         <% if can?(:stock, @product) %>
-          <%= link_to Spree.t(:manage_taxons), spree.taxons_admin_product_url(@product), class: 'pull-right' %>
+          <%= link_to Spree.t(:manage_taxons), spree.taxons_tree_admin_product_url(@product), class: 'pull-right' %>
         <% end %>
         <h3 class="panel-title"><%= Spree.t(:taxons) %></h3>
       </div>
