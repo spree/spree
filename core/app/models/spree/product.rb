@@ -81,7 +81,7 @@ module Spree
 
     before_validation :validate_master
 
-    validates :meta_keywords, length: { maximum: 255 }
+    validates :meta_keywords, length: { maximum: 1000 }
     validates :meta_title, length: { maximum: 255 }
     validates :name, presence: true
     validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
