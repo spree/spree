@@ -98,7 +98,7 @@ module Spree
         params[:q] ||= {}
         params[:q][:deleted_at_null] ||= "1"
 
-        params[:q][:s] ||= "name asc"
+        params[:q][:s] ||= "id desc"
         @collection = super
         if params[:q].delete(:deleted_at_null) == '0'
           @collection = @collection.with_deleted
