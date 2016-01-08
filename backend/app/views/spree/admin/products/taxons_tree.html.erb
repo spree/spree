@@ -8,7 +8,10 @@
       <%= f.field_container :taxons, class: ['form-group'] do %>
 
         <% if can? :modify, Spree::Classification %>
-          <%= f.hidden_field :taxon_ids, value: @product.taxon_ids.join(','), class: 'js-product-taxon-ids' %>
+          <% taxons_and_parents_ids = @product.taxons.flat_map do |t|
+                                        t.ancestors.pluck(:id) << t.id
+                                      end.uniq.join(',') %>
+          <%= f.hidden_field :taxon_ids, value: taxons_and_parents_ids, class: 'js-product-taxon-ids' %>
 
           <div class="tree-view-search">
             <div class="input-group">
@@ -57,9 +60,10 @@
                   // without expanding we cant select (selectNode) the active taxons
                   $('#tree').treeview('expandAll', { silent: true });
 
-                  <% @product.taxon_ids.each do |taxon_id| %>
-                    saveAsNodeToSelect(treeNodeIdByTaxonId(<%= taxon_id %>), <%= taxon_id %>);
-                  <% end %>
+                  $.each($('#product_taxon_ids').val().split(','), function (i, taxon_id_string) {
+                    var taxon_id = parseInt(taxon_id_string);
+                    saveAsNodeToSelect(treeNodeIdByTaxonId(taxon_id), taxon_id);
+                  });
 
                   $('#tree').treeview('selectNode', [TaxonTreeNodesToSelect, { silent: true } ]);
 
