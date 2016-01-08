@@ -25,7 +25,7 @@
     <% end if can?(:admin, Spree::Variant) %>
     <%= content_tag :li, class: ('active' if current == 'Taxons') do %>
       <%= link_to_with_icon 'th-list', Spree.t(:taxons), spree.taxons_tree_admin_product_url(@product) %>
-    <% end if can?(:stock, @product) %>
+    <% end if can?(:admin, Spree::Variant) %>
     <%= content_tag :li, class: ('active' if current == 'Product Properties') do %>
       <%= link_to_with_icon 'list-alt', Spree.t(:properties), spree.admin_product_product_properties_url(@product) %>
     <% end if can?(:admin, Spree::ProductProperty) %>
