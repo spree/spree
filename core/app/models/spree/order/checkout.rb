@@ -76,6 +76,9 @@ module Spree
                 transition to: :awaiting_return
               end
 
+              before_transition to: :complete, do: :ensure_line_item_variants_are_not_deleted
+              before_transition to: :complete, do: :ensure_line_items_are_in_stock
+
               if states[:payment]
                 before_transition to: :complete do |order|
                   if order.payment_required? && order.payments.valid.empty?
@@ -108,9 +111,6 @@ module Spree
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_deleted
               before_transition to: :resumed, do: :ensure_line_items_are_in_stock
-
-              before_transition to: :complete, do: :ensure_line_item_variants_are_not_deleted
-              before_transition to: :complete, do: :ensure_line_items_are_in_stock
 
               after_transition to: :complete, do: :finalize!
               after_transition to: :resumed, do: :after_resume
