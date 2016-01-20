@@ -3,6 +3,7 @@
 *
 
 # Whitelist allowed files
+!.buildkite/pipeline.yml
 !.gitignore
 !api/
 !backend/
