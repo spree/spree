@@ -8,6 +8,7 @@ module Spree
       belongs_to :taxon, class_name: "Spree::Taxon"
     end
 
+    validates :taxon, :product, presence: true
     # For #3494
     validates :taxon_id, uniqueness: { scope: :product_id, message: :already_linked, allow_blank: true }
   end
