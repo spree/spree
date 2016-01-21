@@ -87,7 +87,6 @@ module Spree
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
-
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_title
