@@ -7,6 +7,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 5.0.0'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+gem 'sprockets-rails', '~> 2.0'
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -24,7 +25,7 @@ group :test do
   gem 'email_spec'
   gem 'factory_girl_rails', '~> 4.5.0'
   gem 'launchy'
-  gem 'rspec-activemodel-mocks'
+  gem 'rspec-activemodel-mocks', '~> 1.0.2'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.1.0'
