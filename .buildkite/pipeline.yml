@@ -1,5 +1,5 @@
 env:
-  BASE_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test
+  BASE_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test:$PREVIOUS_SHA
   TEST_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test:$COMMIT_SHA
 
 steps:
@@ -7,7 +7,7 @@ steps:
     command: |
       set -e
       eval "$(aws ecr get-login)"
-      docker pull "$BASE_CONTAINER"
+      docker pull "$BASE_CONTAINER" || true
       docker build --tag "$TEST_CONTAINER" -- .
       docker push "$TEST_CONTAINER"
     agents:
