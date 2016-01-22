@@ -5,7 +5,8 @@ env:
 steps:
   - name: Test Container
     command: |
-      set -e
+      source strict-mode.sh
+
       eval "$(aws ecr get-login)"
       docker pull "$BASE_CONTAINER" || true
       docker build --tag "$TEST_CONTAINER" -- .
