@@ -22,20 +22,20 @@ describe Spree::Price, :type => :model do
       end
     end
 
-    context 'when the amount is greater than 999,999.99' do
-      let(:amount) { 1_000_000 }
+    context 'when the amount is greater than maximum amount' do
+      let(:amount) { Spree::Price::MAXIMUM_AMOUNT + 1 }
 
       it 'has 1 error_on' do
         expect(subject.error_on(:amount).size).to eq(1)
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq 'must be less than or equal to 999999.99'
+        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::MAXIMUM_AMOUNT}"
       end
     end
 
-    context 'when the amount is between 0 and 999,999.99' do
-      let(:amount) { 100 }
+    context 'when the amount is between 0 and the maximum amount' do
+      let(:amount) { Spree::Price::MAXIMUM_AMOUNT }
       it { is_expected.to be_valid }
     end
   end
