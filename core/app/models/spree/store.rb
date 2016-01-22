@@ -20,7 +20,7 @@ module Spree
     end
 
     def self.default
-      Rails.cache.fetch("default_store") do
+      Rails.cache.fetch("#{Rails.application.class.parent_name.underscore}_default_store") do
         where(default: true).first || new
       end
     end
@@ -44,7 +44,7 @@ module Spree
     end
 
     def clear_cache
-      Rails.cache.delete("default_store")
+      Rails.cache.delete("#{Rails.application.class.parent_name.underscore}_default_store")
     end
   end
 end

@@ -13,9 +13,13 @@ module Spree
 
     validates :name, :iso_name, presence: true
 
+    before_save :clear_cache
+
     def self.default
-      country_id = Spree::Config[:default_country_id]
-      country_id.present? ? find(country_id) : find_by!(iso: 'US')
+      Rails.cache.fetch("#{Rails.application.class.parent_name.underscore}_default_country") do
+        country_id = Spree::Config[:default_country_id]
+        country_id.present? ? find(country_id) : find_by!(iso: 'US')
+      end
     end
 
     def <=>(other)
@@ -24,6 +28,11 @@ module Spree
 
     def to_s
       name
+    end
+
+    private
+    def clear_cache
+      Rails.cache.delete("#{Rails.application.class.parent_name.underscore}_default_country")
     end
   end
 end

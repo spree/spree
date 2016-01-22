@@ -15,6 +15,8 @@ module Spree
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
 
+    before_save :clear_cache
+
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
     end
@@ -99,6 +101,16 @@ module Spree
       end
     end
 
+    def self.default
+      Rails.cache.fetch("#{Rails.application.class.parent_name.underscore}_default_stock_location") do
+        default_location = where(default: true).first
+        if default_location.blank? && (default_location = first)
+          default_location.update(default: true)
+        end
+        default_location
+      end
+    end
+
     private
       def create_stock_items
         Variant.includes(:product).find_each do |variant|
@@ -110,6 +122,10 @@ module Spree
         if self.default
           StockLocation.where(default: true).where.not(id: self.id).update_all(default: false)
         end
+      end
+
+      def clear_cache
+        Rails.cache.delete("#{Rails.application.class.parent_name.underscore}_default_stock_location")
       end
   end
 end
