@@ -16,121 +16,121 @@ steps:
   - wait
 
   - name: API Model Tests
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api --database -- rake metrics:coverage
+    command: docker-bundle-exec --path api --database -- rake metrics:coverage
     agents:
       queue: mrh-build
 
   - name: API Rubocop
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api -- rake metrics:rubocop
+    command: docker-bundle-exec --path api -- rake metrics:rubocop
     agents:
       queue: mrh-build
 
   - name: API Reek
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api -- rake metrics:reek
+    command: docker-bundle-exec --path api -- rake metrics:reek
     agents:
       queue: mrh-build
 
   - name: API Flay
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api -- rake metrics:flay
+    command: docker-bundle-exec --path api -- rake metrics:flay
     agents:
       queue: mrh-build
 
   - name: API Flog
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api -- rake metrics:flog
+    command: docker-bundle-exec --path api -- rake metrics:flog
     agents:
       queue: mrh-build
 
   - name: API Yardstick
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path api -- rake metrics:yardstick:verify
+    command: docker-bundle-exec --path api -- rake metrics:yardstick:verify
     agents:
       queue: mrh-build
 
   - name: Backend Model Tests
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend --database -- rake metrics:coverage
+    command: docker-bundle-exec --path backend --database -- rake metrics:coverage
     agents:
       queue: mrh-build
 
   - name: Backend Rubocop
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend -- rake metrics:rubocop
+    command: docker-bundle-exec --path backend -- rake metrics:rubocop
     agents:
       queue: mrh-build
 
   - name: Backend Reek
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend -- rake metrics:reek
+    command: docker-bundle-exec --path backend -- rake metrics:reek
     agents:
       queue: mrh-build
 
   - name: Backend Flay
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend -- rake metrics:flay
+    command: docker-bundle-exec --path backend -- rake metrics:flay
     agents:
       queue: mrh-build
 
   - name: Backend Flog
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend -- rake metrics:flog
+    command: docker-bundle-exec --path backend -- rake metrics:flog
     agents:
       queue: mrh-build
 
   - name: Backend Yardstick
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path backend -- rake metrics:yardstick:verify
+    command: docker-bundle-exec --path backend -- rake metrics:yardstick:verify
     agents:
       queue: mrh-build
 
   - name: Core Model Tests
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core --database -- rake metrics:coverage
+    command: docker-bundle-exec --path core --database -- rake metrics:coverage
     agents:
       queue: mrh-build
 
   - name: Core Rubocop
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core -- rake metrics:rubocop
+    command: docker-bundle-exec --path core -- rake metrics:rubocop
     agents:
       queue: mrh-build
 
   - name: Core Reek
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core -- rake metrics:reek
+    command: docker-bundle-exec --path core -- rake metrics:reek
     agents:
       queue: mrh-build
 
   - name: Core Flay
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core -- rake metrics:flay
+    command: docker-bundle-exec --path core -- rake metrics:flay
     agents:
       queue: mrh-build
 
   - name: Core Flog
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core -- rake metrics:flog
+    command: docker-bundle-exec --path core -- rake metrics:flog
     agents:
       queue: mrh-build
 
   - name: Core Yardstick
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path core -- rake metrics:yardstick:verify
+    command: docker-bundle-exec --path core -- rake metrics:yardstick:verify
     agents:
       queue: mrh-build
 
   - name: Frontend Model Tests
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend --database -- rake metrics:coverage
+    command: docker-bundle-exec --path frontend --database -- rake metrics:coverage
     agents:
       queue: mrh-build
 
   - name: Frontend Rubocop
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend -- rake metrics:rubocop
+    command: docker-bundle-exec --path frontend -- rake metrics:rubocop
     agents:
       queue: mrh-build
 
   - name: Frontend Reek
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend -- rake metrics:reek
+    command: docker-bundle-exec --path frontend -- rake metrics:reek
     agents:
       queue: mrh-build
 
   - name: Frontend Flay
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend -- rake metrics:flay
+    command: docker-bundle-exec --path frontend -- rake metrics:flay
     agents:
       queue: mrh-build
 
   - name: Frontend Flog
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend -- rake metrics:flog
+    command: docker-bundle-exec --path frontend -- rake metrics:flog
     agents:
       queue: mrh-build
 
   - name: Frontend Yardstick
-    command: eval "$(aws ecr get-login)" && docker-bundle-exec --path frontend -- rake metrics:yardstick:verify
+    command: docker-bundle-exec --path frontend -- rake metrics:yardstick:verify
     agents:
       queue: mrh-build
