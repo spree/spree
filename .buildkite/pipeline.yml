@@ -7,8 +7,7 @@ steps:
     command: |
       source strict-mode.sh
 
-      eval "$(aws ecr get-login)"
-      docker pull "$BASE_CONTAINER" || true
+      docker-pull-ecr "$BASE_CONTAINER" || true
       docker build --tag "$TEST_CONTAINER" -- .
       docker push "$TEST_CONTAINER"
     agents:
