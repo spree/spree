@@ -53,7 +53,7 @@ module Spree
             locale = session[:locale]
             locale ||= config_locale if respond_to?(:config_locale, true)
             locale ||= Rails.application.config.i18n.default_locale
-            locale ||= I18n.default_locale unless I18n.available_locales.map(&:to_s).include?(locale)
+            locale ||= I18n.default_locale
             I18n.locale = locale
           end
 
