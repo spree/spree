@@ -21,7 +21,7 @@ module Spree
         .where("spree_shipments.state != 'canceled'").references(:shipment)
         .where(variant_id: stock_item.variant_id)
         .where('spree_orders.completed_at is not null')
-        .backordered.order("spree_orders.completed_at ASC")
+        .backordered.order(Spree::Order.arel_table[:completed_at])
     end
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)

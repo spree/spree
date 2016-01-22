@@ -23,7 +23,7 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}") })
+        self.scope(name.to_s, -> { order(Spree::Product.arel_table[parts[2].to_sym].send(parts[1] == 'ascend' ?  :asc : :desc)) })
       end
     end
 
@@ -39,11 +39,11 @@ module Spree
     add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
-      joins(:master => :default_price).order("#{price_table_name}.amount ASC")
+      joins(:master => :default_price).order(Spree::Price.arel_table[:amount])
     end
 
     add_search_scope :descend_by_master_price do
-      joins(:master => :default_price).order("#{price_table_name}.amount DESC")
+      joins(:master => :default_price).order(Spree::Price.arel_table[:amount].desc)
     end
 
     add_search_scope :price_between do |low, high|
@@ -78,7 +78,7 @@ module Spree
     add_search_scope :in_taxon do |taxon|
       includes(:classifications).
       where("spree_products_taxons.taxon_id" => taxon.self_and_descendants.pluck(:id)).
-      order("spree_products_taxons.position ASC")
+      order(Spree::Classification.arel_table[:position])
     end
 
     # This scope selects products in all taxons AND all its descendants
