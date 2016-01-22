@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.license     = %q{BSD-3}
   s.rubyforge_project = 'spree_backend'
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
+  s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
 
