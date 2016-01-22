@@ -1,6 +1,6 @@
 env:
   BASE_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test
-  TEST_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test:$BUILDKITE_COMMIT
+  TEST_CONTAINER: 207654339136.dkr.ecr.us-east-1.amazonaws.com/mountainroseherbs/spree-test:$COMMIT_SHA
 
 steps:
   - name: Test Container
