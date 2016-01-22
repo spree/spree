@@ -615,6 +615,7 @@ en:
     destination: Destination
     destroy: Destroy
     discount_amount: Discount Amount
+    discontinue_on: Discontinue On
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
