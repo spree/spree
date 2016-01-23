@@ -18,7 +18,6 @@ Spree gem you automatically require all of the necessary gem dependencies which 
 * spree_api (RESTful API)
 * spree_frontend (User-facing components)
 * spree_backend (Admin area)
-* spree_cmd (Command-line tools)
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
 * spree_sample (Sample data)
 
@@ -41,59 +40,43 @@ Installation
 EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
 SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
 
-The fastest way to get started is by using the spree command line tool
-available in the spree gem which will add Spree to an existing Rails application.
+To install spree, just use rails generator:
 
 ```shell
-gem install rails -v 4.2.2
+gem install rails
 gem install spree
-rails _4.2.2_ new my_store
-spree install my_store
+rails new my_store
 cd my_store
-rails g spree:auth:install
+```
+add spree gems, append these three lines in your Gemfile:
+```ruby
+gem 'spree', github: 'spree/spree', branch: '3-0-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-0-stable'
+gem 'spree_gateway', github: 'spree/spree_gateway', branch: '3-0-stable'
 ```
 
-This will add the Spree gem to your Gemfile, create initializers, copy migrations
-and optionally generate sample products and orders.
+```shell
+bundle update
+spring stop 
+rails g spree:install
+```
 
 If you get an "sh: identify: command not found" error then you can try installing imagemagick.
+
+for OS X
 ```shell
 brew install imagemagick
 ```
-If you get an "Unable to resolve dependencies" error when installing the Spree gem
-then you can try installing just the spree_cmd gem which should avoid any circular
-dependency issues.
-
+for ubuntu
 ```shell
-gem install spree_cmd
-```
-
-To auto accept all prompts while running the install generator, pass -A as an option
-
-```shell
-spree install my_store -A
-```
-
-To select a specific branch, pass in the `--branch` option. If there is no branch, you
-will be given the latest version of either spree_auth_devise or spree_gateway.
-
-```shell
-spree install my_store --branch "3-0-stable"
+sudo apt-get install imagemagick --fix-missing
 ```
 
 Using stable builds and bleeding edge
 -------------
 
-To use a stable build of Spree, you can manually add Spree to your
-Rails application. To use the 3-0-stable branch of Spree, add this line to
+if you want to use the bleeding edge version of Spree, add this line to
 your Gemfile.
-
-```ruby
-gem 'spree', github: 'spree/spree', branch: '3-0-stable'
-```
-
-Alternatively, if you want to use the bleeding edge version of Spree, use this
-line:
 
 ```ruby
 gem 'spree', github: 'spree/spree'
@@ -109,7 +92,7 @@ Once you've done that, then you can install these gems using this command:
 bundle install
 ```
 
-Use the install generator to set up Spree:
+you can see more options with help command: rails g spree:install --help
 
 ```shell
 rails g spree:install --sample=false --seed=false

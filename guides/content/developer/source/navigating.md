@@ -91,7 +91,6 @@ subdirectories as follows:
 | :--------------| :---------| :-------------------------|
 | spree_api      | api       | Provides REST API access  |
 | spree_backend  | backend   | Backend functionality     |
-| spree_cmd      | cmd       | Command line utility for installing Spree and creating extensions |
 | spree_core     | core      | Core functionality - all other gems depend on this gem |
 | spree_dash     | dash      | Simple overview dashboard |
 | spree_frontend | frontend  | Customer-facing functionality    |
