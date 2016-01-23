@@ -13,8 +13,8 @@ module Spree
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias_method :actions, :promotion_actions
 
-    has_many :order_promotions, class_name: 'Spree::OrderPromotion'
-    has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
+    has_many :order_promotions, class_name: "Spree::OrderPromotion"
+    has_many :orders, through: :order_promotions, class_name: "Spree::Order"
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
@@ -27,35 +27,35 @@ module Spree
 
     before_save :normalize_blank_values
 
-    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
-    scope :applied, lambda {
-      joins(<<-SQL).uniq
-        INNER JOIN spree_order_promotions
-        ON spree_order_promotions.promotion_id = #{table_name}.id
-      SQL
-    }
+    scope :coupons, -> { where.not(code: nil) }
+    scope :advertised, -> { where(advertise: true) }
+    scope :active, -> do
+      table = self.arel_table
+      time = Time.current
+      where(table[:starts_at].not_eq(nil).and(table[:expires_at].not_eq(nil))).
+      where(table[:starts_at].eq(nil).or(table[:starts_at].lt(time))).
+        where(table[:expires_at].eq(nil).or(table[:expires_at].gt(time)))
+    end
+    scope :applied, -> { joins(:order_promotions).uniq }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
-    def self.advertised
-      where(advertise: true)
-    end
-
     def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).first
-    end
-
-    def self.active
-      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.current).
-        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
+      where(self.arel_table[:code].eq(coupon_code.strip)).first
     end
 
     def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
+    def active?
+      !(starts_at.nil? && expires_at.nil?) &&
+      (starts_at.nil? || starts_at < Time.current) &&
+        (expires_at.nil? || expires_at > Time.current)
+    end
+
     def expired?
-      !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
+      !active?
     end
 
     def activate(payload)
