@@ -5,7 +5,9 @@ class Spree::Base < ActiveRecord::Base
   include Spree::RansackableAttributes
 
   after_initialize do
-    self.preferences = default_preferences.merge(preferences) if has_attribute?(:preferences)
+    if has_attribute?(:preferences) && !preferences.nil?
+      self.preferences = default_preferences.merge(preferences)
+    end
   end
 
   if Kaminari.config.page_method_name != :page
