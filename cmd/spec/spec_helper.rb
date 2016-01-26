@@ -15,6 +15,13 @@ end
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
 
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
