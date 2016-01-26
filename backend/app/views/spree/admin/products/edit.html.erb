@@ -42,7 +42,7 @@
         <h3 class="panel-title"><%= Spree.t(:properties) %></h3>
       </div>
       <table class="table">
-        <% @product.product_properties.not_empty.not_text.each do |prop| %>
+        <% @product.product_properties.not_empty.each do |prop| %>
           <tr>
             <th><%= prop.property.presentation %></th>
             <td><%= prop.value %></td>
