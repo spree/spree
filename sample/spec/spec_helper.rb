@@ -7,6 +7,13 @@ require 'ffaker'
 require 'spree_sample'
 require 'spree/testing_support/shoulda_matcher_configuration'
 
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
+
 RSpec.configure do |config|
   config.color = true
   config.fail_fast = ENV['FAIL_FAST'] || false
