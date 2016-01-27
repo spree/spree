@@ -12,7 +12,7 @@
       <%= link_to_with_icon 'th-list', Spree.t(:overview), spree.edit_admin_product_url(@product) %>
     <% end if can?(:admin, @product) %>
     <%= content_tag :li, class: ('active' if current == 'General') do %>
-      <%= link_to_with_icon 'edit', Spree.t(:general), spree.general_admin_product_url(@product) %>
+      <%= link_to_with_icon 'edit', Spree.t(:details), spree.general_admin_product_url(@product) %>
     <% end if can?(:edit, @product) %>
     <%= content_tag :li, class: ('active' if current == 'Content') do %>
       <%= link_to_with_icon 'cog', Spree.t(:content), spree.content_admin_product_url(@product) %>
