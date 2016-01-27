@@ -42,12 +42,12 @@ module Spree
 
     def deals_with_adjustments_for_deleted_source
       # For incomplete orders, remove the adjustment completely.
-      adjustments.with_incomplete_order.destroy_all
+      adjustments.for_incomplete_order.destroy_all
 
       # For complete orders, the source will be invalid.
       # Therefore we nullify the source_id, leaving the adjustment in place.
       # This would mean that the order's total is not altered at all.
-      adjustments.with_complete_order.update_all(source_id: nil, updated_at: Time.current)
+      adjustments.for_complete_order.update_all(source_id: nil, updated_at: Time.current)
     end
   end
 end
