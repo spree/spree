@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.license     = %q{BSD-3}
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
+  s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.47.0'

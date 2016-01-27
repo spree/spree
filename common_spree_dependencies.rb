@@ -27,7 +27,7 @@ group :test do
   gem 'rspec-activemodel-mocks', '~> 1.0.2'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 3.3'
+  gem 'rspec-rails', '3.4.0'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.6.0'

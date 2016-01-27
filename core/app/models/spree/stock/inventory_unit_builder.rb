@@ -8,15 +8,7 @@ module Spree
       def units
         @order.line_items.flat_map do |line_item|
           line_item.quantity.times.map do |i|
-            @order.inventory_units.includes(
-              variant: {
-                product: {
-                  shipping_category: {
-                    shipping_methods: [:calculator, { zones: :zone_members }]
-                  }
-                }
-              }
-            ).build(
+            @order.inventory_units.build(
               pending: true,
               variant: line_item.variant,
               line_item: line_item,

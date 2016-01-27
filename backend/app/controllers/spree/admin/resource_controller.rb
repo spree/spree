@@ -30,9 +30,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     invoke_callbacks(:update, :before)
     if @object.update_attributes(permitted_resource_params)
       invoke_callbacks(:update, :after)
-      flash[:success] = flash_message_for(@object, :successfully_updated)
       respond_with(@object) do |format|
-        format.html { redirect_to location_after_save }
+        format.html do
+          flash[:success] = flash_message_for(@object, :successfully_updated)
+          redirect_to location_after_save
+        end
         format.js { render layout: false }
       end
     else
