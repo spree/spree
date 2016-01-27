@@ -5,8 +5,6 @@ module Spree
 
     scope :of_type, ->(t) { where(type: t) }
 
-    validate :unique_per_promotion, on: :create
-
     def self.for(promotable)
       all.select { |rule| rule.applicable?(promotable) }
     end
@@ -30,11 +28,6 @@ module Spree
     end
 
     private
-    def unique_per_promotion
-      if Spree::PromotionRule.exists?(promotion_id: promotion_id, type: self.class.name)
-        errors[:base] << "Promotion already contains this rule type"
-      end
-    end
 
     def eligibility_error_message(key, options = {})
       Spree.t(key, Hash[scope: [:eligibility_errors, :messages]].merge(options))
