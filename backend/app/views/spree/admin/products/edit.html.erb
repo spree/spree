@@ -7,7 +7,7 @@
         <% if can?(:edit, @product) %>
           <%= link_to Spree.t(:edit), spree.general_admin_product_url(@product), class: 'pull-right' %>
         <% end %>
-        <h3 class="panel-title"><%= Spree.t(:general) %></h3>
+        <h3 class="panel-title"><%= Spree.t(:details) %></h3>
       </div>
       <table class="table">
         <tr data-hook="product_overview_general_id">
