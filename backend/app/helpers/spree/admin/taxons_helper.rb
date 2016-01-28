@@ -11,7 +11,7 @@ module Spree
 
         taxon_ids.collect do |id, index|
           taxon = Spree::Taxon.find(id)
-          Hashie::Mash.new(id: taxon.id, name: taxon.name, pretty_name: taxon.pretty_name)
+          Hashie::Mash.new(id: taxon.id, name: taxon.name.to_s, pretty_name: taxon.pretty_name)
         end.sort { |a,b| a.name <=> b.name }
       end
     end
