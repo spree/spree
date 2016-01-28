@@ -35,8 +35,8 @@ module Spree
       inverse_of: :variant
 
     before_validation :set_cost_currency
-    validate :check_price, if: proc { Spree::Config[:require_master_price] }
 
+    validate :check_price
 
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
@@ -260,12 +260,12 @@ module Spree
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
-      if price.nil?
+      if price.nil? && Spree::Config[:require_master_price]
         raise 'No master variant found to infer price' unless product && product.master
         raise 'Must supply price for variant or master.price for product.' if self == product.master
         self.price = product.master.price
       end
-      if currency.nil?
+      if price.present? && currency.nil?
         self.currency = Spree::Config[:currency]
       end
     end

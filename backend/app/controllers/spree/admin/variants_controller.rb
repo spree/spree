@@ -26,8 +26,10 @@ module Spree
           master = @object.product.master
           @object.attributes = master.attributes.except('id', 'created_at', 'deleted_at',
                                                                         'sku', 'is_master')
-          # Shallow Clone of the default price to populate the price field.
-          @object.default_price = master.default_price.clone
+          if master.default_price.present?
+            # Shallow Clone of the default price to populate the price field.
+            @object.default_price = master.default_price.clone
+          end
         end
 
         def collection
