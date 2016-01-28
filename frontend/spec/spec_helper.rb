@@ -47,6 +47,9 @@ require 'spree/testing_support/caching'
 
 require 'paperclip/matchers'
 
+require 'capybara-screenshot/rspec'
+Capybara.save_and_open_page_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
+
 if ENV['WEBDRIVER'] == 'accessible'
   require 'capybara/accessible'
   Capybara.javascript_driver = :accessible

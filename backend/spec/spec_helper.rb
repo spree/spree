@@ -43,6 +43,9 @@ require 'spree/testing_support/capybara_ext'
 
 require 'paperclip/matchers'
 
+require 'capybara-screenshot/rspec'
+Capybara.save_and_open_page_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
+
 require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
