@@ -156,6 +156,15 @@ describe "Visiting Products", type: :feature, inaccessible: true do
         expect(page).not_to have_content Spree.t(:out_of_stock)
       end
     end
+
+    it "doesn't display cart form if all variants (including master) are out of stock" do
+      product.variants_including_master.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
+
+      click_link product.name
+      within("[data-hook=product_price]") do
+        expect(page).not_to have_content Spree.t(:add_to_cart)
+      end
+    end
   end
 
   context "a product with variants, images only for the variants" do
@@ -172,6 +181,28 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     it "should not display no image available" do
       visit spree.root_path
       expect(page).to have_xpath("//img[contains(@src,'thinking-cat')]")
+    end
+  end
+
+  context "an out of stock product without variants" do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Tote") }
+
+    before do
+      product.master.stock_items.update_all count_on_hand: 0, backorderable: false
+    end
+
+    it "does display out of stock for master product" do
+      click_link product.name
+      within("#product-price") do
+        expect(page).to have_content Spree.t(:out_of_stock)
+      end
+    end
+
+    it "doesn't display cart form if master is out of stock" do
+      click_link product.name
+      within("[data-hook=product_price]") do
+        expect(page).not_to have_content Spree.t(:add_to_cart)
+      end
     end
   end
 

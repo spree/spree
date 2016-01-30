@@ -33,15 +33,22 @@ Spree.ready ($) ->
   Spree.updateVariantPrice = (variant) ->
     variantPrice = variant.data('price')
     ($ '.price.selling').text(variantPrice) if variantPrice
+
+  Spree.disableCartForm = (variant) ->
+    inStock = variant.data('in-stock')
+    $('#add-to-cart-button').attr('disabled', !inStock)
+
   radios = ($ '#product-variants input[type="radio"]')
 
   if radios.length > 0
     selectedRadio = ($ '#product-variants input[type="radio"][checked="checked"]')
     Spree.showVariantImages selectedRadio.attr('value')
     Spree.updateVariantPrice selectedRadio
+    Spree.disableCartForm selectedRadio
+
+    radios.click (event) ->
+      Spree.showVariantImages @value
+      Spree.updateVariantPrice ($ this)
+      Spree.disableCartForm ($ this)
 
   Spree.addImageHandlers()
-
-  radios.click (event) ->
-    Spree.showVariantImages @value
-    Spree.updateVariantPrice ($ this)
