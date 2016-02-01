@@ -15,12 +15,7 @@ end
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
 
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
-  end
-end
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 RSpec.configure do |config|
   config.color = true

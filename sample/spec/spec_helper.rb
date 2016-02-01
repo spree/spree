@@ -5,13 +5,7 @@ require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'ffaker'
 require 'spree_sample'
-
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
-  end
-end
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 RSpec.configure do |config|
   config.color = true

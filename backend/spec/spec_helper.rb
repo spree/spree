@@ -40,6 +40,7 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 require 'paperclip/matchers'
 
@@ -48,13 +49,6 @@ Capybara.javascript_driver = :poltergeist
 
 # Set timeout to something high enough to allow CI to pass
 Capybara.default_max_wait_time = 10
-
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
-  end
-end
 
 RSpec.configure do |config|
   config.color = true
