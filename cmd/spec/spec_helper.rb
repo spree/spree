@@ -15,11 +15,13 @@ end
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
 
+require 'spree/testing_support/shoulda_matcher_configuration'
+
 RSpec.configure do |config|
   config.color = true
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
-  
+
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.use_transactional_fixtures = false

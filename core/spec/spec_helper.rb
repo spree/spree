@@ -34,6 +34,7 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 RSpec.configure do |config|
   config.color = true
