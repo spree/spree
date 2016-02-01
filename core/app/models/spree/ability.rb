@@ -65,7 +65,7 @@ module Spree
         @rules = rules + ability.send(:rules)
       end
 
-      # Protect admin and user roles
+      # Protect admin role
       cannot [:update, :destroy], Role, name: ['admin']
     end
   end
