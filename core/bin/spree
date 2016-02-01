@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'thor/group'
+
+case ARGV.first
+  when 'version', '-v', '--version'
+    puts Gem.loaded_specs['spree_core'].version
+  when 'extension'
+    ARGV.shift
+    require '../lib/spree/extension'
+    SpreeCmd::Extension.start
+end
