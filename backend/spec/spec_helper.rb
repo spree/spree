@@ -50,7 +50,7 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
 # Set timeout to something high enough to allow CI to pass
-Capybara.default_max_wait_time = 10
+Capybara.default_max_wait_time = 20
 
 RSpec.configure do |config|
   config.color = true
@@ -95,7 +95,7 @@ RSpec.configure do |config|
   end
 
   config.around do |example|
-    Timeout.timeout(20, &example)
+    Timeout.timeout(30, &example)
   end
 
   config.after(:each, :type => :feature) do |example|
