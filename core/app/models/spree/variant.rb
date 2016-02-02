@@ -161,7 +161,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency } || Spree::Price.new(variant_id: id, currency: currency)
+      prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
     end
 
     def amount_in(currency)
@@ -265,13 +265,13 @@ module Spree
         raise 'Must supply price for variant or master.price for product.' if self == product.master
         self.price = product.master.price
       end
-      if currency.nil?
+      if price.present? && currency.nil?
         self.currency = Spree::Config[:currency]
       end
     end
 
     def set_cost_currency
-      self.cost_currency = Spree::Config[:currency] if cost_currency.nil? || cost_currency.empty?
+      self.cost_currency = Spree::Config[:currency] if cost_currency.blank?
     end
 
     def create_stock_items

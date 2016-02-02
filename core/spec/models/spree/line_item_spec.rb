@@ -6,6 +6,46 @@ describe Spree::LineItem, type: :model do
 
   before { create(:store) }
 
+  describe '#ensure_valid_quantity' do
+    context 'quantity.nil?' do
+      before do
+        line_item.quantity = nil
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity < 0' do
+      before do
+        line_item.quantity = -1
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity = 0' do
+      before do
+        line_item.quantity = 0
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity > 0' do
+      let(:original_quantity) { 1 }
+
+      before do
+        line_item.quantity = original_quantity
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to eq(original_quantity) }
+    end
+  end
+
   context '#save' do
     it 'touches the order' do
       expect(line_item.order).to receive(:touch)

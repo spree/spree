@@ -202,7 +202,7 @@ module Spree
         required_attributes = json_response["required_attributes"]
         expect(required_attributes).to include("name")
         expect(required_attributes).to include("price")
-        expect(required_attributes).to include("shipping_category_id")
+        expect(required_attributes).to include("shipping_category")
       end
 
       it_behaves_like "modifying product actions are restricted"
@@ -335,7 +335,7 @@ module Spree
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
           errors = json_response["errors"]
           errors.delete("slug") # Don't care about this one.
-          expect(errors.keys).to match_array(["name", "price", "shipping_category_id"])
+          expect(errors.keys).to match_array(["name", "price", "shipping_category"])
         end
       end
 

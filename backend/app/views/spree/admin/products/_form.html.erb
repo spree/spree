@@ -101,7 +101,7 @@
 
         <div data-hook="admin_product_form_promotionable">
           <%= f.field_container :promotionable, class: ['form-group'] do %>
-              <%= f.label :promotionable %>
+              <%= f.label :promotionable, Spree.t(:promotionable) %>
               <%= f.error_message_on :promotionable %>
               <%= f.check_box :promotionable, class: 'form-control' %>
           <% end %>

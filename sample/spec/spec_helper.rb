@@ -5,6 +5,7 @@ require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'ffaker'
 require 'spree_sample'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 RSpec.configure do |config|
   config.color = true

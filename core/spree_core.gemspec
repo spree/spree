@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.license     = %q{BSD-3}
 
-  s.files        = Dir['LICENSE', 'README.md', 'app/**/*', 'config/**/*', 'lib/**/*', 'db/**/*', 'vendor/**/*']
+  s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.47.0'
@@ -35,13 +35,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'paperclip', '~> 4.2.0'
   s.add_dependency 'paranoia', '~> 2.1.0'
   s.add_dependency 'premailer-rails'
-  s.add_dependency 'rails', '~> 4.2.2'
+  s.add_dependency 'rails', '~> 4.2.5'
   s.add_dependency 'ransack', '~> 1.4.1'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.2'
   s.add_dependency 'stringex'
   s.add_dependency 'truncate_html', '0.9.2'
   s.add_dependency 'twitter_cldr', '~> 3.0'
+  s.add_dependency 'sprockets-rails', '~> 2.0'
 
   s.add_development_dependency 'email_spec', '~> 1.6'
 end

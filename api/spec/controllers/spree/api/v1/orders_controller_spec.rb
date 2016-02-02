@@ -12,7 +12,7 @@ module Spree
     let(:attributes) do
       [:number, :item_total, :display_total, :total, :state, :adjustment_total, :user_id,
        :created_at, :updated_at, :completed_at, :payment_total, :shipment_state, :payment_state,
-       :email, :special_instructions, :total_quantity, :display_item_total, :currency]
+       :email, :special_instructions, :total_quantity, :display_item_total, :currency, :considered_risky]
     end
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }

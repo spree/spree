@@ -181,7 +181,7 @@ describe "Products", type: :feature do
         wait_for_ajax
         check "Large"
         click_button "Create"
-        expect(page).to have_content("Shipping category can't be blank")
+        expect(page).to have_content("Shipping Category can't be blank")
         expect(field_labeled("Size")).to be_checked
         expect(field_labeled("Large")).to be_checked
         expect(field_labeled("Small")).not_to be_checked
@@ -215,7 +215,7 @@ describe "Products", type: :feature do
         fill_in "product_sku", with: "B100"
         fill_in "product_price", with: "100"
         click_button "Create"
-        expect(page).to have_content("Shipping category can't be blank")
+        expect(page).to have_content("Shipping Category can't be blank")
       end
 
       context "using a locale with a different decimal format " do
