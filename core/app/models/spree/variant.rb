@@ -265,7 +265,7 @@ module Spree
         raise 'Must supply price for variant or master.price for product.' if self == product.master
         self.price = product.master.price
       end
-      if currency.nil?
+      if price.present? && currency.nil?
         self.currency = Spree::Config[:currency]
       end
     end
