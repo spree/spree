@@ -16,5 +16,4 @@ describe Spree::ShippingCategory, :type => :model do
       expect(FactoryGirl.build(:shipping_category, name: 'Test')).not_to be_valid
     end
   end
-
 end
