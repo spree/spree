@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spree/testing_support/url_helpers'
 
 class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
@@ -7,6 +8,7 @@ end
 
 describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   controller(FakesController) {}
+  include Spree::TestingSupport::UrlHelpers
 
   describe '#current_ability' do
     it 'returns Spree::Ability instance' do
