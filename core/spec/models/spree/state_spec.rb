@@ -11,4 +11,8 @@ describe Spree::State, :type => :model do
     state = create(:state)
     expect(Spree::State.states_group_by_country_id).to eq({ state.country_id.to_s => [[state.id, state.name]] })
   end
+
+  describe 'whitelisted_ransackable_attributes' do
+    it { expect(Spree::State.whitelisted_ransackable_attributes).to eq(%w(abbr)) }
+  end
 end
