@@ -4,7 +4,7 @@ describe Spree::ShippingCategory, :type => :model do
 
   describe '#validations' do
     it 'should have a valid factory' do
-      expect(shipping_category).to be_valid
+      expect(FactoryGirl.build(:shipping_category)).to be_valid
     end
 
     it 'should require name' do
