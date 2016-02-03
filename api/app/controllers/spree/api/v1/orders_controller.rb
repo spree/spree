@@ -17,8 +17,14 @@ module Spree
 
         def cancel
           authorize! :update, @order, params[:token]
-          @order.cancel!
-          respond_with(@order, :default_template => :show)
+          @order.canceled_by(current_api_user)
+          respond_with(@order, default_template: :show)
+        end
+
+        def approve
+          authorize! :approve, @order, params[:token]
+          @order.approved_by(current_api_user)
+          respond_with(@order, default_template: :show)
         end
 
         def create
@@ -94,7 +100,7 @@ module Spree
           @order.coupon_code = params[:coupon_code]
           @handler = PromotionHandler::Coupon.new(@order).apply
           status = @handler.successful? ? 200 : 422
-          render "spree/api/v1/promotions/handler", :status => status
+          render "spree/api/v1/promotions/handler", status: status
         end
 
         private

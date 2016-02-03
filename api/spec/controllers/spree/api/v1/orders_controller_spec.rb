@@ -703,10 +703,29 @@ module Spree
         end
 
         specify do
-          api_put :cancel, :id => order.to_param
+          api_put :cancel, id: order.to_param
           expect(json_response["state"]).to eq("canceled")
+          expect(json_response["canceler_id"]).to eq(current_api_user.id)
         end
       end
+
+      context "can approve an order" do
+        before do
+          order.completed_at = Time.current
+          order.state = 'complete'
+          order.shipment_state = 'ready'
+          order.considered_risky = true
+          order.save!
+        end
+
+        specify do
+          api_put :approve, id: order.to_param
+          order.reload
+          expect(order.approver_id).to eq(current_api_user.id)
+          expect(order.considered_risky).to eq(false)
+        end
+      end
+
     end
   end
 end
