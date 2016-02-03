@@ -17,13 +17,9 @@ module Spree
     before_validation :copy_tax_category
 
     validates :variant, presence: true
-    validates :quantity, numericality:
-                        {
-                          only_integer: true,
-                          greater_than: -1,
-                          message: Spree.t('validation.must_be_int')
-                        }
+    validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
     validates :price, numericality: true
+
     validates_with Stock::AvailabilityValidator
     validate :ensure_proper_currency
 
