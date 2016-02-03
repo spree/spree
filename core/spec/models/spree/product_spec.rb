@@ -148,6 +148,17 @@ describe Spree::Product, :type => :model do
       end
     end
 
+    context "#can_supply?" do
+      it "should be true" do
+        expect(product.can_supply?).to be(true)
+      end
+
+      it "should be false" do
+        product.variants_including_master.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
+        expect(product.can_supply?).to be(false)
+      end
+    end
+
     context "variants_and_option_values" do
       let!(:high) { create(:variant, product: product) }
       let!(:low) { create(:variant, product: product) }

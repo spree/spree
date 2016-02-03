@@ -161,6 +161,11 @@ module Spree
       !!discontinue_on && discontinue_on <= Time.current
     end
 
+    # determine if any variant (including master) can be supplied
+    def can_supply?
+      variants_including_master.any?(&:can_supply?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
