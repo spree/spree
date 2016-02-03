@@ -438,14 +438,20 @@ module Spree
     end
 
     def empty!
-      line_items.destroy_all
-      updater.update_item_count
-      adjustments.destroy_all
-      shipments.destroy_all
-      state_changes.destroy_all
+      if completed?
+        raise Spree.t(:cannot_empty_completed_order)
+      else
+        line_items.destroy_all
+        updater.update_item_count
+        adjustments.destroy_all
+        shipments.destroy_all
+        state_changes.destroy_all
 
-      update_totals
-      persist_totals
+        update_totals
+        persist_totals
+        restart_checkout_flow
+        self
+      end
     end
 
     def has_step?(step)
