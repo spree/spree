@@ -27,11 +27,6 @@ module Spree
       'Base Calculator'
     end
 
-    ###################################################################
-
-    def self.register(*klasses)
-    end
-
     # Returns all calculators applicable for kind of work
     def self.calculators
       Rails.application.config.spree.calculators
