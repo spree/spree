@@ -3,6 +3,41 @@ require 'spec_helper'
 describe "Product scopes", :type => :model do
   let!(:product) { create(:product) }
 
+  describe '#available' do
+    context 'when discontinued' do
+      let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
+
+      it { expect(Spree::Product.available).not_to include(discontinued_product) }
+    end
+
+    context 'when not discontinued' do
+      let!(:product_2) { create(:product, discontinue_on: Time.current + 1.day) }
+
+      it { expect(Spree::Product.available).to include(product_2) }
+    end
+
+    context 'when available' do
+      let!(:product_2) { create(:product, available_on: Time.current - 1.day) }
+
+      it { expect(Spree::Product.available).to include(product_2) }
+    end
+
+    context 'when not available' do
+      let!(:unavailable_product) { create(:product, available_on: Time.current + 1.day) }
+
+      it { expect(Spree::Product.available).not_to include(unavailable_product) }
+    end
+
+    context 'when multiple prices present' do
+      let!(:price_1) { create(:price, currency: 'EUR', variant: product.master) }
+      let!(:price_2) { create(:price, currency: 'EUR', variant: product.master) }
+
+      it 'should not duplicate product' do
+        expect(Spree::Product.available).to eq([product])
+      end
+    end
+  end
+
   context "A product assigned to parent and child taxons" do
     before do
       @taxonomy = create(:taxonomy)
