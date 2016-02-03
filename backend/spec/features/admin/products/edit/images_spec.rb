@@ -23,7 +23,7 @@ describe "Product Images", type: :feature, js: true do
       click_link "Images"
       click_link "new_image_link"
       attach_file('image_attachment', file_path)
-      click_button "Update"
+      click_button "Create"
       expect(page).to have_content("successfully created!")
 
       click_icon(:edit)
