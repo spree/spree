@@ -3,6 +3,7 @@ module Spree
     module V1
       class CheckoutsController < Spree::Api::BaseController
         before_action :associate_user, only: :update
+        before_action :load_order_with_lock, only: [:next, :advance, :update]
 
         include Spree::Core::ControllerHelpers::Auth
         include Spree::Core::ControllerHelpers::Order
@@ -10,7 +11,6 @@ module Spree
         skip_before_action :set_current_order
 
         def next
-          load_order(true)
           authorize! :update, @order, order_token
           @order.next!
           respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
@@ -19,14 +19,12 @@ module Spree
         end
 
         def advance
-          load_order(true)
           authorize! :update, @order, order_token
           while @order.next; end
           respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
         end
 
         def update
-          load_order(true)
           authorize! :update, @order, order_token
 
           if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
@@ -68,6 +66,10 @@ module Spree
           raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
           @order.state = params[:state] if params[:state]
           state_callback(:before)
+        end
+
+        def load_order_with_lock
+          load_order(true)
         end
 
         def raise_insufficient_quantity
