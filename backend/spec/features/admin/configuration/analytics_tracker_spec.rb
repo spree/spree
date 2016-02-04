@@ -5,7 +5,8 @@ describe "Analytics Tracker", type: :feature do
 
   context "index" do
     before(:each) do
-      2.times { create(:tracker) }
+      create(:tracker)
+      create(:tracker, analytics_id: 'A200')
       visit spree.admin_trackers_path
     end
 
@@ -20,7 +21,7 @@ describe "Analytics Tracker", type: :feature do
       end
 
       within_row(2) do
-        expect(column_text(1)).to eq("A100")
+        expect(column_text(1)).to eq("A200")
         expect(column_text(2)).to eq("Yes")
       end
     end
