@@ -76,7 +76,7 @@ module Spree
     #
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      includes(:classifications).
+      joins(:classifications).
         where(Classification.arel_table[:taxon_id].in(taxon.self_and_descendants.pluck(:id))).
         order(Classification.arel_table[:position])
     end
@@ -128,8 +128,8 @@ module Spree
     # 1) have an option value with the name matching the one given
     # 2) have a product property with a value matching the one given
     add_search_scope :with do |value|
-      includes(variants_including_master: :option_values).
-        includes(:product_properties).
+      joins(variants_including_master: :option_values).
+        joins(:product_properties).
         where(OptionValue.arel_table[:name].eq(value).or(ProductProperty.arel_table[:value].eq(value)))
     end
 
