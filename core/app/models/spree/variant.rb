@@ -64,6 +64,10 @@ module Spree
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
 
+    def available?
+      !discontinued? && product.available?
+    end
+
     def self.active(currency = nil)
       not_discontinued.joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
