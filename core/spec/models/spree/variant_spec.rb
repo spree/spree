@@ -543,6 +543,53 @@ describe Spree::Variant, :type => :model do
     end
   end
 
+  describe "#available?" do
+    let(:variant) { create(:variant) }
+    context 'when discontinued' do
+      before(:each) do
+        variant.discontinue_on = Time.current - 1.day
+      end
+
+      context 'when product is available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { true }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+
+      context 'when product is not available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { false }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+    end
+
+    context 'when not discontinued' do
+      before(:each) do
+        variant.discontinue_on = Time.current + 1.day
+      end
+
+      context 'when product is available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { true }
+        end
+
+        it { expect(variant.available?).to be(true) }
+      end
+
+      context 'when product is not available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { false }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+    end
+  end
+
   describe "#check_price" do
     let(:variant) { create(:variant) }
     let(:variant2) { create(:variant) }

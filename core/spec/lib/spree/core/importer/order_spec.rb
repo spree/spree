@@ -14,7 +14,7 @@ module Spree
       let(:product) do
         product = Spree::Product.create(name: 'Test',
                                         sku: 'TEST-1',
-                                        price: 33.22)
+                                        price: 33.22, available_on: Time.current - 1.day)
         product.shipping_category = create(:shipping_category)
         product.save
         product
