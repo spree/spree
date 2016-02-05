@@ -93,7 +93,7 @@ module Spree
         options[:class] = (options[:class].to_s + " fa fa-#{icon_name} icon_link with-tip").strip
         options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
-        text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
+        text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         link_to(text, url, options)
       end
