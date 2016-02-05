@@ -5,8 +5,10 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
-    has_many :inventory_units, through: :return_items
-    has_many :customer_returns, through: :return_items
+    with_options through: :return_items do
+      has_many :inventory_units
+      has_many :customer_returns
+    end
 
     belongs_to :stock_location
     belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
@@ -15,9 +17,7 @@ module Spree
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
-    validates :order, presence: true
-    validates :reason, presence: true
-    validates :stock_location, presence: true
+    validates :order, :reason, :stock_location, presence: true
     validate :must_have_shipped_units, on: :create
 
 
@@ -37,6 +37,8 @@ module Spree
 
     extend DisplayMoney
     money_methods :pre_tax_total
+
+    self.whitelisted_ransackable_attributes = ['memo']
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)

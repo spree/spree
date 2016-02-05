@@ -148,6 +148,17 @@ describe Spree::Product, :type => :model do
       end
     end
 
+    context "#can_supply?" do
+      it "should be true" do
+        expect(product.can_supply?).to be(true)
+      end
+
+      it "should be false" do
+        product.variants_including_master.each { |v| v.stock_items.update_all count_on_hand: 0, backorderable: false }
+        expect(product.can_supply?).to be(false)
+      end
+    end
+
     context "variants_and_option_values" do
       let!(:high) { create(:variant, product: product) }
       let!(:low) { create(:variant, product: product) }
@@ -160,15 +171,17 @@ describe Spree::Product, :type => :model do
     end
 
     describe 'Variants sorting' do
+      ORDER_REGEXP = /ORDER BY (\`|\")spree_variants(\`|\").(\'|\")position(\'|\") ASC/
+
       context 'without master variant' do
         it 'sorts variants by position' do
-          expect(product.variants.to_sql).to match(/ORDER BY (\`|\")spree_variants(\`|\").position ASC/)
+          expect(product.variants.to_sql).to match(ORDER_REGEXP)
         end
       end
 
       context 'with master variant' do
         it 'sorts variants by position' do
-          expect(product.variants_including_master.to_sql).to match(/ORDER BY (\`|\")spree_variants(\`|\").position ASC/)
+          expect(product.variants_including_master.to_sql).to match(ORDER_REGEXP)
         end
       end
     end
@@ -484,5 +497,27 @@ describe Spree::Product, :type => :model do
   it "initializes a master variant when building a product" do
     product = Spree::Product.new
     expect(product.master.is_master).to be true
+  end
+
+  context "#discontinue!" do
+    let(:product) { create(:product, sku: 'a-sku') }
+
+    it "sets the discontinued" do
+      product.discontinue!
+      product.reload
+      expect(product.discontinued?).to be(true)
+    end
+  end
+
+  context "#discontinued?" do
+    let(:product_live) { build(:product, sku: "a-sku") }
+    it "should be false" do
+      expect(product_live.discontinued?).to be(false)
+    end
+
+    let(:product_discontinued) { build(:product, sku: "a-sku", discontinue_on: Time.now - 1.day)  }
+    it "should be true" do
+      expect(product_discontinued.discontinued?).to be(true)
+    end
   end
 end

@@ -1,10 +1,13 @@
 module Spree
   class InventoryUnit < Spree::Base
-    belongs_to :variant, class_name: "Spree::Variant", inverse_of: :inventory_units
-    belongs_to :order, class_name: "Spree::Order", inverse_of: :inventory_units
-    belongs_to :shipment, class_name: "Spree::Shipment", touch: true, inverse_of: :inventory_units
-    belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization", inverse_of: :inventory_units
-    belongs_to :line_item, class_name: "Spree::LineItem", inverse_of: :inventory_units
+
+    with_options inverse_of: :inventory_units do
+      belongs_to :variant, class_name: "Spree::Variant"
+      belongs_to :order, class_name: "Spree::Order"
+      belongs_to :shipment, class_name: "Spree::Shipment", touch: true
+      belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
+      belongs_to :line_item, class_name: "Spree::LineItem"
+    end
 
     has_many :return_items, inverse_of: :inventory_unit
     has_one :original_return_item, class_name: "Spree::ReturnItem", foreign_key: :exchange_inventory_unit_id
@@ -53,7 +56,7 @@ module Spree
       inventory_units.map do |iu|
         iu.update_columns(
           pending: false,
-          updated_at: Time.now,
+          updated_at: Time.current,
         )
       end
     end

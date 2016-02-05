@@ -108,7 +108,7 @@ describe Spree::ShippingRate, type: :model do
     end
 
     it "can be retrieved even when deleted" do
-      shipping_method.update_column(:deleted_at, Time.now)
+      shipping_method.update_column(:deleted_at, Time.current)
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.shipping_method).to eq(shipping_method)
@@ -127,7 +127,7 @@ describe Spree::ShippingRate, type: :model do
     end
 
     it "can be retrieved even when deleted" do
-      tax_rate.update_column(:deleted_at, Time.now)
+      tax_rate.update_column(:deleted_at, Time.current)
       shipping_rate.save
       shipping_rate.reload
       expect(shipping_rate.tax_rate).to eq(tax_rate)

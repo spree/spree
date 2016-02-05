@@ -120,7 +120,7 @@ module Spree
           end
 
           it "nullifies adjustments for completed orders" do
-            order = Order.create(completed_at: Time.now)
+            order = Order.create(completed_at: Time.current)
             adjustment = action.adjustments.create!(label: "Check",
                                                     amount: 0,
                                                     order: order,

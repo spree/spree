@@ -562,7 +562,7 @@ module Spree
 
     temp = SHIPMENT.merge({
       "tracking" => "UPS1234566",
-      "shipped_at" => Time.now.to_s,
+      "shipped_at" => Time.current.to_s,
       "state" => "shipped"
     })
     temp.delete('shipping_method')

@@ -4,13 +4,16 @@ module Spree
 
     class IncompleteReimbursementError < StandardError; end
 
-    belongs_to :order, inverse_of: :reimbursements
-    belongs_to :customer_return, inverse_of: :reimbursements, touch: true
+    with_options inverse_of: :reimbursements do
+      belongs_to :order
+      belongs_to :customer_return, touch: true
+    end
 
-    has_many :refunds, inverse_of: :reimbursement
-    has_many :credits, inverse_of: :reimbursement, class_name: 'Spree::Reimbursement::Credit'
-
-    has_many :return_items, inverse_of: :reimbursement
+    with_options inverse_of: :reimbursement do
+      has_many :refunds
+      has_many :credits, class_name: 'Spree::Reimbursement::Credit'
+      has_many :return_items
+    end
 
     validates :order, presence: true
     validate :validate_return_items_belong_to_same_order
@@ -26,7 +29,7 @@ module Spree
     class_attribute :reimbursement_tax_calculator
     self.reimbursement_tax_calculator = ReimbursementTaxCalculator
     # A separate attribute here allows you to use a more performant calculator for estimates
-    # and a different one (e.g. one that hits a 3rd party API) for the final caluclations.
+    # and a different one (e.g. one that hits a 3rd party API) for the final calculations.
     class_attribute :reimbursement_simulator_tax_calculator
     self.reimbursement_simulator_tax_calculator = ReimbursementTaxCalculator
 
@@ -147,7 +150,7 @@ module Spree
     # payments and credits have already been processed, we should allow the
     # reimbursement to show as 'reimbursed' and not 'errored'.
     def unpaid_amount_within_tolerance?
-      reimbursement_count = reimbursement_models.count do |model|
+      reimbursement_count = reimbursement_models.size do |model|
         model.total_amount_reimbursed_for(self) > 0
       end
       leniency = if reimbursement_count > 0

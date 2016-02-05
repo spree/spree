@@ -1,7 +1,5 @@
-node do |t|
-  child t.children => :taxons do
-    attributes *taxon_attributes
+attributes *taxon_attributes
 
-    extends "spree/api/v1/taxons/taxons"
-  end
+node :taxons do |t|
+  t.children.map { |c| partial("spree/api/v1/taxons/taxons", :object => c) }
 end

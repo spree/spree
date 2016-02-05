@@ -8,7 +8,7 @@ describe Spree::OptionType, :type => :model do
       product = product_option_type.product
       product.update_column(:updated_at, 1.day.ago)
       option_type.touch
-      expect(product.reload.updated_at).to be_within(3.seconds).of(Time.now)
+      expect(product.reload.updated_at).to be_within(3.seconds).of(Time.current)
     end
   end
 end

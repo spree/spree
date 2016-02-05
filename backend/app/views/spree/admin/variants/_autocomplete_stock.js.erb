@@ -1,5 +1,5 @@
 <script type='text/template' id='variant_autocomplete_stock_template'>
-  
+
   <label><%= Spree.t(:select_stock) %></label>
   <table class="table table-condensed table-bordered stock-levels no-marginb" data-hook="stock-levels">
     <thead>
@@ -13,12 +13,12 @@
         <tr>
           <td>{{this.stock_location_name}}</td>
           {{#unless ../variant.track_inventory}}
-            <td>It doesn't track inventory</td>
+            <td><%= Spree.t(:doesnt_track_inventory) %></td>
             <td>
               <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
             </td>
             <td class="actions actions-1">
-              <button class="btn btn-sm btn-default add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
+              <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
                 <span class="icon icon-add"></span>
               </button>
             </td>
@@ -32,7 +32,7 @@
                 <input class="quantity form-control input-sm" id="stock_item_quantity" data-stock-location-id="{{this.stock_location_id}}" type="number" min="1" value="1">
               </td>
               <td class="actions actions-1">
-                <button class="btn btn-sm btn-default add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
+                <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
                   <span class="icon icon-add"></span>
                 </button>
               </td>
@@ -44,5 +44,5 @@
         </tr>
       {{/each}}
     </tbody>
-  </table>  
+  </table>
 </script>

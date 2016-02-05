@@ -23,7 +23,7 @@ module Spree
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
-    validates :description, length: { maximum: 255 }
+    validates :description, length: { maximum: 255 }, allow_blank: true
 
     before_save :normalize_blank_values
 
@@ -35,6 +35,8 @@ module Spree
       SQL
     }
 
+    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+
     def self.advertised
       where(advertise: true)
     end
@@ -44,8 +46,8 @@ module Spree
     end
 
     def self.active
-      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.now).
-        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.now)
+      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.current).
+        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
     end
 
     def self.order_activatable?(order)
@@ -53,7 +55,7 @@ module Spree
     end
 
     def expired?
-      !!(starts_at && Time.now < starts_at || expires_at && Time.now > expires_at)
+      !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
     end
 
     def activate(payload)
@@ -78,7 +80,7 @@ module Spree
         self.save
       end
 
-      return action_taken
+      action_taken
     end
 
     # called anytime order.update! happens
@@ -129,7 +131,7 @@ module Spree
 
     def adjusted_credits_count(promotable)
       adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.promotion.where(:source_id => actions.pluck(:id)).count
+      credits_count - adjustments.promotion.where(source_id: actions.pluck(:id)).size
     end
 
     def credits

@@ -1,3 +1,21 @@
+
+# New Spree Commerce roadmap announcement
+
+We are excited to announce a new [Spree Commerce development roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016) for 2016 along with the new [Core Team](https://github.com/spree/spree/wiki/Core-Team). 
+
+Future Spree open-source efforts will be coordinated and managed jointly by [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/) developers who are working daily for merchants using Spree and who have hands on experience in Spree development, customization, maintenance and performance optimization. 
+
+We would be excited to welcome new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members! You can make history and join the Core Team. We will evaluate you as a candidate based on the volume and quality of the code contributed to the project as well as sustained efforts in improving the overall quality of the Spree community.
+
+We are determined to support the current contributor community and businesses running Spree worldwide. Spree will be developed and maintained with the next versions to follow. 
+
+Together we’ll not only develop future versions but we’ll support Spree developers around the world (mailing list, Slack channel, GitHub issues) in their daily efforts including migrations from 2.x. to 3.x versions.
+
+**For general discussion and support inquiries please use**:
+* Spree Slack public channels: http://slack.spreecommerce.com/
+* Spree Mailing List: https://groups.google.com/forum/#!forum/spree-user 
+
+
 **THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
 EXISTING ON THE MASTER BRANCH. IF YOU ARE WISHING TO USE A NON-MASTER BRANCH OF
 SPREE, PLEASE CONSULT THAT BRANCH'S README AND NOT THIS ONE.**
@@ -30,7 +48,7 @@ spree_api.
 
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/spree/spree)
+[![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
 [![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
@@ -45,15 +63,21 @@ The fastest way to get started is by using the spree command line tool
 available in the spree gem which will add Spree to an existing Rails application.
 
 ```shell
-gem install rails -v 4.2.2
+gem install rails -v 4.2.5
 gem install spree
-rails _4.2.2_ new my_store
+rails _4.2.5_ new my_store
 spree install my_store
+cd my_store
+rails g spree:auth:install
 ```
 
 This will add the Spree gem to your Gemfile, create initializers, copy migrations
 and optionally generate sample products and orders.
 
+If you get an "sh: identify: command not found" error then you can try installing imagemagick.
+```shell
+brew install imagemagick
+```
 If you get an "Unable to resolve dependencies" error when installing the Spree gem
 then you can try installing just the spree_cmd gem which should avoid any circular
 dependency issues.
@@ -143,27 +167,27 @@ within the context of Rails application. You can easily create a sandbox
 application inside of your cloned source directory for testing purposes.
 
 
-1. Clone the Git repo
+Clone the Git repo
 
 ```shell
 git clone git://github.com/spree/spree.git
 cd spree
 ```
 
-2. Install the gem dependencies
+Install the gem dependencies
 
 ```shell
 bundle install
 ```
 
-3. Create a sandbox Rails application for testing purposes (and automatically
+Create a sandbox Rails application for testing purposes (and automatically
 perform all necessary database setup)
 
 ```shell
 bundle exec rake sandbox
 ```
 
-4. Start the server
+Start the server
 
 ```shell
 cd sandbox

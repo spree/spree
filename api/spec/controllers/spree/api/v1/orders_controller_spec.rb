@@ -12,7 +12,7 @@ module Spree
     let(:attributes) do
       [:number, :item_total, :display_total, :total, :state, :adjustment_total, :user_id,
        :created_at, :updated_at, :completed_at, :payment_total, :shipment_state, :payment_state,
-       :email, :special_instructions, :total_quantity, :display_item_total, :currency]
+       :email, :special_instructions, :total_quantity, :display_item_total, :currency, :considered_risky]
     end
 
     let(:address_params) { { :country_id => Country.first.id, :state_id => State.first.id } }
@@ -65,9 +65,9 @@ module Spree
       end
 
       it "returns orders in reverse chronological order by completed_at" do
-        order.update_columns completed_at: Time.now
+        order.update_columns completed_at: Time.current
 
-        order2 = Order.create user: order.user, completed_at: Time.now - 1.day
+        order2 = Order.create user: order.user, completed_at: Time.current - 1.day
         expect(order2.created_at).to be > order.created_at
         order3 = Order.create user: order.user, completed_at: nil
         expect(order3.created_at).to be > order2.created_at
@@ -222,7 +222,7 @@ module Spree
     end
 
     it "cannot cancel an order that doesn't belong to them" do
-      order.update_attribute(:completed_at, Time.now)
+      order.update_attribute(:completed_at, Time.current)
       order.update_attribute(:shipment_state, "ready")
       api_put :cancel, :id => order.to_param
       assert_unauthorized!
@@ -696,17 +696,36 @@ module Spree
 
       context "can cancel an order" do
         before do
-          order.completed_at = Time.now
+          order.completed_at = Time.current
           order.state = 'complete'
           order.shipment_state = 'ready'
           order.save!
         end
 
         specify do
-          api_put :cancel, :id => order.to_param
+          api_put :cancel, id: order.to_param
           expect(json_response["state"]).to eq("canceled")
+          expect(json_response["canceler_id"]).to eq(current_api_user.id)
         end
       end
+
+      context "can approve an order" do
+        before do
+          order.completed_at = Time.current
+          order.state = 'complete'
+          order.shipment_state = 'ready'
+          order.considered_risky = true
+          order.save!
+        end
+
+        specify do
+          api_put :approve, id: order.to_param
+          order.reload
+          expect(order.approver_id).to eq(current_api_user.id)
+          expect(order.considered_risky).to eq(false)
+        end
+      end
+
     end
   end
 end

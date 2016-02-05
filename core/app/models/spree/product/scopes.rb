@@ -186,14 +186,18 @@ module Spree
       where("#{Product.quoted_table_name}.deleted_at IS NULL or #{Product.quoted_table_name}.deleted_at >= ?", Time.zone.now)
     end
 
+    add_search_scope :not_discontinued do
+      where("#{Product.quoted_table_name}.discontinue_on IS NULL or #{Product.quoted_table_name}.discontinue_on >= ?", Time.zone.now)
+    end
+
     # Can't use add_search_scope for this as it needs a default argument
     def self.available(available_on = nil, currency = nil)
-      joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.now)
+      not_discontinued.joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.current)
     end
     search_scopes << :available
 
     def self.active(currency = nil)
-      not_deleted.available(nil, currency)
+      not_discontinued.available(nil, currency)
     end
     search_scopes << :active
 

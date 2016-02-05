@@ -3,16 +3,11 @@ module Spree
   class LegacyUser < Spree::Base
     include UserAddress
     include UserPaymentSource
+    include UserMethods
 
     self.table_name = 'spree_users'
 
-    has_many :orders, foreign_key: :user_id
-
     before_destroy :check_completed_orders
-
-    def has_spree_role?(role)
-      true
-    end
 
     attr_accessor :password
     attr_accessor :password_confirmation

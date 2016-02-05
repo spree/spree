@@ -9,7 +9,7 @@ module Spree
     #   2) Add it to the config load path, or require it in an initializer, e.g...
     #
     #      # config/initializers/spree.rb
-    #      require 'spree/product_filters'
+    #      require 'spree/core/product_filters'
     #
 
     # set up some basic filters for use with products

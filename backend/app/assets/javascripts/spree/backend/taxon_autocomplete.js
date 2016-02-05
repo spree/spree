@@ -8,6 +8,7 @@ var set_taxon_select = function(selector){
       initSelection: function (element, callback) {
         var url = Spree.url(Spree.routes.taxons_search, {
           ids: element.val(),
+          without_children: true,
           token: Spree.api_key
         });
         return $.getJSON(url, null, function (data) {

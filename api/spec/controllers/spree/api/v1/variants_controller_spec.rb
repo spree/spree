@@ -79,7 +79,7 @@ module Spree
     # Regression test for #2141
     context "a deleted variant" do
       before do
-        variant.update_column(:deleted_at, Time.now)
+        variant.update_column(:deleted_at, Time.current)
       end
 
       it "is not returned in the results" do
@@ -157,7 +157,7 @@ module Spree
       # Test for #2141
       context "deleted variants" do
         before do
-          variant.update_column(:deleted_at, Time.now)
+          variant.update_column(:deleted_at, Time.current)
         end
 
         it "are visible by admin" do

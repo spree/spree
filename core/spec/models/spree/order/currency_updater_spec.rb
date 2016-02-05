@@ -8,8 +8,8 @@ describe Spree::Order, :type => :model do
 
       context "#homogenize_line_item_currencies" do
         it "succeeds without error" do
-          expect { line_item.order.update_attributes!(currency: 'EUR') }.to_not raise_error
-        end      
+          expect { line_item.order.update_attributes!(currency: 'EUR') }.not_to raise_error
+        end
 
         it "changes the line_item currencies" do
           expect { line_item.order.update_attributes!(currency: 'EUR') }.to change{ line_item.reload.currency }.from('USD').to('EUR')
@@ -20,7 +20,7 @@ describe Spree::Order, :type => :model do
         end
 
         it "fails to change the order currency when no prices are available in that currency" do
-          expect { line_item.order.update_attributes!(currency: 'GBP') }.to raise_error
+          expect { line_item.order.update_attributes!(currency: 'GBP') }.to raise_error("no GBP price found for #{line_item.product.name} (#{line_item.variant.sku})")
         end
 
         it "calculates the item total in the order.currency" do

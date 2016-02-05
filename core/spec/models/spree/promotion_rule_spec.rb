@@ -12,7 +12,7 @@ module Spree
     end
 
     it "should force developer to implement eligible? method" do
-      expect { BadTestRule.new.eligible? }.to raise_error
+      expect { BadTestRule.new.eligible? }.to raise_error(ArgumentError)
     end
 
     it "validates unique rules for a promotion" do

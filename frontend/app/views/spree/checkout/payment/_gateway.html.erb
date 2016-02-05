@@ -6,7 +6,7 @@
     <%= label_tag "name_on_card_#{payment_method.id}" do %>
       <%= Spree.t(:name_on_card) %><abbr class="required" title="required">*</abbr>
     <% end %>
-    <%= text_field_tag "#{param_prefix}[name]", "#{@order.billing_firstname} #{@order.billing_lastname}", { id: "name_on_card_#{payment_method.id}", :class => 'form-control required'} %>
+    <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card_#{payment_method.id}", :class => 'form-control required'} %>
   </p>
 
   <p class="field" data-hook="card_number">

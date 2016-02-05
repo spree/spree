@@ -17,7 +17,7 @@
       </div>
       <div data-hook="display" class="form-group">
         <%= label_tag :payment_method_display_on, Spree.t(:display) %>
-        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, {:class => 'select2'}) %>
+        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, {:class => 'select2'}) %>
       </div>
       <div data-hook="auto_capture" class="form-group">
         <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %>

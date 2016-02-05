@@ -203,15 +203,15 @@ describe Spree::Order, :type => :model do
     end
   end
 
-  describe '#ensure_line_item_variants_are_not_deleted' do
-    subject { order.ensure_line_item_variants_are_not_deleted }
+  describe "#ensure_line_item_variants_are_not_discontinued" do
+    subject { order.ensure_line_item_variants_are_not_discontinued }
 
     let(:order) { create :order_with_line_items }
 
     context 'when variant is destroyed' do
       before do
         allow(order).to receive(:restart_checkout_flow)
-        order.line_items.first.variant.destroy
+        order.line_items.first.variant.discontinue!
       end
 
       it 'should restart checkout flow' do
@@ -267,23 +267,30 @@ describe Spree::Order, :type => :model do
   end
 
   context "empty!" do
-    let(:order) { stub_model(Spree::Order, item_count: 2) }
+    let(:order) { Spree::Order.create(email: 'test@example.com') }
 
-    before do
-      allow(order).to receive_messages(line_items: [1, 2])
-      allow(order).to receive_messages(adjustments: [])
-      allow(order).to receive_message_chain(:line_items, sum: 0)
+    context 'completed order' do
+      before do
+        order.update_columns(state: 'complete', completed_at: Time.current)
+      end
+
+      it "raises an exception" do
+        expect { order.empty! }.to raise_error(RuntimeError, Spree.t(:cannot_empty_completed_order))
+      end
     end
 
-    it "clears out line items, adjustments and update totals" do
-      expect(order.line_items).to receive(:destroy_all)
-      expect(order.adjustments).to receive(:destroy_all)
-      expect(order.shipments).to receive(:destroy_all)
-      expect(order.updater).to receive(:update_totals)
-      expect(order.updater).to receive(:persist_totals)
+    context 'incomplete order' do
+      before do
+        order.empty!
+      end
 
-      order.empty!
-      expect(order.item_total).to eq 0
+      it "clears out line items, adjustments and update totals" do
+        expect(order.line_items.count).to eq(0)
+        expect(order.adjustments.count).to eq(0)
+        expect(order.shipments.count).to eq(0)
+        expect(order.item_total).to eq(0)
+        expect(order.empty!).to eq(order)
+      end
     end
   end
 
@@ -717,7 +724,7 @@ describe Spree::Order, :type => :model do
       order.completed_at = nil
       expect(order.completed?).to be false
 
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       expect(order.completed?).to be true
     end
   end
@@ -756,14 +763,14 @@ describe Spree::Order, :type => :model do
     it "should be false for completed order in the canceled state" do
       order.state = 'canceled'
       order.shipment_state = 'ready'
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       expect(order.can_cancel?).to be false
     end
 
     it "should be true for completed order with no shipment" do
       order.state = 'complete'
       order.shipment_state = nil
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       expect(order.can_cancel?).to be true
     end
   end

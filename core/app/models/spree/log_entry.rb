@@ -7,10 +7,7 @@ module Spree
     after_rollback :save_anyway
 
     def save_anyway
-      log = Spree::LogEntry.new
-      log.source  = source
-      log.details = details
-      log.save!
+      Spree::LogEntry.create!(source: source, details: details)
     end
 
     def parsed_details

@@ -25,13 +25,13 @@ module Spree
     it 'compute_shipment must be overridden' do
       expect {
         subject.compute_shipment(shipment)
-      }.to raise_error
+      }.to raise_error(NameError)
     end
 
     it 'compute_package must be overridden' do
       expect {
         subject.compute_package(package)
-      }.to raise_error
+      }.to raise_error(NotImplementedError)
     end
 
     it 'checks availability for a package' do

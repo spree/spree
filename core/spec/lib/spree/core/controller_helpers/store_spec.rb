@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Auth
+  include Spree::Core::ControllerHelpers::Order
   include Spree::Core::ControllerHelpers::Store
 end
 
@@ -14,8 +16,8 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     end
   end
 
-  describe "#current_tax_zone" do
-    subject { controller.current_tax_zone }
+  describe "#current_price_options" do
+    subject(:current_price_options) { controller.current_price_options }
 
     context "when there is a default tax zone" do
       let(:default_zone) { Spree::Zone.new }
@@ -26,7 +28,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
 
       context "when there is no current order" do
         it "returns the default tax zone" do
-          is_expected.to eq(default_zone)
+          is_expected.to include(tax_zone: default_zone)
         end
       end
 
@@ -39,7 +41,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
           allow(controller).to receive(:current_order).and_return(current_order)
         end
 
-        it { is_expected.to eq(other_zone) }
+        it { is_expected.to include(tax_zone: other_zone) }
       end
     end
 
@@ -49,7 +51,9 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context "when there is no current order" do
-        it { is_expected.to be_nil }
+        it "return nil when asked for the current tax zone" do
+          expect(current_price_options[:tax_zone]).to be_nil
+        end
       end
 
       context "when there is a current order" do
@@ -61,7 +65,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
           allow(controller).to receive(:current_order).and_return(current_order)
         end
 
-        it { is_expected.to eq(other_zone) }
+        it { is_expected.to include(tax_zone: other_zone) }
       end
     end
   end

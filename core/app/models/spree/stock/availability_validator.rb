@@ -4,12 +4,11 @@ module Spree
       def validate(line_item)
         unit_count = line_item.inventory_units.size
         return if unit_count >= line_item.quantity
+
         quantity = line_item.quantity - unit_count
         return if quantity.zero?
 
-        quantifier = Stock::Quantifier.new(line_item.variant)
-
-        return if quantifier.can_supply?(quantity)
+        return if item_available?(line_item, quantity)
 
         variant = line_item.variant
         display_name = "#{variant.name}"
@@ -19,6 +18,12 @@ module Spree
           :selected_quantity_not_available,
           item: display_name.inspect
         )
+      end
+
+      private
+
+      def item_available?(line_item, quantity)
+        Stock::Quantifier.new(line_item.variant).can_supply?(quantity)
       end
     end
   end

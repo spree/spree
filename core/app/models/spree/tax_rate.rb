@@ -5,13 +5,16 @@ module Spree
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
 
-    belongs_to :zone, class_name: "Spree::Zone", inverse_of: :tax_rates
-    belongs_to :tax_category,
-               class_name: "Spree::TaxCategory",
-               inverse_of: :tax_rates
+    with_options inverse_of: :tax_rates do
+      belongs_to :zone, class_name: "Spree::Zone"
+      belongs_to :tax_category,
+                 class_name: "Spree::TaxCategory"
+    end
 
-    validates :amount, presence: true, numericality: true
-    validates :tax_category_id, presence: true
+    with_options presence: true do
+      validates :amount, numericality: { allow_nil: true }
+      validates :tax_category
+    end
 
     scope :by_zone, -> (zone) { where(zone_id: zone.id) }
     scope :potential_rates_for_zone,
@@ -71,11 +74,11 @@ module Spree
       end
     end
 
-    def self.included_tax_amount_for(zone, category)
-      return 0 unless zone && category
-      potential_rates_for_zone(zone).
+    def self.included_tax_amount_for(options)
+      return 0 unless options[:tax_zone] && options[:tax_category]
+      potential_rates_for_zone(options[:tax_zone]).
         included_in_price.
-        for_tax_category(category).
+        for_tax_category(options[:tax_category]).
         pluck(:amount).sum
     end
 

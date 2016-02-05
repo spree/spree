@@ -13,7 +13,7 @@ module Spree
       before_action :find_adjustment, only: [:destroy, :edit, :update]
 
       def index
-        @adjustments = @order.all_adjustments.order("created_at ASC")
+        @adjustments = @order.all_adjustments.order(created_at: :asc)
       end
 
       private

@@ -5,7 +5,7 @@ describe Spree::CreditCard, type: :model do
     {
       number: '4111111111111111',
       verification_value: '123',
-      expiry: "12 / #{(Time.now.year + 1).to_s.last(2)}",
+      expiry: "12 / #{(Time.current.year + 1).to_s.last(2)}",
       name: 'Spree Commerce'
     }
   end
@@ -42,12 +42,12 @@ describe Spree::CreditCard, type: :model do
 
   context "#can_capture?" do
     it "should be true if payment is pending" do
-      payment = mock_model(Spree::Payment, pending?: true, created_at: Time.now)
+      payment = mock_model(Spree::Payment, pending?: true, created_at: Time.current)
       expect(credit_card.can_capture?(payment)).to be true
     end
 
     it "should be true if payment is checkout" do
-      payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.now)
+      payment = mock_model(Spree::Payment, pending?: false, checkout?: true, created_at: Time.current)
       expect(credit_card.can_capture?(payment)).to be true
     end
   end
@@ -273,8 +273,8 @@ describe Spree::CreditCard, type: :model do
   context "#to_active_merchant" do
     before do
       credit_card.number = "4111111111111111"
-      credit_card.year = Time.now.year
-      credit_card.month = Time.now.month
+      credit_card.year = Time.current.year
+      credit_card.month = Time.current.month
       credit_card.name = "Ludwig van Beethoven"
       credit_card.verification_value = 123
     end
@@ -282,8 +282,8 @@ describe Spree::CreditCard, type: :model do
     it "converts to an ActiveMerchant::Billing::CreditCard object" do
       am_card = credit_card.to_active_merchant
       expect(am_card.number).to eq("4111111111111111")
-      expect(am_card.year).to eq(Time.now.year)
-      expect(am_card.month).to eq(Time.now.month)
+      expect(am_card.year).to eq(Time.current.year)
+      expect(am_card.month).to eq(Time.current.month)
       expect(am_card.first_name).to eq("Ludwig")
       expect(am_card.last_name).to eq("van Beethoven")
       expect(am_card.verification_value).to eq(123)
@@ -317,7 +317,7 @@ describe Spree::CreditCard, type: :model do
     user = FactoryGirl.create(:user)
     first = FactoryGirl.create(:credit_card, user: user, default: true)
     second = FactoryGirl.create(:credit_card, user: user, default: false)
-    first.update_columns(year: DateTime.now.year, month: 1.month.ago.month)
+    first.update_columns(year: DateTime.current.year, month: 1.month.ago.month)
 
     expect { second.update_attributes!(default: true) }.not_to raise_error
   end

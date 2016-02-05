@@ -31,7 +31,7 @@ module Spree
     has_many :properties, through: :product_properties
 
     has_many :classifications, dependent: :delete_all, inverse_of: :product
-    has_many :taxons, through: :classifications
+    has_many :taxons, through: :classifications, before_remove: :remove_taxon
 
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
     has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
@@ -45,12 +45,12 @@ module Spree
       class_name: 'Spree::Variant'
 
     has_many :variants,
-      -> { where(is_master: false).order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      -> { where(is_master: false).order(:position) },
       inverse_of: :product,
       class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { order("#{::Spree::Variant.quoted_table_name}.position ASC") },
+      -> { order(:position) },
       inverse_of: :product,
       class_name: 'Spree::Variant',
       dependent: :destroy
@@ -62,16 +62,13 @@ module Spree
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
-    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth, :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in
+    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth,
+                        :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in, :cost_price, :images
 
-    delegate_belongs_to :master, :cost_price
-
-    delegate :images, to: :master, prefix: true
-    alias_method :images, :master_images
+    alias_method :master_images, :images
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
 
-    after_create :set_master_variant_defaults
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
@@ -84,15 +81,20 @@ module Spree
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
+    before_destroy :ensure_no_line_items
 
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
-    validates :meta_keywords, length: { maximum: 255 }
-    validates :meta_title, length: { maximum: 255 }
-    validates :name, presence: true
-    validates :price, presence: true, if: proc { Spree::Config[:require_master_price] }
-    validates :shipping_category_id, presence: true
+    with_options length: { maximum: 255 }, allow_blank: true do
+      validates :meta_keywords
+      validates :meta_title
+    end
+    with_options presence: true do
+      validates :name, :shipping_category
+      validates :price, if: proc { Spree::Config[:require_master_price] }
+    end
+
     validates :slug, length: { minimum: 3 }, allow_blank: true, uniqueness: true
 
     attr_accessor :option_values_hash
@@ -101,17 +103,16 @@ module Spree
 
     alias :options :product_option_types
 
+    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_attributes = %w[description name slug]
+
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
     end
 
     def tax_category
-      if self[:tax_category_id].nil?
-        TaxCategory.where(is_default: true).first
-      else
-        TaxCategory.find(self[:tax_category_id])
-      end
+      super || TaxCategory.find_by(is_default: true)
     end
 
     # Adding properties and option types on creation based on a chosen prototype
@@ -123,9 +124,10 @@ module Spree
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
-      option_values_hash.keys.map(&:to_i).each do |id|
-        self.option_type_ids << id unless option_type_ids.include?(id)
-        product_option_types.create(option_type_id: id) unless product_option_types.pluck(:option_type_id).include?(id)
+      required_option_type_ids = option_values_hash.keys.map(&:to_i)
+      missing_option_type_ids = required_option_type_ids - option_type_ids
+      missing_option_type_ids.each do |id|
+        product_option_types.create(option_type_id: id)
       end
     end
 
@@ -147,7 +149,20 @@ module Spree
     # deleted products and products with nil or future available_on date
     # are not available
     def available?
-      !(available_on.nil? || available_on.future?) && !deleted?
+      !(available_on.nil? || available_on.future?) && !deleted? && !discontinued?
+    end
+
+    def discontinue!
+      update_column(:discontinue_on, Time.current)
+    end
+
+    def discontinued?
+      !!discontinue_on && discontinue_on <= Time.current
+    end
+
+    # determine if any variant (including master) can be supplied
+    def can_supply?
+      variants_including_master.any?(&:can_supply?)
     end
 
     # split variants list into hash which shows mapping of opt value onto matching variants
@@ -158,11 +173,10 @@ module Spree
     end
 
     def self.like_any(fields, values)
-      where fields.map { |field|
-        values.map { |value|
-          arel_table[field].matches("%#{value}%")
-        }.inject(:or)
-      }.inject(:or)
+      conditions = fields.product(values).map do |(field, value)|
+        arel_table[field].matches("%#{value}%")
+      end
+      where conditions.inject(:or)
     end
 
     # Suitable for displaying only variants that has at least one option value.
@@ -190,11 +204,7 @@ module Spree
     def set_property(property_name, property_value, property_presentation = property_name)
       ActiveRecord::Base.transaction do
         # Works around spree_i18n #301
-        property = if Property.exists?(name: property_name)
-          Property.where(name: property_name).first
-        else
-          Property.create(name: property_name, presentation: property_presentation)
-        end
+        property = Property.create_with(presentation: property_presentation).find_or_create_by(name: property_name)
         product_property = ProductProperty.where(product: self, property: property).first_or_initialize
         product_property.value = property_value
         product_property.save!
@@ -218,7 +228,7 @@ module Spree
     # which would make AR's default finder return nil.
     # This is a stopgap for that little problem.
     def master
-      super || variants_including_master.with_deleted.where(is_master: true).first
+      super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
     private
@@ -234,10 +244,11 @@ module Spree
     end
 
     def any_variants_not_track_inventory?
+      return true unless Spree::Config.track_inventory_levels
       if variants_including_master.loaded?
-        variants_including_master.any? { |v| !v.should_track_inventory? }
+        variants_including_master.any? { |v| !v.track_inventory? }
       else
-        !Spree::Config.track_inventory_levels || variants_including_master.where(track_inventory: false).any?
+        variants_including_master.where(track_inventory: false).exists?
       end
     end
 
@@ -248,7 +259,7 @@ module Spree
       values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
 
       values.each do |ids|
-        variant = variants.create(
+        variants.create(
           option_value_ids: ids,
           price: master.price
         )
@@ -267,7 +278,7 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.now.to_i}_#{slug}"[0..254] unless frozen?
+      update_column :slug, "#{Time.current.to_i}_#{slug}"[0..254] unless frozen?
     end
 
     def update_slug_history
@@ -318,11 +329,6 @@ module Spree
       end
     end
 
-    # ensures the master variant is flagged as such
-    def set_master_variant_defaults
-      master.is_master = true
-    end
-
     # Try building a slug based on the following fields in increasing order of specificity.
     def slug_candidates
       [
@@ -350,6 +356,17 @@ module Spree
       Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
     end
 
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
+      end
+    end
+
+    def remove_taxon(taxon)
+      removed_classifications = classifications.where(taxon: taxon)
+      removed_classifications.each &:remove_from_list
+    end
   end
 end
 

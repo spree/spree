@@ -441,7 +441,7 @@ describe Spree::Variant, :type => :model do
     it "updates a product" do
       variant.product.update_column(:updated_at, 1.day.ago)
       variant.touch
-      expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.now)
+      expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.current)
     end
 
     it "clears the in_stock cache key" do
@@ -518,6 +518,160 @@ describe Spree::Variant, :type => :model do
     it "return the dimension if the dimension parameters are different of zero" do
       dimension_expected = variant.width + variant.depth + variant.height
       expect(variant.dimension).to eq (dimension_expected)
+    end
+  end
+
+  context "#discontinue!" do
+    let(:variant) { create(:variant) }
+
+    it "sets the discontinued" do
+      variant.discontinue!
+      variant.reload
+      expect(variant.discontinued?).to be(true)
+    end
+  end
+
+  context "#discontinued?" do
+    let(:variant_live) { build(:variant) }
+    it "should be false" do
+      expect(variant_live.discontinued?).to be(false)
+    end
+
+    let(:variant_discontinued) { build(:variant, discontinue_on: Time.now - 1.day) }
+    it "should be true" do
+      expect(variant_discontinued.discontinued?).to be(true)
+    end
+  end
+
+  describe "#available?" do
+    let(:variant) { create(:variant) }
+    context 'when discontinued' do
+      before(:each) do
+        variant.discontinue_on = Time.current - 1.day
+      end
+
+      context 'when product is available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { true }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+
+      context 'when product is not available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { false }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+    end
+
+    context 'when not discontinued' do
+      before(:each) do
+        variant.discontinue_on = Time.current + 1.day
+      end
+
+      context 'when product is available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { true }
+        end
+
+        it { expect(variant.available?).to be(true) }
+      end
+
+      context 'when product is not available' do
+        before(:each) do
+          allow(variant.product).to receive(:available?) { false }
+        end
+
+        it { expect(variant.available?).to be(false) }
+      end
+    end
+  end
+
+  describe "#check_price" do
+    let(:variant) { create(:variant) }
+    let(:variant2) { create(:variant) }
+
+    context 'require_master_price set false' do
+      before { Spree::Config.set(require_master_price: false) }
+
+      context 'price present and currency present' do
+        it { expect(variant.send(:check_price)).to be(nil) }
+      end
+
+      context 'price present and currency nil' do
+        before { variant.currency = nil }
+
+        it { expect(variant.send(:check_price)).to be(Spree::Config[:currency]) }
+      end
+
+      context 'price nil and currency present' do
+        before { variant.price = nil }
+
+        it { expect(variant.send(:check_price)).to be(nil) }
+      end
+
+      context 'price nil and currency nil' do
+        before { variant.price = nil }
+
+        it { expect(variant.send(:check_price)).to be(nil) }
+      end
+    end
+
+    context 'require_master_price set true' do
+      before { Spree::Config.set(require_master_price: true) }
+
+      context 'price present and currency present' do
+        it { expect(variant.send(:check_price)).to be(nil) }
+      end
+
+      context 'price present and currency nil' do
+        before { variant.currency = nil }
+
+        it { expect(variant.send(:check_price)).to be(Spree::Config[:currency]) }
+      end
+
+      context 'product and master_variant present and equal' do
+        context 'price nil and currency present' do
+          before { variant.price = nil }
+          it { expect(variant.send(:check_price)).to be(nil) }
+
+          context 'check variant price' do
+            before { variant.send(:check_price) }
+            it { expect(variant.price).to eq(variant.product.master.price) }
+          end
+        end
+
+        context 'price nil and currency nil' do
+          before do
+            variant.price = nil
+            variant.send(:check_price)
+          end
+
+          it { expect(variant.price).to eq(variant.product.master.price) }
+          it { expect(variant.currency).to eq(Spree::Config[:currency]) }
+        end
+      end
+
+      context 'product not present' do
+        context 'product not present' do
+          before { variant.product = nil }
+
+          context 'price nil and currency present' do
+            before { variant.price = nil }
+
+            it { expect { variant.send(:check_price) }.to raise_error(RuntimeError, 'No master variant found to infer price') }
+          end
+
+          context 'price nil and currency nil' do
+            before { variant.price = nil }
+
+            it { expect { variant.send(:check_price) }.to raise_error(RuntimeError, 'No master variant found to infer price') }
+          end
+        end
+      end
     end
   end
 end

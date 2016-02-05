@@ -59,7 +59,7 @@ module Spree
         #
         def create
           authorize! :create, Product
-          params[:product][:available_on] ||= Time.now
+          params[:product][:available_on] ||= Time.current
           set_up_shipping_category
 
           options = { variants_attrs: variants_params, options_attrs: option_types_params }

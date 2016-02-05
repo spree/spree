@@ -167,7 +167,7 @@ describe Spree::StockItem, :type => :model do
 
       expect {
         stock_location.stock_items.create!(variant: subject.variant)
-      }.to raise_error
+      }.to raise_error(StandardError)
     end
   end
 

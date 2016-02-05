@@ -33,6 +33,16 @@ describe Spree::LocalizedNumber do
         expect(subject.class.parse(1599.99)).to eql 1599.99
       end
     end
+
+    context "string argument" do
+      it "should not be modified" do
+        I18n.locale = :de
+        number = '1.599,99'
+        number_bak = number.dup
+        subject.class.parse(number)
+        expect(number).to eql(number_bak)
+      end
+    end
   end
 
 end

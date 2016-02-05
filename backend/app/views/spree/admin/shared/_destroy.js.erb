@@ -3,4 +3,8 @@ if success %>
   show_flash('success', "<%= j success %>")
 <% end %>
 
+<% if error = flash.discard(:error) %>
+show_flash('warning', "<%= j error %>")
+<% end %>
+
 <%= render :partial => '/spree/admin/shared/update_order_state' if @order %>

@@ -3,7 +3,7 @@ require 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
-    PAYMENT_STATES = %w(balance_due checkout completed credit_owed failed paid pending processing void).freeze
+    PAYMENT_STATES = %w(balance_due credit_owed failed paid void).freeze
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped).freeze
 
     extend FriendlyId
@@ -51,6 +51,9 @@ module Spree
       remove_transition from: :delivery, to: :confirm
     end
 
+    self.whitelisted_ransackable_associations = %w[shipments user promotions bill_address ship_address line_items]
+    self.whitelisted_ransackable_attributes =  %w[completed_at created_at email number state payment_state shipment_state total considered_risky]
+
     attr_reader :coupon_code
     attr_accessor :temporary_address, :temporary_credit_card
 
@@ -73,12 +76,15 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
-    has_many :state_changes, as: :stateful, dependent: :destroy
-    has_many :line_items, -> { order("#{LineItem.table_name}.created_at ASC") }, dependent: :destroy, inverse_of: :order
-    has_many :payments, dependent: :destroy
-    has_many :return_authorizations, dependent: :destroy, inverse_of: :order
+
+    with_options dependent: :destroy do
+      has_many :state_changes, as: :stateful
+      has_many :line_items, -> { order(:created_at) }, inverse_of: :order
+      has_many :payments
+      has_many :return_authorizations, inverse_of: :order
+      has_many :adjustments, -> { order(:created_at) }, as: :adjustable
+    end
     has_many :reimbursements, inverse_of: :order
-    has_many :adjustments, -> { order("#{Adjustment.table_name}.created_at ASC") }, as: :adjustable, dependent: :destroy
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
@@ -115,19 +121,14 @@ module Spree
     before_create :link_by_email
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
-    validates :number,               presence:     true,
-                                     length:       { maximum: 32, allow_blank: true },
-                                     uniqueness:   { allow_blank: true }
-    validates :email,                presence:     true,
-                                     length:       { maximum: 254, allow_blank: true },
-                                     email:        { allow_blank: true },
-                                     if:           :require_email
-    validates :state,                presence:     true,
-                                     inclusion:    { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
-    validates :payment_state,        inclusion:    { in: %w[balance_due paid credit_owed failed void], allow_blank: true }
-    validates :shipment_state,       inclusion:    { in: %w[ready pending partial shipped backorder canceled], allow_blank: true }
-    validates :item_count,           presence:     true,
-                                     numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+    with_options presence: true do
+      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
+      validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
+      validates :state, inclusion: { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
+      validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+    end
+    validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
+    validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
     validates :item_total,           POSITIVE_MONEY_VALIDATION
     validates :adjustment_total,     MONEY_VALIDATION
     validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
@@ -139,8 +140,9 @@ module Spree
 
     validate :has_available_shipment
 
-    delegate :update_totals, :persist_totals, :to => :updater
+    delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
+    delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
 
     class_attribute :update_hooks
     self.update_hooks = Set.new
@@ -347,7 +349,7 @@ module Spree
 
     def name
       if (address = bill_address || ship_address)
-        "#{address.firstname} #{address.lastname}"
+        address.full_name
       end
     end
 
@@ -409,23 +411,15 @@ module Spree
       @available_payment_methods ||= PaymentMethod.available_on_front_end
     end
 
-    def billing_firstname
-      bill_address.try(:firstname)
-    end
-
-    def billing_lastname
-      bill_address.try(:lastname)
-    end
-
     def insufficient_stock_lines
       line_items.select(&:insufficient_stock?)
     end
 
     ##
-    # Check to see if any line item variants are soft deleted.
+    # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
-    def ensure_line_item_variants_are_not_deleted
-      if line_items.any?{ |li| !li.variant || li.variant.paranoia_destroyed? }
+    def ensure_line_item_variants_are_not_discontinued
+      if line_items.any?{ |li| !li.variant || li.variant.discontinued? }
         errors.add(:base, Spree.t(:deleted_variants_present))
         restart_checkout_flow
         false
@@ -445,14 +439,20 @@ module Spree
     end
 
     def empty!
-      line_items.destroy_all
-      updater.update_item_count
-      adjustments.destroy_all
-      shipments.destroy_all
-      state_changes.destroy_all
+      if completed?
+        raise Spree.t(:cannot_empty_completed_order)
+      else
+        line_items.destroy_all
+        updater.update_item_count
+        adjustments.destroy_all
+        shipments.destroy_all
+        state_changes.destroy_all
 
-      update_totals
-      persist_totals
+        update_totals
+        persist_totals
+        restart_checkout_flow
+        self
+      end
     end
 
     def has_step?(step)
@@ -517,7 +517,7 @@ module Spree
     def restart_checkout_flow
       self.update_columns(
         state: 'cart',
-        updated_at: Time.now,
+        updated_at: Time.current,
       )
       self.next! if self.line_items.size > 0
     end
@@ -537,7 +537,7 @@ module Spree
     end
 
     def is_risky?
-      self.payments.risky.count > 0
+      payments.risky.size > 0
     end
 
     def canceled_by(user)
@@ -545,7 +545,7 @@ module Spree
         cancel!
         self.update_columns(
           canceler_id: user.id,
-          canceled_at: Time.now,
+          canceled_at: Time.current,
         )
       end
     end
@@ -555,7 +555,7 @@ module Spree
         approve!
         self.update_columns(
           approver_id: user.id,
-          approved_at: Time.now,
+          approved_at: Time.current,
         )
       end
     end
@@ -678,7 +678,7 @@ module Spree
     end
 
     def use_billing?
-      @use_billing == true || @use_billing == 'true' || @use_billing == '1'
+      use_billing.in?([true, 'true', '1'])
     end
 
     def set_currency

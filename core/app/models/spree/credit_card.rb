@@ -8,15 +8,20 @@ module Spree
 
     after_save :ensure_one_default
 
-    attr_accessor :encrypted_data,
-                    :number,
-                    :imported,
-                    :verification_value
+    # As of rails 4.2 string columns always return strings, we can override it on model level.
+    attribute :month, Type::Integer.new
+    attribute :year,  Type::Integer.new
 
-    validates :month, :year, numericality: { only_integer: true }, if: :require_card_numbers?, on: :create
-    validates :number, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
-    validates :name, presence: true, if: :require_card_numbers?, on: :create
-    validates :verification_value, presence: true, if: :require_card_numbers?, on: :create, unless: :imported
+    attr_reader :number
+    attr_accessor :encrypted_data,
+                  :imported,
+                  :verification_value
+
+    with_options if: :require_card_numbers?, on: :create do
+      validates :month, :year, numericality: { only_integer: true }
+      validates :number, :verification_value, presence: true, unless: :imported
+      validates :name, presence: true
+    end
 
     scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
     scope :default, -> { where(default: true) }
@@ -41,20 +46,6 @@ module Spree
       jcb: /^(?:2131|1800|35\d{3})\d{11}$/
     }
 
-    # As of rails 4.2 string columns always return strings, perhaps we should
-    # change these to integer columns on db level
-    def month
-      if type_casted = super
-        type_casted.to_i
-      end
-    end
-
-    def year
-      if type_casted = super
-        type_casted.to_i
-      end
-    end
-
     def expiry=(expiry)
       return unless expiry.present?
 
@@ -65,7 +56,7 @@ module Spree
         [match[1], match[2]]
       end
       if self[:year]
-        self[:year] = "20" + self[:year] if self[:year].length == 2
+        self[:year] = "20#{ self[:year] }" if self[:year] / 100 == 0
         self[:year] = self[:year].to_i
       end
       self[:month] = self[:month].to_i if self[:month]
@@ -144,12 +135,12 @@ module Spree
 
     def to_active_merchant
       ActiveMerchant::Billing::CreditCard.new(
-        :number => number,
-        :month => month,
-        :year => year,
-        :verification_value => verification_value,
-        :first_name => first_name,
-        :last_name => last_name,
+        number: number,
+        month: month,
+        year: year,
+        verification_value: verification_value,
+        first_name: first_name,
+        last_name: last_name,
       )
     end
 
@@ -161,9 +152,8 @@ module Spree
 
     def ensure_one_default
       if self.user_id && self.default
-        CreditCard.where(default: true).where.not(id: self.id).where(user_id: self.user_id).each do |ucc|
-          ucc.update_columns(default: false)
-        end
+        CreditCard.where(default: true, user_id: self.user_id).where.not(id: self.id)
+          .update_all(default: false)
       end
     end
   end

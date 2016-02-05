@@ -121,13 +121,12 @@ describe Spree::Admin::OrdersController, type: :controller do
       let(:closed) { double('closed_adjustments') }
 
       before do
-        allow(adjustments).to receive(:where).and_return(closed)
+        allow(adjustments).to receive(:closed).and_return(closed)
         allow(closed).to receive(:update_all)
       end
 
       it "changes all the closed adjustments to open" do
-        expect(adjustments).to receive(:where).with(state: 'closed')
-          .and_return(closed)
+        expect(adjustments).to receive(:closed).and_return(closed)
         expect(closed).to receive(:update_all).with(state: 'open')
         spree_post :open_adjustments, id: order.number
       end
@@ -147,13 +146,12 @@ describe Spree::Admin::OrdersController, type: :controller do
       let(:open) { double('open_adjustments') }
 
       before do
-        allow(adjustments).to receive(:where).and_return(open)
+        allow(adjustments).to receive(:open).and_return(open)
         allow(open).to receive(:update_all)
       end
 
       it "changes all the open adjustments to closed" do
-        expect(adjustments).to receive(:where).with(state: 'open')
-          .and_return(open)
+        expect(adjustments).to receive(:open).and_return(open)
         expect(open).to receive(:update_all).with(state: 'closed')
         spree_post :close_adjustments, id: order.number
       end

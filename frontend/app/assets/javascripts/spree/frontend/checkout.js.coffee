@@ -1,8 +1,3 @@
-//= require jquery.payment
-//= require_self
-//= require spree/frontend/checkout/address
-//= require spree/frontend/checkout/payment
-
 Spree.disableSaveOnClick = ->
   ($ 'form.edit_order').on('submit', (e) ->
     if (($ this).data('submitted') == true)

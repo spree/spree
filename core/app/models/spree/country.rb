@@ -1,12 +1,13 @@
 module Spree
   class Country < Spree::Base
-    has_many :states, -> { order('name ASC') }, dependent: :destroy
+    has_many :states, dependent: :destroy
     has_many :addresses, dependent: :nullify
 
     has_many :zone_members,
-      -> { where(zoneable_type: 'Spree::Country') },
-      class_name: 'Spree::ZoneMember',
-      foreign_key: :zoneable_id
+             -> { where(zoneable_type: 'Spree::Country') },
+             class_name: 'Spree::ZoneMember',
+             dependent: :destroy,
+             foreign_key: :zoneable_id
 
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 

@@ -14,15 +14,17 @@ module Spree
     has_many :products, through: :classifications
 
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
-    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
+    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
 
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon'
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true
-    validates :meta_keywords, length: { maximum: 255 }
-    validates :meta_description, length: { maximum: 255 }
-    validates :meta_title, length: { maximum: 255 }
+    with_options length: { maximum: 255 }, allow_blank: true do
+      validates :meta_keywords
+      validates :meta_description
+      validates :meta_title
+    end
 
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
@@ -92,7 +94,7 @@ module Spree
 
     def touch_ancestors_and_taxonomy
       # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
-      self.class.where(id: ancestors.pluck(:id)).update_all(updated_at: Time.now)
+      ancestors.update_all(updated_at: Time.current)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
       taxonomy.try!(:touch)
     end

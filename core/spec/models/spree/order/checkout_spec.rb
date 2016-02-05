@@ -408,14 +408,32 @@ describe Spree::Order, :type => :model do
         context 'when there is at least one valid payment' do
           let(:payment_state) { 'checkout' }
 
-          before do
-            expect(order).to receive(:process_payments!).once { true }
+          context 'line_items are in stock' do
+            before do
+              expect(order).to receive(:process_payments!).once { true }
+            end
+
+            it "transitions to complete" do
+              order.next!
+              assert_state_changed(order, 'payment', 'complete')
+              expect(order.state).to eq('complete')
+            end
           end
 
-          it "transitions to complete" do
-            order.next!
-            assert_state_changed(order, 'payment', 'complete')
-            expect(order.state).to eq('complete')
+          context 'line_items are not in stock' do
+            before do
+              expect(order).to receive(:ensure_line_items_are_in_stock).once { false }
+            end
+
+            it 'should not receive process_payments!' do
+              expect(order).not_to receive(:process_payments!)
+              order.next
+            end
+
+            it 'does not transition to complete' do
+              order.next
+              expect(order.state).to eq('payment')
+            end
           end
         end
 
@@ -550,7 +568,7 @@ describe Spree::Order, :type => :model do
     it "does not attempt to process payments" do
       allow(order).to receive_message_chain(:line_items, :present?) { true }
       allow(order).to receive(:ensure_line_items_are_in_stock) { true }
-      allow(order).to receive(:ensure_line_item_variants_are_not_deleted) { true }
+      allow(order).to receive(:ensure_line_item_variants_are_not_discontinued) { true }
       expect(order).not_to receive(:payment_required?)
       expect(order).not_to receive(:process_payments!)
       order.next!
@@ -692,7 +710,7 @@ describe Spree::Order, :type => :model do
 
         expect {
           order.update_from_params(params, permitted_params)
-        }.to raise_error
+        }.to raise_error(Spree.t(:invalid_credit_card))
       end
     end
 

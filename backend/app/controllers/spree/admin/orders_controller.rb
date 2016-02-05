@@ -81,7 +81,7 @@ module Spree
           @order.errors.add(:line_items, Spree.t('errors.messages.blank')) if @order.line_items.empty?
         end
 
-        render :action => :edit
+        render action: :edit
       end
 
       def cancel
@@ -110,7 +110,7 @@ module Spree
       end
 
       def open_adjustments
-        adjustments = @order.all_adjustments.where(state: 'closed')
+        adjustments = @order.all_adjustments.closed
         adjustments.update_all(state: 'open')
         flash[:success] = Spree.t(:all_adjustments_opened)
 
@@ -118,7 +118,7 @@ module Spree
       end
 
       def close_adjustments
-        adjustments = @order.all_adjustments.where(state: 'open')
+        adjustments = @order.all_adjustments.open
         adjustments.update_all(state: 'closed')
         flash[:success] = Spree.t(:all_adjustments_closed)
 

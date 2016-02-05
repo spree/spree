@@ -136,6 +136,9 @@ module Spree
           unless params[:show_deleted]
             scope = scope.not_deleted
           end
+          unless params[:show_discontinued]
+            scope = scope.not_discontinued
+          end
         else
           scope = Product.accessible_by(current_ability, :read).active.includes(*product_includes)
         end

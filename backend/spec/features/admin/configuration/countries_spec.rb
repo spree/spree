@@ -18,7 +18,7 @@ module Spree
 
       wait_for_ajax
 
-      expect { Country.find(country.id) }.to raise_error
+      expect { Country.find(country.id) }.to raise_error(StandardError)
     end
   end
 end

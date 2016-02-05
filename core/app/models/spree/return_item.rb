@@ -11,12 +11,14 @@ module Spree
     class_attribute :refund_amount_calculator
     self.refund_amount_calculator = Calculator::Returns::DefaultRefundAmount
 
-    belongs_to :return_authorization, inverse_of: :return_items
-    belongs_to :inventory_unit, inverse_of: :return_items
+    with_options inverse_of: :return_items do
+      belongs_to :return_authorization
+      belongs_to :inventory_unit
+      belongs_to :customer_return
+      belongs_to :reimbursement
+    end
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
     belongs_to :exchange_inventory_unit, class_name: 'Spree::InventoryUnit', inverse_of: :original_return_item
-    belongs_to :customer_return, inverse_of: :return_items
-    belongs_to :reimbursement, inverse_of: :return_items
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
@@ -220,12 +222,8 @@ module Spree
     end
 
     def cancel_others
-      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id)
-                       .where.not(id: id)
-                       .where.not(reception_status: 'cancelled')
-                       .each do |return_item|
-        return_item.cancel!
-      end
+      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id).where.not(id: id).
+        not_cancelled.each(&:cancel!)
     end
 
     def should_restock?

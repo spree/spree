@@ -7,12 +7,12 @@ module Spree
     belongs_to :state, class_name: 'Spree::State'
     belongs_to :country, class_name: 'Spree::Country'
 
-    validates_presence_of :name
+    validates :name, presence: true
 
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
-    after_create :create_stock_items, :if => "self.propagate_all_variants?"
+    after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
 
     def state_text
@@ -68,7 +68,7 @@ module Spree
       item = stock_item_or_create(variant)
       item.update_columns(
         count_on_hand: item.count_on_hand + quantity,
-        updated_at: Time.now
+        updated_at: Time.current
       )
     end
 
@@ -108,10 +108,7 @@ module Spree
 
       def ensure_one_default
         if self.default
-          StockLocation.where(default: true).where.not(id: self.id).each do |stock_location|
-            stock_location.default = false
-            stock_location.save!
-          end
+          StockLocation.where(default: true).where.not(id: self.id).update_all(default: false)
         end
       end
   end

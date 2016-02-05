@@ -7,7 +7,7 @@ describe Spree::InventoryUnit, :type => :model do
   context "#backordered_for_stock_item" do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
-      order.completed_at = Time.now
+      order.completed_at = Time.current
       create(:shipment, order: order, stock_location: stock_location)
       order.shipments.reload
       create(:line_item, order: order, variant: stock_item.variant)
@@ -100,23 +100,6 @@ describe Spree::InventoryUnit, :type => :model do
 
     end
 
-  end
-
-  context "variants deleted" do
-    let!(:unit) do
-      Spree::InventoryUnit.create(variant: stock_item.variant)
-    end
-
-    it "can still fetch variant" do
-      unit.variant.destroy
-      expect(unit.reload.variant).to be_a Spree::Variant
-    end
-
-    it "can still fetch variants by eager loading (remove default_scope)" do
-      skip "find a way to remove default scope when eager loading associations"
-      unit.variant.destroy
-      expect(Spree::InventoryUnit.joins(:variant).includes(:variant).first.variant).to be_a Spree::Variant
-    end
   end
 
   context "#finalize_units!" do

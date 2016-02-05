@@ -13,6 +13,32 @@ describe Spree::Adjustment, :type => :model do
 
   let(:adjustment) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: order, order: order, amount: 5) }
 
+  describe 'scopes' do
+    describe '.for_complete_order' do
+      let(:complete_order) { Spree::Order.create! completed_at: Time.current }
+      let(:incomplete_order) { Spree::Order.create! completed_at: nil }
+      let(:adjustment_for_complete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: complete_order, order: complete_order, amount: 5) }
+      let(:adjustment_for_incomplete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: incomplete_order, order: incomplete_order, amount: 5) }
+
+      subject { Spree::Adjustment.for_complete_order }
+
+      it { is_expected.to include(adjustment_for_complete_order) }
+      it { is_expected.to_not include(adjustment_for_incomplete_order) }
+    end
+
+    describe '.for_incomplete_order' do
+      let(:complete_order) { Spree::Order.create! completed_at: Time.current }
+      let(:incomplete_order) { Spree::Order.create! completed_at: nil }
+      let(:adjustment_for_complete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: complete_order, order: complete_order, amount: 5) }
+      let(:adjustment_for_incomplete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: incomplete_order, order: incomplete_order, amount: 5) }
+
+      subject { Spree::Adjustment.for_incomplete_order }
+
+      it { is_expected.to_not include(adjustment_for_complete_order) }
+      it { is_expected.to include(adjustment_for_incomplete_order) }
+    end
+  end
+
   context '#create & #destroy' do
     let(:adjustment) { Spree::Adjustment.new(label: "Adjustment", amount: 5, order: order, adjustable: create(:line_item)) }
 

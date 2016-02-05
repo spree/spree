@@ -12,6 +12,8 @@ module Spree
 
     after_touch :touch_all_products
 
+    self.whitelisted_ransackable_attributes = ['presentation']
+
     private
 
     def touch_all_products

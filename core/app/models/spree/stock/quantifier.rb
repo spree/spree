@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Quantifier
-      attr_reader :stock_items
+      attr_reader :stock_items, :variant
 
       def initialize(variant)
         @variant = variant
@@ -9,7 +9,7 @@ module Spree
       end
 
       def total_on_hand
-        if @variant.should_track_inventory?
+        if variant.should_track_inventory?
           stock_items.sum(:count_on_hand)
         else
           Float::INFINITY
@@ -20,8 +20,8 @@ module Spree
         stock_items.any?(&:backorderable)
       end
 
-      def can_supply?(required)
-        total_on_hand >= required || backorderable?
+      def can_supply?(required = 1)
+        variant.available? && (total_on_hand >= required || backorderable?)
       end
 
     end

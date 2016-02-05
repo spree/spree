@@ -9,9 +9,7 @@ module Spree
 
     after_create :process_return!
 
-    validates :return_items, presence: true
-    validates :stock_location, presence: true
-
+    validates :return_items, :stock_location, presence: true
     validate :must_have_return_authorization, on: :create
     validate :return_items_belong_to_same_order
 
@@ -19,6 +17,8 @@ module Spree
 
     extend DisplayMoney
     money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+
+    delegate :id, to: :order, prefix: true, allow_nil: true
 
     def completely_decided?
       !return_items.undecided.exists?
@@ -34,9 +34,6 @@ module Spree
       return_items.first.inventory_unit.order
     end
 
-    def order_id
-      order.try(:id)
-    end
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
@@ -60,7 +57,7 @@ module Spree
     end
 
     def return_items_belong_to_same_order
-      if return_items.select { |return_item| return_item.inventory_unit.order_id != order_id }.any?
+      if return_items.any? { |return_item| return_item.inventory_unit.order_id != order_id }
         errors.add(:base, Spree.t(:return_items_cannot_be_associated_with_multiple_orders))
       end
     end

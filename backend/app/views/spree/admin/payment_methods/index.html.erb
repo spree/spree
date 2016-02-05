@@ -28,7 +28,7 @@
           </td>
           <td><%= method.name %></td>
           <td><%= method.type %></td>
-          <td class="text-center"><%= method.display_on.blank? ? Spree.t(:both) : Spree.t(method.display_on) %></td>
+          <td class="text-center"><%= Spree.t(method.display_on) %></td>
           <td class="text-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">
             <%= link_to_edit(method, :no_text => true) if can? :edit, method %>

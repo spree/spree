@@ -138,6 +138,7 @@ describe Spree::BaseHelper, type: :helper do
   describe "#display_price" do
     let!(:product) { create(:product) }
     let(:current_currency) { "USD" }
+    let(:current_price_options) { { tax_zone: current_tax_zone } }
 
     context "when there is no current order" do
       let (:current_tax_zone) { nil }

@@ -2,37 +2,35 @@ module Spree
   class StockItem < Spree::Base
     acts_as_paranoid
 
-    belongs_to :stock_location, class_name: 'Spree::StockLocation', inverse_of: :stock_items
-    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :stock_items, counter_cache: true
+    with_options inverse_of: :stock_items do
+      belongs_to :stock_location, class_name: 'Spree::StockLocation'
+      belongs_to :variant, class_name: 'Spree::Variant', counter_cache: true
+    end
     has_many :stock_movements, inverse_of: :stock_item
 
-    validates_presence_of :stock_location, :variant
-    validates_uniqueness_of :variant_id, scope: [:stock_location_id, :deleted_at]
+    validates :stock_location, :variant, presence: true
+    validates :variant_id, uniqueness: { scope: [:stock_location_id, :deleted_at] }, allow_blank: true
 
-    validates_numericality_of :count_on_hand,
+    validates :count_on_hand, numericality: {
                               greater_than_or_equal_to: 0,
                               less_than_or_equal_to: 2**31 - 1,
-                              only_integer: true, if: :verify_count_on_hand?
+                              only_integer: true }, if: :verify_count_on_hand?
 
     delegate :weight, :should_track_inventory?, to: :variant
+    delegate :name, to: :variant, prefix: true
 
     after_save :conditional_variant_touch, if: :changed?
     after_touch { variant.touch }
+
+    self.whitelisted_ransackable_attributes = ['count_on_hand', 'stock_location_id']
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end
 
-    def variant_name
-      variant.name
-    end
-
     def adjust_count_on_hand(value)
       self.with_lock do
-        self.count_on_hand = self.count_on_hand + value
-        process_backorders(count_on_hand - count_on_hand_was)
-
-        self.save!
+        set_count_on_hand(count_on_hand + value)
       end
     end
 
@@ -63,10 +61,6 @@ module Spree
     private
       def verify_count_on_hand?
         count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
-      end
-
-      def count_on_hand=(value)
-        write_attribute(:count_on_hand, value)
       end
 
       # Process backorders based on amount of stock received

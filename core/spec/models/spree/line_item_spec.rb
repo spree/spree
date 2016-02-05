@@ -6,6 +6,46 @@ describe Spree::LineItem, type: :model do
 
   before { create(:store) }
 
+  describe '#ensure_valid_quantity' do
+    context 'quantity.nil?' do
+      before do
+        line_item.quantity = nil
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity < 0' do
+      before do
+        line_item.quantity = -1
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity = 0' do
+      before do
+        line_item.quantity = 0
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to be_zero }
+    end
+
+    context 'quantity > 0' do
+      let(:original_quantity) { 1 }
+
+      before do
+        line_item.quantity = original_quantity
+        line_item.valid?
+      end
+
+      it { expect(line_item.quantity).to eq(original_quantity) }
+    end
+  end
+
   context '#save' do
     it 'touches the order' do
       expect(line_item.order).to receive(:touch)
@@ -13,17 +53,19 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  context '#destroy' do
-    it "fetches deleted products" do
-      line_item.product.destroy
+  context "#discontinued" do
+    it "fetches discontinued products" do
+      line_item.product.discontinue!
       expect(line_item.reload.product).to be_a Spree::Product
     end
 
-    it "fetches deleted variants" do
-      line_item.variant.destroy
+    it "fetches discontinued variants" do
+      line_item.variant.discontinue!
       expect(line_item.reload.variant).to be_a Spree::Variant
     end
+  end
 
+  context "#destroy" do
     it "returns inventory when a line item is destroyed" do
       expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
       line_item.destroy

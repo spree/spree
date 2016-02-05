@@ -22,20 +22,20 @@ describe Spree::Price, :type => :model do
       end
     end
 
-    context 'when the amount is greater than 999,999.99' do
-      let(:amount) { 1_000_000 }
+    context 'when the amount is greater than maximum amount' do
+      let(:amount) { Spree::Price::MAXIMUM_AMOUNT + 1 }
 
       it 'has 1 error_on' do
         expect(subject.error_on(:amount).size).to eq(1)
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq 'must be less than or equal to 999999.99'
+        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::MAXIMUM_AMOUNT}"
       end
     end
 
-    context 'when the amount is between 0 and 999,999.99' do
-      let(:amount) { 100 }
+    context 'when the amount is between 0 and the maximum amount' do
+      let(:amount) { Spree::Price::MAXIMUM_AMOUNT }
       it { is_expected.to be_valid }
     end
   end
@@ -46,43 +46,46 @@ describe Spree::Price, :type => :model do
     let(:zone) { Spree::Zone.new }
     let(:amount) { 10 }
     let(:tax_category) { Spree::TaxCategory.new }
-    subject { Spree::Price.new variant: variant, amount: amount }
+    let(:price) { Spree::Price.new variant: variant, amount: amount }
+    let(:price_options) { { tax_zone: zone } }
+
+    subject(:price_with_vat) { price.price_including_vat_for(price_options) }
 
     context 'when called with a non-default zone' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(subject).to receive(:default_zone).at_least(:once).and_return(default_zone)
-        allow(subject).to receive(:apply_foreign_vat?).and_return(true)
-        allow(subject).to receive(:included_tax_amount).with(default_zone, tax_category) { 0.19 }
-        allow(subject).to receive(:included_tax_amount).with(zone, tax_category) { 0.25 }
+        expect(price).to receive(:default_zone).at_least(:once).and_return(default_zone)
+        allow(price).to receive(:apply_foreign_vat?).and_return(true)
+        allow(price).to receive(:included_tax_amount).with(tax_zone: default_zone, tax_category: tax_category) { 0.19 }
+        allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category) { 0.25 }
       end
 
       it "returns the correct price including another VAT to two digits" do
-        expect(subject.price_including_vat_for(zone)).to eq(10.50)
+        expect(price_with_vat).to eq(10.50)
       end
     end
 
     context 'when called from the default zone' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(subject).to receive(:default_zone).at_least(:once).and_return(zone)
+        expect(price).to receive(:default_zone).at_least(:once).and_return(zone)
       end
 
       it "returns the correct price" do
-        expect(subject).to receive(:price).and_call_original
-        expect(subject.price_including_vat_for(zone)).to eq(10.00)
+        expect(price).to receive(:price).and_call_original
+        expect(price_with_vat).to eq(10.00)
       end
     end
 
     context 'when no default zone is set' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(subject).to receive(:default_zone).at_least(:once).and_return(nil)
+        expect(price).to receive(:default_zone).at_least(:once).and_return(nil)
       end
 
       it "returns the correct price" do
-        expect(subject).to receive(:price).and_call_original
-        expect(subject.price_including_vat_for(zone)).to eq(10.00)
+        expect(price).to receive(:price).and_call_original
+        expect(price.price_including_vat_for(tax_zone: zone)).to eq(10.00)
       end
     end
   end

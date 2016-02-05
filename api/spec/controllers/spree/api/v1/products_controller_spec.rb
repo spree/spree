@@ -6,7 +6,7 @@ module Spree
     render_views
 
     let!(:product) { create(:product) }
-    let!(:inactive_product) { create(:product, available_on: Time.now.tomorrow, name: "inactive") }
+    let!(:inactive_product) { create(:product, available_on: Time.current.tomorrow, name: "inactive") }
     let(:base_attributes) { Api::ApiHelpers.product_attributes }
     let(:show_attributes) { base_attributes.dup.push(:has_variants) }
     let(:new_attributes) { base_attributes }
@@ -202,7 +202,7 @@ module Spree
         required_attributes = json_response["required_attributes"]
         expect(required_attributes).to include("name")
         expect(required_attributes).to include("price")
-        expect(required_attributes).to include("shipping_category_id")
+        expect(required_attributes).to include("shipping_category")
       end
 
       it_behaves_like "modifying product actions are restricted"
@@ -335,7 +335,7 @@ module Spree
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
           errors = json_response["errors"]
           errors.delete("slug") # Don't care about this one.
-          expect(errors.keys).to match_array(["name", "price", "shipping_category_id"])
+          expect(errors.keys).to match_array(["name", "price", "shipping_category"])
         end
       end
 

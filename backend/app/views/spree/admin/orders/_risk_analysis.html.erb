@@ -11,8 +11,8 @@
           <strong><%= Spree.t(:failed_payment_attempts) %>:</strong>
         </td>
         <td>
-          <span class="label label-<%= @order.payments.failed.count > 0 ? 'void' : 'complete' %>">
-            <%= link_to "#{Spree.t 'payments_count', count: @order.payments.failed.count, default: pluralize(@order.payments.failed.count, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
+          <span class="label label-<%= @order.payments.failed.size > 0 ? 'void' : 'complete' %>">
+            <%= link_to "#{Spree.t 'payments_count', count: @order.payments.failed.size, default: pluralize(@order.payments.failed.size, Spree.t(:payment))}", spree.admin_order_payments_path(@order) %>
           </span>
         </td>
       </tr>

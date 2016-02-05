@@ -1,13 +1,3 @@
-//= require_self
-//= require spree/backend/handlebar_extensions
-//= require spree/backend/variant_autocomplete
-//= require spree/backend/taxon_autocomplete
-//= require spree/backend/option_type_autocomplete
-//= require spree/backend/user_picker
-//= require spree/backend/product_picker
-//= require spree/backend/option_value_picker
-//= require spree/backend/taxons
-
 /**
 This is a collection of javascript functions and whatnot
 under the spree namespace that do stuff we find helpful.
@@ -166,8 +156,8 @@ jQuery(function($) {
     }
   });
 
-  // Make flash messages dissapear
-  setTimeout('$(".alert-auto-dissapear").slideUp()', 5000);
+  // Make flash messages disappear
+  setTimeout('$(".alert-auto-disappear").slideUp()', 5000);
 
 });
 
@@ -180,7 +170,7 @@ show_flash = function(type, message) {
     flash_div = $('<div class="alert alert-' + type + '" />');
     $('#content').prepend(flash_div);
   }
-  flash_div.html(message).show().delay(5000).slideUp();
+  flash_div.html(message).show().delay(10000).slideUp();
 }
 
 
