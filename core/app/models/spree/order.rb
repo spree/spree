@@ -137,8 +137,6 @@ module Spree
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
 
-    validate :has_available_shipment
-
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
@@ -618,13 +616,6 @@ module Spree
       unless line_items.present?
         errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) and return false
       end
-    end
-
-    def has_available_shipment
-      return unless has_step?("delivery")
-      return unless has_step?(:address) && address?
-      return unless ship_address && ship_address.valid?
-      # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
     end
 
     def ensure_available_shipping_rates
