@@ -133,6 +133,21 @@ describe Spree::Order, :type => :model do
           expect { order.next! }.to_not raise_error
         end
 
+        context 'line_items are not in stock' do
+          before do
+            allow(order).to receive(:ensure_line_items_are_in_stock).once { false }
+          end
+
+          it 'ensure order state to be cart' do
+            expect(order.state).to eq('cart')
+          end
+
+          it 'does not transition to complete' do
+            order.next
+            expect(order.state).to eq('cart')
+          end
+        end
+
         context "with default addresses" do
           let(:default_address) { FactoryGirl.create(:address) }
 
@@ -274,6 +289,17 @@ describe Spree::Order, :type => :model do
             end
           end
         end
+
+        context 'line_items are not in stock' do
+          it 'ensure order state to be address' do
+            expect(order.state).to eq('address')
+          end
+
+          it 'does not transition to complete' do
+            order.next
+            expect(order.state).to eq('address')
+          end
+        end
       end
     end
 
@@ -339,6 +365,21 @@ describe Spree::Order, :type => :model do
         it "transitions to complete" do
           order.next!
           expect(order.state).to eq("complete")
+        end
+      end
+
+      context 'line_items are not in stock' do
+        before do
+          allow(order).to receive(:ensure_line_items_are_in_stock).once { false }
+        end
+
+        it 'ensure order state to be delivery' do
+          expect(order.state).to eq('delivery')
+        end
+
+        it 'does not transition to payment' do
+          order.next
+          expect(order.state).to eq('delivery')
         end
       end
 
