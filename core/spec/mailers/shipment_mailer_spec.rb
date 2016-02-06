@@ -1,20 +1,22 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::ShipmentMailer, :type => :mailer do
+describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
   before { create(:store) }
 
+  let(:order) { stub_model(Spree::Order, number: 'R12345') }
+  let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
+  let(:product) { stub_model(Spree::Product, name: %{The "BEST" product}, sku: 'SKU0001') }
+  let(:variant) { stub_model(Spree::Variant, product: product) }
+  let(:line_item) { stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 5) }
   let(:shipment) do
-    order = stub_model(Spree::Order)
-    product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
-    variant = stub_model(Spree::Variant, :product => product)
-    line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
     shipment = stub_model(Spree::Shipment)
-    allow(shipment).to receive_messages(:line_items => [line_item], :order => order)
-    allow(shipment).to receive_messages(:tracking_url => "TRACK_ME")
+    allow(shipment).to receive_messages(line_items: [line_item], order: order)
+    allow(shipment).to receive_messages(tracking_url: "http://track.com/me")
+    allow(shipment).to receive_messages(shipping_method: shipping_method)
     shipment
   end
 
@@ -43,7 +45,7 @@ describe Spree::ShipmentMailer, :type => :mailer do
       context "pt-BR locale" do
         before do
           I18n.enforce_available_locales = false
-          pt_br_shipped_email = { :spree => { :shipment_mailer => { :shipped_email => { :dear_customer => 'Caro Cliente,' } } } }
+          pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
           I18n.locale = :'pt-BR'
         end
@@ -58,6 +60,22 @@ describe Spree::ShipmentMailer, :type => :mailer do
           expect(shipped_email).to have_body_text("Caro Cliente,")
         end
       end
+    end
+  end
+
+  context "shipped_email" do
+    let(:shipped_email) { Spree::ShipmentMailer.shipped_email(shipment) }
+
+    specify do
+      expect(shipped_email).to have_body_text(order.number)
+    end
+
+    specify do
+      expect(shipped_email).to have_body_text(shipping_method.name)
+    end
+
+    specify do
+      expect(shipped_email).to have_body_text("href=\"#{shipment.tracking_url}\"")
     end
   end
 end
