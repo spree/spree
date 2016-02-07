@@ -83,18 +83,18 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
 
     # Regression test for #3684
-    context "#edit" do
-      it "does not refresh rates if the order is completed" do
-        allow(order).to receive_messages completed?: true
-        expect(order).not_to receive :refresh_shipment_rates
+    describe "#edit" do
+      before do
+        allow(controller).to receive(:can_not_transition_without_customer_info)
+        allow(order).to receive(:refresh_shipment_rates).with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END).and_return(true)
+      end
+
+      after do
         spree_get :edit, id: order.number
       end
 
-      it "does refresh the rates if the order is incomplete" do
-        allow(order).to receive_messages completed?: false
-        expect(order).to receive :refresh_shipment_rates
-        spree_get :edit, id: order.number
-      end
+      it { expect(controller).to receive(:can_not_transition_without_customer_info) }
+      it { expect(order).to receive(:refresh_shipment_rates).with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END).and_return(true) }
     end
 
     # Test for #3919
