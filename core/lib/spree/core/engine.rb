@@ -98,6 +98,7 @@ module Spree
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
+          Promotion::Actions::CreateAdjustedLineItems,
           Promotion::Actions::FreeShipping]
       end
 
