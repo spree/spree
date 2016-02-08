@@ -297,15 +297,15 @@ describe Spree::Promotion, :type => :model do
   end
 
   context "#products" do
+    let(:product) { create(:product) }
     let(:promotion) { create(:promotion) }
 
     context "when it has product rules with products associated" do
-      let(:promotion_rule) { Spree::Promotion::Rules::Product.new }
+      let(:promotion_rule) { create(:promotion_rule, promotion: promotion, type: 'Spree::Promotion::Rules::Product') }
 
       before do
-        promotion_rule.promotion = promotion
-        promotion_rule.products << create(:product)
-        promotion_rule.save
+        promotion.promotion_rules << promotion_rule
+        product.product_promotion_rules.create(promotion_rule_id: promotion_rule.id)
       end
 
       it "should have products" do

@@ -341,12 +341,10 @@ describe Spree::Product, :type => :model do
       let!(:promotion) do
         create(:promotion, advertise: true, starts_at: 1.day.ago)
       end
-      let!(:rule) do
-        Spree::Promotion::Rules::Product.create(
-          promotion: promotion,
-          products: [product]
-        )
-      end
+
+      let!(:promotion_rule) { create(:promotion_rule, promotion: promotion) }
+
+      before { product.product_promotion_rules.create(promotion_rule_id: promotion_rule.id) }
 
       it "lists the promotion as a possible promotion" do
         expect(product.possible_promotions).to include(promotion)
