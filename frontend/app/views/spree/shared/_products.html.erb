@@ -25,7 +25,7 @@
           <% cache(@taxon.present? ? [I18n.locale, current_currency, @taxon, product] : cache_key_for_product(product)) do %>
             <div class="panel-body text-center product-body">
               <%= link_to url, itemprop: "url" do %>
-                <%= small_image(product, itemprop: "image") %>
+                <%= small_image(product, itemprop: "image") %><br/>
                 <%= content_tag(:span, truncate(product.name, length: 50), class: 'info', itemprop: "name", title: product.name) %>
               <% end %>
               <br/>
