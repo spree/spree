@@ -20,6 +20,23 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     expect(page).to have_content("Shopping Cart")
   end
 
+  describe "correct displaying of microdata" do
+    let(:products) { Spree::TestingSupport::Microdata::Document.new(page.body).extract_items }
+    let(:ringer) { products.keep_if { |product| product.properties["name"].first.match("Ringer") }.first }
+
+    it "correctly displays the product name via microdata" do
+      expect(ringer.properties["name"]).to eq ["Ruby on Rails Ringer T-Shirt"]
+    end
+
+    it "correctly displays the product image via microdata" do
+      expect(ringer.properties["image"]).to eq ["/assets/noimage/small.png"]
+    end
+
+    it "correctly displays the product url via microdata" do
+      expect(ringer.properties["url"]).to eq ["http://www.example.com/products/ruby-on-rails-ringer-t-shirt"]
+    end
+  end
+
   describe 'meta tags and title' do
     let(:jersey) { Spree::Product.find_by_name('Ruby on Rails Baseball Jersey') }
     let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
@@ -240,11 +257,11 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
     expect(page.all('#products .product-list-item').size).to eq(2)
-    products = page.all('#products .product-list-item a[itemprop=name]')
+    products = page.all('#products .product-list-item span[itemprop=name]')
     expect(products.count).to eq(2)
 
     find('.pagination .next a').click
-    products = page.all('#products .product-list-item a[itemprop=name]')
+    products = page.all('#products .product-list-item span[itemprop=name]')
     expect(products.count).to eq(1)
   end
 
