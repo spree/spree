@@ -80,6 +80,9 @@ module Spree
               before_transition to: :complete, do: :ensure_line_items_are_in_stock
 
               if states[:payment]
+                before_transition to: :payment, do: :ensure_line_item_variants_are_not_discontinued
+                before_transition to: :payment, do: :ensure_line_items_are_in_stock
+
                 before_transition to: :complete do |order|
                   if order.payment_required? && order.payments.valid.empty?
                     order.errors.add(:base, Spree.t(:no_payment_found))
@@ -94,8 +97,12 @@ module Spree
               end
 
               before_transition from: :cart, do: :ensure_line_items_present
+              before_transition from: :cart, do: :ensure_line_item_variants_are_not_discontinued
+              before_transition from: :cart, do: :ensure_line_items_are_in_stock
 
               if states[:address]
+                before_transition to: :address, do: :ensure_line_item_variants_are_not_discontinued
+                before_transition to: :address, do: :ensure_line_items_are_in_stock
                 before_transition from: :address, do: :update_line_item_prices!
                 before_transition from: :address, do: :create_tax_charge!
                 before_transition to: :address, do: :assign_default_addresses!
@@ -103,6 +110,8 @@ module Spree
               end
 
               if states[:delivery]
+                before_transition to: :delivery, do: :ensure_line_item_variants_are_not_discontinued
+                before_transition to: :delivery, do: :ensure_line_items_are_in_stock
                 before_transition to: :delivery, do: :create_proposed_shipments
                 before_transition to: :delivery, do: :ensure_available_shipping_rates
                 before_transition to: :delivery, do: :set_shipments_cost

@@ -418,7 +418,7 @@ module Spree
     # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
-      if line_items.any?{ |li| !li.variant || li.variant.discontinued? }
+      if has_discontinued_line_item_variants?
         errors.add(:base, Spree.t(:deleted_variants_present))
         restart_checkout_flow
         false
@@ -518,7 +518,7 @@ module Spree
         state: 'cart',
         updated_at: Time.current,
       )
-      self.next! if self.line_items.size > 0
+      self.next! if line_items_valid?
     end
 
     def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
@@ -618,6 +618,14 @@ module Spree
     # Determine if email is required (we don't want validation errors before we hit the checkout)
     def require_email
       true unless new_record? or ['cart', 'address'].include?(state)
+    end
+
+    def has_discontinued_line_item_variants?
+      line_items.any? { |li| !li.variant || li.variant.discontinued? }
+    end
+
+    def line_items_valid?
+      !has_discontinued_line_item_variants? && insufficient_stock_lines.blank? && line_items.size > 0
     end
 
     def ensure_line_items_present

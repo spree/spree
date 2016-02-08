@@ -443,7 +443,73 @@ describe Spree::Order, :type => :model do
         expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("cart")
       end
     end
+
+    context "line items discontinued" do
+      let(:order) { create :order_with_line_items, line_items_count: 1, state: "delivery" }
+
+      before { order.line_items.first.variant.discontinue! }
+
+      it "updates the state column to cart" do
+        expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("cart")
+      end
+    end
+
+    context "line items have insufficient stock" do
+      let(:order) { create :order_with_line_items, line_items_count: 1, state: "delivery" }
+
+      before do
+        order.line_items.first.variant.stock_items.update_all(backorderable: false)
+      end
+
+      it "updates the state column to cart" do
+        expect{ order.restart_checkout_flow }.to change{order.state}.from("delivery").to("cart")
+      end
+    end
   end
+
+  describe '#has_discontinued_line_item_variants?' do
+    context 'line items not discontinued' do
+      let(:order) { create :order_with_line_items, line_items_count: 1 }
+
+      it { expect(order.send(:has_discontinued_line_item_variants?)).to be_falsey }
+    end
+
+    context 'line items variant discontinued' do
+      let(:order) { create :order_with_line_items, line_items_count: 1 }
+
+      before { order.line_items.first.variant.discontinue! }
+
+      it { expect(order.send(:has_discontinued_line_item_variants?)).to be_truthy }
+    end
+  end
+
+  describe '#line_items_valid?' do
+    let(:order) { create :order_with_line_items, line_items_count: 1 }
+
+    context 'valid case' do
+      it { expect(order.send(:line_items_valid?)).to be_truthy }
+    end
+
+    context 'invalid cases' do
+      let(:order) { create :order_with_line_items, line_items_count: 1 }
+
+      context 'order has no line items' do
+        before { order.line_items.destroy_all }
+        it { expect(order.send(:line_items_valid?)).to be_falsey }
+      end
+
+      context 'line items have insufficient stock' do
+        before { order.line_items.first.variant.stock_items.update_all(backorderable: false) }
+        it { expect(order.send(:line_items_valid?)).to be_falsey }
+      end
+
+      context 'line items variant discontinued' do
+        before { order.line_items.first.variant.discontinue! }
+        it { expect(order.send(:line_items_valid?)).to be_falsey }
+      end
+    end
+  end
+
 
   # Regression tests for #4072
   context "#state_changed" do
