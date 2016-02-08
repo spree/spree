@@ -151,7 +151,7 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
-    scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
+    scope :reverse_chronological, -> { order(completed_at: :desc, created_at: :desc) }
 
     def self.complete
       where.not(completed_at: nil)

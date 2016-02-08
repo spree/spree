@@ -15,6 +15,19 @@ describe Spree::Order, :type => :model do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  describe 'scopes' do
+    describe '.reverse_chronological' do
+      let!(:order1) { create(:order, created_at: Time.current - 2.days, completed_at: Time.current - 2.day) }
+      let!(:order2) { create(:order, created_at: Time.current, completed_at: Time.current) }
+      let!(:order3) { create(:order, created_at: Time.current, completed_at: nil) }
+      let!(:order4) { create(:order, created_at: Time.current - 2.days, completed_at: nil) }
+
+      it 'expects to show complete orders order by completed_at DESC, then incomplete ones order by created_at DESC' do
+        expect(Spree::Order.reverse_chronological).to eq([order2, order1, order3, order4])
+      end
+    end
+  end
+
   context "#cancel" do
     let(:order) { create(:completed_order_with_totals) }
     let!(:payment) do
