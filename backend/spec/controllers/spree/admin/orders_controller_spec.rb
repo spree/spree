@@ -109,11 +109,20 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(Spree::Order.count).to eq 1
       end
 
-      it "does not display duplicated results" do
+      def send_request
         spree_get :index, q: {
           line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
         }
+      end
+
+      it 'does not display duplicate results' do
+        send_request
         expect(assigns[:orders].map { |o| o.number }.count).to eq 1
+      end
+
+      it 'preloads users' do
+        expect(Spree::Order).to receive(:preload).with(:user).and_return(Spree::Order.all)
+        send_request
       end
     end
 
