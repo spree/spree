@@ -192,10 +192,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     return parent.send(controller_name) if parent_data.present?
     if model_class.respond_to?(:accessible_by) &&
         !current_ability.has_block?(params[:action], model_class)
-      model_class.accessible_by(current_ability, action)
+      records = model_class.accessible_by(current_ability, action)
     else
-      model_class.where(nil)
+      records = model_class.where(nil)
     end
+    records.page(params[:page])
   end
 
   def location_after_destroy
