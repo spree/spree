@@ -20,7 +20,7 @@
 
 <% if @payments.any? %>
 
-  <div data-hook="payment_list" class="panel panel-default no-border-bottom">
+  <div data-hook="payment_list" class="panel panel-default no-border-bottom table-wrapper">
     <%= render partial: 'list', locals: { payments: @payments } %>
   </div>
 
