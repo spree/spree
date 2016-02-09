@@ -2,9 +2,9 @@
   <%= Spree.t(:editing_resource, resource: Spree::ShippingCategory.model_name.human) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @shipping_category } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_category } %>
 
 <%= form_for [:admin, @shipping_category] do |f| %>
-  <%= render :partial => 'form', :locals => { :f => f } %>
-  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+  <%= render partial: 'form', locals: { f: f } %>
+  <%= render partial: 'spree/admin/shared/edit_resource_links' %>
 <% end %>

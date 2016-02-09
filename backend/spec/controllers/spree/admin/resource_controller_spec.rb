@@ -12,7 +12,7 @@ module Spree
   end
 end
 
-describe Spree::Admin::WidgetsController, :type => :controller do
+describe Spree::Admin::WidgetsController, type: :controller do
   stub_authorization!
 
   after(:all) do

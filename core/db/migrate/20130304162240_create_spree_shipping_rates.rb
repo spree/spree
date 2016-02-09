@@ -3,13 +3,13 @@ class CreateSpreeShippingRates < ActiveRecord::Migration
     create_table :spree_shipping_rates do |t|
       t.belongs_to :shipment
       t.belongs_to :shipping_method
-      t.boolean :selected, :default => false
-      t.decimal :cost, :precision => 8, :scale => 2
+      t.boolean :selected, default: false
+      t.decimal :cost, precision: 8, scale: 2
       t.timestamps null: false
     end
     add_index(:spree_shipping_rates, [:shipment_id, :shipping_method_id],
-              :name => 'spree_shipping_rates_join_index',
-              :unique => true)
+              name: 'spree_shipping_rates_join_index',
+              unique: true)
 
     # Spree::Shipment.all.each do |shipment|
     #   shipping_method = Spree::ShippingMethod.find(shipment.shipment_method_id)

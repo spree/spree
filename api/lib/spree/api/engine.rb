@@ -20,7 +20,7 @@ module Spree
       config.versioncake.supported_version_numbers = [1]
       config.versioncake.extraction_strategy = :http_header
 
-      initializer "spree.api.environment", :before => :load_config_initializers do |app|
+      initializer "spree.api.environment", before: :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end
 

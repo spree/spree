@@ -3,7 +3,7 @@ require 'spec_helper'
 # In this file, we want to test that the controller helpers function correctly
 # So we need to use one of the controllers inside Spree.
 # ProductsController is good.
-describe Spree::ProductsController, :type => :controller do
+describe Spree::ProductsController, type: :controller do
 
   before do
     I18n.enforce_available_locales = false

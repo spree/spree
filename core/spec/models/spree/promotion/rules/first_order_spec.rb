@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::FirstOrder, :type => :model do
+describe Spree::Promotion::Rules::FirstOrder, type: :model do
   let(:rule) { Spree::Promotion::Rules::FirstOrder.new }
-  let(:order) { mock_model(Spree::Order, :user => nil, :email => nil) }
+  let(:order) { mock_model(Spree::Order, user: nil, email: nil) }
   let(:user) { mock_model(Spree::LegacyUser) }
 
   context "without a user or email" do
@@ -18,31 +18,31 @@ describe Spree::Promotion::Rules::FirstOrder, :type => :model do
     context "for a signed user" do
       context "with no completed orders" do
         before(:each) do
-          allow(user).to receive_message_chain(:orders, :complete => [])
+          allow(user).to receive_message_chain(:orders, complete: [])
         end
 
         specify do
-          allow(order).to receive_messages(:user => user)
+          allow(order).to receive_messages(user: user)
           expect(rule).to be_eligible(order)
         end
 
         it "should be eligible when user passed in payload data" do
-          expect(rule).to be_eligible(order, :user => user)
+          expect(rule).to be_eligible(order, user: user)
         end
       end
 
       context "with completed orders" do
         before(:each) do
-          allow(order).to receive_messages(:user => user)
+          allow(order).to receive_messages(user: user)
         end
 
         it "should be eligible when checked against first completed order" do
-          allow(user).to receive_message_chain(:orders, :complete => [order])
+          allow(user).to receive_message_chain(:orders, complete: [order])
           expect(rule).to be_eligible(order)
         end
 
         context "with another order" do
-          before { allow(user).to receive_message_chain(:orders, :complete => [mock_model(Spree::Order)]) }
+          before { allow(user).to receive_message_chain(:orders, complete: [mock_model(Spree::Order)]) }
           it { expect(rule).not_to be_eligible(order) }
           it "sets an error message" do
             rule.eligible?(order)
@@ -55,14 +55,14 @@ describe Spree::Promotion::Rules::FirstOrder, :type => :model do
 
     context "for a guest user" do
       let(:email) { 'user@spreecommerce.com' }
-      before { allow(order).to receive_messages :email => 'user@spreecommerce.com' }
+      before { allow(order).to receive_messages email: 'user@spreecommerce.com' }
 
       context "with no other orders" do
         it { expect(rule).to be_eligible(order) }
       end
 
       context "with another order" do
-        before { allow(rule).to receive_messages(:orders_by_email => [mock_model(Spree::Order)]) }
+        before { allow(rule).to receive_messages(orders_by_email: [mock_model(Spree::Order)]) }
         it { expect(rule).not_to be_eligible(order) }
         it "sets an error message" do
           rule.eligible?(order)

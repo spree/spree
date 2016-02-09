@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Spree::LegacyUser, :type => :model do
+describe Spree::LegacyUser, type: :model do
   # Regression test for #2844 + #3346
   context "#last_incomplete_order" do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
 
-    let!(:order_1) { create(:order, :created_at => 1.day.ago, :user => user, :created_by => user) }
-    let!(:order_2) { create(:order, :user => user, :created_by => user) }
-    let!(:order_3) { create(:order, :user => user, :created_by => create(:user)) }
+    let!(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user) }
+    let!(:order_2) { create(:order, user: user, created_by: user) }
+    let!(:order_3) { create(:order, user: user, created_by: create(:user)) }
 
     it "returns correct order" do
       expect(user.last_incomplete_spree_order).to eq order_3
@@ -60,7 +60,7 @@ describe Spree::LegacyUser, :type => :model do
   end
 end
 
-describe Spree.user_class, :type => :model do
+describe Spree.user_class, type: :model do
   context "reporting" do
     let(:order_value) { BigDecimal.new("80.94") }
     let(:order_count) { 4 }

@@ -27,7 +27,7 @@ Dummy::Application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
-  ActionMailer::Base.default :from => "spree@example.com"
+  ActionMailer::Base.default from: "spree@example.com"
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr

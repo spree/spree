@@ -47,11 +47,11 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
         mug.save!
       end
 
-      it "does not break the per-item shipping method calculator", :js => true do
+      it "does not break the per-item shipping method calculator", js: true do
         add_mug_to_cart
         click_button "Checkout"
 
-        fill_in "order_email", :with => "test@example.com"
+        fill_in "order_email", with: "test@example.com"
         click_on 'Continue'
         fill_in_address
 
@@ -67,7 +67,7 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
       before do
         add_mug_to_cart
         click_button "Checkout"
-        fill_in "order_email", :with => "test@example.com"
+        fill_in "order_email", with: "test@example.com"
         click_on 'Continue'
       end
 
@@ -98,7 +98,7 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
     before(:each) do
       order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages confirmation_required?: true
-      allow(order).to receive_messages(:available_payment_methods => [ create(:credit_card_payment_method) ])
+      allow(order).to receive_messages(available_payment_methods: [ create(:credit_card_payment_method) ])
 
       user = create(:user)
       order.user = user
@@ -175,7 +175,7 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
       expect(page).to have_selector('input.btn[disabled]')
     end
 
-    it "prevents double clicking the confirm button on checkout", :js => true do
+    it "prevents double clicking the confirm button on checkout", js: true do
       order.payments << create(:payment, amount: order.amount)
       visit spree.checkout_state_path(:confirm)
 

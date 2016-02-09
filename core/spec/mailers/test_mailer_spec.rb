@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::TestMailer, :type => :mailer do
+describe Spree::TestMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 

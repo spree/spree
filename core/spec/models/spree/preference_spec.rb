@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preference, :type => :model do
+describe Spree::Preference, type: :model do
 
   it "should require a key" do
     @preference = Spree::Preference.new

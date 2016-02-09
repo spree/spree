@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_shipping_category), new_object_url, :class => "btn-success", :icon => 'add' %>
+  <%= button_link_to Spree.t(:new_shipping_category), new_object_url, class: "btn-success", icon: 'add' %>
 <% end if can? :create, Spree::ShippingCategory %>
 
 <% if @shipping_categories.any? %>
@@ -19,8 +19,8 @@
       <tr id="<%= spree_dom_id shipping_category %>" data-hook="category_row">
         <td><%= shipping_category.name %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit(shipping_category, :no_text => true) if can? :edit, shipping_category %>
-          <%= link_to_delete(shipping_category, :no_text => true) if can? :edit, shipping_category %>
+          <%= link_to_edit(shipping_category, no_text: true) if can? :edit, shipping_category %>
+          <%= link_to_delete(shipping_category, no_text: true) if can? :edit, shipping_category %>
         </td>
       </tr>
       <% end %>

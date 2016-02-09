@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'email_spec'
 
-describe Spree::ShipmentMailer, :type => :mailer do
+describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
@@ -9,12 +9,12 @@ describe Spree::ShipmentMailer, :type => :mailer do
 
   let(:shipment) do
     order = stub_model(Spree::Order)
-    product = stub_model(Spree::Product, :name => %Q{The "BEST" product})
-    variant = stub_model(Spree::Variant, :product => product)
-    line_item = stub_model(Spree::LineItem, :variant => variant, :order => order, :quantity => 1, :price => 5)
+    product = stub_model(Spree::Product, name: %Q{The "BEST" product})
+    variant = stub_model(Spree::Variant, product: product)
+    line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 5)
     shipment = stub_model(Spree::Shipment)
-    allow(shipment).to receive_messages(:line_items => [line_item], :order => order)
-    allow(shipment).to receive_messages(:tracking_url => "TRACK_ME")
+    allow(shipment).to receive_messages(line_items: [line_item], order: order)
+    allow(shipment).to receive_messages(tracking_url: "TRACK_ME")
     shipment
   end
 
@@ -43,7 +43,7 @@ describe Spree::ShipmentMailer, :type => :mailer do
       context "pt-BR locale" do
         before do
           I18n.enforce_available_locales = false
-          pt_br_shipped_email = { :spree => { :shipment_mailer => { :shipped_email => { :dear_customer => 'Caro Cliente,' } } } }
+          pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
           I18n.locale = :'pt-BR'
         end

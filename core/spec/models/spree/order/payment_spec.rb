@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::Order, :type => :model do
+  describe Spree::Order, type: :model do
     let(:order) { stub_model(Spree::Order) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
@@ -11,12 +11,12 @@ module Spree
         Spree::Config[:auto_capture] = true
 
         allow(order).to receive_message_chain(:line_items, :empty?).and_return(false)
-        allow(order).to receive_messages :total => 100
+        allow(order).to receive_messages total: 100
       end
 
       it 'processes all checkout payments' do
-        payment_1 = create(:payment, :amount => 50)
-        payment_2 = create(:payment, :amount => 50)
+        payment_1 = create(:payment, amount: 50)
+        payment_2 = create(:payment, amount: 50)
         allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2])
 
         order.process_payments!
@@ -28,9 +28,9 @@ module Spree
       end
 
       it 'does not go over total for order' do
-        payment_1 = create(:payment, :amount => 50)
-        payment_2 = create(:payment, :amount => 50)
-        payment_3 = create(:payment, :amount => 50)
+        payment_1 = create(:payment, amount: 50)
+        payment_2 = create(:payment, amount: 50)
+        payment_3 = create(:payment, amount: 50)
         allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2, payment_3])
 
         order.process_payments!
@@ -43,8 +43,8 @@ module Spree
       end
 
       it "does not use failed payments" do
-        payment_1 = create(:payment, :amount => 50)
-        payment_2 = create(:payment, :amount => 50, :state => 'failed')
+        payment_1 = create(:payment, amount: 50)
+        payment_2 = create(:payment, amount: 50, state: 'failed')
         allow(order).to receive(:pending_payments).and_return([payment_1])
 
         expect(payment_2).not_to receive(:process!)
@@ -63,14 +63,14 @@ module Spree
         persisted_order = Spree::Order.create
         credit_card_payment_method = create(:credit_card_payment_method)
         attributes = {
-          :payments_attributes => [
+          payments_attributes: [
             {
-              :payment_method_id => credit_card_payment_method.id,
-              :source_attributes => {
-                :name => "Ryan Bigg",
-                :number => "41111111111111111111",
-                :expiry => "01 / 15",
-                :verification_value => "123"
+              payment_method_id: credit_card_payment_method.id,
+              source_attributes: {
+                name: "Ryan Bigg",
+                number: "41111111111111111111",
+                expiry: "01 / 15",
+                verification_value: "123"
               }
             }
           ]
@@ -113,12 +113,12 @@ module Spree
         before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
 
         it "should return true when configured to allow checkout on gateway failures" do
-          Spree::Config.set :allow_checkout_on_gateway_error => true
+          Spree::Config.set allow_checkout_on_gateway_error: true
           expect(order.process_payments!).to be true
         end
 
         it "should return false when not configured to allow checkout on gateway failures" do
-          Spree::Config.set :allow_checkout_on_gateway_error => false
+          Spree::Config.set allow_checkout_on_gateway_error: false
           expect(order.process_payments!).to be false
         end
       end
@@ -126,7 +126,7 @@ module Spree
 
     context "#authorize_payments!" do
       let(:payment) { stub_model(Spree::Payment) }
-      before { allow(order).to receive_messages :unprocessed_payments => [payment], :total => 10 }
+      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
       subject { order.authorize_payments! }
 
       it "processes payments with attempt_authorization!" do
@@ -139,7 +139,7 @@ module Spree
 
     context "#capture_payments!" do
       let(:payment) { stub_model(Spree::Payment) }
-      before { allow(order).to receive_messages :unprocessed_payments => [payment], :total => 10 }
+      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
       subject { order.capture_payments! }
 
       it "processes payments with attempt_authorization!" do

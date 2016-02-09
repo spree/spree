@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OptionValue, :type => :model do
+describe Spree::OptionValue, type: :model do
   context "touching" do
     it "should touch a variant" do
       variant = create(:variant)

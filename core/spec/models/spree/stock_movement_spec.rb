@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::StockMovement, :type => :model do
+describe Spree::StockMovement, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
   subject { build(:stock_movement, stock_item: stock_item) }

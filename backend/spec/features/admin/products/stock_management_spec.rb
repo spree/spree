@@ -96,7 +96,7 @@ describe "Stock Management", type: :feature, js: true do
 
         expect(page).to have_content('successfully created')
 
-        within("#listing_product_stock tr", :text => "SPREEC") do
+        within("#listing_product_stock tr", text: "SPREEC") do
           within("table") do
             expect(column_text(2)).to eq '40'
           end

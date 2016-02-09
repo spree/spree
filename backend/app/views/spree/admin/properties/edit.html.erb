@@ -2,11 +2,11 @@
   <%= Spree.t(:editing_resource, resource: Spree::Property.model_name.human) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @property } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @property } %>
 
 <%= form_for [:admin, @property] do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
   </fieldset>
 <% end %>

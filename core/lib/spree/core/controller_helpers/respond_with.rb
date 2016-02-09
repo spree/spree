@@ -52,7 +52,7 @@ module Spree
               end
 
               if format_value.is_a?(Proc)
-                options = {action_name.to_sym => {format_name.to_sym => {:success => format_value}}}
+                options = {action_name.to_sym => {format_name.to_sym => {success: format_value}}}
               end
 
               self.spree_responders.deep_merge!(self.name.to_sym => options)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Store, :type => :model do
+describe Spree::Store, type: :model do
 
   describe ".by_url" do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }

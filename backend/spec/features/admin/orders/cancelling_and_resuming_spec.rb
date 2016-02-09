@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Cancelling + Resuming", :type => :feature do
+describe "Cancelling + Resuming", type: :feature do
 
   stub_authorization!
 
