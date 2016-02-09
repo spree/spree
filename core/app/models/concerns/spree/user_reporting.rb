@@ -4,7 +4,7 @@ module Spree
     money_methods :lifetime_value, :average_order_value
 
     def lifetime_value
-      orders.complete.pluck(:total).sum
+      orders.complete.sum(:total)
     end
 
     def order_count
