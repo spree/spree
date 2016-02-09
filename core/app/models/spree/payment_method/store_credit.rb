@@ -1,6 +1,5 @@
 module Spree
   class PaymentMethod::StoreCredit < PaymentMethod
-
     def payment_source_class
       ::Spree::StoreCredit
     end
@@ -45,9 +44,9 @@ module Spree
         amount: amount_in_cents / 100.0.to_d,
         action: Spree::StoreCredit::ELIGIBLE_ACTION
       )
-      event = eligible_events.find do |eligible_event|
-        store_credit.store_credit_events.where(authorization_code: eligible_event.authorization_code)
-        .where.not(action: Spree::StoreCredit::ELIGIBLE_ACTION).empty?
+      event = eligible_events.detect do |eligible_event|
+        store_credit.store_credit_events.where(authorization_code: eligible_event.authorization_code).
+          where.not(action: Spree::StoreCredit::ELIGIBLE_ACTION).empty?
       end
 
       if event.blank?
@@ -57,10 +56,10 @@ module Spree
       end
     end
 
-    def void(auth_code, gateway_options={})
-      action = -> (store_credit) {
+    def void(auth_code, gateway_options = {})
+      action = -> (store_credit) do
         store_credit.void(auth_code, action_originator: gateway_options[:originator])
-      }
+      end
       handle_action(action, :void, auth_code)
     end
 
@@ -76,7 +75,8 @@ module Spree
     end
 
     def cancel(auth_code)
-      store_credit_event = StoreCreditEvent.find_by(authorization_code: auth_code, action: Spree::StoreCredit::CAPTURE_ACTION)
+      store_credit_event = StoreCreditEvent.find_by(authorization_code: auth_code,
+                                                    action: Spree::StoreCredit::CAPTURE_ACTION)
       store_credit = store_credit_event.try(:store_credit)
 
       if !store_credit_event || !store_credit
@@ -95,7 +95,7 @@ module Spree
 
     private
 
-    def handle_action_call(store_credit, action, action_name, auth_code=nil)
+    def handle_action_call(store_credit, action, action_name, auth_code = nil)
       store_credit.with_lock do
         if response = action.call(store_credit)
           # note that we only need to return the auth code on an 'auth', but it's innocuous to always return
@@ -126,6 +126,5 @@ module Spree
         handle_action_call(store_credit, action, action_name, auth_code)
       end
     end
-
   end
 end

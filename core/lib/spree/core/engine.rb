@@ -5,45 +5,49 @@ module Spree
       engine_name 'spree'
 
       rake_tasks do
-        load File.join(root, "lib", "tasks", "exchanges.rake")
+        load File.join(root, 'lib', 'tasks', 'exchanges.rake')
       end
 
-      initializer "spree.environment", :before => :load_config_initializers do |app|
+      initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Spree::Core::Environment.new
-        Spree::Config = app.config.spree.preferences #legacy access
+        Spree::Config = app.config.spree.preferences # legacy access
       end
 
-      initializer "spree.register.calculators" do |app|
+      initializer 'spree.register.calculators' do |app|
         app.config.spree.calculators.shipping_methods = [
-            Spree::Calculator::Shipping::FlatPercentItemTotal,
-            Spree::Calculator::Shipping::FlatRate,
-            Spree::Calculator::Shipping::FlexiRate,
-            Spree::Calculator::Shipping::PerItem,
-            Spree::Calculator::Shipping::PriceSack]
+          Spree::Calculator::Shipping::FlatPercentItemTotal,
+          Spree::Calculator::Shipping::FlatRate,
+          Spree::Calculator::Shipping::FlexiRate,
+          Spree::Calculator::Shipping::PerItem,
+          Spree::Calculator::Shipping::PriceSack
+        ]
 
-         app.config.spree.calculators.tax_rates = [
-            Spree::Calculator::DefaultTax]
+        app.config.spree.calculators.tax_rates = [
+          Spree::Calculator::DefaultTax
+        ]
       end
 
-      initializer "spree.register.stock_splitters" do |app|
+      initializer 'spree.register.stock_splitters' do |app|
         app.config.spree.stock_splitters = [
           Spree::Stock::Splitter::ShippingCategory,
           Spree::Stock::Splitter::Backordered
         ]
       end
 
-      initializer "spree.register.payment_methods" do |app|
+      initializer 'spree.register.payment_methods' do |app|
         app.config.spree.payment_methods = [
-            Spree::Gateway::Bogus,
-            Spree::Gateway::BogusSimple,
-            Spree::PaymentMethod::Check,
-            Spree::PaymentMethod::StoreCredit ]
+          Spree::Gateway::Bogus,
+          Spree::Gateway::BogusSimple,
+          Spree::PaymentMethod::Check,
+          Spree::PaymentMethod::StoreCredit
+        ]
       end
 
-      initializer "spree.register.adjustable_adjusters" do |app|
+      initializer 'spree.register.adjustable_adjusters' do |app|
         app.config.spree.adjusters = [
           Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax]
+          Spree::Adjustable::Adjuster::Tax
+        ]
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -98,7 +102,7 @@ module Spree
       end
 
       # filter sensitive information during logging
-      initializer "spree.params.filter" do |app|
+      initializer 'spree.params.filter' do |app|
         app.config.filter_parameters += [
           :password,
           :password_confirmation,
@@ -106,7 +110,7 @@ module Spree
           :verification_value]
       end
 
-      initializer "spree.core.checking_migrations" do |app|
+      initializer 'spree.core.checking_migrations' do
         Migrations.new(config, engine_name).check
       end
 

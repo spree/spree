@@ -2,22 +2,26 @@ require 'spec_helper'
 
 module Spree
   describe ReimbursementType::StoreCredit do
-    let(:reimbursement)           { create(:reimbursement, return_items_count: 2) }
-    let(:return_item)             { reimbursement.return_items.first }
-    let(:return_item2)            { reimbursement.return_items.last }
-    let(:payment)                 { reimbursement.order.payments.first }
-    let(:simulate)                { false }
-    let!(:default_refund_reason)  { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+    let(:reimbursement) { create(:reimbursement, return_items_count: 2) }
+    let(:return_item) { reimbursement.return_items.first }
+    let(:return_item2) { reimbursement.return_items.last }
+    let(:payment) { reimbursement.order.payments.first }
+    let(:simulate) { false }
+    let!(:default_refund_reason) do
+      Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON,
+                                             mutable: false)
+    end
 
-    let!(:primary_credit_type)    { create(:primary_credit_type) }
-    let!(:created_by_user)        { create(:user, email: Spree::StoreCredit::DEFAULT_CREATED_BY_EMAIL) }
+    let!(:primary_credit_type) { create(:primary_credit_type) }
+    let!(:created_by_user) { create(:user, email: Spree::StoreCredit::DEFAULT_CREATED_BY_EMAIL) }
     let!(:default_reimbursement_category) { create(:store_credit_category) }
 
-    subject { Spree::ReimbursementType::StoreCredit.reimburse(reimbursement, [return_item, return_item2], simulate)}
-
-    before do
-      reimbursement.update!(total: reimbursement.calculated_total)
+    subject do
+      Spree::ReimbursementType::StoreCredit.reimburse(reimbursement, [return_item, return_item2],
+                                                      simulate)
     end
+
+    before { reimbursement.update!(total: reimbursement.calculated_total) }
 
     describe '.reimburse' do
       context 'simulate is true' do

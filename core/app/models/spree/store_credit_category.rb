@@ -1,9 +1,8 @@
 module Spree
   class StoreCreditCategory < Spree::Base
-
     validates_presence_of :name
 
-    GIFT_CARD_CATEGORY_NAME = 'Gift Card'
+    GIFT_CARD_CATEGORY_NAME = 'Gift Card'.freeze
     DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME]
 
     def non_expiring?
@@ -15,7 +14,7 @@ module Spree
     end
 
     class << self
-      def default_reimbursement_category(options = {})
+      def default_reimbursement_category(_options = {})
         Spree::StoreCreditCategory.first
       end
     end

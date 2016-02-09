@@ -10,7 +10,7 @@ module Spree
         unpaid_amount -= amount
       end
 
-      return reimbursement_list, unpaid_amount
+      [reimbursement_list, unpaid_amount]
     end
 
     def create_credits(reimbursement, unpaid_amount, simulate, reimbursement_list = [])
@@ -18,17 +18,17 @@ module Spree
       unpaid_amount -= credits.sum(&:amount)
       reimbursement_list += credits
 
-      return reimbursement_list, unpaid_amount
+      [reimbursement_list, unpaid_amount]
     end
 
     private
 
     def create_refund(reimbursement, payment, amount, simulate)
-      refund = reimbursement.refunds.build({
+      refund = reimbursement.refunds.build(
         payment: payment,
         amount: amount,
-        reason: Spree::RefundReason.return_processing_reason,
-      })
+        reason: Spree::RefundReason.return_processing_reason
+      )
 
       simulate ? refund.readonly! : refund.save!
       refund
@@ -60,9 +60,8 @@ module Spree
     end
 
     # overwrite if you need options for the default reimbursement category
-    def category_options(reimbursement)
+    def category_options(_reimbursement)
       {}
     end
-
   end
 end

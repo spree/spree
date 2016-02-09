@@ -16,7 +16,7 @@ module Spree
         @store_credit = @user.store_credits.build(
           permitted_store_credit_params.merge(
             created_by: try_spree_current_user,
-            action_originator: try_spree_current_user,
+            action_originator: try_spree_current_user
           )
         )
 
@@ -25,7 +25,7 @@ module Spree
           redirect_to admin_user_store_credits_path(@user)
         else
           load_categories
-          flash[:error] = Spree.t("store_credit.errors.unable_to_create")
+          flash[:error] = Spree.t('store_credit.errors.unable_to_create')
           render :new
         end
       end
@@ -39,7 +39,7 @@ module Spree
           redirect_to admin_user_store_credits_path(@user)
         else
           load_categories
-          flash[:error] = Spree.t("store_credit.errors.unable_to_update")
+          flash[:error] = Spree.t('store_credit.errors.unable_to_update')
           render :edit
         end
       end
@@ -54,7 +54,7 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render text: Spree.t("store_credit.errors.unable_to_delete"), status: :unprocessable_entity
+          render text: Spree.t('store_credit.errors.unable_to_delete'), status: :unprocessable_entity
         end
       end
 

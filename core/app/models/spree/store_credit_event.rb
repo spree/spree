@@ -11,13 +11,13 @@ module Spree
     delegate :currency, to: :store_credit
 
     def display_amount
-      Spree::Money.new(amount, { currency: currency })
+      Spree::Money.new(amount, currency: currency)
     end
 
     def display_user_total_amount
-      Spree::Money.new(user_total_amount, { currency: currency })
+      Spree::Money.new(user_total_amount, currency: currency)
     end
-    
+
     def display_action
       case action
       when Spree::StoreCredit::CAPTURE_ACTION
