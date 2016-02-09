@@ -6,6 +6,10 @@ describe Spree::LineItem, type: :model do
 
   before { create(:store) }
 
+  describe 'Validations' do
+    it { expect(line_item).to validate_numericality_of(:quantity).only_integer.with_message(Spree.t('validation.must_be_int')) }
+  end
+
   describe '#ensure_valid_quantity' do
     context 'quantity.nil?' do
       before do
