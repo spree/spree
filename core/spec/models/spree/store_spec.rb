@@ -30,33 +30,47 @@ describe Spree::Store, :type => :model do
     end
   end
 
-  describe ".default" do
-    let!(:store)    { create(:store) }
-    let!(:store_2)  { create(:store, default: true) }
+  describe '.default' do
+    context 'when a default store is already present' do
+      let!(:store)    { create(:store) }
+      let!(:store_2)  { create(:store, default: true) }
 
-    it "should ensure there is a default if one doesn't exist yet" do
-      expect(store_2.default).to be true
-    end
-
-    it "should ensure there is only one default" do
-      [store, store_2].each(&:reload)
-
-      expect(Spree::Store.where(default: true).count).to eq(1)
-      expect(store_2.default).to be true
-      expect(store.default).not_to be true
-    end
-
-    context 'when store is not saved' do
-      before do
-        store.default = true
-        store.code = nil
-        store.save
+      it 'should return the already existing default store' do
+        expect(Spree::Store.default).to eq(store_2)
       end
 
-      it "ensure old default location still default" do
-        [store, store_2].each(&:reload)
-        expect(store.default).to be false
+      it "should ensure there is a default if one doesn't exist yet" do
         expect(store_2.default).to be true
+      end
+
+      it 'should ensure there is only one default' do
+        [store, store_2].each(&:reload)
+
+        expect(Spree::Store.where(default: true).count).to eq(1)
+        expect(store_2.default).to be true
+        expect(store.default).not_to be true
+      end
+
+      context 'when store is not saved' do
+        before do
+          store.default = true
+          store.code = nil
+          store.save
+        end
+
+        it 'ensure old default location still default' do
+          [store, store_2].each(&:reload)
+          expect(store.default).to be false
+          expect(store_2.default).to be true
+        end
+      end
+    end
+
+    context 'when a default store is not present' do
+      it 'should build a new default store' do
+        expect(Spree::Store.default.class).to eq(Spree::Store)
+        expect(Spree::Store.default.persisted?).to eq(false)
+        expect(Spree::Store.default.default).to be(true)
       end
     end
   end
