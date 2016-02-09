@@ -11,6 +11,7 @@ describe "New Order", :type => :feature do
 
   before do
     # create default store
+    allow(Spree.user_class).to receive(:find_by).and_return(user)
     create(:store)
     visit spree.new_admin_order_path
   end
@@ -132,6 +133,7 @@ describe "New Order", :type => :feature do
   # Regression test for #5327
   context "customer with default credit card", js: true do
     before do
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       create(:credit_card, default: true, user: user)
     end
     it "transitions to delivery not to complete" do
