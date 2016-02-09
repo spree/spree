@@ -53,7 +53,7 @@ describe Spree::Store, :type => :model do
         store.save
       end
 
-      it "ensure old default location still default" do
+      it "ensure old default store still default" do
         [store, store_2].each(&:reload)
         expect(store.default).to be false
         expect(store_2.default).to be true

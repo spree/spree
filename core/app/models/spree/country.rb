@@ -13,9 +13,11 @@ module Spree
 
     validates :name, :iso_name, presence: true
 
-    def self.default
+    include DefaultCacheable
+
+    def self.default_query
       country_id = Spree::Config[:default_country_id]
-      country_id.present? ? find(country_id) : find_by!(iso: 'US')
+      country_id.present? ? where(country_id).first : where(iso: 'US').first
     end
 
     def <=>(other)

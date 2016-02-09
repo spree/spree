@@ -13,7 +13,8 @@ module Spree
     scope :order_default, -> { order(default: :desc, name: :asc) }
 
     after_create :create_stock_items, if: :propagate_all_variants?
-    after_save :ensure_one_default
+
+    include DefaultCacheable
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
@@ -103,12 +104,6 @@ module Spree
       def create_stock_items
         Variant.includes(:product).find_each do |variant|
           propagate_variant(variant)
-        end
-      end
-
-      def ensure_one_default
-        if self.default
-          StockLocation.where(default: true).where.not(id: self.id).update_all(default: false)
         end
       end
   end
