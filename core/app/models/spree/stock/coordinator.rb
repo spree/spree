@@ -1,7 +1,11 @@
 module Spree
   module Stock
     class Coordinator
-      attr_reader :order, :inventory_units
+      attr_reader :order
+
+      def inventory_units
+        @inventory_units.compact
+      end
 
       def initialize(order, inventory_units = nil)
         @order = order
@@ -31,7 +35,7 @@ module Spree
       # Returns an array of Package instances
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|
-          next unless stock_location.stock_items.where(:variant_id => inventory_units.compact.map(&:variant_id).uniq).exists?
+          next unless stock_location.stock_items.where(:variant_id => inventory_units.map(&:variant_id).uniq).exists?
 
           packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
