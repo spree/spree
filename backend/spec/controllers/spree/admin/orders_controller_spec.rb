@@ -206,14 +206,14 @@ describe Spree::Admin::OrdersController, type: :controller do
         user.spree_roles.clear
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
         spree_put :update, id: order.number
-        expect(response).to redirect_to('/unauthorized')
+        expect(response).to redirect_to(spree.forbidden_path)
       end
     end
 
     it 'should deny access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       spree_post :index
-      expect(response).to redirect_to('/unauthorized')
+      expect(response).to redirect_to(spree.forbidden_path)
     end
 
     it 'should restrict returned order(s) on index when using OrderSpecificAbility' do
