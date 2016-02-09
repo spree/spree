@@ -118,23 +118,23 @@ module Spree
       end
 
       def not_found
-        headers(404) + json(:error => "The resource you were looking for could not be found.")
+        headers(404) + json(error: "The resource you were looking for could not be found.")
       end
 
       def authorization_failure
-        headers(401) + json(:error => "You are not authorized to perform that action.")
+        headers(401) + json(error: "You are not authorized to perform that action.")
       end
 
       def invalid_resource
-        headers(422) + json(:error => "Invalid object.")
+        headers(422) + json(error: "Invalid object.")
       end
 
       def invalid_token
-        headers(401) + json(:error => "Token is invalid.")
+        headers(401) + json(error: "Token is invalid.")
       end
 
       def store_not_found
-        headers(404) + json(:error => "Store not found.")
+        headers(404) + json(error: "Store not found.")
       end
 
       def text_html(response, status, head = {})
@@ -557,7 +557,7 @@ module Spree
 
     ORDER_FAILED_TRANSITION ||= {
       "error" => "The order could not be transitioned. Please fix the errors and try again.",
-      "errors" => { :email => ["can't be blank"] }
+      "errors" => { email: ["can't be blank"] }
     }
 
     temp = SHIPMENT.merge({
@@ -822,8 +822,8 @@ module Spree
         "taxonomy_id"=>1
       }
 
-    TAXON_WITH_CHILDREN ||= TAXON.merge(:taxons => [SECONDARY_TAXON])
-    TAXON_WITHOUT_CHILDREN ||= TAXON.merge(:taxons => [])
+    TAXON_WITH_CHILDREN ||= TAXON.merge(taxons: [SECONDARY_TAXON])
+    TAXON_WITHOUT_CHILDREN ||= TAXON.merge(taxons: [])
 
     TAXONOMY ||=
      {

@@ -15,7 +15,7 @@ module Spree
           @address = find_address
 
           if @address.update_attributes(address_params)
-            respond_with(@address, :default_template => :show)
+            respond_with(@address, default_template: :show)
           else
             invalid_resource!(@address)
           end

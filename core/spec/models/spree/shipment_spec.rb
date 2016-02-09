@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'benchmark'
 
-describe Spree::Shipment, :type => :model do
+describe Spree::Shipment, type: :model do
   let(:order) { mock_model Spree::Order, backordered?: false,
                                          canceled?: false,
                                          can_ship?: true,

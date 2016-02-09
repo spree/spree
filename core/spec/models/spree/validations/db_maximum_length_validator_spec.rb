@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Validations::DbMaximumLengthValidator, :type => :model do
+describe Spree::Validations::DbMaximumLengthValidator, type: :model do
   context 'when Spree::Product' do
     Spree::Product.class_eval do
       attribute :slug, ActiveRecord::Type::String.new(limit: 255)

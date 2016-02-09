@@ -7,23 +7,23 @@ module SpreeCmd
     include Thor::Actions
 
     desc 'Creates a new rails project with a spree store'
-    argument :app_path, :type => :string, :desc => 'rails app_path', :default => '.'
+    argument :app_path, type: :string, desc: 'rails app_path', default: '.'
 
-    class_option :auto_accept, :type => :boolean, :aliases => '-A',
-                               :desc => 'Answer yes to all prompts'
+    class_option :auto_accept, type: :boolean, aliases: '-A',
+                               desc: 'Answer yes to all prompts'
 
-    class_option :skip_install_data, :type => :boolean, :default => false,
-                 :desc => 'Skip running migrations and loading seed and sample data'
+    class_option :skip_install_data, type: :boolean, default: false,
+                 desc: 'Skip running migrations and loading seed and sample data'
 
-    class_option :version, :type => :string, :desc => 'Spree Version to use'
+    class_option :version, type: :string, desc: 'Spree Version to use'
 
-    class_option :edge, :type => :boolean
+    class_option :edge, type: :boolean
 
-    class_option :path, :type => :string, :desc => 'Spree gem path'
-    class_option :git, :type => :string, :desc => 'Spree gem git url'
-    class_option :ref, :type => :string, :desc => 'Spree gem git ref'
-    class_option :branch, :type => :string, :desc => 'Spree gem git branch'
-    class_option :tag, :type => :string, :desc => 'Spree gem git tag'
+    class_option :path, type: :string, desc: 'Spree gem path'
+    class_option :git, type: :string, desc: 'Spree gem git url'
+    class_option :ref, type: :string, desc: 'Spree gem git ref'
+    class_option :branch, type: :string, desc: 'Spree gem git branch'
+    class_option :tag, type: :string, desc: 'Spree gem git tag'
 
     def verify_rails
       unless rails_project?
@@ -106,7 +106,7 @@ module SpreeCmd
           gem :spree_auth_devise, github: 'spree/spree_auth_devise'
         end
 
-        run 'bundle install', :capture => true
+        run 'bundle install', capture: true
       end
     end
 
@@ -119,7 +119,7 @@ module SpreeCmd
       spree_options << "--auto_accept" if options[:auto_accept]
 
       inside @app_path do
-        run "rails generate spree:install #{spree_options.join(' ')}", :verbose => false
+        run "rails generate spree:install #{spree_options.join(' ')}", verbose: false
       end
     end
 
@@ -130,7 +130,7 @@ module SpreeCmd
         parts = ["'#{name}'"]
         parts << ["'~> #{gem_options.delete(:version)}'"] if gem_options[:version]
         gem_options.each { |key, value| parts << "#{key}: '#{value}'" }
-        append_file 'Gemfile', "\ngem #{parts.join(', ')}", :verbose => false
+        append_file 'Gemfile', "\ngem #{parts.join(', ')}", verbose: false
       end
 
       def ask_with_default(message, default = 'yes')

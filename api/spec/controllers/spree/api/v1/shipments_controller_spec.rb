@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::V1::ShipmentsController, :type => :controller do
+describe Spree::Api::V1::ShipmentsController, type: :controller do
   render_views
   let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
@@ -124,7 +124,7 @@ describe Spree::Api::V1::ShipmentsController, :type => :controller do
         allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
         shipment.update!(shipment.order)
         expect(shipment.state).to eq("ready")
-        allow_any_instance_of(Spree::ShippingRate).to receive_messages(:cost => 5)
+        allow_any_instance_of(Spree::ShippingRate).to receive_messages(cost: 5)
       end
 
       it "can transition a shipment from ready to ship" do

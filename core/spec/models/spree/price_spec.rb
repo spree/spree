@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Price, :type => :model do
+describe Spree::Price, type: :model do
   describe 'validations' do
     let(:variant) { stub_model Spree::Variant }
     subject { Spree::Price.new variant: variant, amount: amount }

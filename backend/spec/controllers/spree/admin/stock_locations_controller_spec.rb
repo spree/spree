@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe StockLocationsController, :type => :controller do
+    describe StockLocationsController, type: :controller do
       stub_authorization!
       
       # Regression for #4272

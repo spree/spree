@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model do
   let(:order) { stub_model(Spree::Order) }
   before do
     Spree::Order.define_state_machine!
@@ -19,10 +19,10 @@ describe Spree::Order, :type => :model do
 
   context "#save" do
     context "when associated with a registered user" do
-      let(:user) { double(:user, :email => "test@example.com") }
+      let(:user) { double(:user, email: "test@example.com") }
 
       before do
-        allow(order).to receive_messages :user => user
+        allow(order).to receive_messages user: user
       end
 
       it "should assign the email address of the user" do

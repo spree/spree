@@ -4,7 +4,7 @@ module Spree
       module RablTemplate
         def to_format
           if template
-            render template, :status => options[:status] || 200
+            render template, status: options[:status] || 200
           else
             super
           end

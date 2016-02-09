@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Coordinator, :type => :model do
+    describe Coordinator, type: :model do
       let!(:order) { create(:order_with_line_items) }
 
       subject { Coordinator.new(order) }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Refund, :type => :model do
+describe Spree::Refund, type: :model do
 
   describe 'create' do
     let(:amount) { 100.0 }

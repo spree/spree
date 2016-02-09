@@ -20,10 +20,10 @@
         <% end %>
       </table>
       <p>
-        <%= Spree.t('shipment_mailer.shipped_email.track_information', :tracking => @shipment.tracking)     if @shipment.tracking %>
+        <%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking)     if @shipment.tracking %>
       </p>
       <p>
-        <%= Spree.t('shipment_mailer.shipped_email.track_link',        :url      => @shipment.tracking_url) if @shipment.tracking_url %>
+        <%= Spree.t('shipment_mailer.shipped_email.track_link',        url: @shipment.tracking_url) if @shipment.tracking_url %>
       </p>
       <p>
         <%= Spree.t('shipment_mailer.shipped_email.thanks') %>

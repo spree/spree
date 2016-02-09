@@ -30,112 +30,112 @@ end
 images = {
   products[:ror_tote].master => [
     {
-      :attachment => image("ror_tote")
+      attachment: image("ror_tote")
     },
     {
-      :attachment => image("ror_tote_back") 
+      attachment: image("ror_tote_back") 
     }
   ],
   products[:ror_bag].master => [
     {
-      :attachment => image("ror_bag")
+      attachment: image("ror_bag")
     }
   ],
   products[:ror_baseball_jersey].master => [
     {
-      :attachment => image("ror_baseball")
+      attachment: image("ror_baseball")
     },
     {
-      :attachment => image("ror_baseball_back")
+      attachment: image("ror_baseball_back")
     }
   ],
   products[:ror_jr_spaghetti].master => [
     {
-      :attachment => image("ror_jr_spaghetti")
+      attachment: image("ror_jr_spaghetti")
     }
   ],
   products[:ror_mug].master => [
     {
-      :attachment => image("ror_mug")
+      attachment: image("ror_mug")
     },
     {
-      :attachment => image("ror_mug_back")
+      attachment: image("ror_mug_back")
     }
   ],
   products[:ror_ringer].master => [
     {
-      :attachment => image("ror_ringer")
+      attachment: image("ror_ringer")
     },
     {
-      :attachment => image("ror_ringer_back")
+      attachment: image("ror_ringer_back")
     }
   ],
   products[:ror_stein].master => [
     {
-      :attachment => image("ror_stein")
+      attachment: image("ror_stein")
     },
     {
-      :attachment => image("ror_stein_back")
+      attachment: image("ror_stein_back")
     }
   ],
   products[:apache_baseball_jersey].master => [
     {
-      :attachment => image("apache_baseball", "png")
+      attachment: image("apache_baseball", "png")
     },
   ],
   products[:ruby_baseball_jersey].master => [
     {
-      :attachment => image("ruby_baseball", "png")
+      attachment: image("ruby_baseball", "png")
     },
   ],
   products[:spree_bag].master => [
     {
-      :attachment => image("spree_bag")
+      attachment: image("spree_bag")
     },
   ],
   products[:spree_tote].master => [
     {
-      :attachment => image("spree_tote_front")
+      attachment: image("spree_tote_front")
     },
     {
-      :attachment => image("spree_tote_back") 
+      attachment: image("spree_tote_back") 
     }
   ],
   products[:spree_ringer].master => [
     {
-      :attachment => image("spree_ringer_t")
+      attachment: image("spree_ringer_t")
     },
     {
-      :attachment => image("spree_ringer_t_back") 
+      attachment: image("spree_ringer_t_back") 
     }
   ],
   products[:spree_jr_spaghetti].master => [
     {
-      :attachment => image("spree_spaghetti")
+      attachment: image("spree_spaghetti")
     }
   ],
   products[:spree_baseball_jersey].master => [
     {
-      :attachment => image("spree_jersey")
+      attachment: image("spree_jersey")
     },
     {
-      :attachment => image("spree_jersey_back") 
+      attachment: image("spree_jersey_back") 
     }
   ],
   products[:spree_stein].master => [
     {
-      :attachment => image("spree_stein")
+      attachment: image("spree_stein")
     },
     {
-      :attachment => image("spree_stein_back") 
+      attachment: image("spree_stein_back") 
     }
   ],
   products[:spree_mug].master => [
     {
-      :attachment => image("spree_mug")
+      attachment: image("spree_mug")
     },
     {
-      :attachment => image("spree_mug_back") 
+      attachment: image("spree_mug_back") 
     }
   ],
 }
@@ -143,10 +143,10 @@ images = {
 products[:ror_baseball_jersey].variants.each do |variant|
   color = variant.option_value("tshirt-color").downcase
   main_image = image("ror_baseball_jersey_#{color}", "png")
-  variant.images.create!(:attachment => main_image)
+  variant.images.create!(attachment: main_image)
   back_image = image("ror_baseball_jersey_back_#{color}", "png")
   if back_image
-    variant.images.create!(:attachment => back_image)
+    variant.images.create!(attachment: back_image)
   end
 end
 

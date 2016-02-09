@@ -5,15 +5,15 @@ require 'bundler/cli'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
-    class_option :migrate, :type => :boolean, :default => true, :banner => 'Run Spree migrations'
-    class_option :seed, :type => :boolean, :default => true, :banner => 'load seed data (migrations must be run)'
-    class_option :sample, :type => :boolean, :default => true, :banner => 'load sample data (migrations must be run)'
-    class_option :auto_accept, :type => :boolean
-    class_option :user_class, :type => :string
-    class_option :admin_email, :type => :string
-    class_option :admin_password, :type => :string
-    class_option :lib_name, :type => :string, :default => 'spree'
-    class_option :enforce_available_locales, :type => :boolean, :default => nil
+    class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
+    class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
+    class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
+    class_option :auto_accept, type: :boolean
+    class_option :user_class, type: :string
+    class_option :admin_email, type: :string
+    class_option :admin_password, type: :string
+    class_option :lib_name, type: :string, default: 'spree'
+    class_option :enforce_available_locales, type: :boolean, default: nil
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -168,14 +168,14 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
-      insert_into_file File.join('config', 'routes.rb'), :after => "Rails.application.routes.draw do\n" do
+      insert_into_file File.join('config', 'routes.rb'), after: "Rails.application.routes.draw do\n" do
         %Q{
   # This line mounts Spree's routes at the root of your application.
   # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
   # If you would like to change where this engine is mounted, simply change the :at option to something different.
   #
   # We ask that you don't use the :as option here, as Spree relies on it being the default of "spree"
-  mount Spree::Core::Engine, :at => '/'
+  mount Spree::Core::Engine, at: '/'
         }
       end
 
@@ -183,7 +183,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "*" * 50
         puts "We added the following line to your application's config/routes.rb file:"
         puts " "
-        puts "    mount Spree::Core::Engine, :at => '/'"
+        puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 

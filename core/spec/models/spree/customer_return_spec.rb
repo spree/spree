@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::CustomerReturn, :type => :model do
+describe Spree::CustomerReturn, type: :model do
   before do
     allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
   end
@@ -168,7 +168,7 @@ describe Spree::CustomerReturn, :type => :model do
     end
 
     context "to a different stock location" do
-      let(:new_stock_location) { create(:stock_location, :name => "other") }
+      let(:new_stock_location) { create(:stock_location, name: "other") }
 
       it "should update the stock item counts in new stock location" do
         expect {

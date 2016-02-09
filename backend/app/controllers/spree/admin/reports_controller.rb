@@ -45,7 +45,7 @@ module Spree
 
         @totals = {}
         @orders.each do |order|
-          @totals[order.currency] = { :item_total => ::Money.new(0, order.currency), :adjustment_total => ::Money.new(0, order.currency), :sales_total => ::Money.new(0, order.currency) } unless @totals[order.currency]
+          @totals[order.currency] = { item_total: ::Money.new(0, order.currency), adjustment_total: ::Money.new(0, order.currency), sales_total: ::Money.new(0, order.currency) } unless @totals[order.currency]
           @totals[order.currency][:item_total] += order.display_item_total.money
           @totals[order.currency][:adjustment_total] += order.display_adjustment_total.money
           @totals[order.currency][:sales_total] += order.display_total.money

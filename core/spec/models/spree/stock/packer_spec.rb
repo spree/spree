@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Packer, :type => :model do
+    describe Packer, type: :model do
       let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
       let(:stock_location) { create(:stock_location) }
 

@@ -20,7 +20,7 @@ describe Spree::Money do
 
   context "with currency" do
     it "passed in option" do
-      money = Spree::Money.new(10, :with_currency => true, :html => false)
+      money = Spree::Money.new(10, with_currency: true, html: false)
       expect(money.to_s).to eq("$10.00 USD")
     end
   end
@@ -40,14 +40,14 @@ describe Spree::Money do
   context "currency parameter" do
     context "when currency is specified in Canadian Dollars" do
       it "uses the currency param over the global configuration" do
-        money = Spree::Money.new(10, :currency => 'CAD', :with_currency => true, :html => false)
+        money = Spree::Money.new(10, currency: 'CAD', with_currency: true, html: false)
         expect(money.to_s).to eq("$10.00 CAD")
       end
     end
 
     context "when currency is specified in Japanese Yen" do
       it "uses the currency param over the global configuration" do
-        money = Spree::Money.new(100, :currency => 'JPY', :html => false)
+        money = Spree::Money.new(100, currency: 'JPY', html: false)
         expect(money.to_s).to eq("¥100")
       end
     end
@@ -55,7 +55,7 @@ describe Spree::Money do
 
   context "symbol positioning" do
     it "passed in option" do
-      money = Spree::Money.new(10, :symbol_position => :after, :html => false)
+      money = Spree::Money.new(10, symbol_position: :after, html: false)
       expect(money.to_s).to eq("10.00 $")
     end
   end
@@ -67,7 +67,7 @@ describe Spree::Money do
     end
 
     it "passed in option" do
-      money = Spree::Money.new(-10, :sign_before_symbol => false)
+      money = Spree::Money.new(-10, sign_before_symbol: false)
       expect(money.to_s).to eq("$-10.00")
     end
   end
@@ -80,7 +80,7 @@ describe Spree::Money do
     end
 
     it "formats correctly" do
-      money = Spree::Money.new(1000, :html => false)
+      money = Spree::Money.new(1000, html: false)
       expect(money.to_s).to eq("¥1,000")
     end
   end

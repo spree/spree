@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Spree::Preferences::Configuration, :type => :model do
+describe Spree::Preferences::Configuration, type: :model do
 
   before :all do
     class AppConfig < Spree::Preferences::Configuration
-      preference :color, :string, :default => :blue
+      preference :color, :string, default: :blue
     end
     @config = AppConfig.new
   end

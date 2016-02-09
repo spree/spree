@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Calculator::PriceSack, :type => :model do
+describe Spree::Calculator::PriceSack, type: :model do
   let(:calculator) do
     calculator = Spree::Calculator::PriceSack.new
     calculator.preferred_minimal_amount = 5
@@ -10,7 +10,7 @@ describe Spree::Calculator::PriceSack, :type => :model do
   end
 
   let(:order) { stub_model(Spree::Order) }
-  let(:shipment) { stub_model(Spree::Shipment, :amount => 10) }
+  let(:shipment) { stub_model(Spree::Shipment, amount: 10) }
 
   # Regression test for #714 and #739
   it "computes with an order object" do

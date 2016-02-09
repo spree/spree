@@ -7,7 +7,7 @@ require 'generators/spree/dummy/dummy_generator'
 desc "Generates a dummy app for testing"
 namespace :common do
   task :test_app, :user_class do |t, args|
-    args.with_defaults(:user_class => "Spree::LegacyUser")
+    args.with_defaults(user_class: "Spree::LegacyUser")
     require "#{ENV['LIB_NAME']}"
 
     ENV["RAILS_ENV"] = 'test'

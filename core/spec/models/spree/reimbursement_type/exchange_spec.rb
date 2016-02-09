@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe ReimbursementType::Exchange, :type => :model do
+  describe ReimbursementType::Exchange, type: :model do
     describe '.reimburse' do
       let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
       let(:return_items)  { reimbursement.return_items }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Homepage", :type => :feature do
+describe "Homepage", type: :feature do
 
   context 'as admin user' do
     stub_authorization!

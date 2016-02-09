@@ -16,8 +16,8 @@ module Nanoc3::DataSources
       # Convert filenames to items
       filenames.map do |filename|
         attributes = {
-          :extension => File.extname(filename)[1..-1],
-          :filename  => filename,
+          extension: File.extname(filename)[1..-1],
+          filename: filename,
         }
         identifier = filename[(prefix.length+1)..-1] + '/'
 
@@ -28,7 +28,7 @@ module Nanoc3::DataSources
           filename,
           attributes,
           identifier,
-          :binary => true, :mtime => mtime, :checksum => checksum
+          binary: true, mtime: mtime, checksum: checksum
         )
       end
     end
