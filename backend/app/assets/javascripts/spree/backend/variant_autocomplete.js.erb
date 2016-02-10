@@ -41,9 +41,9 @@ $.fn.variantAutocomplete = function() {
       }
     },
     formatResult: formatVariantResult,
-    formatSelection: function (variant) {
-      $(this.element).parent().children('.options_placeholder').html(variant.options_text)
-      return variant.name;
+    formatSelection: function (variant, container, escapeMarkup) {
+      $(this.element).parent().children('.options_placeholder').html(Select2.util.escapeMarkup(variant.options_text))
+      return Select2.util.escapeMarkup(variant.name);
     }
   })
 }
