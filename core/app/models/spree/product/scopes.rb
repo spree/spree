@@ -23,39 +23,39 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}") })
+        self.scope(name.to_s, -> { order(Spree::Product.arel_table[parts[2].to_sym].send(parts[1] == 'ascend' ?  :asc : :desc)) })
       end
     end
 
     def self.property_conditions(property)
       properties = Property.table_name
       conditions = case property
-      when String   then { "#{properties}.name" => property }
-      when Property then { "#{properties}.id" => property.id }
-      else               { "#{properties}.id" => property.to_i }
-      end
+                     when String   then Property.arel_table[:name].eq(property)
+                     when Property then Property.arel_table[:id].eq(property.id)
+                     else               Property.arel_table[:id].eq(property.to_i)
+                   end
     end
 
     add_simple_scopes simple_scopes
 
     add_search_scope :ascend_by_master_price do
-      joins(:master => :default_price).order("#{price_table_name}.amount ASC")
+      joins(:master => :default_price).order(Price.arel_table[:amount])
     end
 
     add_search_scope :descend_by_master_price do
-      joins(:master => :default_price).order("#{price_table_name}.amount DESC")
+      joins(:master => :default_price).order(Price.arel_table[:amount].desc)
     end
 
     add_search_scope :price_between do |low, high|
-      joins(:master => :default_price).where(Price.table_name => { :amount => low..high })
+      joins(:master => :default_price).where(Price.arel_table[:amount].in(low..high))
     end
 
     add_search_scope :master_price_lte do |price|
-      joins(:master => :default_price).where("#{price_table_name}.amount <= ?", price)
+      joins(:master => :default_price).where(Price.arel_table[:amount].lteq(price))
     end
 
     add_search_scope :master_price_gte do |price|
-      joins(:master => :default_price).where("#{price_table_name}.amount >= ?", price)
+      joins(:master => :default_price).where(Price.arel_table[:amount].gteq(price))
     end
 
     # This scope selects products in taxon AND all its descendants
@@ -76,9 +76,9 @@ module Spree
     #
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
-      includes(:classifications).
-      where("spree_products_taxons.taxon_id" => taxon.self_and_descendants.pluck(:id)).
-      order("spree_products_taxons.position ASC")
+      joins(:classifications).
+        where(Classification.arel_table[:taxon_id].in(taxon.self_and_descendants.pluck(:id))).
+        order(Classification.arel_table[:position])
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -99,40 +99,38 @@ module Spree
     # note that it can test for properties with NULL values, but not for absent values
     add_search_scope :with_property_value do |property, value|
       joins(:properties)
-        .where("#{ProductProperty.table_name}.value = ?", value)
+        .where(ProductProperty.arel_table[:value].eq(value))
         .where(property_conditions(property))
     end
 
     add_search_scope :with_option do |option|
-      option_types = OptionType.table_name
       conditions = case option
-      when String     then { "#{option_types}.name" => option }
-      when OptionType then { "#{option_types}.id" => option.id }
-      else                 { "#{option_types}.id" => option.to_i }
-      end
+                     when String     then OptionType.arel_table[:name].eq(option)
+                     when OptionType then OptionType.arel_table[:id].eq(option.id)
+                     else                 OptionType.arel_table[:id].eq(option.to_i)
+                   end
 
       joins(:option_types).where(conditions)
     end
 
     add_search_scope :with_option_value do |option, value|
-      option_values = OptionValue.table_name
       option_type_id = case option
-        when String then OptionType.find_by(name: option) || option.to_i
-        when OptionType then option.id
-        else option.to_i
-      end
+                         when String then OptionType.find_by(name: option) || option.to_i
+                         when OptionType then option.id
+                         else option.to_i
+                       end
 
-      conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-      group('spree_products.id').joins(variants_including_master: :option_values).where(conditions)
+      group(Product.arel_table[:id]).joins(variants_including_master: :option_values)
+        .where(OptionValue.arel_table[:name].eq(value), OptionValue.arel_table[:option_type_id].eq(option_type_id))
     end
 
     # Finds all products which have either:
     # 1) have an option value with the name matching the one given
     # 2) have a product property with a value matching the one given
     add_search_scope :with do |value|
-      includes(variants_including_master: :option_values).
-      includes(:product_properties).
-      where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
+      joins(variants_including_master: :option_values).
+        joins(:product_properties).
+        where(OptionValue.arel_table[:name].eq(value).or(ProductProperty.arel_table[:value].eq(value)))
     end
 
     # Finds all products that have a name containing the given words.
@@ -166,7 +164,7 @@ module Spree
     # :order => 'COALESCE(cnt, 0) DESC'
     add_search_scope :descend_by_popularity do
       joins(:master).
-      order(%Q{
+        order(%Q{
            COALESCE((
              SELECT
                COUNT(#{LineItem.quoted_table_name}.id)
@@ -183,16 +181,16 @@ module Spree
     end
 
     add_search_scope :not_deleted do
-      where("#{Product.quoted_table_name}.deleted_at IS NULL or #{Product.quoted_table_name}.deleted_at >= ?", Time.zone.now)
+      where(Product.arel_table[:deleted_at].eq(nil).or(Product.arel_table[:deleted_at].gteq(Time.zone.now)))
     end
 
     add_search_scope :not_discontinued do
-      where("#{Product.quoted_table_name}.discontinue_on IS NULL or #{Product.quoted_table_name}.discontinue_on >= ?", Time.zone.now)
+      where(Product.arel_table[:discontinue_on].eq(nil).or(Product.arel_table[:discontinue_on].gteq(Time.zone.now)))
     end
 
     # Can't use add_search_scope for this as it needs a default argument
     def self.available(available_on = nil, currency = nil)
-      not_discontinued.joins(:master => :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on || Time.current)
+      not_discontinued.joins(:master => :prices).where(Product.arel_table[:available_on].lteq(available_on || Time.current))
     end
     search_scopes << :available
 
@@ -202,7 +200,7 @@ module Spree
     search_scopes << :active
 
     add_search_scope :taxons_name_eq do |name|
-      group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      group(Product.arel_table[:id]).joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     def self.distinct_by_product_ids(sort_order = nil)
@@ -232,35 +230,31 @@ module Spree
 
     private
 
-      def self.price_table_name
-        Price.quoted_table_name
-      end
+    # specifically avoid having an order for taxon search (conflicts with main order)
+    def self.prepare_taxon_conditions(taxons)
+      ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
+      joins(:taxons).where(Taxon.arel_table[:id].in(ids))
+    end
 
-      # specifically avoid having an order for taxon search (conflicts with main order)
-      def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
-        joins(:taxons).where("#{Taxon.table_name}.id" => ids)
-      end
+    # Produce an array of keywords for use in scopes.
+    # Always return array with at least an empty string to avoid SQL errors
+    def self.prepare_words(words)
+      return [''] if words.blank?
+      a = words.split(/[,\s]/).map(&:strip)
+      a.any? ? a : ['']
+    end
 
-      # Produce an array of keywords for use in scopes.
-      # Always return array with at least an empty string to avoid SQL errors
-      def self.prepare_words(words)
-        return [''] if words.blank?
-        a = words.split(/[,\s]/).map(&:strip)
-        a.any? ? a : ['']
-      end
-
-      def self.get_taxons(*ids_or_records_or_names)
-        taxons = Taxon.table_name
-        ids_or_records_or_names.flatten.map { |t|
-          case t
+    def self.get_taxons(*ids_or_records_or_names)
+      taxons = Taxon.table_name
+      ids_or_records_or_names.flatten.map { |t|
+        case t
           when Integer then Taxon.find_by(id: t)
           when ActiveRecord::Base then t
           when String
             Taxon.find_by(name: t) ||
-            Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
-          end
-        }.compact.flatten.uniq
-      end
+              Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/").or(Taxon.arel_table[:permalink].eq("#{t}/"))).first
+        end
+      }.compact.flatten.uniq
     end
+  end
 end

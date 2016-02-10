@@ -51,7 +51,7 @@ module Spree
     def self.match(address)
       return unless address &&
                     matches = includes(:zone_members).
-                              order('spree_zones.zone_members_count', 'spree_zones.created_at').
+                              order(:zone_members_count, :created_at, :id).
                               where("(spree_zone_members.zoneable_type = 'Spree::Country' AND " +
                                       "spree_zone_members.zoneable_id = ?) OR " +
                                       "(spree_zone_members.zoneable_type = 'Spree::State' AND " +
