@@ -7,8 +7,6 @@ module Spree
 
       # http://spreecommerce.com/blog/2010/11/02/json-hijacking-vulnerability/
       before_action :check_json_authenticity, only: :index
-      before_action :load_roles
-      before_action :extract_roles_from_params, only: [:create, :update]
 
       def index
         respond_with(@collection) do |format|
@@ -22,11 +20,8 @@ module Spree
       end
 
       def create
-
         @user = Spree.user_class.new(user_params)
         if @user.save
-          set_roles
-
           flash.now[:success] = flash_message_for(@user, :successfully_created)
           render :edit
         else
@@ -41,7 +36,6 @@ module Spree
         end
 
         if @user.update_attributes(user_params)
-          set_roles
           flash.now[:success] = Spree.t(:account_updated)
         end
 
@@ -112,21 +106,9 @@ module Spree
 
       private
 
-      def set_roles
-        if @roles_ids
-          @user.spree_roles = Spree::Role.where(id: @roles_ids)
-        end
-      end
-
-      def extract_roles_from_params
-        if params[:user]
-          @roles_ids = params[:user].delete("spree_role_ids")
-        end
-      end
-
       def user_params
         params.require(:user).permit(permitted_user_attributes |
-                                     [:spree_role_ids,
+                                     [spree_role_ids: [],
                                       ship_address_attributes: permitted_address_attributes,
                                       bill_address_attributes: permitted_address_attributes])
       end
@@ -156,10 +138,6 @@ module Spree
         if try_spree_current_user == @user && @user.password.present?
           sign_in(@user, event: :authentication, bypass: true)
         end
-      end
-
-      def load_roles
-        @roles = Spree::Role.all
       end
     end
   end
