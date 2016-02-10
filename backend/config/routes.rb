@@ -141,8 +141,8 @@ Spree::Core::Engine.add_routes do
     end
 
     resources :reimbursement_types, only: [:index]
-    resources :refund_reasons, except: [:show, :destroy]
-    resources :return_authorization_reasons, except: [:show, :destroy]
+    resources :refund_reasons, except: :show
+    resources :return_authorization_reasons, except: :show
 
     resources :shipping_methods
     resources :shipping_categories

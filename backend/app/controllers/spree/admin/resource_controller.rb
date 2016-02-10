@@ -94,8 +94,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:destroy, :fails)
+      flash[:error] = @object.errors.full_messages.join(', ')
       respond_with(@object) do |format|
         format.html { redirect_to location_after_destroy }
+        format.js
       end
     end
   end
