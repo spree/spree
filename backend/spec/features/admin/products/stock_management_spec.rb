@@ -83,8 +83,8 @@ describe "Stock Management", type: :feature, js: true do
     end
 
     context "with multiple variants" do
+      let!(:variant) { create(:variant, product: product, sku: 'SPREEC') }
       before do
-        variant = product.variants.create!(sku: 'SPREEC')
         variant.stock_items.first.update_column(:count_on_hand, 30)
         visit current_url
       end
@@ -106,12 +106,13 @@ describe "Stock Management", type: :feature, js: true do
 
     # Regression test for #3304
     context "with no stock location" do
+      let(:product) { create(:product, name: 'apache baseball cap', price: 10) }
+      let(:variant) { create(:variant, product: product, sku: 'FOOBAR') }
+
       before do
-        @product = create(:product, name: 'apache baseball cap', price: 10)
-        v = @product.variants.create!(sku: 'FOOBAR')
         Spree::StockLocation.delete_all
 
-        visit spree.stock_admin_product_path(@product)
+        visit spree.stock_admin_product_path(product)
       end
 
       it "redirects to stock locations page" do

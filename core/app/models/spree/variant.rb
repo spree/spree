@@ -38,6 +38,8 @@ module Spree
 
     validate :check_price
 
+    validates :option_values, presence: true, unless: :is_master?
+
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
       validates :price
