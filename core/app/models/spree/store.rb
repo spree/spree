@@ -21,7 +21,7 @@ module Spree
 
     def self.default
       Rails.cache.fetch("default_store") do
-        where(default: true).first || new
+        where(default: true).first_or_initialize
       end
     end
 
