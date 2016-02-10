@@ -46,12 +46,13 @@ describe Spree::Variant, :type => :model do
       before do
         product.master.stock_items.first.set_count_on_hand(5)
       end
+
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
       end
 
       context 'when a variant is created' do
-        before(:each) do
+        before do
           product.variants.create!(:name => 'any-name')
         end
 
