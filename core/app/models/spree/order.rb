@@ -419,7 +419,7 @@ module Spree
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
       if line_items.any?{ |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, Spree.t(:deleted_variants_present))
+        errors.add(:base, Spree.t(:discontinued_variants_present))
         restart_checkout_flow
         false
       else

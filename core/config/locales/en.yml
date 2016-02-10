@@ -635,7 +635,7 @@ en:
     delete: Delete
     deleted: Deleted
     delete_from_taxon: Delete From Taxon
-    deleted_variants_present: Some line items in this order have products that are no longer available.
+    discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
     details: Details

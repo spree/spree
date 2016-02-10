@@ -221,7 +221,7 @@ describe Spree::Order, :type => :model do
 
       it 'should have error message' do
         subject
-        expect(order.errors[:base]).to include(Spree.t(:deleted_variants_present))
+        expect(order.errors[:base]).to include(Spree.t(:discontinued_variants_present))
       end
 
       it 'should be false' do
