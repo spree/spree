@@ -60,6 +60,112 @@ describe Spree::Variant, :type => :model do
     end
   end
 
+  describe 'scope' do
+    describe '.not_discontinued' do
+      context 'when discontinued' do
+        let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }
+
+        it { expect(Spree::Variant.not_discontinued).not_to include(discontinued_variant) }
+      end
+
+      context 'when not discontinued' do
+        let!(:variant_2) { create(:variant, discontinue_on: Time.current + 1.day) }
+
+        it { expect(Spree::Variant.not_discontinued).to include(variant_2) }
+      end
+
+      context 'when discontinue_on not present' do
+        let!(:variant_2) { create(:variant, discontinue_on: nil) }
+
+        it { expect(Spree::Variant.not_discontinued).to include(variant_2) }
+      end
+    end
+
+    describe '.not_deleted' do
+      context 'when deleted' do
+        let!(:deleted_variant) { create(:variant, deleted_at: Time.current) }
+
+        it { expect(Spree::Variant.not_deleted).not_to include(deleted_variant) }
+      end
+
+      context 'when not deleted' do
+        let!(:variant_2) { create(:variant, deleted_at: nil) }
+
+        it { expect(Spree::Variant.not_deleted).to include(variant_2) }
+      end
+    end
+
+    describe '.for_currency_and_available_price_amount' do
+      let(:currency) { 'EUR' }
+
+      context 'when price with currency present' do
+        context 'when price has amount' do
+          let!(:price_1) { create(:price, currency: currency, variant: variant, amount: 10) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to include(variant) }
+        end
+
+        context 'when price do not have amount' do
+          let!(:price_1) { create(:price, currency: currency, variant: variant, amount: nil) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+      end
+
+      context 'when price with currency not present' do
+        let!(:unavailable_currency) { 'INR' }
+        context 'when price has amount' do
+          let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: 10) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+
+        context 'when price do not have amount' do
+          let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+      end
+
+      context 'when multiple prices for same currency present' do
+        let!(:price_1) { create(:price, currency: currency, variant: variant) }
+        let!(:price_2) { create(:price, currency: currency, variant: variant) }
+
+        it 'should not duplicate variant' do
+          expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to eq([variant])
+        end
+      end
+    end
+
+    describe '.active' do
+      let!(:variants) { [variant] }
+      let!(:currency) { 'EUR' }
+
+      before(:each) do
+        allow(Spree::Variant).to receive(:not_discontinued).and_return(variants)
+        allow(variants).to receive(:not_deleted).and_return(variants)
+        allow(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
+      end
+
+      it 'should find not_discontinued variants' do
+        expect(Spree::Variant).to receive(:not_discontinued).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it 'should find not_deleted variants' do
+        expect(variants).to receive(:not_deleted).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it 'should find variants for_currency_and_available_price_amount' do
+        expect(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it { expect(Spree::Variant.active(currency)).to eq(variants) }
+    end
+  end
+
   context "product has other variants" do
     describe "option value accessors" do
       before {
