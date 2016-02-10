@@ -73,10 +73,6 @@ module Spree
     extend DisplayMoney
     money_methods :amount
 
-    def closed?
-      state == "closed"
-    end
-
     def currency
       adjustable ? adjustable.currency : Spree::Config[:currency]
     end
