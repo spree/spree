@@ -1,4 +1,4 @@
-<!-- You can override this template to design your own header.
+<!-- You can override this template to design your own header. -->
 <table class="row header">
   <tr>
     <td class="center" align="center">
@@ -10,11 +10,10 @@
 
               <table class="twelve columns">
                 <tr>
-                  <td class="six sub-columns">
-                    <%= image_tag(Spree::Config.logo) %>
-                  </td>
-                  <td class="six sub-columns last" style="text-align:right; vertical-align:middle;">
-                    <span class="template-label"><%= Spree::Store.current.name %></span>
+                  <td class="twelve sub-columns last">
+                    <%= link_to spree.root_url, class: 'template-label' do %>
+                      <%= image_tag Spree::Config.logo, class: 'logo', alt: Spree::Store.current.name, title: Spree::Store.current.name %>
+                    <% end %>
                   </td>
                   <td class="expander"></td>
                 </tr>
@@ -28,4 +27,3 @@
     </td>
   </tr>
 </table>
--->

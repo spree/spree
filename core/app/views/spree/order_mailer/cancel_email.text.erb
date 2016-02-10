@@ -3,7 +3,7 @@
 <%= Spree.t('order_mailer.cancel_email.instructions') %>
 
 ============================================================
-<%= Spree.t('order_mailer.cancel_email.order_summary_canceled') %>
+<%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %>
 ============================================================
 <% @order.line_items.each do |item| %>
   <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
