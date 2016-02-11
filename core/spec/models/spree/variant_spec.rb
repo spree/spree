@@ -135,6 +135,14 @@ describe Spree::Variant, :type => :model do
           expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to eq([variant])
         end
       end
+
+      context 'when currency parameter is nil' do
+        let!(:price_1) { create(:price, currency: currency, variant: variant, amount: 10) }
+
+        before { Spree::Config[:currency] = currency }
+
+        it { expect(Spree::Variant.for_currency_and_available_price_amount).to include(variant) }
+      end
     end
 
     describe '.active' do
