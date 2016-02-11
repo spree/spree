@@ -288,4 +288,10 @@ describe Spree::Address, :type => :model do
     let(:address) { stub_model(Spree::Address) }
     specify { expect(address.instance_eval{ require_phone? }).to be true}
   end
+
+  describe '.build_default' do
+    let(:_address) { described_class.build_default }
+
+    it { expect(_address.country).to eq(Spree::Country.default) }
+  end
 end
