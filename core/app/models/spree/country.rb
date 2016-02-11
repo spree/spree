@@ -18,7 +18,8 @@ module Spree
 
     def self.default
       country_id = Spree::Config[:default_country_id]
-      country_id.present? ? find(country_id) : find_by!(iso: 'US')
+      default = find_by(id: country_id) if country_id.present?
+      default || find_by(iso: 'US') || first
     end
 
     def <=>(other)
