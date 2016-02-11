@@ -84,34 +84,36 @@
       </table>
     </div>
 
-    <% if @product.variants.any? %>
-      <div class="panel panel-default" data-hook="product_overview_variants_panel">
-        <div class="panel-heading">
-          <% if can?(:admin, Spree::Variant) %>
-            <%= link_to Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: 'pull-right' %>
-          <% end %>
-          <h3 class="panel-title"><%= Spree.t(:variants) %></h3>
-        </div>
-        <table class="table">
-          <thead data-hook="variants_header">
-            <tr>
-              <th width="25%"><%= Spree.t(:options) %></th>
-              <th><%= Spree.t(:price) %></th>
-              <th><%= Spree.t(:sku) %></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @product.variants.each do |variant| %>
-              <tr data-hook="variants_row">
-                <td><%= variant.options_text %></td>
-                <td><%= variant.display_price.to_html %></td>
-                <td><%= variant.sku %></td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+    <div class="panel panel-default" data-hook="product_overview_variants_panel">
+      <div class="panel-heading">
+        <% if @product.variants.any? && can?(:admin, Spree::Variant) %>
+          <%= link_to Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: 'pull-right' %>
+        <% end %>
+        <h3 class="panel-title">SKU and Stock</h3>
       </div>
-    <% end %>
+      <table class="table">
+        <thead data-hook="variants_header">
+          <tr>
+            <th width="25%"><%= Spree.t(:options) %></th>
+            <th><%= Spree.t(:price) %></th>
+            <th><%= Spree.t(:sku) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @product.variants_including_master.each do |variant| %>
+            <tr data-hook="variants_row">
+              <% if variant.is_master? %>
+                <td><strong>Master</strong></td>
+              <% else %>
+                <td><%= variant.options_text %></td>
+              <% end %>
+              <td><%= variant.display_price.to_html %></td>
+              <td><%= variant.sku %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
 
     <div class="panel panel-default" data-hook="product_overview_prices_panel">
       <div class="panel-heading">
