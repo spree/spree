@@ -33,6 +33,14 @@ describe "Homepage", :type => :feature do
       it "should have a link to configuration" do
         page.find_link("Configuration")['/admin/configurations']
       end
+
+      it "should have a link to return authorizations" do
+        within('.sidebar') { page.find_link("Return Authorizations")['/admin/return_authorizations'] }
+      end
+
+      it "should have a link to customer returns" do
+        within('.sidebar') { page.find_link("Customer Returns")['/admin/customer_returns'] }
+      end
     end
 
     context "visiting the products tab" do

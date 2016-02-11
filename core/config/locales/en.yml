@@ -519,6 +519,7 @@ en:
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
     cancel: cancel
+    canceled: Canceled
     canceler: Canceler
     canceled_at: Canceled at
     cannot_empty_completed_order: Order has already been processed so it cannot be emptied
@@ -904,6 +905,7 @@ en:
       variant_deleted: Variant has been deleted
       variant_not_deleted: Variant could not be deleted
     num_orders: "# Orders"
+    number: Number
     on_hand: On Hand
     open: Open
     open_all_adjustments: Open All Adjustments
@@ -1134,8 +1136,12 @@ en:
     resume: resume
     resumed: Resumed
     return: return
+    returns: Returns
     return_authorization: Return Authorization
     return_authorization_reasons: Return Authorization Reasons
+    return_authorization_states:
+      authorized: Authorized
+      canceled: Canceled
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
