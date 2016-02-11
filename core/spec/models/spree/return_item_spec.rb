@@ -679,4 +679,53 @@ describe Spree::ReturnItem, :type => :model do
       expect(return_item.total).to eq 20
     end
   end
+
+  describe '#process_inventory_unit!' do
+    let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+    let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }
+    let!(:stock_item) { inventory_unit.find_stock_item }
+    before { return_item.update_attributes!(reception_status: 'awaiting') }
+
+    subject { return_item.send(:process_inventory_unit!) }
+
+    it { expect { subject }.to change { inventory_unit.state }.to('returned').from('shipped') }
+
+    context 'stock should restock' do
+      let(:stock_movement_attributes) do
+        {
+          stock_item_id: stock_item.id,
+          quantity: 1,
+          originator: return_item.return_authorization
+        }
+      end
+
+      it { expect(subject).to eq(Spree::StockMovement.find_by(stock_movement_attributes)) }
+    end
+
+    context 'stock should not restock' do
+      context 'return_item is not resellable' do
+        before { return_item.resellable = false }
+        it { expect(subject).to be_nil }
+        it { expect { subject }.to_not change { stock_item.reload.count_on_hand } }
+      end
+
+      context 'variant should not track inventory' do
+        before { return_item.variant.track_inventory = false }
+        it { expect(subject).to be_nil }
+        it { expect { subject }.to_not change { stock_item.reload.count_on_hand } }
+      end
+
+      context 'stock_item not present' do
+        before { stock_item.destroy }
+        it { expect(subject).to be_nil }
+        it { expect { subject }.to_not change { stock_item.reload.count_on_hand } }
+      end
+
+      context 'when restock inventory preference false' do
+        before { Spree::Config[:restock_inventory] = false }
+        it { expect(subject).to be_nil }
+        it { expect { subject }.to_not change { stock_item.reload.count_on_hand } }
+      end
+    end
+  end
 end
