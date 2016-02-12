@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+source strict-mode.sh
+
+git clean -dx --force --force --exclude */spec/dummy/public/assets/

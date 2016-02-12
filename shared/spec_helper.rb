@@ -64,7 +64,7 @@ private
   #
   # @return [undefined]
   def dummy_app
-    require(specdir.join('dummy/config/environment'))
+    require(specdir.join('dummy/config/environment').to_s)
     require('rspec/rails')  # Can only be loaded after rails :(
   end
 

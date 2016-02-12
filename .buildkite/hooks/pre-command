@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+source strict-mode.sh
+
+export COMMIT_SHA
+export PREVIOUS_SHA
+
+COMMIT_SHA="$(git rev-parse --short HEAD)"
+PREVIOUS_SHA="$(git rev-parse --short HEAD~1)"
+
+export REGISTRY_URL="$BUILDKITE_AGENT_META_DATA_TEST_REGISTRY_URL"
+
+export TEST_CONTAINER="$REGISTRY_URL/spree-test:$COMMIT_SHA"
+export PREV_TEST_CONTAINER="$REGISTRY_URL/spree-test:$PREVIOUS_SHA"

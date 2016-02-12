@@ -3,15 +3,9 @@
 *
 
 # Whitelist allowed files
-!.buildkite/pipeline.yml
-!.gitignore
 !api/
 !backend/
 !config/
 !core/
 !frontend/
-!shared/Rakefile
-!shared/dependencies.rb
-!shared/gemspec.rb
-!shared/rubocop.yml
-!shared/spec_helper.rb
+!shared/
