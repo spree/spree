@@ -407,4 +407,22 @@ describe Spree::StockItem, :type => :model do
       end
     end
   end
+
+  describe 'scopes' do
+    context '.with_active_stock_location' do
+      let(:stock_items_with_active_location) { Spree::StockItem.with_active_stock_location }
+
+      context 'when stock location is active' do
+        before { stock_location.update_column(:active, true) }
+
+        it { expect(stock_items_with_active_location).to include(subject) }
+      end
+
+      context 'when stock location is inactive' do
+        before { stock_location.update_column(:active, false) }
+
+        it { expect(stock_items_with_active_location).to_not include(subject) }
+      end
+    end
+  end
 end
