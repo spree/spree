@@ -43,6 +43,10 @@ describe Spree::Payment, :type => :model do
     allow(payment.log_entries).to receive(:create!)
   end
 
+  describe 'delegate' do
+    it { is_expected.to delegate_method(:currency).to(:order) }
+  end
+
   context '.risky' do
 
     let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }
