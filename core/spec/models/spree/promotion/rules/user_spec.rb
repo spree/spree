@@ -2,6 +2,14 @@ require 'spec_helper'
 
 describe Spree::Promotion::Rules::User, :type => :model do
   let(:rule) { Spree::Promotion::Rules::User.new }
+  let(:test_user) { create :user }
+
+  describe 'Associations' do
+    it 'should have many promotion_rule_users' do
+      is_expected.to have_many(:promotion_rule_users).with_foreign_key(:promotion_rule_id).
+        class_name('Spree::PromotionRuleUser').dependent(:destroy)
+    end
+  end
 
   context "#eligible?(order)" do
     let(:order) { Spree::Order.new }
