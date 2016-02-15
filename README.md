@@ -203,7 +203,7 @@ your Ruby objects on each request.  The introduction of the asset pipeline in
 Rails 3.1 made default performance in development mode significantly worse. There
 are, however, a few tricks to speeding up performance in development mode.
 
-First, in your `config/development.rb`:
+First, in your `config/environments/development.rb`:
 
 ```ruby
 config.assets.debug = false
