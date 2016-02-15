@@ -3,6 +3,7 @@ module Spree
     module Orders
       class CustomerDetailsController < Spree::Admin::BaseController
         before_action :load_order
+        before_action :load_user, only: :update, unless: :guest_checkout?
 
         def show
           edit
@@ -20,9 +21,7 @@ module Spree
 
         def update
           if @order.update_attributes(order_params)
-            if params[:guest_checkout] == "false"
-              @order.associate_user!(Spree.user_class.find(params[:user_id]), @order.email.blank?)
-            end
+            @order.associate_user!(@user, @order.email.blank?) unless guest_checkout?
             @order.next unless @order.complete?
             @order.refresh_shipment_rates(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
 
@@ -54,6 +53,20 @@ module Spree
 
         def model_class
           Spree::Order
+        end
+
+        def load_user
+          @user = (Spree.user_class.find_by(id: params[:user_id]) ||
+            Spree.user_class.find_by(email: order_params[:email]))
+
+          unless @user
+            flash.now[:error] = Spree.t(:user_not_found)
+            render :edit
+          end
+        end
+
+        def guest_checkout?
+          params[:guest_checkout] == 'true'
         end
       end
     end

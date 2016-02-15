@@ -40,6 +40,7 @@ describe "Customer Details", type: :feature, js: true do
 
   context "brand new order" do
     before do
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       visit spree.new_admin_order_path
     end
     # Regression test for #3335 & #5317
@@ -63,7 +64,7 @@ describe "Customer Details", type: :feature, js: true do
       expect_form_value('#order_bill_address_attributes_state_id', user.bill_address.state_id.to_s)
       expect_form_value('#order_bill_address_attributes_phone', user.bill_address.phone)
       click_button "Update"
-      expect(Spree::Order.last.user).not_to be_nil
+      expect(Spree::Order.last.user).to eq(user)
     end
   end
 
@@ -74,6 +75,7 @@ describe "Customer Details", type: :feature, js: true do
         config.company = true
       end
 
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       visit spree.admin_orders_path
       within('table#listing_orders') { click_icon(:edit) }
     end
@@ -123,9 +125,9 @@ describe "Customer Details", type: :feature, js: true do
       previous_user = order.user
       click_link "Customer"
       fill_in "order_email", with: "newemail@example.com"
-      expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
       expect(order.user_id).to eq previous_user.id
       expect(order.user.email).to eq previous_user.email
+      expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
     end
 
     context "country associated was removed" do
