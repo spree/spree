@@ -265,6 +265,11 @@ describe Spree::Order, :type => :model do
 
   context "empty!" do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
+    let(:promotion) { create :promotion, code: '10off' }
+
+    before do
+      promotion.orders << order
+    end
 
     context 'completed order' do
       before do
@@ -282,10 +287,12 @@ describe Spree::Order, :type => :model do
       end
 
       it "clears out line items, adjustments and update totals" do
-        expect(order.line_items.count).to eq(0)
-        expect(order.adjustments.count).to eq(0)
-        expect(order.shipments.count).to eq(0)
-        expect(order.item_total).to eq(0)
+        expect(order.line_items.count).to be_zero
+        expect(order.adjustments.count).to be_zero
+        expect(order.shipments.count).to be_zero
+        expect(order.order_promotions.count).to be_zero
+        expect(order.promo_total).to be_zero
+        expect(order.item_total).to be_zero
         expect(order.empty!).to eq(order)
       end
     end

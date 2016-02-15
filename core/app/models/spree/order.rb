@@ -444,6 +444,7 @@ module Spree
         adjustments.destroy_all
         shipments.destroy_all
         state_changes.destroy_all
+        order_promotions.destroy_all
 
         update_totals
         persist_totals
