@@ -8,6 +8,10 @@ describe Spree::Country, type: :model do
     it { is_expected.to callback(:ensure_not_default).before(:destroy) }
   end
 
+  describe 'Associations' do
+    it { is_expected.to have_many(:addresses).dependent(:restrict_with_error) }
+  end
+
   describe '.default' do
     it 'will return the country from the config' do
       Spree::Config[:default_country_id] = canada.id

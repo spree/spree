@@ -130,22 +130,6 @@ describe "Customer Details", type: :feature, js: true do
       expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
     end
 
-    context "country associated was removed" do
-      let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
-
-      before do
-        order.bill_address.country.destroy
-        configure_spree_preferences do |config|
-          config.default_country_id = brazil.id
-        end
-      end
-
-      it "sets default country when displaying form" do
-        click_link "Customer"
-        expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
-      end
-    end
-
     # Regression test for #942
     context "errors when no shipping methods are available" do
       before do
