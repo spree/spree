@@ -87,7 +87,16 @@ module Spree
 
         select_tag(:per_page,
           options_for_select(per_page_options, params['per_page'] || per_page_default),
-          { id: "js-per-page-select", class: "form-control pull-right" })
+          { class: "form-control pull-right js-per-page-select" })
+      end
+
+      # helper method to create proper url to apply per page filtering
+      # fixes https://github.com/spree/spree/issues/6888
+      def per_page_dropdown_params
+        args = params.clone
+        args.delete(:page)
+        args.delete(:per_page)
+        args
       end
 
       # finds class for a given symbol / string

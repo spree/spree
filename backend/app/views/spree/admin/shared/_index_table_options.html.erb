@@ -4,20 +4,10 @@
   </div>
   <div class="col-sm-6">
     <div class="pagination-wrap">
-      <%= form_tag({ :action => "index"}, { :method => "get", :id => "js-per-page-form", :class => 'form-inline' }) do %>
+      <%= form_tag(per_page_dropdown_params, { method: :get, class: 'js-per-page-form form-inline' }) do %>
         <%= per_page_dropdown %>
       <% end %>
       <div class="clearfix"></div>
     </div>
   </div>
 </div>
-
-<% content_for :head do %>
-  <%= javascript_tag do %>
-    $(document).ready(function() {
-      $("#js-per-page-select").change(function() {
-        $("#js-per-page-form").submit();
-      });
-    });
-  <% end %>
-<% end %>

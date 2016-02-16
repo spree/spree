@@ -1,11 +1,16 @@
 module Spree
   class Price < Spree::Base
     acts_as_paranoid
+
+    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     validate :check_price
-    validates :amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-    validate :validate_amount_maximum
+    validates :amount, allow_nil: true, numericality: {
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: MAXIMUM_AMOUNT
+    }
 
     extend DisplayMoney
     money_methods :amount, :price
@@ -33,16 +38,6 @@ module Spree
 
     def check_price
       self.currency ||= Spree::Config[:currency]
-    end
-
-    def maximum_amount
-      BigDecimal '999999.99'
-    end
-
-    def validate_amount_maximum
-      if amount && amount > maximum_amount
-        errors.add :amount, I18n.t('errors.messages.less_than_or_equal_to', count: maximum_amount)
-      end
     end
   end
 end

@@ -44,6 +44,7 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 require 'paperclip/matchers'
 

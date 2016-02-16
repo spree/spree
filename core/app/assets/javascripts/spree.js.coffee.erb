@@ -8,7 +8,7 @@ class window.Spree
       callback(jQuery)
 
   @mountedAt: ->
-    "<%= Rails.application.routes.url_helpers.spree_path %>"
+    "<%= Rails.application.routes.url_helpers.spree_path(trailing_slash: true) %>"
 
   @pathFor: (path) ->
     locationOrigin = "#{window.location.protocol}//#{window.location.hostname}" + (if window.location.port then ":#{window.location.port}" else "")

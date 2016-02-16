@@ -39,6 +39,7 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 require 'paperclip/matchers'
 
@@ -49,7 +50,7 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
 # Set timeout to something high enough to allow CI to pass
-Capybara.default_max_wait_time = 10
+Capybara.default_max_wait_time = 20
 
 RSpec.configure do |config|
   config.color = true
@@ -91,6 +92,10 @@ RSpec.configure do |config|
     wait_for_ajax if RSpec.current_example.metadata[:js]
 
     DatabaseCleaner.clean
+  end
+
+  config.around do |example|
+    Timeout.timeout(30, &example)
   end
 
   config.after(:each, :type => :feature) do |example|

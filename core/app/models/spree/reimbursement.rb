@@ -26,7 +26,7 @@ module Spree
     class_attribute :reimbursement_tax_calculator
     self.reimbursement_tax_calculator = ReimbursementTaxCalculator
     # A separate attribute here allows you to use a more performant calculator for estimates
-    # and a different one (e.g. one that hits a 3rd party API) for the final caluclations.
+    # and a different one (e.g. one that hits a 3rd party API) for the final calculations.
     class_attribute :reimbursement_simulator_tax_calculator
     self.reimbursement_simulator_tax_calculator = ReimbursementTaxCalculator
 

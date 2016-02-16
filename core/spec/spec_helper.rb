@@ -34,6 +34,7 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/shoulda_matcher_configuration'
 
 RSpec.configure do |config|
   config.color = true
@@ -68,6 +69,6 @@ RSpec.configure do |config|
   end
 
   config.around do |example|
-    Timeout.timeout(10, &example)
+    Timeout.timeout(30, &example)
   end
 end
