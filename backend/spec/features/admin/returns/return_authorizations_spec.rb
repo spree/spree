@@ -5,8 +5,8 @@ describe "Return Authorizations", type: :feature do
   stub_authorization!
 
   describe "listing" do
-    let!(:return_authorization_2) { create(:return_authorization, created_at: Time.current - 1.day) }
     let!(:return_authorization) { create(:return_authorization, created_at: Time.current) }
+    let!(:return_authorization_2) { create(:return_authorization, created_at: Time.current - 1.day) }
 
     before(:each) do
       visit spree.admin_return_authorizations_path

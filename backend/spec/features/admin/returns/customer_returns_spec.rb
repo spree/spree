@@ -3,10 +3,10 @@ require 'spec_helper'
 
 describe "Customer Returns", type: :feature do
   stub_authorization!
+  let!(:customer_return) { create(:customer_return, created_at: Time.current) }
 
   describe "listing" do
     let!(:customer_return_2) { create(:customer_return, created_at: Time.current - 1.day) }
-    let!(:customer_return) { create(:customer_return, created_at: Time.current) }
 
     before(:each) do
       visit spree.admin_customer_returns_path
@@ -39,7 +39,6 @@ describe "Customer Returns", type: :feature do
   end
 
   describe "searching" do
-    let!(:customer_return) { create(:customer_return) }
     let!(:customer_return_2) { create(:customer_return) }
 
     it "should search on number" do
@@ -62,8 +61,6 @@ describe "Customer Returns", type: :feature do
   end
 
   describe 'link' do
-    let!(:customer_return) { create(:customer_return) }
-
     describe 'order number' do
       it 'should open orders edit page' do
         visit spree.admin_customer_returns_path

@@ -14,7 +14,7 @@ module Spree
 
         before { subject }
 
-        it "loads the return authorizations" do
+        it "should load return authorizations" do
           expect(assigns(:collection)).to include(return_authorization)
         end
       end
@@ -28,7 +28,7 @@ module Spree
 
         before { subject }
 
-        it "loads the customer returns" do
+        it "should load customer returns" do
           expect(assigns(:collection)).to include(customer_return)
         end
       end
