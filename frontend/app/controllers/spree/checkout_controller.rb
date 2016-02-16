@@ -71,7 +71,7 @@ module Spree
     def ensure_valid_state
       if @order.state != correct_state && !skip_state_validation?
         flash.keep
-        @order.state = correct_state
+        @order.update_column(:state, correct_state)
         redirect_to checkout_state_path(@order.state)
       end
     end
