@@ -19,3 +19,7 @@ body {
   .no-margin-#{$side}  { margin-#{side}: 0; }
   .no-padding-#{$side} { padding-#{side}: 0; }
 }
+
+.alert-error {
+  @extend .alert-danger;
+}
