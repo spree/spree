@@ -2,7 +2,7 @@ module Spree
   module Api
     module V1
       class ProductPropertiesController < Spree::Api::BaseController
-        before_action :find_product
+        before_action :find_product, :authorize_product!
         before_action :product_property, only: [:show, :update, :destroy]
 
         def index
@@ -52,7 +52,10 @@ module Spree
         private
 
         def find_product
-          @product = super(params[:product_id])
+          super(params[:product_id])
+        end
+
+        def authorize_product!
           authorize! :read, @product
         end
 
