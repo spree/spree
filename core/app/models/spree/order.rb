@@ -217,7 +217,7 @@ module Spree
         # Little hacky fix for #4117
         # If this wasn't here, order would transition to address state on confirm failure
         # because there would be no valid payments any more.
-        state == 'confirm'
+        confirm?
     end
 
     def backordered?
@@ -257,7 +257,7 @@ module Spree
     end
 
     def allow_cancel?
-      return false unless completed? and state != 'canceled'
+      return false if !completed? || canceled?
       shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
@@ -328,7 +328,7 @@ module Spree
     end
 
     def outstanding_balance
-      if state == 'canceled'
+      if canceled?
         -1 * payment_total
       elsif reimbursements.includes(:refunds).size > 0
         reimbursed = reimbursements.includes(:refunds).inject(0) do |sum, reimbursement|
