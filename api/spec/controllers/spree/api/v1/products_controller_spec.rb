@@ -405,5 +405,93 @@ module Spree
         expect(product.reload.deleted_at).not_to be_nil
       end
     end
+
+    describe '#find_product' do
+      let(:products) { Spree::Product.all }
+
+      def send_request
+        api_get :show, id: product.id
+      end
+
+      before { allow(controller).to receive(:product_scope).and_return(products) }
+
+      context 'product found using friendly_id' do
+        before do
+          allow(products).to receive(:friendly).and_return(products)
+          allow(products).to receive(:find).with(product.id.to_s).and_return(product)
+        end
+
+        describe 'expects to receive' do
+          it { expect(controller).to receive(:product_scope).and_return(products) }
+          it { expect(products).to receive(:friendly).and_return(products) }
+          it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
+          after { send_request }
+        end
+
+        describe 'assigns' do
+          before { send_request }
+          it { expect(assigns(:product)).to eq(product) }
+        end
+
+        describe 'response' do
+          before { send_request }
+          it { expect(response).to have_http_status(:ok) }
+          it { expect(json_response[:id]).to eq(product.id) }
+          it { expect(json_response[:name]).to eq(product.name) }
+        end
+      end
+
+      context 'product not found using friendly_id, but found in normal scope using id' do
+        before do
+          allow(products).to receive(:friendly).and_return(products)
+          allow(products).to receive(:find).with(product.id.to_s).and_raise(ActiveRecord::RecordNotFound)
+          allow(products).to receive(:find_by).with(id: product.id.to_s).and_return(product)
+        end
+
+        describe 'expects to receive' do
+          it { expect(controller).to receive(:product_scope).and_return(products) }
+          it { expect(products).to receive(:friendly).and_return(products) }
+          it { expect(products).to receive(:find_by).with(id: product.id.to_s).and_return(product) }
+          after { send_request }
+        end
+
+        describe 'assigns' do
+          before { send_request }
+          it { expect(assigns(:product)).to eq(product) }
+        end
+
+        describe 'response' do
+          before { send_request }
+          it { expect(response).to have_http_status(:ok) }
+          it { expect(json_response[:id]).to eq(product.id) }
+          it { expect(json_response[:name]).to eq(product.name) }
+        end
+      end
+
+      context 'product not found' do
+        before do
+          allow(products).to receive(:friendly).and_return(products)
+          allow(products).to receive(:find).with(product.id.to_s).and_raise(ActiveRecord::RecordNotFound)
+          allow(products).to receive(:find_by).with(id: product.id.to_s).and_return(nil)
+        end
+
+        describe 'expects to receive' do
+          it { expect(controller).to receive(:product_scope).and_return(products) }
+          it { expect(products).to receive(:friendly).and_return(products) }
+          it { expect(products).to receive(:find_by).with(id: product.id.to_s).and_return(nil) }
+          after { send_request }
+        end
+
+        describe 'assigns' do
+          before { send_request }
+          it { expect(assigns(:product)).to eq(nil) }
+        end
+
+        describe 'response' do
+          before { send_request }
+          it { assert_not_found! }
+        end
+      end
+    end
   end
 end
