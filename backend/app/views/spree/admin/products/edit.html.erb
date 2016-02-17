@@ -1,6 +1,17 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: 'Overview' } %>
 
 <div class="row">
+  <div class="col-md-12">
+    <% @product.comments.reverse.each do |comment| %>
+      <div class="alert alert-warning no-objects-found">
+        <div>
+          <%= comment.comment.html_safe %> - <%= comment.created_at.to_date.strftime('%d/%m/%Y') %>
+          <%= link_to_if can?(:edit, @product), 'Edit', spree.general_admin_product_url(@product), class: 'pull-right' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
   <div class="col-md-8">
     <div class="panel panel-default" data-hook="product_overview_general_panel">
       <div class="panel-heading">
