@@ -53,7 +53,7 @@ $(document).ready(function() {
             });
           });
         }
-        return customer.email;
+        return Select2.util.escapeMarkup(customer.email);
       }
     })
   }
