@@ -134,13 +134,7 @@ describe Spree::ShippingRate, type: :model do
     end
   end
 
-  context "#shipping_method_code" do
-    before do
-      shipping_method.code = "THE_CODE"
-    end
-
-    it 'should be shipping_method.code' do
-      expect(shipping_rate.shipping_method_code).to eq("THE_CODE")
-    end
+  describe 'delegate' do
+    it { is_expected.to delegate_method(:code).to(:shipping_method).with_prefix(true) }
   end
 end
