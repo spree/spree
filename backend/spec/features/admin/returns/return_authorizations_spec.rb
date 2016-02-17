@@ -12,25 +12,25 @@ describe "Return Authorizations", type: :feature do
       visit spree.admin_return_authorizations_path
     end
 
-    it "should list sorted by created_at" do
+    it "lists return authorizations sorted by created_at" do
       within_row(1) { expect(page).to have_content(return_authorization.number) }
       within_row(2) { expect(page).to have_content(return_authorization_2.number) }
     end
 
-    it "should display order number" do
+    it "displays order number" do
       within_row(1) { expect(page).to have_content(return_authorization.order.number) }
     end
 
-    it "should display return authorization number" do
+    it "displays return authorization number" do
       within_row(1) { expect(page).to have_content(return_authorization.number) }
     end
 
-    it 'should display state' do
+    it 'displays state' do
       return_authorization_state = Spree.t("return_authorization_states.#{return_authorization.state}")
       within_row(1) { expect(page).to have_content(return_authorization_state) }
     end
 
-    it 'should have edit link' do
+    it 'has edit link' do
       expect(page).to have_css('.icon-edit')
     end
   end
@@ -39,7 +39,7 @@ describe "Return Authorizations", type: :feature do
     let!(:return_authorization) { create(:return_authorization, state: 'authorized') }
     let!(:return_authorization_2) { create(:return_authorization, state: 'canceled') }
 
-    it "should search on number" do
+    it "searches on number" do
       visit spree.admin_return_authorizations_path
 
       click_on 'Filter'
@@ -57,7 +57,7 @@ describe "Return Authorizations", type: :feature do
       expect(page).not_to have_content(return_authorization.number)
     end
 
-    it "should search on status" do
+    it "searches on status" do
       visit spree.admin_return_authorizations_path
 
       click_on 'Filter'
@@ -80,7 +80,7 @@ describe "Return Authorizations", type: :feature do
     let!(:return_authorization) { create(:return_authorization) }
 
     describe 'order number' do
-      it 'should open orders edit page' do
+      it 'opens orders edit page' do
         visit spree.admin_return_authorizations_path
         click_link return_authorization.order.number
         expect(page).to have_content("Orders / #{return_authorization.order.number}")
@@ -88,7 +88,7 @@ describe "Return Authorizations", type: :feature do
     end
 
     describe 'return authorization number' do
-      it 'should open return authorization edit page' do
+      it 'opens return authorization edit page' do
         visit spree.admin_return_authorizations_path
         click_link return_authorization.number
         expect(page).to have_content("Return Authorization #{return_authorization.number}")
@@ -99,7 +99,7 @@ describe "Return Authorizations", type: :feature do
       let!(:return_authorization) { create(:return_authorization, state: 'authorized') }
       let!(:return_authorization_2) { create(:return_authorization, state: 'canceled') }
 
-      it 'should only show authorized return authorizations' do
+      it 'only shows authorized return authorizations' do
         visit spree.admin_return_authorizations_path
         within('.nav-tabs') do
           click_link 'Authorized'
@@ -109,7 +109,7 @@ describe "Return Authorizations", type: :feature do
         expect(page).not_to have_content(return_authorization_2.number)
       end
 
-      it 'should preselect authorized status in filter' do
+      it 'preselects authorized status in filter' do
         visit spree.admin_return_authorizations_path
         within('.nav-tabs') do
           click_link 'Authorized'
@@ -126,7 +126,7 @@ describe "Return Authorizations", type: :feature do
       let!(:return_authorization) { create(:return_authorization, state: 'canceled') }
       let!(:return_authorization_2) { create(:return_authorization, state: 'authorized') }
 
-      it 'should only show canceled return authorizations' do
+      it 'only shows canceled return authorizations' do
         visit spree.admin_return_authorizations_path
         within('.nav-tabs') do
           click_link 'Canceled'
@@ -136,7 +136,7 @@ describe "Return Authorizations", type: :feature do
         expect(page).not_to have_content(return_authorization_2.number)
       end
 
-      it 'should preselect canceled status in filter' do
+      it 'preselects canceled status in filter' do
         visit spree.admin_return_authorizations_path
         within('.nav-tabs') do
           click_link 'Canceled'

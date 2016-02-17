@@ -12,28 +12,28 @@ describe "Customer Returns", type: :feature do
       visit spree.admin_customer_returns_path
     end
 
-    it "should list sorted by created_at" do
+    it "lists sorted by created_at" do
       within_row(1) { expect(page).to have_content(customer_return.number) }
       within_row(2) { expect(page).to have_content(customer_return_2.number) }
     end
 
-    it "should display pre tax total" do
+    it "displays pre tax total" do
       within_row(1) { expect(page).to have_content(customer_return.display_pre_tax_total.to_html) }
     end
 
-    it "should display order number" do
+    it "displays order number" do
       within_row(1) { expect(page).to have_content(customer_return.order.number) }
     end
 
-    it "should display customer return number" do
+    it "displays customer return number" do
       within_row(1) { expect(page).to have_content(customer_return.number) }
     end
 
-    it 'should display status' do
+    it 'displays status' do
       within_row(1) { expect(page).to have_content(Spree.t(:incomplete)) }
     end
 
-    it 'should have edit link' do
+    it 'has edit link' do
       expect(page).to have_css('.icon-edit')
     end
   end
@@ -41,7 +41,7 @@ describe "Customer Returns", type: :feature do
   describe "searching" do
     let!(:customer_return_2) { create(:customer_return) }
 
-    it "should search on number" do
+    it "searches on number" do
       visit spree.admin_customer_returns_path
 
       click_on 'Filter'
@@ -62,7 +62,7 @@ describe "Customer Returns", type: :feature do
 
   describe 'link' do
     describe 'order number' do
-      it 'should open orders edit page' do
+      it 'opens orders edit page' do
         visit spree.admin_customer_returns_path
         click_link customer_return.order.number
         expect(page).to have_content("Orders / #{customer_return.order.number}")
@@ -70,7 +70,7 @@ describe "Customer Returns", type: :feature do
     end
 
     describe 'customer return number' do
-      it 'should open customer return edit page' do
+      it 'opens customer return edit page' do
         visit spree.admin_customer_returns_path
         click_link customer_return.number
         expect(page).to have_content("Customer Return ##{customer_return.number}")
