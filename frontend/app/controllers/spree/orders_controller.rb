@@ -95,11 +95,7 @@ module Spree
     private
 
       def order_params
-        if params[:order]
-          params[:order].permit(*permitted_order_attributes)
-        else
-          {}
-        end
+        params.fetch(:order, {}).permit(*permitted_order_attributes)
       end
 
       def assign_order_with_lock
