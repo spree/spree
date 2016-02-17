@@ -60,6 +60,8 @@ module Spree
       response_code
     end
 
+    delegate :currency, to: :order
+
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
       # With card payments, happens before purchase or authorization happens
@@ -97,10 +99,6 @@ module Spree
           name:           'payment',
         )
       end
-    end
-
-    def currency
-      order.currency
     end
 
     def money

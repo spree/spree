@@ -8,6 +8,8 @@ module Spree
       @variant = line_item.variant
     end
 
+    delegate :inventory_units, to: :line_item
+
     # Only verify inventory for completed orders (as orders in frontend checkout
     # have inventory assigned via +order.create_proposed_shipment+) or when
     # shipment is explicitly passed
@@ -27,10 +29,6 @@ module Spree
           remove(inventory_units, shipment)
         end
       end
-    end
-
-    def inventory_units
-      line_item.inventory_units
     end
 
     private

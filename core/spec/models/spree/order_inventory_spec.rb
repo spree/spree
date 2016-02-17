@@ -6,6 +6,10 @@ describe Spree::OrderInventory, :type => :model do
 
   subject { described_class.new(order, line_item) }
 
+  describe 'delegate' do
+    it { is_expected.to delegate_method(:inventory_units).to(:line_item) }
+  end
+
   context "when order is missing inventory units" do
     before { line_item.update_column(:quantity, 2) }
 
