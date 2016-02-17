@@ -141,7 +141,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   context "a product with variants" do
     let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
     let(:option_value) { create(:option_value) }
-    let!(:variant) { product.variants.create!(:price => 5.59) }
+    let!(:variant) { build(:variant, price: 5.59, product: product, option_values: []) }
 
     before do
       # Need to have two images to trigger the error
@@ -151,6 +151,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
       product.option_types << option_value.option_type
       variant.option_values << option_value
+      variant.save!
     end
 
     it "should be displayed" do
@@ -186,13 +187,13 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
   context "a product with variants, images only for the variants" do
     let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:variant1) { create(:variant, product: product, price: 9.99) }
+    let(:variant2) { create(:variant, product: product, price: 10.99) }
 
     before do
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-      v1 = product.variants.create!(price: 9.99)
-      v2 = product.variants.create!(price: 10.99)
-      v1.images.create!(attachment: image)
-      v2.images.create!(attachment: image)
+      variant1.images.create!(attachment: image)
+      variant2.images.create!(attachment: image)
     end
 
     it "should not display no image available" do

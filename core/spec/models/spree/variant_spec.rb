@@ -4,8 +4,14 @@ require 'spec_helper'
 
 describe Spree::Variant, :type => :model do
   let!(:variant) { create(:variant) }
+  let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
+
+  describe 'validations' do
+    it { expect(master_variant).to_not validate_presence_of(:option_values) }
+    it { expect(variant).to validate_presence_of(:option_values) }
+  end
 
   context 'sorting' do
     it 'responds to set_list_position' do
@@ -30,7 +36,7 @@ describe Spree::Variant, :type => :model do
 
     it "propagate to stock items" do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
-      product.variants.create(:name => "Foobar")
+      create(:variant, product: product)
     end
 
     context "stock location has disable propagate all variants" do
@@ -51,9 +57,7 @@ describe Spree::Variant, :type => :model do
       end
 
       context 'when a variant is created' do
-        before(:each) do
-          product.variants.create!(:name => 'any-name')
-        end
+        let!(:new_variant) { create(:variant, product: product) }
 
         it { expect(product.master).to_not be_in_stock }
       end
@@ -341,13 +345,14 @@ describe Spree::Variant, :type => :model do
 
   # Regression test for #2432
   describe 'options_text' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
       # Order bar than foo
       variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
       variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
+      variant.save
     end
 
     it 'should order by bar than foo' do
@@ -357,7 +362,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'exchange_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -366,6 +371,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do
@@ -383,7 +389,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'exchange_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -392,6 +398,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do
@@ -409,7 +416,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'descriptive_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -418,6 +425,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do
