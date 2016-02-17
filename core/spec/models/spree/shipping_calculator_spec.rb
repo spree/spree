@@ -2,11 +2,11 @@ require 'spec_helper'
 
 module Spree
   describe ShippingCalculator, :type => :model do
-    let(:variant1) { build(:variant, :price => 10) }
-    let(:variant2) { build(:variant, :price => 20) }
+    let(:line_item1) { build(:line_item, :price => 10) }
+    let(:line_item2) { build(:line_item, :price => 20) }
 
     let(:package) do
-      build(:stock_package, variants_contents: { variant1 => 2, variant2 => 1 })
+      build(:stock_package, line_item_contents: { line_item1 => 2, line_item2 => 1 })
     end
 
     subject { ShippingCalculator.new }
