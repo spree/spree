@@ -37,7 +37,7 @@ $(document).ready(function() {
         $('#guest_checkout_false').prop("checked", true);
         $('#guest_checkout_false').prop("disabled", false);
 
-        return customer.email;
+        return Select2.util.escapeMarkup(customer.email);
       }
     })
   }
