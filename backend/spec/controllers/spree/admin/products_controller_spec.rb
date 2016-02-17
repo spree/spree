@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ProductsController, :type => :controller do
+describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
   context "#index" do
@@ -25,20 +25,66 @@ describe Spree::Admin::ProductsController, :type => :controller do
 
   end
 
-
   # regression test for #801
-  context "destroying a product" do
-    let(:product) do
-      product = create(:product)
-      create(:variant, :product => product)
-      product
+  describe '#destroy' do
+    let(:product) { mock_model(Spree::Product) }
+    let(:products) { double(ActiveRecord::Relation) }
+
+    def send_request
+      spree_delete :destroy, id: product, format: :js
     end
 
-    it "deletes all the variants (including master) for the product" do
-      spree_delete :destroy, :id => product
-      expect(product.reload.deleted_at).not_to be_nil
-      product.variants_including_master.each do |variant|
-        expect(variant.reload.deleted_at).not_to be_nil
+    context 'will successfully destroy product' do
+      before do
+        allow(Spree::Product).to receive(:friendly).and_return(products)
+        allow(products).to receive(:find).with(product.id.to_s).and_return(product)
+        allow(product).to receive(:destroy).and_return(true)
+      end
+
+      describe 'expects to receive' do
+        it { expect(Spree::Product).to receive(:friendly).and_return(products) }
+        it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
+        it { expect(product).to receive(:destroy).and_return(true) }
+
+        after { send_request }
+      end
+
+      describe 'assigns' do
+        before { send_request }
+        it { expect(assigns(:product)).to eq(product) }
+      end
+
+      describe 'response' do
+        before { send_request }
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(flash[:success]).to eq(Spree.t('notice_messages.product_deleted')) }
+      end
+    end
+
+    context 'will not successfully destroy product' do
+      before do
+        allow(Spree::Product).to receive(:friendly).and_return(products)
+        allow(products).to receive(:find).with(product.id.to_s).and_return(product)
+        allow(product).to receive(:destroy).and_return(false)
+      end
+
+      describe 'expects to receive' do
+        it { expect(Spree::Product).to receive(:friendly).and_return(products) }
+        it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
+        it { expect(product).to receive(:destroy).and_return(false) }
+
+        after { send_request }
+      end
+
+      describe 'assigns' do
+        before { send_request }
+        it { expect(assigns(:product)).to eq(product) }
+      end
+
+      describe 'response' do
+        before { send_request }
+        it { expect(response).to have_http_status(:ok) }
+        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_deleted')) }
       end
     end
   end
