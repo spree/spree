@@ -1,17 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Zone, :type => :model do
+describe Spree::Zone, type: :model do
+  let(:country) { create(:country) }
+  let(:state) { create(:state, country: country) }
+  let(:country_zone) { create(:zone, kind: 'country') }
+  let(:state_zone) { create(:zone, kind: 'state') }
+
   context "#match" do
-    let(:country_zone) { create(:zone, kind: 'country') }
-
-    let(:country) do
-      create(:country)
-    end
-
-    let(:state) do
-      create(:state, country: country)
-    end
-
     before { country_zone.members.create(zoneable: country) }
 
     context "when there is only one qualifying zone" do
@@ -46,7 +41,6 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when there are two qualified zones with different member types" do
-      let(:state_zone) { create(:zone, kind: 'state') }
       let(:address) { create(:address, country: country, state: state) }
 
       before { state_zone.members.create!(zoneable: state) }
@@ -64,11 +58,7 @@ describe Spree::Zone, :type => :model do
   end
 
   context "#country_list" do
-    let(:state) { create(:state) }
-    let(:country) { state.country }
-
     context "when zone consists of countries" do
-      let(:country_zone) { create(:zone, kind: 'country') }
 
       before { country_zone.members.create(zoneable: country) }
 
@@ -78,8 +68,6 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when zone consists of states" do
-      let(:state_zone) { create(:zone, kind: 'state') }
-
       before { state_zone.members.create(zoneable: state) }
 
       it 'should return a list of countries' do
@@ -89,12 +77,9 @@ describe Spree::Zone, :type => :model do
   end
 
   context "#include?" do
-    let(:state) { create(:state) }
-    let(:country) { state.country }
     let(:address) { create(:address, state: state) }
 
     context "when zone is country type" do
-      let(:country_zone) { create(:zone, kind: 'country') }
       before { country_zone.members.create(zoneable: country) }
 
       it "should be true" do
@@ -103,7 +88,6 @@ describe Spree::Zone, :type => :model do
     end
 
     context "when zone is state type" do
-      let(:state_zone) { create(:zone, kind: 'state') }
       before { state_zone.members.create(zoneable: state) }
 
       it "should be true" do
@@ -316,8 +300,6 @@ describe Spree::Zone, :type => :model do
     context "when a zone member country is added to an existing zone consisting of state members" do
       it "should remove existing state members" do
         zone = create(:zone, name: 'foo', zone_members: [])
-        state = create(:state)
-        country = create(:country)
         zone.members.create(zoneable: state)
         country_member = zone.members.create(zoneable: country)
         zone.save
@@ -345,7 +327,6 @@ describe Spree::Zone, :type => :model do
   end
 
   context "#potential_matching_zones" do
-    let!(:country)  { create(:country) }
     let!(:country2) { create(:country, name: 'OtherCountry') }
     let!(:country3) { create(:country, name: 'TaxCountry') }
     let!(:default_tax_zone) do
@@ -376,7 +357,6 @@ describe Spree::Zone, :type => :model do
     end
 
     context "finding potential matches for a state zone" do
-      let!(:state)  { create(:state, country: country) }
       let!(:state2) { create(:state, country: country2, name: 'OtherState') }
       let!(:state3) { create(:state, country: country2, name: 'State') }
       let!(:zone) do
@@ -410,7 +390,6 @@ describe Spree::Zone, :type => :model do
   end
 
   context "state and country associations" do
-    let!(:country)  { create(:country) }
 
     context "has countries associated" do
       let!(:zone) do
@@ -423,7 +402,6 @@ describe Spree::Zone, :type => :model do
     end
 
     context "has states associated" do
-      let!(:state)  { create(:state, country: country) }
       let!(:zone) do
         create(:zone, states: [state])
       end
@@ -431,6 +409,49 @@ describe Spree::Zone, :type => :model do
       it "can access associated states" do
         expect(zone.states).to include(state)
       end
+    end
+  end
+
+  describe '#state?' do
+    it { expect(state_zone.state?).to be_truthy }
+    it { expect(country_zone.state?).to be_falsy }
+  end
+
+  describe '#country?' do
+    it { expect(state_zone.country?).to be_falsy }
+    it { expect(country_zone.country?).to be_truthy }
+  end
+
+  describe '#country_ids' do
+    let!(:zone) { create(:zone, countries: [country]) }
+    it { expect(zone.country_ids).to eq([country.id]) }
+    it { expect(zone.state_ids).to eq([]) }
+  end
+
+  describe '#state_ids' do
+    let!(:zone) { create(:zone, states: [state]) }
+    it { expect(zone.state_ids).to eq([state.id]) }
+    it { expect(zone.country_ids).to eq([]) }
+  end
+
+  describe '#kind_of?' do
+    it { expect(state_zone.send(:kind_alike?, 'state')).to be_truthy }
+    it { expect(country_zone.send(:kind_alike?, 'state')).to be_falsy }
+    it { expect(state_zone.send(:kind_alike?, 'country')).to be_falsy }
+    it { expect(country_zone.send(:kind_alike?, 'country')).to be_truthy }
+  end
+
+  describe '#zoneable_ids' do
+    context 'will have country_ids' do
+      let!(:zone) { create(:zone, countries: [country]) }
+      it { expect(zone.send(:zoneable_ids, 'country')).to eq([country.id]) }
+      it { expect(zone.send(:zoneable_ids, 'state')).to eq([]) }
+    end
+
+    context 'will have state_ids' do
+      let!(:zone) { create(:zone, states: [state]) }
+      it { expect(zone.send(:zoneable_ids, 'state')).to eq([state.id]) }
+      it { expect(zone.send(:zoneable_ids, 'country')).to eq([]) }
     end
   end
 end
