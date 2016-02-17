@@ -282,9 +282,12 @@ $(document).ready(function(){
         },
         dataType: 'script',
         success: function(response) {
-          el.parents("tr").fadeOut('hide', function() {
-            $(this).remove();
-          });
+          var $flash_element = $('.alert-success');
+          if ($flash_element.length) {
+            el.parents("tr").fadeOut('hide', function() {
+              $(this).remove();
+            });
+          }
         },
         error: function(response, textStatus, errorThrown) {
           show_flash('error', response.responseText);
