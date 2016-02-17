@@ -5,7 +5,11 @@
  *
  *= require spree/backend
 <% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/backend'  %>
- *= require spree/backend/<%= options[:lib_name].gsub("/", "_") %>
+  <% filename = "spree/backend/#{ options[:lib_name].gsub("/", "_") }" %>
+  <% filepath = File.join(File.dirname(__FILE__), "../../app/assets/stylesheets/#{ filename }") %>
+  <% if stylesheet_exists?(filepath) %>
+    *= require <%= filename %>
+  <% end %>
 <% end %>
  *= require_self
  *= require_tree .
