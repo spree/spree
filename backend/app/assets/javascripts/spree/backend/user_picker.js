@@ -1,6 +1,10 @@
 $.fn.userAutocomplete = function () {
   'use strict';
 
+  function formatUser(user) {
+    return Select2.util.escapeMarkup(user.email);
+  }
+
   this.select2({
     minimumInputLength: 1,
     multiple: true,
@@ -26,12 +30,8 @@ $.fn.userAutocomplete = function () {
         };
       }
     },
-    formatResult: function (user) {
-      return user.email;
-    },
-    formatSelection: function (user) {
-      return user.email;
-    }
+    formatResult: formatUser,
+    formatSelection: formatUser
   });
 };
 
