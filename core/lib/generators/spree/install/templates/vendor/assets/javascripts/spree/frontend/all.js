@@ -8,6 +8,10 @@
 //= require jquery_ujs
 //= require spree/frontend
 <% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
-//= require spree/frontend/<%= options[:lib_name].gsub("/", "_") %>
+  <% filename = "spree/frontend/#{ options[:lib_name].gsub("/", "_") }" %>
+  <% filepath = File.join(File.dirname(__FILE__), "../../app/assets/javascripts/#{ filename }") %>
+  <% if javascript_exists?(filepath) %>
+    //= require <%= filename %>
+  <% end %>
 <% end %>
 //= require_tree .
