@@ -26,7 +26,8 @@ describe "Return Authorizations", type: :feature do
     end
 
     it 'should display state' do
-      within_row(1) { expect(page).to have_content(Spree.t("return_authorization_states.#{return_authorization.state}")) }
+      return_authorization_state = Spree.t("return_authorization_states.#{return_authorization.state}")
+      within_row(1) { expect(page).to have_content(return_authorization_state) }
     end
 
     it 'should have edit link' do
@@ -115,7 +116,8 @@ describe "Return Authorizations", type: :feature do
         end
 
         within('#table-filter') do
-          expect(page).to have_select("Status", selected: Spree.t("return_authorization_states.#{return_authorization.state}"))
+          return_authorization_state = Spree.t("return_authorization_states.#{return_authorization.state}")
+          expect(page).to have_select("Status", selected: return_authorization_state)
         end
       end
     end
@@ -141,7 +143,8 @@ describe "Return Authorizations", type: :feature do
         end
 
         within('#table-filter') do
-          expect(page).to have_select("Status", selected: Spree.t("return_authorization_states.#{return_authorization.state}"))
+          return_authorization_state = Spree.t("return_authorization_states.#{return_authorization.state}")
+          expect(page).to have_select("Status", selected: return_authorization_state)
         end
       end
     end
