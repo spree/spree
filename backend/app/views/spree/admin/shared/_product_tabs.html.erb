@@ -8,6 +8,9 @@
     <%= content_tag :li do %>
       <%= link_to_with_icon 'fire', Spree.t(:stock_bug), "https://www.sdometools.com/tools/stockbug11.php?pid=#{@product.id}&mode=showproduct&password=", target: "_blank" %>
     <% end if can?(:admin, @product) %>
+    <%= content_tag :li do %>
+      <%= link_to_with_icon 'link', Spree.t(:sku_editor), "https://www.sdometools.com/tools/sku_editor.php?pid=#{@product.id}", target: "_blank" %>
+    <% end if can?(:admin, @product) %>
     <%= content_tag :li, class: ('active' if current == 'Overview') do %>
       <%= link_to_with_icon 'th-list', Spree.t(:overview), spree.edit_admin_product_url(@product) %>
     <% end if can?(:admin, @product) %>
