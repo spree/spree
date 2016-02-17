@@ -9,14 +9,18 @@ describe Spree::Country, type: :model do
   end
 
   describe '.default' do
-    it 'will return the country from the config' do
-      Spree::Config[:default_country_id] = canada.id
-      expect(described_class.default.id).to eql canada.id
+    context 'when default_country_id config is set' do
+      before { Spree::Config[:default_country_id] = canada.id }
+      it 'will return the country from the config' do
+        expect(described_class.default.id).to eql canada.id
+      end
     end
 
-    it 'will return the US if config is not set' do
-      america.touch
-      expect(described_class.default.id).to eql america.id
+    context 'config is not set though record for america exists' do
+      before { america.touch }
+      it 'will return the US' do
+        expect(described_class.default.id).to eql america.id
+      end
     end
   end
 
