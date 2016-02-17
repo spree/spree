@@ -191,7 +191,7 @@ jQuery(function($) {
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 show_flash = function(type, message) {
-  var flash_div = $('.flash.' + type);
+  var flash_div = $('.alert-' + type);
   if (flash_div.length == 0) {
     flash_div = $('<div class="alert alert-' + type + '" />');
     $('#content').prepend(flash_div);
