@@ -216,6 +216,8 @@ module Spree
             checkout_step_index(state) > checkout_step_index(self.state)
           end
 
+          alias :future_state? :can_go_to_state?
+
           define_callbacks :updating_from_params, terminator: ->(_target, result) { result == false }
 
           set_callback :updating_from_params, :before, :update_params_payment_source
