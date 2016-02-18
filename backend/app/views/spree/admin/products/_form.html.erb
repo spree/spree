@@ -1,15 +1,17 @@
 <div data-hook="admin_product_form_fields">
 
   <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-warning no-objects-found">
+        Sku Details can be edited in the <%= link_to "Sku Editor", "https://www.sdometools.com/tools/sku_editor.php?pid=#{@product.id}", target: '_blank' %>
+      </div>
+    </div>
 
     <div class="col-md-8" data-hook="admin_product_form_left">
-      <div data-hook="admin_product_form_name">
-        <%= f.field_container :name, class: ['form-group'], data: { hook: 'admin_product_form_name' } do %>
-          <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
-          <%= f.text_field :name, class: 'form-control title' %>
-          <%= f.error_message_on :name %>
-        <% end %>
-      </div>
+
+      <%= fake_input_field @product.name, :name %>
+
+      <div data-hook="admin_product_form_name"></div>
 
       <%= fake_input_field @product.available_on, :available_on %>
 
@@ -25,11 +27,9 @@
       <%= fake_input_field @product.cost_currency, :cost_currency %>
 
       <% unless @product.has_variants? %>
+
         <div data-hook="admin_product_form_sku">
-          <%= f.field_container :sku, class: ['form-group'] do %>
-            <%= f.label :sku, Spree.t(:sku) %>
-            <%= f.text_field :sku, size: 16, class: 'form-control' %>
-          <% end %>
+          <%= fake_input_field @product.sku, :sku %>
         </div>
       <% end %>
     </div>

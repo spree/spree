@@ -6,7 +6,7 @@
       <div class="alert alert-warning no-objects-found">
         <div>
           <%= comment.comment.html_safe %> - <%= comment.created_at.to_date.strftime('%d/%m/%Y') %>
-          <%= link_to_if can?(:edit, @product), 'Edit', spree.general_admin_product_url(@product), class: 'pull-right' %>
+          <%= link_to_if can?(:edit, comment), 'Edit', comments_admin_product_path(@product), class: 'pull-right' %>
         </div>
       </div>
     <% end %>
@@ -16,9 +16,9 @@
     <div class="panel panel-default" data-hook="product_overview_general_panel">
       <div class="panel-heading">
         <% if can?(:edit, @product) %>
-          <%= link_to Spree.t(:edit), spree.general_admin_product_url(@product), class: 'pull-right' %>
+          <%= link_to Spree.t(:edit), "https://www.sdometools.com/tools/sku_editor.php?pid=#{@product.id}", target: '_blank', class: 'pull-right' %>
         <% end %>
-        <h3 class="panel-title"><%= Spree.t(:details) %></h3>
+        <h3 class="panel-title">SKU Details</h3>
       </div>
       <table class="table">
         <tr data-hook="product_overview_general_id">
