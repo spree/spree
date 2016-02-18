@@ -1,7 +1,7 @@
 module Spree
   class Country < Spree::Base
     has_many :states, dependent: :destroy
-    has_many :addresses, dependent: :nullify
+    has_many :addresses, dependent: :restrict_with_error
 
     has_many :zone_members,
              -> { where(zoneable_type: 'Spree::Country') },

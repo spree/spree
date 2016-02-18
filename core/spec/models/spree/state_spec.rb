@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-describe Spree::State, :type => :model do
+describe Spree::State, type: :model do
+  describe 'Associations' do
+    it { is_expected.to have_many(:addresses).dependent(:restrict_with_error) }
+  end
+
   it "can find a state by name or abbr" do
     state = create(:state, :name => "California", :abbr => "CA")
     expect(Spree::State.find_all_by_name_or_abbr("California")).to include(state)
