@@ -27,19 +27,16 @@ module Spree
 
     before_save :normalize_blank_values
 
-    scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
+    scope :coupons, -> { where("#{table_name}.code IS NOT NULL") }
     scope :applied, lambda {
       joins(<<-SQL).uniq
         INNER JOIN spree_order_promotions
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
+    scope :advertised, -> { where(advertise: true) }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
-
-    def self.advertised
-      where(advertise: true)
-    end
 
     def self.with_coupon_code(coupon_code)
       where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).first

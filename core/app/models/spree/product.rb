@@ -36,6 +36,12 @@ module Spree
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
     has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
 
+    has_many :promotions, through: :promotion_rules, class_name: 'Spree::Promotion'
+
+    has_many :possible_promotions, -> { advertised.active }, through: :promotion_rules,
+                                                             class_name: 'Spree::Promotion',
+                                                             source: :promotion
+
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
@@ -208,11 +214,6 @@ module Spree
         product_property.value = property_value
         product_property.save!
       end
-    end
-
-    def possible_promotions
-      promotion_ids = promotion_rules.map(&:promotion_id).uniq
-      Spree::Promotion.advertised.where(id: promotion_ids).reject(&:expired?)
     end
 
     def total_on_hand

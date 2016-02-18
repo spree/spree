@@ -11,6 +11,21 @@ end
 
 describe Spree::Product, :type => :model do
 
+  describe 'Associations' do
+    it do
+      is_expected.to have_many(:promotions).
+                     class_name('Spree::Promotion').
+                     through(:promotion_rules)
+    end
+
+    it do
+      is_expected.to have_many(:possible_promotions).
+                     class_name('Spree::Promotion').
+                     through(:promotion_rules).
+                     source(:promotion)
+    end
+  end
+
   context 'product instance' do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, :product => product) }
@@ -338,16 +353,20 @@ describe Spree::Product, :type => :model do
 
     # Regression test for #4416
     context "#possible_promotions" do
-      let!(:promotion) do
-        create(:promotion, advertise: true, starts_at: 1.day.ago)
+      let!(:possible_promotion) { create(:promotion, advertise: true, starts_at: 1.day.ago) }
+      let!(:unadvertised_promotion) { create(:promotion, advertise: false, starts_at: 1.day.ago) }
+      let!(:inactive_promotion) { create(:promotion, advertise: true, starts_at: 1.day.since) }
+
+      before do
+        product.promotion_rules.create!(promotion: possible_promotion)
+        product.promotion_rules.create!(promotion: unadvertised_promotion)
+        product.promotion_rules.create!(promotion: inactive_promotion)
       end
 
-      let!(:promotion_rule) { create(:promotion_rule, promotion: promotion) }
-
-      before { product.product_promotion_rules.create(promotion_rule_id: promotion_rule.id) }
-
       it "lists the promotion as a possible promotion" do
-        expect(product.possible_promotions).to include(promotion)
+        expect(product.possible_promotions).to include(possible_promotion)
+        expect(product.possible_promotions).to_not include(unadvertised_promotion)
+        expect(product.possible_promotions).to_not include(inactive_promotion)
       end
     end
   end

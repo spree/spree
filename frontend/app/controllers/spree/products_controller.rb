@@ -10,7 +10,7 @@ module Spree
 
     def index
       @searcher = build_searcher(params.merge(include_images: true))
-      @products = @searcher.retrieve_products
+      @products = @searcher.retrieve_products.includes(:possible_promotions)
       @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
 
