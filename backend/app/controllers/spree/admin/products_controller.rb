@@ -104,14 +104,31 @@ module Spree
           @collection = @collection.with_deleted
         end
         # @search needs to be defined as this is passed to search_form_for
-        @search = @collection.ransack(params[:q])
+        @search = search_results(params[:q]).ransack
+
         @collection = @search.result.
               distinct_by_product_ids(params[:q][:s]).
               includes(product_includes).
               page(params[:page]).
               per(params[:per_page] || Spree::Config[:admin_products_per_page])
-
         @collection
+      end
+
+      def search_results(params)
+        if params[:id_eq].present?
+          Spree::Product.where(id: params[:id_eq])
+        elsif params[:name_cont].present?
+          Spree::Product.with_translations(:en)
+            .where("spree_product_translations.name LIKE ?", "%#{params[:name_cont]}%")
+        elsif params[:legacy_supplier_sku_cont].present?
+          Spree::Product
+            .where("legacy_supplier_sku like ?", "%#{params[:legacy_supplier_sku_cont]}%")
+        elsif params[:variants_including_master_sku_cont].present?
+          Spree::Product.joins(:variants_including_master)
+            .where("sku like ?", "%#{params[:variants_including_master_sku_cont]}%")
+        else
+          Spree::Product.none
+        end
       end
 
       def create_before
