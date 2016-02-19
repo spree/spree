@@ -11,7 +11,7 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {:f => f} %>
       <div data-hook="admin_products_index_search" class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <div class="form-group no-margin-bottom">
             <%= f.label :id_eq, Spree.t(:id) %>
             <%= f.text_field :id_eq, :size => 15, class: "form-control js-quick-search-target" %>
@@ -27,6 +27,12 @@
           <div class="form-group no-margin-bottom">
             <%= f.label :variants_including_master_sku_cont, Spree.t(:sku) %>
             <%= f.text_field :variants_including_master_sku_cont, :size => 15, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group no-margin-bottom">
+            <%= f.label :legacy_supplier_sku_cont, Spree.t(:supplier_sku) %>
+            <%= f.text_field :legacy_supplier_sku_cont, :size => 15, class: "form-control" %>
           </div>
         </div>
         <div class="col-md-12">
