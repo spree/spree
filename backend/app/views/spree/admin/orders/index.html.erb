@@ -145,9 +145,9 @@
 
 <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @orders %>
 
 <% if @orders.any? %>
+  <%= render 'spree/admin/shared/index_table_options', collection: @orders %>
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
@@ -214,6 +214,7 @@
     <% end %>
     </tbody>
   </table>
+  <%= render 'spree/admin/shared/index_table_options', collection: @orders, simple: true %>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
@@ -221,4 +222,3 @@
   </div>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @orders, simple: true %>

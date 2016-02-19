@@ -42,9 +42,9 @@
   </div>
 <% end %>
 
-<%= paginate @promotions %>
 
 <% if @promotions.any? %>
+  <%= paginate @promotions %>
   <table class="table">
     <thead>
       <tr>
