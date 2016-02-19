@@ -391,6 +391,9 @@ describe "Order Details", type: :feature, js: true do
               click_icon :add
             end
 
+            wait_for_ajax
+            order.reload
+
             within(".stock-contents") do
               expect(page).to have_content(product.name)
             end
