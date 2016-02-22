@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_promotion_category), new_object_url, :icon => 'add', :class => 'btn-success' %>
 <% end %>
 
-<% if @promotion_categories.any? %>
+<% if @promotion_categories.present? %>
   <table class="table">
     <thead>
       <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>

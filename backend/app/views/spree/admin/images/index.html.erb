@@ -6,7 +6,7 @@
 
 <% has_variants = @product.has_variants? %>
 
-<% unless @product.variant_images.any? %>
+<% unless @product.variant_images.present? %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
   </div>

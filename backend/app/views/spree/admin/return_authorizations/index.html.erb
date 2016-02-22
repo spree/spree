@@ -10,7 +10,7 @@
   / <%= Spree.t(:return_authorizations) %>
 <% end %>
 
-<% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>
+<% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.present? %>
   <table class="table">
     <thead data-hook="rma_header">
       <tr>

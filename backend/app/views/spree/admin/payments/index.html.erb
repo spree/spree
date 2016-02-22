@@ -18,13 +18,13 @@
   </div>
 <% end %>
 
-<% if @payments.any? %>
+<% if @payments.present? %>
 
   <div data-hook="payment_list" class="panel panel-default no-border-bottom table-wrapper">
     <%= render partial: 'list', locals: { payments: @payments } %>
   </div>
 
-  <% if @refunds.any? %>
+  <% if @refunds.present? %>
     <fieldset data-hook="payment_list" class="no-border-bottom">
       <legend><%= Spree.t(:refunds) %></legend>
       <%= render partial: 'spree/admin/shared/refunds', locals: { refunds: @refunds, show_actions: true } %>

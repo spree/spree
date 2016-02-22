@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_shipping_category), new_object_url, :class => "btn-success", :icon => 'add' %>
 <% end if can? :create, Spree::ShippingCategory %>
 
-<% if @shipping_categories.any? %>
+<% if @shipping_categories.present? %>
   <table class="table">
     <thead>
       <tr data-hook="categories_header">

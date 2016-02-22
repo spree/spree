@@ -7,7 +7,7 @@
   <%= link_to_with_icon 'arrow-left', Spree.t(:back_to_resource_list, resource: Spree::StockLocation.model_name.human), admin_stock_locations_path, class: 'btn btn-default' %>
 <% end %>
 
-<% if @stock_movements.any? %>
+<% if @stock_movements.present? %>
 <table class="table" id='listing_stock_movements'>
   <colgroup>
     <col style="width: 35%">

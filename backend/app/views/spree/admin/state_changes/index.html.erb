@@ -4,7 +4,7 @@
   <%= plural_resource_name(Spree::StateChange) %>
 <% end %>
 
-<% if @state_changes.any? %>
+<% if @state_changes.present? %>
   <table class="table" id="listing_order_state_changes" data-hook>
     <thead>
       <tr data-hook="admin_orders_state_changes_headers">

@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_role), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_role_link' %>
 <% end if can? :create, Spree::Role %>
 
-<% if @roles.any? %>
+<% if @roles.present? %>
   <table class="table">
     <thead>
       <tr data-hook="admin_roles_index_headers">

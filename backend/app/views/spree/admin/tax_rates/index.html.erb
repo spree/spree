@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_tax_rate), new_object_url, class: "btn-success", icon: 'add' %>
 <% end if can? :create, Spree::TaxRate %>
 
-<% if @tax_rates.any? %>
+<% if @tax_rates.present? %>
   <table class="table">
     <thead>
       <tr data-hook="rate_header">

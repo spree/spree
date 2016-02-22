@@ -3,7 +3,7 @@
 <%# Place for new variant form %>
 <div id="new_variant" data-hook></div>
 
-<% if @variants.any? %>
+<% if @variants.present? %>
   <table class="table sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <thead data-hook="variants_header">
       <tr>

@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_prototype), new_object_url, { :class => "btn-success", :icon => 'add', 'data-update' => 'new_prototype', :id => 'new_prototype_link'} %>
 <% end %>
 
-<% if @prototypes.any? %>
+<% if @prototypes.present? %>
   <table class="table" id='listing_prototypes' data-hook>
     <thead>
       <tr data-hook="prototypes_header">

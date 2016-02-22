@@ -47,7 +47,7 @@
   </fieldset>
 </div>
 
-<% if @stock_transfers.any? %>
+<% if @stock_transfers.present? %>
   <table class="table" id='listing_stock_transfers' data-hook>
     <thead>
       <tr data-hook='stock_transfers_header'>
