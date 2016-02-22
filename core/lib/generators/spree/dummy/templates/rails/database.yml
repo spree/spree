@@ -1,6 +1,8 @@
 <% if agent_number = ENV['TC_AGENT_NUMBER']
 database_prefix = agent_number + '_'
 end %>
+<% db_password = ENV['DB_PASSWORD'] %>
+<% db_username = ENV['DB_USERNAME'] %>
 <% case ENV['DB']
   when 'sqlite' %>
 development:
@@ -14,44 +16,49 @@ production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
 <% when 'mysql' %>
+mysql: &mysql
+  adapter: mysql2
+  encoding: utf8
+  <% unless db_username.blank? %>
+  username: <%= db_username %>
+  <% end %>
+  <% unless db_password.blank? %>
+  password: <%= db_password %>
+  <% end %>
+
 development:
-  adapter: mysql2
+  <<: *mysql
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
-  encoding: utf8
 test:
-  adapter: mysql2
+  <<: *mysql
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
-  encoding: utf8
 production:
-  adapter: mysql2
+  <<: *mysql
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
-  encoding: utf8
 <% when 'postgres' %>
 <% db_host = ENV['DB_HOST'] %>
+postgres: &postgres
+  adapter: postgresql
+  <% unless db_username.blank? %>
+  username: <%= db_username || 'postgres' %>
+  <% end %>
+  <% unless db_password.blank? %>
+  password: <%= db_password %>
+  <% end %>
+  <% unless db_host.blank? %>
+  host: <%= db_host %>
+  <% end %>
+  min_messages: warning
+
 development:
-  adapter: postgresql
+  <<: *postgres
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
-  username: postgres
-  min_messages: warning
-<% unless db_host.blank? %>
-  host: <%= db_host %>
-<% end %>
 test:
-  adapter: postgresql
+  <<: *postgres
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
-  username: postgres
-  min_messages: warning
-<% unless db_host.blank? %>
-  host: <%= db_host %>
-<% end %>
 production:
-  adapter: postgresql
+  <<: *postgres
   database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
-  username: postgres
-  min_messages: warning
-<% unless db_host.blank? %>
-  host: <%= db_host %>
-<% end %>
 <% else %>
 development:
   adapter: sqlite3
