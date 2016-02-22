@@ -116,18 +116,18 @@ module Spree
 
       def search_results(params)
         if params[:id_eq].present?
-          Spree::Product.where(id: params[:id_eq])
+          @collection.where(id: params[:id_eq])
         elsif params[:name_cont].present?
-          Spree::Product.with_translations(:en)
+          @collection.with_translations(:en)
             .where("spree_product_translations.name LIKE ?", "%#{params[:name_cont]}%")
         elsif params[:legacy_supplier_sku_cont].present?
-          Spree::Product
+          @collection
             .where("legacy_supplier_sku like ?", "%#{params[:legacy_supplier_sku_cont]}%")
         elsif params[:variants_including_master_sku_cont].present?
-          Spree::Product.joins(:variants_including_master)
+          @collection.joins(:variants_including_master)
             .where("sku like ?", "%#{params[:variants_including_master_sku_cont]}%")
         else
-          Spree::Product.none
+          @collection
         end
       end
 
