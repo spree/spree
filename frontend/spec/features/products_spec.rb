@@ -29,7 +29,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
 
     it "correctly displays the product image via microdata" do
-      expect(ringer.properties["image"]).to eq ["/assets/noimage/small.png"]
+      expect(ringer.properties['image'].first).to include '/assets/noimage/small'
     end
 
     it "correctly displays the product url via microdata" do
