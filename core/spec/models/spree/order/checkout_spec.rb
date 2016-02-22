@@ -196,16 +196,16 @@ describe Spree::Order, :type => :model do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
         line_item = FactoryGirl.create(:line_item, price: 10, adjustment_total: 10)
         line_item.variant.update_attributes!(price: 20)
+        zone = create(:zone, default_tax: true)
+        order.bill_address = create(:address)
+        zone.zone_members.create(zoneable: order.bill_address.country)
         order.line_items << line_item
         tax_rate = create :tax_rate,
                           included_in_price: true,
                           tax_category: line_item.tax_category,
-                          amount: 0.05
-        allow(Spree::TaxRate).to receive_messages(match: [tax_rate])
-        FactoryGirl.create :tax_adjustment,
-                           adjustable: line_item,
-                           source: tax_rate,
-                           order: order
+                          amount: 0.05,
+                          zone: zone
+
         order.email = "user@example.com"
         order.next!
         expect(order.adjustment_total).to eq(0)

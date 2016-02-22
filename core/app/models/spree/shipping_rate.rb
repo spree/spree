@@ -8,6 +8,8 @@ module Spree
     delegate :name, to: :shipping_method
     delegate :code, to: :shipping_method, prefix: true
 
+    has_one :tax_category, through: :shipping_method
+
     extend Spree::DisplayMoney
 
     money_methods :base_price, :tax_amount
