@@ -31,8 +31,8 @@ $.fn.variantAutocomplete = ->
         results: data["variants"]
 
     formatResult: formatVariantResult
-    formatSelection: (variant) ->
+    formatSelection: (variant, container, escapeMarkup) ->
       if !!variant.options_text
-        variant.name + " (#{variant.options_text})"
+        Select2.util.escapeMarkup("#{variant.name} (#{variant.options_text})")
       else
-        variant.name
+        Select2.util.escapeMarkup(variant.name)
