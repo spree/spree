@@ -13,7 +13,7 @@ module Spree
 
     before_destroy :ensure_not_default
 
-    validates :name, :iso_name, presence: true
+    validates :name, :iso_name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     def self.default
       country_id = Spree::Config[:default_country_id]

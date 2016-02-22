@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "Customer Details", type: :feature, js: true do
   stub_authorization!
 
-  let(:country) { create(:country, name: "Kangaland") }
-  let(:state) { create(:state, name: "Alabama", country: country) }
+  let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
+  let!(:state) { create(:state, name: "Alabama", country: country, abbr: 'AL') }
   let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
   let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
   let!(:product) { create(:product_in_stock) }
@@ -162,7 +162,8 @@ describe "Customer Details", type: :feature, js: true do
     fill_in "Street Address (cont'd)", with: "#101"
     fill_in "City",                    with: "Bethesda"
     fill_in "Zip",                     with: "20170"
-    targetted_select2 "Alabama",       from: "#s2id_order_#{kind}_address_attributes_state_id"
+    targetted_select2 country.name,    from: "#s2id_order_#{kind}_address_attributes_country_id"
+    targetted_select2 state.name,      from: "#s2id_order_#{kind}_address_attributes_state_id"
     fill_in "Phone",                   with: "123-456-7890"
   end
 end

@@ -4,6 +4,9 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
 
   include_context 'checkout setup'
 
+  let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
+  let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
+
   context "visitor makes checkout as guest without registration" do
     before(:each) do
       stock_location.stock_items.update_all(count_on_hand: 1)
@@ -500,8 +503,8 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
     fill_in "#{address}_lastname", with: "Bigg"
     fill_in "#{address}_address1", with: "143 Swan Street"
     fill_in "#{address}_city", with: "Richmond"
-    select "United States of America", from: "#{address}_country_id"
-    select "Alabama", from: "#{address}_state_id"
+    select country.name, from: "#{address}_country_id"
+    select state.name, from: "#{address}_state_id"
     fill_in "#{address}_zipcode", with: "12345"
     fill_in "#{address}_phone", with: "(555) 555-5555"
   end
