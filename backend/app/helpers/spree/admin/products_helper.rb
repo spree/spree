@@ -5,11 +5,12 @@ module Spree
         options = @taxons.map do |taxon|
           selected = product.taxons.include?(taxon)
           content_tag(:option,
-                      :value    => taxon.id,
-                      :selected => ('selected' if selected)) do
-            (taxon.ancestors.pluck(:name) + [taxon.name]).join(" -> ")
-          end
-        end.join("").html_safe
+                      value: taxon.id,
+                      selected: ('selected' if selected)) do
+                        (taxon.ancestors.pluck(:name) + [taxon.name]).join(" -> ")
+                      end
+        end
+        safe_join(options)
       end
 
       def option_types_options_for(product)
@@ -20,7 +21,8 @@ module Spree
                       :selected => ('selected' if selected)) do
             option_type.name
           end
-        end.join("").html_safe
+        end
+        safe_join(options)
       end
     end
   end
