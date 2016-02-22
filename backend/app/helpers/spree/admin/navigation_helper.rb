@@ -152,7 +152,7 @@ module Spree
         options[:class] = (options[:class].to_s + " icon-link with-tip action-#{icon_name}").strip
         options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
-        text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
+        text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
