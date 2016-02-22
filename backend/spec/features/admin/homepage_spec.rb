@@ -10,28 +10,36 @@ describe "Homepage", :type => :feature do
         visit spree.admin_path
       end
 
-      it "should have the header text 'Orders'" do
+      it "has header text 'Orders'" do
         within('h1') { expect(page).to have_content("Orders") }
       end
 
-      it "should have a link to overview" do
+      it "has a link to overview" do
         within("header") { page.find(:xpath, "//a[@href='/admin']") }
       end
         
-      it "should have a link to orders" do
+      it "has a link to orders" do
         page.find_link("Orders")['/admin/orders']
       end
 
-      it "should have a link to products" do
+      it "has a link to products" do
         page.find_link("Products")['/admin/products']
       end
 
-      it "should have a link to reports" do
+      it "has a link to reports" do
         page.find_link("Reports")['/admin/reports']
       end
 
-      it "should have a link to configuration" do
+      it "has a link to configuration" do
         page.find_link("Configuration")['/admin/configurations']
+      end
+
+      it "has a link to return authorizations" do
+        within('.sidebar') { page.find_link("Return Authorizations")['/admin/return_authorizations'] }
+      end
+
+      it "has a link to customer returns" do
+        within('.sidebar') { page.find_link("Customer Returns")['/admin/customer_returns'] }
       end
     end
 
@@ -40,19 +48,19 @@ describe "Homepage", :type => :feature do
         visit spree.admin_products_path
       end
 
-      it "should have a link to products" do
+      it "has a link to products" do
         within('.sidebar') { page.find_link("Products")['/admin/products'] }
       end
 
-      it "should have a link to option types" do
+      it "has a link to option types" do
         within('.sidebar') { page.find_link("Option Types")['/admin/option_types'] }
       end
 
-      it "should have a link to properties" do
+      it "has a link to properties" do
         within('.sidebar') { page.find_link("Properties")['/admin/properties'] }
       end
 
-      it "should have a link to prototypes" do
+      it "has a link to prototypes" do
         within('.sidebar') { page.find_link("Prototypes")['/admin/prototypes'] }
       end
     end
@@ -68,7 +76,7 @@ describe "Homepage", :type => :feature do
       can [:admin, :edit, :index, :read], Spree::Order
     end
 
-    it 'should only display tabs fakedispatch has access to' do
+    it 'only displays tabs fakedispatch has access to' do
       visit spree.admin_path
       expect(page).to have_link('Orders')
       expect(page).not_to have_link('Products')
