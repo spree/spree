@@ -2,6 +2,7 @@
   <% if can?(:create, Spree::Product) %>
     <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add', id: 'admin_new_product' } %>
   <% end %>
+  <%= back_to_list_button(Spree::Product.model_name.human, admin_products_path) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/product_tabs', locals: {current: :details} %>
