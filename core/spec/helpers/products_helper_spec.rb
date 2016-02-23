@@ -158,6 +158,10 @@ THIS IS THE BEST PRODUCT EVER!
         expect(description).to eq(initialDescription)
       end
 
+      context "renders a product description default description incase description is blank" do
+        before { product.description = '' }
+        it { expect(product_description(product)).to eq(Spree.t(:product_has_no_description)) }
+      end
     end
 
     shared_examples_for "line item descriptions" do
