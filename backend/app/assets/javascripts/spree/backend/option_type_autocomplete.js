@@ -1,6 +1,10 @@
 $(document).ready(function () {
   'use strict';
 
+  function formatOptionType(option_type) {
+    return Select2.util.escapeMarkup(option_type.presentation + ' (' + option_type.name + ')');
+  }
+
   if ($('#product_option_type_ids').length > 0) {
     $('#product_option_type_ids').select2({
       placeholder: Spree.translations.option_type_placeholder,
@@ -32,12 +36,8 @@ $(document).ready(function () {
           };
         }
       },
-      formatResult: function (option_type) {
-        return option_type.presentation + ' (' + option_type.name + ')';
-      },
-      formatSelection: function (option_type) {
-        return option_type.presentation + ' (' + option_type.name + ')';
-      }
+      formatResult: formatOptionType,
+      formatSelection: formatOptionType
     });
   }
 });

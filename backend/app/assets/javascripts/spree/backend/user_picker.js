@@ -1,6 +1,10 @@
 $.fn.userAutocomplete = function () {
   'use strict';
 
+  function formatUser(user) {
+    return Select2.util.escapeMarkup(user.email);
+  }
+
   this.select2({
     minimumInputLength: 1,
     multiple: true,
@@ -8,7 +12,7 @@ $.fn.userAutocomplete = function () {
       $.get(Spree.routes.user_search, {
         ids: element.val()
       }, function (data) {
-        callback(data);
+        callback(data.users);
       });
     },
     ajax: {
@@ -22,16 +26,12 @@ $.fn.userAutocomplete = function () {
       },
       results: function (data) {
         return {
-          results: data
+          results: data.users
         };
       }
     },
-    formatResult: function (user) {
-      return user.email;
-    },
-    formatSelection: function (user) {
-      return user.email;
-    }
+    formatResult: formatUser,
+    formatSelection: formatUser
   });
 };
 
