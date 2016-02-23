@@ -51,6 +51,8 @@ describe Spree::ShippingMethod, :type => :model do
         it { expect(subject.error_on(:base).size).to eq(0) }
       end
     end
+
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive.allow_blank }
   end
 
   context 'factory' do
