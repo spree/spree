@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Roles", type: :feature, js: true do
+describe "Roles", type: :feature do
   stub_authorization!
 
   before(:each) do

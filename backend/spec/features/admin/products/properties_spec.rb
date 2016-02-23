@@ -42,7 +42,7 @@ describe "Properties", type: :feature, js: true do
   end
 
   context "creating a property" do
-    it "should allow an admin to create a new product property", js: true do
+    it "should allow an admin to create a new product property" do
       click_link "Products"
       click_link "Properties"
       click_link "new_property_link"
@@ -126,9 +126,10 @@ describe "Properties", type: :feature, js: true do
     end
 
     def delete_product_property
-      page.evaluate_script('window.confirm = function() { return true; }')
-      click_icon :delete
-      wait_for_ajax # delete action must finish before reloading
+      accept_alert do
+        click_icon :delete
+        wait_for_ajax # delete action must finish before reloading
+      end
     end
 
     def check_property_row_count(expected_row_count)

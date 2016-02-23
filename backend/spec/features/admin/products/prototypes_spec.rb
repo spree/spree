@@ -93,7 +93,7 @@ describe "Prototypes", type: :feature, js: true do
     end
   end
 
-  it 'should be deletable', js: true do
+  it 'should be deletable' do
     shirt_prototype = create(:prototype, name: "Shirt", properties: [])
     shirt_prototype.taxons << create(:taxon)
 
@@ -105,8 +105,8 @@ describe "Prototypes", type: :feature, js: true do
       page.find('.delete-resource').click
     end
 
-    page.evaluate_script('window.confirm = function() { return true; }')
-
-    expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
+    accept_alert do
+      expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
+    end
   end
 end
