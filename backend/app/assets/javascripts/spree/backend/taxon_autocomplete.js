@@ -1,6 +1,10 @@
 'use strict';
 
 var set_taxon_select = function(selector){
+  function formatTaxon(taxon) {
+    return Select2.util.escapeMarkup(taxon.pretty_name);
+  }
+
   if ($(selector).length > 0) {
     $(selector).select2({
       placeholder: Spree.translations.taxon_placeholder,
@@ -36,12 +40,8 @@ var set_taxon_select = function(selector){
           };
         }
       },
-      formatResult: function (taxon) {
-        return taxon.pretty_name;
-      },
-      formatSelection: function (taxon) {
-        return taxon.pretty_name;
-      }
+      formatResult: formatTaxon,
+      formatSelection: formatTaxon
     });
   }
 }
