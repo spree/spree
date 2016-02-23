@@ -43,7 +43,7 @@
 
     <div class="col-md-8">
       <div data-hook="name" class="form-group">
-        <%= label_tag :payment_method_name, Spree.t(:name) %>
+        <%= label_tag :payment_method_name, required_label_markup(:name) %>
         <%= text_field :payment_method, :name, :class => 'form-control' %>
       </div>
       <div data-hook="description" class="form-group">

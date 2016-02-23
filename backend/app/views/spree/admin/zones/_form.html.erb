@@ -7,7 +7,7 @@
 
       <div class="panel-body">
         <%= zone_form.field_container :name, class: ['form-group'] do %>
-          <%= zone_form.label :name, Spree.t(:name) %>
+          <%= zone_form.required_label_markup(:name) %>
           <%= zone_form.text_field :name, :class => 'form-control' %>
         <% end %>
 

@@ -2,7 +2,7 @@
   <div class="row">
     <div data-hook="admin_shipping_method_form_name_field" class="col-md-6">
       <%= f.field_container :name, :class => ['form-group'] do %>
-        <%= f.label :name, Spree.t(:name) %>
+        <%= f.required_label_markup(:name) %>
         <%= f.text_field :name, :class => 'form-control' %>
         <%= error_message_on :shipping_method, :name %>
       <% end %>
