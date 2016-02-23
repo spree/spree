@@ -325,6 +325,10 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items.
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category: "You must select at least one shipping category"
 
   devise:
     confirmations:
