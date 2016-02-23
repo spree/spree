@@ -104,8 +104,8 @@ module Spree
     end
 
     def options_text
-      values = self.option_values.sort do |a, b|
-        a.option_type.position <=> b.option_type.position
+      values = option_values.includes(:option_type).sort_by do |option_value|
+        option_value.option_type.position
       end
 
       values.to_a.map! do |ov|
