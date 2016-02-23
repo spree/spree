@@ -14,8 +14,10 @@ module Spree
 
     validates :name, presence: true, uniqueness: { allow_blank: true }
 
+    scope :with_default_tax, -> { where(default_tax: true) }
+
     after_save :remove_defunct_members
-    after_save :remove_previous_default
+    after_save :remove_previous_default, if: [:default_tax?, :default_tax_changed?]
 
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }
@@ -172,7 +174,7 @@ module Spree
     end
 
     def remove_previous_default
-      Spree::Zone.where('id != ?', id).update_all(default_tax: false) if default_tax
+      Spree::Zone.with_default_tax.where.not(id: id).update_all(default_tax: false)
     end
 
     def set_zone_members(ids, type)

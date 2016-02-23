@@ -14,6 +14,38 @@ describe Spree::Zone, :type => :model do
 
     before { country_zone.members.create(zoneable: country) }
 
+    describe 'scopes' do
+      describe '.remove_previous_default' do
+        let(:zone_with_default_tax) { create(:zone, kind: 'country', default_tax: true) }
+        let(:zone_not_with_default_tax) { create(:zone, kind: 'country', default_tax: false) }
+
+        subject { Spree::Zone.with_default_tax }
+
+        it 'is expected to include zone with default tax' do
+          is_expected.to include(zone_with_default_tax)
+        end
+
+        it 'is expected to not include zone with default tax' do
+          is_expected.to_not include(zone_not_with_default_tax)
+        end
+      end
+    end
+
+    describe 'callbacks' do
+      it { is_expected.to callback(:remove_previous_default).after(:save).if(:default_tax?).if(:default_tax_changed?) }
+
+      describe '#remove_previous_default' do
+        let!(:zone_with_default_tax) { create(:zone, kind: 'country', default_tax: true) }
+        let!(:zone_not_with_default_tax) { create(:zone, kind: 'country', default_tax: false) }
+
+        it 'is expected to make previous default tax zones to non default tax zones' do
+          expect(zone_with_default_tax).to be_default_tax
+          zone_not_with_default_tax.update(default_tax: true)
+          expect(zone_with_default_tax.reload).to_not be_default_tax
+        end
+      end
+    end
+
     context "when there is only one qualifying zone" do
       let(:address) { create(:address, country: country, state: state) }
 
