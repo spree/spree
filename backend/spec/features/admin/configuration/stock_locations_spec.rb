@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Stock Locations", type: :feature, js: true do
+describe "Stock Locations", type: :feature do
   stub_authorization!
 
   before(:each) do
@@ -18,7 +18,7 @@ describe "Stock Locations", type: :feature, js: true do
     expect(page).to have_content("London")
   end
 
-  it "can delete an existing stock location" do
+  it "can delete an existing stock location", js: true do
     location = create(:stock_location)
     visit current_path
 
@@ -32,7 +32,7 @@ describe "Stock Locations", type: :feature, js: true do
     expect(page).to have_content("No Stock Locations found")
   end
 
-  it "can update an existing stock location" do
+  it "can update an existing stock location", js: true do
     create(:stock_location)
     visit current_path
 
