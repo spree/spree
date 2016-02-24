@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::OptionTypesController, :type => :controller do
     render_views
 
-    let(:attributes) { [:id, :name, :position, :presentation] }
+    let(:attributes) { [:id, :name, :presentation, :position] }
     let!(:option_value) { create(:option_value) }
     let!(:option_type) { option_value.option_type }
 
@@ -15,7 +15,7 @@ module Spree
     def check_option_values(option_values)
       expect(option_values.count).to eq(1)
       expect(option_values.first).to have_attributes([:id, :name, :presentation,
-                                                  :option_type_name, :option_type_id])
+                                                      :option_type_id, :option_type_name])
     end
 
     it "can list all option types" do
@@ -46,6 +46,12 @@ module Spree
       api_get :show, :id => option_type.id
       expect(json_response).to have_attributes(attributes)
       check_option_values(json_response["option_values"])
+    end
+
+    it "can learn how to create a new option type" do
+      api_get :new
+      expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
+      expect(json_response["required_attributes"]).to_not be_empty
     end
 
     it "cannot create a new option type" do

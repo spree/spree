@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::OptionValuesController, :type => :controller do
     render_views
 
-    let(:attributes) { [:id, :name, :presentation, :option_type_name, :option_type_name] }
+    let(:attributes) { [:id, :name, :presentation, :option_type_name, :option_type_id, :option_type_presentation] }
     let!(:option_value) { create(:option_value) }
     let!(:option_type) { option_value.option_type }
 
@@ -85,6 +85,12 @@ module Spree
 
       context "as an admin" do
         sign_in_as_admin!
+
+        it "can learn how to create a new option value" do
+          api_get :new
+          expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
+          expect(json_response["required_attributes"]).to_not be_empty
+        end
 
         it "can create an option value" do
           api_post :create, :option_value => {
