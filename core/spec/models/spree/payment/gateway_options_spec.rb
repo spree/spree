@@ -44,6 +44,21 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double Spree::Address, active_merchant_hash: { ship: :address }
   end
 
+  describe 'delegate' do
+    subject { options }
+    it { is_expected.to delegate_method(:currency).to(:payment) }
+    it { is_expected.to delegate_method(:order).to(:payment) }
+    it { is_expected.to delegate_method(:additional_tax_total).to(:order) }
+    it { is_expected.to delegate_method(:bill_address).to(:order) }
+    it { is_expected.to delegate_method(:ship_address).to(:order) }
+    it { is_expected.to delegate_method(:email).to(:order) }
+    it { is_expected.to delegate_method(:item_total).to(:order) }
+    it { is_expected.to delegate_method(:last_ip_address).to(:order) }
+    it { is_expected.to delegate_method(:promo_total).to(:order) }
+    it { is_expected.to delegate_method(:ship_total).to(:order) }
+    it { is_expected.to delegate_method(:user_id).to(:order) }
+  end
+
   describe "#email" do
     subject { options.email }
     it { should == "test@email.com" }
