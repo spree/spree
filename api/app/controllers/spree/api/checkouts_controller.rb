@@ -5,7 +5,7 @@ module Spree
 
       include Spree::Core::ControllerHelpers::Auth
       include Spree::Core::ControllerHelpers::Order
-      # This before_filter comes from Spree::Core::ControllerHelpers::Order
+      # This before_action comes from Spree::Core::ControllerHelpers::Order
       skip_before_action :set_current_order
 
       def next

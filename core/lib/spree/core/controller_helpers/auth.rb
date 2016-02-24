@@ -6,7 +6,7 @@ module Spree
         include Spree::Core::TokenGenerator
 
         included do
-          before_filter :set_guest_token
+          before_action :set_guest_token
           helper_method :try_spree_current_user
 
           rescue_from CanCan::AccessDenied do |exception|

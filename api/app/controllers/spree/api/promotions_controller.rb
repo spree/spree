@@ -1,8 +1,8 @@
 module Spree
   module Api
     class PromotionsController < Spree::Api::BaseController
-      before_filter :requires_admin
-      before_filter :load_promotion
+      before_action :requires_admin
+      before_action :load_promotion
 
       def show
         if @promotion
@@ -12,7 +12,7 @@ module Spree
         end
       end
 
-      private 
+      private
         def requires_admin
           return if @current_user_roles.include?("admin")
           unauthorized and return
