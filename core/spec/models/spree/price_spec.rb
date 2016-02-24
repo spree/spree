@@ -1,6 +1,34 @@
 require 'spec_helper'
 
 describe Spree::Price, :type => :model do
+  describe '#amount=' do
+    let(:price) { Spree::Price.new }
+    let(:amount) { '3,0A0' }
+
+    before do
+      price.amount = amount
+    end
+
+    it 'is expected to equal to localized number' do
+      expect(price.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
+  end
+
+  describe '#price' do
+    let(:price) { Spree::Price.new }
+    let(:amount) { 3000.00 }
+
+    context 'when amount is changed' do
+      before do
+        price.amount = amount
+      end
+
+      it 'is expected to equal to price' do
+        expect(price.amount).to eq(price.price)
+      end
+    end
+  end
+
   describe 'validations' do
     let(:variant) { stub_model Spree::Variant }
     subject { Spree::Price.new variant: variant, amount: amount }

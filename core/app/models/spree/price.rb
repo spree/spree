@@ -24,13 +24,11 @@ module Spree
       Spree::Money.new(amount || 0, { currency: currency })
     end
 
-    def price
-      amount
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
     end
 
-    def price=(price)
-      self[:amount] = Spree::LocalizedNumber.parse(price)
-    end
+    alias_attribute :price, :amount
 
     def price_including_vat_for(price_options)
       options = price_options.merge(tax_category: variant.tax_category)
