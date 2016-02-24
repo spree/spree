@@ -159,7 +159,7 @@ order to be tampered with (ex. changing the quantity) after checkout.
 ### Filters
 
 The `spree_core` and the default authentication gem (`spree_auth_devise`) gems
-define several `before_filters` for the `Spree::CheckoutController`:
+define several `before_actions` for the `Spree::CheckoutController`:
 
 * `load_order`: Assigns the `@order` instance variable and sets the `@order.state` to the `params[:state]` value. This filter also runs the "before" callbacks for the current state.
 * `check_authorization`: Verifies that the `current_user` has access to `current_order`.
