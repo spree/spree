@@ -16,12 +16,12 @@ module Spree
     before_validation :copy_price
     before_validation :copy_tax_category
 
-    validates :variant, presence: true
+    validates :variant, :order, presence: true
     validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
     validates :price, numericality: true
 
     validates_with Stock::AvailabilityValidator
-    validate :ensure_proper_currency
+    validate :ensure_proper_currency, if: -> { order.present? }
 
     before_destroy :update_inventory
     before_destroy :destroy_inventory_units
