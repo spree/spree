@@ -1299,6 +1299,7 @@ en:
       shipped: Shipped
       void: Void
     states_required: States Required
+    states_required_invalid: is set to not allow states for this country.
     status: Status
     stock: Stock
     stock_location: Stock Location
