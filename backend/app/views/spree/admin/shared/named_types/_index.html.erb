@@ -15,7 +15,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="<%= resource_name.to_s.parameterize.underscore %>">
       <% @collection.each do |named_type| %>
         <tr id="<%= spree_dom_id named_type %>" data-hook="named_type_row">
           <td class="align-center">
@@ -27,6 +27,7 @@
           <td class="actions actions-1 text-right">
             <% if named_type.mutable? %>
               <%= link_to_edit(named_type, no_text: true) if can? :edit, named_type %>
+              <%= link_to_delete(named_type, no_text: true) if can? :delete, named_type %>
             <% end %>
           </td>
         </tr>
