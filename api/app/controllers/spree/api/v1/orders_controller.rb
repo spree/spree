@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class OrdersController < Spree::Api::BaseController
-        skip_before_action :check_for_user_or_api_key, only: :apply_coupon_code
         skip_before_action :authenticate_user, only: :apply_coupon_code
 
         before_action :find_order, except: [:create, :mine, :current, :index, :update]
