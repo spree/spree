@@ -12,6 +12,7 @@ module Spree
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
     validates :country, :name, presence: true
+    validates :name, :abbr, uniqueness: { case_sensitive: false, scope: :country_id }, allow_blank: true
 
     self.whitelisted_ransackable_attributes = %w(abbr)
 

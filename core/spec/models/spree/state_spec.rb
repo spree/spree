@@ -5,6 +5,13 @@ describe Spree::State, type: :model do
     it { is_expected.to have_many(:addresses).dependent(:restrict_with_error) }
   end
 
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:country) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:country_id).case_insensitive }
+    it { is_expected.to validate_uniqueness_of(:abbr).scoped_to(:country_id).case_insensitive }
+  end
+
   it "can find a state by name or abbr" do
     state = create(:state, :name => "California", :abbr => "CA")
     expect(Spree::State.find_all_by_name_or_abbr("California")).to include(state)
