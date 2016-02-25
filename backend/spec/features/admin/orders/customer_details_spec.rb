@@ -3,8 +3,8 @@ require 'spec_helper'
 describe "Customer Details", type: :feature, js: true do
   stub_authorization!
 
-  let(:country) { create(:country, name: "Kangaland") }
-  let(:state) { create(:state, name: "Alabama", country: country) }
+  let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
+  let!(:state) { create(:state, name: "Alabama", country: country, abbr: 'AL') }
   let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
   let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
   let!(:product) { create(:product_in_stock) }
@@ -14,21 +14,6 @@ describe "Customer Details", type: :feature, js: true do
   let!(:bill_address) { create(:address, country: country, state: state, first_name: "Rumpelstiltskin") }
 
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
-
-  # "Intelligiently" wait on condition
-  #
-  # Much better than a random sleep "here and there"
-  # it will not cause any delay in case the condition is fullfilled on first cycle.
-  def wait_for_condition
-    time = Capybara.default_max_wait_time
-    step = 0.1
-    while time > 0
-      return if yield
-      sleep(step)
-      time -= 0.1
-    end
-    fail "Could not achieve condition within #{Capybara.default_max_wait_time} seconds."
-  end
 
   # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
   # As the browser might take time to make the values visible in the dom we need to
@@ -40,6 +25,7 @@ describe "Customer Details", type: :feature, js: true do
 
   context "brand new order" do
     before do
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       visit spree.new_admin_order_path
     end
     # Regression test for #3335 & #5317
@@ -63,7 +49,7 @@ describe "Customer Details", type: :feature, js: true do
       expect_form_value('#order_bill_address_attributes_state_id', user.bill_address.state_id.to_s)
       expect_form_value('#order_bill_address_attributes_phone', user.bill_address.phone)
       click_button "Update"
-      expect(Spree::Order.last.user).not_to be_nil
+      expect(Spree::Order.last.user).to eq(user)
     end
   end
 
@@ -74,6 +60,7 @@ describe "Customer Details", type: :feature, js: true do
         config.company = true
       end
 
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       visit spree.admin_orders_path
       within('table#listing_orders') { click_icon(:edit) }
     end
@@ -123,25 +110,9 @@ describe "Customer Details", type: :feature, js: true do
       previous_user = order.user
       click_link "Customer"
       fill_in "order_email", with: "newemail@example.com"
-      expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
       expect(order.user_id).to eq previous_user.id
       expect(order.user.email).to eq previous_user.email
-    end
-
-    context "country associated was removed" do
-      let(:brazil) { create(:country, iso: "BRA", name: "Brazil") }
-
-      before do
-        order.bill_address.country.destroy
-        configure_spree_preferences do |config|
-          config.default_country_id = brazil.id
-        end
-      end
-
-      it "sets default country when displaying form" do
-        click_link "Customer"
-        expect(find_field("order_bill_address_attributes_country_id").value.to_i).to eq brazil.id
-      end
+      expect { click_button "Update" }.to change { order.reload.email }.to "newemail@example.com"
     end
 
     # Regression test for #942
@@ -176,7 +147,8 @@ describe "Customer Details", type: :feature, js: true do
     fill_in "Street Address (cont'd)", with: "#101"
     fill_in "City",                    with: "Bethesda"
     fill_in "Zip",                     with: "20170"
-    targetted_select2 "Alabama",       from: "#s2id_order_#{kind}_address_attributes_state_id"
+    targetted_select2 country.name,    from: "#s2id_order_#{kind}_address_attributes_country_id"
+    targetted_select2 state.name,      from: "#s2id_order_#{kind}_address_attributes_state_id"
     fill_in "Phone",                   with: "123-456-7890"
   end
 end

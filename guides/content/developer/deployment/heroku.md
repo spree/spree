@@ -54,7 +54,7 @@ Although not currently implemented, future plans for Spree include moving long r
 heroku addons:add heroku-postgresql
 ```
 
-(If you want to use MySQL instead, you may want to look into the Amazon RDS service, which works will with Heroku dynos. Integration instructions can be found [here](https://devcenter.heroku.com/articles/amazon-rds))
+(If you want to use MySQL instead, you may want to look into the Amazon RDS service, which works well with Heroku dynos. Integration instructions can be found [here](https://devcenter.heroku.com/articles/amazon-rds))
 
 ### Specify Ruby version
 

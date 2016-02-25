@@ -21,7 +21,7 @@ module Spree
 
     def self.default
       Rails.cache.fetch("default_store") do
-        where(default: true).first || new
+        where(default: true).first_or_initialize
       end
     end
 
@@ -29,9 +29,7 @@ module Spree
 
     def ensure_default_exists_and_is_unique
       if default
-        Store.where.not(id: id).each do |store|
-          store.update_attribute(:default, false)
-        end
+        Store.where.not(id: id).update_all(default: false)
       elsif Store.where(default: true).count.zero?
         self.default = true
       end

@@ -533,6 +533,7 @@ en:
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
     cancel: cancel
+    canceled: Canceled
     canceler: Canceler
     canceled_at: Canceled at
     cannot_empty_completed_order: Order has already been processed so it cannot be emptied
@@ -645,13 +646,14 @@ en:
       js_format: yy/mm/dd
     date_range: Date Range
     default: Default
+    default_country_cannot_be_deleted: Default country cannot be deleted
     default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
     deleted: Deleted
     delete_from_taxon: Delete From Taxon
-    deleted_variants_present: Some line items in this order have products that are no longer available.
+    discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
     details: Details
@@ -923,6 +925,7 @@ en:
       variant_deleted: Variant has been deleted
       variant_not_deleted: Variant could not be deleted
     num_orders: "# Orders"
+    number: Number
     on_hand: On Hand
     open: Open
     open_all_adjustments: Open All Adjustments
@@ -945,21 +948,19 @@ en:
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
+      subtotal: ! 'Subtotal:'
+      total: ! 'Order Total:'
       cancel_email:
         dear_customer: Dear Customer,
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
-        order_summary_canceled: Order Summary [CANCELED]
+        order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
-        subtotal: ! 'Subtotal:'
-        total: ! 'Order Total:'
       confirm_email:
         dear_customer: Dear Customer,
         instructions: Please review and retain the following order information for your records.
-        order_summary: Order Summary
+        order_summary: Order %{number} Summary
         subject: Order Confirmation
-        subtotal: ! 'Subtotal:'
         thanks: Thank you for your business.
-        total: ! 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1155,8 +1156,12 @@ en:
     resume: resume
     resumed: Resumed
     return: return
+    returns: Returns
     return_authorization: Return Authorization
     return_authorization_reasons: Return Authorization Reasons
+    return_authorization_states:
+      authorized: Authorized
+      canceled: Canceled
     return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
@@ -1224,12 +1229,13 @@ en:
     shipment_mailer:
       shipped_email:
         dear_customer: Dear Customer,
-        instructions: Your order has been shipped
-        shipment_summary: Shipment Summary
+        instructions: Your order %{number} has been shipped
+        shipment_summary: Shipment Summary for order
+        shipping_method: "Shipping method: %{shipping_method}"
         subject: Shipment Notification
         thanks: Thank you for your business.
         track_information: ! 'Tracking Information: %{tracking}'
-        track_link: ! 'Tracking Link: %{url}'
+        track_link: "Tracking Link: %{url}"
     shipment_state: Shipment State
     shipment_states:
       backorder: backorder

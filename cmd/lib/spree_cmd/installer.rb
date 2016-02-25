@@ -97,13 +97,13 @@ module SpreeCmd
         if @install_default_gateways && @spree_gem_options[:branch]
           gem :spree_gateway, github: 'spree/spree_gateway', branch: @spree_gem_options[:branch]
         elsif @install_default_gateways
-          gem :spree_gateway, github: 'spree/spree_gateway'
+          gem :spree_gateway, version: '3.0.0'
         end
 
         if @install_default_auth && @spree_gem_options[:branch]
           gem :spree_auth_devise, github: 'spree/spree_auth_devise', branch: @spree_gem_options[:branch]
         elsif @install_default_auth
-          gem :spree_auth_devise, github: 'spree/spree_auth_devise'
+          gem :spree_auth_devise, version: '3.0.0'
         end
 
         run 'bundle install', :capture => true
@@ -128,7 +128,7 @@ module SpreeCmd
       def gem(name, gem_options={})
         say_status :gemfile, name
         parts = ["'#{name}'"]
-        parts << ["'#{gem_options.delete(:version)}'"] if gem_options[:version]
+        parts << ["'~> #{gem_options.delete(:version)}'"] if gem_options[:version]
         gem_options.each { |key, value| parts << "#{key}: '#{value}'" }
         append_file 'Gemfile', "\ngem #{parts.join(', ')}", :verbose => false
       end

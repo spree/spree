@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :country, class: Spree::Country do
-    iso_name 'UNITED STATES'
-    name 'United States of America'
+    sequence(:iso_name) { |n| "ISO_NAME_#{n}" }
+    sequence(:name) { |n| "NAME_#{n}" }
     iso 'US'
     iso3 'USA'
     numcode 840

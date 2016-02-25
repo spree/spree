@@ -67,7 +67,7 @@ describe Spree.user_class, type: :model do
     let(:orders) { Array.new(order_count, double(total: order_value)) }
 
     before do
-      allow(orders).to receive(:pluck).with(:total).and_return(orders.map(&:total))
+      allow(orders).to receive(:sum).with(:total).and_return(orders.sum(&:total))
       allow(orders).to receive(:count).and_return(orders.length)
     end
 

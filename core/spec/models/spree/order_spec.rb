@@ -15,6 +15,22 @@ describe Spree::Order, :type => :model do
     allow(Spree::LegacyUser).to receive_messages(:current => mock_model(Spree::LegacyUser, :id => 123))
   end
 
+  describe '.scopes' do
+    let!(:user) { FactoryGirl.create(:user) }
+    let!(:completed_order) { FactoryGirl.create(:order, user: user, completed_at: Time.current) }
+    let!(:incompleted_order) { FactoryGirl.create(:order, user: user, completed_at: nil) }
+
+    describe '.complete' do
+      it { expect(Spree::Order.complete).to include completed_order }
+      it { expect(Spree::Order.complete).not_to include incompleted_order }
+    end
+
+    describe '.incomplete' do
+      it { expect(Spree::Order.incomplete).to include incompleted_order }
+      it { expect(Spree::Order.incomplete).not_to include completed_order }
+    end
+  end
+
   context "#cancel" do
     let(:order) { create(:completed_order_with_totals) }
     let!(:payment) do
@@ -157,9 +173,6 @@ describe Spree::Order, :type => :model do
     end
 
     it "should freeze all adjustments" do
-      # Stub this method as it's called due to a callback
-      # and it's irrelevant to this test
-      allow(order).to receive :has_available_shipment
       allow(Spree::OrderMailer).to receive_message_chain :confirm_email, :deliver_later
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
@@ -221,7 +234,7 @@ describe Spree::Order, :type => :model do
 
       it 'should have error message' do
         subject
-        expect(order.errors[:base]).to include(Spree.t(:deleted_variants_present))
+        expect(order.errors[:base]).to include(Spree.t(:discontinued_variants_present))
       end
 
       it 'should be false' do
@@ -268,6 +281,11 @@ describe Spree::Order, :type => :model do
 
   context "empty!" do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
+    let(:promotion) { create :promotion, code: '10off' }
+
+    before do
+      promotion.orders << order
+    end
 
     context 'completed order' do
       before do
@@ -285,10 +303,12 @@ describe Spree::Order, :type => :model do
       end
 
       it "clears out line items, adjustments and update totals" do
-        expect(order.line_items.count).to eq(0)
-        expect(order.adjustments.count).to eq(0)
-        expect(order.shipments.count).to eq(0)
-        expect(order.item_total).to eq(0)
+        expect(order.line_items.count).to be_zero
+        expect(order.adjustments.count).to be_zero
+        expect(order.shipments.count).to be_zero
+        expect(order.order_promotions.count).to be_zero
+        expect(order.promo_total).to be_zero
+        expect(order.item_total).to be_zero
         expect(order.empty!).to eq(order)
       end
     end

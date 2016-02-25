@@ -2,8 +2,6 @@ module Spree
   module Api
     module V1
       class StatesController < Spree::Api::BaseController
-        skip_before_action :set_expiry
-        skip_before_action :check_for_user_or_api_key
         skip_before_action :authenticate_user
 
         def index

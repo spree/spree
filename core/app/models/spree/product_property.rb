@@ -9,7 +9,7 @@ module Spree
 
     validates :property, presence: true
 
-    validates_with Spree::Validations::DbMaximumLengthValidator, field: :value
+    validates :value, db_maximum_length: true
 
     default_scope { order(:position) }
 

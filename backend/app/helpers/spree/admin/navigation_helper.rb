@@ -99,6 +99,15 @@ module Spree
           { class: "form-control pull-right js-per-page-select" })
       end
 
+      # helper method to create proper url to apply per page filtering
+      # fixes https://github.com/spree/spree/issues/6888
+      def per_page_dropdown_params(args = nil)
+        args ||= params.clone
+        args.delete(:page)
+        args.delete(:per_page)
+        args
+      end
+
       # finds class for a given symbol / string
       #
       # Example :
@@ -152,7 +161,7 @@ module Spree
         options[:class] = (options[:class].to_s + " icon-link with-tip action-#{icon_name}").strip
         options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
-        text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
+        text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")

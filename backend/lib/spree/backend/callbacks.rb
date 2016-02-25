@@ -10,23 +10,19 @@ module Spree
         protected
 
         def new_action
-          @callbacks ||= {}
-          @callbacks[:new_action] ||= Spree::ActionCallbacks.new
+          custom_callback(:new_action)
         end
 
         def create
-          @callbacks ||= {}
-          @callbacks[:create] ||= Spree::ActionCallbacks.new
+          custom_callback(:create)
         end
 
         def update
-          @callbacks ||= {}
-          @callbacks[:update] ||= Spree::ActionCallbacks.new
+          custom_callback(:update)
         end
 
         def destroy
-          @callbacks ||= {}
-          @callbacks[:destroy] ||= Spree::ActionCallbacks.new
+          custom_callback(:destroy)
         end
 
         def custom_callback(action)

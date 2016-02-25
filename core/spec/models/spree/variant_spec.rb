@@ -4,8 +4,14 @@ require 'spec_helper'
 
 describe Spree::Variant, :type => :model do
   let!(:variant) { create(:variant) }
+  let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
+
+  describe 'validations' do
+    it { expect(master_variant).to_not validate_presence_of(:option_values) }
+    it { expect(variant).to validate_presence_of(:option_values) }
+  end
 
   context 'sorting' do
     it 'responds to set_list_position' do
@@ -30,7 +36,7 @@ describe Spree::Variant, :type => :model do
 
     it "propagate to stock items" do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
-      product.variants.create(:name => "Foobar")
+      create(:variant, product: product)
     end
 
     context "stock location has disable propagate all variants" do
@@ -51,12 +57,116 @@ describe Spree::Variant, :type => :model do
       end
 
       context 'when a variant is created' do
-        before(:each) do
-          product.variants.create!(:name => 'any-name')
-        end
+        let!(:new_variant) { create(:variant, product: product) }
 
         it { expect(product.master).to_not be_in_stock }
       end
+    end
+  end
+
+  describe 'scope' do
+    describe '.not_discontinued' do
+      context 'when discontinued' do
+        let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }
+
+        it { expect(Spree::Variant.not_discontinued).not_to include(discontinued_variant) }
+      end
+
+      context 'when not discontinued' do
+        let!(:variant_2) { create(:variant, discontinue_on: Time.current + 1.day) }
+
+        it { expect(Spree::Variant.not_discontinued).to include(variant_2) }
+      end
+
+      context 'when discontinue_on not present' do
+        let!(:variant_2) { create(:variant, discontinue_on: nil) }
+
+        it { expect(Spree::Variant.not_discontinued).to include(variant_2) }
+      end
+    end
+
+    describe '.not_deleted' do
+      context 'when deleted' do
+        let!(:deleted_variant) { create(:variant, deleted_at: Time.current) }
+
+        it { expect(Spree::Variant.not_deleted).not_to include(deleted_variant) }
+      end
+
+      context 'when not deleted' do
+        let!(:variant_2) { create(:variant, deleted_at: nil) }
+
+        it { expect(Spree::Variant.not_deleted).to include(variant_2) }
+      end
+    end
+
+    describe '.for_currency_and_available_price_amount' do
+      let(:currency) { 'EUR' }
+
+      context 'when price with currency present' do
+        context 'when price has amount' do
+          let!(:price_1) { create(:price, currency: currency, variant: variant, amount: 10) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to include(variant) }
+        end
+
+        context 'when price do not have amount' do
+          let!(:price_1) { create(:price, currency: currency, variant: variant, amount: nil) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+      end
+
+      context 'when price with currency not present' do
+        let!(:unavailable_currency) { 'INR' }
+        context 'when price has amount' do
+          let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: 10) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+
+        context 'when price do not have amount' do
+          let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }
+
+          it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
+        end
+      end
+
+      context 'when multiple prices for same currency present' do
+        let!(:price_1) { create(:price, currency: currency, variant: variant) }
+        let!(:price_2) { create(:price, currency: currency, variant: variant) }
+
+        it 'should not duplicate variant' do
+          expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to eq([variant])
+        end
+      end
+    end
+
+    describe '.active' do
+      let!(:variants) { [variant] }
+      let!(:currency) { 'EUR' }
+
+      before(:each) do
+        allow(Spree::Variant).to receive(:not_discontinued).and_return(variants)
+        allow(variants).to receive(:not_deleted).and_return(variants)
+        allow(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
+      end
+
+      it 'should find not_discontinued variants' do
+        expect(Spree::Variant).to receive(:not_discontinued).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it 'should find not_deleted variants' do
+        expect(variants).to receive(:not_deleted).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it 'should find variants for_currency_and_available_price_amount' do
+        expect(variants).to receive(:for_currency_and_available_price_amount).with(currency).and_return(variants)
+        Spree::Variant.active(currency)
+      end
+
+      it { expect(Spree::Variant.active(currency)).to eq(variants) }
     end
   end
 
@@ -235,13 +345,14 @@ describe Spree::Variant, :type => :model do
 
   # Regression test for #2432
   describe 'options_text' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
       # Order bar than foo
       variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
       variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
+      variant.save
     end
 
     it 'should order by bar than foo' do
@@ -251,7 +362,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'exchange_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -260,6 +371,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do
@@ -277,7 +389,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'exchange_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -286,6 +398,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do
@@ -303,7 +416,7 @@ describe Spree::Variant, :type => :model do
   end
 
   describe 'descriptive_name' do
-    let!(:variant) { create(:variant, option_values: []) }
+    let!(:variant) { build(:variant, option_values: []) }
     let!(:master) { create(:master_variant) }
 
     before do
@@ -312,6 +425,7 @@ describe Spree::Variant, :type => :model do
                                                      presentation: 'Foo',
                                                      option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
                                                    })
+      variant.save
     end
 
     context 'master variant' do

@@ -8,16 +8,17 @@ module Spree
         @state = state
       end
 
-      def variant
-        inventory_unit.variant
+      with_options allow_nil: true do
+        delegate :line_item,
+                 :variant, to: :inventory_unit
+        delegate :price, to: :variant
+        delegate :dimension,
+                 :volume,
+                 :weight, to: :variant, prefix: true
       end
 
       def weight
-        variant.weight * quantity
-      end
-
-      def line_item
-        inventory_unit.line_item
+        variant_weight * quantity
       end
 
       def on_hand?
@@ -28,9 +29,6 @@ module Spree
         state.to_s == "backordered"
       end
 
-      def price
-        variant.price
-      end
 
       def amount
         price * quantity
@@ -45,11 +43,11 @@ module Spree
       end
 
       def volume
-        variant.volume * quantity
+        variant_volume * quantity
       end
 
       def dimension
-        variant.dimension * quantity
+        variant_dimension * quantity
       end
     end
   end

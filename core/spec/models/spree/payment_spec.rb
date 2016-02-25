@@ -43,6 +43,41 @@ describe Spree::Payment, :type => :model do
     allow(payment.log_entries).to receive(:create!)
   end
 
+  describe 'delegate' do
+    it { is_expected.to delegate_method(:currency).to(:order) }
+  end
+
+  describe 'Constants' do
+    it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid)) }
+  end
+
+  describe 'scopes' do
+    describe '.valid' do
+      let!(:invalid_payment) do
+        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', state: 'invalid')
+      end
+
+      let!(:failed_payment) do
+        create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '', state: 'failed')
+      end
+
+      let!(:checkout_payment) do
+        create(:payment, avs_response: 'A', cvv_response_code: 'M', cvv_response_message: '', state: 'checkout')
+      end
+
+      let!(:completed_payment) do
+        create(:payment, avs_response: 'Y', cvv_response_code: 'N', cvv_response_message: '', state: 'completed')
+      end
+
+      subject { Spree::Payment.valid }
+
+      it { is_expected.to_not include(invalid_payment) }
+      it { is_expected.to_not include(failed_payment) }
+      it { is_expected.to     include(checkout_payment) }
+      it { is_expected.to     include(completed_payment) }
+    end
+  end
+
   context '.risky' do
 
     let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }

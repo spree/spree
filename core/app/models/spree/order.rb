@@ -138,8 +138,6 @@ module Spree
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
 
-    validate :has_available_shipment
-
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
@@ -152,17 +150,11 @@ module Spree
 
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
+    scope :complete, -> { where.not(completed_at: nil) }
+    scope :incomplete, -> { where(completed_at: nil) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
-
-    def self.complete
-      where.not(completed_at: nil)
-    end
-
-    def self.incomplete
-      where(completed_at: nil)
-    end
 
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
@@ -218,7 +210,7 @@ module Spree
         # Little hacky fix for #4117
         # If this wasn't here, order would transition to address state on confirm failure
         # because there would be no valid payments any more.
-        state == 'confirm'
+        confirm?
     end
 
     def backordered?
@@ -258,7 +250,7 @@ module Spree
     end
 
     def allow_cancel?
-      return false unless completed? and state != 'canceled'
+      return false if !completed? || canceled?
       shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
@@ -329,7 +321,7 @@ module Spree
     end
 
     def outstanding_balance
-      if state == 'canceled'
+      if canceled?
         -1 * payment_total
       elsif reimbursements.includes(:refunds).size > 0
         reimbursed = reimbursements.includes(:refunds).inject(0) do |sum, reimbursement|
@@ -420,7 +412,7 @@ module Spree
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
       if line_items.any?{ |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, Spree.t(:deleted_variants_present))
+        errors.add(:base, Spree.t(:discontinued_variants_present))
         restart_checkout_flow
         false
       else
@@ -447,6 +439,7 @@ module Spree
         adjustments.destroy_all
         shipments.destroy_all
         state_changes.destroy_all
+        order_promotions.destroy_all
 
         update_totals
         persist_totals
@@ -639,13 +632,6 @@ module Spree
       unless line_items.present?
         errors.add(:base, Spree.t(:there_are_no_items_for_this_order)) and return false
       end
-    end
-
-    def has_available_shipment
-      return unless has_step?("delivery")
-      return unless has_step?(:address) && address?
-      return unless ship_address && ship_address.valid?
-      # errors.add(:base, :no_shipping_methods_available) if available_shipping_methods.empty?
     end
 
     def ensure_available_shipping_rates

@@ -139,6 +139,32 @@ jQuery(function($) {
     }
   });
 
+  // per page dropdown
+  // preserves all selected filters / queries supplied by user
+  // changes only per_page value
+  $(".js-per-page-select").change(function() {
+    var form  = $(this).closest(".js-per-page-form");
+    var url   = form.attr('action');
+    var value = $(this).val().toString();
+    if (url.match(/\?/)) {
+      url += "&per_page=" + value;
+    } else {
+      url += "?per_page=" + value;
+    }
+    window.location = url;
+  });
+
+  // injects per_page settings to all available search forms
+  // so when user changes some filters / queries per_page is preserved
+  $(document).ready(function() {
+    var perPageDropdown = $(".js-per-page-select:first");
+    if (perPageDropdown.length) {
+      var perPageValue = perPageDropdown.val().toString();
+      var perPageInput = '<input type="hidden" name="per_page" value=' + perPageValue + ' />';
+      $("#table-filter form").append(perPageInput);
+    }
+  });
+
   // Enable sidebar toggle
   $("[data-toggle='offcanvas']").click(function(e) {
     e.preventDefault();
@@ -165,7 +191,7 @@ jQuery(function($) {
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
 show_flash = function(type, message) {
-  var flash_div = $('.flash.' + type);
+  var flash_div = $('.alert-' + type);
   if (flash_div.length == 0) {
     flash_div = $('<div class="alert alert-' + type + '" />');
     $('#content').prepend(flash_div);
@@ -256,9 +282,12 @@ $(document).ready(function(){
         },
         dataType: 'script',
         success: function(response) {
-          el.parents("tr").fadeOut('hide', function() {
-            $(this).remove();
-          });
+          var $flash_element = $('.alert-success');
+          if ($flash_element.length) {
+            el.parents("tr").fadeOut('hide', function() {
+              $(this).remove();
+            });
+          }
         },
         error: function(response, textStatus, errorThrown) {
           show_flash('error', response.responseText);

@@ -1,7 +1,7 @@
 module Spree
   class State < Spree::Base
     belongs_to :country, class_name: 'Spree::Country'
-    has_many :addresses, dependent: :nullify
+    has_many :addresses, dependent: :restrict_with_error
 
     has_many :zone_members,
              -> { where(zoneable_type: 'Spree::State') },
@@ -12,6 +12,7 @@ module Spree
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
     validates :country, :name, presence: true
+    validates :name, :abbr, uniqueness: { case_sensitive: false, scope: :country_id }, allow_blank: true
 
     self.whitelisted_ransackable_attributes = %w(abbr)
 

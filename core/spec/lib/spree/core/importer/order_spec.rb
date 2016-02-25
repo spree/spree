@@ -176,7 +176,7 @@ module Spree
         }
 
         order = Importer::Order.import(user, params)
-        expect(order.ship_address.state.name).to eq 'Alabama'
+        expect(order.ship_address.state.name).to eq state.name
       end
 
       context "with a different currency" do

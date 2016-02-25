@@ -197,8 +197,7 @@ module Spree
     end
 
     def property(property_name)
-      return nil unless prop = properties.find_by(name: property_name)
-      product_properties.find_by(property: prop).try(:value)
+      product_properties.joins(:property).find_by(spree_properties: { name: property_name }).try(:value)
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)

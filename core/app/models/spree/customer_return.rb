@@ -18,6 +18,8 @@ module Spree
     extend DisplayMoney
     money_methods pre_tax_total: { currency: Spree::Config[:currency] }
 
+    self.whitelisted_ransackable_attributes = ['number']
+
     delegate :id, to: :order, prefix: true, allow_nil: true
 
     def completely_decided?

@@ -38,6 +38,8 @@ module Spree
 
     validate :check_price
 
+    validates :option_values, presence: true, unless: :is_master?
+
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
       validates :price
@@ -51,7 +53,23 @@ module Spree
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
-    scope :not_discontinued, -> { where("#{Variant.quoted_table_name}.discontinue_on IS NULL OR #{Variant.quoted_table_name}.discontinue_on <= ?", Time.current) }
+
+    scope :not_discontinued, -> do
+      variant_table_name = Variant.quoted_table_name
+      where("#{variant_table_name}.discontinue_on IS NULL OR #{variant_table_name}.discontinue_on >= ?", Time.current)
+    end
+
+    scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
+
+    scope :for_currency_and_available_price_amount, -> (currency) do
+      currency ||= Spree::Config[:currency]
+      joins(:prices).where("spree_prices.currency = ?", currency).where("spree_prices.amount IS NOT NULL").uniq
+    end
+
+    scope :active, -> (currency = nil) do
+      not_discontinued.not_deleted.
+        for_currency_and_available_price_amount(currency)
+    end
 
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -66,10 +84,6 @@ module Spree
 
     def available?
       !discontinued? && product.available?
-    end
-
-    def self.active(currency = nil)
-      not_discontinued.joins(:prices).where(deleted_at: nil).where('spree_prices.currency' => currency || Spree::Config[:currency]).where('spree_prices.amount IS NOT NULL')
     end
 
     def self.having_orders

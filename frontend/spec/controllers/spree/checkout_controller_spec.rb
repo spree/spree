@@ -271,6 +271,13 @@ describe Spree::CheckoutController, type: :controller do
         spree_post :update, state: 'address'
         expect(response).to render_template :edit
       end
+
+      it "should render order in payment state when payment fails" do
+        order.update_column(:state, 'confirm')
+        allow(controller).to receive(:insufficient_payment?).and_return(true)
+        spree_post :update, state: 'confirm'
+        expect(order.state).to eq('payment')
+      end
     end
 
     context "when current_order is nil" do

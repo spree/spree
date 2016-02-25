@@ -1,0 +1,4 @@
+<ul id="sidebar-returns" class="collapse nav nav-pills nav-stacked" data-hook="admin_returns_sub_tabs">
+  <%= tab :return_authorizations, url: spree.admin_return_authorizations_path, match_path: '/return_authorizations' if can?(:admin, Spree::ReturnAuthorization) %>
+  <%= tab :customer_returns, url: spree.admin_customer_returns_path, match_path: '/customer_returns' if can?(:admin, Spree::CustomerReturn) %>
+</ul>

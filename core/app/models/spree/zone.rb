@@ -122,7 +122,7 @@ module Spree
     end
 
     def country_ids
-      if kind == 'country'
+      if country?
         members.pluck(:zoneable_id)
       else
         []
@@ -130,7 +130,7 @@ module Spree
     end
 
     def state_ids
-      if kind == 'state'
+      if state?
         members.pluck(:zoneable_id)
       else
         []

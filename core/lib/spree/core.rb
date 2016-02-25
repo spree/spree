@@ -27,8 +27,13 @@ module Spree
     end
   end
 
-  mattr_accessor :admin_path
-  @@admin_path = "/admin"
+  def self.admin_path
+    Spree::Config[:admin_path]
+  end
+
+  def self.admin_path=(path)
+    Spree::Config[:admin_path] = path
+  end
 
   # Used to configure Spree.
   #

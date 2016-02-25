@@ -1,5 +1,4 @@
-<% success = flash.discard(:success)
-if success %>
+<% if success = flash.discard(:success) %>
   show_flash('success', "<%= j success %>")
 <% end %>
 

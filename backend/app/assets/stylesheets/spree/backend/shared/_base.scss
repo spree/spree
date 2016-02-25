@@ -2,6 +2,10 @@ body {
   padding-top: $navbar-height + 2px;
 }
 
+.table-wrapper {
+  overflow: auto;
+}
+
 .row {
   padding: 0 0 15px 0;
 }
@@ -14,4 +18,8 @@ body {
 @each $side in top bottom left right {
   .no-margin-#{$side}  { margin-#{side}: 0; }
   .no-padding-#{$side} { padding-#{side}: 0; }
+}
+
+.alert-error {
+  @extend .alert-danger;
 }

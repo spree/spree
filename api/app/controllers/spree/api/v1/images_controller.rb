@@ -14,14 +14,21 @@ module Spree
 
         def create
           authorize! :create, Image
-          @image = scope.images.create(image_params)
-          respond_with(@image, status: 201, default_template: :show)
+          @image = scope.images.new(image_params)
+          if @image.save
+            respond_with(@image, status: 201, default_template: :show)
+          else
+            invalid_resource!(@image)
+          end
         end
 
         def update
           @image = scope.images.accessible_by(current_ability, :update).find(params[:id])
-          @image.update_attributes(image_params)
-          respond_with(@image, default_template: :show)
+          if @image.update_attributes(image_params)
+            respond_with(@image, default_template: :show)
+          else
+            invalid_resource!(@image)
+          end
         end
 
         def destroy

@@ -24,6 +24,8 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['count_on_hand', 'stock_location_id']
 
+    scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
+
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)
     end

@@ -109,11 +109,20 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(Spree::Order.count).to eq 1
       end
 
-      it "does not display duplicated results" do
+      def send_request
         spree_get :index, q: {
           line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
         }
+      end
+
+      it 'does not display duplicate results' do
+        send_request
         expect(assigns[:orders].map { |o| o.number }.count).to eq 1
+      end
+
+      it 'preloads users' do
+        expect(Spree::Order).to receive(:preload).with(:user).and_return(Spree::Order.all)
+        send_request
       end
     end
 
@@ -206,14 +215,14 @@ describe Spree::Admin::OrdersController, type: :controller do
         user.spree_roles.clear
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
         spree_put :update, id: order.number
-        expect(response).to redirect_to('/unauthorized')
+        expect(response).to redirect_to(spree.forbidden_path)
       end
     end
 
     it 'should deny access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       spree_post :index
-      expect(response).to redirect_to('/unauthorized')
+      expect(response).to redirect_to(spree.forbidden_path)
     end
 
     it 'should restrict returned order(s) on index when using OrderSpecificAbility' do

@@ -20,6 +20,23 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     expect(page).to have_content("Shopping Cart")
   end
 
+  describe "correct displaying of microdata" do
+    let(:products) { Spree::TestingSupport::Microdata::Document.new(page.body).extract_items }
+    let(:ringer) { products.keep_if { |product| product.properties["name"].first.match("Ringer") }.first }
+
+    it "correctly displays the product name via microdata" do
+      expect(ringer.properties["name"]).to eq ["Ruby on Rails Ringer T-Shirt"]
+    end
+
+    it "correctly displays the product image via microdata" do
+      expect(ringer.properties['image'].first).to include '/assets/noimage/small'
+    end
+
+    it "correctly displays the product url via microdata" do
+      expect(ringer.properties["url"]).to eq ["http://www.example.com/products/ruby-on-rails-ringer-t-shirt"]
+    end
+  end
+
   describe 'meta tags and title' do
     let(:jersey) { Spree::Product.find_by_name('Ruby on Rails Baseball Jersey') }
     let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
@@ -124,7 +141,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   context "a product with variants" do
     let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
     let(:option_value) { create(:option_value) }
-    let!(:variant) { product.variants.create!(:price => 5.59) }
+    let!(:variant) { build(:variant, price: 5.59, product: product, option_values: []) }
 
     before do
       # Need to have two images to trigger the error
@@ -134,6 +151,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
       product.option_types << option_value.option_type
       variant.option_values << option_value
+      variant.save!
     end
 
     it "should be displayed" do
@@ -169,13 +187,13 @@ describe "Visiting Products", type: :feature, inaccessible: true do
 
   context "a product with variants, images only for the variants" do
     let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:variant1) { create(:variant, product: product, price: 9.99) }
+    let(:variant2) { create(:variant, product: product, price: 10.99) }
 
     before do
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-      v1 = product.variants.create!(price: 9.99)
-      v2 = product.variants.create!(price: 10.99)
-      v1.images.create!(attachment: image)
-      v2.images.create!(attachment: image)
+      variant1.images.create!(attachment: image)
+      variant2.images.create!(attachment: image)
     end
 
     it "should not display no image available" do
@@ -240,11 +258,11 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     within(:css, '#sidebar_products_search') { click_button "Search" }
 
     expect(page.all('#products .product-list-item').size).to eq(2)
-    products = page.all('#products .product-list-item a[itemprop=name]')
+    products = page.all('#products .product-list-item span[itemprop=name]')
     expect(products.count).to eq(2)
 
     find('.pagination .next a').click
-    products = page.all('#products .product-list-item a[itemprop=name]')
+    products = page.all('#products .product-list-item span[itemprop=name]')
     expect(products.count).to eq(1)
   end
 

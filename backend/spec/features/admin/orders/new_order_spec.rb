@@ -11,6 +11,7 @@ describe "New Order", :type => :feature do
 
   before do
     # create default store
+    allow(Spree.user_class).to receive(:find_by).and_return(user)
     create(:store)
     visit spree.new_admin_order_path
   end
@@ -26,10 +27,7 @@ describe "New Order", :type => :feature do
     click_icon :add
     wait_for_ajax
     click_on "Customer"
-
-    within "#select-customer" do
-      targetted_select2_search user.email, from: "#s2id_customer_search"
-    end
+    select_customer
 
     check "order_use_billing"
     fill_in_address
@@ -62,10 +60,7 @@ describe "New Order", :type => :feature do
       end
 
       click_on "Customer"
-
-      within "#select-customer" do
-        targetted_select2_search user.email, from: "#s2id_customer_search"
-      end
+      select_customer
 
       check "order_use_billing"
       fill_in_address
@@ -106,10 +101,7 @@ describe "New Order", :type => :feature do
   context "start by customer address" do
     it "completes order fine", js: true do
       click_on "Customer"
-
-      within "#select-customer" do
-        targetted_select2_search user.email, from: "#s2id_customer_search"
-      end
+      select_customer
 
       check "order_use_billing"
       fill_in_address
@@ -132,6 +124,7 @@ describe "New Order", :type => :feature do
   # Regression test for #5327
   context "customer with default credit card", js: true do
     before do
+      allow(Spree.user_class).to receive(:find_by).and_return(user)
       create(:credit_card, default: true, user: user)
     end
     it "transitions to delivery not to complete" do
@@ -142,7 +135,7 @@ describe "New Order", :type => :feature do
       end
       wait_for_ajax
       click_link "Customer"
-      targetted_select2 user.email, from: "#s2id_customer_search"
+      select_customer
       click_button "Update"
       expect(Spree::Order.last.state).to eq 'delivery'
     end
@@ -157,5 +150,11 @@ describe "New Order", :type => :feature do
     fill_in "Zip",                       with: "20170"
     targetted_select2_search state.name, from: "#s2id_order_#{kind}_address_attributes_state_id"
     fill_in "Phone",                     with: "123-456-7890"
+  end
+
+  def select_customer
+    within "div#select-customer" do
+      targetted_select2_search user.email, from: "#s2id_customer_search"
+    end
   end
 end

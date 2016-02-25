@@ -67,15 +67,11 @@ module Spree
     scope :is_included, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
     scope :competing_promos, -> { where(source_type: competing_promos_source_types) }
-    scope :for_complete_order, -> { joins(:order).merge(Spree::Order.where.not(completed_at: nil)) }
-    scope :for_incomplete_order, -> { joins(:order).merge(Spree::Order.where(completed_at: nil)) }
+    scope :for_complete_order, -> { joins(:order).merge(Spree::Order.complete) }
+    scope :for_incomplete_order, -> { joins(:order).merge(Spree::Order.incomplete) }
 
     extend DisplayMoney
     money_methods :amount
-
-    def closed?
-      state == "closed"
-    end
 
     def currency
       adjustable ? adjustable.currency : Spree::Config[:currency]

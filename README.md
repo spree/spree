@@ -1,19 +1,19 @@
 
 # New Spree Commerce roadmap announcement
 
-We are excited to announce a new [Spree Commerce development roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016) for 2016 along with the new [Core Team](https://github.com/spree/spree/wiki/Core-Team). 
+We are excited to announce a new [Spree Commerce development roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016) for 2016 along with the new [Core Team](https://github.com/spree/spree/wiki/Core-Team).
 
-Future Spree open-source efforts will be coordinated and managed jointly by [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/) developers who are working daily for merchants using Spree and who have hands on experience in Spree development, customization, maintenance and performance optimization. 
+Future Spree open-source efforts will be coordinated and managed jointly by [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/) developers who are working daily for merchants using Spree and who have hands on experience in Spree development, customization, maintenance and performance optimization.
 
 We would be excited to welcome new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members! You can make history and join the Core Team. We will evaluate you as a candidate based on the volume and quality of the code contributed to the project as well as sustained efforts in improving the overall quality of the Spree community.
 
-We are determined to support the current contributor community and businesses running Spree worldwide. Spree will be developed and maintained with the next versions to follow. 
+We are determined to support the current contributor community and businesses running Spree worldwide. Spree will be developed and maintained with the next versions to follow.
 
 Together we’ll not only develop future versions but we’ll support Spree developers around the world (mailing list, Slack channel, GitHub issues) in their daily efforts including migrations from 2.x. to 3.x versions.
 
 **For general discussion and support inquiries please use**:
 * Spree Slack public channels: http://slack.spreecommerce.com/
-* Spree Mailing List: https://groups.google.com/forum/#!forum/spree-user 
+* Spree Mailing List: https://groups.google.com/forum/#!forum/spree-user
 
 
 **THIS README IS FOR THE MASTER BRANCH OF SPREE AND REFLECTS THE WORK CURRENTLY
@@ -103,11 +103,11 @@ Using stable builds and bleeding edge
 -------------
 
 To use a stable build of Spree, you can manually add Spree to your
-Rails application. To use the 3-0-stable branch of Spree, add this line to
+Rails application. Add this line to
 your Gemfile.
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '3-0-stable'
+gem 'spree'
 ```
 
 Alternatively, if you want to use the bleeding edge version of Spree, use this
@@ -203,7 +203,7 @@ your Ruby objects on each request.  The introduction of the asset pipeline in
 Rails 3.1 made default performance in development mode significantly worse. There
 are, however, a few tricks to speeding up performance in development mode.
 
-First, in your `config/development.rb`:
+First, in your `config/environments/development.rb`:
 
 ```ruby
 config.assets.debug = false

@@ -28,6 +28,15 @@ module Spree
         end.to change(Image, :count).by(1)
       end
 
+      it "can't upload a new image for a variant without attachment" do
+        api_post :create,
+                 image: { viewable_type: 'Spree::Variant',
+                          viewable_id: product.master.to_param
+                        },
+                 product_id: product.id
+        expect(response.status).to eq(422)
+      end
+
       context "working with an existing image" do
         let!(:product_image) { product.master.images.create!(:attachment => image('thinking-cat.jpg')) }
 
@@ -63,6 +72,13 @@ module Spree
           expect(response.status).to eq(200)
           expect(json_response).to have_attributes(attributes)
           expect(product_image.reload.position).to eq(2)
+        end
+
+        it "can't update a image without attachment" do
+          api_post :update,
+                   image: { attachment: nil },
+                   id: product_image.id, product_id: product.id
+          expect(response.status).to eq(422)
         end
 
         it "can delete an image" do

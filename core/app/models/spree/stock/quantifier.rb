@@ -5,7 +5,7 @@ module Spree
 
       def initialize(variant)
         @variant = variant
-        @stock_items = Spree::StockItem.joins(:stock_location).where(variant_id: @variant, Spree::StockLocation.table_name => { active: true })
+        @stock_items = @variant.stock_items.with_active_stock_location
       end
 
       def total_on_hand

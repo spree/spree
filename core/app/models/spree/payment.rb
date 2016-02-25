@@ -9,6 +9,7 @@ module Spree
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
+    INVALID_STATES      = %w(failed invalid).freeze
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true
@@ -55,7 +56,7 @@ module Spree
     scope :failed, -> { with_state('failed') }
 
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
-    scope :valid, -> { where.not(state: %w(failed invalid)) }
+    scope :valid, -> { where.not(state: INVALID_STATES) }
 
     scope :store_credits, -> { where(source_type: Spree::StoreCredit.to_s) }
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
@@ -64,6 +65,8 @@ module Spree
     def transaction_id
       response_code
     end
+
+    delegate :currency, to: :order
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
@@ -102,10 +105,6 @@ module Spree
           name:           'payment',
         )
       end
-    end
-
-    def currency
-      order.currency
     end
 
     def money
@@ -181,6 +180,10 @@ module Spree
 
     private
 
+    def has_invalid_state?
+      INVALID_STATES.include?(state)
+    end
+
       def validate_source
         if source && !source.valid?
           source.errors.each do |field, error|
@@ -197,7 +200,7 @@ module Spree
 
       def create_payment_profile
         # Don't attempt to create on bad payments.
-        return if %w(invalid failed).include?(state)
+        return if has_invalid_state?
         # Payment profile cannot be created without source
         return unless source
         # Imported payments shouldn't create a payment profile.
@@ -209,7 +212,7 @@ module Spree
       end
 
       def invalidate_old_payments
-        if state != 'invalid' and state != 'failed'
+        unless has_invalid_state?
           order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
             payment.invalidate!
           end

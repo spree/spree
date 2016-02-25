@@ -11,9 +11,10 @@ module Spree
       end
 
       def validate(record)
+        warn "`Spree::Validations::DbMaximumLengthValidator` is deprecated. Use `DbMaximumLengthValidator` instead."
         limit = record.class.columns_hash[@field].limit
         value = record[@field.to_sym]
-        if value && limit && value.to_s.length > limit 
+        if value && limit && value.to_s.length > limit
           record.errors.add(@field.to_sym, :too_long, count: limit)
         end
       end

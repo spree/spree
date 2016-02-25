@@ -16,7 +16,7 @@ module Spree
             )
           end
         end
-        links.join(' ').html_safe
+        safe_join(links, '&nbsp;'.html_safe)
       end
 
       def line_item_shipment_price(line_item, quantity)

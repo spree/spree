@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Tax Rates", type: :feature, js: true do
+describe "Tax Rates", type: :feature do
   stub_authorization!
 
   let!(:tax_rate) { create(:tax_rate, calculator: stub_model(Spree::Calculator)) }

@@ -22,6 +22,7 @@ module Spree
     # Alphabetized to more easily lookup particular preferences
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
+    preference :admin_path, :string, default: '/admin'
     preference :admin_products_per_page, :integer, default: 10
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
@@ -48,6 +49,7 @@ module Spree
     preference :require_master_price, :boolean, default: true
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
+    preference :send_core_emails, :boolean, default: true # Default mail headers settings
     preference :shipping_instructions, :boolean, default: false # Request instructions/info for shipping
     preference :show_only_complete_orders_by_default, :boolean, default: true
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
@@ -55,9 +57,6 @@ module Spree
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
-
-    # Default mail headers settings
-    preference :send_core_emails, :boolean, default: true
 
     # Store credits configurations
     preference :non_expiring_credit_types, :array, default: []
