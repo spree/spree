@@ -4,7 +4,7 @@ module Spree
 
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
-    validates :name, :type, presence: true
+    validates :type, presence: true
 
     preference :server, :string, default: 'test'
     preference :test_mode, :boolean, default: true
