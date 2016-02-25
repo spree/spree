@@ -12,7 +12,7 @@ module Spree
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
     has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
-    validates :name, presence: true, uniqueness: { allow_blank: true }
+    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     after_save :remove_defunct_members
     after_save :remove_previous_default
