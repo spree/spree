@@ -38,7 +38,9 @@ module Spree
 
     validate :check_price
 
-    validates :option_values, presence: true, unless: :is_master?
+    ## Override +option_values_required?+ if it is not necessary
+    ## to have option_values present to create a variant.
+    validates :option_values, presence: true, if: :option_values_required_and_not_master?
 
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
@@ -257,6 +259,14 @@ module Spree
     end
 
     private
+
+    def option_values_required_and_not_master?
+      option_values_required? && !is_master?
+    end
+
+    def option_values_required?
+      true
+    end
 
     def ensure_no_line_items
       if line_items.any?
