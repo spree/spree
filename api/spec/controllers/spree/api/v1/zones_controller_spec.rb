@@ -41,14 +41,16 @@ module Spree
     context "as an admin" do
       sign_in_as_admin!
 
+      let!(:country) { create(:country) }
+
       it "can create a new zone" do
         params = {
           :zone => {
             :name => "North Pole",
             :zone_members => [
               {
-                :zoneable_type => "Spree::Country",
-                :zoneable_id => 1
+                zoneable_type: "Spree::Country",
+                zoneable_id: country.id
               }
             ]
           }
@@ -66,8 +68,8 @@ module Spree
             :name => "North Pole",
             :zone_members => [
               {
-                :zoneable_type => "Spree::Country",
-                :zoneable_id => 1
+                zoneable_type: "Spree::Country",
+                zoneable_id: country.id
               }
             ]
           }
