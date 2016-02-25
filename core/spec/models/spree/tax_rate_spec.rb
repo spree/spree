@@ -240,7 +240,7 @@ describe Spree::TaxRate, :type => :model do
 
         it "without an adress costs 100 euros including tax" do
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
           expect(order.included_tax_total).to eq(15.97)
         end
@@ -248,7 +248,7 @@ describe Spree::TaxRate, :type => :model do
         it "to germany costs 100 euros including tax" do
           allow(order).to receive(:tax_zone).and_return(germany_zone)
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
           expect(order.included_tax_total).to eq(15.97)
         end
@@ -257,7 +257,7 @@ describe Spree::TaxRate, :type => :model do
           allow(order).to receive(:tax_zone).and_return(france_zone)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(105.04))
           expect(order.included_tax_total).to eq(21.01)
           expect(order.additional_tax_total).to eq(0)
@@ -267,7 +267,7 @@ describe Spree::TaxRate, :type => :model do
           allow(order).to receive(:tax_zone).and_return(india_zone)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.included_tax_total).to eq(0)
           expect(order.included_tax_total).to eq(0)
           expect(order.display_total).to eq(Spree::Money.new(84.03))
@@ -282,7 +282,7 @@ describe Spree::TaxRate, :type => :model do
         it "to germany costs 100 euros including tax" do
           allow(order).to receive(:tax_zone).and_return(germany_zone)
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
           expect(order.included_tax_total).to eq(15.97)
         end
@@ -291,7 +291,7 @@ describe Spree::TaxRate, :type => :model do
           allow(order).to receive(:tax_zone).and_return(france_zone)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100.00))
           expect(order.included_tax_total).to eq(15.97)
           expect(order.additional_tax_total).to eq(0)
@@ -301,7 +301,7 @@ describe Spree::TaxRate, :type => :model do
           allow(order).to receive(:tax_zone).and_return(india_zone)
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
-          order.update!
+          order.update_with_updater!
           expect(order.included_tax_total).to eq(0)
           expect(order.display_total).to eq(Spree::Money.new(84.03))
         end

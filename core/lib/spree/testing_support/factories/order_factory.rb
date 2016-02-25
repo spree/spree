@@ -45,7 +45,7 @@ FactoryGirl.define do
         create(:shipment, order: order, cost: evaluator.shipment_cost)
         order.shipments.reload
 
-        order.update!
+        order.update_with_updater!
       end
 
       factory :completed_order_with_totals do

@@ -7,7 +7,7 @@ module Spree
 
         def homogenize_line_item_currencies
           update_line_item_currencies!
-          update!
+          update_with_updater!
         end
 
       end
