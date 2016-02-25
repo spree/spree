@@ -101,12 +101,28 @@ module CapybaraExt
     first(:xpath, "//label[text()[contains(.,'#{text}')]]")
   end
 
-  def wait_for_ajax
+  # arg delay in seconds
+  def wait_for_ajax(delay = Capybara.default_max_wait_time)
     counter = 0
+    delay_threshold = delay * 10
     while page.evaluate_script("typeof($) === 'undefined' || $.active > 0")
       counter += 1
       sleep(0.1)
-      raise "AJAX request took longer than 5 seconds." if counter >= 50
+      raise "AJAX request took longer than #{delay} seconds." if counter >= delay_threshold
+    end
+  end
+
+  # "Intelligiently" wait on condition
+  #
+  # Much better than a random sleep "here and there"
+  # it will not cause any delay in case the condition is fullfilled on first cycle.
+  def wait_for_condition(delay = Capybara.default_max_wait_time)
+    counter = 0
+    delay_threshold = delay * 10
+    while !yield
+      counter += 1
+      sleep(0.1)
+      raise "Could not achieve condition within #{delay} seconds." if counter >= delay_threshold
     end
   end
 
