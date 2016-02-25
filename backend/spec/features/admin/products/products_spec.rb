@@ -329,7 +329,7 @@ describe "Products", type: :feature do
         end
 
         within(:css, "tr.product_property:first-child") do
-          expect(first('input[type=text]').value).to eq('baseball_cap_color')
+          expect(first('input[type=text]').value).to eq(prototype.properties.first.name)
         end
       end
     end

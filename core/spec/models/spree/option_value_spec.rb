@@ -1,6 +1,11 @@
 require 'spec_helper'
 
-describe Spree::OptionValue, :type => :model do
+describe Spree::OptionValue, type: :model do
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:option_type_id).case_insensitive.allow_blank }
+  end
+
   context "touching" do
     it "should touch a variant" do
       variant = create(:variant)

@@ -3,8 +3,13 @@ require 'spec_helper'
 class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
-describe Spree::ShippingMethod, :type => :model do
+describe Spree::ShippingMethod, type: :model do
   let(:shipping_method){ create(:shipping_method) }
+
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive.allow_blank }
+  end
 
   context 'calculators' do
     it "Should reject calculators that don't inherit from Spree::ShippingCalculator" do

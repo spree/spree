@@ -1,6 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Zone, :type => :model do
+describe Spree::Zone, type: :model do
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive.allow_blank }
+  end
+
   context "#match" do
     let(:country_zone) { create(:zone, kind: 'country') }
 

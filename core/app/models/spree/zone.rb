@@ -12,7 +12,7 @@ module Spree
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
     has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
-    validates :name, presence: true, uniqueness: { allow_blank: true }
+    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     scope :with_default_tax, -> { where(default_tax: true) }
 
