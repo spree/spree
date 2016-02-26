@@ -5,6 +5,7 @@
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, :class => 'form-control' %>
+      <%= error_message_on :promotion, :name %>
     <% end %>
 
     <%= f.field_container :code, class: ['form-group'] do %>
