@@ -53,6 +53,7 @@ module Spree
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :of_type, -> (type) { joins(product: [:product_properties, :properties]).where("spree_properties.name = 'type' AND spree_product_properties.value = ?", type) }
 
     scope :not_discontinued, -> do
       variant_table_name = Variant.quoted_table_name
