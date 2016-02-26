@@ -198,7 +198,7 @@ describe Spree::Promotion, :type => :model do
     end
 
     it "should not be expired if current time is within starts_at and expires_at range" do
-      promotion.starts_at  = Time.current - 1.day
+      promotion.starts_at = Time.current - 1.day
       promotion.expires_at = Time.current + 1.day
       expect(promotion).not_to be_expired
     end
@@ -207,6 +207,44 @@ describe Spree::Promotion, :type => :model do
       promotion.usage_limit = 2
       allow(promotion).to receive_messages(:credits_count => 1)
       expect(promotion).not_to be_expired
+    end
+  end
+
+  context '#active' do
+    it 'should be active' do
+      expect(promotion.active?).to eq(true)
+    end
+
+    it "should not be active if it hasn't started yet" do
+      promotion.starts_at = Time.now + 1.day
+      expect(promotion.active?).to eq(false)
+    end
+
+    it 'should not be active if it has already ended' do
+      promotion.expires_at = Time.now - 1.day
+      expect(promotion.active?).to eq(false)
+    end
+
+    it 'should be active if it has started already' do
+      promotion.starts_at = Time.now - 1.day
+      expect(promotion.active?).to eq(true)
+    end
+
+    it 'should be active if it has not ended yet' do
+      promotion.expires_at = Time.now + 1.day
+      expect(promotion.active?).to eq(true)
+    end
+
+    it 'should be active if current time is within starts_at and expires_at range' do
+      promotion.starts_at = Time.now - 1.day
+      promotion.expires_at = Time.now + 1.day
+      expect(promotion.active?).to eq(true)
+    end
+
+    it 'should be active if there are no start and end times set' do
+      promotion.starts_at = nil
+      promotion.expires_at = nil
+      expect(promotion.active?).to eq(true)
     end
   end
 
@@ -507,21 +545,10 @@ describe Spree::Promotion, :type => :model do
 
   # regression for #4059
   # admin form posts the code and path as empty string
-  describe "normalize blank values for code & path" do
-    it "will save blank value as nil value instead" do
-      promotion = Spree::Promotion.create(:name => "A promotion", :code => "", :path => "")
-      expect(promotion.code).to be_nil
+  describe 'normalize blank values for path' do
+    it 'will save blank value as nil value instead' do
+      promotion = Spree::Promotion.create(name: 'A promotion', path: '')
       expect(promotion.path).to be_nil
-    end
-  end
-
-  # Regression test for #4081
-  describe "#with_coupon_code" do
-    context "and code stored in uppercase" do
-      let!(:promotion) { create(:promotion, :code => "MY-COUPON-123") }
-      it "finds the code with lowercase" do
-        expect(Spree::Promotion.with_coupon_code("my-coupon-123")).to eql promotion
-      end
     end
   end
 

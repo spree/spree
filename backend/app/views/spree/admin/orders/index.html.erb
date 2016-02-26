@@ -106,8 +106,8 @@
 
         <div class="col-md-4">
           <div class="form-group">
-            <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
-            <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {:include_blank => true}, :class => 'select2' %>
+            <%= label_tag nil, Spree.t(:promotion) %>
+            <%= f.text_field :promotions_promotion_code_value_cont, size: 25 %>
           </div>
         </div>
 

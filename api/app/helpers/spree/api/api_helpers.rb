@@ -123,7 +123,7 @@ module Spree
       @@adjustment_attributes = [
         :id, :source_type, :source_id, :adjustable_type, :adjustable_id,
         :originator_type, :originator_id, :amount, :label, :mandatory,
-        :locked, :eligible,  :created_at, :updated_at
+        :promotion_code, :locked, :eligible,  :created_at, :updated_at
       ]
 
       @@creditcard_attributes = [

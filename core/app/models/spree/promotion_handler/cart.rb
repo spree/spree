@@ -30,24 +30,29 @@ module Spree
 
       private
 
+      # Reverting 715d4439f4f02a1d75b8adac74b77dd445b61908 here to add promotion_code join.
+      # Might be good to combine these two.
       def promotions
-        # AR cannot bind raw ASTs to prepared statements. There always must be a manager around.
-        # Also Postgresql requires an aliased table for `SELECT * FROM (subexpression) AS alias`.
-        # And Sqlite3 cannot work on outher parenthesis from `(left UNION right)`.
-        # So this construct makes both happy.
-        select = Arel::SelectManager.new(
-          Promotion,
-          Promotion.arel_table.create_table_alias(
-            order.promotions.active.union(Promotion.active.where(code: nil, path: nil)),
-            Promotion.table_name
-          ),
-        )
-        select.project(Arel.star)
+        promo_table = Promotion.arel_table
+        code_table  = PromotionCode.arel_table
+        join_table = Arel::Table.new(:spree_order_promotions)
 
-        Promotion.find_by_sql(
-          select,
-          order.promotions.bind_values
-        )
+        join_condition = promo_table.join(join_table, Arel::Nodes::OuterJoin).on(
+          promo_table[:id].eq(join_table[:promotion_id])
+        ).join_sources
+
+        promotion_code_condition = promo_table.join(code_table, Arel::Nodes::OuterJoin).on(
+          promo_table[:id].eq(code_table[:promotion_id])
+        ).join_sources
+
+        Promotion.active.includes(:promotion_rules).
+          joins(promotion_code_condition).
+          joins(join_condition).
+          where(
+            code_table[:value].eq(nil).and(
+              promo_table[:path].eq(nil)
+            ).or(join_table[:order_id].eq(order.id))
+            ).distinct
       end
     end
   end
