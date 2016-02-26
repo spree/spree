@@ -1,8 +1,11 @@
 <div data-hook="admin_tracker_form_fields" class="row">
   <div class="col-md-4">
     <div data-hook="analytics_id" class="form-group">
-      <%= label_tag nil, Spree.t(:google_analytics_id) %>
-      <%= text_field :tracker, :analytics_id, :class => 'form-control' %>
+      <%= f.field_container :analytics_id, class: ["form-group"] do %>
+        <%= f.label :analytics_id, Spree.t(:google_analytics_id) %>
+        <%= f.text_field :analytics_id, :class => 'form-control' %>
+        <%= error_message_on :tracker, :analytics_id %>
+      <% end %>
     </div>
   </div>
   <div class="col-md-4">
@@ -18,11 +21,11 @@
         <%= label_tag :tracker_active_false do %>
           <%= radio_button(:tracker, :active, false) %>
           <%= Spree.t(:say_no) %>
-        <% end %>        
+        <% end %>
       </div>
     </div>
   </div>
-  
+
   <div data-hook="additional_tracker_fields"></div>
 
 </div>

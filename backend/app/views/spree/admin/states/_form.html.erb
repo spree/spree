@@ -3,6 +3,7 @@
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, Spree.t(:name) %>
       <%= f.text_field :name, :class => 'form-control' %>
+      <%= error_message_on :state, :name %>
     <% end %>
   </div>
   <div class="col-md-6">

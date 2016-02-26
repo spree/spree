@@ -13,10 +13,13 @@
           <%= f.text_field :name, :class => 'form-control' %>
         </div>
         <div data-hook="rate" class="form-group">
-          <%= f.label :amount, Spree.t(:rate) %>
-          <%= f.text_field :amount, :class => 'form-control' %>
+          <%= f.field_container :amount, class: ["form-group"] do %>
+            <%= f.label :amount, Spree.t(:rate) %>
+            <%= f.text_field :amount, :class => 'form-control' %>
+            <%= error_message_on :tax_rate, :amount %>
+          <% end %>
           <p class="help-block">
-            <%= Spree.t(:tax_rate_amount_explanation) %>
+          <%= Spree.t(:tax_rate_amount_explanation) %>
           </p>
         </div>
         <div data-hook="included" class="form-group">

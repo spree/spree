@@ -2,6 +2,7 @@
   <%= f.field_container :name, :class => ['form-group'] do %>
     <%= f.label :name, Spree.t(:name) %>
     <%= f.text_field :name, :class => 'form-control' %>
+    <%= error_message_on :tax_category, :name %>
   <% end %>
 
   <%= f.field_container :tax_code, :class => ['form-group'] do %>
