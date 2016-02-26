@@ -3,10 +3,10 @@ module Spree
     class StoreCreditError < StandardError; end
 
     class StoreCreditsController < Spree::Admin::BaseController
-      before_filter :load_user
-      before_filter :load_categories, only: [:new, :edit]
-      before_filter :load_store_credit, only: [:new, :edit, :update]
-      before_filter :ensure_unused_store_credit, only: [:update]
+      before_action :load_user
+      before_action :load_categories, only: [:new, :edit]
+      before_action :load_store_credit, only: [:new, :edit, :update]
+      before_action :ensure_unused_store_credit, only: [:update]
 
       def index
         @store_credits = @user.store_credits.reverse_order
