@@ -1,6 +1,9 @@
 <div data-hook="admin_shipping_category_form_fields">
   <div data-hook="name" class="form-group">
-    <%= label_tag :shipping_category_name, Spree.t(:name) %><br>
-    <%= f.text_field :name, class: 'form-control' %>
+    <%= f.field_container :name, class: ["form-group"] do %>
+      <%= f.label :name, Spree.t(:name) %><br>
+      <%= f.text_field :name, class: 'form-control' %>
+      <%= error_message_on :shipping_category, :name %>
+    <% end %>
   </div>
 </div>

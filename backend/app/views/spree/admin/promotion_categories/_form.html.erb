@@ -1,8 +1,9 @@
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @promotion } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @promotion_category } %>
 
 <%= f.field_container :name, class: ['form-group'] do %>
   <%= f.label :name %>
   <%= f.text_field :name, :class => 'form-control' %>
+  <%= error_message_on :promotion_category, :name %>
 <% end %>
 <%= f.field_container :code, class: ['form-group'] do %>
   <%= f.label :code %>

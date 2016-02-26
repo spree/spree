@@ -6,6 +6,8 @@
   <%= back_to_list_button(Spree::Role.model_name.human, admin_roles_path) %>
 <% end %>
 
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @role } %>
+
 <%= form_for [:admin, @role] do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>

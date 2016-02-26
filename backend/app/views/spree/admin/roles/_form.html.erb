@@ -1,7 +1,10 @@
 <div data-hook="admin_role_form_fields">
   <div data-hook="role_name" class="form-group">
-    <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
-    <%= f.text_field :name, class: 'form-control' %>
+    <%= f.field_container :name, class: ["form-group"] do %>
+      <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
+      <%= f.text_field :name, class: 'form-control' %>
+      <%= error_message_on :role, :name %>
+    <% end %>
   </div>
 
   <div data-hook="additional_role_fields"></div>
