@@ -58,6 +58,10 @@ module Spree
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 
+    # Store credits configurations
+    preference :non_expiring_credit_types, :array, default: []
+    preference :credit_to_new_allocation, :boolean, default: false
+
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
       @searcher_class ||= Spree::Core::Search::Base

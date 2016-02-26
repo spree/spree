@@ -10,7 +10,7 @@ module Spree
         unpaid_amount -= amount
       end
 
-      return reimbursement_list, unpaid_amount
+      [reimbursement_list, unpaid_amount]
     end
 
     def create_credits(reimbursement, unpaid_amount, simulate, reimbursement_list = [])
@@ -18,17 +18,17 @@ module Spree
       unpaid_amount -= credits.sum(&:amount)
       reimbursement_list += credits
 
-      return reimbursement_list, unpaid_amount
+      [reimbursement_list, unpaid_amount]
     end
 
     private
 
     def create_refund(reimbursement, payment, amount, simulate)
-      refund = reimbursement.refunds.build({
+      refund = reimbursement.refunds.build(
         payment: payment,
         amount: amount,
-        reason: Spree::RefundReason.return_processing_reason,
-      })
+        reason: Spree::RefundReason.return_processing_reason
+      )
 
       simulate ? refund.readonly! : refund.save!
       refund
@@ -44,7 +44,24 @@ module Spree
     end
 
     def create_creditable(reimbursement, unpaid_amount)
-      Spree::Reimbursement::Credit.default_creditable_class.new(reimbursement: reimbursement, amount: unpaid_amount)
+      category = Spree::StoreCreditCategory.default_reimbursement_category(category_options(reimbursement))
+      Spree::StoreCredit.new(store_credit_params(category, reimbursement, unpaid_amount))
+    end
+
+    def store_credit_params(category, reimbursement, unpaid_amount)
+      {
+        user: reimbursement.order.user,
+        amount: unpaid_amount,
+        category: category,
+        created_by: Spree::StoreCredit.default_created_by,
+        memo: "Refund for uncreditable payments on order #{reimbursement.order.number}",
+        currency: reimbursement.order.currency
+      }
+    end
+
+    # overwrite if you need options for the default reimbursement category
+    def category_options(_reimbursement)
+      {}
     end
   end
 end

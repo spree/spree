@@ -20,6 +20,7 @@ module Spree
       :stock_location_attributes,
       :stock_movement_attributes,
       :store_attributes,
+      :store_credit_attributes,
       :taxon_attributes,
       :taxonomy_attributes,
       :user_attributes,
@@ -91,6 +92,8 @@ module Spree
 
     @@store_attributes = [:name, :url, :seo_title, :meta_keywords,
                          :meta_description, :default_currency, :mail_from_address]
+
+    @@store_credit_attributes = [:amount, :category_id, :memo]
 
     @@taxonomy_attributes = [:name]
 

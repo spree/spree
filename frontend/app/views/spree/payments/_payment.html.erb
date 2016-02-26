@@ -14,3 +14,5 @@
 <% else %>
   <%= content_tag(:span, payment.payment_method.name) %>
 <% end %>
+
+<span class="payment-amount">(<%= payment.display_amount %>)</span>

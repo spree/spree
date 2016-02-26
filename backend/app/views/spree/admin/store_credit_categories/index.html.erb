@@ -1,0 +1,34 @@
+<% content_for :page_title do %>
+  <%= plural_resource_name(Spree::StoreCreditCategory) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_store_credit_category), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_store_credit_category_link' %>
+<% end if can? :create, Spree::StoreCreditCategory %>
+
+<% if @store_credit_categories.any? %>
+  <table class="table">
+    <thead>
+      <tr data-hook="admin_store_credit_categories_index_headers">
+        <th><%= Spree.t(:name) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @store_credit_categories.each do |store_credit_category| %>
+        <tr id="<%= spree_dom_id store_credit_category %>" data-hook="admin_store_credit_categories_index_rows">
+          <td><%= store_credit_category.name %></td>
+          <td class="actions text-right">
+            <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
+            <%= link_to_delete(store_credit_category, no_text: true) if can? :destroy, store_credit_category %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-warning">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCreditCategory)) %>,
+    <%= link_to(Spree.t(:add_one), new_object_url) if can? :create, Spree::StoreCreditCategory %>!
+  </div>
+<% end %>

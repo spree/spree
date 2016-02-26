@@ -55,6 +55,8 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
+  config.extend WithModel
+
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
 

@@ -15,6 +15,7 @@ module Spree
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
 
       has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"
+      has_many :store_credits, -> { includes(:credit_type) }, foreign_key: "user_id", class_name: "Spree::StoreCredit"
 
       belongs_to :ship_address, class_name: 'Spree::Address'
       belongs_to :bill_address, class_name: 'Spree::Address'
@@ -37,6 +38,10 @@ module Spree
 
     def analytics_id
       id
+    end
+
+    def total_available_store_credit
+      store_credits.reload.to_a.sum(&:amount_remaining)
     end
   end
 end

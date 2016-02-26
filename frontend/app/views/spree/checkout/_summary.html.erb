@@ -61,5 +61,12 @@
       <td><strong><%= Spree.t(:order_total) %>:</strong></td>
       <td><strong><span id='summary-order-total' class="lead text-primary"><%= order.display_total.to_html %></span></strong></td>
     </tr>
+
+    <% if order.using_store_credit? %>
+      <tr data-hook="order_details_store_credit">
+        <td><%= Spree.t( Spree::StoreCredit.model_name.human ) %>:</strong></td>
+        <td><span id='summary-store-credit'><%= order.display_total_applied_store_credit.to_html %></span></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
