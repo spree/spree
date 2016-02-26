@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
+  s.required_ruby_version = '>= 2.1.0'
   s.author       = 'Sean Schofield'
   s.email        = 'sean@spreecommerce.com'
   s.homepage     = 'http://spreecommerce.com'
