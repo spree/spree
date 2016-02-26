@@ -82,7 +82,7 @@ module Spree
 
       def conditional_variant_touch
         # the variant_id changes from nil when a new stock location is added
-        stock_changed = (count_on_hand_changed? && count_on_hand_change.any?(&:zero?)) || variant_id_changed?
+        stock_changed = (count_on_hand_changed? && count_on_hand_change.any?(&:zero?)) || variant_id_changed? || backorderable_changed?
 
         if !Spree::Config.binary_inventory_cache || stock_changed
           variant.touch
