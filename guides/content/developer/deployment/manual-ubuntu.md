@@ -206,16 +206,20 @@ You now have a version of Ruby correctly configured on your server.
 
 The next step is to put your Spree application onto the server. To do this, you
 will use the deployment tool called
-[Capistrano](https://github.com/capistrano/capistrano/wiki).
+[Capistrano](https://github.com/capistrano/capistrano/wiki). The instructions below describe how to do this using Capistrano version 2.x. If you wish to use version 3.x or higher, you should consult the documentation at http://capistranorb.com.
 
-Install Capistrano on your local system by running this command:
+First add the capistrano gem to the Gemfile located in the directory containing your Spree application:
 
-```bash
-$ gem install capistrano
+```ruby
+group :development do
+ gem 'capistrano', '~> 2.0'
+end
 ```
-
-Then, inside the directory for your Spree app, run this command to set up a
-Capistrano deploy configuration:
+and to install the gem run the following command from that directory:
+```bash
+$ bundle install
+```
+In the same directory, run this command to set up a Capistrano deploy configuration:
 
 ```bash
 $ capify .
