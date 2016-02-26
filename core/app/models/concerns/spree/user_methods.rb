@@ -41,7 +41,7 @@ module Spree
     end
 
     def total_available_store_credit
-      store_credits.reload.to_a.sum{ |credit| credit.amount_remaining }
+      store_credits.reload.to_a.sum(&:amount_remaining)
     end
   end
 end

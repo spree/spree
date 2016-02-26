@@ -72,7 +72,7 @@ module Spree
       end
 
       def load_categories
-        @credit_categories = Spree::StoreCreditCategory.all.order(:name)
+        @credit_categories = Spree::StoreCreditCategory.order(:name)
       end
 
       def load_store_credit
