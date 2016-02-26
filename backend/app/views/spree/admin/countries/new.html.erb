@@ -6,7 +6,7 @@
   <%= back_to_list_button(Spree::Country.model_name.human, admin_countries_path) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @countries } %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @country } %>
 
 <%= form_for [:admin, @country] do |f| %>
   <fieldset>
