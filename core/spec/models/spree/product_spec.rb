@@ -12,17 +12,14 @@ end
 describe Spree::Product, :type => :model do
 
   describe 'Associations' do
-    it do
+    it 'should have many promotions' do
       is_expected.to have_many(:promotions).
-                     class_name('Spree::Promotion').
-                     through(:promotion_rules)
+        class_name('Spree::Promotion').through(:promotion_rules)
     end
 
-    it do
+    it 'should have many possible_promotions' do
       is_expected.to have_many(:possible_promotions).
-                     class_name('Spree::Promotion').
-                     through(:promotion_rules).
-                     source(:promotion)
+        class_name('Spree::Promotion').through(:promotion_rules).source(:promotion)
     end
   end
 
