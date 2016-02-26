@@ -74,7 +74,7 @@ rails g spree:auth:install
 This will add the Spree gem to your Gemfile, create initializers, copy migrations
 and optionally generate sample products and orders.
 
-If you get an "sh: identify: command not found" error then you can try installing imagemagick.
+If you get an `sh: identify: command not found. Image magick must be installed` error then you can try installing imagemagick.
 ```shell
 brew install imagemagick
 ```
