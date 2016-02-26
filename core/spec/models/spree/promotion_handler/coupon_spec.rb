@@ -228,7 +228,7 @@ module Spree
             @zone = create(:zone, :name => "Country Zone", :default_tax => true, :zone_members => [])
             @zone.zone_members.create(:zoneable => @country)
             @category = Spree::TaxCategory.create :name => "Taxable Foo"
-            @rate1 = Spree::TaxRate.create(
+            @rate1 = create(:tax_rate,
                 :amount => 0.10,
                 :calculator => Spree::Calculator::DefaultTax.create,
                 :tax_category => @category,

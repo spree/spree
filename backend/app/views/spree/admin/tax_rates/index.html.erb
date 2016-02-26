@@ -20,7 +20,7 @@
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="tax_rates">
       <% @tax_rates.each do |tax_rate|%>
       <tr id="<%= spree_dom_id tax_rate %>" data-hook="rate_row">
         <td><%=tax_rate.zone.try(:name) || Spree.t(:not_available) %></td>
