@@ -6,6 +6,10 @@ describe 'Store credits admin' do
   let!(:admin_user) { create(:admin_user) }
   let!(:store_credit) { create(:store_credit) }
 
+  before do
+    allow(Spree.user_class).to receive(:find_by).and_return(store_credit.user)
+  end
+
   describe 'visiting the store credits page' do
     before do
       visit spree.admin_path
@@ -68,6 +72,22 @@ describe 'Store credits admin' do
       store_credit_table = page.find('table')
       expect(store_credit_table).to have_content(Spree::Money.new(updated_amount).to_s)
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
+    end
+  end
+
+  describe 'non-existent user' do
+    before do
+      visit spree.admin_path
+      click_link 'Users'
+      click_link store_credit.user.email
+      store_credit.user.destroy
+      allow(Spree.user_class).to receive(:find_by).and_return(nil)
+      click_link 'Store Credits'
+      allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
+    end
+
+    it 'should display flash withe error' do
+      expect(page).to have_content(Spree.t(:user_not_found))
     end
   end
 end

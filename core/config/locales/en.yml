@@ -909,6 +909,7 @@ en:
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
     no_tracking_present: No tracking details provided.
+    user_not_found: User not found
     none: None
     none_selected: None Selected
     normal_amount: Normal Amount

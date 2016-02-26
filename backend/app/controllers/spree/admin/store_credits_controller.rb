@@ -68,7 +68,12 @@ module Spree
       private
 
       def load_user
-        @user = Spree.user_class.find(params[:user_id])
+        @user = Spree.user_class.find_by(id: params[:user_id])
+
+        unless @user
+          flash[:error] = Spree.t(:user_not_found)
+          redirect_to admin_path
+        end
       end
 
       def load_categories
