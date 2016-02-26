@@ -16,6 +16,8 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
 
+    has_one :promotion_code, class_name: 'Spree::PromotionCode'
+
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
@@ -26,6 +28,7 @@ module Spree
     validates :description, length: { maximum: 255 }, allow_blank: true
 
     before_save :normalize_blank_values
+    before_save :update_promotion_code_value
 
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
     scope :applied, lambda {
@@ -189,6 +192,16 @@ module Spree
     def normalize_blank_values
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?
+      end
+    end
+
+    def update_promotion_code_value
+      if code.present?
+        if promotion_code.present?
+          promotion_code.update_attributes(value: code)
+        else
+          build_promotion_code(value: code, usage_limit: usage_limit)
+        end
       end
     end
 
