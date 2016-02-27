@@ -12,7 +12,7 @@
         <%= text_field_tag :permalink_part, @permalink_part, :class => 'form-control' %>
         <p class="help-block" id="permalink_part_display">
           <%= @taxon.permalink.split('/')[0...-1].join('/') + '/' %>
-        </span>
+        </p>
       <% end %>
 
       <%= f.field_container :icon, class: ['form-group'] do %>
