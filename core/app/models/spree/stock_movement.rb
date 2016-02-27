@@ -1,5 +1,9 @@
 module Spree
   class StockMovement < Spree::Base
+
+    MAX_QUANTITY = 2147483647
+    MIN_QUANTITY = -2147483648
+
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
 
@@ -8,8 +12,8 @@ module Spree
     with_options presence: true do
       validates :stock_item
       validates :quantity, numericality: {
-                                            greater_than_or_equal_to: -2**31,
-                                            less_than_or_equal_to: 2**31 - 1,
+                                            greater_than_or_equal_to: MIN_QUANTITY,
+                                            less_than_or_equal_to: MAX_QUANTITY,
                                             only_integer: true,
                                             allow_nil: true
                                           }
@@ -20,7 +24,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['quantity']
 
     def readonly?
-      !new_record?
+      persisted?
     end
 
     private
