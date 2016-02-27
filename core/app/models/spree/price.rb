@@ -4,15 +4,18 @@ module Spree
 
     acts_as_paranoid
 
-    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+    AMOUNT = {
+      max: BigDecimal('99_999_999.99'),
+      min: 0
+    }
 
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
 
     validates :amount, allow_nil: true, numericality: {
-      greater_than_or_equal_to: 0,
-      less_than_or_equal_to: MAXIMUM_AMOUNT
+      greater_than_or_equal_to: AMOUNT[:min],
+      less_than_or_equal_to: AMOUNT[:max]
     }
 
     extend DisplayMoney

@@ -27,6 +27,7 @@ require 'database_cleaner'
 require 'ffaker'
 
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
+Dir["./spec/models/spree/shared/**/*.rb"].sort.each { |f| require f }
 
 if ENV["CHECK_TRANSLATIONS"]
   require "spree/testing_support/i18n"
