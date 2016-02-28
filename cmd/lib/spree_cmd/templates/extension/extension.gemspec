@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
-  s.version     = '<%= spree_version %>'
+  s.version     = '<%= Spree.version %>'
   s.summary     = 'TODO: Add gem summary here'
   s.description = 'TODO: Add (optional) gem description here'
   s.required_ruby_version = '>= 2.0.0'
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> <%= spree_version %>'
+  s.add_dependency 'spree_core', '~> <%= Spree.version %>'
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'coffee-rails'

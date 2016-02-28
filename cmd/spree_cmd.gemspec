@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
+require_relative '../core/lib/spree/core/version.rb'
 
 Gem::Specification.new do |s|
   s.name        = "spree_cmd"
-  s.version     = version
+  s.version     = Spree.version
   s.authors     = ["Chris Mar"]
   s.email       = ["chris@spreecommerce.com"]
   s.homepage    = "http://spreecommerce.com"
-  s.license     = %q{BSD-3}
+  s.license     = 'BSD-3'
   s.summary     = %q{Spree Commerce command line utility}
   s.description = %q{tools to create new Spree stores and extensions}
 
