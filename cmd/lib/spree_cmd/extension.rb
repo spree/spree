@@ -1,10 +1,9 @@
 module SpreeCmd
-
   class Extension < Thor::Group
     include Thor::Actions
 
     desc "builds a spree extension"
-    argument :file_name, :type => :string, :desc => 'rails app_path', :default => '.'
+    argument :file_name, type: :string, desc: 'rails app_path', default: '.'
 
     source_root File.expand_path('../templates/extension', __FILE__)
 
@@ -30,15 +29,13 @@ module SpreeCmd
     end
 
     def final_banner
-      say %Q{
+      say %{
         #{'*' * 80}
 
-        Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
+        Your extension has been generated with a gemspec dependency on Spree #{Spree.version}.
 
         Please update the Versionfile to designate compatibility with different versions of Spree.
         See http://spreecommerce.com/documentation/extensions.html#versionfile
-
-        Consider listing your extension in the official extension registry http://spreecommerce.com/extensions
 
         #{'*' * 80}
       }
@@ -49,16 +46,11 @@ module SpreeCmd
         Thor::Util.camel_case file_name
       end
 
-      def spree_version
-        '3.0.7'
-      end
-
       def use_prefix(prefix)
         unless file_name =~ /^#{prefix}/
           @file_name = prefix + Thor::Util.snake_case(file_name)
         end
       end
     end
-
   end
 end

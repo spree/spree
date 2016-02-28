@@ -10,7 +10,6 @@ module Spree
     subject { described_class.new(config, "spree")  }
 
     before do
-      expect(File).to receive(:exists?).with("config/spree.yml").and_return true
       expect(File).to receive(:directory?).with("db/migrate").and_return true
     end
 

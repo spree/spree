@@ -21,7 +21,7 @@ module Spree
     # Shouldn't run on test mode because migrations inside engine don't have
     # engine name on the file name
     def check
-      if File.exists?("config/spree.yml") && File.directory?("db/migrate")
+      if File.directory?("db/migrate")
         engine_in_app = app_migrations.map do |file_name|
           name, engine = file_name.split(".", 2)
           next unless match_engine?(engine)
