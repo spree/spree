@@ -6,13 +6,11 @@
   <%= back_to_list_button(Spree::PaymentMethod.model_name.human, admin_payment_methods_path) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment_method } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment_method } %>
 
-<%= form_for @payment_method, :url => collection_url do |f| %>
+<%= form_for @payment_method, url: collection_url do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <div data-hook="buttons" class="actions">
-      <%= button Spree.t(:create), 'save' %>
-    </div>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/new_resource_links' %>
   </fieldset>
 <% end %>

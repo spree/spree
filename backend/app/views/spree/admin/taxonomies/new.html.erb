@@ -8,9 +8,7 @@
 
 <%= form_for [:admin, @taxonomy] do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <div class="form-actions" data-hook="buttons">
-      <%= button Spree.t(:create), 'save' %>
-    </div>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/new_resource_links' %>
   </fieldset>
 <% end %>
