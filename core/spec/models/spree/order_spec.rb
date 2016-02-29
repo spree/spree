@@ -31,6 +31,21 @@ describe Spree::Order, :type => :model do
     end
   end
 
+  describe '#update_with_updater!' do
+    let(:updater) { Spree::OrderUpdater.new(order) }
+
+    before do
+      allow(order).to receive(:updater).and_return(updater)
+      allow(updater).to receive(:update).and_return(true)
+    end
+
+    after { order.update_with_updater! }
+
+    it 'expects to update order with order updater' do
+      expect(updater).to receive(:update).and_return(true)
+    end
+  end
+
   context "#cancel" do
     let(:order) { create(:completed_order_with_totals) }
     let!(:payment) do
@@ -419,7 +434,7 @@ describe Spree::Order, :type => :model do
     it "calls hook during update" do
       order = create(:order)
       expect(order).to receive(:add_awesome_sauce)
-      order.update!
+      order.update_with_updater!
     end
 
     it "calls hook during finalize" do

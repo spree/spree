@@ -8,7 +8,7 @@ describe Spree::Adjustment, :type => :model do
   let(:order) { Spree::Order.new }
 
   before do
-    allow(order).to receive(:update!)
+    allow(order).to receive(:update_with_updater!)
   end
 
   let(:adjustment) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: order, order: order, amount: 5) }

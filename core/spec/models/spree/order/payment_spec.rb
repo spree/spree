@@ -172,7 +172,7 @@ module Spree
                         reimbursement: reimbursement
         order = reimbursement.order.reload
         # Update the order totals so payment_total goes to 0 reflecting the refund..
-        order.update!
+        order.update_with_updater!
         # Order Total - (Payment Total + Reimbursed)
         # 10 - (0 + 10) = 0
         expect(order.outstanding_balance).to eq 0

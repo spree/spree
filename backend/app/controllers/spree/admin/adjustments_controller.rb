@@ -24,7 +24,7 @@ module Spree
       end
 
       def update_totals
-        @order.reload.update!
+        @order.reload.update_with_updater!
       end
 
       # Override method used to create a new instance to correctly

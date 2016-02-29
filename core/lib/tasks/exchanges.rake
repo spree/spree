@@ -35,7 +35,7 @@ namespace :exchanges do
           variant_inventory_units.each { |i| i.update_attributes!(line_item_id: line_item.id, order_id: order.id) }
         end
 
-        order.reload.update!
+        order.reload.update_with_updater!
         while order.state != order.checkout_steps[-2] && order.next; end
 
         unless order.payments.present?
@@ -54,7 +54,7 @@ namespace :exchanges do
         order.update_attributes!(state: "confirm")
 
         order.reload.next!
-        order.update!
+        order.update_with_updater!
         order.finalize!
 
         failed_orders << order unless order.completed? && order.valid?

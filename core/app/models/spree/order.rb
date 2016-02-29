@@ -232,8 +232,13 @@ module Spree
       @updater ||= OrderUpdater.new(self)
     end
 
-    def update!
+    def update_with_updater!
       updater.update
+    end
+
+    def update!
+      warn "`update!` is deprecated as it conflicts with update! method of rails. Use `update_with_updater!` instead."
+      update_with_updater!
     end
 
     def merger
@@ -651,7 +656,7 @@ module Spree
       payments.store_credits.pending.each(&:void!)
 
       send_cancel_email
-      self.update!
+      self.update_with_updater!
     end
 
     def send_cancel_email
