@@ -40,7 +40,7 @@ Spree.ready ($) ->
       # i.e. if user enters invalid data
       ($ 'input[type="radio"]:checked').click()
 
-      $('#checkout_form_payment').submit ->
+      $('#checkout_form_payment').submit (event) ->
         # Coupon code application may take a number of seconds.
         # Informing the user that this is happening is a good way to indicate some progress to them.
         # In addition to this, if the coupon code FAILS then they don't lose their just-entered payment data.
@@ -65,14 +65,16 @@ Spree.ready ($) ->
             async: false,
             method: "PUT",
             url: url,
-            success: (data) ->
+            success: (data) =>
               coupon_code_field.val('')
               coupon_status.addClass("alert-success").html("Coupon code applied successfully.")
+              @submit()
               return true
             error: (xhr) ->
               handler = JSON.parse(xhr.responseText)
               coupon_status.addClass("alert-error").html(handler["error"])
-              $('.continue').attr('disabled', false)
+              Spree.enableSave()
+              event.preventDefault()
               return false
           })
 
