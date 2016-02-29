@@ -1,22 +1,22 @@
 # -*- encoding: utf-8 -*-
-version = File.read(File.expand_path("../../SPREE_VERSION", __FILE__)).strip
+require_relative '../core/lib/spree/core/version.rb'
 
-Gem::Specification.new do |gem|
-  gem.authors       = ["Ryan Bigg"]
-  gem.email         = ["ryan@spreecommerce.com"]
-  gem.description   = %q{Spree's API}
-  gem.summary       = %q{Spree's API}
-  gem.homepage      = 'https://spreecommerce.com'
-  gem.license       = %q{BSD-3}
+Gem::Specification.new do |s|
+  s.authors       = ["Ryan Bigg"]
+  s.email         = ["ryan@spreecommerce.com"]
+  s.description   = %q{Spree's API}
+  s.summary       = %q{Spree's API}
+  s.homepage      = 'https://spreecommerce.com'
+  s.license       = 'BSD-3'
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "spree_api"
-  gem.require_paths = ["lib"]
-  gem.version       = version
+  s.files         = `git ls-files`.split($\)
+  s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
+  s.name          = "spree_api"
+  s.require_paths = ["lib"]
+  s.version       = Spree.version
 
-  gem.add_dependency 'spree_core', version
-  gem.add_dependency 'rabl', '~> 0.11.6'
-  gem.add_dependency 'versioncake', '~> 2.3.1'
+  s.add_dependency 'spree_core', s.version
+  s.add_dependency 'rabl', '~> 0.11.6'
+  s.add_dependency 'versioncake', '~> 2.3.1'
 end
