@@ -41,6 +41,11 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
+    # temporary code. remove after the column is dropped from the db.
+    def columns
+      super.reject { |column| column.name == 'code' }
+    end
+
     def self.advertised
       where(advertise: true)
     end
