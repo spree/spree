@@ -47,8 +47,11 @@ module Spree
 
         begin
           # TODO: why is @product.destroy raising ActiveRecord::RecordNotDestroyed instead of failing with false result
-          @product.destroy
-          flash[:success] = Spree.t('notice_messages.product_deleted')
+          if @product.destroy
+            flash[:success] = Spree.t('notice_messages.product_deleted')
+          else
+            flash[:error] = Spree.t('notice_messages.product_not_deleted')
+          end
         rescue ActiveRecord::RecordNotDestroyed => e
           flash[:error] = Spree.t('notice_messages.product_not_deleted')
         end
