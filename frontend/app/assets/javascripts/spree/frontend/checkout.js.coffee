@@ -9,5 +9,8 @@ Spree.disableSaveOnClick = ->
       ($ this).find(':submit, :image').removeClass('primary').addClass 'disabled'
   )
 
+Spree.enableSave = ->
+  ($ 'form.edit_order').data('submitted', false).find(':submit, :image').attr('disabled', false).addClass('primary').removeClass 'disabled'
+
 Spree.ready ($) ->
   Spree.Checkout = {}
