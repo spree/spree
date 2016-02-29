@@ -71,6 +71,8 @@ describe Spree::Admin::PromotionsController, type: :controller do
         super().merge(bulk_base: 'abc', bulk_number: 2)
       end
 
+      before { srand 123 }
+
       it 'succeeds and creates multiple codes' do
         expect {
           expect {
@@ -78,7 +80,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
           }.to change { Spree::Promotion.count }.by(1)
         }.to change { Spree::PromotionCode.count }.by(2)
 
-        expect(assigns(:promotion).codes.map(&:value)).to all(match(/\Aabc_/))
+        expect(assigns(:promotion).codes.map(&:value).sort).to eq ['abc_kzwbar', 'abc_nccgrt']
       end
     end
   end

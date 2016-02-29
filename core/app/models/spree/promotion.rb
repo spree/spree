@@ -17,6 +17,7 @@ module Spree
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
 
     has_many :codes, class_name: 'Spree::PromotionCode', inverse_of: :promotion
+    alias_method :promotion_codes, :codes
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
@@ -58,11 +59,11 @@ module Spree
     end
 
     def code
-      fail 'Tried to call code for Spree::Promotion'
+      fail 'Attempted to call code on a Spree::Promotion. Promotions are now tied to multiple code records'
     end
 
     def code=(val)
-      fail 'Tried to call code for Spree::Promotion'
+      fail 'Attempted to call code= on a Spree::Promotion. Promotions are now tied to multiple code records'
     end
 
     def as_json(options={})
@@ -84,11 +85,17 @@ module Spree
       (starts_at.nil? || starts_at < Time.now) && (expires_at.nil? || expires_at > Time.now)
     end
 
-    def activate(payload)
-      order = payload[:order]
+    def activate(order:, line_item: nil, user: nil, path: nil, promotion_code: nil)
       return unless self.class.order_activatable?(order)
 
-      payload[:promotion] = self
+      payload = {
+        order: order,
+        promotion: self,
+        line_item: line_item,
+        user: user,
+        path: path,
+        promotion_code: promotion_code
+      }
 
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
@@ -100,10 +107,8 @@ module Spree
       action_taken = results.include?(true)
 
       if action_taken
-      # connect to the order
-      # create the join_table entry.
-        self.orders << order
-        self.save
+        # connect to the order
+        order_promotions.find_or_create_by!(order_id: order.id, promotion_code_id: promotion_code.try!(:id))
       end
 
       action_taken
@@ -239,7 +244,7 @@ module Spree
     end
 
     def build_code_with_base(base_code:, random_code_length: 6)
-      code_with_entropy = "#{base_code}_#{('A'..'Z').to_a.sample(random_code_length).join}"
+      code_with_entropy = "#{base_code}_#{Array.new(random_code_length) { ('A'..'Z').to_a.sample }.join}"
 
       if Spree::PromotionCode.where(value: code_with_entropy).exists?
         build_code_with_base(base_code)

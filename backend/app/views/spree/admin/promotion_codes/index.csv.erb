@@ -1,4 +1,0 @@
-<%= CSV.generate_line ['Code'] %>
-<%- @promotion.codes.each do |code| -%>
-<%= CSV.generate_line([code.value]) -%>
-<%- end -%>

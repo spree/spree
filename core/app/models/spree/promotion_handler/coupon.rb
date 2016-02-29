@@ -62,7 +62,7 @@ module Spree
 
         # If any of the actions for the promotion return `true`,
         # then result here will also be `true`.
-        result = promotion.activate(:order => order)
+        result = promotion.activate(order: order, promotion_code: promotion_code)
         if result
           determine_promotion_application_result
         else

@@ -23,7 +23,7 @@ module Spree
       def activate
         promotions.each do |promotion|
           if (line_item && promotion.eligible?(line_item)) || promotion.eligible?(order)
-            promotion.activate(line_item: line_item, order: order)
+            promotion.activate(line_item: line_item, order: order, promotion_code: promotion_code(promotion))
           end
         end
       end
@@ -52,6 +52,11 @@ module Spree
 
         Promotion.active.includes(:promotion_rules).joins(promotion_code_join).
           where(code_table[:value].eq(nil).and(promo_table[:path].eq(nil))).distinct
+      end
+
+      def promotion_code(promotion)
+        order_promotion = Spree::OrderPromotion.find_by(order: order, promotion: promotion)
+        order_promotion.present? ? order_promotion.promotion_code : nil
       end
     end
   end

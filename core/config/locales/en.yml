@@ -649,6 +649,7 @@ en:
     discontinued: Discontinued
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
+    download_promotion_code_list: Download Code List
     doesnt_track_inventory: It doesn't track inventory
     edit: Edit
     editing_resource: 'Editing %{resource}'
@@ -907,6 +908,7 @@ en:
       variant_not_deleted: Variant could not be deleted
     num_orders: "# Orders"
     number: Number
+    number_of_codes: ! '%{count} codes'
     on_hand: On Hand
     open: Open
     open_all_adjustments: Open All Adjustments

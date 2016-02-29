@@ -5,15 +5,15 @@
 <% content_for :page_actions do %>
   <li>
     <%= button_link_to Spree.t(:back_to_promotions_list), admin_promotions_path, icon: 'arrow-left' %>
-    <%= button_link_to 'Download Code List', admin_promotion_promotion_codes_path(promotion_id: @promotion.id, format: :csv), icon: 'arrow-down' %>
+    <%= button_link_to Spree.t(:download_promotion_code_list), admin_promotion_promotion_codes_path(promotion_id: @promotion.id, format: :csv), icon: 'arrow-down' %>
   </li>
 <% end %>
 
-<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
+<%= form_for @promotion, url: object_url, method: :put do |f| %>
   <div class="row">
     <div class="col-md-12">
-      <%= render :partial => 'form', :locals => { :f => f } %>
-      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+      <%= render partial: 'form', locals: { f: f } %>
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </div>
 
@@ -22,15 +22,15 @@
 <div id="promotion-filters" class="row">
   <div id="rules_container" class="col-md-6">
     <div class="panel panel-default">
-      <%= render :partial => 'rules' %>
+      <%= render partial: 'rules' %>
     </div>
   </div>
 
   <div id="actions_container" class="col-md-6">
     <div class="panel panel-default">
-      <%= render :partial => 'actions' %>
+      <%= render partial: 'actions' %>
     </div>
   </div>
 </div>
 
-<%= render :partial => "spree/admin/variants/autocomplete", :formats => [:js] %>
+<%= render partial: 'spree/admin/variants/autocomplete', formats: [:js] %>
