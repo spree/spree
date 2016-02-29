@@ -1,8 +1,10 @@
 module Spree
   class StockMovement < Spree::Base
 
-    MAX_QUANTITY = 2147483647
-    MIN_QUANTITY = -2147483648
+    QUANTITY = {
+      max: 2147483647,
+      min: -2147483648
+    }
 
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
@@ -12,8 +14,8 @@ module Spree
     with_options presence: true do
       validates :stock_item
       validates :quantity, numericality: {
-                                            greater_than_or_equal_to: MIN_QUANTITY,
-                                            less_than_or_equal_to: MAX_QUANTITY,
+                                            greater_than_or_equal_to: QUANTITY[:min],
+                                            less_than_or_equal_to: QUANTITY[:max],
                                             only_integer: true,
                                             allow_nil: true
                                           }

@@ -6,13 +6,13 @@ describe Spree::StockMovement, :type => :model do
 
     describe 'MAX_QUANTITY' do
       it 'return 2147483647' do
-        expect(Spree::StockMovement::MAX_QUANTITY).to eq(2147483647)
+        expect(Spree::StockMovement::QUANTITY[:max]).to eq(2147483647)
       end
     end
 
     describe 'MIN_QUANTITY' do
       it 'return -2147483648' do
-        expect(Spree::StockMovement::MIN_QUANTITY).to eq(-2147483648)
+        expect(Spree::StockMovement::QUANTITY[:min]).to eq(-2147483648)
       end
     end
 
@@ -20,18 +20,19 @@ describe Spree::StockMovement, :type => :model do
 
   describe 'Associations' do
 
-    it { should belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
-    it { should belong_to(:originator) }
+    it { is_expected.to belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
+    it { is_expected.to belong_to(:originator) }
 
   end
 
   describe 'Validations' do
 
-    it { should validate_presence_of(:stock_item) }
-    it { should validate_presence_of(:quantity) }
-    it do should validate_numericality_of(:quantity).
-      is_greater_than_or_equal_to(Spree::StockMovement::MIN_QUANTITY).
-      is_less_than_or_equal_to(Spree::StockMovement::MAX_QUANTITY).
+    it { is_expected.to validate_presence_of(:stock_item) }
+    it { is_expected.to validate_presence_of(:quantity) }
+    it do
+      is_expected.to validate_numericality_of(:quantity).
+      is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY[:min]).
+      is_less_than_or_equal_to(Spree::StockMovement::QUANTITY[:max]).
       only_integer.allow_nil
     end
   end
@@ -62,7 +63,7 @@ describe Spree::StockMovement, :type => :model do
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
-      it 'should not update a persisted records' do
+      it 'should not update a persisted record' do
         expect {
           stock_movement.save
         }.to raise_error(ActiveRecord::ReadOnlyRecord)
