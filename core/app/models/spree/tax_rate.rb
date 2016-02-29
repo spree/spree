@@ -83,7 +83,7 @@ module Spree
     end
 
     def adjust(order, item)
-      create_adjustment(order, item, included_in_price)
+      create_adjustment(order, item, nil, included_in_price)
     end
 
     def compute_amount(item)

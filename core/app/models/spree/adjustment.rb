@@ -44,7 +44,6 @@ module Spree
 
     after_create :update_adjustable_adjustment_total
     after_destroy :update_adjustable_adjustment_total
-    before_save :update_promotion_code
 
     class_attribute :competing_promos_source_types
 
@@ -100,13 +99,6 @@ module Spree
     def update_adjustable_adjustment_total
       # Cause adjustable's total to be recalculated
       Adjustable::AdjustmentsUpdater.update(adjustable)
-    end
-
-    # Temporary to make sure data is getting written correctly
-    def update_promotion_code
-      if promotion? && source.try(:promotion).try(:promotion_code).present?
-        self.promotion_code = source.promotion.promotion_code
-      end
     end
   end
 end

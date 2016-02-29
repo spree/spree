@@ -4,9 +4,10 @@ module Spree
       class FreeShipping < Spree::PromotionAction
         include Spree::AdjustmentSource
 
-        def perform(payload={})
+        def perform(payload = {})
           order = payload[:order]
-          create_unique_adjustments(order, order.shipments)
+          promotion_code = payload[:promotion_code]
+          create_unique_adjustments(order, order.shipments, promotion_code)
         end
 
         def compute_amount(shipment)

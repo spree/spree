@@ -6,7 +6,7 @@ describe Spree::PromotionCode do
 
     describe '#downcase_value' do
       let(:promotion) { create(:promotion, code: 'NewCoDe') }
-      let(:promotion_code) { promotion.promotion_code }
+      let(:promotion_code) { promotion.codes.first }
 
       it 'downcases the value before saving' do
         subject

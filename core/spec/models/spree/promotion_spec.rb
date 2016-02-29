@@ -248,14 +248,8 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  context "#credits_count" do
-    let!(:promotion) do
-      promotion = Spree::Promotion.new
-      promotion.name = "Foo"
-      promotion.code = "XXX"
-      calculator = Spree::Calculator::FlatRate.new
-      promotion.tap(&:save)
-    end
+  context '#credits_count' do
+    let!(:promotion) { create(:promotion, name: 'Foo', code: 'XXX') }
 
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
@@ -268,21 +262,21 @@ describe Spree::Promotion, :type => :model do
     let!(:adjustment) do
       order = create(:order)
       Spree::Adjustment.create!(
-        order:      order,
+        order: order,
         adjustable: order,
-        source:     action,
-        amount:     10,
-        label:      'Promotional adjustment'
+        source: action,
+        amount: 10,
+        label: 'Promotional adjustment'
       )
     end
 
-    it "counts eligible adjustments" do
+    it 'counts eligible adjustments' do
       adjustment.update_column(:eligible, true)
       expect(promotion.credits_count).to eq(1)
     end
 
     # Regression test for #4112
-    it "does not count ineligible adjustments" do
+    it 'does not count ineligible adjustments' do
       adjustment.update_column(:eligible, false)
       expect(promotion.credits_count).to eq(0)
     end
@@ -625,6 +619,40 @@ describe Spree::Promotion, :type => :model do
       expect(other_line_item).not_to eq line_item
       expect(other_line_item.adjustments.size).to eq(1)
       expect(order.adjustment_total).to eq -10
+    end
+  end
+
+  describe '#build_promotion_codes' do
+    context 'when number_of_codes is 1' do
+      before do
+        promotion.build_promotion_codes(base_code: 'abc', number_of_codes: 1)
+      end
+
+      it 'builds one code' do
+        expect(promotion.codes.size).to eq 1
+      end
+
+      it 'builds one code with the correct value' do
+        expect(promotion.codes.map(&:value)).to eq ['abc']
+      end
+    end
+
+    context 'when number_of_codes is greater than 1' do
+      before do
+        promotion.build_promotion_codes(base_code: 'abc', number_of_codes: 2)
+      end
+
+      it 'builds the correct number of codes' do
+        expect(promotion.codes.size).to eq 2
+      end
+
+      it 'builds codes with distinct values' do
+        expect(promotion.codes.map(&:value).uniq.size).to eq 2
+      end
+
+      it 'builds codes with the same base prefix' do
+        expect(promotion.codes.map(&:value)).to all(match(/\Aabc_/))
+      end
     end
   end
 end

@@ -68,6 +68,19 @@ module Spree
                 expect(second_line_item.reload.adjustments).to be_empty
               end
             end
+
+            context 'when a promotion code is used' do
+              let(:promotion_code) { create(:promotion_code) }
+              let(:promotion) { promotion_code.promotion }
+              let(:payload) { { order: order, promotion: promotion, promotion_code: promotion_code } }
+
+              it 'should connect the adjustment to the promotion_code' do
+                expect {
+                  action.perform(payload)
+                }.to change { line_item.adjustments.count }.by(1)
+                expect(line_item.adjustments.last.promotion_code).to eq promotion_code
+              end
+            end
           end
         end
 

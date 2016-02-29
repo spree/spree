@@ -16,12 +16,11 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
 
-    has_one :promotion_code, class_name: 'Spree::PromotionCode', inverse_of: :promotion
+    has_many :codes, class_name: 'Spree::PromotionCode', inverse_of: :promotion
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
-    validates_associated :promotion_code
 
     validates :name, presence: true
     validates :path, uniqueness: { allow_blank: true }
@@ -29,8 +28,6 @@ module Spree
     validates :description, length: { maximum: 255 }, allow_blank: true
 
     before_save :normalize_blank_values
-
-    after_save :save_promotion_code
 
     scope :coupons, ->{ where("#{table_name}.code IS NOT NULL") }
     scope :applied, lambda {
@@ -60,18 +57,17 @@ module Spree
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
     end
 
-    # Temporarily keeping the same interface for promotion codes while using
-    # promotion_codes table.
     def code
-      promotion_code.try!(:value)
+      fail 'Tried to call code for Spree::Promotion'
     end
 
     def code=(val)
-      if promotion_code
-        promotion_code.value = val
-      else
-        build_promotion_code(value: val) if val.present?
-      end
+      fail 'Tried to call code for Spree::Promotion'
+    end
+
+    def as_json(options={})
+      options[:except] ||= :code
+      super
     end
 
     def self.with_coupon_code(val)
@@ -205,7 +201,25 @@ module Spree
       end
     end
 
+    # Build promo codes. If number_of_codes is great than one then generate
+    # multiple codes by adding a random suffix to each code.
+    #
+    # @param base_code [String] When number_of_codes=1 this is the code. When
+    #   number_of_codes > 1 it is the base of the generated codes.
+    # @param number_of_codes [Integer] Number of codes to generate
+    # @param usage_limit [Integer] Usage limit for each code
+    def build_promotion_codes(base_code:, number_of_codes:)
+      if number_of_codes == 1
+        codes.build(value: base_code)
+      elsif number_of_codes > 1
+        number_of_codes.times do
+          build_code_with_base(base_code: base_code)
+        end
+      end
+    end
+
     private
+
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem
@@ -220,12 +234,18 @@ module Spree
       self[:path] = nil if self[:path].blank?
     end
 
-    def save_promotion_code
-      promotion_code.save! if promotion_code.present?
-    end
-
     def match_all?
       match_policy == 'all'
+    end
+
+    def build_code_with_base(base_code:, random_code_length: 6)
+      code_with_entropy = "#{base_code}_#{('A'..'Z').to_a.sample(random_code_length).join}"
+
+      if Spree::PromotionCode.where(value: code_with_entropy).exists?
+        build_code_with_base(base_code)
+      else
+        codes.build(value: code_with_entropy)
+      end
     end
   end
 end

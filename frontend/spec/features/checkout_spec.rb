@@ -359,29 +359,29 @@ describe "Checkout", type: :feature, inaccessible: true, js: true do
     end
   end
 
-  context "if coupon promotion, submits coupon along with payment", js: true do
-    let!(:promotion) { Spree::Promotion.create(name: "Huhuhu", code: "huhu") }
-    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: "10") }
+  context 'if coupon promotion, submits coupon along with payment', js: true do
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
+    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do
       promotion.actions << action
 
       add_mug_to_cart
-      click_on "Checkout"
+      click_on 'Checkout'
 
-      fill_in "order_email", with: "test@example.com"
+      fill_in 'order_email', with: 'test@example.com'
       click_on 'Continue'
       fill_in_address
-      click_on "Save and Continue"
+      click_on 'Save and Continue'
 
-      click_on "Save and Continue"
-      expect(current_path).to eql(spree.checkout_state_path("payment"))
+      click_on 'Save and Continue'
+      expect(current_path).to eql(spree.checkout_state_path('payment'))
     end
 
-    it "makes sure payment reflects order total with discounts" do
-      fill_in "Coupon Code", with: promotion.code
-      click_on "Save and Continue"
+    it 'makes sure payment reflects order total with discounts' do
+      fill_in 'Coupon Code', with: promotion.codes.first.value
+      click_on 'Save and Continue'
 
       expect(page).to have_content(promotion.name)
       expect(Spree::Payment.first.amount.to_f).to eq Spree::Order.last.total.to_f

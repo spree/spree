@@ -12,6 +12,18 @@
       <%= text_field_tag 'promotion[code]', @promotion.code, class: 'form-control' %>
     <% end %>
 
+    <% if @promotion.new_record? %>
+      <%= f.field_container :base_code, class: ['form-group'] do %>
+        <%= label_tag :base_code %>
+        <%= text_field_tag 'bulk_base', @bulk_base, class: 'form-control' %>
+      <% end %>
+
+      <%= f.field_container :number_of_codes, class: ['form-group'] do %>
+        <%= label_tag :number_of_codes %>
+        <%= text_field_tag 'bulk_number', @bulk_number, class: 'form-control' %>
+      <% end %>
+    <% end %>
+
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
       <%= f.text_field :path, :class => 'form-control' %>

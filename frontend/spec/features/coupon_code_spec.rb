@@ -9,12 +9,10 @@ describe "Coupon code promotions", type: :feature, js: true do
   let!(:product) { create(:product, name: "RoR Mug", price: 20) }
   let!(:store) { create(:store) }
 
-  context "visitor makes checkout as guest without registration" do
+  context 'visitor makes checkout as guest without registration' do
     def create_basic_coupon_promotion(code)
-      promotion = Spree::Promotion.create!(name:       code.titleize,
-                                           code:       code,
-                                           starts_at:  1.day.ago,
-                                           expires_at: 1.day.from_now)
+      promotion = create(:promotion, name: code.titleize, code: code, starts_at: 1.day.ago,
+                                     expires_at: 1.day.from_now)
 
       calculator = Spree::Calculator::FlatRate.new
       calculator.preferred_amount = 10
@@ -27,7 +25,7 @@ describe "Coupon code promotions", type: :feature, js: true do
       promotion.reload # so that promotion.actions is available
     end
 
-    let!(:promotion) { create_basic_coupon_promotion("onetwo") }
+    let!(:promotion) { create_basic_coupon_promotion('onetwo') }
 
     # OrdersController
     context "on the payment page" do
@@ -59,8 +57,7 @@ describe "Coupon code promotions", type: :feature, js: true do
       end
 
       it "informs the user about a coupon code which has exceeded its usage" do
-        promotion.update_column(:usage_limit, 5)
-        allow_any_instance_of(promotion.class).to receive_messages(credits_count: 10)
+        Spree::Promotion.any_instance.should_receive(:usage_limit_exceeded?).and_return(true)
 
         fill_in "order_coupon_code", with: "onetwo"
         click_button "Save and Continue"

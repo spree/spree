@@ -89,7 +89,7 @@ module Spree
       def determine_promotion_application_result
         # Check for applied adjustments.
         discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == order.coupon_code.downcase
+          p.source.promotion.codes.any? { |code| code.value == order.coupon_code.downcase }
         end
 
         # Check for applied line items.

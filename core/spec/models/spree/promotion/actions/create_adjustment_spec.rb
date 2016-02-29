@@ -46,5 +46,18 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       action.perform(payload)
       expect(promotion.credits_count).to eq(1)
     end
+
+    context 'when a promotion code is used' do
+      let(:promotion_code) { create(:promotion_code) }
+      let(:promotion) { promotion_code.promotion }
+      let(:payload) { { order: order, promotion_code: promotion_code } }
+
+      it 'should connect the adjustment to the promotion_code' do
+        expect {
+          action.perform(payload)
+        }.to change { order.adjustments.count }.by(1)
+        expect(order.adjustments.last.promotion_code).to eq promotion_code
+      end
+    end
   end
 end

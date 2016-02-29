@@ -46,40 +46,40 @@ module Spree
         end
       end
 
-      context "coupon code promotion doesnt exist" do
-        before { Promotion.create name: "promo", :code => nil }
+      context 'coupon code promotion doesnt exist' do
+        before { create(:promotion) }
 
-        it "doesnt fetch any promotion" do
+        it 'doesnt fetch any promotion' do
           expect(subject.promotion).to be_blank
         end
 
-        context "with no actions defined" do
-          before { Promotion.create name: "promo", :code => "10off" }
+        context 'with no actions defined' do
+          before { create(:promotion, name: 'promo', code: '10off') }
 
-          it "populates error message" do
+          it 'populates error message' do
             subject.apply
             expect(subject.error).to eq Spree.t(:coupon_code_not_found)
           end
         end
       end
 
-      context "existing coupon code promotion" do
-        let!(:promotion) { Promotion.create name: "promo", :code => "10off"  }
+      context 'existing coupon code promotion' do
+        let!(:promotion) { create(:promotion, name: 'promo', code: '10off') }
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
         let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
-        it "fetches with given code" do
+        it 'fetches with given code' do
           expect(subject.promotion).to eq promotion
         end
 
-        context "with a per-item adjustment action" do
-          let(:order) { create(:order_with_line_items, :line_items_count => 3) }
+        context 'with a per-item adjustment action' do
+          let(:order) { create(:order_with_line_items, line_items_count: 3) }
 
-          context "right coupon given" do
-            context "with correct coupon code casing" do
-              before { allow(order).to receive_messages :coupon_code => "10off" }
+          context 'right coupon given' do
+            context 'with correct coupon code casing' do
+              before { allow(order).to receive_messages coupon_code: '10off' }
 
-              it "successfully activates promo" do
+              it 'successfully activates promo' do
                 expect(order.total).to eq(130)
                 subject.apply
                 expect(subject.success).to be_present
@@ -90,7 +90,7 @@ module Spree
                 expect(order.reload.total).to eq(100)
               end
 
-              it "coupon already applied to the order" do
+              it 'coupon already applied to the order' do
                 subject.apply
                 expect(subject.success).to be_present
                 subject.apply
@@ -99,9 +99,10 @@ module Spree
             end
 
             # Regression test for #4211
-            context "with incorrect coupon code casing" do
-              before { allow(order).to receive_messages :coupon_code => "10OFF" }
-              it "successfully activates promo" do
+            context 'with incorrect coupon code casing' do
+              before { allow(order).to receive_messages coupon_code: '10OFF' }
+
+              it 'successfully activates promo' do
                 expect(order.total).to eq(130)
                 subject.apply
                 expect(subject.success).to be_present
@@ -120,7 +121,7 @@ module Spree
             before do
               allow(order).to receive_messages :coupon_code => "10off"
               calculator = Calculator::FlatRate.new(preferred_amount: 10)
-              general_promo = Promotion.create name: "General Promo"
+              general_promo = create(:promotion, name: 'General Promo')
               general_action = Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator)
 
               order.contents.add create(:variant)
@@ -274,21 +275,23 @@ module Spree
               expect(@order.additional_tax_total).to eq(3.6)
             end
           end
-          context "and multiple quantity per line item" do
+
+          context 'and multiple quantity per line item' do
             before(:each) do
-              twnty_off = Promotion.create name: "promo", :code => "20off"
+              twnty_off = create(:promotion, name: 'promo', code: '20off')
               twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
               Promotion::Actions::CreateItemAdjustments.create(promotion: twnty_off,
                                                                calculator: twnty_off_calc)
 
               allow(@order).to receive(:coupon_code).and_call_original
-              allow(@order).to receive_messages :coupon_code => "20off"
+              allow(@order).to receive_messages coupon_code: '20off'
               3.times do |i|
-                taxable = create(:product, :tax_category => @category, :price => 10.0)
+                taxable = create(:product, tax_category: @category, price: 10.0)
                 @order.contents.add(taxable.master, 2)
               end
             end
-            it "successfully applies the promo" do
+
+            it 'successfully applies the promo' do
               # 3 * ((2 * 10) + 2.0)
               expect(@order.total.to_f).to eq(66)
               coupon = Coupon.new(@order)
