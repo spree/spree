@@ -59,10 +59,11 @@ module Spree
     end
 
     private
-      def at_least_one_shipping_category
-        if self.shipping_categories.empty?
-          self.errors[:base] << "You need to select at least one shipping category"
-        end
+
+    def at_least_one_shipping_category
+      if shipping_categories.empty?
+        errors.add(:base, :required_shipping_category)
       end
+    end
   end
 end

@@ -42,8 +42,15 @@ describe Spree::ShippingMethod, :type => :model do
     end
 
     context "shipping category" do
-      it "validates presence of at least one" do
-        expect(subject.error_on(:base).size).to eq(1)
+      context "is required" do
+        it { expect(subject.error_on(:base).size).to eq(1) }
+        it 'adds error to base' do
+          expect(subject.error_on(:base)).to include(I18n.t(:required_shipping_category,
+                                                            scope: [
+                                                              :activerecord, :errors, :models,
+                                                              'spree/shipping_method', :attributes, :base
+                                                            ]))
+        end
       end
 
       context "one associated" do
