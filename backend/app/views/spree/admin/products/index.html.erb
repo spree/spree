@@ -35,6 +35,12 @@
             <%= f.text_field :legacy_supplier_sku_cont, :size => 15, class: "form-control" %>
           </div>
         </div>
+        <div class="col-md-6">
+          <div class="form-group no-margin-bottom">
+            <%= f.label :variants_including_master_barcode_cont, Spree.t(:barcode) %>
+            <%= f.text_field :variants_including_master_barcode_cont, :size => 15, class: "form-control" %>
+          </div>
+        </div>
         <div class="col-md-12">
           <div class="form-group">
             <div class="checkbox">

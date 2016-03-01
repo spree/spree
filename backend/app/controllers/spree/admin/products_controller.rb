@@ -126,6 +126,9 @@ module Spree
         elsif params[:variants_including_master_sku_cont].present?
           @collection.joins(:variants_including_master)
             .where("sku like ?", "%#{params[:variants_including_master_sku_cont]}%")
+        elsif params[:variants_including_master_barcode_cont].present?
+          @collection.joins(:variants_including_master)
+            .where("barcode like ?", "%#{params[:variants_including_master_barcode_cont]}%")
         else
           @collection
         end
