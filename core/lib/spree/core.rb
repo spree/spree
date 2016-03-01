@@ -15,6 +15,10 @@ require 'ransack'
 require 'responders'
 require 'state_machines-activerecord'
 
+# This is required because ActiveModel::Validations#invalid? conflicts with the
+# invalid state of a Payment. In the future this should be removed.
+StateMachines::Machine.ignore_method_conflicts = true
+
 module Spree
 
   mattr_accessor :user_class
