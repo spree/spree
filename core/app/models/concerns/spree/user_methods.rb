@@ -8,10 +8,10 @@ module Spree
     include Spree::RansackableAttributes
 
     included do
-      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id
+      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
 
-      has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id
+      has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
 
       has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"

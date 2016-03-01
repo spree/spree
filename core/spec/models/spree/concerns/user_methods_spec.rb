@@ -5,8 +5,15 @@ describe Spree::UserMethods do
 
   describe 'Associations' do
     subject { test_user }
+
     it 'should have many promotion_rule_users' do
-      is_expected.to have_many(:promotion_rule_users).with_foreign_key(:user_id).class_name('Spree::PromotionRuleUser')
+      is_expected.to have_many(:promotion_rule_users).with_foreign_key(:user_id).
+        class_name('Spree::PromotionRuleUser').dependent(:destroy)
+    end
+
+    it 'should have many role_users' do
+      is_expected.to have_many(:role_users).class_name('Spree::RoleUser').
+        with_foreign_key(:user_id).dependent(:destroy)
     end
   end
 
