@@ -2,6 +2,10 @@
   <%= Spree.t(:new_user) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= back_to_list_button(Spree::User.model_name.human, admin_users_path) %>
+<% end %>
+
 <div data-hook="admin_user_new_form_header">
   <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @user } %>
 </div>

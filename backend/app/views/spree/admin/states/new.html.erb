@@ -4,6 +4,10 @@
   <%= Spree.t(:new_state) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= back_to_list_button(Spree::State.model_name.human, admin_country_states_path(@country)) %>
+<% end %>
+
 <%= form_for [:admin, @country, @state] do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>

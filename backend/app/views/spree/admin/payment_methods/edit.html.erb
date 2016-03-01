@@ -2,6 +2,10 @@
   <%= Spree.t(:editing_resource, resource: Spree::PaymentMethod.model_name.human) %> / <%= @payment_method.name %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= back_to_list_button(Spree::PaymentMethod.model_name.human, admin_payment_methods_path) %>
+<% end %>
+
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @payment_method } %>
 
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method) do |f| %>

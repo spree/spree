@@ -1,4 +1,7 @@
 <%= render 'order_actions', order: @order, events: @order_events %>
+<% content_for :page_actions do %>
+  <%= back_to_list_button(Spree::Order.model_name.human, admin_orders_path) %>
+<% end %>
 
 <%= render 'spree/admin/shared/order_tabs', current: :cart %>
 
