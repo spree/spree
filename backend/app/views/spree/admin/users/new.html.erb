@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= back_to_list_button(Spree::User.model_name.human, admin_users_path) %>
+  <%= back_to_list_button(Spree.user_class.model_name.human, admin_users_path) %>
 <% end %>
 
 <div data-hook="admin_user_new_form_header">
