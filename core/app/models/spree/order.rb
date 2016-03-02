@@ -2,7 +2,6 @@ require 'spree/core/validators/email'
 require 'spree/order/checkout'
 
 module Spree
-  # rubocop:disable ClassLength
   class Order < Spree::Base
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
@@ -95,7 +94,6 @@ module Spree
     accepts_nested_attributes_for :payments
     accepts_nested_attributes_for :shipments
 
-    # Needs to happen before save_permalink is called
     before_validation :set_currency
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
@@ -129,8 +127,6 @@ module Spree
     validates :total,                MONEY_VALIDATION
 
     validate :has_available_shipment
-
-    make_permalink field: :number
 
     delegate :update_totals, :persist_totals, :to => :updater
     delegate :merge!, to: :merger

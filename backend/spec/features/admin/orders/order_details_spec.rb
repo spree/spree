@@ -5,7 +5,7 @@ describe "Order Details", type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, :name => 'spree t-shirt', :price => 20.00) }
   let!(:tote) { create(:product, :name => "Tote", :price => 15.00) }
-  let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100") }
+  let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15") }
   let(:state) { create(:state) }
   #let(:shipment) { create(:shipment, :order => order, :stock_location => stock_location) }
   let!(:shipping_method) { create(:shipping_method, :name => "Default") }
@@ -114,7 +114,7 @@ describe "Order Details", type: :feature, js: true do
       end
 
       context "with special_instructions present" do
-        let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :number => "R100", :special_instructions => "Very special instructions here") }
+        let(:order) { create(:order, :state => 'complete', :completed_at => "2011-02-01 12:36:15", :special_instructions => "Very special instructions here") }
         it "will show the special_instructions" do
           visit spree.edit_admin_order_path(order)
           expect(page).to have_content("Very special instructions here")
@@ -268,7 +268,7 @@ describe "Order Details", type: :feature, js: true do
           context 'A shipment has shipped' do
 
             it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
-              order = create(:order, :state => 'payment', :number => "R100")
+              order = create(:order, :state => 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
 
               visit spree.cart_admin_order_path(order)
