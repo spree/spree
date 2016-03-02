@@ -137,7 +137,7 @@ module Spree
     end
 
     def finalize!
-      InventoryUnit.finalize_units!(inventory_units)
+      inventory_units.finalize_units!
       after_resume
     end
 

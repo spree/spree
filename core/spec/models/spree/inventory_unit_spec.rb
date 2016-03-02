@@ -105,14 +105,18 @@ describe Spree::InventoryUnit, :type => :model do
   context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
+    let (:shipment) { create(:shipment) }
     let(:inventory_units) { [
       create(:inventory_unit, variant: variant),
       create(:inventory_unit, variant: variant)
     ] }
+    before do
+      shipment.inventory_units = inventory_units
+    end
 
     it "should create a stock movement" do
-      Spree::InventoryUnit.finalize_units!(inventory_units)
-      expect(inventory_units.any?(&:pending)).to be false
+      expect { shipment.inventory_units.finalize_units! }.
+        to change { shipment.inventory_units.where(pending: false).count }.by 2
     end
   end
 
