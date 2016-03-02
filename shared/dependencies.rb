@@ -6,7 +6,7 @@ source 'https://rubygems.org'
 group :test do
   gem 'capybara',                  '~> 2.5.0'
   gem 'database_cleaner',          '~> 1.5.1'
-  gem 'devtools',                  '~> 0.1.2', git: 'https://github.com/mbj/devtools.git'
+  gem 'devtools',                  '= 0.1.4' # nailed till we have the time to followup with config changes
   gem 'email_spec',                '~> 1.6.0'
   gem 'factory_girl_rails',        '~> 4.5.0'
   gem 'ffaker',                    '~> 2.1.0'
