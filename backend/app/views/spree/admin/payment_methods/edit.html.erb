@@ -11,8 +11,8 @@
 <%= form_for @payment_method, :url => admin_payment_method_path(@payment_method) do |f| %>
   <fieldset>
     <%= render :partial => 'form', :locals => { :f => f } %>
-    <div data-hook="buttons" class="actions">
-      <%= button Spree.t('actions.update'), 'save' %>
+    <div data-hook="admin_shipping_method_edit_form_buttons">
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </fieldset>
 <% end %>

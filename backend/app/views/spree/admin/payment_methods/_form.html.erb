@@ -42,10 +42,12 @@
     </div>
 
     <div class="col-md-8">
-      <div data-hook="name" class="form-group">
-        <%= label_tag :payment_method_name, Spree.t(:name) %>
-        <%= text_field :payment_method, :name, :class => 'form-control' %>
-      </div>
+      <div data-hook="admin_payment_method_form_name_field" class="form-group">
+        <%= field_container :payment_method, :name, class: ['form-group'] do %>
+          <%= label_tag :payment_method_name, Spree.t(:name) %>
+          <%= text_field :payment_method, :name, :class => 'form-control' %>
+          <%= error_message_on :payment_method, :name %>
+        <% end %>
       <div data-hook="description" class="form-group">
         <%= label_tag :payment_method_description, Spree.t(:description) %>
         <%= text_area :payment_method, :description, { :cols => 60, :rows => 6, :class => 'form-control' } %>
