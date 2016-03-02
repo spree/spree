@@ -47,7 +47,7 @@ class Project
     end
   end
 
-private
+  private
 
   # Check if current bundle is already usable
   #
