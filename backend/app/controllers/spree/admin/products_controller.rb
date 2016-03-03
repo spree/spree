@@ -115,6 +115,10 @@ module Spree
       end
 
       def search_results(params)
+        # If id from params is off the charts, we get an error that our handling wouldn't catch
+        max_id_size = 2147483647
+        raise ActiveRecord::RecordNotFound if params[:id_eq].to_i > max_id_size
+
         if params[:id_eq].present?
           @collection.where(id: params[:id_eq])
         elsif params[:name_cont].present?
