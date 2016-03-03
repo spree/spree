@@ -4,7 +4,7 @@ module Spree
 
     acts_as_paranoid
 
-    AMOUNT = {
+    AMOUNT_LIMIT = {
       max: BigDecimal('99_999_999.99'),
       min: 0
     }
@@ -14,8 +14,8 @@ module Spree
     before_validation :ensure_currency
 
     validates :amount, allow_nil: true, numericality: {
-      greater_than_or_equal_to: AMOUNT[:min],
-      less_than_or_equal_to: AMOUNT[:max]
+      greater_than_or_equal_to: AMOUNT_LIMIT[:min],
+      less_than_or_equal_to: AMOUNT_LIMIT[:max]
     }
 
     extend DisplayMoney

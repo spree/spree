@@ -12,15 +12,15 @@ describe Spree::Price, :type => :model do
   end
 
   describe 'Constants' do
-    describe 'MAXIMUM AMOUNT' do
+    describe 'AMOUNT_LIMIT[:max]' do
       it 'return 99999999.99' do
-        expect(Spree::Price::AMOUNT[:max]).to eq BigDecimal('99_999_999.99')
+        expect(Spree::Price::AMOUNT_LIMIT[:max]).to eq BigDecimal('99_999_999.99')
       end
     end
 
-    describe 'MINIMUM AMOUNT' do
+    describe 'AMOUNT_LIMIT[:min]' do
       it 'return 0' do
-        expect(Spree::Price::AMOUNT[:min]).to eq 0
+        expect(Spree::Price::AMOUNT_LIMIT[:min]).to eq 0
       end
     end
   end
@@ -41,7 +41,7 @@ describe Spree::Price, :type => :model do
       it { is_expected.to be_valid }
     end
 
-    context 'when the amount is less than #{Spree::Price::AMOUNT[:min]}' do
+    context 'when the amount is less than #{Spree::Price::AMOUNT_LIMIT[:min]}' do
       let(:amount) { -1 }
 
       it 'has 1 error_on' do
@@ -49,24 +49,24 @@ describe Spree::Price, :type => :model do
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq "must be greater than or equal to #{Spree::Price::AMOUNT[:min]}"
+        expect(subject.errors.messages[:amount].first).to eq "must be greater than or equal to #{Spree::Price::AMOUNT_LIMIT[:min]}"
       end
     end
 
     context 'when the amount is greater than maximum amount' do
-      let(:amount) { Spree::Price::AMOUNT[:max] + 1 }
+      let(:amount) { Spree::Price::AMOUNT_LIMIT[:max] + 1 }
 
       it 'has 1 error_on' do
         expect(subject.error_on(:amount).size).to eq(1)
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::AMOUNT[:max]}"
+        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::AMOUNT_LIMIT[:max]}"
       end
     end
 
     context 'when the amount is between 0 and the maximum amount' do
-      let(:amount) { Spree::Price::AMOUNT[:max] }
+      let(:amount) { Spree::Price::AMOUNT_LIMIT[:max] }
       it { is_expected.to be_valid }
     end
   end
