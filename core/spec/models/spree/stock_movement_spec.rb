@@ -4,15 +4,15 @@ describe Spree::StockMovement, :type => :model do
 
   describe 'Constants' do
 
-    describe 'MAX_QUANTITY' do
-      it 'return 2147483647' do
-        expect(Spree::StockMovement::QUANTITY[:max]).to eq(2147483647)
+    describe 'QUANTITY_LIMITS[:max]' do
+      it 'return 2**31 - 1' do
+        expect(Spree::StockMovement::QUANTITY_LIMITS[:max]).to eq(2**31 - 1)
       end
     end
 
-    describe 'MIN_QUANTITY' do
-      it 'return -2147483648' do
-        expect(Spree::StockMovement::QUANTITY[:min]).to eq(-2147483648)
+    describe 'QUANTITY_LIMITS[:min]' do
+      it 'return -2**31' do
+        expect(Spree::StockMovement::QUANTITY_LIMITS[:min]).to eq(-2**31)
       end
     end
 
@@ -27,12 +27,18 @@ describe Spree::StockMovement, :type => :model do
 
   describe 'Validations' do
 
-    it { is_expected.to validate_presence_of(:stock_item) }
-    it { is_expected.to validate_presence_of(:quantity) }
+    it do
+      is_expected.to validate_presence_of(:stock_item)
+    end
+
+    it do
+      is_expected.to validate_presence_of(:quantity)
+    end
+
     it do
       is_expected.to validate_numericality_of(:quantity).
-      is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY[:min]).
-      is_less_than_or_equal_to(Spree::StockMovement::QUANTITY[:max]).
+      is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
+      is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).
       only_integer.allow_nil
     end
   end
