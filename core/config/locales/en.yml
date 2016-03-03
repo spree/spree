@@ -1339,6 +1339,7 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_credit: Store Credit
     store_credit:
       credit: "Credit"
       authorized: "Authorized"
