@@ -16,6 +16,12 @@ module Spree
     context "as an admin" do
       sign_in_as_admin!
 
+      it "can learn how to create a new image" do
+        api_get :new, product_id: product.id
+        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
+        expect(json_response["required_attributes"]).to be_empty
+      end
+
       it "can upload a new image for a variant" do
         expect do
           api_post :create,
