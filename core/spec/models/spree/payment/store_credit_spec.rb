@@ -51,7 +51,7 @@ describe 'Payment' do
       context 'does not cancel successfully' do
         it 'does not change the payment state' do
           expect(payment.payment_method).to receive(:cancel).with(payment.response_code) { failed_response }
-          expect { subject }.to raise_error
+          expect { subject }.to raise_error(Spree::Core::GatewayError)
           expect(payment.reload.state).not_to eq 'void'
         end
       end
