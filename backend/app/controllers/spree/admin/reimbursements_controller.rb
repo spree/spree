@@ -10,6 +10,9 @@ module Spree
       def perform
         @reimbursement.perform!
         redirect_to location_after_save
+      rescue Spree::Reimbursement::IncompleteReimbursementError
+        flash[:error] = "Amount was not fully reimbursed. Still due: #{@reimbursement.unpaid_amount}"
+        redirect_to location_after_save
       end
 
       private
