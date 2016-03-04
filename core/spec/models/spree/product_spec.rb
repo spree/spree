@@ -521,6 +521,10 @@ describe Spree::Product, :type => :model do
       product.reload
       expect(product.discontinued?).to be(true)
     end
+
+    it "changes updated_at" do
+      expect { product.discontinue! }.to change { product.updated_at }
+    end
   end
 
   context "#discontinued?" do

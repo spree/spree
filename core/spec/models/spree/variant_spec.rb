@@ -643,6 +643,10 @@ describe Spree::Variant, :type => :model do
       variant.reload
       expect(variant.discontinued?).to be(true)
     end
+
+    it "changes updated_at" do
+      expect { variant.discontinue! }.to change { variant.updated_at }
+    end
   end
 
   context "#discontinued?" do

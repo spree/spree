@@ -159,7 +159,7 @@ module Spree
     end
 
     def discontinue!
-      update_column(:discontinue_on, Time.current)
+      update_attribute(:discontinue_on, Time.current)
     end
 
     def discontinued?
