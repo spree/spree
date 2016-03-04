@@ -24,6 +24,12 @@ jQuery(function($) {
   // Add some tips
   $('.with-tip').tooltip();
 
+  $('.js-show-index-filters').click(function(){
+    $(".filter-well").slideToggle();
+    $(this).parents(".filter-wrap").toggleClass("collapsed");
+    $("span.icon", $(this)).toggleClass("icon-chevron-down");
+  });
+
   $(".js-collapse-sidebar").click(function(){
     $(".main-right-sidebar").toggleClass("collapsed");
     $("section.content").toggleClass("sidebar-collapsed");
