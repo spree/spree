@@ -224,6 +224,29 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
   end
 
+  context 'product with taxons' do
+    let(:product) { Spree::Product.find_by_name("Ruby on Rails Tote") }
+    let(:taxon) { product.taxons.first }
+
+    it 'displays breadcrumbs for the default taxon when none selected' do
+      click_link product.name
+      within("#breadcrumbs") do
+        expect(page).to have_content taxon.name
+      end
+    end
+
+    it 'displays selected taxon in breadcrumbs' do
+      taxon = Spree::Taxon.last
+      product.taxons << taxon
+      product.save!
+      visit '/t/' + taxon.to_param
+      click_link product.name
+      within("#breadcrumbs") do
+        expect(page).to have_content taxon.name
+      end
+    end
+  end
+
   it "should be able to hide products without price" do
     expect(page.all('#products .product-list-item').size).to eq(9)
     Spree::Config.show_products_without_price = false
