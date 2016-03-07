@@ -191,18 +191,18 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     protected
 
     def javascript_exists?(script)
-      extensions = %w(.coffee .erb .coffee.erb) + [""]
+      extensions = %w(.js.coffee .js.erb .js.coffee.erb .js)
       file_exists?(extensions, script)
     end
 
     def stylesheet_exists?(stylesheet)
-      extensions = %w(.scss .erb .scss.erb) + [""]
+      extensions = %w(.css.scss .css.erb .css.scss.erb .css)
       file_exists?(extensions, stylesheet)
     end
 
     def file_exists?(extensions, filename)
       extensions.detect do |extension|
-        File.exists?("#{filename}.css#{extension}")
+        File.exists?("#{filename}#{extension}")
       end
     end
   end
