@@ -49,13 +49,14 @@
                     multiSelect: true,
                     showTags: false,
                     onNodeSelected: function(event, node) {
+                      addToSelectedTaxons(node.id);
                       addToSelectedNodes(node.nodeId);
                     },
                     onNodeUnselected: function(event, node) {
+                      removeFromSelectedTaxons(node.id);
                       removeFromSelectedNodes(node.nodeId);
                     },
                   });
-
                   // we expand the tree by default
                   // without expanding we cant select (selectNode) the active taxons
                   $('#tree').treeview('expandAll', { silent: true });

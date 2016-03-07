@@ -15,7 +15,7 @@ $(document).ready(function() {
       taxonIds.push(taxonId);
     });
 
-    var newTaxonIds = taxonIds.concat(TaxonTreeNotInList);
+    var newTaxonIds = $.unique(taxonIds.concat(TaxonTreeNotInList));
 
     $('.js-product-taxon-ids').val(newTaxonIds);
   });
@@ -56,7 +56,6 @@ function treeItemByNodeId(nodeId) {
 
 function treeNodeIdByTaxonId(taxonId) {
   var nodeId = $('.list-group-item[data-taxonid="' + taxonId + '"]').data('nodeid');
-  console.log(nodeId);
 
   return nodeId;
 }
@@ -78,8 +77,18 @@ function addToSelectedNodes(nodeId) {
   TaxonTreeNodesToSelect = $.unique(TaxonTreeNodesToSelect);
 }
 
+function addToSelectedTaxons(taxonId) {
+  TaxonTreeNotInList.push(taxonId);
+
+  TaxonTreeNotInList = $.unique(TaxonTreeNotInList);
+}
+
 function removeFromSelectedNodes(nodeId) {
   TaxonTreeNodesToSelect.splice($.inArray(nodeId, TaxonTreeNodesToSelect), 1);
+}
+
+function removeFromSelectedTaxons(taxonId) {
+  TaxonTreeNotInList.splice($.inArray(taxonId, TaxonTreeNotInList), 1);
 }
 
 function collapseAndReveal() {
