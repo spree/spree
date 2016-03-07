@@ -13,15 +13,9 @@ module Spree
 
     after_touch :touch_all_variants
 
+    delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
+
     self.whitelisted_ransackable_attributes = ['presentation']
-
-    def option_type_name
-      option_type.name
-    end
-
-    def option_type_presentation
-      option_type.presentation
-    end
 
     private
 
