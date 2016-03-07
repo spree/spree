@@ -3,11 +3,14 @@ module Spree
     module BaseHelper
       def flash_alert flash
         if flash.present?
+          close_button = button_tag(class: 'close', 'data-dismiss' => 'alert', 'aria-label' => Spree.t(:close)) do
+            content_tag('span', '&times;'.html_safe, 'aria-hidden' => true)
+          end
           message = flash[:error] || flash[:notice] || flash[:success]
           flash_class = "danger" if flash[:error]
           flash_class = "info" if flash[:notice]
           flash_class = "success" if flash[:success]
-          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} alert-auto-disappear")
+          flash_div = content_tag(:div, (close_button + message), class: "alert alert-#{flash_class} alert-auto-disappear")
           content_tag(:div, flash_div, class: 'col-md-12')
         end
       end
