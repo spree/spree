@@ -12,6 +12,7 @@ module Spree
     end
 
     with_options presence: true do
+      validates :name, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :amount, numericality: { allow_nil: true }
       validates :tax_category
     end

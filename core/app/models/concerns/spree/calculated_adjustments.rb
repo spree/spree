@@ -6,7 +6,7 @@ module Spree
       has_one   :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
       accepts_nested_attributes_for :calculator
       validates :calculator, presence: true
-      delegate :compute, to: :calculator
+      delegate :compute, to: :calculator, allow_nil: true
 
       def self.calculators
         spree_calculators.send model_name_without_spree_namespace
