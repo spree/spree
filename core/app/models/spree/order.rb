@@ -14,6 +14,7 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Core::NumberGenerator.new(prefix: 'R')
+    include Spree::Core::TokenGenerator
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -677,10 +678,7 @@ module Spree
     end
 
     def create_token
-      self.guest_token ||= loop do
-        random_token = SecureRandom.urlsafe_base64(nil, false)
-        break random_token unless self.class.exists?(guest_token: random_token)
-      end
+      self.guest_token ||= generate_guest_token
     end
   end
 end
