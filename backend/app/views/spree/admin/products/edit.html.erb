@@ -16,7 +16,7 @@
     <div class="panel panel-default" data-hook="product_overview_general_panel">
       <div class="panel-heading">
         <% if can?(:edit, @product) %>
-          <%= link_to Spree.t(:edit), "https://www.sdometools.com/tools/sku_editor.php?pid=#{@product.id}", target: '_blank', class: 'pull-right' %>
+          <%= link_to Spree.t(:edit), "/admin/products/#{@product.id}/general", target: '_blank', class: 'pull-right' %>
         <% end %>
         <h3 class="panel-title">SKU Details</h3>
       </div>
