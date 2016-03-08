@@ -7,6 +7,8 @@ module Spree
 
     has_many :shipments, inverse_of: :address
 
+    before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
+
     with_options presence: true do
       validates :firstname, :lastname, :address1, :city, :country
       validates :zipcode, if: :require_zipcode?
@@ -97,19 +99,39 @@ module Spree
     end
 
     private
+      def clear_state_entities
+        clear_state
+        clear_state_name
+      end
+
+      def clear_state
+        self.state = nil
+      end
+
+      def clear_state_name
+        self.state_name = nil
+      end
+
+      def clear_invalid_state_entities
+        if state.present? && (state.country != country)
+          clear_state
+        elsif state_name.present? && !country.states_required? && country.states.empty?
+          clear_state_name
+        end
+      end
+
       def state_validate
         # Skip state validation without country (also required)
         # or when disabled by preference
         return if country.blank? || !Spree::Config[:address_requires_state]
         return unless country.states_required
-
         # ensure associated state belongs to country
         if state.present?
           if state.country == country
-            self.state_name = nil #not required as we have a valid state and country combo
+            clear_state_name #not required as we have a valid state and country combo
           else
             if state_name.present?
-              self.state = nil
+              clear_state
             else
               errors.add(:state, :invalid)
             end
@@ -123,7 +145,7 @@ module Spree
 
             if states.size == 1
               self.state = states.first
-              self.state_name = nil
+              clear_state_name
             else
               errors.add(:state, :invalid)
             end
