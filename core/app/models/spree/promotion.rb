@@ -115,8 +115,11 @@ module Spree
     end
 
     # called anytime order.update! happens
+    # TODO: add specs for coupon_code usage limit
     def eligible?(promotable)
-      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
+      return false if expired?
+      return false if usage_limit_exceeded?(promotable)
+      return false if blacklisted?(promotable)
       !!eligible_rules(promotable, {})
     end
 
@@ -156,25 +159,44 @@ module Spree
       rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
     end
 
+    # Whether the given promotable would violate the usage restrictions
+    #
+    # @param promotable object (e.g. order/line item/shipment)
+    # @return true or false
+    # TODO: specs
     def usage_limit_exceeded?(promotable)
-      usage_limit.present? && usage_limit > 0 && adjusted_credits_count(promotable) >= usage_limit
+      # TODO: This logic appears to be wrong.
+      # Currently if you have:
+      # - 2 different line item level actions on a promotion
+      # - 2 line items in an order
+      # Then using the promo on that order will create 4 adjustments and count as 4
+      # usages.
+      # See also PromotionCode#usage_limit_exceeded?
+      if usage_limit
+        usage_count - usage_count_for(promotable) >= usage_limit
+      end
     end
 
-    def adjusted_credits_count(promotable)
-      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.promotion.where(source_id: actions.pluck(:id)).size
+    # Number of times the code has been used overall
+    #
+    # @return [Integer] usage count
+    # TODO: specs
+    def usage_count
+      adjustment_promotion_scope(Spree::Adjustment.eligible).count
     end
 
-    def credits
-      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
+    # Number of times the code has been used for the given promotable
+    #
+    # @param promotable promotable object (e.g. order/line item/shipment)
+    # @return [Integer] usage count for this promotable
+    # TODO: specs
+    def usage_count_for(promotable)
+      adjustment_promotion_scope(promotable.adjustments).count
     end
 
-    def credits_count
-      credits.count
-    end
-
+    # TODO: specs
     def line_item_actionable?(order, line_item)
-      if eligible? order
+      if eligible?(order)
         rules = eligible_rules(order)
         if rules.blank?
           true
@@ -233,6 +255,10 @@ module Spree
         promotable.line_items.any? &&
           !promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).any?
       end
+    end
+
+    def adjustment_promotion_scope(adjustment_scope)
+      adjustment_scope.promotion.where(source_id: actions.map(&:id))
     end
 
     def normalize_blank_values

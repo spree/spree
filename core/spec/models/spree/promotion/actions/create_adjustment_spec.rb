@@ -20,7 +20,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
     it "does not apply an adjustment if the amount is 0" do
       action.calculator.preferred_amount = 0
       action.perform(payload)
-      expect(promotion.credits_count).to eq(0)
+      expect(promotion.usage_count).to eq(0)
       expect(order.adjustments.count).to eq(0)
     end
 
@@ -28,7 +28,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       order.shipments.create!(cost: 10, stock_location: create(:stock_location))
 
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+      expect(promotion.usage_count).to eq(1)
       expect(order.adjustments.count).to eq(1)
       expect(order.adjustments.first.amount.to_i).to eq(-10)
     end
@@ -44,7 +44,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
 
       action.perform(payload)
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+      expect(promotion.usage_count).to eq(1)
     end
 
     context 'when a promotion code is used' do
