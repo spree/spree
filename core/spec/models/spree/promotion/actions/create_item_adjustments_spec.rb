@@ -61,10 +61,13 @@ module Spree
                 before { allow(rule).to receive(:actionable?).and_return(true) }
 
                 it 'creates an adjustment' do
-                  action.perform(payload)
-                  expect(action.adjustments.count).to eq 1
-                  expect(line_item.adjustments.count).to eq 1
-                  expect(action.adjustments.first).to eq line_item.adjustments.first
+                  expect do
+                    expect do
+                      action.perform(payload)
+                    end.to change { action.adjustments.count }.by(1)
+                  end.to change { line_item.adjustments.count }.by(1)
+
+                  expect(action.adjustments.last).to eq line_item.adjustments.last
                 end
               end
 
@@ -72,9 +75,11 @@ module Spree
                 before { allow(rule).to receive(:actionable?).and_return(false) }
 
                 it 'does not create an adjustment' do
-                  action.perform(payload)
-                  expect(action.adjustments.count).to eq 0
-                  expect(line_item.adjustments.count).to eq 0
+                  expect do
+                    expect do
+                      action.perform(payload)
+                    end.to_not change { action.adjustments.count }
+                  end.to_not change { line_item.adjustments.count }
                 end
               end
             end
