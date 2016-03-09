@@ -79,7 +79,6 @@ $(document).ready(function () {
     var link = $(this);
     var shipment_number = link.data('shipment-number');
     var selected_shipping_rate_id = link.parents('tbody').find("select#selected_shipping_rate_id[data-shipment-number='" + shipment_number + "']").val();
-    var unlock = link.parents('tbody').find("input[name='open_adjustment'][data-shipment-number='" + shipment_number + "']:checked").val();
     var url = Spree.url(Spree.routes.shipments_api + '/' + shipment_number + '.json');
 
     $.ajax({
@@ -87,8 +86,7 @@ $(document).ready(function () {
       url: url,
       data: {
         shipment: {
-          selected_shipping_rate_id: selected_shipping_rate_id,
-          unlock: unlock
+          selected_shipping_rate_id: selected_shipping_rate_id
         },
         token: Spree.api_key
       }
