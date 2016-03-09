@@ -202,32 +202,70 @@ module Spree
               expect_adjustment_creation(adjustable: order, promotion: promotion, promotion_code: promotion_code)
             end
 
-            it 'coupon already applied to the order' do
-              subject.apply
-              expect(subject.success).to be_present
-              subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+            context 'when the coupon is already applied to the order' do
+              before { subject.apply }
+
+              it 'is not successful' do
+                subject.apply
+                expect(subject.successful?).to be false
+              end
+
+              it 'returns a coupon has already been applied error' do
+                subject.apply
+                expect(subject.error).to eq Spree.t(:coupon_code_already_applied)
+              end
             end
 
-            it 'coupon fails to activate' do
-              allow_any_instance_of(Spree::Promotion).to receive(:activate).and_return false
-              subject.apply
-              expect(subject.error).to eq Spree.t(:coupon_code_unknown_error)
+            context 'when the coupon fails to activate' do
+              before { Spree::Promotion.any_instance.stub(:activate).and_return false }
+
+              it 'is not successful' do
+                subject.apply
+                expect(subject.successful?).to be false
+              end
+
+              it 'returns a coupon failed to activate error' do
+                subject.apply
+                expect(subject.error).to eq Spree.t(:coupon_code_unknown_error)
+              end
             end
 
+            context 'when the promotion exceeds its usage limit' do
+              let(:second_order) { create(:order, coupon_code: '10off', item_total: 50, ship_total: 10) }
 
-            it 'coupon code hit max usage' do
-              promotion.update_column(:usage_limit, 1)
-              coupon = Coupon.new(order)
-              coupon.apply
-              expect(coupon.successful?).to be true
+              before do
+                promotion.update!(usage_limit: 1)
+                Coupon.new(second_order).apply
+              end
 
-              order_2 = create(:order)
-              allow(order_2).to receive_messages coupon_code: '10off'
-              coupon = Coupon.new(order_2)
-              coupon.apply
-              expect(coupon.successful?).to be false
-              expect(coupon.error).to eq Spree.t(:coupon_code_max_usage)
+              it 'is not successful' do
+                subject.apply
+                expect(subject.successful?).to be false
+              end
+
+              it 'returns a coupon is at max usage error' do
+                subject.apply
+                expect(subject.error).to eq Spree.t(:coupon_code_max_usage)
+              end
+            end
+
+            context 'when the promotion code exceeds its usage limit' do
+              let(:second_order) { create(:order, coupon_code: '10off', item_total: 50, ship_total: 10) }
+
+              before do
+                promotion.update!(per_code_usage_limit: 1)
+                Coupon.new(second_order).apply
+              end
+
+              it 'is not successful' do
+                subject.apply
+                expect(subject.successful?).to be false
+              end
+
+              it 'returns a coupon is at max usage error' do
+                subject.apply
+                expect(subject.error).to eq Spree.t(:coupon_code_max_usage)
+              end
             end
 
             context 'when the a new coupon is less good' do

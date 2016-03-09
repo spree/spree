@@ -5,8 +5,8 @@ module Spree
     describe Cart, :type => :model do
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
+      let(:promotion) { create(:promotion) }
 
-      let(:promotion) { Promotion.create(name: "At line items") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
       subject { Cart.new(order, line_item) }
@@ -89,12 +89,13 @@ module Spree
       end
 
       context 'activates promotions associated with the order' do
-        let(:promo) { create :promotion_with_item_adjustment, adjustment_rate: 5, code: 'promo' }
-        let(:promotion_code) { promo.codes.first }
-        let(:adjustable) { line_item }
+        let(:promotion) { create :promotion, :with_order_adjustment, code: 'promo' }
+        let(:promotion_code) { promotion.codes.first }
+        let(:adjustable) { order }
 
         before do
-          Spree::OrderPromotion.create!(promotion: promo, order: order, promotion_code: promotion_code)
+          Spree::OrderPromotion.create!(promotion: promotion, order: order, promotion_code: promotion_code)
+          order.update!
         end
 
         include_context 'creates the adjustment'
@@ -102,6 +103,11 @@ module Spree
         it 'records the promotion code in the adjustment' do
           subject.activate
           expect(adjustable.adjustments.map(&:promotion_code)).to eq [promotion_code]
+        end
+
+        it 'checks if the promotion code is eligible' do
+          expect_any_instance_of(Spree::Promotion).to receive(:eligible?).at_least(2).times.with(anything, promotion_code: promotion_code).and_return(false)
+          subject.activate
         end
       end
     end

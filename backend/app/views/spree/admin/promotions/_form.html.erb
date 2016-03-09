@@ -24,6 +24,11 @@
       <% end %>
     <% end %>
 
+    <%= f.field_container :per_code_usage_limit, class: ['form-group'] do %>
+      <%= f.label :per_code_usage_limit %>
+      <%= f.text_field :per_code_usage_limit, class: 'form-control' %>
+    <% end %>
+
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
       <%= f.text_field :path, :class => 'form-control' %>
@@ -50,8 +55,8 @@
   </div>
 
   <div id="expiry_fields" class="col-md-3">
-    <%= f.field_container :usage_limit do %>
-      <%= f.label :usage_limit %>
+    <%= f.field_container :overall_usage_limit do %>
+      <%= f.label :overall_usage_limit %>
       <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
       <p class="help-block">
         <%= Spree.t(:current_promotion_usage, count: @promotion.usage_count) %>

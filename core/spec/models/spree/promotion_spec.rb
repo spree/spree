@@ -179,8 +179,67 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  context "#expired" do
-    it "should not be exipired" do
+  context '#usage_limit_exceeded?' do
+    let(:promotable) { create(:order) }
+
+    context 'there is a usage limit set' do
+      let(:promotion) { create(:promotion, :with_order_adjustment, usage_limit: usage_limit) }
+
+      let!(:existing_adjustment) do
+        Spree::Adjustment.create!(label: 'Adjustment', amount: 1, source: promotion.actions.first)
+      end
+
+      context 'the usage limit is not exceeded' do
+        let(:usage_limit) { 10 }
+
+        it 'returns false' do
+          expect(promotion.usage_limit_exceeded?(promotable)).to be_falsey
+        end
+      end
+
+      context 'the usage limit is exceeded' do
+        let(:usage_limit) { 1 }
+
+        context 'for a different order' do
+          it 'returns true' do
+            expect(promotion.usage_limit_exceeded?(promotable)).to be(true)
+          end
+        end
+
+        context 'for the same order' do
+          let!(:existing_adjustment) do
+            Spree::Adjustment.create!(adjustable: promotable, label: 'Adjustment', amount: 1, source: promotion.actions.first)
+          end
+
+          it 'returns false' do
+            expect(promotion.usage_limit_exceeded?(promotable)).to be(false)
+          end
+        end
+      end
+    end
+
+    context 'there is no usage limit set' do
+      it 'returns false' do
+        promotion.usage_limit = nil
+        expect(promotion.usage_limit_exceeded?(promotable)).to be_falsey
+      end
+    end
+  end
+
+  context '#usage_count' do
+    let(:promotable) { create(:order) }
+    let(:promotion) { create(:promotion, :with_order_adjustment) }
+    let!(:adjustment1) { Spree::Adjustment.create!(adjustable: promotable, label: 'Adjustment', amount: 1, source: promotion.actions.first) }
+    let!(:adjustment2) { Spree::Adjustment.create!(adjustable: promotable, label: 'Adjustment', amount: 1, source: promotion.actions.first) }
+
+    it 'counts the eligible adjustments that have used this promotion' do
+      adjustment2.update_columns(eligible: false)
+      expect(promotion.usage_count).to eq 1
+    end
+  end
+
+  context '#expired' do
+    it 'should not be exipired' do
       expect(promotion).not_to be_expired
     end
 
@@ -189,30 +248,24 @@ describe Spree::Promotion, :type => :model do
       expect(promotion).to be_expired
     end
 
-    it "should be expired if it has already ended" do
+    it 'should be expired if it has already ended' do
       promotion.expires_at = Time.current - 1.day
       expect(promotion).to be_expired
     end
 
-    it "should not be expired if it has started already" do
+    it 'should not be expired if it has started already' do
       promotion.starts_at = Time.current - 1.day
       expect(promotion).not_to be_expired
     end
 
-    it "should not be expired if it has not ended yet" do
+    it 'should not be expired if it has not ended yet' do
       promotion.expires_at = Time.current + 1.day
       expect(promotion).not_to be_expired
     end
 
-    it "should not be expired if current time is within starts_at and expires_at range" do
+    it 'should not be expired if current time is within starts_at and expires_at range' do
       promotion.starts_at = Time.current - 1.day
       promotion.expires_at = Time.current + 1.day
-      expect(promotion).not_to be_expired
-    end
-
-    it "should not be expired if usage limit is not exceeded" do
-      promotion.usage_limit = 2
-      allow(promotion).to receive_messages(usage_count: 1)
       expect(promotion).not_to be_expired
     end
   end
@@ -313,18 +366,44 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  context "#eligible?" do
+  context '#eligible?' do
     let(:promotable) { create :order }
     subject { promotion.eligible?(promotable) }
 
     it { should be true }
 
-    context "when promotion is expired" do
+    context 'when promotion is expired' do
       before { promotion.expires_at = Time.current - 10.days }
       it { is_expected.to be false }
     end
 
-    context "when promotable is a Spree::LineItem" do
+    context "when the promotion's usage limit is exceeded" do
+      let(:promotion) { create(:promotion, :with_order_adjustment) }
+
+      before do
+        Spree::Adjustment.create!(label: 'Adjustment', amount: 1, source: promotion.actions.first)
+        promotion.usage_limit = 1
+      end
+
+      it 'returns false' do
+        expect(promotion.eligible?(promotable)).to eq(false)
+      end
+    end
+
+    context "when the promotion code's usage limit is exceeded" do
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'abc123', per_code_usage_limit: 1) }
+      let(:promotion_code) { promotion.codes.first }
+
+      before do
+        Spree::Adjustment.create!(label: 'Adjustment', amount: 1, source: promotion.actions.first, promotion_code: promotion_code)
+      end
+
+      it 'returns false' do
+        expect(promotion.eligible?(promotable, promotion_code: promotion_code)).to eq(false)
+      end
+    end
+
+    context 'when promotable is a Spree::LineItem' do
       let(:promotable) { create :line_item }
       let(:product) { promotable.product }
 
@@ -332,28 +411,28 @@ describe Spree::Promotion, :type => :model do
         product.promotionable = promotionable
       end
 
-      context "and product is promotionable" do
+      context 'and product is promotionable' do
         let(:promotionable) { true }
         it { is_expected.to be true }
       end
 
-      context "and product is not promotionable" do
+      context 'and product is not promotionable' do
         let(:promotionable) { false }
         it { is_expected.to be false }
       end
     end
 
-    context "when promotable is a Spree::Order" do
+    context 'when promotable is a Spree::Order' do
       let(:promotable) { create :order }
 
-      context "and it is empty" do
+      context 'and it is empty' do
         it { is_expected.to be true }
       end
 
-      context "and it contains items" do
+      context 'and it contains items' do
         let!(:line_item) { create(:line_item, order: promotable) }
 
-        context "and the items are all non-promotionable" do
+        context 'and the items are all non-promotionable' do
           before do
             line_item.product.update_column(:promotionable, false)
           end
@@ -361,7 +440,7 @@ describe Spree::Promotion, :type => :model do
           it { is_expected.to be false }
         end
 
-        context "and at least one item is promotionable" do
+        context 'and at least one item is promotionable' do
           it { is_expected.to be true }
         end
       end
@@ -505,10 +584,24 @@ describe Spree::Promotion, :type => :model do
       end
     end
 
-      context 'when the order is not eligible for the promotion' do
+    context 'when the order is not eligible for the promotion' do
+      context 'due to promotion expiration' do
         before { promotion.starts_at = Time.current + 2.days }
         it { is_expected.not_to be }
       end
+
+      context 'due to promotion code not being eligible' do
+        let(:order) { create(:order) }
+        let(:promotion) { create(:promotion, per_code_usage_limit: 0) }
+        let(:promotion_code) { create(:promotion_code, promotion: promotion) }
+
+        subject { promotion.line_item_actionable? order, line_item, promotion_code: promotion_code }
+
+        it 'returns false' do
+          expect(subject).to eq false
+        end
+      end
+    end
   end
 
   # regression for #4059
