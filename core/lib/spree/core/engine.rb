@@ -34,7 +34,7 @@ module Spree
         ]
       end
 
-      initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
+      initializer 'spree.register.payment_methods' do |app|
         app.config.spree.payment_methods = [
           Spree::Gateway::Bogus,
           Spree::Gateway::BogusSimple,
