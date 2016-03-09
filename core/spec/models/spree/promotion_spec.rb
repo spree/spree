@@ -26,34 +26,55 @@ describe Spree::Promotion, :type => :model do
     end
   end
 
-  describe ".coupons" do
-    it "scopes promotions with coupon code present only" do
-      promotion = Spree::Promotion.create! name: "test", code: ''
-      expect(Spree::Promotion.coupons).to be_empty
+  describe 'scopes' do
+    describe '.coupons' do
+      let!(:promotion_without_code) { Spree::Promotion.create! name: 'test', code: '' }
+      let!(:promotion_with_code) { Spree::Promotion.create! name: 'test1', code: 'code' }
 
-      promotion.update_column :code, "check"
-      expect(Spree::Promotion.coupons.first).to eq promotion
+      subject { Spree::Promotion.coupons }
+
+      it 'is expected to not include promotion without code' do
+        is_expected.to_not include(promotion_without_code)
+      end
+
+      it 'is expected to include promotion with code' do
+        is_expected.to include(promotion_with_code)
+      end
     end
-  end
 
-  describe ".applied" do
-    it "scopes promotions that have been applied to an order only" do
-      promotion = Spree::Promotion.create! name: "test", code: ''
-      expect(Spree::Promotion.applied).to be_empty
+    describe '.applied' do
+      let!(:promotion_not_applied) { Spree::Promotion.create! name: 'test', code: '' }
+      let(:order) { create(:order) }
+      let!(:promotion_applied) do
+        promotion = Spree::Promotion.create!(name: 'test1', code: '')
+        promotion.orders << order
+        promotion
+      end
 
-      promotion.orders << create(:order)
-      expect(Spree::Promotion.applied.first).to eq promotion
+      subject { Spree::Promotion.applied }
+
+      it 'is expected to not include promotion not applied' do
+        is_expected.to_not include(promotion_not_applied)
+      end
+
+      it 'is expected to include promotion applied' do
+        is_expected.to include(promotion_applied)
+      end
     end
-  end
 
-  describe ".advertised" do
-    let(:promotion) { create(:promotion) }
-    let(:advertised_promotion) { create(:promotion, :advertise => true) }
+    describe '.advertised' do
+      let!(:promotion_not_advertised) { Spree::Promotion.create! name: 'test', advertise: false }
+      let!(:promotion_advertised) { Spree::Promotion.create! name: 'test1', advertise: true }
 
-    it "only shows advertised promotions" do
-      advertised = Spree::Promotion.advertised
-      expect(advertised).to include(advertised_promotion)
-      expect(advertised).not_to include(promotion)
+      subject { Spree::Promotion.advertised }
+
+      it 'is expected to not include promotion not advertised' do
+        is_expected.to_not include(promotion_not_advertised)
+      end
+
+      it 'is expected to include promotion advertised' do
+        is_expected.to include(promotion_advertised)
+      end
     end
   end
 
