@@ -2,6 +2,7 @@ module Spree
   class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    DEFAULT_RANDOM_CODE_LENGTH = 6
 
     attr_reader :eligibility_errors
 
@@ -268,14 +269,18 @@ module Spree
       match_policy == 'all'
     end
 
-    def build_code_with_base(base_code:, random_code_length: 6)
-      code_with_entropy = "#{base_code}_#{Array.new(random_code_length) { ('A'..'Z').to_a.sample }.join}"
+    def build_code_with_base(base_code:)
+      random_code = code_with_randomness(base_code: base_code)
 
-      if Spree::PromotionCode.where(value: code_with_entropy).exists?
-        build_code_with_base(base_code)
+      if Spree::PromotionCode.where(value: random_code).exists? || codes.any? { |c| c.value == random_code }
+        build_code_with_base(base_code: base_code)
       else
-        codes.build(value: code_with_entropy)
+        codes.build(value: random_code)
       end
+    end
+
+    def code_with_randomness(base_code:)
+      "#{base_code}_#{Array.new(DEFAULT_RANDOM_CODE_LENGTH){ ('A'..'Z').to_a.sample }.join}"
     end
   end
 end

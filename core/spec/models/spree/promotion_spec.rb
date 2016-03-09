@@ -705,20 +705,32 @@ describe Spree::Promotion, :type => :model do
     end
 
     context 'when number_of_codes is greater than 1' do
-      before do
-        promotion.build_promotion_codes(base_code: 'abc', number_of_codes: 2)
-      end
+      subject { promotion.build_promotion_codes(base_code: 'abc', number_of_codes: 2) }
+      before  { srand 123 }
 
       it 'builds the correct number of codes' do
+        subject
         expect(promotion.codes.size).to eq 2
       end
 
       it 'builds codes with distinct values' do
+        subject
         expect(promotion.codes.map(&:value).uniq.size).to eq 2
       end
 
       it 'builds codes with the same base prefix' do
+        subject
         expect(promotion.codes.map(&:value)).to all(match(/\Aabc_/))
+      end
+
+      context 'there is a collision with the random codes generated' do
+        it 'will resolve the collision' do
+          # Generate the same code twice, then generate a new code
+          expect(promotion).to receive(:code_with_randomness).twice.and_return('duplicate_code')
+          expect(promotion).to receive(:code_with_randomness).once.and_return('new_code')
+          subject
+          expect(promotion.codes.map(&:value).uniq.size).to eq 2
+        end
       end
     end
   end
