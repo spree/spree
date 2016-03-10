@@ -7,7 +7,6 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 5.0.0'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
-gem 'rake', '~> 10.5.0' # downgraded because rspec-core on rubygems doesn’t support rake 11.x yet (https://github.com/rspec/rspec-core/commit/8e723fc805e901ac4fa5483837138b175d411d6e)
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -30,6 +29,7 @@ group :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '3.4.0'
+  gem 'rspec-core', '~> 3.4.4'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
   gem 'poltergeist', '1.6.0'
