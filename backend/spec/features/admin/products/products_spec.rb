@@ -140,7 +140,7 @@ describe "Products", type: :feature do
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, name: "Random")
+        @property_prototype = create(:prototype, name: "Random", properties: [create(:property, name: 'test')])
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
         click_link "admin_new_product"
@@ -301,13 +301,13 @@ describe "Products", type: :feature do
       let(:product) { create(:product) }
 
       let(:prototype) do
-        size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, name: "Size", option_types: [ size ])
+        color = build_option_type_with_values("color", %w(Red Green Blue))
+        FactoryGirl.create(:prototype, name: "Color", option_types: [color])
       end
 
       before(:each) do
         @option_type_prototype = prototype
-        @property_prototype = create(:prototype, name: "Random")
+        @property_prototype = create(:prototype, name: "Random", properties: [create(:property, name: 'test_property')])
       end
 
       it 'should parse correctly available_on' do

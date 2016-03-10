@@ -313,6 +313,10 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete products once they are attached to line items.
+        spree/product_property:
+          attributes:
+            property_id:
+              already_linked: 'is already associated with the same product'
         spree/refund:
           attributes:
             amount:
