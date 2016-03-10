@@ -13,7 +13,7 @@ module Spree
     has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
 
     with_options presence: true do
-      validates :name, uniqueness: { allow_blank: true }
+      validates :name, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :presentation
     end
 

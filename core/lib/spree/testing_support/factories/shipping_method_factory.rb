@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :base_shipping_method, class: Spree::ShippingMethod do
     zones { |a| [Spree::Zone.global] }
-    name 'UPS Ground'
+    sequence(:name) { |n| "UPS Ground #{n}" }
     code 'UPS_GROUND'
 
     before(:create) do |shipping_method, evaluator|

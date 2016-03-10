@@ -1,6 +1,11 @@
 require 'spec_helper'
 
-describe Spree::OptionType, :type => :model do
+describe Spree::OptionType, type: :model do
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).case_insensitive.allow_blank }
+  end
+
   context "touching" do
     it "should touch a product" do
       product_option_type = create(:product_option_type)
