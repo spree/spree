@@ -23,8 +23,8 @@ describe Spree::Order, :type => :model do
       expect(order.number).not_to be_nil
     end
 
-    it 'should create a randomized 22 character token' do
-      expect(order.guest_token.size).to eq(22)
+    it "should create a randomized 35 character token" do
+      expect(order.guest_token.size).to eq(35)
     end
   end
 
