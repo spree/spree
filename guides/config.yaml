@@ -69,3 +69,13 @@ base_url: http://edgeguides.spreecommerce.com
 #api_versions:
 #  -
 #    - v1
+
+deploy:
+  default:
+    kind:                  fog
+    provider:              aws
+    region:                region
+    bucket:                bucket
+    aws_access_key_id:     aws_access_key_id
+    aws_secret_access_key: aws_secret_access_key
+    path_style:            true

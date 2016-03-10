@@ -189,12 +189,6 @@ Set `EDGE_GUIDES=true` in an environment variable in order to generate the "edge
 
     $ EDGE_GUIDES=true nanoc autocompile
 
-## Deploy
-
-The guides can no longer be deployed to production from this
-repo. Sufficiently-privileged users should see the private repo
-[guides_deploy](https://github.com/spree/guides_deploy).
-
 ## TODO
 
 * Integrate through a simple hurl.it app for live API calls.
