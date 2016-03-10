@@ -27,7 +27,7 @@ group :test do
   gem 'rspec-activemodel-mocks'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 3.0.2'
+  gem 'rspec-rails', '~> 3.4.2'
   gem 'selenium-webdriver', '~> 2.35'
   gem 'simplecov'
   gem 'test-unit'
