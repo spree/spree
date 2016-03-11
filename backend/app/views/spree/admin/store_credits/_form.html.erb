@@ -5,7 +5,7 @@
     <%= f.error_message_on :amount %>
   <% end %>
   <%= f.field_container :category, class: ['form-group'] do %>
-    <%= f.label :category, raw(Spree.t(:reason) + content_tag(:span, " *", class: "required")) %>
+    <%= f.label :category, raw(Spree.t(:category) + content_tag(:span, " *", class: "required")) %>
     <%= f.select :category_id, options_from_collection_for_select(@credit_categories, :id, :name, f.object.category.try(:id)),
         { include_blank: true }, { class: 'select2 fullwidth', placeholder: Spree.t(:select_a_store_credit_reason) } %>
     <%= f.error_message_on :category %>
