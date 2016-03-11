@@ -13,6 +13,7 @@ module Spree
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
     include Spree::NumberGenerator
+    include Spree::Core::TokenGenerator
 
     def generate_number(options = {})
       options[:prefix] ||= 'R'
@@ -628,10 +629,7 @@ module Spree
     end
 
     def create_token
-      self.guest_token ||= loop do
-        random_token = SecureRandom.urlsafe_base64(nil, false)
-        break random_token unless self.class.exists?(guest_token: random_token)
-      end
+      self.guest_token ||= generate_guest_token
     end
   end
 end
