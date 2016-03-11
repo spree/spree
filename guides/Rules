@@ -11,6 +11,13 @@
 #   because “*” matches zero or more characters.
 require 'coderay_bash'
 
+preprocess do
+  config[:deploy][:default][:region] = ENV['S3_REGION']
+  config[:deploy][:default][:bucket] = ENV['S3_BUCKET_NAME']
+  config[:deploy][:default][:aws_access_key_id] = ENV['AWS_ACCESS_KEY_ID']
+  config[:deploy][:default][:aws_secret_access_key] = ENV['AWS_SECRET_ACCESS_KEY']
+end
+
 compile '/static/*' do
 end
 
