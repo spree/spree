@@ -167,7 +167,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
   # If you would like to change where this engine is mounted, simply change the :at option to something different.
   #
   # We ask that you don't use the :as option here, as Spree relies on it being the default of "spree"
-  mount Spree::Core::Engine, :at => '/'
+  mount Spree::Core::Engine, at: '/'
         }
       end
 
@@ -175,7 +175,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "*" * 50
         puts "We added the following line to your application's config/routes.rb file:"
         puts " "
-        puts "    mount Spree::Core::Engine, :at => '/'"
+        puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 
