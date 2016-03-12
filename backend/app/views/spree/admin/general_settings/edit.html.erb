@@ -59,29 +59,30 @@
 
       <div class="row">
         <div class="col-md-6">
-
           <%#-------------------------------------------------%>
           <%# Security settings                               %>
           <%#-------------------------------------------------%>
-          <div class="panel panel-default security">
-            <div class="panel-heading">
-              <h1 class="panel-title">
-                <%= Spree.t(:security_settings)%>
-              </h1>
-            </div>
+          <% if @preferences_security.any? %>
+            <div class="panel panel-default security">
+              <div class="panel-heading">
+                <h1 class="panel-title">
+                  <%= Spree.t(:security_settings) %>
+                </h1>
+              </div>
 
-            <div class="panel-body">
-              <% @preferences_security.each do |key|
-                  type = Spree::Config.preference_type(key) %>
-                  <div class="checkbox">
-                    <%= label_tag key do %>
-                      <%= preference_field_tag(key, Spree::Config[key], type: type) %>
-                      <%= Spree.t(key) %>
-                    <% end %>
-                  </div>
-              <% end %>
+              <div class="panel-body">
+                <% @preferences_security.each do |key|
+                    type = Spree::Config.preference_type(key) %>
+                    <div class="checkbox">
+                      <%= label_tag key do %>
+                        <%= preference_field_tag(key, Spree::Config[key], type: type) %>
+                        <%= Spree.t(key) %>
+                      <% end %>
+                    </div>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
 
           <%#-------------------------------------------------%>
           <%# Clear cache                                     %>
