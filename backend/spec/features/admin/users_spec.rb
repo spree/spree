@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'Users', type: :feature do
+  include Spree::BaseHelper
   stub_authorization!
 
   let!(:country) { create(:country) }
@@ -33,7 +34,7 @@ describe 'Users', type: :feature do
         expect(page).to have_content (order.total + order_2.total)
         expect(page).to have_content orders.count
         expect(page).to have_content (orders.sum(&:total) / orders.count)
-        expect(page).to have_content I18n.l(user_a.created_at.to_date)
+        expect(page).to have_content pretty_time(user_a.created_at)
       end
     end
 
