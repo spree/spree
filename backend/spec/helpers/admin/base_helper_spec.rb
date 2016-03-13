@@ -21,4 +21,10 @@ describe Spree::Admin::BaseHelper, :type => :helper do
       expect(plural_resource_name(resource_class)).to eq("Products")
     end
   end
+
+  context "#order_time" do
+    it "prints in a format" do
+      expect(order_time(DateTime.new(2016, 5, 6, 13, 33))).to eq "2016-05-06 1:33 PM"
+    end
+  end
 end

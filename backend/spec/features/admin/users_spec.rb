@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'Users', type: :feature do
   stub_authorization!
+  include Spree::Admin::BaseHelper
 
   let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
@@ -219,8 +220,8 @@ describe 'Users', type: :feature do
 
     context "completed_at" do
       it_behaves_like "a sortable attribute" do
-        let(:text_match_1) { I18n.l(order.completed_at.to_date) }
-        let(:text_match_2) { I18n.l(order_2.completed_at.to_date) }
+        let(:text_match_1) { order_time(order.completed_at) }
+        let(:text_match_2) { order_time(order_2.completed_at) }
         let(:table_id) { "listing_orders" }
         let(:sort_link) { "orders_completed_at_title" }
       end
@@ -250,8 +251,8 @@ describe 'Users', type: :feature do
 
     context "completed_at" do
       it_behaves_like "a sortable attribute" do
-        let(:text_match_1) { I18n.l(order.completed_at.to_date) }
-        let(:text_match_2) { I18n.l(order_2.completed_at.to_date) }
+        let(:text_match_1) { order_time(order.completed_at) }
+        let(:text_match_2) { order_time(order_2.completed_at) }
         let(:table_id) { "listing_items" }
         let(:sort_link) { "orders_completed_at_title" }
       end
