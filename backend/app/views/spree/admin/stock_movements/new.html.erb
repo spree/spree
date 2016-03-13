@@ -10,7 +10,7 @@
 
 <%= form_for [:admin, stock_location, @stock_movement] do |f| %>
   <fieldset>
-    <%= render partial: 'form', locals: { :f => f } %>
+    <%= render partial: 'form', locals: { f: f } %>
     <%= render partial: 'spree/admin/shared/new_resource_links', locals: { collection_url: admin_stock_location_stock_movements_path(stock_location) } %>
   </fieldset>
 <% end %>
