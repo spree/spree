@@ -210,7 +210,7 @@ THIS IS THE BEST PRODUCT EVER!
       context 'when there is a maximum updated date' do
         let(:updated_at) { Date.new(2011, 12, 13) }
         before :each do
-          allow(@products).to receive(:count) { 5 }
+          allow(@products).to receive(:length).and_return(5)
           allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
@@ -220,7 +220,7 @@ THIS IS THE BEST PRODUCT EVER!
       context 'when there is no considered maximum updated date' do
         let(:today) { Date.new(2013, 12, 11) }
         before :each do
-          allow(@products).to receive(:count) { 1234567 }
+          allow(@products).to receive(:length).and_return(1234567)
           allow(@products).to receive(:maximum).with(:updated_at) { nil }
           allow(Date).to receive(:today) { today }
         end
