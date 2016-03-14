@@ -3,6 +3,7 @@ module Spree
     module ControllerHelpers
       module Auth
         extend ActiveSupport::Concern
+        include Spree::Core::TokenGenerator
 
         included do
           before_action :set_guest_token
@@ -24,8 +25,8 @@ module Spree
         end
 
         def set_guest_token
-          unless cookies.signed[:guest_token].present?
-            cookies.permanent.signed[:guest_token] = SecureRandom.urlsafe_base64(nil, false)
+          if cookies.signed[:guest_token].blank?
+            cookies.permanent.signed[:guest_token] = generate_guest_token
           end
         end
 

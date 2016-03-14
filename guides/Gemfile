@@ -5,14 +5,14 @@ gem 'coderay_bash'
 gem 'kramdown'
 gem 'mime-types'
 gem 'nokogiri'
-gem 'nanoc', '3.6.3'
+gem 'nanoc'
 gem 'nanoc-toolbox'
 gem 'rake'
-gem 'thin'
-gem "yajl-ruby"
+gem 'yajl-ruby'
 gem 'sass'
 gem 'bourbon'
 gem 'neat'
+gem 'fog'
 
 group :development do
   gem 'listen'

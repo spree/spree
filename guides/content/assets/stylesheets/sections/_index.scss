@@ -26,7 +26,7 @@ body.index {
       margin-bottom: em(40);
 
       li {
-        @include span-columns(2 of 10);
+        @include span-columns(2 of 8);
         @include omega(5n);
         text-align: center;
 
@@ -40,7 +40,7 @@ body.index {
           }
 
           i {
-            font-size: 170px;
+            font-size: 215px;
             display: block;
             margin-bottom: em(5);
             color: white;

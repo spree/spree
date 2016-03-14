@@ -15,6 +15,7 @@ describe "General Settings", type: :feature do
       expect(find("#store_name").value).to eq("Test Store")
       expect(find("#store_url").value).to eq("test.example.org")
       expect(find("#store_mail_from_address").value).to eq("test@example.org")
+      expect(page).to_not have_content(Spree.t(:security_settings))
     end
   end
 

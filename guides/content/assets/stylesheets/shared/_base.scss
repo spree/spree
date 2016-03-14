@@ -25,6 +25,13 @@ img {
     }
   }
 
+  .sponsors {
+    text-align: right;
+    a {
+      color: $c-green;
+    }
+  }
+
   a {
     font-weight: 600;
   }
