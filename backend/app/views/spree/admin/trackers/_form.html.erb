@@ -1,7 +1,7 @@
 <div data-hook="admin_tracker_form_fields" class="row">
   <div class="col-md-4">
     <div data-hook="analytics_id" class="form-group">
-      <%= label_tag nil, Spree.t(:google_analytics_id) %>
+      <%= label_tag nil, required_label_markup(:google_analytics_id) %>
       <%= text_field :tracker, :analytics_id, :class => 'form-control' %>
     </div>
   </div>

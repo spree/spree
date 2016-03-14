@@ -21,4 +21,12 @@ describe Spree::Admin::BaseHelper, :type => :helper do
       expect(plural_resource_name(resource_class)).to eq("Products")
     end
   end
+
+  describe '#required_label_markup' do
+    it { expect(required_label_markup(:name)).to eq("Name<span class=\"required\"> *</span>") }
+  end
+
+  describe '#required_markup' do
+    it { expect(required_markup).to eq("<span class=\"required\"> *</span>") }
+  end
 end

@@ -149,10 +149,23 @@ module Spree
         link_to_with_icon 'arrow-left', button_text, path, class: 'btn btn-default'
       end
 
+      def required_label_markup(method)
+        sanitize(label_text_for(method) + required_markup)
+      end
+
       private
-        def attribute_name_for(field_name)
-          field_name.gsub(' ', '_').downcase
-        end
+
+      def attribute_name_for(field_name)
+        field_name.tr(' ', '_').downcase
+      end
+
+      def required_markup
+        content_tag(:span, ' *', class: 'required')
+      end
+
+      def label_text_for(method)
+        method.is_a?(Symbol) ? Spree.t(method) : method
+      end
     end
   end
 end

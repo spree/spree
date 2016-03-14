@@ -68,13 +68,13 @@
   <% end %>
 
   <%= f.field_container :stock_location, class: ['form-group'] do %>
-    <%= f.label :stock_location, Spree.t(:stock_location) %>
+    <%= f.required_label_markup(:stock_location) %>
     <%= f.select :stock_location_id, Spree::StockLocation.order_default.active.to_a.collect{|l|[l.name, l.id]}, {include_blank: true}, {class: 'select2', "data-placeholder" => Spree.t(:select_a_stock_location)} %>
     <%= f.error_message_on :stock_location_id %>
   <% end %>
 
   <%= f.field_container :reason, class: ['form-group'] do %>
-    <%= f.label :reason, Spree.t(:reason) %>
+    <%= f.required_label_markup(:reason) %>
     <%= f.select :return_authorization_reason_id, @reasons.collect{|r|[r.name, r.id]}, {include_blank: true}, {class: 'select2', "data-placeholder" => Spree.t(:select_a_return_authorization_reason)} %>
     <%= f.error_message_on :reason %>
   <% end %>
