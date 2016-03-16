@@ -6,11 +6,11 @@ require 'generators/spree/dummy/dummy_generator'
 
 desc "Generates a dummy app for testing"
 namespace :common do
-  task :test_app, :user_class do |t, args|
-    args.with_defaults(:user_class => "Spree::LegacyUser")
-    require "#{ENV['LIB_NAME']}"
+  task :test_app, :user_class do |_t, args|
+    args.with_defaults(user_class: "Spree::LegacyUser")
+    require ENV['LIB_NAME'].to_s
 
-    ENV["RAILS_ENV"] = 'test'
+    ENV['RAILS_ENV'] = 'test'
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet"]
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--auto-accept", "--migrate=false", "--seed=false", "--sample=false", "--quiet", "--user_class=#{args[:user_class]}"]
@@ -30,16 +30,8 @@ namespace :common do
     end
   end
 
-  task :seed do |t, args|
+  task :seed do |_t|
     puts "Seeding ..."
-    cmd = "bundle exec rake db:seed RAILS_ENV=test"
-
-    if RUBY_PLATFORM =~ /mswin|mingw/ # windows
-      cmd += " >nul"
-    else
-      cmd += " >/dev/null"
-    end
-
-    system(cmd)
+    system("bundle exec rake db:seed RAILS_ENV=test > #{File::NULL}")
   end
 end

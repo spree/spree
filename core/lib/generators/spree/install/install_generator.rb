@@ -38,14 +38,6 @@ module Spree
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
 
-    def config_spree_yml
-      create_file "config/spree.yml" do
-        settings = { 'version' => Spree.version }
-
-        settings.to_yaml
-      end
-    end
-
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
       append_file "public/robots.txt", <<-ROBOTS
@@ -175,7 +167,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
   # If you would like to change where this engine is mounted, simply change the :at option to something different.
   #
   # We ask that you don't use the :as option here, as Spree relies on it being the default of "spree"
-  mount Spree::Core::Engine, :at => '/'
+  mount Spree::Core::Engine, at: '/'
         }
       end
 
@@ -183,7 +175,7 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "*" * 50
         puts "We added the following line to your application's config/routes.rb file:"
         puts " "
-        puts "    mount Spree::Core::Engine, :at => '/'"
+        puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 
@@ -193,6 +185,24 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
         puts "Spree has been installed successfully. You're all ready to go!"
         puts " "
         puts "Enjoy!"
+      end
+    end
+
+    protected
+
+    def javascript_exists?(script)
+      extensions = %w(.js.coffee .js.erb .js.coffee.erb .js)
+      file_exists?(extensions, script)
+    end
+
+    def stylesheet_exists?(stylesheet)
+      extensions = %w(.css.scss .css.erb .css.scss.erb .css)
+      file_exists?(extensions, stylesheet)
+    end
+
+    def file_exists?(extensions, filename)
+      extensions.detect do |extension|
+        File.exists?("#{filename}#{extension}")
       end
     end
   end

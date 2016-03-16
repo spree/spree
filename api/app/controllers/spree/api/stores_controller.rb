@@ -2,7 +2,7 @@ module Spree
   module Api
     class StoresController < Spree::Api::BaseController
 
-      before_filter :get_store, except: [:index, :create]
+      before_action :get_store, except: [:index, :create]
 
       def index
         authorize! :read, Spree::Store

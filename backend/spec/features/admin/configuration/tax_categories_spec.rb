@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Tax Categories", type: :feature, js: true do
+describe "Tax Categories", type: :feature do
   stub_authorization!
 
   before(:each) do
@@ -43,7 +43,7 @@ describe "Tax Categories", type: :feature, js: true do
   end
 
   context "admin editing a tax category" do
-    it "should be able to update an existing tax category" do
+    it "should be able to update an existing tax category", js: true do
       create(:tax_category)
       click_link "Tax Categories"
       within_row(1) { click_icon :edit }

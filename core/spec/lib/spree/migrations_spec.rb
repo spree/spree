@@ -7,16 +7,18 @@ module Spree
 
     let(:config) { double("Config", root: "dir") }
 
-    subject { described_class.new(config, "spree")  }
+    let(:engine_dir) { "dir/db/migrate" }
+    let(:app_dir) { "#{Rails.root}/db/migrate" }
+
+    subject { described_class.new(config, "spree") }
 
     before do
-      expect(File).to receive(:exists?).with("config/spree.yml").and_return true
-      expect(File).to receive(:directory?).with("db/migrate").and_return true
+      expect(File).to receive(:directory?).with(app_dir).and_return true
     end
 
     it "warns about missing migrations" do
-      expect(Dir).to receive(:entries).with("db/migrate").and_return app_migrations
-      expect(Dir).to receive(:entries).with("dir/db/migrate").and_return engine_migrations
+      expect(Dir).to receive(:entries).with(app_dir).and_return app_migrations
+      expect(Dir).to receive(:entries).with(engine_dir).and_return engine_migrations
 
       silence_stream(STDOUT) {
         expect(subject.check).to eq true
@@ -25,8 +27,8 @@ module Spree
 
     context "no missing migrations" do
       it "says nothing" do
-        expect(Dir).to receive(:entries).with("dir/db/migrate").and_return engine_migrations
-        expect(Dir).to receive(:entries).with("db/migrate").and_return (app_migrations + engine_migrations)
+        expect(Dir).to receive(:entries).with(engine_dir).and_return engine_migrations
+        expect(Dir).to receive(:entries).with(app_dir).and_return(app_migrations + engine_migrations)
         expect(subject.check).to eq nil
       end
     end

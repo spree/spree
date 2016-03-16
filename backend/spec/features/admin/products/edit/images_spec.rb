@@ -40,7 +40,7 @@ describe "Product Images", type: :feature, js: true do
   end
 
   # Regression test for #2228
-  it "should see variant images" do
+  it "should see variant images", js: false do
     variant = create(:variant)
     variant.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(variant.product)
@@ -64,7 +64,7 @@ describe "Product Images", type: :feature, js: true do
     end
   end
 
-  it "should not see variant column when product has no variants" do
+  it "should not see variant column when product has no variants", js: false do
     product = create(:product)
     product.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(product)

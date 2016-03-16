@@ -4,13 +4,12 @@ require 'spec_helper'
 describe "Order Details", type: :feature, js: true do
   let!(:stock_location) { create(:stock_location_with_items) }
   let!(:product) { create(:product, name: 'spree t-shirt', price: 20.00) }
-  let!(:tote) { create(:product, name: "Tote", price: 15.00) }
   let(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15", number: "R100") }
   let(:state) { create(:state) }
   let!(:shipping_method) { create(:shipping_method, name: "Default") }
 
   before do
-    order.shipments.create(stock_location_id: stock_location.id)
+    order.shipments.create!(stock_location_id: stock_location.id)
     order.contents.add(product.master, 2)
   end
 
@@ -120,7 +119,7 @@ describe "Order Details", type: :feature, js: true do
         expect(page).to have_content("Backdoor")
       end
 
-      it "will show the variant sku" do
+      it "will show the variant sku", js: false do
         order = create(:completed_order_with_totals)
         visit spree.edit_admin_order_path(order)
         sku = order.line_items.first.variant.sku
@@ -128,51 +127,64 @@ describe "Order Details", type: :feature, js: true do
       end
 
       context "with special_instructions present" do
-        let(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15", number: "R100", special_instructions: "Very special instructions here") }
-        it "will show the special_instructions" do
+        before(:each) do
+          order.update_column(:special_instructions, "Very special instructions here")
+        end
+
+        it "will show the special_instructions", js: false do
           visit spree.edit_admin_order_path(order)
           expect(page).to have_content("Very special instructions here")
         end
       end
 
-      context "variant doesn't track inventory" do
-        before do
-          tote.master.update_column :track_inventory, false
-          # make sure there's no stock level for any item
-          tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+      context 'when not tracking inventory' do
+        let(:tote) { create(:product, name: "Tote", price: 15.00) }
+
+        context "variant doesn't track inventory" do
+          before do
+            tote.master.update_column :track_inventory, false
+            # make sure there's no stock level for any item
+            tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+          end
+
+          it "adds variant to order just fine" do
+            select2_search tote.name, from: Spree.t(:name_or_sku)
+            within("table.stock-levels") do
+              fill_in "variant_quantity", with: 1
+              click_icon :add
+            end
+
+            wait_for_ajax
+
+            within(".line-items") do
+              expect(page).to have_content(tote.name)
+            end
+          end
         end
 
-        it "adds variant to order just fine" do
-          select2_search tote.name, from: Spree.t(:name_or_sku)
-          within("table.stock-levels") do
-            fill_in "variant_quantity", with: 1
-            click_icon :add
+        context "site doesn't track inventory" do
+          before do
+            Spree::Config[:track_inventory_levels] = false
+            tote.master.update_column(:track_inventory, true)
+            # make sure there's no stock level for any item
+            tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
           end
 
-          within(".line-items") do
-            expect(page).to have_content(tote.name)
-          end
-        end
-      end
+          it "adds variant to order just fine" do
+            select2_search tote.name, from: Spree.t(:name_or_sku)
+            within("table.stock-levels") do
+              fill_in "variant_quantity", with: 1
+              click_icon :add
+            end
 
-      context "site doesn't track inventory" do
-        before do
-          Spree::Config.set track_inventory_levels: false
-          product.master.update_column(:track_inventory, true)
-          product.master.stock_items.first.update_column(:backorderable, true)
-          product.master.stock_items.first.update_column(:count_on_hand, 0)
-        end
+            wait_for_ajax
 
-        it "adds variant to order just fine" do
-          select2_search product.name, from: Spree.t(:name_or_sku)
-          within("table.stock-levels") do
-            fill_in "variant_quantity", with: 1
-            click_icon :add
+            within(".line-items") do
+              expect(page).to have_content(tote.name)
+            end
           end
 
-          within(".line-items") do
-            expect(page).to have_content(product.name)
-          end
+          after { Spree::Config[:track_inventory_levels] = true }
         end
       end
 
@@ -301,7 +313,7 @@ describe "Order Details", type: :feature, js: true do
 
           context 'A shipment has shipped' do
 
-            it 'should not show or let me back to the cart page, nor show the shipment edit buttons' do
+            it 'should not show or let me back to the cart page, nor show the shipment edit buttons', js: false do
               order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
 
@@ -376,24 +388,54 @@ describe "Order Details", type: :feature, js: true do
           end
         end
 
-        context "site doesn't track inventory" do
-          before do
-            Spree::Config.set track_inventory_levels: false
-            product.master.update_column(:track_inventory, true)
-            product.master.stock_items.first.update_column(:backorderable, true)
-            product.master.stock_items.first.update_column(:count_on_hand, 0)
+        context 'when not tracking inventory' do
+          let(:tote) { create(:product, name: "Tote", price: 15.00) }
+
+          context "variant doesn't track inventory" do
+            before do
+              tote.master.update_column :track_inventory, false
+              # make sure there's no stock level for any item
+              tote.master.stock_items.update_all count_on_hand: 0, backorderable: false
+            end
+
+            it "adds variant to order just fine" do
+              select2_search tote.name, from: Spree.t(:name_or_sku)
+              within("table.stock-levels") do
+                fill_in "stock_item_quantity", with: 1
+                click_icon :add
+              end
+
+              wait_for_ajax
+
+              within("[data-hook=admin_order_form_fields]") do
+                expect(page).to have_content(tote.name)
+              end
+            end
           end
 
-          it "adds variant to order just fine" do
-            select2_search product.name, from: Spree.t(:name_or_sku)
-            within("table.stock-levels") do
-              fill_in "stock_item_quantity", with: 1
-              click_icon :add
+          context "site doesn't track inventory" do
+            before do
+              Spree::Config[:track_inventory_levels] = false
+              tote.master.update_column(:track_inventory, true)
+              # make sure there's no stock level for any item
+              tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
             end
 
-            within(".stock-contents") do
-              expect(page).to have_content(product.name)
+            it "adds variant to order just fine" do
+              select2_search tote.name, from: Spree.t(:name_or_sku)
+              within("table.stock-levels") do
+                fill_in "stock_item_quantity", with: 1
+                click_icon :add
+              end
+
+              wait_for_ajax
+
+              within("[data-hook=admin_order_form_fields]") do
+                expect(page).to have_content(tote.name)
+              end
             end
+
+            after { Spree::Config[:track_inventory_levels] = true }
           end
         end
 
@@ -568,7 +610,7 @@ describe "Order Details", type: :feature, js: true do
                                    and_return(Spree.user_class.new)
     end
 
-    it 'should not display order tabs or edit buttons without ability' do
+    it 'should not display order tabs or edit buttons without ability', js: false do
       visit spree.edit_admin_order_path(order)
 
       # Order Form

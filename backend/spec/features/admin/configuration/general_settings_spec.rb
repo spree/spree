@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "General Settings", type: :feature, js: true do
+describe "General Settings", type: :feature do
   stub_authorization!
 
   before(:each) do
@@ -30,7 +30,7 @@ describe "General Settings", type: :feature, js: true do
     end
   end
 
-  context "clearing the cache" do
+  context "clearing the cache", js: true do
     it "should clear the cache" do
       expect(page).to_not have_content(Spree.t(:clear_cache_ok))
       expect(page).to have_content(Spree.t(:clear_cache_warning))
