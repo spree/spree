@@ -5,7 +5,7 @@
 <%= render partial: 'spree/admin/users/sidebar', locals: { current: :store_credits } %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:back_to_users_list), spree.admin_users_path, class: 'btn-primary', icon: 'chevron-left' %>
+  <%= back_to_list_button(Spree.user_class.model_name.human, spree.admin_users_path) %>
   <%= button_link_to Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: "btn-success", icon: 'add' %>
 <% end %>
 

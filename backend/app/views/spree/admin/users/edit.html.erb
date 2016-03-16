@@ -2,10 +2,6 @@
   <%= Spree.t(:editing_user) %> <%= @user.email %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <%= back_to_list_button(Spree.user_class.model_name.human, admin_users_path) %>
-<% end %>
-
 <%= render partial: 'spree/admin/users/sidebar', locals: { current: :account } %>
 <%= render partial: 'spree/admin/users/user_page_actions' %>
 
