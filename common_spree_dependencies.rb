@@ -37,6 +37,7 @@ group :test do
   gem 'mutant-rspec', '~> 0.8.0'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
+  gem 'test_after_commit', '~> 1.0.0'
 end
 
 group :test, :development do
