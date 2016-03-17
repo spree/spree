@@ -40,7 +40,7 @@ describe 'Users', type: :feature do
     end
 
     it 'can go back to the users list' do
-      expect(page).to have_link Spree.t(:back_to_users_list), href: spree.admin_users_path
+      expect(page).to have_link Spree.user_class.model_name.human, href: spree.admin_users_path
     end
 
     it 'can navigate to the account page' do
