@@ -12,7 +12,7 @@ module Spree
 
     scope :by_url, lambda { |url| where("url like ?", "%#{url}%") }
 
-    before_save :clear_cache
+    after_commit :clear_cache
 
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
