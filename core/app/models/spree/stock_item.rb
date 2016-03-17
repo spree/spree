@@ -4,6 +4,9 @@ module Spree
 
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
+      belongs_to :active_stock_location, -> { where(active: true) },
+                                         class_name: 'Spree::StockLocation',
+                                         foreign_key: :stock_location_id
       belongs_to :variant, class_name: 'Spree::Variant', counter_cache: true
     end
     has_many :stock_movements, inverse_of: :stock_item
@@ -24,7 +27,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['count_on_hand', 'stock_location_id']
 
-    scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
+    scope :with_active_stock_location, -> { joins(:active_stock_location) }
 
     def backordered_inventory_units
       Spree::InventoryUnit.backordered_for_stock_item(self)

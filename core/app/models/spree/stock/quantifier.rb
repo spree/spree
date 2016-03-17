@@ -5,12 +5,12 @@ module Spree
 
       def initialize(variant)
         @variant = variant
-        @stock_items = @variant.stock_items.with_active_stock_location
+        @stock_items = @variant.stock_items_with_active_location
       end
 
       def total_on_hand
         if variant.should_track_inventory?
-          stock_items.sum(:count_on_hand)
+          stock_items.inject(0) { |result, stock_item| result + stock_item.count_on_hand }
         else
           Float::INFINITY
         end

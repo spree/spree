@@ -15,6 +15,9 @@ module Spree
     with_options inverse_of: :variant do
       has_many :inventory_units
       has_many :stock_items, dependent: :destroy
+      has_many :stock_items_with_active_location, -> { with_active_stock_location },
+                                                  class_name: "Spree::StockItem",
+                                                  dependent: :destroy
     end
 
     has_many :line_items, dependent: :restrict_with_error

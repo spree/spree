@@ -190,9 +190,10 @@ module Spree
     # values should not be displayed to frontend users. Otherwise it breaks the
     # idea of having variants
     def variants_and_option_values(current_currency = nil)
-      variants.includes(:option_values).active(current_currency).select do |variant|
-        variant.option_values.any?
-      end
+      variants.includes(:option_values, :prices, :stock_items_with_active_location).
+        active(current_currency).select do |variant|
+          variant.option_values.any?
+        end
     end
 
     def empty_option_values?
