@@ -149,6 +149,10 @@ module Spree
         link_to_with_icon 'arrow-left', button_text, path, class: 'btn btn-default'
       end
 
+      def order_time(time)
+        [I18n.l(time.to_date), time.strftime("%l:%M %p")].join('')
+      end
+
       private
         def attribute_name_for(field_name)
           field_name.gsub(' ', '_').downcase

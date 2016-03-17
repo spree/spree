@@ -24,7 +24,7 @@
         <% @orders.each do |order| %>
           <% order.line_items.each do |item| %>
             <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
-              <td class="order-completed-at"><%= l(order.completed_at.to_date) if order.completed_at %></td>
+              <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
               <td class="item-image">
                 <%= mini_image(item.variant) %>
               </td>

@@ -22,7 +22,7 @@
       <tbody>
       <% @orders.each do |order| %>
         <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
-          <td class="order-completed-at"><%= l(order.completed_at.to_date) if order.completed_at %></td>
+          <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
           <td class="order-number"><%= link_to order.number, edit_admin_order_path(order) %></td>
           <td class="order-state">
             <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
