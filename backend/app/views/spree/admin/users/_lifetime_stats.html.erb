@@ -4,7 +4,7 @@
       <%= Spree.t(:lifetime_stats) %>
     </h1>
   </div>
-  
+
   <table class="table" id="user-lifetime-stats" data-hook>
     <tr>
       <td width="30%"><%= Spree.t(:total_sales) %>:</td>
@@ -24,7 +24,7 @@
     </tr>
     <tr>
       <td><%= Spree.t(:member_since) %>:</td>
-      <td><%= l @user.created_at.to_date %></td>
+      <td><%= pretty_time(@user.created_at) %></td>
     </tr>
   </table>
 </div>
