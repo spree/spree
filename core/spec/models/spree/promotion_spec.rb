@@ -710,4 +710,22 @@ describe Spree::Promotion, type: :model do
       end
     end
   end
+
+  describe 'a user-linked promotion without a code' do
+    let(:order) { create :order }
+    let(:promo) { create :promotion_with_order_adjustment, code: nil }
+    let(:variant) { create :variant }
+    let(:test_user) { create :user }
+
+    it 'is not applied to an order with a different user' do
+      user_rule = Spree::Promotion::Rules::User.create
+      user_rule.users << test_user
+      promo.promotion_rules << user_rule
+
+      Spree::Cart::AddItem.call(order: order, variant: variant,
+                                options: { currency: order.currency })
+
+      expect(order.all_adjustments.promotion).to be_empty
+    end
+  end
 end
