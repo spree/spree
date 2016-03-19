@@ -1,0 +1,63 @@
+---
+title: Upgrading Spree from 3.0.x to 3.1.x
+section: upgrades
+---
+
+This guide covers upgrading a 3.0.x Spree store, to a 3.1.x store. This
+guide has been written from the perspective of a blank Spree 3.0.x store with
+no extensions.
+
+If you have extensions that your store depends on, you will need to manually
+verify that each of those extensions work within your 3.1.x store once this
+upgrade is complete. Typically, extensions that are compatible with this
+version of Spree will have a 3-1-stable branch.
+
+## Upgrade Rails
+
+For this Spree release, you will need to upgrade your Rails version to at least 4.2.6.
+
+```ruby
+gem 'rails', '~> 4.2.6'
+```
+
+## Upgrade Spree
+
+For best results, use the spree gem in version 3.1.x:
+
+```ruby
+gem 'spree', '~> 3.1.0'
+```
+
+Run `bundle update spree`.
+
+## Copy and run migrations
+
+Copy over the migrations from Spree (and any other engine) and run them using
+these commands:
+
+    rake railties:install:migrations
+    rake db:migrate
+
+## Additional information
+
+If you are using Spree Gateway and/or Spree Auth Devise you should also upgrade them:
+
+```ruby
+gem 'spree_auth_devise', '~> 3.1.0'
+gem 'spree_gateway', '~> 3.1.0'
+```
+
+For Spree Auth Devise run installer:
+
+    rails g spree:auth:install
+
+(you don't have to override config/initializers/devise.rb)
+
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [3.1.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_3_1_0.html).
+
+## Verify that everything is OK
+
+Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.

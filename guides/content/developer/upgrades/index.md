@@ -9,6 +9,7 @@ We strongly advise upgrading Spree incrementally, rather than in one big go. For
 
 If there are any issues with these guides, please let us know by [filing an issue](https://github.com/spree/spree/issues/new).
 
+* [3.0.x to 3.1.x](/developer/upgrades/three-dot-oh-to-three-dot-one)
 * [2.3.x to 2.4.x](/developer/upgrades/two-dot-three-to-two-dot-four)
 * [2.2.x to 2.3.x](/developer/upgrades/two-dot-two-to-two-dot-three)
 * [2.1.x to 2.2.x](/developer/upgrades/two-dot-one-to-two-dot-two)
