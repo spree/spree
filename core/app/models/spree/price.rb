@@ -7,7 +7,7 @@ module Spree
     AMOUNT_LIMIT = {
       max: BigDecimal('99_999_999.99'),
       min: 0
-    }
+    }.freeze
 
     belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 

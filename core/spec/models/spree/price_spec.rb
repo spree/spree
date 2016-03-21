@@ -28,7 +28,7 @@ describe Spree::Price, :type => :model do
   describe 'association' do
     it do
       is_expected.to belong_to(:variant).class_name('Spree::Variant').
-      inverse_of(:prices).touch(true)
+        inverse_of(:prices).touch(true)
     end
   end
 
@@ -49,7 +49,8 @@ describe Spree::Price, :type => :model do
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq "must be greater than or equal to #{Spree::Price::AMOUNT_LIMIT[:min]}"
+        expect(subject.errors.messages[:amount].first).
+          to eq "must be greater than or equal to #{Spree::Price::AMOUNT_LIMIT[:min]}"
       end
     end
 
@@ -61,7 +62,8 @@ describe Spree::Price, :type => :model do
       end
       it 'populates errors' do
         subject.valid?
-        expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::AMOUNT_LIMIT[:max]}"
+        expect(subject.errors.messages[:amount].first).
+          to eq "must be less than or equal to #{Spree::Price::AMOUNT_LIMIT[:max]}"
       end
     end
 
@@ -84,7 +86,6 @@ describe Spree::Price, :type => :model do
   # Instance methods
 
   describe 'Instance Methods' do
-
     describe '#amount=' do
       let(:price) { Spree::Price.new }
       let(:amount) { '3,0A0' }
@@ -114,7 +115,8 @@ describe Spree::Price, :type => :model do
           allow(variant).to receive(:tax_category).and_return(tax_category)
           expect(price).to receive(:default_zone).at_least(:once).and_return(default_zone)
           allow(price).to receive(:apply_foreign_vat?).and_return(true)
-          allow(price).to receive(:included_tax_amount).with(tax_zone: default_zone, tax_category: tax_category) { 0.19 }
+          allow(price).to receive(:included_tax_amount).
+            with(tax_zone: default_zone, tax_category: tax_category) { 0.19 }
           allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category) { 0.25 }
         end
 
