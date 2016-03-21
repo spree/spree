@@ -1,10 +1,9 @@
 module Spree
   class StockMovement < Spree::Base
-
     QUANTITY_LIMITS = {
       max: 2**31 - 1,
       min: -2**31
-    }
+    }.freeze
 
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
@@ -14,11 +13,11 @@ module Spree
     with_options presence: true do
       validates :stock_item
       validates :quantity, numericality: {
-                                            greater_than_or_equal_to: QUANTITY_LIMITS[:min],
-                                            less_than_or_equal_to: QUANTITY_LIMITS[:max],
-                                            only_integer: true,
-                                            allow_nil: true
-                                          }
+        greater_than_or_equal_to: QUANTITY_LIMITS[:min],
+        less_than_or_equal_to: QUANTITY_LIMITS[:max],
+        only_integer: true,
+        allow_nil: true
+      }
     end
 
     scope :recent, -> { order(created_at: :desc) }

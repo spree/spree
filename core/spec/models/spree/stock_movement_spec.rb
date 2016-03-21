@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Spree::StockMovement, :type => :model do
 
   describe 'Constants' do
-
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do
         expect(Spree::StockMovement::QUANTITY_LIMITS[:max]).to eq(2**31 - 1)
@@ -15,18 +14,14 @@ describe Spree::StockMovement, :type => :model do
         expect(Spree::StockMovement::QUANTITY_LIMITS[:min]).to eq(-2**31)
       end
     end
-
   end
 
   describe 'Associations' do
-
     it { is_expected.to belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
     it { is_expected.to belong_to(:originator) }
-
   end
 
   describe 'Validations' do
-
     it do
       is_expected.to validate_presence_of(:stock_item)
     end
@@ -37,9 +32,8 @@ describe Spree::StockMovement, :type => :model do
 
     it do
       is_expected.to validate_numericality_of(:quantity).
-      is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
-      is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).
-      only_integer.allow_nil
+        is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
+        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer.allow_nil
     end
   end
 
@@ -63,21 +57,17 @@ describe Spree::StockMovement, :type => :model do
   end
 
   describe 'Insatance Methods' do
-
     let(:stock_location) { create(:stock_location_with_items) }
     let(:stock_item) { stock_location.stock_items.order(:id).first }
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
       it 'should not update a persisted record' do
-        expect {
-          stock_movement.save
-        }.to raise_error(ActiveRecord::ReadOnlyRecord)
+        expect { stock_movement.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
       end
     end
 
     describe '#update_stock_item_quantity' do
-
       let(:stock_movement) { build(:stock_movement, stock_item: stock_item) }
 
       context 'when track inventory levels is false' do
