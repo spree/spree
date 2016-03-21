@@ -7,7 +7,6 @@ describe Spree::ProductsController, :type => :controller do
 
   before do
     I18n.enforce_available_locales = false
-    expect(I18n).to receive(:available_locales).and_return([:en, :de])
     Spree::Frontend::Config[:locale] = :de
   end
 
