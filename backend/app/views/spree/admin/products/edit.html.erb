@@ -108,7 +108,9 @@
         <%= product_image @product, class: 'main' %>
 
         <% (@product.variant_images).each do |image| %>
-          <%= image_tag image.attachment.url(:mini), class: 'thumbnail' %>
+          <%= image_tag image.attachment.url(:mini),
+                        class: 'thumbnail',
+                        data: { large: image.attachment.url(:product) } %>
         <% end %>
       </div>
     </div>
