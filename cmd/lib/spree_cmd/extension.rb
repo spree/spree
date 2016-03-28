@@ -32,7 +32,7 @@ module SpreeCmd
       say %{
         #{'*' * 80}
 
-        Your extension has been generated with a gemspec dependency on Spree #{Spree.version}.
+        Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
 
         Please update the Versionfile to designate compatibility with different versions of Spree.
         See http://spreecommerce.com/documentation/extensions.html#versionfile
@@ -44,6 +44,10 @@ module SpreeCmd
     no_tasks do
       def class_name
         Thor::Util.camel_case file_name
+      end
+
+      def spree_version
+        Gem.loaded_specs['spree_cmd'].version.to_s
       end
 
       def use_prefix(prefix)
