@@ -323,14 +323,25 @@ en:
               cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
             inventory_unit:
               other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
-        spree/store:
-          attributes:
-            base:
-              cannot_destroy_default_store: Cannot destroy the default Store.
         spree/shipping_method:
           attributes:
             base:
               required_shipping_category: "You must select at least one shipping category"
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Cannot destroy the default Store.
+        spree/store_credit:
+          attributes:
+            amount_used:
+              cannot_be_greater_than_amount: Cannot be greater than amount.
+              greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.
+            amount_authorized:
+              exceeds_total_credits: Exceeds total credits.
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items.
 
   devise:
     confirmations:

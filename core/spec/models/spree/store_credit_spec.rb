@@ -10,12 +10,13 @@ describe 'StoreCredit' do
 
     context 'amount used is greater than zero' do
       let(:store_credit) { create(:store_credit, amount: 100, amount_used: 1) }
+      let(:validation_message) { I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.greater_than_zero_restrict_delete') }
       subject { store_credit.destroy }
 
       it 'can not delete the store credit' do
         subject
         expect(store_credit.reload).to eq store_credit
-        expect(store_credit.errors[:amount_used]).to include('is greater than zero. Can not delete store credit')
+        expect(store_credit.errors[:amount_used]).to include(validation_message)
       end
     end
 
@@ -62,7 +63,7 @@ describe 'StoreCredit' do
         it 'should set the correct error message' do
           invalid_store_credit.valid?
           attribute_name = I18n.t('activerecord.attributes.spree/store_credit.amount_used')
-          validation_message = Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater')
+          validation_message = I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.cannot_be_greater_than_amount')
           expected_error_message = "#{attribute_name} #{validation_message}"
           expect(invalid_store_credit.errors.full_messages).to include(expected_error_message)
         end
@@ -86,7 +87,7 @@ describe 'StoreCredit' do
 
       it 'adds an error message about the invalid amount used' do
         subject.valid?
-        text = Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater')
+        text = I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.cannot_be_greater_than_amount')
         expect(subject.errors[:amount_used]).to include(text)
       end
     end
@@ -100,7 +101,7 @@ describe 'StoreCredit' do
 
       it 'adds an error message about the invalid authorized amount' do
         subject.valid?
-        text = Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit')
+        text = I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_authorized.exceeds_total_credits')
         expect(subject.errors[:amount_authorized]).to include(text)
       end
     end
