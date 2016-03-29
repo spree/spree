@@ -153,7 +153,7 @@ module Spree
           # @order.reload sets @order.state back to "confirm," which we don't want.
           # Set the state back to payment so that the user can edit their payment after
           # getting to the confirm page (or on a failed payment attempt)
-          @order.state = 'payment'
+          @order.state = "payment"
         end
 
         if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
