@@ -223,21 +223,21 @@ module Spree
       return true if amount_used.nil?
 
       if amount_used > amount
-        errors.add(:amount_used, Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
+        errors.add(:amount_used, :cannot_be_greater_than_amount)
         false
       end
     end
 
     def amount_authorized_less_than_or_equal_to_amount
       if (amount_used + amount_authorized) > amount
-        errors.add(:amount_authorized, Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+        errors.add(:amount_authorized, :exceeds_total_credits)
         false
       end
     end
 
     def validate_no_amount_used
       if amount_used > 0
-        errors.add(:amount_used, 'is greater than zero. Can not delete store credit')
+        errors.add(:amount_used, :greater_than_zero_restrict_delete)
         false
       end
     end
