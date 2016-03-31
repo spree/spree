@@ -18,9 +18,6 @@ namespace :common do
     puts "Setting up dummy database..."
     system("bundle exec rake db:drop db:create db:migrate > #{File::NULL}")
 
-    puts "Precompiling assets..."
-    system("bundle exec rake assets:precompile > #{File::NULL}")
-
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
       puts 'Running extension installation generator...'
@@ -28,6 +25,9 @@ namespace :common do
     rescue LoadError
       puts 'Skipping installation no generator to run...'
     end
+
+    puts "Precompiling assets..."
+    system("bundle exec rake assets:precompile > #{File::NULL}")
   end
 
   task :seed do |_t|
