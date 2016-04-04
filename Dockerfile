@@ -12,11 +12,11 @@ COPY config/docker/etc /etc/
 
 RUN echo '@testing https://s3.amazonaws.com/alpine-packages/testing' >> /etc/apk/repositories \
   && apk add --update-cache \
-    imagemagick=6.9.3.6-r0 \
+    imagemagick=6.9.3.7-r1 \
     libxml2-dev=2.9.3-r0 \
     libxslt-dev=1.1.28-r2 \
     ncurses=6.0-r7 \
-    nodejs=4.3.1-r0 \
+    nodejs=4.4.2-r0 \
     phantomjs@testing=1.9.8-r0 \
     postgresql-dev=9.5.1-r0
 

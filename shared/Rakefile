@@ -17,15 +17,7 @@ task :test_app, :user_class do |t, args|
   Dir.chdir(dummy_path) do
     system(
       { 'RAILS_ENV' => 'test' },
-      *%w[
-        bundle
-        exec
-        rake
-        db:drop
-        db:create
-        db:structure:load
-        assets:precompile
-      ]
+      *%w[rake db:drop db:create db:structure:load assets:precompile]
     )
   end
 end
@@ -72,8 +64,6 @@ task('metrics:coverage').clear
 namespace :metrics do
   desc 'Measure code coverage'
   task :coverage do
-    system(
-      *%w[bundle exec rspec spec --order random]
-    ) or fail "Specs failed"
+    system(*%w[rspec spec --order random]) or fail 'Specs failed'
   end
 end
