@@ -220,6 +220,13 @@ module Spree
         updater.update
       end
 
+      it "updates shipments total again after updating shipments" do
+        expect(updater).to receive(:update_shipment_total).ordered
+        expect(updater).to receive(:update_shipments).ordered
+        expect(updater).to receive(:update_shipment_total).ordered
+        updater.update
+      end
+
       it "updates each shipment" do
         shipment = stub_model(Spree::Shipment, order: order)
         shipments = [shipment]

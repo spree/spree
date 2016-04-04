@@ -20,6 +20,7 @@ module Spree
         update_payment_state
         update_shipments
         update_shipment_state
+        update_shipment_total
       end
       run_hooks
       persist_totals
