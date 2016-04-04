@@ -30,7 +30,7 @@ Spree::Core::Engine.add_routes do
         end
       end
       member do
-        get :clone
+        post :clone
         get :stock
       end
       resources :variants do

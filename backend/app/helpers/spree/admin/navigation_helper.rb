@@ -125,9 +125,11 @@ module Spree
       end
 
       def link_to_clone(resource, options={})
-        options[:data] = { action: 'clone' }
-        options[:class] = "btn btn-primary btn-sm"
-        link_to_with_icon('clone', Spree.t(:clone), clone_object_url(resource), options)
+        options[:data] = { action: 'clone', :'original-title' => Spree.t(:clone) }
+        options[:class] = "btn btn-primary btn-sm with-tip"
+        options[:method] = :post
+        options[:icon] = :clone
+        button_link_to '', clone_object_url(resource), options
       end
 
       def link_to_new(resource)
@@ -186,7 +188,7 @@ module Spree
         if (html_options[:method] &&
             html_options[:method].to_s.downcase != 'get' &&
             !html_options[:remote])
-          form_tag(url, method: html_options.delete(:method)) do
+          form_tag(url, method: html_options.delete(:method), class: 'display-inline') do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else
