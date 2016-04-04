@@ -1,11 +1,10 @@
 steps:
   - name: Test Container
     command: |
-      source strict-mode.sh
-
-      docker pull -- "$PREV_TEST_CONTAINER" || true
-      docker build --tag "$TEST_CONTAINER" -- .
-      docker push -- "$TEST_CONTAINER"
+      if ! docker pull "$TEST_CONTAINER" &> /dev/null; then
+        docker build --tag "$TEST_CONTAINER" -- .
+        docker push "$TEST_CONTAINER"
+      fi
     agents:
       queue: mrh-build
 

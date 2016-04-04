@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source strict-mode.sh
-
 path=$1
 workdir=$(realpath ..)
 
