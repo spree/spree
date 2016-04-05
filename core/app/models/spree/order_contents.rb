@@ -68,7 +68,7 @@ module Spree
       def add_to_line_item(variant, quantity, options)
         fail 'redundant :currency option' if options.key?(:currency)
         shipment = options[:shipment]
-        line_item = grab_line_item_by_variant(variant)
+        line_item = order.find_line_item_by_variant(variant)
 
 
         line_item ||= order.line_items.new(
@@ -89,24 +89,14 @@ module Spree
       end
 
       def remove_from_line_item(variant, quantity, options = {})
-        line_item = grab_line_item_by_variant(variant, true, options)
+        line_item = order.find_line_item_by_variant(variant) or fail ActiveRecord::NotFound, "Line item not found for variant: #{variant.sku}"
         line_item.quantity -= quantity
-        line_item.target_shipment= options[:shipment]
+        line_item.target_shipment = options[:shipment]
 
         if line_item.quantity.zero?
           order.line_items.destroy(line_item)
         else
           line_item.save!
-        end
-
-        line_item
-      end
-
-      def grab_line_item_by_variant(variant, raise_error = false, options = {})
-        line_item = order.find_line_item_by_variant(variant, options)
-
-        if !line_item.present? && raise_error
-          raise ActiveRecord::RecordNotFound, "Line item not found for variant #{variant.sku}"
         end
 
         line_item
