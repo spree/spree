@@ -7,13 +7,17 @@ module Spree
     end
 
     def add(variant, quantity = 1, options = {})
-      line_item = add_to_line_item(variant, quantity, options)
-      after_add_or_remove(line_item, options)
+      target_shipment = options[:shipment]
+
+      line_item = add_to_line_item(variant, quantity, target_shipment)
+      after_add_or_remove(line_item, target_shipment)
     end
 
     def remove(variant, quantity = 1, options = {})
-      line_item = remove_from_line_item(variant, quantity, options)
-      after_add_or_remove(line_item, options)
+      target_shipment = options[:shipment]
+
+      line_item = remove_from_line_item(variant, quantity, target_shipment)
+      after_add_or_remove(line_item, target_shipment)
     end
 
     def update_cart(params)
@@ -33,10 +37,9 @@ module Spree
     end
 
     private
-      def after_add_or_remove(line_item, options = {})
+      def after_add_or_remove(line_item, target_shipment)
         persist_totals
-        shipment = options[:shipment]
-        shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+        target_shipment ? target_shipment.update_amounts : order.ensure_updated_shipments
         PromotionHandler::Cart.new(order, line_item).activate
         persist_totals
         line_item
@@ -65,9 +68,7 @@ module Spree
         order_updater.update
       end
 
-      def add_to_line_item(variant, quantity, options)
-        fail 'redundant :currency option' if options.key?(:currency)
-        shipment = options[:shipment]
+      def add_to_line_item(variant, quantity, target_shipment)
         line_item = order.find_line_item_by_variant(variant)
 
 
@@ -76,11 +77,9 @@ module Spree
           variant: variant
         )
 
-        line_item.options = ActionController::Parameters.new(options).permit(PermittedAttributes.line_item_attributes)
-
         line_item.quantity += quantity
 
-        line_item.target_shipment = shipment
+        line_item.target_shipment = target_shipment
         line_item.currency        = order.currency
         line_item.price           = variant.price_in(order.currency).amount
 
@@ -88,10 +87,10 @@ module Spree
         line_item
       end
 
-      def remove_from_line_item(variant, quantity, options)
+      def remove_from_line_item(variant, quantity, target_shipment)
         line_item = order.find_line_item_by_variant(variant) or fail ActiveRecord::NotFound, "Line item not found for variant: #{variant.sku}"
         line_item.quantity -= quantity
-        line_item.target_shipment = options[:shipment]
+        line_item.target_shipment = target_shipment
 
         if line_item.quantity.zero?
           order.line_items.destroy(line_item)
