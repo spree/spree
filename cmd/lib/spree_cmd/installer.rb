@@ -106,6 +106,7 @@ module SpreeCmd
           gem :spree_auth_devise, version: '3.0.0'
         end
 
+        ENV['DISABLE_SPRING'] = '1'
         run 'bundle install', :capture => true
       end
     end
