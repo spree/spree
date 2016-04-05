@@ -88,7 +88,7 @@ module Spree
         line_item
       end
 
-      def remove_from_line_item(variant, quantity, options = {})
+      def remove_from_line_item(variant, quantity, options)
         line_item = order.find_line_item_by_variant(variant) or fail ActiveRecord::NotFound, "Line item not found for variant: #{variant.sku}"
         line_item.quantity -= quantity
         line_item.target_shipment = options[:shipment]
