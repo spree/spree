@@ -32,7 +32,7 @@
             <%= item.quantity %>
           </td>
           <td class="line-item-qty-edit hidden">
-            <%= number_field_tag :quantity, item.quantity, min: 0, class: 'line_item_quantity', size: 5 %>
+            <%= number_field_tag :quantity, item.quantity, min: 1, class: 'line_item_quantity', size: 5 %>
           </td>
           <td class="line-item-total align-center">
             <%= line_item_shipment_price(item, item.quantity) %>

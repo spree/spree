@@ -1,6 +1,5 @@
 module Spree
   class LineItem < Spree::Base
-    before_validation :invalid_quantity_check
     belongs_to :order, class_name: "Spree::Order", inverse_of: :line_items, touch: true
     belongs_to :variant, class_name: "Spree::Variant", inverse_of: :line_items
     belongs_to :tax_category, class_name: "Spree::TaxCategory"
@@ -14,9 +13,8 @@ module Spree
 
     validates :variant, presence: true
     validates :quantity, numericality: {
-      only_integer: true,
-      greater_than_or_equal_to: 0,
-      message: Spree.t('validation.must_be_int')
+      only_integer:             true,
+      greater_than_or_equal_to: 1
     }
     validates :price, numericality: true
     validates_with Stock::AvailabilityValidator
@@ -89,10 +87,6 @@ module Spree
     end
     alias display_total money
     alias display_amount money
-
-    def invalid_quantity_check
-      self.quantity = 0 if quantity.nil? || quantity < 0
-    end
 
     def sufficient_stock?
       Stock::Quantifier.new(variant).can_supply? quantity

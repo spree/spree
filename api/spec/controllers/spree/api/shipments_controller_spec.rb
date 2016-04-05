@@ -34,8 +34,9 @@ describe Spree::Api::ShipmentsController, :type => :controller do
     describe 'POST #create' do
       let(:params) do
         {
-          variant_id: stock_location.stock_items.first!.variant.to_param,
-          shipment: { order_id: order.number },
+          quantity:          '1',
+          variant_id:        stock_location.stock_items.first!.variant.to_param,
+          shipment:          { order_id: order.number },
           stock_location_id: stock_location.to_param
         }
       end
