@@ -21,8 +21,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[firstname lastname company]
 
     def self.build_default
-      country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
-      new(country: country)
+      new(country: Spree::Country.default)
     end
 
     def self.default(user = nil, kind = "bill")

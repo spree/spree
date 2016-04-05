@@ -33,6 +33,13 @@ describe Spree::Country, type: :model do
         expect(described_class.default.id).to eql america.id
       end
     end
+
+    context 'when config is not set and america is not created' do
+      before { canada.touch }
+      it 'will return the first record' do
+        expect(described_class.default.id).to eql canada.id
+      end
+    end
   end
 
   describe 'ensure default country in not deleted' do
