@@ -38,7 +38,7 @@ these commands:
     rake railties:install:migrations
     rake db:migrate
 
-## Additional information
+## Spree Auth Devise & Spree Gateway
 
 If you are using Spree Gateway and/or Spree Auth Devise you should also upgrade them:
 
@@ -53,6 +53,28 @@ For Spree Auth Devise run installer:
 
 (you don't have to override config/initializers/devise.rb)
 
+## Additional information
+
+### Make sure to v1 namespace custom rabl templates & overrides.
+
+If your rabl templates reference others with extend you'll need to add the v1 namespace.
+
+For example:
+
+```ruby
+extends 'spree/api/zones/show'
+```
+
+Becomes:
+
+```ruby
+extends 'spree/api/v1/zones/show'
+```
+
+### Remove Spree::Config.check_for_spree_alerts
+
+If you were disabling the alert checks you'll now want to remove this preference as it's no longer used.
+
 
 ## Read the release notes
 
@@ -60,4 +82,4 @@ For information about changes contained within this release, please read the [3.
 
 ## Verify that everything is OK
 
-Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+Run you test suite, click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
