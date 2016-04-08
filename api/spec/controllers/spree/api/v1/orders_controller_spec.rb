@@ -388,9 +388,9 @@ module Spree
 
       it "cannot update completed order" do
         order.update_column(:completed_at, Time.current)
-        api_put :update, :id => order.to_param, :order => {
-          :line_items => {
-            "0" => { :id => line_item.id, :quantity => 10 }
+        api_put :update, id: order.to_param, order: {
+          line_items: {
+            '0': { id: line_item.id, price: 0 }
           }
         }
 
