@@ -9,6 +9,7 @@ case ARGV.first
     require 'spree_cmd/extension'
     SpreeCmd::Extension.start
   else
+    warn "[WARNING] Spree CMD Installer is deprecated. Please follow installation instructions at https://github.com/spree/spree#getting-started"
     ARGV.shift
     require 'spree_cmd/installer'
     SpreeCmd::Installer.start

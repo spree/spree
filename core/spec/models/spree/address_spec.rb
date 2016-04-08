@@ -1,8 +1,10 @@
 require 'spec_helper'
 
-describe Spree::Address, :type => :model do
+describe Spree::Address, type: :model do
 
-  subject { Spree::Address }
+  describe 'Callbacks' do
+    it { is_expected.to callback(:clear_invalid_state_entities).before(:validation).on(:update) }
+  end
 
   describe "clone" do
     it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
@@ -232,12 +234,12 @@ describe Spree::Address, :type => :model do
       let(:user) { double("User", bill_address: bill_address, ship_address: ship_address) }
 
       it "returns a copy of that user bill address" do
-        expect(subject.default(user).phone).to eq bill_address.phone
+        expect(Spree::Address.default(user).phone).to eq bill_address.phone
       end
 
       it "falls back to build default when user has no address" do
         allow(user).to receive_messages(bill_address: nil)
-        expect(subject.default(user)).to eq subject.build_default
+        expect(Spree::Address.default(user)).to eq Spree::Address.build_default
       end
     end
   end
@@ -287,5 +289,108 @@ describe Spree::Address, :type => :model do
   context "defines require_phone? helper method" do
     let(:address) { stub_model(Spree::Address) }
     specify { expect(address.instance_eval{ require_phone? }).to be true}
+  end
+
+  context '#clear_state_entities' do
+    let (:address) { create(:address) }
+    before { address.state_name = 'maryland' }
+
+    it { expect { address.send(:clear_state_entities) }.to change { address.state }.to(nil).from(address.state) }
+    it { expect { address.send(:clear_state_entities) }.to change { address.state_name }.to(nil).from('maryland') }
+  end
+
+  context '#clear_state' do
+    let (:address) { create(:address) }
+    before { address.state_name = 'maryland' }
+
+    it { expect { address.send(:clear_state) }.to change { address.state }.to(nil).from(address.state) }
+    it { expect { address.send(:clear_state) }.to_not change(address, :state_name) }
+  end
+
+  context '#clear_state_name' do
+    let (:address) { create(:address) }
+    before { address.state_name = 'maryland' }
+
+    it { expect { address.send(:clear_state_name) }.to_not change(address, :state_id) }
+    it { expect { address.send(:clear_state_name) }.to change { address.state_name }.to(nil).from('maryland') }
+  end
+
+  context '#clear_invalid_state_entities' do
+    let(:country) { create(:country) }
+    let(:state) { create(:state, country: country) }
+    let (:address) { create(:address, country: country, state: state) }
+
+    def clear_state_entities
+      address.send(:clear_invalid_state_entities)
+    end
+
+    context 'state not present and state_name both not present' do
+      before do
+        address.state = nil
+        address.state_name = nil
+        clear_state_entities
+      end
+
+      it { expect(address.state).to be_nil }
+      it { expect(address.state_name).to be_nil }
+    end
+
+    context 'state_name not present and state present ' do
+      before { address.state_name = nil }
+
+      context 'state belongs to a different country than to which address is associated' do
+        before do
+          address.country = create(:country)
+          clear_state_entities
+        end
+
+        it { expect(address.state).to be_nil }
+        it { expect(address.state_name).to be_nil }
+      end
+
+      context 'state belongs to the same country associated with address' do
+        before { clear_state_entities }
+        it { expect(address.state).to eq(state) }
+        it { expect(address.state_name).to be_nil }
+      end
+    end
+
+    context 'state not present and state_name present' do
+      before do
+        address.state = nil
+        address.state_name = state.name
+      end
+
+      context 'when country has no states and state is required' do
+        before do
+          address.country = create(:country, states_required: true)
+          clear_state_entities
+        end
+
+        it { expect(address.state).to be_nil }
+        it { expect(address.state_name).to eq(state.name) }
+      end
+
+      context 'when country has states' do
+        before do
+          address.state_name = state.name
+          clear_state_entities
+        end
+
+        it { expect(address.state).to be_nil }
+        it { expect(address.state_name).to eq(state.name) }
+      end
+
+      context 'when country has no states and state is not required' do
+        before do
+          address.country = create(:country, states_required: false)
+          address.state_name = state.name
+          clear_state_entities
+        end
+
+        it { expect(address.state).to be_nil }
+        it { expect(address.state_name).to be_nil }
+      end
+    end
   end
 end
