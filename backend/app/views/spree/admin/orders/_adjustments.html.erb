@@ -5,11 +5,13 @@
         <%= title %>
       </h1>
     </div>
-    
+
     <table class="table table-bordered">
       <thead>
-        <th><%= Spree.t('name')%></th>
-        <th><%= Spree.t('amount')%></th>
+        <tr>
+          <th><%= Spree.t('name')%></th>
+          <th><%= Spree.t('amount')%></th>
+        </tr>
       </thead>
       <tbody id="order-charges" data-hook="order_details_adjustments">
         <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
@@ -20,7 +22,7 @@
             <td class="total">
               <span>
                 <%= Spree::Money.new(
-                  adjustments.sum(&:amount), 
+                  adjustments.sum(&:amount),
                   currency: adjustments.first.order.try(:currency)
                 ) %>
               </span>
