@@ -25,7 +25,7 @@ gem 'rails', '~> 4.2.6'
 For best results, use the spree gem in version 3.1.x:
 
 ```ruby
-gem 'spree', '~> 3.1.0'
+gem 'spree', '~> 3.1.0.rc1'
 ```
 
 Run `bundle update spree`.
@@ -43,8 +43,8 @@ these commands:
 If you are using Spree Gateway and/or Spree Auth Devise you should also upgrade them:
 
 ```ruby
-gem 'spree_auth_devise', '~> 3.1.0'
-gem 'spree_gateway', '~> 3.1.0'
+gem 'spree_auth_devise', '~> 3.1.0.rc1'
+gem 'spree_gateway', '~> 3.1.0.rc1'
 ```
 
 For Spree Auth Devise run installer:
