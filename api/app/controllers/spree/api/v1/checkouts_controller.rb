@@ -25,6 +25,12 @@ module Spree
         end
 
         def update
+          # not authorized to update if order is already in the completed state
+          if @order.completed?
+            authorize! :read, @order, order_token
+            respond_with(@order, default_template: 'spree/api/v1/orders/show') and return
+          end
+
           authorize! :update, @order, order_token
 
           if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
