@@ -386,6 +386,17 @@ module Spree
         expect(json_response['line_items'].first['price'].to_f).to eq(line_item.variant.price)
       end
 
+      it "cannot update completed order" do
+        order.update_column(:completed_at, Time.current)
+        api_put :update, :id => order.to_param, :order => {
+          :line_items => {
+            "0" => { :id => line_item.id, :quantity => 10 }
+          }
+        }
+
+        expect(response.status).to eq(401)
+      end
+
       it "can add billing address" do
         api_put :update, :id => order.to_param, :order => { :bill_address_attributes => billing_address }
 
