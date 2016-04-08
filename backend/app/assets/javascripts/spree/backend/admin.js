@@ -22,16 +22,33 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-left");
   });
 
+
+//toggle icon "icon-chevron-down" was asynchronous if clicked rapidly
+//now its stable according to the condition of collapsable dropdown.
   $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
     {
-      if($(this).find('.icon-chevron-left').length == 1){
-        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');
-      }
-      else {
-        $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
-      }
+      var $this = $(this),
+          collapseableItemId = $this.attr('href'),
+          $collapseableElem  = $(collapseableItemId + '.collapse'),
+          $updateElemIcon = $this.find('.icon-chevron-left');
+
+      $collapseableElem.on('show.bs.collapse', function () {
+        $updateElemIcon.removeClass('icon-chevron-left')
+                       .addClass('icon-chevron-down');
+      });
+
+      $collapseableElem.on('hidden.bs.collapse', function () {
+        $updateElemIcon.removeClass('icon-chevron-down')
+                       .addClass('icon-chevron-left');
+      });
     }
-  )
+  );
+
+///// Selected item's collapsable dropdown is opened on page refresh
+////or page load which remained close.
+  $('#main-sidebar').find('.selected').parents('.sidebar-menu-item')
+                    .find('[data-toggle="collapse"]').trigger('click');
+
 
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle');
