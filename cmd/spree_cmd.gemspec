@@ -5,20 +5,20 @@ require_relative '../core/lib/spree/core/version.rb'
 Gem::Specification.new do |s|
   s.name        = "spree_cmd"
   s.version     = Spree.version
-  s.authors     = ["Chris Mar"]
-  s.email       = ["chris@spreecommerce.com"]
-  s.homepage    = "http://spreecommerce.com"
+  s.authors     = ['Chris Mar']
+  s.email       = ['chris@spreecommerce.com']
+  s.homepage    = 'http://spreecommerce.com'
   s.license     = 'BSD-3'
-  s.summary     = %q{Spree Commerce command line utility}
-  s.description = %q{tools to create new Spree stores and extensions}
+  s.summary     = 'Spree Commerce command line utility'
+  s.description = 'tools to create new Spree stores and extensions'
 
   s.rubyforge_project = "spree_cmd"
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
   s.bindir        = 'bin'
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec'
   # Temporary hack until https://github.com/wycats/thor/issues/234 is fixed
