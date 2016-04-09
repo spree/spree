@@ -39,14 +39,6 @@ $ brew install imagemagick
 
 If you are using Unix or Windows check out [Imagemagick.org](http://www.imagemagick.org/) for more detailed instructions on how to setup ImageMagick for your particular system.
 
-### Installing Spree
-
-The easiest way to get Spree setup is by installing the `spree_cmd` gem. This can be done with the following command:
-
-```bash
-$ gem install spree_cmd
-```
-
 ## Creating a New Spree Project
 
 The distribution of Spree as a Rubygem allows it to be used in a new Rails project or added to an existing Rails project. This guide will assume you are creating a brand new store and will walk you through the process, starting with the creation of a new Rails application.
@@ -69,20 +61,24 @@ After you create the store application, switch to its folder to continue work di
 $ cd mystore
 ```
 
-Now let's add Spree to our Rails application:
+Add Spree gems to your Gemfile:
 
-```bash
-$ spree install --auto-accept
+```ruby
+gem 'spree', '~> 3.1.0.rc1'
+gem 'spree_auth_devise', '~> 3.1.0.rc1'
+gem 'spree_gateway', '~> 3.1.0.rc1'
 ```
 
-***
-Note that this command will add the Spree dependencies to your gemfile. If you are using a custom build of Spree, or are bundling Spree from Github, you may want to use the rails generator provided by the `spree` gem instead:
+Run `bundle install`
 
-```bash
-$ rails generate spree:install
+Use the install generators to set up Spree:
+
+```shell
+rails g spree:install --user_class=Spree::User
+rails g spree:auth:install
+rails g spree_gateway:install
 ```
 
-This will run the spree generator using the version of Spree you have defined in your Gemfile. Running spree install with a custom source or build will generate an error as your Gemfile will be amended to require different versions of Spree.
 ***
 
 ## Hello, Spree!
