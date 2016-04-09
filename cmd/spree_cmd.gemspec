@@ -12,8 +12,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Spree Commerce command line utility'
   s.description = 'tools to create new Spree stores and extensions'
 
-  s.rubyforge_project = "spree_cmd"
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
   s.bindir        = 'bin'
