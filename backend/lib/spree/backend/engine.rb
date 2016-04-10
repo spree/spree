@@ -19,7 +19,6 @@ module Spree
 
         app.config.assets.precompile += %w[
           spree/backend/all*
-          spree/backend/orders/edit_form.js
           spree/backend/address_states.js
           jqPlot/excanvas.min.js
           spree/backend/images/new.js
