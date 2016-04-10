@@ -199,14 +199,6 @@ module Spree
         end
       end
 
-      def configurations_menu_item(link_text, url, description = '')
-        %(<tr>
-          <td>#{link_to(link_text, url)}</td>
-          <td>#{description}</td>
-        </tr>
-        ).html_safe
-      end
-
       def configurations_sidebar_menu_item(link_text, url, options = {})
         is_active = url.ends_with?(controller.controller_name) ||
                     url.ends_with?("#{controller.controller_name}/edit") ||
