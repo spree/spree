@@ -15,13 +15,6 @@ jQuery(function($) {
     $("span.icon", $(this)).toggleClass("icon-chevron-down");
   });
 
-  $(".js-collapse-sidebar").click(function(){
-    $(".main-right-sidebar").toggleClass("collapsed");
-    $("section.content").toggleClass("sidebar-collapsed");
-    $("span.icon", $(this)).toggleClass("icon-chevron-right");
-    $("span.icon", $(this)).toggleClass("icon-chevron-left");
-  });
-
   $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
     {
       if($(this).find('.icon-chevron-left').length == 1){

@@ -69,17 +69,6 @@ module Spree
         end
       end
 
-      # sidebar are used on order edit, product edit, user overview etc.
-      # this link is shown so a user can collapse the sidebar
-      def collapse_sidebar_link
-        content_tag :div, class: "collapse-sidebar" do
-          link_to "javascript:;", class: "js-collapse-sidebar" do
-            content_tag(:span, nil, class: "icon icon-chevron-right") +
-            content_tag(:span, "Collapse sidebar", class: "text")
-          end
-        end
-      end
-
       # the per_page_dropdown is used on index pages like orders, products, promotions etc.
       # this method generates the select_tag
       def per_page_dropdown
