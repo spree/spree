@@ -24,11 +24,9 @@
 //= require spree/backend/handlebar_extensions
 //= require spree/backend/line_items
 //= require spree/backend/line_items_on_order_edit
-//= require spree/backend/nested-attribute
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/option_value_picker
 //= require spree/backend/orders/edit
-//= require spree/backend/orders/edit_form
 //= require spree/backend/payments/edit
 //= require spree/backend/payments/new
 //= require spree/backend/product_picker
