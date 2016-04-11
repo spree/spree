@@ -7,11 +7,13 @@
     </div>
     <table class="table table-bordered line-items" data-hook="line-items">
       <thead>
-        <th colspan="2"><%= Spree.t(:name) %></th>
-        <th class="text-center"><%= Spree.t(:price) %></th>
-        <th class="text-center"><%= Spree.t(:quantity) %></th>
-        <th class="text-center"><%= Spree.t(:total_price) %></th>
-        <th class="orders-actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
+        <tr>
+          <th colspan="2"><%= Spree.t(:name) %></th>
+          <th class="text-center"><%= Spree.t(:price) %></th>
+          <th class="text-center"><%= Spree.t(:quantity) %></th>
+          <th class="text-center"><%= Spree.t(:total_price) %></th>
+          <th class="orders-actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
+        </tr>
       </thead>
       <tbody>
         <% order.line_items.each do |item| %>
