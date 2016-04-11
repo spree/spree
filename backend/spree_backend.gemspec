@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.email       = 'sean@spreecommerce.com'
   s.homepage    = 'https://spreecommerce.com'
   s.license     = 'BSD-3'
-  s.rubyforge_project = 'spree_backend'
 
   s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
