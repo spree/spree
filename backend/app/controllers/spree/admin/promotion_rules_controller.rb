@@ -1,5 +1,5 @@
 class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
-  helper 'spree/promotion_rules'
+  helper 'spree/admin/promotion_rules'
 
   before_action :load_promotion, only: [:create, :destroy]
   before_action :validate_promotion_rule_type, only: :create
