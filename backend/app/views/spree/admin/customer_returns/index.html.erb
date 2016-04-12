@@ -11,8 +11,7 @@
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) %>
-
-  <% if @customer_returns.any? %>
+  <% if @customer_returns.present? %>
     <table class="table">
       <thead data-hook="customer_return_header">
         <tr>

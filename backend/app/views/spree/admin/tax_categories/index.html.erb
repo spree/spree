@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_tax_category), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_tax_categories_link' %>
 <% end if can? :create, Spree::TaxCategory %>
 
-<% if @tax_categories.any? %>
+<% if @tax_categories.present? %>
 <table class="table" id='listing_tax_categories' data-hook>
   <thead>
     <tr data-hook="tax_header">

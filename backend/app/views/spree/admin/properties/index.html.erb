@@ -36,7 +36,7 @@
   </div>
 <% end %>
 
-<% if @properties.any? %>
+<% if @properties.present? %>
   <table class="table" id='listing_properties' data-hook>
     <thead>
       <tr data-hook="listing_properties_header">

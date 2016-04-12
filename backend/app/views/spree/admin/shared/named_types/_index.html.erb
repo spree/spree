@@ -6,7 +6,7 @@
   <%= button_link_to new_button_text, new_object_url, { icon: 'add', id: 'admin_new_named_type', :class => "btn-success" } %>
 <% end if can? :create, resource %>
 
-<% if @collection.any? %>
+<% if @collection.present? %>
   <table class="table" id='listing_named_types' data-hook>
     <thead>
       <tr data-hook="named_types_header">

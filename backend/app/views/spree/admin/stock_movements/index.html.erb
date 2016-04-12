@@ -7,7 +7,7 @@
   <%= back_to_list_button(Spree::StockLocation.model_name.human, admin_stock_locations_path) %>
 <% end %>
 
-<% if @stock_movements.any? %>
+<% if @stock_movements.present? %>
 <table class="table" id='listing_stock_movements'>
   <colgroup>
     <col style="width: 35%">

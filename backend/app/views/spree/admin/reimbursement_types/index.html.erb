@@ -2,7 +2,7 @@
   <%= plural_resource_name(Spree::ReimbursementType) %>
 <% end %>
 
-<% if @reimbursement_types.any? %>
+<% if @reimbursement_types.present? %>
   <table class="table" id='listing_reimbursement_types' data-hook>
     <thead>
       <tr data-hook="reimbursement_types_header">

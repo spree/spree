@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_payment_method), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_payment_methods_link' %>
 <% end if can? :create, Spree::PaymentMethod %>
 
-<% if @payment_methods.any? %>
+<% if @payment_methods.present? %>
   <table class="table sortable" id='listing_payment_methods' data-hook data-sortable-link="<%= update_positions_admin_payment_methods_url %>">
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
