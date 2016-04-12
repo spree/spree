@@ -5,6 +5,15 @@ describe Spree::StockItem, :type => :model do
 
   subject { stock_location.stock_items.order(:id).first }
 
+  describe "associations" do
+    it do
+      is_expected.to belong_to(:active_stock_location).
+        conditions(active: true).
+        class_name("Spree::StockLocation").
+        with_foreign_key(:stock_location_id)
+    end
+  end
+
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10
   end

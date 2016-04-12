@@ -8,6 +8,15 @@ describe Spree::Variant, :type => :model do
 
   it_behaves_like 'default_price'
 
+  describe 'associations' do
+    it do
+      is_expected.to have_many(:stock_items_with_active_location).
+        conditions(:with_active_stock_location).
+        class_name("Spree::StockItem").
+        dependent(:destroy)
+    end
+  end
+
   describe 'validations' do
     it { expect(master_variant).to_not validate_presence_of(:option_values) }
     it { expect(variant).to validate_presence_of(:option_values) }
@@ -58,6 +67,7 @@ describe Spree::Variant, :type => :model do
 
       context 'when a variant is created' do
         let!(:new_variant) { create(:variant, product: product) }
+        before { product.reload }
 
         it { expect(product.master).to_not be_in_stock }
       end
