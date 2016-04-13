@@ -28,10 +28,6 @@ module Spree
 
 
       private
-        def load_product
-          @product = Product.friendly.find(params[:product_id])
-        end
-
         def setup_new_option_value
           @option_type.option_values.build if @option_type.option_values.empty?
         end
