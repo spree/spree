@@ -15,7 +15,6 @@ module Spree
 
     before_action :associate_user
     before_action :check_authorization
-    before_action :apply_coupon_code
 
     before_action :setup_for_current_state
     before_action :add_store_credit_payments, only: [:update]
