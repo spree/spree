@@ -15,6 +15,7 @@ module Spree
       end
 
       def initialize(adjustable)
+        ActiveSupport::Deprecation.warn "PromotionAccumulator will be removed in Spree 3.3.0. Please use Adjusters (https://github.com/spree/spree/blob/master/guides/content/developer/core/adjustments.md#extending-adjustments)"
         @adjustable = adjustable
         @adjustments, @sources, @promotions = [], [], []
         all_adjustments.each { |a| add_adjustment(a) }
