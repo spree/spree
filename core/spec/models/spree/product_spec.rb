@@ -224,6 +224,16 @@ describe Spree::Product, :type => :model do
         expect(product.slug).not_to match "/"
       end
 
+      it "stores old slugs in FriendlyIds history" do
+        # create_slug is a private method, included by FriendlyId::History
+        # it's effect is rather complex and dependent on state and config.
+        # However, when a new slug is set, it should call slugs.create!
+        expect(product.slugs).to receive(:create!)
+        # Set it, otherwise the create_slug method avoids writing a new one
+        product.slug = "custom-slug"
+        product.run_callbacks :save
+      end
+
       context "when product destroyed" do
 
         it "renames slug" do

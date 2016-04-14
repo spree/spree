@@ -23,6 +23,17 @@ describe Spree::Taxon, :type => :model do
       expect(taxon.permalink).to eql 'ni-hao'
     end
 
+    it "stores old slugs in FriendlyIds history" do
+      # Stub out unrelated methods that cannot handle a save without an id
+      allow(subject).to receive(:set_depth!)
+      # create_slug is a private method, included by FriendlyId::History
+      # it's effect is rather complex and dependent on state and config.
+      # However, when a new slug is set, it should call slugs.create!
+      expect(subject.slugs).to receive(:create!)
+      subject.permalink = "custom-slug"
+      subject.run_callbacks :save
+    end
+
     context "with parent taxon" do
       let(:parent) { FactoryGirl.build(:taxon, :permalink => "brands") }
       before       { allow(taxon).to receive_messages parent: parent }

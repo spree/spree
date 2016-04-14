@@ -4,7 +4,7 @@ require 'stringex'
 module Spree
   class Taxon < Spree::Base
     extend FriendlyId
-    friendly_id :permalink, slug_column: :permalink, use: :slugged
+    friendly_id :permalink, slug_column: :permalink, use: :history
     before_create :set_permalink
 
     acts_as_nested_set dependent: :destroy
