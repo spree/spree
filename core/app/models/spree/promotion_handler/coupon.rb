@@ -85,7 +85,7 @@ module Spree
         end
 
         # Check for applied line items.
-        created_line_items = promotion.actions.detect { |a| a.type == 'Spree::Promotion::Actions::CreateLineItems' }
+        created_line_items = promotion.actions.detect { |a| Object.const_get(a.type).ancestors.include?(Spree::Promotion::Actions::CreateLineItems) }
 
         if discount || created_line_items
           order.update_totals
