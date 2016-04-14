@@ -121,12 +121,6 @@ module Spree
         button_link_to '', clone_object_url(resource), options
       end
 
-      def link_to_new(resource)
-        options[:data] = { action: 'new' }
-        options[:class] = "btn btn-success btn-sm"
-        link_to_with_icon('plus', Spree.t(:new), edit_object_url(resource))
-      end
-
       def link_to_edit(resource, options={})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }

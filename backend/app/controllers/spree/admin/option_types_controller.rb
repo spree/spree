@@ -28,20 +28,8 @@ module Spree
 
 
       private
-        def load_product
-          @product = Product.friendly.find(params[:product_id])
-        end
-
         def setup_new_option_value
           @option_type.option_values.build if @option_type.option_values.empty?
-        end
-
-        def set_available_option_types
-          @available_option_types = if @product.option_type_ids.any?
-            OptionType.where.not(id: @product.option_type_ids)
-          else
-            OptionType.all
-          end
         end
     end
   end
