@@ -40,10 +40,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     else
       invoke_callbacks(:update, :fails)
       respond_with(@object) do |format|
-        format.html do
-          flash.now[:error] = @object.errors.full_messages.join(", ")
-          render action: 'edit'
-        end
+        format.html { render action: :edit }
         format.js { render layout: false }
       end
     end
@@ -62,10 +59,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     else
       invoke_callbacks(:create, :fails)
       respond_with(@object) do |format|
-        format.html do
-          flash.now[:error] = @object.errors.full_messages.join(", ")
-          render action: 'new'
-        end
+        format.html { render action: :new }
         format.js { render layout: false }
       end
     end
