@@ -2,6 +2,8 @@
   <%= Spree.t(:editing_resource, resource: Spree::StoreCreditCategory.model_name.human) %>
 <% end %>
 
+<%= render 'spree/admin/shared/error_messages', target: @store_credit_category %>
+
 <%= form_for [:admin, @store_credit_category] do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>
