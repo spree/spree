@@ -3,7 +3,7 @@
     <%= f.field_container :name, class: ["form-group"] do %>
       <%= f.label :name, Spree.t(:name) %><br>
       <%= f.text_field :name, class: 'form-control' %>
-      <%= error_message_on :shipping_category, :name %>
+      <%= f.error_message_on :name %>
     <% end %>
   </div>
 </div>

@@ -5,7 +5,7 @@
         <%= f.field_container :name, class: ['form-group']  do %>
           <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
           <%= f.text_field :name, class: 'form-control', required: true %>
-          <%= error_message_on :stock_location, :name %>
+          <%= f.error_message_on :name %>
         <% end %>
       </div>
       <div data-hook="stock_location_admin_name">

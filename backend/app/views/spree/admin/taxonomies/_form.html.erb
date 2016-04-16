@@ -2,6 +2,6 @@
   <%= f.field_container :name, class: ['form-group'] do %>
     <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
     <%= f.text_field :name, :class => 'form-control' %>
-    <%= error_message_on :taxonomy, :name, :class => 'error-message' %>
+    <%= f.error_message_on :name, :class => 'error-message' %>
   <% end %>
 </div>
