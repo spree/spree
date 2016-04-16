@@ -2,6 +2,7 @@
   <%= f.field_container :name, class: ['form-group'] do %>
     <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
     <%= f.text_field :name, class: 'form-control' %>
+    <%= error_message_on :object, :name %>
   <% end %>
   <div class="checkbox">
     <%= label_tag :active do %>

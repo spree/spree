@@ -9,6 +9,7 @@
         <%= zone_form.field_container :name, class: ['form-group'] do %>
           <%= zone_form.label :name, Spree.t(:name) %>
           <%= zone_form.text_field :name, :class => 'form-control' %>
+          <%= error_message_on :zone, :name %>
         <% end %>
 
         <%= zone_form.field_container :description, class: ['form-group'] do %>

@@ -1,12 +1,18 @@
 <div data-hook="admin_country_form_fields">
   <div data-hook="name" class="form-group">
-    <%= f.label :name, Spree.t(:name) %>
-    <%= f.text_field :name, :class => 'form-control' %>
+    <%= f.field_container :name, class: ["form-group"] do %>
+      <%= f.label :name, Spree.t(:name) %>
+      <%= f.text_field :name, :class => 'form-control' %>
+      <%= error_message_on :country, :name %>
+    <% end %>
   </div>
 
   <div data-hook="iso_name" class="form-group">
-    <%= f.label :iso_name, Spree.t(:iso_name) %>
-    <%= f.text_field :iso_name, :class => 'form-control' %>
+    <%= f.field_container :iso_name, class: ["form-group"] do %>
+      <%= f.label :iso_name, Spree.t(:iso_name) %>
+      <%= f.text_field :iso_name, :class => 'form-control' %>
+      <%= error_message_on :country, :iso_name %>
+    <% end %>
   </div>
 
   <div data-hook="states_required" class="checkbox">
