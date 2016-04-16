@@ -332,6 +332,55 @@ describe "Products", type: :feature do
           expect(first('input[type=text]').value).to eq('baseball_cap_color')
         end
       end
+
+      context "using a locale with a different decimal format" do
+        before do
+          # change English locale’s separator and delimiter to match 19,99 format
+          I18n.backend.store_translations(
+            :en,
+            number: {
+              currency: {
+                format: {
+                  separator: ",",
+                  delimiter: "."
+                }
+              },
+              format: {
+                separator: ",",
+                delimiter: "."
+              }
+            }
+          )
+        end
+
+        after do
+          # revert changes to English locale
+          I18n.backend.store_translations(
+            :en,
+            number: {
+              currency: {
+                format: {
+                  separator: ".",
+                  delimiter: ","
+                }
+              },
+              format: {
+                separator: ".",
+                delimiter: ","
+              }
+            }
+          )
+        end
+
+        it 'should parse correctly decimal values like weight' do
+          visit spree.admin_product_path(product)
+          fill_in 'product_weight', with: '1'
+          click_button 'Update'
+          weight_prev = find('#product_weight').value
+          click_button 'Update'
+          expect(find('#product_weight').value).to eq(weight_prev)
+        end
+      end
     end
 
     context 'deleting a product', :js => true do
