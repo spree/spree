@@ -1,5 +1,6 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::Zone.model_name.human) %>
+  <%= link_to Spree.t(:zones), spree.admin_zones_url %> /
+  <%= @zone.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @zone } %>
