@@ -1,9 +1,10 @@
-<% content_for :page_title do %>
-  <%= link_to "#{@user.email}", edit_admin_user_url(@user) %> / <%= Spree.t(:"admin.user.order_history") %>
-<% end %>
-
 <%= render partial: 'spree/admin/users/sidebar', locals: { current: :orders } %>
 <%= render partial: 'spree/admin/users/user_page_actions' %>
+
+<% content_for :page_title do %>
+  <%= link_to @user.email, spree.edit_admin_user_url(@user) %> /
+  <%= Spree.t(:"admin.user.order_history") %>
+<% end %>
 
 <fieldset data-hook="admin_user_order_history">
   <%= paginate @orders %>
