@@ -1,11 +1,8 @@
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @prototype } %>
 
 <% content_for :page_title do %>
+  <%= link_to Spree.t(:prototypes), spree.admin_prototypes_url %> /
   <%= Spree.t(:new_prototype) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= back_to_list_button(Spree::Prototype.model_name.human, admin_prototypes_path) %>
 <% end %>
 
 <%= form_for [:admin, @prototype] do |f| %>
