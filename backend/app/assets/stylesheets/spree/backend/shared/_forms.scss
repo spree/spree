@@ -33,7 +33,8 @@ input.form-control {
       color: $brand-danger
     }
 
-    input {
+    input,
+    .select2-choice {
       border-color: $brand-danger;
     }
   }
