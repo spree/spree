@@ -3,7 +3,7 @@
     <%= f.field_container :email, class: ['form-group'] do %>
       <%= f.label :email, Spree.t(:email) %>
       <%= f.email_field :email, :class => 'form-control' %>
-      <%= error_message_on :user, :email %>
+      <%= f.error_message_on :email %>
     <% end %>
 
     <div data-hook="admin_user_form_roles" class="form-group">

@@ -79,17 +79,6 @@ describe Spree::Admin::WidgetsController, :type => :controller do
       expect { subject }.to change { Widget.count }.by(1)
     end
 
-    context 'failure' do
-      let(:params) do
-        {widget: {name: ''}} # blank name generates an error
-      end
-
-      it 'sets a flash error' do
-        subject
-        expect(flash[:error]).to eq assigns(:widget).errors.full_messages.join(', ')
-      end
-    end
-
     context 'without any parameters' do
       let(:params) { {} }
 
@@ -117,20 +106,6 @@ describe Spree::Admin::WidgetsController, :type => :controller do
 
     it 'updates the resource' do
       expect { subject }.to change { widget.reload.name }.from('a widget').to('widget renamed')
-    end
-
-    context 'failure' do
-      let(:params) do
-        {
-          id: widget.to_param,
-          widget: {name: ''}, # a blank name will trigger a validation error
-        }
-      end
-
-      it 'sets a flash error' do
-        subject
-        expect(flash[:error]).to eq assigns(:widget).errors.full_messages.join(', ')
-      end
     end
   end
 
@@ -273,4 +248,3 @@ describe Spree::Admin::Submodule::PostsController, type: :controller do
     end
   end
 end
-
