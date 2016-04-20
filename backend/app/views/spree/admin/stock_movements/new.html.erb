@@ -1,9 +1,7 @@
 <% content_for :page_title do %>
+  <%= link_to Spree.t(:stock_locations), spree.admin_stock_locations_url %> /
+  <%= link_to Spree.t(:stock_movements), spree.admin_stock_location_stock_movements_path(stock_location) %> /
   <%= Spree.t(:new_stock_movement) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= back_to_list_button(Spree::StockMovement.model_name.human, admin_stock_location_stock_movements_path(stock_location)) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @stock_movement } %>
