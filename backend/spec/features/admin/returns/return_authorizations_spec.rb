@@ -91,7 +91,7 @@ describe "Return Authorizations", type: :feature do
       it 'opens return authorization edit page' do
         visit spree.admin_return_authorizations_path
         click_link return_authorization.number
-        expect(page).to have_content("Return Authorization #{return_authorization.number}")
+        expect(page).to have_content(return_authorization.number)
       end
     end
 
