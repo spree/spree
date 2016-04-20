@@ -4,6 +4,33 @@ describe Spree::InventoryUnit, :type => :model do
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
 
+  describe 'scopes' do
+    let!(:inventory_unit_1) { create(:inventory_unit, state: 'on_hand') }
+    let!(:inventory_unit_2) { create(:inventory_unit, state: 'backordered') }
+    let!(:inventory_unit_3) { create(:inventory_unit, state: 'shipped') }
+    let!(:inventory_unit_4) { create(:inventory_unit, state: 'returned') }
+
+    describe '.backordered' do
+      it { expect(Spree::InventoryUnit.backordered).to eq([inventory_unit_2]) }
+    end
+
+    describe '.on_hand' do
+      it { expect(Spree::InventoryUnit.on_hand).to eq([inventory_unit_1]) }
+    end
+
+    describe '.on_hand_or_backordered' do
+      it { expect(Spree::InventoryUnit.on_hand_or_backordered).to eq([inventory_unit_1, inventory_unit_2]) }
+    end
+
+    describe '.shipped' do
+      it { expect(Spree::InventoryUnit.shipped).to eq([inventory_unit_3]) }
+    end
+
+    describe '.returned' do
+      it { expect(Spree::InventoryUnit.returned).to eq([inventory_unit_4]) }
+    end
+  end
+
   context "#backordered_for_stock_item" do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
