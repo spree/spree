@@ -1,9 +1,6 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::ShippingCategory.model_name.human) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= back_to_list_button(Spree::ShippingCategory.model_name.human, admin_shipping_categories_path) %>
+  <%= link_to Spree.t(:shipping_categories), spree.admin_shipping_categories_url %> /
+  <%= @shipping_category.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @shipping_category } %>
