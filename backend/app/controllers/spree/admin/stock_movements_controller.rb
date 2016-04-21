@@ -21,10 +21,6 @@ module Spree
         redirect_to admin_stock_location_stock_movements_path(stock_location)
       end
 
-      def edit
-        @stock_movement = StockMovement.find(params[:id])
-      end
-
       private
 
       def stock_location
