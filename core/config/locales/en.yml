@@ -823,7 +823,7 @@ en:
     lifetime_stats: Lifetime Stats
     line_item_adjustments: "Line item adjustments"
     list: List
-    loading: Loading
+    loading: Loading...
     loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location

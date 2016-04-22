@@ -110,7 +110,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
             url: Spree.url(Spree.routes.jstree_theme_path)
           strings:
             new_node: new_taxon,
-            loading: Spree.translations.loading + "..."
+            loading: Spree.translations.loading
           crrm:
             move:
               check_move: (m) ->
