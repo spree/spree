@@ -219,11 +219,15 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def object_url(object = nil, options = {})
+    object_path(object, options)
+  end
+
+  def object_path(object = nil, options = {})
     target = object ? object : @object
     if parent_data.present?
-      spree.send "admin_#{resource.model_name}_#{resource.object_name}_url", parent, target, options
+      spree.send "admin_#{resource.model_name}_#{resource.object_name}_path", parent, target, options
     else
-      spree.send "admin_#{resource.object_name}_url", target, options
+      spree.send "admin_#{resource.object_name}_path", target, options
     end
   end
 
