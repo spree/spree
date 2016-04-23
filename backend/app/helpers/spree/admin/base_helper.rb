@@ -144,11 +144,6 @@ module Spree
         resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
       end
 
-      def back_to_list_button(resource, path)
-        button_text = Spree.t(:back_to_resource_list, resource: resource)
-        link_to_with_icon 'arrow-left', button_text, path, class: 'btn btn-default'
-      end
-
       def order_time(time)
         [I18n.l(time.to_date), time.strftime("%l:%M %p")].join('')
       end
