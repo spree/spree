@@ -11,7 +11,8 @@ module Spree
       end
 
       def add(inventory_unit, state = :on_hand)
-        contents << ContentItem.new(inventory_unit, state) unless find_item(inventory_unit)
+         # Remove find_item check as already taken care by prioritizer
+        contents << ContentItem.new(inventory_unit, state)
       end
 
       def add_multiple(inventory_units, state = :on_hand)
@@ -62,11 +63,12 @@ module Spree
       end
 
       def shipping_categories
-        contents.map { |item| item.variant.shipping_category }.compact.uniq
+        Spree::ShippingCategory.joins(products: :variants_including_master).
+          where(spree_variants: { id: variant_ids }).uniq
       end
 
       def shipping_methods
-        shipping_categories.map(&:shipping_methods).reduce(:&).to_a
+        shipping_categories.includes(:shipping_methods).map(&:shipping_methods).reduce(:&).to_a
       end
 
       def inspect
@@ -98,6 +100,12 @@ module Spree
 
       def dimension
         contents.sum(&:dimension)
+      end
+
+      private
+
+      def variant_ids
+        contents.map { |item| item.inventory_unit.variant_id }.compact.uniq
       end
     end
   end
