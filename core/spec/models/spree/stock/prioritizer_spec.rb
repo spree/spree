@@ -30,7 +30,7 @@ module Spree
         end
 
         packages = [package1]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
         expect(packages.size).to eq 1
       end
@@ -47,7 +47,7 @@ module Spree
         end
 
         packages = [package1, package2]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
         expect(packages.size).to eq 1
       end
@@ -61,7 +61,7 @@ module Spree
         end
 
         packages = [package1, package2]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
         expect(packages.size).to eq 2
       end
@@ -77,7 +77,7 @@ module Spree
         end
 
         packages = [package1, package2]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
         expect(packages.count).to eq 2
         expect(packages[0].quantity).to eq 2
@@ -95,7 +95,7 @@ module Spree
         end
 
         packages = [package1, package2]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
 
         expect(packages[0].quantity(:backordered)).to eq 3
@@ -113,7 +113,7 @@ module Spree
         end
 
         packages = [package1, package2]
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         packages = prioritizer.prioritized_packages
         expect(packages[0]).to eq package2
         expect(packages[1]).to be_nil

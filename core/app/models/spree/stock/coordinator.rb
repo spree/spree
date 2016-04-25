@@ -55,7 +55,7 @@ module Spree
       end
 
       def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(inventory_units, packages)
+        prioritizer = Prioritizer.new(packages)
         prioritizer.prioritized_packages
       end
 

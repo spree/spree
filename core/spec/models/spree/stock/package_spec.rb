@@ -64,13 +64,11 @@ module Spree
         method2   = create(:shipping_method)
         method1.shipping_categories = [category1, category2]
         method2.shipping_categories = [category1]
-        variant1 = mock_model(Variant, shipping_category: category1)
-        variant2 = mock_model(Variant, shipping_category: category2)
-        variant3 = mock_model(Variant, shipping_category: nil)
-        contents = [ContentItem.new(build(:inventory_unit, variant: variant1)),
-                    ContentItem.new(build(:inventory_unit, variant: variant1)),
-                    ContentItem.new(build(:inventory_unit, variant: variant2)),
-                    ContentItem.new(build(:inventory_unit, variant: variant3))]
+        variant1 = create(:product, shipping_category: category1).master
+        variant2 = create(:product, shipping_category: category2).master
+        contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
+                    ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
+                    ContentItem.new(build(:inventory_unit, variant_id: variant2.id))]
 
         package = Package.new(stock_location, contents)
         expect(package.shipping_methods).to eq([method1])
@@ -104,16 +102,6 @@ module Spree
         expect(last_unit.state).to eq 'backordered'
 
         expect(shipment.shipping_method).to eq shipping_method
-      end
-
-      it 'does not add an inventory unit to a package twice' do
-        # since inventory units currently don't have a quantity
-        unit = build_inventory_unit
-        subject.add unit
-        subject.add unit
-        expect(subject.quantity).to eq 1
-        expect(subject.contents.first.inventory_unit).to eq unit
-        expect(subject.contents.first.quantity).to eq 1
       end
 
       describe "#add_multiple" do
