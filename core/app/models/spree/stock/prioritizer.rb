@@ -1,12 +1,12 @@
 module Spree
   module Stock
     class Prioritizer
-      attr_reader :packages, :inventory_units
+      attr_reader :packages
 
-      def initialize(inventory_units, packages, adjuster_class=Adjuster)
-        @inventory_units = inventory_units
+      def initialize(packages, adjuster_class=Adjuster)
         @packages = packages
         @adjuster_class = adjuster_class
+        @adjusters = Hash.new
       end
 
       def prioritized_packages
@@ -17,22 +17,32 @@ module Spree
       end
 
       private
+
       def adjust_packages
-        inventory_units.each do |inventory_unit|
-          adjuster = @adjuster_class.new(inventory_unit, :on_hand)
+        packages.each do |package|
+          package.contents.each do |item|
+            adjuster = find_adjuster(item)
 
-          visit_packages(adjuster)
+            if adjuster.nil?
+              adjuster = build_adjuster(item, package)
+            elsif item.state == :on_hand && adjuster.status == :backordered
+              # Remove item from backordered package
+              adjuster.package.remove(item.inventory_unit)
+              # Reassign adjuster's status package
+              adjuster.reassign(:on_hand, package)
+            end
 
-          adjuster.status = :backordered
-          visit_packages(adjuster)
+            adjuster.adjust(package)
+          end
         end
       end
 
-      def visit_packages(adjuster)
-        packages.each do |package|
-          item = package.find_item adjuster.inventory_unit, adjuster.status
-          adjuster.adjust(package) if item
-        end
+      def build_adjuster(item, package)
+        @adjusters[item.inventory_unit] = @adjuster_class.new(item.inventory_unit, item.state, package)
+      end
+
+      def find_adjuster(item)
+        @adjusters[item.inventory_unit]
       end
 
       def sort_packages
