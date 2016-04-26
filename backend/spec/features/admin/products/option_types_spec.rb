@@ -59,7 +59,7 @@ describe "Option Types", type: :feature, js: true do
     create(:option_value, option_type: option_type)
     click_link "Option Types"
     within('table#listing_option_types') { click_icon :edit }
-    expect(page).to have_content(option_type.presentation)
+    expect(page).to have_content(option_type.name)
     expect(all("tbody#option_values tr").count).to eq(1)
     within("tbody#option_values") do
       find('.spree_remove_fields').click
