@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= link_to Spree.t(:properties), admin_properties_url %> /
-  <%= @property.presentation %>
+  <%= @property.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @property } %>
