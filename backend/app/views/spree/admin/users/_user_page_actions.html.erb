@@ -1,4 +1,3 @@
 <% content_for :page_actions do %>
-  <%= back_to_list_button(Spree.user_class.model_name.human, spree.admin_users_path) %>
   <%= button_link_to Spree.t(:create_new_order), spree.new_admin_order_path(user_id: @user.id), class: "btn-success", icon: 'add' %>
 <% end %>

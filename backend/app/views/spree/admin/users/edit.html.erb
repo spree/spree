@@ -1,9 +1,9 @@
-<% content_for :page_title do %>
-  <%= Spree.t(:editing_user) %> <%= @user.email %>
-<% end %>
-
 <%= render partial: 'spree/admin/users/sidebar', locals: { current: :account } %>
 <%= render partial: 'spree/admin/users/user_page_actions' %>
+
+<% content_for :page_title do %>
+  <%= @user.email %>
+<% end %>
 
 <div data-hook="admin_user_edit_general_settings" class="panel panel-default">
   <div class="panel-heading">

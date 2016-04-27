@@ -2,13 +2,13 @@
   <% if @return_authorization.can_cancel? %>
     <%= button_link_to Spree.t('actions.cancel'), fire_admin_order_return_authorization_url(@order, @return_authorization, e: 'cancel'), method: :put, data: { confirm: Spree.t(:are_you_sure) }, icon: "delete" %>
   <% end %>
-  <%= button_link_to Spree.t(:back), spree.admin_order_return_authorizations_url(@order), icon: 'arrow-left' %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :return_authorizations } %>
 
 <% content_for :page_title do %>
-  / <%= Spree.t(:return_authorization) %> <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
+  / <%= link_to Spree.t(:return_authorizations), spree.admin_order_return_authorizations_url %>
+  / <%= @return_authorization.number %> (<%= Spree.t(@return_authorization.state.downcase) %>)
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @return_authorization } %>

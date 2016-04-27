@@ -1,9 +1,6 @@
 <% content_for :page_title do %>
+  <%= link_to collection_url_label, collection_url %> /
   <%= page_title %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= link_to_with_icon 'arrow-left', back_button_text, collection_url, class: 'btn btn-default' %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>

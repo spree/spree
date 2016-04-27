@@ -1,4 +1,5 @@
 <% content_for :page_title do %>
+  <%= link_to Spree.t(:stock_transfers), spree.admin_stock_transfers_url %> /
   <%= Spree.t(:new_stock_transfer) %>
 <% end %>
 
@@ -48,7 +49,7 @@
           <%= label_tag :transfer_destination_location_id, Spree.t(:destination) %>
           <%= select_tag :transfer_destination_location_id, {}, class: 'select2' %>
         </div>
-      </div>  
+      </div>
     </div>
   </div>
 
