@@ -1,2 +1,2 @@
-Spree::TaxCategory.create!(:name => "Clothing")
-Spree::TaxCategory.create!(:name => "Food")
+Spree::TaxCategory.where(name: 'Clothing').first_or_create!
+Spree::TaxCategory.where(name: 'Food').first_or_create!
