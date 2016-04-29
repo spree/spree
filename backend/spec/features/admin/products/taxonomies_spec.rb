@@ -9,12 +9,12 @@ describe "Taxonomies", type: :feature, js: true do
   end
 
   context "show" do
-    it "should display existing taxonomies" do
+    it 'should display existing taxonomies' do
       create(:taxonomy, name: 'Brand')
       create(:taxonomy, name: 'Categories')
-      click_link "Taxonomies"
-      within_row(1) { expect(page).to have_content("Brand") }
-      within_row(2) { expect(page).to have_content("Categories") }
+      visit spree.admin_taxonomies_path
+      within_row(1) { expect(page).to have_content('Brand') }
+      within_row(2) { expect(page).to have_content('Categories') }
     end
   end
 
