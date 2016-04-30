@@ -117,6 +117,11 @@ RSpec.configure do |config|
   config.include Paperclip::Shoulda::Matchers
 
   config.extend WithModel
+
+  config.include VersionCake::TestHelpers, type: :controller
+  config.before(:each, type: :controller) do
+    set_request_version('', 1)
+  end
 end
 
 module Spree
