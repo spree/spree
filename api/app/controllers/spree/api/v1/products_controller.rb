@@ -57,6 +57,9 @@ module Spree
         #     shipping_category: "Free Shipping Items"
         #   }
         #
+        def new
+        end
+
         def create
           authorize! :create, Product
           params[:product][:available_on] ||= Time.current

@@ -16,6 +16,9 @@ module Spree
           show
         end
 
+        def new
+        end
+
         def create
           authorize! :create, Taxonomy
           @taxonomy = Taxonomy.new(taxonomy_params)

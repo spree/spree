@@ -26,6 +26,9 @@ module Spree
           show
         end
 
+        def new
+        end
+
         def create
           authorize! :create, Taxon
           @taxon = Spree::Taxon.new(taxon_params)

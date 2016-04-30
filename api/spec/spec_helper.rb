@@ -52,4 +52,9 @@ RSpec.configure do |config|
   config.before do
     Spree::Api::Config[:requires_authentication] = true
   end
+
+  config.include VersionCake::TestHelpers, type: :controller
+  config.before(:each, type: :controller) do
+    set_request_version('', 1)
+  end
 end

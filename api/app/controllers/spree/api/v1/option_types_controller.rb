@@ -16,6 +16,9 @@ module Spree
           respond_with(@option_type)
         end
 
+        def new
+        end
+
         def create
           authorize! :create, Spree::OptionType
           @option_type = Spree::OptionType.new(option_type_params)
