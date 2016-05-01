@@ -187,17 +187,5 @@ module Spree
     def check_authorization
       authorize!(:edit, current_order, cookies.signed[:guest_token])
     end
-
-    def sanitize_zip_code
-      order_params = params[:order]
-      return unless order_params
-      strip_zip(order_params[:bill_address_attributes])
-      strip_zip(order_params[:ship_address_attributes])
-    end
-
-    def strip_zip(address_params)
-      return unless address_params
-      address_params[:zipcode] = address_params[:zipcode].strip if address_params[:zipcode]
-    end
   end
 end
