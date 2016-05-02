@@ -1,5 +1,7 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:taxon_edit) %>
+  <%= link_to Spree.t(:taxonomies), spree.admin_taxonomies_url %> /
+  <%= link_to @taxonomy.name, spree.edit_admin_taxonomy_url(@taxonomy) %> /
+  <%= @taxon.name %>
 <% end %>
 
 <%# Because otherwise the form would attempt to use to_param of @taxon %>

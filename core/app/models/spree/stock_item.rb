@@ -23,6 +23,7 @@ module Spree
     after_touch { variant.touch }
 
     self.whitelisted_ransackable_attributes = ['count_on_hand', 'stock_location_id']
+    self.whitelisted_ransackable_associations = ['variant']
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
 

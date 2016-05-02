@@ -1,9 +1,6 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:editing_resource, resource: Spree::Prototype.model_name.human) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= back_to_list_button(Spree::Prototype.model_name.human, admin_prototypes_path) %>
+  <%= link_to Spree.t(:prototypes), spree.admin_prototypes_url %> /
+  <%= @prototype.name %>
 <% end %>
 
 <%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @prototype } %>
