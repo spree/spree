@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:reimbursement_types), spree.admin_reimbursement_types_url %> /
+  <%= Spree.t(:new_reimbursement_type) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @reimbursement_type } %>
+
+<%= form_for [:admin, @reimbursement_type] do |reimbursement_form| %>
+  <%= render partial: 'form', locals: { f: reimbursement_form } %>
+  <%= render partial: 'spree/admin/shared/new_resource_links' %>
+<% end %>
