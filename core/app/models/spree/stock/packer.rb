@@ -24,10 +24,11 @@ module Spree
         # Group by variant_id as grouping by variant fires cached query.
         inventory_units.group_by(&:variant_id).each do |variant_id, variant_inventory_units|
           variant = Spree::Variant.find(variant_id)
-          units = variant_inventory_units.clone
-          if variant.should_track_inventory?
-            next unless stock_location.stock_item(variant)
+          next unless stock_location.stock_item(variant)
 
+          units = variant_inventory_units.clone
+
+          if variant.should_track_inventory?
             on_hand, backordered = stock_location.fill_status(variant, units.size)
             on_hand_units, backordered_units = units.slice!(0, on_hand), units.slice!(0, backordered)
 
