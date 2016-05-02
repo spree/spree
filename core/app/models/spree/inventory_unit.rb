@@ -14,6 +14,7 @@ module Spree
 
     scope :backordered, -> { where state: 'backordered' }
     scope :on_hand, -> { where state: 'on_hand' }
+    scope :on_hand_or_backordered, -> { where state: ['backordered', 'on_hand'] }
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
     scope :backordered_per_variant, ->(stock_item) do

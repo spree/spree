@@ -885,6 +885,58 @@ describe Spree::Order, :type => :model do
   end
 
   describe "#create_proposed_shipments" do
+    context 'has unassociated inventory units' do
+      let!(:inventory_unit) { create(:inventory_unit, order: subject) }
+
+      before(:each) do
+        inventory_unit.update_column(:shipment_id, nil)
+      end
+
+      context 'when shipped' do
+        before(:each) do
+          inventory_unit.update_column(:state, 'shipped')
+        end
+
+        it 'does not delete inventory_unit' do
+          subject.create_proposed_shipments
+          expect(inventory_unit.reload).to eq inventory_unit
+        end
+      end
+
+      context 'when returned' do
+        before(:each) do
+          inventory_unit.update_column(:state, 'returned')
+        end
+
+        it 'does not delete inventory_unit' do
+          subject.create_proposed_shipments
+          expect(inventory_unit.reload).to eq inventory_unit
+        end
+      end
+
+      context 'when on_hand' do
+        before(:each) do
+          inventory_unit.update_column(:state, 'on_hand')
+        end
+
+        it 'deletes inventory_unit' do
+          subject.create_proposed_shipments
+          expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
+      context 'when backordered' do
+        before(:each) do
+          inventory_unit.update_column(:state, 'backordered')
+        end
+
+        it 'deletes inventory_unit' do
+          subject.create_proposed_shipments
+          expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+    end
+
     it "assigns the coordinator returned shipments to its shipments" do
       shipment = build(:shipment)
       allow_any_instance_of(Spree::Stock::Coordinator).to receive(:shipments).and_return([shipment])
