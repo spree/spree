@@ -4,7 +4,7 @@ module Spree
 
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
-      belongs_to :variant, class_name: 'Spree::Variant', counter_cache: true
+      belongs_to :variant, class_name: 'Spree::Variant'
     end
     has_many :stock_movements, inverse_of: :stock_item
 
