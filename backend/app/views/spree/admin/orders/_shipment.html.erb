@@ -62,7 +62,7 @@
         <% end %>
 
         <td class="actions text-center">
-          <% if( (can? :update, shipment) and !shipment.shipped?) %>
+          <% if can?(:update, shipment) && !shipment.shipped? %>
             <%= link_to_with_icon 'edit', Spree.t('edit'), "javascript:;", class: 'edit-method with-tip btn btn-sm btn-primary', data: {action: 'edit'}, no_text: true %>
           <% end %>
         </td>
@@ -106,16 +106,20 @@
 
       <tr class="show-shipment-address">
         <td colspan="5">
-          <strong><%= Spree.t(:shipment_address) %>:</strong> <%= shipment.address %>
+          <strong><%= Spree.t(:shipping_address) %>:</strong>
+          <% if shipment.address.present? %>
+            <%= render partial: 'spree/admin/shared/address', locals: { address: shipment.address } %>
+          <% end %>
+
           <%= render(partial: "spree/admin/orders/shipment_address_modal",
                 locals: {
                   shipment: shipment,
                   url: admin_shipment_address_path(shipment.id)
-                }) if(can? :update, shipment) && !shipment.shipped?
+                }) if can?(:update, shipment) && !shipment.shipped?
           %>
         </td>
         <td class="action text-center">
-          <% if(can? :update, shipment) && !shipment.shipped? %>
+          <% if can?(:update, shipment) && !shipment.shipped? %>
             <%= link_to_with_icon 'edit', Spree.t('edit'), "#", class: 'btn btn-primary btn-sm', data: { toggle: "modal", target: "#change_address_#{ shipment.id }" }, title: Spree.t('edit'), no_text: true %>
           <% end %>
         </td>

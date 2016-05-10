@@ -3,6 +3,7 @@ FactoryGirl.define do
     tracking 'U10000'
     cost 100.00
     state 'pending'
+    address
     order
     stock_location
 

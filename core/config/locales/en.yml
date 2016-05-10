@@ -495,6 +495,7 @@ en:
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
     administration: Administration
+    addresses: Addresses
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
@@ -515,6 +516,7 @@ en:
     analytics_desc_list_4: It's completely free!
     analytics_trackers: Analytics Trackers
     and: and
+    apply_to_other_shipments: Apply To Other Shipments
     approve: approve
     approver: Approver
     approved_at: Approved at
@@ -550,7 +552,7 @@ en:
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
-    cancel: cancel
+    cancel: Cancel
     canceled: Canceled
     canceler: Canceler
     canceled_at: Canceled at
@@ -574,8 +576,8 @@ en:
     categories: Categories
     category: Category
     charged: Charged
+    change_shipment_address: Change Shipment Address
     changing_customer_will_change_bill_address: "When you change the customer, the billing address will change to the new customers billing address."
-    check_for_spree_alerts: Check for Spree alerts
     checkout: Checkout
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
@@ -672,6 +674,7 @@ en:
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_refund_amount: Default Refund Amount
+    default_shipping_address: Default Shipping Address
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
@@ -691,6 +694,8 @@ en:
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     edit: Edit
+    edit_billing_address: Edit Billing Address
+    edit_shipping_address: Edit Shipping Address
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
     editing_user: Editing User

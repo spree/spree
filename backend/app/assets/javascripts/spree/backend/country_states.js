@@ -11,7 +11,7 @@ $(document).ready(function () {
 });
 
 var countryStates = {
-  requestStates: function($parent){
+  requestStates: function($parent, state_id){
     var countryId = countryStates.getCountryId($parent);
 
     $.ajax({
@@ -22,6 +22,7 @@ var countryStates = {
       }
     }).done(function (data) {
       countryStates.buildStatesSelect(data, $parent);
+      countryStates.selectState(state_id, $parent);
     }).error(function (msg) {
       console.log(msg);
     });
@@ -64,6 +65,16 @@ var countryStates = {
       stateInput.prop('disabled', !statesRequired);
       stateInput.removeClass('hidden');
     }
+  },
+
+  selectState: function(state_id, $parent){
+    if(state_id == undefined){
+      state_id = '';
+    }
+
+    var statePara = $('.js-state', $parent);
+    var stateSelect2 = statePara.find('.select2');
+    stateSelect2.select2('val', state_id);
   },
 
   hideStateSelects: function(select, select2){

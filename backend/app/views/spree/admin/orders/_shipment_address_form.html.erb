@@ -3,96 +3,80 @@
 <div data-hook="shipment_address_inner" %>
   <div class="row no-padding-bottom">
     <div class="col-md-6">
-      <p class="form-group">
+      <%= field_container address, :firstname, class: ["form-group"] do %>
         <%= form.label :firstname, Spree.t(:first_name) %>
         <%= form.text_field :firstname, class: 'form-control', value: address.firstname %>
-      </p>
+      <% end %>
     </div>
     <div class="col-md-6">
-      <p class="form-group">
+      <%= field_container address, :lastname, class: ["form-group"] do %>
         <%= form.label :lastname, Spree.t(:last_name) %>
         <%= form.text_field :lastname, class: 'form-control', value: address.lastname %>
-      </p>
+      <% end %>
     </div>
   </div>
 
   <div class="row no-padding-bottom">
     <div class="col-md-6">
-      <p class="form-group">
+      <%= field_container address, :address1, class: ["form-group"] do %>
         <%= form.label :address1, Spree.t(:street_address) %>
         <%= form.text_field :address1, class: 'form-control', value: address.address1 %>
-      </p>
+      <% end %>
     </div>
     <div class="col-md-6">
-      <p class="form-group">
+      <%= field_container address, :address2, class: ["form-group"] do %>
         <%= form.label :address2, Spree.t(:street_address_2) %>
         <%= form.text_field :address2, class: 'form-control', value: address.address2 %>
-      </p>
+      <% end %>
     </div>
   </div>
 
   <% if Spree::Config[:company] %>
-    <p class="form-group">
+    <%= field_container address, :company, class: ["form-group"] do %>
       <%= form.label :company, Spree.t(:company) %>
       <%= form.text_field :company, class: 'form-control', value: address.company %>
-    </p>
+    <% end %>
   <% end %>
 
-  <p class="form-group">
+  <%= field_container address, :city, class: ["form-group"] do %>
     <%= form.label :city, Spree.t(:city) %>
     <%= form.text_field :city, class: 'form-control', value: address.city %>
-  </p>
+  <% end %>
 
-  <p class="form-group">
+  <%= field_container address, :zipcode, class: ["form-group"] do %>
     <%= form.label :zipcode, Spree.t(:zip) %>
     <%= form.text_field :zipcode, class: "form-control", value: address.zipcode %>
-  </p>
+  <% end %>
 
   <div class="row no-padding-bottom js-country-states">
     <div class="col-md-6">
       <p class="form-group js-country">
         <%= form.label :country_id, Spree.t(:country) %>
-        <%= select :address, :country_id, options_for_select(available_countries.collect {|p| [ p.name, p.id ] }, address.country_id), {}, {class: 'select2'} %>
+        <%= form.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
       </p>
     </div>
     <% if Spree::Config[:address_requires_state] %>
       <div class="col-md-6">
         <p class="form-group js-state" id="<%="#{address_id}state" %>">
-          <% have_states = address.country.present? && !address.country.states.empty? %>
-          <%= form.label :state, Spree.t(:state) %>
-
-          <% state_elements = [
-             select(:address,
-                    :state_id,
-                    options_for_select(have_states ? address.country.states.collect {|p| [ p.name, p.id ] } : [], address.state_id),
-                    {},
-                    {include_blank: true,
-                     disabled: !have_states,
-                     class: have_states ? 'select2' : 'select2 hidden'}) +
-             form.text_field(:state_name,
-                                class: !have_states ? 'form-control' : 'form-control hidden',
-                                disabled: have_states,
-                                value: address.state_name)
-             ].join.gsub('"', "'").gsub("\n", "")
-          %>
-          <%= javascript_tag do -%>
-            $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
-          <% end %>
+          <%= form.label :state_id, Spree.t(:state) %>
+          <%= form.text_field :state_name,
+                disabled: !address.country.states.empty?, class: "form-control state_name #{address.country.states.empty? ? '' : 'hidden' }" %>
+          <%= form.collection_select :state_id, address.country.states.sort, :id, :name, { include_blank: true }, { class: "select2 #{address.country.states.empty? ? 'hidden' : '' }", disabled: address.country.states.empty? } %>
         </p>
       </div>
     <% end %>
   </div>
 
-  <p class="form-group">
+  <%= field_container address, :phone, class: ["form-group"] do %>
     <%= form.label :phone, Spree.t(:phone) %>
     <%= form.phone_field :phone, class: "form-control", value: address.phone %>
-  </p>
+  <% end %>
 
   <% if Spree::Config[:alternative_shipping_phone] %>
-    <p class="form-group">
+    <%= field_container address, :alternative_shipping_phone, class: ["form-group"] do %>
       <%= form.label :alternative_phone, Spree.t(:alternative_phone) %>
       <%= form.phone_field :alternative_phone, class: 'form-control', value: address.alternative_phone %>
-    </p>
+    <% end %>
   <% end %>
 
   <% other_shipments = @order.shipments.editable.where.not(id: shipment.id) %>

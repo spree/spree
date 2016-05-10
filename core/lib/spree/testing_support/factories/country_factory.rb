@@ -5,5 +5,6 @@ FactoryGirl.define do
     iso 'US'
     iso3 'USA'
     numcode 840
+    states_required false
   end
 end

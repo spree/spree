@@ -66,17 +66,19 @@ describe "Customer Details", type: :feature, js: true do
     end
 
     context "selected country has no state" do
-      before { create(:country, iso: "BRA", name: "Brazil") }
+      before { create(:country, iso: "BRA", name: "Brazil", states_required: true) }
 
       it "changes state field to text input" do
         click_link "Customer"
 
+        within("[data-hook='bill_address_wrapper']") { click_link "Edit" }
         within("#billing") do
           targetted_select2 "Brazil", from: "#s2id_order_bill_address_attributes_country_id"
           fill_in "order_bill_address_attributes_state_name", with: "Piaui"
         end
 
         click_button "Update"
+        within("[data-hook='bill_address_wrapper']") { click_link "Edit" }
         expect(find_field("order_bill_address_attributes_state_name").value).to eq("Piaui")
       end
     end
@@ -86,10 +88,16 @@ describe "Customer Details", type: :feature, js: true do
       order.save!
 
       click_link "Customer"
+      within("[data-hook='ship_address_wrapper']") { click_link "Edit" }
       within("#shipping") { fill_in_address "ship" }
-      within("#billing") { fill_in_address "bill" }
-
       click_button "Update"
+      expect(page).to have_content(Spree.t('customer_details_updated'))
+
+      within("[data-hook='bill_address_wrapper']") { click_link "Edit" }
+      within("#billing") { fill_in_address "bill" }
+      click_button "Update"
+      expect(page).to have_content(Spree.t('customer_details_updated'))
+
       click_link "Customer"
 
       # Regression test for #2950 + #2433
@@ -123,6 +131,7 @@ describe "Customer Details", type: :feature, js: true do
 
       specify do
         click_link "Customer"
+        within("[data-hook='ship_address_wrapper']") { click_link "Edit" }
         # Need to fill in valid information so it passes validations
         fill_in "order_ship_address_attributes_firstname",  with: "John 99"
         fill_in "order_ship_address_attributes_lastname",   with: "Doe"

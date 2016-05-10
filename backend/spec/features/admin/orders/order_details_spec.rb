@@ -102,6 +102,44 @@ describe "Order Details", type: :feature, js: true do
         expect(page).to have_content("Default")
       end
 
+      it 'changes shipping address' do
+        order = create(:completed_order_with_totals)
+        shipment = order.shipments.first
+        old_ship_address_attributes = shipment.address.attributes
+
+        visit spree.edit_admin_order_path(order)
+        within("table.table tr.show-shipment-address") do
+          click_icon :edit
+          expect(page).to have_css('div.modal-dialog')
+
+          fill_in "First Name",              with: "John 99"
+          fill_in "Last Name",               with: "Doe"
+          fill_in "Street Address",          with: "100 first lane"
+          fill_in "Street Address (cont'd)", with: "#101"
+          fill_in "City",                    with: "Bethesda"
+          fill_in "Zip",                     with: "20170"
+          fill_in "Phone",                   with: "123-456-7890"
+
+          click_button "Save and Continue"
+
+          expect(page).to have_content('John 99 Doe')
+          expect(page).to have_content('100 first lane')
+          expect(page).to have_content('#101')
+          expect(page).to have_content('Bethesda')
+          expect(page).to have_content('20170')
+          expect(page).to have_content('123-456-7890')
+        end
+
+        shipment.reload
+        expect(shipment.address.firstname).to_not eq old_ship_address_attributes[:firstname]
+        expect(shipment.address.lastname).to_not eq old_ship_address_attributes[:lastname]
+        expect(shipment.address.address1).to_not eq old_ship_address_attributes[:address1]
+        expect(shipment.address.address2).to_not eq old_ship_address_attributes[:address2]
+        expect(shipment.address.city).to_not eq old_ship_address_attributes[:city]
+        expect(shipment.address.zipcode).to_not eq old_ship_address_attributes[:zipcode]
+        expect(shipment.address.phone).to_not eq old_ship_address_attributes[:phone]
+      end
+
       it "can assign a back-end only shipping method" do
         create(:shipping_method, name: "Backdoor", display_on: "back_end")
         order = create(

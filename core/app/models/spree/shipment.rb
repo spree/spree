@@ -381,7 +381,8 @@ module Spree
       end
 
       def can_get_rates?
-        address.present? ? (address && address.valid?) : (order.ship_address && order.ship_address.valid?)
+        ship_address = self.address || order.ship_address
+        ship_address && ship_address.valid?
       end
 
       def manifest_restock(item)

@@ -50,7 +50,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'having successful response' do
             before { send_request(attributes) }
             it { expect(response).to have_http_status(302) }
-            it { expect(response).to redirect_to(edit_admin_order_url(order)) }
+            it { expect(response).to redirect_to(admin_order_customer_url(order)) }
           end
 
           context 'with correct method flow' do
@@ -107,7 +107,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'having successful response' do
             before { send_request(changed_attributes) }
             it { expect(response).to have_http_status(302) }
-            it { expect(response).to redirect_to(edit_admin_order_url(order)) }
+            it { expect(response).to redirect_to(admin_order_customer_url(order)) }
           end
 
           context 'with correct method flow' do

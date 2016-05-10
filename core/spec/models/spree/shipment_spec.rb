@@ -30,6 +30,90 @@ describe Spree::Shipment, type: :model do
 
   end
 
+  describe 'scopes' do
+    describe '.with_state' do
+      context 'when state is pending' do
+        let(:shipment) { create(:shipment, state: 'pending') }
+        it { expect(Spree::Shipment.with_state('pending')).to include shipment }
+      end
+
+      context 'when state is ready' do
+        let(:shipment) { create(:shipment, state: 'ready') }
+        it { expect(Spree::Shipment.with_state('ready')).to include shipment }
+      end
+    end
+
+    describe '.pending' do
+      context 'when state is pending' do
+        let(:shipment) { create(:shipment, state: 'pending') }
+        it { expect(Spree::Shipment.pending).to include shipment }
+      end
+
+      context 'when state is not pending' do
+        let(:shipment) { create(:shipment, state: 'ready') }
+        it { expect(Spree::Shipment.pending).to_not include shipment }
+      end
+    end
+
+    describe '.ready' do
+      context 'when state is ready' do
+        let(:shipment) { create(:shipment, state: 'ready') }
+        it { expect(Spree::Shipment.ready).to include shipment }
+      end
+
+      context 'when state is not ready' do
+        let(:shipment) { create(:shipment, state: 'pending') }
+        it { expect(Spree::Shipment.ready).to_not include shipment }
+      end
+    end
+
+    describe '.shipped' do
+      context 'when state is shipped' do
+        let(:shipment) { create(:shipment, state: 'shipped') }
+        it { expect(Spree::Shipment.shipped).to include shipment }
+      end
+
+      context 'when state is not shipped' do
+        let(:shipment) { create(:shipment, state: 'pending') }
+        it { expect(Spree::Shipment.shipped).to_not include shipment }
+      end
+    end
+
+    describe '.editable' do
+      context 'when state is pending' do
+        let(:shipment) { create(:shipment, state: 'pending') }
+        it { expect(Spree::Shipment.editable).to include shipment }
+      end
+
+      context 'when state is ready' do
+        let(:shipment) { create(:shipment, state: 'ready') }
+        it { expect(Spree::Shipment.editable).to include shipment }
+      end
+
+      context 'when state is neither ready nor pending' do
+        let(:shipment) { create(:shipment, state: 'shipped') }
+        it { expect(Spree::Shipment.editable).to_not include shipment }
+      end
+    end
+
+    describe '.trackable' do
+      context 'when tracking is present' do
+        let(:shipment) { create(:shipment, tracking: 'test tracking') }
+        it { expect(Spree::Shipment.trackable).to include shipment }
+      end
+
+      context 'when tracking is null' do
+        let(:shipment) { create(:shipment, tracking: nil) }
+        it { expect(Spree::Shipment.trackable).to_not include shipment }
+      end
+
+      context 'when tracking is blank' do
+        let(:shipment) { create(:shipment, tracking: '') }
+        it { expect(Spree::Shipment.trackable).to_not include shipment }
+      end
+    end
+  end
+
   describe "precision of pre_tax_amount" do
     let(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
 
