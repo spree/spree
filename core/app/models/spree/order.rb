@@ -125,7 +125,6 @@ module Spree
     with_options presence: true do
       validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-      validates :state, inclusion: { in: state_machine.states.map { |state| state.name.to_s }, allow_blank: true }
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
     end
     validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
