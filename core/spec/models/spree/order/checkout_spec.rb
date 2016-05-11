@@ -605,6 +605,10 @@ describe Spree::Order, :type => :model do
         order = Spree::Order.new
         expect(order.checkout_steps).to eq(%w(new_step before_address address delivery complete))
       end
+
+      it 'goes through checkout without raising error' do
+        expect{ OrderWalkthrough.up_to(:complete) }.to_not raise_error
+      end
     end
 
     context "after" do
@@ -617,6 +621,10 @@ describe Spree::Order, :type => :model do
       specify do
         order = Spree::Order.new
         expect(order.checkout_steps).to eq(%w(new_step address after_address delivery complete))
+      end
+
+      it 'goes through checkout without raising error' do
+        expect{ OrderWalkthrough.up_to(:complete) }.to_not raise_error
       end
     end
   end
