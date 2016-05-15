@@ -3,6 +3,7 @@ module Spree
     class BaseController < ActionController::Metal
       include Spree::Api::ControllerSetup
       include ::ActionController::Head
+      include Spree::Core::ControllerHelpers::Auth
 
       self.responder = Spree::Api::Responders::AppResponder
 
