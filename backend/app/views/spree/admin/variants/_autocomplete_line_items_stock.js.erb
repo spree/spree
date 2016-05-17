@@ -15,7 +15,7 @@
         {{#if variant.track_inventory}}
           {{#if variant.total_on_hand}}
             <td class="text-center">
-                {{variant.total_on_hand}}
+              {{variant.total_on_hand}}
             </td>
 
             <td class="text-center">
@@ -24,14 +24,12 @@
             <td class="actions actions-1 text-center">
               <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
                 <span class="icon icon-add"></span>
-                </button>
+              </button>
             </td>
           {{else}}
-
             {{#if variant.is_backorderable}}
               <td class="text-center">
-                  {{variant.total_on_hand}}
-                  (<%= Spree.t(:backorders_allowed) %>)
+                {{variant.total_on_hand}} (<%= Spree.t(:backorders_allowed) %>)
               </td>
 
               <td class="text-center">
@@ -40,7 +38,7 @@
               <td class="actions actions-1 text-center">
                 <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
                   <span class="icon icon-add"></span>
-                  </button>
+                </button>
               </td>
             {{else}}
               <td class="text-center"><%= Spree.t(:out_of_stock) %></td>
@@ -64,4 +62,3 @@
     </tbody>
   </table>
 </script>
-
