@@ -1393,6 +1393,7 @@ en:
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
+    tags_placeholder: Add Tags
     taxon_rule:
       choose_taxons: Choose taxons
       label: Order must contain x amount of these taxons

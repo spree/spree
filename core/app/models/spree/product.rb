@@ -21,10 +21,10 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
+    include ActsAsTaggable
     friendly_id :slug_candidates, use: :history
 
     acts_as_paranoid
-    acts_as_taggable
 
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types

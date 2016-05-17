@@ -44,6 +44,7 @@
 //= require spree/backend/taxonomy
 //= require spree/backend/taxons
 //= require spree/backend/user_picker
+//= require spree/backend/tag_picker
 //= require spree/backend/variant_autocomplete
 //= require spree/backend/variant_management
 //= require spree/backend/zone
@@ -62,6 +63,7 @@ Spree.routes.stock_locations_api = Spree.pathFor('api/v1/stock_locations')
 Spree.routes.taxon_products_api = Spree.pathFor('api/v1/taxons/products')
 Spree.routes.taxons_search = Spree.pathFor('api/v1/taxons')
 Spree.routes.user_search = Spree.adminPathFor('search/users')
+Spree.routes.tags_search = Spree.adminPathFor('search/tags')
 Spree.routes.variants_api = Spree.pathFor('api/v1/variants')
 
 Spree.routes.edit_product = function(product_id) {
