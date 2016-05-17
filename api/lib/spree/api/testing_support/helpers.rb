@@ -30,8 +30,8 @@ module Spree
           File.open(Spree::Api::Engine.root + "spec/fixtures" + filename)
         end
 
-        def upload_image(filename)
-          fixture_file_upload(image(filename).path)
+        def upload_image(filename, mime_type = 'image/jpg')
+          fixture_file_upload(image(filename).path, mime_type)
         end
       end
     end
