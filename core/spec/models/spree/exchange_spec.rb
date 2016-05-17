@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Exchange, :type => :model do
+  describe Exchange, type: :model do
     let(:order) { Spree::Order.new }
 
     let(:return_item_1) { build(:exchange_return_item) }
@@ -48,13 +48,13 @@ module Spree
 
       context "when it cannot create shipments for all items" do
         before do
-          StockItem.where(:variant_id => return_item.exchange_variant_id).destroy_all
+          StockItem.where(variant_id: return_item.exchange_variant_id).destroy_all
         end
 
         it 'raises an UnableToCreateShipments error' do
-          expect {
+          expect do
             subject
-          }.to raise_error(Spree::Exchange::UnableToCreateShipments)
+          end.to raise_error(Spree::Exchange::UnableToCreateShipments)
         end
       end
     end
@@ -70,6 +70,5 @@ module Spree
     describe ".model_name" do # for dom_id
       it { expect(Exchange.model_name).to eq Spree::Exchange }
     end
-
   end
 end

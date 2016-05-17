@@ -2,7 +2,7 @@ module Spree
   class Promotion
     module Rules
       class OptionValue < PromotionRule
-        MATCH_POLICIES = %w(any)
+        MATCH_POLICIES = %w(any).freeze
         preference :match_policy, :string, default: MATCH_POLICIES.first
         preference :eligible_values, :hash
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::ItemTotal, :type => :model do
+describe Spree::Promotion::Rules::ItemTotal, type: :model do
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
   let(:order) { double(:order) }
 
@@ -14,7 +14,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
     end
 
     context "and item total is lower than prefered maximum amount" do
-
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
           allow(order).to receive_messages item_total: 51
@@ -23,7 +22,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
       end
 
       context "and item total is equal to the prefered minimum amount" do
-
         before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
@@ -79,7 +77,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
           to eq "This coupon code can't be applied to orders higher than $60.00."
       end
     end
-
   end
 
   context "preferred operator set to gt and preferred operator_max set to lte" do
@@ -89,7 +86,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
     end
 
     context "and item total is lower than prefered maximum amount" do
-
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
           allow(order).to receive_messages item_total: 51
@@ -98,7 +94,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
       end
 
       context "and item total is equal to the prefered minimum amount" do
-
         before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
@@ -157,7 +152,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
     end
 
     context "and item total is lower than prefered maximum amount" do
-
       context "and item total is higher than prefered minimum amount" do
         it "should be eligible" do
           allow(order).to receive_messages item_total: 51
@@ -166,7 +160,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
       end
 
       context "and item total is equal to the prefered minimum amount" do
-
         before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do
@@ -216,7 +209,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
           to eq "This coupon code can't be applied to orders higher than $60.00."
       end
     end
-
   end
 
   context "preferred operator set to gte and preferred operator_max set to lte" do
@@ -234,7 +226,6 @@ describe Spree::Promotion::Rules::ItemTotal, :type => :model do
       end
 
       context "and item total is equal to the prefered minimum amount" do
-
         before { allow(order).to receive_messages item_total: 50 }
 
         it "should not be eligible" do

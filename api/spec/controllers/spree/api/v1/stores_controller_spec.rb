@@ -17,40 +17,40 @@ module Spree
 
       let!(:non_default_store) do
         create(:store,
-          name: "Extra Store",
-          url: "spreestore-5.example.com",
-          default: false
-        )
+               name: "Extra Store",
+               url: "spreestore-5.example.com",
+               default: false
+              )
       end
 
       it "I can list the available stores" do
         api_get :index
         expect(json_response["stores"]).to eq([
-          {
-            "id" => store.id,
-            "name" => "My Spree Store",
-            "url" => "spreestore.example.com",
-            "meta_description" => nil,
-            "meta_keywords" => nil,
-            "seo_title" => nil,
-            "mail_from_address" => "spree@example.org",
-            "default_currency" => nil,
-            "code" => store.code,
-            "default" => true
-          },
-          {
-            "id" => non_default_store.id,
-            "name" => "Extra Store",
-            "url" => "spreestore-5.example.com",
-            "meta_description" => nil,
-            "meta_keywords" => nil,
-            "seo_title" => nil,
-            "mail_from_address" => "spree@example.org",
-            "default_currency" => nil,
-            "code" => non_default_store.code,
-            "default" => false
-          }
-        ])
+                                                {
+                                                  "id" => store.id,
+                                                  "name" => "My Spree Store",
+                                                  "url" => "spreestore.example.com",
+                                                  "meta_description" => nil,
+                                                  "meta_keywords" => nil,
+                                                  "seo_title" => nil,
+                                                  "mail_from_address" => "spree@example.org",
+                                                  "default_currency" => nil,
+                                                  "code" => store.code,
+                                                  "default" => true
+                                                },
+                                                {
+                                                  "id" => non_default_store.id,
+                                                  "name" => "Extra Store",
+                                                  "url" => "spreestore-5.example.com",
+                                                  "meta_description" => nil,
+                                                  "meta_keywords" => nil,
+                                                  "seo_title" => nil,
+                                                  "mail_from_address" => "spree@example.org",
+                                                  "default_currency" => nil,
+                                                  "code" => non_default_store.code,
+                                                  "default" => false
+                                                }
+                                              ])
       end
 
       it "I can get the store details" do
@@ -96,7 +96,7 @@ module Spree
           api_delete :destroy, id: store.id
           expect(response.status).to eq(422)
           expect(json_response["errors"]["base"]).to eql(
-          ["Cannot destroy the default Store."]
+            ["Cannot destroy the default Store."]
           )
         end
 
@@ -108,7 +108,6 @@ module Spree
     end
 
     context "as an user" do
-
       it "I cannot list all the stores" do
         api_get :index
         expect(response.status).to eq(401)

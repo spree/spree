@@ -1,13 +1,12 @@
 module CapybaraExt
   def page!
-    save_and_open_page
   end
 
   def click_icon(type)
     find(".icon-#{type}").click
   end
 
-  def eventually_fill_in(field, options={})
+  def eventually_fill_in(field, options = {})
     expect(page).to have_css('#' + field)
     fill_in field, options
   end
@@ -16,7 +15,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       within("table.table tbody tr:nth-child(#{num})", &block)
     else
-      within(:xpath, all("table.table tbody tr")[num-1].path, &block)
+      within(:xpath, all("table.table tbody tr")[num - 1].path, &block)
     end
   end
 
@@ -24,24 +23,24 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
-      all("td")[num-1].text
+      all("td")[num - 1].text
     end
   end
 
   def set_select2_field(field, value)
-    page.execute_script %Q{$('#{field}').select2('val', '#{value}')}
+    page.execute_script %{$('#{field}').select2('val', '#{value}')}
   end
 
   def select2_search(value, options)
     label = find_label_by_text(options[:from])
-    within label.first(:xpath,".//..") do
-      options[:from] = "##{find(".select2-container")["id"]}"
+    within label.first(:xpath, ".//..") do
+      options[:from] = "##{find('.select2-container')['id']}"
     end
     targetted_select2_search(value, options)
   end
 
   def targetted_select2_search(value, options)
-    page.execute_script %Q{$('#{options[:from]}').select2('open')}
+    page.execute_script %{$('#{options[:from]}').select2('open')}
     page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
     select_select2_result(value)
   end
@@ -49,14 +48,14 @@ module CapybaraExt
   def select2(value, options)
     label = find_label_by_text(options[:from])
 
-    within label.first(:xpath,".//..") do
-      options[:from] = "##{find(".select2-container")["id"]}"
+    within label.first(:xpath, ".//..") do
+      options[:from] = "##{find('.select2-container')['id']}"
     end
     targetted_select2(value, options)
   end
 
-  def select2_no_label value, options={}
-    raise "Must pass a hash containing 'from'" if not options.is_a?(Hash) or not options.has_key?(:from)
+  def select2_no_label(value, options = {})
+    raise "Must pass a hash containing 'from'" if (not options.is_a?(Hash)) || (not options.has_key?(:from))
 
     placeholder = options[:from]
     minlength = options[:minlength] || 4
@@ -145,7 +144,7 @@ Capybara.configure do |config|
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|
-  match do |actual|
+  match do |_actual|
     has_css?("meta[name='#{name}'][content='#{expected}']", visible: false)
   end
 
@@ -160,7 +159,7 @@ RSpec::Matchers.define :have_meta do |name, expected|
 end
 
 RSpec::Matchers.define :have_title do |expected|
-  match do |actual|
+  match do |_actual|
     has_css?("title", text: expected, visible: false)
   end
 

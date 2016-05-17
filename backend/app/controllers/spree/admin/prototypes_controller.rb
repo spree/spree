@@ -3,7 +3,7 @@ module Spree
     class PrototypesController < ResourceController
       def show
         if request.xhr?
-          render :layout => false
+          render layout: false
         else
           redirect_to admin_prototypes_path
         end
@@ -12,7 +12,7 @@ module Spree
       def available
         @prototypes = Prototype.order('name asc')
         respond_with(@prototypes) do |format|
-          format.html { render :layout => !request.xhr? }
+          format.html { render layout: !request.xhr? }
           format.js
         end
       end
@@ -21,7 +21,6 @@ module Spree
         @prototype ||= Prototype.find(params[:id])
         @prototype_properties = @prototype.properties
       end
-
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe LegacyUser, :type => :model do
+  describe LegacyUser, type: :model do
     let(:user) { LegacyUser.new }
 
     it "can generate an API key" do

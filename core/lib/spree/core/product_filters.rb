@@ -53,7 +53,7 @@ module Spree
       # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
       #
       Spree::Product.add_search_scope :price_range_any do |*opts|
-        conds = opts.map {|o| Spree::Core::ProductFilters.price_filter[:conds][o]}.reject { |c| c.nil? }
+        conds = opts.map { |o| Spree::Core::ProductFilters.price_filter[:conds][o] }.reject(&:nil?)
         scope = conds.shift
         conds.each do |new_scope|
           scope = scope.or(new_scope)
@@ -61,25 +61,24 @@ module Spree
         Spree::Product.joins(master: :default_price).where(scope)
       end
 
-      def ProductFilters.format_price(amount)
+      def self.format_price(amount)
         Spree::Money.new(amount)
       end
 
-      def ProductFilters.price_filter
+      def self.price_filter
         v = Spree::Price.arel_table
-        conds = [ [ Spree.t(:under_price, price: format_price(10))     , v[:amount].lteq(10)],
-                  [ "#{format_price(10)} - #{format_price(15)}"        , v[:amount].in(10..15)],
-                  [ "#{format_price(15)} - #{format_price(18)}"        , v[:amount].in(15..18)],
-                  [ "#{format_price(18)} - #{format_price(20)}"        , v[:amount].in(18..20)],
-                  [ Spree.t(:or_over_price, price: format_price(20)) , v[:amount].gteq(20)]]
+        conds = [[Spree.t(:under_price, price: format_price(10)), v[:amount].lteq(10)],
+                 ["#{format_price(10)} - #{format_price(15)}", v[:amount].in(10..15)],
+                 ["#{format_price(15)} - #{format_price(18)}", v[:amount].in(15..18)],
+                 ["#{format_price(18)} - #{format_price(20)}", v[:amount].in(18..20)],
+                 [Spree.t(:or_over_price, price: format_price(20)), v[:amount].gteq(20)]]
         {
           name:   Spree.t(:price_range),
           scope:  :price_range_any,
           conds:  Hash[*conds.flatten],
-          labels: conds.map { |k,v| [k, k] }
+          labels: conds.map { |k, _v| [k, k] }
         }
       end
-
 
       # Example: filtering by possible brands
       #
@@ -94,7 +93,7 @@ module Spree
       #   being blank: note that this relies on with_property doing a left outer join
       #   rather than an inner join.
       Spree::Product.add_search_scope :brand_any do |*opts|
-        conds = opts.map {|o| ProductFilters.brand_filter[:conds][o]}.reject { |c| c.nil? }
+        conds = opts.map { |o| ProductFilters.brand_filter[:conds][o] }.reject(&:nil?)
         scope = conds.shift
         conds.each do |new_scope|
           scope = scope.or(new_scope)
@@ -102,7 +101,7 @@ module Spree
         Spree::Product.with_property('brand').where(scope)
       end
 
-      def ProductFilters.brand_filter
+      def self.brand_filter
         brand_property = Spree::Property.find_by(name: 'brand')
         brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
         pp = Spree::ProductProperty.arel_table
@@ -111,7 +110,7 @@ module Spree
           name:   'Brands',
           scope:  :brand_any,
           conds:  conds,
-          labels: (brands.sort).map { |k| [k, k] }
+          labels: brands.sort.map { |k| [k, k] }
         }
       end
 
@@ -138,12 +137,12 @@ module Spree
         Spree::Product.brand_any(*opts)
       end
 
-      def ProductFilters.selective_brand_filter(taxon = nil)
+      def self.selective_brand_filter(taxon = nil)
         taxon ||= Spree::Taxonomy.first.root
         brand_property = Spree::Property.find_by(name: 'brand')
         scope = Spree::ProductProperty.where(property: brand_property).
-          joins(product: :taxons).
-          where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants)
+                joins(product: :taxons).
+                where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants)
         brands = scope.pluck(:value).uniq
         {
           name:   'Applicable Brands',
@@ -164,7 +163,7 @@ module Spree
       #
       # This scope selects products in any of the active taxons or their children.
       #
-      def ProductFilters.taxons_below(taxon)
+      def self.taxons_below(taxon)
         return Spree::Core::ProductFilters.all_taxons if taxon.nil?
         {
           name:   'Taxons under ' + taxon.name,
@@ -180,7 +179,7 @@ module Spree
       # it uses one of the auto-generated scopes from Ransack.
       #
       # idea: expand the format to allow nesting of labels?
-      def ProductFilters.all_taxons
+      def self.all_taxons
         taxons = Spree::Taxonomy.all.map { |t| [t.root] + t.root.descendants }.flatten
         {
           name:   'All taxons',

@@ -1,7 +1,7 @@
 module Spree
   module Admin
     module BaseHelper
-      def flash_alert flash
+      def flash_alert(flash)
         if flash.present?
           close_button = button_tag(class: 'close', 'data-dismiss' => 'alert', 'aria-label' => Spree.t(:close)) do
             content_tag('span', '&times;'.html_safe, 'aria-hidden' => true)
@@ -24,7 +24,7 @@ module Spree
         content_tag(:div, capture(&block), class: css_classes.join(' '), id: "#{model}_#{method}_field")
       end
 
-      def error_message_on(object, method, options = {})
+      def error_message_on(object, method, _options = {})
         object = convert_to_model(object)
         obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
 
@@ -39,8 +39,6 @@ module Spree
       def datepicker_field_value(date)
         unless date.blank?
           l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
-        else
-          nil
         end
       end
 
@@ -50,7 +48,7 @@ module Spree
           text_field_tag(name, value, preference_field_options(options))
         when :boolean
           hidden_field_tag(name, 0, id: "#{name}_hidden") +
-          check_box_tag(name, 1, value, preference_field_options(options))
+            check_box_tag(name, 1, value, preference_field_options(options))
         when :string
           text_field_tag(name, value, preference_field_options(options))
         when :password
@@ -81,58 +79,56 @@ module Spree
 
       def preference_field_options(options)
         field_options = case options[:type]
-        when :integer
-          {
-            size: 10,
-            class: 'input_integer form-control'
-          }
-        when :boolean
-          {}
-        when :string
-          {
-            size: 10,
-            class: 'input_string form-control'
-          }
-        when :password
-          {
-            size: 10,
-            class: 'password_string form-control'
-          }
-        when :text
-          {
-            rows: 15,
-            cols: 85,
-            class: 'form-control'
-          }
-        else
-          {
-            size: 10,
-            class: 'input_string form-control'
-          }
+                        when :integer
+                          {
+                            size: 10,
+                            class: 'input_integer form-control'
+                          }
+                        when :boolean
+                          {}
+                        when :string
+                          {
+                            size: 10,
+                            class: 'input_string form-control'
+                          }
+                        when :password
+                          {
+                            size: 10,
+                            class: 'password_string form-control'
+                          }
+                        when :text
+                          {
+                            rows: 15,
+                            cols: 85,
+                            class: 'form-control'
+                          }
+                        else
+                          {
+                            size: 10,
+                            class: 'input_string form-control'
+                          }
         end
 
-        field_options.merge!({
-          readonly: options[:readonly],
-          disabled: options[:disabled],
-          size:     options[:size]
-        })
+        field_options.merge!(readonly: options[:readonly],
+                             disabled: options[:disabled],
+                             size:     options[:size])
       end
 
       def preference_fields(object, form)
         return unless object.respond_to?(:preferences)
-        fields = object.preferences.keys.map { |key|
+        fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
             form.label("preferred_#{key}", Spree.t(key) + ": ") +
               preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
           end
-        }
+        end
         safe_join(fields, '<br />'.html_safe)
       end
 
       # renders hidden field and link to remove record using nested_attributes
       def link_to_icon_remove_fields(f)
         url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('delete', '', url, class: "spree_remove_fields btn btn-sm btn-danger", data: {action: 'remove'}, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
+        link_to_with_icon('delete', '', url, class: "spree_remove_fields btn btn-sm btn-danger", data: { action: 'remove' }, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

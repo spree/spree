@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::EligibilityValidator::Default, :type => :model do
+describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
   let(:return_item) { create(:return_item) }
   let(:validator) { Spree::ReturnItem::EligibilityValidator::Default.new(return_item) }
 
@@ -10,11 +10,11 @@ describe Spree::ReturnItem::EligibilityValidator::Default, :type => :model do
   let(:time_eligibility_instance) { double(errors: time_error) }
   let(:rma_eligibility_instance)  { double(errors: rma_error) }
 
-  let(:time_error) {{}}
-  let(:rma_error)  {{}}
+  let(:time_error) { {} }
+  let(:rma_error)  { {} }
 
   before do
-    validator.permitted_eligibility_validators = [ time_eligibility_class, rma_eligibility_class ]
+    validator.permitted_eligibility_validators = [time_eligibility_class, rma_eligibility_class]
 
     expect(time_eligibility_class).to receive(:new).and_return(time_eligibility_instance)
     expect(rma_eligibility_class).to receive(:new).and_return(rma_eligibility_instance)
@@ -63,14 +63,14 @@ describe Spree::ReturnItem::EligibilityValidator::Default, :type => :model do
     end
 
     context "the validators have errors" do
-      let(:time_error) { { time: time_error_text }}
-      let(:rma_error)  { { rma: rma_error_text }}
+      let(:time_error) { { time: time_error_text } }
+      let(:rma_error)  { { rma: rma_error_text } }
 
       let(:time_error_text) { "Time eligibility error" }
       let(:rma_error_text)  { "RMA eligibility error" }
 
       it "gathers all errors from permitted eligibility validators into a single errors hash" do
-        expect(subject).to eq({time: time_error_text, rma: rma_error_text})
+        expect(subject).to eq(time: time_error_text, rma: rma_error_text)
       end
     end
   end

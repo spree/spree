@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Estimator, :type => :model do
+    describe Estimator, type: :model do
       let!(:shipping_method) { create(:shipping_method) }
-      let(:package) { build(:stock_package, contents: inventory_units.map { |i| ContentItem.new(inventory_unit) }) }
+      let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
       let(:order) { build(:order_with_line_items) }
       let(:inventory_units) { order.inventory_units }
 
@@ -12,13 +12,13 @@ module Spree
 
       context "#shipping rates" do
         before(:each) do
-          shipping_method.zones.first.members.create(:zoneable => order.ship_address.country)
+          shipping_method.zones.first.members.create(zoneable: order.ship_address.country)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return({:currency => currency})
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
-          allow(package).to receive_messages(:shipping_methods => [shipping_method])
+          allow(package).to receive_messages(shipping_methods: [shipping_method])
         end
 
         let(:currency) { "USD" }
@@ -42,7 +42,7 @@ module Spree
         end
 
         context "when the order's ship address is in a different zone" do
-          before { shipping_method.zones.each{|z| z.members.delete_all} }
+          before { shipping_method.zones.each { |z| z.members.delete_all } }
           it_should_behave_like "shipping rate doesn't match"
         end
 
@@ -71,7 +71,7 @@ module Spree
         end
 
         it "sorts shipping rates by cost" do
-          shipping_methods = 3.times.map { create(:shipping_method) }
+          shipping_methods = Array.new(3) { create(:shipping_method) }
           allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
           allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
           allow(shipping_methods[2]).to receive_message_chain(:calculator, :compute).and_return(4.00)
@@ -82,7 +82,7 @@ module Spree
         end
 
         context "general shipping methods" do
-          let(:shipping_methods) { 2.times.map { create(:shipping_method) } }
+          let(:shipping_methods) { Array.new(2) { create(:shipping_method) } }
 
           it "selects the most affordable shipping rate" do
             allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
@@ -133,7 +133,6 @@ module Spree
             end
             package.shipping_methods.map(&:reload)
           end
-
 
           it "links the shipping rate and the tax rate" do
             shipping_rates = subject.shipping_rates(package)

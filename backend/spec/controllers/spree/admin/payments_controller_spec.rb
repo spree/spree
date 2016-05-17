@@ -2,14 +2,14 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe PaymentsController, :type => :controller do
+    describe PaymentsController, type: :controller do
       stub_authorization!
 
       let(:order) { create(:order) }
 
       context "with a valid credit card" do
-        let(:order) { create(:order_with_line_items, :state => "payment") }
-        let(:payment_method) { create(:credit_card_payment_method, :display_on => "back_end") }
+        let(:order) { create(:order_with_line_items, state: "payment") }
+        let(:payment_method) { create(:credit_card_payment_method, display_on: "back_end") }
 
         before do
           attributes = {
@@ -44,11 +44,11 @@ module Spree
       # Regression test for #3233
       context "with a backend payment method" do
         before do
-          @payment_method = create(:check_payment_method, :display_on => "back_end")
+          @payment_method = create(:check_payment_method, display_on: "back_end")
         end
 
         it "loads backend payment methods" do
-          spree_get :new, :order_id => order.number
+          spree_get :new, order_id: order.number
           expect(response.status).to eq(200)
           expect(assigns[:payment_methods]).to include(@payment_method)
         end
@@ -62,7 +62,7 @@ module Spree
 
         context "order does not have payments" do
           it "redirect to new payments page" do
-            spree_get :index, { amount: 100, order_id: order.number }
+            spree_get :index, amount: 100, order_id: order.number
             expect(response).to redirect_to(spree.new_admin_order_payment_path(order))
           end
         end
@@ -73,11 +73,10 @@ module Spree
           end
 
           it "shows the payments page" do
-            spree_get :index, { amount: 100, order_id: order.number }
+            spree_get :index, amount: 100, order_id: order.number
             expect(response.code).to eq "200"
           end
         end
-
       end
 
       context "order does not have a billing address" do
@@ -87,11 +86,10 @@ module Spree
         end
 
         it "should redirect to the customer details page" do
-          spree_get :index, { amount: 100, order_id: order.number }
+          spree_get :index, amount: 100, order_id: order.number
           expect(response).to redirect_to(spree.edit_admin_order_customer_path(order))
         end
       end
-
     end
   end
 end

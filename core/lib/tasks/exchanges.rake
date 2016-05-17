@@ -1,12 +1,11 @@
 namespace :exchanges do
-  desc %q{Takes unreturned exchanged items and creates a new order to charge
-  the customer for not returning them}
+  desc 'Takes unreturned exchanged items and creates a new order to charge
+  the customer for not returning them'
   task charge_unreturned_items: :environment do
-
-    unreturned_return_items =  Spree::ReturnItem.awaiting_return.exchange_processed.joins(:exchange_inventory_unit).where([
-      "spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state",
-      days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: "shipped"
-    ]).to_a
+    unreturned_return_items = Spree::ReturnItem.awaiting_return.exchange_processed.joins(:exchange_inventory_unit).where([
+                                                                                                                           "spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state",
+                                                                                                                           days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: "shipped"
+                                                                                                                         ]).to_a
 
     # Determine that a return item has already been deemed unreturned and therefore charged
     # by the fact that its exchange inventory unit has popped off to a different order

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 module Spree
-  describe ShippingCalculator, :type => :model do
-    let(:variant1) { build(:variant, :price => 10) }
-    let(:variant2) { build(:variant, :price => 20) }
+  describe ShippingCalculator, type: :model do
+    let(:variant1) { build(:variant, price: 10) }
+    let(:variant2) { build(:variant, price: 20) }
 
     let(:package) do
       build(:stock_package, variants_contents: { variant1 => 2, variant2 => 1 })
@@ -23,15 +23,15 @@ module Spree
     end
 
     it 'compute_shipment must be overridden' do
-      expect {
+      expect do
         subject.compute_shipment(shipment)
-      }.to raise_error(NameError)
+      end.to raise_error(NameError)
     end
 
     it 'compute_package must be overridden' do
-      expect {
+      expect do
         subject.compute_package(package)
-      }.to raise_error(NotImplementedError)
+      end.to raise_error(NotImplementedError)
     end
 
     it 'checks availability for a package' do

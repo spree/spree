@@ -22,7 +22,6 @@ describe Spree::ShippingRate, type: :model do
                zone: default_zone
       end
       context "when the tax rate is from the default zone" do
-
         before { shipping_rate.tax_rate = default_tax_rate }
 
         it "shows correct tax amount" do

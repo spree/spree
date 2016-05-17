@@ -1,21 +1,19 @@
 module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
-
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
       respond_to :html, :json, :js
 
       def index
-
       end
 
       def search
-        if params[:ids]
-          @taxons = Spree::Taxon.where(id: params[:ids].split(','))
-        else
-          @taxons = Spree::Taxon.limit(20).ransack(name_cont: params[:q]).result
-        end
+        @taxons = if params[:ids]
+                    Spree::Taxon.where(id: params[:ids].split(','))
+                  else
+                    Spree::Taxon.limit(20).ransack(name_cont: params[:q]).result
+                  end
       end
 
       def create
@@ -48,14 +46,14 @@ module Spree
 
         set_permalink_params
 
-        #check if we need to rename child taxons if parent name or permalink changes
+        # check if we need to rename child taxons if parent name or permalink changes
         @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
         if @taxon.update_attributes(taxon_params)
           flash[:success] = flash_message_for(@taxon, :successfully_updated)
         end
 
-        #rename child taxons
+        # rename child taxons
         rename_child_taxons if @update_children
 
         respond_with(@taxon) do |format|

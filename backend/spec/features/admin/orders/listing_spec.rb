@@ -5,17 +5,17 @@ describe "Orders Listing", type: :feature do
 
   let(:order1) do
     create :order_with_line_items,
-      created_at: 1.day.from_now,
-      completed_at: 1.day.from_now,
-      considered_risky: true,
-      number: "R100"
+           created_at: 1.day.from_now,
+           completed_at: 1.day.from_now,
+           considered_risky: true,
+           number: "R100"
   end
 
   let(:order2) do
     create :order,
-      created_at: 1.day.ago,
-      completed_at: 1.day.ago,
-      number: "R200"
+           created_at: 1.day.ago,
+           completed_at: 1.day.ago,
+           number: "R200"
   end
 
   before do

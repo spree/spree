@@ -9,7 +9,6 @@ class AddLineItemIdToSpreeInventoryUnits < ActiveRecord::Migration
 
       shipments.find_each do |shipment|
         shipment.inventory_units.group_by(&:variant_id).each do |variant_id, units|
-
           line_item = shipment.order.line_items.find_by(variant_id: variant_id)
           next unless line_item
 

@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Admin::RootController do
-
   context "unauthorized request" do
-
     before :each do
       allow(controller).to receive(:spree_current_user).and_return(nil)
     end

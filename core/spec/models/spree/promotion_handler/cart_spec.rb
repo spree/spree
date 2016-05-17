@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module PromotionHandler
-    describe Cart, :type => :model do
+    describe Cart, type: :model do
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
 
@@ -17,9 +17,9 @@ module Spree
 
         shared_context "creates the adjustment" do
           it "creates the adjustment" do
-            expect {
+            expect do
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.adjustments.count }.by(1)
           end
         end
 
@@ -53,9 +53,9 @@ module Spree
 
         shared_context "creates the adjustment" do
           it "creates the adjustment" do
-            expect {
+            expect do
               subject.activate
-            }.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.adjustments.count }.by(1)
           end
         end
 
@@ -92,9 +92,9 @@ module Spree
         end
 
         it "creates the adjustment" do
-          expect {
+          expect do
             subject.activate
-          }.to change { adjustable.adjustments.count }.by(1)
+          end.to change { adjustable.adjustments.count }.by(1)
         end
       end
     end

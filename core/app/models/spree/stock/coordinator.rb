@@ -63,7 +63,7 @@ module Spree
         Packer.new(stock_location, inventory_units, splitters(stock_location))
       end
 
-      def splitters(stock_location)
+      def splitters(_stock_location)
         # extension point to return custom splitters for a location
         Rails.application.config.spree.stock_splitters
       end

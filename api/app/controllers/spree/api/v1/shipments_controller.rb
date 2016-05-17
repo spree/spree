@@ -2,18 +2,17 @@ module Spree
   module Api
     module V1
       class ShipmentsController < Spree::Api::BaseController
-
         before_action :find_and_update_shipment, only: [:ship, :ready, :add, :remove]
         before_action :load_transfer_params, only: [:transfer_to_location, :transfer_to_shipment]
 
         def mine
           if current_api_user.persisted?
-            @shipments = Spree::Shipment
-              .reverse_chronological
-              .joins(:order)
-              .where(spree_orders: {user_id: current_api_user.id})
-              .includes(mine_includes)
-              .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+            @shipments = Spree::Shipment.
+                         reverse_chronological.
+                         joins(:order).
+                         where(spree_orders: { user_id: current_api_user.id }).
+                         includes(mine_includes).
+                         ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           else
             render "spree/api/errors/unauthorized", status: :unauthorized
           end
@@ -25,7 +24,7 @@ module Spree
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
-          @order.contents.add(variant, quantity, {shipment: @shipment})
+          @order.contents.add(variant, quantity, shipment: @shipment)
 
           @shipment.save!
 
@@ -44,7 +43,7 @@ module Spree
             if @shipment.can_ready?
               @shipment.ready!
             else
-              render 'spree/api/v1/shipments/cannot_ready_shipment', status: 422 and return
+              render('spree/api/v1/shipments/cannot_ready_shipment', status: 422) && return
             end
           end
           respond_with(@shipment, default_template: :show)
@@ -60,7 +59,7 @@ module Spree
         def add
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.add(variant, quantity, {shipment: @shipment})
+          @shipment.order.contents.add(variant, quantity, shipment: @shipment)
 
           respond_with(@shipment, default_template: :show)
         end
@@ -68,7 +67,7 @@ module Spree
         def remove
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.remove(variant, quantity, {shipment: @shipment})
+          @shipment.order.contents.remove(variant, quantity, shipment: @shipment)
           @shipment.reload if @shipment.persisted?
           respond_with(@shipment, default_template: :show)
         end
@@ -82,11 +81,11 @@ module Spree
           end
 
           @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
         def transfer_to_shipment
-          @target_shipment  = Spree::Shipment.friendly.find(params[:target_shipment_number])
+          @target_shipment = Spree::Shipment.friendly.find(params[:target_shipment_number])
 
           if @quantity < 0 || @target_shipment == @original_shipment
             unprocessable_entity('ArgumentError')
@@ -94,7 +93,7 @@ module Spree
           end
 
           @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
         private

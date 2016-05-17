@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model do
   let(:order) { stub_model("Spree::Order") }
 
   before { create(:store) }
@@ -63,7 +63,7 @@ describe Spree::Order, :type => :model do
     end
 
     it "should not send duplicate confirmation emails" do
-      allow(order).to receive_messages(:confirmation_delivered? => true)
+      allow(order).to receive_messages(confirmation_delivered?: true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
       order.finalize!
     end
@@ -80,7 +80,7 @@ describe Spree::Order, :type => :model do
 
     context "order is considered risky" do
       before do
-        allow(order).to receive_messages :is_risky? => true
+        allow(order).to receive_messages is_risky?: true
       end
 
       it "should change state to risky" do
@@ -90,7 +90,7 @@ describe Spree::Order, :type => :model do
 
       context "and order is approved" do
         before do
-          allow(order).to receive_messages :approved? => true
+          allow(order).to receive_messages approved?: true
         end
 
         it "should leave order in complete state" do
@@ -102,7 +102,7 @@ describe Spree::Order, :type => :model do
 
     context "order is not considered risky" do
       before do
-        allow(order).to receive_messages :is_risky? => false
+        allow(order).to receive_messages is_risky?: false
       end
 
       it "should set completed_at" do

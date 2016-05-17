@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Tracker, :type => :model do
+describe Spree::Tracker, type: :model do
   describe "current" do
     before(:each) { @tracker = create(:tracker) }
 

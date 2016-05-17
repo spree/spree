@@ -34,10 +34,10 @@ describe Spree::Core::NumberGenerator do
 
       it 'writes attribute value' do
         object = described_class.new(options.merge(name => value_a))
-        expect { object.public_send(:"#{name}=", value_b) }
-          .to change { object.public_send(name) }
-          .from(value_a)
-          .to(value_b)
+        expect { object.public_send(:"#{name}=", value_b) }.
+          to change { object.public_send(name) }.
+          from(value_a).
+          to(value_b)
       end
     end
   end
@@ -55,7 +55,7 @@ describe Spree::Core::NumberGenerator do
     end
   end
 
-  shared_examples_for 'generating permalink'do
+  shared_examples_for 'generating permalink' do
     let(:resource) { model.new }
 
     before do
@@ -83,22 +83,22 @@ describe Spree::Core::NumberGenerator do
       end
 
       context 'and less than half of the value space taken' do
-        let(:next_candidate) { next_candidate_low            }
-        let(:record_count)   { 10 ** expected_length / 2 - 1 }
+        let(:next_candidate) { next_candidate_low }
+        let(:record_count)   { 10**expected_length / 2 - 1 }
 
         include_examples 'duplicate without length increment'
       end
 
       context 'and exactly half of the value space taken' do
-        let(:next_candidate) { next_candidate_low        }
-        let(:record_count)   { 10 ** expected_length / 2 }
+        let(:next_candidate) { next_candidate_low }
+        let(:record_count)   { 10**expected_length / 2 }
 
         include_examples 'duplicate without length increment'
       end
 
       context 'and more than half of the value space is taken' do
-        let(:record_count)   { 10 ** expected_length / 2 + 1 }
-        let(:next_candidate) { next_candidate_high           }
+        let(:record_count)   { 10**expected_length / 2 + 1 }
+        let(:next_candidate) { next_candidate_high }
 
         before do
           expect(random).to receive(:rand).

@@ -99,5 +99,4 @@ describe Spree::PaymentMethod, type: :model do
       end
     end
   end
-
 end

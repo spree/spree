@@ -34,7 +34,7 @@ module Spree
 
         update_params = params[ActiveModel::Naming.param_key(@payment_method)] || {}
         attributes = payment_method_params.merge(update_params)
-        attributes.each do |k,v|
+        attributes.each do |k, _v|
           if k.include?("password") && attributes[k].blank?
             attributes.delete(k)
           end
@@ -53,7 +53,7 @@ module Spree
       private
 
       def load_data
-        @providers = Gateway.providers.sort{|p1, p2| p1.name <=> p2.name }
+        @providers = Gateway.providers.sort { |p1, p2| p1.name <=> p2.name }
       end
 
       def validate_payment_method_provider

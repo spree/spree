@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Prioritizer, :type => :model do
+    describe Prioritizer, type: :model do
       let(:order) { mock_model(Order) }
       let(:stock_location) { build(:stock_location) }
       let(:variant) { build(:variant) }

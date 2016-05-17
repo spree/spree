@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Refund, :type => :model do
-
+describe Spree::Refund, type: :model do
   describe 'create' do
     let(:amount) { 100.0 }
     let(:amount_in_cents) { amount * 100 }
@@ -9,19 +8,19 @@ describe Spree::Refund, :type => :model do
     let(:authorization) { generate(:refund_transaction_id) }
 
     let(:payment) { create(:payment, amount: payment_amount, payment_method: payment_method) }
-    let(:payment_amount) { amount*2 }
+    let(:payment_amount) { amount * 2 }
     let(:payment_method) { create(:credit_card_payment_method) }
 
     let(:refund_reason) { create(:refund_reason) }
 
-    let(:gateway_response) {
+    let(:gateway_response) do
       ActiveMerchant::Billing::Response.new(
         gateway_response_success,
         gateway_response_message,
         gateway_response_params,
         gateway_response_options
       )
-    }
+    end
     let(:gateway_response_success) { true }
     let(:gateway_response_message) { "" }
     let(:gateway_response_params) { {} }
@@ -30,10 +29,10 @@ describe Spree::Refund, :type => :model do
     subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     before do
-      allow(payment.payment_method)
-        .to receive(:credit)
-        .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-        .and_return(gateway_response)
+      allow(payment.payment_method).
+        to receive(:credit).
+        with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+        and_return(gateway_response)
     end
 
     context "transaction id exists on creation" do
@@ -41,7 +40,7 @@ describe Spree::Refund, :type => :model do
       subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: transaction_id) }
 
       it "creates a refund record" do
-        expect{ subject }.to change { Spree::Refund.count }.by(1)
+        expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
       it "maintains the transaction id" do
@@ -60,14 +59,13 @@ describe Spree::Refund, :type => :model do
         expect(payment.payment_method).not_to receive(:credit)
         subject
       end
-
     end
 
     context "processing is successful" do
       let(:gateway_response_options) { { authorization: authorization } }
 
       it 'should create a refund' do
-        expect{ subject }.to change{ Spree::Refund.count }.by(1)
+        expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
       it 'return the newly created refund' do
@@ -95,7 +93,6 @@ describe Spree::Refund, :type => :model do
         expect(payment.order.updater).to receive(:update)
         subject
       end
-
     end
 
     context "processing fails" do
@@ -105,7 +102,7 @@ describe Spree::Refund, :type => :model do
       it 'should raise error and not create a refund' do
         expect do
           expect { subject }.to raise_error(Spree::Core::GatewayError, gateway_response_message)
-        end.to_not change{ Spree::Refund.count }
+        end.to_not change { Spree::Refund.count }
       end
     end
 
@@ -115,10 +112,10 @@ describe Spree::Refund, :type => :model do
       end
 
       it 'should not supply the payment source' do
-        expect(payment.payment_method)
-          .to receive(:credit)
-          .with(amount * 100, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-          .and_return(gateway_response)
+        expect(payment.payment_method).
+          to receive(:credit).
+          with(amount * 100, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          and_return(gateway_response)
 
         subject
       end
@@ -130,10 +127,10 @@ describe Spree::Refund, :type => :model do
       end
 
       it 'should supply the payment source' do
-        expect(payment.payment_method)
-          .to receive(:credit)
-          .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-          .and_return(gateway_response)
+        expect(payment.payment_method).
+          to receive(:credit).
+          with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
+          and_return(gateway_response)
 
         subject
       end
@@ -157,7 +154,7 @@ describe Spree::Refund, :type => :model do
 
     context 'with amount too large' do
       let(:payment_amount) { 10 }
-      let(:amount) { payment_amount*2 }
+      let(:amount) { payment_amount * 2 }
 
       it 'is invalid' do
         expect { subject }.to raise_error { |error|
@@ -169,7 +166,7 @@ describe Spree::Refund, :type => :model do
   end
 
   describe 'total_amount_reimbursed_for' do
-    let(:customer_return) { reimbursement.customer_return}
+    let(:customer_return) { reimbursement.customer_return }
     let(:reimbursement) { create(:reimbursement) }
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 

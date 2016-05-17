@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnAuthorization, :type => :model do
+describe Spree::ReturnAuthorization, type: :model do
   let(:order) { create(:shipped_order) }
   let(:stock_location) { create(:stock_location) }
   let(:rma_reason) { create(:return_authorization_reason) }
@@ -9,8 +9,8 @@ describe Spree::ReturnAuthorization, :type => :model do
   let(:variant) { order.variants.first }
   let(:return_authorization) do
     Spree::ReturnAuthorization.new(order: order,
-      stock_location_id: stock_location.id,
-      return_authorization_reason_id: rma_reason.id)
+                                   stock_location_id: stock_location.id,
+                                   return_authorization_reason_id: rma_reason.id)
   end
 
   context "save" do
@@ -42,7 +42,7 @@ describe Spree::ReturnAuthorization, :type => :model do
         subject { create(:return_authorization, order: order) }
 
         it "does not create a reimbursement" do
-          expect{subject.save}.to_not change { Spree::Reimbursement.count }
+          expect { subject.save }.to_not change { Spree::Reimbursement.count }
         end
       end
 
@@ -80,7 +80,6 @@ describe Spree::ReturnAuthorization, :type => :model do
           end
         end
       end
-
     end
   end
 
@@ -175,9 +174,9 @@ describe Spree::ReturnAuthorization, :type => :model do
     let(:return_items) { [return_item] }
     let(:return_item) { create(:return_item) }
 
-    subject {
+    subject do
       return_authorization.cancel!
-    }
+    end
 
     it 'cancels the associated return items' do
       subject

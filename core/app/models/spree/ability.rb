@@ -15,15 +15,15 @@ module Spree
     # the +CanCan::Ability+ module.  The registered ability should behave properly as a stand-alone class
     # and therefore should be easy to test in isolation.
     def self.register_ability(ability)
-      self.abilities.add(ability)
+      abilities.add(ability)
     end
 
     def self.remove_ability(ability)
-      self.abilities.delete(ability)
+      abilities.delete(ability)
     end
 
     def initialize(user)
-      self.clear_aliased_actions
+      clear_aliased_actions
 
       # override cancan default aliasing (we don't want to differentiate between read and index)
       alias_action :delete, to: :destroy

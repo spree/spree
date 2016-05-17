@@ -3,11 +3,11 @@ require 'spec_helper'
 module Spree
   class Promotion
     module Actions
-      describe CreateItemAdjustments, :type => :model do
+      describe CreateItemAdjustments, type: :model do
         let(:order) { create(:order) }
         let(:promotion) { create(:promotion) }
         let(:action) { CreateItemAdjustments.new }
-        let!(:line_item) { create(:line_item, :order => order) }
+        let!(:line_item) { create(:line_item, order: order) }
         let(:payload) { { order: order, promotion: promotion } }
 
         before do
@@ -21,7 +21,7 @@ module Spree
           # Regression test for #3966
           context "when calculator computes 0" do
             before do
-              allow(action).to receive_messages :compute_amount => 0
+              allow(action).to receive_messages compute_amount: 0
             end
 
             it "does not create an adjustment when calculator returns 0" do
@@ -33,7 +33,7 @@ module Spree
           context "when calculator returns a non-zero value" do
             before do
               promotion.promotion_actions = [action]
-              allow(action).to receive_messages :compute_amount => 10
+              allow(action).to receive_messages compute_amount: 10
             end
 
             it "creates adjustment with item as adjustable" do
@@ -53,7 +53,7 @@ module Spree
             end
 
             context "with products rules" do
-              let!(:second_line_item) { create(:line_item, :order => order) }
+              let!(:second_line_item) { create(:line_item, order: order) }
               let(:rule) { double Spree::Promotion::Rules::Product }
 
               before do
@@ -114,9 +114,9 @@ module Spree
                                        order: order,
                                        adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.to change { Adjustment.count }.by(-1)
+            end.to change { Adjustment.count }.by(-1)
           end
 
           it "nullifies adjustments for completed orders" do
@@ -126,9 +126,9 @@ module Spree
                                                     order: order,
                                                     adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.to change { adjustment.reload.source_id }.from(action.id).to nil
+            end.to change { adjustment.reload.source_id }.from(action.id).to nil
           end
 
           it "doesnt mess with unrelated adjustments" do
@@ -137,9 +137,9 @@ module Spree
                                              order: order,
                                              adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.not_to change { other_action.adjustments.count }
+            end.not_to change { other_action.adjustments.count }
           end
         end
       end

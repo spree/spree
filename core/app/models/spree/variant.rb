@@ -31,9 +31,9 @@ module Spree
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
 
     has_many :prices,
-      class_name: 'Spree::Price',
-      dependent: :destroy,
-      inverse_of: :variant
+             class_name: 'Spree::Price',
+             dependent: :destroy,
+             inverse_of: :variant
 
     before_validation :set_cost_currency
 
@@ -71,7 +71,7 @@ module Spree
         for_currency_and_available_price_amount(currency)
     end
 
-    LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
+    LOCALIZED_NUMBERS = %w(cost_price weight depth width height).freeze
 
     LOCALIZED_NUMBERS.each do |m|
       define_method("#{m}=") do |argument|
@@ -104,7 +104,7 @@ module Spree
     end
 
     def options_text
-      values = self.option_values.sort do |a, b|
+      values = option_values.sort do |a, b|
         a.option_type.position <=> b.option_type.position
       end
 
@@ -112,7 +112,7 @@ module Spree
         "#{ov.option_type.presentation}: #{ov.presentation}"
       end
 
-      values.to_sentence({ words_connector: ", ", two_words_connector: ", " })
+      values.to_sentence(words_connector: ", ", two_words_connector: ", ")
     end
 
     # Default to master name
@@ -146,23 +146,23 @@ module Spree
 
     def set_option_value(opt_name, opt_value)
       # no option values on master
-      return if self.is_master
+      return if is_master
 
       option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
         o.presentation = opt_name
         o.save!
       end
 
-      current_value = self.option_values.detect { |o| o.option_type.name == opt_name }
+      current_value = option_values.detect { |o| o.option_type.name == opt_name }
 
-      unless current_value.nil?
-        return if current_value.name == opt_value
-        self.option_values.delete(current_value)
-      else
+      if current_value.nil?
         # then we have to check to make sure that the product has the option type
-        unless self.product.option_types.include? option_type
-          self.product.option_types << option_type
+        unless product.option_types.include? option_type
+          product.option_types << option_type
         end
+      else
+        return if current_value.name == opt_value
+        option_values.delete(current_value)
       end
 
       option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
@@ -170,12 +170,12 @@ module Spree
         o.save!
       end
 
-      self.option_values << option_value
-      self.save
+      option_values << option_value
+      save
     end
 
     def option_value(opt_name)
-      self.option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
+      option_values.detect { |o| o.option_type.name == opt_name }.try(:presentation)
     end
 
     def price_in(currency)
@@ -189,27 +189,27 @@ module Spree
     def price_modifier_amount_in(currency, options = {})
       return 0 unless options.present?
 
-      options.keys.map { |key|
+      options.keys.map do |key|
         m = "#{key}_price_modifier_amount_in".to_sym
-        if self.respond_to? m
-          self.send(m, currency, options[key])
+        if respond_to? m
+          send(m, currency, options[key])
         else
           0
         end
-      }.sum
+      end.sum
     end
 
     def price_modifier_amount(options = {})
       return 0 unless options.present?
 
-      options.keys.map { |key|
+      options.keys.map do |key|
         m = "#{key}_price_modifier_amount".to_sym
-        if self.respond_to? m
-          self.send(m, options[key])
+        if respond_to? m
+          send(m, options[key])
         else
           0
         end
-      }.sum
+      end.sum
     end
 
     def name_and_sku
@@ -233,11 +233,11 @@ module Spree
     # Shortcut method to determine if inventory tracking is enabled for this variant
     # This considers both variant tracking flag and site-wide inventory tracking settings
     def should_track_inventory?
-      self.track_inventory? && Spree::Config.track_inventory_levels
+      track_inventory? && Spree::Config.track_inventory_levels
     end
 
     def track_inventory
-      self.should_track_inventory?
+      should_track_inventory?
     end
 
     def volume

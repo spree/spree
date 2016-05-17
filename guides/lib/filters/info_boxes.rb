@@ -1,10 +1,9 @@
 require 'kramdown'
 
 class ParseInfoBoxes < Nanoc::Filter
-
   identifier :parse_info_boxes
 
-  def run(content, params={})
+  def run(content, _params = {})
     content = content.gsub(/^!!!\n(.*?)!!!/m) do
       generate_div("warning", $1)
     end
@@ -31,12 +30,11 @@ class ParseInfoBoxes < Nanoc::Filter
 
   private
 
-    def generate_div(klass, content)
-      %{<div class="#{klass}">#{parse_inner_content(content)}</div>}
-    end
+  def generate_div(klass, content)
+    %{<div class="#{klass}">#{parse_inner_content(content)}</div>}
+  end
 
-    def parse_inner_content(content)
-      Kramdown::Document.new(content).to_html
-    end
+  def parse_inner_content(content)
+    Kramdown::Document.new(content).to_html
+  end
 end
-

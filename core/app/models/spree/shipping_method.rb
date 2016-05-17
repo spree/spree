@@ -2,7 +2,7 @@ module Spree
   class ShippingMethod < Spree::Base
     acts_as_paranoid
     include Spree::CalculatedAdjustments
-    DISPLAY = [:both, :front_end, :back_end]
+    DISPLAY = [:both, :front_end, :back_end].freeze
 
     # Used for #refresh_rates
     DISPLAY_ON_FRONT_AND_BACK_END = 0
@@ -39,13 +39,13 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace)
-        .select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      spree_calculators.send(model_name_without_spree_namespace).
+        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
     # Some shipping methods are only meant to be set via backend
     def frontend?
-      self.display_on != "back_end"
+      display_on != "back_end"
     end
 
     def tax_category
@@ -54,8 +54,8 @@ module Spree
 
     def available_to_display(display_filter)
       display_filter == DISPLAY_ON_FRONT_AND_BACK_END ||
-      (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
-      (!frontend? && display_filter == DISPLAY_ON_BACK_END)
+        (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
+        (!frontend? && display_filter == DISPLAY_ON_BACK_END)
     end
 
     private

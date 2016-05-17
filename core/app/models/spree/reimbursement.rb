@@ -60,7 +60,6 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
-
       event :errored do
         transition to: :errored, from: :pending
       end
@@ -68,21 +67,18 @@ module Spree
       event :reimbursed do
         transition to: :reimbursed, from: [:pending, :errored]
       end
-
     end
 
     class << self
       def build_from_customer_return(customer_return)
         order = customer_return.order
-        order.reimbursements.build({
-          customer_return: customer_return,
-          return_items: customer_return.return_items.accepted.not_reimbursed,
-        })
+        order.reimbursements.build(customer_return: customer_return,
+                                   return_items: customer_return.return_items.accepted.not_reimbursed)
       end
     end
 
     def display_total
-      Spree::Money.new(total, { currency: order.currency })
+      Spree::Money.new(total, currency: order.currency)
     end
 
     def calculated_total

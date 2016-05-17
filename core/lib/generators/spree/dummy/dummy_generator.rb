@@ -6,11 +6,11 @@ module Spree
   class DummyGenerator < Rails::Generators::Base
     desc "Creates blank Rails application, installs Spree and all sample data"
 
-    class_option :lib_name, :default => ''
-    class_option :database, :default => ''
+    class_option :lib_name, default: ''
+    class_option :database, default: ''
 
     def self.source_paths
-      paths = self.superclass.source_paths
+      paths = superclass.source_paths
       paths << File.expand_path('../templates', __FILE__)
       paths.flatten
     end
@@ -21,7 +21,7 @@ module Spree
 
     PASSTHROUGH_OPTIONS = [
       :skip_active_record, :skip_javascript, :database, :javascript, :quiet, :pretend, :force, :skip
-    ]
+    ].freeze
 
     def generate_test_dummy
       # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
@@ -34,21 +34,21 @@ module Spree
 
       puts "Generating dummy Rails application..."
       invoke Rails::Generators::AppGenerator,
-        [ File.expand_path(dummy_path, destination_root) ], opts
+             [File.expand_path(dummy_path, destination_root)], opts
     end
 
     def test_dummy_config
       @lib_name = options[:lib_name]
       @database = options[:database]
 
-      template "rails/database.yml", "#{dummy_path}/config/database.yml", :force => true
-      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
-      template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
-      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
-      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", :force => true
-      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
-      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
-      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", :force => true
+      template "rails/database.yml", "#{dummy_path}/config/database.yml", force: true
+      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", force: true
+      template "rails/application.rb", "#{dummy_path}/config/application.rb", force: true
+      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", force: true
+      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", force: true
+      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", force: true
+      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", force: true
+      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", force: true
     end
 
     def test_dummy_inject_extension_requirements
@@ -76,7 +76,6 @@ module Spree
         remove_file "vendor"
         remove_file "spec"
       end
-
     end
 
     attr :lib_name
@@ -85,13 +84,13 @@ module Spree
     protected
 
     def inject_require_for(requirement)
-      inject_into_file 'config/application.rb', %Q[
+      inject_into_file 'config/application.rb', %[
 begin
   require '#{requirement}'
 rescue LoadError
   # #{requirement} is not available.
 end
-      ], :before => /require '#{@lib_name}'/, :verbose => true
+      ], before: /require '#{@lib_name}'/, verbose: true
     end
 
     def dummy_path

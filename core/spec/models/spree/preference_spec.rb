@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preference, :type => :model do
-
+describe Spree::Preference, type: :model do
   it "should require a key" do
     @preference = Spree::Preference.new
     @preference.key = :test
@@ -74,7 +73,5 @@ describe Spree::Preference, :type => :model do
       pref = round_trip_preference(key, value)
       expect(pref.value).to eq value
     end
-
   end
-
 end

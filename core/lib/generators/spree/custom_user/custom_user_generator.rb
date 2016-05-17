@@ -3,22 +3,19 @@ module Spree
     include Rails::Generators::ResourceHelpers
     include Rails::Generators::Migration
 
-
     desc "Set up a Spree installation with a custom User class"
 
     def self.source_paths
-      paths = self.superclass.source_paths
+      paths = superclass.source_paths
       paths << File.expand_path('../templates', __FILE__)
       paths.flatten
     end
 
     def check_for_constant
-      begin
-        klass
-      rescue NameError
-        @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
-        exit(1)
-      end
+      klass
+    rescue NameError
+      @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
+      exit(1)
     end
 
     def generate
@@ -27,7 +24,7 @@ module Spree
 
       file_action = File.exist?('config/initializers/spree.rb') ? :append_file : :create_file
       send(file_action, 'config/initializers/spree.rb') do
-        %Q{
+        %{
           Rails.application.config.to_prepare do
             require_dependency 'spree/authentication_helpers'
           end\n}
@@ -50,7 +47,5 @@ module Spree
     def table_name
       klass.table_name
     end
-
   end
 end
-

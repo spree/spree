@@ -3,7 +3,7 @@ module Spree
     validates_presence_of :name
 
     GIFT_CARD_CATEGORY_NAME = 'Gift Card'.freeze
-    DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME]
+    DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME].freeze
 
     def non_expiring?
       non_expiring_category_types.include? name

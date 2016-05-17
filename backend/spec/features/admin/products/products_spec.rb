@@ -28,7 +28,7 @@ describe "Products", type: :feature do
 
           # Name DESC
           click_link "admin_products_listing_name_title"
-          within_row(1) { expect(page).to have_content("zomg shirt")  }
+          within_row(1) { expect(page).to have_content("zomg shirt") }
           within_row(2) { expect(page).to have_content('apache baseball cap') }
         end
 
@@ -127,7 +127,7 @@ describe "Products", type: :feature do
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, name: "Size", option_types: [ size ])
+        FactoryGirl.create(:prototype, name: "Size", option_types: [size])
       end
 
       let(:option_values_hash) do
@@ -222,31 +222,31 @@ describe "Products", type: :feature do
         before do
           # change English locale’s separator and delimiter to match 19,99 format
           I18n.backend.store_translations(:en,
-            :number => {
-              :currency => {
-                :format => {
-                  :separator => ",",
-                  :delimiter => "."
-                }
-              }
-            })
+                                          number: {
+                                            currency: {
+                                              format: {
+                                                separator: ",",
+                                                delimiter: "."
+                                              }
+                                            }
+                                          })
         end
 
         after do
           # revert changes to English locale
           I18n.backend.store_translations(:en,
-            :number => {
-              :currency => {
-                :format => {
-                  :separator => ".",
-                  :delimiter => ","
-                }
-              }
-            })
+                                          number: {
+                                            currency: {
+                                              format: {
+                                                separator: ".",
+                                                delimiter: ","
+                                              }
+                                            }
+                                          })
         end
 
-        it "should show localized price value on validation errors", :js => true do
-          fill_in "product_price", :with => "19,99"
+        it "should show localized price value on validation errors", js: true do
+          fill_in "product_price", with: "19,99"
           click_button "Create"
           expect(find('input#product_price').value).to eq('19,99')
         end
@@ -263,7 +263,6 @@ describe "Products", type: :feature do
         expect(page).to have_content("successfully updated!")
       end
     end
-
 
     context "cloning a product", js: true do
       it "should allow an admin to clone a product" do
@@ -302,7 +301,7 @@ describe "Products", type: :feature do
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        FactoryGirl.create(:prototype, name: "Size", option_types: [ size ])
+        FactoryGirl.create(:prototype, name: "Size", option_types: [size])
       end
 
       before(:each) do
@@ -383,7 +382,7 @@ describe "Products", type: :feature do
       end
     end
 
-    context 'deleting a product', :js => true do
+    context 'deleting a product', js: true do
       let!(:product) { create(:product) }
 
       it "is still viewable" do
@@ -403,12 +402,11 @@ describe "Products", type: :feature do
   end
 
   context 'with only product permissions' do
-
     before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       can [:admin, :update, :index, :read], Spree::Product
     end
     let!(:product) { create(:product) }

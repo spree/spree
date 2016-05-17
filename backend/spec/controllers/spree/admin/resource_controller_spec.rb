@@ -12,7 +12,7 @@ module Spree
   end
 end
 
-describe Spree::Admin::WidgetsController, :type => :controller do
+describe Spree::Admin::WidgetsController, type: :controller do
   stub_authorization!
 
   after(:all) do
@@ -70,7 +70,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
 
   describe '#create' do
     let(:params) do
-      {widget: {name: 'a widget'}}
+      { widget: { name: 'a widget' } }
     end
 
     subject { spree_post :create, params }
@@ -98,7 +98,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     let(:params) do
       {
         id: widget.to_param,
-        widget: {name: 'widget renamed'},
+        widget: { name: 'widget renamed' },
       }
     end
 
@@ -111,11 +111,11 @@ describe Spree::Admin::WidgetsController, :type => :controller do
 
   describe '#destroy' do
     let!(:widget) { Widget.create!(name: 'a widget') }
-    let(:params) { {id: widget.id} }
+    let(:params) { { id: widget.id } }
 
-    subject {
+    subject do
       spree_delete :destroy, params
-    }
+    end
 
     it 'destroys the resource' do
       expect { subject }.to change { Widget.count }.from(1).to(0)
@@ -128,7 +128,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
 
     subject do
       spree_post :update_positions, id: widget_1.to_param,
-        positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js'
+                                    positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js'
     end
 
     it 'updates the position of widget 1' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::StockItem, :type => :model do
+describe Spree::StockItem, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
 
   subject { stock_location.stock_items.order(:id).first }
@@ -37,21 +37,21 @@ describe Spree::StockItem, :type => :model do
     context 'when count_on_hand > 0' do
       before(:each) do
         subject.update_column('count_on_hand', 4)
-         subject.reduce_count_on_hand_to_zero
-       end
+        subject.reduce_count_on_hand_to_zero
+      end
 
-       it { expect(subject.count_on_hand).to eq(0) }
-     end
+      it { expect(subject.count_on_hand).to eq(0) }
+    end
 
-     context 'when count_on_hand > 0' do
-       before(:each) do
-         subject.update_column('count_on_hand', -4)
-         @count_on_hand = subject.count_on_hand
-         subject.reduce_count_on_hand_to_zero
-       end
+    context 'when count_on_hand > 0' do
+      before(:each) do
+        subject.update_column('count_on_hand', -4)
+        @count_on_hand = subject.count_on_hand
+        subject.reduce_count_on_hand_to_zero
+      end
 
-       it { expect(subject.count_on_hand).to eq(@count_on_hand) }
-     end
+      it { expect(subject.count_on_hand).to eq(@count_on_hand) }
+    end
   end
 
   context "adjust count_on_hand" do
@@ -73,7 +73,7 @@ describe Spree::StockItem, :type => :model do
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
       before do
-        allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
+        allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
         subject.update_column(:count_on_hand, -2)
       end
 
@@ -94,7 +94,7 @@ describe Spree::StockItem, :type => :model do
       end
 
       context "adds new items" do
-        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)
@@ -132,7 +132,7 @@ describe Spree::StockItem, :type => :model do
       end
 
       context "adds new items" do
-        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)
@@ -157,17 +157,17 @@ describe Spree::StockItem, :type => :model do
     before { subject.destroy }
 
     it "recreates stock item just fine" do
-      expect {
+      expect do
         stock_location.stock_items.create!(variant: subject.variant)
-      }.not_to raise_error
+      end.not_to raise_error
     end
 
     it "doesnt allow recreating more than one stock item at once" do
       stock_location.stock_items.create!(variant: subject.variant)
 
-      expect {
+      expect do
         stock_location.stock_items.create!(variant: subject.variant)
-      }.to raise_error(StandardError)
+      end.to raise_error(StandardError)
     end
   end
 

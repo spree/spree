@@ -1,7 +1,7 @@
 module Spree
   class Promotion < Spree::Base
-    MATCH_POLICIES = %w(all any)
-    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    MATCH_POLICIES = %w(all any).freeze
+    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"].freeze
 
     attr_reader :eligibility_errors
 
@@ -71,10 +71,10 @@ module Spree
       action_taken = results.include?(true)
 
       if action_taken
-      # connect to the order
-      # create the join_table entry.
-        self.orders << order
-        self.save
+        # connect to the order
+        # create the join_table entry.
+        orders << order
+        save
       end
 
       action_taken
@@ -173,13 +173,14 @@ module Spree
     end
 
     private
+
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order
         promotable.line_items.any? &&
-          !promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).any?
+          !promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).any?
       end
     end
 

@@ -12,7 +12,7 @@ module Spree
 
         respond_with(@object) do |format|
           format.html { redirect_to collection_url }
-          format.js  { render_js_for_destroy }
+          format.js { render_js_for_destroy }
         end
       end
 
@@ -20,14 +20,14 @@ module Spree
 
       def set_shipping_category
         return true if params["shipping_method"][:shipping_categories] == ""
-        @shipping_method.shipping_categories = Spree::ShippingCategory.where(:id => params["shipping_method"][:shipping_categories])
+        @shipping_method.shipping_categories = Spree::ShippingCategory.where(id: params["shipping_method"][:shipping_categories])
         @shipping_method.save
         params[:shipping_method].delete(:shipping_categories)
       end
 
       def set_zones
         return true if params["shipping_method"][:zones] == ""
-        @shipping_method.zones = Spree::Zone.where(:id => params["shipping_method"][:zones])
+        @shipping_method.zones = Spree::Zone.where(id: params["shipping_method"][:zones])
         @shipping_method.save
         params[:shipping_method].delete(:zones)
       end

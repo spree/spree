@@ -1,10 +1,9 @@
 require 'spec_helper'
 
-describe Spree::Calculator, :type => :model do
-
+describe Spree::Calculator, type: :model do
   let(:order) { create(:order) }
-  let!(:line_item) { create(:line_item, :order => order) }
-  let(:shipment) { create(:shipment, :order => order, :stock_location => create(:stock_location_with_items)) }
+  let!(:line_item) { create(:line_item, order: order) }
+  let(:shipment) { create(:shipment, order: order, stock_location: create(:stock_location_with_items)) }
 
   context "with computable" do
     context "and compute methods stubbed out" do
@@ -38,32 +37,31 @@ describe Spree::Calculator, :type => :model do
       end
     end
 
-  context "with no stubbing" do
-    context "with a Spree::LineItem" do
+    context "with no stubbing" do
+      context "with a Spree::LineItem" do
         it "raises NotImplementedError" do
-          expect{subject.compute(line_item)}.to raise_error NotImplementedError, /Please implement \'compute_line_item\(line_item\)\' in your calculator/
+          expect { subject.compute(line_item) }.to raise_error NotImplementedError, /Please implement \'compute_line_item\(line_item\)\' in your calculator/
         end
       end
 
       context "with a Spree::Order" do
         it "raises NotImplementedError" do
-          expect{subject.compute(order)}.to raise_error NotImplementedError, /Please implement \'compute_order\(order\)\' in your calculator/
+          expect { subject.compute(order) }.to raise_error NotImplementedError, /Please implement \'compute_order\(order\)\' in your calculator/
         end
       end
 
       context "with a Spree::Shipment" do
         it "raises NotImplementedError" do
-          expect{subject.compute(shipment)}.to raise_error NotImplementedError, /Please implement \'compute_shipment\(shipment\)\' in your calculator/
+          expect { subject.compute(shipment) }.to raise_error NotImplementedError, /Please implement \'compute_shipment\(shipment\)\' in your calculator/
         end
       end
 
       context "with a arbitray object" do
         it "raises NotImplementedError" do
           s = "Calculator can all"
-          expect{subject.compute(s)}.to raise_error NotImplementedError, /Please implement \'compute_string\(string\)\' in your calculator/
+          expect { subject.compute(s) }.to raise_error NotImplementedError, /Please implement \'compute_string\(string\)\' in your calculator/
         end
       end
     end
   end
-
 end

@@ -14,11 +14,11 @@ module Spree
       end
 
       def authorize_admin
-        if respond_to?(:model_class, true) && model_class
-          record = model_class
-        else
-          record = controller_name.to_sym
-        end
+        record = if respond_to?(:model_class, true) && model_class
+                   model_class
+                 else
+                   controller_name.to_sym
+                 end
         authorize! :admin, record
         authorize! action, record
       end

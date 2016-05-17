@@ -4,7 +4,7 @@ module Spree
       module RablTemplate
         def to_format
           if template
-            render template, :status => options[:status] || 200
+            render template, status: options[:status] || 200
           else
             super
           end
@@ -20,8 +20,6 @@ module Spree
           if controller.params[:action] == "destroy"
             # Render a blank template
             super
-          else
-            # Do nothing and fallback to the default template
           end
         end
       end

@@ -11,8 +11,8 @@ describe "Zones", type: :feature do
 
   context "show" do
     it "should display existing zones" do
-      create(:zone, :name => "eastern", :description => "zone is eastern")
-      create(:zone, :name => "western", :description => "cool san fran")
+      create(:zone, name: "eastern", description: "zone is eastern")
+      create(:zone, name: "western", description: "cool san fran")
       click_link "Zones"
 
       within_row(1) { expect(page).to have_content("eastern") }
@@ -30,8 +30,8 @@ describe "Zones", type: :feature do
       click_link "Zones"
       click_link "admin_new_zone_link"
       expect(page).to have_content("New Zone")
-      fill_in "zone_name", :with => "japan"
-      fill_in "zone_description", :with => "japanese time zone"
+      fill_in "zone_name", with: "japan"
+      fill_in "zone_description", with: "japanese time zone"
       click_button "Create"
       expect(page).to have_content("successfully created!")
     end

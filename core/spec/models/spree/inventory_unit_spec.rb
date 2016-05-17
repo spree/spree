@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::InventoryUnit, :type => :model do
+describe Spree::InventoryUnit, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
 
@@ -124,19 +124,19 @@ describe Spree::InventoryUnit, :type => :model do
       it "does not find inventory units belonging to incomplete orders" do
         expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
       end
-
     end
-
   end
 
   context "#finalize_units!" do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let (:shipment) { create(:shipment) }
-    let(:inventory_units) { [
-      create(:inventory_unit, variant: variant),
-      create(:inventory_unit, variant: variant)
-    ] }
+    let(:inventory_units) do
+      [
+        create(:inventory_unit, variant: variant),
+        create(:inventory_unit, variant: variant)
+      ]
+    end
     before do
       shipment.inventory_units = inventory_units
     end
@@ -180,12 +180,10 @@ describe Spree::InventoryUnit, :type => :model do
 
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
+    let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        additional_tax_total: line_item_additional_tax_total,
-      })
+      build(:line_item, quantity: quantity,
+                        additional_tax_total: line_item_additional_tax_total)
     end
 
     subject do
@@ -199,12 +197,10 @@ describe Spree::InventoryUnit, :type => :model do
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_included_tax_total)  { 10.00 }
+    let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
+      build(:line_item, quantity: quantity,
+                        included_tax_total: line_item_included_tax_total)
     end
 
     subject do
@@ -218,12 +214,10 @@ describe Spree::InventoryUnit, :type => :model do
 
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
+    let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        additional_tax_total: line_item_additional_tax_total,
-      })
+      build(:line_item, quantity: quantity,
+                        additional_tax_total: line_item_additional_tax_total)
     end
 
     subject do
@@ -237,12 +231,10 @@ describe Spree::InventoryUnit, :type => :model do
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_included_tax_total)  { 10.00 }
+    let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
-      build(:line_item, {
-        quantity: quantity,
-        included_tax_total: line_item_included_tax_total,
-      })
+      build(:line_item, quantity: quantity,
+                        included_tax_total: line_item_included_tax_total)
     end
 
     subject do

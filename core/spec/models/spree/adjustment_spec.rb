@@ -3,8 +3,7 @@
 
 require 'spec_helper'
 
-describe Spree::Adjustment, :type => :model do
-
+describe Spree::Adjustment, type: :model do
   let(:order) { Spree::Order.new }
 
   before do
@@ -76,7 +75,7 @@ describe Spree::Adjustment, :type => :model do
     end
   end
 
-  describe 'competing_promos scope' do    
+  describe 'competing_promos scope' do
     before do
       allow_any_instance_of(Spree::Adjustment).to receive(:update_adjustable_adjustment_total).and_return(true)
     end
@@ -112,7 +111,6 @@ describe Spree::Adjustment, :type => :model do
       end
     end
   end
-
 
   context "adjustment state" do
     let(:adjustment) { create(:adjustment, order: order, state: 'open') }
@@ -185,5 +183,4 @@ describe Spree::Adjustment, :type => :model do
       end
     end
   end
-
 end

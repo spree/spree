@@ -11,7 +11,6 @@ module Spree
       tracker.analytics_id.present? ? tracker : nil if tracker
     end
 
-
     def clear_cache
       Rails.cache.delete("current_tracker")
     end

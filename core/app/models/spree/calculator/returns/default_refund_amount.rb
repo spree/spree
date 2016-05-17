@@ -3,7 +3,6 @@ require_dependency 'spree/returns_calculator'
 module Spree
   module Calculator::Returns
     class DefaultRefundAmount < ReturnsCalculator
-
       def self.description
         Spree.t(:default_refund_amount)
       end
@@ -24,13 +23,13 @@ module Spree
       end
 
       def percentage_of_order_total(inventory_unit)
-       return 0.0 if inventory_unit.order.pre_tax_item_amount.zero?
-       weighted_line_item_pre_tax_amount(inventory_unit) / inventory_unit.order.pre_tax_item_amount
+        return 0.0 if inventory_unit.order.pre_tax_item_amount.zero?
+        weighted_line_item_pre_tax_amount(inventory_unit) / inventory_unit.order.pre_tax_item_amount
      end
 
-     def percentage_of_line_item(inventory_unit)
-       1 / BigDecimal.new(inventory_unit.line_item.quantity)
-     end
+      def percentage_of_line_item(inventory_unit)
+        1 / BigDecimal.new(inventory_unit.line_item.quantity)
+      end
    end
  end
 end

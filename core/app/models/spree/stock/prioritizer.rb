@@ -3,7 +3,7 @@ module Spree
     class Prioritizer
       attr_reader :packages
 
-      def initialize(packages, adjuster_class=Adjuster)
+      def initialize(packages, adjuster_class = Adjuster)
         @packages = packages
         @adjuster_class = adjuster_class
         @adjusters = Hash.new
@@ -50,7 +50,7 @@ module Spree
       end
 
       def prune_packages
-        packages.reject! { |pkg| pkg.empty? }
+        packages.reject!(&:empty?)
       end
     end
   end

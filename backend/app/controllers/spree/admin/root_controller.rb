@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class RootController < Spree::Admin::BaseController
-
       skip_before_action :authorize_admin
 
       def index

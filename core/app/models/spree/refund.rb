@@ -22,7 +22,7 @@ module Spree
     scope :non_reimbursement, -> { where(reimbursement_id: nil) }
 
     def money
-      Spree::Money.new(amount, { currency: payment.currency })
+      Spree::Money.new(amount, currency: payment.currency)
     end
     alias display_amount money
 
@@ -55,9 +55,9 @@ module Spree
     # return an activemerchant response object if successful or else raise an error
     def process!(credit_cents)
       response = if payment.payment_method.payment_profiles_supported?
-        payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, {originator: self})
-      else
-        payment.payment_method.credit(credit_cents, payment.transaction_id, {originator: self})
+                   payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
+                 else
+                   payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
       end
 
       if !response.success?

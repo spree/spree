@@ -173,7 +173,7 @@ module Spree
 
         # Return to the Payments page if additional payment is needed.
         if @order.payments.valid.sum(:amount) < @order.total
-          redirect_to checkout_state_path(@order.state) and return
+          redirect_to(checkout_state_path(@order.state)) && return
         end
       end
     end

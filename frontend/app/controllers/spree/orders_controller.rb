@@ -1,7 +1,7 @@
 module Spree
   class OrdersController < Spree::StoreController
     before_action :check_authorization
-    rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_404
     helper 'spree/products', 'spree/orders'
 
     respond_to :html
@@ -33,8 +33,8 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order || Order.incomplete.
-                                  includes(line_items: [variant: [:images, :option_values, :product]]).
-                                  find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+               includes(line_items: [variant: [:images, :option_values, :product]]).
+               find_or_initialize_by(guest_token: cookies.signed[:guest_token])
       associate_user
     end
 
@@ -76,7 +76,7 @@ module Spree
 
     def accurate_title
       if @order && @order.completed?
-        Spree.t(:order_number, :number => @order.number)
+        Spree.t(:order_number, number: @order.number)
       else
         Spree.t(:shopping_cart)
       end
@@ -94,20 +94,20 @@ module Spree
 
     private
 
-      def order_params
-        if params[:order]
-          params[:order].permit(*permitted_order_attributes)
-        else
-          {}
-        end
+    def order_params
+      if params[:order]
+        params[:order].permit(*permitted_order_attributes)
+      else
+        {}
       end
+    end
 
-      def assign_order_with_lock
-        @order = current_order(lock: true)
-        unless @order
-          flash[:error] = Spree.t(:order_not_found)
-          redirect_to root_path and return
-        end
+    def assign_order_with_lock
+      @order = current_order(lock: true)
+      unless @order
+        flash[:error] = Spree.t(:order_not_found)
+        redirect_to(root_path) && return
       end
+    end
   end
 end

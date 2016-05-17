@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe Spree::Admin::NavigationHelper, type: :helper do
-
   describe "#tab" do
     before do
       allow(helper).to receive(:cannot?).and_return false
@@ -39,7 +38,6 @@ describe Spree::Admin::NavigationHelper, type: :helper do
           allow(controller).to receive(:controller_name).and_return("bonobos")
           expect(subject).not_to include('selected')
         end
-
       end
 
       context "when match_path option is supplied" do
@@ -75,7 +73,6 @@ describe Spree::Admin::NavigationHelper, type: :helper do
   end
 
   describe '#klass_for' do
-
     it 'returns correct klass for Spree model' do
       expect(klass_for(:products)).to eq(Spree::Product)
       expect(klass_for(:product_properties)).to eq(Spree::ProductProperty)
@@ -100,7 +97,5 @@ describe Spree::Admin::NavigationHelper, type: :helper do
       My.send(:remove_const, 'User')
       Object.send(:remove_const, 'My')
     end
-
   end
-
 end

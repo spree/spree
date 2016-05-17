@@ -11,7 +11,7 @@ module Spree
         return if item_available?(line_item, quantity)
 
         variant = line_item.variant
-        display_name = "#{variant.name}"
+        display_name = variant.name.to_s
         display_name += " (#{variant.options_text})" unless variant.options_text.blank?
 
         line_item.errors[:quantity] << Spree.t(

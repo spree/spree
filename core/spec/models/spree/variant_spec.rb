@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Spree::Variant, :type => :model do
+describe Spree::Variant, type: :model do
   let!(:variant) { create(:variant) }
   let(:master_variant) { create(:master_variant) }
 
@@ -44,7 +44,7 @@ describe Spree::Variant, :type => :model do
 
       it "propagate to stock items" do
         expect_any_instance_of(Spree::StockLocation).not_to receive(:propagate_variant)
-        product.variants.create(:name => "Foobar")
+        product.variants.create(name: "Foobar")
       end
     end
 
@@ -172,10 +172,10 @@ describe Spree::Variant, :type => :model do
 
   context "product has other variants" do
     describe "option value accessors" do
-      before {
-        @multi_variant = FactoryGirl.create :variant, :product => variant.product
+      before do
+        @multi_variant = FactoryGirl.create :variant, product: variant.product
         variant.product.reload
-      }
+      end
 
       let(:multi_variant) { @multi_variant }
 
@@ -192,22 +192,22 @@ describe Spree::Variant, :type => :model do
       it "should not duplicate associated option values when set multiple times" do
         multi_variant.set_option_value('media_type', 'CD')
 
-        expect {
-         multi_variant.set_option_value('media_type', 'DVD')
-        }.to_not change(multi_variant.option_values, :count)
+        expect do
+          multi_variant.set_option_value('media_type', 'DVD')
+        end.to_not change(multi_variant.option_values, :count)
 
-        expect {
+        expect do
           multi_variant.set_option_value('coolness_type', 'awesome')
-        }.to change(multi_variant.option_values, :count).by(1)
+        end.to change(multi_variant.option_values, :count).by(1)
       end
     end
 
     context "product has other variants" do
       describe "option value accessors" do
-        before {
-          @multi_variant = create(:variant, :product => variant.product)
+        before do
+          @multi_variant = create(:variant, product: variant.product)
           variant.product.reload
-        }
+        end
 
         let(:multi_variant) { @multi_variant }
 
@@ -224,13 +224,13 @@ describe Spree::Variant, :type => :model do
         it "should not duplicate associated option values when set multiple times" do
           multi_variant.set_option_value('media_type', 'CD')
 
-          expect {
-           multi_variant.set_option_value('media_type', 'DVD')
-          }.to_not change(multi_variant.option_values, :count)
+          expect do
+            multi_variant.set_option_value('media_type', 'DVD')
+          end.to_not change(multi_variant.option_values, :count)
 
-          expect {
+          expect do
             multi_variant.set_option_value('coolness_type', 'awesome')
-          }.to change(multi_variant.option_values, :count).by(1)
+          end.to change(multi_variant.option_values, :count).by(1)
         end
       end
     end
@@ -282,7 +282,7 @@ describe Spree::Variant, :type => :model do
 
   describe '.price_in' do
     before do
-      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+      variant.prices << create(:price, variant: variant, currency: "EUR", amount: 33.33)
     end
     subject { variant.price_in(currency).display_amount }
 
@@ -313,7 +313,7 @@ describe Spree::Variant, :type => :model do
 
   describe '.amount_in' do
     before do
-      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+      variant.prices << create(:price, variant: variant, currency: "EUR", amount: 33.33)
     end
 
     subject { variant.amount_in(currency) }
@@ -350,15 +350,14 @@ describe Spree::Variant, :type => :model do
 
     before do
       # Order bar than foo
-      variant.option_values << create(:option_value, {name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')})
-      variant.option_values << create(:option_value, {name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type')})
+      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
+      variant.option_values << create(:option_value, name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type'))
       variant.save
     end
 
     it 'should order by bar than foo' do
       expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
     end
-
   end
 
   describe 'exchange_name' do
@@ -366,11 +365,9 @@ describe Spree::Variant, :type => :model do
     let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value, {
-                                                     name: 'Foo',
+      variant.option_values << create(:option_value, name: 'Foo',
                                                      presentation: 'Foo',
-                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
-                                                   })
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
       variant.save
     end
 
@@ -385,7 +382,6 @@ describe Spree::Variant, :type => :model do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
     end
-
   end
 
   describe 'exchange_name' do
@@ -393,11 +389,9 @@ describe Spree::Variant, :type => :model do
     let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value, {
-                                                     name: 'Foo',
+      variant.option_values << create(:option_value, name: 'Foo',
                                                      presentation: 'Foo',
-                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
-                                                   })
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
       variant.save
     end
 
@@ -412,7 +406,6 @@ describe Spree::Variant, :type => :model do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
     end
-
   end
 
   describe 'descriptive_name' do
@@ -420,11 +413,9 @@ describe Spree::Variant, :type => :model do
     let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value, {
-                                                     name: 'Foo',
+      variant.option_values << create(:option_value, name: 'Foo',
                                                      presentation: 'Foo',
-                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type')
-                                                   })
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
       variant.save
     end
 
@@ -439,7 +430,6 @@ describe Spree::Variant, :type => :model do
         expect(variant.descriptive_name).to eql variant.name + ' - Foo Type: Foo'
       end
     end
-
   end
 
   # Regression test for #2744
@@ -565,7 +555,6 @@ describe Spree::Variant, :type => :model do
   end
 
   describe "#should_track_inventory?" do
-
     it 'should not track inventory when global setting is off' do
       Spree::Config[:track_inventory_levels] = false
 
@@ -622,7 +611,7 @@ describe Spree::Variant, :type => :model do
 
     it "return the volume if the dimension parameters are different of zero" do
       volume_expected = variant.width * variant.depth * variant.height
-      expect(variant.volume).to eq (volume_expected)
+      expect(variant.volume).to eq volume_expected
     end
   end
 
@@ -631,7 +620,7 @@ describe Spree::Variant, :type => :model do
 
     it "return the dimension if the dimension parameters are different of zero" do
       dimension_expected = variant.width + variant.depth + variant.height
-      expect(variant.dimension).to eq (dimension_expected)
+      expect(variant.dimension).to eq dimension_expected
     end
   end
 

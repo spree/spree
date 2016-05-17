@@ -17,6 +17,7 @@ module Spree
       end
 
       private
+
       def choose_default_shipping_rate(shipping_rates)
         unless shipping_rates.empty?
           shipping_rates.min_by(&:cost).selected = true
@@ -59,10 +60,10 @@ module Spree
           calculator = ship_method.calculator
 
           ship_method.available_to_display(display_filter) &&
-          ship_method.include?(order.ship_address) &&
-          calculator.available?(package) &&
-          (calculator.preferences[:currency].blank? ||
-           calculator.preferences[:currency] == currency)
+            ship_method.include?(order.ship_address) &&
+            calculator.available?(package) &&
+            (calculator.preferences[:currency].blank? ||
+             calculator.preferences[:currency] == currency)
         end
       end
     end

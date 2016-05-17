@@ -287,7 +287,7 @@ module Spree
           end
 
           def assign_default_credit_card
-            if payments.from_credit_card.size == 0 && user_has_valid_default_card? && payment_required?
+            if payments.from_credit_card.empty? && user_has_valid_default_card? && payment_required?
               cc = user.default_credit_card
               payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
             end
@@ -316,7 +316,7 @@ module Spree
             if @updating_params[:payment_source].present?
               source_params = @updating_params.
                               delete(:payment_source)[@updating_params[:order][:payments_attributes].
-                                                      first[:payment_method_id].to_s]
+                              first[:payment_method_id].to_s]
 
               if source_params
                 @updating_params[:order][:payments_attributes].first[:source_attributes] = source_params

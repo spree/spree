@@ -34,7 +34,7 @@ describe "Properties", type: :feature, js: true do
         click_on "Filter"
         fill_in "q_name_cont", with: "size"
         click_on 'Search'
-        
+
         expect(page).to have_content("shirt size")
         expect(page).not_to have_content("shirt fit")
       end

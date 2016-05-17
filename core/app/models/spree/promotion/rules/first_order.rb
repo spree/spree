@@ -24,13 +24,14 @@ module Spree
         end
 
         private
-          def completed_orders
-            user ? user.orders.complete : orders_by_email
-          end
 
-          def orders_by_email
-            Spree::Order.where(email: email).complete
-          end
+        def completed_orders
+          user ? user.orders.complete : orders_by_email
+        end
+
+        def orders_by_email
+          Spree::Order.where(email: email).complete
+        end
       end
     end
   end

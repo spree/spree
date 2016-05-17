@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
-#/ Usage: script/bootstrap [<options>]
-#/ Bootstraps the gem environment.
-#/
-#/ Options are passed through to the bundle-install command. In most cases you
-#/ won't need these. They're used primarily in production environments.
+# / Usage: script/bootstrap [<options>]
+# / Bootstraps the gem environment.
+# /
+# / Options are passed through to the bundle-install command. In most cases you
+# / won't need these. They're used primarily in production environments.
 #
 # =============================================================================
 # Uses bundler to install all gems specified in the Gemfile.
@@ -37,4 +37,3 @@ system("bundle", *argv) || begin
   end
   exit($?.exitstatus)
 end
-

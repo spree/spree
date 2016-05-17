@@ -26,7 +26,6 @@ class RecreateSpreeReturnAuthorizations < ActiveRecord::Migration
       t.datetime "updated_at"
       t.integer  "stock_location_id"
     end
-
   end
 
   def down

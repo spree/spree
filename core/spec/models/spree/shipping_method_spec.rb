@@ -3,19 +3,19 @@ require 'spec_helper'
 class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
-describe Spree::ShippingMethod, :type => :model do
-  let(:shipping_method){ create(:shipping_method) }
+describe Spree::ShippingMethod, type: :model do
+  let(:shipping_method) { create(:shipping_method) }
 
   context 'calculators' do
     it "Should reject calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
-        Spree::Calculator::Shipping::FlatPercentItemTotal,
-        Spree::Calculator::Shipping::PriceSack,
-        Spree::Calculator::DefaultTax,
-        DummyShippingCalculator # included as regression test for https://github.com/spree/spree/issues/3109
-      ])
+                                                                                                                Spree::Calculator::Shipping::FlatPercentItemTotal,
+                                                                                                                Spree::Calculator::Shipping::PriceSack,
+                                                                                                                Spree::Calculator::DefaultTax,
+                                                                                                                DummyShippingCalculator # included as regression test for https://github.com/spree/spree/issues/3109
+                                                                                                              ])
 
-      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator ])
+      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
       expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::DefaultTax])
     end
   end
@@ -25,7 +25,7 @@ describe Spree::ShippingMethod, :type => :model do
     let!(:shipping_method) { create(:shipping_method) }
     let!(:shipment) do
       shipment = create(:shipment)
-      shipment.shipping_rates.create!(:shipping_method => shipping_method)
+      shipment.shipping_rates.create!(shipping_method: shipping_method)
       shipment
     end
 

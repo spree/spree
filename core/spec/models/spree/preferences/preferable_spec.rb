@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preferences::Preferable, :type => :model do
-
+describe Spree::Preferences::Preferable, type: :model do
   before :all do
     class A
       include Spree::Preferences::Preferable
@@ -15,7 +14,7 @@ describe Spree::Preferences::Preferable, :type => :model do
         @preferences ||= default_preferences
       end
 
-      preference :color, :string, :default => 'green'
+      preference :color, :string, default: 'green'
     end
 
     class B < A
@@ -25,9 +24,9 @@ describe Spree::Preferences::Preferable, :type => :model do
 
   before :each do
     @a = A.new
-    allow(@a).to receive_messages(:persisted? => true)
+    allow(@a).to receive_messages(persisted?: true)
     @b = B.new
-    allow(@b).to receive_messages(:persisted? => true)
+    allow(@b).to receive_messages(persisted?: true)
 
     # ensure we're persisting as that is the default
     #
@@ -58,9 +57,9 @@ describe Spree::Preferences::Preferable, :type => :model do
     end
 
     it "can be asked and raises" do
-      expect {
+      expect do
         @a.has_preference! :flavor
-      }.to raise_error(NoMethodError, "flavor preference not defined")
+      end.to raise_error(NoMethodError, "flavor preference not defined")
     end
 
     it "has a type" do
@@ -74,11 +73,10 @@ describe Spree::Preferences::Preferable, :type => :model do
     end
 
     it "raises if not defined" do
-      expect {
+      expect do
         @a.get_preference :flavor
-      }.to raise_error(NoMethodError, "flavor preference not defined")
+      end.to raise_error(NoMethodError, "flavor preference not defined")
     end
-
   end
 
   describe "preference access" do
@@ -96,22 +94,20 @@ describe Spree::Preferences::Preferable, :type => :model do
     end
 
     it "raises when preference not defined" do
-      expect {
+      expect do
         @a.set_preference(:bad, :bone)
-      }.to raise_exception(NoMethodError, "bad preference not defined")
+      end.to raise_exception(NoMethodError, "bad preference not defined")
     end
 
     it "builds a hash of preferences" do
       @b.preferred_flavor = :strawberry
       expect(@b.preferences[:flavor]).to eq 'strawberry'
-      expect(@b.preferences[:color]).to eq 'green' #default from A
+      expect(@b.preferences[:color]).to eq 'green' # default from A
     end
 
     it "builds a hash of preference defaults" do
-      expect(@b.default_preferences).to eq({
-        flavor: nil,
-        color: 'green'
-      })
+      expect(@b.default_preferences).to eq(flavor: nil,
+                                           color: 'green')
     end
 
     context "converts integer preferences to integer values" do
@@ -126,7 +122,6 @@ describe Spree::Preferences::Preferable, :type => :model do
         @a.set_preference(:is_integer, '')
         expect(@a.preferences[:is_integer]).to eq(0)
       end
-
     end
 
     context "converts decimal preferences to BigDecimal values" do
@@ -150,7 +145,7 @@ describe Spree::Preferences::Preferable, :type => :model do
 
     context "converts boolean preferences to boolean values" do
       before do
-        A.preference :is_boolean, :boolean, :default => true
+        A.preference :is_boolean, :boolean, default: true
       end
 
       it "with strings" do
@@ -212,14 +207,14 @@ describe Spree::Preferences::Preferable, :type => :model do
       end
 
       it "with hash and keys are integers" do
-        @a.set_preference(:is_hash, {1 => 2, 3 => 4})
-        expect(@a.preferences[:is_hash]).to eql({1 => 2, 3 => 4})
+        @a.set_preference(:is_hash, 1 => 2, 3 => 4)
+        expect(@a.preferences[:is_hash]).to eql(1 => 2, 3 => 4)
       end
 
       it "with ancestor of a hash" do
-        ancestor_of_hash = ActionController::Parameters.new({ key: :value })
+        ancestor_of_hash = ActionController::Parameters.new(key: :value)
         @a.set_preference(:is_hash, ancestor_of_hash)
-        expect(@a.preferences[:is_hash]).to eql({"key" => :value})
+        expect(@a.preferences[:is_hash]).to eql("key" => :value)
       end
 
       it "with string" do
@@ -255,8 +250,8 @@ describe Spree::Preferences::Preferable, :type => :model do
 
     context "converts any preferences to any values" do
       before do
-        A.preference :product_ids, :any, :default => []
-        A.preference :product_attributes, :any, :default => {}
+        A.preference :product_ids, :any, default: []
+        A.preference :product_attributes, :any, default: {}
       end
 
       it "with array" do
@@ -267,11 +262,10 @@ describe Spree::Preferences::Preferable, :type => :model do
 
       it "with hash" do
         expect(@a.preferences[:product_attributes]).to eq({})
-        @a.set_preference(:product_attributes, {:id => 1, :name => 2})
-        expect(@a.preferences[:product_attributes]).to eq({:id => 1, :name => 2})
+        @a.set_preference(:product_attributes, id: 1, name: 2)
+        expect(@a.preferences[:product_attributes]).to eq(id: 1, name: 2)
       end
     end
-
   end
 
   describe "persisted preferables" do
@@ -294,8 +288,8 @@ describe Spree::Preferences::Preferable, :type => :model do
       CreatePrefTest.migrate(:up)
 
       class PrefTest < Spree::Base
-        preference :pref_test_pref, :string, :default => 'abc'
-        preference :pref_test_any, :any, :default => []
+        preference :pref_test_pref, :string, default: 'abc'
+        preference :pref_test_any, :any, default: []
       end
     end
 
@@ -338,11 +332,10 @@ describe Spree::Preferences::Preferable, :type => :model do
       @pt.preferred_pref_test_pref = 'lmn'
       @pt.save!
       @pt.destroy
-      @pt1 = PrefTest.new(:col => 'aaaa')
+      @pt1 = PrefTest.new(col: 'aaaa')
       @pt1.id = @pt.id
       @pt1.save!
       expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
     end
   end
-
 end

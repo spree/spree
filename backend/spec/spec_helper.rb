@@ -26,7 +26,7 @@ require 'rspec/rails'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 require 'database_cleaner'
 require 'ffaker'
@@ -73,11 +73,11 @@ RSpec.configure do |config|
   config.before(:each) do
     Rails.cache.clear
     WebMock.disable!
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
+    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
+                                 :truncation
+                               else
+                                 :transaction
+                               end
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
     if ActiveRecord::Base.connection.open_transactions < 0
@@ -99,7 +99,7 @@ RSpec.configure do |config|
     Timeout.timeout(30, &example)
   end
 
-  config.after(:each, :type => :feature) do |example|
+  config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       puts "Found missing translations: #{missing_translations.inspect}"

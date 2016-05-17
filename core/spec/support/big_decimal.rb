@@ -1,5 +1,5 @@
 class BigDecimal
   def inspect
-    "#<BigDecimal: #{to_s}>"
+    "#<BigDecimal: #{self}>"
   end
 end

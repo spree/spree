@@ -74,6 +74,4 @@ describe "Ransackable Attributes" do
       expect(product_names).not_to include other_product.name
     end
   end
-
-
 end

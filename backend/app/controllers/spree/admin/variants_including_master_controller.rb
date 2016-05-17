@@ -10,7 +10,6 @@ module Spree
       def object_name
         "variant"
       end
-
     end
   end
 end

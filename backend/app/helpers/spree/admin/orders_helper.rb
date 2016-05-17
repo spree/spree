@@ -11,7 +11,7 @@ module Spree
               label.capitalize,
               [event, :admin, order],
               method: :put,
-              icon: "#{event}",
+              icon: event.to_s,
               data: { confirm: Spree.t(:order_sure_want_to, event: label) }
             )
           end
@@ -20,7 +20,7 @@ module Spree
       end
 
       def line_item_shipment_price(line_item, quantity)
-        Spree::Money.new(line_item.price * quantity, { currency: line_item.currency })
+        Spree::Money.new(line_item.price * quantity, currency: line_item.currency)
       end
 
       def avs_response_code

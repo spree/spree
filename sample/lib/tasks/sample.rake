@@ -4,9 +4,9 @@ require 'spree/sample'
 
 namespace :spree_sample do
   desc 'Loads sample data'
-  task :load => :environment do
+  task load: :environment do
     if ARGV.include?("db:migrate")
-      puts %Q{
+      puts %{
 Please run db:migrate separately from spree_sample:load.
 
 Running db:migrate and spree_sample:load at the same time has been known to
@@ -20,5 +20,3 @@ Migrations have been run. Please run "rake spree_sample:load" by itself now.
     SpreeSample::Engine.load_samples
   end
 end
-
-

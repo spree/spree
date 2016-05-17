@@ -14,8 +14,8 @@ module Spree
 
     private
 
-      def check_completed_orders
-        raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
-      end
+    def check_completed_orders
+      raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
+    end
   end
 end

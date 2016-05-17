@@ -7,7 +7,7 @@ describe Spree::CustomerReturn, type: :model do
 
   describe ".validation" do
     describe "#must_have_return_authorization" do
-      let(:customer_return)       { build(:customer_return) }
+      let(:customer_return) { build(:customer_return) }
 
       let(:inventory_unit)  { build(:inventory_unit) }
       let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
@@ -144,7 +144,6 @@ describe Spree::CustomerReturn, type: :model do
     let(:return_item)     { create(:return_item, inventory_unit: inventory_unit) }
 
     context "to the initial stock location" do
-
       it "should mark all inventory units are returned" do
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
         expect(inventory_unit.reload.state).to eq 'returned'
@@ -175,9 +174,9 @@ describe Spree::CustomerReturn, type: :model do
       let(:new_stock_location) { create(:stock_location, name: "other") }
 
       it "should update the stock item counts in new stock location" do
-        expect {
+        expect do
           create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
-        }.to change {
+        end.to change {
           Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
         }.by(1)
       end
@@ -207,7 +206,6 @@ describe Spree::CustomerReturn, type: :model do
     end
 
     context 'when all return items are decided' do
-
       context 'when all return items are rejected' do
         before { customer_return.return_items.each(&:reject!) }
 

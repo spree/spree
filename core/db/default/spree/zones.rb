@@ -2,7 +2,7 @@ eu_vat = Spree::Zone.create!(name: "EU_VAT", description: "Countries that make u
 north_america = Spree::Zone.create!(name: "North America", description: "USA + Canada", kind: 'country')
 
 %w(PL FI PT RO DE FR SK HU SI IE AT ES IT BE SE LV BG GB LT CY LU MT DK NL EE HR CZ GR).
-each do |name|
+  each do |name|
   eu_vat.zone_members.create!(zoneable: Spree::Country.find_by!(iso: name))
 end
 

@@ -23,6 +23,6 @@ end.join(', ')
 state_values.call.each_slice(500) do |state_values_batch|
   connection.execute <<-SQL
     INSERT INTO spree_states (#{columns})
-    VALUES #{state_values_batch.join(", ")};
+    VALUES #{state_values_batch.join(', ')};
   SQL
 end

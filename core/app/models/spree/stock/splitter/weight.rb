@@ -17,9 +17,10 @@ module Spree
         end
 
         private
+
         def reduce(package)
           removed = []
-          while package.weight > self.threshold
+          while package.weight > threshold
             contents = package.contents_by_weight
             break if contents.size == 1
             # Deleting the second heaviest item in the package should yield best results
@@ -31,4 +32,3 @@ module Spree
     end
   end
 end
-

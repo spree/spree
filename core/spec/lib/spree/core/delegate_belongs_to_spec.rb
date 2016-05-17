@@ -18,5 +18,5 @@ module Spree
         subject.name
       end
     end
-  end 
+  end
 end

@@ -8,8 +8,7 @@ shared_examples "an invalid state transition" do |status, expected_status|
   end
 end
 
-describe Spree::ReturnItem, :type => :model do
-
+describe Spree::ReturnItem, type: :model do
   all_reception_statuses = Spree::ReturnItem.state_machines[:reception_status].states.map(&:name).map(&:to_s)
   all_acceptance_statuses = Spree::ReturnItem.state_machines[:acceptance_status].states.map(&:name).map(&:to_s)
 
@@ -30,7 +29,6 @@ describe Spree::ReturnItem, :type => :model do
 
     subject { return_item.receive! }
 
-
     it 'returns the inventory unit' do
       subject
       expect(inventory_unit.reload.state).to eq 'returned'
@@ -42,7 +40,7 @@ describe Spree::ReturnItem, :type => :model do
     end
 
     context 'with a stock location' do
-      let(:stock_item)      { inventory_unit.find_stock_item }
+      let(:stock_item) { inventory_unit.find_stock_item }
       let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do
@@ -401,7 +399,7 @@ describe Spree::ReturnItem, :type => :model do
 
       it 'is valid' do
         expect(subject).to_not be_valid
-        expect(subject.errors.messages).to eq({reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')]})
+        expect(subject.errors.messages).to eq(reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')])
       end
     end
   end
@@ -541,19 +539,17 @@ describe Spree::ReturnItem, :type => :model do
     let(:old_reception_status) { 'awaiting' }
 
     subject do
-      build(:return_item, {
-        return_authorization: old_return_item.return_authorization,
-        inventory_unit: old_return_item.inventory_unit,
-      })
+      build(:return_item, return_authorization: old_return_item.return_authorization,
+                          inventory_unit: old_return_item.inventory_unit)
     end
 
     context 'with other awaiting return items exist for the same inventory unit' do
       let(:old_reception_status) { 'awaiting' }
 
       it 'cancels the others' do
-        expect {
+        expect do
           subject.save!
-        }.to change { old_return_item.reload.reception_status }.from('awaiting').to('cancelled')
+        end.to change { old_return_item.reload.reception_status }.from('awaiting').to('cancelled')
       end
 
       it 'does not cancel itself' do

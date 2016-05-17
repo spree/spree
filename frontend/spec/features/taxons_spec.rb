@@ -86,12 +86,12 @@ describe "viewing products", type: :feature, inaccessible: true do
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       array = ["Ruby on Rails Bag",
-       "Ruby on Rails Baseball Jersey",
-       "Ruby on Rails Jr. Spaghetti",
-       "Ruby on Rails Mug",
-       "Ruby on Rails Ringer T-Shirt",
-       "Ruby on Rails Stein",
-       "Ruby on Rails Tote"]
+               "Ruby on Rails Baseball Jersey",
+               "Ruby on Rails Jr. Spaghetti",
+               "Ruby on Rails Mug",
+               "Ruby on Rails Ringer T-Shirt",
+               "Ruby on Rails Stein",
+               "Ruby on Rails Tote"]
       expect(tmp.sort!).to eq(array)
     end
 
@@ -120,10 +120,10 @@ describe "viewing products", type: :feature, inaccessible: true do
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete("")
       expect(tmp.sort!).to eq(["Apache Baseball Jersey",
-     "Ruby Baseball Jersey",
-     "Ruby on Rails Baseball Jersey",
-     "Ruby on Rails Jr. Spaghetti",
-     "Ruby on Rails Ringer T-Shirt"])
+                               "Ruby Baseball Jersey",
+                               "Ruby on Rails Baseball Jersey",
+                               "Ruby on Rails Jr. Spaghetti",
+                               "Ruby on Rails Ringer T-Shirt"])
     end
 
     it "should be able to visit category Mugs" do

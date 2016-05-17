@@ -7,7 +7,6 @@ module Spree
         @log_entries = @payment.log_entries
       end
 
-
       private
 
       def find_order_and_payment

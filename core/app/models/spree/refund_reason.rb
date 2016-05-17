@@ -2,7 +2,7 @@ module Spree
   class RefundReason < Spree::Base
     include Spree::NamedType
 
-    RETURN_PROCESSING_REASON = 'Return processing'
+    RETURN_PROCESSING_REASON = 'Return processing'.freeze
 
     has_many :refunds, dependent: :restrict_with_error
 

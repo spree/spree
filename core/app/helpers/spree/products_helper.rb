@@ -24,7 +24,7 @@ module Spree
     def variant_full_price(variant)
       product = variant.product
       unless product.variants.active(current_currency).all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, { currency: current_currency }).to_html
+        Spree::Money.new(variant.price, currency: current_currency).to_html
       end
     end
 
@@ -38,7 +38,7 @@ module Spree
       description.blank? ? Spree.t(:product_has_no_description) : raw(description)
     end
 
-    def line_item_description_text description_text
+    def line_item_description_text(description_text)
       if description_text.present?
         truncate(strip_tags(description_text.gsub('&nbsp;', ' ').squish), length: 100)
       else
@@ -59,7 +59,7 @@ module Spree
 
     def available_status(product) # will return a human readable string
       return Spree.t(:discontinued)  if product.discontinued?
-      return Spree.t(:deleted)  if product.deleted?
+      return Spree.t(:deleted) if product.deleted?
 
       if product.available?
         Spree.t(:available)

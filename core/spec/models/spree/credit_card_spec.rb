@@ -17,21 +17,20 @@ describe Spree::CreditCard, type: :model do
   let(:credit_card) { Spree::CreditCard.new }
 
   before(:each) do
-
     @order = create(:order)
-    @payment = Spree::Payment.create(:amount => 100, :order => @order)
+    @payment = Spree::Payment.create(amount: 100, order: @order)
 
     @success_response = double('gateway_response', success?: true, authorization: '123', avs_result: { 'code' => 'avs-code' })
     @fail_response = double('gateway_response', success?: false)
 
     @payment_gateway = mock_model(Spree::PaymentMethod,
-      payment_profiles_supported?: true,
-      authorize: @success_response,
-      purchase: @success_response,
-      capture: @success_response,
-      void: @success_response,
-      credit: @success_response,
-    )
+                                  payment_profiles_supported?: true,
+                                  authorize: @success_response,
+                                  purchase: @success_response,
+                                  capture: @success_response,
+                                  void: @success_response,
+                                  credit: @success_response,
+                                 )
 
     allow(@payment).to receive_messages payment_method: @payment_gateway
   end
@@ -192,7 +191,6 @@ describe Spree::CreditCard, type: :model do
     it "does not blow up when passed one number" do
       expect { credit_card.expiry = '12' }.not_to raise_error
     end
-
   end
 
   context "#cc_type=" do

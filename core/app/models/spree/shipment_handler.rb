@@ -26,18 +26,19 @@ module Spree
     end
 
     private
-      def send_shipped_email
-        ShipmentMailer.shipped_email(@shipment.id).deliver_later
-      end
 
-      def update_order_shipment_state
-        order = @shipment.order
+    def send_shipped_email
+      ShipmentMailer.shipped_email(@shipment.id).deliver_later
+    end
 
-        new_state = OrderUpdater.new(order).update_shipment_state
-        order.update_columns(
-                             shipment_state: new_state,
-                             updated_at: Time.current,
-                             )
-      end
+    def update_order_shipment_state
+      order = @shipment.order
+
+      new_state = OrderUpdater.new(order).update_shipment_state
+      order.update_columns(
+        shipment_state: new_state,
+        updated_at: Time.current,
+      )
+    end
   end
 end
