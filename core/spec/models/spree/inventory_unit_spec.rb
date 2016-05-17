@@ -19,7 +19,7 @@ describe Spree::InventoryUnit, :type => :model do
     end
 
     describe '.on_hand_or_backordered' do
-      it { expect(Spree::InventoryUnit.on_hand_or_backordered).to eq([inventory_unit_1, inventory_unit_2]) }
+      it { expect(Spree::InventoryUnit.on_hand_or_backordered).to match_array([inventory_unit_1, inventory_unit_2]) }
     end
 
     describe '.shipped' do
