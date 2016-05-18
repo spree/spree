@@ -39,7 +39,7 @@ describe "Cancelling + Resuming", :type => :feature do
       click_button 'Resume'
       within(".additional-info") do
         within(".state") do
-          expect(page).to have_content("resumed")
+          expect(page).to have_content("complete")
         end
       end
     end
