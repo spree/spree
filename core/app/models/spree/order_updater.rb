@@ -49,7 +49,6 @@ module Spree
       update_adjustment_total
     end
 
-
     # give each of the shipments a chance to update themselves
     def update_shipments
       shipments.each do |shipment|
@@ -130,18 +129,18 @@ module Spree
       else
         # get all the shipment states for this order
         shipment_states = shipments.states
-        if shipment_states.size > 1
-          # multiple shiment states means it's most likely partially shipped
-          order.shipment_state = 'partial'
-        else
-          # will return nil if no shipments are found
-          order.shipment_state = shipment_states.first
-          # TODO inventory unit states?
-          # if order.shipment_state && order.inventory_units.where(:shipment_id => nil).exists?
-          #   shipments exist but there are unassigned inventory units
-          #   order.shipment_state = 'partial'
-          # end
-        end
+        order.shipment_state = if shipment_states.size > 1
+                                 # multiple shiment states means it's most likely partially shipped
+                                 'partial'
+                               else
+                                 # will return nil if no shipments are found
+                                 shipment_states.first
+                                 # TODO inventory unit states?
+                                 # if order.shipment_state && order.inventory_units.where(shipment_id: nil).exists?
+                                 #   shipments exist but there are unassigned inventory units
+                                 #   order.shipment_state = 'partial'
+                                 # end
+                               end
       end
 
       order.state_changed('shipment')
@@ -159,7 +158,7 @@ module Spree
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
       last_state = order.payment_state
-      if payments.present? && payments.valid.size == 0
+      if payments.present? && payments.valid.empty?
         order.payment_state = 'failed'
       elsif order.canceled? && order.payment_total == 0
         order.payment_state = 'void'

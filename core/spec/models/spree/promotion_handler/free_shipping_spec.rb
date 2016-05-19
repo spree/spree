@@ -4,7 +4,7 @@ module Spree
   module PromotionHandler
     describe FreeShipping, type: :model do
       let(:order) { create(:order) }
-      let(:shipment) { create(:shipment, order: order ) }
+      let(:shipment) { create(:shipment, order: order) }
 
       let(:promotion) { Promotion.create(name: "Free Shipping") }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }

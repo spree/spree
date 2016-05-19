@@ -27,10 +27,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:zone) do |h|
-{ :zones => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ zones: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -48,10 +48,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:zone) do |h|
- { :zones => [h],
-   :count => 25,
-   :pages => 5,
-   :current_page => 1 }
+ { zones: [h],
+   count: 25,
+   pages: 5,
+   current_page: 1 }
 end %>
 
 ### Sorting results
@@ -86,12 +86,12 @@ Assuming in this instance that you want to create a zone containing
 a zone member which is a `Spree::Country` record with the `id` attribute of 1, send through the parameters like this:
 
 <%= json \
-  :zone => {
-    :name => "North Pole",
-    :zone_members => [
+  zone: {
+    name: "North Pole",
+    zone_members: [
       {
-        :zoneable_type => "Spree::Country",
-        :zoneable_id => 1
+        zoneable_type: "Spree::Country",
+        zoneable_id: 1
       }
     ]
   } %>
@@ -113,13 +113,13 @@ PUT /api/zones/1```
 To update zone and zone member information, use parameters like this:
 
 <%= json \
-  :id => 1,
-  :zone => {
-    :name => "North Pole",
-    :zone_members => [
+  id: 1,
+  zone: {
+    name: "North Pole",
+    zone_members: [
       {
-        :zoneable_type => "Spree::Country",
-        :zoneable_id => 1
+        zoneable_type: "Spree::Country",
+        zoneable_id: 1
       }
     ]
   } %>

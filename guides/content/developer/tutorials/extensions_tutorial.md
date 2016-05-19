@@ -81,7 +81,7 @@ Because we are dealing with prices, we need to now edit the generated migration 
 ```ruby
 class AddSalePriceToSpreeVariants < ActiveRecord::Migration
   def change
-    add_column :spree_variants, :sale_price, :decimal, :precision => 8, :scale => 2
+    add_column :spree_variants, :sale_price, :decimal, precision: 8, scale: 2
   end
 end
 ```
@@ -93,7 +93,7 @@ Before we continue development of our extension, let's add it to the Spree appli
 Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_simple_sales', :path => '../spree_simple_sales'
+gem 'spree_simple_sales', path: '../spree_simple_sales'
 ```
 
 You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
@@ -190,7 +190,7 @@ Next, create the file `app/views/spree/home/sale.html.erb` and add the following
 
 ```erb
 <div data-hook="homepage_products">
-  <%%= render 'spree/shared/products', :products => @products %>
+  <%%= render 'spree/shared/products', products: @products %>
 </div>
 ```
 
@@ -214,7 +214,7 @@ module Spree
     alias_method :orig_price_in, :price_in
     def price_in(currency)
       return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(:variant_id => self.id, :amount => self.sale_price, :currency => currency)
+      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
     end
   end
 end
@@ -259,8 +259,8 @@ require 'spec_helper'
 describe Spree::Variant do
   describe "#price_in" do
     it "returns the sale price if it is present" do
-      variant = create(:variant, :sale_price => 8.00)
-      expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.sale_price)
+      variant = create(:variant, sale_price: 8.00)
+      expected = Spree::Price.new(variant_id: variant.id, currency: "USD", amount: variant.sale_price)
 
       result = variant.price_in("USD")
 
@@ -270,8 +270,8 @@ describe Spree::Variant do
     end
 
     it "returns the normal price if it is not on sale" do
-      variant = create(:variant, :price => 15.00)
-      expected = Spree::Price.new(:variant_id => variant.id, :currency => "USD", :amount => variant.price)
+      variant = create(:variant, price: 15.00)
+      expected = Spree::Price.new(variant_id: variant.id, currency: "USD", amount: variant.price)
 
       result = variant.price_in("USD")
 

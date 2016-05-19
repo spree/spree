@@ -300,7 +300,6 @@ describe "Order Details", type: :feature, js: true do
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
-
             fill_in 'item_quantity', with: -1
             click_icon :save
 
@@ -312,7 +311,6 @@ describe "Order Details", type: :feature, js: true do
           end
 
           context 'A shipment has shipped' do
-
             it 'should not show or let me back to the cart page, nor show the shipment edit buttons', js: false do
               order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
@@ -324,7 +322,6 @@ describe "Order Details", type: :feature, js: true do
               expect(page).not_to have_selector('.fa-split')
               expect(page).not_to have_selector('.fa-trash')
             end
-
           end
         end
 
@@ -345,7 +342,6 @@ describe "Order Details", type: :feature, js: true do
               expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
             end
-
           end
 
           context 'but it can backorder' do
@@ -538,7 +534,6 @@ describe "Order Details", type: :feature, js: true do
             product.master.stock_items.last.update_column(:count_on_hand, 0)
             expect(@shipment2.reload.backordered?).to eq(false)
 
-
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
@@ -569,7 +564,7 @@ describe "Order Details", type: :feature, js: true do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       can [:admin, :index, :read, :edit], Spree::Order
     end
 
@@ -597,7 +592,7 @@ describe "Order Details", type: :feature, js: true do
   end
 
   context 'as Fakedispatch' do
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       # allow dispatch to :admin, :index, and :edit on Spree::Order
       can [:admin, :edit, :index, :read], Spree::Order
       # allow dispatch to :index, :show, :create and :update shipments on the admin
@@ -606,8 +601,8 @@ describe "Order Details", type: :feature, js: true do
 
     before do
       allow(Spree.user_class).to receive(:find_by).
-                                   with(hash_including(:spree_api_key)).
-                                   and_return(Spree.user_class.new)
+        with(hash_including(:spree_api_key)).
+        and_return(Spree.user_class.new)
     end
 
     it 'should not display order tabs or edit buttons without ability', js: false do

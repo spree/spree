@@ -7,6 +7,6 @@ FactoryGirl.define do
     transient do
       association :product
     end
-    variant{ product.master }
+    variant { product.master }
   end
 end

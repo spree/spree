@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class AdjustmentsController < ResourceController
-
       belongs_to 'spree/order', find_by: :number
 
       create.after :update_totals
@@ -32,7 +31,6 @@ module Spree
       def build_resource
         parent.adjustments.build(order: parent)
       end
-
     end
   end
 end

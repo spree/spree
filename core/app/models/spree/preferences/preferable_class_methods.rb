@@ -1,11 +1,10 @@
 module Spree::Preferences
   module PreferableClassMethods
-
     def preference(name, type, *args)
       options = args.extract_options!
       options.assert_valid_keys(:default)
       default = options[:default]
-      default = ->{ options[:default] } unless default.is_a?(Proc)
+      default = -> { options[:default] } unless default.is_a?(Proc)
 
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
@@ -37,7 +36,7 @@ module Spree::Preferences
     end
 
     def preference_setter_method(name)
-       "preferred_#{name}=".to_sym
+      "preferred_#{name}=".to_sym
     end
 
     def preference_default_getter_method(name)

@@ -13,7 +13,7 @@ Spree::Address.create!(
   country: united_states,
   phone: FFaker::PhoneNumber.phone_number)
 
-#Shipping address
+# Shipping address
 Spree::Address.create!(
   firstname: FFaker::Name.first_name,
   lastname: FFaker::Name.last_name,

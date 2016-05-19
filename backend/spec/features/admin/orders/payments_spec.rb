@@ -4,14 +4,13 @@ describe 'Payments', type: :feature, js: true do
   stub_authorization!
 
   context "with a pre-existing payment" do
-
     let!(:payment) do
       create(:payment,
-        order:          order,
-        amount:         order.outstanding_balance,
-        payment_method: create(:credit_card_payment_method),
-        state:          state
-      )
+             order:          order,
+             amount:         order.outstanding_balance,
+             payment_method: create(:credit_card_payment_method),
+             state:          state
+            )
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }
@@ -31,10 +30,10 @@ describe 'Payments', type: :feature, js: true do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
       let!(:payment) do
         create(:payment,
-          order:          order,
-          amount:         order.outstanding_balance,
-          payment_method: create(:check_payment_method)  # Check
-        )
+               order:          order,
+               amount:         order.outstanding_balance,
+               payment_method: create(:check_payment_method) # Check
+              )
       end
 
       it 'capturing a check payment from a new order' do
@@ -50,7 +49,7 @@ describe 'Payments', type: :feature, js: true do
     end
 
     it 'should list all captures for a payment' do
-      capture_amount = order.outstanding_balance/2 * 100
+      capture_amount = order.outstanding_balance / 2 * 100
       payment.capture!(capture_amount)
 
       visit spree.admin_order_payment_path(order, payment)
@@ -109,6 +108,7 @@ describe 'Payments', type: :feature, js: true do
             click_icon(:edit)
             fill_in('amount', with: '$1')
             click_icon(:save)
+            wait_for_ajax
             expect(page).to have_selector('td.amount span', text: '$1.00')
             expect(payment.reload.amount).to eq(1.00)
           end
@@ -119,6 +119,7 @@ describe 'Payments', type: :feature, js: true do
             find('td.amount span').click
             fill_in('amount', with: '$1.01')
             click_icon(:save)
+            wait_for_ajax
             expect(page).to have_selector('td.amount span', text: '$1.01')
             expect(payment.reload.amount).to eq(1.01)
           end

@@ -7,23 +7,23 @@ module Spree
       def index
         respond_with(@collection) do |format|
           format.html
-          format.js { render :partial => 'state_list' }
+          format.js { render partial: 'state_list' }
         end
       end
 
       protected
 
-        def location_after_save
-          admin_country_states_url(@country)
-        end
+      def location_after_save
+        admin_country_states_url(@country)
+      end
 
-        def collection
-          super.order(:name)
-        end
+      def collection
+        super.order(:name)
+      end
 
-        def load_data
-          @countries = Country.order(:name)
-        end
+      def load_data
+        @countries = Country.order(:name)
+      end
     end
   end
 end

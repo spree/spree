@@ -1,9 +1,7 @@
 require 'digest/sha1'
 
 module Nanoc3::DataSources
-
   class Static < Nanoc3::DataSource
-
     identifier :static
 
     def items
@@ -16,10 +14,10 @@ module Nanoc3::DataSources
       # Convert filenames to items
       filenames.map do |filename|
         attributes = {
-          :extension => File.extname(filename)[1..-1],
-          :filename  => filename,
+          extension: File.extname(filename)[1..-1],
+          filename: filename,
         }
-        identifier = filename[(prefix.length+1)..-1] + '/'
+        identifier = filename[(prefix.length + 1)..-1] + '/'
 
         mtime      = File.mtime(filename)
         checksum   = checksum_for(filename)
@@ -28,12 +26,12 @@ module Nanoc3::DataSources
           filename,
           attributes,
           identifier,
-          :binary => true, :mtime => mtime, :checksum => checksum
+          binary: true, mtime: mtime, checksum: checksum
         )
       end
     end
 
-  private
+    private
 
     # Returns a checksum of the given filenames
     # TODO un-duplicate this somewhere
@@ -49,7 +47,5 @@ module Nanoc3::DataSources
         digest.hexdigest
       end.join('-')
     end
-
   end
-
 end

@@ -25,7 +25,7 @@ describe "Analytics Tracker", type: :feature do
         expect(column_text(2)).to eq("Yes")
       end
     end
-   end
+  end
 
   context "create" do
     before(:each) do

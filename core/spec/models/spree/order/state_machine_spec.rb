@@ -93,8 +93,10 @@ describe Spree::Order, type: :model do
 
   context "#cancel" do
     let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, variant: variant),
-                              stub_model(Spree::InventoryUnit, variant: variant)] }
+    let!(:inventory_units) do
+      [stub_model(Spree::InventoryUnit, variant: variant),
+       stub_model(Spree::InventoryUnit, variant: variant)]
+    end
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
       allow(shipment).to receive_messages inventory_units: inventory_units, order: order
@@ -143,7 +145,6 @@ describe Spree::Order, type: :model do
         allow(shipment).to receive(:update_order)
         allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
         allow(mail_message).to receive :deliver
-
       end
     end
 
@@ -158,7 +159,7 @@ describe Spree::Order, type: :model do
         allow(order).to receive :restock_items!
         allow(shipment).to receive(:cancel!)
         allow(payment).to receive(:cancel!)
-        allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
         allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
         allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
         allow(order).to receive_message_chain(:payments, :last).and_return(payment)
@@ -167,7 +168,7 @@ describe Spree::Order, type: :model do
 
       context "without shipped items" do
         it "should set payment state to 'void'" do
-          expect { order.cancel! }.to change{ order.reload.payment_state }.to("void")
+          expect { order.cancel! }.to change { order.reload.payment_state }.to("void")
         end
       end
 
@@ -205,7 +206,6 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages email: "user@spreecommerce.com"
       allow(order).to receive_messages state: "canceled"
       allow(order).to receive_messages allow_resume?: true
-
     end
   end
 end

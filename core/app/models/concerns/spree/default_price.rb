@@ -4,9 +4,9 @@ module Spree
 
     included do
       has_one :default_price,
-        -> { where currency: Spree::Config[:currency] },
-        class_name: 'Spree::Price',
-        dependent: :destroy
+              -> { where currency: Spree::Config[:currency] },
+              class_name: 'Spree::Price',
+              dependent: :destroy
 
       delegate_belongs_to :default_price,
                           :display_price,
@@ -23,7 +23,7 @@ module Spree
       end
 
       def has_default_price?
-        !self.default_price.nil?
+        !default_price.nil?
       end
 
       private

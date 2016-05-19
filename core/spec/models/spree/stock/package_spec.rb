@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Stock
-    describe Package, :type => :model do
+    describe Package, type: :model do
       let(:variant) { build(:variant, weight: 25.0) }
       let(:stock_location) { build(:stock_location) }
       let(:order) { build(:order) }
@@ -86,7 +86,7 @@ module Spree
         subject.add build_inventory_unit, :backordered
 
         shipping_method = build(:shipping_method)
-        subject.shipping_rates = [ Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true) ]
+        subject.shipping_rates = [Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true)]
 
         shipment = subject.to_shipment
         expect(shipment.stock_location).to eq subject.stock_location
@@ -121,7 +121,6 @@ module Spree
       describe "#remove" do
         let(:unit) { build_inventory_unit }
         context "there is a content item for the inventory unit" do
-
           before { subject.add unit }
 
           it "removes that content item" do
@@ -140,7 +139,6 @@ module Spree
       describe "#order" do
         let(:unit) { build_inventory_unit }
         context "there is an inventory unit" do
-
           before { subject.add unit }
 
           it "returns an order" do

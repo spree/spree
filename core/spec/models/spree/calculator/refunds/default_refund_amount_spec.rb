@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Calculator::Returns::DefaultRefundAmount, :type => :model do
-  let(:order)           { create(:order) }
+describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
+  let(:order) { create(:order) }
   let(:line_item_quantity) { 2 }
   let(:pre_tax_amount)  { 100.0 }
   let(:line_item)       { create(:line_item, price: 100.0, quantity: line_item_quantity, pre_tax_amount: pre_tax_amount) }
   let(:inventory_unit) { build(:inventory_unit, order: order, line_item: line_item) }
-  let(:return_item) { build(:return_item, inventory_unit: inventory_unit ) }
+  let(:return_item) { build(:return_item, inventory_unit: inventory_unit) }
   let(:calculator) { Spree::Calculator::Returns::DefaultRefundAmount.new }
 
   before { order.line_items << line_item }

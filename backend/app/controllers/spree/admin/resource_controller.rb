@@ -3,25 +3,25 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   respond_to :html
 
   def new
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
-      format.html { render :layout => !request.xhr? }
+      format.html { render layout: !request.xhr? }
       if request.xhr?
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     end
   end
 
   def edit
     respond_with(@object) do |format|
-      format.html { render :layout => !request.xhr? }
+      format.html { render layout: !request.xhr? }
       if request.xhr?
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     end
   end
@@ -54,7 +54,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_created)
       respond_with(@object) do |format|
         format.html { redirect_to location_after_save }
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     else
       invoke_callbacks(:create, :fails)
@@ -158,10 +158,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def parent
     if parent_data.present?
       @parent ||= parent_data[:model_class].
-          send("find_by_#{parent_data[:find_by]}", params["#{resource.model_name}_id"])
+                  send("find_by_#{parent_data[:find_by]}", params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
-    else
-      nil
     end
   end
 
@@ -184,7 +182,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def collection
     return parent.send(controller_name) if parent_data.present?
     if model_class.respond_to?(:accessible_by) &&
-        !current_ability.has_block?(params[:action], model_class)
+       !current_ability.has_block?(params[:action], model_class)
       model_class.accessible_by(current_ability, action)
     else
       model_class.where(nil)

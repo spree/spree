@@ -29,10 +29,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:return_authorization) do |h|
-{ :return_authorizations => [h],
-  :count => 2,
-  :pages => 1,
-  :current_page => 1 }
+{ return_authorizations: [h],
+  count: 2,
+  pages: 1,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -55,10 +55,10 @@ Results can be returned in a specific order by specifying which field to sort by
 
 <%= headers 200 %>
 <%= json(:return_authorization) do |h|
- { :return_authorizations => [h],
-   :count => 1,
-   :pages => 1,
-   :current_page => 1 }
+ { return_authorizations: [h],
+   count: 1,
+   pages: 1,
+   current_page: 1 }
 end %>
 
 ## Show

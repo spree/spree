@@ -5,7 +5,7 @@ module Spree
     class Adjuster
       attr_accessor :inventory_unit, :status, :fulfilled, :package
 
-      def initialize(inventory_unit, status, package=nil)
+      def initialize(inventory_unit, status, package = nil)
         @inventory_unit = inventory_unit
         @status = status
         @package = package

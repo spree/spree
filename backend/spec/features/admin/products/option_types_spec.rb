@@ -83,7 +83,7 @@ describe "Option Types", type: :feature, js: true do
     within('table#listing_option_types') { click_icon :edit }
 
     wait_for_ajax
-    page.find("tbody#option_values", :visible => true)
+    page.find("tbody#option_values", visible: true)
 
     expect(all("tbody#option_values tr").select(&:visible?).count).to eq(1)
 
@@ -108,7 +108,5 @@ describe "Option Types", type: :feature, js: true do
     expect(all("div#progress[style]").count).to eq(0)
     # Assert that the field is hidden automatically
     expect(all("tbody#option_values tr").select(&:visible?).count).to eq(0)
-
   end
-
 end

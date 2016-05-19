@@ -22,11 +22,19 @@ module Spree
         params[:q].delete(:inventory_units_shipment_id_null) if params[:q][:inventory_units_shipment_id_null] == "0"
 
         if params[:q][:created_at_gt].present?
-          params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ""
+          params[:q][:created_at_gt] = begin
+                                         Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
+                                       rescue
+                                         ""
+                                       end
         end
 
         if params[:q][:created_at_lt].present?
-          params[:q][:created_at_lt] = Time.zone.parse(params[:q][:created_at_lt]).end_of_day rescue ""
+          params[:q][:created_at_lt] = begin
+                                         Time.zone.parse(params[:q][:created_at_lt]).end_of_day
+                                       rescue
+                                         ""
+                                       end
         end
 
         if @show_only_completed
@@ -40,8 +48,8 @@ module Spree
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
         # see https://github.com/spree/spree/pull/3919
         @orders = @search.result(distinct: true).
-          page(params[:page]).
-          per(params[:per_page] || Spree::Config[:orders_per_page])
+                  page(params[:page]).
+                  per(params[:per_page] || Spree::Config[:orders_per_page])
 
         # Restore dates
         params[:q][:created_at_gt] = created_at_gt
@@ -75,7 +83,7 @@ module Spree
           @order.update_with_updater!
           unless @order.completed?
             # Jump to next step if order is not completed.
-            redirect_to admin_order_customer_path(@order) and return
+            redirect_to(admin_order_customer_path(@order)) && return
           end
         else
           @order.errors.add(:line_items, Spree.t('errors.messages.blank')) if @order.line_items.empty?
@@ -126,24 +134,25 @@ module Spree
       end
 
       private
-        def order_params
-          params[:created_by_id] = try_spree_current_user.try(:id)
-          params.permit(:created_by_id, :user_id)
-        end
 
-        def load_order
-          @order = Order.includes(:adjustments).friendly.find(params[:id])
-          authorize! action, @order
-        end
+      def order_params
+        params[:created_by_id] = try_spree_current_user.try(:id)
+        params.permit(:created_by_id, :user_id)
+      end
 
-        # Used for extensions which need to provide their own custom event links on the order details view.
-        def initialize_order_events
-          @order_events = %w{approve cancel resume}
-        end
+      def load_order
+        @order = Order.includes(:adjustments).friendly.find(params[:id])
+        authorize! action, @order
+      end
 
-        def model_class
-          Spree::Order
-        end
+      # Used for extensions which need to provide their own custom event links on the order details view.
+      def initialize_order_events
+        @order_events = %w{approve cancel resume}
+      end
+
+      def model_class
+        Spree::Order
+      end
     end
   end
 end

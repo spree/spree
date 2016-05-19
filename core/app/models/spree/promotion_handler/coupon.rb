@@ -49,12 +49,12 @@ module Spree
         return promotion_applied if promotion_exists_on_order?(order, promotion)
         unless promotion.eligible?(order)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
-          return (self.error || ineligible_for_this_order)
+          return (error || ineligible_for_this_order)
         end
 
         # If any of the actions for the promotion return `true`,
         # then result here will also be `true`.
-        result = promotion.activate(:order => order)
+        result = promotion.activate(order: order)
         if result
           determine_promotion_application_result
         else

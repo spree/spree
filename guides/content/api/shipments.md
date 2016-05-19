@@ -55,9 +55,9 @@ The `order_id` is the number of the order to create a shipment for and is provid
 Assuming in this instance that you want to create a shipment with a stock_location_id of `1` and a variant_id of `10` for order `R1234567`, send through the parameters like this:
 
 <%= json \
-  :order_id => 123456,
-  :stock_location_id => 1,
-  :variant_id => 10
+  order_id: 123456,
+  stock_location_id: 1,
+  variant_id: 10
  %>
 
 ### Response

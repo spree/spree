@@ -37,7 +37,7 @@ gem 'rails', '~> 3.1.10'
 For best results, use the 1-0-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-0-stable'```
+gem 'spree', github: 'spree/spree', branch: '1-0-stable'```
 
 Run `bundle update spree`. 
 
@@ -69,7 +69,7 @@ these commands:
 Within `config/routes.rb`, you must now mount the Spree engine:
 
 ```ruby
-mount Spree::Core::Engine, :at => '/'```
+mount Spree::Core::Engine, at: '/'```
 
 This is the standard way of adding engines to Rails applications.
 

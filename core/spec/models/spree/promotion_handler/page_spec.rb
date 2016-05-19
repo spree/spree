@@ -2,13 +2,13 @@ require 'spec_helper'
 
 module Spree
   module PromotionHandler
-    describe Page, :type => :model do
-      let(:order) { create(:order_with_line_items, :line_items_count => 1) }
+    describe Page, type: :model do
+      let(:order) { create(:order_with_line_items, line_items_count: 1) }
 
-      let(:promotion) { Promotion.create(name: "10% off", :path => '10off') }
+      let(:promotion) { Promotion.create(name: "10% off", path: '10off') }
       before do
         calculator = Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
-        action = Promotion::Actions::CreateItemAdjustments.create(:calculator => calculator)
+        action = Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
         promotion.actions << action
       end
 
@@ -21,8 +21,8 @@ module Spree
       context "when promotion is expired" do
         before do
           promotion.update_columns(
-            :starts_at => 1.week.ago,
-            :expires_at => 1.day.ago
+            starts_at: 1.week.ago,
+            expires_at: 1.day.ago
           )
         end
 
@@ -41,4 +41,3 @@ module Spree
     end
   end
 end
-

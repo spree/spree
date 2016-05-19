@@ -6,13 +6,12 @@ require 'spree/testing_support/bar_ability'
 class OrderSpecificAbility
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(_user)
     can [:admin, :manage], Spree::Order, number: 'R987654321'
   end
 end
 
 describe Spree::Admin::OrdersController, type: :controller do
-
   context "with authorization" do
     stub_authorization!
 
@@ -117,7 +116,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       it 'does not display duplicate results' do
         send_request
-        expect(assigns[:orders].map { |o| o.number }.count).to eq 1
+        expect(assigns[:orders].map(&:number).count).to eq 1
       end
 
       it 'preloads users' do
@@ -237,7 +236,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(response).to render_template :index
         expect(assigns['orders'].size).to eq 1
         expect(assigns['orders'].first.number).to eq number
-        expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq  [number]
+        expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq [number]
       end
     end
   end
@@ -246,9 +245,9 @@ describe Spree::Admin::OrdersController, type: :controller do
     stub_authorization!
 
     it "raise active record not found" do
-      expect {
+      expect do
         spree_get :edit, id: 99999999
-      }.to raise_error ActiveRecord::RecordNotFound
+      end.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

@@ -57,7 +57,7 @@ the :load_data before_action.
 
 ```ruby
 Spree::ProductsController.class_eval do
-  before_action :load_data, :only => :some_action
+  before_action :load_data, only: :some_action
 
   def some_action
     ...
@@ -85,7 +85,7 @@ any action, and is built on top of Rails 3's **respond_with** method
 using the following syntax:
 
 ```ruby
-respond_override :action_name => { :format =>  { :result => lambda { ... response ... } } }
+respond_override action_name: { format:  { result: lambda { ... response ... } } }
 ```
 
 -   **:action_name** - Can be any existing action within a controller
@@ -111,8 +111,8 @@ ProductsController, you could include the following in your
 
 ```ruby
 Spree::ProductsController.class_eval do
-  respond_override :index => { :html =>
-    { :success => lambda { render 'shared/some_file' } } }
+  respond_override index: { html:
+    { success: lambda { render 'shared/some_file' } } }
 end
 ```
 
@@ -121,7 +121,7 @@ Admin::ProductsController, you would use:
 
 ```ruby
 Spree::Admin::ProductsController.class_eval do
-  respond_override :create => { :html => { :failure => lambda {
+  respond_override create: { html: { failure: lambda {
     redirect_to some_url } } }
 end
 ```
@@ -148,10 +148,10 @@ app model directory, and override the attachment sizes:
 ```ruby
 Spree::Image.class_eval do
   attachment_definitions[:attachment][:styles] = {
-    :mini => '48x48>', # thumbs under image
-    :small => '100x100>', # images on category view
-    :product => '240x240>', # full product image
-    :large => '600x600>' # light box image
+    mini: '48x48>', # thumbs under image
+    small: '100x100>', # images on category view
+    product: '240x240>', # full product image
+    large: '600x600>' # light box image
   }
 end
 ```

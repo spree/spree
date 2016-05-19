@@ -246,7 +246,7 @@ module Spree
         it 'raise error as variant shouldnt be found' do
           variant.product.destroy
           hash = { sku: variant.sku }
-          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{ hash[:sku] } not found.")
+          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{hash[:sku]} not found.")
         end
       end
 
@@ -281,14 +281,14 @@ module Spree
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 3.times.map { { sku: sku } }
+                inventory_units: Array.new(3) { { sku: sku } }
               },
               {
                 tracking: '123456789',
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 2.times.map { { sku: sku } }
+                inventory_units: Array.new(2) { { sku: sku } }
               }
             ]
           }

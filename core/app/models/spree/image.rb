@@ -9,14 +9,14 @@ module Spree
                       path: ':rails_root/public/spree/products/:id/:style/:basename.:extension',
                       convert_options: { all: '-strip -auto-orient -colorspace sRGB' }
     validates_attachment :attachment,
-      :presence => true,
-      :content_type => { :content_type => %w(image/jpeg image/jpg image/png image/gif) }
+                         presence: true,
+                         content_type: { content_type: %w(image/jpeg image/jpg image/png image/gif) }
 
     # save the w,h of the original image (from which others can be calculated)
     # we need to look at the write-queue for images which have not been saved yet
     before_save :find_dimensions, if: :attachment_updated_at_changed?
 
-    #used by admin products autocomplete
+    # used by admin products autocomplete
     def mini_url
       attachment.url(:mini, false)
     end

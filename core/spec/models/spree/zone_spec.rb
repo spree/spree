@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Zone, :type => :model do
+describe Spree::Zone, type: :model do
   context "#match" do
     let(:country_zone) { create(:zone, kind: 'country') }
 
@@ -243,7 +243,6 @@ describe Spree::Zone, :type => :model do
       end
     end
 
-
     context "when checking states against states" do
       before do
         @source.members.create(zoneable: state1)
@@ -300,7 +299,6 @@ describe Spree::Zone, :type => :model do
       before { @source.members.create(zoneable: country1) }
 
       context "when all states contained in one of the countries we check against" do
-
         before do
           state1 = create(:state, country: country1)
           @target.members.create(zoneable: state1)
@@ -442,7 +440,7 @@ describe Spree::Zone, :type => :model do
   end
 
   context "state and country associations" do
-    let!(:country)  { create(:country) }
+    let!(:country) { create(:country) }
 
     context "has countries associated" do
       let!(:zone) do
@@ -455,7 +453,7 @@ describe Spree::Zone, :type => :model do
     end
 
     context "has states associated" do
-      let!(:state)  { create(:state, country: country) }
+      let!(:state) { create(:state, country: country) }
       let!(:zone) do
         create(:zone, states: [state])
       end

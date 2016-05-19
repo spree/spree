@@ -1,14 +1,16 @@
 require 'spec_helper'
 require 'benchmark'
 
-describe Spree::Shipment, :type => :model do
-  let(:order) { mock_model Spree::Order, backordered?: false,
-                                         canceled?: false,
-                                         can_ship?: true,
-                                         currency: 'USD',
-                                         number: 'S12345',
-                                         paid?: false,
-                                         touch: true }
+describe Spree::Shipment, type: :model do
+  let(:order) do
+    mock_model Spree::Order, backordered?: false,
+                             canceled?: false,
+                             can_ship?: true,
+                             currency: 'USD',
+                             number: 'S12345',
+                             paid?: false,
+                             touch: true
+  end
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
@@ -22,12 +24,11 @@ describe Spree::Shipment, :type => :model do
   let(:line_item) { mock_model(Spree::LineItem, variant: variant) }
 
   def create_shipment(order, stock_location)
-    order.shipments.create({ stock_location_id: stock_location.id }).inventory_units.create(
+    order.shipments.create(stock_location_id: stock_location.id).inventory_units.create(
       order_id: order.id,
       variant_id: order.line_items.first.variant_id,
       line_item_id: order.line_items.first.id
     )
-
   end
 
   describe "precision of pre_tax_amount" do
@@ -53,9 +54,9 @@ describe Spree::Shipment, :type => :model do
 
   it 'is backordered if one if its inventory_units is backordered' do
     allow(shipment).to receive_messages(inventory_units: [
-      mock_model(Spree::InventoryUnit, backordered?: false),
-      mock_model(Spree::InventoryUnit, backordered?: true)
-    ])
+                                          mock_model(Spree::InventoryUnit, backordered?: false),
+                                          mock_model(Spree::InventoryUnit, backordered?: true)
+                                        ])
     expect(shipment).to be_backordered
   end
 
@@ -190,10 +191,12 @@ describe Spree::Shipment, :type => :model do
     let(:shipment) { create(:shipment) }
     let(:shipping_method1) { create(:shipping_method) }
     let(:shipping_method2) { create(:shipping_method) }
-    let(:shipping_rates) { [
-      Spree::ShippingRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
-      Spree::ShippingRate.new(shipping_method: shipping_method2, cost: 20.00)
-    ] }
+    let(:shipping_rates) do
+      [
+        Spree::ShippingRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
+        Spree::ShippingRate.new(shipping_method: shipping_method2, cost: 20.00)
+      ]
+    end
 
     it 'returns shipping_method from selected shipping_rate' do
       shipment.shipping_rates.delete_all
@@ -203,7 +206,7 @@ describe Spree::Shipment, :type => :model do
 
     context 'refresh_rates' do
       let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
-      before { allow(shipment).to receive(:can_get_rates?){ true } }
+      before { allow(shipment).to receive(:can_get_rates?) { true } }
 
       it 'should request new rates, and maintain shipping_method selection' do
         expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(mock_estimator)
@@ -334,10 +337,11 @@ describe Spree::Shipment, :type => :model do
 
       context "when using a custom shipment handler" do
         before do
-          Spree::ShipmentHandler::UPS = Class.new {
-            def initialize(shipment) true end
+          Spree::ShipmentHandler::UPS = Class.new do
+            def initialize(_shipment) true end
+
             def perform() true end
-          }
+          end
         end
 
         it "should call the custom handler's 'perform' method" do
@@ -431,9 +435,9 @@ describe Spree::Shipment, :type => :model do
         expect(other_shipment.inventory_units.count).to eq 1
         expect(other_shipment.inventory_units.first).to be_backordered
 
-        expect {
+        expect do
           shipment.cancel!
-        }.not_to change { other_shipment.inventory_units.first.state }
+        end.not_to change { other_shipment.inventory_units.first.state }
       end
     end
   end
@@ -725,7 +729,7 @@ describe Spree::Shipment, :type => :model do
   context "state changes" do
     before do
       # Must be stubbed so transition can succeed
-      allow(order).to receive_messages :paid? => true
+      allow(order).to receive_messages paid?: true
     end
 
     it "are logged to the database" do

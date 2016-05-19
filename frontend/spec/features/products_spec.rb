@@ -146,8 +146,8 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     before do
       # Need to have two images to trigger the error
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-      product.images.create!(:attachment => image)
-      product.images.create!(:attachment => image)
+      product.images.create!(attachment: image)
+      product.images.create!(attachment: image)
 
       product.option_types << option_value.option_type
       variant.option_values << option_value
@@ -255,7 +255,6 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     expect(page.all('#products .product-list-item').size).to eq(0)
   end
 
-
   it "should be able to display products priced under 10 dollars" do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
     check "Price_Range_Under_$10.00"
@@ -299,13 +298,13 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete("")
     expect(tmp.sort!).to eq(["Ruby on Rails Bag",
-                         "Ruby on Rails Baseball Jersey",
-                         "Ruby on Rails Jr. Spaghetti",
-                         "Ruby on Rails Ringer T-Shirt"])
+                             "Ruby on Rails Baseball Jersey",
+                             "Ruby on Rails Jr. Spaghetti",
+                             "Ruby on Rails Ringer T-Shirt"])
   end
 
   it "should be able to put a product without a description in the cart" do
-    product = FactoryGirl.create(:base_product, :description => nil, :name => 'Sample', :price => '19.99')
+    product = FactoryGirl.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     visit spree.product_path(product)
     expect(page).to have_content "This product has no description"
     click_button 'add-to-cart-button'
@@ -313,7 +312,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   it "shouldn't be able to put a product without a current price in the cart" do
-    product = FactoryGirl.create(:base_product, :description => nil, :name => 'Sample', :price => '19.99')
+    product = FactoryGirl.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     Spree::Config.currency = "CAN"
     Spree::Config.show_products_without_price = true
     visit spree.product_path(product)

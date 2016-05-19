@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Spree::PromotionRule, :type => :model do
-
+  describe Spree::PromotionRule, type: :model do
     class BadTestRule < Spree::PromotionRule; end
 
     class TestRule < Spree::PromotionRule
@@ -24,6 +23,5 @@ module Spree
       p2.promotion_id = 1
       expect(p2).not_to be_valid
     end
-
   end
 end

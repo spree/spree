@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module Admin
-    describe CustomerReturnsController, :type => :controller do
+    describe CustomerReturnsController, type: :controller do
       stub_authorization!
 
       describe "#index" do
@@ -10,7 +10,7 @@ module Spree
         let(:customer_return) { create(:customer_return) }
 
         subject do
-          spree_get :index, { order_id: customer_return.order.to_param }
+          spree_get :index, order_id: customer_return.order.to_param
         end
 
         before { subject }
@@ -32,7 +32,7 @@ module Spree
         let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
 
         subject do
-          spree_get :new, { order_id: order.to_param }
+          spree_get :new, order_id: order.to_param
         end
 
         it "loads the order" do
@@ -60,7 +60,7 @@ module Spree
             end
 
             it "loads the persisted rma return items" do
-              expect(assigns(:rma_return_items).all? { |return_item| return_item.persisted? }).to eq true
+              expect(assigns(:rma_return_items).all?(&:persisted?)).to eq true
             end
 
             it "has one rma return item" do
@@ -75,11 +75,11 @@ module Spree
         let(:customer_return) { create(:customer_return, line_items_count: 3) }
 
         let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
-        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!)}
+        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!) }
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
 
         subject do
-          spree_get :edit, { order_id: order.to_param, id: customer_return.to_param }
+          spree_get :edit, order_id: order.to_param, id: customer_return.to_param
         end
 
         before do
@@ -135,7 +135,7 @@ module Spree
                   "0" => {
                     id: return_authorization.return_items.first.id,
                     returned: "1",
-                    "pre_tax_amount"=>"15.99",
+                    "pre_tax_amount" => "15.99",
                     inventory_unit_id: order.inventory_units.shipped.last.id
                   }
                 }
@@ -144,7 +144,7 @@ module Spree
           end
 
           it "creates a customer return" do
-            expect{ subject }.to change { Spree::CustomerReturn.count }.by(1)
+            expect { subject }.to change { Spree::CustomerReturn.count }.by(1)
           end
 
           it "redirects to the index page" do
@@ -162,7 +162,7 @@ module Spree
                 return_items_attributes: {
                   "0" => {
                     returned: "1",
-                    "pre_tax_amount"=>"15.99",
+                    "pre_tax_amount" => "15.99",
                     inventory_unit_id: order.inventory_units.shipped.last.id
                   }
                 }
@@ -171,7 +171,7 @@ module Spree
           end
 
           it "doesn't create a customer return" do
-            expect{ subject }.to_not change { Spree::CustomerReturn.count }
+            expect { subject }.to_not change { Spree::CustomerReturn.count }
           end
 
           it "renders the new page" do

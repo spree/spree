@@ -23,7 +23,11 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[firstname lastname company]
 
     def self.build_default
-      country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
+      country = begin
+                  Spree::Country.find(Spree::Config[:default_country_id])
+                rescue
+                  Spree::Country.first
+                end
       new(country: country)
     end
 
@@ -60,11 +64,11 @@ module Spree
     end
 
     def clone
-      self.class.new(self.attributes.except('id', 'updated_at', 'created_at'))
+      self.class.new(attributes.except('id', 'updated_at', 'created_at'))
     end
 
     def ==(other_address)
-      self_attrs = self.attributes
+      self_attrs = attributes
       other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
 
       [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at') }

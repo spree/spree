@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   class Calculator
-    describe PercentOnLineItem, :type => :model do
+    describe PercentOnLineItem, type: :model do
       let(:line_item) { double("LineItem", amount: 100) }
 
       before { subject.preferred_percent = 15 }

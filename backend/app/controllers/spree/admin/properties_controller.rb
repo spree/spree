@@ -15,8 +15,8 @@ module Spree
         @collection = super
         @search = @collection.ransack(params[:q])
         @collection = @search.result.
-              page(params[:page]).
-              per(Spree::Config[:properties_per_page])
+                      page(params[:page]).
+                      per(Spree::Config[:properties_per_page])
       end
     end
   end

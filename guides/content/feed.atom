@@ -6,4 +6,4 @@ author_uri: https://github.com/technoweenie
 layout: false
 ---
 
-<%= atom_feed :limit => 30, :articles => api_changes %>
+<%= atom_feed limit: 30, articles: api_changes %>

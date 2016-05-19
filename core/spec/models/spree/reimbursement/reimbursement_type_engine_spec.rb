@@ -1,22 +1,24 @@
 require 'spec_helper'
 
 module Spree
-  describe Reimbursement::ReimbursementTypeEngine, :type => :model do
+  describe Reimbursement::ReimbursementTypeEngine, type: :model do
     describe '#calculate_reimbursement_types' do
       let(:return_item)   { create(:return_item) }
-      let(:return_items)  { [ return_item ] }
+      let(:return_items)  { [return_item] }
       let(:reimbursement_type_engine) { Spree::Reimbursement::ReimbursementTypeEngine.new(return_items) }
       let(:expired_reimbursement_type) { Spree::ReimbursementType::OriginalPayment }
       let(:override_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
       let(:preferred_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
       let(:calculated_reimbursement_types) { subject }
-      let(:all_reimbursement_types) {[
-                                        reimbursement_type_engine.default_reimbursement_type,
-                                        reimbursement_type_engine.exchange_reimbursement_type,
-                                        expired_reimbursement_type,
-                                        override_reimbursement_type,
-                                        preferred_reimbursement_type
-                                    ]}
+      let(:all_reimbursement_types) do
+        [
+          reimbursement_type_engine.default_reimbursement_type,
+          reimbursement_type_engine.exchange_reimbursement_type,
+          expired_reimbursement_type,
+          override_reimbursement_type,
+          preferred_reimbursement_type
+        ]
+      end
 
       subject { reimbursement_type_engine.calculate_reimbursement_types }
 

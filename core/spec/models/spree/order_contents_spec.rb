@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderContents, :type => :model do
+describe Spree::OrderContents, type: :model do
   let(:order) { Spree::Order.create }
   let(:variant) { create(:variant) }
 
@@ -56,7 +56,7 @@ describe Spree::OrderContents, :type => :model do
 
     context "running promotions" do
       let(:promotion) { create(:promotion) }
-      let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
+      let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       shared_context "discount changes order total" do
         before { subject.add(variant, 1) }
@@ -97,7 +97,7 @@ describe Spree::OrderContents, :type => :model do
           )
         end
         let(:variant) { create(:variant, price: 1000) }
-        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(:preferred_percent => 50) }
+        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it "should update included_tax_total" do
@@ -119,9 +119,9 @@ describe Spree::OrderContents, :type => :model do
   context "#remove" do
     context "given an invalid variant" do
       it "raises an exception" do
-        expect {
+        expect do
           subject.remove(variant, 1)
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -171,12 +171,12 @@ describe Spree::OrderContents, :type => :model do
       expect(order.item_total.to_f).to eq(0.00)
       expect(order.total.to_f).to eq(0.00)
 
-      subject.add(variant,2)
+      subject.add(variant, 2)
 
       expect(order.item_total.to_f).to eq(39.98)
       expect(order.total.to_f).to eq(39.98)
 
-      subject.remove(variant,1)
+      subject.remove(variant, 1)
       expect(order.item_total.to_f).to eq(19.99)
       expect(order.total.to_f).to eq(19.99)
     end
@@ -212,7 +212,7 @@ describe Spree::OrderContents, :type => :model do
       expect(order.item_total.to_f).to eq(0.00)
       expect(order.total.to_f).to eq(0.00)
 
-      line_item = subject.add(variant,2)
+      line_item = subject.add(variant, 2)
 
       expect(order.item_total.to_f).to eq(39.98)
       expect(order.total.to_f).to eq(39.98)
@@ -238,23 +238,23 @@ describe Spree::OrderContents, :type => :model do
     end
 
     it "updates order totals" do
-      expect {
+      expect do
         subject.update_cart params
-      }.to change { subject.order.total }
+      end.to change { subject.order.total }
     end
 
     context "submits item quantity 0" do
       let(:params) do
         { line_items_attributes: {
           "0" => { id: shirt.id, quantity: 0 },
-          "1" => { id: "666", quantity: 0}
+          "1" => { id: "666", quantity: 0 }
         } }
       end
 
       it "removes item from order" do
-        expect {
+        expect do
           subject.update_cart params
-        }.to change { subject.order.line_items.count }
+        end.to change { subject.order.line_items.count }
       end
 
       it "doesnt try to update unexistent items" do
@@ -270,7 +270,6 @@ describe Spree::OrderContents, :type => :model do
         expect(subject.order).to receive(:update_attributes).with(single_line_item_params)
         subject.update_cart single_line_item_params
       end
-
     end
 
     it "ensures updated shipments" do
@@ -285,13 +284,13 @@ describe Spree::OrderContents, :type => :model do
     before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
 
     it "updates order payment state" do
-      expect {
+      expect do
         subject.add variant
-      }.to change { order.payment_state }
+      end.to change { order.payment_state }
 
-      expect {
+      expect do
         subject.remove variant
-      }.to change { order.payment_state }
+      end.to change { order.payment_state }
     end
   end
 end

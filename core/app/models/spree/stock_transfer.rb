@@ -32,7 +32,7 @@ module Spree
 
           self.source_location = source_location
           self.destination_location = destination_location
-          self.save!
+          save!
         end
       end
     end

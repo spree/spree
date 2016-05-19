@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'shared_examples/protect_product_actions'
 
 module Spree
-  describe Api::V1::ProductsController, :type => :controller do
+  describe Api::V1::ProductsController, type: :controller do
     render_views
 
     let!(:product) { create(:product) }
@@ -18,12 +18,10 @@ module Spree
     end
     let(:attributes_for_variant) do
       h = attributes_for(:variant).except(:option_values, :product)
-      h.merge({
-        options: [
-          { name: "size", value: "small" },
-          { name: "color", value: "black" }
-        ]
-      })
+      h.merge(options: [
+                { name: "size", value: "small" },
+                { name: "color", value: "black" }
+              ])
     end
 
     before do
@@ -59,7 +57,7 @@ module Spree
       end
 
       it "retrieves a list of products by id" do
-        api_get :index, :ids => [product.id]
+        api_get :index, ids: [product.id]
         expect(json_response["products"].first).to have_attributes(show_attributes)
         expect(json_response["total_count"]).to eq(1)
         expect(json_response["current_page"]).to eq(1)
@@ -78,7 +76,7 @@ module Spree
 
       it "retrieves a list of products by ids string" do
         second_product = create(:product)
-        api_get :index, :ids => [product.id, second_product.id].join(",")
+        api_get :index, ids: [product.id, second_product.id].join(",")
         expect(json_response["products"].first).to have_attributes(show_attributes)
         expect(json_response["products"][1]).to have_attributes(show_attributes)
         expect(json_response["total_count"]).to eq(2)
@@ -88,7 +86,7 @@ module Spree
       end
 
       it "does not return inactive products when queried by ids" do
-        api_get :index, :ids => [inactive_product.id]
+        api_get :index, ids: [inactive_product.id]
         expect(json_response["count"]).to eq(0)
       end
 
@@ -100,7 +98,7 @@ module Spree
       context "pagination" do
         it "can select the next page of products" do
           second_product = create(:product)
-          api_get :index, :page => 2, :per_page => 1
+          api_get :index, page: 2, per_page: 1
           expect(json_response["products"].first).to have_attributes(show_attributes)
           expect(json_response["total_count"]).to eq(2)
           expect(json_response["current_page"]).to eq(2)
@@ -109,7 +107,7 @@ module Spree
 
         it 'can control the page size through a parameter' do
           create(:product)
-          api_get :index, :per_page => 1
+          api_get :index, per_page: 1
           expect(json_response['count']).to eq(1)
           expect(json_response['total_count']).to eq(2)
           expect(json_response['current_page']).to eq(1)
@@ -118,40 +116,40 @@ module Spree
       end
 
       it "can search for products" do
-        create(:product, :name => "The best product in the world")
-        api_get :index, :q => { :name_cont => "best" }
+        create(:product, name: "The best product in the world")
+        api_get :index, q: { name_cont: "best" }
         expect(json_response["products"].first).to have_attributes(show_attributes)
         expect(json_response["count"]).to eq(1)
       end
 
       it "gets a single product" do
-        product.master.images.create!(:attachment => image("thinking-cat.jpg"))
+        product.master.images.create!(attachment: image("thinking-cat.jpg"))
         create(:variant, product: product)
-        product.variants.first.images.create!(:attachment => image("thinking-cat.jpg"))
+        product.variants.first.images.create!(attachment: image("thinking-cat.jpg"))
         product.set_property("spree", "rocks")
         product.taxons << create(:taxon)
 
-        api_get :show, :id => product.to_param
+        api_get :show, id: product.to_param
 
         expect(json_response).to have_attributes(show_attributes)
         expect(json_response['variants'].first).to have_attributes([:name,
-                                                              :is_master,
-                                                              :price,
-                                                              :images,
-                                                              :in_stock])
+                                                                    :is_master,
+                                                                    :price,
+                                                                    :images,
+                                                                    :in_stock])
 
         expect(json_response['variants'].first['images'].first).to have_attributes([:attachment_file_name,
-                                                                                :attachment_width,
-                                                                                :attachment_height,
-                                                                                :attachment_content_type,
-                                                                                :mini_url,
-                                                                                :small_url,
-                                                                                :product_url,
-                                                                                :large_url])
+                                                                                    :attachment_width,
+                                                                                    :attachment_height,
+                                                                                    :attachment_content_type,
+                                                                                    :mini_url,
+                                                                                    :small_url,
+                                                                                    :product_url,
+                                                                                    :large_url])
 
         expect(json_response["product_properties"].first).to have_attributes([:value,
-                                                                         :product_id,
-                                                                         :property_name])
+                                                                              :product_id,
+                                                                              :property_name])
 
         expect(json_response["classifications"].first).to have_attributes([:taxon_id, :position, :taxon])
         expect(json_response["classifications"].first['taxon']).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])
@@ -161,7 +159,7 @@ module Spree
         before { Config.track_inventory_levels = false }
 
         it "still displays valid json with total_on_hand Float::INFINITY" do
-          api_get :show, :id => product.to_param
+          api_get :show, id: product.to_param
           expect(response).to be_ok
           expect(json_response[:total_on_hand]).to eq nil
         end
@@ -170,29 +168,29 @@ module Spree
       end
 
       context "finds a product by slug first then by id" do
-        let!(:other_product) { create(:product, :slug => "these-are-not-the-droids-you-are-looking-for") }
+        let!(:other_product) { create(:product, slug: "these-are-not-the-droids-you-are-looking-for") }
 
         before do
           product.update_column(:slug, "#{other_product.id}-and-1-ways")
         end
 
         specify do
-          api_get :show, :id => product.to_param
+          api_get :show, id: product.to_param
           expect(json_response["slug"]).to match(/and-1-ways/)
           product.destroy
 
-          api_get :show, :id => other_product.id
+          api_get :show, id: other_product.id
           expect(json_response["slug"]).to match(/droids/)
         end
       end
 
       it "cannot see inactive products" do
-        api_get :show, :id => inactive_product.to_param
+        api_get :show, id: inactive_product.to_param
         assert_not_found!
       end
 
       it "returns a 404 error when it cannot find a product" do
-        api_get :show, :id => "non-existant"
+        api_get :show, id: "non-existant"
         assert_not_found!
       end
 
@@ -225,7 +223,7 @@ module Spree
       # Regression test for #1626
       context "deleted products" do
         before do
-          create(:product, :deleted_at => 1.day.ago)
+          create(:product, deleted_at: 1.day.ago)
         end
 
         it "does not include deleted products" do
@@ -234,26 +232,24 @@ module Spree
         end
 
         it "can include deleted products" do
-          api_get :index, :show_deleted => 1
+          api_get :index, show_deleted: 1
           expect(json_response["products"].count).to eq(3)
         end
       end
 
       describe "creating a product" do
         it "can create a new product" do
-          api_post :create, :product => { :name => "The Other Product",
-                                          :price => 19.99,
-                                          :shipping_category_id => create(:shipping_category).id }
+          api_post :create, product: { name: "The Other Product",
+                                       price: 19.99,
+                                       shipping_category_id: create(:shipping_category).id }
           expect(json_response).to have_attributes(base_attributes)
           expect(response.status).to eq(201)
         end
 
         it "creates with embedded variants" do
-          product_data.merge!({
-            variants: [attributes_for_variant, attributes_for_variant]
-          })
+          product_data[:variants] = [attributes_for_variant, attributes_for_variant]
 
-          api_post :create, :product => product_data
+          api_post :create, product: product_data
           expect(response.status).to eq 201
 
           variants = json_response['variants']
@@ -265,41 +261,37 @@ module Spree
         end
 
         it "can create a new product with embedded product_properties" do
-          product_data.merge!({
-            product_properties_attributes: [{
-              property_name: "fabric",
-              value: "cotton"
-            }]
-          })
+          product_data[:product_properties_attributes] = [{
+            property_name: "fabric",
+            value: "cotton"
+          }]
 
-          api_post :create, :product => product_data
+          api_post :create, product: product_data
 
           expect(json_response['product_properties'][0]['property_name']).to eq('fabric')
           expect(json_response['product_properties'][0]['value']).to eq('cotton')
         end
 
         it "can create a new product with option_types" do
-          product_data.merge!({
-            option_types: ['size', 'color']
-          })
+          product_data[:option_types] = ['size', 'color']
 
-          api_post :create, :product => product_data
+          api_post :create, product: product_data
           expect(json_response['option_types'].count).to eq(2)
         end
 
         it "creates product with option_types ids" do
           option_type = create(:option_type)
-          product_data.merge!(option_type_ids: [option_type.id])
+          product_data[:option_type_ids] = [option_type.id]
           api_post :create, product: product_data
           expect(json_response['option_types'].first['id']).to eq option_type.id
         end
 
         it "creates with shipping categories" do
-          hash = { :name => "The Other Product",
-                   :price => 19.99,
-                   :shipping_category => "Free Ships" }
+          hash = { name: "The Other Product",
+                   price: 19.99,
+                   shipping_category: "Free Ships" }
 
-          api_post :create, :product => hash
+          api_post :create, product: hash
           expect(response.status).to eq 201
 
           shipping_id = ShippingCategory.find_by_name("Free Ships").id
@@ -323,7 +315,7 @@ module Spree
           end
 
           it "can still create a product" do
-            api_post :create, :product => product_data, :token => "fake"
+            api_post :create, product: product_data, token: "fake"
             expect(json_response).to have_attributes(show_attributes)
             expect(response.status).to eq(201)
           end
@@ -341,17 +333,17 @@ module Spree
 
       context 'updating a product' do
         it "can update a product" do
-          api_put :update, :id => product.to_param, :product => { :name => "New and Improved Product!" }
+          api_put :update, id: product.to_param, product: { name: "New and Improved Product!" }
           expect(response.status).to eq(200)
         end
 
         it "can create new option types on a product" do
-          api_put :update, :id => product.to_param, :product => { :option_types => ['shape', 'color'] }
+          api_put :update, id: product.to_param, product: { option_types: ['shape', 'color'] }
           expect(json_response['option_types'].count).to eq(2)
         end
 
         it "can create new variants on a product" do
-          api_put :update, :id => product.to_param, :product => { :variants => [attributes_for_variant, attributes_for_variant.merge(sku: "ABC-#{Kernel.rand(9999)}")] }
+          api_put :update, id: product.to_param, product: { variants: [attributes_for_variant, attributes_for_variant.merge(sku: "ABC-#{Kernel.rand(9999)}")] }
           expect(response.status).to eq 200
           expect(json_response['variants'].count).to eq(2) # 2 variants
 
@@ -364,16 +356,16 @@ module Spree
 
         it "can update an existing variant on a product" do
           variant_hash = {
-            :sku => '123', :price => 19.99, :options => [{:name => "size", :value => "small"}]
+            sku: '123', price: 19.99, options: [{ name: "size", value: "small" }]
           }
           variant_id = product.variants.create!({ product: product }.merge(variant_hash)).id
 
-          api_put :update, :id => product.to_param, :product => {
-            :variants => [
+          api_put :update, id: product.to_param, product: {
+            variants: [
               variant_hash.merge(
-                :id => variant_id.to_s,
-                :sku => '456',
-                :options => [{:name => "size", :value => "large" }]
+                id: variant_id.to_s,
+                sku: '456',
+                options: [{ name: "size", value: "large" }]
               )
             ]
           }
@@ -386,7 +378,7 @@ module Spree
         end
 
         it "cannot update a product with an invalid attribute" do
-          api_put :update, :id => product.to_param, :product => { :name => "" }
+          api_put :update, id: product.to_param, product: { name: "" }
           expect(response.status).to eq(422)
           expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
           expect(json_response["errors"]["name"]).to eq(["can't be blank"])
@@ -400,7 +392,7 @@ module Spree
 
       it "can delete a product" do
         expect(product.deleted_at).to be_nil
-        api_delete :destroy, :id => product.to_param
+        api_delete :destroy, id: product.to_param
         expect(response.status).to eq(204)
         expect(product.reload.deleted_at).not_to be_nil
       end

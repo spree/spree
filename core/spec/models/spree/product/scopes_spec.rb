@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product scopes", :type => :model do
+describe "Product scopes", type: :model do
   let!(:product) { create(:product) }
 
   describe '#available' do
@@ -43,8 +43,8 @@ describe "Product scopes", :type => :model do
       @taxonomy = create(:taxonomy)
       @root_taxon = @taxonomy.root
 
-      @parent_taxon = create(:taxon, :name => 'Parent', :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
-      @child_taxon = create(:taxon, :name =>'Child 1', :taxonomy_id => @taxonomy.id, :parent => @parent_taxon)
+      @parent_taxon = create(:taxon, name: 'Parent', taxonomy_id: @taxonomy.id, parent: @root_taxon)
+      @child_taxon = create(:taxon, name: 'Child 1', taxonomy_id: @taxonomy.id, parent: @parent_taxon)
       @parent_taxon.reload # Need to reload for descendents to show up
 
       product.taxons << @parent_taxon
@@ -59,7 +59,7 @@ describe "Product scopes", :type => :model do
     end
 
     it "calling Product.in_taxon should not return duplicate records" do
-      expect(Spree::Product.in_taxon(@parent_taxon).to_a.count).to eq(1)
+      expect(Spree::Product.in_taxon(@parent_taxon).to_a.size).to eq(1)
     end
 
     context 'orders products based on their ordering within the classifications' do
@@ -73,7 +73,7 @@ describe "Product scopes", :type => :model do
 
       it 'after ordering changed' do
         [@child_taxon, other_taxon].each do |taxon|
-          Spree::Classification.find_by(:taxon => taxon, :product => product).insert_at(2)
+          Spree::Classification.find_by(taxon: taxon, product: product).insert_at(2)
           expect(Spree::Product.in_taxon(taxon)).to eq([product_2, product])
         end
       end
@@ -82,8 +82,8 @@ describe "Product scopes", :type => :model do
 
   context "property scopes" do
     let(:name) { "A proper tee" }
-    let(:value) { "A proper value"}
-    let!(:property) { create(:property, name: name)}
+    let(:value) { "A proper value" }
+    let!(:property) { create(:property, name: name) }
 
     before do
       product.properties << property

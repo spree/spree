@@ -34,7 +34,7 @@ module Spree
         def destroy
           authorize! :destroy, stock_location
           stock_location.destroy
-          respond_with(stock_location, :status => 204)
+          respond_with(stock_location, status: 204)
         end
 
         private

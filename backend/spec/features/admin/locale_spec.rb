@@ -1,20 +1,20 @@
 require 'spec_helper'
 
-describe "setting locale", :type => :feature do
+describe "setting locale", type: :feature do
   stub_authorization!
 
   before do
     I18n.locale = I18n.default_locale
     I18n.backend.store_translations(:fr,
-      :date => {
-        :month_names => [],
-      },
-      :spree => {
-        :admin => {
-          :tab => { :orders => "Ordres" }
-        },
-        :listing_orders => "Ordres",
-      })
+                                    date: {
+                                      month_names: [],
+                                    },
+                                    spree: {
+                                      admin: {
+                                        tab: { orders: "Ordres" }
+                                      },
+                                      listing_orders: "Ordres",
+                                    })
     Spree::Backend::Config[:locale] = "fr"
   end
 

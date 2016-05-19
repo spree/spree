@@ -122,7 +122,7 @@ The `spree_i18n` gem is configured in the same manner as any Rubygem in a Rails
 application.  Simply add it to the `Gemfile.` using the git url.
 
 ```ruby
-gem 'spree_i18n', :github => 'spree/spree_i18n'
+gem 'spree_i18n', github: 'spree/spree_i18n'
 ```
 
 ### Setting the Default Locale

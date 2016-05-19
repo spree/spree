@@ -37,7 +37,7 @@ module Spree
 
           if taxonomy.nil?
             @taxon.errors[:taxonomy_id] = I18n.t(:invalid_taxonomy_id, scope: 'spree.api')
-            invalid_resource!(@taxon) and return
+            invalid_resource!(@taxon) && return
           end
 
           @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
@@ -75,23 +75,23 @@ module Spree
 
         private
 
-          def taxonomy
-            if params[:taxonomy_id].present?
-              @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
-            end
+        def taxonomy
+          if params[:taxonomy_id].present?
+            @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
           end
+        end
 
-          def taxon
-            @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
-          end
+        def taxon
+          @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
+        end
 
-          def taxon_params
-            if params[:taxon] && !params[:taxon].empty?
-              params.require(:taxon).permit(permitted_taxon_attributes)
-            else
-              {}
-            end
+        def taxon_params
+          if params[:taxon] && !params[:taxon].empty?
+            params.require(:taxon).permit(permitted_taxon_attributes)
+          else
+            {}
           end
+        end
       end
     end
   end

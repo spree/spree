@@ -1,6 +1,5 @@
 module Spree
   class InventoryUnit < Spree::Base
-
     with_options inverse_of: :inventory_units do
       belongs_to :variant, class_name: "Spree::Variant"
       belongs_to :order, class_name: "Spree::Order"
@@ -18,11 +17,11 @@ module Spree
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
     scope :backordered_per_variant, ->(stock_item) do
-      includes(:shipment, :order)
-        .where("spree_shipments.state != 'canceled'").references(:shipment)
-        .where(variant_id: stock_item.variant_id)
-        .where('spree_orders.completed_at is not null')
-        .backordered.order("spree_orders.completed_at ASC")
+      includes(:shipment, :order).
+        where("spree_shipments.state != 'canceled'").references(:shipment).
+        where(variant_id: stock_item.variant_id).
+        where('spree_orders.completed_at is not null').
+        backordered.order("spree_orders.completed_at ASC")
     end
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
@@ -59,7 +58,7 @@ module Spree
 
     def find_stock_item
       Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
-        variant_id: variant_id).first
+                             variant_id: variant_id).first
     end
 
     # Remove variant default_scope `deleted_at: nil`
@@ -81,21 +80,21 @@ module Spree
 
     private
 
-      def allow_ship?
-        self.on_hand?
-      end
+    def allow_ship?
+      on_hand?
+    end
 
-      def fulfill_order
-        self.reload
-        order.fulfill!
-      end
+    def fulfill_order
+      reload
+      order.fulfill!
+    end
 
-      def percentage_of_line_item
-        1 / BigDecimal.new(line_item.quantity)
-      end
+    def percentage_of_line_item
+      1 / BigDecimal.new(line_item.quantity)
+    end
 
-      def current_return_item
-        return_items.not_cancelled.first
-      end
+    def current_return_item
+      return_items.not_cancelled.first
+    end
   end
 end

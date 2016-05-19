@@ -2,7 +2,7 @@
   <div class="col-md-4" data-hook="analytics_id">
     <%= f.field_container :analytics_id, class: ["form-group"], "data-hook" => "analytics_id" do %>
       <%= f.label :analytics_id, Spree.t(:google_analytics_id) %>
-      <%= f.text_field :analytics_id, :class => 'form-control' %>
+      <%= f.text_field :analytics_id, class: 'form-control' %>
       <%= f.error_message_on :analytics_id %>
     <% end %>
   </div>

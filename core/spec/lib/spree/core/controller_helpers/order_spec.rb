@@ -23,10 +23,10 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#current_order' do
-    before {
+    before do
       allow(controller).to receive_messages(current_store: store)
       allow(controller).to receive_messages(try_spree_current_user: user)
-    }
+    end
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user }
       it 'returns current order' do
@@ -35,9 +35,9 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
     context 'create_order_if_necessary option is true' do
       it 'creates new order' do
-        expect {
+        expect do
           controller.current_order(create_order_if_necessary: true)
-        }.to change(Spree::Order, :count).to(1)
+        end.to change(Spree::Order, :count).to(1)
       end
 
       it 'assigns the current_store id' do

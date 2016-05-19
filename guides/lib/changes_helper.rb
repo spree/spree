@@ -55,7 +55,7 @@ module ChangesHelper
     end
 
     @api_releases[version] = begin
-      pair = api_versions.detect do |(name, date)|
+      pair = api_versions.detect do |(name, _date)|
         name == version
       end
       pair ? pair[1] : nil
@@ -86,4 +86,3 @@ module ChangesHelper
     @api_versions ||= Array(@site.config[:api_versions])
   end
 end
-

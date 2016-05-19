@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 module Spree
-  describe ReimbursementType::OriginalPayment, :type => :model do
+  describe ReimbursementType::OriginalPayment, type: :model do
     let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
     let(:return_item)             { reimbursement.return_items.first }
     let(:payment)                 { reimbursement.order.payments.first }
     let(:simulate)                { false }
     let!(:default_refund_reason)  { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate)}
+    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate) }
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
 
@@ -24,9 +24,9 @@ module Spree
 
       context "simulate is false" do
         it 'performs the refund' do
-          expect {
+          expect do
             subject
-          }.to change { payment.refunds.count }.by(1)
+          end.to change { payment.refunds.count }.by(1)
           expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
         end
       end

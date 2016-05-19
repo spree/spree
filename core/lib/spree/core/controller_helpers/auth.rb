@@ -9,7 +9,7 @@ module Spree
           before_action :set_guest_token
           helper_method :try_spree_current_user
 
-          rescue_from CanCan::AccessDenied do |exception|
+          rescue_from CanCan::AccessDenied do |_exception|
             redirect_unauthorized_access
           end
         end
@@ -40,7 +40,7 @@ module Spree
             end
           end
 
-          disallowed_urls.map!{ |url| url[/\/\w+$/] }
+          disallowed_urls.map! { |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
             session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
           end
@@ -56,9 +56,7 @@ module Spree
           # This one will be defined by Devise
           elsif respond_to?(:current_spree_user)
             current_spree_user
-          else
-            nil
-          end
+                    end
         end
 
         # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
@@ -77,7 +75,6 @@ module Spree
             end
           end
         end
-
       end
     end
   end

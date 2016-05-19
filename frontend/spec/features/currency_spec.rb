@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe "Switching currencies in backend", :type => :feature do
+describe "Switching currencies in backend", type: :feature do
   before do
-    create(:base_product, :name => "RoR Mug")
+    create(:base_product, name: "RoR Mug")
   end
 
   # Regression test for #2340
@@ -14,5 +14,4 @@ describe "Switching currencies in backend", :type => :feature do
     Spree::Config[:currency] = "AUD"
     expect { visit spree.root_path }.not_to raise_error
   end
-
 end

@@ -1,5 +1,4 @@
 Spree::Core::Engine.add_routes do
-
   get '/locale/set', to: 'locale#set'
 
   # non-restful checkout stuff
@@ -7,7 +6,7 @@ Spree::Core::Engine.add_routes do
   get '/checkout/:state', to: 'checkout#edit', as: :checkout_state
   get '/checkout', to: 'checkout#edit', as: :checkout
 
-  populate_redirect = redirect do |params, request|
+  populate_redirect = redirect do |_params, request|
     request.flash[:error] = Spree.t(:populate_get_error)
     request.referer || '/cart'
   end

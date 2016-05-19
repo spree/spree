@@ -2,9 +2,9 @@ require 'spec_helper'
 
 module Spree
   module Calculator::Shipping
-    describe FlexiRate, :type => :model do
-      let(:variant1) { build(:variant, :price => 10) }
-      let(:variant2) { build(:variant, :price => 20) }
+    describe FlexiRate, type: :model do
+      let(:variant1) { build(:variant, price: 10) }
+      let(:variant2) { build(:variant, price: 20) }
 
       let(:package) do
         build(:stock_package, variants_contents: { variant1 => 4, variant2 => 6 })
@@ -41,12 +41,11 @@ module Spree
         end
 
         it "should allow creation of new object with all the attributes" do
-          FlexiRate.new(:preferred_first_item => 1,
-                        :preferred_additional_item => 1,
-                        :preferred_max_items => 1)
+          FlexiRate.new(preferred_first_item: 1,
+                        preferred_additional_item: 1,
+                        preferred_max_items: 1)
         end
       end
     end
   end
 end
-

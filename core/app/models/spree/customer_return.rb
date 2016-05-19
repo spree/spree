@@ -36,7 +36,6 @@ module Spree
       return_items.first.inventory_unit.order
     end
 
-
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
     end

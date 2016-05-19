@@ -19,8 +19,7 @@ module DelegateBelongsTo
   extend ActiveSupport::Concern
 
   module ClassMethods
-
-    @@default_rejected_delegate_columns = ['created_at','created_on','updated_at','updated_on','lock_version','type','id','position','parent_id','lft','rgt']
+    @@default_rejected_delegate_columns = ['created_at', 'created_on', 'updated_at', 'updated_on', 'lock_version', 'type', 'id', 'position', 'parent_id', 'lft', 'rgt']
     mattr_accessor :default_rejected_delegate_columns
 
     ##
@@ -29,7 +28,7 @@ module DelegateBelongsTo
     # @todo Integrate this with ActiveRecord::Dirty, so if you set a property through one of these setters and then call save on this object, it will save the associated object automatically.
     # delegate_belongs_to :contact
     # delegate_belongs_to :contact, [:defaults]  ## same as above, and useless
-    # delegate_belongs_to :contact, [:defaults, :address, :fullname], :class_name => 'VCard'
+    # delegate_belongs_to :contact, [:defaults, :address, :fullname], class_name: 'VCard'
     ##
     def delegate_belongs_to(association, *attrs)
       opts = attrs.extract_options!
@@ -49,28 +48,27 @@ module DelegateBelongsTo
 
     protected
 
-      def get_association_column_names(association, without_default_rejected_delegate_columns=true)
-        begin
-          association_klass = reflect_on_association(association).klass
-          methods = association_klass.column_names
-          methods.reject!{|x|default_rejected_delegate_columns.include?(x.to_s)} if without_default_rejected_delegate_columns
-          return methods
-        rescue
-          return []
-        end
-      end
+    def get_association_column_names(association, without_default_rejected_delegate_columns = true)
+      association_klass = reflect_on_association(association).klass
+      methods = association_klass.column_names
+      methods.reject! { |x| default_rejected_delegate_columns.include?(x.to_s) } if without_default_rejected_delegate_columns
+      return methods
+    rescue
+      return []
+    end
 
-      ##
-      # initialize_association :belongs_to, :contact
-      def initialize_association(type, association, opts={})
-        raise 'Illegal or unimplemented association type.' unless [:belongs_to].include?(type.to_s.to_sym)
-        send type, association, opts if reflect_on_association(association).nil?
-      end
+    ##
+    # initialize_association :belongs_to, :contact
+    def initialize_association(type, association, opts = {})
+      raise 'Illegal or unimplemented association type.' unless [:belongs_to].include?(type.to_s.to_sym)
+      send type, association, opts if reflect_on_association(association).nil?
+    end
 
     private
-      def class_def(name, method=nil, &blk)
-        class_eval { method.nil? ? define_method(name, &blk) : define_method(name, method) }
-      end
+
+    def class_def(name, method = nil, &blk)
+      class_eval { method.nil? ? define_method(name, &blk) : define_method(name, method) }
+    end
   end
 
   def delegator_for(association, attr, *args)

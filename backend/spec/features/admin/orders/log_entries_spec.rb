@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Log entries", :type => :feature do
+describe "Log entries", type: :feature do
   stub_authorization!
 
   let!(:payment) { create(:payment) }
@@ -10,12 +10,12 @@ describe "Log entries", :type => :feature do
       response = ActiveMerchant::Billing::Response.new(
         true,
         "Transaction successful",
-        :transid => "ABCD1234"
+        transid: "ABCD1234"
       )
 
       payment.log_entries.create(
-        :source => payment.source,
-        :details => response.to_yaml
+        source: payment.source,
+        details: response.to_yaml
       )
     end
 
@@ -34,12 +34,12 @@ describe "Log entries", :type => :feature do
       response = ActiveMerchant::Billing::Response.new(
         false,
         "Transaction failed",
-        :transid => "ABCD1234"
+        transid: "ABCD1234"
       )
 
       payment.log_entries.create(
-        :source => payment.source,
-        :details => response.to_yaml
+        source: payment.source,
+        details: response.to_yaml
       )
     end
 

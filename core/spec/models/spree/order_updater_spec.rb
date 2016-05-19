@@ -34,10 +34,8 @@ module Spree
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
-          Promotion::Actions::CreateAdjustment.create!({
-            calculator: calculator,
-            promotion: promotion,
-          })
+          Promotion::Actions::CreateAdjustment.create!(calculator: calculator,
+                                                       promotion: promotion)
         end
 
         before do
@@ -55,11 +53,9 @@ module Spree
       it "update order adjustments" do
         # A line item will not have both additional and included tax,
         # so please just humour me for now.
-        order.line_items.first.update_columns({
-          adjustment_total: 10.05,
-          additional_tax_total: 0.05,
-          included_tax_total: 0.05,
-        })
+        order.line_items.first.update_columns(adjustment_total: 10.05,
+                                              additional_tax_total: 0.05,
+                                              included_tax_total: 0.05)
         updater.update_adjustment_total
         expect(order.adjustment_total).to eq(10.05)
         expect(order.additional_tax_total).to eq(0.05)
@@ -90,7 +86,6 @@ module Spree
         expect(order.shipment_state).to be_nil
       end
 
-
       ["shipped", "ready", "pending"].each do |state|
         it "is #{state}" do
           allow(order).to receive_message_chain(:shipments, :states).and_return([state])
@@ -111,7 +106,7 @@ module Spree
       let(:updater) { order.updater }
 
       it "is failed if no valid payments" do
-        allow(order).to receive_message_chain(:payments, :valid, :size).and_return(0)
+        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(true)
 
         updater.update_payment_state
         expect(order.payment_state).to eq('failed')
@@ -122,9 +117,9 @@ module Spree
           order.payment_total = 2
           order.total = 1
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'credit_owed'
+          end.to change { order.payment_state }.to 'credit_owed'
         end
       end
 
@@ -133,9 +128,9 @@ module Spree
           order.payment_total = 1
           order.total = 2
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'balance_due'
+          end.to change { order.payment_state }.to 'balance_due'
         end
       end
 
@@ -144,14 +139,13 @@ module Spree
           order.payment_total = 30
           order.total = 30
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'paid'
+          end.to change { order.payment_state }.to 'paid'
         end
       end
 
       context "order is canceled" do
-
         before do
           order.state = 'canceled'
         end
@@ -160,37 +154,34 @@ module Spree
           it "is void" do
             order.payment_total = 0
             order.total = 30
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'void'
+            end.to change { order.payment_state }.to 'void'
           end
         end
 
         context "and is paid" do
-
           it "is credit_owed" do
             order.payment_total = 30
             order.total = 30
-            allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+            allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
             allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'credit_owed'
+            end.to change { order.payment_state }.to 'credit_owed'
           end
-
         end
 
         context "and payment is refunded" do
           it "is void" do
             order.payment_total = 0
             order.total = 30
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'void'
+            end.to change { order.payment_state }.to 'void'
           end
         end
       end
-
     end
 
     it "state change" do

@@ -117,10 +117,10 @@ module Spree
       if currency
         self.currency = currency
         self.price = variant.price_in(currency).amount +
-          variant.price_modifier_amount_in(currency, opts)
+                     variant.price_modifier_amount_in(currency, opts)
       else
         self.price = variant.price +
-          variant.price_modifier_amount(opts)
+                     variant.price_modifier_amount(opts)
       end
     end
 

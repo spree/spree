@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe 'products', :type => :feature, :caching => true do
+describe 'products', type: :feature, caching: true do
   let!(:product) { create(:product) }
   let!(:product2) { create(:product) }
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxon) { create(:taxon, :taxonomy => taxonomy) }
+  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
   before do
     product2.update_column(:updated_at, 1.day.ago)

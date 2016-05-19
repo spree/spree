@@ -44,49 +44,53 @@ module Spree
       american_express: /^3[47][0-9]{13}$/,
       discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
       jcb: /^(?:2131|1800|35\d{3})\d{11}$/
-    }
+    }.freeze
 
     def expiry=(expiry)
       return unless expiry.present?
 
       self[:month], self[:year] =
-      if expiry.match(/\d{2}\s?\/\s?\d{2,4}/) # will match mm/yy and mm / yyyy
-        expiry.delete(' ').split('/')
-      elsif match = expiry.match(/(\d{2})(\d{2,4})/) # will match mmyy and mmyyyy
-        [match[1], match[2]]
-      end
+        if expiry =~ /\d{2}\s?\/\s?\d{2,4}/ # will match mm/yy and mm / yyyy
+          expiry.delete(' ').split('/')
+        elsif match = expiry.match(/(\d{2})(\d{2,4})/) # will match mmyy and mmyyyy
+          [match[1], match[2]]
+        end
       if self[:year]
-        self[:year] = "20#{ self[:year] }" if self[:year] / 100 == 0
+        self[:year] = "20#{self[:year]}" if self[:year] / 100 == 0
         self[:year] = self[:year].to_i
       end
       self[:month] = self[:month].to_i if self[:month]
     end
 
     def number=(num)
-      @number = num.gsub(/[^0-9]/, '') rescue nil
+      @number = begin
+                  num.gsub(/[^0-9]/, '')
+                rescue
+                  nil
+                end
     end
 
     # cc_type is set by jquery.payment, which helpfully provides different
     # types from Active Merchant. Converting them is necessary.
     def cc_type=(type)
       self[:cc_type] = case type
-      when 'mastercard', 'maestro' then 'master'
-      when 'amex' then 'american_express'
-      when 'dinersclub' then 'diners_club'
-      when '' then try_type_from_number
-      else type
+                       when 'mastercard', 'maestro' then 'master'
+                       when 'amex' then 'american_express'
+                       when 'dinersclub' then 'diners_club'
+                       when '' then try_type_from_number
+                       else type
       end
     end
 
     def set_last_digits
-      number.to_s.gsub!(/\s/,'')
-      verification_value.to_s.gsub!(/\s/,'')
+      number.to_s.gsub!(/\s/, '')
+      verification_value.to_s.gsub!(/\s/, '')
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
     def try_type_from_number
       numbers = number.delete(' ') if number
-      CARD_TYPES.find{|type, pattern| return type.to_s if numbers =~ pattern}.to_s
+      CARD_TYPES.find { |type, pattern| return type.to_s if numbers =~ pattern }.to_s
     end
 
     def verification_value?
@@ -147,13 +151,13 @@ module Spree
     private
 
     def require_card_numbers?
-      !self.encrypted_data.present? && !self.has_payment_profile?
+      !encrypted_data.present? && !has_payment_profile?
     end
 
     def ensure_one_default
-      if self.user_id && self.default
-        CreditCard.where(default: true, user_id: self.user_id).where.not(id: self.id)
-          .update_all(default: false)
+      if user_id && default
+        CreditCard.where(default: true, user_id: user_id).where.not(id: id).
+          update_all(default: false)
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "New Order", :type => :feature do
+describe "New Order", type: :feature do
   let!(:product) { create(:product_in_stock) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }

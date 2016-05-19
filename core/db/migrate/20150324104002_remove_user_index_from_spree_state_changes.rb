@@ -3,7 +3,6 @@ class RemoveUserIndexFromSpreeStateChanges < ActiveRecord::Migration
     if index_exists? :spree_state_changes, :user_id
       remove_index :spree_state_changes, :user_id
     end
-
   end
 
   def down
