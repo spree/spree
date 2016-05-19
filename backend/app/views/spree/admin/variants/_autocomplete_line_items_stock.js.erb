@@ -14,20 +14,38 @@
         <td>{{variant.name}}</td>
         {{#if variant.track_inventory}}
           {{#if variant.total_on_hand}}
-            <td class="text-center">{{variant.total_on_hand}}</td>
+            <td class="text-center">
+              {{variant.total_on_hand}}
+            </td>
+
             <td class="text-center">
               <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
             </td>
             <td class="actions actions-1 text-center">
               <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
                 <span class="icon icon-add"></span>
-                </button>
+              </button>
             </td>
           {{else}}
-            <td class="text-center"><%= Spree.t(:out_of_stock) %></td>
-            <td class="text-center">0</td>
-            <td></td>
-            <td></td>
+            {{#if variant.is_backorderable}}
+              <td class="text-center">
+                {{variant.total_on_hand}} (<%= Spree.t(:backorders_allowed) %>)
+              </td>
+
+              <td class="text-center">
+                <input class="quantity form-control" id="variant_quantity" data-variant-id="{{variant.id}}" type="number" min="1" value="1">
+              </td>
+              <td class="actions actions-1 text-center">
+                <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
+                  <span class="icon icon-add"></span>
+                </button>
+              </td>
+            {{else}}
+              <td class="text-center"><%= Spree.t(:out_of_stock) %></td>
+              <td class="text-center">0</td>
+              <td></td>
+              <td></td>
+            {{/if}}
           {{/if}}
         {{else}}
           <td class="text-center"><%= Spree.t(:doesnt_track_inventory) %></td>
