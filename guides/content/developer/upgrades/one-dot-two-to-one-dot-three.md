@@ -19,7 +19,7 @@ version of Spree will have a 1-3-stable branch.
 For best results, use the 1-3-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-3-stable'```
+gem 'spree', github: 'spree/spree', branch: '1-3-stable'```
 
 Run `bundle update spree`. 
 

@@ -7,5 +7,5 @@
     remote:        data-remote
 -%>
 <li class="last">
-  <%= link_to_unless current_page.last?, t('views.pagination.last').html_safe, url, :remote => remote %>
+  <%= link_to_unless current_page.last?, t('views.pagination.last').html_safe, url, remote: remote %>
 </li>

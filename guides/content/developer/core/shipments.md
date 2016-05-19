@@ -243,7 +243,7 @@ To install the `spree-active-shipping` extension add the following to your `Gemf
 
 ```ruby
 gem 'spree_active_shipping'
-gem 'active_shipping', :git => 'git://github.com/Shopify/active_shipping.git'
+gem 'active_shipping', git: 'git://github.com/Shopify/active_shipping.git'
 ```
 
 and run `bundle install` from the command line.
@@ -278,11 +278,11 @@ The `spree_active_shipping` gem needs some configuration variables set in order 
 
 ```ruby
   # these can be set in an initializer in your site extension
-  Spree::ActiveShipping::Config.set(:usps_login => "YOUR_USPS_LOGIN")
-  Spree::ActiveShipping::Config.set(:fedex_login => "YOUR_FEDEX_LOGIN")
-  Spree::ActiveShipping::Config.set(:fedex_password => "YOUR_FEDEX_PASSWORD")
-  Spree::ActiveShipping::Config.set(:fedex_account => "YOUR_FEDEX_ACCOUNT")
-  Spree::ActiveShipping::Config.set(:fedex_key => "YOUR_FEDEX_KEY")
+  Spree::ActiveShipping::Config.set(usps_login: "YOUR_USPS_LOGIN")
+  Spree::ActiveShipping::Config.set(fedex_login: "YOUR_FEDEX_LOGIN")
+  Spree::ActiveShipping::Config.set(fedex_password: "YOUR_FEDEX_PASSWORD")
+  Spree::ActiveShipping::Config.set(fedex_account: "YOUR_FEDEX_ACCOUNT")
+  Spree::ActiveShipping::Config.set(fedex_key: "YOUR_FEDEX_KEY")
 ```
 
 ### Adding Additional Calculators

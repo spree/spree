@@ -62,11 +62,11 @@ API docs should look like:
 
     ### Input (request json body)
 
-    <%= json :field => "sample value" %>
+    <%= json field: "sample value" %>
 
     ### Response
 
-    <%= headers 200, :pagination => true, 'X-Custom-Header' => "value" %>
+    <%= headers 200, pagination: true, 'X-Custom-Header' => "value" %>
     <%= json :resource_name %>
 
 **Note**: We're using [Kramdown Markdown extensions](http://kramdown.gettalong.org/syntax.html), such as definition lists.

@@ -23,10 +23,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:taxonomy) do |h|
-{ :taxonomies => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ taxonomies: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -44,10 +44,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:taxonomy) do |h|
- { :taxonomies => [h],
-   :count => 5,
-   :pages => 2,
-   :current_page => 1 }
+ { taxonomies: [h],
+   count: 5,
+   pages: 2,
+   current_page: 1 }
 end %>
 
 ### Sorting results

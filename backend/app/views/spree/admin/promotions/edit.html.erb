@@ -3,11 +3,11 @@
   <%= @promotion.name %>
 <% end %>
 
-<%= form_for @promotion, :url => object_url, :method => :put do |f| %>
+<%= form_for @promotion, url: object_url, method: :put do |f| %>
   <div class="row">
     <div class="col-md-12">
-      <%= render :partial => 'form', :locals => { :f => f } %>
-      <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+      <%= render partial: 'form', locals: { f: f } %>
+      <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </div>
 
@@ -16,15 +16,15 @@
 <div id="promotion-filters" class="row">
   <div id="rules_container" class="col-md-6">
     <div class="panel panel-default">
-      <%= render :partial => 'rules' %>
+      <%= render partial: 'rules' %>
     </div>
   </div>
 
   <div id="actions_container" class="col-md-6">
     <div class="panel panel-default">
-      <%= render :partial => 'actions' %>
+      <%= render partial: 'actions' %>
     </div>
   </div>
 </div>
 
-<%= render :partial => "spree/admin/variants/autocomplete", :formats => [:js] %>
+<%= render partial: "spree/admin/variants/autocomplete", formats: [:js] %>

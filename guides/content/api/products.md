@@ -30,10 +30,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:product) do |h|
-{ :products => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ products: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -51,10 +51,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:product) do |h|
-{ :products => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ products: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ### Sorting results
@@ -103,11 +103,11 @@ GET /api/products/new```
 
 <%= headers 200 %>
 <%= json \
-  :attributes => [
+  attributes: [
     :id, :name, :description, :price, :available_on, :permalink,
     :count_on_hand, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids
   ],
-  :required_attributes => [:name, :price, :shipping_category_id]
+  required_attributes: [:name, :price, :shipping_category_id]
  %>
 
 ## Create
@@ -132,11 +132,11 @@ POST /api/products?product[name]=Headphones&product[price]=100&product[shipping_
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
-    :name => ["can't be blank"],
-    :price => ["can't be blank"],
-    :shipping_category_id => ["can't be blank"]
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    name: ["can't be blank"],
+    price: ["can't be blank"],
+    shipping_category_id: ["can't be blank"]
   }
 %>
 
@@ -162,11 +162,11 @@ PUT /api/products/a-product?product[name]=Headphones```
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
-    :name => ["can't be blank"],
-    :price => ["can't be blank"],
-    :shipping_category_id => ["can't be blank"]
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    name: ["can't be blank"],
+    price: ["can't be blank"],
+    shipping_category_id: ["can't be blank"]
   }
 %>
 

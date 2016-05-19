@@ -29,10 +29,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:order) do |h|
-{ :orders => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ orders: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -50,10 +50,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:order) do |h|
- { :orders => [h],
-   :count => 25,
-   :pages => 5,
-   :current_page => 1 }
+ { orders: [h],
+   count: 25,
+   pages: 5,
+   current_page: 1 }
 end %>
 
 ### Sorting results
@@ -105,7 +105,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 When an order is in the "delivery" state, additional shipments information will be returned in the API:
 
 <%= json(:shipment) do |h|
- { :shipments => [h] }
+ { shipments: [h] }
 end %>
 
 ## Create
@@ -137,10 +137,10 @@ POST /api/orders
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
-    :name => ["can't be blank"],
-    :price => ["can't be blank"]
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    name: ["can't be blank"],
+    price: ["can't be blank"]
   }
 %>
 

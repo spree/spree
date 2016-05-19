@@ -22,7 +22,7 @@ For example, take the Checkout Registration template, which looks like
 this:
 
 ```erb
-<%%= render 'spree/shared/error_messages', :target => user %>
+<%%= render 'spree/shared/error_messages', target: user %>
 <h2><%%= Spree.t(:registration) %></h2>
 <div id="registration" data-hook>
   <div id="account" class="columns alpha eight">
@@ -30,16 +30,16 @@ this:
   </div>
   <%% if Spree::Config[:allow_guest_checkout] %>
     <div id="guest_checkout" data-hook class="columns omega eight">
-      <%%= render 'spree/shared/error_messages', :target => order %>
+      <%%= render 'spree/shared/error_messages', target: order %>
 
       <h2><%%= Spree.t(:guest_user_account) %></h2>
 
-      <%%= form_for order, :url => update_checkout_registration_path, :method => :put, :html => { :id => 'checkout_form_registration' } do |f| %>
+      <%%= form_for order, url: update_checkout_registration_path, method: :put, html: { id: 'checkout_form_registration' } do |f| %>
         <p>
           <%%= f.label :email, Spree.t(:email) %><br />
-          <%%= f.email_field :email, :class => 'title' %>
+          <%%= f.email_field :email, class: 'title' %>
         </p>
-        <p><%%= f.submit Spree.t(:continue), :class => 'button primary' %></p>
+        <p><%%= f.submit Spree.t(:continue), class: 'button primary' %></p>
       <%% end %>
     </div>
   <%% end %>
@@ -49,10 +49,10 @@ this:
 If you wanted to insert some code just before the +#registration+ div on the page you would define an override as follows:
 
 ```ruby
-Deface::Override.new(:virtual_path  => "spree/checkout/registration",
-                     :insert_before => "div#registration",
-                     :text          => "<p>Registration is the future!</p>",
-                     :name          => "registration_future")
+Deface::Override.new(virtual_path : "spree/checkout/registration",
+                     insert_before: "div#registration",
+                     text         : "<p>Registration is the future!</p>",
+                     name         : "registration_future")
 ```
 
 This override **inserts** <code><p>Registration is the future!</p></code> **before** the div with the id of "registration".
@@ -62,11 +62,11 @@ This override **inserts** <code><p>Registration is the future!</p></code> **befo
 Deface applies an __action__ to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
 
 ```ruby
-:remove => "p.junk"
+remove: "p.junk"
 
-:insert_after => "div#wow p.header"
+insert_after: "div#wow p.header"
 
-:insert_bottom => "ul#giant-list"
+insert_bottom: "ul#giant-list"
 ```
 
 Deface currently supports the following actions:
@@ -119,7 +119,7 @@ For example, spree/products/show.html.erb looks as follows:
         </div>
 
         <div id="thumbnails" data-hook>
-          <%%= render 'thumbnails', :product => product %>
+          <%%= render 'thumbnails', product: product %>
         </div>
       </div>
 
@@ -170,18 +170,18 @@ attribute wherever possible. Here are a few examples based on
 **products/show.html.erb** above:
 
 ```ruby
-:replace => "[data-hook='product_show']"
+replace: "[data-hook='product_show']"
 
-:insert_top => "#thumbnails[data-hook]"
+insert_top: "#thumbnails[data-hook]"
 
-:remove => "[data-hook='cart_form']"
+remove: "[data-hook='cart_form']"
 ```
 
 You can also use a combination of both styles of selectors in a single
 override to ensure maximum protection against changes:
 
 ```ruby
- :insert_top => "[data-hook='thumbnails'], #thumbnails[data-hook]"
+ insert_top: "[data-hook='thumbnails'], #thumbnails[data-hook]"
  ```
 
 ### Targeting ruby blocks
@@ -227,9 +227,9 @@ So you can target ruby code blocks with the same standard CSS3 style
 selectors, for example:
 
 ```ruby
-:replace => "erb[loud]:contains('t(:products)')"
+replace: "erb[loud]:contains('t(:products)')"
 
-:insert_before => "erb[silent]:contains('elsif')"
+insert_before: "erb[silent]:contains('elsif')"
 ```
 
 ### View upgrade protection

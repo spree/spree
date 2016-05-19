@@ -6,7 +6,7 @@
 #
 #   require 'spree/testing_support/controller_requests'
 #   RSpec.configure do |c|
-#     c.include Spree::TestingSupport::ControllerRequests, :type => :controller
+#     c.include Spree::TestingSupport::ControllerRequests, type: :controller
 #   end
 #
 # Then, in your controller tests, you can access spree routes like this:

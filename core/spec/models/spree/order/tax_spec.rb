@@ -16,7 +16,7 @@ module Spree
         end
       end
 
-      context "when :tax_using_ship_address => true" do
+      context "when tax_using_ship_address: true" do
         before { Spree::Config.set(tax_using_ship_address: true) }
 
         it "should calculate using ship_address" do
@@ -26,7 +26,7 @@ module Spree
         end
       end
 
-      context "when :tax_using_ship_address => false" do
+      context "when tax_using_ship_address: false" do
         before { Spree::Config.set(tax_using_ship_address: false) }
 
         it "should calculate using bill_address" do

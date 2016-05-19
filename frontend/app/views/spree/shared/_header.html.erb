@@ -5,11 +5,11 @@
         <figure id="logo" class="col-md-4 col-sm-3" data-hook>
           <%= logo %>
         </figure>
-        <%= render :partial => 'spree/shared/nav_bar' %>
+        <%= render partial: 'spree/shared/nav_bar' %>
       </div>
     </div>
   </header>
   <div class="container">
-    <%= render :partial => 'spree/shared/main_nav_bar' if store_menu? %>
+    <%= render partial: 'spree/shared/main_nav_bar' if store_menu? %>
   </div>
 </div>

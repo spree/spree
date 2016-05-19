@@ -61,12 +61,12 @@ module Spree
     # This scope selects products in taxon AND all its descendants
     # If you need products only within one taxon use
     #
-    #   Spree::Product.joins(:taxons).where(Taxon.table_name => { :id => taxon.id })
+    #   Spree::Product.joins(:taxons).where(Taxon.table_name => { id: taxon.id })
     #
     # If you're using count on the result of this scope, you must use the
     # `:distinct` option as well:
     #
-    #   Spree::Product.in_taxon(taxon).count(:distinct => true)
+    #   Spree::Product.in_taxon(taxon).count(distinct: true)
     #
     # This is so that the count query is distinct'd:
     #
@@ -162,8 +162,8 @@ module Spree
     # there is alternative faster and more elegant solution, it has small drawback though,
     # it doesn stack with other scopes :/
     #
-    # :joins => "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
-    # :order => 'COALESCE(cnt, 0) DESC'
+    # joins: "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
+    # order: 'COALESCE(cnt, 0) DESC'
     add_search_scope :descend_by_popularity do
       joins(:master).
         order(%{
