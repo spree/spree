@@ -24,6 +24,41 @@ describe Spree::Promotion, :type => :model do
       @valid_promotion.name = nil
       expect(@valid_promotion).not_to be_valid
     end
+
+    describe "expires_at_must_be_later_than_starts_at" do
+      before do
+        @valid_promotion.starts_at = Date.today
+      end
+
+      context "starts_at is a date earlier than expires_at" do
+        before { @valid_promotion.expires_at = 5.days.from_now }
+
+        it "is valid" do
+          expect(@valid_promotion).to be_valid
+        end
+      end
+
+      context "starts_at is a date earlier than expires_at" do
+        before { @valid_promotion.expires_at = 5.days.ago }
+
+        context "is not valid" do
+          before { @valid_promotion.valid? }
+          it { expect(@valid_promotion).not_to be_valid }
+          it { expect(@valid_promotion.errors[:expires_at]).to include(I18n.t(:invalid_date_range, scope: 'activerecord.errors.models.spree/promotion.attributes.expires_at')) }
+        end
+      end
+
+      context "starts_at and expires_at are nil" do
+        before do
+          @valid_promotion.expires_at = nil
+          @valid_promotion.starts_at = nil
+        end
+
+        it "is valid" do
+          expect(@valid_promotion).to be_valid
+        end
+      end
+    end
   end
 
   describe 'scopes' do

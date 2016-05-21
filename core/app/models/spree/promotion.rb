@@ -24,6 +24,7 @@ module Spree
     validates :path, uniqueness: { allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
+    validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
 
     before_save :normalize_blank_values
 
@@ -191,6 +192,12 @@ module Spree
 
     def match_all?
       match_policy == 'all'
+    end
+
+    def expires_at_must_be_later_than_starts_at
+      if expires_at < starts_at
+        errors.add(:expires_at, :invalid_date_range)
+      end
     end
   end
 end

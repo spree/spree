@@ -309,6 +309,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: "Must match order currency"
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: must be later than start date
         spree/refund:
           attributes:
             amount:
