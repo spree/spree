@@ -2,6 +2,7 @@ Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
     get '/search/users', to: "search#users", as: :search_users
     get '/search/products', to: "search#products", as: :search_products
+    get "/search/tags", to: "search#tags", as: :search_tags
 
     resources :promotions do
       resources :promotion_rules

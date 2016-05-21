@@ -35,6 +35,15 @@ module Spree
         expires_in 15.minutes, public: true
         headers['Surrogate-Control'] = "max-age=#{15.minutes}"
       end
+
+      def tags
+        @tags =
+          if params[:ids]
+            Tag.where(id: params[:ids].split(",").flatten)
+          else
+            Tag.ransack(params[:q]).result
+          end
+      end
     end
   end
 end
