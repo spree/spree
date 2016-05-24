@@ -1,4 +1,4 @@
-class ActsAsTaggableOnMigration < ActiveRecord::Migration
+class ActsAsTaggableOnSpreeMigration < ActiveRecord::Migration
   def self.up
     create_table :spree_tags do |t|
       t.string :name
