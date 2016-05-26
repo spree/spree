@@ -2,12 +2,17 @@
   <%= plural_resource_name(Spree::ReimbursementType) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_reimbursement_type), new_object_url, { :class => "btn-success", :icon => 'add', :id => 'admin_new_reimbursement_type' } %>
+<% end if can?(:create, Spree::ReimbursementType) %>
+
 <% if @reimbursement_types.any? %>
   <table class="table" id='listing_reimbursement_types' data-hook>
     <thead>
       <tr data-hook="reimbursement_types_header">
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:type) %></th>
+        <th class="actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -18,6 +23,10 @@
           </td>
           <td>
             <%= reimbursement_type.type %>
+          </td>
+          <td class="actions actions-2 text-right">
+            <%= link_to_edit reimbursement_type, no_text: true, class: 'edit' if can?(:edit, reimbursement_type) %>
+            <%= link_to_delete reimbursement_type, no_text: true if can?(:delete, reimbursement_type) %>
           </td>
         </tr>
       <% end %>
