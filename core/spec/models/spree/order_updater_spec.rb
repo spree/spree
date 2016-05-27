@@ -210,45 +210,56 @@ module Spree
     context "completed order" do
       before { allow(order).to receive_messages completed?: true }
 
-      it "updates payment state" do
-        expect(updater).to receive(:update_payment_state)
-        updater.update
+      describe "#update" do
+        it "updates payment state" do
+          expect(updater).to receive(:update_payment_state)
+          updater.update
+        end
+
+        it "updates shipment state" do
+          expect(updater).to receive(:update_shipment_state)
+          updater.update
+        end
+
+        it "updates shipments total again after updating shipments" do
+          expect(updater).to receive(:update_shipment_total).ordered
+          expect(updater).to receive(:update_shipments).ordered
+          expect(updater).to receive(:update_shipment_total).ordered
+          updater.update
+        end
       end
 
-      it "updates shipment state" do
-        expect(updater).to receive(:update_shipment_state)
-        updater.update
-      end
+      describe "#update_shipments" do
+        it "updates each shipment" do
+          shipment = stub_model(Spree::Shipment, order: order)
+          shipments = [shipment]
+          allow(order).to receive_messages shipments: shipments
+          allow(shipments).to receive_messages states: []
+          allow(shipments).to receive_messages ready: []
+          allow(shipments).to receive_messages pending: []
+          allow(shipments).to receive_messages shipped: []
 
-      it "updates each shipment" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-        allow(shipments).to receive_messages states: []
-        allow(shipments).to receive_messages ready: []
-        allow(shipments).to receive_messages pending: []
-        allow(shipments).to receive_messages shipped: []
+          expect(shipment).to receive(:update!).with(order)
+          updater.update_shipments
+        end
 
-        expect(shipment).to receive(:update!).with(order)
-        updater.update_shipments
-      end
+        it "refreshes shipment rates" do
+          shipment = stub_model(Spree::Shipment, order: order)
+          shipments = [shipment]
+          allow(order).to receive_messages shipments: shipments
 
-      it "refreshes shipment rates" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
+          expect(shipment).to receive(:refresh_rates)
+          updater.update_shipments
+        end
 
-        expect(shipment).to receive(:refresh_rates)
-        updater.update_shipments
-      end
+        it "updates the shipment amount" do
+          shipment = stub_model(Spree::Shipment, order: order)
+          shipments = [shipment]
+          allow(order).to receive_messages shipments: shipments
 
-      it "updates the shipment amount" do
-        shipment = stub_model(Spree::Shipment, order: order)
-        shipments = [shipment]
-        allow(order).to receive_messages shipments: shipments
-
-        expect(shipment).to receive(:update_amounts)
-        updater.update_shipments
+          expect(shipment).to receive(:update_amounts)
+          updater.update_shipments
+        end
       end
     end
 
