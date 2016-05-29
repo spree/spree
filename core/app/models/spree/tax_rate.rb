@@ -72,6 +72,12 @@ module Spree
           rate.adjust(order, item)
         end
       end
+
+      # updates pre_tax for items without any tax rates
+      remaining_items = items - relevant_items
+      remaining_items.each do |item|
+        store_pre_tax_amount(item, [])
+      end
     end
 
     def self.included_tax_amount_for(options)

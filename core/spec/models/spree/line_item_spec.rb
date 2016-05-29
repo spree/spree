@@ -318,9 +318,11 @@ describe Spree::LineItem, type: :model do
   end
 
   describe "precision of pre_tax_amount" do
-    let!(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
+    let(:line_item) { create :line_item, pre_tax_amount: 4.2051 }
 
     it "keeps four digits of precision even when reloading" do
+      # prevent it from updating pre_tax_amount
+      allow_any_instance_of(Spree::LineItem).to receive(:update_tax_charge)
       expect(line_item.reload.pre_tax_amount).to eq(4.2051)
     end
   end

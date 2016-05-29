@@ -165,6 +165,25 @@ describe Spree::TaxRate, :type => :model do
       end
     end
 
+    context "without tax rates" do
+      let(:line_item) do
+        stub_model(Spree::LineItem,
+          :price => 10.0,
+          :quantity => 2,
+          :tax_category => nil,
+          :variant => stub_model(Spree::Variant)
+        )
+      end
+
+      let(:line_items) { [line_item] }
+
+      it "should update pre_tax_total to match line item cost if no taxes" do
+        line_item.tax_category = nil
+        Spree::TaxRate.adjust(order, line_items)
+        expect(line_item.pre_tax_amount).to eq line_item.price * line_item.quantity
+      end
+    end
+
     context "with shipments" do
       let(:shipments) { [stub_model(Spree::Shipment, :cost => 10.0, :tax_category => tax_category_1)] }
 
