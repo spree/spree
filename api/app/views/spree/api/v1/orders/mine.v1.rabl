@@ -6,4 +6,4 @@ end
 
 node(:count) { @orders.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @orders.num_pages }
+node(:pages) { @orders.total_pages }

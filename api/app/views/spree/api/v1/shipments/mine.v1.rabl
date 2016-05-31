@@ -2,7 +2,7 @@ object false
 
 node(:count) { @shipments.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @shipments.num_pages }
+node(:pages) { @shipments.total_pages }
 
 child(@shipments => :shipments) do
   extends "spree/api/v1/shipments/big"
