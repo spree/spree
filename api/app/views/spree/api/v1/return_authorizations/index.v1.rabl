@@ -4,4 +4,4 @@ child(@return_authorizations => :return_authorizations) do
 end
 node(:count) { @return_authorizations.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @return_authorizations.num_pages }
+node(:pages) { @return_authorizations.total_pages }
