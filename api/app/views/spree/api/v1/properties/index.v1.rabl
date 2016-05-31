@@ -4,4 +4,4 @@ child(@properties => :properties) do
 end
 node(:count) { @properties.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @properties.num_pages }
+node(:pages) { @properties.total_pages }
