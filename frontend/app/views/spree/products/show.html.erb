@@ -7,7 +7,7 @@
         <div id="product-images" data-hook="product_images">
           <div id="main-image" class="panel panel-default" data-hook>
             <div class="panel-body text-center">
-              <%= render :partial => 'image' %>
+              <%= product_image(@product, :itemprop => "image") %>
             </div>
           </div>
           <div id="thumbnails" data-hook>
