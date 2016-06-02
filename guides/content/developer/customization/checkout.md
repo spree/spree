@@ -110,9 +110,9 @@ understanding of the design in order to customize your checkout.
 Three custom routes in spree_core handle all of the routing for a checkout:
 
 ```ruby
-put '/checkout/update/:state', :to => 'checkout#update', :as => :update_checkout
-get '/checkout/:state', :to => 'checkout#edit', :as => :checkout_state
-get '/checkout', :to => 'checkout#edit', :as => :checkout
+put '/checkout/update/:state', to: 'checkout#update', as: :update_checkout
+get '/checkout/:state', to: 'checkout#edit', as: :checkout_state
+get '/checkout', to: 'checkout#edit', as: :checkout
 ```
 
 The '/checkout' route maps to the `edit` action of the
@@ -213,7 +213,7 @@ before that transition, placing this code in a file called
 `app/models/spree/order_decorator.rb`:
 
 ```ruby
-Spree::Order.state_machine.before_transition :to => :delivery, :do => :valid_zip_code?
+Spree::Order.state_machine.before_transition to: :delivery, do: :valid_zip_code?
 ```
 
 This callback would prevent transitioning to the `delivery` step if
@@ -250,7 +250,7 @@ checkout_flow do
   }
   go_to_state :confirm, if: ->(order) { order.confirmation_required? }
   go_to_state :complete
-  remove_transition :from => :delivery, :to => :confirm
+  remove_transition from: :delivery, to: :confirm
 ```
 
 we can pass a block on each checkout step definition and work some logic to
@@ -285,9 +285,9 @@ The `insert_checkout_step` takes a `before` or `after` option to determine where
 insert the step:
 
 ```ruby
-insert_checkout_step :new_step, :before => :address
+insert_checkout_step :new_step, before: :address
 # or
-insert_checkout_step :new_step, :after => :address
+insert_checkout_step :new_step, after: :address
 ```
 
 The `remove_checkout_step` will remove just one checkout step at a time:
@@ -364,8 +364,8 @@ def create_profile(payment)
   if payment.source.gateway_customer_profile_id.nil?
     profile_hash = create_customer_profile(payment)
     payment.source.update_attributes({
-      :gateway_customer_profile_id => profile_hash[:customer_profile_id],
-      :gateway_payment_profile_id => profile_hash[:customer_payment_profile_id])
+      gateway_customer_profile_id: profile_hash[:customer_profile_id],
+      gateway_payment_profile_id: profile_hash[:customer_payment_profile_id])
     })
   end
 end

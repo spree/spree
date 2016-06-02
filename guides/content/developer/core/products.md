@@ -60,11 +60,11 @@ Images link to a product through its master variant. The sub-variants for the pr
 Spree automatically handles creation and storage of several size versions of each image (via the Paperclip plugin). The default styles are as follows:
 
 ```ruby
-:styles => {
-  :mini => '48x48>',
-  :small => '100x100>',
-  :product => '240x240>',
-  :large => '600x600>'
+styles: {
+  mini: '48x48>',
+  small: '100x100>',
+  product: '240x240>',
+  large: '600x600>'
 }
 ```
 

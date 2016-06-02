@@ -40,7 +40,7 @@ For more information, please refer to the [Upgrading Ruby on Rails guide](http:/
 For best results, use the 1-1-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-1-stable'```
+gem 'spree', github: 'spree/spree', branch: '1-1-stable'```
 
 Run `bundle update spree`. 
 

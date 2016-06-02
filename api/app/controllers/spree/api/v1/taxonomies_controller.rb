@@ -20,7 +20,7 @@ module Spree
           authorize! :create, Taxonomy
           @taxonomy = Taxonomy.new(taxonomy_params)
           if @taxonomy.save
-            respond_with(@taxonomy, :status => 201, :default_template => :show)
+            respond_with(@taxonomy, status: 201, default_template: :show)
           else
             invalid_resource!(@taxonomy)
           end
@@ -29,7 +29,7 @@ module Spree
         def update
           authorize! :update, taxonomy
           if taxonomy.update_attributes(taxonomy_params)
-            respond_with(taxonomy, :status => 200, :default_template => :show)
+            respond_with(taxonomy, status: 200, default_template: :show)
           else
             invalid_resource!(taxonomy)
           end
@@ -38,13 +38,13 @@ module Spree
         def destroy
           authorize! :destroy, taxonomy
           taxonomy.destroy
-          respond_with(taxonomy, :status => 204)
+          respond_with(taxonomy, status: 204)
         end
 
         private
 
         def taxonomies
-          @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(:root => :children).
+          @taxonomies = Taxonomy.accessible_by(current_ability, :read).order('name').includes(root: :children).
                         ransack(params[:q]).result.
                         page(params[:page]).per(params[:per_page])
         end

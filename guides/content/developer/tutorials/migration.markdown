@@ -183,8 +183,8 @@ etc.
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
 ```ruby
-p = Spree::Product.create :name => 'some product', :price => 10.0,
-:description => 'some text here'
+p = Spree::Product.create name: 'some product', price: 10.0,
+description: 'some text here'
 ```
 
 Observe that the*permalink+ and timestamps are added automatically.
@@ -232,7 +232,7 @@ string. You can either generate the list of categories in advance, or use
 when required.
 
 ```ruby
-p.shipping_category = Spree::ShippingCategory.where(:name => 'Type A').first_or_create
+p.shipping_category = Spree::ShippingCategory.where(name: 'Type A').first_or_create
 ```
 
 #### Tax category
@@ -293,7 +293,7 @@ possibly using 'A > B > C' style of context to assign the taxons for a product. 
 
 ```ruby
 # create outside of loop
-  main_taxonomy = Spree::Taxonomy.where(:name => 'Products').first_or_create
+  main_taxonomy = Spree::Taxonomy.where(name: 'Products').first_or_create
 
 # inside of main loop
 the_taxons = []
@@ -329,7 +329,7 @@ Then you just set the value for the property-product pair.
 Assuming value*size_info+ which is derived from the relevant
 column, this means:
 ```ruby
-Spree::ProductProperty.create :property => size_prop, :product => p, :value => size_info
+Spree::ProductProperty.create property: size_prop, product: p, value: size_info
 ```
 
 #### Product prototypes
@@ -368,7 +368,7 @@ explicitly set, the new variant will use the master variant's price (the same ap
 *cost_price* too). You can also set the *weight*, *width*, *height*, and *depth* too.
 
 ```ruby
-v = Spree::Variant.create :product => p, :sku => "some_sku_code", :price => NNNN
+v = Spree::Variant.create product: p, sku: "some_sku_code", price: NNNN
 ```
 
 ***
@@ -396,7 +396,7 @@ use the *where.first_or_create* technique, with something like this:
 
 ```ruby
 p.option_types = option_names_col.map do |name|
-  Spree::OptionType.where(:name => name, :presentation => name).first_or_create
+  Spree::OptionType.where(name: name, presentation: name).first_or_create
 end
 ```
 
@@ -413,7 +413,7 @@ the option values for the new variant (see below for variant creation).
 
 ```ruby
 *, opts, sku, price = opt_info.match(/(.+)\s=\s(\w+)\s@\s\$(.+)/).to_a
-v = Spree::Variant.create :product => p, :sku => sku, :price => price
+v = Spree::Variant.create product: p, sku: sku, price: price
 v.option_values = opts.split('&').map do |nm|
   Spree::OptionValue.where.first_or_create nm.strip
 end
@@ -439,10 +439,10 @@ If you create option values in advance, just create them in the required
 order and the plugin will set the *position* automatically.
 
 ```ruby
-color_type = Spree::OptionType.create :name => 'Color', :presentation => 'Color'
+color_type = Spree::OptionType.create name: 'Color', presentation: 'Color'
 color_options = %w[Red Blue Green].split.map { |n|
-  Spree::OptionValue.create :name => n, :presentation => n,
-  :option_type => color_type }
+  Spree::OptionValue.create name: n, presentation: n,
+  option_type: color_type }
 ```
 
 Otherwise, you could enforce the ordering*after_ loading up all of the
@@ -472,10 +472,10 @@ create all of the size formats.
 
 ```ruby
 #for image for product (all variants) represented by master variant
-img = Spree::Image.create(:attachment => File.open(path), :viewable => product.master)
+img = Spree::Image.create(attachment: File.open(path), viewable: product.master)
 
 #for image for single variant
-img = Spree::Image.create(:attachment => File.open(path), :viewable => variant)
+img = Spree::Image.create(attachment: File.open(path), viewable: variant)
 ```
 
 Paperclip also supports external [storage of images in S3](https://github.com/thoughtbot/paperclip/blob/master/lib/paperclip/storage.rb)

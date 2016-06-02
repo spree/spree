@@ -139,7 +139,7 @@ module Spree
           # will return nil if no shipments are found
           order.shipment_state = shipment_states.first
           # TODO inventory unit states?
-          # if order.shipment_state && order.inventory_units.where(:shipment_id => nil).exists?
+          # if order.shipment_state && order.inventory_units.where(shipment_id: nil).exists?
           #   shipments exist but there are unassigned inventory units
           #   order.shipment_state = 'partial'
           # end

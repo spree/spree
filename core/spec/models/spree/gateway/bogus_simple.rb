@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Gateway::BogusSimple, :type => :model do
+describe Spree::Gateway::BogusSimple, type: :model do
 
   subject { Spree::Gateway::BogusSimple.new }
 

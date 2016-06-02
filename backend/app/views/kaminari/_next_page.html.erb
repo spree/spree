@@ -10,6 +10,6 @@
   <% if current_page.last? %>
     <a href="javascript:;">&raquo;</a>
   <% else %>
-    <%= link_to_unless current_page.last?, "&raquo;".html_safe, url, :rel => 'next', :remote => remote %>
+    <%= link_to_unless current_page.last?, "&raquo;".html_safe, url, rel: 'next', remote: remote %>
   <% end %>
 </li>

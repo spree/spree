@@ -49,10 +49,10 @@ You can add additional preferences under the `spree/app_configuration` namespace
 # These will be saved with key: spree/app_configuration/hot_salsa
 Spree::AppConfiguration.class_eval do
   preference :hot_salsa, :boolean
-  preference :dark_chocolate, :boolean, :default => true
+  preference :dark_chocolate, :boolean, default: true
   preference :color, :string
   preference :favorite_number
-  preference :language, :string, :default => 'English'
+  preference :language, :string, default: 'English'
 end
 
 # Spree::Config is an instance of Spree::AppConfiguration
@@ -62,7 +62,7 @@ Spree::Config.hot_salsa = false
 # These will be saved with key: kona/store_configuration/hot_coffee
 Kona::StoreConfiguration < Preferences::Configuration
   preference :hot_coffee, :boolean
-  preference :color, :string, :default => 'black'
+  preference :color, :string, default: 'black'
 end
 
 KONA::STORE_CONFIG = Kona::StoreConfiguration.new
@@ -76,10 +76,10 @@ You can define preferences for a model within the model itself:
 ```ruby
 class User < ActiveRecord::Base
   preference :hot_salsa, :boolean
-  preference :dark_chocolate, :boolean, :default => true
+  preference :dark_chocolate, :boolean, default: true
   preference :color, :string
   preference :favorite_number, :integer
-  preference :language, :string, :default => "English"
+  preference :language, :string, default: "English"
 end
 ```
 
@@ -275,7 +275,7 @@ You can define preferences that are site-wide and don't apply to a specific inst
 
 ```ruby
 class Spree::MyApplicationConfiguration < Spree::Preferences::Configuration
-  preference :theme, :string, :default => "Default"
+  preference :theme, :string, default: "Default"
   preference :show_splash_page, :boolean
   preference :number_of_articles, :integer
 end

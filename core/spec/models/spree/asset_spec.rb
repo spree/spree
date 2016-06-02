@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Asset, :type => :model do
+describe Spree::Asset, type: :model do
   describe "#viewable" do
     it "touches association" do
       Timecop.scale(3600) do

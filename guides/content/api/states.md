@@ -31,10 +31,10 @@ GET /api/states?country_id=1```
 
 <%= headers 200 %>
 <%= json(:state) do |h|
-{ :states => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ states: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Show

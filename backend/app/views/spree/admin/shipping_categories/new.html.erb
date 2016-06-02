@@ -3,11 +3,11 @@
   <%= Spree.t(:new_shipping_category) %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @shipping_category } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_category } %>
 
 <%= form_for [:admin, @shipping_category] do |f| %>
   <fieldset>
-    <%= render :partial => 'form', :locals => { :f => f } %>
-    <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/new_resource_links' %>
   </fieldset>
 <% end %>

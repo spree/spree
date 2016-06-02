@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe 'page promotions', :type => :feature do
-  let!(:product) { create(:product, :name => "RoR Mug", :price => 20) }
+describe 'page promotions', type: :feature do
+  let!(:product) { create(:product, name: "RoR Mug", price: 20) }
   before do
-    promotion = Spree::Promotion.create!(:name       => "$10 off",
-                                         :path       => 'test',
-                                         :starts_at  => 1.day.ago,
-                                         :expires_at => 1.day.from_now)
+    promotion = Spree::Promotion.create!(name:       "$10 off",
+                                         path:       'test',
+                                         starts_at:  1.day.ago,
+                                         expires_at: 1.day.from_now)
 
    calculator = Spree::Calculator::FlatRate.new
    calculator.preferred_amount = 10
 
-   action = Spree::Promotion::Actions::CreateItemAdjustments.create(:calculator => calculator)
+   action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
    promotion.actions << action
 
    visit spree.root_path

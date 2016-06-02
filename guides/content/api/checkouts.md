@@ -196,27 +196,27 @@ In order to update the addresses, make this request with the necessary parameter
 As an example, here are the required address attributes and how they should be formatted:
 
 <%= json \
-  :order => {
-    :bill_address_attributes => {
-      :firstname  => 'John',
-      :lastname   => 'Doe',
-      :address1   => '7735 Old Georgetown Road',
-      :city       => 'Bethesda',
-      :phone      => '3014445002',
-      :zipcode    => '20814',
-      :state_id   => 48,
-      :country_id => 49
+  order: {
+    bill_address_attributes: {
+      firstname:  'John',
+      lastname:   'Doe',
+      address1:   '7735 Old Georgetown Road',
+      city:       'Bethesda',
+      phone:      '3014445002',
+      zipcode:    '20814',
+      state_id:   48,
+      country_id: 49
     },
 
-    :ship_address_attributes => {
-      :firstname  => 'John',
-      :lastname   => 'Doe',
-      :address1   => '7735 Old Georgetown Road',
-      :city       => 'Bethesda',
-      :phone      => '3014445002',
-      :zipcode    => '20814',
-      :state_id   => 48,
-      :country_id => 49
+    ship_address_attributes: {
+      firstname:  'John',
+      lastname:   'Doe',
+      address1:   '7735 Old Georgetown Road',
+      city:       'Bethesda',
+      phone:      '3014445002',
+      zipcode:    '20814',
+      state_id:   48,
+      country_id: 49
     }
   }
 %>
@@ -385,12 +385,12 @@ To advance to the next state, `confirm`, the order will need to have a payment.
 You can create a payment by passing in parameters such as this:
 
 <%= json \
-  :order => {
-    :payments_attributes => [{
-      :payment_method_id => "1"
+  order: {
+    payments_attributes: [{
+      payment_method_id: "1"
     }]
   },
-  :payment_source => {
+  payment_source: {
     "1" => {
       "number" => "4111111111111111",
       "month" => "1",
@@ -410,8 +410,8 @@ You can also use an existing card for the order by submitting the credit card
 id. See an example request:
 
 <%= json \
-  :order => {
-    :existing_card => "1"
+  order: {
+    existing_card: "1"
   }
 %>
 
@@ -419,11 +419,11 @@ _Please note that for 2-2-stable checkout api the request body to submit a payme
 via api/checkouts is slight different. See example:_
 
 <%= json \
-  :order => {
-    :payments_attributes => {
-      :payment_method_id => "1"
+  order: {
+    payments_attributes: {
+      payment_method_id: "1"
     },
-    :payment_source => {
+    payment_source: {
       "1" => {
         "number" => "4111111111111111",
         "month" => "1",

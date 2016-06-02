@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe ReturnsCalculator, :type => :model do
+  describe ReturnsCalculator, type: :model do
     let(:return_item) { build(:return_item) }
     subject { ReturnsCalculator.new }
 

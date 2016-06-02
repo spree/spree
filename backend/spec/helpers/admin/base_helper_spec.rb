@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::BaseHelper, :type => :helper do
+describe Spree::Admin::BaseHelper, type: :helper do
   include Spree::Admin::BaseHelper
 
   context "#datepicker_field_value" do

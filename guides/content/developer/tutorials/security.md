@@ -65,7 +65,7 @@ if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
   can :manage, :all
 else
   #############################
-  can [:read,:update,:destroy], Spree.user_class, :id => user.id
+  can [:read,:update,:destroy], Spree.user_class, id: user.id
   can :create, Spree.user_class
   #############################
   can :read, Order do |order, token|
@@ -232,8 +232,8 @@ module Spree
     module TokenResource
       module ClassMethods
         def token_resource
-          has_one :tokenized_permission, :as => :permissable
-          delegate :token, :to => :tokenized_permission, :allow_nil => true
+          has_one :tokenized_permission, as: :permissable
+          delegate :token, to: :tokenized_permission, allow_nil: true
           after_create :create_token
         end
       end

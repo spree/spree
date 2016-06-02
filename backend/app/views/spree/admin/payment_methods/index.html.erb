@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_payment_method), new_object_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_payment_methods_link' %>
+  <%= button_link_to Spree.t(:new_payment_method), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_payment_methods_link' %>
 <% end if can? :create, Spree::PaymentMethod %>
 
 <% if @payment_methods.any? %>
@@ -31,8 +31,8 @@
           <td class="text-center"><%= Spree.t(method.display_on) %></td>
           <td class="text-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit(method, :no_text => true) if can? :edit, method %>
-            <%= link_to_delete(method, :no_text => true) if can? :delete, method %>
+            <%= link_to_edit(method, no_text: true) if can? :edit, method %>
+            <%= link_to_delete(method, no_text: true) if can? :delete, method %>
           </td>
         </tr>
       <% end %>

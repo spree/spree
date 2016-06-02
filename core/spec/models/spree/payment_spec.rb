@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Payment, :type => :model do
+describe Spree::Payment, type: :model do
   let(:order) { Spree::Order.create }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
-    gateway = Spree::Gateway::Bogus.new(:active => true)
-    allow(gateway).to receive_messages :source_required => true
+    gateway = Spree::Gateway::Bogus.new(active: true)
+    allow(gateway).to receive_messages source_required: true
     gateway
   end
 
@@ -182,7 +182,7 @@ describe Spree::Payment, :type => :model do
 
       # Regression test for #4598
       it "should allow payments with a gateway_customer_profile_id" do
-        allow(payment.source).to receive_messages :gateway_customer_profile_id => "customer_1"
+        allow(payment.source).to receive_messages gateway_customer_profile_id: "customer_1"
         expect(payment.payment_method).to receive(:supports?).with(payment.source).and_return(false)
         expect(payment).to receive(:started_processing!)
         payment.process!
@@ -190,7 +190,7 @@ describe Spree::Payment, :type => :model do
 
       # Another regression test for #4598
       it "should allow payments with a gateway_payment_profile_id" do
-        allow(payment.source).to receive_messages :gateway_payment_profile_id => "customer_1"
+        allow(payment.source).to receive_messages gateway_payment_profile_id: "customer_1"
         expect(payment.payment_method).to receive(:supports?).with(payment.source).and_return(false)
         expect(payment).to receive(:started_processing!)
         payment.process!
@@ -206,10 +206,10 @@ describe Spree::Payment, :type => :model do
       end
 
       it "should call authorize on the gateway with the currency code" do
-        allow(payment).to receive_messages :currency => 'GBP'
+        allow(payment).to receive_messages currency: 'GBP'
         expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
                                                                card,
-                                                               hash_including({:currency => "GBP"})).and_return(success_response)
+                                                               hash_including({currency: "GBP"})).and_return(success_response)
         payment.authorize!
       end
 
@@ -369,7 +369,7 @@ describe Spree::Payment, :type => :model do
 
         context "if unsuccessful" do
           it "should not make payment complete" do
-            allow(gateway).to receive_messages :capture => failed_response
+            allow(gateway).to receive_messages capture: failed_response
             expect(payment).to receive(:failure)
             expect(payment).not_to receive(:complete)
             expect { payment.capture! }.to raise_error(Spree::Core::GatewayError)
@@ -400,7 +400,7 @@ describe Spree::Payment, :type => :model do
 
       context "when profiles are supported" do
         it "should call payment_gateway.void with the payment's response_code" do
-          allow(gateway).to receive_messages :payment_profiles_supported? => true
+          allow(gateway).to receive_messages payment_profiles_supported?: true
           expect(gateway).to receive(:void).with('123', card, anything).and_return(success_response)
           payment.void_transaction!
         end
@@ -408,14 +408,14 @@ describe Spree::Payment, :type => :model do
 
       context "when profiles are not supported" do
         it "should call payment_gateway.void with the payment's response_code" do
-          allow(gateway).to receive_messages :payment_profiles_supported? => false
+          allow(gateway).to receive_messages payment_profiles_supported?: false
           expect(gateway).to receive(:void).with('123', anything).and_return(success_response)
           payment.void_transaction!
         end
       end
 
       it "should log the response" do
-        expect(payment.log_entries).to receive(:create!).with(:details => anything)
+        expect(payment.log_entries).to receive(:create!).with(details: anything)
         payment.void_transaction!
       end
 
@@ -430,7 +430,7 @@ describe Spree::Payment, :type => :model do
 
       context "if unsuccessful" do
         it "should not void the payment" do
-          allow(gateway).to receive_messages :void => failed_response
+          allow(gateway).to receive_messages void: failed_response
           expect(payment).not_to receive(:void)
           expect { payment.void_transaction! }.to raise_error(Spree::Core::GatewayError)
         end
@@ -475,7 +475,7 @@ describe Spree::Payment, :type => :model do
     context "raises no error if source is not specified" do
       before do
         payment.source = nil
-        allow(payment.payment_method).to receive_messages(:source_required? => false)
+        allow(payment.payment_method).to receive_messages(source_required?: false)
       end
 
       specify do
@@ -518,7 +518,7 @@ describe Spree::Payment, :type => :model do
     context "not completed payments" do
       it "doesn't update order payment total" do
         expect {
-          Spree::Payment.create(:amount => 100, :order => order)
+          Spree::Payment.create(amount: 100, order: order)
         }.not_to change { order.payment_total }
       end
 
@@ -554,8 +554,8 @@ describe Spree::Payment, :type => :model do
 
     context "when profiles are supported" do
       before do
-        allow(gateway).to receive_messages :payment_profiles_supported? => true
-        allow(payment.source).to receive_messages :has_payment_profile? => false
+        allow(gateway).to receive_messages payment_profiles_supported?: true
+        allow(payment.source).to receive_messages has_payment_profile?: false
       end
 
       context "when there is an error connecting to the gateway" do
@@ -565,10 +565,10 @@ describe Spree::Payment, :type => :model do
           expect(gateway).to receive(:create_profile).and_raise(connection_error)
           expect do
             Spree::Payment.create(
-              :amount => 100,
-              :order => order,
-              :source => card,
-              :payment_method => gateway
+              amount: 100,
+              order: order,
+              source: card,
+              payment_method: gateway
             )
           end.to raise_error(Spree::Core::GatewayError)
         end
@@ -599,25 +599,25 @@ describe Spree::Payment, :type => :model do
         it "should create a payment profile" do
           expect(payment.payment_method).to receive :create_profile
           payment = Spree::Payment.create(
-            :amount => 100,
-            :order => order,
-            :source => card,
-            :payment_method => gateway
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
           )
         end
       end
     end
 
     context "when profiles are not supported" do
-      before { allow(gateway).to receive_messages :payment_profiles_supported? => false }
+      before { allow(gateway).to receive_messages payment_profiles_supported?: false }
 
       it "should not create a payment profile" do
         expect(gateway).not_to receive :create_profile
         payment = Spree::Payment.create(
-          :amount => 100,
-          :order => order,
-          :source => card,
-          :payment_method => gateway
+          amount: 100,
+          order: order,
+          source: card,
+          payment_method: gateway
         )
       end
     end
@@ -626,13 +626,13 @@ describe Spree::Payment, :type => :model do
   describe "#build_source" do
     let(:params) do
       {
-        :amount => 100,
-        :payment_method => gateway,
-        :source_attributes => {
-          :expiry =>"01 / 99",
-          :number => '1234567890123',
-          :verification_value => '123',
-          :name => 'Spree Commerce'
+        amount: 100,
+        payment_method: gateway,
+        source_attributes: {
+          expiry:"01 / 99",
+          number: '1234567890123',
+          verification_value: '123',
+          name: 'Spree Commerce'
         }
       }
     end
@@ -652,8 +652,8 @@ describe Spree::Payment, :type => :model do
     end
 
     it "errors when payment source not valid" do
-      params = { :amount => 100, :payment_method => gateway,
-        :source_attributes => {:expiry => "1 / 12" }}
+      params = { amount: 100, payment_method: gateway,
+        source_attributes: {expiry: "1 / 12" }}
 
       payment = Spree::Payment.new(params)
       expect(payment).not_to be_valid
@@ -684,7 +684,7 @@ describe Spree::Payment, :type => :model do
 
   # Regression test for #2216
   describe "#gateway_options" do
-    before { allow(order).to receive_messages(:last_ip_address => "192.168.1.1") }
+    before { allow(order).to receive_messages(last_ip_address: "192.168.1.1") }
 
     it "contains an IP" do
       expect(payment.gateway_options[:ip]).to eq(order.last_ip_address)
@@ -694,7 +694,7 @@ describe Spree::Payment, :type => :model do
       # Sets the payment's order to a different Ruby object entirely
       payment.order = Spree::Order.find(payment.order_id)
       email = 'foo@example.com'
-      order.update_attributes(:email => email)
+      order.update_attributes(email: email)
       expect(payment.gateway_options[:email]).to eq(email)
     end
   end
@@ -774,7 +774,7 @@ describe Spree::Payment, :type => :model do
 
     context "when the locale uses a coma as a decimal separator" do
       before(:each) do
-        I18n.backend.store_translations(:fr, { :number => { :currency => { :format => { :delimiter => ' ', :separator => ',' } } } })
+        I18n.backend.store_translations(:fr, { number: { currency: { format: { delimiter: ' ', separator: ',' } } } })
         I18n.locale = :fr
         subject.amount = amount
       end

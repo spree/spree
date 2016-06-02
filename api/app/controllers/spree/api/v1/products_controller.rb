@@ -11,14 +11,14 @@ module Spree
           end
 
           @products = @products.distinct.page(params[:page]).per(params[:per_page])
-          expires_in 15.minutes, :public => true
+          expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@products)
         end
 
         def show
           @product = find_product(params[:id])
-          expires_in 15.minutes, :public => true
+          expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           headers['Surrogate-Key'] = "product_id=1"
           respond_with(@product)
@@ -66,7 +66,7 @@ module Spree
           @product = Core::Importer::Product.new(nil, product_params, options).create
 
           if @product.persisted?
-            respond_with(@product, :status => 201, :default_template => :show)
+            respond_with(@product, status: 201, default_template: :show)
           else
             invalid_resource!(@product)
           end
@@ -80,7 +80,7 @@ module Spree
           @product = Core::Importer::Product.new(@product, product_params, options).update
 
           if @product.errors.empty?
-            respond_with(@product.reload, :status => 200, :default_template => :show)
+            respond_with(@product.reload, status: 200, default_template: :show)
           else
             invalid_resource!(@product)
           end
@@ -90,7 +90,7 @@ module Spree
           @product = find_product(params[:id])
           authorize! :destroy, @product
           @product.destroy
-          respond_with(@product, :status => 204)
+          respond_with(@product, status: 204)
         end
 
         private

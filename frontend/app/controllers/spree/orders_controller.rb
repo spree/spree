@@ -1,7 +1,7 @@
 module Spree
   class OrdersController < Spree::StoreController
     before_action :check_authorization
-    rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_404
     helper 'spree/products', 'spree/orders'
 
     respond_to :html
@@ -76,7 +76,7 @@ module Spree
 
     def accurate_title
       if @order && @order.completed?
-        Spree.t(:order_number, :number => @order.number)
+        Spree.t(:order_number, number: @order.number)
       else
         Spree.t(:shopping_cart)
       end

@@ -85,7 +85,7 @@ If you're using spree_auth_devise, your app already comes with the Warden gem, w
 ```
 let(:user) { FactoryGirl.create(:user) }
 before(:each) do
-	login_as(user, :scope => :spree_user)
+	login_as(user, scope: :spree_user)
 end
 ```
 
@@ -99,16 +99,16 @@ For Spree 2.2 and prior, Spree keeps track of the order for a logged out user us
 ```
 let (:order) { FactoryGirl.create(:order) }
 before(:each) do
-  page.set_rack_session(:order_id => order.id)
-  page.set_rack_session(:access_token => order.token)
+  page.set_rack_session(order_id: order.id)
+  page.set_rack_session(access_token: order.token)
 end
 ```
 
 In Spree 2.3, a signed cookie is used to keep track of the guest user's cart. In the example below, we make two stubs onto objects in Spree to fake-out the guest token (in this text example, we simply set it to 'xyz'). In the example, presume that the order factory will have a lineitem in it for an associated product called "Some Product":
 
 ```
-describe "cart to registration page", :type => :feature do
-  let(:order) { FactoryGirl.create(:order, :guest_token => "xyz") }
+describe "cart to registration page", type: :feature do
+  let(:order) { FactoryGirl.create(:order, guest_token: "xyz") }
   # user should be nil for logged out user
 
 
@@ -121,7 +121,7 @@ describe "cart to registration page", :type => :feature do
 
       Spree::OrdersController.any_instance
                       .stub(:cookies)
-                      .and_return(mock(:cookies, :signed => {:guest_token => "xyz"}))
+                      .and_return(mock(:cookies, signed: {guest_token: "xyz"}))
     end
 
     it "should let me load the shopping cart page" do

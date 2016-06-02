@@ -5,7 +5,7 @@
     <div class="col-md-4">
       <div id="preference-settings" data-hook class="form-group">
         <%= f.label :type, Spree.t(:provider) %>
-        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {:id => 'gtwy-type', :class => 'select2'}) %>
+        <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {id: 'gtwy-type', class: 'select2'}) %>
 
         <% unless @object.new_record? %>
           <%= preference_fields(@object, f) %>
@@ -17,11 +17,11 @@
       </div>
       <div data-hook="display" class="form-group">
         <%= label_tag :payment_method_display_on, Spree.t(:display) %>
-        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, {:class => 'select2'}) %>
+        <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, {class: 'select2'}) %>
       </div>
       <div data-hook="auto_capture" class="form-group">
         <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %>
-        <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes), true], [Spree.t(:say_no), false]], {}, {:class => 'select2'}) %>
+        <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes), true], [Spree.t(:say_no), false]], {}, {class: 'select2'}) %>
       </div>
       <div data-hook="active" class="form-group">
         <strong><%= Spree.t(:active) %></strong>
@@ -44,12 +44,12 @@
     <div class="col-md-8">
       <%= field_container :payment_method, :name, class: ['form-group'], 'data-hook' => 'name' do %>
         <%= label_tag :payment_method_name, Spree.t(:name) %>
-        <%= text_field :payment_method, :name, :class => 'form-control' %>
+        <%= text_field :payment_method, :name, class: 'form-control' %>
         <%= error_message_on :payment_method, :name %>
       <% end %>
       <%= field_container :payment_method, :description, class: ['form-group'], 'data-hook' => 'description' do %>
         <%= label_tag :payment_method_description, Spree.t(:description) %>
-        <%= text_area :payment_method, :description, { :cols => 60, :rows => 6, :class => 'form-control' } %>
+        <%= text_area :payment_method, :description, { cols: 60, rows: 6, class: 'form-control' } %>
       <% end %>
     </div>
   </div>

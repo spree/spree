@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Reimbursement::ReimbursementTypeEngine, :type => :model do
+  describe Reimbursement::ReimbursementTypeEngine, type: :model do
     describe '#calculate_reimbursement_types' do
       let(:return_item)   { create(:return_item) }
       let(:return_items)  { [ return_item ] }

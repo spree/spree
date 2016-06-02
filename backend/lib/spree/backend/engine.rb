@@ -3,7 +3,7 @@ module Spree
     class Engine < ::Rails::Engine
       config.middleware.use "Spree::Backend::Middleware::SeoAssist"
 
-      initializer "spree.backend.environment", :before => :load_config_initializers do |app|
+      initializer "spree.backend.environment", before: :load_config_initializers do |app|
         Spree::Backend::Config = Spree::BackendConfiguration.new
       end
 
@@ -13,7 +13,7 @@ module Spree
       end
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
-      initializer "spree.assets.precompile", :group => :all do |app|
+      initializer "spree.assets.precompile", group: :all do |app|
         app.config.assets.paths << "#{Rails.root}/app/assets/fonts"
         app.config.assets.precompile << /\.(?:svg|eot|woff|ttf)$/
 

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 module Spree
-  describe Api::V1::UsersController, :type => :controller do
+  describe Api::V1::UsersController, type: :controller do
     render_views
 
     let(:user) { create(:user, spree_api_key: rand.to_s) }
-    let(:stranger) { create(:user, :email => 'stranger@example.com') }
+    let(:stranger) { create(:user, email: 'stranger@example.com') }
     let(:attributes) { [:id, :email, :created_at, :updated_at] }
 
     context "as a normal user" do
@@ -28,16 +28,16 @@ module Spree
 
       it "can create a new user" do
         user_params = {
-          :email => 'new@example.com', :password => 'spree123', :password_confirmation => 'spree123'
+          email: 'new@example.com', password: 'spree123', password_confirmation: 'spree123'
         }
 
-        api_post :create, :user => user_params, token: user.spree_api_key
+        api_post :create, user: user_params, token: user.spree_api_key
         expect(json_response['email']).to eq 'new@example.com'
       end
 
       # there's no validations on LegacyUser?
       xit "cannot create a new user with invalid attributes" do
-        api_post :create, :user => {}, token: user.spree_api_key
+        api_post :create, user: {}, token: user.spree_api_key
         expect(response.status).to eq(422)
         expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
         errors = json_response["errors"]
@@ -74,7 +74,7 @@ module Spree
       end
 
       it "cannot update other users details" do
-        api_put :update, id: stranger.id, token: user.spree_api_key, user: { :email => "mine@example.com" }
+        api_put :update, id: stranger.id, token: user.spree_api_key, user: { email: "mine@example.com" }
         assert_not_found!
       end
 
@@ -116,34 +116,34 @@ module Spree
 
       it 'can control the page size through a parameter' do
         2.times { create(:user) }
-        api_get :index, :per_page => 1
+        api_get :index, per_page: 1
         expect(json_response['count']).to eq(1)
         expect(json_response['current_page']).to eq(1)
         expect(json_response['pages']).to eq(2)
       end
 
       it 'can query the results through a paramter' do
-        expected_result = create(:user, :email => 'brian@spreecommerce.com')
-        api_get :index, :q => { :email_cont => 'brian' }
+        expected_result = create(:user, email: 'brian@spreecommerce.com')
+        api_get :index, q: { email_cont: 'brian' }
         expect(json_response['count']).to eq(1)
         expect(json_response['users'].first['email']).to eq expected_result.email
       end
 
       it "can create" do
-        api_post :create, :user => { :email => "new@example.com", :password => 'spree123', :password_confirmation => 'spree123' }
+        api_post :create, user: { email: "new@example.com", password: 'spree123', password_confirmation: 'spree123' }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
 
       it "can destroy user without orders" do
         user.orders.destroy_all
-        api_delete :destroy, :id => user.id
+        api_delete :destroy, id: user.id
         expect(response.status).to eq(204)
       end
 
       it "cannot destroy user with orders" do
-        create(:completed_order_with_totals, :user => user)
-        api_delete :destroy, :id => user.id
+        create(:completed_order_with_totals, user: user)
+        api_delete :destroy, id: user.id
         expect(json_response["exception"]).to eq "Spree::Core::DestroyWithOrdersError"
         expect(response.status).to eq(422)
       end

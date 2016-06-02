@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnAuthorization, :type => :model do
+describe Spree::ReturnAuthorization, type: :model do
   let(:order) { create(:shipped_order) }
   let(:stock_location) { create(:stock_location) }
   let(:rma_reason) { create(:return_authorization_reason) }

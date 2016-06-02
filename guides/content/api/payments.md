@@ -27,10 +27,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:payment) do |h|
-{ :payments => [h],
-  :count => 2,
-  :pages => 2,
-  :current_page => 1 }
+{ payments: [h],
+  count: 2,
+  pages: 2,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -47,10 +47,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:payment) do |h|
-{ :payments => [h],
-  :count => 2,
-  :pages => 2,
-  :current_page => 1 }
+{ payments: [h],
+  count: 2,
+  pages: 2,
+  current_page: 1 }
 end %>
 
 ### Sorting results
@@ -73,11 +73,11 @@ In order to create a new payment, you will need to know about the available paym
 
 <%= headers 200 %>
 <%= json \
-  :attributes =>
+  attributes:
   ["id", "source_type", "source_id", "amount",
    "payment_method_id", "response_code", "state",
    "avs_response", "created_at", "updated_at"],
-  :payment_methods => [Spree::Resources::PAYMENT_METHOD] %>
+  payment_methods: [Spree::Resources::PAYMENT_METHOD] %>
 
 ## Create
 
@@ -115,7 +115,7 @@ To authorize a payment, make a request like this:
 ### Failed Response
 
 <%= headers 422 %>
-<%= json :error => "There was a problem with the payment gateway: [text]" %>
+<%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Capture
 
@@ -133,7 +133,7 @@ To capture a payment, make a request like this:
 ### Failed Response
 
 <%= headers 422 %>
-<%= json :error => "There was a problem with the payment gateway: [text]" %>
+<%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Purchase
 
@@ -151,7 +151,7 @@ To make a purchase with a payment, make a request like this:
 ### Failed Response
 
 <%= headers 422 %>
-<%= json :error => "There was a problem with the payment gateway: [text]" %>
+<%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Void
 
@@ -167,7 +167,7 @@ To void a payment, make a request like this:
 ### Failed Response
 
 <%= headers 422 %>
-<%= json :error => "There was a problem with the payment gateway: [text]" %>
+<%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Credit
 
@@ -185,10 +185,10 @@ If the payment is over the payment's credit allowed limit, a "Credit Over Limit"
 ### Failed Response
 
 <%= headers 422 %>
-<%= json :error => "There was a problem with the payment gateway: [text]" %>
+<%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ### Credit Over Limit Response
 
 <%= headers 422 %>
-<%= json :error => "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number." %>
+<%= json error: "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number." %>
 

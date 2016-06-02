@@ -35,10 +35,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:variant) do |h|
-{ :variants => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ variants: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -67,10 +67,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:variant) do |h|
- { :variants => [h],
-   :count => 25,
-   :pages => 5,
-   :current_page => 1 }
+ { variants: [h],
+   count: 25,
+   pages: 5,
+   current_page: 1 }
 end %>
 
 ### Sorting results
@@ -117,11 +117,11 @@ GET /api/products/ruby-on-rails-tote/variants/new```
 
 <%= headers 200 %>
 <%= json \
-  :attributes => [
+  attributes: [
     :id, :name, :count_on_hand, :sku, :price, :weight, :height,
     :width, :depth, :is_master, :cost_price, :permalink
   ],
-  :required_attributes => []
+  required_attributes: []
  %>
 
 ## Create
@@ -146,8 +146,8 @@ POST /api/products/ruby-on-rails-tote/variants/?variant[sku]=12345&variant[price
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
   }
 %>
 
@@ -173,8 +173,8 @@ PUT /api/products/ruby-on-rails-tote/variants/2?variant[sku]=12345```
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
   }
 %>
 

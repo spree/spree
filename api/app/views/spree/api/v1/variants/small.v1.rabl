@@ -10,8 +10,8 @@ node(:is_backorderable) { |v| v.is_backorderable? }
 node(:total_on_hand) { |v| v.total_on_hand }
 node(:is_destroyed) { |v| v.destroyed? }
 
-child :option_values => :option_values do
+child option_values: :option_values do
   attributes *option_value_attributes
 end
 
-child(:images => :images) { extends "spree/api/v1/images/show" }
+child(images: :images) { extends "spree/api/v1/images/show" }
