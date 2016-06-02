@@ -1,7 +1,6 @@
 module Spree
   class Variant < Spree::Base
     acts_as_paranoid
-    acts_as_list
 
     include Spree::DefaultPrice
 
