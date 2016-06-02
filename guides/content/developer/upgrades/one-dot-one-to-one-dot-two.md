@@ -19,7 +19,7 @@ version of Spree will have a 1-2-stable branch.
 For best results, use the 1-2-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '1-2-stable'```
+gem 'spree', github: 'spree/spree', branch: '1-2-stable'```
 
 Run `bundle update spree`. 
 
@@ -29,7 +29,7 @@ In this release, the `spree_auth` component was moved out of the main set of
 gems into an extension, called `spree_auth_devise`. If you want to continue using Spree's authentication, then you will need to specify this extension as a dependency in your `Gemfile`:
 
 ```ruby
-gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-2-stable'```
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '1-2-stable'```
 
 Run `bundle install` to install this extension.
 

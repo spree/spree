@@ -220,7 +220,7 @@ to contributing to it) then the simplest thing to do is add a *:github*
 directive to your *Gemfile* and point it at the master branch.
 
 ```ruby
-gem 'spree', :github => 'spree/spree'
+gem 'spree', github: 'spree/spree'
 ```
 
 This will effectively use the latest code from the Git repository at the
@@ -243,7 +243,7 @@ parent as a locally cloned version of the Spree source. Then simply use
 the following in your Gemfile.
 
 ```ruby
-gem 'spree', :path => '../spree'
+gem 'spree', path: '../spree'
 ```
 
 ***
@@ -257,13 +257,13 @@ version. For instance, there is a 2-1-stable branch which contains the latest
 work for the 2.1.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '2-1-stable'
+gem 'spree', github: 'spree/spree', branch: '2-1-stable'
 ```
 
 Similarly, all main Spree extensions use this versioning scheme as well. For example, here's a line that would be used for `spree_auth_devise`:
 
 ```ruby
-gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '2-1-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-1-stable'
 ```
 
 !!!

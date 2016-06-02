@@ -7,7 +7,7 @@ address_fields = [:firstname, :lastname,
   :state_id, :country_id,
   :company]
 
-  child :ship_address => :ship_address do
+  child ship_address: :ship_address do
     attributes *address_fields
     child :state do
       attributes :name
@@ -18,7 +18,7 @@ address_fields = [:firstname, :lastname,
     end
   end
 
-  child :bill_address => :bill_address do
+  child bill_address: :bill_address do
     attributes *address_fields
     child :state do
       attributes :name

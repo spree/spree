@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     module Splitter
-      describe ShippingCategory, :type => :model do
+      describe ShippingCategory, type: :model do
 
         let(:variant1) { create(:variant) }
         let(:variant2) { create(:variant) }

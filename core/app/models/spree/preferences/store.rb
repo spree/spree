@@ -24,7 +24,7 @@ module Spree::Preferences
 
     def exist?(key)
       @cache.exist?(key) ||
-      should_persist? && Spree::Preference.where(:key => key).exists?
+      should_persist? && Spree::Preference.where(key: key).exists?
     end
 
     def get(key)
@@ -73,7 +73,7 @@ module Spree::Preferences
     def persist(cache_key, value)
       return unless should_persist?
 
-      preference = Spree::Preference.where(:key => cache_key).first_or_initialize
+      preference = Spree::Preference.where(key: cache_key).first_or_initialize
       preference.value = value
       preference.save
     end

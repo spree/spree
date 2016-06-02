@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrdersController, :type => :controller do
+describe Spree::OrdersController, type: :controller do
   let(:user) { create(:user) }
 
   context "Order model mock" do
@@ -10,7 +10,7 @@ describe Spree::OrdersController, :type => :controller do
     let(:variant) { create(:variant) }
 
     before do
-      allow(controller).to receive_messages(:try_spree_current_user => user)
+      allow(controller).to receive_messages(try_spree_current_user: user)
     end
 
     context "#populate" do
@@ -75,13 +75,13 @@ describe Spree::OrdersController, :type => :controller do
         it "should render the edit view (on failure)" do
           # email validation is only after address state
           order.update_column(:state, "delivery")
-          spree_put :update, { :order => { :email => "" } }, { :order_id => order.id }
+          spree_put :update, { order: { email: "" } }, { order_id: order.id }
           expect(response).to render_template :edit
         end
 
         it "should redirect to cart path (on success)" do
           allow(order).to receive(:update_attributes).and_return true
-          spree_put :update, {}, {:order_id => 1}
+          spree_put :update, {}, {order_id: 1}
           expect(response).to redirect_to(spree.cart_path)
         end
       end
@@ -108,7 +108,7 @@ describe Spree::OrdersController, :type => :controller do
       end
 
       it "cannot update a blank order" do
-        spree_put :update, :order => { :email => "foo" }
+        spree_put :update, order: { email: "foo" }
         expect(flash[:error]).to eq(Spree.t(:order_not_found))
         expect(response).to redirect_to(spree.root_path)
       end
@@ -122,12 +122,12 @@ describe Spree::OrdersController, :type => :controller do
 
     before do
       allow(controller).to receive(:check_authorization)
-      allow(controller).to receive_messages(:current_order => order)
+      allow(controller).to receive_messages(current_order: order)
     end
 
     it "removes line items on update" do
       expect(order.line_items.count).to eq 1
-      spree_put :update, :order => { line_items_attributes: { "0" => { id: line_item.id, quantity: 0 } } }
+      spree_put :update, order: { line_items_attributes: { "0" => { id: line_item.id, quantity: 0 } } }
       expect(order.reload.line_items.count).to eq 0
     end
   end

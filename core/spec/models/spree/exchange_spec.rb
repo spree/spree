@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Exchange, :type => :model do
+  describe Exchange, type: :model do
     let(:order) { Spree::Order.new }
 
     let(:return_item_1) { build(:exchange_return_item) }

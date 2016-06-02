@@ -24,9 +24,9 @@ module Spree
 end
 
 RSpec.configure do |config|
-  config.include Spree::TestingSupport::Caching, :caching => true
+  config.include Spree::TestingSupport::Caching, caching: true
 
-  config.before(:each, :caching => true) do
+  config.before(:each, caching: true) do
     ActionController::Base.perform_caching = true
 
     ActiveSupport::Notifications.subscribe("read_fragment.action_controller") do |event, start_time, finish_time, _, details|
@@ -40,7 +40,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each, :caching => true) do
+  config.after(:each, caching: true) do
     ActionController::Base.perform_caching = false
     Rails.cache.clear
   end

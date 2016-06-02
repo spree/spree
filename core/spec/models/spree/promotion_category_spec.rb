@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::PromotionCategory, :type => :model do
+describe Spree::PromotionCategory, type: :model do
   describe 'validation' do
     let(:name) { 'Nom' }
     subject { Spree::PromotionCategory.new name: name }

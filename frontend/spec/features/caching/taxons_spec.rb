@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe 'taxons', :type => :feature, :caching => true do
+describe 'taxons', type: :feature, caching: true do
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxon) { create(:taxon, :taxonomy => taxonomy) }
+  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
   before do
     # warm up the cache

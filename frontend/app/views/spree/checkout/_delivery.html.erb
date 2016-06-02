@@ -88,7 +88,7 @@
     <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>
         <h4><%= Spree.t(:shipping_instructions) %></h4>
-        <%= form.text_area :special_instructions, :cols => 40, :rows => 4, :class => "form-control" %>
+        <%= form.text_area :special_instructions, cols: 40, rows: 4, class: "form-control" %>
       </p>
     <% end %>
   </div>
@@ -97,5 +97,5 @@
 <br />
 
 <div class="well text-right form-buttons" data-hook="buttons">
-  <%= submit_tag Spree.t(:save_and_continue), :class => 'btn btn-lg btn-success' %>
+  <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
 </div>

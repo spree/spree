@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   module ReturnItem::ExchangeVariantEligibility
-    describe SameProduct, :type => :model do
+    describe SameProduct, type: :model do
       describe ".eligible_variants" do
 
         context "product has no variants" do

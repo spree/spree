@@ -29,7 +29,7 @@ For more information, please read the [Upgrading Ruby on Rails Guide](http://gui
 For best results, use the 0-70-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '0-70-stable'```
+gem 'spree', github: 'spree/spree', branch: '0-70-stable'```
 
 Run `bundle update rails` and `bundle update spree` and verify that was successful.
 

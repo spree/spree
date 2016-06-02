@@ -143,7 +143,7 @@ module Spree
       end
 
       def record_response(response)
-        log_entries.create!(:details => response.to_yaml)
+        log_entries.create!(details: response.to_yaml)
       end
 
       def protect_from_connection_error

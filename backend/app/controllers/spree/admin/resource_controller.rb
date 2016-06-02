@@ -3,25 +3,25 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url
   before_action :load_resource, except: :update_positions
-  rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
+  rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
   respond_to :html
 
   def new
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
-      format.html { render :layout => !request.xhr? }
+      format.html { render layout: !request.xhr? }
       if request.xhr?
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     end
   end
 
   def edit
     respond_with(@object) do |format|
-      format.html { render :layout => !request.xhr? }
+      format.html { render layout: !request.xhr? }
       if request.xhr?
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     end
   end
@@ -54,7 +54,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_created)
       respond_with(@object) do |format|
         format.html { redirect_to location_after_save }
-        format.js   { render :layout => false }
+        format.js   { render layout: false }
       end
     else
       invoke_callbacks(:create, :fails)

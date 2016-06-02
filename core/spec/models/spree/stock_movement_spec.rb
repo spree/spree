@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::StockMovement, :type => :model do
+describe Spree::StockMovement, type: :model do
 
   describe 'Constants' do
     describe 'QUANTITY_LIMITS[:max]' do

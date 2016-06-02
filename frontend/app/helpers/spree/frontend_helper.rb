@@ -73,7 +73,7 @@ module Spree
         css_class = 'full'
       end
 
-      link_to text.html_safe, spree.cart_path, :class => "cart-info #{css_class}"
+      link_to text.html_safe, spree.cart_path, class: "cart-info #{css_class}"
     end
 
     # helper to determine if its appropriate to show the store menu

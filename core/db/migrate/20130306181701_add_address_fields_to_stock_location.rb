@@ -12,11 +12,11 @@ class AddAddressFieldsToStockLocation < ActiveRecord::Migration
     add_column :spree_stock_locations, :phone, :string
 
 
-    usa = Spree::Country.where(:iso => 'US').first
+    usa = Spree::Country.where(iso: 'US').first
     # In case USA isn't found.
     # See #3115
     country = usa || Spree::Country.first
     Spree::Country.reset_column_information
-    Spree::StockLocation.update_all(:country_id => country)
+    Spree::StockLocation.update_all(country_id: country)
   end
 end

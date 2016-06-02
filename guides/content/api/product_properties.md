@@ -29,10 +29,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:product_property) do |h|
-{ :product_properties => [h],
-  :count => 10,
-  :pages => 2,
-  :current_page => 1 }
+{ product_properties: [h],
+  count: 10,
+  pages: 2,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -49,10 +49,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:product_property) do |h|
- { :product_properties => [h],
-   :count => 10,
-   :pages => 2,
-   :current_page => 1 }
+ { product_properties: [h],
+   count: 10,
+   pages: 2,
+   current_page: 1 }
 end %>
 
 ### Sorting results

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Reimbursement::ReimbursementTypeValidator, :type => :model do
+  describe Reimbursement::ReimbursementTypeValidator, type: :model do
     class DummyClass
       include Spree::Reimbursement::ReimbursementTypeValidator
 

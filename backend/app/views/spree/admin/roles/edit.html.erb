@@ -3,7 +3,7 @@
   <%= @role.name.capitalize %>
 <% end %>
 
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @role } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @role } %>
 
 <%= form_for [:admin, @role] do |f| %>
   <fieldset>

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Price, :type => :model do
+describe Spree::Price, type: :model do
   describe '#amount=' do
     let(:price) { Spree::Price.new }
     let(:amount) { '3,0A0' }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preferences::ScopedStore, :type => :model do
+describe Spree::Preferences::ScopedStore, type: :model do
   let(:scoped_store){ described_class.new(prefix, suffix) }
   subject{ scoped_store }
   let(:prefix){ nil }
