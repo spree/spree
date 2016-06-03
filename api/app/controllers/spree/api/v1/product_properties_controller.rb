@@ -16,8 +16,7 @@ module Spree
           respond_with(@product_property)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, ProductProperty

@@ -29,8 +29,7 @@ module Spree
           respond_with(@variants)
         end
 
-        def new
-        end
+        def new; end
 
         def show
           @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images, { stock_items: :stock_location })

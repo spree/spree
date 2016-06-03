@@ -22,8 +22,7 @@ module Spree
           respond_with(@property)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Property
