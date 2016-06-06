@@ -6,7 +6,7 @@ module Spree
 
         self.line_item_options = []
 
-        def new;end
+        def new; end
 
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
