@@ -6,12 +6,12 @@ module Spree
           @option_types =
             if params[:ids]
               Spree::OptionType.includes(:option_values)
-                             .accessible_by(current_ability, :read)
-                             .where(id: params[:ids].split(','))
+                               .accessible_by(current_ability, :read)
+                               .where(id: params[:ids].split(','))
             else
               Spree::OptionType.includes(:option_values)
-                             .accessible_by(current_ability, :read)
-                             .load.ransack(params[:q]).result
+                               .accessible_by(current_ability, :read)
+                               .load.ransack(params[:q]).result
             end
           respond_with(@option_types)
         end
