@@ -75,6 +75,7 @@ module Spree
     after_initialize :ensure_master
 
     after_save :save_master
+    after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
 
     before_validation :validate_master
@@ -302,6 +303,10 @@ module Spree
     # ensures the master variant is flagged as such
     def set_master_variant_defaults
       master.is_master = true
+    end
+    
+    def run_touch_callbacks
+      run_callbacks(:touch)
     end
 
     def taxon_and_ancestors
