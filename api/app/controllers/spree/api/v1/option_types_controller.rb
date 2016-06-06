@@ -4,14 +4,16 @@ module Spree
       class OptionTypesController < Spree::Api::BaseController
         def index
           @option_types =  if params[:ids]
-                             Spree::OptionType.includes(:option_values).
-                             accessible_by(current_ability, :read).
-                             where(id: params[:ids].split(','))
+                             Spree::OptionType
+                               .includes(:option_values)
+                               .accessible_by(current_ability, :read)
+                               .where(id: params[:ids].split(','))
                            else
-                             Spree::OptionType.includes(:option_values).
-                             accessible_by(current_ability, :read).
-                             load.ransack(params[:q]).result
-                          end
+                             Spree::OptionType
+                               .includes(:option_values)
+                               .accessible_by(current_ability, :read)
+                               .load.ransack(params[:q]).result
+                           end
           respond_with(@option_types)
         end
 
