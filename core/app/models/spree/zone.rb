@@ -79,11 +79,11 @@ module Spree
     end
 
     def country?
-      kind == 'country'
+      kind_alike?('country')
     end
 
     def state?
-      kind == 'state'
+      kind_alike?('state')
     end
 
     def include?(address)
@@ -124,19 +124,11 @@ module Spree
     end
 
     def country_ids
-      if country?
-        members.pluck(:zoneable_id)
-      else
-        []
-      end
+      zoneable_ids('country')
     end
 
     def state_ids
-      if state?
-        members.pluck(:zoneable_id)
-      else
-        []
-      end
+      zoneable_ids('state')
     end
 
     def country_ids=(ids)
@@ -166,6 +158,14 @@ module Spree
     end
 
     private
+
+    def kind_alike?(_kind)
+      kind.eql?(_kind)
+    end
+
+    def zoneable_ids(_kind)
+      kind_alike?(_kind) ? members.pluck(:zoneable_id) : []
+    end
 
     def remove_defunct_members
       if zone_members.any?
