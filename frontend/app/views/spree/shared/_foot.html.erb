@@ -1,0 +1,23 @@
+<%= javascript_include_tag 'spree/frontend/all' %>
+
+<!-- you can use downloadJSAtOnload for even better performance -->
+<!-- check this out https://developers.google.com/speed/docs/insights/PrioritizeVisibleContent#DeferLoadingJS -->
+<!--
+  <script type="text/javascript">
+      function downloadJSAtOnload() {
+          var element = document.createElement("script");
+          element.src = "<%=asset_path('spree/frontend/all.js')%>";
+          document.body.appendChild(element);
+      }
+      if (window.addEventListener)
+          window.addEventListener("load", downloadJSAtOnload, false);
+      else if (window.attachEvent)
+          window.attachEvent("onload", downloadJSAtOnload);
+      else window.onload = downloadJSAtOnload;
+  </script>
+-->
+
+<!-- load page java script after load all library-->
+<% if content_for?(:foot) %>
+    <%= yield :foot %>
+<% end %>

@@ -10,7 +10,10 @@
         </noscript>
         &nbsp;
       </li>
-      <script>Spree.fetch_cart()</script>
     </ul>
   </div>
 </nav>
+
+<% content_for :foot do %>
+    <script>Spree.fetch_cart()</script>
+<% end %>
