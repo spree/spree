@@ -8,13 +8,13 @@
       <div class="panel-body">
         <%= zone_form.field_container :name, class: ['form-group'] do %>
           <%= zone_form.label :name, Spree.t(:name) %>
-          <%= zone_form.text_field :name, :class => 'form-control' %>
+          <%= zone_form.text_field :name, class: 'form-control' %>
           <%= zone_form.error_message_on :name %>
         <% end %>
 
         <%= zone_form.field_container :description, class: ['form-group'] do %>
           <%= zone_form.label :description, Spree.t(:description) %>
-          <%= zone_form.text_field :description, :class => 'form-control' %>
+          <%= zone_form.text_field :description, class: 'form-control' %>
         <% end %>
 
         <div data-hook="default" class="checkbox">
@@ -28,13 +28,13 @@
           <strong><%= Spree.t(:type) %></strong>
           <div class="radio">
             <%= label_tag :country_based do %>
-              <%= zone_form.radio_button('kind', 'country', { :id => 'country_based' }) %>
+              <%= zone_form.radio_button('kind', 'country', { id: 'country_based' }) %>
               <%= Spree.t(:country_based) %>
             <% end %>
           </div>
           <div class="radio">
             <%= label_tag :state_based do %>
-              <%= zone_form.radio_button('kind', 'state', { :id => 'state_based' }) %>
+              <%= zone_form.radio_button('kind', 'state', { id: 'state_based' }) %>
               <%= Spree.t(:state_based) %>
             <% end %>
           </div>
@@ -43,7 +43,7 @@
     </div>
   </div>
   <div class="col-md-6">
-    <%= render :partial => 'state_members', :locals => { :zone_form => zone_form }%>
-    <%= render :partial => 'country_members', :locals => { :zone_form => zone_form } %>
+    <%= render partial: 'state_members', locals: { zone_form: zone_form }%>
+    <%= render partial: 'country_members', locals: { zone_form: zone_form } %>
   </div>
 </div>

@@ -1,10 +1,10 @@
-<%= form_for Spree::User.new, :as => :spree_user, :url => spree.create_new_session_path do |f| %>
+<%= form_for Spree::User.new, as: :spree_user, url: spree.create_new_session_path do |f| %>
   <fieldset id="password-credentials">
     <div class="form-group">
-      <%= f.email_field :email, :class => 'form-control', :tabindex => 1, :placeholder => Spree.t(:email) %>
+      <%= f.email_field :email, class: 'form-control', tabindex: 1, placeholder: Spree.t(:email) %>
     </div>
     <div class="form-group">
-      <%= f.password_field :password, :class => 'form-control', :tabindex => 2, :placeholder => Spree.t(:password) %>
+      <%= f.password_field :password, class: 'form-control', tabindex: 2, placeholder: Spree.t(:password) %>
     </div>
     <div class="checkbox">
       <label>
@@ -13,7 +13,7 @@
       </label>
     </div>
     <div class="form-group">
-      <%= f.submit Spree.t(:login), :class => 'btn btn-lg btn-success btn-block', :tabindex => 3 %>
+      <%= f.submit Spree.t(:login), class: 'btn btn-lg btn-success btn-block', tabindex: 3 %>
     </div>
   </fieldset>
 <% end %>

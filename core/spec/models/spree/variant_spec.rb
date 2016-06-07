@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Spree::Variant, :type => :model do
+describe Spree::Variant, type: :model do
   let!(:variant) { create(:variant) }
   let(:master_variant) { create(:master_variant) }
 
@@ -44,7 +44,7 @@ describe Spree::Variant, :type => :model do
 
       it "propagate to stock items" do
         expect_any_instance_of(Spree::StockLocation).not_to receive(:propagate_variant)
-        product.variants.create(:name => "Foobar")
+        product.variants.create(name: "Foobar")
       end
     end
 
@@ -173,7 +173,7 @@ describe Spree::Variant, :type => :model do
   context "product has other variants" do
     describe "option value accessors" do
       before {
-        @multi_variant = FactoryGirl.create :variant, :product => variant.product
+        @multi_variant = FactoryGirl.create :variant, product: variant.product
         variant.product.reload
       }
 
@@ -205,7 +205,7 @@ describe Spree::Variant, :type => :model do
     context "product has other variants" do
       describe "option value accessors" do
         before {
-          @multi_variant = create(:variant, :product => variant.product)
+          @multi_variant = create(:variant, product: variant.product)
           variant.product.reload
         }
 
@@ -282,7 +282,7 @@ describe Spree::Variant, :type => :model do
 
   describe '.price_in' do
     before do
-      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+      variant.prices << create(:price, variant: variant, currency: "EUR", amount: 33.33)
     end
     subject { variant.price_in(currency).display_amount }
 
@@ -313,7 +313,7 @@ describe Spree::Variant, :type => :model do
 
   describe '.amount_in' do
     before do
-      variant.prices << create(:price, :variant => variant, :currency => "EUR", :amount => 33.33)
+      variant.prices << create(:price, variant: variant, currency: "EUR", amount: 33.33)
     end
 
     subject { variant.amount_in(currency) }

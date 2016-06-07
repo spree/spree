@@ -24,7 +24,7 @@ component in the past and you wish to continue doing so, you will need
 to add this extra line to your *Gemfile*:
 
 ```ruby
-gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise"
+gem 'spree_auth_devise', git: "git://github.com/spree/spree_auth_devise"
 ```
 
 By having this authentication component outside of Spree, applications
@@ -153,9 +153,9 @@ application's *config/routes.rb* if you're using Devise:
 
 ```ruby
 devise_scope :person do
-  get '/login', :to => "devise/sessions#new"
-  get '/signup', :to => "devise/registrations#new"
-  delete '/logout', :to => "devise/sessions#destroy"
+  get '/login', to: "devise/sessions#new"
+  get '/signup', to: "devise/registrations#new"
+  delete '/logout', to: "devise/sessions#destroy"
 end
 ```
 
@@ -227,12 +227,12 @@ Deface override. Create a new file at
 *app/overrides/auth_login_bar.rb* and put this content inside it:
 
 ```ruby
-Deface::Override.new(:virtual_path => "spree/shared/_nav_bar",
-  :name => "auth_shared_login_bar",
-  :insert_before => "li#search-bar",
-  :partial => "spree/shared/login_bar",
-  :disabled => false,
-  :original => 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
+Deface::Override.new(virtual_path: "spree/shared/_nav_bar",
+  name: "auth_shared_login_bar",
+  insert_before: "li#search-bar",
+  partial: "spree/shared/login_bar",
+  disabled: false,
+  original: 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
 ```
 
 This override references a partial called "spree/shared/login_bar".
@@ -244,7 +244,7 @@ important. This file will then contain this code:
 ```erb
 <%% if spree_current_user %>
   <li>
-    <%%= link_to Spree.t(:logout), spree_logout_path, :method => :delete %>
+    <%%= link_to Spree.t(:logout), spree_logout_path, method: :delete %>
   </li>
 <%% else %>
   <li>

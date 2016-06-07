@@ -9,7 +9,7 @@ module ThirdParty
   end
 end
 
-describe Spree::Product, :type => :model do
+describe Spree::Product, type: :model do
 
   describe 'Associations' do
     it 'should have many promotions' do
@@ -25,11 +25,11 @@ describe Spree::Product, :type => :model do
 
   context 'product instance' do
     let(:product) { create(:product) }
-    let(:variant) { create(:variant, :product => product) }
+    let(:variant) { create(:variant, product: product) }
 
     context '#duplicate' do
       before do
-        allow(product).to receive_messages :taxons => [create(:taxon)]
+        allow(product).to receive_messages taxons: [create(:taxon)]
       end
 
       it 'duplicates product' do
@@ -100,7 +100,7 @@ describe Spree::Product, :type => :model do
 
     context "product has variants" do
       before do
-        create(:variant, :product => product)
+        create(:variant, product: product)
       end
 
       context "#destroy" do
@@ -351,11 +351,11 @@ describe Spree::Product, :type => :model do
 
     # Regression test for #2455
     it "should not overwrite properties' presentation names" do
-      Spree::Property.where(:name => 'foo').first_or_create!(:presentation => "Foo's Presentation Name")
+      Spree::Property.where(name: 'foo').first_or_create!(presentation: "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
-      expect(Spree::Property.where(:name => 'foo').first.presentation).to eq("Foo's Presentation Name")
-      expect(Spree::Property.where(:name => 'bar').first.presentation).to eq("bar")
+      expect(Spree::Property.where(name: 'foo').first.presentation).to eq("Foo's Presentation Name")
+      expect(Spree::Property.where(name: 'bar').first.presentation).to eq("bar")
     end
 
     # Regression test for #4416
@@ -400,7 +400,7 @@ describe Spree::Product, :type => :model do
 
       let(:prototype) do
         size = build_option_type_with_values("size", %w(Small Medium Large))
-        create(:prototype, :name => "Size", :option_types => [ size ])
+        create(:prototype, name: "Size", option_types: [ size ])
       end
 
       let(:option_values_hash) do
@@ -454,12 +454,12 @@ describe Spree::Product, :type => :model do
   context "#images" do
     let(:product) { create(:product) }
     let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
-    let(:params) { {:viewable_id => product.master.id, :viewable_type => 'Spree::Variant', :attachment => image, :alt => "position 2", :position => 2} }
+    let(:params) { {viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: image, alt: "position 2", position: 2} }
 
     before do
       Spree::Image.create(params)
-      Spree::Image.create(params.merge({:alt => "position 1", :position => 1}))
-      Spree::Image.create(params.merge({:viewable_type => 'ThirdParty::Extension', :alt => "position 1", :position => 2}))
+      Spree::Image.create(params.merge({alt: "position 1", position: 1}))
+      Spree::Image.create(params.merge({viewable_type: 'ThirdParty::Extension', alt: "position 1", position: 2}))
     end
 
     it "only looks for variant images" do
@@ -489,12 +489,12 @@ describe Spree::Product, :type => :model do
 
     it 'should be infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
-      expect(build(:product, :variants_including_master => [build(:master_variant)]).total_on_hand).to eql(Float::INFINITY)
+      expect(build(:product, variants_including_master: [build(:master_variant)]).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'should be infinite if variant is on demand' do
       Spree::Config[:track_inventory_levels] = true
-      expect(build(:product, :variants_including_master => [build(:on_demand_master_variant)]).total_on_hand).to eql(Float::INFINITY)
+      expect(build(:product, variants_including_master: [build(:on_demand_master_variant)]).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'should return sum of stock items count_on_hand' do

@@ -3,7 +3,7 @@ require 'spec_helper'
 class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
-describe Spree::ShippingMethod, :type => :model do
+describe Spree::ShippingMethod, type: :model do
   let(:shipping_method){ create(:shipping_method) }
 
   context 'calculators' do
@@ -25,7 +25,7 @@ describe Spree::ShippingMethod, :type => :model do
     let!(:shipping_method) { create(:shipping_method) }
     let!(:shipment) do
       shipment = create(:shipment)
-      shipment.shipping_rates.create!(:shipping_method => shipping_method)
+      shipment.shipping_rates.create!(shipping_method: shipping_method)
       shipment
     end
 

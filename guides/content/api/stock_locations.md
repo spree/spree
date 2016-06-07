@@ -29,10 +29,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:stock_location) do |h|
-{ :stock_locations => [h],
-  :count => 5,
-  :pages => 1,
-  :current_page => 1 }
+{ stock_locations: [h],
+  count: 5,
+  pages: 1,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -52,10 +52,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:stock_location) do |h|
-{ :stock_locations => [h],
-  :count => 5,
-  :pages => 1,
-  :current_page => 1 }
+{ stock_locations: [h],
+  count: 5,
+  pages: 1,
+  current_page: 1 }
 end %>
 
 ## Show
@@ -84,9 +84,9 @@ POST /api/stock_locations```
 Assuming in this instance that you want to create a stock location with a name of `East Coast`, send through the parameters like this:
 
 <%= json \
-  :stock_location => {
-    :name => "East Coast",
-    :action => "true"
+  stock_location: {
+    name: "East Coast",
+    action: "true"
   } %>
 
 ### Response
@@ -106,9 +106,9 @@ PUT /api/stock_locations/1```
 To update stock location information, use parameters like this:
 
 <%= json \
-  :stock_location => {
-    :name => "North Pole",
-    :action => "false"
+  stock_location: {
+    name: "North Pole",
+    action: "false"
   } %>
 
 ### Response

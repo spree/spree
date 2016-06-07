@@ -239,7 +239,7 @@ set :scm, :subversion
 
 role :web, "your web-server here" # Your HTTP server, Apache/etc
 role :app, "your app-server here" # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
+role :db,  "your primary db-server here", primary: true # This is where Rails migrations will run
 role :db,  "your slave db-server here"
 ```
 
@@ -262,7 +262,7 @@ will continue to do so. Therefore, these roles should look like this:
 server = "[your server's address]"
 role :web, server
 role :app, server
-role :db,  server, :primary => true
+role :db,  server, primary: true
 ```
 
 After this, you will need to tell Capistrano the account name to use for
@@ -318,7 +318,7 @@ server = "[your server's address]"
 
 role :web, server
 role :app, server
-role :db,  server, :primary => true # This is where Rails migrations will run
+role :db,  server, primary: true # This is where Rails migrations will run
 
 set :user, "spree"
 
@@ -784,7 +784,7 @@ a username and password for your admin user. If you're not using
 the console and assign it the admin role, like this:
 
 ```ruby
-user = User.create!(:email => "email@example.com", :password => "topsekret")
+user = User.create!(email: "email@example.com", password: "topsekret")
 user.spree_roles << Spree::Role.find_by_name("admin")
 user.save!
 ```
@@ -817,7 +817,7 @@ to do that you can add this content to your `config/deploy.rb`:
 
 ```ruby
 namespace :images do
-  task :symlink, :except => { :no_release => true } do
+  task :symlink, except: { no_release: true } do
     run "rm -rf #{release_path}/public/spree"
     run "ln -nfs #{shared_path}/spree #{release_path}/public/spree"
   end

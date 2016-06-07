@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Calculator::TieredPercent, :type => :model do
+describe Spree::Calculator::TieredPercent, type: :model do
   let(:calculator) { Spree::Calculator::TieredPercent.new }
 
   describe "#valid?" do

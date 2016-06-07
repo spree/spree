@@ -45,9 +45,9 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.include FactoryGirl::Syntax::Methods
-  config.include Spree::Api::TestingSupport::Helpers, :type => :controller
-  config.extend Spree::Api::TestingSupport::Setup, :type => :controller
-  config.include Spree::TestingSupport::Preferences, :type => :controller
+  config.include Spree::Api::TestingSupport::Helpers, type: :controller
+  config.extend Spree::Api::TestingSupport::Setup, type: :controller
+  config.include Spree::TestingSupport::Preferences, type: :controller
 
   config.before do
     Spree::Api::Config[:requires_authentication] = true

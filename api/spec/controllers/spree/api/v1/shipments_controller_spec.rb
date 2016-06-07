@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::V1::ShipmentsController, :type => :controller do
+describe Spree::Api::V1::ShipmentsController, type: :controller do
   render_views
   let!(:shipment) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
@@ -77,7 +77,7 @@ describe Spree::Api::V1::ShipmentsController, :type => :controller do
     end
 
     it "can make a shipment ready" do
-      allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
+      allow_any_instance_of(Spree::Order).to receive_messages(paid?: true, complete?: true)
       api_put :ready
       expect(json_response).to have_attributes(attributes)
       expect(json_response["state"]).to eq("ready")
@@ -85,7 +85,7 @@ describe Spree::Api::V1::ShipmentsController, :type => :controller do
     end
 
     it "cannot make a shipment ready if the order is unpaid" do
-      allow_any_instance_of(Spree::Order).to receive_messages(:paid? => false)
+      allow_any_instance_of(Spree::Order).to receive_messages(paid?: false)
       api_put :ready
       expect(json_response["error"]).to eq("Cannot ready shipment.")
       expect(response.status).to eq(422)
@@ -121,10 +121,10 @@ describe Spree::Api::V1::ShipmentsController, :type => :controller do
 
     context "can transition a shipment from ready to ship" do
       before do
-        allow_any_instance_of(Spree::Order).to receive_messages(:paid? => true, :complete? => true)
+        allow_any_instance_of(Spree::Order).to receive_messages(paid?: true, complete?: true)
         shipment.update!(shipment.order)
         expect(shipment.state).to eq("ready")
-        allow_any_instance_of(Spree::ShippingRate).to receive_messages(:cost => 5)
+        allow_any_instance_of(Spree::ShippingRate).to receive_messages(cost: 5)
       end
 
       it "can transition a shipment from ready to ship" do

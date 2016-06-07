@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe StockTransfer, :type => :model do
+  describe StockTransfer, type: :model do
     let(:destination_location) { create(:stock_location_with_items) }
     let(:source_location) { create(:stock_location_with_items) }
     let(:stock_item) { source_location.stock_items.order(:id).first }

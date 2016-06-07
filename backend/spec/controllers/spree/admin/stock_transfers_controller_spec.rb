@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Admin::StockTransfersController, :type => :controller do
+  describe Admin::StockTransfersController, type: :controller do
     stub_authorization!
 
     let!(:stock_transfer1) {
@@ -26,13 +26,13 @@ module Spree
       end
 
       it "searches by source location" do
-        spree_get :index, :q => { :source_location_id_eq => 1 }
+        spree_get :index, q: { source_location_id_eq: 1 }
         expect(assigns[:stock_transfers].count).to eq 1
         expect(assigns[:stock_transfers]).to include(stock_transfer1)
       end
 
       it "searches by destination location" do
-        spree_get :index, :q => { :destination_location_id_eq => 4 }
+        spree_get :index, q: { destination_location_id_eq: 4 }
         expect(assigns[:stock_transfers].count).to eq 1
         expect(assigns[:stock_transfers]).to include(stock_transfer2)
       end

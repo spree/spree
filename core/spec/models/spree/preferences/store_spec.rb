@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Preferences::Store, :type => :model do
+describe Spree::Preferences::Store, type: :model do
   before :each do
     @store = Spree::Preferences::StoreInstance.new
   end
@@ -17,7 +17,7 @@ describe Spree::Preferences::Store, :type => :model do
   end
 
   it "will return db value when cache is emtpy and cache the db value" do
-    preference = Spree::Preference.where(:key => 'test').first_or_initialize
+    preference = Spree::Preference.where(key: 'test').first_or_initialize
     preference.value = '123'
     preference.save
 
@@ -34,7 +34,7 @@ describe Spree::Preferences::Store, :type => :model do
 
   it "should return but not cache fallback value when persistence is disabled" do
     Rails.cache.clear
-    allow(@store).to receive_messages(:should_persist? => false)
+    allow(@store).to receive_messages(should_persist?: false)
     expect(@store.get(:test){ true }).to be true
     expect(Rails.cache.exist?(:test)).to be false
   end

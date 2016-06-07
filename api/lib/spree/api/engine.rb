@@ -28,7 +28,7 @@ module Spree
         end
       end
 
-      initializer "spree.api.environment", :before => :load_config_initializers do |app|
+      initializer "spree.api.environment", before: :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end
 

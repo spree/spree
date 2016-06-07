@@ -74,7 +74,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   if ENV['WEBDRIVER'] == 'accessible'
-    config.around(:each, :inaccessible => true) do |example|
+    config.around(:each, inaccessible: true) do |example|
       Capybara::Accessible.skip_audit { example.run }
     end
   end
@@ -106,7 +106,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.after(:each, :type => :feature) do |example|
+  config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       puts "Found missing translations: #{missing_translations.inspect}"

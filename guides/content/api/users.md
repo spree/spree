@@ -21,7 +21,7 @@ GET /api/users?page=2```
 
 <%= headers 200 %>
 <%= json(:user) do |h|
-    { :users => [h], :count => 25, :pages => 5, :current_page => 1 }
+    { users: [h], count: 25, pages: 5, current_page: 1 }
 end %>
 
 ## A single user
@@ -50,7 +50,7 @@ user by making this request:
 ### Response
 
 <%= headers 200 %>
-<%= json :attributes => ["<attribute1>", "<attribute2>"], :required_attributes => [] %>
+<%= json attributes: ["<attribute1>", "<attribute2>"], required_attributes: [] %>
 
 ## Creating a new new
 
@@ -75,8 +75,8 @@ POST /api/users?user[email]=spree@example.com&user[password]=password```
 ### Failed response
 
 <%= headers 422 %>
-<%= json :error => "Invalid resource. Please fix errors and try again.",
-         :errors => { :email => ["can't be blank"] } %>
+<%= json error: "Invalid resource. Please fix errors and try again.",
+         errors: { email: ["can't be blank"] } %>
 
 ## Updating a user
 
@@ -98,8 +98,8 @@ For instance, to update a user\'s password, send it through like this:
 ### Failed response
 
 <%= headers 422 %>
-<%= json :error => "Invalid resource. Please fix errors and try again.",
-         :errors => { :email => ["can't be blank"] } %>
+<%= json error: "Invalid resource. Please fix errors and try again.",
+         errors: { email: ["can't be blank"] } %>
 
 ## Deleting a user
 

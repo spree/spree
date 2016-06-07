@@ -24,10 +24,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:stock_movement) do |h|
-{ :stock_movements => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ stock_movements: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -47,10 +47,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:stock_movement) do |h|
- { :stock_movements => [h],
-   :count => 25,
-   :pages => 5,
-   :current_page => 1 }
+ { stock_movements: [h],
+   count: 25,
+   pages: 5,
+   current_page: 1 }
 end %>
 
 ### Sorting results
@@ -90,10 +90,10 @@ POST /api/stock_locations/1/stock_movements```
 For instance, a request to create a new stock movement with a quantity of 10, the action set to received, and a stock_item_id of 1 would look like this::
 
 <%= json \
-  :stock_movement => {
-    :quantity => "10",
-    :stock_item_id => "1",
-    :action => "received"
+  stock_movement: {
+    quantity: "10",
+    stock_item_id: "1",
+    action: "received"
   } %>
 
 ### Successful response
@@ -105,8 +105,8 @@ For instance, a request to create a new stock movement with a quantity of 10, th
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
   }
 %>
 
@@ -122,8 +122,8 @@ PUT /api/stock_locations/1/stock_movements/1```
 For instance, to update a stock movement's quantity, send it through like this:
 
 <%= json \
-  :stock_movement => {
-    :quantity => "30",
+  stock_movement: {
+    quantity: "30",
   } %>
 
 ### Successful response
@@ -135,8 +135,8 @@ For instance, to update a stock movement's quantity, send it through like this:
 
 <%= headers 422 %>
 <%= json \
-  :error => "Invalid resource. Please fix errors and try again.",
-  :errors => {
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
   }
 %>
 

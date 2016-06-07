@@ -13,7 +13,7 @@ describe Spree::State, type: :model do
   end
 
   it "can find a state by name or abbr" do
-    state = create(:state, :name => "California", :abbr => "CA")
+    state = create(:state, name: "California", abbr: "CA")
     expect(Spree::State.find_all_by_name_or_abbr("California")).to include(state)
     expect(Spree::State.find_all_by_name_or_abbr("CA")).to include(state)
   end

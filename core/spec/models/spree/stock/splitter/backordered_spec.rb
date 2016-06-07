@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     module Splitter
-      describe Backordered, :type => :model do
+      describe Backordered, type: :model do
         let(:variant) { build(:variant) }
 
         let(:packer) { build(:stock_packer) }

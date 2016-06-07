@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::OrderContents, :type => :model do
+describe Spree::OrderContents, type: :model do
   let(:order) { Spree::Order.create }
   let(:variant) { create(:variant) }
 
@@ -56,7 +56,7 @@ describe Spree::OrderContents, :type => :model do
 
     context "running promotions" do
       let(:promotion) { create(:promotion) }
-      let(:calculator) { Spree::Calculator::FlatRate.new(:preferred_amount => 10) }
+      let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       shared_context "discount changes order total" do
         before { subject.add(variant, 1) }
@@ -97,7 +97,7 @@ describe Spree::OrderContents, :type => :model do
           )
         end
         let(:variant) { create(:variant, price: 1000) }
-        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(:preferred_percent => 50) }
+        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it "should update included_tax_total" do

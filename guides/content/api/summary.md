@@ -47,7 +47,7 @@ You may encounter the follow error messages when using the API.
 #### Invalid API Key
 
 <%= headers 401 %>
-<%= json(:error => "Invalid API key ([key]) specified.") %>
+<%= json(error: "Invalid API key ([key]) specified.") %>
 
 ## Rules
 

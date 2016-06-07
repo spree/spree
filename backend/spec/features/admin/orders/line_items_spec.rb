@@ -7,11 +7,11 @@ describe "Order Line Items", type: :feature, js: true do
   before do
     # Removing the delivery step causes the order page to render a different
     # partial, called _line_items, which shows line items rather than shipments
-    allow(Spree::Order).to receive_messages :checkout_step_names => [:address, :payment, :confirm, :complete]
+    allow(Spree::Order).to receive_messages checkout_step_names: [:address, :payment, :confirm, :complete]
   end
 
   let!(:order) do
-    order = create(:order_with_line_items, :line_items_count => 1)
+    order = create(:order_with_line_items, line_items_count: 1)
     order.shipments.destroy_all
     order
   end
@@ -21,7 +21,7 @@ describe "Order Line Items", type: :feature, js: true do
     within(".line-items") do
       within_row(1) do
         find(".edit-line-item").click
-        fill_in "quantity", :with => 10
+        fill_in "quantity", with: 10
         find(".save-line-item").click
         within '.line-item-qty-show' do
           expect(page).to have_content("10")

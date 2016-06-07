@@ -7,5 +7,5 @@
     remote:        data-remote
 -%>
 <li class="first">
-  <%= link_to_unless current_page.first?, t('views.pagination.first').html_safe, url, :remote => remote %>
+  <%= link_to_unless current_page.first?, t('views.pagination.first').html_safe, url, remote: remote %>
 </li>
