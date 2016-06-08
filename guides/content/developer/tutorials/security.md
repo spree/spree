@@ -176,11 +176,7 @@ module Spree
       def index
         # Relevant code in here
       end
-
-     def new_coll_action
-     # relevant code
-     end
-end
+  end
     private
       def model_class
         Widget
