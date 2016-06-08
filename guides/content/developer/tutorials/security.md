@@ -176,7 +176,6 @@ module Spree
       def index
         # Relevant code in here
       end
-  end
     private
       def model_class
         Widget
