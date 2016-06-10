@@ -443,6 +443,7 @@ en:
     address: Address
     address1: Address
     address2: Address (contd.)
+    addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
@@ -1399,6 +1400,7 @@ en:
     taxon: Taxon
     taxon_edit: Edit Taxon
     taxon_placeholder: Add a Taxon
+    tags: Tags
     tags_placeholder: Add Tags
     taxon_rule:
       choose_taxons: Choose taxons
