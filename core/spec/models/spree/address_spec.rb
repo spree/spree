@@ -65,7 +65,7 @@ describe Spree::Address, type: :model do
       end
     end
 
-    let(:country) { mock_model(Spree::Country, states: [state], states_required: true) }
+    let(:country) { stub_model(Spree::Country, states: [state], states_required: true) }
     let(:state) { stub_model(Spree::State, name: 'maryland', abbr: 'md') }
     let(:address) { build(:address, country: country) }
 
@@ -160,6 +160,12 @@ describe Spree::Address, type: :model do
       context 'does not validate' do
         it 'does not have a country' do
           address.country = nil
+          address.valid?
+          expect(address.errors['zipcode']).not_to include('is invalid')
+        end
+
+        it 'country does not requires zipcode' do
+          allow(address.country).to receive(:zipcode_required?).and_return(false)
           address.valid?
           expect(address.errors['zipcode']).not_to include('is invalid')
         end
