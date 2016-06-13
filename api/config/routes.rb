@@ -116,6 +116,9 @@ Spree::Core::Engine.add_routes do
     end
 
     match 'v:api/*path', to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
-    match '*path', to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
+
+    match '*path', to: redirect{ |params, request|
+      "/api/v1/#{params[:path]}?#{request.query_string}"
+    }, via: [:get, :post, :put, :patch, :delete]
   end
 end

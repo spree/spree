@@ -176,7 +176,6 @@ module Spree
       def index
         # Relevant code in here
       end
-
     private
       def model_class
         Widget
@@ -189,6 +188,35 @@ end
 This is necessary because CanCan cannot, by default, detect the model used to
 authorize controllers under the Admin namespace. By specifying `model_class`, Spree
 knows what to tell CanCan to use to authorize your controller.
+
+
+If you inherit from `ResourceController` instead of directly `BaseController`, and if you define new
+collection actions, you need to override  `ResourceController#collection_actions` which contains only `[:index]` by default.
+
+
+```ruby
+module Spree
+  module Admin
+    class WidgetsController < ResourceController
+      def index
+        # Relevant code in here
+      end
+
+     def new_coll_action
+        # relevant code
+     end
+
+    def collection_actions
+        [:index, :new_coll_action]
+    end
+    private
+      def model_class
+        Widget
+      end
+    end
+  end
+end
+```
 
 ### Tokenized Permissions
 

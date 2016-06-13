@@ -4,4 +4,4 @@ child(@countries => :countries) do
 end
 node(:count) { @countries.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @countries.num_pages }
+node(:pages) { @countries.total_pages }

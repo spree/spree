@@ -4,4 +4,4 @@ child(@taxonomies => :taxonomies) do
 end
 node(:count) { @taxonomies.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @taxonomies.num_pages }
+node(:pages) { @taxonomies.total_pages }

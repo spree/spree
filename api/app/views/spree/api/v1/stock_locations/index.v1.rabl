@@ -4,4 +4,4 @@ child(@stock_locations => :stock_locations) do
 end
 node(:count) { @stock_locations.count }
 node(:current_page) { params[:page] || 1 }
-node(:pages) { @stock_locations.num_pages }
+node(:pages) { @stock_locations.total_pages }
