@@ -14,10 +14,9 @@ module Spree
 
     with_options inverse_of: :variant do
       has_many :inventory_units
+      has_many :line_items
       has_many :stock_items, dependent: :destroy
     end
-
-    has_many :line_items, dependent: :restrict_with_error
 
     has_many :orders, through: :line_items
     with_options through: :stock_items do
@@ -49,6 +48,7 @@ module Spree
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
+    before_destroy :ensure_no_line_items
 
     after_touch :clear_in_stock_cache
 
@@ -257,6 +257,13 @@ module Spree
     end
 
     private
+
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
+      end
+    end
 
     def quantifier
       Spree::Stock::Quantifier.new(self)
