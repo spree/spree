@@ -38,9 +38,9 @@ required rails `rails (~> 4.2.6)`
 Add Spree gems to your Gemfile:
 
 ```ruby
-gem 'spree', '~> 3.1.0.rc1'
-gem 'spree_auth_devise', '~> 3.1.0.rc1'
-gem 'spree_gateway', '~> 3.1.0.rc1'
+gem 'spree', '~> 3.1.0'
+gem 'spree_auth_devise', '~> 3.1.0'
+gem 'spree_gateway', '~> 3.1.0'
 ```
 
 Run `bundle install`
