@@ -26,6 +26,10 @@ module Spree
 
     acts_as_paranoid
 
+    # we need to have this callback before any dependent: :destroy associations
+    # https://github.com/rails/rails/issues/3458
+    before_destroy :ensure_no_line_items
+
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy, inverse_of: :product
@@ -88,7 +92,6 @@ module Spree
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
-    before_destroy :ensure_no_line_items
 
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
