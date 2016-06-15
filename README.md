@@ -3,6 +3,7 @@
 
 * [Join our Slack](http://slack.spreecommerce.com/)
 * Join us in New York City on June 28-29th for **[OpenCommerce Conf 2016](http://opencommerceconf.org/)**
+* [Extensions](https://github/spree-contrib)
 * [Documentation](http://guides.spreecommerce.com)
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 * [Vote & comment on roadmap features](https://trello.com/b/ta4WU3AX/spree-roadmap)
@@ -93,6 +94,28 @@ Browse Admin Interface
 
 http://localhost:3000/admin
 
+Extensions
+----------------------
+
+Spree Extensions provide additional features not present in the Core system.
+
+| Extension | Description |
+| --- | --- |
+| [spree_i18n](https://github.com/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
+| [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
+| [spree_multi_currency](https://github.com/spree-contrib/spree_multi_currency) | Provides UI to allow configuring multiple currencies in Spree |
+| [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) | Official Spree Braintree v.zero + PayPal extension |
+| [spree_address_book](https://github.com/spree-contrib/spree_address_book) | Adds address book for users to Spree |
+| [spree_digital](https://github.com/spree-contrib/spree_digital) | A Spree extension to enable downloadable products |
+| [spree_social](https://github.com/spree-contrib/spree_social) | Building block for spree social networking features (provides authentication and account linkage) |
+| [spree_related_products](https://github.com/spree-contrib/spree_related_products) | Related products extension for Spree
+| [spree_active_shipping](https://github.com/spree-contrib/spree_active_shipping) | Spree integration for Shopify's active_shipping gem
+| [spree_static_content](https://github.com/spree-contrib/spree_static_content) | Manage static pages for Spree |
+| [spree-product-assembly](https://github.com/spree-contrib/spree-product-assembly) | Adds oportunity to make bundle of products |
+| [spree_editor](https://github.com/spree-contrib/spree_editor) | Rich text editor for Spree with Image and File uploading in-place |
+| [spree_recently_viewed](https://github.com/spree-contrib/spree_recently_viewed) | Recently viewed products in Spree |
+| [spree_wishlist](https://github.com/spree-contrib/spree_wishlist) | Wishlist extension for Spree |
+| [spree_sitemap](https://github.com/spree-contrib/spree_sitemap) | Sitemap Generator for Spree  |
 
 Performance
 ----------------------
