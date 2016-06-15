@@ -12,6 +12,10 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
+    # we need to have this callback before any dependent: :destroy associations
+    # https://github.com/rails/rails/issues/3458
+    before_destroy :ensure_no_line_items
+
     with_options inverse_of: :variant do
       has_many :inventory_units
       has_many :line_items
@@ -48,7 +52,6 @@ module Spree
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
-    before_destroy :ensure_no_line_items
 
     after_touch :clear_in_stock_cache
 
