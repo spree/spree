@@ -12,12 +12,15 @@ module Spree
                         :shipping_category_id, :meta_description, :meta_keywords,
                         :shipping_category
 
+    # we need to have this callback before any dependent: :destroy associations
+    # https://github.com/rails/rails/issues/3458
+    before_destroy :ensure_no_line_items
+
     with_options inverse_of: :variant do
       has_many :inventory_units
+      has_many :line_items
       has_many :stock_items, dependent: :destroy
     end
-
-    has_many :line_items, dependent: :restrict_with_error
 
     has_many :orders, through: :line_items
     with_options through: :stock_items do
@@ -257,6 +260,13 @@ module Spree
     end
 
     private
+
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
+      end
+    end
 
     def quantifier
       Spree::Stock::Quantifier.new(self)

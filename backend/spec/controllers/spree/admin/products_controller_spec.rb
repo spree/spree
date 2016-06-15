@@ -62,13 +62,10 @@ describe Spree::Admin::ProductsController, type: :controller do
     end
 
     context 'will not successfully destroy product' do
-      let!(:error_message) { 'Test error' }
-
       before do
         allow(Spree::Product).to receive(:friendly).and_return(products)
         allow(products).to receive(:find).with(product.id.to_s).and_return(product)
         allow(product).to receive(:destroy).and_return(false)
-        allow(product).to receive_message_chain(:errors, :full_messages).and_return([error_message])
       end
 
       describe 'expects to receive' do
@@ -87,7 +84,7 @@ describe Spree::Admin::ProductsController, type: :controller do
       describe 'response' do
         before { send_request }
         it { expect(response).to have_http_status(:ok) }
-        it { expect(flash[:error]).to eq(error_message) }
+        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_deleted')) }
       end
     end
   end

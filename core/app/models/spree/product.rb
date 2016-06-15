@@ -26,6 +26,10 @@ module Spree
 
     acts_as_paranoid
 
+    # we need to have this callback before any dependent: :destroy associations
+    # https://github.com/rails/rails/issues/3458
+    before_destroy :ensure_no_line_items
+
     has_many :product_option_types, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy, inverse_of: :product
@@ -354,6 +358,13 @@ module Spree
     def touch_taxons
       Spree::Taxon.where(id: taxon_and_ancestors.map(&:id)).update_all(updated_at: Time.current)
       Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
+    end
+
+    def ensure_no_line_items
+      if line_items.any?
+        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        return false
+      end
     end
 
     def remove_taxon(taxon)

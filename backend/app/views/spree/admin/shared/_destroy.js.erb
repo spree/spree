@@ -3,7 +3,7 @@
 <% end %>
 
 <% if error = flash.discard(:error) %>
-  show_flash('warning', "<%= j error %>");
+  show_flash('error', "<%= j error %>");
 <% end %>
 
 <%= render partial: '/spree/admin/shared/update_order_state' if @order %>
