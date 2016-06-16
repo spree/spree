@@ -6,7 +6,7 @@ require 'spec_helper'
 class Spree::CustomController < Spree::BaseController
   def index
     respond_with(Spree::Address.new) do |format|
-      format.html { render text: "neutral" }
+      format.html { render plain: "neutral" }
     end
   end
 
@@ -42,7 +42,7 @@ describe Spree::CustomController, type: :controller do
             private
 
             def success_method
-              render text: 'success!!!'
+              render plain: 'success!!!'
             end
           end
         end

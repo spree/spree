@@ -7,7 +7,7 @@ describe Spree::Api::BaseController, type: :controller do
   render_views
   controller(Spree::Api::BaseController) do
     def index
-      render text: { "products" => [] }.to_json
+      render plain: { "products" => [] }.to_json
     end
   end
 

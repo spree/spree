@@ -73,7 +73,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
 
     respond_to do |format|
-      format.js { render text: 'Ok' }
+      format.js { render plain: 'Ok' }
     end
   end
 

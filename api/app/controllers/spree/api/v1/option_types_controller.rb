@@ -47,7 +47,7 @@ module Spree
         def destroy
           @option_type = Spree::OptionType.accessible_by(current_ability, :destroy).find(params[:id])
           @option_type.destroy
-          render text: nil, status: 204
+          render plain: nil, status: 204
         end
 
         private

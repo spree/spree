@@ -89,7 +89,7 @@ module Spree
       end
 
       def unprocessable_entity(message)
-        render text: { exception: message }.to_json, status: 422
+        render plain: { exception: message }.to_json, status: 422
       end
 
       def gateway_error(exception)

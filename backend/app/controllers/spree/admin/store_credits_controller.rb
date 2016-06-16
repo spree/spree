@@ -54,7 +54,7 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render text: Spree.t('store_credit.errors.unable_to_delete'), status: :unprocessable_entity
+          render plain: Spree.t('store_credit.errors.unable_to_delete'), status: :unprocessable_entity
         end
       end
 

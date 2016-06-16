@@ -47,7 +47,7 @@ module Spree
         def empty
           authorize! :update, @order, order_token
           @order.empty!
-          render text: nil, status: 204
+          render plain: nil, status: 204
         end
 
         def index
