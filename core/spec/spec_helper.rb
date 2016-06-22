@@ -36,6 +36,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/shoulda_matcher_configuration'
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/kernel'
 
 RSpec.configure do |config|
   config.color = true
@@ -59,6 +60,7 @@ RSpec.configure do |config|
 
   config.include FactoryGirl::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::Kernel
 
   # Clean out the database state before the tests run
   config.before(:suite) do
