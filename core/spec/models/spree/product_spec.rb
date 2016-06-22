@@ -466,6 +466,7 @@ describe Spree::Product, type: :model do
         product.option_values_hash = option_values_hash
         product.prototype_id = nil
         product.save
+        product.reload
         expect(product.option_type_ids.length).to eq(1)
         expect(product.option_type_ids).to eq(prototype.option_type_ids)
         expect(product.variants.length).to eq(3)
@@ -533,7 +534,7 @@ describe Spree::Product, type: :model do
 
     it 'should return sum of stock items count_on_hand' do
       product.stock_items.first.set_count_on_hand 5
-      product.variants_including_master(true) # force load association
+      product.variants_including_master.reload # force load association
       expect(product.total_on_hand).to eql(5)
     end
 
