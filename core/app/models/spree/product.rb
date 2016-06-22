@@ -269,7 +269,7 @@ module Spree
           price: master.price
         )
       end
-      save
+      throw(:abort) unless save
     end
 
     def ensure_master

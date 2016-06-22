@@ -136,7 +136,7 @@ module Spree
     end
 
     def destroy_inventory_units
-      inventory_units.destroy_all
+      throw(:abort) unless inventory_units.destroy_all
     end
 
     def update_adjustments

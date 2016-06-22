@@ -38,6 +38,7 @@ module Spree
     def validate_not_default
       if default
         errors.add(:base, :cannot_destroy_default_store)
+        throw(:abort)
       end
     end
 
