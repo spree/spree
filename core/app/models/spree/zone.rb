@@ -33,7 +33,7 @@ module Spree
         # Match zones of the same kind with similar countries
         joins(countries: :zones).
           where("zone_members_spree_countries_join.zone_id = ?", zone.id).
-          uniq
+          distinct
       else
         # Match zones of the same kind with similar states in AND match zones
         # that have the states countries in
@@ -44,7 +44,7 @@ module Spree
             spree_zone_members.zoneable_id IN (?))",
           zone.state_ids,
           zone.states.pluck(:country_id)
-        ).uniq
+        ).distinct
       end
     end
 
