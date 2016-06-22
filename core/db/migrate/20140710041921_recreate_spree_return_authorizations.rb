@@ -34,7 +34,7 @@ class RecreateSpreeReturnAuthorizations < ActiveRecord::Migration
 
     Spree::Adjustment.where(source_type: 'Spree::LegacyReturnAuthorization').update_all(source_type: 'Spree::ReturnAuthorization')
 
-    if table_exists?(:spree_legacy_return_authorizations)
+    if data_source_exists?(:spree_legacy_return_authorizations)
       rename_table :spree_legacy_return_authorizations, :spree_return_authorizations
       rename_column :spree_inventory_units, :legacy_return_authorization_id, :return_authorization_id
     else

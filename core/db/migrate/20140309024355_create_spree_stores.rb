@@ -1,6 +1,6 @@
 class CreateSpreeStores < ActiveRecord::Migration
   def change
-    if table_exists?(:spree_stores)
+    if data_source_exists?(:spree_stores)
       rename_column :spree_stores, :domains, :url
       rename_column :spree_stores, :email, :mail_from_address
       add_column :spree_stores, :meta_description, :text

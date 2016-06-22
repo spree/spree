@@ -1,7 +1,7 @@
 module Spree
   class Calculator < Spree::Base
     # Conditional check for backwards compatibilty since acts as paranoid was added late https://github.com/spree/spree/issues/5858
-    if connection.table_exists?(:spree_calculators) && connection.column_exists?(:spree_calculators, :deleted_at)
+    if connection.data_source_exists?(:spree_calculators) && connection.column_exists?(:spree_calculators, :deleted_at)
       acts_as_paranoid
     end
 
