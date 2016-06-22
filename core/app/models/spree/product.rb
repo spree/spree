@@ -212,7 +212,7 @@ module Spree
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
-      ActiveRecord::Base.transaction do
+      ApplicationRecord.transaction do
         # Works around spree_i18n #301
         property = Property.create_with(presentation: property_presentation).find_or_create_by(name: property_name)
         product_property = ProductProperty.where(product: self, property: property).first_or_initialize

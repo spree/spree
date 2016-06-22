@@ -7,7 +7,7 @@ describe Spree::Core::NumberGenerator do
   let(:model) do
     mod = number_generator
 
-    Class.new(ActiveRecord::Base) do
+    Class.new(ApplicationRecord) do
       self.table_name = 'spree_orders'
       include mod
     end

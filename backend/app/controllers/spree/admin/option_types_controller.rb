@@ -4,7 +4,7 @@ module Spree
       before_action :setup_new_option_value, only: :edit
 
       def update_values_positions
-        ActiveRecord::Base.transaction do
+        ApplicationRecord.transaction do
           params[:positions].each do |id, index|
             Spree::OptionValue.where(id: id).update_all(position: index)
           end

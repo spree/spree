@@ -11,6 +11,6 @@ class RemoveUnusedCreditCardFields < ActiveRecord::Migration
   end
 
   def column_exists?(table, column)
-    ActiveRecord::Base.connection.column_exists?(table, column)
+    ApplicationRecord.connection.column_exists?(table, column)
   end
 end
