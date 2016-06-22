@@ -1,1 +1,1 @@
-Spree::BaseController.send(:include, Spree::ViewContext)
+Spree::BaseController.include Spree::ViewContext
