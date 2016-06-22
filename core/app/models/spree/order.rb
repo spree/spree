@@ -236,11 +236,6 @@ module Spree
       updater.update
     end
 
-    def update!
-      warn "`update!` is deprecated as it conflicts with update! method of rails. Use `update_with_updater!` instead."
-      update_with_updater!
-    end
-
     def merger
       @merger ||= Spree::OrderMerger.new(self)
     end
