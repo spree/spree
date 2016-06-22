@@ -767,16 +767,6 @@ describe Spree::Order, type: :model do
           order.update_from_params(params, permitted_params)
         end
       end
-
-      context 'callbacks halt' do
-        before do
-          expect(order).to receive(:update_params_payment_source).and_return false
-        end
-        it 'does not let through unpermitted attributes' do
-          expect(order).not_to receive(:update_attributes).with({})
-          order.update_from_params(params, permitted_params)
-        end
-      end
     end
   end
 end
