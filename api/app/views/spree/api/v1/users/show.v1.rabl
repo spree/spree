@@ -1,4 +1,5 @@
 object @user
+cache [I18n.locale, root_object]
 
 attributes *user_attributes
 child(bill_address: :bill_address) do

@@ -18,6 +18,7 @@ $(document).ready(function() {
       ajax: {
         url: Spree.routes.users_api,
         datatype: 'json',
+        cache: true,
         data: function(term, page) {
           return {
             q: term,

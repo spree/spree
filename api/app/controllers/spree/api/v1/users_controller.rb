@@ -7,6 +7,8 @@ module Spree
 
         def index
           @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          expires_in 15.minutes, public: true
+          headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@users)
         end
 
