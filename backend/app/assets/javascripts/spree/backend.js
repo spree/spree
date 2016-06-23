@@ -62,7 +62,7 @@ Spree.routes.checkouts_api = Spree.pathFor('api/v1/checkouts')
 Spree.routes.stock_locations_api = Spree.pathFor('api/v1/stock_locations')
 Spree.routes.taxon_products_api = Spree.pathFor('api/v1/taxons/products')
 Spree.routes.taxons_search = Spree.pathFor('api/v1/taxons')
-Spree.routes.user_search = Spree.adminPathFor('search/users')
+Spree.routes.users_api = Spree.pathFor('api/v1/users')
 Spree.routes.tags_search = Spree.adminPathFor('search/tags')
 Spree.routes.variants_api = Spree.pathFor('api/v1/variants')
 

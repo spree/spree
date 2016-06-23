@@ -16,7 +16,7 @@ $(document).ready(function() {
     $("#customer_search").select2({
       placeholder: Spree.translations.choose_a_customer,
       ajax: {
-        url: Spree.routes.user_search,
+        url: Spree.routes.users_api,
         datatype: 'json',
         data: function(term, page) {
           return {
