@@ -13,7 +13,7 @@ $.fn.productAutocomplete = function (options) {
     minimumInputLength: 3,
     multiple: multiple,
     initSelection: function (element, callback) {
-      $.get(Spree.routes.product_search, {
+      $.get(Spree.routes.products_api, {
         ids: element.val().split(','),
         token: Spree.api_key
       }, function (data) {
@@ -21,8 +21,9 @@ $.fn.productAutocomplete = function (options) {
       });
     },
     ajax: {
-      url: Spree.routes.product_search,
+      url: Spree.routes.products_api,
       datatype: 'json',
+      cache: true,
       data: function (term, page) {
         return {
           q: {
