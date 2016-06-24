@@ -5,7 +5,7 @@ module Spree
 
       before_action :load_simulated_refunds, only: :edit
 
-      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error, only: :perform
+      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error
 
       def perform
         @reimbursement.perform!

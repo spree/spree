@@ -6,7 +6,7 @@ module Spree
 
       helper_method :refund_reasons
 
-      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error, only: :create
+      rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error
 
       private
 
