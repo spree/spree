@@ -33,7 +33,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
 
     it "correctly displays the product url via microdata" do
-      expect(ringer.properties["url"]).to eq ["http://www.example.com/products/ruby-on-rails-ringer-t-shirt"]
+      expect(ringer.properties["url"]).to eq ["/products/ruby-on-rails-ringer-t-shirt"]
     end
   end
 
