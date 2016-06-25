@@ -38,8 +38,6 @@ Spree::Core::Engine.add_routes do
       resources :variants_including_master, only: [:update]
     end
 
-    get '/variants/search', to: "variants#search", as: :search_variants
-
     resources :option_types do
       collection do
         post :update_positions
