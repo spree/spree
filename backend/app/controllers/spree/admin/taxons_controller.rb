@@ -4,18 +4,9 @@ module Spree
 
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
-      respond_to :html, :json, :js
+      respond_to :html, :js
 
       def index
-
-      end
-
-      def search
-        if params[:ids]
-          @taxons = Spree::Taxon.where(id: params[:ids].split(','))
-        else
-          @taxons = Spree::Taxon.limit(20).ransack(name_cont: params[:q]).result
-        end
       end
 
       def create
