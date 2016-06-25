@@ -1,7 +1,5 @@
 Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
-    get "/search/tags", to: "search#tags", as: :search_tags
-
     resources :promotions do
       resources :promotion_rules
       resources :promotion_actions

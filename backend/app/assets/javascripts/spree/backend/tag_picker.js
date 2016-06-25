@@ -18,8 +18,9 @@ $.fn.tagAutocomplete = function () {
       callback(data);
     },
     ajax: {
-      url: Spree.routes.tags_search,
+      url: Spree.routes.tags_api,
       datatype: 'json',
+      cache: true,
       data: function (term) {
         return {
           q: term,
