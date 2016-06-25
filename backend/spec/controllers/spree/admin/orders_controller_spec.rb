@@ -225,6 +225,12 @@ describe Spree::Admin::OrdersController, type: :controller do
       expect(response).to redirect_to(spree.forbidden_path)
     end
 
+    it 'should deny access to not signed in users' do
+      allow(controller).to receive_messages spree_current_user: nil
+      spree_get :index
+      expect(response).to redirect_to(spree.root_path)
+    end
+
     it 'should restrict returned order(s) on index when using OrderSpecificAbility' do
       number = order.number
 
