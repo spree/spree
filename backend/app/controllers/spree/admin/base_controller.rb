@@ -41,16 +41,6 @@ module Spree
         render partial: '/spree/admin/shared/destroy'
       end
 
-      # Index request for JSON needs to pass a CSRF token in order to prevent JSON Hijacking
-      def check_json_authenticity
-        return unless request.format.js? || request.format.json?
-        return unless protect_against_forgery?
-        auth_token = params[request_forgery_protection_token]
-        unless auth_token && form_authenticity_token == URI.unescape(auth_token)
-          raise(ActionController::InvalidAuthenticityToken)
-        end
-      end
-
       def config_locale
         Spree::Backend::Config[:locale]
       end
