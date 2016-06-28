@@ -10,7 +10,7 @@ $(document).ready(function () {
       placeholder: Spree.translations.option_type_placeholder,
       multiple: true,
       initSelection: function (element, callback) {
-        var url = Spree.url(Spree.routes.option_type_search, {
+        var url = Spree.url(Spree.routes.option_types_api, {
           ids: element.val(),
           token: Spree.api_key
         });
@@ -19,7 +19,7 @@ $(document).ready(function () {
         });
       },
       ajax: {
-        url: Spree.routes.option_type_search,
+        url: Spree.routes.option_types_api,
         quietMillis: 200,
         datatype: 'json',
         data: function (term) {

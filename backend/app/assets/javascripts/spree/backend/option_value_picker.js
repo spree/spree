@@ -11,7 +11,7 @@ $.fn.optionValueAutocomplete = function (options) {
     minimumInputLength: 3,
     multiple: multiple,
     initSelection: function (element, callback) {
-      $.get(Spree.routes.option_value_search, {
+      $.get(Spree.routes.option_values_api, {
         ids: element.val().split(','),
         token: Spree.api_key
       }, function (data) {
@@ -19,7 +19,7 @@ $.fn.optionValueAutocomplete = function (options) {
       });
     },
     ajax: {
-      url: Spree.routes.option_value_search,
+      url: Spree.routes.option_values_api,
       datatype: 'json',
       data: function (term) {
         var productId = typeof(productSelect) !== 'undefined' ? $(productSelect).select2('val') : null;

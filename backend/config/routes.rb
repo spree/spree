@@ -1,9 +1,5 @@
 Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
-    get '/search/users', to: "search#users", as: :search_users
-    get '/search/products', to: "search#products", as: :search_products
-    get "/search/tags", to: "search#tags", as: :search_tags
-
     resources :promotions do
       resources :promotion_rules
       resources :promotion_actions
@@ -41,8 +37,6 @@ Spree::Core::Engine.add_routes do
       end
       resources :variants_including_master, only: [:update]
     end
-
-    get '/variants/search', to: "variants#search", as: :search_variants
 
     resources :option_types do
       collection do
@@ -131,11 +125,7 @@ Spree::Core::Engine.add_routes do
       resources :taxons
     end
 
-    resources :taxons, only: [:index, :show] do
-      collection do
-        get :search
-      end
-    end
+    resources :taxons, only: [:index, :show]
 
     resources :reports, only: [:index] do
       collection do
