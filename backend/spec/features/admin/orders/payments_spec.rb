@@ -50,6 +50,7 @@ describe 'Payments', type: :feature, js: true do
     end
 
     it 'should list all captures for a payment' do
+      Spree::ShippingMethod.delete_all
       capture_amount = order.outstanding_balance/2 * 100
       payment.capture!(capture_amount)
 
