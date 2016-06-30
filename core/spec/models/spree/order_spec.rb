@@ -238,7 +238,6 @@ describe Spree::Order, :type => :model do
 
     context 'when variant is destroyed' do
       before do
-        allow(order).to receive(:restart_checkout_flow)
         order.line_items.first.variant.discontinue!
       end
 
@@ -272,14 +271,14 @@ describe Spree::Order, :type => :model do
   describe '#ensure_line_items_are_in_stock' do
     subject { order.ensure_line_items_are_in_stock }
 
-    let(:line_item) { mock_model Spree::LineItem, :insufficient_stock? => true }
+    let(:line_item) { create(:line_item, order: order) }
 
     before do
-      allow(order).to receive(:restart_checkout_flow)
-      allow(order).to receive_messages(:line_items => [line_item])
+      allow(order).to receive(:insufficient_stock_lines).and_return([true])
     end
 
     it 'should restart checkout flow' do
+      allow(order).to receive(:restart_checkout_flow)
       expect(order).to receive(:restart_checkout_flow).once
       subject
     end
@@ -290,6 +289,7 @@ describe Spree::Order, :type => :model do
     end
 
     it 'should be false' do
+      allow(order).to receive(:restart_checkout_flow)
       expect(subject).to be_falsey
     end
   end
