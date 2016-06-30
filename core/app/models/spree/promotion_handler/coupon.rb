@@ -11,16 +11,13 @@ module Spree
       def apply
         if order.coupon_code.present?
           if promotion.present? && promotion.actions.exists?
-            handle_present_promotion(promotion)
+            handle_present_promotion
+          elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
+            set_error_code :coupon_code_expired
           else
-            if Promotion.with_coupon_code(order.coupon_code).try(:expired?)
-              set_error_code :coupon_code_expired
-            else
-              set_error_code :coupon_code_not_found
-            end
+            set_error_code :coupon_code_not_found
           end
         end
-
         self
       end
 
@@ -35,7 +32,9 @@ module Spree
       end
 
       def promotion
-        @promotion ||= Promotion.active.includes(:promotion_rules, :promotion_actions).with_coupon_code(order.coupon_code)
+        @promotion ||= Promotion.active.includes(
+          :promotion_rules, :promotion_actions
+        ).with_coupon_code(order.coupon_code)
       end
 
       def successful?
@@ -44,18 +43,17 @@ module Spree
 
       private
 
-      def handle_present_promotion(promotion)
+      def handle_present_promotion
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
-        return promotion_applied if promotion_exists_on_order?(order, promotion)
+        return promotion_applied if promotion_exists_on_order?
         unless promotion.eligible?(order)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
-          return (self.error || ineligible_for_this_order)
+          return (error || ineligible_for_this_order)
         end
 
         # If any of the actions for the promotion return `true`,
         # then result here will also be `true`.
-        result = promotion.activate(order: order)
-        if result
+        if promotion.activate(order: order)
           determine_promotion_application_result
         else
           set_error_code :coupon_code_unknown_error
@@ -74,7 +72,7 @@ module Spree
         set_error_code :coupon_code_already_applied
       end
 
-      def promotion_exists_on_order?(order, promotion)
+      def promotion_exists_on_order?
         order.promotions.include? promotion
       end
 
@@ -85,21 +83,23 @@ module Spree
         end
 
         # Check for applied line items.
-        created_line_items = promotion.actions.detect { |a| Object.const_get(a.type).ancestors.include?(Spree::Promotion::Actions::CreateLineItems) }
+        created_line_items = promotion.actions.detect do |a|
+          Object.const_get(a.type).ancestors.include?(
+            Spree::Promotion::Actions::CreateLineItems
+          )
+        end
 
         if discount || created_line_items
           order.update_totals
           order.persist_totals
           set_success_code :coupon_code_applied
-        else
+        elsif order.promotions.with_coupon_code(order.coupon_code)
           # if the promotion exists on an order, but wasn't found above,
           # we've already selected a better promotion
-          if order.promotions.with_coupon_code(order.coupon_code)
-            set_error_code :coupon_code_better_exists
-          else
-            # if the promotion was created after the order
-            set_error_code :coupon_code_not_found
-          end
+          set_error_code :coupon_code_better_exists
+        else
+          # if the promotion was created after the order
+          set_error_code :coupon_code_not_found
         end
       end
     end
