@@ -412,8 +412,8 @@ module Spree
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
       if line_items.any?{ |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, Spree.t(:discontinued_variants_present))
         restart_checkout_flow
+        errors.add(:base, Spree.t(:discontinued_variants_present))
         false
       else
         true
@@ -422,8 +422,8 @@ module Spree
 
     def ensure_line_items_are_in_stock
       if insufficient_stock_lines.present?
-        errors.add(:base, Spree.t(:insufficient_stock_lines_present))
         restart_checkout_flow
+        errors.add(:base, Spree.t(:insufficient_stock_lines_present))
         false
       else
         true
