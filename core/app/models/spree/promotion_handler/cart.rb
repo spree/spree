@@ -31,22 +31,7 @@ module Spree
       private
 
       def promotions
-        # AR cannot bind raw ASTs to prepared statements. There always must be a manager around.
-        # Also Postgresql requires an aliased table for `SELECT * FROM (subexpression) AS alias`.
-        # And Sqlite3 cannot work on outher parenthesis from `(left UNION right)`.
-        # So this construct makes both happy.
-        select = Arel::SelectManager.new(
-          Promotion.arel_table.create_table_alias(
-            order.promotions.active.union(Promotion.active.where(code: nil, path: nil)),
-            Promotion.table_name
-          )
-        )
-        select.project(Arel.star)
-
-        Promotion.find_by_sql([
-          select.to_sql,
-          order.id
-        ])
+        Promotion.find_by_sql("#{order.promotions.active.to_sql} UNION #{Promotion.active.where(code: nil, path: nil).to_sql}")
       end
     end
   end
