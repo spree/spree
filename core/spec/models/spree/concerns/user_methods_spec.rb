@@ -52,4 +52,31 @@ describe Spree::UserMethods do
       it { is_expected.to be_nil }
     end
   end
+
+  context '#check_completed_orders' do
+    let(:possible_promotion) { create(:promotion, advertise: true, starts_at: 1.day.ago) }
+    context 'rstrict t delete dependent destroyed' do
+      before do
+        test_user.promotion_rules.create!(promotion: possible_promotion)
+        create(:order, user: test_user, completed_at: Time.current)
+      end
+
+      it 'should not destroy dependent destroy items' do
+        expect { test_user.destroy }.to raise_error(Spree::Core::DestroyWithOrdersError)
+        expect(test_user.promotion_rule_users.any?).to be(true)
+      end
+    end
+
+    context 'allow to destroy dependent destroy' do
+      before do
+        test_user.promotion_rules.create!(promotion: possible_promotion)
+        create(:order, user: test_user, created_at: 1.day.ago)
+        test_user.destroy
+      end
+
+      it 'should not destroy dependent destroy items' do
+        expect(test_user.promotion_rule_users.any?).to be(false)
+      end
+    end
+  end
 end
