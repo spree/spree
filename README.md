@@ -12,8 +12,6 @@
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
 [![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
-[![Issue Stats](http://issuestats.com/github/spree/spree/badge/pr)](http://issuestats.com/github/spree/spree)
-[![Issue Stats](http://issuestats.com/github/spree/spree/badge/issue)](http://issuestats.com/github/spree/spree)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by developers from [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
