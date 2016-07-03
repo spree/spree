@@ -20,5 +20,9 @@
     <%= content_tag :li, class: ('active' if current == :stock) do %>
       <%= link_to_with_icon 'home', Spree.t(:stock), stock_admin_product_url(@product) %>
     <% end if can?(:stock, Spree::Product) %>
+    <%= content_tag :li do %>
+      <%= link_to_with_icon 'eye-open', Spree.t(:see_in_store), spree.product_path(@product), target: "_blank" %>
+    <% end if can?(:admin, Spree::Product) %>
   </ul>
+
 <% end %>
