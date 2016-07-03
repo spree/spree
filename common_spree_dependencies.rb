@@ -30,14 +30,14 @@ group :test do
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.4.2'
   gem 'simplecov'
-  gem 'webmock', '~> 2.0.3'
-  gem 'poltergeist', '~> 1.9.0'
+  gem 'webmock', '~> 2.1'
+  gem 'poltergeist', '~> 1.10'
   gem 'timecop'
   gem 'with_model'
   gem 'mutant-rspec', '~> 0.8.0'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
-  gem 'test_after_commit', '~> 1.0.0'
+  gem 'test_after_commit', '~> 1.1'
 end
 
 group :test, :development do
