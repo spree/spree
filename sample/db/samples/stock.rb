@@ -11,6 +11,8 @@ location.active = true
 location.save!
 
 Spree::Variant.all.each do |variant|
+  next if variant.is_master? && variant.product.has_variants?
+
   variant.stock_items.each do |stock_item|
     Spree::StockMovement.create(quantity: 10, stock_item: stock_item)
   end
