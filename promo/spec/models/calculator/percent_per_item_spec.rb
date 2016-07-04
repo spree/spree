@@ -13,7 +13,7 @@ describe Spree::Calculator::PercentPerItem do
   let!(:promotion_without_rules) { double("Promotion", :rules => []) }
   let!(:promotion_without_products) { double("Promotion", :rules => [double("Rule", :products => [])]) }
 
-  let!(:calculator) { Spree::Calculator::PercentPerItem.new(:preferred_percent => 0.25) }
+  let!(:calculator) { Spree::Calculator::PercentPerItem.new(:preferred_percent => 25) }
 
   it "has a translation for description" do
     calculator.description.should_not include("translation missing")
@@ -22,7 +22,7 @@ describe Spree::Calculator::PercentPerItem do
 
   it "correctly calculates per item promotion" do
     calculator.stub(:calculable => promotion_calculable)
-    calculator.compute(object).to_f.should == 12.5 # 5 x 10 x 0.25 since only product1 is included in the promotion rule
+    calculator.compute(object).to_f.should == 12.5
   end
 
   it "correctly calculates per item promotion without rules" do
