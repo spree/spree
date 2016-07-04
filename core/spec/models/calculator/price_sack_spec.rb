@@ -11,6 +11,7 @@ describe Spree::Calculator::PriceSack do
 
   let(:order) { stub_model(Spree::Order) }
   let(:shipment) { stub_model(Spree::Shipment) }
+  let(:line_item) { stub_model(Spree::LineItem, price: 1, quantity: 2) }
 
   # Regression test for #714 and #739
   it "computes with an order object" do
@@ -20,6 +21,10 @@ describe Spree::Calculator::PriceSack do
   # Regression test for #1156
   it "computes with a shipment object" do
     calculator.compute(shipment)
+  end
+
+  it "computes with a line item object" do
+    calculator.compute(line_item)
   end
 
   # Regression test for #2055
