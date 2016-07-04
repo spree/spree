@@ -1,7 +1,7 @@
 # Used in the sandbox rake task in Rakefile
 #!/bin/bash
 rm -rf sandbox
-rails new sandbox --skip-bundle
+bundle exec rails new sandbox --skip-bundle
 cd sandbox
 echo "gem 'spree', :path => '..'" >> Gemfile
 echo "gem 'spree_auth_devise', :github => 'spree/spree_auth_devise', :branch => '1-2-stable'" >> Gemfile
