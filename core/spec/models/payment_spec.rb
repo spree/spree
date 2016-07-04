@@ -26,11 +26,13 @@ describe Spree::Payment do
 
   let(:currency) { 'USD' }
 
-  let!(:success_response) do
-    mock('success_response', :success? => true,
-                             :authorization => '123',
-                             :avs_result => { 'code' => 'avs-code' },
-                             :cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
+  def success_response(options = {})
+    default = {:success? => true,
+               :authorization => '123',
+               :cvv_result => nil,
+               :avs_result => { 'code' => 'avs-code' }}
+
+    mock('success_response', default.merge(options))
   end
 
   let(:failed_response) { mock('gateway_response', :success? => false) }
@@ -127,23 +129,32 @@ describe Spree::Payment do
       end
 
       context "if successful" do
-        before do
+        def authorize_payment(response)
+          payment.should_receive(:pend!)
           payment.payment_method.should_receive(:authorize).with(amount_in_cents,
                                                                  card,
-                                                                 anything).and_return(success_response)
+                                                                 anything).and_return(response)
+          payment.authorize!
         end
 
-        it "should store the response_code, avs_response and cvv_response fields" do
-          payment.authorize!
+        it "should store the response_code and avs_response" do
+          response = success_response(:cvv_result => nil)
+          authorize_payment(response)
+
           payment.response_code.should == '123'
           payment.avs_response.should == 'avs-code'
-          payment.cvv_response_code.should == 'cvv-code'
-          payment.cvv_response_message.should == 'CVV Result'
+          payment.cvv_response_code.should be_nil
+          payment.cvv_response_message.should be_nil
         end
 
-        it "should make payment pending" do
-          payment.should_receive(:pend!)
-          payment.authorize!
+        context "with a cvv_response" do
+          it "should store the cvv_response" do
+            response = success_response(:cvv_result => { 'code' => 'cvv-code', 'message' => "CVV Result"})
+            authorize_payment(response)
+
+            payment.cvv_response_code.should == 'cvv-code'
+            payment.cvv_response_message.should == 'CVV Result'
+          end
         end
       end
 
