@@ -51,14 +51,15 @@ module CapybaraExt
 
   def targetted_select2(value, options)
     # find select2 element and click it
-    find(options[:from]).find('a').click
+
+    find(options[:from]).find('ul.select2-choices').click
     select_select2_result(value)
   end
 
   def select_select2_result(value)
     #p %Q{$("div.select2-result-label:contains('#{value}')").mouseup()}
     sleep(1)
-    page.execute_script(%Q{$("div.select2-result-label:contains('#{value}')").mouseup()})
+    find(:xpath, "//div[@class='select2-result-label' and contains(., '#{value}')]").click
   end
 
   def find_label_by_text(text)
