@@ -58,8 +58,11 @@ module Spree
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
 
     scope :not_discontinued, -> do
-      variant_table_name = Variant.quoted_table_name
-      where("#{variant_table_name}.discontinue_on IS NULL OR #{variant_table_name}.discontinue_on >= ?", Time.current)
+      where(
+        arel_table[:discontinue_on].eq(nil).or(
+          arel_table[:discontinue_on].gte(Time.current)
+        )
+      )
     end
 
     scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
