@@ -14,6 +14,7 @@ en:
   advertise: Advertise
   coupon: Coupon
   coupon_code: Coupon code
+  coupon_code_added: Coupon code added
   editing_promotion: Editing Promotion
   events:
     spree:
