@@ -92,6 +92,15 @@ module Spree
         updater.update_payment_state
         order.payment_state.should == 'paid'
       end
+
+      it "is is marked as'emptied' if order is emptied (payment_total == 0 && total == 0)" do
+        order.stub_chain(:line_items, :empty?).and_return(false)
+        order.stub payment_total: 0
+        order.stub total: 0
+
+        updater.update_payment_state
+        order.payment_state.should == 'emptied'
+      end
     end
 
 
