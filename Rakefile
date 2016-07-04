@@ -18,8 +18,6 @@ task :test_app do
   end
 end
 
-task :default => :all_tests
-
 desc "Run all tests for all supported databases"
 task :ci do
   cmd = "bundle update"; puts cmd; system cmd;
