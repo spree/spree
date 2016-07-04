@@ -29,7 +29,9 @@ module Spree
           params[:attachment_styles][style[:name]] = style[:value] unless style[:value].empty?
         end if params[:new_attachment_styles].present?
 
-        styles = params[:attachment_styles]
+        styles = params[:attachment_styles].each do |style, value|
+          params[:attachment_styles][style] = value.split(', ')
+        end if params[:attachment_styles]
 
         Spree::Config[:attachment_styles] = ActiveSupport::JSON.encode(styles) unless styles.nil?
       end

@@ -18,14 +18,27 @@ describe Spree::Admin::ImageSettingsController do
       it "should be able to update the paperclip styles" do
         spree_put :update, {  "attachment_styles" => { "thumb" => "25x25>" } }
         updated_styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
-        updated_styles["thumb"].should == "25x25>"
+        updated_styles["thumb"].should == ["25x25>"]
+      end
+
+      it "should be able to update style with format" do
+        spree_put :update, { "attachment_styles" => { "thumb" => "25x25>, jpg" } }
+        updated_styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
+        updated_styles["thumb"].should == ["25x25>", 'jpg']
       end
 
       it "should be able to add a new style" do
         spree_put :update, { "attachment_styles" => { }, "new_attachment_styles" => { "1" => { "name" => "jumbo", "value" => "2000x2000>" } } }
         styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
-        styles["jumbo"].should == "2000x2000>"
+        styles["jumbo"].should == ["2000x2000>"]
       end
+
+      it "should be able to add a new style with format" do
+        spree_put :update, { "attachment_styles" => { }, "new_attachment_styles" => { "1" => { "name" => "jumbo", "value" => "2000x2000>, jpg" } } }
+        styles = ActiveSupport::JSON.decode(Spree::Config[:attachment_styles])
+        styles["jumbo"].should == ["2000x2000>", 'jpg']
+      end
+
     end
 
     context "amazon s3" do
