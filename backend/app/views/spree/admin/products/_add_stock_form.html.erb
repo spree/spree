@@ -20,7 +20,7 @@
       <div class="five columns omega">
         <%= f.field_container :variant_id do %>
           <%= label_tag 'variant_id', Spree.t(:variant) %>
-          <%= select_tag 'variant_id', options_from_collection_for_select(@variants, :id, :sku),
+          <%= select_tag 'variant_id', options_from_collection_for_select(@variants, :id, :name),
             class: 'select2 fullwidth' %>
         <% end %>
       </div>
