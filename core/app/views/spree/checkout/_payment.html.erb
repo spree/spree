@@ -5,7 +5,7 @@
     <p>
       <label>
         <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.payment_method %>
-        <%= t(method.name, :scope => :payment_methods, :default => method.name) %>
+        <%= label_tag "order_payments_attributes__payment_method_id_#{method.id}", t(method.name, :scope => :payment_methods, :default => method.name) %>
       </label>
     </p>
     <% end %>
