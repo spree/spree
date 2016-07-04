@@ -38,6 +38,21 @@ describe "Product Images" do
       page.driver.browser.switch_to.alert.accept
       page.should_not have_content("ruby on rails t-shirt")
     end
+
+    # Regression test for #3325
+    it "should show error messages when attachment processing encounters an error" do
+      Spree::Image.attachment_definitions[:attachment].delete :storage
+
+      create(:product)
+
+      visit spree.admin_path
+      click_link "Products"
+      click_icon(:edit)
+      click_link "Images"
+      click_link "new_image_link"
+      click_button "Update"
+      page.should have_content("Attachment file name can't be empty")
+    end
   end
 
   # Regression test for #2228
