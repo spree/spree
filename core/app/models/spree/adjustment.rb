@@ -64,6 +64,10 @@ module Spree
       originator_type == 'Spree::PromotionAction'
     end
 
+    def promotion?
+      originator_type == 'Spree::PromotionAction'
+    end
+
     # Update the boolean _eligible_ attribute which determines which adjustments
     # count towards the order's adjustment_total.
     def set_eligibility
