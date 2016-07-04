@@ -17,15 +17,13 @@
       <col style="width: 35%">
       <col style="width: 15%">
       <col style="width: 10%">
-      <col style="width: 10%">
-      <col style="width: 15%">
+      <col style="width: 25%">
     </colgroup>
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
         <th><%= t(:name) %></th>
         <th><%= t(:provider) %></th>
         <th><%= t(:environment) %></th>
-        <th><%= t(:display) %></th>
         <th><%= t(:active) %></th>
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
       </tr>  
@@ -36,7 +34,6 @@
           <td class="align-center"><%= method.name %></td>
           <td><%= method.type %></td>
           <td class="align-center"><%= method.environment.to_s.titleize %></td>
-          <td class="align-center"><%= method.display_on.blank? ? t(:both) : t(method.display_on) %></td>
           <td class="align-center"><%= method.active ? t(:say_yes) : t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions">
             <%= link_to_edit method, :no_text => true %>
