@@ -1,6 +1,8 @@
 var handle_ajax_error = function(XMLHttpRequest, textStatus, errorThrown){
-  $.jstree.rollback(last_rollback);
-  $("#ajax_error").show().html("<strong>" + server_error + "</strong><br />" + taxonomy_tree_error);
+  if(XMLHttpRequest.status !== 200) {
+    $.jstree.rollback(last_rollback);
+    $("#ajax_error").show().html("<strong>" + server_error + "</strong><br />" + taxonomy_tree_error);
+  }
 };
 
 //var handle_move = function(li, target, droppped, tree, rb) {
@@ -76,14 +78,14 @@ var handle_delete = function(e, data){
 
 };
 
-var taxonomy_id; 
+var taxonomy_id;
 
 $(document).ready(function(){
   if(taxonomy_id!=undefined){
 
     base_url = $("#taxonomy_tree").data("url").split("?")[0] + "/" ;
     child_url = base_url.replace("/taxons", "/get_children.json");
-    
+
     is_cut = false;
     last_rollback = null;
 

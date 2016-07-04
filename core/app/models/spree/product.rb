@@ -110,7 +110,7 @@ module Spree
 
     # Returns true if there are inventory units (any variant) with "on_hand" state for this product
     def has_stock?
-      master.in_stock? || variants.any?(&:in_stock?)
+      (variants.blank? && master.in_stock?) || variants.any?(&:in_stock?)
     end
 
     def tax_category
