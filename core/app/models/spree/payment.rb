@@ -109,15 +109,16 @@ module Spree
       # and this is it. Related to #1998.
       # See https://github.com/spree/spree/issues/1998#issuecomment-12869105
       def set_unique_identifier
+        return true if self.identifier.present?
+
         chars = [('A'..'Z').to_a, ('0'..'9').to_a].flatten - %w(0 1 I O)
-        identifier = ''
-        8.times { identifier << chars[rand(chars.length)] }
-        if Spree::Payment.exists?(:identifier => identifier)
-          # Call it again, we've got a duplicate ID.
-          set_unique_identifier
-        else
-          self.identifier = identifier
+        new_identifier = ''
+
+        while new_identifier.empty? or Spree::Payment.exists?(:identifier => new_identifier)
+          new_identifier = 8.times.map{ chars[rand(chars.length)] }.join
         end
+
+        self.identifier = new_identifier
       end
   end
 end
