@@ -1118,6 +1118,7 @@ en:
   validation:
     cannot_be_less_than_shipped_units: "cannot be less than the number of shipped units."
     cannot_destroy_line_item_as_inventory_units_have_shipped: "Cannot destroy line item as some inventory units have shipped."
+    cannot_destroy_last_line_item_for_complete_order: "Cannot destroy the last line item for this completed order."
     is_too_large: "is too large -- stock on hand cannot cover requested quantity!"
     must_be_int: "must be an integer"
     must_be_non_negative: "must be a non-negative value"

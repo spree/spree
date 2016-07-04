@@ -3,9 +3,14 @@ require 'spec_helper'
 describe Spree::LineItem do
   let(:variant) { mock_model(Spree::Variant, :count_on_hand => 95, :price => 9.99) }
   let(:line_item) { Spree::LineItem.new(:quantity => 5) }
+
+  let(:variant2) { mock_model(Spree::Variant, :count_on_hand => 45, :price => 19.99) }
+  let(:line_item2) { Spree::LineItem.new(:quantity => 2) }
+
+
   let(:order) do
     shipments = mock(:shipments, :reduce => 0)
-    mock_model(Spree::Order, :line_items => [line_item],
+    mock_model(Spree::Order, :line_items => [line_item, line_item2],
                              :inventory_units => [],
                              :shipments => shipments,
                              :completed? => true,
@@ -15,6 +20,8 @@ describe Spree::LineItem do
   before do
     line_item.stub(:order => order, :variant => variant, :new_record? => false)
     variant.stub(:currency => "USD")
+    line_item2.stub(:order => order, :variant => variant2, :new_record? => false)
+    variant2.stub(:currency => "USD")
     Spree::Config.set :allow_backorders => true
   end
 
@@ -104,6 +111,16 @@ describe Spree::LineItem do
         line_item.stub(:update_order)
         Spree::InventoryUnit.should_receive(:decrease).with(order, variant, 5)
         line_item.destroy
+      end
+
+      context 'and there is just 1 line_item' do
+        it "it will not allow to destroy" do
+          order.stub(:line_items => [line_item])
+          # We don't care about this method for this test
+          line_item.stub(:update_order)
+          line_item.should_not_receive(:remove_inventory)
+          line_item.destroy.should be_false
+        end
       end
     end
 
