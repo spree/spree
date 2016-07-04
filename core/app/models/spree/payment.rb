@@ -38,7 +38,7 @@ module Spree
     end
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
-    state_machine :initial => 'checkout' do
+    state_machine :initial => 'checkout', :use_transactions => false, :action => :save_state do
       # With card payments, happens before purchase or authorization happens
       event :started_processing do
         transition :from => ['checkout', 'pending', 'completed', 'processing'], :to => 'processing'
@@ -149,5 +149,7 @@ module Spree
           self.identifier = identifier
         end
       end
+
+      alias_method :save_state, :save
   end
 end
