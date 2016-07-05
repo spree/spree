@@ -31,7 +31,7 @@ in a single repository and documented in a single set of
 Getting Started
 ----------------------
 
-required rails `rails (~> 4.2.6)`
+Required rails `rails (~> 4.2.6)`
 
 Add Spree gems to your Gemfile:
 
