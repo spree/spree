@@ -66,6 +66,11 @@ module Spree
       end
     end
 
+    def populate_redirect
+      flash[:error] = Spree.t(:populate_get_error)
+      redirect_to('/cart')
+    end
+
     def empty
       if @order = current_order
         @order.empty!
