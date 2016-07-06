@@ -1,7 +1,11 @@
-before_script:
-  - sh -e /etc/init.d/xvfb start
-  - export DISPLAY=:99.0
-bundler_args: --without development production --quiet
+sudo: required
+dist: trusty
+
+language: ruby
+
+cache:
+  bundler: true
+
 env:
   - GEM=api DB=mysql
   - GEM=api DB=postgres
@@ -13,11 +17,21 @@ env:
   - GEM=frontend DB=postgres
   - GEM=sample DB=mysql
   - GEM=sample DB=postgres
+
 before_install:
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
+
 script:
   - bundle exec rake test_app
   - bundle exec rake spec
+
 rvm:
-  - 2.1
-  - 2.2
+  - 2.3.1
+  - 2.2.5
+
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
