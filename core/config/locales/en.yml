@@ -630,7 +630,6 @@ en:
     create_reimbursement: Create reimbursement
     created_at: Created At
     created_by: Created By
-    creating: Creating
     credit: Credit
     credit_card: Credit Card
     credit_cards: Credit Cards
@@ -1225,6 +1224,7 @@ en:
     sales_totals: Sales Totals
     save_and_continue: Save and Continue
     save_my_address: Save my address
+    saving: Saving
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
