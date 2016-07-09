@@ -279,6 +279,40 @@ describe Spree::Product, type: :model do
       end
     end
 
+    describe "#discontinue_on_must_be_later_than_available_on" do
+      before { product.available_on = Date.today }
+
+      context "available_on is a date earlier than discontinue_on" do
+        before { product.discontinue_on = 5.days.from_now }
+
+        it "is valid" do
+          expect(product).to be_valid
+        end
+      end
+
+      context "available_on is a date earlier than discontinue_on" do
+        before { product.discontinue_on = 5.days.ago }
+
+        context "is not valid" do
+          before { product.valid? }
+
+          it { expect(product).not_to be_valid }
+          it { expect(product.errors[:discontinue_on]).to include(I18n.t(:invalid_date_range, scope: 'activerecord.errors.models.spree/product.attributes.discontinue_on')) }
+        end
+      end
+
+      context "available_on and discontinue_on are nil" do
+        before do
+          product.discontinue_on = nil
+          product.available_on = nil
+        end
+
+        it "is valid" do
+          expect(product).to be_valid
+        end
+      end
+    end
+
     context "hard deletion" do
       it "doesnt raise ActiveRecordError error" do
         expect { product.really_destroy! }.to_not raise_error
