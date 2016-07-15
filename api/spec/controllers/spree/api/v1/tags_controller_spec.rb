@@ -32,7 +32,6 @@ module Spree
 
       it "retrieves a list of tags" do
         api_get :index
-        p json_response
         expect(json_response["tags"].first).to have_attributes(base_attributes)
         expect(json_response["total_count"]).to eq(1)
         expect(json_response["current_page"]).to eq(1)
@@ -61,8 +60,9 @@ module Spree
       end
 
       context "pagination" do
+        let!(:second_tag) { create(:tag) }
+
         it "can select the next page of tags" do
-          second_tag = create(:tag)
           api_get :index, page: 2, per_page: 1
           expect(json_response["tags"].first).to have_attributes(base_attributes)
           expect(json_response["total_count"]).to eq(2)
@@ -71,7 +71,6 @@ module Spree
         end
 
         it 'can control the page size through a parameter' do
-          create(:tag)
           api_get :index, per_page: 1
           expect(json_response['count']).to eq(1)
           expect(json_response['total_count']).to eq(2)
