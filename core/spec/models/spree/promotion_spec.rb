@@ -539,9 +539,29 @@ describe Spree::Promotion, :type => :model do
   # Regression test for #4081
   describe "#with_coupon_code" do
     context "and code stored in uppercase" do
-      let!(:promotion) { create(:promotion, :code => "MY-COUPON-123") }
+      let!(:promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
       it "finds the code with lowercase" do
         expect(Spree::Promotion.with_coupon_code("my-coupon-123")).to eql promotion
+      end
+    end
+
+    context "and there are multiple coupons with the same code" do
+      context "and only one has any actions" do
+        let!(:promotion_without_actions) { create(:promotion, code: "MY-COUPON-123").actions.clear }
+        let!(:promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
+
+        it "then returns the one with an action" do
+          expect(Spree::Promotion.with_coupon_code("MY-COUPON-123").actions.exists?).to be
+        end
+      end
+
+      context "and all of them has actions" do
+        let!(:first_promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
+        let!(:second_promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
+
+        it "then returns the first one with an action" do
+          expect(Spree::Promotion.with_coupon_code("MY-COUPON-123").id).to eq(first_promotion.id)
+        end
       end
     end
   end
