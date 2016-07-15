@@ -22,7 +22,7 @@ module Spree
       stub_authentication!
     end
 
-    let(:promotion) { create :promotion, code: '10off' }
+    let(:promotion) { create :promotion, :with_order_adjustment, code: '10off' }
 
     describe 'GET #show' do
       subject { api_get :show, id: id }
