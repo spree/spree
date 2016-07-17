@@ -118,7 +118,7 @@ Spree Extensions provide additional features not present in the Core system.
 Performance
 ----------------------
 
-You may notice that your Spree store runs slowly in development enviornment. This can be because in development each asset (css and javascript) is loaded separately. You can disable it by adding the following line to `config/environments/development.rb`.
+You may notice that your Spree store runs slowly in development environment. This can be because in development each asset (css and javascript) is loaded separately. You can disable it by adding the following line to `config/environments/development.rb`.
 
 ```ruby
 config.assets.debug = false
