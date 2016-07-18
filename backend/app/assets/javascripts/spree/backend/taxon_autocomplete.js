@@ -10,7 +10,7 @@ var set_taxon_select = function(selector){
       placeholder: Spree.translations.taxon_placeholder,
       multiple: true,
       initSelection: function (element, callback) {
-        var url = Spree.url(Spree.routes.taxons_search, {
+        var url = Spree.url(Spree.routes.taxons_api, {
           ids: element.val(),
           without_children: true,
           token: Spree.api_key
@@ -20,7 +20,7 @@ var set_taxon_select = function(selector){
         });
       },
       ajax: {
-        url: Spree.routes.taxons_search,
+        url: Spree.routes.taxons_api,
         datatype: 'json',
         data: function (term, page) {
           return {
