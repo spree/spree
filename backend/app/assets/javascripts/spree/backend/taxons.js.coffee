@@ -21,7 +21,7 @@ $(document).ready ->
       dropdownCssClass: "taxon_select_box",
       placeholder: Spree.translations.find_a_taxon,
       ajax:
-        url: Spree.routes.taxons_search,
+        url: Spree.routes.taxons_api,
         datatype: 'json',
         data: (term, page) ->
           per_page: 50,
