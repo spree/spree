@@ -138,8 +138,10 @@ taxons = [
 
 taxons.each do |taxon_attrs|
   parent = Spree::Taxon.where(name: taxon_attrs[:parent]).first
+  taxonomy = taxon_attrs[:taxonomy]
   Spree::Taxon.where(name: taxon_attrs[:name]).first_or_create! do |taxon|
     taxon.parent = parent
+    taxon.taxonomy = taxonomy
     taxon.products = taxon_attrs[:products] if taxon_attrs[:products]
   end
 end
