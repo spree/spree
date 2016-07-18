@@ -85,11 +85,3 @@
     <% end %>
   </div>
 </div>
-
-<% content_for :head do %>
-  <%= javascript_tag do %>
-    $(document).ready(function(){
-      $('span#country .select2').on('change', function() { update_state(''); });
-    });
-  <% end %>
-<% end %>
