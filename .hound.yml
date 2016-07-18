@@ -2,5 +2,6 @@ ruby:
   enabled: true
   config_file: .rubocop.yml
 
-java_script:
+jshint:
   enabled: true
+  config_file: .jshintrc
