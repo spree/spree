@@ -41,6 +41,7 @@
 //= require spree/backend/stock_movement
 //= require spree/backend/stock_transfer
 //= require spree/backend/taxon_autocomplete
+//= require spree/backend/taxon_permalink_preview
 //= require spree/backend/taxon_tree_menu
 //= require spree/backend/taxonomy
 //= require spree/backend/taxons
