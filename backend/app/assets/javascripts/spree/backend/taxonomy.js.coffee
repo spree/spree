@@ -1,6 +1,6 @@
 handle_ajax_error = (XMLHttpRequest, textStatus, errorThrown) ->
   $.jstree.rollback(last_rollback)
-  $("#ajax_error").show().html("<strong>" + server_error + "</strong><br />" + taxonomy_tree_error)
+  $("#ajax_error").show().html("<strong>" + Spree.translations.server_error + "</strong><br />" + Spree.translations.taxonomy_tree_error)
 
 handle_move = (e, data) ->
   last_rollback = data.rlbk
@@ -109,7 +109,7 @@ root.setup_taxonomy_tree = (taxonomy_id) ->
             theme: "spree",
             url: Spree.url(Spree.routes.jstree_theme_path)
           strings:
-            new_node: new_taxon,
+            new_node: Spree.translations.new_taxon,
             loading: Spree.translations.loading + "..."
           crrm:
             move:
