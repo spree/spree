@@ -480,8 +480,8 @@ after "bundle:install", "symlink_database_yml"
 
 After `bundle install` has finished running on the server, Capistrano will now
 copy over the `config/database.yml` into the current path. In order for
-Capistrano to deploy *and* run your migrations, you will need to ru` `cap
-deploy` and then `cap deploy:migrate`. Run those commands now. You should see
+Capistrano to deploy *and* run your migrations, you will need to run `cap deploy`
+and then `cap deploy:migrate`. Run those commands now. You should see
 the migrations run on the server.
 
 The next step is to set up the web server to serve requests for your
