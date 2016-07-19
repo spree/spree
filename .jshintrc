@@ -7,7 +7,7 @@
   "forin": true,
   "immed": true,
   "latedef": "nofunc",
-  "maxlen": 80,
+  "maxlen": 120,
   "newcap": true,
   "noarg": true,
   "noempty": true,
@@ -24,7 +24,8 @@
 
     "angular",
     "inject",
-    "module"
+    "module",
+    "Spree"
   ],
   "quotmark": true,
   "trailing": true,
