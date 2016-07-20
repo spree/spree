@@ -9,14 +9,15 @@ $.fn.userAutocomplete = function () {
     minimumInputLength: 1,
     multiple: true,
     initSelection: function (element, callback) {
-      $.get(Spree.routes.user_search, {
-        ids: element.val()
+      $.get(Spree.routes.users_api, {
+        ids: element.val(),
+        token: Spree.api_key
       }, function (data) {
         callback(data.users);
       });
     },
     ajax: {
-      url: Spree.routes.user_search,
+      url: Spree.routes.users_api,
       datatype: 'json',
       data: function (term) {
         return {
