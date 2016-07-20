@@ -194,7 +194,7 @@ describe "Orders Listing", type: :feature do
     context "per page dropdown", js: true do
       before do
         select "45", from: "per_page"
-        sleep(1)
+        wait_for_ajax
         expect(page).to have_select("per_page", selected: "45")
       end
 
@@ -211,7 +211,7 @@ describe "Orders Listing", type: :feature do
         expect(current_url).to match(/per_page\=45/)
         expect(page).to have_select("per_page", selected: "45")
         select "60", from: "per_page"
-        sleep(1)
+        wait_for_ajax
         expect(page).to have_select("per_page", selected: "60")
         expect(page).not_to have_content("R100")
         within_row(1) { expect(page).to have_content("R200") }
