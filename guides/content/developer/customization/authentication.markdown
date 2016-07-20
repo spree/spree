@@ -120,9 +120,9 @@ module Spree
    end
 end
 
-Spree::BaseController.send      :include, Spree::AuthenticationHelpers
-Spree::Api::BaseController.send :include, Spree::AuthenticationHelpers
-ApplicationController.send      :include, Spree::AuthenticationHelpers
+Spree::BaseController.include Spree::AuthenticationHelpers
+Spree::Api::BaseController.include Spree::AuthenticationHelpers
+ApplicationController.include Spree::AuthenticationHelpers
 ```
 
 Each of the methods defined in this module return values that are the

@@ -92,4 +92,4 @@ module DelegateBelongsTo
   protected :delegator_for_setter
 end
 
-ActiveRecord::Base.send :include, DelegateBelongsTo
+ActiveRecord::Base.include DelegateBelongsTo
