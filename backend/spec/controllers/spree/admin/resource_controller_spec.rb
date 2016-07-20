@@ -20,7 +20,7 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     Rails.application.reload_routes!
   end
 
-  with_model 'Widget' do
+  with_model 'Widget', scope: :all do
     table do |t|
       t.string :name
       t.integer :position
@@ -171,7 +171,7 @@ describe Spree::Admin::Submodule::PostsController, type: :controller do
     Rails.application.reload_routes!
   end
 
-  with_table 'spree_posts' do |t|
+  with_table 'spree_posts', scope: :all do |t|
     t.string :name
     t.integer :position
     t.timestamps null: false
