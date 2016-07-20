@@ -21,6 +21,21 @@ describe Spree::Product, :type => :model do
       is_expected.to have_many(:possible_promotions).
         class_name('Spree::Promotion').through(:promotion_rules).source(:promotion)
     end
+
+    it do
+      is_expected.to have_many(:variants).
+        class_name('Spree::Variant').
+        inverse_of(:product).
+        conditions(is_master: false).
+        order(:position)
+    end
+
+    it do
+      is_expected.to have_many(:variants_including_master).
+        class_name('Spree::Variant').
+        inverse_of(:product).
+        order(:position)
+    end
   end
 
   context 'product instance' do
@@ -179,22 +194,6 @@ describe Spree::Product, :type => :model do
 
       it "returns only variants with option values" do
         expect(product.variants_and_option_values).to eq([low])
-      end
-    end
-
-    describe 'Variants sorting' do
-      ORDER_REGEXP = /ORDER BY (\`|\")spree_variants(\`|\").(\'|\")position(\'|\") ASC/
-
-      context 'without master variant' do
-        it 'sorts variants by position' do
-          expect(product.variants.to_sql).to match(ORDER_REGEXP)
-        end
-      end
-
-      context 'with master variant' do
-        it 'sorts variants by position' do
-          expect(product.variants_including_master.to_sql).to match(ORDER_REGEXP)
-        end
       end
     end
 
