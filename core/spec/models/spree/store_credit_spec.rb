@@ -180,7 +180,7 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing'
+          with_model 'OriginatorThing', scope: :all
 
           let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
 
@@ -335,7 +335,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing'
+        with_model 'OriginatorThing', scope: :all
 
         let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
 
@@ -407,7 +407,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing'
+        with_model 'OriginatorThing', scope: :all
 
         let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
 
@@ -534,7 +534,7 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing'
+          with_model 'OriginatorThing', scope: :all
 
           let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
 
