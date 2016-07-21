@@ -165,7 +165,9 @@ describe Spree::Admin::WidgetsController, :type => :controller do
     end
 
     it 'touches updated_at' do
-      expect { subject }.to change { widget_1.reload.updated_at }
+      Timecop.scale(3600) do
+        expect { subject }.to change { widget_1.reload.updated_at }
+      end
     end
   end
 end
