@@ -96,9 +96,12 @@ describe 'Order' do
         let(:order) { create(:order, user: primary_store_credit.user, total: order_total) }
 
         before do
+          Timecop.scale(3600)
           subject
           order.reload
         end
+
+        after { Timecop.return }
 
         it 'uses the primary store credit type over the secondary' do
           primary_payment = order.payments.first

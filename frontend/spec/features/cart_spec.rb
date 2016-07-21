@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe "Cart", type: :feature, inaccessible: true do
+  before { Timecop.scale(100) }
+
+  after { Timecop.return }
+
   it "shows cart icon on non-cart pages" do
     visit spree.root_path
     expect(page).to have_selector("li#link-to-cart a", visible: true)
