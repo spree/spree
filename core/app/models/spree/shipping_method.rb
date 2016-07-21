@@ -28,7 +28,7 @@ module Spree
 
     def include?(address)
       return false unless address
-      zones.includes(:zone_members).any? do |zone|
+      zones.any? do |zone|
         zone.include?(address)
       end
     end
