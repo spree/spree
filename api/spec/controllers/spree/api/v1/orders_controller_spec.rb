@@ -65,23 +65,25 @@ module Spree
       end
 
       it "returns orders in reverse chronological order by completed_at" do
-        order.update_columns completed_at: Time.current
+        Timecop.scale(3600) do
+          order.update_columns completed_at: Time.current
 
-        order2 = Order.create user: order.user, completed_at: Time.current - 1.day
-        expect(order2.created_at).to be > order.created_at
-        order3 = Order.create user: order.user, completed_at: nil
-        expect(order3.created_at).to be > order2.created_at
-        order4 = Order.create user: order.user, completed_at: nil
-        expect(order4.created_at).to be > order3.created_at
+          order2 = Order.create user: order.user, completed_at: Time.current - 1.day
+          expect(order2.created_at).to be > order.created_at
+          order3 = Order.create user: order.user, completed_at: nil
+          expect(order3.created_at).to be > order2.created_at
+          order4 = Order.create user: order.user, completed_at: nil
+          expect(order4.created_at).to be > order3.created_at
 
-        api_get :mine
-        expect(response.status).to eq(200)
-        expect(json_response["pages"]).to eq(1)
-        expect(json_response["orders"].length).to eq(4)
-        expect(json_response["orders"][0]["number"]).to eq(order.number)
-        expect(json_response["orders"][1]["number"]).to eq(order2.number)
-        expect(json_response["orders"][2]["number"]).to eq(order4.number)
-        expect(json_response["orders"][3]["number"]).to eq(order3.number)
+          api_get :mine
+          expect(response.status).to eq(200)
+          expect(json_response["pages"]).to eq(1)
+          expect(json_response["orders"].length).to eq(4)
+          expect(json_response["orders"][0]["number"]).to eq(order.number)
+          expect(json_response["orders"][1]["number"]).to eq(order2.number)
+          expect(json_response["orders"][2]["number"]).to eq(order4.number)
+          expect(json_response["orders"][3]["number"]).to eq(order3.number)
+        end
       end
     end
 
@@ -102,9 +104,11 @@ module Spree
 
       context "multiple incomplete orders exist" do
         it "returns the latest incomplete order" do
-          new_order = Spree::Order.create! user: order.user
-          expect(new_order.created_at).to be > order.created_at
-          expect(JSON.parse(subject.body)['id']).to eq new_order.id
+          Timecop.scale(3600) do
+            new_order = Spree::Order.create! user: order.user
+            expect(new_order.created_at).to be > order.created_at
+            expect(JSON.parse(subject.body)['id']).to eq new_order.id
+          end
         end
       end
 

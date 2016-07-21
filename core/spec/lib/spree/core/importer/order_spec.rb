@@ -588,7 +588,7 @@ module Spree
           ]
         }
         order = Importer::Order.import(user, params)
-        expect(order.payments.first.created_at).to be_within(0.1).of created_at
+        expect(order.payments.first.created_at).to be_within(1).of created_at
       end
 
       context "raises error" do
