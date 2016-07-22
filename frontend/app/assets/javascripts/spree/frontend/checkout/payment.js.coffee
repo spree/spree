@@ -69,7 +69,7 @@ Spree.ready ($) ->
             url: url,
             success: (data) =>
               coupon_code_field.val('')
-              coupon_status.addClass("alert-success").html("Coupon code applied successfully.")
+              coupon_status.addClass("alert-success").html(Spree.translations.coupon_code_applied)
               coupon_applied = true
             error: (xhr) ->
               handler = JSON.parse(xhr.responseText)
