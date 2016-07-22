@@ -8,6 +8,7 @@
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 * [Vote & comment on roadmap features](https://trello.com/b/ta4WU3AX/spree-roadmap)
 
+[![Build Status](https://travis-ci.org/spree/spree.svg?branch=master)](https://travis-ci.org/spree/spree)
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
