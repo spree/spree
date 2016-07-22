@@ -31,7 +31,7 @@ module Spree
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
-      joins(<<-SQL).uniq
+      joins(<<-SQL).distinct
         INNER JOIN spree_order_promotions
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL

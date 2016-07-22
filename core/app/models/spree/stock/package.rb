@@ -64,7 +64,7 @@ module Spree
 
       def shipping_categories
         Spree::ShippingCategory.joins(products: :variants_including_master).
-          where(spree_variants: { id: variant_ids }).uniq
+          where(spree_variants: { id: variant_ids }).distinct
       end
 
       def shipping_methods
