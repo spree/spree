@@ -12,7 +12,7 @@ module Spree
 
         respond_to do |format|
           format.html { redirect_to admin_product_variants_url(params[:product_id]) }
-          format.js { render text: 'Ok' }
+          format.js { render plain: 'Ok' }
         end
       end
 

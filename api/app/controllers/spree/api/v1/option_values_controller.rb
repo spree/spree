@@ -41,7 +41,7 @@ module Spree
         def destroy
           @option_value = scope.accessible_by(current_ability, :destroy).find(params[:id])
           @option_value.destroy
-          render text: nil, status: 204
+          render plain: nil, status: 204
         end
 
         private

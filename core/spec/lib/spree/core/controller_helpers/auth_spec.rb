@@ -3,7 +3,7 @@ require 'spree/testing_support/url_helpers'
 
 class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
-  def index; render text: 'index'; end
+  def index; render plain: 'index'; end
 end
 
 describe Spree::Core::ControllerHelpers::Auth, type: :controller do
@@ -40,7 +40,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     controller(FakesController) do
       def index
         set_guest_token
-        render text: 'index'
+        render plain: 'index'
       end
     end
     it 'sends cookie header' do
