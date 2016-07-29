@@ -2,11 +2,9 @@
 ![Spree](spree_logo.png)
 
 * [Join our Slack](http://slack.spreecommerce.com/)
-* Join us in New York City on June 28-29th for **[OpenCommerce Conf 2016](http://opencommerceconf.org/)**
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.com)
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
-* [Vote & comment on roadmap features](https://trello.com/b/ta4WU3AX/spree-roadmap)
 
 [![Build Status](https://travis-ci.org/spree/spree.svg?branch=master)](https://travis-ci.org/spree/spree)
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
