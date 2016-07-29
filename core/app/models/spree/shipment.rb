@@ -20,6 +20,8 @@ module Spree
       has_many :state_changes, as: :stateful
     end
     has_many :shipping_methods, through: :shipping_rates
+    has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate
+
 
     after_save :update_adjustments
 
@@ -227,10 +229,6 @@ module Spree
       end
 
       shipping_rates
-    end
-
-    def selected_shipping_rate
-      shipping_rates.where(selected: true).first
     end
 
     def selected_shipping_rate_id
