@@ -214,23 +214,29 @@ module Spree
       return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
-      original_shipping_method_id = shipping_method.try(:id)
+      original_shipping_method_id = shipping_method.try!(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).
+      new_rates = Stock::Estimator.new(order).
       shipping_rates(to_package, shipping_method_filter)
 
-      if shipping_method
-        selected_rate = shipping_rates.detect { |rate|
-          rate.shipping_method_id == original_shipping_method_id
-        }
-        self.selected_shipping_rate_id = selected_rate.id if selected_rate
+      # If one of the new rates matches the previously selected shipping
+      # method, select that instead of the default provided by the estimator.
+      # Otherwise, keep the default.
+      selected_rate = new_rates.detect{ |rate| rate.shipping_method_id == original_shipping_method_id }
+      if selected_rate
+        new_rates.each do |rate|
+          rate.selected = (rate == selected_rate)
+        end
       end
+
+      self.shipping_rates = new_rates
+      self.save!
 
       shipping_rates
     end
 
     def selected_shipping_rate
-      shipping_rates.where(selected: true).first
+      shipping_rates.detect(&:selected?)
     end
 
     def selected_shipping_rate_id
