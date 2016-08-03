@@ -25,6 +25,8 @@ module Spree
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
+        elsif inventory_units.size == line_item.quantity && !line_item.changed?
+          remove(inventory_units, shipment)
         elsif inventory_units.size > line_item.quantity
           remove(inventory_units, shipment)
         end
@@ -32,8 +34,9 @@ module Spree
     end
 
     private
+
       def remove(item_units, shipment = nil)
-        quantity = item_units.size - line_item.quantity
+        quantity = set_quantity_to_remove(item_units)
 
         if shipment.present?
           remove_from_shipment(shipment, quantity)
@@ -42,6 +45,14 @@ module Spree
             break if quantity == 0
             quantity -= remove_from_shipment(shipment, quantity)
           end
+        end
+      end
+
+      def set_quantity_to_remove(item_units)
+        if (item_units.size - line_item.quantity).zero?
+          line_item.quantity
+        else
+          item_units.size - line_item.quantity
         end
       end
 
