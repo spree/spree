@@ -152,6 +152,25 @@ module Spree
             api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
             expect(order.reload.shipments).not_to be_empty
           end
+
+          context 'deleting line items' do
+            it 'restocks product after line item removal' do
+              line_item = order.line_items.first
+              variant = line_item.variant
+              expect do
+                api_delete :destroy, id: line_item.id
+              end.to change { variant.total_on_hand }.by(line_item.quantity)
+
+              expect(response.status).to eq(204)
+              order.reload
+              expect(order.line_items.count).to eq(0)
+            end
+
+            it 'calls `restock` on proper stock location' do
+              expect(order.shipments.first.stock_location).to receive(:restock)
+              api_delete :destroy, id: line_item.id
+            end
+          end
         end
       end
     end

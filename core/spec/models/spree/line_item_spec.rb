@@ -87,9 +87,9 @@ describe Spree::LineItem, type: :model do
   end
 
   context "#destroy" do
+    let!(:line_item) { order.line_items.first }
     it "returns inventory when a line item is destroyed" do
-      expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
-      line_item.destroy
+      is_expected.to callback(:verify_order_inventory).before(:destroy)
     end
 
     it "deletes inventory units" do
