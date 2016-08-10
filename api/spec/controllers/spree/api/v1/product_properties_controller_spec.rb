@@ -94,9 +94,22 @@ module Spree
       end
 
       context 'when product property exists' do
-        it "can update a product property" do
-          api_put :update, id: property_1.property_name, product_property: { value: "my value 456" }
-          expect(response.status).to eq(200)
+        context 'when product property is valid' do
+          it 'responds 200' do
+            api_put :update, id: property_1.property_name, product_property: { value: "my value 456" }
+            expect(response.status).to eq(200)
+          end
+        end
+
+        context 'when product property is invalid' do
+          before(:each) do
+            expect_any_instance_of(Spree::ProductProperty).to receive(:update_attributes).and_return false
+          end
+
+          it 'responds 422' do
+            api_put :update, id: property_1.property_name, product_property: { value: 'hello' }
+            expect(response.status).to eq(422)
+          end
         end
       end
 
