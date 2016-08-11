@@ -21,7 +21,7 @@ module Spree
     end
     has_many :shipping_methods, through: :shipping_rates
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate
-    has_one :shipping_method, through: :selected_shipping_rate, source: :shipping_method
+    has_one :shipping_method, through: :selected_shipping_rate
 
 
     after_save :update_adjustments
