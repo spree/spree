@@ -14,6 +14,8 @@ env:
   - GEM=sample DB=mysql
   - GEM=sample DB=postgres
 before_install:
+  - gem update --system 2.4.8
+  - gem --version
   - cd $GEM; export BUNDLE_GEMFILE="`pwd`/Gemfile"
 script:
   - bundle exec rake test_app

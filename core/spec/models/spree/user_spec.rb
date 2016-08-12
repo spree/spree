@@ -6,12 +6,18 @@ describe Spree::LegacyUser, type: :model do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
 
-    let!(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user) }
-    let!(:order_2) { create(:order, user: user, created_by: user) }
-    let!(:order_3) { create(:order, user: user, created_by: create(:user)) }
+    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user) }
+    let(:order_2) { create(:order, user: user, created_by: user) }
+    let(:order_3) { create(:order, user: user, created_by: create(:user)) }
 
     it 'returns correct order' do
-      expect(user.last_incomplete_spree_order).to eq order_3
+      Timecop.scale(3600) do
+        order_1
+        order_2
+        order_3
+
+        expect(user.last_incomplete_spree_order).to eq order_3
+      end
     end
 
     context 'persists order address' do
