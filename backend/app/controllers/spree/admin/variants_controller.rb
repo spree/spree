@@ -22,31 +22,38 @@ module Spree
       end
 
       protected
-        def new_before
-          master = @object.product.master
-          @object.attributes = master.attributes.except('id', 'created_at', 'deleted_at',
-                                                                        'sku', 'is_master')
-          if master.default_price.present?
-            # Shallow Clone of the default price to populate the price field.
-            @object.default_price = master.default_price.clone
-          end
-        end
 
-        def collection
-          @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
+      def new_before
+        master = @object.product.master
+        @object.attributes = master.attributes.except(
+          'id', 'created_at', 'deleted_at', 'sku', 'is_master'
+        )
 
+        # Shallow Clone of the default price to populate the price field.
+        @object.default_price = master.default_price.clone if master.default_price.present?
+      end
+
+      def parent
+        @product = Product.with_deleted.friendly.find(params[:product_id])
+      end
+
+      def collection
+        @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
+
+        @collection ||=
           if @deleted.blank?
-            @collection ||= super.includes(:default_price, option_values: :option_type)
+            super.includes(:default_price, option_values: :option_type)
           else
-            @collection ||= Variant.only_deleted.where(product_id: parent.id)
+            Variant.only_deleted.where(product_id: parent.id)
           end
-          @collection
-        end
+        @collection
+      end
 
       private
-        def load_data
-          @tax_categories = TaxCategory.order(:name)
-        end
+
+      def load_data
+        @tax_categories = TaxCategory.order(:name)
+      end
     end
   end
 end
