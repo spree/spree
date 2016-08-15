@@ -525,7 +525,9 @@ describe Spree::Order, type: :model do
     end
 
     it 'does not include a payment method that is not suitable for this order' do
+      allow(ok_method).to receive(:within_transaction_limits?).with(order).and_return(true)
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
+
       expect(order.available_payment_methods).to match_array [ok_method]
     end
   end

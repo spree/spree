@@ -12,6 +12,8 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
+    include Spree::Validations::Money
+
     include NumberAsParam
 
     extend Spree::DisplayMoney
@@ -21,25 +23,6 @@ module Spree
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
-
-    MONEY_THRESHOLD  = 100_000_000
-    MONEY_VALIDATION = {
-      presence:     true,
-      numericality: {
-        greater_than: -MONEY_THRESHOLD,
-        less_than:     MONEY_THRESHOLD,
-        allow_blank:   true
-      },
-      format:       { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
-    }.freeze
-
-    POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:greater_than_or_equal_to] = 0
-    end.freeze
-
-    NEGATIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:less_than_or_equal_to] = 0
-    end.freeze
 
     checkout_flow do
       go_to_state :address
@@ -697,7 +680,7 @@ module Spree
     end
 
     def collect_payment_methods
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.within_transaction_limits?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
