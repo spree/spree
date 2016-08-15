@@ -10,7 +10,7 @@ module Spree
     end
 
     has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
-    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
+    has_many :shipping_methods, through: :shipping_method_zones, class_name: 'Spree::ShippingMethod'
 
     validates :name, presence: true, uniqueness: { allow_blank: true }
 
