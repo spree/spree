@@ -13,6 +13,7 @@
         <th></th>
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:provider) %></th>
+        <th><%= Spree.t(:transaction_limits) %></th>
         <th class="text-center"><%= Spree.t(:display) %></th>
         <th class="text-center"><%= Spree.t(:active) %></th>
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
@@ -28,6 +29,7 @@
           </td>
           <td><%= method.name %></td>
           <td><%= method.type %></td>
+          <td><%= method.transaction_minimum || "-" %> / <%= method.transaction_maximum || "-" %></td>
           <td class="text-center"><%= Spree.t(method.display_on) %></td>
           <td class="text-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">

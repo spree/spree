@@ -680,7 +680,7 @@ module Spree
     end
 
     def collect_payment_methods
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.within_transaction_limits?(self) }
     end
   end
 end

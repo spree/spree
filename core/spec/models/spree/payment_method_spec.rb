@@ -42,6 +42,47 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe "transaction limits" do 
+    it "should be a valid payment method with a transaction_minimum" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_minimum: 47.11)).to be_valid
+    end
+
+    it "should be a valid payment method with a transaction_maximum" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_maximum: 13.37)).to be_valid
+    end
+
+    it "should be a valid payment method with a transaction_minimum and transaction_maximum" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_minimum: 50, transaction_maximum: 999)).to be_valid
+    end
+      
+    it "should not create a payment method with a transaction_maximum lower then transaction_minimum" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_minimum: 500, transaction_maximum: 250)).not_to be_valid
+    end
+
+    it "should not create a payment method with a transaction_minimum lower then zero" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_minimum: -25)).not_to be_valid
+    end
+
+    it "should not create a payment method with a transaction_maximum lower then zero" do
+      expect(Spree::Gateway::Test.new(name: 'Display Both', display_on: "both", active: true, description: 'foofah', transaction_minimum: -25)).not_to be_valid
+    end
+    
+    it "should be available for an order" do
+      order = Spree::Order.create total: 100
+      expect(Spree::Gateway::Test.new(name: 'Min 50', display_on: "both", active: true, transaction_minimum: 50).within_transaction_limits?(order)).to be true
+      expect(Spree::Gateway::Test.new(name: 'Max 200', display_on: "both", active: true, transaction_maximum: 200).within_transaction_limits?(order)).to be true
+      expect(Spree::Gateway::Test.new(name: 'Min 100', display_on: "both", active: true, transaction_minimum: 100).within_transaction_limits?(order)).to be true
+      expect(Spree::Gateway::Test.new(name: 'Max 100', display_on: "both", active: true, transaction_maximum: 100).within_transaction_limits?(order)).to be true
+      expect(Spree::Gateway::Test.new(name: 'MinMax 100', display_on: "both", active: true, transaction_minimum: 100, transaction_maximum: 100).within_transaction_limits?(order)).to be true
+    end
+
+    it "should not be available for an order" do 
+      order = Spree::Order.create total: 100
+      expect(Spree::Gateway::Test.new(name: 'Min 500', display_on: "both", active: true, transaction_minimum: 500).within_transaction_limits?(order)).to_not be true
+      expect(Spree::Gateway::Test.new(name: 'Max 25', display_on: "both", active: true, transaction_maximum: 25).within_transaction_limits?(order)).to_not be true
+    end
+  end
+
   describe '#auto_capture?' do
     class TestGateway < Spree::Gateway
       def provider_class
