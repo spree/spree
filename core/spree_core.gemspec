@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
 
-  s.add_dependency 'activemerchant', '>= 1.49', '< 2.0'
+  s.add_dependency 'activemerchant', '~> 1.49', '< 2.0'
   s.add_dependency 'acts_as_list', '0.7.2'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
