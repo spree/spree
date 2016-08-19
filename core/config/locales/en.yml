@@ -612,6 +612,8 @@ en:
       FRA: France
       ITA: Italy
       US: United States of America
+    country_rule:
+      label: Choose must be shipped to this country
     coupon: Coupon
     coupon_code: Coupon code
     coupon_code_already_applied: The coupon code has already been applied to this order
@@ -1098,6 +1100,9 @@ en:
     promotion_label: 'Promotion (%{name})'
     promotion_rule: Promotion Rule
     promotion_rule_types:
+      country:
+        description: Order is shipped to proper (or default) country
+        name: Country
       first_order:
         description: Must be the customer's first order
         name: First order

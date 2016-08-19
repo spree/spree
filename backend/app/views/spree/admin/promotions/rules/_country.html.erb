@@ -1,0 +1,6 @@
+<div class="panel-body">
+  <div class="form-group no-marginb">
+    <%= label_tag Spree.t('country_rule.label') %>
+    <%= select_tag("#{param_prefix}[preferred_country_id]", options_for_select(Spree::Country.pluck(:name, :id), promotion_rule.preferred_country_id), { class: 'select_product form-control' }) %>
+  </div>
+</div>
