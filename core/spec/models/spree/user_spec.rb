@@ -106,7 +106,7 @@ describe Spree.user_class, type: :model do
     describe '#order_count' do
       before { load_orders }
       it 'returns the count of completed orders for the user' do
-        expect(subject.order_count).to eq BigDecimal(order_count)
+        expect(subject.order_count).to eq order_count
       end
     end
 
