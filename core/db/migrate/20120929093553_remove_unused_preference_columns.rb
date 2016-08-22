@@ -1,4 +1,4 @@
-class RemoveUnusedPreferenceColumns < ActiveRecord::Migration
+class RemoveUnusedPreferenceColumns < ActiveRecord::Migration[4.2]
   def change
     # Columns have already been removed if the application was upgraded from an older version, but must be removed from new apps.
     remove_column :spree_preferences, :name       if ApplicationRecord.connection.column_exists?(:spree_preferences, :name)

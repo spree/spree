@@ -1,4 +1,4 @@
-class SpreeOneTwo < ActiveRecord::Migration
+class SpreeOneTwo < ActiveRecord::Migration[4.2]
   def up
     # This migration is just a compressed version of all the previous
     # migrations for spree_core. Do not run it if one of the core tables

@@ -1,4 +1,4 @@
-class CopyProductSlugsToSlugHistory < ActiveRecord::Migration
+class CopyProductSlugsToSlugHistory < ActiveRecord::Migration[4.2]
   def change
 
 	# do what sql does best: copy all slugs into history table in a single query

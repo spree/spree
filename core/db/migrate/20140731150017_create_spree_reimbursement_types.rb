@@ -1,4 +1,4 @@
-class CreateSpreeReimbursementTypes < ActiveRecord::Migration
+class CreateSpreeReimbursementTypes < ActiveRecord::Migration[4.2]
   def change
     create_table :spree_reimbursement_types do |t|
       t.string :name

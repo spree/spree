@@ -1,4 +1,4 @@
-class AddDiscontinuedToProductsAndVariants < ActiveRecord::Migration
+class AddDiscontinuedToProductsAndVariants < ActiveRecord::Migration[4.2]
   def up
     add_column :spree_products, :discontinue_on, :datetime, after: :available_on
     add_column :spree_variants, :discontinue_on, :datetime, after: :deleted_at

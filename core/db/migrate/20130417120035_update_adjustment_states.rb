@@ -1,4 +1,4 @@
-class UpdateAdjustmentStates < ActiveRecord::Migration
+class UpdateAdjustmentStates < ActiveRecord::Migration[4.2]
   def up
     Spree::Order.complete.find_each do |order|
       order.adjustments.update_all(state: 'closed')

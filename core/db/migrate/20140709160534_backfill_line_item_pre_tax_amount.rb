@@ -1,4 +1,4 @@
-class BackfillLineItemPreTaxAmount < ActiveRecord::Migration
+class BackfillLineItemPreTaxAmount < ActiveRecord::Migration[4.2]
   def change
     # set pre_tax_amount to discounted_amount - included_tax_total
     execute(<<-SQL)

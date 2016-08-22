@@ -1,4 +1,4 @@
-class AddMissingIndexesToSpreeTaggings < ActiveRecord::Migration
+class AddMissingIndexesToSpreeTaggings < ActiveRecord::Migration[4.2]
   def change
     add_index :spree_taggings, :tag_id
     add_index :spree_taggings, :taggable_id

@@ -1,4 +1,4 @@
-class MigrateOldShippingCalculators < ActiveRecord::Migration
+class MigrateOldShippingCalculators < ActiveRecord::Migration[4.2]
   def up
     Spree::ShippingMethod.all.each do |shipping_method|
       old_calculator = shipping_method.calculator

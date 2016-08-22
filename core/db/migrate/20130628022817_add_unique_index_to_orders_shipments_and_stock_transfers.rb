@@ -1,4 +1,4 @@
-class AddUniqueIndexToOrdersShipmentsAndStockTransfers < ActiveRecord::Migration
+class AddUniqueIndexToOrdersShipmentsAndStockTransfers < ActiveRecord::Migration[4.2]
   def add
     add_index "spree_orders", ["number"], name: "number_idx_unique", unique: true
     add_index "spree_shipments", ["number"], name: "number_idx_unique", unique: true

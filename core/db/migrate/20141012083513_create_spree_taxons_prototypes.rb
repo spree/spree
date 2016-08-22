@@ -1,4 +1,4 @@
-class CreateSpreeTaxonsPrototypes < ActiveRecord::Migration
+class CreateSpreeTaxonsPrototypes < ActiveRecord::Migration[4.2]
   def change
     create_table :spree_taxons_prototypes do |t|
       t.belongs_to :taxon, index: true

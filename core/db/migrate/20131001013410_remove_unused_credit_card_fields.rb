@@ -1,4 +1,4 @@
-class RemoveUnusedCreditCardFields < ActiveRecord::Migration
+class RemoveUnusedCreditCardFields < ActiveRecord::Migration[4.2]
   def up
     remove_column :spree_credit_cards, :start_month if column_exists?(:spree_credit_cards, :start_month)
     remove_column :spree_credit_cards, :start_year if column_exists?(:spree_credit_cards, :start_year)

@@ -1,4 +1,4 @@
-class SplitPricesFromVariants < ActiveRecord::Migration
+class SplitPricesFromVariants < ActiveRecord::Migration[4.2]
   def up
     create_table :spree_prices do |t|
       t.integer :variant_id, null: false

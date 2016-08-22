@@ -1,4 +1,4 @@
-class CreateDefaultRefundReason < ActiveRecord::Migration
+class CreateDefaultRefundReason < ActiveRecord::Migration[4.2]
   def up
     Spree::RefundReason.create!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false)
   end

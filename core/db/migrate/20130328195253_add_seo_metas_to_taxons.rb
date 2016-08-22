@@ -1,4 +1,4 @@
-class AddSeoMetasToTaxons < ActiveRecord::Migration
+class AddSeoMetasToTaxons < ActiveRecord::Migration[4.2]
   def change
     change_table :spree_taxons do |t|
       t.string   :meta_title

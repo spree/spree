@@ -1,4 +1,4 @@
-class RemoveOnDemandFromProductAndVariant < ActiveRecord::Migration
+class RemoveOnDemandFromProductAndVariant < ActiveRecord::Migration[4.2]
   def change
     remove_column :spree_products, :on_demand
     remove_column :spree_variants, :on_demand

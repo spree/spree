@@ -1,4 +1,4 @@
-class CreateSpreeStores < ActiveRecord::Migration
+class CreateSpreeStores < ActiveRecord::Migration[4.2]
   def change
     if data_source_exists?(:spree_stores)
       rename_column :spree_stores, :domains, :url

@@ -1,4 +1,4 @@
-class RecreateSpreeReturnAuthorizations < ActiveRecord::Migration
+class RecreateSpreeReturnAuthorizations < ActiveRecord::Migration[4.2]
   def up
     # If the app has any legacy return authorizations then rename the table & columns and leave them there
     # for the spree_legacy_return_authorizations extension to pick up with.

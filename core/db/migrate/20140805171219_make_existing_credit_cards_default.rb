@@ -1,4 +1,4 @@
-class MakeExistingCreditCardsDefault < ActiveRecord::Migration
+class MakeExistingCreditCardsDefault < ActiveRecord::Migration[4.2]
   def up
     # set the newest credit card for every user to be the default; SQL technique from
     # http://stackoverflow.com/questions/121387/fetch-the-row-which-has-the-max-value-for-a-column
