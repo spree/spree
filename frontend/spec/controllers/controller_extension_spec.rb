@@ -59,8 +59,8 @@ describe Spree::CustomController, type: :controller do
       context "render" do
         before do
           Spree::CustomController.instance_eval do
-            respond_override({index: {html: {success: lambda { render(text: 'success!!!') }}}})
-            respond_override({index: {html: {failure: lambda { render(text: 'failure!!!') }}}})
+            respond_override(index: { html: { success: lambda { render(plain: 'success!!!') } } })
+            respond_override(index: { html: { failure: lambda { render(plain: 'failure!!!') } } })
           end
         end
 
@@ -77,7 +77,7 @@ describe Spree::CustomController, type: :controller do
         before do
           Spree::CustomController.instance_eval do
             respond_override({index: {html: {success: lambda { redirect_to('/cart') }}}})
-            respond_override({index: {html: {failure: lambda { render(text: 'failure!!!') }}}})
+            respond_override(index: { html: { failure: lambda { render(plain: 'failure!!!') } } })
           end
         end
 
@@ -93,8 +93,8 @@ describe Spree::CustomController, type: :controller do
         before do
           Spree::CustomController.instance_eval do
             respond_to :html
-            respond_override({create: {html: {success: lambda { render(text: 'success!!!') }}}})
-            respond_override({create: {html: {failure: lambda { render(text: 'failure!!!') }}}})
+            respond_override(create: { html: { success: lambda { render(plain: 'success!!!') } } })
+            respond_override(create: { html: { failure: lambda { render(plain: 'failure!!!') } } })
           end
         end
 
@@ -110,7 +110,7 @@ describe Spree::CustomController, type: :controller do
       context 'A different controllers respond_override. Regression test for #1301' do
         before do
           Spree::CheckoutController.instance_eval do
-            respond_override({index: {html: {success: lambda { render(text: 'success!!!') }}}})
+            respond_override(index: { html: { success: lambda { render(plain: 'success!!!') } } })
           end
         end
 
