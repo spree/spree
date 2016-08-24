@@ -84,14 +84,14 @@ module Spree
         end
 
         select_tag(:per_page,
-          options_for_select(per_page_options, params['per_page'] || per_page_default),
-          { class: "form-control pull-right js-per-page-select" })
+                   options_for_select(per_page_options, params[:per_page].try(:to_i) || per_page_default),
+                   class: 'form-control pull-right js-per-page-select')
       end
 
       # helper method to create proper url to apply per page filtering
       # fixes https://github.com/spree/spree/issues/6888
       def per_page_dropdown_params(args = nil)
-        args ||= params.clone
+        args = params.permit!.to_h.clone
         args.delete(:page)
         args.delete(:per_page)
         args
