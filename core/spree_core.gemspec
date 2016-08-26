@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '~> 2.1.0'
   s.add_dependency 'premailer-rails'
   s.add_dependency 'acts-as-taggable-on', '~> 3.4'
-  s.add_dependency 'rails', '~> 4.2.6'
+  s.add_dependency 'rails', '~> 4.2.7.1'
   s.add_dependency 'ransack', '~> 1.8.0'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.2'

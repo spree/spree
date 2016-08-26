@@ -134,7 +134,7 @@ $(document).ready(function () {
 
       var show = link.parents('tbody').find('tr.show-tracking');
       show.toggle();
-      show.find('.tracking-value').html($("<strong>").html("<%= Spree.t(:tracking) %>: ")).append(data.tracking);
+      show.find('.tracking-value').html($("<strong>").html(Spree.translations.tracking + ": ")).append(data.tracking);
     });
   });
 });

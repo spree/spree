@@ -1,7 +1,20 @@
 module Spree
   class Promotion
     module Rules
+      module OptionValueWithNumerificationSupport
+        def preferred_eligible_values
+          values = super || {}
+          Hash[values.keys.map(&:to_i).zip(
+            values.values.map do |v|
+              (v.is_a?(Array) ? v : v.split(",")).map(&:to_i)
+            end
+          )]
+        end
+      end
+
       class OptionValue < PromotionRule
+        prepend OptionValueWithNumerificationSupport
+
         MATCH_POLICIES = %w(any)
         preference :match_policy, :string, default: MATCH_POLICIES.first
         preference :eligible_values, :hash
@@ -23,16 +36,6 @@ module Spree
 
           product_ids.include?(pid) && (value_ids(pid) - ovids).empty?
         end
-
-        def preferred_eligible_values_with_numerification
-          values = preferred_eligible_values_without_numerification || {}
-          Hash[values.keys.map(&:to_i).zip(
-            values.values.map do |v|
-              (v.is_a?(Array) ? v : v.split(",")).map(&:to_i)
-            end
-          )]
-        end
-        alias_method_chain :preferred_eligible_values, :numerification
 
         private
 

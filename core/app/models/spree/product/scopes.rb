@@ -198,7 +198,7 @@ module Spree
     search_scopes << :available
 
     def self.active(currency = nil)
-      not_discontinued.available(nil, currency)
+      available(nil, currency)
     end
     search_scopes << :active
 

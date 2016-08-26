@@ -400,7 +400,7 @@ module Spree
     end
 
     def available_payment_methods
-      @available_payment_methods ||= PaymentMethod.available_on_front_end
+      @available_payment_methods ||= collect_payment_methods
     end
 
     def insufficient_stock_lines
@@ -475,7 +475,6 @@ module Spree
     def can_add_coupon?
       Spree::Promotion.order_activatable?(self)
     end
-
 
     def shipped?
       %w(partial shipped).include?(shipment_state)
@@ -678,6 +677,10 @@ module Spree
 
     def create_token
       self.guest_token ||= generate_guest_token
+    end
+
+    def collect_payment_methods
+      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
   end
 end

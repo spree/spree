@@ -93,6 +93,7 @@ describe Spree::OrderInventory, type: :model do
     let(:variant) { line_item.variant }
 
     before do
+      allow(line_item).to receive(:changed?).and_return(:true)
       subject.verify
 
       order.shipments.create(stock_location_id: stock_location.id, cost: 5)

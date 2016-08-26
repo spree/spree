@@ -12,6 +12,8 @@ describe Spree::Zone, type: :model do
       create(:state, country: country)
     end
 
+    it { is_expected.to have_many(:shipping_methods).through(:shipping_method_zones).class_name('Spree::ShippingMethod') }
+
     before { country_zone.members.create(zoneable: country) }
 
     describe 'scopes' do

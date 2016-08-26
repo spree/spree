@@ -54,3 +54,5 @@ test_app
 */.sass-cache
 .localeapp
 .ruby-gemset
+vendor/bundle
+*/vendor/bundle
