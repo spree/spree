@@ -7,6 +7,7 @@ node(:options_text) { |v| v.options_text }
 node(:track_inventory) { |v| v.should_track_inventory? }
 node(:in_stock) { |v| v.in_stock? }
 node(:is_backorderable) { |v| v.is_backorderable? }
+node(:is_orderable) { |v| v.is_backorderable? || v.in_stock? }
 node(:total_on_hand) { |v| v.total_on_hand }
 node(:is_destroyed) { |v| v.destroyed? }
 
