@@ -53,17 +53,16 @@ module Spree
     end
 
     def filter_order_items(params)
-      filtered_params = params.symbolize_keys
-      return filtered_params if filtered_params[:line_items_attributes].nil? || filtered_params[:line_items_attributes][:id]
+      return params if params[:line_items_attributes].nil? || params[:line_items_attributes][:id]
 
       line_item_ids = order.line_items.pluck(:id)
 
       params[:line_items_attributes].each_pair do |id, value|
         unless line_item_ids.include?(value[:id].to_i) || value[:variant_id].present?
-          filtered_params[:line_items_attributes].delete(id)
+          params[:line_items_attributes].delete(id)
         end
       end
-      filtered_params
+      params
     end
 
     def order_updater
@@ -82,8 +81,10 @@ module Spree
         line_item.quantity += quantity.to_i
         line_item.currency = currency unless currency.nil?
       else
-        opts = { currency: order.currency }.merge ActionController::Parameters.new(options).
-                                            permit(PermittedAttributes.line_item_attributes).to_h
+        opts = ActionController::Parameters.new(options.to_h).
+               permit(PermittedAttributes.line_item_attributes).to_h.
+               merge( { currency: order.currency } )
+
         line_item = order.line_items.new(quantity: quantity,
                                           variant: variant,
                                           options: opts)
