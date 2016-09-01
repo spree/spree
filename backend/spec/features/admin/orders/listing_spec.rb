@@ -199,6 +199,8 @@ describe "Orders Listing", type: :feature do
       end
 
       it "adds per_page parameter to url" do
+        # this redundant expect(page) is required for Circle CI
+        expect(page).to have_select("per_page", selected: "45")
         expect(current_url).to match(/per_page\=45/)
       end
 
