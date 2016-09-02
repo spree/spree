@@ -159,12 +159,13 @@ module Spree
         icon_name ? content_tag(:i, '', class: icon_name) : ''
       end
 
+      #Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options={})
         if icon_name
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
-        button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}"))
+        button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}", data: { disable_with: "#{ Spree.t(:saving) }..." }))
       end
 
       def button_link_to(text, url, html_options = {})
