@@ -42,6 +42,8 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/shoulda_matcher_configuration'
 
+require 'spree/core/controller_helpers/strong_parameters'
+
 require 'paperclip/matchers'
 
 require 'capybara-screenshot/rspec'
@@ -113,6 +115,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+
+  config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
 
   config.include Paperclip::Shoulda::Matchers
 
