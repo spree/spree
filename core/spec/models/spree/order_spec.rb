@@ -1023,4 +1023,24 @@ describe Spree::Order, type: :model do
       it { expect(order.fully_discounted?).to eq false }
     end
   end
+
+  describe 'order transit to returned state from resumed state' do
+    let!(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
+
+    context 'when all inventory_units returned' do
+      before do
+        resumed_order.inventory_units.update_all(state: 'returned')
+        resumed_order.return
+      end
+      it { expect(resumed_order).to be_returned }
+    end
+
+    context 'when some inventory_units returned' do
+      before do
+        resumed_order.inventory_units.first.update_attribute(:state, 'returned')
+        resumed_order.return
+      end
+      it { expect(resumed_order).to be_resumed }
+    end
+  end
 end
