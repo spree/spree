@@ -27,8 +27,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           order: {
             email: "",
             use_billing: "",
-            bill_address_attributes: {},
-            ship_address_attributes: {}
+            bill_address_attributes: { firstname: 'john' },
+            ship_address_attributes: { firstname: 'john' }
           },
           guest_checkout: 'true'
         }
@@ -54,7 +54,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           end
 
           context 'with correct method flow' do
-            it { expect(order).to receive(:update_attributes).with(attributes[:order]) }
+            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to_not receive(:next) }
             it { expect(order).to receive(:complete?) }
             it 'does refresh the shipment rates with all shipping methods' do
@@ -79,7 +79,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           end
 
           context 'with correct method flow' do
-            it { expect(order).to receive(:update_attributes).with(attributes[:order]) }
+            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).to_not receive(:load_user).and_call_original }
@@ -111,7 +111,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           end
 
           context 'with correct method flow' do
-            it { expect(order).to receive(:update_attributes).with(changed_attributes[:order]) }
+            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to receive(:associate_user!).with(user, order.email.blank?) }
             it { expect(order).to_not receive(:next) }
             it { expect(order).to receive(:complete?) }
@@ -138,7 +138,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           end
 
           context 'with correct method flow' do
-            it { expect(order).to_not receive(:update_attributes).with(changed_attributes[:order]) }
+            it { expect(order).to_not receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).to receive(:load_user).and_call_original }
