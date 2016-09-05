@@ -108,6 +108,11 @@ module Spree
       assign_attributes opts
     end
 
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
 
     def ensure_valid_quantity
