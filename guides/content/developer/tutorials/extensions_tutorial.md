@@ -264,9 +264,9 @@ describe Spree::Variant do
 
       result = variant.price_in("USD")
 
-      result.variant_id.should == expected.variant_id
-      result.amount.to_f.should == expected.amount.to_f
-      result.currency.should == expected.currency
+      expect(result.variant_id).to eq(expected.variant_id)
+      expect(result.amount.to_f).to eq(expected.amount.to_f)
+      expect(result.currency).to eq(expected.currency)
     end
 
     it "returns the normal price if it is not on sale" do
@@ -275,9 +275,9 @@ describe Spree::Variant do
 
       result = variant.price_in("USD")
 
-      result.variant_id.should == expected.variant_id
-      result.amount.to_f.should == expected.amount.to_f
-      result.currency.should == expected.currency
+      expect(result.variant_id).to eq(expected.variant_id)
+      expect(result.amount.to_f).to eq(expected.amount.to_f)
+      expect(result.currency).to eq(expected.currency)
     end
   end
 end
