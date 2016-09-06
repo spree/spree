@@ -125,7 +125,11 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def run_migrations
       if @run_migrations
         say_status :running, "migrations"
-        quietly { rake 'db:migrate' }
+        silence_stream(STDOUT) do
+          silence_stream(STDERR) do
+            silence_warnings { rake 'db:migrate' }
+          end
+        end
       else
         say_status :skipping, "migrations (don't forget to run rake db:migrate)"
       end
@@ -141,7 +145,11 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
 
         cmd = lambda { rake("db:seed #{rake_options.join(' ')}") }
         if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
-          quietly &cmd
+          silence_stream(STDOUT) do
+            silence_stream(STDERR) do
+              silence_warnings &cmd
+            end
+          end
         else
           cmd.call
         end
@@ -153,7 +161,11 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     def load_sample_data
       if @load_sample_data
         say_status :loading, "sample data"
-        quietly { rake 'spree_sample:load' }
+        silence_stream(STDOUT) do
+          silence_stream(STDERR) do
+            silence_warnings { rake 'spree_sample:load' }
+          end
+        end
       else
         say_status :skipping, "sample data (you can always run rake spree_sample:load)"
       end
@@ -204,6 +216,18 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       extensions.detect do |extension|
         File.exists?("#{filename}#{extension}")
       end
+    end
+
+    private
+
+    def silence_stream(stream)
+      old_stream = stream.dup
+      stream.reopen(RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ? 'NUL:' : '/dev/null')
+      stream.sync = true
+      yield
+    ensure
+      stream.reopen(old_stream)
+      old_stream.close
     end
   end
 end

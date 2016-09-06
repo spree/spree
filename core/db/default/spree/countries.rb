@@ -1,6 +1,6 @@
 require 'carmen'
 
-connection      = ActiveRecord::Base.connection
+connection      = ApplicationRecord.connection
 country_inserts = []
 
 country_values = -> do

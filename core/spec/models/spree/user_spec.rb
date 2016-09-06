@@ -31,8 +31,8 @@ describe Spree::LegacyUser, type: :model do
       end
 
       it 'doesnt create new addresses if user has already' do
-        user.update_column(:bill_address_id, create(:address))
-        user.update_column(:ship_address_id, create(:address))
+        user.update_column(:bill_address_id, create(:address).id)
+        user.update_column(:ship_address_id, create(:address).id)
         user.reload
 
         expect do

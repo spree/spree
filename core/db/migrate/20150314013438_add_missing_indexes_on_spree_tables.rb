@@ -1,4 +1,4 @@
-class AddMissingIndexesOnSpreeTables < ActiveRecord::Migration
+class AddMissingIndexesOnSpreeTables < ActiveRecord::Migration[4.2]
   def change
     unless index_exists? :spree_promotion_rules_users,
                          [:user_id, :promotion_rule_id],

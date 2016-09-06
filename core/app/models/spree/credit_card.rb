@@ -9,8 +9,8 @@ module Spree
     after_save :ensure_one_default
 
     # As of rails 4.2 string columns always return strings, we can override it on model level.
-    attribute :month, Type::Integer.new
-    attribute :year,  Type::Integer.new
+    attribute :month, ActiveRecord::Type::Integer.new
+    attribute :year,  ActiveRecord::Type::Integer.new
 
     attr_reader :number
     attr_accessor :encrypted_data,

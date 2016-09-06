@@ -1,4 +1,4 @@
-class SpreeStoreCreditTypes < ActiveRecord::Migration
+class SpreeStoreCreditTypes < ActiveRecord::Migration[4.2]
   def up
     Spree::StoreCreditType.find_or_create_by(name: 'Expiring', priority: 1)
     Spree::StoreCreditType.find_or_create_by(name: 'Non-expiring', priority: 2)

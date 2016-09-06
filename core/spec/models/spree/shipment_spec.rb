@@ -8,7 +8,7 @@ describe Spree::Shipment, type: :model do
                                          currency: 'USD',
                                          number: 'S12345',
                                          paid?: false,
-                                         touch: true }
+                                         touch_later: false }
   let(:shipping_method) { create(:shipping_method, name: "UPS") }
   let(:shipment) do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
@@ -230,7 +230,7 @@ describe Spree::Shipment, type: :model do
       end
 
       it "can't get rates without a shipping address" do
-        shipment.order(ship_address: nil)
+        shipment.order.ship_address = nil
         expect(shipment.refresh_rates).to eq([])
       end
 

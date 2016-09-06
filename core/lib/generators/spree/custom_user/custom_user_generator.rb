@@ -35,7 +35,7 @@ module Spree
     end
 
     def self.next_migration_number(dirname)
-      if ActiveRecord::Base.timestamped_migrations
+      if ApplicationRecord.timestamped_migrations
         sleep 1 # make sure to get a different migration every time
         Time.new.utc.strftime("%Y%m%d%H%M%S")
       else

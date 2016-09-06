@@ -1,4 +1,4 @@
-class AddTypeToReimbursementType < ActiveRecord::Migration
+class AddTypeToReimbursementType < ActiveRecord::Migration[4.2]
   def change
     add_column :spree_reimbursement_types, :type, :string
     add_index :spree_reimbursement_types, :type

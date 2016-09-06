@@ -66,7 +66,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def update_positions
-    ActiveRecord::Base.transaction do
+    ApplicationRecord.transaction do
       params[:positions].each do |id, index|
         model_class.find(id).set_list_position(index)
       end

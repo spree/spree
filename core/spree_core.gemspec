@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'The bare bones necessary for Spree.'
   s.description = 'The bare bones necessary for Spree.'
 
-  s.required_ruby_version     = '>= 2.1.0'
+  s.required_ruby_version     = '>= 2.2.2'
   s.required_rubygems_version = '>= 1.8.23'
 
   s.author      = 'Sean Schofield'
@@ -32,10 +32,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'kaminari', '~> 0.17'
   s.add_dependency 'monetize', '~> 1.1'
   s.add_dependency 'paperclip', '~> 4.3.0'
-  s.add_dependency 'paranoia', '~> 2.1.0'
+  s.add_dependency 'paranoia', '~> 2.2.0.pre'
   s.add_dependency 'premailer-rails'
-  s.add_dependency 'acts-as-taggable-on', '~> 3.4'
-  s.add_dependency 'rails', '~> 4.2.7.1'
+  s.add_dependency 'acts-as-taggable-on', '~> 4.0'
+  s.add_dependency 'rails', '~> 5.0.0'
   s.add_dependency 'ransack', '~> 1.8.0'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.2'

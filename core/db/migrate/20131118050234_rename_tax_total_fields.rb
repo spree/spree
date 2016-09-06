@@ -1,4 +1,4 @@
-class RenameTaxTotalFields < ActiveRecord::Migration
+class RenameTaxTotalFields < ActiveRecord::Migration[4.2]
   def change
     rename_column :spree_line_items, :tax_total, :additional_tax_total
     rename_column :spree_shipments, :tax_total, :additional_tax_total

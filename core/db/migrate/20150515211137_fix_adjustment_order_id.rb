@@ -1,4 +1,4 @@
-class FixAdjustmentOrderId < ActiveRecord::Migration
+class FixAdjustmentOrderId < ActiveRecord::Migration[4.2]
   def change
     say 'Populate order_id from adjustable_id where appropriate'
     execute(<<-SQL.squish)

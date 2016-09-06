@@ -1,4 +1,4 @@
-class CreateSpreeReturnAuthorizationInventoryUnit < ActiveRecord::Migration
+class CreateSpreeReturnAuthorizationInventoryUnit < ActiveRecord::Migration[4.2]
   def change
     create_table :spree_return_authorization_inventory_units do |t|
       t.integer :return_authorization_id

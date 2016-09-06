@@ -1,4 +1,4 @@
-class AddZipcodeRequiredToSpreeCountries < ActiveRecord::Migration
+class AddZipcodeRequiredToSpreeCountries < ActiveRecord::Migration[4.2]
   def change
     add_column :spree_countries, :zipcode_required, :boolean, default: true
     Spree::Country.reset_column_information

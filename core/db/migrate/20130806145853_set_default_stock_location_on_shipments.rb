@@ -1,4 +1,4 @@
-class SetDefaultStockLocationOnShipments < ActiveRecord::Migration
+class SetDefaultStockLocationOnShipments < ActiveRecord::Migration[4.2]
   def change
     if Spree::Shipment.where('stock_location_id IS NULL').count > 0
       location = Spree::StockLocation.find_by(name: 'default') || Spree::StockLocation.first

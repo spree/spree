@@ -1,4 +1,4 @@
-class RemoveDuplicatedIndexesFromMultiColumns < ActiveRecord::Migration
+class RemoveDuplicatedIndexesFromMultiColumns < ActiveRecord::Migration[4.2]
   def change
     remove_index :spree_adjustments, name: "index_adjustments_on_order_id"
     remove_index :spree_option_types_prototypes, :prototype_id

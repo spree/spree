@@ -1,4 +1,4 @@
-class MigratePaymentMethodsDisplay < ActiveRecord::Migration
+class MigratePaymentMethodsDisplay < ActiveRecord::Migration[4.2]
   def change
     Spree::PaymentMethod.all.each do |method|
       if method.display_on.blank?

@@ -1,4 +1,4 @@
-class DefaultVariantWeightToZero < ActiveRecord::Migration
+class DefaultVariantWeightToZero < ActiveRecord::Migration[4.2]
   def up
     Spree::Variant.unscoped.where(weight: nil).update_all("weight = 0.0")
 

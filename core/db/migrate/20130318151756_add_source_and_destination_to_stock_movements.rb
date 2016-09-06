@@ -1,4 +1,4 @@
-class AddSourceAndDestinationToStockMovements < ActiveRecord::Migration
+class AddSourceAndDestinationToStockMovements < ActiveRecord::Migration[4.2]
   def change
     change_table :spree_stock_movements do |t|
       t.references :source, polymorphic: true

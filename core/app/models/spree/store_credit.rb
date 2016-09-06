@@ -238,7 +238,7 @@ module Spree
     def validate_no_amount_used
       if amount_used > 0
         errors.add(:amount_used, :greater_than_zero_restrict_delete)
-        false
+        throw(:abort)
       end
     end
 

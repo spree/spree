@@ -19,15 +19,19 @@ orders << Spree::Order.where(
     order.billing_address = Spree::Address.last
   end
 
-orders[0].line_items.where(
-  variant: Spree::Product.find_by_name!("Ruby on Rails Tote").master,
-  quantity: 1,
-  price: 15.99).first_or_create!
+unless orders[0].line_items.any?
+  orders[0].line_items.new(
+    variant: Spree::Product.find_by_name!("Ruby on Rails Tote").master,
+    quantity: 1,
+    price: 15.99).save!
+end
 
-orders[1].line_items.where(
-  variant: Spree::Product.find_by_name!("Ruby on Rails Bag").master,
-  quantity: 1,
-  price: 22.99).first_or_create!
+unless orders[1].line_items.any?
+  orders[1].line_items.new(
+    variant: Spree::Product.find_by_name!("Ruby on Rails Bag").master,
+    quantity: 1,
+    price: 22.99).save!
+end
 
 orders.each(&:create_proposed_shipments)
 

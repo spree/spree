@@ -7,10 +7,10 @@
     <%= link_to Spree.t(:all), spree.admin_return_authorizations_path %>
   </li>
   <li class="<%= "active" if params[:q][:state_eq] == "authorized" %>">
-    <%= link_to Spree.t(:authorized), params.merge({q: {state_eq: :authorized}}) %>
+    <%= link_to Spree.t(:authorized), params.to_h.merge({q: {state_eq: :authorized}}) %>
   </li>
   <li class="<%= "active" if params[:q][:state_eq] == "canceled" %>">
-    <%= link_to Spree.t(:canceled), params.merge({q: {state_eq: :canceled}}) %>
+    <%= link_to Spree.t(:canceled), params.to_h.merge({q: {state_eq: :canceled}}) %>
   </li>
 <% end %>
 

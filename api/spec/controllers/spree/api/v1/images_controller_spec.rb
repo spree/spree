@@ -80,9 +80,8 @@ module Spree
           expect(product_image.reload.position).to eq(2)
         end
 
-        it "can't update a image without attachment" do
+        it "can't update an image without attachment" do
           api_post :update,
-                   image: { attachment: nil },
                    id: product_image.id, product_id: product.id
           expect(response.status).to eq(422)
         end

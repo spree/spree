@@ -73,17 +73,17 @@ describe Spree::Admin::UsersController, type: :controller do
     end
 
     it "can create a shipping_address" do
-      expect(Spree.user_class).to receive(:new).with(hash_including(
+      expect(Spree.user_class).to receive(:new).with(ActionController::Parameters.new(
         "ship_address_attributes" => { "city" => "New York" }
-      ))
-      spree_post :create, { user: { ship_address_attributes: { city: "New York" } } }
+      ).permit(ship_address_attributes: permitted_address_attributes))
+      spree_post :create, user: { ship_address_attributes: { city: "New York" } }
     end
 
     it "can create a billing_address" do
-      expect(Spree.user_class).to receive(:new).with(hash_including(
+      expect(Spree.user_class).to receive(:new).with(ActionController::Parameters.new(
         "bill_address_attributes" => { "city" => "New York" }
-      ))
-      spree_post :create, { user: { bill_address_attributes: { city: "New York" } } }
+      ).permit(bill_address_attributes: permitted_address_attributes))
+      spree_post :create, user: { bill_address_attributes: { city: "New York" } }
     end
   end
 
@@ -94,17 +94,17 @@ describe Spree::Admin::UsersController, type: :controller do
     end
 
     it "allows shipping address attributes through" do
-      expect(mock_user).to receive(:update_attributes).with(hash_including(
+      expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
         "ship_address_attributes" => { "city" => "New York" }
-      ))
-      spree_put :update, { id: mock_user.id, user: { ship_address_attributes: { city: "New York" } } }
+      ).permit(ship_address_attributes: permitted_address_attributes))
+      spree_put :update, id: mock_user.id, user: { ship_address_attributes: { city: "New York" } }
     end
 
     it "allows billing address attributes through" do
-      expect(mock_user).to receive(:update_attributes).with(hash_including(
+      expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
         "bill_address_attributes" => { "city" => "New York" }
-      ))
-      spree_put :update, { id: mock_user.id, user: { bill_address_attributes: { city: "New York" } } }
+      ).permit(bill_address_attributes: permitted_address_attributes))
+      spree_put :update, id: mock_user.id, user: { bill_address_attributes: { city: "New York" } }
     end
 
     it "allows updating without password resetting" do

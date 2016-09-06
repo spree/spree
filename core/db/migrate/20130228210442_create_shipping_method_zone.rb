@@ -1,5 +1,5 @@
-class CreateShippingMethodZone < ActiveRecord::Migration
-  class ShippingMethodZone < ActiveRecord::Base
+class CreateShippingMethodZone < ActiveRecord::Migration[4.2]
+  class ShippingMethodZone < ApplicationRecord
     self.table_name = 'shipping_methods_zones'
   end
   def up

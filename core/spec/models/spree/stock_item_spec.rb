@@ -5,6 +5,8 @@ describe Spree::StockItem, type: :model do
 
   subject { stock_location.stock_items.order(:id).first }
 
+  it { is_expected.to delegate_method(:product).to(:variant) }
+
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10
   end

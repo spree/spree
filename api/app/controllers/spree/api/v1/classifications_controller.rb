@@ -12,7 +12,7 @@ module Spree
           # Because position we get back is 0-indexed.
           # acts_as_list is 1-indexed.
           classification.insert_at(params[:position].to_i + 1)
-          render nothing: true
+          head :ok
         end
       end
     end
