@@ -567,7 +567,9 @@ describe Spree::Product, type: :model do
     end
 
     it "changes updated_at" do
-      expect { product.discontinue! }.to change { product.updated_at }
+      Timecop.scale(1000) do
+        expect { product.discontinue! }.to change { product.updated_at }
+      end
     end
   end
 
