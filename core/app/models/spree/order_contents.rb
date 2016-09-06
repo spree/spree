@@ -7,10 +7,10 @@ module Spree
     end
 
     def add(variant, quantity = 1, options = {})
-      timestamp = Time.current
-      line_item = add_to_line_item(variant, quantity, options)
-      options[:line_item_created] = true if timestamp <= line_item.created_at
-      after_add_or_remove(line_item, options)
+      result = add_to_line_item(variant, quantity, options)
+      options[:line_item_created] = result[:line_item_created]
+
+      after_add_or_remove(result[:line_item], options)
     end
 
     def remove(variant, quantity = 1, options = {})
@@ -76,11 +76,13 @@ module Spree
 
     def add_to_line_item(variant, quantity, options = {})
       line_item = grab_line_item_by_variant(variant, false, options)
+      line_item_created = false
 
       if line_item
         line_item.quantity += quantity.to_i
         line_item.currency = currency unless currency.nil?
       else
+        line_item_created = true
         opts = ActionController::Parameters.new(options.to_h).
                permit(PermittedAttributes.line_item_attributes).to_h.
                merge( { currency: order.currency } )
@@ -91,7 +93,8 @@ module Spree
       end
       line_item.target_shipment = options[:shipment] if options.has_key? :shipment
       line_item.save!
-      line_item
+
+      { line_item: line_item, line_item_created: line_item_created }
     end
 
     def remove_from_line_item(variant, quantity, options = {})
