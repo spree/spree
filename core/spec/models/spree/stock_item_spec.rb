@@ -226,9 +226,11 @@ describe Spree::StockItem, type: :model do
 
   describe "#after_touch" do
     it "touches its variant" do
-      expect do
-        subject.touch
-      end.to change { subject.variant.updated_at }
+      Timecop.scale(1000) do
+        expect do
+          subject.touch
+        end.to change { subject.variant.updated_at }
+      end
     end
   end
 
