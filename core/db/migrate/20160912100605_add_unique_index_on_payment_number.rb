@@ -1,4 +1,4 @@
-class AddUniqueIndexOnPaymentNumber < ActiveRecord::Migration
+class AddUniqueIndexOnPaymentNumber < ActiveRecord::Migration[4.2]
   def change
     non_unique_number_payments = Spree::Payment.all.group("number").having("count(*) > ?", 1)
     non_unique_numbers = []
