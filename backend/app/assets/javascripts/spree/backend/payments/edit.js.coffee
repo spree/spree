@@ -23,8 +23,8 @@ jQuery ($) ->
       jqXHR.done (data) =>
         @data = data
       jqXHR.fail ->
-        response = $.parseJSON(jqXHR.responseText)
-        show_flash('error', response.error)
+        response = jqXHR.responseJSON and jqXHR.responseJSON.error or jqXHR.statusText
+        show_flash('error', response)
 
     amount:         -> @data.amount
     display_amount: -> @data.display_amount
