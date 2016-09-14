@@ -9,6 +9,8 @@ machine:
 dependencies:
   override:
     - ./build-ci.rb install
+  pre:
+    - gem install bundler
 test:
   override:
     - './build-ci.rb test':
