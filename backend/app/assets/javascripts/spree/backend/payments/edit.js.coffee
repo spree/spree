@@ -12,10 +12,14 @@ jQuery ($) ->
         callback() if data.state in ['checkout', 'pending']
 
     update: (attributes, success) ->
+      @updating = true
+
       jqXHR = $.ajax
         type: 'PUT'
         url:  @url.toString()
         data: { payment: attributes }
+      jqXHR.always =>
+        @updating = false
       jqXHR.done (data) =>
         @data = data
       jqXHR.fail ->
@@ -57,8 +61,6 @@ jQuery ($) ->
         .one
           click: (event) ->
             event.preventDefault()
-          mousedown: ->
-            $(@).data('clicked', true)
           mouseup: =>
             @[action]()
 
@@ -115,8 +117,9 @@ jQuery ($) ->
       amount.html(@$new_input(amount.find('span').width()))
 
     save: (event) ->
-      @payment.update(amount: @$input().val())
-        .done(=> @show())
+      unless @payment.updating
+        @payment.update(amount: @$input().val())
+          .done(=> @show())
 
     cancel: @::show
 
@@ -127,8 +130,7 @@ jQuery ($) ->
         .width(width)
         .one
           blur: =>
-            clicked = (@$buttons().filter -> $(@).data('clicked')).length
-            @save() unless clicked
+            @save()
         .css('text-align': 'right')
 
     $input: ->
