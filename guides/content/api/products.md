@@ -8,12 +8,12 @@ description: Use the Spree Commerce storefront API to access Product data.
 List products visible to the authenticated user. If the user is not an admin, they will only be able to see products which have an `available_on` date in the past. If the user is an admin, they are able to see all products.
 
 ```text
-GET /api/products```
+GET /api/v1/products```
 
 Products are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/products?page=2```
+GET /api/v1/products?page=2```
 
 ### Parameters
 
@@ -41,7 +41,7 @@ end %>
 To search for a particular product, make a request like this:
 
 ```text
-GET /api/products?q[name_cont]=Spree```
+GET /api/v1/products?q[name_cont]=Spree```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -62,24 +62,24 @@ end %>
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
 ```text
-GET /api/products?q[s]=sku%20asc```
+GET /api/v1/products?q[s]=sku%20asc```
 
 It is also possible to sort results using an associated object's field.
 
 ```text
-GET /api/products?q[s]=shipping_category_name%20asc```
+GET /api/v1/products?q[s]=shipping_category_name%20asc```
 
 ## Show
 
 To view the details for a single product, make a request using that product\'s permalink:
 
 ```text
-GET /api/products/a-product```
+GET /api/v1/products/a-product```
 
 You may also query by the product\'s id attribute:
 
 ```text
-GET /api/products/1```
+GET /api/v1/products/1```
 
 Note that the API will attempt a permalink lookup before an ID lookup.
 
@@ -97,7 +97,7 @@ Note that the API will attempt a permalink lookup before an ID lookup.
 You can learn about the potential attributes (required and non-required) for a product by making this request:
 
 ```text
-GET /api/products/new```
+GET /api/v1/products/new```
 
 ### Response
 
@@ -117,12 +117,12 @@ GET /api/products/new```
 To create a new product through the API, make this request with the necessary parameters:
 
 ```text
-POST /api/products```
+POST /api/v1/products```
 
 For instance, a request to create a new product called \"Headphones\" with a price of $100 would look like this:
 
 ```text
-POST /api/products?product[name]=Headphones&product[price]=100&product[shipping_category_id]=1```
+POST /api/v1/products?product[name]=Headphones&product[price]=100&product[shipping_category_id]=1```
 
 ### Successful response
 
@@ -147,12 +147,12 @@ POST /api/products?product[name]=Headphones&product[price]=100&product[shipping_
 To update a product\'s details, make this request with the necessary parameters:
 
 ```text
-PUT /api/products/a-product```
+PUT /api/v1/products/a-product```
 
 For instance, to update a product\'s name, send it through like this:
 
 ```text
-PUT /api/products/a-product?product[name]=Headphones```
+PUT /api/v1/products/a-product?product[name]=Headphones```
 
 ### Successful response
 
@@ -177,7 +177,7 @@ PUT /api/products/a-product?product[name]=Headphones```
 To delete a product, make this request:
 
 ```text
-DELETE /api/products/a-product```
+DELETE /api/v1/products/a-product```
 
 This request, much like a typical product \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the product, as well as all of that product\'s variants.
 

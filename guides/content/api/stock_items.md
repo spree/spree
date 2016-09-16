@@ -10,7 +10,7 @@ description: Use the Spree Commerce storefront API to access StockItem data.
 To return a paginated list of all stock items for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
 ```text
-GET /api/stock_locations/1/stock_items```
+GET /api/v1/stock_locations/1/stock_items```
 
 ### Parameters
 
@@ -37,7 +37,7 @@ end %>
 To search for a particular stock item, make a request like this:
 
 ```text
-GET /api/stock_locations/1/stock_items?q[variant_id_eq]=10```
+GET /api/v1/stock_locations/1/stock_items?q[variant_id_eq]=10```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `variant_id_eq` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -58,7 +58,7 @@ end %>
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
 ```text
-GET /api/stock_locations/1/stock_items?q[s]=variant_id%20asc```
+GET /api/v1/stock_locations/1/stock_items?q[s]=variant_id%20asc```
 
 ## Show
 
@@ -67,7 +67,7 @@ GET /api/stock_locations/1/stock_items?q[s]=variant_id%20asc```
 To view the details for a single stock item, make a request using that stock item's id, along with its `stock_location_id`:
 
 ```text
-GET /api/stock_locations/1/stock_items/2```
+GET /api/v1/stock_locations/1/stock_items/2```
 
 ### Successful Response
 
@@ -85,7 +85,7 @@ GET /api/stock_locations/1/stock_items/2```
 To create a new stock item for a stock location, make this request with the necessary parameters:
 
 ```text
-POST /api/stock_locations/1/stock_items```
+POST /api/v1/stock_locations/1/stock_items```
 
 For instance, a request to create a new stock item with a count_on_hand of 10 and a variant_id of 1 would look like this::
 
@@ -124,7 +124,7 @@ value as it's stored in the database.
 To update a stock item's details, make this request with the necessary parameters.
 
 ```text
-PUT /api/stock_locations/1/stock_items/2```
+PUT /api/v1/stock_locations/1/stock_items/2```
 
 For instance, to update a stock item's count_on_hand, send it through like this:
 
@@ -162,7 +162,7 @@ Or alternatively with the force attribute to replace the current count_on_hand w
 To delete a stock item, make this request:
 
 ```text
-DELETE /api/stock_locations/1/stock_items/2```
+DELETE /api/v1/stock_locations/1/stock_items/2```
 
 ### Response
 

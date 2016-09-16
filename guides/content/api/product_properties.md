@@ -11,11 +11,11 @@ List
 
 Retrieve a list of all product properties for a product by making this request:
 
-    GET /api/products/1/product_properties
+    GET /api/v1/products/1/product_properties
 
 Product properties are paginated and can be iterated through by passing along a `page` parameter:
 
-    GET /api/products/1/product_properties?page=2
+    GET /api/v1/products/1/product_properties?page=2
 
 ### Parameters
 
@@ -39,7 +39,7 @@ end %>
 
 To search for a particular product property, make a request like this:
 
-    GET /api/products/1/product_properties?q[property_name_cont]=bag
+    GET /api/v1/products/1/product_properties?q[property_name_cont]=bag
 
 The searching API is provided through the Ransack gem which Spree depends on. The `property_name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -59,17 +59,17 @@ end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/products/1/product_properties?q[s]=property_name%20desc
+    GET /api/v1/products/1/product_properties?q[s]=property_name%20desc
 
 ## Show
 
 To get information about a single product property, make a request like this:
 
-    GET /api/products/1/product_properties/1
+    GET /api/v1/products/1/product_properties/1
 
 Or you can use a property's name:
 
-    GET /api/products/1/product_properties/size
+    GET /api/v1/products/1/product_properties/size
 
 ### Response
 
@@ -82,7 +82,7 @@ Or you can use a property's name:
 
 To create a new product property, make a request like this:
 
-    POST /api/products/1/product_properties?product_property[property_name]=size&product_property[value]=10
+    POST /api/v1/products/1/product_properties?product_property[property_name]=size&product_property[value]=10
 
 If a property with that name does not already exist, then it will automatically be created.
 
@@ -95,11 +95,11 @@ If a property with that name does not already exist, then it will automatically 
 
 To update an existing product property, make a request like this:
 
-    PUT /api/products/1/product_properties/size?product_property[value]=10
+    PUT /api/v1/products/1/product_properties/size?product_property[value]=10
 
 You may also use a property's id if you know it:
 
-    PUT /api/products/1/product_properties/1?product_property[value]=10
+    PUT /api/v1/products/1/product_properties/1?product_property[value]=10
 
 ### Response
 
@@ -110,7 +110,7 @@ You may also use a property's id if you know it:
 
 To delete a product property, make a request like this:
 
-    DELETE /api/products/1/product_properties/size
+    DELETE /api/v1/products/1/product_properties/size
 
 <%= headers 204 %>
 

@@ -8,7 +8,7 @@ description: Use the Spree Commerce storefront API to access Checkout data.
 ## Introduction
 
 The checkout API functionality can be used to advance an existing order's state.
-Sending a `PUT` request to `/api/checkouts/:number` will advance an order's
+Sending a `PUT` request to `/api/v1/checkouts/:number` will advance an order's
 state or, failing that, report any errors.
 
 The following sections will walk through creating a new order and advancing an order from its `cart` state to its `complete` state.
@@ -17,7 +17,7 @@ The following sections will walk through creating a new order and advancing an o
 
 To create a new, empty order, make this request:
 
-    POST /api/orders.json
+    POST /api/v1/orders.json
 
 ### Response
 
@@ -87,7 +87,7 @@ Pass line item attributes like this:
 
 to this api endpoint:
 
-    POST /api/orders/:number/line_items.json
+    POST /api/v1/orders/:number/line_items.json
 
 <%= headers 201 %>
 <pre class="highlight"><code class="language-javascript">{
@@ -162,11 +162,11 @@ to this api endpoint:
 
 To update an order you must be authenticated as the order's user, and perform a request like this:
 
-    PUT /api/orders/:number.json
+    PUT /api/v1/orders/:number.json
 
 If you know the order's token, then you can also update the order:
 
-    PUT /api/orders/:number.json?order_token=abcdef123456
+    PUT /api/v1/orders/:number.json?order_token=abcdef123456
 
 Requests performed as a non-admin or non-authorized user will be met with a 401 response from this action.
 
@@ -174,7 +174,7 @@ Requests performed as a non-admin or non-authorized user will be met with a 401 
 
 To transition an order to its next step, make a request like this:
 
-    PUT /api/checkouts/:number/next.json
+    PUT /api/v1/checkouts/:number/next.json
 
 If the request is successfull you'll get a 200 response using the same order
 template shown when creating the order with the state updated. See example of
@@ -191,7 +191,7 @@ To advance to the next state, `delivery`, the order will first need both a shipp
 
 In order to update the addresses, make this request with the necessary parameters:
 
-    PUT /api/checkouts/:number.json
+    PUT /api/v1/checkouts/:number.json
 
 As an example, here are the required address attributes and how they should be formatted:
 
@@ -347,17 +347,17 @@ To advance to the next state, `payment`, you will need to select a shipping rate
 for each shipment for the order. These were returned when transitioning to the
 `delivery` step. If you need want to see them again, make the following request:
 
-    GET /api/orders/:number.json
+    GET /api/v1/orders/:number.json
 
 Spree will select a shipping rate by default so you can advance to the `payment`
 state by making this request:
 
-    PUT /api/checkouts/:number/next.json
+    PUT /api/v1/checkouts/:number/next.json
 
 If the order doesn't have an assigned shipping rate, or you want to choose a different
 shipping rate make the following request to select one and advance the order's state:
 
-    PUT /api/checkouts/:number.json
+    PUT /api/v1/checkouts/:number.json
 
 With parameters such as these:
 
@@ -437,7 +437,7 @@ via api/checkouts is slight different. See example:_
 
 If the order already has a payment, you can advance it to the `confirm` state by making this request:
 
-    PUT /api/checkouts/:number.json
+    PUT /api/v1/checkouts/:number.json
 
 For more information on payments, view the [payments documentation](payments).
 
@@ -482,6 +482,6 @@ For more information on payments, view the [payments documentation](payments).
 
 Now the order is ready to be advanced to the final state, `complete`. To accomplish this, make this request:
 
-    PUT /api/checkouts/:number.json
+    PUT /api/v1/checkouts/:number.json
 
 You should get a 200 response with all the order info.
