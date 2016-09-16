@@ -8,7 +8,7 @@ description: Use the Spree Commerce storefront API to access Address data.
 Retrieve details about a particular address:
 
 ```text
-GET /api/orders/1/addresses/1```
+GET /api/v1/orders/1/addresses/1```
 
 ### Response
 
@@ -20,7 +20,7 @@ GET /api/orders/1/addresses/1```
 To update an address, make a request like this:
 
 ```text
-PUT /api/orders/1/addresses/1?address[firstname]=Ryan```
+PUT /api/v1/orders/1/addresses/1?address[firstname]=Ryan```
 
 This request will update the `firstname` field for an address to the value of \"Ryan\"
 

@@ -11,11 +11,11 @@ description: Use the Spree Commerce storefront API to access ReturnAuthorization
 
 To list all return authorizations for an order, make a request like this:
 
-    GET /api/orders/R1234567/return_authorizations
+    GET /api/v1/orders/R1234567/return_authorizations
 
 Return authorizations are paginated and can be iterated through by passing along a `page` parameter:
 
-    GET /api/orders/R1234567/return_authorizations?page=2
+    GET /api/v1/orders/R1234567/return_authorizations?page=2
 
 ### Parameters
 
@@ -39,7 +39,7 @@ end %>
 
 To search for a particular return authorization, make a request like this:
 
-    GET /api/orders/R1234567/return_authorizations?q[reason_cont]=damage
+    GET /api/v1/orders/R1234567/return_authorizations?q[reason_cont]=damage
 
 The searching API is provided through the Ransack gem which Spree depends on. The `reason_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -49,7 +49,7 @@ The search results are paginated.
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-    GET /api/orders/R1234567/return_authorizations?q[s]=amount%20asc
+    GET /api/v1/orders/R1234567/return_authorizations?q[s]=amount%20asc
 
 ### Response
 
@@ -65,7 +65,7 @@ end %>
 
 To get information for a single return authorization, make a request like this:
 
-     GET /api/orders/R1234567/return_authorizations/1
+     GET /api/v1/orders/R1234567/return_authorizations/1
 
 ### Response
 
@@ -78,12 +78,12 @@ To get information for a single return authorization, make a request like this:
 
 To create a return authorization, make a request like this:
 
-     POST /api/orders/R1234567/return_authorizations
+     POST /api/v1/orders/R1234567/return_authorizations
 
 For instance, if you want to create a return authorization with a number, make
 this request:
 
-     POST /api/orders/R1234567/return_authorizations?return_authorization[number]=123456
+     POST /api/v1/orders/R1234567/return_authorizations?return_authorization[number]=123456
 
 ### Response
 
@@ -96,11 +96,11 @@ this request:
 
 To update a return authorization, make a request like this:
 
-     PUT /api/orders/R1234567/return_authorizations/1
+     PUT /api/v1/orders/R1234567/return_authorizations/1
 
 For instance, to update a return authorization's number, make this request:
 
-     PUT /api/orders/R1234567/return_authorizations/1?return_authorization[number]=123456
+     PUT /api/v1/orders/R1234567/return_authorizations/1?return_authorization[number]=123456
 
 ### Response
 
@@ -113,7 +113,7 @@ For instance, to update a return authorization's number, make this request:
 
 To delete a return authorization, make a request like this:
 
-    DELETE /api/orders/R1234567/return_authorizations/1
+    DELETE /api/v1/orders/R1234567/return_authorizations/1
 
 ### Response
 
