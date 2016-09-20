@@ -64,4 +64,24 @@ describe Spree::ProductsController, :type => :controller do
       expect(response.header["Location"]).to include("taxon_id=#{taxon.id}")
     end
   end
+
+  context "index products" do
+    it "calls includes when the retrieved_products object responds to it" do
+      searcher = double("Searcher")
+      allow(controller).to receive_messages build_searcher: searcher
+      expect(searcher).to receive_message_chain("retrieve_products.includes")
+
+      spree_get :index
+    end
+
+    it "does not call includes when it's not available" do
+      searcher = double("Searcher")
+      allow(controller).to receive_messages build_searcher: searcher
+      allow(searcher).to receive(:retrieve_products).and_return([])
+
+      spree_get :index
+
+      expect(assigns(:products)).to eq([])
+    end
+  end
 end
