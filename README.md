@@ -1,9 +1,10 @@
 
 ![Spree](spree_logo.png)
 
-* [Join our Slack](http://slack.spreecommerce.com/)
+* Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.com)
+* Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 
 [![Build Status](https://travis-ci.org/spree/spree.svg?branch=master)](https://travis-ci.org/spree/spree)
