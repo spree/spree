@@ -327,9 +327,10 @@ $(document).ready(function(){
         helper: fixHelper,
         placeholder: 'ui-sortable-placeholder',
         update: function(event, ui) {
+          var tbody = this;
           $("#progress").show();
           positions = {};
-          $.each($('table.sortable tbody tr'), function(position, obj){
+          $.each($('tr', tbody), function(position, obj){
             reg = /spree_(\w+_?)+_(\d+)/;
             parts = reg.exec($(obj).prop('id'));
             if (parts) {
