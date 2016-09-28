@@ -64,7 +64,9 @@ describe Spree::Zone, type: :model do
 
       context "when both zones have the same number of members" do
         it "should return the zone that was created first" do
-          expect(Spree::Zone.match(address)).to eq(country_zone)
+          Timecop.scale(100) do
+            expect(Spree::Zone.match(address)).to eq(country_zone)
+          end
         end
       end
 
