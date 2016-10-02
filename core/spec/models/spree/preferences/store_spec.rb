@@ -37,7 +37,7 @@ describe Spree::Preferences::Store do
     Rails.cache.clear
     @store.stub(:should_persist? => false)
     @store.get(:test, true).should be true
-    Rails.cache.exist?(:test).should be_nil
+    Rails.cache.exist?(:test).should be false
   end
 
   it "should return nil when key can't be found and fallback value is not supplied" do
