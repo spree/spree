@@ -1,6 +1,10 @@
 $.fn.productAutocomplete = function () {
   'use strict';
 
+  function formatProduct(product) {
+    return Select2.util.escapeMarkup(product.name);
+  }
+
   this.select2({
     minimumInputLength: 1,
     multiple: true,
@@ -32,12 +36,8 @@ $.fn.productAutocomplete = function () {
         };
       }
     },
-    formatResult: function (product) {
-      return product.name;
-    },
-    formatSelection: function (product) {
-      return product.name;
-    }
+    formatResult: formatProduct,
+    formatSelection: formatProduct
   });
 };
 

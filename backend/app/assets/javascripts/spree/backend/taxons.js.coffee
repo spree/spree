@@ -1,5 +1,9 @@
 $(document).ready ->
   window.productTemplate = Handlebars.compile($('#product_template').text());
+
+  formatTaxon = (taxon) ->
+    Select2.util.escapeMarkup(taxon.pretty_name)
+
   $('#taxon_products').sortable();
   $('#taxon_products').on "sortstop", (event, ui) ->
     $.ajax
@@ -28,10 +32,8 @@ $(document).ready ->
           more = page < data.pages;
           results: data['taxons'],
           more: more
-      formatResult: (taxon) ->
-        taxon.pretty_name;
-      formatSelection: (taxon) ->
-        taxon.pretty_name;
+      formatResult: formatTaxon,
+      formatSelection: formatTaxon
 
   $('#taxon_id').on "change", (e) ->
     el = $('#taxon_products')

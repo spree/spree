@@ -38,24 +38,24 @@
       <% have_states = !address.country.states.empty? %>
       <%= form.label :state, Spree.t(:state) %><span class='required' id=<%="#{address_id}state-required"%>>*</span><br/>
 
-      <% state_elements = [
-         form.collection_select(:state_id, address.country.states,
-                            :id, :name,
-                            {:include_blank => true},
-                            {:class => have_states ? 'required' : 'hidden',
-                            :disabled => !have_states}) +
-         form.text_field(:state_name,
-                            :class => !have_states ? 'required' : 'hidden',
-                            :disabled => have_states)
-         ].join.gsub('"', "'").gsub("\n", "")
-      %>
-      <%= javascript_tag do -%>
-        $('#<%="#{address_id}state" %>').append("<%== state_elements %>");
-      <% end %>
-    </p>
+      <span class="js-address-fields" style="display: none;">
+        <%= form.collection_select(
+          :state_id, address.country.states, :id, :name,
+          {include_blank: true},
+          {
+            class: have_states ? 'required' : 'hidden',
+            disabled: !have_states
+          }) %>
+        <%= form.text_field(
+          :state_name,
+          class: !have_states ? 'required' : 'hidden',
+          disabled: have_states) %>
+      </span>
+
       <noscript>
         <%= form.text_field :state_name, :class => 'required' %>
       </noscript>
+    </p>
   <% end %>
 
   <p class="field" id=<%="#{address_id}zipcode" %>>
