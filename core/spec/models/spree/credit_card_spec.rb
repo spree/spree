@@ -222,6 +222,10 @@ describe Spree::CreditCard, type: :model do
       credit_card.cc_type = ''
       expect(credit_card.cc_type).to eq('master')
 
+      credit_card.number = '2223000010309703'
+      credit_card.cc_type = ''
+      expect(credit_card.cc_type).to eq('master')
+
       credit_card.number = '378282246310005'
       credit_card.cc_type = ''
       expect(credit_card.cc_type).to eq('american_express')
