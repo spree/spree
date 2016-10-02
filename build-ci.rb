@@ -82,7 +82,16 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system(%w[bundle exec rspec spec --order random])
+    system(%w[bundle exec rspec] + rspec_arguments)
+  end
+
+  def rspec_arguments
+    args = []
+    args += %w[--order random]
+    if report_dir = ENV['CIRCLE_TEST_REPORTS']
+      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{name}.xml]
+    end
+    args
   end
 
   # Execute system command via execve
