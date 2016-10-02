@@ -25,7 +25,7 @@ $(document).ready(function() {
           }
         },
         results: function(data, page) {
-          return { results: data }
+          return { results: data.users }
         }
       },
       dropdownCssClass: 'customer_search',
@@ -37,7 +37,7 @@ $(document).ready(function() {
         $('#guest_checkout_false').prop("checked", true);
         $('#guest_checkout_false').prop("disabled", false);
 
-        return customer.email;
+        return Select2.util.escapeMarkup(customer.email);
       }
     })
   }

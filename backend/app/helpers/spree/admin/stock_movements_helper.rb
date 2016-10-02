@@ -15,9 +15,9 @@ module Spree
 
       def display_variant(stock_movement)
         variant = stock_movement.stock_item.variant
-        output = variant.name
-        output += "<br>(#{variant.options_text})" unless variant.options_text.blank?
-        output.html_safe
+        output = [variant.name]
+        output << variant.options_text unless variant.options_text.blank?
+        safe_join(output, "<br />".html_safe)
       end
     end
   end

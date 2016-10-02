@@ -1,4 +1,4 @@
-collection(@users)
+collection(@users => :users)
 attributes :email, :id
 address_fields = [:firstname, :lastname,
                   :address1, :address2,

@@ -27,11 +27,15 @@ module Spree
         parts << variant.product.name
         parts << "(#{variant.options_text})" if variant.options_text.present?
         parts << line_item.display_total
-        parts.join("<br>").html_safe
+        safe_join(parts, "<br />".html_safe)
       end
 
       def display_shipment(shipment)
-        "#{Spree.t(:shipment)} ##{shipment.number}<br>#{shipment.display_cost}".html_safe
+        parts = [
+          "#{Spree.t(:shipment)} ##{shipment.number}",
+          shipment.display_cost
+        ]
+        safe_join(parts, "<br />".html_safe)
       end
 
       def display_order(order)
