@@ -23,7 +23,7 @@ module Spree
       validates :name, presence: true
     end
 
-    scope :with_payment_profile, -> { where('gateway_customer_profile_id IS NOT NULL') }
+    scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :default, -> { where(default: true) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
