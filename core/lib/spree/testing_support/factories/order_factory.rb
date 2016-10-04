@@ -81,6 +81,7 @@ FactoryGirl.define do
                 shipment.inventory_units.update_all state: 'shipped'
                 shipment.update_column('state', 'shipped')
               end
+              order.update_column('shipment_state', 'shipped')
               order.reload
             end
           end
