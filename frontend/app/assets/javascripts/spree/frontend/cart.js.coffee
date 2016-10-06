@@ -1,3 +1,5 @@
+#= require spree/frontend/coupon_manager
+
 Spree.ready ($) ->
   if ($ 'form#update-cart').is('*')
     ($ 'form#update-cart a.delete').show().one 'click', ->
@@ -5,8 +7,19 @@ Spree.ready ($) ->
       ($ this).parents('form').first().submit()
       false
 
-  ($ 'form#update-cart').submit ->
+  ($ 'form#update-cart').submit (event) ->
     ($ 'form#update-cart #update-button').attr('disabled', true)
+    input =
+      couponCodeField: $('#order_coupon_code')
+      couponStatus: $('#coupon_status')
+
+    if new CouponManager(input).applyCoupon()
+      @submit()
+      return true
+    else
+      ($ 'form#update-cart #update-button').attr('disabled', false)
+      event.preventDefault()
+      return false
 
 Spree.fetch_cart = ->
   $.ajax
