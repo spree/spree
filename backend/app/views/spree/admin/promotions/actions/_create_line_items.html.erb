@@ -1,6 +1,6 @@
 <div class="panel-body calculator-fields">
   <% promotion_action.promotion_action_line_items.each do |item| %>
-    <strong><%= item.quantity %> x <%= item.variant.product.name %></strong>
+    <strong><%= item.quantity %> x <%= item.name %></strong>
     <%= item.variant.options_text %>
   <% end %>
 

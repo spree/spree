@@ -30,8 +30,8 @@
                 <%= mini_image(item.variant) %>
               </td>
               <td class="item-name">
-                <%= item.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
-                <% if item.variant.sku.present? %>
+                <%= item.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+                <% if item.sku.present? %>
                   <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
                 <% end %>
               </td>
