@@ -1,7 +1,7 @@
 <% order.line_items.each do |line_item| %>
 ga('ec:addProduct', {               // Provide product details in a productFieldObject.
-  'id': '<%= j (line_item.variant.sku || line_item.variant_id) %>',  // Product ID (string).
-  'name': '<%= j line_item.variant.product.name %>', // Product name (string).
+  'id': '<%= j (line_item.sku || line_item.variant_id) %>',  // Product ID (string).
+  'name': '<%= j line_item.name %>', // Product name (string).
   'category': '',            // Product category (string).
   'brand': '',                // Product brand (string).
   'variant': '',               // Product variant (string).
