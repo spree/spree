@@ -794,4 +794,16 @@ describe Spree::Variant, type: :model do
       end
     end
   end
+
+  describe '#created_at' do
+    it 'creates variant with created_at timestamp' do
+      expect(variant.created_at).to_not be_nil
+    end
+  end
+
+  describe '#updated_at' do
+    it 'creates variant with updated_at timestamp' do
+      expect(variant.updated_at).to_not be_nil
+    end
+  end
 end
