@@ -207,7 +207,7 @@ module Spree
     end
 
     def credit_allocation_memo
-      "This is a credit from store credit ID #{id}"
+      Spree.t(:credit_allocation_memo, resource_id: id)
     end
 
     def store_event

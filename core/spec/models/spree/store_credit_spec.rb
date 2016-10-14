@@ -119,6 +119,10 @@ describe 'StoreCredit' do
     end
   end
 
+  describe '#credit_allocation_memo' do
+    it { expect(store_credit.credit_allocation_memo).to eq("This is a credit from store credit ID %{resource_id}") }
+  end
+
   describe '#amount_remaining' do
     context 'the amount_used is not defined' do
       context 'the authorized amount is not defined' do
