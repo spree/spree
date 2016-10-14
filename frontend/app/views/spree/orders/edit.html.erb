@@ -31,6 +31,7 @@
             <label>
               <%= order_form.label :coupon_code %>
               <%= order_form.text_field :coupon_code, size: '30', class: 'form-control' %>
+              <%= button_tag Spree.t(:coupon_code_apply), class: 'btn btn-default' %>
             </label>
           </div>
         </div>
@@ -53,4 +54,3 @@
   Spree.current_order_id = "<%= @order.number %>"
   Spree.current_order_token = "<%= @order.guest_token %>"
 </script>
-

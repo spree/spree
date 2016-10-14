@@ -614,6 +614,7 @@ en:
       US: United States of America
     coupon: Coupon
     coupon_code: Coupon code
+    coupon_code_apply: Apply
     coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
     coupon_code_better_exists: The previously applied coupon code results in a better deal
