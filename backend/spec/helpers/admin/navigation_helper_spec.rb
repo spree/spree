@@ -2,6 +2,11 @@
 require 'spec_helper'
 
 describe Spree::Admin::NavigationHelper, type: :helper do
+  before(:each) do
+    # `spree` route helper is not accessible in `type: :helper` hence extending it explicitly
+    # https://github.com/rspec/rspec-rails/issues/1626
+    helper.extend Spree::TestingSupport::UrlHelpers
+  end
 
   describe "#tab" do
     before do

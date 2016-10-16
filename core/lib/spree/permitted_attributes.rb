@@ -45,7 +45,7 @@ module Spree
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
-    @@inventory_unit_attributes = [:shipment, :variant_id]
+    @@inventory_unit_attributes = [:shipment, :shipment_id, :variant_id]
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
 

@@ -1,4 +1,4 @@
-class MigrateTaxCategoriesToLineItems < ActiveRecord::Migration
+class MigrateTaxCategoriesToLineItems < ActiveRecord::Migration[4.2]
   def change
     Spree::LineItem.find_each do |line_item|
       next if line_item.variant.nil?

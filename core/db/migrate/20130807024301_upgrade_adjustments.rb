@@ -1,4 +1,4 @@
-class UpgradeAdjustments < ActiveRecord::Migration
+class UpgradeAdjustments < ActiveRecord::Migration[4.2]
   def up
     # Temporarily make originator association available
     Spree::Adjustment.class_eval do

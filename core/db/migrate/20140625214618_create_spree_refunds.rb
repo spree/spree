@@ -1,4 +1,4 @@
-class CreateSpreeRefunds < ActiveRecord::Migration
+class CreateSpreeRefunds < ActiveRecord::Migration[4.2]
   def change
     create_table :spree_refunds do |t|
       t.integer :payment_id

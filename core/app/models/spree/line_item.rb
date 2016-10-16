@@ -108,6 +108,11 @@ module Spree
       assign_attributes opts
     end
 
+    # Remove variant default_scope `deleted_at: nil`
+    def variant
+      Spree::Variant.unscoped { super }
+    end
+
     private
 
     def ensure_valid_quantity
@@ -136,7 +141,7 @@ module Spree
     end
 
     def destroy_inventory_units
-      inventory_units.destroy_all
+      throw(:abort) unless inventory_units.destroy_all
     end
 
     def update_adjustments

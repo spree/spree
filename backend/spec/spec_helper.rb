@@ -42,6 +42,8 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/shoulda_matcher_configuration'
 
+require 'spree/core/controller_helpers/strong_parameters'
+
 require 'paperclip/matchers'
 
 require 'capybara-screenshot/rspec'
@@ -51,7 +53,7 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
 # Set timeout to something high enough to allow CI to pass
-Capybara.default_max_wait_time = 10
+Capybara.default_max_wait_time = 30
 
 RSpec.configure do |config|
   config.color = true
@@ -80,8 +82,8 @@ RSpec.configure do |config|
     end
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
-    if ActiveRecord::Base.connection.open_transactions < 0
-      ActiveRecord::Base.connection.increment_open_transactions
+    if ApplicationRecord.connection.open_transactions < 0
+      ApplicationRecord.connection.increment_open_transactions
     end
 
     DatabaseCleaner.start
@@ -89,10 +91,11 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
+    # wait_for_ajax sometimes fails so we should clean db first to get rid of false failed specs
+    DatabaseCleaner.clean
+
     # Ensure js requests finish processing before advancing to the next test
     wait_for_ajax if RSpec.current_example.metadata[:js]
-
-    DatabaseCleaner.clean
   end
 
   config.around do |example|
@@ -113,6 +116,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+
+  config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
 
   config.include Paperclip::Shoulda::Matchers
 

@@ -1,4 +1,4 @@
-class AddUpdatedAtToSpreeCountries < ActiveRecord::Migration
+class AddUpdatedAtToSpreeCountries < ActiveRecord::Migration[4.2]
   def up
     add_column :spree_countries, :updated_at, :datetime
   end

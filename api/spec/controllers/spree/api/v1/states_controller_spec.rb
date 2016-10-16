@@ -40,14 +40,14 @@ module Spree
       end
 
       it "paginates when page parameter is passed through" do
-        expect(scope).to receive(:page).with(1).and_return(scope)
+        expect(scope).to receive(:page).with("1").and_return(scope)
         expect(scope).to receive(:per).with(nil).and_return(scope)
         api_get :index, page: 1
       end
 
       it "paginates when per_page parameter is passed through" do
         expect(scope).to receive(:page).with(nil).and_return(scope)
-        expect(scope).to receive(:per).with(25).and_return(scope)
+        expect(scope).to receive(:per).with("25").and_return(scope)
         api_get :index, per_page: 25
       end
     end

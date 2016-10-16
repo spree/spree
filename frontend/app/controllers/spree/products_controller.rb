@@ -52,7 +52,8 @@ module Spree
         # If an old id or a numeric id was used to find the record,
         # we should do a 301 redirect that uses the current friendly id.
         if params[:id] != @product.friendly_id
-          params.merge!(id: @product.friendly_id)
+          params[:id] = @product.friendly_id
+          params.permit!
           return redirect_to url_for(params), status: :moved_permanently
         end
       end

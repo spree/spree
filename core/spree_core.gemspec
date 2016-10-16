@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'The bare bones necessary for Spree.'
   s.description = 'The bare bones necessary for Spree.'
 
-  s.required_ruby_version     = '>= 2.1.0'
+  s.required_ruby_version     = '>= 2.2.2'
   s.required_rubygems_version = '>= 1.8.23'
 
   s.author      = 'Sean Schofield'
@@ -19,12 +19,12 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files`.split("\n")
   s.require_path = 'lib'
 
-  s.add_dependency 'activemerchant', '~> 1.49'
-  s.add_dependency 'acts_as_list', '~> 0.7.4'
+  s.add_dependency 'activemerchant', '~> 1.59'
+  s.add_dependency 'acts_as_list', '~> 0.8'
   s.add_dependency 'awesome_nested_set', '~> 3.1.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.10.1'
-  s.add_dependency 'deface', '~> 1.0.0'
+  s.add_dependency 'deface', '~> 1.0'
   s.add_dependency 'ffaker', '~> 2.2.0'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
   s.add_dependency 'friendly_id', '~> 5.1.0'
@@ -32,10 +32,10 @@ Gem::Specification.new do |s|
   s.add_dependency 'kaminari', '~> 0.17'
   s.add_dependency 'monetize', '~> 1.1'
   s.add_dependency 'paperclip', '~> 4.3.0'
-  s.add_dependency 'paranoia', '~> 2.1.0'
+  s.add_dependency 'paranoia', '~> 2.2.0.pre'
   s.add_dependency 'premailer-rails'
-  s.add_dependency 'acts-as-taggable-on', '~> 3.4'
-  s.add_dependency 'rails', '~> 4.2.7.1'
+  s.add_dependency 'acts-as-taggable-on', '~> 4.0'
+  s.add_dependency 'rails', '~> 5.0.0'
   s.add_dependency 'ransack', '~> 1.8.0'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.2'

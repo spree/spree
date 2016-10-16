@@ -224,7 +224,7 @@ module Spree
       #
       # Don't allow sort_column, a variable coming from params,
       # to be anything but a column in the database
-      if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' && !column_names.include?(sort_column)
+      if ApplicationRecord.connection.adapter_name == 'PostgreSQL' && !column_names.include?(sort_column)
         all
       else
         distinct
@@ -256,7 +256,7 @@ module Spree
         ids_or_records_or_names.flatten.map { |t|
           case t
           when Integer then Taxon.find_by(id: t)
-          when ActiveRecord::Base then t
+          when ApplicationRecord then t
           when String
             Taxon.find_by(name: t) ||
             Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first

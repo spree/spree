@@ -9,6 +9,8 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://spreecommerce.com'
   s.license       = 'BSD-3'
 
+  s.required_ruby_version = '>= 2.2.2'
+
   s.files         = `git ls-files`.split($\)
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})

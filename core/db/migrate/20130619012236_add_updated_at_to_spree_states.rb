@@ -1,4 +1,4 @@
-class AddUpdatedAtToSpreeStates < ActiveRecord::Migration
+class AddUpdatedAtToSpreeStates < ActiveRecord::Migration[4.2]
   def up
     add_column :spree_states, :updated_at, :datetime
   end

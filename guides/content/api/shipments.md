@@ -10,12 +10,12 @@ description: Use the Spree Commerce storefront API to access Shipment data.
 Retrieve a list of the current user's shipments by making this request:
 
 ```text
-GET /api/shipments/mine```
+GET /api/v1/shipments/mine```
 
 Shipments are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/shipments/mine?page=2```
+GET /api/v1/shipments/mine?page=2```
 
 ### Parameters
 
@@ -48,7 +48,7 @@ The following attributes are required when creating a shipment:
 To create a shipment, make a request like this:
 
 ```text
-POST /api/shipments?shipment[order_id]=R1234567```
+POST /api/v1/shipments?shipment[order_id]=R1234567```
 
 The `order_id` is the number of the order to create a shipment for and is provided as part of the URL string as shown above. The shipment will be created at the selected stock location and include the variant selected.
 
@@ -72,7 +72,7 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 To update shipment information, make a request like this:
 
 ```text
-PUT /api/shipments/H123456789?shipment[tracking]=TRK9000```
+PUT /api/v1/shipments/H123456789?shipment[tracking]=TRK9000```
 
 ### Parameters
 
@@ -81,7 +81,7 @@ unlock
 
 To update order ship method inspect order/shipments/shipping_rates for available shipping_rate_id values and use following api call:
 
-    PUT /api/shipments/H123456789?shipment[selected_shipping_rate_id]=162&shipment[unlock]=yes
+    PUT /api/v1/shipments/H123456789?shipment[selected_shipping_rate_id]=162&shipment[unlock]=yes
 
 ### Response
 
@@ -94,11 +94,11 @@ To update order ship method inspect order/shipments/shipping_rates for available
 
 To mark a shipment as ready, make a request like this:
 
-    PUT /api/shipments/H123456789/ready
+    PUT /api/v1/shipments/H123456789/ready
 
 You may choose to update shipment attributes with this request as well:
 
-    PUT /api/shipments/H123456789/ready?shipment[number]=1234567
+    PUT /api/v1/shipments/H123456789/ready?shipment[number]=1234567
 
 ### Response
 
@@ -111,11 +111,11 @@ You may choose to update shipment attributes with this request as well:
 
 To mark a shipment as shipped, make a request like this:
 
-    PUT /api/shipments/H123456789/ship
+    PUT /api/v1/shipments/H123456789/ship
 
 You may choose to update shipment attributes with this request as well:
 
-    PUT /api/shipments/H123456789/ship?shipment[tracking]=1234567
+    PUT /api/v1/shipments/H123456789/ship?shipment[tracking]=1234567
 
 ### Response
 
@@ -128,7 +128,7 @@ You may choose to update shipment attributes with this request as well:
 
 To add a variant to a shipment, make a request like this:
 
-    PUT /api/shipments/H123456789/add?variant_id=1&quantity=1
+    PUT /api/v1/shipments/H123456789/add?variant_id=1&quantity=1
 
 ### Response
 
@@ -141,7 +141,7 @@ To add a variant to a shipment, make a request like this:
 
 To remove a variant from a shipment, make a request like this:
 
-    PUT /api/shipments/H123456789/remove?variant_id=1&quantity=1
+    PUT /api/v1/shipments/H123456789/remove?variant_id=1&quantity=1
 
 ### Response
 

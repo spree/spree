@@ -7,8 +7,8 @@ module Spree
         def initialize(product, product_params, options = {})
           @product = product || Spree::Product.new(product_params)
 
-          @product_attrs = product_params
-          @variants_attrs = options[:variants_attrs] || []
+          @product_attrs = product_params.to_h
+          @variants_attrs = (options[:variants_attrs] || []).map(&:to_h)
           @options_attrs = options[:options_attrs] || []
         end
 

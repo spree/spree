@@ -7,12 +7,7 @@ Spree::Core::Engine.add_routes do
   get '/checkout/:state', to: 'checkout#edit', as: :checkout_state
   get '/checkout', to: 'checkout#edit', as: :checkout
 
-  populate_redirect = redirect do |params, request|
-    request.flash[:error] = Spree.t(:populate_get_error)
-    request.referer || '/cart'
-  end
-
-  get '/orders/populate', to: populate_redirect
+  get '/orders/populate', to: 'orders#populate_redirect'
 
   resources :orders, except: [:index, :new, :create, :destroy] do
     post :populate, on: :collection

@@ -216,12 +216,6 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.preferences[:is_hash]).to eql({1 => 2, 3 => 4})
       end
 
-      it "with ancestor of a hash" do
-        ancestor_of_hash = ActionController::Parameters.new({ key: :value })
-        @a.set_preference(:is_hash, ancestor_of_hash)
-        expect(@a.preferences[:is_hash]).to eql({"key" => :value})
-      end
-
       it "with string" do
         @a.set_preference(:is_hash, "{\"0\"=>{\"answer\"=>\"1\", \"value\"=>\"No\"}}")
         expect(@a.preferences[:is_hash]).to be_is_a(Hash)
@@ -276,7 +270,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
   describe "persisted preferables" do
     before(:all) do
-      class CreatePrefTest < ActiveRecord::Migration
+      class CreatePrefTest < ActiveRecord::Migration[4.2]
         def self.up
           create_table :pref_tests do |t|
             t.string :col
@@ -305,6 +299,8 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     before(:each) do
+      # load PrefTest table
+      PrefTest.first
       @pt = PrefTest.create
     end
 

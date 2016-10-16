@@ -49,13 +49,13 @@ describe Spree::Api::BaseController, type: :controller do
 
     it "with an invalid API key" do
       request.headers["X-Spree-Token"] = "fake_key"
-      get :index, {}
+      get :index
       expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
       expect(response.status).to eq(401)
     end
 
     it "using an invalid token param" do
-      get :index, token: "fake_key"
+      get :index, params: { token: "fake_key" }
       expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
     end
   end
@@ -64,7 +64,7 @@ describe Spree::Api::BaseController, type: :controller do
     expect(subject).to receive(:authenticate_user).and_return(true)
     expect(subject).to receive(:load_user_roles).and_return(true)
     expect(subject).to receive(:index).and_raise(ActionController::ParameterMissing.new('foo'))
-    get :index, token: 'exception-message'
+    get :index, params: { token: 'exception-message' }
     expect(json_response).to eql('exception' => 'param is missing or the value is empty: foo')
   end
 
@@ -74,7 +74,7 @@ describe Spree::Api::BaseController, type: :controller do
     resource = Spree::Product.new
     resource.valid? # get some errors
     expect(subject).to receive(:index).and_raise(ActiveRecord::RecordInvalid.new(resource))
-    get :index, token: 'exception-message'
+    get :index, params: { token: 'exception-message' }
     expect(json_response).to eql('exception' => "Validation failed: Name can't be blank, Shipping Category can't be blank, Price can't be blank")
   end
 

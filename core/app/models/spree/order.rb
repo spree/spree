@@ -609,20 +609,6 @@ module Spree
 
     private
 
-    def create_store_credit_payment(payment_method, credit, amount)
-      payments.create!(
-        source: credit,
-        payment_method: payment_method,
-        amount: amount,
-        state: 'checkout',
-        response_code: credit.generate_authorization_code
-      )
-    end
-
-    def store_credit_amount(credit, total)
-      [credit.amount_remaining, total].min
-    end
-
     def link_by_email
       self.email = user.email if self.user
     end

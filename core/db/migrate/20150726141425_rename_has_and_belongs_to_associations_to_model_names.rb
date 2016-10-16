@@ -1,4 +1,4 @@
-class RenameHasAndBelongsToAssociationsToModelNames < ActiveRecord::Migration
+class RenameHasAndBelongsToAssociationsToModelNames < ActiveRecord::Migration[4.2]
   def change
     {
       'spree_option_types_prototypes' => 'spree_option_type_prototypes',

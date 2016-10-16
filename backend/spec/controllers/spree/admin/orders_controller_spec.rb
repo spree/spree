@@ -147,9 +147,26 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(flash[:success]).to eql('All adjustments successfully opened!')
       end
 
-      it "redirects back" do
-        spree_post :open_adjustments, id: order.number
-        expect(response).to redirect_to(:back)
+      context 'when referer' do
+        before(:each) do
+          request.env['HTTP_REFERER'] = root_url
+        end
+
+        it "redirects back" do
+          spree_post :open_adjustments, id: order.number
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context 'when no referer' do
+        before(:each) do
+          request.env['HTTP_REFERER'] = nil
+        end
+
+        it 'refirects to fallback location' do
+          spree_post :open_adjustments, id: order.number
+          expect(response).to redirect_to(admin_order_adjustments_url(order))
+        end
       end
     end
 
@@ -172,9 +189,26 @@ describe Spree::Admin::OrdersController, type: :controller do
         expect(flash[:success]).to eql('All adjustments successfully closed!')
       end
 
-      it "redirects back" do
-        spree_post :close_adjustments, id: order.number
-        expect(response).to redirect_to(:back)
+      context 'when referer' do
+        before(:each) do
+          request.env['HTTP_REFERER'] = root_url
+        end
+
+        it "redirects back" do
+          spree_post :close_adjustments, id: order.number
+          expect(response).to redirect_to(root_url)
+        end
+      end
+
+      context 'when no referer' do
+        before(:each) do
+          request.env['HTTP_REFERER'] = nil
+        end
+
+        it 'refirects to fallback location' do
+          spree_post :close_adjustments, id: order.number
+          expect(response).to redirect_to(admin_order_adjustments_url(order))
+        end
       end
     end
   end

@@ -1,4 +1,4 @@
-class CorrectSomePolymorphicIndexAndAddMoreMissing < ActiveRecord::Migration
+class CorrectSomePolymorphicIndexAndAddMoreMissing < ActiveRecord::Migration[4.2]
   def change
     add_index :spree_addresses, :country_id
     add_index :spree_addresses, :state_id

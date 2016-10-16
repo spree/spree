@@ -645,7 +645,9 @@ describe Spree::Variant, type: :model do
     end
 
     it "changes updated_at" do
-      expect { variant.discontinue! }.to change { variant.updated_at }
+      Timecop.scale(1000) do
+        expect { variant.discontinue! }.to change { variant.updated_at }
+      end
     end
   end
 
@@ -790,6 +792,18 @@ describe Spree::Variant, type: :model do
           end
         end
       end
+    end
+  end
+
+  describe '#created_at' do
+    it 'creates variant with created_at timestamp' do
+      expect(variant.created_at).to_not be_nil
+    end
+  end
+
+  describe '#updated_at' do
+    it 'creates variant with updated_at timestamp' do
+      expect(variant.updated_at).to_not be_nil
     end
   end
 end

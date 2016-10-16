@@ -41,7 +41,7 @@ module Spree
       object = instance_variable_get('@'+controller_name.singularize)
       meta = {}
 
-      if object.kind_of? ActiveRecord::Base
+      if object.kind_of? ApplicationRecord
         meta[:keywords] = object.meta_keywords if object[:meta_keywords].present?
         meta[:description] = object.meta_description if object[:meta_description].present?
       end

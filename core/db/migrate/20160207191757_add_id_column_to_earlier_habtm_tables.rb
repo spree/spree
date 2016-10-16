@@ -1,4 +1,4 @@
-class AddIdColumnToEarlierHabtmTables < ActiveRecord::Migration
+class AddIdColumnToEarlierHabtmTables < ActiveRecord::Migration[4.2]
   def up
     add_column :spree_option_type_prototypes, :id, :primary_key
     add_column :spree_option_value_variants, :id, :primary_key

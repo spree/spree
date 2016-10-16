@@ -1,4 +1,4 @@
-class RemoveSpreeConfigurations < ActiveRecord::Migration
+class RemoveSpreeConfigurations < ActiveRecord::Migration[4.2]
   def up
     drop_table "spree_configurations"
   end

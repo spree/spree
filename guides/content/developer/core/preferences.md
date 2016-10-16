@@ -10,7 +10,7 @@ Spree Preferences support general application configuration and preferences per 
 To implement preferences for a model, simply add a new column called `preferences`. This is an example migration for the `spree_products` table:
 
 ```ruby
-class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration
+class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration[4.2]
   def up
     add_column :spree_products, :preferences, :text
   end

@@ -4,7 +4,7 @@ module Spree
     with_options inverse_of: :inventory_units do
       belongs_to :variant, class_name: "Spree::Variant"
       belongs_to :order, class_name: "Spree::Order"
-      belongs_to :shipment, class_name: "Spree::Shipment", touch: true
+      belongs_to :shipment, class_name: "Spree::Shipment", touch: true, optional: true
       belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
       belongs_to :line_item, class_name: "Spree::LineItem"
     end
@@ -19,9 +19,9 @@ module Spree
     scope :returned, -> { where state: 'returned' }
     scope :backordered_per_variant, ->(stock_item) do
       includes(:shipment, :order)
-        .where("spree_shipments.state != 'canceled'").references(:shipment)
+        .where.not(spree_shipments: { state: 'canceled' })
         .where(variant_id: stock_item.variant_id)
-        .where('spree_orders.completed_at is not null')
+        .where.not(spree_orders: { completed_at: nil })
         .backordered.order("spree_orders.completed_at ASC")
     end
 

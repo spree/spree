@@ -9,6 +9,8 @@ machine:
   pre:
     - sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
 dependencies:
+  pre:
+    - gem install bundler -v 1.12.5
   override:
     - ./build-ci.rb install
 test:

@@ -17,9 +17,9 @@ module Spree
         expect(json_response['state']).to eq @inventory_unit.state
       end
 
-      it "updates an inventory unit (only shipment is accessable by default)" do
+      it "updates an inventory unit" do
         api_put :update, id: @inventory_unit.id,
-                         inventory_unit: { shipment: nil }
+                         inventory_unit: { shipment_id: nil }
         expect(json_response['shipment_id']).to be_nil
       end
 
@@ -27,8 +27,7 @@ module Spree
         it 'if supplied with :fire param' do
           api_put :update, id: @inventory_unit.id,
                            fire: 'ship',
-                           inventory_unit: { shipment: nil }
-
+                           inventory_unit: { shipment: { tracking: 'foobar' } }
           expect(json_response['state']).to eq 'shipped'
         end
 

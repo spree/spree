@@ -1,4 +1,4 @@
-class AddMoreIndexes < ActiveRecord::Migration
+class AddMoreIndexes < ActiveRecord::Migration[4.2]
   def change
     add_index :spree_payment_methods, [:id, :type]
     add_index :spree_calculators, [:id, :type]

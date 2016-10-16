@@ -260,11 +260,11 @@ module Spree
       expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
       allow(order).to receive(:associate_user!)
       allow(order).to receive_message_chain(:contents, :add).and_return(line_item = double('LineItem'))
-      expect(line_item).to receive(:update_attributes!).with("special" => true)
+      expect(line_item).to receive(:update_attributes!).with(hash_including("special" => "foo"))
 
       allow(controller).to receive_messages(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
       api_post :create, order: {
-        line_items: [{ variant_id: variant.to_param, quantity: 5, special: true }]
+        line_items: [{ variant_id: variant.to_param, quantity: 5, special: "foo" }]
       }
       expect(response.status).to eq(201)
     end
@@ -581,7 +581,7 @@ module Spree
       end
 
       it "responds with orders updated_at with miliseconds precision" do
-        if ActiveRecord::Base.connection.adapter_name == "Mysql2"
+        if ApplicationRecord.connection.adapter_name == "Mysql2"
           skip "MySQL does not support millisecond timestamps."
         else
           skip "Probable need to make it call as_json. See https://github.com/rails/rails/commit/0f33d70e89991711ff8b3dde134a61f4a5a0ec06"

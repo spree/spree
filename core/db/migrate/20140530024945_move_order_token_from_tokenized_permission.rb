@@ -1,4 +1,4 @@
-class MoveOrderTokenFromTokenizedPermission < ActiveRecord::Migration
+class MoveOrderTokenFromTokenizedPermission < ActiveRecord::Migration[4.2]
   class Spree::TokenizedPermission < Spree::Base
     belongs_to :permissable, polymorphic: true
   end

@@ -5,6 +5,8 @@ describe Spree::StockItem, type: :model do
 
   subject { stock_location.stock_items.order(:id).first }
 
+  it { is_expected.to delegate_method(:product).to(:variant) }
+
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10
   end
@@ -224,9 +226,11 @@ describe Spree::StockItem, type: :model do
 
   describe "#after_touch" do
     it "touches its variant" do
-      expect do
-        subject.touch
-      end.to change { subject.variant.updated_at }
+      Timecop.scale(1000) do
+        expect do
+          subject.touch
+        end.to change { subject.variant.updated_at }
+      end
     end
   end
 

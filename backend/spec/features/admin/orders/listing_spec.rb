@@ -196,11 +196,10 @@ describe "Orders Listing", type: :feature do
         select "45", from: "per_page"
         wait_for_ajax
         expect(page).to have_select("per_page", selected: "45")
+        expect(page).to have_selector(:css, "select.per-page-selected-45")
       end
 
       it "adds per_page parameter to url" do
-        # this redundant expect(page) is required for Circle CI
-        expect(page).to have_select("per_page", selected: "45")
         expect(current_url).to match(/per_page\=45/)
       end
 
@@ -215,6 +214,7 @@ describe "Orders Listing", type: :feature do
         select "60", from: "per_page"
         wait_for_ajax
         expect(page).to have_select("per_page", selected: "60")
+        expect(page).to have_selector(:css, "select.per-page-selected-60")
         expect(page).not_to have_content("R100")
         within_row(1) { expect(page).to have_content("R200") }
         expect(current_url).to match(/per_page\=60/)

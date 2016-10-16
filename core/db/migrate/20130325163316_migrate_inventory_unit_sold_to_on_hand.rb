@@ -1,4 +1,4 @@
-class MigrateInventoryUnitSoldToOnHand < ActiveRecord::Migration
+class MigrateInventoryUnitSoldToOnHand < ActiveRecord::Migration[4.2]
   def up
     Spree::InventoryUnit.where(state: 'sold').update_all(state: 'on_hand')
   end

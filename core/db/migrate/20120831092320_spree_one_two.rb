@@ -1,9 +1,9 @@
-class SpreeOneTwo < ActiveRecord::Migration
+class SpreeOneTwo < ActiveRecord::Migration[4.2]
   def up
     # This migration is just a compressed version of all the previous
     # migrations for spree_core. Do not run it if one of the core tables
     # already exists. Assume the best.
-    return if table_exists?(:spree_addresses)
+    return if data_source_exists?(:spree_addresses)
 
 
     create_table :spree_activators do |t|

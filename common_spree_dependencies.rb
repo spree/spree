@@ -3,8 +3,8 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'coffee-rails', '~> 4.1.1'
-gem 'sass-rails', '~> 5.0.0'
+gem 'coffee-rails'
+gem 'sass-rails'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
@@ -29,6 +29,7 @@ group :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.4'
+  gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 2.1'
   gem 'poltergeist', '~> 1.10'
@@ -37,7 +38,7 @@ group :test do
   gem 'mutant-rspec', '~> 0.8'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'shoulda-callback-matchers', '~> 1.1'
-  gem 'test_after_commit', '~> 1.1'
+  gem 'rails-controller-testing'
 end
 
 group :test, :development do

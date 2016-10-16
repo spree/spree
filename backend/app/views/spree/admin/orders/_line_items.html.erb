@@ -22,7 +22,7 @@
               <%= mini_image(item.variant) %>
             </td>
             <td class="line-item-name text-center">
-              <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+              <%= item.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
             </td>
             <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
             <td class="line-item-qty-show text-center">

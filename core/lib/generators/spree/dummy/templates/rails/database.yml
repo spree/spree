@@ -1,6 +1,9 @@
 <% if agent_number = ENV['TC_AGENT_NUMBER']
 database_prefix = agent_number + '_'
 end %>
+<% if options[:lib_name]
+  lib_name = options[:lib_name].gsub('/', '_')
+end %>
 <% db_password = ENV['DB_PASSWORD'] %>
 <% db_username = ENV['DB_USERNAME'] %>
 <% case ENV['DB']
@@ -28,13 +31,13 @@ mysql: &mysql
 
 development:
   <<: *mysql
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
+  database: <%= database_prefix %><%= lib_name %>_spree_development
 test:
   <<: *mysql
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
+  database: <%= database_prefix %><%= lib_name %>_spree_test
 production:
   <<: *mysql
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
+  database: <%= database_prefix %><%= lib_name %>_spree_production
 <% when 'postgres' %>
 <% db_host = ENV['DB_HOST'] %>
 postgres: &postgres
@@ -52,13 +55,13 @@ postgres: &postgres
 
 development:
   <<: *postgres
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_development
+  database: <%= database_prefix %><%= lib_name %>_spree_development
 test:
   <<: *postgres
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_test
+  database: <%= database_prefix %><%= lib_name %>_spree_test
 production:
   <<: *postgres
-  database: <%= database_prefix %><%= options[:lib_name] %>_spree_production
+  database: <%= database_prefix %><%= lib_name %>_spree_production
 <% else %>
 development:
   adapter: sqlite3

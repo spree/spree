@@ -1,4 +1,4 @@
-class AddKindToZone < ActiveRecord::Migration
+class AddKindToZone < ActiveRecord::Migration[4.2]
   def change
     add_column :spree_zones, :kind, :string
     add_index :spree_zones, :kind

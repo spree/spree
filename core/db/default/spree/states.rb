@@ -1,4 +1,4 @@
-connection = ActiveRecord::Base.connection
+connection = ApplicationRecord.connection
 state_inserts = []
 
 state_values = -> do

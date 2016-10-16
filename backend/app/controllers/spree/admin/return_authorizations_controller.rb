@@ -10,7 +10,7 @@ module Spree
       def fire
         @return_authorization.send("#{params[:e]}!")
         flash[:success] = Spree.t(:return_authorization_updated)
-        redirect_to :back
+        redirect_back fallback_location: spree.admin_return_authorization_url(@return_authorization)
       end
 
       private
@@ -40,7 +40,7 @@ module Spree
       end
 
       def load_return_authorization_reasons
-        @reasons = Spree::ReturnAuthorizationReason.active
+        @reasons = Spree::ReturnAuthorizationReason.active.to_a
         # Only allow an inactive reason if it's already associated to the RMA
         if @return_authorization.reason && !@return_authorization.reason.active?
           @reasons << @return_authorization.reason
