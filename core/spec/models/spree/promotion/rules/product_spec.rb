@@ -6,9 +6,9 @@ describe Spree::Promotion::Rules::Product do
   context "#eligible?(order)" do
     let(:order) { Spree::Order.new }
 
-    it "should be eligible if there are no products" do
+    it "should not be eligible if there are no products" do
       rule.stub(:eligible_products => [])
-      rule.should be_eligible(order)
+      rule.should_not be_eligible(order)
     end
 
     before do
