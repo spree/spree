@@ -61,6 +61,7 @@ Spree.ready ($) ->
           )
 
           coupon_status.removeClass();
+          result = false
           $.ajax({
             async: false,
             method: "PUT",
@@ -68,12 +69,13 @@ Spree.ready ($) ->
             success: (data) ->
               coupon_code_field.val('')
               coupon_status.addClass("success").html("Coupon code applied successfully.")
-              return true
+              result = true
             error: (xhr) ->
               handler = JSON.parse(xhr.responseText)
               coupon_status.addClass("error").html(handler["error"])
               $('.continue').attr('disabled', false)
-              return false
+              result = false
           })
+          return result
 
   Spree.onPayment()
