@@ -211,14 +211,6 @@ module Spree
         gateway_error e
       end
 
-      def invalidate_old_payments
-        unless has_invalid_state?
-          order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
-            payment.invalidate!
-          end
-        end
-      end
-
       def split_uncaptured_amount
         if uncaptured_amount > 0
           order.payments.create! amount: uncaptured_amount,
