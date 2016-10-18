@@ -56,6 +56,9 @@ module Spree
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
+    
+    has_many :line_items, through: :variants_including_master
+    has_many :orders, through: :line_items
 
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
