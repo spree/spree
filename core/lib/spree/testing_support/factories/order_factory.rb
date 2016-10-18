@@ -18,6 +18,8 @@ FactoryGirl.define do
 
       transient do
         line_items_count 5
+        shipment_cost 100
+        shipping_method_filter Spree::ShippingMethod::DISPLAY_ON_FRONT_END
       end
 
       after(:create) do |order, evaluator|
@@ -33,8 +35,8 @@ FactoryGirl.define do
       factory :completed_order_with_totals do
         state 'complete'
 
-        after(:create) do |order|
-          order.refresh_shipment_rates
+        after(:create) do |order, evaluator|
+          order.refresh_shipment_rates(evaluator.shipping_method_filter)
           order.update_column(:completed_at, Time.now)
         end
 
