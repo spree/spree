@@ -467,6 +467,38 @@ describe "Checkout", inaccessible: true do
     end
   end
 
+  context "when order is completed" do
+    let!(:user) { create(:user) }
+
+    let!(:order) do
+      order = OrderWalkthrough.up_to(:delivery)
+
+      order.reload
+      order.user = user
+      order.update!
+      order
+    end
+
+    before(:each) do
+      Spree::CheckoutController.any_instance.stub(:current_order => order)
+      Spree::CheckoutController.any_instance.stub(:try_spree_current_user => user)
+      Spree::OrdersController.any_instance.stub(:try_spree_current_user => user)
+
+      visit spree.checkout_state_path(:delivery)
+      click_button "Save and Continue"
+      click_button "Save and Continue"
+    end
+
+    it "displays a thank you message", js: true do
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
+    end
+
+    it "does not display a thank you message on that order future visits", js: true do
+      visit spree.order_path(order)
+      expect(page).to_not have_content(Spree.t(:thank_you_for_your_order))
+    end
+  end
+
   def fill_in_address
     address = "order_bill_address_attributes"
     fill_in "#{address}_firstname", with: "Ryan"

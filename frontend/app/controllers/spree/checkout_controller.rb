@@ -37,7 +37,7 @@ module Spree
         if @order.completed?
           session[:order_id] = nil
           flash.notice = Spree.t(:order_processed_successfully)
-          flash[:commerce_tracking] = "nothing special"
+          flash[:order_completed] = true
           redirect_to completion_route
         else
           redirect_to checkout_state_path(@order.state)
@@ -72,7 +72,7 @@ module Spree
       end
 
       def load_order_with_lock
-        @order = current_order(lock: true) 
+        @order = current_order(lock: true)
         redirect_to spree.cart_path and return unless @order
       end
 
