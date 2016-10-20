@@ -88,7 +88,12 @@ module Spree
 
       def approve
         @order.approved_by(try_spree_current_user)
-        flash[:success] = Spree.t(:order_approved)
+        if @order.approved?
+          @order.next
+          flash[:success] = Spree.t(:order_approved)
+        else
+          flash[:alert] = Spree.t(:order_not_approved)
+        end
         redirect_to :back
       end
 

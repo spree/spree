@@ -29,10 +29,33 @@ describe Spree::Admin::OrdersController do
     before { Spree::Order.stub :find_by_number! => order }
 
     context "#approve" do
-      it "approves an order" do
-        expect(order).to receive(:approved_by).with(controller.try_spree_current_user)
-        spree_put :approve, id: order.number
-        expect(flash[:success]).to eq Spree.t(:order_approved)
+      subject { spree_put :approve, id: order.number }
+
+      before do
+        allow(order).to receive(:next).and_return(true)
+        allow(order).to receive(:approved_by).and_return(true)
+      end
+
+      context "when approving an order succeeds" do
+        before { allow(order).to receive(:approved?).and_return(true) }
+        it "responds appropriately" do
+          subject
+          expect(flash[:success]).to eq "Order approved"
+        end
+
+        it "tries to move the order forward" do
+          expect(order).to receive(:next)
+          subject
+        end
+      end
+
+      context "when approving an order doesn't succeed" do
+        before { allow(order).to receive(:approved?).and_return(false) }
+
+        it "responds appropriately" do
+          subject
+          expect(flash[:alert]).to eq "Order could not be approved at this time"
+        end
       end
     end
 
