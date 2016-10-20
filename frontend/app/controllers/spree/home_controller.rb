@@ -4,8 +4,7 @@ module Spree
     respond_to :html
 
     def index
-      @searcher = build_searcher(params)
-      @products = @searcher.retrieve_products
+      @products = build_searcher(:Product, params).search
       @taxonomies = Spree::Taxonomy.includes(root: :children)
     end
   end
