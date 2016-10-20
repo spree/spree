@@ -158,6 +158,10 @@ table {
         border-color: very-light($color-error, 15);
       }
 
+      &.ineligible {
+        text-decoration: line-through;
+      }
+
       &.ui-sortable-placeholder td {
         border: 1px solid $color-2 !important;
         visibility: visible !important;

@@ -19,6 +19,11 @@ module Spree
 
       end
 
+      def spree_adjustment_tr_class(adjustment)
+        'ineligible' unless adjustment.eligible
+      end
+
+
       private
 
       def display_line_item(line_item)
