@@ -24,6 +24,7 @@ $(document).ready ->
           token: Spree.api_key,
           q:
             name_cont: term
+          token: Spree.api_key
         results: (data, page) ->
           more = page < data.pages;
           results: data['taxons'],
