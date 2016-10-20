@@ -15,7 +15,7 @@
   </ul>
 <% end %>
 
-<%= form_for @product, :url => admin_product_url(@product), :method => :put do |f| %>
+<%= form_for @product.becomes(Spree::Product), :url => admin_product_url(@product), :method => :put do |f| %>
   <fieldset class="no-border-top">
     <div class="add_product_properties" data-hook="add_product_properties"></div>
 
