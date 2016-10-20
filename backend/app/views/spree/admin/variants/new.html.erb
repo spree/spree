@@ -1,6 +1,6 @@
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @variant } %>
 
-<%= form_for [:admin, @product, @variant] do |f| %>
+<%= form_for [:admin, @product.becomes(Spree::Product), @variant] do |f| %>
   <fieldset data-hook="admin_variant_new_form">
     <legend align="center"><%= Spree.t(:new_variant) %></legend>
     <%= render :partial => 'form', :locals => { :f => f } %>
