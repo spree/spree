@@ -1,4 +1,4 @@
-if defined?(Deface)
+if defined?(Deface) && @user.respond_to?(:spree_api_key)
   Deface::Override.new(:virtual_path => "spree/admin/users/edit",
                        :name => "api_admin_user_edit_form",
                        :insert_after => "[data-hook='admin_user_edit_general_settings']",
