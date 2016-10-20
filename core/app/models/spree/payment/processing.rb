@@ -33,6 +33,7 @@ module Spree
         result = gateway_action(source, :purchase, :complete)
         # This won't be called if gateway_action raises a GatewayError
         capture_events.create!(amount: amount)
+        update_uncaptured_amount
       end
 
       # Takes the amount in cents to capture.
