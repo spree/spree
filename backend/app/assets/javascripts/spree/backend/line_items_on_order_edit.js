@@ -43,7 +43,10 @@ adjustLineItems = function(order_number, variant_id, quantity){
         window.Spree.advanceOrder();
         window.location.reload();
     }).fail(function(msg) {
-        alert(msg.responseJSON.message)
+      if (typeof msg.responseJSON.message != 'undefined') {
+        alert(msg.responseJSON.message);
+      } else {
+        alert(msg.responseJSON.exception);
+      }
     });
-
 }
