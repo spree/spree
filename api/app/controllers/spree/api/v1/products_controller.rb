@@ -109,7 +109,7 @@ module Spree
             end
 
             params.require(:product).permit(
-              variants_key => [permitted_variant_attributes, :id],
+              variants_key: [permitted_variant_attributes, :id],
             ).delete(variants_key) || []
           end
 

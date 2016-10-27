@@ -20,7 +20,7 @@ module Spree
     end
 
     it 'transfers variants between 2 locations' do
-      variants = { variant => 5 }
+      variants = { variant: 5 }
 
       subject.transfer(source_location,
                        destination_location,
@@ -37,7 +37,7 @@ module Spree
     end
 
     it 'receive new inventory (from a vendor)' do
-      variants = { variant => 5 }
+      variants = { variant: 5 }
 
       subject.receive(destination_location, variants)
 
