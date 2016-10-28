@@ -52,6 +52,10 @@ module Spree
 
       private
 
+      def collection
+        @collection = super.order(position: :asc)
+      end
+      
       def load_data
         @providers = Gateway.providers.sort{|p1, p2| p1.name <=> p2.name }
       end
