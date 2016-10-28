@@ -8,6 +8,7 @@ machine:
     version: 2.2.4
 dependencies:
   override:
+    - bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
     - ./build-ci.rb install
 test:
   override:
