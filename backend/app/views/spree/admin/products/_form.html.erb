@@ -171,7 +171,7 @@
     <%= f.field_container :option_types, class: ['form-group'] do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
 
-      <% if can? :modify, Spree::OptionType %>
+      <% if can? :modify, Spree::ProductOptionType %>
         <%= f.hidden_field :option_type_ids, value: @product.option_type_ids.join(',') %>
       <% elsif @product.option_types.any? %>
         <ul class="text_list">
