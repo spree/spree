@@ -27,12 +27,13 @@ module Spree
       # to build a package because it would be empty. Plus we avoid errors down
       # the stack because it would assume the stock location has stock items
       # for the given order
-      # 
+      #
       # Returns an array of Package instances
       def build_packages(packages = Array.new)
         StockLocation.active.each do |stock_location|
-          next unless stock_location.stock_items.where(:variant_id => inventory_units.map(&:variant_id).uniq).exists?
-
+          if Spree::Config.track_inventory_levels
+            next unless stock_location.stock_items.where(variant_id: inventory_units.map(&:variant_id).uniq).exists?
+          end
           packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
         end
