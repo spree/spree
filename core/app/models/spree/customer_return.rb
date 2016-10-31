@@ -63,7 +63,7 @@ module Spree
 
     def process_return!
       return_items.each(&:receive!)
-      order.return! if order.all_inventory_units_returned?
+      order.return!
     end
 
     def return_items_belong_to_same_order
