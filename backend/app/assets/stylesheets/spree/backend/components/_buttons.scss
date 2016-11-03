@@ -30,7 +30,7 @@
   }
 }
 
-.btn-sm .glyphicon { padding: 0 }
+.btn-sm .glyphicon { padding: 0; }
 
 .btn.action-void { @extend .btn-danger; }
 .btn.action-capture { @extend .btn-success; }
