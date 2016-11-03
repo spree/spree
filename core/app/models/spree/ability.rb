@@ -60,13 +60,21 @@ module Spree
       end
 
       # Include any abilities registered by extensions, etc.
-      Ability.abilities.each do |clazz|
+      Ability.abilities.merge(abilities_to_register).each do |clazz|
         ability = clazz.send(:new, user)
         @rules = rules + ability.send(:rules)
       end
 
       # Protect admin role
       cannot [:update, :destroy], Role, name: ['admin']
+    end
+
+    private
+
+    # you can override this method to register your abilities
+    # this method has to return array of classes
+    def abilities_to_register
+      []
     end
   end
 end

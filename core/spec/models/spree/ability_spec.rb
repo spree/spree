@@ -38,6 +38,18 @@ describe Spree::Ability, type: :model do
     end
   end
 
+  context '#abilities_to_register' do
+    it 'adds the ability to the list of abilities' do
+      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register) { [FooAbility] }
+      expect(Spree::Ability.new(user).abilities).to include FooAbility
+    end
+
+    it 'applies the registered abilities permissions' do
+      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register) { [FooAbility] }
+      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
+    end
+  end
+
   context 'for general resource' do
     let(:resource) { Object.new }
 
