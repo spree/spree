@@ -222,8 +222,12 @@ describe Spree::Order, type: :model do
 
   context "insufficient_stock_lines" do
     let(:line_item) { mock_model Spree::LineItem, insufficient_stock?: true }
+    let(:line_items) { [line_item] }
 
-    before { allow(order).to receive_messages(line_items: [line_item]) }
+    before do
+      allow(order).to receive_messages(line_items: line_items)
+      allow(line_items).to receive_messages(includes: line_items)
+    end
 
     it "should return line_item that has insufficient stock on hand" do
       expect(order.insufficient_stock_lines.size).to eq(1)
