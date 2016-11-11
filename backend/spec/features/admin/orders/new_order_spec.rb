@@ -74,6 +74,32 @@ describe "New Order", type: :feature do
     end
   end
 
+  context "adding new item to the order which isn't available", js: true do
+    before do
+      product.update(available_on: nil)
+      select2_search product.name, from: Spree.t(:name_or_sku)
+    end
+
+    it "inventory items is displayed" do
+      expect(page).to have_content(product.name)
+      expect(page).to have_css('#stock_details')
+    end
+
+    context 'on increase in quantity the product should be removed from order', js: true do
+      before do
+        accept_alert do
+          within("table.stock-levels") do
+            fill_in "variant_quantity", with: 2
+            click_icon :add
+            wait_for_ajax
+          end
+        end
+      end
+
+      it { expect(page).not_to have_css('#stock_details') }
+    end
+  end
+
   # Regression test for #3958
   context "without a delivery step", js: true do
     before do

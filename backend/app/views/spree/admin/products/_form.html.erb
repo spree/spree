@@ -33,7 +33,7 @@
       <div data-hook="admin_product_form_price">
         <%= f.field_container :price, class: ['form-group'] do %>
           <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: "required")) %>
-          <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', disabled: (cannot? :update, Spree::Price) %>
+          <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', disabled: (cannot? :update, @product.price) %>
           <%= f.error_message_on :price %>
         <% end %>
       </div>
@@ -141,7 +141,7 @@
       <div data-hook="admin_product_form_shipping_categories">
         <%= f.field_container :shipping_categories, class: ['form-group'] do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::ShippingCategory) }) %>
+          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :shipping_category %>
         <% end %>
       </div>
@@ -149,7 +149,7 @@
       <div data-hook="admin_product_form_tax_category">
         <%= f.field_container :tax_category, class: ['form-group'] do %>
           <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', disabled: (cannot? :edit, Spree::TaxCategory) }) %>
+          <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :tax_category %>
         <% end %>
       </div>
@@ -180,7 +180,7 @@
     <%= f.field_container :option_types, class: ['form-group'] do %>
       <%= f.label :option_type_ids, Spree.t(:option_types) %>
 
-      <% if can? :modify, Spree::OptionType %>
+      <% if can? :modify, Spree::ProductOptionType %>
         <%= f.hidden_field :option_type_ids, value: @product.option_type_ids.join(',') %>
       <% elsif @product.option_types.any? %>
         <ul class="text_list">
