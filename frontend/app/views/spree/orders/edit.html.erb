@@ -16,7 +16,7 @@
             <%= render partial: 'form', locals: { order_form: order_form } %>
           </div>
 
-          <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
+          <div class="links col-md-3 navbar-form pull-right text-right" data-hook="cart_buttons">
             <div class="form-group">
               <%= button_tag class: 'btn btn-primary', id: 'update-button' do %>
                 <%= Spree.t(:update) %>
@@ -26,11 +26,18 @@
               <% end %>
             </div>
           </div>
+
+          <div class='col-md-6 form-inline pull-right' data-hook='coupon_code'>
+            <label>
+              <%= order_form.label :coupon_code %>
+              <%= order_form.text_field :coupon_code, size: '30', class: 'form-control' %>
+            </label>
+          </div>
         </div>
       <% end %>
     </div>
 
-    <div id="empty-cart" class="col-md-6 pull-left" data-hook>
+    <div id="empty-cart" class="col-md-3 pull-left" data-hook>
       <%= form_tag empty_cart_path, method: :put do %>
         <p id="clear_cart_link" data-hook>
           <%= submit_tag Spree.t(:empty_cart), class: 'btn btn-default' %>
@@ -41,3 +48,9 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  Spree.current_order_id = "<%= @order.number %>"
+  Spree.current_order_token = "<%= @order.guest_token %>"
+</script>
+
