@@ -86,6 +86,7 @@ describe 'Payments', type: :feature, js: true do
       expect(page).to have_content('successfully created!')
 
       click_icon(:capture)
+      wait_for_ajax
       expect(find('#payment_status').text).to eq('paid')
 
       expect(page).not_to have_selector('#new_payment_section')
