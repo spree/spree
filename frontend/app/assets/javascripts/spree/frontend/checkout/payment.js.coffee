@@ -45,13 +45,13 @@ Spree.ready ($) ->
         input =
           couponCodeField: $('#order_coupon_code')
           couponStatus: $('#coupon_status')
-
-        if new CouponManager(input).applyCoupon()
-          @submit()
-          return true
-        else
-          Spree.enableSave()
-          event.preventDefault()
-          return false
+        if input.couponCodeField.val().trim().length > 0
+          if new CouponManager(input).applyCoupon()
+            @submit()
+            return true
+          else
+            Spree.enableSave()
+            event.preventDefault()
+            return false
 
   Spree.onPayment()
