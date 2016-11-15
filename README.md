@@ -1,5 +1,5 @@
 
-![Spree](spree_logo.png)
+<img src="spree_logo.png" width="261">
 
 * Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
 * [Extensions](https://github.com/spree-contrib)
@@ -7,7 +7,6 @@
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 
-[![Build Status](https://travis-ci.org/spree/spree.svg?branch=master)](https://travis-ci.org/spree/spree)
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
@@ -31,7 +30,7 @@ in a single repository and documented in a single set of
 Getting Started
 ----------------------
 
-Required rails `rails (~> 4.2.6)`
+Required rails `rails (~> 4.2.5)`
 
 Add Spree gems to your Gemfile:
 
@@ -54,7 +53,7 @@ rails g spree_gateway:install
 Installation options
 ----------------------
 
-Alternatively, if you want to use the bleeding edge version of Spree, add this to your Gemfile:
+Alternatively, if you want to use the bleeding edge version of Spree (for Rails 5), add this to your Gemfile:
 
 ```ruby
 gem 'spree', github: 'spree/spree'
