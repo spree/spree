@@ -71,6 +71,13 @@
       }
     }
   }
+
+  .spree-version {
+    position: absolute;
+    z-index: -1;
+    left: 15px;
+    bottom: 15px;
+  }
 }
 
 #wrapper.sidebar-minimized #main-sidebar {
