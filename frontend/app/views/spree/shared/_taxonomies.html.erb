@@ -3,8 +3,10 @@
 <nav id="taxonomies" class="sidebar-item" data-hook>
   <% @taxonomies.each do |taxonomy| %>
     <% cache [I18n.locale, taxonomy, max_level, @taxon] do %>
-      <h4 class='taxonomy-root'><%= Spree.t(:shop_by_taxonomy, taxonomy: taxonomy.name) %></h4>
-      <%= taxons_tree(taxonomy.root, @taxon, max_level) %>
+      <% if taxonomy.root.children.any? %>
+        <h4 class='taxonomy-root'><%= Spree.t(:shop_by_taxonomy, taxonomy: taxonomy.name) %></h4>
+        <%= taxons_tree(taxonomy.root, @taxon, max_level) %>
+      <% end %>
     <% end %>
   <% end %>
 </nav>
