@@ -39,3 +39,9 @@
     <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration", url: "#sidebar-configuration" %>
   </ul>
 <% end %>
+
+<% if can? :admin, current_store && Spree::Config[:admin_show_version] %>
+  <div class="spree-version hidden-xs hidden-sm">
+    <%= Spree.version %>
+  </div>
+<% end %>

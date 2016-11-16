@@ -24,6 +24,7 @@ module Spree
     preference :admin_interface_logo, :string, default: 'logo/spree_50.png'
     preference :admin_path, :string, default: '/admin'
     preference :admin_products_per_page, :integer, default: 10
+    preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
     preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
