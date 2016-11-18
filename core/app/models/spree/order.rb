@@ -482,7 +482,12 @@ module Spree
 
     def create_proposed_shipments
       all_adjustments.shipping.delete_all
-      shipments.destroy_all
+
+      shipment_ids = shipments.map(&:id)
+      StateChange.where(stateful_type: "Spree::Shipment", stateful_id: shipment_ids).delete_all
+      ShippingRate.where(shipment_id: shipment_ids).delete_all
+
+      shipments.delete_all
 
       # Inventory Units which are not associated to any shipment (unshippable)
       # and are not returned or shipped should be deleted
