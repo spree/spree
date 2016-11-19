@@ -145,6 +145,19 @@ describe Spree::Reimbursement, type: :model do
       end
     end
 
+    context 'with return item amounts that should round down' do
+      let(:reimbursement) { create(:reimbursement, return_items_count: 3) }
+      let(:total) { (111.0000 + 5.84671) * 3 }
+
+      before do
+        reimbursement.return_items.each { |ri| ri.update_attributes(pre_tax_amount: 111.00, additional_tax_total: 5.84671) }
+      end
+
+      it 'rounds down' do
+        expect(reimbursement.calculated_total).to eq total.round(2)
+      end
+    end
+
     context 'with a return item amount that should round up' do
       let(:reimbursement) { Spree::Reimbursement.new }
 

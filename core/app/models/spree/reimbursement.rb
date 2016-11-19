@@ -88,7 +88,7 @@ module Spree
     def calculated_total
       # rounding every return item individually to handle edge cases for consecutive partial
       # returns where rounding might cause us to try to reimburse more than was originally billed
-      return_items.map { |ri| ri.total.to_d.round(2) }.sum
+      return_items.map { |ri| ri.total.to_d.round(3) }.sum.round(2)
     end
 
     def paid_amount
