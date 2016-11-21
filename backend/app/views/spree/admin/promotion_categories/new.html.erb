@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= link_to Spree.t(:promotion_categories), spree.admin_promotion_categories_url %> /
+  <%= link_to plural_resource_name(Spree::PromotionCategory), spree.admin_promotion_categories_url %> /
   <%= Spree.t(:new_promotion_category) %>
 <% end %>
 
