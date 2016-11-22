@@ -638,6 +638,7 @@ en:
     currency: Currency
     currency_settings: Currency Settings
     current: Current
+    current_count_on_hand: Current Count On Hand
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
     customer_details: Customer Details
@@ -1062,6 +1063,7 @@ en:
     product: Product
     product_details: Product Details
     product_has_no_description: This product has no description
+    product_name: Product Name
     product_not_available_in_this_currency: This product is not available in the selected currency.
     product_properties: Product Properties
     product_rule:
@@ -1297,6 +1299,7 @@ en:
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
+    sku_and_options_text: SKU and Options
     sku: SKU
     skus: SKUs
     slug: Slug
@@ -1346,6 +1349,7 @@ en:
     status: Status
     stock: Stock
     stock_location: Stock Location
+    select_stock_location: Select Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
     stock_locations_need_a_default_country: You must create a default country before creating a stock location.

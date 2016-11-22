@@ -170,6 +170,8 @@ Spree::Core::Engine.add_routes do
       end
       resources :store_credits
     end
+
+    resources :stock_items
   end
 
   get Spree.admin_path, to: redirect(Spree.admin_path + '/orders'), as: :admin
