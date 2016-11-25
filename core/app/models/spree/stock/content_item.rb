@@ -10,6 +10,7 @@ module Spree
 
       with_options allow_nil: true do
         delegate :line_item,
+                 :quantity,
                  :variant, to: :inventory_unit
         delegate :price, to: :variant
         delegate :dimension,
@@ -32,14 +33,6 @@ module Spree
 
       def amount
         price * quantity
-      end
-
-      def quantity
-        # Since inventory units don't have a quantity,
-        # make this always 1 for now, leaving ourselves
-        # open to a different possibility in the future,
-        # but this massively simplifies things for now
-        1
       end
 
       def volume

@@ -12,6 +12,8 @@
         <th><%= Spree.t(:product) %></th>
         <th><%= Spree.t(:status) %></th>
         <th><%= Spree.t(:charged) %></th>
+        <th><%= Spree.t(:purchased_quantity) %></th>
+        <th><%= Spree.t(:return_quantity) %></th>
         <th><%= Spree.t(:pre_tax_refund_amount) %></th>
         <th><%= Spree.t(:reimbursement_type) %></th>
         <th><%= Spree.t(:exchange_for) %></th>
@@ -36,6 +38,16 @@
           <td><%= inventory_unit.state.humanize %></td>
           <td>
             <%= return_item.display_pre_tax_amount %>
+          </td>
+          <td>
+            <%= inventory_unit.quantity %>
+          </td>
+          <td>
+            <% if editable %>
+              <%= item_fields.number_field :return_quantity, { class: 'refund-quantity-input form-control' } %>
+            <% else %>
+              <%= return_item.return_quantity %>
+            <% end %>
           </td>
           <td>
             <% if editable %>

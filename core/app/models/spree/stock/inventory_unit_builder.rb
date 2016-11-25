@@ -6,15 +6,14 @@ module Spree
       end
 
       def units
-        @order.line_items.flat_map do |line_item|
-          line_item.quantity.times.map do |i|
-            @order.inventory_units.build(
-              pending: true,
-              variant_id: line_item.variant_id,
-              line_item: line_item,
-              order: @order
-            )
-          end
+        @order.line_items.map do |line_item|
+          InventoryUnit.new(
+            pending:    true,
+            line_item:  line_item,
+            variant:    line_item.variant,
+            quantity:   line_item.quantity,
+            order_id:   @order.id
+          )
         end
       end
     end

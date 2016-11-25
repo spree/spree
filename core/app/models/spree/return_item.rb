@@ -5,6 +5,14 @@ module Spree
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
 
+    def return_quantity=(value)
+      @_return_quantity = value.to_i
+    end
+
+    def return_quantity
+      @_return_quantity.nil? ? 1 : @_return_quantity
+    end
+
     class_attribute :exchange_variant_engine
     self.exchange_variant_engine = ReturnItem::ExchangeVariantEligibility::SameProduct
 
@@ -27,6 +35,7 @@ module Spree
     validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
     validate :validate_no_other_completed_return_items, on: :create
+    validate :sufficient_quantity_for_return, if: -> { return_quantity > 0 }
 
     after_create :cancel_others, unless: :cancelled?
 
@@ -52,7 +61,9 @@ module Spree
     delegate :variant, to: :inventory_unit
     delegate :shipment, to: :inventory_unit
 
+    before_create :split_into_multiple_returns, if: -> { inventory_unit.quantity > 1 }
     before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
+
     before_save :set_exchange_pre_tax_amount
 
     state_machine :reception_status, initial: :awaiting do
@@ -203,6 +214,25 @@ module Spree
     def validate_acceptance_status_for_reimbursement
       if reimbursement && !accepted?
         errors.add(:reimbursement, :cannot_be_associated_unless_accepted)
+      end
+    end
+
+    def sufficient_quantity_for_return
+      return unless errors.empty? # Only perform the check if everything is good so far
+      if return_quantity > inventory_unit.quantity
+        errors.add(:return_quantity, Spree.t(:cannot_return_more_than_bought_quantity))
+      end
+    end
+
+    def split_into_multiple_returns
+      (return_quantity - 1).times do
+        rr = dup
+        rr.return_quantity = 1
+        rr.inventory_unit  = self.inventory_unit.split_inventory!(1)
+        rr.save
+      end
+      unless self.inventory_unit.quantity == 1
+        self.inventory_unit = self.inventory_unit.split_inventory!(1)
       end
     end
 

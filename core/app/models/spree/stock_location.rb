@@ -40,6 +40,10 @@ module Spree
       stock_items.where(variant_id: variant_id).order(:id).first
     end
 
+    def stocks?(variant)
+      stock_items.where(variant: variant).any?
+    end
+
     # Attempts to look up StockItem for the variant, and creates one if not found.
     # This method accepts an instance of the variant.
     # Other methods in this model attempt to pass a variant,

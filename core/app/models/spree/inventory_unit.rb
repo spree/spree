@@ -25,6 +25,8 @@ module Spree
         .backordered.order("spree_orders.completed_at ASC")
     end
 
+    validates :quantity, numericality: { greater_than: 0 }
+
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
       event :fill_backorder do
@@ -62,6 +64,21 @@ module Spree
         variant_id: variant_id).first
     end
 
+    def self.split(original_inventory_unit, extract_quantity)
+      split = original_inventory_unit.dup
+      split.quantity = extract_quantity
+      original_inventory_unit.quantity -= extract_quantity
+      split
+    end
+
+    # This will fail if extract >= available_quantity
+    def split_inventory!(extract_quantity)
+      split = self.class.split(self, extract_quantity)
+      split.save!
+      save!
+      split
+    end
+
     # Remove variant default_scope `deleted_at: nil`
     def variant
       Spree::Variant.unscoped { super }
@@ -79,6 +96,10 @@ module Spree
       line_item.included_tax_total * percentage_of_line_item
     end
 
+    def empty?
+      quantity == 0
+    end
+
     private
 
       def allow_ship?
@@ -91,7 +112,7 @@ module Spree
       end
 
       def percentage_of_line_item
-        1 / BigDecimal.new(line_item.quantity)
+        quantity / BigDecimal.new(line_item.quantity)
       end
 
       def current_return_item
