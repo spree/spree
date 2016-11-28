@@ -20,9 +20,9 @@
     <% @totals.each do |key, row| %>
       <tr>
         <td><%= key %></td>
-        <td><%= row[:item_total].format %></td>
-        <td><%= row[:adjustment_total].format %></td>
-        <td><%= row[:sales_total].format %></td>
+        <td><%= Spree::Money.new(row[:item_total], { currency: key }) %></td>
+        <td><%= Spree::Money.new(row[:adjustment_total], { currency: key }) %></td>
+        <td><%= Spree::Money.new(row[:sales_total], { currency: key }) %></td>
       </tr>
     <% end %>
   </tbody>
