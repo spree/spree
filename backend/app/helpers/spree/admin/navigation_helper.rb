@@ -93,7 +93,7 @@ module Spree
         options[:class] = (options[:class].to_s + " fa fa-#{icon_name} icon_link with-tip").strip
         options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
-        text = options[:no_text] ? '' : raw("<span class='text'>#{text}</span>")
+        text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         link_to(text, url, options)
       end
@@ -126,14 +126,8 @@ module Spree
           if html_options[:icon]
             html_options[:class] += " fa fa-#{html_options[:icon]}"
           end
-          link_to(text_for_button_link(text, html_options), url, html_options)
+          link_to(text, url, html_options)
         end
-      end
-
-      def text_for_button_link(text, html_options)
-        s = ''
-        s << text
-        raw(s)
       end
 
       def configurations_menu_item(link_text, url, description = '')
