@@ -914,7 +914,7 @@ module Spree
         "name"=> "dotcom",
         "display"=> "Dotcom Distribution",
         "description"=> "Order fulfillment and tracking using Dotcom Distribution",
-        "help"=> "http://guides.spreecommerce.com/integration/dotcom_integration.html",
+        "help"=> "http://guides.spreecommerce.org/integration/dotcom_integration.html",
         "url"=> "http://ep-rlm.spree.fm",
         "category"=> "distribution",
         "services"=> [

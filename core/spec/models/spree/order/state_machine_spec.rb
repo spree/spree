@@ -203,7 +203,7 @@ describe Spree::Order, type: :model do
   # Another regression test for #729
   context "#resume" do
     before do
-      allow(order).to receive_messages email: "user@spreecommerce.com"
+      allow(order).to receive_messages email: "user@spreecommerce.org"
       allow(order).to receive_messages state: "canceled"
       allow(order).to receive_messages allow_resume?: true
 

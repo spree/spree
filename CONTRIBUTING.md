@@ -1,5 +1,5 @@
 Spree is an open source project and we encourage contributions.  Please see the
-[contributors guidelines](https://guides.spreecommerce.com/developer/contributing.html)
+[contributors guidelines](http://guides.spreecommerce.org/developer/contributing.html)
 before contributing.
 
 ## Filing an issue

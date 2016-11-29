@@ -63,7 +63,7 @@ Spree API no longer provides any asset files, so references to these must be rem
 
 ## Read the release notes
 
-For information about what has changed in this release, please read the [1.1.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_1_1_0.html).
+For information about what has changed in this release, please read the [1.1.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_1_1_0.html).
 
 ## Verify that everything is OK
 

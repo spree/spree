@@ -6,8 +6,7 @@
 
 // -- Spree Custom Header and Footer ---------------------
 #spree-header {
-  background: $brand-primary asset-url('spree_header.jpg') center center;
-  background-size: cover;
+  background-color: $brand-primary;
   margin-bottom: $line-height-computed;
 
   #header {
@@ -19,7 +18,8 @@
     margin-bottom: 10px;
 
     img {
-      width: 100%;
+      max-width: 100%;
+      max-height: 50px;
     }
   }
 

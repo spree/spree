@@ -269,7 +269,7 @@ module Spree
           user = create(:user)
           # Need to pass email as well so that validations succeed
           api_put :update, id: order.to_param, order_token: order.guest_token,
-            order: { user_id: user.id, email: "guest@spreecommerce.com" }
+            order: { user_id: user.id, email: "guest@spreecommerce.org" }
           expect(response.status).to eq(200)
           expect(json_response['user_id']).to eq(user.id)
         end
@@ -277,8 +277,8 @@ module Spree
 
       it "can assign an email to the order" do
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { email: "guest@spreecommerce.com" }
-        expect(json_response['email']).to eq("guest@spreecommerce.com")
+          order: { email: "guest@spreecommerce.org" }
+        expect(json_response['email']).to eq("guest@spreecommerce.org")
         expect(response.status).to eq(200)
       end
 
