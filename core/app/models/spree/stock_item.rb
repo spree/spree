@@ -75,7 +75,7 @@ module Spree
         return unless number > 0
         units    = backordered_inventory_units.first(number) # We can process atmost n backorders
         position = 0
-        while number > 0 and position < units.length
+        while number > 0 && position < units.length
           unit = units[position]
           if unit.quantity > number
             # if required quantity is greater than available

@@ -12,10 +12,6 @@ module Spree
         @fulfilled = false
       end
 
-      def package_stocked_at_same_location?(other_package)
-        package.stock_location == other_package.stock_location
-      end
-
       def adjust(package)
         if fulfilled?
           package.remove(inventory_unit)
