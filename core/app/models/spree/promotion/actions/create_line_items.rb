@@ -37,7 +37,7 @@ module Spree
         # needs to be manually removed from the order by the customer
         def perform(options = {})
           order = options[:order]
-          return unless self.eligible? order
+          return unless eligible? order
 
           action_taken = false
           promotion_action_line_items.each do |item|
@@ -56,7 +56,7 @@ module Spree
         # Should help to prevent some of cases listed above the #perform method
         def revert(options = {})
           order = options[:order]
-          return if self.eligible?(order)
+          return if eligible?(order)
 
           action_taken = false
           promotion_action_line_items.each do |item|
