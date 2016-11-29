@@ -21,28 +21,17 @@ module Spree
       def adjust_packages
         packages.each do |package|
           package.contents.each do |item|
-            adjuster = find_adjuster(item)
-
-            if adjuster.nil?
-              adjuster = build_adjuster(item, package)
-            elsif item.state == :on_hand && adjuster.status == :backordered
-              # Remove item from backordered package
-              adjuster.package.remove(item.inventory_unit)
-              # Reassign adjuster's status package
-              adjuster.reassign(:on_hand, package)
-            end
-
-            adjuster.adjust(package)
+            adjuster = find_adjuster(item) || build_adjuster(item, package)
           end
         end
       end
 
       def build_adjuster(item, package)
-        @adjusters[item.inventory_unit] = @adjuster_class.new(item.inventory_unit, item.state, package)
+        @adjusters[item.variant] = @adjuster_class.new(item.inventory_unit, item.state, package)
       end
 
       def find_adjuster(item)
-        @adjusters[item.inventory_unit]
+        @adjusters[item.variant]
       end
 
       def sort_packages

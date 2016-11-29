@@ -12,7 +12,9 @@ $(document).ready(function() {
       var totalPretaxRefund = 0;
       var checkedItems = formFields.find('input.add-item:checked');
       $.each(checkedItems, function(i, checkbox) {
-        totalPretaxRefund += parseFloat($(checkbox).parents('tr').find('.refund-amount-input').val());
+        var returnItemRow  = $(checkbox).parents('tr'), returnQuantity;
+        returnQuantity = parseInt(returnItemRow.find('.refund-quantity-input').val(), 10);
+        totalPretaxRefund += returnQuantity * parseFloat(returnItemRow.find('.refund-amount-input').val());
       });
 
       var displayTotal = isNaN(totalPretaxRefund) ? '' : totalPretaxRefund.toFixed(2);
@@ -29,6 +31,7 @@ $(document).ready(function() {
 
     formFields.find('input.add-item').on('change', updateSuggestedAmount);
     formFields.find('.refund-amount-input').on('keyup', updateSuggestedAmount);
+    formFields.find('.refund-quantity-input').on('keyup', updateSuggestedAmount);
 
     formFields.find('input, select').not('.add-item').on('change', checkAddItemBox);
   }

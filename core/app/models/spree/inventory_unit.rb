@@ -17,6 +17,7 @@ module Spree
     scope :on_hand_or_backordered, -> { where state: ['backordered', 'on_hand'] }
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
+    scope :singular, -> { where quantity: 1 }
     scope :backordered_per_variant, ->(stock_item) do
       includes(:shipment, :order)
         .where.not(spree_shipments: { state: 'canceled' })
@@ -77,6 +78,14 @@ module Spree
       split.save!
       save!
       split
+    end
+
+    def extract_singular_inventory!
+      split_inventory!(1)
+    end
+
+    def singular?
+      quantity == 1
     end
 
     # Remove variant default_scope `deleted_at: nil`

@@ -227,12 +227,12 @@ module Spree
     def split_into_multiple_returns
       (return_quantity - 1).times do
         rr = dup
-        rr.return_quantity = 1
-        rr.inventory_unit  = self.inventory_unit.split_inventory!(1)
+        rr.return_quantity = nil
+        rr.inventory_unit  = self.inventory_unit.extract_singular_inventory!
         rr.save
       end
-      unless self.inventory_unit.quantity == 1
-        self.inventory_unit = self.inventory_unit.split_inventory!(1)
+      unless self.inventory_unit.singular? # Depends on split to find the final available quantity
+        self.inventory_unit = self.inventory_unit.extract_singular_inventory!
       end
     end
 

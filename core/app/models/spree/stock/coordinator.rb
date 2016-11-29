@@ -18,7 +18,7 @@ module Spree
 
       def packages
         packages = build_packages
-        packages = prioritize_packages(packages)
+        # packages = prioritize_packages(packages)
         packages = estimate_packages(packages)
       end
 
