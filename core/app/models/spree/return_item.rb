@@ -35,6 +35,7 @@ module Spree
     validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
     validate :validate_no_other_completed_return_items, on: :create
+    validates :return_quantity, numericality: { greater_than_or_equal_to: 1 }
     validate :sufficient_quantity_for_return, if: -> { return_quantity > 0 }
 
     after_create :cancel_others, unless: :cancelled?
@@ -227,7 +228,7 @@ module Spree
     def split_into_multiple_returns
       (return_quantity - 1).times do
         rr = dup
-        rr.return_quantity = nil
+        rr.return_quantity = 1
         rr.inventory_unit  = self.inventory_unit.extract_singular_inventory!
         rr.save
       end
