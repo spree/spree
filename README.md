@@ -3,7 +3,7 @@
 
 * Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
 * [Extensions](https://github.com/spree-contrib)
-* [Documentation](http://guides.spreecommerce.com)
+* [Documentation](http://guides.spreecommerce.org)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 
@@ -17,7 +17,7 @@ was originally developed by Sean Schofield and is now maintained by developers f
 
 Spree consists of several different gems, each of which are maintained
 in a single repository and documented in a single set of
-[online documentation](http://guides.spreecommerce.com/).
+[online documentation](http://guides.spreecommerce.org/).
 
 * spree_api (RESTful API)
 * spree_frontend (Customer frontend)
@@ -237,7 +237,7 @@ Here are some ways **you** can contribute:
 * by using prerelease versions / master branch
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
-* by writing or editing [documentation](http://guides.spreecommerce.com/developer/contributing.html#contributing-to-the-documentation)
+* by writing or editing [documentation](http://guides.spreecommerce.org/developer/contributing.html#contributing-to-the-documentation)
 * by writing [specs](https://github.com/spree/spree/labels/need_specs)
 * by writing [needed code](https://github.com/spree/spree/labels/feature_request) or [finishing code](https://github.com/spree/spree/labels/address_feedback)
 * by [refactoring code](https://github.com/spree/spree/labels/address_feedback)

@@ -51,7 +51,7 @@ This may copy over additional migrations from spree_auth_devise and run them as 
 
 ## Read the release notes
 
-For information about changes contained with this release, please read the [1.2.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_1_2_0.html).
+For information about changes contained with this release, please read the [1.2.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_1_2_0.html).
 
 ## Verify that everything is OK
 
