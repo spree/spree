@@ -9,7 +9,7 @@ module Spree
       end
 
       class << self
-        def split_under_weight(content, weight)
+        def split_into_contents_under_weight(content, weight)
           per_content_max_quantity = (weight/content.variant_weight).floor
           content_items            = [content]
           while content.quantity > per_content_max_quantity

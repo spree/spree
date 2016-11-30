@@ -97,7 +97,7 @@ module Spree
       def split_contents_over_weight(threshold)
         @contents = contents.flat_map do |content|
           if content.weight > threshold && content.splittable?
-            ContentItem.split_under_weight(content, threshold)
+            ContentItem.split_into_contents_under_weight(content, threshold)
           else
             content
           end
