@@ -30,7 +30,7 @@ module Spree
                  :weight, to: :variant, prefix: true
       end
 
-      def splittable?
+      def splittable_by_weight?
         quantity > 1 && variant_weight.present?
       end
 

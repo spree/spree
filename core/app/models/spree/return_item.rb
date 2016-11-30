@@ -36,7 +36,7 @@ module Spree
     validates :inventory_unit, presence: true
     validate :validate_no_other_completed_return_items, on: :create
     validates :return_quantity, numericality: { greater_than_or_equal_to: 1 }
-    validate :sufficient_quantity_for_return, if: -> { return_quantity > 0 }
+    validate :sufficient_quantity_for_return
 
     after_create :cancel_others, unless: :cancelled?
 
