@@ -19,6 +19,7 @@ module Spree
 
         private
         def reduce(package)
+          package.split_contents_over_weight self.threshold
           contents = package.contents_by_weight
           # Treat current package as one of the generated packages for convenience and add the heaviest item
           # This also prevents an additional package if no fit is possible
