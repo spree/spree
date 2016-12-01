@@ -111,12 +111,15 @@
             <%= render partial: 'spree/admin/shared/address', locals: { address: shipment.address } %>
           <% end %>
 
-          <%= render(partial: "spree/admin/orders/shipment_address_modal",
-                locals: {
-                  shipment: shipment,
-                  url: admin_shipment_address_path(shipment.id)
-                }) if can?(:update, shipment) && !shipment.shipped?
-          %>
+          <% if can?(:update, shipment) && !shipment.shipped? %>
+            <div class="modal fade" id="<%= "change_address_#{shipment.id}" %>" tabindex="-1" role="dialog" aria-labelledby="<%= "change_address_#{shipment.id}_label" %>" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <%= render partial: 'spree/admin/orders/shipment_address_form', locals: { shipment: shipment } %>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </td>
         <td class="action text-center">
           <% if can?(:update, shipment) && !shipment.shipped? %>

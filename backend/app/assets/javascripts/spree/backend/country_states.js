@@ -4,7 +4,7 @@
 // Now the states will be refreshed as the country changes.
 
 $(document).ready(function () {
-  $('.js-country select').on('change', function () {
+  $('body').on('change', '.js-country select', function(){
     var $parent = $(this).parents('.js-country-states');
     countryStates.requestStates($parent);
   });
@@ -39,7 +39,7 @@ var countryStates = {
     var statePara = $('.js-state', $parent);
     var stateSelect = statePara.find('select');
     var stateSelect2 = statePara.find('.select2');
-    var stateInput = statePara.find('input');
+    var stateInput = statePara.find('input.state_name');
 
     if(states.length > 0){
       var selected = parseInt(stateSelect.val(), 10);
@@ -62,8 +62,7 @@ var countryStates = {
         stateInput.val('');
       }
       statePara.toggle(!!statesRequired);
-      stateInput.prop('disabled', !statesRequired);
-      stateInput.removeClass('hidden');
+      stateInput.show().prop('disabled', !statesRequired).removeClass('hidden');
     }
   },
 
@@ -78,15 +77,14 @@ var countryStates = {
   },
 
   hideStateSelects: function(select, select2){
-    select.prop('disabled', true);
-    select.hide();
+    select.hide().prop('disabled', true);
     select2.hide();
   },
 
   showStateSelects: function(select, select2){
     select.prop('disabled', false);
     countryStates.showStateElement(select);
-    select.removeClass('hidden');
+    select.show().removeClass('hidden');
     select2.show();
   },
 

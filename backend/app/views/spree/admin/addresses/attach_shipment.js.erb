@@ -1,0 +1,5 @@
+<% if @address.errors.present? %>
+  $('#change_address_<%= @shipment.id %> .modal-content').html("<%= j(render partial: 'spree/admin/orders/shipment_address_form', locals: { shipment: @shipment }) %>");
+  $('#change_address_<%= @shipment.id %> .modal-content').find('select.select2').select2();
+<% else %>
+<% end %>

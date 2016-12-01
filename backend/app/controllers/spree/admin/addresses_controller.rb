@@ -1,22 +1,29 @@
 module Spree
   module Admin
     class AddressesController < ResourceController
-      before_action :load_shipment, only: :create_shipment
-      before_action :load_address, only: :create_shipment
+      before_action :load_shipment, only: :attach_shipment
+      before_action :load_address, only: :attach_shipment
 
-      def create_shipment
+      def attach_shipment
         @address.attributes = address_params
 
         if @shipment.save
           apply_to_other_shipments
-          flash[:success] = flash_message_for(@address, :successfully_created)
-        else
-          flash[:error] = @address.errors.full_messages.join(", ")
-        end
+          flash[:success] = flash_message_for(@shipment, :successfully_updated)
 
-        respond_with(@shipment.order) do |format|
-          format.html { redirect_to edit_admin_order_path(@shipment.order) }
-          format.js   { render layout: false }
+          respond_with(@shipment.order) do |format|
+            format.html { redirect_to edit_admin_order_path(@shipment.order) }
+            format.js { render js: "window.location = '#{edit_admin_order_path(@shipment.order)}'" }
+          end
+        else
+          respond_with(@shipment.order) do |format|
+            format.html do
+              flash[:error] = @address.errors.full_messages.join(", ")
+              redirect_to edit_admin_order_path(@shipment.order)
+            end
+
+            format.js { render layout: false }
+          end
         end
       end
 
@@ -30,7 +37,7 @@ module Spree
         # Build address for shipment if shipment address not present
         # OR if shipment address is same as order ship address
         # ELSE load existing shipment address
-        @address = if @shipment.address && @shipment.address != @shipment.order.ship_address
+        @address = if @shipment.address && @shipment.address.id != @shipment.order.ship_address.try(:id)
           @shipment.address
         else
           @shipment.build_address

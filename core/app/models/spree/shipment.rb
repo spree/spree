@@ -344,7 +344,7 @@ module Spree
       transaction do
         new_shipment = order.shipments.create!(
           stock_location: stock_location,
-          address: self.address)
+          address: address.try(:clone))
 
         order.contents.remove(variant, quantity, {shipment: self})
         order.contents.add(variant, quantity, {shipment: new_shipment})

@@ -9,12 +9,12 @@ module Spree
       let(:shipment) { mock_model(Spree::Shipment, save: true, order: order) }
       let(:address) { mock_model(Spree::Address, save: true) }
 
-      describe '#create_shipment' do
+      describe '#attach_shipment' do
         let(:order_address) { mock_model(Spree::Address, save: true) }
         let(:address_params) { { firstname: 'first', lastname: 'last' } }
 
         def send_request(params={})
-          spree_patch :create_shipment, params.merge(shipment_id: shipment.id, address: address_params)
+          spree_patch :attach_shipment, params.merge(shipment_id: shipment.id, address: address_params)
         end
 
         before(:each) do
@@ -97,7 +97,7 @@ module Spree
         end
 
         it 'assigns address attributes with address params' do
-          expect(address).to receive(:attributes=).with(address_params)
+          expect(address).to receive(:attributes=).with(ActionController::Parameters.new(address_params).permit(permitted_address_attributes))
           send_request
         end
 
@@ -135,7 +135,7 @@ module Spree
 
           it 'sets flash success' do
             send_request
-            expect(flash[:success]).to eq('Address has been successfully created!')
+            expect(flash[:success]).to eq(Spree.t(:successfully_updated, resource: 'Shipment'))
           end
         end
 
