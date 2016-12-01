@@ -40,8 +40,10 @@ module Spree
     after_create :set_master_out_of_stock, unless: :is_master?
 
     after_touch :clear_in_stock_cache
+    after_save :update_counter_cache
 
-    scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :in_stock, -> { joins(:stock_items).
+                          where("spree_stock_items.count_on_hand > ? OR track_inventory = ?", 0, false) }
 
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
@@ -207,6 +209,10 @@ module Spree
     end
 
     def total_on_hand
+      should_track_inventory? ? count_on_hand : Float::INFINITY
+    end
+
+    def computed_total_on_hand
       Spree::Stock::Quantifier.new(self).total_on_hand
     end
 
@@ -214,6 +220,11 @@ module Spree
     # This considers both variant tracking flag and site-wide inventory tracking settings
     def should_track_inventory?
       self.track_inventory? && Spree::Config.track_inventory_levels
+    end
+
+    def update_counter_cache
+      return unless should_track_inventory?
+      update_column(:count_on_hand, computed_total_on_hand)
     end
 
     private

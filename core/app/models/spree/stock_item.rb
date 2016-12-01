@@ -88,6 +88,8 @@ module Spree
 
         if !Spree::Config.binary_inventory_cache || stock_changed
           variant.touch
+          variant.update_counter_cache
+          variant.product.update_counter_cache
         end
       end
   end
