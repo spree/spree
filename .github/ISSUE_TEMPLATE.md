@@ -3,6 +3,7 @@
 
 ## Context
 <!--- Provide a more detailed introduction to the issue itself -->
+<!--- How has this issue affected you? What were you trying to accomplish? -->
 
 ## Expected Behavior
 <!--- Tell us what should happen -->
@@ -20,9 +21,6 @@
 2.
 3.
 4.
-
-## Context
-<!--- How has this issue affected you? What were you trying to accomplish? -->
 
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the issue in -->
