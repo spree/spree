@@ -24,6 +24,8 @@ module Spree
         promotions.each do |promotion|
           if (line_item && promotion.eligible?(line_item)) || promotion.eligible?(order)
             promotion.activate(line_item: line_item, order: order)
+          else
+            promotion.deactivate(line_item: line_item, order: order)
           end
         end
       end
