@@ -9,6 +9,7 @@ machine:
 dependencies:
   override:
     - bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
+    - bundle update
     - ./build-ci.rb install
 test:
   override:
