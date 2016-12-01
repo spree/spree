@@ -6,6 +6,10 @@ describe 'products', type: :feature, caching: true do
   let!(:taxonomy) { create(:taxonomy) }
   let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
+  before { Timecop.scale(1000) }
+
+  after { Timecop.return }
+
   before do
     product2.update_column(:updated_at, 1.day.ago)
     # warm up the cache

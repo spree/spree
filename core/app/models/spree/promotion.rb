@@ -83,6 +83,33 @@ module Spree
       action_taken
     end
 
+    # Called when a promotion is removed from the cart
+    def deactivate(payload)
+      order = payload[:order]
+      return unless self.class.order_activatable?(order)
+
+      payload[:promotion] = self
+
+      # Track results from actions to see if any action has been taken.
+      # Actions should return nil/false if no action has been taken.
+      # If an action returns true, then an action has been taken.
+      results = actions.map do |action|
+        action.revert(payload) if action.respond_to?(:revert)
+      end
+
+      # If an action has been taken, report back to whatever `d this promotion.
+      action_taken = results.include?(true)
+
+      if action_taken
+        # connect to the order
+        # create the join_table entry.
+        orders << order
+        save
+      end
+
+      action_taken
+    end
+
     # called anytime order.update_with_updater! happens
     def eligible?(promotable)
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)

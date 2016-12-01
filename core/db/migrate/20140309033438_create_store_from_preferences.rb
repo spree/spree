@@ -20,7 +20,7 @@ class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
           'Spree Demo Site'
         end
         s.url               = preference_store.get 'spree/app_configuration/site_url' do
-          'demo.spreecommerce.com'
+          'demo.spreecommerce.org'
         end
         s.mail_from_address = preference_store.get 'spree/app_configuration/mails_from' do
           'spree@example.com'

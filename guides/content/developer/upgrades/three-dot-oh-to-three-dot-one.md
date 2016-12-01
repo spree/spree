@@ -78,7 +78,7 @@ If you were disabling the alert checks you'll now want to remove this preference
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [3.1.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_3_1_0.html).
+For information about changes contained within this release, please read the [3.1.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_1_0.html).
 
 ## Verify that everything is OK
 

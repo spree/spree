@@ -41,7 +41,7 @@ these commands:
 
 ## Read the release notes
 
-For information about changes contained with this release, please read the [2.2.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_2_2_0.html).
+For information about changes contained with this release, please read the [2.2.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_2_2_0.html).
 
 ### Rename assets
 
@@ -54,7 +54,7 @@ This applies across the board on Spree, and may need to be done in your store's 
 
 ### Paperclip settings have been removed from master
 
-Please consult [this section](http://guides.spreecommerce.com/release_notes/spree_2_2_0.html#paperclip-settings-have-been-removed) of the release notes if you were using custom Paperclip settings. This will direct you what to do in that particular case.
+Please consult [this section](http://guides.spreecommerce.org/release_notes/spree_2_2_0.html#paperclip-settings-have-been-removed) of the release notes if you were using custom Paperclip settings. This will direct you what to do in that particular case.
 
 ## Verify that everything is OK
 

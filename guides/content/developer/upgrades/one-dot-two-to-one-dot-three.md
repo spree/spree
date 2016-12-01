@@ -82,7 +82,7 @@ Or you can rely on the current currency within views:
 
 ## Read the release notes
 
-For information about changes contained with this release, please read the [1.3.0 Release Notes](http://guides.spreecommerce.com/release_notes/spree_1_3_0.html).
+For information about changes contained with this release, please read the [1.3.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_1_3_0.html).
 
 ## Verify that everything is OK
 

@@ -68,7 +68,7 @@ $ cd spree_simple_sales
 
 ### Adding a Sale Price to Variants
 
-The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.com/products_and_variants.html#what-is-a-variant).
+The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.org/products_and_variants.html#what-is-a-variant).
 
 We can do this with the following command:
 

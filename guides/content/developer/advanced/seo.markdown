@@ -19,7 +19,7 @@ address common search engine optimization issues.
 
 ### Relevant, Meaningful URLs
 
-The helper method `seo_url(taxon)` yields SEO friendly URLs such as [demo.spreecommerce.com/products/xm-direct2-interface-adapter](http://demo.spreecommerce.com/products/xm-direct2-interface-adapter) and [demo.spreecommerce.com/t/categories/headphones](http://demo.spreecommerce.com/t/categories/headphones).
+The helper method `seo_url(taxon)` yields SEO friendly URLs such as [demo.spreecommerce.org/products/xm-direct2-interface-adapter](http://demo.spreecommerce.org/products/xm-direct2-interface-adapter) and [demo.spreecommerce.org/t/categories/headphones](http://demo.spreecommerce.org/t/categories/headphones).
 Each controller is configured to serve the content using these keyword-relevant, meaningful URLs.
 
 ### On Page Keyword Targeting
@@ -53,16 +53,16 @@ The Google Analytics setup includes e-commerce conversion tracking.
 ### Known Duplicate Content Issues
 
 In the Spree demo, it is a known issue that
-[demo.spreecommerce.com](http://demo.spreecommerce.com/) contains
+[demo.spreecommerce.org](http://demo.spreecommerce.org/) contains
 duplicate content to
-[demo.spreecommerce.com/products](http://demo.spreecommerce.com/products).
+[demo.spreecommerce.org/products](http://demo.spreecommerce.org/products).
 Duplicate content can be a detriment to search engine performance as
 external links are divided among duplicate content pages. As a result,
 duplicate content pages may not only not be excluded from the main
 search engine index, but pages may also rank poorly in comparison to
 other sites where all external links go to one non-duplicated page.
 
-If you change your home page this won't be an issue for you. Alternatively, you can have your [demo.spreecommerce.com/products](http://demo.spreecommerce.com/products) page redirect to your home page to eliminate this problem.
+If you change your home page this won't be an issue for you. Alternatively, you can have your [demo.spreecommerce.org/products](http://demo.spreecommerce.org/products) page redirect to your home page to eliminate this problem.
 
 ### Integration of Content Management System or Content
 
