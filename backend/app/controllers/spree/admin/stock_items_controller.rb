@@ -26,7 +26,6 @@ module Spree
           flash[:success] = flash_message_for(stock_movement, :successfully_created)
           respond_to do |format|
             format.json { render json: { stock_item: stock_movement.stock_item, message: flash[:success] } }
-            format.html { redirect_back fallback_location: spree.stock_admin_product_url(variant.product) }
           end
         else
           flash[:error] = Spree.t(:could_not_create_stock_movement)
@@ -37,6 +36,8 @@ module Spree
                 message: flash[:error]
               }, status: :unprocessable_entity
             }
+          end
+          respond_to do |format|
             format.html { redirect_back fallback_location: spree.stock_admin_product_url(variant.product) }
           end
         end
@@ -58,7 +59,7 @@ module Spree
         end
 
         def stock_item
-          @stock_item ||= StockItem.find_by(id: params[:id])
+          @stock_item ||= StockItem.find(params[:id])
         end
 
         def stock_location
@@ -69,7 +70,7 @@ module Spree
         end
 
         def variant
-          @variant ||= Variant.find_by(id: params[:variant_id])
+          @variant ||= Variant.find(params[:variant_id])
         end
 
         def collection
@@ -81,7 +82,6 @@ module Spree
             accessible_by(current_ability, :read).
             includes({ variant: [:product, :images, option_values: :option_type] }).
             order("#{ Spree::Variant.table_name }.product_id")
-
 
           @search = @collection.ransack(params[:q])
           @collection = @search.result.

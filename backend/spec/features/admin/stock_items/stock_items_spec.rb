@@ -52,7 +52,7 @@ describe "Stock Items", type: :feature do
     context 'results present' do
       context 'search on name' do
         before do
-          search({ q_variant_product_name_cont: variant.name })
+          search(q_variant_product_name_cont: variant.name)
         end
 
         it { expect(page).to have_content(variant.name) }
@@ -61,7 +61,7 @@ describe "Stock Items", type: :feature do
 
       context 'search on sku' do
         before do
-          search({ q_variant_sku_cont: variant1.sku })
+          search(q_variant_sku_cont: variant1.sku)
         end
 
         it { expect(page).to have_content(variant1.name) }
@@ -70,7 +70,7 @@ describe "Stock Items", type: :feature do
 
       context 'search on sku and name both' do
         before do
-          search({ q_variant_sku_cont: variant.sku, q_variant_product_name_cont: variant.name })
+          search(q_variant_sku_cont: variant.sku, q_variant_product_name_cont: variant.name)
         end
 
         it { expect(page).not_to have_content(variant1.name) }
@@ -80,7 +80,7 @@ describe "Stock Items", type: :feature do
 
     context 'result not present' do
       before do
-        search({ q_variant_sku_cont: variant.sku, q_variant_product_name_cont: variant1.name })
+        search(q_variant_sku_cont: variant.sku, q_variant_product_name_cont: variant1.name)
       end
 
       it { expect(page).not_to have_content(variant.name) }
@@ -104,7 +104,8 @@ describe "Stock Items", type: :feature do
         end
       end
       it 'page has a success message' do
-        expect(page).to have_content(Spree.t(:successfully_created, resource: Spree::StockMovement.new.class.model_name.human))
+        expect(page).to have_content(Spree.t(:successfully_created,
+          resource: Spree::StockMovement.new.class.model_name.human))
       end
     end
 
@@ -123,7 +124,8 @@ describe "Stock Items", type: :feature do
           end
         end
         it 'page has a success message' do
-          expect(page).to have_content(Spree.t(:successfully_created, resource: Spree::StockMovement.new.class.model_name.human ))
+          expect(page).to have_content(Spree.t(:successfully_created,
+            resource: Spree::StockMovement.new.class.model_name.human))
         end
       end
 
