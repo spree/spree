@@ -48,7 +48,8 @@ module Spree
                   previous_state: transition.from,
                   next_state:     transition.to,
                   name:           'order',
-                  user_id:        order.user_id
+                  user_id:        order.user_id,
+                  reason:         order.state_change_reason
                 )
                 order.save
               end
