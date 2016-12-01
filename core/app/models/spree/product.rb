@@ -275,6 +275,10 @@ module Spree
       self.save!
     end
 
+    def update_slug_history
+      self.save!
+    end
+
     def anything_changed?
       changed? || @nested_changes
     end
