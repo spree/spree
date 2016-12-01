@@ -18,7 +18,7 @@ module Spree
               }
             ).build(
               pending: true,
-              variant: line_item.variant,
+              variant_id: line_item.variant_id,
               line_item: line_item,
               order: @order
             )
