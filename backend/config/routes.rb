@@ -172,5 +172,5 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  get Spree.admin_path, to: redirect(Spree.admin_path + '/orders'), as: :admin
+  get Spree.admin_path, to: redirect((Rails.application.routes.url_helpers.spree_path(trailing_slash: true) + Spree.admin_path + '/orders').gsub('//', '/')), as: :admin
 end
