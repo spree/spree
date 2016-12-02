@@ -8,10 +8,10 @@ class window.Spree
       callback(jQuery)
 
   @mountedAt: ->
-    "<%= Rails.application.routes.url_helpers.spree_path(trailing_slash: true) %>"
+    window.SpreePaths.mounted_at
 
   @adminPath: ->
-    '<%= Spree.admin_path.gsub(/\A(\/)?(.*[^\/])(\/)?\z/, '\\2/') %>'
+    window.SpreePaths.admin
 
   @pathFor: (path) ->
     locationOrigin = "#{window.location.protocol}//#{window.location.hostname}" + (if window.location.port then ":#{window.location.port}" else "")
