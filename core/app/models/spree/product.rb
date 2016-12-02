@@ -236,6 +236,14 @@ module Spree
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
+    def brand
+      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
+    end
+
+    def category
+      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+    end
+
     private
 
     def add_associations_from_prototype
