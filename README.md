@@ -227,7 +227,7 @@ Contributing
 ----------------------
 
 Spree is an open source project and we encourage contributions. Please review the
-[contributing guidelines](CONTRIBUTING.md)
+[contributing guidelines](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md)
 before contributing.
 
 In the spirit of [free software](http://www.fsf.org/licensing/essays/free-sw.html), **everyone** is encouraged to help improve this project.
