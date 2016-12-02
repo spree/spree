@@ -44,7 +44,7 @@ We prefer using Gitter over IRC for the chat logs, notifications, and other feat
 
 The [GitHub issues page for Spree](https://github.com/spree/spree/issues) shows
 a list of currently open issues on Spree. If you think you have found a new
-issue with Spree, please first read the [Filing an Issue](https://github.com/spree/spree/blob/master/CONTRIBUTING.md#filing-an-issue)
+issue with Spree, please first read the [Filing an Issue](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md#filing-an-issue)
 guidelines. If you provide the information we ask for there, we will be able to
 help you with your issue much more effectively.
 
