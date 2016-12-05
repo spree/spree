@@ -36,10 +36,10 @@
             <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
           </td>
           <td><%= inventory_unit.state.humanize %></td>
-          <td>
+          <td class="charged-amount" data-charged-amount="<%= return_item.pre_tax_amount %>">
             <%= return_item.display_pre_tax_amount %>
           </td>
-          <td>
+          <td class="purchased-quantity">
             <%= inventory_unit.quantity %>
           </td>
           <td>

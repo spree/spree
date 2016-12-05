@@ -10,7 +10,7 @@ module Spree
     end
 
     def return_quantity
-      @_return_quantity.nil? ? 1 : @_return_quantity
+      @_return_quantity.nil? ? inventory_unit.quantity : @_return_quantity
     end
 
     class_attribute :exchange_variant_engine
@@ -62,7 +62,7 @@ module Spree
     delegate :variant, to: :inventory_unit
     delegate :shipment, to: :inventory_unit
 
-    before_create :split_into_multiple_returns, if: -> { inventory_unit.quantity > 1 }
+    before_create :extract_inventory_unit, unless: -> { inventory_unit.quantity == return_quantity }
     before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
 
     before_save :set_exchange_pre_tax_amount
@@ -148,7 +148,8 @@ module Spree
       # for pricing information for if the inventory unit is
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
-      super(variant: exchange_variant, line_item: inventory_unit.line_item, order: inventory_unit.order) if exchange_required?
+      super(variant: exchange_variant, line_item: inventory_unit.line_item,
+            order: inventory_unit.order, quantity: return_quantity) if exchange_required?
     end
 
     def exchange_shipment
@@ -225,16 +226,8 @@ module Spree
       end
     end
 
-    def split_into_multiple_returns
-      (return_quantity - 1).times do
-        rr = dup
-        rr.return_quantity = 1
-        rr.inventory_unit  = self.inventory_unit.extract_singular_inventory!
-        rr.save
-      end
-      unless self.inventory_unit.singular? # Depends on split to find the final available quantity
-        self.inventory_unit = self.inventory_unit.extract_singular_inventory!
-      end
+    def extract_inventory_unit
+      self.inventory_unit = self.inventory_unit.split_inventory!(return_quantity)
     end
 
     def set_exchange_pre_tax_amount
