@@ -90,20 +90,6 @@ module Spree
         )
       end
 
-      def contents_by_weight
-        contents.sort { |x, y| y.weight <=> x.weight }
-      end
-
-      def split_contents_over_weight(threshold)
-        @contents = contents.flat_map do |content|
-          if content.weight > threshold && content.splittable_by_weight?
-            ContentItem.split_into_contents_under_weight(content, threshold)
-          else
-            content
-          end
-        end
-      end
-
       def volume
         contents.sum(&:volume)
       end

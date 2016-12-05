@@ -18,31 +18,31 @@ module Spree
         end
 
         private
+
         def reduce(package)
-          package.split_contents_over_weight self.threshold
-          contents = package.contents_by_weight
+          contents = split_package_contents_over_threshold(package).sort { |x, y| y.weight <=> x.weight }
           # Treat current package as one of the generated packages for convenience and add the heaviest item
           # This also prevents an additional package if no fit is possible
           package.contents.clear
           package.contents << contents.shift
-          generated = [package]
+          _split_packages = [package]
           while contents.present?
 
-            package_to_use = choose_package generated, contents.first
+            package_to_use = choose_package _split_packages, contents.first
 
             if package_to_use.nil?
               package_to_use = build_package
-              generated << package_to_use
+              _split_packages << package_to_use
             end
 
             package_to_use.contents << contents.shift
           end
 
-          generated.drop 1 # Drop the original package to ensure only generated packages are returned
+          _split_packages.drop 1 # Drop the original package to ensure only generated packages are returned
         end
 
         def choose_package(generated_packages, content_to_add)
-          # Implements worst fit
+          # Implements worst fit, add to package with most space left over after addition.
           # See: http://www.labri.fr/perso/eyraud/pmwiki/uploads/Main/BinPackingSurvey.pdf, for survey of other techniques
           package_to_use     = nil
           available_space    = -1
@@ -57,6 +57,27 @@ module Spree
           end
 
           package_to_use
+        end
+
+        def split_package_contents_over_threshold(package)
+          package.contents.flat_map do |content|
+            if content.weight > self.threshold && content.splittable_by_weight?
+              split_content_item_over_threshold content
+            else
+              content
+            end
+          end
+        end
+
+        def split_content_item_over_threshold(content_item)
+          per_content_max_quantity = (self.threshold/content_item.variant_weight).floor
+          per_content_max_quantity = 1 if per_content_max_quantity.zero?
+          content_items = [content_item]
+          while content_item.quantity > per_content_max_quantity
+            split_inventory = InventoryUnit.split(content_item.inventory_unit, per_content_max_quantity)
+            content_items << ContentItem.new(split_inventory, content_item.state)
+          end
+          content_items
         end
       end
     end

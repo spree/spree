@@ -8,18 +8,6 @@ module Spree
         @state = state
       end
 
-      class << self
-        def split_into_contents_under_weight(content, weight)
-          per_content_max_quantity = (weight/content.variant_weight).floor
-          content_items            = [content]
-          while content.quantity > per_content_max_quantity
-            split_inventory = InventoryUnit.split(content.inventory_unit, per_content_max_quantity)
-            content_items << self.new(split_inventory, content.state)
-          end
-          content_items
-        end
-      end
-
       with_options allow_nil: true do
         delegate :line_item,
                  :quantity,
