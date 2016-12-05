@@ -24,6 +24,7 @@ module Spree
     preference :admin_interface_logo, :string, default: 'admin/logo.png'
     preference :admin_path, :string, default: '/admin'
     preference :admin_products_per_page, :integer, default: 30
+    preference :admin_orders_per_page, :integer, default: 30
     preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
@@ -43,7 +44,6 @@ module Spree
     preference :layout, :string, default: 'spree/layouts/spree_application'
     preference :logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
-    preference :orders_per_page, :integer, default: 15
     preference :properties_per_page, :integer, default: 15
     preference :products_per_page, :integer, default: 12
     preference :promotions_per_page, :integer, default: 15

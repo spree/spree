@@ -402,9 +402,9 @@ The logo to display on your frontend. Defaults to `logo/spree_50.png`.
 
 The number of levels to descend when viewing a taxon menu. Defaults to `1`.
 
-`orders_per_page`
+`admin_orders_per_page`
 
-The number of orders to display on the orders listing in the admin backend. Defaults to `15`.
+The number of orders to display on the orders listing in the admin backend. Defaults to `30`.
 
 `prices_inc_tax`
 
