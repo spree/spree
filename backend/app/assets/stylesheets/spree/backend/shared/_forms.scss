@@ -30,7 +30,7 @@ input.form-control {
 .form-group {
   &.withError {
     label, .formError, .required {
-      color: $brand-danger
+      color: $brand-danger;
     }
 
     input,
