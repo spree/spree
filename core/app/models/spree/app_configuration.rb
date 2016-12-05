@@ -27,6 +27,7 @@ module Spree
     preference :admin_orders_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_properties_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_promotions_per_page, :integer, default: Kaminari.config.default_per_page
+    preference :admin_users_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
