@@ -1,0 +1,46 @@
+<% content_for :page_title do %>
+  <%= plural_resource_name(Spree::StockItem) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_products_sidebar">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <div data-hook="admin_stock_itemss_index_search" class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :variant_product_name_cont, Spree.t(:name) %>
+            <%= f.text_field :variant_product_name_cont, size: 15, class: "form-control js-quick-search-target" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :variant_sku_cont, Spree.t(:sku) %>
+            <%= f.text_field :variant_sku_cont, size: 15, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div data-hook="admin_stock_items_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<div id='stock-items-div' class='container-fluid' >
+  <div class="row">
+    <%= label_tag Spree.t(:select_stock_location) %>
+    <%= select_tag :stock_location, options_for_select(Spree::StockLocation.all.map { |stock_location| [stock_location.name, stock_location.id, data: { url: admin_stock_items_url(q: search_params, per_page: params[:per_page], stock_location: stock_location.name) }] }, @stock_location.id), class: 'select2', id: 'stock-location-selector', data: { hook: 'stock-location-selector' } %>
+  </div>
+</div>
+
+<div data-hook='admin_stock_inventory_management'>
+  <% if @collection.present? %>
+    <%= render partial: 'stock_items' %>
+  <% else %>
+    <div class="alert alert-info no-objects-found">
+      <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StockItem)) %>
+    </div>
+  <% end %>
+</div>
+
+<%= javascript_include_tag 'spree/backend/stock_inventory_manager' %>

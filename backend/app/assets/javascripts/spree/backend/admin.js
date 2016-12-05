@@ -4,6 +4,8 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
+//= require spree/backend/per_page_selector
+
 jQuery(function($) {
 
   // Add some tips
@@ -132,20 +134,10 @@ jQuery(function($) {
     }
   });
 
-  // per page dropdown
-  // preserves all selected filters / queries supplied by user
-  // changes only per_page value
-  $(".js-per-page-select").change(function() {
-    var form  = $(this).closest(".js-per-page-form");
-    var url   = form.attr('action');
-    var value = $(this).val().toString();
-    if (url.match(/\?/)) {
-      url += "&per_page=" + value;
-    } else {
-      url += "?per_page=" + value;
-    }
-    window.location = url;
-  });
+  var inputs = {
+    perPageElement: $(".js-per-page-select")
+  }
+  new PerPageSelector(inputs).init();
 
   // injects per_page settings to all available search forms
   // so when user changes some filters / queries per_page is preserved
@@ -160,9 +152,7 @@ jQuery(function($) {
 
   // Make flash messages disappear
   setTimeout('$(".alert-auto-disappear").slideUp()', 5000);
-
 });
-
 
 $.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
 
