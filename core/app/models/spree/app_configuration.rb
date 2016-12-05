@@ -27,6 +27,7 @@ module Spree
     preference :admin_orders_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_properties_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_promotions_per_page, :integer, default: Kaminari.config.default_per_page
+    preference :admin_customer_returns_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_users_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
@@ -48,7 +49,6 @@ module Spree
     preference :logo, :string, default: 'logo/spree_50.png'
     preference :max_level_in_taxons_menu, :integer, default: 1 # maximum nesting level in taxons menu
     preference :products_per_page, :integer, default: 12
-    preference :customer_returns_per_page, :integer, default: 15
     preference :require_master_price, :boolean, default: true
     preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
     preference :return_eligibility_number_of_days, :integer, default: 365
