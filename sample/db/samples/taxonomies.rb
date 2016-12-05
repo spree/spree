@@ -1,5 +1,5 @@
 taxonomies = [
-  { name: "Categories" },
+  { name: I18n.t('spree.taxonomy_brands_name') },
   { name: "Brand" }
 ]
 

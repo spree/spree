@@ -598,4 +598,22 @@ describe Spree::Product, type: :model do
       expect(product.tag_list).to_not include("awesome")
     end
   end
+
+  context "#brand" do
+    let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_brands_name')) }
+    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
+
+    it 'should fetch Brand Taxon' do
+      expect(product.brand).to eql(taxonomy.taxons.first)
+    end
+  end
+
+  context "#category" do
+    let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_categories_name')) }
+    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
+
+    it 'should fetch Category Taxon' do
+      expect(product.category).to eql(taxonomy.taxons.first)
+    end
+  end
 end

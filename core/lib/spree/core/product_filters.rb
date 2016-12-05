@@ -108,7 +108,7 @@ module Spree
         pp = Spree::ProductProperty.arel_table
         conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
         {
-          name:   'Brands',
+          name:   I18n.t('spree.taxonomy_brands_name'),
           scope:  :brand_any,
           conds:  conds,
           labels: (brands.sort).map { |k| [k, k] }
