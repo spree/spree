@@ -23,7 +23,7 @@ module Spree
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :admin_interface_logo, :string, default: 'admin/logo.png'
     preference :admin_path, :string, default: '/admin'
-    preference :admin_products_per_page, :integer, default: 10
+    preference :admin_products_per_page, :integer, default: 30
     preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true

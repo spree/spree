@@ -325,7 +325,7 @@ The path to the logo to display on the admin interface. Can be different from `S
 
 `admin_products_per_page`
 
-How many products to display on the products listing in the admin interface. Defaults to 10.
+How many products to display on the products listing in the admin interface. Defaults to 30.
 
 `allow_checkout_on_gateway_error`
 
