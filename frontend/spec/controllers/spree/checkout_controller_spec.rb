@@ -458,5 +458,58 @@ describe Spree::CheckoutController, type: :controller do
       order.reload
       expect(order.state).to eq 'confirm'
     end
+
+    context 'with store credits payment' do
+      let(:user) { create(:user) }
+      let(:credit_amount) { order.total + 1.00 }
+      let(:put_attrs) do
+        {
+          state: 'payment',
+          apply_store_credit: 'Apply Store Credit',
+          order: {
+            payments_attributes: [{ payment_method_id: payment_method_id }],
+          }
+        }
+      end
+      before do
+        create(:store_credit_payment_method)
+        create(:store_credit, user: user, amount: credit_amount)
+      end
+
+      def expect_one_store_credit_payment(order, amount)
+        expect(order.payments.count).to eq 1
+        expect(order.payments.first.source).to be_a Spree::StoreCredit
+        expect(order.payments.first.amount).to eq amount
+      end
+
+      it 'can fully pay with store credits while removing other payment attributes' do
+        spree_put :update, put_attrs
+
+        order.reload
+        expect(order.state).to eq 'confirm'
+        expect_one_store_credit_payment(order, order.total)
+      end
+
+      it 'can fully pay with store credits while removing an existing card' do
+        credit_card = create(:credit_card, user: user, payment_method: Spree::PaymentMethod.first)
+        put_attrs[:order][:existing_card] = credit_card.id
+        spree_put :update, put_attrs
+
+        order.reload
+        expect(order.state).to eq 'confirm'
+        expect_one_store_credit_payment(order, order.total)
+      end
+
+      context 'partial payment' do
+        let(:credit_amount) { order.total - 1.00 }
+        it 'returns to payment for partial store credit' do
+          spree_put :update, put_attrs
+
+          order.reload
+          expect(order.state).to eq 'payment'
+          expect_one_store_credit_payment(order, credit_amount)
+        end
+      end
+    end
   end
 end
