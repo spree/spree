@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description   = %q{Spree's API}
   s.summary       = %q{Spree's API}
   s.homepage      = 'https://spreecommerce.com'
-  s.license       = 'BSD-3'
+  s.license       = 'BSD-3-Clause'
 
   s.required_ruby_version = '>= 2.2.2'
 
