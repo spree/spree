@@ -80,19 +80,8 @@ module Spree
         def collection
           return @collection if @collection.present?
           @collection = super
-          if request.xhr? && params[:q].present?
-            @collection = @collection.includes(:bill_address, :ship_address)
-                              .where("spree_users.email #{LIKE} :search
-                                     OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
-                                     OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.bill_address_id)
-                                     OR (spree_addresses.firstname #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)
-                                     OR (spree_addresses.lastname  #{LIKE} :search AND spree_addresses.id = spree_users.ship_address_id)",
-                                    { search: "#{params[:q].strip}%" })
-                              .limit(params[:limit] || 100)
-          else
-            @search = @collection.ransack(params[:q])
-            @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
-          end
+          @search = @collection.ransack(params[:q])
+          @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_products_per_page])
         end
 
       private
@@ -108,21 +97,6 @@ module Spree
       def user_destroy_with_orders_error
         invoke_callbacks(:destroy, :fails)
         render status: :forbidden, text: Spree.t(:error_user_destroy_with_orders)
-      end
-
-      # Allow different formats of json data to suit different ajax calls
-      def json_data
-        json_format = params[:json_format] || 'default'
-        case json_format
-        when 'basic'
-          collection.map { |u| { 'id' => u.id, 'name' => u.email } }.to_json
-        else
-          address_fields = [:firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :state_id, :country_id]
-          includes = { only: address_fields, include: { state: { only: :name }, country: { only: :name } } }
-
-          collection.to_json(only: [:id, :email], include:
-                             { bill_address: includes, ship_address: includes })
-        end
       end
 
       def sign_in_if_change_own_password
