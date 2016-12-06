@@ -7,6 +7,8 @@ module Spree
 
       def units
         @order.line_items.map do |line_item|
+          # They go through multiple splits, avoid loading the
+          # association to order until needed.
           InventoryUnit.new(
             pending:    true,
             line_item:  line_item,
