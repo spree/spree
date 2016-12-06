@@ -22,7 +22,7 @@ module Spree
 
       def percentage_of_order_total(return_item, inventory_unit)
        return 0.0 if inventory_unit.order.pre_tax_item_amount.zero?
-       weighted_line_item_pre_tax_amount(return_item, inventory_unit) * inventory_unit.order.pre_tax_item_amount
+       weighted_line_item_pre_tax_amount(return_item, inventory_unit) / inventory_unit.order.pre_tax_item_amount
       end
 
       def weighted_line_item_pre_tax_amount(return_item, inventory_unit)
