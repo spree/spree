@@ -79,8 +79,8 @@ module Spree
             per_page_options << (amount + 1) * Spree::Config.admin_products_per_page
           end
         else
-          per_page_default = 15
-          per_page_options = %w{5 15 30 45 60}
+          per_page_default = Spree::Config.admin_orders_per_page
+          per_page_options = %w{15 30 45 60}
         end
 
         selected_option = params[:per_page].try(:to_i) || per_page_default

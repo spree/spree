@@ -109,12 +109,12 @@ describe "Orders Listing", type: :feature do
 
     context "when pagination is really short" do
       before do
-        @old_per_page = Spree::Config[:orders_per_page]
-        Spree::Config[:orders_per_page] = 1
+        @old_per_page = Spree::Config[:admin_orders_per_page]
+        Spree::Config[:admin_orders_per_page] = 1
       end
 
       after do
-        Spree::Config[:orders_per_page] = @old_per_page
+        Spree::Config[:admin_orders_per_page] = @old_per_page
       end
 
       # Regression test for #4004
