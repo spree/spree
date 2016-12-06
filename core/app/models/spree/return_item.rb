@@ -183,7 +183,7 @@ module Spree
       inventory_unit.return!
       Spree::StockMovement.create!(
         stock_item_id: stock_item.id,
-        quantity: 1,
+        quantity: inventory_unit.quantity,
         originator: return_authorization
       ) if should_restock?
     end
