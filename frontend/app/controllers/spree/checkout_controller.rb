@@ -169,6 +169,7 @@ module Spree
 
         # Remove other payment method parameters.
         params[:order].delete(:payments_attributes)
+        params[:order].delete(:existing_card)
         params.delete(:payment_source)
 
         # Return to the Payments page if additional payment is needed.
