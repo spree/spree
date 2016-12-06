@@ -49,40 +49,30 @@ module Spree
         def self.create_shipments_from_params(shipments_hash, order)
           return [] unless shipments_hash
 
-          inventory_units = Spree::Stock::InventoryUnitBuilder.new(order).units
 
           shipments_hash.each do |s|
             begin
               shipment = order.shipments.build
               shipment.tracking       = s[:tracking]
               shipment.stock_location = Spree::StockLocation.find_by_admin_name(s[:stock_location]) || Spree::StockLocation.find_by_name!(s[:stock_location])
+              inventory_units = create_inventory_units_from_order_and_params(order, s[:inventory_units])
 
-              shipment_units = s[:inventory_units] || []
-              shipment_units.each do |su|
-                ensure_variant_id_from_params(su)
+              inventory_units.each do |inventory_unit|
+                inventory_unit.shipment = shipment
 
-                inventory_unit = inventory_units.detect { |iu| iu.variant_id.to_i == su[:variant_id].to_i }
-
-                if inventory_unit.present?
-                  inventory_unit.shipment = shipment
-
-                  if s[:shipped_at].present?
-                    inventory_unit.pending = false
-                    inventory_unit.state = 'shipped'
-                  end
-
-                  inventory_unit.save!
-
-                  # Don't assign shipments to this inventory unit more than once
-                  inventory_units.delete(inventory_unit)
+                if s[:shipped_at].present?
+                  inventory_unit.pending = false
+                  inventory_unit.state = 'shipped'
                 end
+
+                inventory_unit.save!
               end
 
               if s[:shipped_at].present?
                 shipment.shipped_at = s[:shipped_at]
                 shipment.state      = 'shipped'
               end
- 
+
               shipment.save!
 
               shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
@@ -96,6 +86,20 @@ module Spree
             rescue Exception => e
               raise "Order import shipments: #{e.message} #{s}"
             end
+          end
+        end
+
+        def self.create_inventory_units_from_order_and_params(order, inventory_unit_params)
+          inventory_unit_params.reduce([]) do |inventory_units, inventory_unit_param|
+            ensure_variant_id_from_params(inventory_unit_param)
+            existing = inventory_units.detect { |unit| unit.variant_id == inventory_unit_param[:variant_id] }
+            if existing
+              existing.quantity += 1
+            else
+              line_item = order.line_items.detect { |ln| ln.variant_id = inventory_unit_param[:variant_id] }
+              inventory_units << InventoryUnit.new(line_item: line_item, order_id: order.id, variant: line_item.variant, quantity: 1)
+            end
+            inventory_units
           end
         end
 

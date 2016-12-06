@@ -85,7 +85,7 @@ module Spree
     end
 
     def singular?
-      quantity == 1
+      quantity === 1
     end
 
     # Remove variant default_scope `deleted_at: nil`
@@ -106,7 +106,7 @@ module Spree
     end
 
     def empty?
-      quantity == 0
+      quantity === 0
     end
 
     private
