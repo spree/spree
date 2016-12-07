@@ -30,9 +30,17 @@ in a single repository and documented in a single set of
 Getting Started
 ----------------------
 
-Required rails `rails (~> 4.2.5)`
-
 Add Spree gems to your Gemfile:
+
+### Rails 5
+
+```ruby
+gem 'spree', '~> 3.2.0.rc1'
+gem 'spree_auth_devise', '~> 3.2.0.beta'
+gem 'spree_gateway', '~> 3.2.0.beta'
+```
+
+### Rails 4.2
 
 ```ruby
 gem 'spree', '~> 3.1.0'
@@ -53,7 +61,7 @@ rails g spree_gateway:install
 Installation options
 ----------------------
 
-Alternatively, if you want to use the bleeding edge version of Spree (for Rails 5), add this to your Gemfile:
+Alternatively, if you want to use the bleeding edge version of Spree, add this to your Gemfile:
 
 ```ruby
 gem 'spree', github: 'spree/spree'
