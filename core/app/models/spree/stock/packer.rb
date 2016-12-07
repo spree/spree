@@ -24,16 +24,14 @@ module Spree
         # Group by variant_id as grouping by variant fires cached query.
         inventory_units.index_by(&:variant_id).each do |variant_id, inventory_unit|
           variant = Spree::Variant.find(variant_id)
-          unit    = inventory_unit
+          unit    = inventory_unit.dup # Can be used by others do not use directly
           if variant.should_track_inventory?
             next unless stock_location.stocks? variant
             on_hand, backordered = stock_location.fill_status(variant, unit.quantity)
             package.add(InventoryUnit.split(unit, backordered), :backordered) if backordered > 0
             package.add(InventoryUnit.split(unit, on_hand),     :on_hand)     if on_hand > 0
-            @allocated_inventory_units << unit if unit.empty?
           else
             package.add unit
-            @allocated_inventory_units << unit
           end
         end
 

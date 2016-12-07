@@ -24,6 +24,10 @@ module Spree
         @contents -= [item] if item
       end
 
+      def remove_item item
+        @contents -= [item]
+      end
+
       # Fix regression that removed package.order.
       # Find it dynamically through an inventory_unit.
       def order

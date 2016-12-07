@@ -7,7 +7,6 @@ module Spree
       def initialize(order, inventory_units = nil)
         @order = order
         @inventory_units = inventory_units || InventoryUnitBuilder.new(order).units
-        self.unallocated_inventory_units = @inventory_units.dup
       end
 
       def shipments
@@ -18,15 +17,14 @@ module Spree
 
       def packages
         packages = build_packages
-        # packages = prioritize_packages(packages)
+        packages = prioritize_packages(packages)
         packages = estimate_packages(packages)
       end
 
       def build_packages(packages = Array.new)
         stock_locations_with_requested_variants.each do |stock_location|
-          packer = build_packer(stock_location, unallocated_inventory_units)
+          packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
-          self.unallocated_inventory_units -= packer.allocated_inventory_units
         end
 
         packages

@@ -26,6 +26,10 @@ module Spree
         variant_weight * quantity
       end
 
+      def quantity=(value)
+        @inventory_unit.quantity = value
+      end
+
       def on_hand?
         state.to_s == "on_hand"
       end
