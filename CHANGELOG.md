@@ -2,6 +2,10 @@
 
 https://github.com/spree/spree/tree/master/guides/content/release_notes
 
+#### Edge
+
+https://github.com/spree/spree/blob/master/guides/content/release_notes/3_3_0.md
+
 #### 3.2.x
 
 https://github.com/spree/spree/blob/master/guides/content/release_notes/3_2_0.md
