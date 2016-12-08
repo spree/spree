@@ -46,11 +46,11 @@ module Spree
       #   {<variant_id> => <stock_item>, ...}
       def stock_item_lookup
         @stock_item_lookup ||=
-          Spree::StockItem.
-          where(variant_id: inventory_units.map(&:variant_id).uniq).
-          where(stock_location_id: stock_location.id).
-          map { |stock_item| [stock_item.variant_id, stock_item] }.to_h
-          # there is only one stock item per variant in a stock location
+        Spree::StockItem.
+        where(variant_id: inventory_units.map(&:variant_id).uniq).
+        where(stock_location_id: stock_location.id).
+        map { |stock_item| [stock_item.variant_id, stock_item] }.to_h
+        # there is only one stock item per variant in a stock location
       end
 
       def build_splitter

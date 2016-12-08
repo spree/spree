@@ -59,7 +59,7 @@ module Spree
     end
 
     def reduce_count_on_hand_to_zero
-      self.set_count_on_hand(0) if count_on_hand.positive?
+      set_count_on_hand(0) if count_on_hand.positive?
     end
 
     def fill_status(quantity)
