@@ -3,7 +3,7 @@ module Spree
     class Packer
       attr_reader :stock_location, :inventory_units, :splitters
 
-      def initialize(stock_location, inventory_units, splitters=[Splitter::Base])
+      def initialize(stock_location, inventory_units, splitters = [Splitter::Base])
         @stock_location = stock_location
         @inventory_units = inventory_units
         @splitters = splitters
@@ -31,7 +31,6 @@ module Spree
           else
             package.add_multiple units
           end
-
         end
         package
       end
@@ -46,10 +45,10 @@ module Spree
       #   {<variant_id> => <stock_item>, ...}
       def stock_item_lookup
         @stock_item_lookup ||=
-        Spree::StockItem.
-        where(variant_id: inventory_units.map(&:variant_id).uniq).
-        where(stock_location_id: stock_location.id).
-        map { |stock_item| [stock_item.variant_id, stock_item] }.to_h
+          Spree::StockItem.
+          where(variant_id: inventory_units.map(&:variant_id).uniq).
+          where(stock_location_id: stock_location.id).
+          map { |stock_item| [stock_item.variant_id, stock_item] }.to_h
         # there is only one stock item per variant in a stock location
       end
 
