@@ -59,7 +59,7 @@ module Spree
     end
 
     def reduce_count_on_hand_to_zero
-      self.set_count_on_hand(0) if count_on_hand > 0
+      self.set_count_on_hand(0) if count_on_hand.positive?
     end
 
     def fill_status(quantity)
@@ -68,7 +68,7 @@ module Spree
         backordered = 0
       else
         on_hand = count_on_hand
-        on_hand = 0 if on_hand < 0
+        on_hand = 0 if on_hand.negative?
         backordered = backorderable? ? (quantity - on_hand) : 0
       end
 
@@ -77,14 +77,14 @@ module Spree
 
     private
       def verify_count_on_hand?
-        count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+        count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand.negative?)
       end
 
       # Process backorders based on amount of stock received
       # If stock was -20 and is now -15 (increase of 5 units), then we should process 5 inventory orders.
       # If stock was -20 but then was -25 (decrease of 5 units), do nothing.
       def process_backorders(number)
-        if number > 0
+        if number.positive?
           backordered_inventory_units.first(number).each do |unit|
             unit.fill_backorder
           end

@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Packer, :type => :model do
-      let!(:inventory_units) { 5.times.map { build(:inventory_unit) } }
+      let!(:inventory_units) { Array.new(5) { build(:inventory_unit) } }
       let(:stock_location) { create(:stock_location) }
 
       subject { Packer.new(stock_location, inventory_units) }

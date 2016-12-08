@@ -26,8 +26,8 @@ module Spree
             next unless stock_item
 
             on_hand, backordered = stock_item.fill_status(units.size)
-            package.add_multiple units.slice!(0, on_hand), :on_hand if on_hand > 0
-            package.add_multiple units.slice!(0, backordered), :backordered if backordered > 0
+            package.add_multiple units.slice!(0, on_hand), :on_hand if on_hand.positive?
+            package.add_multiple units.slice!(0, backordered), :backordered if backordered.positive?
           else
             package.add_multiple units
           end
@@ -45,11 +45,12 @@ module Spree
       # Returns a lookup table in the form of:
       #   {<variant_id> => <stock_item>, ...}
       def stock_item_lookup
-        @stock_item_lookup ||= Spree::StockItem.
+        @stock_item_lookup ||=
+          Spree::StockItem.
           where(variant_id: inventory_units.map(&:variant_id).uniq).
           where(stock_location_id: stock_location.id).
-          map { |stock_item| [stock_item.variant_id, stock_item] }.
-          to_h # there is only one stock item per variant in a stock location
+          map { |stock_item| [stock_item.variant_id, stock_item] }.to_h
+          # there is only one stock item per variant in a stock location
       end
 
       def build_splitter
