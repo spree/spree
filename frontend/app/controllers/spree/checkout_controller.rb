@@ -150,6 +150,10 @@ module Spree
           # As an intermediary step to optimize reloads out of high volume code path
           # the reload was lifted here and will be removed by later passes.
           @order.reload
+          # @order.reload sets @order.state back to "confirm," which we don't want.
+          # Set the state back to payment so that the user can edit their payment after
+          # getting to the confirm page (or on a failed payment attempt)
+          @order.state = "payment"
         end
 
         if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
