@@ -165,10 +165,7 @@ module Spree
       end
 
       it 'zero on_hand with all backordered' do
-        zero_stock_item = mock_model(StockItem,
-                                     count_on_hand: 0,
-                                     backorderable?: true)
-        expect(subject).to receive(:stock_item).with(variant).and_return(zero_stock_item)
+        stock_item.set_count_on_hand(0)
 
         on_hand, backordered = subject.fill_status(variant, 20)
         expect(on_hand).to eq 0
@@ -177,8 +174,7 @@ module Spree
 
       context 'when backordering is not allowed' do
         before do
-          @stock_item = mock_model(StockItem, backorderable?: false)
-          expect(subject).to receive(:stock_item).with(variant).and_return(@stock_item)
+          stock_item.update!(backorderable: false)
         end
 
         it 'all on_hand' do
@@ -190,7 +186,7 @@ module Spree
         end
 
         it 'some on_hand' do
-          allow(@stock_item).to receive_messages(count_on_hand: 10)
+          stock_item.set_count_on_hand(10)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 10
@@ -198,7 +194,7 @@ module Spree
         end
 
         it 'zero on_hand' do
-          allow(@stock_item).to receive_messages(count_on_hand: 0)
+          stock_item.set_count_on_hand(0)
 
           on_hand, backordered = subject.fill_status(variant, 20)
           expect(on_hand).to eq 0
