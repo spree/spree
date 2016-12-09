@@ -7,14 +7,14 @@ require '<%=file_name%>/version'
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
   s.version     = <%= class_name %>.version
+  s.summary     = 'Add extension summary here'
+  s.description = 'Add (optional) extension description here'
   s.required_ruby_version = '>= 2.2.2'
 
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
-  # s.homepage  = 'http://www.spreecommerce.com'
+  s.author    = 'You'
+  s.email     = 'you@example.com'
+  s.homepage  = 'https://github.com/your-github-handle/<%= file_name %>'
   s.license = 'BSD-3-Clause'
 
   # s.files       = `git ls-files`.split("\n")
@@ -33,5 +33,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sass-rails'
   s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'pg'
 end
