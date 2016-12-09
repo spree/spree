@@ -24,14 +24,12 @@ There are three steps we need to take to install spree_i18n.
 First, we need to add the gem to the bottom of our `Gemfile`:
 
 ```ruby
-gem 'spree_i18n', git: 'git://github.com/spree/spree_i18n.git', branch: '3-0-stable'
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
 ```
-****
-
-Note that if you are using the edge version of Spree, you should omit the branch parameter to get the latest version of spree_i18n. Alternatively, you should select the version of spree_i18n that corresponds with your version of spree.
 
 ***
-If you are using a 3.0.x version of Spree, the above line will work fine. If you're using a 2.4.x version of Spree, you'll need to change the "branch" option to point to the "2-4-stable" branch. If you're using the "master" branch of Spree, change the "branch" argument for "spree_i18n" to be "master" as well.
+If you are using a 3.0.x or 2.x version of Spree, you'll need to change the `branch` to `X-X-stable` 
+to match the version of Spree you're using. For example, use `3-0-stable` if you're using Spree `3.0.x`.
 ***
 
 Now, let's install the gem via Bundler with the following command:
