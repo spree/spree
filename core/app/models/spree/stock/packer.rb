@@ -26,8 +26,8 @@ module Spree
             next unless stock_item
 
             on_hand, backordered = stock_item.fill_status(units.size)
-            package.add_multiple units.slice!(0, on_hand), :on_hand if on_hand.positive?
-            package.add_multiple units.slice!(0, backordered), :backordered if backordered.positive?
+            package.add_multiple units.slice!(0, on_hand), :on_hand if on_hand > 0
+            package.add_multiple units.slice!(0, backordered), :backordered if backordered > 0
           else
             package.add_multiple units
           end
