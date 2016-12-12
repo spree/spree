@@ -139,31 +139,30 @@ describe "Promotion Adjustments", type: :feature, js: true do
       expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
-    xit "should allow an admin to create an automatic promotion with free shipping (no code)" do
+    it "should allow an admin to create an automatic promotion with free shipping (no code)" do
       fill_in "Name", with: "Promotion"
       click_button "Create"
-      expect(page).to have_content("Editing Promotion")
+
+      promotion = Spree::Promotion.find_by_name("Promotion")
+      expect(page).to have_content(promotion.name)
 
       select2 "Item total", from: "Add rule of type"
       within('#rule_fields') { click_button "Add" }
-      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount", with: "30"
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_min", with: "50"
+      eventually_fill_in "promotion_promotion_rules_attributes_1_preferred_amount_max", with: "150"
       within('#rule_fields') { click_button "Update" }
 
-      select2 "Create whole-order adjustment", from: "Add action of type"
+      select2 "Free shipping", from: "Add action of type"
       within('#action_fields') { click_button "Add" }
-      select2 "Free Shipping", from: "Calculator"
-      within('#actions_container') { click_button "Update" }
+      expect(page).to have_content("Makes all shipments for the order free")
 
-      promotion = Spree::Promotion.find_by_name("Promotion")
       expect(promotion.code).to be_blank
 
       first_rule = promotion.rules.first
       expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
 
       first_action = promotion.actions.first
-      expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
-      first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::FreeShipping)
+      expect(first_action.class).to eq(Spree::Promotion::Actions::FreeShipping)
     end
 
     it "should allow an admin to create an automatic promo requiring a landing page to be visited" do
