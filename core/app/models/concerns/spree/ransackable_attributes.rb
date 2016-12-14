@@ -3,6 +3,7 @@ module Spree::RansackableAttributes
   included do
     class_attribute :whitelisted_ransackable_associations
     class_attribute :whitelisted_ransackable_attributes
+    class_attribute :whitelisted_ransackable_scopes
 
     class_attribute :default_ransackable_attributes
     self.default_ransackable_attributes = %w[id name]
@@ -13,6 +14,10 @@ module Spree::RansackableAttributes
 
     def self.ransackable_attributes(*args)
       self.default_ransackable_attributes | (self.whitelisted_ransackable_attributes || [])
+    end
+
+    def self.ransackable_scopes(*args)
+      self.whitelisted_ransackable_scopes || []
     end
   end
 
