@@ -17,7 +17,7 @@ module Spree::RansackableAttributes
     end
 
     def self.ransackable_scopes(*args)
-      self.whitelisted_ransackable_scopes || []
+      whitelisted_ransackable_scopes || []
     end
   end
 
