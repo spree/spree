@@ -187,7 +187,7 @@ module Spree
     end
 
     def self.not_discontinued(only_not_discontinued = true)
-      if only_not_discontinued != '0' &&  only_not_discontinued
+      if only_not_discontinued != '0' && only_not_discontinued
         where("#{Product.quoted_table_name}.discontinue_on IS NULL or #{Product.quoted_table_name}.discontinue_on >= ?", Time.zone.now)
       else
         all
