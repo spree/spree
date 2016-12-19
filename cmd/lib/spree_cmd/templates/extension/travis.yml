@@ -1,0 +1,28 @@
+sudo: required
+dist: trusty
+
+language: ruby
+
+env:
+  - DB=postgres
+  - DB=mysql
+
+gemfile:
+  - gemfiles/spree_3_1.gemfile
+  - gemfiles/spree_3_2.gemfile
+  - gemfiles/spree_master.gemfile
+
+script:
+  - bundle exec rake test_app
+  - bundle exec rake spec
+
+rvm:
+  - 2.3.1
+  - 2.2.5
+
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
