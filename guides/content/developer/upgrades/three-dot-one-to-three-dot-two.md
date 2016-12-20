@@ -13,7 +13,7 @@ to upgrade your store.
 
 ### Update Gemfile
 
-```
+```ruby
 gem 'spree', '~> 3.2.0.rc1'
 gem 'spree_auth_devise', '~> 3.2.0.beta'
 gem 'spree_gateway', '~> 3.2.0.beta'
@@ -27,12 +27,14 @@ extension branch to Spree branch. Starting from now `master` branch of all
 your extensions in Gemfile eg.:
 
 from:
-```
+
+```ruby
 gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero', branch: '3-1-stable'
 ```
 
 to:
-```
+
+```ruby
 gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
 ```
 
@@ -40,7 +42,7 @@ gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
 
 ### Install missing migrations
 
-```
+```bash
 rails spree:install:migrations
 rails spree_auth:install:migrations
 rails spree_gateway:install:migrations
@@ -48,7 +50,7 @@ rails spree_gateway:install:migrations
 
 ### Run migrations
 
-```
+```bash
 rails db:migrate
 ```
 
