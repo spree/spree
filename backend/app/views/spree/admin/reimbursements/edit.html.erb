@@ -10,6 +10,8 @@
 
 <%= render :partial => 'spree/shared/error_messages', :locals => { :target => @reimbursement } %>
 
+<div data-hook="before-reimbursement"></div>
+
 <%= form_for [:admin, @order, @reimbursement] do |f| %>
   <fieldset class='no-border-bottom'>
     <legend align='center'><%= Spree.t(:items_to_be_reimbursed) %></legend>
