@@ -616,4 +616,14 @@ describe Spree::Product, type: :model do
       expect(product.category).to eql(taxonomy.taxons.first)
     end
   end
+
+  describe '#ensure_no_line_items' do
+    let(:product) { create(:product) }
+    let!(:line_item) { create(:line_item, variant: product.master) }
+
+    it 'should add error on product destroy' do
+      expect(product.destroy).to eq false
+      expect(product.errors[:base]).to include Spree.t(:cannot_destroy_if_attached_to_line_items)
+    end
+  end
 end
