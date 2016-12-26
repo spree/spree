@@ -806,4 +806,13 @@ describe Spree::Variant, type: :model do
       expect(variant.updated_at).to_not be_nil
     end
   end
+
+  describe '#ensure_no_line_items' do
+    let!(:line_item) { create(:line_item, variant: variant) }
+
+    it 'should add error on product destroy' do
+      expect(variant.destroy).to eq false
+      expect(variant.errors[:base]).to include Spree.t(:cannot_destroy_if_attached_to_line_items)
+    end
+  end
 end
