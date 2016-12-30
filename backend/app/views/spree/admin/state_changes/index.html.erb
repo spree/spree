@@ -1,7 +1,8 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :state_changes } %>
 
-<% content_for :page_title do %>
-  <%= plural_resource_name(Spree::StateChange) %>
+<% content_for :page_title do %>  
+  / <%= plural_resource_name(Spree::StateChange) %>
+  / <%= Spree::StateChange.human_attribute_name(:state_changes) %>
 <% end %>
 
 <% if @state_changes.any? %>
