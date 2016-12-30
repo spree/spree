@@ -54,7 +54,7 @@
         <th><%= Spree.t(:usage_limit) %></th>
         <th><%= Spree.t(:promotion_uses) %></th>
         <th><%= Spree.t(:expiration) %></th>
-        <th class="actions"></th>
+        <th data-hook="admin_promotions_index_header_actions" class="actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -66,7 +66,7 @@
           <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
           <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-          <td class="actions actions-2">
+          <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">
             <%= link_to_edit promotion, no_text: true %>
             <%= link_to_delete promotion, no_text: true %>
           </td>
