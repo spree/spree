@@ -19,24 +19,24 @@ module Spree
     # are always unstocked when the order is completed through +shipment.finalize+
     def verify(shipment = nil)
       if order.completed? || shipment.present?
-
-        if inventory_units.size < line_item.quantity
-          quantity = line_item.quantity - inventory_units.size
+        units_count = inventory_units.sum(&:quantity)
+        if units_count < line_item.quantity
+          quantity = line_item.quantity - units_count
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif inventory_units.size == line_item.quantity && !line_item.changed?
-          remove(inventory_units, shipment)
-        elsif inventory_units.size > line_item.quantity
-          remove(inventory_units, shipment)
+        elsif units_count == line_item.quantity && !line_item.changed?
+          remove(units_count, shipment)
+        elsif units_count > line_item.quantity
+          remove(units_count, shipment)
         end
       end
     end
 
     private
 
-      def remove(item_units, shipment = nil)
-        quantity = set_quantity_to_remove(item_units)
+      def remove(units_count, shipment = nil)
+        quantity = set_quantity_to_remove(units_count)
 
         if shipment.present?
           remove_from_shipment(shipment, quantity)
@@ -48,11 +48,11 @@ module Spree
         end
       end
 
-      def set_quantity_to_remove(item_units)
-        if (item_units.size - line_item.quantity).zero?
+      def set_quantity_to_remove(units_count)
+        if (units_count - line_item.quantity).zero?
           line_item.quantity
         else
-          item_units.size - line_item.quantity
+          units_count - line_item.quantity
         end
       end
 
@@ -96,12 +96,18 @@ module Spree
         removed_quantity = 0
 
         shipment_units.each do |inventory_unit|
-          break if removed_quantity == quantity
-          inventory_unit.destroy
-          removed_quantity += 1
+          inventory_unit.quantity.times do
+            break if removed_quantity == quantity
+            if inventory_unit.quantity > 1
+              inventory_unit.decrement(:quantity)
+            else
+              inventory_unit.destroy
+            end
+            removed_quantity += 1
+          end
         end
 
-        shipment.destroy if shipment.inventory_units.count.zero?
+        shipment.destroy if shipment.inventory_units.sum(:quantity).zero?
 
         # removing this from shipment, and adding to stock_location
         if order.completed?
