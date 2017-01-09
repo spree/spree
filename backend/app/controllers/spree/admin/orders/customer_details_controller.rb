@@ -24,7 +24,7 @@ module Spree
               @order.associate_user!(Spree.user_class.find(params[:user_id]), @order.email.blank?)
             end
             @order.next
-            @order.refresh_shipment_rates
+            @order.refresh_shipment_rates(false)
             flash[:success] = Spree.t('customer_details_updated')
             redirect_to edit_admin_order_url(@order)
           else
