@@ -19,8 +19,12 @@ module Spree
         elsif item.backordered?
           # We only use the first backorder item to fill backorders
           # as the items/packages are processed in priority order
-          self.backorder_package = package_to_adjust if backorder_package.nil?
-          self.backorder_item    = item if backorder_item.nil?
+          if backorder_package.nil?
+            self.backorder_package = package_to_adjust
+            self.backorder_item    = item
+          else
+            package_to_adjust.remove_item item
+          end
         else
           if item.quantity >= remaining_quantity
             item.quantity = remaining_quantity
@@ -31,7 +35,7 @@ module Spree
       end
 
       def update_backorder
-        return unless backorder_package.present?
+        return if backorder_package.nil?
         if fulfilled?
           backorder_package.remove_item  backorder_item
         elsif backorder_item.present?

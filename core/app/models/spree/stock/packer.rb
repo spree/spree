@@ -1,13 +1,12 @@
 module Spree
   module Stock
     class Packer
-      attr_reader :stock_location, :inventory_units, :splitters, :allocated_inventory_units
+      attr_reader :stock_location, :inventory_units, :splitters
 
       def initialize(stock_location, inventory_units, splitters=[Splitter::Base])
         @stock_location = stock_location
         @inventory_units = inventory_units
         @splitters = splitters
-        @allocated_inventory_units = []
       end
 
       def packages
@@ -24,7 +23,7 @@ module Spree
         # Group by variant_id as grouping by variant fires cached query.
         inventory_units.index_by(&:variant_id).each do |variant_id, inventory_unit|
           variant = Spree::Variant.find(variant_id)
-          unit    = inventory_unit.clone # Can be used by others do not use directly
+          unit    = inventory_unit.dup # Can be used by others do not use directly
           if variant.should_track_inventory?
             next unless stock_location.stocks? variant
             on_hand, backordered = stock_location.fill_status(variant, unit.quantity)
