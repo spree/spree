@@ -45,6 +45,21 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         expect(Spree::Order.last.store_id).to eq store.id
       end
     end
+
+    context 'gets using the guest_token' do
+      let!(:order) { create :order, user: user }
+      let!(:guest_order) { create :order, user: nil, email: nil, guest_token: 'token' }
+
+      before do
+        expect(controller).to receive(:current_order_params).and_return(
+          currency: Spree::Config[:currency], guest_token: 'token', store_id: guest_order.store_id, user_id: user.id,
+        )
+      end
+
+      specify 'without the guest token being bound to any user yet' do
+        expect(controller.current_order).to eq guest_order
+      end
+    end
   end
 
   describe '#associate_user' do
