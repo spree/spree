@@ -28,9 +28,9 @@
               <%= variant.sku_and_options_text %>
               <%= form_tag admin_product_variants_including_master_path(@product, variant, format: :js), method: :put, class: 'toggle_variant_track_inventory' do %>
                 <div class="checkbox">
-                  <%= label_tag :track_inventory do %>
+                  <%= label_tag "track_inventory_#{ variant.id }" do %>
                     <%= check_box_tag 'track_inventory', 1, variant.track_inventory?,
-                                      class: 'track_inventory_checkbox' %>
+                                      class: 'track_inventory_checkbox', id: "track_inventory_#{ variant.id }" %>
                     <%= Spree.t(:track_inventory) %>
                     <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
 			class: 'variant_track_inventory',
