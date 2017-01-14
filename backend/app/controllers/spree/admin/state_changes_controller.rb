@@ -4,7 +4,7 @@ module Spree
       before_action :load_order, only: [:index]
 
       def index
-        @state_changes = @order.state_changes.includes(:user)
+        @state_changes = @order.state_changes.includes(:user).order(created_at: :desc)
       end
 
       private
