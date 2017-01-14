@@ -123,6 +123,7 @@ describe "Adjustments", type: :feature do
         end
       end
 
+      wait_for_ajax
       expect(page).to have_content(/Total: ?\$170\.00/)
     end
   end
