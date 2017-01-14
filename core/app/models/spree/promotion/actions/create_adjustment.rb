@@ -13,7 +13,7 @@ module Spree
         end
 
         def compute_amount(order)
-          [(order.item_total + order.ship_total), compute(order)].min * -1
+          [(order.item_total + order.ship_total - order.shipping_discount), compute(order)].min * -1
         end
       end
     end
