@@ -25,8 +25,8 @@ module Spree
       belongs_to :customer_return
       belongs_to :reimbursement
     end
+    has_many :exchange_inventory_units, class_name: 'Spree::InventoryUnit', foreign_key: :original_return_item_id, inverse_of: :original_return_item
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
-    belongs_to :exchange_inventory_unit, class_name: 'Spree::InventoryUnit', inverse_of: :original_return_item
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
 
@@ -52,8 +52,8 @@ module Spree
     scope :reimbursed, -> { where.not(reimbursement_id: nil) }
     scope :not_reimbursed, -> { where(reimbursement_id: nil) }
     scope :exchange_requested, -> { where.not(exchange_variant: nil) }
-    scope :exchange_processed, -> { where.not(exchange_inventory_unit: nil) }
-    scope :exchange_required, -> { exchange_requested.where(exchange_inventory_unit: nil) }
+    scope :exchange_processed, -> { joins(:exchange_inventory_units).distinct }
+    scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: { original_return_item_id: nil }).distinct }
     scope :resellable, -> { where resellable: true }
 
     serialize :acceptance_status_errors
@@ -127,7 +127,7 @@ module Spree
     end
 
     def exchange_processed?
-      exchange_inventory_unit.present?
+      exchange_inventory_units.present?
     end
 
     def exchange_required?
@@ -142,18 +142,18 @@ module Spree
       exchange_variant_engine.eligible_variants(variant)
     end
 
-    def build_exchange_inventory_unit
+    def build_default_exchange_inventory_unit
       # The inventory unit needs to have the new variant
       # but it also needs to know the original line item
       # for pricing information for if the inventory unit is
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
-      super(variant: exchange_variant, line_item: inventory_unit.line_item,
+      exchange_inventory_units.build(variant: exchange_variant, line_item: inventory_unit.line_item,
             order: inventory_unit.order, quantity: return_quantity) if exchange_required?
     end
 
-    def exchange_shipment
-      exchange_inventory_unit.try(:shipment)
+    def exchange_shipments
+      exchange_inventory_units.map(&:shipment).uniq
     end
 
     def set_default_pre_tax_amount

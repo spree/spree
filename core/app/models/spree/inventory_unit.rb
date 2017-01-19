@@ -1,6 +1,5 @@
 module Spree
   class InventoryUnit < Spree::Base
-
     with_options inverse_of: :inventory_units do
       belongs_to :variant, class_name: "Spree::Variant"
       belongs_to :order, class_name: "Spree::Order"
@@ -10,7 +9,7 @@ module Spree
     end
 
     has_many :return_items, inverse_of: :inventory_unit
-    has_one :original_return_item, class_name: "Spree::ReturnItem", foreign_key: :exchange_inventory_unit_id
+    belongs_to :original_return_item, class_name: "Spree::ReturnItem"
 
     scope :backordered, -> { where state: 'backordered' }
     scope :on_hand, -> { where state: 'on_hand' }
@@ -107,6 +106,18 @@ module Spree
 
     def empty?
       quantity === 0
+    end
+
+    def required_quantity
+      @required_quantity ||= if exchanged_unit?
+        original_return_item.return_quantity
+      else
+        line_item.quantity
+      end
+    end
+
+    def exchanged_unit?
+      original_return_item_id?
     end
 
     private

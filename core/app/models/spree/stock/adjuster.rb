@@ -7,7 +7,7 @@ module Spree
                     :backorder_item
 
       def initialize(inventory_unit, status, package=nil)
-        self.required_quantity = inventory_unit.line_item.quantity
+        self.required_quantity = inventory_unit.required_quantity
         self.backorder_package = nil
         self.backorder_item    = nil
         self.received_quantity = 0
