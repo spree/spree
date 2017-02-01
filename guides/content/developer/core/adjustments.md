@@ -17,7 +17,7 @@ Adjustments have the following attributes:
 * `label`: The label for the adjustment to indicate what the adjustment is for.
 * `eligible`: Indicates if the adjustment is eligible for the thing it's adjusting.
 * `mandatory`: Indicates if this adjustment is mandatory; i.e that this adjustment *must* be applied regardless of its eligibility rules.
-* `state`: Can either be `open`, `closed`, or `finalized`. Once it is in the `finalized` state, it cannot be changed.
+* `state`: Can either be `open` or `closed`. Once an adjustment is closed, it will not be automatically updated.
 * `included`: Whether or not this adjustment affects the final price of the item it is applied to. Used only for tax adjustments which may themselves be included in the price.
 
 Along with these attributes, an adjustment links to three polymorphic objects:
