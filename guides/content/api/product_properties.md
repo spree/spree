@@ -20,7 +20,7 @@ Product properties are paginated and can be iterated through by passing along a 
 ### Parameters
 
 page
-: The page number of product property to display.
+: The page number of product properties to display.
 
 per_page
 : The number of product properties to return per page
