@@ -60,8 +60,8 @@ The following are some simple rules that all Spree API endpoints comply with.
 5. Delete requests will return status of 200, and no content.
 6. Requests that list collections, such as `/api/v1/products` are paginated and
    will return 25 records per page. You can speficy your own `per_page` value.
-7. Requests that list collections can be paginated through by passing a 0-based
-   `page` parameter (`page=0` will return first 25 products).
+7. Requests that list collections can be paginated through by passing a `page`
+   parameter, `page=1` being the first page.
 8. If a resource can not be found, the API will return a status of 404.
 9. Unauthorized requests will be met with a 401 response.
 
