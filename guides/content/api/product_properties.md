@@ -93,6 +93,8 @@ If a property with that name does not already exist, then it will automatically 
 
 ## Update
 
+<%= admin_only %>
+
 To update an existing product property, make a request like this:
 
     PUT /api/v1/products/1/product_properties/size?product_property[value]=10
@@ -107,6 +109,8 @@ You may also use a property's id if you know it:
 <%= json(:product_property) %>
 
 ## Delete
+
+<%= admin_only %>
 
 To delete a product property, make a request like this:
 
