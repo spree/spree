@@ -37,6 +37,8 @@ end %>
 
 ## Search
 
+<%= admin_only %>
+
 To search for a particular order, make a request like this:
 
 ```text
