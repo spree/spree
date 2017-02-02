@@ -345,7 +345,7 @@ as seen below:
 
 To advance to the next state, `payment`, you will need to select a shipping rate
 for each shipment for the order. These were returned when transitioning to the
-`delivery` step. If you need want to see them again, make the following request:
+`delivery` step. If you want to see them again, make the following request:
 
     GET /api/v1/orders/:number.json
 
