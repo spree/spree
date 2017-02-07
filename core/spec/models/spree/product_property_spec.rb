@@ -19,4 +19,8 @@ describe Spree::ProductProperty, type: :model do
       expect(@pp.property.name).to eq('Size')
     end
   end
+
+  context 'ransackable_associations' do
+    it { expect(Spree::ProductProperty.whitelisted_ransackable_associations).to include('property') }
+  end
 end

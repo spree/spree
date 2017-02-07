@@ -48,6 +48,15 @@ module Spree
       expect(json_response['product_properties'].first['value']).to eq property.value
     end
 
+    it "can search for product properties" do
+      product.product_properties.create(property_name: "Shirt Size")
+      product.product_properties.create(property_name: "Shirt Weight")
+      api_get :index, q: { property_name_cont: "size" }
+      expect(json_response["product_properties"].first['property_name']).to eq('Shirt Size')
+      expect(json_response["product_properties"].first).to have_attributes(attributes)
+      expect(json_response["count"]).to eq(1)
+    end
+
     it "can see a single product_property" do
       api_get :show, id: property_1.property_name
       expect(json_response).to have_attributes(attributes)
