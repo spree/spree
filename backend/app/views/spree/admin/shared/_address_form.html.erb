@@ -52,7 +52,7 @@
     </span>
   </div>
 
-  <div class="form-group <%= "#{type}-row" %>">
+  <%= field_container f.object, :state, class: ["form-group", "#{type}-row"] do %>
     <%= f.label :state_id, Spree.t(:state) %>
     <span id="<%= s_or_b %>state">
       <%= f.text_field :state_name,
@@ -60,7 +60,8 @@
             disabled: !f.object.country.states.empty?, class: 'form-control state_name' %>
       <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
     </span>
-  </div>
+    <%= error_message_on f.object, :state_id %>
+  <% end %>
 
   <%= field_container f.object, :phone, class: ["form-group", "#{type}-row"] do %>
     <%= f.label :phone, Spree.t(:phone) %>
