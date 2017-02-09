@@ -260,7 +260,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     within(:css, '#taxonomies') { click_link "Ruby on Rails" }
     check "Price_Range_Under_$10.00"
     within(:css, '#sidebar_products_search') { click_button "Search" }
-    expect(page).to have_content("No products found")
+    expect(page).to have_content("No product found")
   end
 
   it "should be able to display products priced between 15 and 18 dollars" do
