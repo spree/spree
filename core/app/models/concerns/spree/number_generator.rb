@@ -25,7 +25,7 @@ module Spree
 
       self.number ||= loop do
         # Make a random number.
-        random = "#{options[:prefix]}#{(0...options[:length]).map { possible.shuffle.first }.join}"
+        random = "#{options[:prefix]}#{(0...options[:length]).map { possible.sample }.join}"
         # Use the random  number if no other order exists with it.
         if self.class.exists?(number: random)
           # If over half of all possible options are taken add another digit.
