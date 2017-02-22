@@ -29,13 +29,13 @@ module Spree
     after_save :create_payment_profile, if: :profiles_supported?
 
     # update the order totals, etc.
-    after_save :update_order
+    set_callback :save, :after, :update_order, unless: -> { capture_on_dispatch }
 
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
 
-    attr_accessor :source_attributes, :request_env
+    attr_accessor :source_attributes, :request_env, :capture_on_dispatch
 
     after_initialize :build_source
 
@@ -221,14 +221,13 @@ module Spree
 
       def split_uncaptured_amount
         if uncaptured_amount > 0
-          order.payments.create! amount: uncaptured_amount,
-                                 avs_response: avs_response,
-                                 cvv_response_code: cvv_response_code,
-                                 cvv_response_message: cvv_response_message,
-                                 payment_method: payment_method,
-                                 response_code: response_code,
-                                 source: source,
-                                 state: 'pending'
+          order.payments.create!(
+            amount: uncaptured_amount,
+            payment_method: payment_method,
+            source: source,
+            state: 'pending',
+            capture_on_dispatch: true
+          ).authorize!
           update_attributes(amount: captured_amount)
         end
       end
