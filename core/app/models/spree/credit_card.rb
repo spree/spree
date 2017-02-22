@@ -1,5 +1,7 @@
 module Spree
   class CreditCard < Spree::Base
+    include ActiveMerchant::Billing::CreditCardMethods
+
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class, foreign_key: 'user_id'
     has_many :payments, as: :source
@@ -15,7 +17,8 @@ module Spree
     attr_reader :number
     attr_accessor :encrypted_data,
                   :imported,
-                  :verification_value
+                  :verification_value,
+                  :manual_entry
 
     with_options if: :require_card_numbers?, on: :create do
       validates :month, :year, numericality: { only_integer: true }

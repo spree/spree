@@ -20,6 +20,21 @@ module Spree
       expect(payment_method.preferred_password).to eq("haxme")
     end
 
+    it 'saves payment method preferences on update' do
+      spree_put :update,
+                id: payment_method.id,
+                payment_method: {
+                  type: payment_method.class.to_s,
+                  name: 'Bogus'
+                },
+                gateway_with_password: {
+                  preferred_password: "abc"
+                }
+
+      payment_method.reload
+      expect(payment_method.preferred_password).to eq("abc")
+    end
+
     context "tries to save invalid payment" do
       it "doesn't break, responds nicely" do
         expect {

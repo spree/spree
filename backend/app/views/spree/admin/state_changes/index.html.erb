@@ -1,7 +1,8 @@
 <%= render partial: 'spree/admin/shared/order_tabs', locals: { current: :state_changes } %>
 
-<% content_for :page_title do %>
-  <%= plural_resource_name(Spree::StateChange) %>
+<% content_for :page_title do %>  
+  / <%= plural_resource_name(Spree::StateChange) %>
+  / <%= Spree::StateChange.human_attribute_name(:state_changes) %>
 <% end %>
 
 <% if @state_changes.any? %>
@@ -23,7 +24,10 @@
           <td><%= state_change.previous_state ? Spree.t(state_change.previous_state) : Spree.t(:previous_state_missing) %></td>
           <td><%= Spree.t(state_change.next_state) %></td>
           <td>
-            <%= link_to state_change.user.login, spree.admin_user_path(state_change.user) if state_change.user %>
+            <% if state_change.user %>
+              <% user_login = state_change.user.try(:login) || state_change.user.try(:email) %>
+              <%= link_to user_login, spree.admin_user_path(state_change.user) %>
+            <% end %>
           </td>
           <td>
             <%= pretty_time(state_change.created_at) %>

@@ -8,6 +8,69 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
 
   it_behaves_like 'an adjustment source'
 
+  describe '#compute_amount' do
+    subject { described_class.new }
+
+    let(:shipping_discount) { 10 }
+    let(:order) do
+      double(:order, item_total: 30, ship_total: 10, shipping_discount: shipping_discount)
+    end
+
+    context 'when shipping_discount is applied' do
+      context 'and total is less than discount' do
+        it 'returns discount amount eq to total' do
+          allow(subject).to receive(:compute).with(order).and_return(100)
+
+          expect(subject.compute_amount(order)).to eq -30
+        end
+      end
+
+      context 'and total is equal to discount' do
+        it 'returns discount amount' do
+          allow(subject).to receive(:compute).with(order).and_return(30)
+
+          expect(subject.compute_amount(order)).to eq -30
+        end
+      end
+
+      context 'and total is greater than discount' do
+        it 'returns discount amount' do
+          allow(subject).to receive(:compute).with(order).and_return(10)
+
+          expect(subject.compute_amount(order)).to eq -10
+        end
+      end
+    end
+
+    context 'when shipping_discount is not applied' do
+      let(:shipping_discount) { 0 }
+
+      context 'and total is less than discount' do
+        it 'returns discount amount eq to total' do
+          allow(subject).to receive(:compute).with(order).and_return(100)
+
+          expect(subject.compute_amount(order)).to eq -40
+        end
+      end
+
+      context 'and total is equal to discount' do
+        it 'returns discount amount' do
+          allow(subject).to receive(:compute).with(order).and_return(40)
+
+          expect(subject.compute_amount(order)).to eq -40
+        end
+      end
+
+      context 'and total is greater than discount' do
+        it 'returns discount amount' do
+          allow(subject).to receive(:compute).with(order).and_return(10)
+
+          expect(subject.compute_amount(order)).to eq -10
+        end
+      end
+    end
+  end
+
   # From promotion spec:
   context "#perform" do
     before do
