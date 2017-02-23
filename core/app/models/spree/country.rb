@@ -15,6 +15,7 @@ module Spree
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
     validates :name, :iso_name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
+    validate :can_have_states?, if: :states_required_changed?
 
     def self.default
       country_id = Spree::Config[:default_country_id]
@@ -35,6 +36,12 @@ module Spree
       if id.eql?(Spree::Config[:default_country_id])
         errors.add(:base, Spree.t(:default_country_cannot_be_deleted))
         throw(:abort)
+      end
+    end
+
+    def can_have_states?
+      if !states_required? && states.present?
+        errors.add(:states_required, Spree.t(:states_required_invalid))
       end
     end
   end

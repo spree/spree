@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Country, type: :model do
-  let(:america) { create :country }
-  let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
+  let(:america) { create :country, states_required: true }
+  let(:canada) { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124', states_required: true }
+  let(:state) { create(:state, name: 'California', abbr: 'CA') }
 
   describe 'Callbacks' do
     it { is_expected.to callback(:ensure_not_default).before(:destroy) }
@@ -17,6 +18,28 @@ describe Spree::Country, type: :model do
     it { is_expected.to validate_presence_of(:iso_name) }
     it { is_expected.to validate_uniqueness_of(:iso_name).case_insensitive }
     it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
+
+    describe '#ensure_states_required' do
+      context 'states present' do
+        before do
+          america.states << state
+          america.states_required = false
+        end
+
+        subject { america.valid? }
+        it { expect(subject).to be_falsy }
+
+        context 'should be checked for error on country' do
+          before { subject }
+          it { expect(america.errors[:states_required]).to include(Spree.t(:states_required_invalid)) }
+        end
+      end
+
+      context 'states not present' do
+        before { canada.states_required = false }
+        it { expect(canada.save).to be_truthy }
+      end
+    end
   end
 
   describe '.default' do
