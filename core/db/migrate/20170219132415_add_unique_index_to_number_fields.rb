@@ -1,6 +1,6 @@
 class AddUniqueIndexToNumberFields < ActiveRecord::Migration
   def change
-    remove_index spree_orders: :number
+    remove_index :spree_orders, :number
     add_index :spree_orders, :number, unique: true
     add_index :spree_payments, :number, unique: true
     add_index :spree_reimbursements, :number, unique: true
