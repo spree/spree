@@ -36,7 +36,7 @@ module Spree
           break random_token unless host.exists?(number: random_token)
         end
 
-        return @prefix + number
+        @prefix + number
       end
     end # Permalink
   end # Core
