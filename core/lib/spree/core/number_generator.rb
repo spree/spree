@@ -45,6 +45,7 @@ module Spree
       end
 
       def new_candidate(length)
+        @candidates.shuffle!
         @prefix + length.times.map { @candidates.sample(random: @random) }.join
       end
     end # Permalink
