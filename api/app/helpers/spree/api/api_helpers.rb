@@ -31,7 +31,8 @@ module Spree
         :promotion_attributes,
         :store_attributes,
         :tag_attributes,
-        :customer_return_attributes
+        :customer_return_attributes,
+        :reimbursement_attributes
       ]
 
       mattr_reader *ATTRIBUTES
@@ -165,7 +166,15 @@ module Spree
 
       @@tag_attributes = [:id, :name]
 
-      @@customer_return_attributes = [:id, :number, :order_id, :fully_reimbursed?, :pre_tax_total, :created_at, :updated_at]
+      @@customer_return_attributes = [
+        :id, :number, :order_id, :fully_reimbursed?, :pre_tax_total,
+        :created_at, :updated_at
+      ]
+
+      @@reimbursement_attributes = [
+        :id, :reimbursement_status, :customer_return_id, :order_id,
+        :number, :total, :created_at, :updated_at
+      ]
 
       def variant_attributes
         if @current_user_roles && @current_user_roles.include?("admin")
