@@ -31,10 +31,11 @@
                       <%= return_item.variant.sku %>
                     </td>
                     <td>
-                      <%= raw(return_item.variant.product.name) %>
+                      <%= link_to raw(return_item.variant.product.name),
+                                  spree.product_url(return_item.variant.product) %>
                     </td>
                     <td>
-                      <%= "(#{raw(return_item.exchange_variant.options_text)})" -%>
+                      <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
                     </td>
                   </tr>
                 <% end %>
@@ -52,7 +53,9 @@
         <% end %>
 
       <% end %>
-
+      <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
+      </p>
     <td class="expander"></td>
   </tr>
 </table>
