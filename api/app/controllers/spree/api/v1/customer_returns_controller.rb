@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class CustomerReturnsController < Spree::Api::BaseController
-
         def index
           collection(Spree::CustomerReturn)
           respond_with(@collection)
@@ -19,7 +18,6 @@ module Spree
           @search = @collection.ransack(params[:q])
           @collection = @search.result.order(created_at: :desc).page(params[:page]).per(params[:per_page])
         end
-
       end
     end
   end

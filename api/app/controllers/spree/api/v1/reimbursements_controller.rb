@@ -2,14 +2,13 @@ module Spree
   module Api
     module V1
       class ReimbursementsController < Spree::Api::BaseController
-
         def index
           collection(Spree::Reimbursement)
           respond_with(@collection)
         end
 
         private
-        
+
         def collection(resource)
           return @collection if @collection.present?
           params[:q] ||= {}
@@ -23,4 +22,3 @@ module Spree
     end
   end
 end
-
