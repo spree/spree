@@ -143,6 +143,7 @@ module Spree
 
         context "order is completed" do
           before do
+            order.reload
             allow(order).to receive_messages completed?: true
             allow(Order).to receive_message_chain :includes, find_by!: order
           end
@@ -154,6 +155,12 @@ module Spree
           end
 
           context 'deleting line items' do
+            let(:shipments) { order.shipments.load }
+
+            before(:each) do
+              allow(order).to receive(:shipments).and_return(shipments)
+            end
+
             it 'restocks product after line item removal' do
               line_item = order.line_items.first
               variant = line_item.variant
@@ -167,7 +174,7 @@ module Spree
             end
 
             it 'calls `restock` on proper stock location' do
-              expect(order.shipments.first.stock_location).to receive(:restock)
+              expect(shipments.first.stock_location).to receive(:restock)
               api_delete :destroy, id: line_item.id
             end
           end
