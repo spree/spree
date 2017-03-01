@@ -3,6 +3,9 @@ Spree::Core::Engine.add_routes do
     namespace :v1 do
       resources :promotions, only: [:show]
 
+      resources :customer_returns, only: [:index]
+      resources :reimbursements, only: [:index]
+
       resources :products do
         resources :images
         resources :variants
