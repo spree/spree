@@ -37,9 +37,14 @@ describe Spree::ReimbursementMailer, type: :mailer do
           I18n.enforce_available_locales = true
         end
 
-        specify do
+        it "localized in HTML template" do
           reimbursement_email = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
-          expect(reimbursement_email.body).to include("Caro Cliente,")
+          reimbursement_email.html_part.to include("Caro Cliente,")
+        end
+
+        it "localized in text template" do
+          reimbursement_email = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
+          reimbursement_email.text_part.to include("Caro Cliente,")
         end
       end
     end
