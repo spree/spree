@@ -6,16 +6,28 @@
         <ul class="list-group">
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
+                                <% if spree_current_user %>
               <%= radio_button_tag "variant_id", variant.id, index == 0,
                   'data-price' => variant.price_in(current_currency).money, 
                   'data-in-stock' => variant.can_supply?
               %>
+              <% else %>
+              <%= radio_button_tag "variant_id", variant.id, index == 0,
+                  'data-price' => "Login for price", 
+                  'data-in-stock' => variant.can_supply?
+              %>
+              <% end %>
               <%= label_tag "variant_id_#{ variant.id }" do %>
                 <span class="variant-description">
                   <%= variant_options variant %>
+                  <% spree_current_user %>
                 </span>
                 <% if variant_price variant %>
-                  <span class="price diff"><%= variant_price variant %></span>
+                  <% if spree_current_user %>
+                    <span class="price diff"><%= variant_price variant %></span>
+                  <% else %>
+                    <li id="link-to-login"><%= link_to Spree.t(:login), spree.login_path %> for prices...</li>
+                  <% end %>
                 <% end %>
                 <% unless variant.can_supply? %>
                   <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
@@ -35,7 +47,12 @@
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
             <span class="lead price selling" itemprop="price">
-              <%= display_price(@product) %>
+                  <% if spree_current_user %>
+                     <%= display_price(@product) %> Price
+                  <% else %>
+                     Login for prices
+                  <% end %>
+              Test here
             </span>
             <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
           </div>

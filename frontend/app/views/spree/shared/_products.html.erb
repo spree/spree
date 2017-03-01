@@ -32,7 +32,13 @@
             </div>
             <div class="panel-footer text-center">
               <span itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                <span class="price selling lead" itemprop="price"><%= display_price(product) %></span>
+                <span class="price selling lead" itemprop="price">
+                 <% if spree_current_user %>
+                   <%= display_price(product) %>
+                 <% else %>
+                   Login for prices
+                 <% end %>
+                </span>
               </span>
             </div>
           <% end %>

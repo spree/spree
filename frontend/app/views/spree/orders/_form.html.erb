@@ -22,7 +22,15 @@
   <% end %>
   <tr class="warning cart-total">
     <td colspan="4" align='right'><h5><%= Spree.t(:total) %></h5></td>
-    <td class="lead" colspan><%= order_form.object.display_total %></td>
+           
+    <td class="lead" colspan>
+      <% if spree_current_user %>
+      <%= order_form.object.display_total %>
+          <% else %>
+     $0.00
+    <% end %>
+    </td>
+
     <td></td>
   </tr>
 </table>
