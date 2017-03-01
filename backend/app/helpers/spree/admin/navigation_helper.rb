@@ -216,6 +216,14 @@ module Spree
         end
       end
 
+      def main_sidebar_classes
+        if cookies['sidebar-minimized'] == 'true'
+          return 'col-sm-3 col-md-2 hidden-xs sidebar'
+        else
+          return 'col-sm-3 col-md-2 sidebar'
+        end
+      end
+
       def wrapper_classes
         if cookies['sidebar-minimized'] == 'true'
           return 'sidebar-minimized'

@@ -28,13 +28,14 @@ jQuery(function($) {
 
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle');
-
   sidebar_toggle.on('click', function(){
     var wrapper = $('#wrapper');
     var main    = $('#main-part');
+    var sidebar = $('#main-sidebar');
 
     if(wrapper.hasClass('sidebar-minimized')){
       wrapper.removeClass('sidebar-minimized');
+      sidebar.removeClass('hidden-xs');
       main
         .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
         .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
@@ -42,6 +43,7 @@ jQuery(function($) {
     }
     else {
       wrapper.addClass('sidebar-minimized');
+      sidebar.addClass('hidden-xs');
       main
         .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
         .addClass('col-sm-12 col-md-12 sidebar-collapsed');
